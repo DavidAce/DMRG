@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.11">
+  <compounddef id="classclass___m_p_s" kind="class" language="C++" prot="public">
+    <compoundname>class_MPS</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classclass___m_p_s_1af32cc48eb1e4ae9295af3bcab10eeae8" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long class_MPS::local_dimension</definition>
+        <argsstring></argsstring>
+        <name>local_dimension</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_MPS.h" line="66" column="1" bodyfile="source/class_MPS.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass___m_p_s_1a1b55b3a4c47bb4e4ec14dbc1d6f02152" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long class_MPS::sites</definition>
+        <argsstring></argsstring>
+        <name>sites</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_MPS.h" line="67" column="1" bodyfile="source/class_MPS.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass___m_p_s_1a5a84e65044090e169ea145d771bea2db" prot="public" static="no" mutable="no">
+        <type><ref refid="class_gamma___a_b" kindref="compound">Gamma_AB</ref></type>
+        <definition>Gamma_AB class_MPS::G</definition>
+        <argsstring></argsstring>
+        <name>G</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_MPS.h" line="69" column="1" bodyfile="source/class_MPS.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass___m_p_s_1a58a6db207f26d776ce01ab0ced820e36" prot="public" static="no" mutable="no">
+        <type><ref refid="class_lambda___a_b" kindref="compound">Lambda_AB</ref></type>
+        <definition>Lambda_AB class_MPS::L</definition>
+        <argsstring></argsstring>
+        <name>L</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_MPS.h" line="70" column="1" bodyfile="source/class_MPS.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass___m_p_s_1a1f3141591083861a11e7707a96f7284c" prot="public" static="no" mutable="no">
+        <type>Tensor1</type>
+        <definition>Tensor1 class_MPS::L_tail</definition>
+        <argsstring></argsstring>
+        <name>L_tail</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_MPS.h" line="71" column="1" bodyfile="source/class_MPS.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass___m_p_s_1a383b5c5b2d621af50c2972b031ea86ce" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>class_MPS::class_MPS</definition>
+        <argsstring>()</argsstring>
+        <name>class_MPS</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_MPS.h" line="73" column="1" bodyfile="source/class_MPS.h" bodystart="73" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass___m_p_s_1a89e3fc0278d754e30c0d45e3febd2970" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_MPS::initialize</definition>
+        <argsstring>(const long dim, const long s)</argsstring>
+        <name>initialize</name>
+        <param>
+          <type>const long</type>
+          <declname>dim</declname>
+        </param>
+        <param>
+          <type>const long</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_MPS.h" line="75" column="1" bodyfile="source/class_MPS.h" bodystart="75" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass___m_p_s_1a931bb52a82a9483434ea8ee3dbfc4b97" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>Tensor4</type>
+        <definition>Tensor4 class_MPS::get_theta</definition>
+        <argsstring>() const </argsstring>
+        <name>get_theta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_MPS.h" line="88" column="1" bodyfile="source/class_MPS.h" bodystart="88" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass___m_p_s_1a27502b59d10647f0037b71e148654d65" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_MPS::swap_AB</definition>
+        <argsstring>()</argsstring>
+        <name>swap_AB</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_MPS.h" line="97" column="1" bodyfile="source/class_MPS.h" bodystart="97" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass___m_p_s_1ac97a829a430419d2f3fe23af6c69b3e1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_MPS::print_error</definition>
+        <argsstring>(const Tensor4 &amp;Hamiltonian)</argsstring>
+        <name>print_error</name>
+        <param>
+          <type>const Tensor4 &amp;</type>
+          <declname>Hamiltonian</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_MPS.h" line="102" column="1" bodyfile="source/class_MPS.h" bodystart="102" bodyend="123"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="6">
+        <label>Gamma_AB</label>
+        <link refid="class_gamma___a_b"/>
+      </node>
+      <node id="7">
+        <label>Lambda_AB</label>
+        <link refid="class_lambda___a_b"/>
+      </node>
+      <node id="5">
+        <label>class_MPS</label>
+        <link refid="classclass___m_p_s"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>G</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>L</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="source/class_MPS.h" line="64" column="1" bodyfile="source/class_MPS.h" bodystart="64" bodyend="127"/>
+    <listofallmembers>
+      <member refid="classclass___m_p_s_1a383b5c5b2d621af50c2972b031ea86ce" prot="public" virt="non-virtual"><scope>class_MPS</scope><name>class_MPS</name></member>
+      <member refid="classclass___m_p_s_1a5a84e65044090e169ea145d771bea2db" prot="public" virt="non-virtual"><scope>class_MPS</scope><name>G</name></member>
+      <member refid="classclass___m_p_s_1a931bb52a82a9483434ea8ee3dbfc4b97" prot="public" virt="non-virtual"><scope>class_MPS</scope><name>get_theta</name></member>
+      <member refid="classclass___m_p_s_1a89e3fc0278d754e30c0d45e3febd2970" prot="public" virt="non-virtual"><scope>class_MPS</scope><name>initialize</name></member>
+      <member refid="classclass___m_p_s_1a58a6db207f26d776ce01ab0ced820e36" prot="public" virt="non-virtual"><scope>class_MPS</scope><name>L</name></member>
+      <member refid="classclass___m_p_s_1a1f3141591083861a11e7707a96f7284c" prot="public" virt="non-virtual"><scope>class_MPS</scope><name>L_tail</name></member>
+      <member refid="classclass___m_p_s_1af32cc48eb1e4ae9295af3bcab10eeae8" prot="private" virt="non-virtual"><scope>class_MPS</scope><name>local_dimension</name></member>
+      <member refid="classclass___m_p_s_1ac97a829a430419d2f3fe23af6c69b3e1" prot="public" virt="non-virtual"><scope>class_MPS</scope><name>print_error</name></member>
+      <member refid="classclass___m_p_s_1a1b55b3a4c47bb4e4ec14dbc1d6f02152" prot="private" virt="non-virtual"><scope>class_MPS</scope><name>sites</name></member>
+      <member refid="classclass___m_p_s_1a27502b59d10647f0037b71e148654d65" prot="public" virt="non-virtual"><scope>class_MPS</scope><name>swap_AB</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
