@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.11">
+  <compounddef id="classclass__environment___r" kind="class" language="C++" prot="public">
+    <compoundname>class_environment_R</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass__environment___r_1a92410fb5b1d4fe0cad21a4099c6694af" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_environment_R::single_picture</definition>
+        <argsstring></argsstring>
+        <name>single_picture</name>
+        <initializer>= &quot;-&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_environment.h" line="51" column="1" bodyfile="source/class_environment.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__environment___r_1ae885c9da50da9f70f44ff6e12d43d51c" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_environment_R::full_picture</definition>
+        <argsstring></argsstring>
+        <name>full_picture</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_environment.h" line="52" column="1" bodyfile="source/class_environment.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__environment___r_1a305167d98081e9cfb6d6345b63fdf3de" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_environment_R::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_environment.h" line="53" column="1" bodyfile="source/class_environment.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__environment___r_1a9cdf8690a03d99e12cb2c80cff751ef4" prot="public" static="no" mutable="no">
+        <type>Tensor3</type>
+        <definition>Tensor3 class_environment_R::block</definition>
+        <argsstring></argsstring>
+        <name>block</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_environment.h" line="55" column="1" bodyfile="source/class_environment.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__environment___r_1a75fc15a5fa31ce457e2aa0e6e601b82a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_environment_R::class_environment_R</definition>
+        <argsstring>()</argsstring>
+        <name>class_environment_R</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_environment.h" line="56" column="1" bodyfile="source/class_environment.cpp" bodystart="15" bodyend="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__environment___r_1a7df690c150d93ed56d4ea61558937a29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_environment_R::enlarge</definition>
+        <argsstring>(const class_MPS &amp;MPS, const Tensor4 &amp;W)</argsstring>
+        <name>enlarge</name>
+        <param>
+          <type>const <ref refid="classclass___m_p_s" kindref="compound">class_MPS</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>const Tensor4 &amp;</type>
+          <declname>W</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/class_environment.h" line="71" column="1" bodyfile="source/class_environment.cpp" bodystart="37" bodyend="47"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/class_environment.h" line="47" column="1" bodyfile="source/class_environment.h" bodystart="47" bodyend="76"/>
+    <listofallmembers>
+      <member refid="classclass__environment___r_1a9cdf8690a03d99e12cb2c80cff751ef4" prot="public" virt="non-virtual"><scope>class_environment_R</scope><name>block</name></member>
+      <member refid="classclass__environment___r_1a75fc15a5fa31ce457e2aa0e6e601b82a" prot="public" virt="non-virtual"><scope>class_environment_R</scope><name>class_environment_R</name></member>
+      <member refid="classclass__environment___r_1a7df690c150d93ed56d4ea61558937a29" prot="public" virt="non-virtual"><scope>class_environment_R</scope><name>enlarge</name></member>
+      <member refid="classclass__environment___r_1ae885c9da50da9f70f44ff6e12d43d51c" prot="public" virt="non-virtual"><scope>class_environment_R</scope><name>full_picture</name></member>
+      <member refid="classclass__environment___r_1a92410fb5b1d4fe0cad21a4099c6694af" prot="public" virt="non-virtual"><scope>class_environment_R</scope><name>single_picture</name></member>
+      <member refid="classclass__environment___r_1a305167d98081e9cfb6d6345b63fdf3de" prot="public" virt="non-virtual"><scope>class_environment_R</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

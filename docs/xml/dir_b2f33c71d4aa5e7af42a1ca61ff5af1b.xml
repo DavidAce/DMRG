@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.11">
+  <compounddef id="dir_b2f33c71d4aa5e7af42a1ca61ff5af1b" kind="dir">
+    <compoundname>source</compoundname>
+    <innerfile refid="class__environment_8cpp">class_environment.cpp</innerfile>
+    <innerfile refid="class__environment_8h">class_environment.h</innerfile>
+    <innerfile refid="class___m_p_s_8cpp">class_MPS.cpp</innerfile>
+    <innerfile refid="class___m_p_s_8h">class_MPS.h</innerfile>
+    <innerfile refid="class__storage_8cpp">class_storage.cpp</innerfile>
+    <innerfile refid="class__storage_8h">class_storage.h</innerfile>
+    <innerfile refid="class__superblock_8cpp">class_superblock.cpp</innerfile>
+    <innerfile refid="class__superblock_8h">class_superblock.h</innerfile>
+    <innerfile refid="class___s_v_d_8cpp">class_SVD.cpp</innerfile>
+    <innerfile refid="class___s_v_d_8h">class_SVD.h</innerfile>
+    <innerfile refid="class__tic__toc_8cpp">class_tic_toc.cpp</innerfile>
+    <innerfile refid="class__tic__toc_8h">class_tic_toc.h</innerfile>
+    <innerfile refid="class___two_site_hamiltonian_8cpp">class_TwoSiteHamiltonian.cpp</innerfile>
+    <innerfile refid="class___two_site_hamiltonian_8h">class_TwoSiteHamiltonian.h</innerfile>
+    <innerfile refid="funcs_8cpp">funcs.cpp</innerfile>
+    <innerfile refid="funcs_8h">funcs.h</innerfile>
+    <innerfile refid="n__model_8cpp">n_model.cpp</innerfile>
+    <innerfile refid="n__model_8h">n_model.h</innerfile>
+    <innerfile refid="n__tensor__extra_8cpp">n_tensor_extra.cpp</innerfile>
+    <innerfile refid="n__tensor__extra_8h">n_tensor_extra.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/"/>
+  </compounddef>
+</doxygen>
