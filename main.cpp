@@ -20,13 +20,6 @@ using namespace Textra;
 
 
 
-// First define the parameters of the simulation
-
-int chi = 40;
-int L = 50;
-double SVDThreshold = 1e-12;
-double eigThreshold = 1e-12;
-int    eigSteps = 1000;
 
 // Profiling objects
 class_profiling t_svd   (1,5, string("SVD           ")) ;
@@ -35,10 +28,18 @@ class_profiling t_env   (1,5, string("Update Env.   ")) ;
 class_profiling t_tmp   (1,5, string("Temporary     ")) ;
 class_profiling t_tot   (1,5, string("Total         ")) ;
 
-void infinite_DMRG(class_superblock &superblock, class_storage &S, int max_length);
-void finite_DMRG(class_superblock &superblock, class_storage &S, int sweeps);
+void infinite_DMRG  (class_superblock &superblock, class_storage &S, int max_length);
+void finite_DMRG    (class_superblock &superblock, class_storage &S, int sweeps);
 
 int main() {
+    // First define the parameters of the simulation
+
+    int    chi          = 40;
+    int    L            = 50;
+    double SVDThreshold = 1e-12;
+    double eigThreshold = 1e-12;
+    int    eigSteps     = 1000;
+
     class_superblock superblock(eigSteps,eigThreshold,SVDThreshold,chi);
     class_storage S(L);
     infinite_DMRG(superblock,S,L);
@@ -80,8 +81,8 @@ void infinite_DMRG(class_superblock &superblock, class_storage &S, int max_lengt
 
 void finite_DMRG(class_superblock &superblock, class_storage &S, int sweeps){
 //    t_tot.tic();
-    long direction  = 1;
-    long sweep = 0;
+    int direction  = 1;
+    int sweep = 0;
 
     while(sweep < sweeps) {
             S.load(superblock);

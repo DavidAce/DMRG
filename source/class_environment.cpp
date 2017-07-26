@@ -22,7 +22,7 @@ class_environment_R::class_environment_R(){
 
 void class_environment_L::enlarge(const class_MPS &MPS, const Tensor4 &W) {
 
-    full_picture.append(single_picture);
+    picture.append(single_picture);
     size++;
     Tensor3 block_enlarged = block.contract(asDiagonal(MPS.L_tail), idxlist1{idx2(0,0)})
             .contract(MPS.G.A, idxlist1{idx2(2,1)})
@@ -35,7 +35,7 @@ void class_environment_L::enlarge(const class_MPS &MPS, const Tensor4 &W) {
 }
 
 void class_environment_R::enlarge(const class_MPS &MPS, const Tensor4 &W){
-    full_picture.append(single_picture);
+    picture.append(single_picture);
     size++;
     Tensor3 block_enlarged = block.contract(asDiagonal(MPS.L.B), idxlist1{idx2(0,0)})
             .contract(MPS.G.B, idxlist1{idx2(2,2)})

@@ -18,7 +18,7 @@ private:
 
 public:
     std::string single_picture = "=";
-    std::string full_picture;
+    std::string picture;
     int size;         //Size is the number of particles that have been contracted into this environment
 
     Tensor3 block;
@@ -32,7 +32,7 @@ private:
 
 public:
     std::string single_picture = "-";
-    std::string full_picture;
+    std::string picture;
     int size;         //Size is the number of particles that have been contracted into this environment
 
     Tensor3 block;
