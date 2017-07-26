@@ -1,4 +1,4 @@
-/* iDMRG code to find the ground state of the infinite 1D XXZ Ising chain.
+/*! iDMRG code to find the ground state of the infinite 1D XXZ Ising chain.
  * This implementation follows the steps in the article
  *      “Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study.”
  *      Kjäll, Zaletel, Mong, Bardarson, and Pollmann.
@@ -11,11 +11,8 @@
 
 #include <class_tic_toc.h>
 #include <n_tensor_extra.h>
-#include <class_TwoSiteHamiltonian.h>
-#include <class_SVD.h>
-#include <class_storage.h>
-#include <class_MPS.h>
 #include <class_superblock.h>
+#include <class_storage.h>
 
 using namespace std;
 using namespace Eigen;
@@ -25,8 +22,8 @@ using namespace Textra;
 
 // First define the parameters of the simulation
 
-long chi = 100;
-int N = 50;
+int chi = 40;
+int L = 50;
 double SVDThreshold = 1e-12;
 double eigThreshold = 1e-12;
 int    eigSteps = 1000;
@@ -38,9 +35,20 @@ class_profiling t_env   (1,5, string("Update Env.   ")) ;
 class_profiling t_tmp   (1,5, string("Temporary     ")) ;
 class_profiling t_tot   (1,5, string("Total         ")) ;
 
+void infinite_DMRG(class_superblock &superblock, class_storage &S, int max_length);
+void finite_DMRG(class_superblock &superblock, class_storage &S, int sweeps);
+
+int main() {
+    class_superblock superblock(eigSteps,eigThreshold,SVDThreshold,chi);
+    class_storage S(L);
+    infinite_DMRG(superblock,S,L);
+    finite_DMRG(superblock,S, 4);
+    return 0;
+}
 
 
-void infinite_DMRG(class_superblock &superblock, class_storage &S, long max_length){
+
+void infinite_DMRG(class_superblock &superblock, class_storage &S, int max_length){
 //    t_tot.tic();
     long length = 0;
     while(length < max_length){
@@ -70,15 +78,12 @@ void infinite_DMRG(class_superblock &superblock, class_storage &S, long max_leng
 
 
 
-void finite_DMRG(class_superblock &superblock, class_storage &S, long sweeps){
+void finite_DMRG(class_superblock &superblock, class_storage &S, int sweeps){
 //    t_tot.tic();
     long direction  = 1;
     long sweep = 0;
 
     while(sweep < sweeps) {
-//    for (long sweep = 0; sweep < sweeps; sweep++){
-//        for (size_t step = 0; step < S.max_length - 2; step++) {
-
             S.load(superblock);
             superblock.update_bond_dimensions();
 
@@ -111,12 +116,4 @@ void finite_DMRG(class_superblock &superblock, class_storage &S, long sweeps){
 }
 
 
-int main() {
-    class_superblock superblock(eigSteps,eigThreshold,SVDThreshold,chi);
-    size_t L = 10;
-    class_storage S(L);
-    infinite_DMRG(superblock,S,L);
-    finite_DMRG(superblock,S, 4);
-    return 0;
-}
 
