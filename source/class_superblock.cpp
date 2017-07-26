@@ -3,6 +3,8 @@
 //
 
 #include "class_superblock.h"
+#include <Eigen/SVD>
+
 class_superblock::class_superblock(const int eigSteps_,
                  const double eigThreshold_,
                  const double SVDThreshold_,
@@ -37,7 +39,19 @@ void class_superblock::find_ground_state(){
 }
 
 void class_superblock::truncate(){
-    std::tie(U, MPS.L.A, V) = SVD.decompose(ground_state, SVDThreshold, H.local_dimension, chi, chia, chib);
+    Eigen::BDCSVD<MatrixType> SVD;
+    SVD.setThreshold(SVDThreshold);
+    SVD.compute(tensor2_to_matrix(ground_state), Eigen::ComputeThinU | Eigen::ComputeThinV);
+    long chi2       = std::min(SVD.rank(),chi);
+    long d          = shape4[0];
+    long chia       = shape4[1];
+    long chib       = shape4[3];
+
+    cout << "chi chi2 chia chib: " << chi  << " " << chi2 << " " << chia << " " << chib << endl;
+    double renorm  = SVD.singularValues().head(chi2).norm();
+    U       =  matrix_to_tensor3(SVD.matrixU().leftCols(chi2),{d,chia,chi2});
+    MPS.L.A =  matrix_to_tensor1(SVD.singularValues().head(chi2)) / renorm;
+    V       =  matrix_to_tensor3(SVD.matrixV().leftCols(chi2),{d,chib,chi2}).shuffle(array3{0,2,1});
 }
 
 

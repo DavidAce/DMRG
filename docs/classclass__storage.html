@@ -70,6 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -110,12 +111,14 @@ $(document).ready(function(){initNavTree('classclass__storage.html','');});
 <div class="title">class_storage Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="class__storage_8h_source.html">class_storage.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab5d56dcc648e1c5958152c4ecbaa4752"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab5d56dcc648e1c5958152c4ecbaa4752"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>class_storage</b> (size_t L)</td></tr>
-<tr class="separator:ab5d56dcc648e1c5958152c4ecbaa4752"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61417134225175104ddad6463b0a8426"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61417134225175104ddad6463b0a8426"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>class_storage</b> (int L)</td></tr>
+<tr class="separator:a61417134225175104ddad6463b0a8426"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27a5109b1b38574b4b3b4587198fb297"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a27a5109b1b38574b4b3b4587198fb297"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>store_insert</b> (const <a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock)</td></tr>
 <tr class="separator:a27a5109b1b38574b4b3b4587198fb297"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -125,39 +128,96 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>load</b> (<a class="e
 <tr class="memitem:a99c64ce93ad4a1613b55ecbb0847846e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a99c64ce93ad4a1613b55ecbb0847846e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>overwrite</b> (const <a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock)</td></tr>
 <tr class="separator:a99c64ce93ad4a1613b55ecbb0847846e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f99c767232625ace388668ce5118d7c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4f99c767232625ace388668ce5118d7c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>move</b> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock, const long direction)</td></tr>
-<tr class="separator:a4f99c767232625ace388668ce5118d7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7151cdfb718037015ae6d8be0dcb9963"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7151cdfb718037015ae6d8be0dcb9963"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>move</b> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock, const int direction)</td></tr>
+<tr class="separator:a7151cdfb718037015ae6d8be0dcb9963"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1148311a7eaf7ecbc3710502837ecaf0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1148311a7eaf7ecbc3710502837ecaf0"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>print_storage</b> ()</td></tr>
 <tr class="separator:a1148311a7eaf7ecbc3710502837ecaf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ad04719c0e94ace7121efce3b095d62b4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad04719c0e94ace7121efce3b095d62b4"></a>
-std::map&lt; size_t, Tensor3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>G_list</b></td></tr>
-<tr class="separator:ad04719c0e94ace7121efce3b095d62b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e0c27eb0be5e2d52e8a3712402deb8c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e0c27eb0be5e2d52e8a3712402deb8c"></a>
-std::map&lt; size_t, Tensor1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>L_list</b></td></tr>
-<tr class="separator:a3e0c27eb0be5e2d52e8a3712402deb8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4efcc2daa54c5c63cacb55ea536eaff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4efcc2daa54c5c63cacb55ea536eaff"></a>
-std::map&lt; size_t, <a class="el" href="classclass__environment___l.html">class_environment_L</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Lblock_list</b></td></tr>
-<tr class="separator:af4efcc2daa54c5c63cacb55ea536eaff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb6bd35c054846e09e4173888e8e8660"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb6bd35c054846e09e4173888e8e8660"></a>
-std::map&lt; size_t, <a class="el" href="classclass__environment___r.html">class_environment_R</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Rblock_list</b></td></tr>
-<tr class="separator:afb6bd35c054846e09e4173888e8e8660"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac880f674d440d41f7ee8dbaca8dc0664"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac880f674d440d41f7ee8dbaca8dc0664"></a>
-const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>max_length</b></td></tr>
-<tr class="separator:ac880f674d440d41f7ee8dbaca8dc0664"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a879c8de38832fe2d87ff59cc3bfcbd63"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a879c8de38832fe2d87ff59cc3bfcbd63"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>position_L</b> = 0</td></tr>
-<tr class="separator:a879c8de38832fe2d87ff59cc3bfcbd63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3044ee359d62e78406f89242faa305e9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3044ee359d62e78406f89242faa305e9"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>position_R</b> = max_length - 1</td></tr>
-<tr class="separator:a3044ee359d62e78406f89242faa305e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28230a30b2085f4b91340b0fe8956ad0"><td class="memItemLeft" align="right" valign="top">std::map&lt; int, Tensor3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a28230a30b2085f4b91340b0fe8956ad0">G_list</a></td></tr>
+<tr class="separator:a28230a30b2085f4b91340b0fe8956ad0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a36c1609ecd2cc6dfb9bec4c8369d4d"><td class="memItemLeft" align="right" valign="top">std::map&lt; int, Tensor1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a9a36c1609ecd2cc6dfb9bec4c8369d4d">L_list</a></td></tr>
+<tr class="separator:a9a36c1609ecd2cc6dfb9bec4c8369d4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a487d155d2a17e7742a973ec03b881d49"><td class="memItemLeft" align="right" valign="top">std::map&lt; int, <a class="el" href="classclass__environment___l.html">class_environment_L</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a487d155d2a17e7742a973ec03b881d49">Lblock_list</a></td></tr>
+<tr class="separator:a487d155d2a17e7742a973ec03b881d49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45fd733a67be78bd55ba07fd74a7ccd4"><td class="memItemLeft" align="right" valign="top">std::map&lt; int, <a class="el" href="classclass__environment___r.html">class_environment_R</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a45fd733a67be78bd55ba07fd74a7ccd4">Rblock_list</a></td></tr>
+<tr class="separator:a45fd733a67be78bd55ba07fd74a7ccd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8d15935418c2051a3994a4af8ec6218"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8d15935418c2051a3994a4af8ec6218"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><b>max_length</b></td></tr>
+<tr class="separator:ad8d15935418c2051a3994a4af8ec6218"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0825ddb44b4487ae1fec0a73d890e9b7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0825ddb44b4487ae1fec0a73d890e9b7"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>position_L</b> = 0</td></tr>
+<tr class="separator:a0825ddb44b4487ae1fec0a73d890e9b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a218c9d8405b157c31702ea6cf848771d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a218c9d8405b157c31702ea6cf848771d"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>position_R</b> = max_length - 1</td></tr>
+<tr class="separator:a218c9d8405b157c31702ea6cf848771d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h1>Storage Class</h1>
+<p>During the infinite-DMRG part of the algorithm, the current state for each chain-length is stored in a <code><a class="el" href="classclass__storage.html">class_storage</a></code> object, for later use in the finite-DMRG stage.</p>
+<p>Specifically, this class stores objects from the current superblock:</p><ul>
+<li>The left and right environment blocks <code>Lblock</code> and <code>Rblock</code>, both type <code>Textra::Tensor3</code>, and</li>
+<li>the MPS tensors <img class="formulaInl" alt="$\Gamma^{A,B}=$" src="form_10.png"/> <code>MPS.G.A, MPS.G.B</code> and <img class="formulaInl" alt="$\Lambda^{A,B}=$" src="form_9.png"/> <code>MPS.L.A, MPS.L.B</code>, required for computing <img class="formulaInl" alt="$\Theta$" src="form_1.png"/>, following the notation used in <a href="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Frank Pollmann's notes</a>: <img class="formulaInl" alt="$\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B.$" src="form_7.png"/>. Here <img class="formulaInl" alt="$\Gamma^{A,B}$" src="form_3.png"/> are a rank-3 tensors of type <code>Textra::Tensor3</code> and <img class="formulaInl" alt="$\Lambda^{A,B}$" src="form_4.png"/> are rank-1 tensors of <code>Textra::Tensor1</code>. </li>
+</ul>
+</div><h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="a28230a30b2085f4b91340b0fe8956ad0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;int, Tensor3&gt; class_storage::G_list</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Detailed description after the member </p>
+
+</div>
+</div>
+<a class="anchor" id="a9a36c1609ecd2cc6dfb9bec4c8369d4d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;int, Tensor1&gt; class_storage::L_list</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Detailed description after the member </p>
+
+</div>
+</div>
+<a class="anchor" id="a487d155d2a17e7742a973ec03b881d49"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;int,<a class="el" href="classclass__environment___l.html">class_environment_L</a>&gt; class_storage::Lblock_list</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Detailed description after the member </p>
+
+</div>
+</div>
+<a class="anchor" id="a45fd733a67be78bd55ba07fd74a7ccd4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;int,<a class="el" href="classclass__environment___r.html">class_environment_R</a>&gt; class_storage::Rblock_list</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Detailed description after the member </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>source/<a class="el" href="class__storage_8h_source.html">class_storage.h</a></li>
+<li>source/class_storage.cpp</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

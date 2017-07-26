@@ -7,7 +7,7 @@
 
 
 #include <class_environment.h>
-#include <class_SVD.h>
+//#include <class_SVD.h>
 #include <class_MPS.h>
 #include <class_TwoSiteHamiltonian.h>
 
@@ -32,7 +32,6 @@ public:
 
     class_environment_L Lblock;
     class_environment_R Rblock;
-    class_SVD SVD;
     class_MPS MPS;
     class_TwoSiteHamiltonian H;
 
