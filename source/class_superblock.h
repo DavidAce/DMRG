@@ -37,7 +37,7 @@ private:
 
     //Store temporaries for eigensolver and SVD.
     Tensor2 ground_state;                               /*!< Stores the ground state eigenvector from eigenvalue solver */
-    Tensor3 U,V;                                        /*!< Stores the left and right unitary matrices \f$U\f$ and \f$V\f$ after an SVD decomposition \f$A = USV^\dagger\f$.*/
+    Tensor3 U,V;                                        /*!< Stores the left and right unitary matrices $U$ and \f$V\f$ after an SVD decomposition \f$A = USV^\dagger\f$.*/
 public:
 
     class_environment_L         Lblock;                 /*!< Left  environment block. */
