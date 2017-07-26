@@ -27,7 +27,6 @@ class class_environment_R;
 */
 
 
-
 class class_storage {
 private:
     template <typename list_type, typename inType>

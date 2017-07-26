@@ -6,6 +6,5 @@ var searchData=
   ['class_5fprofiling',['class_profiling',['../classclass__profiling.html',1,'']]],
   ['class_5fstorage',['class_storage',['../classclass__storage.html',1,'']]],
   ['class_5fsuperblock',['class_superblock',['../classclass__superblock.html',1,'']]],
-  ['class_5fsvd',['class_SVD',['../classclass___s_v_d.html',1,'']]],
   ['class_5ftwositehamiltonian',['class_TwoSiteHamiltonian',['../classclass___two_site_hamiltonian.html',1,'']]]
 ];

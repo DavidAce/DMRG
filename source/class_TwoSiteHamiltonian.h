@@ -16,7 +16,7 @@ class class_TwoSiteHamiltonian{
 public:
     unsigned int sites = 2;     // Two sites
     long local_dimension;       // "Spin" dimension
-    string pic;                 // Graphical representation
+    string picture;                 // Graphical representation
     Tensor4 W;                  // MPO representation of Hamiltonian
     MatrixType asMatrix;        // Matrix   representation of full two-site Hamiltonian
     Tensor4 asTensor4;          // Tenesor4 representation of full two-site Hamiltonian.

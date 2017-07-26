@@ -13,6 +13,6 @@ class_TwoSiteHamiltonian::class_TwoSiteHamiltonian(){
     asTensor4       = Eigen::TensorMap<Tensor4> (asMatrix.data(),2,2,2,2);
     W               = Model::W(sites);
     local_dimension = Model::local_dimension;
-    pic         = "**";
+    picture         = "**";
 };
 

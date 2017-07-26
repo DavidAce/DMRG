@@ -2,18 +2,24 @@
 // Created by david on 7/22/17.
 //
 
-#include "class_superblock.h"
-#include <Eigen/SVD>
+#include <class_superblock.h>
 
-class_superblock::class_superblock(const int eigSteps_,
-                 const double eigThreshold_,
-                 const double SVDThreshold_,
-                 const long chi_){
+
+using namespace Textra;
+
+class_superblock::class_superblock( const int eigSteps_,
+                                    const double eigThreshold_,
+                                    const double SVDThreshold_,
+                                    const long chi_){
     MPS.initialize(H.local_dimension, H.sites);
-    eigSteps = eigSteps_;
-    eigThreshold = eigThreshold_;
-    SVDThreshold = SVDThreshold_;
-    chi = chi_;
+
+    chi             = chi_;
+    update_bond_dimensions();
+
+    eigSteps        = eigSteps_;
+    eigThreshold    = eigThreshold_;
+    SVDThreshold    = SVDThreshold_;
+
 }
 
 void class_superblock::find_ground_state(){
@@ -24,10 +30,8 @@ void class_superblock::find_ground_state(){
             Spectra::SMALLEST_ALGE,
             class_superblock>
             eigs(this, 1, 4);
-    array1 tempshape = {MPS.G.A.dimension(1) * MPS.G.B.dimension(2) * H.local_dimension * H.local_dimension};
-    cout << "Shape1 theta: " << tempshape[0] << endl;
 
-    Tensor1 theta = MPS.get_theta().reshape(shape1);
+    Textra::Tensor1 theta = MPS.get_theta().reshape(shape1);
     eigs.init(theta.data()); //Throw in the initial vector v0 here
     eigs.compute(eigSteps,eigThreshold, Spectra::SMALLEST_ALGE);
 
@@ -43,15 +47,12 @@ void class_superblock::truncate(){
     SVD.setThreshold(SVDThreshold);
     SVD.compute(tensor2_to_matrix(ground_state), Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chi2       = std::min(SVD.rank(),chi);
-    long d          = shape4[0];
-    long chia       = shape4[1];
-    long chib       = shape4[3];
 
     cout << "chi chi2 chia chib: " << chi  << " " << chi2 << " " << chia << " " << chib << endl;
-    double renorm  = SVD.singularValues().head(chi2).norm();
-    U       =  matrix_to_tensor3(SVD.matrixU().leftCols(chi2),{d,chia,chi2});
-    MPS.L.A =  matrix_to_tensor1(SVD.singularValues().head(chi2)) / renorm;
-    V       =  matrix_to_tensor3(SVD.matrixV().leftCols(chi2),{d,chib,chi2}).shuffle(array3{0,2,1});
+    double renorm   = SVD.singularValues().head(chi2).norm();
+    U               = matrix_to_tensor3(SVD.matrixU().leftCols(chi2),{d,chia,chi2});
+    MPS.L.A         = matrix_to_tensor1(SVD.singularValues().head(chi2)) / renorm;
+    V               = matrix_to_tensor3(SVD.matrixV().leftCols(chi2),{d,chib,chi2}).shuffle(array3{0,2,1});
 }
 
 
@@ -74,11 +75,12 @@ void class_superblock::enlarge_environment(long direction){
 }
 
 void class_superblock::update_bond_dimensions(){
-    chia = MPS.G.A.dimension(1);
-    chib = MPS.G.B.dimension(2);
-    shape1 = {H.local_dimension * chia * H.local_dimension * chib};
-    shape2 = {H.local_dimension * chia , H.local_dimension * chib};
-    shape4 = {H.local_dimension , chia , H.local_dimension , chib};
+    d       = H.local_dimension;
+    chia    = MPS.G.A.dimension(1);
+    chib    = MPS.G.B.dimension(2);
+    shape1  = {H.local_dimension * chia * H.local_dimension * chib};
+    shape2  = {H.local_dimension * chia , H.local_dimension * chib};
+    shape4  = {H.local_dimension , chia , H.local_dimension , chib};
 }
 
 
@@ -87,7 +89,7 @@ void  class_superblock::swap_AB(){
 }
 
 void class_superblock::print_picture(){
-    cout << Lblock.full_picture << H.pic << Rblock.full_picture << endl;
+    cout << Lblock.picture << H.picture << Rblock.picture << endl;
 }
 
 void class_superblock::print_error() {
