@@ -52,6 +52,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -117,28 +118,113 @@ $(document).ready(function(){initNavTree('classclass__environment___l.html','');
 <div class="title">class_environment_L Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Left environment block. </p>
+<h1>Left environment</h1>
+<p>This class contains the Left environment block as a rank-3 tensor. New sites are contracted into the left environment as </p><p class="formulaDsp">
+\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]
+</p>
+<p>where \(W\) is the rank-4 tensor Hamiltonian MPO. </p>
+</div>
+<p><code>#include &lt;<a class="el" href="class__environment_8h_source.html">class_environment.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1aff2b359287769e1480c5fd009e9598"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1aff2b359287769e1480c5fd009e9598"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>enlarge</b> (const <a class="el" href="classclass___m_p_s.html">class_MPS</a> &amp;MPS, const Tensor4 &amp;W)</td></tr>
+<tr class="memitem:a1aff2b359287769e1480c5fd009e9598"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment___l.html#a1aff2b359287769e1480c5fd009e9598">enlarge</a> (const <a class="el" href="classclass___m_p_s.html">class_MPS</a> &amp;MPS, const Tensor4 &amp;W)</td></tr>
 <tr class="separator:a1aff2b359287769e1480c5fd009e9598"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ae8a9aef9f983ff0580d7e2ee9da1d1d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8a9aef9f983ff0580d7e2ee9da1d1d9"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>single_picture</b> = &quot;=&quot;</td></tr>
+<tr class="memitem:ae8a9aef9f983ff0580d7e2ee9da1d1d9"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment___l.html#ae8a9aef9f983ff0580d7e2ee9da1d1d9">single_picture</a> = &quot;=&quot;</td></tr>
 <tr class="separator:ae8a9aef9f983ff0580d7e2ee9da1d1d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa21df2a11d777fc21d486a578b67551f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa21df2a11d777fc21d486a578b67551f"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>picture</b></td></tr>
+<tr class="memitem:aa21df2a11d777fc21d486a578b67551f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment___l.html#aa21df2a11d777fc21d486a578b67551f">picture</a></td></tr>
 <tr class="separator:aa21df2a11d777fc21d486a578b67551f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24d7fa03475506a8ee1d1d27609dd665"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a24d7fa03475506a8ee1d1d27609dd665"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>size</b></td></tr>
+<tr class="memitem:a24d7fa03475506a8ee1d1d27609dd665"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment___l.html#a24d7fa03475506a8ee1d1d27609dd665">size</a></td></tr>
 <tr class="separator:a24d7fa03475506a8ee1d1d27609dd665"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ea7d593c41cf3797a2db082e7a40cb8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ea7d593c41cf3797a2db082e7a40cb8"></a>
-Tensor3&#160;</td><td class="memItemRight" valign="bottom"><b>block</b></td></tr>
+<tr class="memitem:a1ea7d593c41cf3797a2db082e7a40cb8"><td class="memItemLeft" align="right" valign="top">Tensor3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment___l.html#a1ea7d593c41cf3797a2db082e7a40cb8">block</a></td></tr>
 <tr class="separator:a1ea7d593c41cf3797a2db082e7a40cb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a1aff2b359287769e1480c5fd009e9598"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_environment_L::enlarge </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classclass___m_p_s.html">class_MPS</a> &amp;&#160;</td>
+          <td class="paramname"><em>MPS</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tensor4 &amp;&#160;</td>
+          <td class="paramname"><em>W</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Contracts a site into the block. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="a1ea7d593c41cf3797a2db082e7a40cb8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Tensor3 class_environment_L::block</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The environment block. </p>
+
+</div>
+</div>
+<a class="anchor" id="aa21df2a11d777fc21d486a578b67551f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string class_environment_L::picture</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Pretty string representation of the left environment block. </p>
+
+</div>
+</div>
+<a class="anchor" id="ae8a9aef9f983ff0580d7e2ee9da1d1d9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string class_environment_L::single_picture = &quot;=&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>String representation each site in the environment (i.e. left of current MPS). </p>
+
+</div>
+</div>
+<a class="anchor" id="a24d7fa03475506a8ee1d1d27609dd665"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int class_environment_L::size</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Number of particles that have been contracted into this left environment. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>source/<a class="el" href="class__environment_8h_source.html">class_environment.h</a></li>
 <li>source/class_environment.cpp</li>

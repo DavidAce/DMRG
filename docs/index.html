@@ -52,6 +52,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -106,13 +107,52 @@ $(document).ready(function(){initNavTree('index.html','');});
 <div class="title">DMRG Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1>DMRG</h1>
-<p>This program finds the ground state of a 1D quantum Ising chain in a transverse field. The implementation follows the steps in the article</p>
+<div class="textblock"><p>This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm.</p><h1>DMRG (in development)</h1>
+<p><a href="https://en.wikipedia.org/wiki/Density_matrix_renormalization_group">Density matrix renormalization group</a> (DMRG) is a variational numerical technique to study the low-energy physics of many-body quantum systems.</p>
+<p>This algorithm constructs and minimizes trial wave functions, in the shape of <a href="https://en.wikipedia.org/wiki/Matrix_product_state">Matrix Product States</a> (MPS), iteratively in order to find the ground state of one-dimensional quantum systems with high precision.</p>
+<p>This implementation loosely follows the steps outlined in:</p>
 <blockquote class="doxtable">
-<p><a href="https://arxiv.org/abs/1212.6255">Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study.”</a><br />
+<p><a href="https://arxiv.org/abs/1212.6255">Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study.</a><br />
  by Kjäll, Zaletel, Mong, Bardarson, and Pollmann. Physical Review B 87 (23): 235106. <br />
-</p>
+ </p>
 </blockquote>
+<blockquote class="doxtable">
+<p><a href="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Efficient Numerical Simulations Using Matrix-Product States</a><br />
+ by Frank Pollmann. <br />
+ </p>
+</blockquote>
+<blockquote class="doxtable">
+<p><a href="https://arxiv.org/abs/1008.3477">The density-matrix renormalization group in the age of matrix product states</a><br />
+ by Ulrich Schollwöck. <br />
+ </p>
+</blockquote>
+<h2>Notation</h2>
+<p>The <em>Vidal canonical form</em>, i.e. \(\Gamma\Lambda\Gamma\Lambda\)"..., is used throughout this code. In code we denote</p>
+<ul>
+<li>\(\Gamma \rightarrow\) <code>G</code>.</li>
+<li>\(\Lambda \rightarrow\) <code>L</code>.</li>
+</ul>
+<h2>Tensor index order convention.</h2>
+<p>The tensor index order used here follows the convention:</p><ul>
+<li>physical indices first, from left to right or for MPO's, up to down.</li>
+<li>other dimensions (like bond dimensions) next, from left to right.</li>
+</ul>
+<h4>Example:</h4>
+<p>Consider for some position \(n\) on the chain \(\Gamma = \Gamma^{\sigma_n}_{a,b}\). Here \(\sigma_n \in [-1,1]\) is a particle with local (physical) dimension \(d\) = 2, and \(a,b\) are the remaining dimensions, in practice they are bond dimensions of \(\Lambda^{n-1}\) and \(\Lambda^{n}\), respectively, which can be numbers \(\in [1,\chi]\).</p>
+<p>In diagrammatic tensor notation this is: </p><pre class="fragment">                        [d]          0
+            G     = [a]__|__[b] = 1__|__2
+</pre><p> where after the second equality the index order is shown. In code this corresponds to</p>
+<div class="fragment"><div class="line">Textra::Tensor3 G(d,a,b);</div></div><!-- fragment --><p>Similarly, we have for \(\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}\):</p>
+<pre class="fragment">                                [d] [d]                0   1
+            Theta     = [chia]___|___|___[chib] = 2 ___|___|___ 3
+</pre><p>which in code reads</p>
+<div class="fragment"><div class="line">Textra::Tensor4 G(d,d,chia,chib);</div></div><!-- fragment --><h1>Requirements</h1>
+<p>The following software is required and has been included: <a href="http://eigen.tuxfamily.org">Eigen</a> <a href="https://spectralib.org/">Spectra</a></p>
+<h1>Details</h1>
+<dl class="section author"><dt>Author</dt><dd>David Aceituno </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>1.0 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>07-2017 </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>MPL2 </dd></dl>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

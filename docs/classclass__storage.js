@@ -1,9 +1,9 @@
 var classclass__storage =
 [
-    [ "class_storage", "classclass__storage.html#a61417134225175104ddad6463b0a8426", null ],
+    [ "class_storage", "classclass__storage.html#a07b69b23cc9a322d79207d3170fe165b", null ],
     [ "load", "classclass__storage.html#a01ac2b3e1bbbc232b5f9c1e2876b2d79", null ],
     [ "move", "classclass__storage.html#a7151cdfb718037015ae6d8be0dcb9963", null ],
-    [ "overwrite", "classclass__storage.html#a99c64ce93ad4a1613b55ecbb0847846e", null ],
+    [ "overwrite_MPS", "classclass__storage.html#a471af292c50ee7367937b19bd03ae639", null ],
     [ "print_storage", "classclass__storage.html#a1148311a7eaf7ecbc3710502837ecaf0", null ],
     [ "store_insert", "classclass__storage.html#a27a5109b1b38574b4b3b4587198fb297", null ],
     [ "G_list", "classclass__storage.html#a28230a30b2085f4b91340b0fe8956ad0", null ],

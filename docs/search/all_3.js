@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['g_5flist',['G_list',['../classclass__storage.html#a28230a30b2085f4b91340b0fe8956ad0',1,'class_storage']]],
-  ['gamma_5fab',['Gamma_AB',['../class_gamma___a_b.html',1,'']]]
+  ['find_5fground_5fstate',['find_ground_state',['../classclass__superblock.html#a7a8d6f965eceb5695e07c44d0aaef1a9',1,'class_superblock']]]
 ];

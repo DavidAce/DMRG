@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['perform_5fop',['perform_op',['../classclass__superblock.html#aba65a6fd12a15cddd175d29dcb8d89f0',1,'class_superblock']]],
-  ['print_5ferror',['print_error',['../classclass__superblock.html#a1b4599960c84cfa704dc18807a5522b2',1,'class_superblock']]],
-  ['print_5fpicture',['print_picture',['../classclass__superblock.html#aa40f692fc973def483ef0e88206d288a',1,'class_superblock']]]
+  ['get_5ftheta',['get_theta',['../classclass___m_p_s.html#a931bb52a82a9483434ea8ee3dbfc4b97',1,'class_MPS']]]
 ];

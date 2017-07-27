@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['swap_5fab',['swap_AB',['../classclass__superblock.html#a593c53eaa16bbb4dd67f4a9db95c821e',1,'class_superblock']]]
+  ['load',['load',['../classclass__storage.html#a01ac2b3e1bbbc232b5f9c1e2876b2d79',1,'class_storage']]]
 ];

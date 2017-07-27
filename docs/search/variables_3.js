@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['rblock',['Rblock',['../classclass__superblock.html#a1cb3d611b9a4bd2da1b397059bc98043',1,'class_superblock']]],
-  ['rblock_5flist',['Rblock_list',['../classclass__storage.html#a45fd733a67be78bd55ba07fd74a7ccd4',1,'class_storage']]]
+  ['max_5flength',['max_length',['../classclass__storage.html#ad8d15935418c2051a3994a4af8ec6218',1,'class_storage']]],
+  ['mps',['MPS',['../classclass__superblock.html#a9989ee56695bf210091e4a668777b323',1,'class_superblock']]]
 ];
