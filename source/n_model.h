@@ -14,9 +14,22 @@
 using namespace Textra;
 using namespace Eigen;
 
+/*! \brief Setup the Hamiltonian and corresponding values.*/
+
+/*!
+ *  \namespace Model
+ *  This namespace contains model parameters, such as the coupling (or nearest neighbor exchange energy)  \f$J\f$, and
+ *  the transverse field strength \f$g\f$. By default the model describes the quantum Ising model with a transverse field:
+ *
+ *  \f[
+ *  H = \frac{1}{2}\sum_{n=1}^L J S^z_n \otimes S^z_{n+1} + gS^x_{n}
+ *  \f]
+ *
+ */
+
 namespace Model {
 
-    //XXZ model:
+    //Transverse field Ising model:
 
     extern double J;
     extern double g;
@@ -28,7 +41,7 @@ namespace Model {
     extern Matrix2cd sz;
     extern Matrix2cd I;
 
-    //Spin variables in L-dimensional hilbert space.
+    //Spin variables in L-dimensional Hilbert space. L being the particle chain length.
     extern std::vector<MatrixXcd> SX;
     extern std::vector<MatrixXcd> SY;
     extern std::vector<MatrixXcd> SZ;
