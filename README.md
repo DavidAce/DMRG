@@ -32,7 +32,7 @@
  - other dimensions (like bond dimensions) next, from left to right.
 
  #### Example:
-Consider a rank-3 tensor `G` with dimensions ´d´,´a´ and ´b´. In diagrammatic tensor notation this is:
+Consider a rank-3 tensor `G` with dimensions `d`, `a` and `b`. In diagrammatic tensor notation this is:
 ```
                  	    [d]          0
             G     =	[a]__|__[b] = 1__|__2
