@@ -62,7 +62,7 @@ public:
     void enlarge_environment(long direction);           /*!< Contract the MPS of current position \f$n\f$ into left or right direction. */
     void update_bond_dimensions();                      /*!< Update the MPS by contracting
                                                         * \f[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \f]
-                                                        * \f[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} U \f] */
+                                                        * \f[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \f] */
     void swap_AB();                                     /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
     void print_picture();                               /*!< Print a pretty picture of the current chain.*/
     void print_error();                                 /*!< Compare current energy with exact value.*/
