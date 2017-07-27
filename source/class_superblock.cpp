@@ -11,11 +11,9 @@ class_superblock::class_superblock( const int eigSteps_,
                                     const double eigThreshold_,
                                     const double SVDThreshold_,
                                     const long chi_){
-    MPS.initialize(H.local_dimension, H.sites);
-
+    MPS.initialize(H.local_dimension);
     chi             = chi_;
     update_bond_dimensions();
-
     eigSteps        = eigSteps_;
     eigThreshold    = eigThreshold_;
     SVDThreshold    = SVDThreshold_;
@@ -51,14 +49,14 @@ void class_superblock::truncate(){
     cout << "chi chi2 chia chib: " << chi  << " " << chi2 << " " << chia << " " << chib << endl;
     double renorm   = SVD.singularValues().head(chi2).norm();
     U               = matrix_to_tensor3(SVD.matrixU().leftCols(chi2),{d,chia,chi2});
-    MPS.L.A         = matrix_to_tensor1(SVD.singularValues().head(chi2)) / renorm;
+    MPS.LA          = matrix_to_tensor1(SVD.singularValues().head(chi2)) / renorm;
     V               = matrix_to_tensor3(SVD.matrixV().leftCols(chi2),{d,chib,chi2}).shuffle(array3{0,2,1});
 }
 
 
 void class_superblock::update_MPS(){
-    MPS.G.A  = asInverseDiagonal(MPS.L_tail).contract(U, idxlist1{idx2(1,1)}).shuffle(array3{1,0,2});
-    MPS.G.B  = V.contract(asInverseDiagonal(MPS.L.B), idxlist1{idx2(2,0)});
+    MPS.GA  = asInverseDiagonal(MPS.L_tail).contract(U, idxlist1{idx2(1,1)}).shuffle(array3{1,0,2});
+    MPS.GB  = V.contract(asInverseDiagonal(MPS.LB), idxlist1{idx2(2,0)});
 }
 
 void class_superblock::enlarge_environment(){
@@ -76,8 +74,8 @@ void class_superblock::enlarge_environment(long direction){
 
 void class_superblock::update_bond_dimensions(){
     d       = H.local_dimension;
-    chia    = MPS.G.A.dimension(1);
-    chib    = MPS.G.B.dimension(2);
+    chia    = MPS.GA.dimension(1);
+    chib    = MPS.GB.dimension(2);
     shape1  = {H.local_dimension * chia * H.local_dimension * chib};
     shape2  = {H.local_dimension * chia , H.local_dimension * chib};
     shape4  = {H.local_dimension , chia , H.local_dimension , chib};

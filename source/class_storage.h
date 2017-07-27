@@ -19,47 +19,35 @@ class class_environment_R;
 
  Specifically, this class stores objects from the current superblock:
  - The left and right environment blocks `Lblock` and `Rblock`, both type `Textra::Tensor3`, and
- - the MPS tensors \f$\Gamma^{A,B}=\f$ `MPS.G.A, MPS.G.B` and \f$\Lambda^{A,B}=\f$ `MPS.L.A, MPS.L.B`, required for computing \f$\Theta\f$, following
+ - the MPS tensors \f$\Gamma^{A,B}=\f$ `MPS.GA, MPS.GB` and \f$\Lambda^{A,B}=\f$ `MPS.LA, MPS.LB`, required for computing \f$\Theta\f$, following
  the notation used in [Frank Pollmann's notes](http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf):
- \f$\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B.\f$.  Here \f$\Gamma^{A,B}\f$ are a rank-3 tensors of type `Textra::Tensor3`  and \f$\Lambda^{A,B}\f$
- are rank-1 tensors of `Textra::Tensor1`.
+ \f$\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. <br> Here \f$\Gamma^{A,B}\f$ are a rank-3 tensors of type `Textra::Tensor3`  and \f$\Lambda^{A,B}\f$
+ are rank-1 tensors of type `Textra::Tensor1`.
 
+ All objects are stored and indexed by their position relative to the final chain of length `max_length`.
 */
 
 
 class class_storage {
-private:
-    template <typename list_type, typename inType>
-    void insert_middle(list_type &target_list, const inType &elem){
-        typename list_type::iterator it = target_list.begin();
-        std::advance(it, std::distance(target_list.begin(), target_list.end())/2);
-        target_list.insert(it, elem);
-    }
-    template <typename list_type, typename inType>
-    void replace(list_type &target_list, const inType &elem, const int at){
-        typename list_type::iterator it = target_list.begin();
-        std::advance(it, std::distance(target_list.begin(), target_list.begin()+at));
-        *it = elem;
-    }
 public:
 
-    std::map<int, Tensor3> G_list;                               /*!< Detailed description after the member */
-    std::map<int, Tensor1> L_list;                               /*!< Detailed description after the member */
-    std::map<int,class_environment_L> Lblock_list;               /*!< Detailed description after the member */
-    std::map<int,class_environment_R> Rblock_list;               /*!< Detailed description after the member */
+    std::map<int, Tensor3> G_list;                                  /*!< A list of stored \f$\Gamma\f$-tensors,  indexed by chain position. */
+    std::map<int, Tensor1> L_list;                                  /*!< A list of stored \f$\Lambda\f$-tensors, indexed by chain position. */
+    std::map<int,class_environment_L> Lblock_list;                  /*!< A list of stored Left block environments,  indexed by chain position. */
+    std::map<int,class_environment_R> Rblock_list;                  /*!< A list of stored Right block environments, indexed by chain position. */
 
-    const int max_length;
-    int position_L = 0;
-    int position_R = max_length - 1;
+    const int max_length;                                           /*!< The maximum length of the chain */
+    int position_L = 0;                                             /*!< The current position of \f$\Gamma^A\f$ w.r.t the full chain. */
+    int position_R = max_length - 1;                                /*!< The current position of \f$\Gamma^B\f$ w.r.t the full chain. */
 
-    class_storage(int L):max_length(L){
-    };
+    class_storage(int max_length_                                   /*!< The maximum length of the chain. */
+                  ):max_length(max_length_){};
 
-    void store_insert(const class_superblock &superblock);
-    void load(class_superblock &superblock);
-    void overwrite(const class_superblock &superblock);
-    void move(class_superblock &superblock, const int direction);
-    void print_storage();
+    void store_insert(const class_superblock &superblock);          /*!< Store current MPS and environments indexed by their respective positions on the chain. */
+    void load(class_superblock &superblock);                        /*!< Load MPS and environments according to current position. */
+    void overwrite_MPS(const class_superblock &superblock);         /*!< Update the MPS stored at current position.*/
+    void move(class_superblock &superblock, const int direction);   /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment.  */
+    void print_storage();                                           /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
 };
 
 

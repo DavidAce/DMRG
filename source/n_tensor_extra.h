@@ -9,8 +9,14 @@
 #include <iterator>
 #include <vector>
 #include <iostream>
+/*! \brief **Textra** stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/
 
-
+/*!
+ *  \namespace Textra
+ *  This namespace makes shorthand typedef's to Eigen's unsupported Tensor module, and provides handy functions
+ *  to interface between `Eigen::Tensor` and `Eigen::Matrix` objects.
+ *  The contents of this namespace are quite self-explanatory.
+ */
 
 namespace Textra {
     using Scalar        = double;
