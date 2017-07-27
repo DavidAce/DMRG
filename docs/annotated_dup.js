@@ -6,7 +6,5 @@ var annotated_dup =
     [ "class_profiling", "classclass__profiling.html", "classclass__profiling" ],
     [ "class_storage", "classclass__storage.html", "classclass__storage" ],
     [ "class_superblock", "classclass__superblock.html", "classclass__superblock" ],
-    [ "class_TwoSiteHamiltonian", "classclass___two_site_hamiltonian.html", "classclass___two_site_hamiltonian" ],
-    [ "Gamma_AB", "class_gamma___a_b.html", "class_gamma___a_b" ],
-    [ "Lambda_AB", "class_lambda___a_b.html", "class_lambda___a_b" ]
+    [ "class_TwoSiteHamiltonian", "classclass___two_site_hamiltonian.html", "classclass___two_site_hamiltonian" ]
 ];

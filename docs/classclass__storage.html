@@ -52,6 +52,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -117,28 +118,31 @@ $(document).ready(function(){initNavTree('classclass__storage.html','');});
 <div class="title">class_storage Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h1>Storage Class</h1>
+<p>During the infinite-DMRG part of the algorithm, the current state for each chain-length is stored in a <code><a class="el" href="classclass__storage.html">class_storage</a></code> object, for later use in the finite-DMRG stage.</p>
+<p>Specifically, this class stores objects from the current superblock:</p><ul>
+<li>The left and right environment blocks <code>Lblock</code> and <code>Rblock</code>, both type <code>Textra::Tensor3</code>, and</li>
+<li>the MPS tensors \(\Gamma^{A,B}=\) <code>MPS.GA, MPS.GB</code> and \(\Lambda^{A,B}=\) <code>MPS.LA, MPS.LB</code>, required for computing \(\Theta\), following the notation used in <a href="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Frank Pollmann's notes</a>: \(\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B\). <br />
+ Here \(\Gamma^{A,B}\) are a rank-3 tensors of type <code>Textra::Tensor3</code> and \(\Lambda^{A,B}\) are rank-1 tensors of type <code>Textra::Tensor1</code>.</li>
+</ul>
+<p>All objects are stored and indexed by their position relative to the final chain of length <code>max_length</code>. </p>
+</div>
 <p><code>#include &lt;<a class="el" href="class__storage_8h_source.html">class_storage.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a61417134225175104ddad6463b0a8426"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61417134225175104ddad6463b0a8426"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>class_storage</b> (int L)</td></tr>
-<tr class="separator:a61417134225175104ddad6463b0a8426"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27a5109b1b38574b4b3b4587198fb297"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a27a5109b1b38574b4b3b4587198fb297"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>store_insert</b> (const <a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock)</td></tr>
+<tr class="memitem:a07b69b23cc9a322d79207d3170fe165b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a07b69b23cc9a322d79207d3170fe165b">class_storage</a> (int max_length_)</td></tr>
+<tr class="separator:a07b69b23cc9a322d79207d3170fe165b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27a5109b1b38574b4b3b4587198fb297"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a27a5109b1b38574b4b3b4587198fb297">store_insert</a> (const <a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock)</td></tr>
 <tr class="separator:a27a5109b1b38574b4b3b4587198fb297"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01ac2b3e1bbbc232b5f9c1e2876b2d79"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01ac2b3e1bbbc232b5f9c1e2876b2d79"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>load</b> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock)</td></tr>
+<tr class="memitem:a01ac2b3e1bbbc232b5f9c1e2876b2d79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a01ac2b3e1bbbc232b5f9c1e2876b2d79">load</a> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock)</td></tr>
 <tr class="separator:a01ac2b3e1bbbc232b5f9c1e2876b2d79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99c64ce93ad4a1613b55ecbb0847846e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a99c64ce93ad4a1613b55ecbb0847846e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>overwrite</b> (const <a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock)</td></tr>
-<tr class="separator:a99c64ce93ad4a1613b55ecbb0847846e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7151cdfb718037015ae6d8be0dcb9963"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7151cdfb718037015ae6d8be0dcb9963"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>move</b> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock, const int direction)</td></tr>
+<tr class="memitem:a471af292c50ee7367937b19bd03ae639"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a471af292c50ee7367937b19bd03ae639">overwrite_MPS</a> (const <a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock)</td></tr>
+<tr class="separator:a471af292c50ee7367937b19bd03ae639"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7151cdfb718037015ae6d8be0dcb9963"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a7151cdfb718037015ae6d8be0dcb9963">move</a> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock, const int direction)</td></tr>
 <tr class="separator:a7151cdfb718037015ae6d8be0dcb9963"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1148311a7eaf7ecbc3710502837ecaf0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1148311a7eaf7ecbc3710502837ecaf0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>print_storage</b> ()</td></tr>
+<tr class="memitem:a1148311a7eaf7ecbc3710502837ecaf0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a1148311a7eaf7ecbc3710502837ecaf0">print_storage</a> ()</td></tr>
 <tr class="separator:a1148311a7eaf7ecbc3710502837ecaf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -151,24 +155,140 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a487d155d2a17e7742a973ec03b881d49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45fd733a67be78bd55ba07fd74a7ccd4"><td class="memItemLeft" align="right" valign="top">std::map&lt; int, <a class="el" href="classclass__environment___r.html">class_environment_R</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a45fd733a67be78bd55ba07fd74a7ccd4">Rblock_list</a></td></tr>
 <tr class="separator:a45fd733a67be78bd55ba07fd74a7ccd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8d15935418c2051a3994a4af8ec6218"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8d15935418c2051a3994a4af8ec6218"></a>
-const int&#160;</td><td class="memItemRight" valign="bottom"><b>max_length</b></td></tr>
+<tr class="memitem:ad8d15935418c2051a3994a4af8ec6218"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#ad8d15935418c2051a3994a4af8ec6218">max_length</a></td></tr>
 <tr class="separator:ad8d15935418c2051a3994a4af8ec6218"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0825ddb44b4487ae1fec0a73d890e9b7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0825ddb44b4487ae1fec0a73d890e9b7"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>position_L</b> = 0</td></tr>
+<tr class="memitem:a0825ddb44b4487ae1fec0a73d890e9b7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a0825ddb44b4487ae1fec0a73d890e9b7">position_L</a> = 0</td></tr>
 <tr class="separator:a0825ddb44b4487ae1fec0a73d890e9b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a218c9d8405b157c31702ea6cf848771d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a218c9d8405b157c31702ea6cf848771d"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>position_R</b> = max_length - 1</td></tr>
+<tr class="memitem:a218c9d8405b157c31702ea6cf848771d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a218c9d8405b157c31702ea6cf848771d">position_R</a> = <a class="el" href="classclass__storage.html#ad8d15935418c2051a3994a4af8ec6218">max_length</a> - 1</td></tr>
 <tr class="separator:a218c9d8405b157c31702ea6cf848771d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h1>Storage Class</h1>
-<p>During the infinite-DMRG part of the algorithm, the current state for each chain-length is stored in a <code><a class="el" href="classclass__storage.html">class_storage</a></code> object, for later use in the finite-DMRG stage.</p>
-<p>Specifically, this class stores objects from the current superblock:</p><ul>
-<li>The left and right environment blocks <code>Lblock</code> and <code>Rblock</code>, both type <code>Textra::Tensor3</code>, and</li>
-<li>the MPS tensors \(\Gamma^{A,B}=\) <code>MPS.G.A, MPS.G.B</code> and \(\Lambda^{A,B}=\) <code>MPS.L.A, MPS.L.B</code>, required for computing \(\Theta\), following the notation used in <a href="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Frank Pollmann's notes</a>: \(\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B.\). Here \(\Gamma^{A,B}\) are a rank-3 tensors of type <code>Textra::Tensor3</code> and \(\Lambda^{A,B}\) are rank-1 tensors of <code>Textra::Tensor1</code>. </li>
-</ul>
-</div><h2 class="groupheader">Member Data Documentation</h2>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a07b69b23cc9a322d79207d3170fe165b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">class_storage::class_storage </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>max_length_</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">max_length_</td><td>The maximum length of the chain. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a01ac2b3e1bbbc232b5f9c1e2876b2d79"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_storage::load </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classclass__superblock.html">class_superblock</a> &amp;&#160;</td>
+          <td class="paramname"><em>superblock</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Load MPS and environments according to current position. </p>
+
+</div>
+</div>
+<a class="anchor" id="a7151cdfb718037015ae6d8be0dcb9963"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_storage::move </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classclass__superblock.html">class_superblock</a> &amp;&#160;</td>
+          <td class="paramname"><em>superblock</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>direction</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Move current position to the left (<code>direction=1</code>) or right (<code>direction=-1</code>), and store the <b>newly enlarged</b> environment. </p>
+
+</div>
+</div>
+<a class="anchor" id="a471af292c50ee7367937b19bd03ae639"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_storage::overwrite_MPS </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classclass__superblock.html">class_superblock</a> &amp;&#160;</td>
+          <td class="paramname"><em>superblock</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Update the MPS stored at current position. </p>
+
+</div>
+</div>
+<a class="anchor" id="a1148311a7eaf7ecbc3710502837ecaf0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_storage::print_storage </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Print the tensor dimensions for all \(\Gamma\)-tensors. </p>
+
+</div>
+</div>
+<a class="anchor" id="a27a5109b1b38574b4b3b4587198fb297"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_storage::store_insert </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classclass__superblock.html">class_superblock</a> &amp;&#160;</td>
+          <td class="paramname"><em>superblock</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Store current MPS and environments indexed by their respective positions on the chain. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
 <a class="anchor" id="a28230a30b2085f4b91340b0fe8956ad0"></a>
 <div class="memitem">
 <div class="memproto">
@@ -178,7 +298,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>position_R</b> = max_l
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Detailed description after the member </p>
+<p>A list of stored \(\Gamma\)-tensors, indexed by chain position. </p>
 
 </div>
 </div>
@@ -191,7 +311,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>position_R</b> = max_l
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Detailed description after the member </p>
+<p>A list of stored \(\Lambda\)-tensors, indexed by chain position. </p>
 
 </div>
 </div>
@@ -204,7 +324,46 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>position_R</b> = max_l
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Detailed description after the member </p>
+<p>A list of stored Left block environments, indexed by chain position. </p>
+
+</div>
+</div>
+<a class="anchor" id="ad8d15935418c2051a3994a4af8ec6218"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int class_storage::max_length</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The maximum length of the chain </p>
+
+</div>
+</div>
+<a class="anchor" id="a0825ddb44b4487ae1fec0a73d890e9b7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int class_storage::position_L = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The current position of \(\Gamma^A\) w.r.t the full chain. </p>
+
+</div>
+</div>
+<a class="anchor" id="a218c9d8405b157c31702ea6cf848771d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int class_storage::position_R = <a class="el" href="classclass__storage.html#ad8d15935418c2051a3994a4af8ec6218">max_length</a> - 1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The current position of \(\Gamma^B\) w.r.t the full chain. </p>
 
 </div>
 </div>
@@ -217,7 +376,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>position_R</b> = max_l
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Detailed description after the member </p>
+<p>A list of stored Right block environments, indexed by chain position. </p>
 
 </div>
 </div>

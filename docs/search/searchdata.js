@@ -1,24 +1,27 @@
 var indexSectionsWithContent =
 {
-  0: "cefglmprstu",
-  1: "cgl",
-  2: "cefpstu",
-  3: "glmr"
+  0: "bcefglmoprstu",
+  1: "c",
+  2: "mt",
+  3: "cefglmopstu",
+  4: "bglmprs"
 };
 
 var indexSectionNames =
 {
   0: "all",
   1: "classes",
-  2: "functions",
-  3: "variables"
+  2: "namespaces",
+  3: "functions",
+  4: "variables"
 };
 
 var indexSectionLabels =
 {
   0: "All",
   1: "Classes",
-  2: "Functions",
-  3: "Variables"
+  2: "Namespaces",
+  3: "Functions",
+  4: "Variables"
 };
 
