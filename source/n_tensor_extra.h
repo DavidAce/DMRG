@@ -73,6 +73,7 @@ namespace Textra {
     extern Tensor2 matrix_to_tensor2(const Eigen::Ref<const MatrixType> matrix);
     extern Tensor2 matrix_to_tensor2(const Eigen::Ref<const MatrixType> matrix, array2 dims);
     extern Tensor3 matrix_to_tensor3(const Eigen::Ref<const MatrixType> matrix, array3 dims);
+    extern Tensor4 matrix_to_tensor4(const Eigen::Ref<const MatrixType> matrix, array4 dims);
     extern MatrixType tensor2_to_matrix(const Tensor2 &tensor);
 
 };

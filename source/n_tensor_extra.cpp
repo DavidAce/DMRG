@@ -37,6 +37,10 @@ namespace Textra {
     }
 
 
+    Tensor4 matrix_to_tensor4(const Eigen::Ref<const MatrixType> matrix, array4 dims) {
+        return Eigen::TensorMap<const_Tensor4>(matrix.data(), dims);
+    }
+
     MatrixType tensor2_to_matrix(const Tensor2 &tensor) {
         return Eigen::Map<const MatrixType>(tensor.data(), tensor.dimension(0), tensor.dimension(1));
     }

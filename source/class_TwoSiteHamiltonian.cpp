@@ -5,6 +5,7 @@
 #include <class_TwoSiteHamiltonian.h>
 #include <iomanip>
 #include <n_model.h>
+#include <unsupported/Eigen/MatrixFunctions>
 
 
 
@@ -14,5 +15,7 @@ class_TwoSiteHamiltonian::class_TwoSiteHamiltonian(){
     W               = Model::W(sites);
     local_dimension = Model::local_dimension;
     picture         = "**";
+    asTimeEvolution = matrix_to_tensor4((-delta * asMatrix).exp().eval(), array4{2,2,2,2});
+
 };
 
