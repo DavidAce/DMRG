@@ -75,5 +75,5 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 
 include_directories(${INCLUDE_DIRS})
 message("SOURCE FILES: ${SOURCES}")
-add_executable(Finite_DMRG_eigen ${SOURCES})
+add_executable(Finite_DMRG_eigen ${SOURCES} source/main.h)
 

@@ -10,6 +10,7 @@ var classclass__superblock =
     [ "print_picture", "classclass__superblock.html#aa40f692fc973def483ef0e88206d288a", null ],
     [ "rows", "classclass__superblock.html#a7a6c6209412468a5b064e80432c0aa10", null ],
     [ "swap_AB", "classclass__superblock.html#a593c53eaa16bbb4dd67f4a9db95c821e", null ],
+    [ "time_evolve", "classclass__superblock.html#a3048f4e93977cdf7ab507818c76ef4f4", null ],
     [ "truncate", "classclass__superblock.html#afe9806bba365adb6e728ee87c9adb566", null ],
     [ "update_bond_dimensions", "classclass__superblock.html#abe0ca58bd3b1ba7ee12e8b3a617c2759", null ],
     [ "update_MPS", "classclass__superblock.html#ae8df112baac53bd9ede08bc766b26fd5", null ],

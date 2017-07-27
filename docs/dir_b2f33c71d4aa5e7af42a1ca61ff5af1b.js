@@ -7,6 +7,7 @@ var dir_b2f33c71d4aa5e7af42a1ca61ff5af1b =
     [ "class_tic_toc.h", "class__tic__toc_8h_source.html", null ],
     [ "class_TwoSiteHamiltonian.h", "class___two_site_hamiltonian_8h_source.html", null ],
     [ "funcs.h", "funcs_8h_source.html", null ],
+    [ "main.h", "main_8h_source.html", null ],
     [ "n_model.h", "n__model_8h_source.html", null ],
     [ "n_tensor_extra.h", "n__tensor__extra_8h_source.html", null ]
 ];
