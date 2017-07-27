@@ -1,12 +1,13 @@
 /*! \mainpage
- *
- * # DMRG
- * This program finds the ground state of a 1D quantum Ising chain in a transverse field.
- * The implementation follows the steps in the article
- *
- * > [Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study.”](https://arxiv.org/abs/1212.6255)<br>
- * > by Kjäll, Zaletel, Mong, Bardarson, and Pollmann. Physical Review B 87 (23): 235106. <br>
- *
+
+  # DMRG
+  This program finds the ground state of a 1D quantum Ising chain in a transverse field.
+  The implementation follows the steps in the article
+
+  > [Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study.”](https://arxiv.org/abs/1212.6255)<br>
+  > by Kjäll, Zaletel, Mong, Bardarson, and Pollmann. Physical Review B 87 (23): 235106. <br>
+
+
  */
 
 
