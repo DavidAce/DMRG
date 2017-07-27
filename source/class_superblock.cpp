@@ -40,6 +40,10 @@ void class_superblock::find_ground_state(){
     ground_state =  matrix_to_tensor2(eigs.eigenvectors(), shape2);
 }
 
+void class_superblock::time_evolve(){
+
+}
+
 void class_superblock::truncate(){
     Eigen::BDCSVD<MatrixType> SVD;
     SVD.setThreshold(SVDThreshold);
