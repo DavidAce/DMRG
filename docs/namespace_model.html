@@ -22,12 +22,6 @@
 <script type="text/javascript">
   $(document).ready(function() { init_search(); });
 </script>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX","output/SVG"],
-});
-</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -52,6 +46,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -117,9 +112,9 @@ $(document).ready(function(){initNavTree('namespace_model.html','');});
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Setup the Hamiltonian and corresponding values. </p>
-<p>This namespace contains model parameters, such as the coupling (or nearest neighbor exchange energy) \(J\), and the transverse field strength \(g\). By default the model describes the quantum Ising model with a transverse field:</p>
+<p>This namespace contains model parameters, such as the coupling (or nearest neighbor exchange energy) <img class="formulaInl" alt="$J$" src="form_45.png"/>, and the transverse field strength <img class="formulaInl" alt="$g$" src="form_46.png"/>. By default the model describes the quantum Ising model with a transverse field:</p>
 <p class="formulaDsp">
-\[ H = \frac{1}{2}\sum_{n=1}^L J S^z_n \otimes S^z_{n+1} + gS^x_{n} \]
+<img class="formulaDsp" alt="\[ H = \frac{1}{2}\sum_{n=1}^L J S^z_n \otimes S^z_{n+1} + gS^x_{n} \]" src="form_47.png"/>
 </p>
  </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -142,6 +137,9 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>J</b> = -1.0</td></
 <tr class="memitem:a582e9bbe9c861dc9090e250f5f35522d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a582e9bbe9c861dc9090e250f5f35522d"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>g</b> = 0.5</td></tr>
 <tr class="separator:a582e9bbe9c861dc9090e250f5f35522d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76650f18a98bc6c404d39a35179a88e3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a76650f18a98bc6c404d39a35179a88e3"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>energy_exact</b> = -1.063544409973372</td></tr>
+<tr class="separator:a76650f18a98bc6c404d39a35179a88e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9373ce073c1c4c4c178ca26c04832825"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9373ce073c1c4c4c178ca26c04832825"></a>
 long&#160;</td><td class="memItemRight" valign="bottom"><b>local_dimension</b> = 2</td></tr>
 <tr class="separator:a9373ce073c1c4c4c178ca26c04832825"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,15 +155,15 @@ Matrix2cd&#160;</td><td class="memItemRight" valign="bottom"><b>sz</b></td></tr>
 <tr class="memitem:a60330fa5daf17d8c5ff8947f97417bc0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a60330fa5daf17d8c5ff8947f97417bc0"></a>
 Matrix2cd&#160;</td><td class="memItemRight" valign="bottom"><b>I</b></td></tr>
 <tr class="separator:a60330fa5daf17d8c5ff8947f97417bc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a303942671d61239a486971d87b6de5b6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a303942671d61239a486971d87b6de5b6"></a>
-std::vector&lt; MatrixXcd &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SX</b></td></tr>
-<tr class="separator:a303942671d61239a486971d87b6de5b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f0c35f39053d515ee464818617f8a43"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f0c35f39053d515ee464818617f8a43"></a>
 std::vector&lt; MatrixXcd &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SY</b></td></tr>
 <tr class="separator:a8f0c35f39053d515ee464818617f8a43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a733fa19ddad414e177e35a8b6ce90bbd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a733fa19ddad414e177e35a8b6ce90bbd"></a>
 std::vector&lt; MatrixXcd &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SZ</b></td></tr>
 <tr class="separator:a733fa19ddad414e177e35a8b6ce90bbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a303942671d61239a486971d87b6de5b6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a303942671d61239a486971d87b6de5b6"></a>
+std::vector&lt; MatrixXcd &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SX</b></td></tr>
+<tr class="separator:a303942671d61239a486971d87b6de5b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

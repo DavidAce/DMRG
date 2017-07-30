@@ -22,12 +22,6 @@
 <script type="text/javascript">
   $(document).ready(function() { init_search(); });
 </script>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX","output/SVG"],
-});
-</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -52,6 +46,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -145,10 +140,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>time_evolve</b> ()</t
 <tr class="separator:abe0ca58bd3b1ba7ee12e8b3a617c2759"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a593c53eaa16bbb4dd67f4a9db95c821e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a593c53eaa16bbb4dd67f4a9db95c821e">swap_AB</a> ()</td></tr>
 <tr class="separator:a593c53eaa16bbb4dd67f4a9db95c821e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac18250c64ae17f054104f050d017d3b7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac18250c64ae17f054104f050d017d3b7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+<tr class="separator:ac18250c64ae17f054104f050d017d3b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa40f692fc973def483ef0e88206d288a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#aa40f692fc973def483ef0e88206d288a">print_picture</a> ()</td></tr>
 <tr class="separator:aa40f692fc973def483ef0e88206d288a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b4599960c84cfa704dc18807a5522b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a1b4599960c84cfa704dc18807a5522b2">print_error</a> ()</td></tr>
-<tr class="separator:a1b4599960c84cfa704dc18807a5522b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8eacf477916dd9d0445c7e57e49e414"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#ae8eacf477916dd9d0445c7e57e49e414">print_error_DMRG</a> ()</td></tr>
+<tr class="separator:ae8eacf477916dd9d0445c7e57e49e414"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25f396c83fe88f18b39bb08fb692d43f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a25f396c83fe88f18b39bb08fb692d43f">print_error_TEBD</a> ()</td></tr>
+<tr class="separator:a25f396c83fe88f18b39bb08fb692d43f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba65a6fd12a15cddd175d29dcb8d89f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#aba65a6fd12a15cddd175d29dcb8d89f0">perform_op</a> (const double *x_in, double *y_out) const </td></tr>
 <tr class="separator:aba65a6fd12a15cddd175d29dcb8d89f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a6c6209412468a5b064e80432c0aa10"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a6c6209412468a5b064e80432c0aa10"></a>
@@ -231,11 +231,11 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Contract the MPS of current position \(n\) into the left and right environments \(L\) and \(R\), i.e. <code>Lblock</code> and <code>Rblock</code>. </p><p class="formulaDsp">
-\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]
+<p>Contract the MPS of current position <img class="formulaInl" alt="$n$" src="form_3.png"/> into the left and right environments <img class="formulaInl" alt="$L$" src="form_30.png"/> and <img class="formulaInl" alt="$R$" src="form_31.png"/>, i.e. <code>Lblock</code> and <code>Rblock</code>. </p><p class="formulaDsp">
+<img class="formulaDsp" alt="\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]" src="form_0.png"/>
 </p>
  <p class="formulaDsp">
-\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]
+<img class="formulaDsp" alt="\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]" src="form_2.png"/>
 </p>
  
 </div>
@@ -253,7 +253,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Contract the MPS of current position \(n\) into left or right direction. </p>
+<p>Contract the MPS of current position <img class="formulaInl" alt="$n$" src="form_3.png"/> into left or right direction. </p>
 
 </div>
 </div>
@@ -296,23 +296,39 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Function for eigenvalue solver Spectra Defines the matrix-vector product in the left side of \(Av = \lambda \) </p>
+<p>Function for eigenvalue solver Spectra Defines the matrix-vector product in the left side of <img class="formulaInl" alt="$Av = \lambda $" src="form_34.png"/> </p>
 
 </div>
 </div>
-<a class="anchor" id="a1b4599960c84cfa704dc18807a5522b2"></a>
+<a class="anchor" id="ae8eacf477916dd9d0445c7e57e49e414"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void class_superblock::print_error </td>
+          <td class="memname">void class_superblock::print_error_DMRG </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Compare current energy with exact value. </p>
+<p>Compare current DMRG energy with exact value. </p>
+
+</div>
+</div>
+<a class="anchor" id="a25f396c83fe88f18b39bb08fb692d43f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_superblock::print_error_TEBD </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Compare current TEBD energy with exact value. </p>
 
 </div>
 </div>
@@ -360,7 +376,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps \(\chi\) (<code>chi</code>) singular values. </p>
+<p>Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps <img class="formulaInl" alt="$\chi$" src="form_29.png"/> (<code>chi</code>) singular values. </p>
 
 </div>
 </div>
@@ -377,10 +393,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Update the MPS by contracting </p><p class="formulaDsp">
-\[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \]
+<img class="formulaDsp" alt="\[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \]" src="form_32.png"/>
 </p>
  <p class="formulaDsp">
-\[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \]
+<img class="formulaDsp" alt="\[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \]" src="form_33.png"/>
 </p>
  
 </div>
@@ -397,7 +413,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Update <code>MPS.G.A</code> and <code>MPS.G.B</code> i.e., \(\Gamma^A\) and \(\Gamma^B\). </p>
+<p>Update <code>MPS.G.A</code> and <code>MPS.G.B</code> i.e., <img class="formulaInl" alt="$\Gamma^A$" src="form_14.png"/> and <img class="formulaInl" alt="$\Gamma^B$" src="form_15.png"/>. </p>
 
 </div>
 </div>
@@ -424,7 +440,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Matrix product states for two sites, A and B, in Vidal Canonical Form \(\Gamma^A\Lambda^A\Gamma^B\Lambda^B\). </p>
+<p>Matrix product states for two sites, A and B, in Vidal Canonical Form <img class="formulaInl" alt="$\Gamma^A\Lambda^A\Gamma^B\Lambda^B$" src="form_28.png"/>. </p>
 
 </div>
 </div>

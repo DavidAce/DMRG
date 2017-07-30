@@ -10,15 +10,15 @@ void class_storage::store_insert(const class_superblock &superblock){
 
 
     position_L = superblock.Lblock.size;
-    position_R = max_length - superblock.Lblock.size - 1;
+    position_R = max_length - superblock.Rblock.size - 1;
 
-    cout << "Storing position L: " << position_L << " R: " << position_R << "]" << endl;
-    cout << "Lbl: " << superblock.Lblock.block.dimensions() << endl;
-    cout << "G.A: " << superblock.MPS.GA.dimensions() << endl;
-    cout << "L.A: " << superblock.MPS.LA.dimensions() << endl;
-    cout << "G.B: " << superblock.MPS.GB.dimensions() << endl;
-    cout << "L.B: " << superblock.MPS.LB.dimensions() << endl;
-    cout << "Rbl: " << superblock.Rblock.block.dimensions() << endl;
+//    cout << "Storing position L: [" << position_L << " R: " << position_R << "]" << endl;
+//    cout << "Lbl: " << superblock.Lblock.block.dimensions() << endl;
+//    cout << "G.A: " << superblock.MPS.GA.dimensions() << endl;
+//    cout << "L.A: " << superblock.MPS.LA.dimensions() << endl;
+//    cout << "G.B: " << superblock.MPS.GB.dimensions() << endl;
+//    cout << "L.B: " << superblock.MPS.LB.dimensions() << endl;
+//    cout << "Rbl: " << superblock.Rblock.block.dimensions() << endl;
 
     G_list.insert(std::make_pair(position_L,superblock.MPS.GA));
     G_list.insert(std::make_pair(position_R,superblock.MPS.GB));
@@ -28,13 +28,13 @@ void class_storage::store_insert(const class_superblock &superblock){
     Lblock_list[position_L]  = superblock.Lblock;
     Rblock_list[position_R]  = superblock.Rblock;
 
-    cout << "Block sizes: [" << superblock.Lblock.size << " " << superblock.Rblock.size << "]" << endl;
+//    cout << "Block sizes: [" << superblock.Lblock.size << " " << superblock.Rblock.size << "]" << endl;
 
 }
 
 void class_storage::load(class_superblock &superblock){
 
-    cout << "Loading position [" << position_L << " " << position_R << "]" << endl;
+//    cout << "Loading position [" << position_L << " " << position_R << "]" << endl;
     superblock.MPS.GA = G_list.at(position_L);
     superblock.MPS.GB = G_list.at(position_R);
 
@@ -46,20 +46,21 @@ void class_storage::load(class_superblock &superblock){
 
     superblock.MPS.L_tail =  L_list.at(position_L-1);
 
-    cout << "Loaded sizes: [" << superblock.Lblock.size << " " << superblock.Rblock.size << "])" << endl;
-
-    cout << "G.A: " << superblock.MPS.GA.dimensions() << endl;
-    cout << "G.B: " << superblock.MPS.GB.dimensions() << endl;
-    cout << "L.A: " << superblock.MPS.LA.dimensions() << endl;
-    cout << "L.B: " << superblock.MPS.LB.dimensions() << endl;
+//    cout << "Loaded sizes: [" << superblock.Lblock.size << " " << superblock.Rblock.size << "])" << endl;
+//
+//    cout << "G.A: " << superblock.MPS.GA.dimensions() << endl;
+//    cout << "G.B: " << superblock.MPS.GB.dimensions() << endl;
+//    cout << "L.A: " << superblock.MPS.LA.dimensions() << endl;
+//    cout << "L.B: " << superblock.MPS.LB.dimensions() << endl;
+//
 }
 
 void class_storage::overwrite_MPS(const class_superblock &superblock) {
-    cout << "Overwriting position [" << position_L << " " << position_R << "]" << endl;
-    cout << "G.A: " << superblock.MPS.GA.dimensions() << endl;
-    cout << "G.B: " << superblock.MPS.GB.dimensions() << endl;
-    cout << "L.A: " << superblock.MPS.LA.dimensions() << endl;
-    cout << "L.B: " << superblock.MPS.LB.dimensions() << endl;
+//    cout << "Overwriting position [" << position_L << " " << position_R << "]" << endl;
+//    cout << "G.A: " << superblock.MPS.GA.dimensions() << endl;
+//    cout << "G.B: " << superblock.MPS.GB.dimensions() << endl;
+//    cout << "L.A: " << superblock.MPS.LA.dimensions() << endl;
+//    cout << "L.B: " << superblock.MPS.LB.dimensions() << endl;
 
     G_list[position_L] = superblock.MPS.GA;
     G_list[position_R] = superblock.MPS.GB;

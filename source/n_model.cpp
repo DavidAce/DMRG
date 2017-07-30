@@ -10,9 +10,16 @@ using namespace std;
 namespace Model{
     double J = -1.0;
     double g = 0.5;
+    double energy_exact = -1.063544409973372; //Exact ground state energy.
+
     long local_dimension = 2;
-    Matrix2cd sx, sy,sz, I;
-    std::vector<MatrixXcd> SX,SY,SZ;
+    Matrix2cd sx;
+    Matrix2cd sy;
+    Matrix2cd sz;
+    Matrix2cd I;
+    std::vector<MatrixXcd> SY;
+    std::vector<MatrixXcd> SZ;
+    std::vector<MatrixXcd> SX;
 
     void generate_spins(const int sites) {
         sx << 0.0, 1.0,

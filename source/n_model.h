@@ -34,7 +34,7 @@ namespace Model {
     extern double J;
     extern double g;
     extern long local_dimension;
-
+    extern double energy_exact;
     //Pauli matrices
     extern Matrix2cd sx;
     extern Matrix2cd sy;

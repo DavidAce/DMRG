@@ -1,5 +1,4 @@
 #include <class_MPS.h>
-#include <iomanip>
 
 
 using namespace std;
@@ -52,8 +51,7 @@ void class_MPS::swap_AB(){
 //    L.swap_AB();
 }
 
-void class_MPS::print_error(const Tensor4 &Hamiltonian) {
-    cout << setprecision(16);
+double class_MPS::get_energy(const Tensor4 &Hamiltonian) {
     Tensor4 LGLGL = asDiagonal(L_tail)
             .contract(GA, idxlist1{idx2(1,1)})
             .contract(asDiagonal(LA), idxlist1{idx2(2,0)})
@@ -63,10 +61,6 @@ void class_MPS::print_error(const Tensor4 &Hamiltonian) {
 
     Tensor0 result = Hamiltonian.contract(LGLGL.conjugate(), idxlist2{idx2(0,0), idx2(1,1)})
             .contract(LGLGL, idxlist4{idx2(0,0),idx2(1,1),idx2(2,2),idx2(3,3)});
-
-    cout << "E_iDMRG = " << result(0) << endl;
-    cout << "E_exact = " << -1.063544409973372 << endl;
-    cout << std::scientific;
-    cout << "Error   = " << -1.063544409973372 - result(0) << endl;
+    return result(0);
 
 }

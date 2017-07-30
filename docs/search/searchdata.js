@@ -4,7 +4,8 @@ var indexSectionsWithContent =
   1: "c",
   2: "mt",
   3: "cefglmopstu",
-  4: "bglmprs"
+  4: "bglmprs",
+  5: "m"
 };
 
 var indexSectionNames =
@@ -13,7 +14,8 @@ var indexSectionNames =
   1: "classes",
   2: "namespaces",
   3: "functions",
-  4: "variables"
+  4: "variables",
+  5: "groups"
 };
 
 var indexSectionLabels =
@@ -22,6 +24,7 @@ var indexSectionLabels =
   1: "Classes",
   2: "Namespaces",
   3: "Functions",
-  4: "Variables"
+  4: "Variables",
+  5: "Modules"
 };
 
