@@ -22,6 +22,12 @@
 <script type="text/javascript">
   $(document).ready(function() { init_search(); });
 </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -117,9 +123,9 @@ $(document).ready(function(){initNavTree('classclass__environment___r.html','');
 <div class="textblock"><p>Right environment block. </p>
 <h1>Right environment</h1>
 <p>This class contains the Right environment block as a rank-3 tensor. New sites are contracted into the Right environment as </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]" src="form_2.png"/>
+\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]
 </p>
-<p>where <img class="formulaInl" alt="$W$" src="form_1.png"/> is the rank-4 tensor Hamiltonian MPO. </p>
+<p>where \(W\) is the rank-4 tensor Hamiltonian MPO. </p>
 </div>
 <p><code>#include &lt;<a class="el" href="class__environment_8h_source.html">class_environment.h</a>&gt;</code></p>
 <table class="memberdecls">

@@ -22,6 +22,12 @@
 <script type="text/javascript">
   $(document).ready(function() { init_search(); });
 </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -231,11 +237,11 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Contract the MPS of current position <img class="formulaInl" alt="$n$" src="form_3.png"/> into the left and right environments <img class="formulaInl" alt="$L$" src="form_30.png"/> and <img class="formulaInl" alt="$R$" src="form_31.png"/>, i.e. <code>Lblock</code> and <code>Rblock</code>. </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]" src="form_0.png"/>
+<p>Contract the MPS of current position \(n\) into the left and right environments \(L\) and \(R\), i.e. <code>Lblock</code> and <code>Rblock</code>. </p><p class="formulaDsp">
+\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]
 </p>
  <p class="formulaDsp">
-<img class="formulaDsp" alt="\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]" src="form_2.png"/>
+\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]
 </p>
  
 </div>
@@ -253,7 +259,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Contract the MPS of current position <img class="formulaInl" alt="$n$" src="form_3.png"/> into left or right direction. </p>
+<p>Contract the MPS of current position \(n\) into left or right direction. </p>
 
 </div>
 </div>
@@ -296,7 +302,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Function for eigenvalue solver Spectra Defines the matrix-vector product in the left side of <img class="formulaInl" alt="$Av = \lambda $" src="form_34.png"/> </p>
+<p>Function for eigenvalue solver Spectra Defines the matrix-vector product in the left side of \(Av = \lambda \) </p>
 
 </div>
 </div>
@@ -376,7 +382,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps <img class="formulaInl" alt="$\chi$" src="form_29.png"/> (<code>chi</code>) singular values. </p>
+<p>Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps \(\chi\) (<code>chi</code>) singular values. </p>
 
 </div>
 </div>
@@ -393,10 +399,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Update the MPS by contracting </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \]" src="form_32.png"/>
+\[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \]
 </p>
  <p class="formulaDsp">
-<img class="formulaDsp" alt="\[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \]" src="form_33.png"/>
+\[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \]
 </p>
  
 </div>
@@ -413,7 +419,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Update <code>MPS.G.A</code> and <code>MPS.G.B</code> i.e., <img class="formulaInl" alt="$\Gamma^A$" src="form_14.png"/> and <img class="formulaInl" alt="$\Gamma^B$" src="form_15.png"/>. </p>
+<p>Update <code>MPS.G.A</code> and <code>MPS.G.B</code> i.e., \(\Gamma^A\) and \(\Gamma^B\). </p>
 
 </div>
 </div>
@@ -440,7 +446,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Matrix product states for two sites, A and B, in Vidal Canonical Form <img class="formulaInl" alt="$\Gamma^A\Lambda^A\Gamma^B\Lambda^B$" src="form_28.png"/>. </p>
+<p>Matrix product states for two sites, A and B, in Vidal Canonical Form \(\Gamma^A\Lambda^A\Gamma^B\Lambda^B\). </p>
 
 </div>
 </div>
