@@ -1,9 +1,9 @@
 var classclass___m_p_s =
 [
     [ "class_MPS", "classclass___m_p_s.html#a383b5c5b2d621af50c2972b031ea86ce", null ],
+    [ "get_energy", "classclass___m_p_s.html#a3c635928be6c0ddcefb8c05d34ab407c", null ],
     [ "get_theta", "classclass___m_p_s.html#a931bb52a82a9483434ea8ee3dbfc4b97", null ],
     [ "initialize", "classclass___m_p_s.html#a80efa1edd3f6c6e532a25d3ea61d46de", null ],
-    [ "print_error", "classclass___m_p_s.html#ac97a829a430419d2f3fe23af6c69b3e1", null ],
     [ "swap_AB", "classclass___m_p_s.html#a27502b59d10647f0037b71e148654d65", null ],
     [ "GA", "classclass___m_p_s.html#a51e7a57a898c7836bfabbfcc298d63a2", null ],
     [ "GB", "classclass___m_p_s.html#ab99c3766043b2488a88bf7dc91e36098", null ],

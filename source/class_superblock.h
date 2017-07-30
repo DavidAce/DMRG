@@ -40,16 +40,17 @@ private:
     Tensor3 U,V;                                        /*!< Stores the left and right unitary matrices \f$U\f$ and \f$V\f$ after an SVD decomposition \f$A = USV^\dagger\f$.*/
 public:
 
-    class_environment_L         Lblock;                 /*!< Left  environment block. */
-    class_environment_R         Rblock;                 /*!< Right environment block. */
-    class_MPS                   MPS;                    /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
-    class_TwoSiteHamiltonian    H;
 
     class_superblock(const int      eigSteps_    ,      /*!< Maximum number of steps for eigenvalue solver. */
                      const double   eigThreshold_,      /*!< Minimum threshold for halting eigenvalue solver. */
                      const double   SVDThreshold_,      /*!< Minimum threshold value for keeping singular values. */
                      const long chi_                    /*!< Maximum number of singular values to keep. */
                     );
+
+    class_environment_L         Lblock;                 /*!< Left  environment block. */
+    class_environment_R         Rblock;                 /*!< Right environment block. */
+    class_MPS                   MPS;                    /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
+    class_TwoSiteHamiltonian    H;
 
     void find_ground_state()    __attribute((hot));     /*!< Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using [Spectra](https://github.com/yixuan/spectra). */
     void time_evolve();
@@ -64,8 +65,11 @@ public:
                                                         * \f[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \f]
                                                         * \f[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \f] */
     void swap_AB();                                     /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
+
+    void reset();
     void print_picture();                               /*!< Print a pretty picture of the current chain.*/
-    void print_error();                                 /*!< Compare current energy with exact value.*/
+    void print_error_DMRG();                            /*!< Compare current DMRG energy with exact value.*/
+    void print_error_TEBD();                            /*!< Compare current TEBD energy with exact value.*/
 
     /*! Function for eigenvalue solver Spectra
      *  Defines the matrix-vector product in the left side of \f$Av = \lambda \f$*/

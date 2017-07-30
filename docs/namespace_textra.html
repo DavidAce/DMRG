@@ -22,12 +22,6 @@
 <script type="text/javascript">
   $(document).ready(function() { init_search(); });
 </script>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX","output/SVG"],
-});
-</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -52,6 +46,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -187,14 +182,6 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>idxlist4</b> = Eigen
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a83480b3f75b0a29f652feb8b2152b475"><td class="memTemplParams" colspan="2"><a class="anchor" id="a83480b3f75b0a29f652feb8b2152b475"></a>
-template&lt;typename T , int L&gt; </td></tr>
-<tr class="memitem:a83480b3f75b0a29f652feb8b2152b475"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;out, const Eigen::DSizes&lt; T, L &gt; &amp;v)</td></tr>
-<tr class="separator:a83480b3f75b0a29f652feb8b2152b475"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47079abeb81c780b562da5b9a8d1ff19"><td class="memTemplParams" colspan="2"><a class="anchor" id="a47079abeb81c780b562da5b9a8d1ff19"></a>
-template&lt;typename T , int L&gt; </td></tr>
-<tr class="memitem:a47079abeb81c780b562da5b9a8d1ff19"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;out, const Eigen::array&lt; T, L &gt; &amp;v)</td></tr>
-<tr class="separator:a47079abeb81c780b562da5b9a8d1ff19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f1aa439eb4f2c4a6b59d47f2db6a70a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0f1aa439eb4f2c4a6b59d47f2db6a70a"></a>
 Tensor3&#160;</td><td class="memItemRight" valign="bottom"><b>reshape</b> (MatrixType matrix, array3 dims)</td></tr>
 <tr class="separator:a0f1aa439eb4f2c4a6b59d47f2db6a70a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -207,12 +194,12 @@ Tensor2&#160;</td><td class="memItemRight" valign="bottom"><b>asInverseDiagonal<
 <tr class="memitem:afdeb0ee042c6c99a0d809925003d583b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdeb0ee042c6c99a0d809925003d583b"></a>
 Tensor1&#160;</td><td class="memItemRight" valign="bottom"><b>matrix_to_tensor1</b> (const Eigen::Ref&lt; const MatrixType &gt; matrix)</td></tr>
 <tr class="separator:afdeb0ee042c6c99a0d809925003d583b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02f58b871afcdcf2cd5840c0b2f863b4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a02f58b871afcdcf2cd5840c0b2f863b4"></a>
-Tensor2&#160;</td><td class="memItemRight" valign="bottom"><b>matrix_to_tensor2</b> (const Eigen::Ref&lt; const MatrixType &gt; matrix)</td></tr>
-<tr class="separator:a02f58b871afcdcf2cd5840c0b2f863b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89b1d3f4d9d1183e98367e7ca3a1a220"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89b1d3f4d9d1183e98367e7ca3a1a220"></a>
 Tensor2&#160;</td><td class="memItemRight" valign="bottom"><b>matrix_to_tensor2</b> (const Eigen::Ref&lt; const MatrixType &gt; matrix, array2 dims)</td></tr>
 <tr class="separator:a89b1d3f4d9d1183e98367e7ca3a1a220"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02f58b871afcdcf2cd5840c0b2f863b4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a02f58b871afcdcf2cd5840c0b2f863b4"></a>
+Tensor2&#160;</td><td class="memItemRight" valign="bottom"><b>matrix_to_tensor2</b> (const Eigen::Ref&lt; const MatrixType &gt; matrix)</td></tr>
+<tr class="separator:a02f58b871afcdcf2cd5840c0b2f863b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac56cd4abca1c6db528c71c124cc5decb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac56cd4abca1c6db528c71c124cc5decb"></a>
 Tensor3&#160;</td><td class="memItemRight" valign="bottom"><b>matrix_to_tensor3</b> (const Eigen::Ref&lt; const MatrixType &gt; matrix, array3 dims)</td></tr>
 <tr class="separator:ac56cd4abca1c6db528c71c124cc5decb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -222,6 +209,14 @@ Tensor4&#160;</td><td class="memItemRight" valign="bottom"><b>matrix_to_tensor4<
 <tr class="memitem:a3be69f3b1dc778cfbbd1f0257cacc887"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3be69f3b1dc778cfbbd1f0257cacc887"></a>
 MatrixType&#160;</td><td class="memItemRight" valign="bottom"><b>tensor2_to_matrix</b> (const Tensor2 &amp;tensor)</td></tr>
 <tr class="separator:a3be69f3b1dc778cfbbd1f0257cacc887"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83480b3f75b0a29f652feb8b2152b475"><td class="memTemplParams" colspan="2"><a class="anchor" id="a83480b3f75b0a29f652feb8b2152b475"></a>
+template&lt;typename T , int L&gt; </td></tr>
+<tr class="memitem:a83480b3f75b0a29f652feb8b2152b475"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;out, const Eigen::DSizes&lt; T, L &gt; &amp;v)</td></tr>
+<tr class="separator:a83480b3f75b0a29f652feb8b2152b475"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47079abeb81c780b562da5b9a8d1ff19"><td class="memTemplParams" colspan="2"><a class="anchor" id="a47079abeb81c780b562da5b9a8d1ff19"></a>
+template&lt;typename T , int L&gt; </td></tr>
+<tr class="memitem:a47079abeb81c780b562da5b9a8d1ff19"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;out, const Eigen::array&lt; T, L &gt; &amp;v)</td></tr>
+<tr class="separator:a47079abeb81c780b562da5b9a8d1ff19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->
