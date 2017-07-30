@@ -22,6 +22,12 @@
 <script type="text/javascript">
   $(document).ready(function() { init_search(); });
 </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -122,10 +128,10 @@ $(document).ready(function(){initNavTree('index.html','');});
  </p>
 </blockquote>
 <h2>Notation</h2>
-<p>The <em>Vidal canonical form</em>, i.e. <img class="formulaInl" alt="$\Gamma\Lambda\Gamma\Lambda$" src="form_35.png"/>"..., is used throughout this code. In code we denote</p>
+<p>The <em>Vidal canonical form</em>, i.e. \(\Gamma\Lambda\Gamma\Lambda\)"..., is used throughout this code. In code we denote</p>
 <ul>
-<li><img class="formulaInl" alt="$\Gamma \rightarrow$" src="form_36.png"/> <code>G</code>.</li>
-<li><img class="formulaInl" alt="$\Lambda \rightarrow$" src="form_37.png"/> <code>L</code>.</li>
+<li>\(\Gamma \rightarrow\) <code>G</code>.</li>
+<li>\(\Lambda \rightarrow\) <code>L</code>.</li>
 </ul>
 <h2>Tensor index order convention.</h2>
 <p>The tensor index order used here follows the convention:</p><ul>
@@ -133,11 +139,11 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li>other dimensions (like bond dimensions) next, from left to right.</li>
 </ul>
 <h4>Example:</h4>
-<p>Consider for some position <img class="formulaInl" alt="$n$" src="form_3.png"/> on the chain <img class="formulaInl" alt="$\Gamma = \Gamma^{\sigma_n}_{a,b}$" src="form_38.png"/>. Here <img class="formulaInl" alt="$\sigma_n \in [-1,1]$" src="form_39.png"/> is a particle with local (physical) dimension <img class="formulaInl" alt="$d$" src="form_9.png"/> = 2, and <img class="formulaInl" alt="$a,b$" src="form_40.png"/> are the remaining dimensions, in practice they are bond dimensions of <img class="formulaInl" alt="$\Lambda^{n-1}$" src="form_41.png"/> and <img class="formulaInl" alt="$\Lambda^{n}$" src="form_42.png"/>, respectively, which can be numbers <img class="formulaInl" alt="$\in [1,\chi]$" src="form_43.png"/>.</p>
+<p>Consider for some position \(n\) on the chain \(\Gamma = \Gamma^{\sigma_n}_{a,b}\). Here \(\sigma_n \in [-1,1]\) is a particle with local (physical) dimension \(d\) = 2, and \(a,b\) are the remaining dimensions, in practice they are bond dimensions of \(\Lambda^{n-1}\) and \(\Lambda^{n}\), respectively, which can be numbers \(\in [1,\chi]\).</p>
 <p>In diagrammatic tensor notation this is: </p><pre class="fragment">                        [d]          0
             G     = [a]__|__[b] = 1__|__2
 </pre><p> where after the second equality the index order is shown. In code this corresponds to</p>
-<div class="fragment"><div class="line">Textra::Tensor3 G(d,a,b);</div></div><!-- fragment --><p>Similarly, we have for <img class="formulaInl" alt="$\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}$" src="form_44.png"/>:</p>
+<div class="fragment"><div class="line">Textra::Tensor3 G(d,a,b);</div></div><!-- fragment --><p>Similarly, we have for \(\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}\):</p>
 <pre class="fragment">                                [d] [d]                0   1
             Theta     = [chia]___|___|___[chib] = 2 ___|___|___ 3
 </pre><p>which in code reads</p>

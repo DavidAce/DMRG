@@ -22,6 +22,12 @@
 <script type="text/javascript">
   $(document).ready(function() { init_search(); });
 </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -112,9 +118,9 @@ $(document).ready(function(){initNavTree('namespace_model.html','');});
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Setup the Hamiltonian and corresponding values. </p>
-<p>This namespace contains model parameters, such as the coupling (or nearest neighbor exchange energy) <img class="formulaInl" alt="$J$" src="form_45.png"/>, and the transverse field strength <img class="formulaInl" alt="$g$" src="form_46.png"/>. By default the model describes the quantum Ising model with a transverse field:</p>
+<p>This namespace contains model parameters, such as the coupling (or nearest neighbor exchange energy) \(J\), and the transverse field strength \(g\). By default the model describes the quantum Ising model with a transverse field:</p>
 <p class="formulaDsp">
-<img class="formulaDsp" alt="\[ H = \frac{1}{2}\sum_{n=1}^L J S^z_n \otimes S^z_{n+1} + gS^x_{n} \]" src="form_47.png"/>
+\[ H = \frac{1}{2}\sum_{n=1}^L J S^z_n \otimes S^z_{n+1} + gS^x_{n} \]
 </p>
  </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>

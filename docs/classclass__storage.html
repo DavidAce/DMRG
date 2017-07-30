@@ -22,6 +22,12 @@
 <script type="text/javascript">
   $(document).ready(function() { init_search(); });
 </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -118,8 +124,8 @@ $(document).ready(function(){initNavTree('classclass__storage.html','');});
 <p>During the infinite-DMRG part of the algorithm, the current state for each chain-length is stored in a <code><a class="el" href="classclass__storage.html">class_storage</a></code> object, for later use in the finite-DMRG stage.</p>
 <p>Specifically, this class stores objects from the current superblock:</p><ul>
 <li>The left and right environment blocks <code>Lblock</code> and <code>Rblock</code>, both type <code>Textra::Tensor3</code>, and</li>
-<li>the MPS tensors <img class="formulaInl" alt="$\Gamma^{A,B}=$" src="form_18.png"/> <code>MPS.GA, MPS.GB</code> and <img class="formulaInl" alt="$\Lambda^{A,B}=$" src="form_19.png"/> <code>MPS.LA, MPS.LB</code>, required for computing <img class="formulaInl" alt="$\Theta$" src="form_5.png"/>, following the notation used in <a href="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Frank Pollmann's notes</a>: <img class="formulaInl" alt="$\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B$" src="form_20.png"/>. <br />
- Here <img class="formulaInl" alt="$\Gamma^{A,B}$" src="form_21.png"/> are a rank-3 tensors of type <code>Textra::Tensor3</code> and <img class="formulaInl" alt="$\Lambda^{A,B}$" src="form_22.png"/> are rank-1 tensors of type <code>Textra::Tensor1</code>.</li>
+<li>the MPS tensors \(\Gamma^{A,B}=\) <code>MPS.GA, MPS.GB</code> and \(\Lambda^{A,B}=\) <code>MPS.LA, MPS.LB</code>, required for computing \(\Theta\), following the notation used in <a href="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Frank Pollmann's notes</a>: \(\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B\). <br />
+ Here \(\Gamma^{A,B}\) are a rank-3 tensors of type <code>Textra::Tensor3</code> and \(\Lambda^{A,B}\) are rank-1 tensors of type <code>Textra::Tensor1</code>.</li>
 </ul>
 <p>All objects are stored and indexed by their position relative to the final chain of length <code>max_length</code>. </p>
 </div>
@@ -262,7 +268,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Print the tensor dimensions for all <img class="formulaInl" alt="$\Gamma$" src="form_23.png"/>-tensors. </p>
+<p>Print the tensor dimensions for all \(\Gamma\)-tensors. </p>
 
 </div>
 </div>
@@ -293,7 +299,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>A list of stored <img class="formulaInl" alt="$\Gamma$" src="form_23.png"/>-tensors, indexed by chain position. </p>
+<p>A list of stored \(\Gamma\)-tensors, indexed by chain position. </p>
 
 </div>
 </div>
@@ -306,7 +312,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>A list of stored <img class="formulaInl" alt="$\Lambda$" src="form_24.png"/>-tensors, indexed by chain position. </p>
+<p>A list of stored \(\Lambda\)-tensors, indexed by chain position. </p>
 
 </div>
 </div>
@@ -345,7 +351,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>The current position of <img class="formulaInl" alt="$\Gamma^A$" src="form_14.png"/> w.r.t the full chain. </p>
+<p>The current position of \(\Gamma^A\) w.r.t the full chain. </p>
 
 </div>
 </div>
@@ -358,7 +364,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>The current position of <img class="formulaInl" alt="$\Gamma^B$" src="form_15.png"/> w.r.t the full chain. </p>
+<p>The current position of \(\Gamma^B\) w.r.t the full chain. </p>
 
 </div>
 </div>
