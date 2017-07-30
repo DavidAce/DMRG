@@ -1069,7 +1069,7 @@ VERBATIM_HEADERS       = YES
 # generated with the -Duse-libclang=ON option for CMake.
 # The default value is: NO.
 
-CLANG_ASSISTED_PARSING = YES
+CLANG_ASSISTED_PARSING = NO
 
 # If clang assisted parsing is enabled you can provide the compiler with command
 # line options that you would normally use when invoking the compiler. Note that
@@ -1078,7 +1078,6 @@ CLANG_ASSISTED_PARSING = YES
 # This tag requires that the tag CLANG_ASSISTED_PARSING is set to YES.
 
 CLANG_OPTIONS          = -std=c++11 \
-                         --verbose \
                          -I./eigen3 \
                          -Wno-unknown-attributes \
                          "-I/usr/lib/llvm-3.6/lib/clang/3.6.2/include" \
@@ -1506,7 +1505,7 @@ EXT_LINKS_IN_WINDOW    = NO
 # Minimum value: 8, maximum value: 50, default value: 10.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-FORMULA_FONTSIZE       = 11
+FORMULA_FONTSIZE       = 13
 
 # Use the FORMULA_TRANPARENT tag to determine whether or not the images
 # generated for formulas are transparent PNGs. Transparent PNGs are not
@@ -1538,7 +1537,7 @@ USE_MATHJAX            = YES
 # The default value is: HTML-CSS.
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
-MATHJAX_FORMAT         = SVG
+MATHJAX_FORMAT         = HTML-CSS
 
 # When MathJax is enabled you need to specify the location relative to the HTML
 # output directory using the MATHJAX_RELPATH option. The destination directory

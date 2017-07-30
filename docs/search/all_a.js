@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['single_5fpicture',['single_picture',['../classclass__environment___l.html#ae8a9aef9f983ff0580d7e2ee9da1d1d9',1,'class_environment_L::single_picture()'],['../classclass__environment___r.html#a92410fb5b1d4fe0cad21a4099c6694af',1,'class_environment_R::single_picture()']]],
-  ['size',['size',['../classclass__environment___l.html#a24d7fa03475506a8ee1d1d27609dd665',1,'class_environment_L::size()'],['../classclass__environment___r.html#ac40c1e8c49257d8764d2fe073e363ad8',1,'class_environment_R::size()']]],
-  ['store_5finsert',['store_insert',['../classclass__storage.html#a27a5109b1b38574b4b3b4587198fb297',1,'class_storage']]],
-  ['swap_5fab',['swap_AB',['../classclass___m_p_s.html#a27502b59d10647f0037b71e148654d65',1,'class_MPS::swap_AB()'],['../classclass__superblock.html#a593c53eaa16bbb4dd67f4a9db95c821e',1,'class_superblock::swap_AB()']]]
+  ['rblock',['Rblock',['../classclass__superblock.html#a1cb3d611b9a4bd2da1b397059bc98043',1,'class_superblock']]],
+  ['rblock_5flist',['Rblock_list',['../classclass__storage.html#a45fd733a67be78bd55ba07fd74a7ccd4',1,'class_storage']]]
 ];
