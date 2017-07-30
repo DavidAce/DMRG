@@ -1,11 +1,11 @@
 var indexSectionsWithContent =
 {
-  0: "bcefglmoprstu",
+  0: "bcefgilmoprstu",
   1: "c",
   2: "mt",
-  3: "cefglmopstu",
-  4: "bglmprs",
-  5: "m"
+  3: "m",
+  4: "cefgilmopstu",
+  5: "bglmprs"
 };
 
 var indexSectionNames =
@@ -13,9 +13,9 @@ var indexSectionNames =
   0: "all",
   1: "classes",
   2: "namespaces",
-  3: "functions",
-  4: "variables",
-  5: "groups"
+  3: "files",
+  4: "functions",
+  5: "variables"
 };
 
 var indexSectionLabels =
@@ -23,8 +23,8 @@ var indexSectionLabels =
   0: "All",
   1: "Classes",
   2: "Namespaces",
-  3: "Functions",
-  4: "Variables",
-  5: "Modules"
+  3: "Files",
+  4: "Functions",
+  5: "Variables"
 };
 

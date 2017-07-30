@@ -1,3 +1,5 @@
+/*! \file */
+
 #include <class_tic_toc.h>
 #include <n_tensor_extra.h>
 #include <class_superblock.h>
@@ -10,34 +12,23 @@ using namespace Textra;
 
 
 
-// Profiling objects
-class_profiling t_svd   (1,5, string("SVD           ")) ;
-class_profiling t_eig   (1,5, string("Diagonalize   ")) ;
-class_profiling t_env   (1,5, string("Update Env.   ")) ;
-class_profiling t_tmp   (1,5, string("Temporary     ")) ;
-class_profiling t_tot   (1,5, string("Total         ")) ;
-
-
-
 void iDMRG(class_superblock &superblock, class_storage &S, int max_length);
 void fDMRG(class_superblock &superblock, class_storage &S, int sweeps);
 void iTEBD(class_superblock &superblock, int max_iter);
 
-/*! \file Main
-*   \defgroup MainApp
-*/
 
-/*!
-    \addtogroup MainApp
-    \brief The Main routine
-    \fn main
-*/
+
+
+
 int main() {
-    // Define the parameters of the simulation
+    /*!
+        \brief  Main function
+        \return an integer 0 upon exit success
+    */
 
-    int     chi          = 200;
-    int     L            = 200;
-    int     N            = 10000;
+    int     chi          = 200;         /*! \param int chi  Keep \f$ \chi \f$  singular values in SVD truncation. */
+    int     L            = 200;         /*! \param int L    Final length of 1D quantum chain. */
+    int     N            = 10000;       /*! \param int N    Number of iTEBD iterations. */
     int     sweeps       = 4;
     double  SVDThreshold = 1e-12;
     double  eigThreshold = 1e-12;
@@ -57,14 +48,15 @@ int main() {
 }
 
 
-/*!
- * \fn iDMRG
- * \addtogroup MainApp
- * \brief Infinite DMRG, grows the chain from 2 up to `max_length` particles.
- * \param superblock, a class containing MPS, environment and Hamiltonian MPO objects.
- * \param S, a class that stores current MPS and environments at each iteration.
- * \param max_length, maximum chain length after which the algorithm stops. */
+
 void iDMRG(class_superblock &superblock, class_storage &S, int max_length){
+/*!
+ * \fn void iDMRG(class_superblock &superblock, class_storage &S, int max_length)
+ * \brief Infinite DMRG, grows the chain from 2 up to `max_length` particles.
+ * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
+ * \param S A class that stores current MPS and environments at each iteration.
+ * \param max_length Maximum chain length after which the algorithm stops.
+ */
     int length = 0;
     while(length < max_length){
         superblock.print_picture();
@@ -90,7 +82,16 @@ void iDMRG(class_superblock &superblock, class_storage &S, int max_length){
 //    t_tot.print_total(); cout << endl;
 }
 
+
+
 void fDMRG(class_superblock &superblock, class_storage &S, int sweeps){
+/*!
+ * \fn void fDMRG(class_superblock &superblock, class_storage &S, int sweeps)
+ * \brief Finite DMRG sweeps across the chain built during iDMRG.
+ * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
+ * \param S A class that stores current MPS and environments at each iteration.
+ * \param sweeps Maximum number of sweeps.
+ */
 //    t_tot.tic();
     int direction  = 1;
     int sweep = 0;
@@ -127,7 +128,15 @@ void fDMRG(class_superblock &superblock, class_storage &S, int sweeps){
 //    t_tot.print_total(); cout << endl;
 }
 
+
+
 void iTEBD(class_superblock &superblock, int max_iter){
+/*!
+ * \fn iTEBD(class_superblock &superblock, int max_iter)
+ * \brief infinite Time evolving block decimation.
+ * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
+ * \param max_iter Maximum number of iterations.
+ */
     for(auto iter = 0; iter < max_iter ; iter++){
         superblock.update_bond_dimensions();
         superblock.time_evolve();
@@ -136,13 +145,6 @@ void iTEBD(class_superblock &superblock, int max_iter){
         superblock.swap_AB();
     }
     superblock.print_error_TEBD();
-
-//    t_tot.toc();
-//    t_svd.print_total(t_tot.total_time);cout<<endl;
-//    t_eig.print_total(t_tot.total_time);cout<<endl;
-//    t_env.print_total(t_tot.total_time);cout<<endl;
-//    t_tmp.print_total(t_tot.total_time);cout<<endl;
-//    t_tot.print_total(); cout << endl;
 }
 
 

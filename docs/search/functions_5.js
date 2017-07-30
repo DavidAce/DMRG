@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['move',['move',['../classclass__storage.html#a7151cdfb718037015ae6d8be0dcb9963',1,'class_storage']]]
+  ['load',['load',['../classclass__storage.html#a01ac2b3e1bbbc232b5f9c1e2876b2d79',1,'class_storage']]]
 ];
