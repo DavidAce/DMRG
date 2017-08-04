@@ -6,7 +6,7 @@
 using namespace Textra;
 using namespace std;
 
-/*!\brief Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites \f$n\f$ and \f$n+1\f$, respectively.*/
+/*! \brief Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites \f$n\f$ and \f$n+1\f$, respectively.*/
 
 /*!
  # MPS Class

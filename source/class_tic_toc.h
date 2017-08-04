@@ -14,27 +14,30 @@ using namespace chrono;
 
 
 
-class class_profiling {
+class class_tic_toc {
 private:
-    high_resolution_clock::time_point delta_tic;
-    high_resolution_clock::time_point delta_toc;
-    int profiling;           //Whether we are profiling or not.
-    int print_precision;
-    int padding = 5;
-    string name;
-public:
-    class_profiling(int on_off, int prec, string output_text);                 //Constructor
-    high_resolution_clock::duration delta_time;
-    high_resolution_clock::duration total_time;
+    high_resolution_clock::time_point tic_timepoint;
+    high_resolution_clock::time_point start_timepoint;
+    bool profiling           = false;           //Whether we are profiling or not.
+    int print_precision      = 5 ;
+    string name              = "";
+    int padding              = 5;
 
+public:
+    class_tic_toc(bool on_off, int prec, string output_text);                 //Constructor
+    class_tic_toc(){};
+    high_resolution_clock::duration delta_time;
+    high_resolution_clock::duration measured_time;
+    void set_properties(bool on_off, int prec, string output_text);
     void tic();
     void toc();
-    void print_total();
-    void print_total(high_resolution_clock::duration total_runtime);
+    void print_time();
+//    void print_time(high_resolution_clock::duration total_runtime);
+    void print_time_w_percent();
     void print_delta();
     void print_total_reset();
     void reset();
-    friend std::ostream &operator<<(std::ostream &, const class_profiling &);
+    friend std::ostream &operator<<(std::ostream &, const class_tic_toc &);
 };
 
 

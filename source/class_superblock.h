@@ -6,7 +6,6 @@
 #define FINITE_DMRG_EIGEN_CLASS_SUPERBLOCK_H
 
 #include <n_tensor_extra.h>
-#include <Eigen/SVD>
 #include <class_environment.h>
 #include <class_MPS.h>
 #include <class_TwoSiteHamiltonian.h>
@@ -23,38 +22,32 @@ class class_superblock {
 private:
     //Bond dimensions and tensor shapes needed by the eigensolver and SVD.
     long d;                                             /*!< Local, or physical, dimension of each particle. */
-    long chi;                                           /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
     long chia;                                          /*!< Bond dimension of the previous (left) position. */
     long chib;                                          /*!< Bond dimension of the next (right) position. */
     Textra::array1 shape1;                              /*!< Shape for Tensor1 representation of the MPS. */
     Textra::array2 shape2;                              /*!< Shape for Tensor2 representation of the MPS. */
     Textra::array4 shape4;                              /*!< Shape for Tensor4 representation of the MPS. */
 
-    //Variables that control eigensolver and SVD precision
-    int     eigSteps;                                   /*!< Maximum number of steps for eigenvalue solver. */
-    double  eigThreshold;                               /*!< Minimum threshold for halting eigenvalue solver. */
-    double  SVDThreshold;                               /*!< Minimum threshold value for keeping singular values. */
-
     //Store temporaries for eigensolver and SVD.
     Tensor2 ground_state;                               /*!< Stores the ground state eigenvector from eigenvalue solver */
     Tensor3 U,V;                                        /*!< Stores the left and right unitary matrices \f$U\f$ and \f$V\f$ after an SVD decomposition \f$A = USV^\dagger\f$.*/
+    double truncation_error;
 public:
 
 
-    class_superblock(const int      eigSteps_    ,      /*!< Maximum number of steps for eigenvalue solver. */
-                     const double   eigThreshold_,      /*!< Minimum threshold for halting eigenvalue solver. */
-                     const double   SVDThreshold_,      /*!< Minimum threshold value for keeping singular values. */
-                     const long chi_                    /*!< Maximum number of singular values to keep. */
-                    );
-
+    class_superblock();
     class_environment_L         Lblock;                 /*!< Left  environment block. */
     class_environment_R         Rblock;                 /*!< Right environment block. */
     class_MPS                   MPS;                    /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
     class_TwoSiteHamiltonian    H;
 
-    void find_ground_state()    __attribute((hot));     /*!< Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using [Spectra](https://github.com/yixuan/spectra). */
+    void find_ground_state(int eigSteps,                /*!< Maximum number of steps for eigenvalue solver. */
+                           double eigThreshold          /*!< Minimum threshold for halting eigenvalue solver. */
+                            )    __attribute((hot));    /*!< Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using [Spectra](https://github.com/yixuan/spectra). */
     void time_evolve();
-    void truncate()             __attribute((hot));     /*!< Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps \f$\chi\f$ (`chi`) singular values. */
+    void truncate(long chi,                             /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+                  double SVDThreshold                   /*!< Minimum threshold value for keeping singular values. */
+                    )             __attribute((hot));   /*!< Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps \f$\chi\f$ (`chi`) singular values. */
     void update_MPS();                                  /*!< Update `MPS.G.A` and `MPS.G.B` i.e., \f$\Gamma^A\f$ and \f$\Gamma^B\f$.*/
     void enlarge_environment();                         /*!< Contract the MPS of current position \f$n\f$ into the left and right environments \f$L\f$ and \f$R\f$, i.e. `Lblock` and `Rblock`.
                                                          * \f[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \f]
@@ -67,9 +60,10 @@ public:
     void swap_AB();                                     /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
 
     void reset();
-    void print_picture();                               /*!< Print a pretty picture of the current chain.*/
-    void print_error_DMRG();                            /*!< Compare current DMRG energy with exact value.*/
-    void print_error_TEBD();                            /*!< Compare current TEBD energy with exact value.*/
+
+    void print_picture(int verbosity);                  /*!< Print a pretty picture of the current chain.*/
+    void print_state_DMRG(int verbosity);               /*!< Compare current DMRG energy with exact value.*/
+    void print_state_TEBD(int verbosity);               /*!< Compare current TEBD energy with exact value.*/
 
     /*! Function for eigenvalue solver Spectra
      *  Defines the matrix-vector product in the left side of \f$Av = \lambda \f$*/

@@ -110,8 +110,7 @@ $(document).ready(function(){initNavTree('main_8cpp.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">main.cpp File Reference</div>  </div>
 </div><!--header-->
@@ -120,150 +119,14 @@ $(document).ready(function(){initNavTree('main_8cpp.html','');});
 <code>#include &lt;n_tensor_extra.h&gt;</code><br />
 <code>#include &lt;class_superblock.h&gt;</code><br />
 <code>#include &lt;class_storage.h&gt;</code><br />
+<code>#include &quot;class_algorithms.h&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a26a1416d342fdf276939211e7b596a42"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a26a1416d342fdf276939211e7b596a42">iDMRG</a> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock, <a class="el" href="classclass__storage.html">class_storage</a> &amp;S, int max_length)</td></tr>
-<tr class="separator:a26a1416d342fdf276939211e7b596a42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa49fd997d729209884d229d421b5e03d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#aa49fd997d729209884d229d421b5e03d">fDMRG</a> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock, <a class="el" href="classclass__storage.html">class_storage</a> &amp;S, int sweeps)</td></tr>
-<tr class="separator:aa49fd997d729209884d229d421b5e03d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6b629a56f50809f0b6ed6c72a829707"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#ab6b629a56f50809f0b6ed6c72a829707">iTEBD</a> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock, int max_iter)</td></tr>
-<tr class="separator:ab6b629a56f50809f0b6ed6c72a829707"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a> ()</td></tr>
 <tr class="separator:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:a560893e0dde3c84755cbca2990bde851"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a560893e0dde3c84755cbca2990bde851"></a>
-<a class="el" href="classclass__profiling.html">class_profiling</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_svd</b> (1, 5, string(&quot;SVD           &quot;))</td></tr>
-<tr class="separator:a560893e0dde3c84755cbca2990bde851"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f8a4042e39e0dc6ff3f2698a0e2b2d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5f8a4042e39e0dc6ff3f2698a0e2b2d9"></a>
-<a class="el" href="classclass__profiling.html">class_profiling</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_eig</b> (1, 5, string(&quot;Diagonalize   &quot;))</td></tr>
-<tr class="separator:a5f8a4042e39e0dc6ff3f2698a0e2b2d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b94d406ad49df1e2b13388ce51dc5e7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9b94d406ad49df1e2b13388ce51dc5e7"></a>
-<a class="el" href="classclass__profiling.html">class_profiling</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_env</b> (1, 5, string(&quot;Update Env.   &quot;))</td></tr>
-<tr class="separator:a9b94d406ad49df1e2b13388ce51dc5e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8703b63066cf54fe072f26d88c8dc76e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8703b63066cf54fe072f26d88c8dc76e"></a>
-<a class="el" href="classclass__profiling.html">class_profiling</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_tmp</b> (1, 5, string(&quot;Temporary     &quot;))</td></tr>
-<tr class="separator:a8703b63066cf54fe072f26d88c8dc76e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5dd8ead463f51a95f565d32ff55364b5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5dd8ead463f51a95f565d32ff55364b5"></a>
-<a class="el" href="classclass__profiling.html">class_profiling</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_tot</b> (1, 5, string(&quot;Total         &quot;))</td></tr>
-<tr class="separator:a5dd8ead463f51a95f565d32ff55364b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="aa49fd997d729209884d229d421b5e03d"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void fDMRG </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classclass__superblock.html">class_superblock</a> &amp;&#160;</td>
-          <td class="paramname"><em>superblock</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classclass__storage.html">class_storage</a> &amp;&#160;</td>
-          <td class="paramname"><em>S</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>sweeps</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Finite DMRG sweeps across the chain built during iDMRG. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">superblock</td><td>A class containing MPS, environment and Hamiltonian MPO objects. </td></tr>
-    <tr><td class="paramname">S</td><td>A class that stores current MPS and environments at each iteration. </td></tr>
-    <tr><td class="paramname">sweeps</td><td>Maximum number of sweeps.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a26a1416d342fdf276939211e7b596a42"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void iDMRG </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classclass__superblock.html">class_superblock</a> &amp;&#160;</td>
-          <td class="paramname"><em>superblock</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classclass__storage.html">class_storage</a> &amp;&#160;</td>
-          <td class="paramname"><em>S</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>max_length</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Infinite DMRG, grows the chain from 2 up to <code>max_length</code> particles. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">superblock</td><td>A class containing MPS, environment and Hamiltonian MPO objects. </td></tr>
-    <tr><td class="paramname">S</td><td>A class that stores current MPS and environments at each iteration. </td></tr>
-    <tr><td class="paramname">max_length</td><td>Maximum chain length after which the algorithm stops.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="ab6b629a56f50809f0b6ed6c72a829707"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void iTEBD </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classclass__superblock.html">class_superblock</a> &amp;&#160;</td>
-          <td class="paramname"><em>superblock</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>max_iter</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>infinite Time evolving block decimation. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">superblock</td><td>A class containing MPS, environment and Hamiltonian MPO objects. </td></tr>
-    <tr><td class="paramname">max_iter</td><td>Maximum number of iterations.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="ae66f6b31b5ad750f1fe042a706a4e3d4"></a>
 <div class="memitem">
 <div class="memproto">
@@ -277,14 +140,6 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Main function </p><dl class="section return"><dt>Returns</dt><dd>an integer 0 upon exit success</dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">int</td><td>chi Keep \( \chi \) singular values in SVD truncation.</td></tr>
-    <tr><td class="paramname">int</td><td>L Final length of 1D quantum chain.</td></tr>
-    <tr><td class="paramname">int</td><td>N Number of iTEBD iterations. </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>

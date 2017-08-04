@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['g_5flist',['G_list',['../classclass__storage.html#a28230a30b2085f4b91340b0fe8956ad0',1,'class_storage']]],
-  ['ga',['GA',['../classclass___m_p_s.html#a51e7a57a898c7836bfabbfcc298d63a2',1,'class_MPS']]],
-  ['gb',['GB',['../classclass___m_p_s.html#ab99c3766043b2488a88bf7dc91e36098',1,'class_MPS']]],
-  ['get_5fenergy',['get_energy',['../classclass___m_p_s.html#a3c635928be6c0ddcefb8c05d34ab407c',1,'class_MPS']]],
-  ['get_5ftheta',['get_theta',['../classclass___m_p_s.html#a931bb52a82a9483434ea8ee3dbfc4b97',1,'class_MPS']]]
+  ['fdmrg',['fDMRG',['../classclass__algorithms.html#a3be23f3471911e6722e41589553aecf7',1,'class_algorithms']]],
+  ['find_5fground_5fstate',['find_ground_state',['../classclass__superblock.html#abfdbb85192198cdae650cbd60f01571a',1,'class_superblock']]]
 ];

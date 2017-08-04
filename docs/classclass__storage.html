@@ -112,7 +112,6 @@ $(document).ready(function(){initNavTree('classclass__storage.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classclass__storage-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">class_storage Class Reference</div>  </div>
@@ -134,33 +133,18 @@ $(document).ready(function(){initNavTree('classclass__storage.html','');});
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a07b69b23cc9a322d79207d3170fe165b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a07b69b23cc9a322d79207d3170fe165b">class_storage</a> (int max_length_)</td></tr>
 <tr class="separator:a07b69b23cc9a322d79207d3170fe165b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca3b7a1e0ccbef142d85e3c90361a7f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#aca3b7a1e0ccbef142d85e3c90361a7f3">set_length</a> (int max_length_)</td></tr>
+<tr class="separator:aca3b7a1e0ccbef142d85e3c90361a7f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27a5109b1b38574b4b3b4587198fb297"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a27a5109b1b38574b4b3b4587198fb297">store_insert</a> (const <a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock)</td></tr>
 <tr class="separator:a27a5109b1b38574b4b3b4587198fb297"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01ac2b3e1bbbc232b5f9c1e2876b2d79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a01ac2b3e1bbbc232b5f9c1e2876b2d79">load</a> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock)</td></tr>
 <tr class="separator:a01ac2b3e1bbbc232b5f9c1e2876b2d79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a471af292c50ee7367937b19bd03ae639"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a471af292c50ee7367937b19bd03ae639">overwrite_MPS</a> (const <a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock)</td></tr>
 <tr class="separator:a471af292c50ee7367937b19bd03ae639"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7151cdfb718037015ae6d8be0dcb9963"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a7151cdfb718037015ae6d8be0dcb9963">move</a> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock, const int direction)</td></tr>
-<tr class="separator:a7151cdfb718037015ae6d8be0dcb9963"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a651a3029dfb16bbba32a72d92207de6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a651a3029dfb16bbba32a72d92207de6a">move</a> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock, int &amp;direction, int &amp;sweep)</td></tr>
+<tr class="separator:a651a3029dfb16bbba32a72d92207de6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1148311a7eaf7ecbc3710502837ecaf0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a1148311a7eaf7ecbc3710502837ecaf0">print_storage</a> ()</td></tr>
 <tr class="separator:a1148311a7eaf7ecbc3710502837ecaf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a28230a30b2085f4b91340b0fe8956ad0"><td class="memItemLeft" align="right" valign="top">std::map&lt; int, Tensor3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a28230a30b2085f4b91340b0fe8956ad0">G_list</a></td></tr>
-<tr class="separator:a28230a30b2085f4b91340b0fe8956ad0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a36c1609ecd2cc6dfb9bec4c8369d4d"><td class="memItemLeft" align="right" valign="top">std::map&lt; int, Tensor1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a9a36c1609ecd2cc6dfb9bec4c8369d4d">L_list</a></td></tr>
-<tr class="separator:a9a36c1609ecd2cc6dfb9bec4c8369d4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a487d155d2a17e7742a973ec03b881d49"><td class="memItemLeft" align="right" valign="top">std::map&lt; int, <a class="el" href="classclass__environment___l.html">class_environment_L</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a487d155d2a17e7742a973ec03b881d49">Lblock_list</a></td></tr>
-<tr class="separator:a487d155d2a17e7742a973ec03b881d49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45fd733a67be78bd55ba07fd74a7ccd4"><td class="memItemLeft" align="right" valign="top">std::map&lt; int, <a class="el" href="classclass__environment___r.html">class_environment_R</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a45fd733a67be78bd55ba07fd74a7ccd4">Rblock_list</a></td></tr>
-<tr class="separator:a45fd733a67be78bd55ba07fd74a7ccd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8d15935418c2051a3994a4af8ec6218"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#ad8d15935418c2051a3994a4af8ec6218">max_length</a></td></tr>
-<tr class="separator:ad8d15935418c2051a3994a4af8ec6218"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0825ddb44b4487ae1fec0a73d890e9b7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a0825ddb44b4487ae1fec0a73d890e9b7">position_L</a> = 0</td></tr>
-<tr class="separator:a0825ddb44b4487ae1fec0a73d890e9b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a218c9d8405b157c31702ea6cf848771d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__storage.html#a218c9d8405b157c31702ea6cf848771d">position_R</a> = <a class="el" href="classclass__storage.html#ad8d15935418c2051a3994a4af8ec6218">max_length</a> - 1</td></tr>
-<tr class="separator:a218c9d8405b157c31702ea6cf848771d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a07b69b23cc9a322d79207d3170fe165b"></a>
@@ -211,7 +195,7 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a7151cdfb718037015ae6d8be0dcb9963"></a>
+<a class="anchor" id="a651a3029dfb16bbba32a72d92207de6a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -224,8 +208,14 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
-          <td class="paramname"><em>direction</em>&#160;</td>
+          <td class="paramtype">int &amp;&#160;</td>
+          <td class="paramname"><em>direction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int &amp;&#160;</td>
+          <td class="paramname"><em>sweep</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -234,7 +224,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Move current position to the left (<code>direction=1</code>) or right (<code>direction=-1</code>), and store the <b>newly enlarged</b> environment. </p>
+<p>Move current position to the left (<code>direction=1</code>) or right (<code>direction=-1</code>), and store the <b>newly enlarged</b> environment. Turn direction around if the edge is reached. </p>
 
 </div>
 </div>
@@ -271,6 +261,23 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="aca3b7a1e0ccbef142d85e3c90361a7f3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_storage::set_length </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>max_length_</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Sets the maximum length of the chain. </p>
+
+</div>
+</div>
 <a class="anchor" id="a27a5109b1b38574b4b3b4587198fb297"></a>
 <div class="memitem">
 <div class="memproto">
@@ -285,98 +292,6 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Store current MPS and environments indexed by their respective positions on the chain. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="a28230a30b2085f4b91340b0fe8956ad0"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;int, Tensor3&gt; class_storage::G_list</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>A list of stored \(\Gamma\)-tensors, indexed by chain position. </p>
-
-</div>
-</div>
-<a class="anchor" id="a9a36c1609ecd2cc6dfb9bec4c8369d4d"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;int, Tensor1&gt; class_storage::L_list</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>A list of stored \(\Lambda\)-tensors, indexed by chain position. </p>
-
-</div>
-</div>
-<a class="anchor" id="a487d155d2a17e7742a973ec03b881d49"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;int,<a class="el" href="classclass__environment___l.html">class_environment_L</a>&gt; class_storage::Lblock_list</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>A list of stored Left block environments, indexed by chain position. </p>
-
-</div>
-</div>
-<a class="anchor" id="ad8d15935418c2051a3994a4af8ec6218"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const int class_storage::max_length</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>The maximum length of the chain </p>
-
-</div>
-</div>
-<a class="anchor" id="a0825ddb44b4487ae1fec0a73d890e9b7"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int class_storage::position_L = 0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>The current position of \(\Gamma^A\) w.r.t the full chain. </p>
-
-</div>
-</div>
-<a class="anchor" id="a218c9d8405b157c31702ea6cf848771d"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int class_storage::position_R = <a class="el" href="classclass__storage.html#ad8d15935418c2051a3994a4af8ec6218">max_length</a> - 1</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>The current position of \(\Gamma^B\) w.r.t the full chain. </p>
-
-</div>
-</div>
-<a class="anchor" id="a45fd733a67be78bd55ba07fd74a7ccd4"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;int,<a class="el" href="classclass__environment___r.html">class_environment_R</a>&gt; class_storage::Rblock_list</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>A list of stored Right block environments, indexed by chain position. </p>
 
 </div>
 </div>

@@ -1,28 +1,21 @@
 //
 // Created by david on 7/22/17.
 //
-
 #include <class_superblock.h>
 #include <iomanip>
-#include "n_model.h"
+#include <Eigen/SVD>
+#include <Eigen/Core>
+#include <n_model.h>
 
 
 using namespace Textra;
 
-class_superblock::class_superblock( const int eigSteps_,
-                                    const double eigThreshold_,
-                                    const double SVDThreshold_,
-                                    const long chi_){
+class_superblock::class_superblock(){
     MPS.initialize(H.local_dimension);
-    chi             = chi_;
     update_bond_dimensions();
-    eigSteps        = eigSteps_;
-    eigThreshold    = eigThreshold_;
-    SVDThreshold    = SVDThreshold_;
-
 }
 
-void class_superblock::find_ground_state(){
+void class_superblock::find_ground_state(int eigSteps, double eigThreshold){
     //============================================================================//
     // Find smallest eigenvalue using Spectra
     //============================================================================//
@@ -47,14 +40,17 @@ void class_superblock::time_evolve(){
 
 }
 
-void class_superblock::truncate(){
+void class_superblock::truncate(long chi, double SVDThreshold){
     Eigen::BDCSVD<MatrixType> SVD;
     SVD.setThreshold(SVDThreshold);
     SVD.compute(tensor2_to_matrix(ground_state), Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chi2       = std::min(SVD.rank(),chi);
 
-//    cout << "chi chi2 chia chib: " << chi  << " " << chi2 << " " << chia << " " << chib << endl;
+//    cout << "chi chi2 nonzero rank singv: " << chi  << " " << chi2 << " " << SVD.nonzeroSingularValues() << " " << SVD.rank()<< " "<< SVD.singularValues().size() << endl;
+//    double renorm   = 1.0 - SVD.singularValues().tail(SVD.singularValues().size()-chi2).sum();
+//    truncation_error= SVD.singularValues().tail(SVD.singularValues().size()-chi2).sum();
     double renorm   = SVD.singularValues().head(chi2).norm();
+    truncation_error= 1.0-renorm;
     U               = matrix_to_tensor3(SVD.matrixU().leftCols(chi2),{d,chia,chi2});
     MPS.LA          = matrix_to_tensor1(SVD.singularValues().head(chi2)) / renorm;
     V               = matrix_to_tensor3(SVD.matrixV().leftCols(chi2),{d,chib,chi2}).shuffle(array3{0,2,1});
@@ -94,31 +90,46 @@ void  class_superblock::swap_AB(){
 }
 
 void class_superblock::reset(){
-    *this = class_superblock(eigSteps, eigThreshold, SVDThreshold, chi);
+    *this = class_superblock();
 }
 
-void class_superblock::print_picture(){
-    cout << Lblock.picture << H.picture << Rblock.picture << endl;
+void class_superblock::print_picture(int verbosity){
+    if (verbosity >= 1) {
+        cout << Lblock.picture << H.picture << Rblock.picture << endl;
+    }
 }
 
-void class_superblock::print_error_DMRG() {
-    double energy = MPS.get_energy(H.asTensor4);
-    cout << setprecision(16);
-    cout << "E_iDMRG = " << energy << endl;
-    cout << "E_exact = " <<  Model::energy_exact << endl;
-    cout << std::scientific;
-    cout << "Error   = " <<  Model::energy_exact - energy << endl;
+void class_superblock::print_state_DMRG(int verbosity) {
+    if (verbosity >= 1) {
+        double energy   = MPS.get_energy(H.asTensor4);
+        Tensor0 entropy = -MPS.LA.contract((MPS.LA.log()/std::log(2.0)).eval(), idxlist1{idx2(0,0)});
+        cout << setprecision(16) << fixed << setw(20) << left;
+        cout << "E_DMRG         =   "   << energy
+             << " Entropy       =   "   << entropy(0)
+             << " Truncation error: "   << std::scientific << truncation_error << endl;
+        if(verbosity >= 2) {
+            cout << "E_exact        = " << std::fixed       << Model::energy_exact << endl;
+            cout << "Error          = " << std::scientific  << Model::energy_exact - energy << endl;
+        }
+    }
 }
 
 
 
-void class_superblock::print_error_TEBD() {
-    double energy = MPS.get_energy(H.asTensor4);
-    cout << setprecision(16);
-    cout << "E_iTEBD = " << energy << endl;
-    cout << "E_exact = " << Model::energy_exact << endl;
-    cout << std::scientific;
-    cout << "Error   = " << Model::energy_exact - energy << endl;
+void class_superblock::print_state_TEBD(int verbosity) {
+    if (verbosity >= 1){
+        double energy  = MPS.get_energy(H.asTensor4);
+        Tensor0 entropy = -MPS.LA.contract((MPS.LA.log()/std::log(2.0)).eval(), idxlist1{idx2(0,0)});
+        cout << setprecision(16) << fixed << setw(20) << left;
+        cout << "E_TEBD         =   "         << energy
+             << " Entropy       =   "         << entropy(0)
+             << " Truncation error: "   << std::scientific << truncation_error
+             << endl;
+        if(verbosity >= 2){
+            cout << "E_exact        = " << std::fixed       << Model::energy_exact << endl;
+            cout << "Error          = " << std::scientific  << Model::energy_exact - energy << endl;
+        }
+    }
 }
 
 

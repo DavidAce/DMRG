@@ -33,7 +33,7 @@ Tensor4 class_MPS::get_theta() const {
 }
 
 void class_MPS::swap_AB(){
-    swap = !swap;
+    swap    = !swap;
     L_tail = LA;
 
     //Swap Gamma

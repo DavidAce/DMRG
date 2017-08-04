@@ -6,10 +6,8 @@
 #define FINITE_DMRG_EIGEN_CLASS_ENVIRONMENT_H
 
 #include <n_tensor_extra.h>
-#include "class_MPS.h"
+#include <class_MPS.h>
 
-
-//enum class environment_side{LEFT,RIGHT};
 
 using namespace Textra;
 using namespace std;

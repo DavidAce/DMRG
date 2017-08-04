@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['fdmrg',['fDMRG',['../main_8cpp.html#aa49fd997d729209884d229d421b5e03d',1,'main.cpp']]],
-  ['find_5fground_5fstate',['find_ground_state',['../classclass__superblock.html#a7a8d6f965eceb5695e07c44d0aaef1a9',1,'class_superblock']]]
+  ['fdmrg',['fDMRG',['../classclass__algorithms.html#a3be23f3471911e6722e41589553aecf7',1,'class_algorithms']]],
+  ['find_5fground_5fstate',['find_ground_state',['../classclass__superblock.html#abfdbb85192198cdae650cbd60f01571a',1,'class_superblock']]]
 ];

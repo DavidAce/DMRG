@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['idmrg',['iDMRG',['../main_8cpp.html#a26a1416d342fdf276939211e7b596a42',1,'main.cpp']]],
-  ['itebd',['iTEBD',['../main_8cpp.html#ab6b629a56f50809f0b6ed6c72a829707',1,'main.cpp']]]
+  ['ga',['GA',['../classclass___m_p_s.html#a51e7a57a898c7836bfabbfcc298d63a2',1,'class_MPS']]],
+  ['gb',['GB',['../classclass___m_p_s.html#ab99c3766043b2488a88bf7dc91e36098',1,'class_MPS']]],
+  ['get_5fenergy',['get_energy',['../classclass___m_p_s.html#a3c635928be6c0ddcefb8c05d34ab407c',1,'class_MPS']]],
+  ['get_5ftheta',['get_theta',['../classclass___m_p_s.html#a931bb52a82a9483434ea8ee3dbfc4b97',1,'class_MPS']]]
 ];

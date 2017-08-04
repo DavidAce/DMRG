@@ -3,9 +3,65 @@ project(Finite_DMRG_eigen)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 # Require MPI for this project:
-find_package(MPI REQUIRED)
-#find_package(OpenMP REQUIRED)
-include_directories(${MPI_INCLUDE_PATH})
+# find_package(MPI REQUIRED)
+#include_directories(${MPI_INCLUDE_PATH})
+
+
+# Require HDF5 for this project
+
+########################################################
+### IF HDF5 IS BUILT FROM SOURCE, USE THESE COMMANDS ###
+#set(HDF5_DIR "/usr/local/HDF5-1.10.1-Linux/HDF_Group/HDF5/1.10.1/share/cmake")
+#find_package(HDF5 NAMES hdf5 COMPONENTS CXX CXX_HL REQUIRED static)
+
+#    link_libraries     (${HDF5_LIBRARIES})
+#    link_libraries     (${HDF5_CXX_STATIC_LIBRARY})
+#    link_libraries     (${HDF5_CXX_HL_STATIC_LIBRARY})
+#    include_directories(${HDF5_INCLUDE_DIR})
+#    add_definitions    (${HDF5_DEFINITIONS})
+
+
+
+
+
+########################################################
+set(HDF5_USE_STATIC_LIBRARIES ON)
+
+find_package(HDF5 COMPONENTS CXX HL REQUIRED)
+#set(HDF5_COMPILER_NO_INTERROGATE TRUE)
+#set(HDF5_CXX_COMPILER_NO_INTERROGATE TRUE)
+get_cmake_property(_variableNames VARIABLES)
+foreach (_variableName ${_variableNames})
+    message(STATUS "${_variableName}=${${_variableName}}")
+endforeach()
+if(HDF5_FOUND)
+    message("Found HDF5:")
+    message("   Version:               ${HDF5_VERSION}")
+    message("   Included dirs:         ${HDF5_INCLUDE_DIRS}")
+    message("   Required        libs:  ${HDF5_LIBRARIES}")
+    message("   Required CXX    libs:  ${HDF5_CXX_LIBRARIES}")
+    message("   Required CXX_HL libs:  ${HDF5_CXX_HL_LIBRARIES}")
+
+    include_directories(${HDF5_INCLUDE_DIR})
+    include_directories(${HDF5_INCLUDE_DIRS})
+    add_definitions    (${HDF5_DEFINITIONS})
+    link_libraries     (${HDF5_LIBRARIES})
+    link_libraries     (${HDF5_HL_LIBRARIES})
+    link_libraries     (${HDF5_CXX_LIBRARIES})
+    link_libraries     (${HDF5_CXX_HL_LIBRARIES})
+#    target_link_libraries(Finite_DMRG_eigen ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
+#    set(CMAKE_CXX_COMPILER ${HDF5_CXX_COMPILER_EXECUTABLE})
+else()
+    message("Please install HDF5")
+    message(" > sudo apt install libhdf5-cpp-11 libhdf5-10 libhdf5-dev libhdf5-doc")
+    message(FATAL_ERROR "HDF5 installation not found!")
+endif()
+
+
+# Require OpenMP
+# find_package(OpenMP REQUIRED)
+
+# include eigen3 and spectra
 include_directories(eigen3)
 include_directories(spectra/include)
 
@@ -61,7 +117,9 @@ endif()
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID}")
 
 
-
+###########################################
+###  Add all source files recursively   ###
+###########################################
 file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
 
@@ -75,5 +133,5 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 
 include_directories(${INCLUDE_DIRS})
 message("SOURCE FILES: ${SOURCES}")
-add_executable(Finite_DMRG_eigen ${SOURCES} source/main.h source/class_algorithms.cpp source/class_algorithms.h)
+add_executable(Finite_DMRG_eigen ${SOURCES})
 
