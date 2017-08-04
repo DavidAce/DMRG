@@ -10,6 +10,17 @@
 #include <iostream>
 #include <n_tensor_extra.h>
 using namespace Textra;
+
+
+
+/*!
+ \brief Writes and reads data to a binary hdf5-file.
+
+ # HDF5 Class
+
+   
+*/
+
 class class_hdf5 {
 public:
     hid_t       file_id;
