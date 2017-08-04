@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['single_5fpicture',['single_picture',['../classclass__environment___l.html#ae8a9aef9f983ff0580d7e2ee9da1d1d9',1,'class_environment_L::single_picture()'],['../classclass__environment___r.html#a92410fb5b1d4fe0cad21a4099c6694af',1,'class_environment_R::single_picture()']]],
-  ['size',['size',['../classclass__environment___l.html#a24d7fa03475506a8ee1d1d27609dd665',1,'class_environment_L::size()'],['../classclass__environment___r.html#ac40c1e8c49257d8764d2fe073e363ad8',1,'class_environment_R::size()']]]
+  ['max_5ffdmrg_5fsweeps',['max_fdmrg_sweeps',['../structparameters.html#a701bae067a0daea4df4952036bbd088e',1,'parameters']]],
+  ['max_5fidmrg_5flength',['max_idmrg_length',['../structparameters.html#a20b13550b072174f9981485917aa4f5f',1,'parameters']]],
+  ['max_5fitebd_5fsteps',['max_itebd_steps',['../structparameters.html#a26e457f06683d96d4df989ba5fa650b6',1,'parameters']]],
+  ['mps',['MPS',['../classclass__superblock.html#a9989ee56695bf210091e4a668777b323',1,'class_superblock']]]
 ];

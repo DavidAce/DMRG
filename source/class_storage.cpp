@@ -6,8 +6,14 @@
 #include <class_superblock.h>
 
 
-void class_storage::store_insert(const class_superblock &superblock){
+void class_storage::set_length(int max_length_) {
+    max_length = max_length_;
+    length_is_set = true;
+}
 
+
+void class_storage::store_insert(const class_superblock &superblock){
+    if(!length_is_set){print_error_and_exit(1);}
 
     position_L = superblock.Lblock.size;
     position_R = max_length - superblock.Rblock.size - 1;
@@ -71,7 +77,7 @@ void class_storage::overwrite_MPS(const class_superblock &superblock) {
 }
 
 
-void class_storage::move(class_superblock &superblock, const int direction){
+void class_storage::move(class_superblock &superblock, int &direction, int &sweep){
     //Take current MPS and generate an Lblock one larger and store it in disk for later loading
 
     position_L += direction;
@@ -81,6 +87,16 @@ void class_storage::move(class_superblock &superblock, const int direction){
     }else{
         Rblock_list[position_R]  = superblock.Rblock;
     }
+
+    //Check edge
+    if (position_L <= 1 || position_R >= max_length - 1) {
+        direction *= -1;
+    }
+
+    //Check if the middle is passed
+    if(direction == 1 && position_L == max_length/2 -1 && position_R == max_length/2){
+        sweep++;
+    }
 }
 
 
@@ -89,4 +105,11 @@ void class_storage::print_storage(){
     for (auto &G : G_list){
         cout << G.first  << ": " << G.second.dimensions() << endl;
     }
+}
+
+
+void  class_storage::print_error_and_exit(int error_type){
+    cout << "Maximum chain length has not been set!" << endl;
+    cout << "try calling class_storage::set_length(int) before using it." << endl;
+    exit(error_type);
 }

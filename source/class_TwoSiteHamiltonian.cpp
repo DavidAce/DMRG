@@ -15,11 +15,6 @@ class_TwoSiteHamiltonian::class_TwoSiteHamiltonian(){
     W               = Model::W(sites);
     local_dimension = Model::local_dimension;
     picture         = "**";
-
     asTimeEvolution = matrix_to_tensor4((-delta * asMatrix).exp().eval(), array4{2,2,2,2});
-    cout << setprecision(3);
-    cout  << "H: " << endl << asMatrix << endl;
-    cout  << "U: " << endl << asTimeEvolution << endl;
-
 };
 
