@@ -146,12 +146,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>time_evolve</b> ()</t
 <tr class="memitem:ac18250c64ae17f054104f050d017d3b7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac18250c64ae17f054104f050d017d3b7"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
 <tr class="separator:ac18250c64ae17f054104f050d017d3b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ad10811db34a0a3e14ee1843c4f6547"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a9ad10811db34a0a3e14ee1843c4f6547">print_picture</a> (int verbosity)</td></tr>
-<tr class="separator:a9ad10811db34a0a3e14ee1843c4f6547"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e34bb0db83122f821fae395a5ec3705"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a2e34bb0db83122f821fae395a5ec3705">print_state_DMRG</a> (int verbosity)</td></tr>
-<tr class="separator:a2e34bb0db83122f821fae395a5ec3705"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad67c322b3160a1d897c69b13fb43e034"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#ad67c322b3160a1d897c69b13fb43e034">print_state_TEBD</a> (int verbosity)</td></tr>
-<tr class="separator:ad67c322b3160a1d897c69b13fb43e034"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0145a695293e2f14c510d208118b4e23"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a0145a695293e2f14c510d208118b4e23">print_picture</a> (bool graphics)</td></tr>
+<tr class="separator:a0145a695293e2f14c510d208118b4e23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9cad5d0f24202e10c2c5343a79d6f8e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#ad9cad5d0f24202e10c2c5343a79d6f8e">print_state</a> (int verbosity, string name=&quot;&quot;)</td></tr>
+<tr class="separator:ad9cad5d0f24202e10c2c5343a79d6f8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba65a6fd12a15cddd175d29dcb8d89f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#aba65a6fd12a15cddd175d29dcb8d89f0">perform_op</a> (const double *x_in, double *y_out) const </td></tr>
 <tr class="separator:aba65a6fd12a15cddd175d29dcb8d89f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a6c6209412468a5b064e80432c0aa10"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a6c6209412468a5b064e80432c0aa10"></a>
@@ -273,15 +271,15 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a9ad10811db34a0a3e14ee1843c4f6547"></a>
+<a class="anchor" id="a0145a695293e2f14c510d208118b4e23"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void class_superblock::print_picture </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>verbosity</em></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>graphics</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -290,37 +288,30 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a2e34bb0db83122f821fae395a5ec3705"></a>
+<a class="anchor" id="ad9cad5d0f24202e10c2c5343a79d6f8e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void class_superblock::print_state_DMRG </td>
+          <td class="memname">void class_superblock::print_state </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>verbosity</em></td><td>)</td>
-          <td></td>
+          <td class="paramname"><em>verbosity</em>, </td>
         </tr>
-      </table>
-</div><div class="memdoc">
-<p>Compare current DMRG energy with exact value. </p>
-
-</div>
-</div>
-<a class="anchor" id="ad67c322b3160a1d897c69b13fb43e034"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
         <tr>
-          <td class="memname">void class_superblock::print_state_TEBD </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>verbosity</em></td><td>)</td>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>name</em> = <code>&quot;&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Compare current TEBD energy with exact value. </p>
+<p>Compare current energy with exact value. </p>
 
 </div>
 </div>

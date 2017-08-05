@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['verbosity',['verbosity',['../structparameters.html#a26149e737925f98f84c64b02a7f35c9f',1,'parameters']]]
+  ['time_5fprec',['time_prec',['../structparameters.html#a9120ae166500f60e4765072c915eb11e',1,'parameters']]]
 ];
