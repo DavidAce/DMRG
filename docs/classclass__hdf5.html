@@ -112,7 +112,6 @@ $(document).ready(function(){initNavTree('classclass__hdf5.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classclass__hdf5-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">class_hdf5 Class Reference</div>  </div>
@@ -126,9 +125,9 @@ $(document).ready(function(){initNavTree('classclass__hdf5.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a297a1231e3e242036d36345fcb86790c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a297a1231e3e242036d36345fcb86790c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>class_hdf5</b> (std::string file_name_=&quot;dmrg_output.h5&quot;)</td></tr>
-<tr class="separator:a297a1231e3e242036d36345fcb86790c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9e750dd6d0ce9e968ceafa16ff8c6c0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae9e750dd6d0ce9e968ceafa16ff8c6c0"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>class_hdf5</b> (fs::path file_name_=fs::path(&quot;dmrg_output.h5&quot;), fs::path output_dirname_=fs::path(&quot;output&quot;), bool create_dir_=true)</td></tr>
+<tr class="separator:ae9e750dd6d0ce9e968ceafa16ff8c6c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdcc763ae90ed86d06b7b159c5ce2a6f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abdcc763ae90ed86d06b7b159c5ce2a6f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>open_file</b> ()</td></tr>
 <tr class="separator:abdcc763ae90ed86d06b7b159c5ce2a6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,15 +143,6 @@ template&lt;&gt; </td></tr>
 template&lt;&gt; </td></tr>
 <tr class="memitem:a11e105f1db12b8d089cdfce6d7489c18"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>write_to_hdf5</b> (const MatrixType &amp;matrix, const std::string dataset_name)</td></tr>
 <tr class="separator:a11e105f1db12b8d089cdfce6d7489c18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a376ec84c1e8a234f5a8a9590b35dd6bc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a376ec84c1e8a234f5a8a9590b35dd6bc"></a>
-hid_t&#160;</td><td class="memItemRight" valign="bottom"><b>file_id</b></td></tr>
-<tr class="separator:a376ec84c1e8a234f5a8a9590b35dd6bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a081f811000355dd408fdca58f4986b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a081f811000355dd408fdca58f4986b"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>file_name</b> = &quot;dmrg_output.h5&quot;</td></tr>
-<tr class="separator:a0a081f811000355dd408fdca58f4986b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>source/<a class="el" href="class__hdf5_8h_source.html">class_hdf5.h</a></li>
