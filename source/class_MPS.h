@@ -61,7 +61,8 @@ public:
     void initialize(const long local_dimension_);   /*! Sets local dimension*/
     Tensor4 get_theta() const;                      /*! Returns rank 4 tensor \f$\Theta\f$.*/
     void swap_AB();                                 /*! Swaps the roles of A and B. Used in infinite DMRG.*/
-    double get_energy(const Tensor4 &Hamiltonian);   /*! Computes the current energy by contracting the current MPS with the Hamiltonian MPO.*/
+    double get_energy(const Tensor4 &Hamiltonian);  /*! Computes the current energy by contracting the current MPS with the Hamiltonian MPO.*/
+    double get_entropy();                           /*! Computes the current entropy \f$ S = - \sum_n \lambda_n log( \lambda_n) \f$, where \f$\lambda_n \f$ are elements of \f$ \Lambda^A\f$ */
 };
 
 

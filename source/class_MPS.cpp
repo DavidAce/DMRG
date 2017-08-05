@@ -64,3 +64,9 @@ double class_MPS::get_energy(const Tensor4 &Hamiltonian) {
     return result(0);
 
 }
+
+double class_MPS::get_entropy() {
+//    Tensor0 result = -LA.contract((LA.log()/std::log(2.0)).eval(), idxlist1{idx2(0,0)});
+    Tensor0 result = -LA.square().contract((LA.square().log()).eval(), idxlist1{idx2(0,0)});
+    return result(0);
+}

@@ -31,9 +31,9 @@ find_package(HDF5 COMPONENTS CXX HL REQUIRED)
 #set(HDF5_COMPILER_NO_INTERROGATE TRUE)
 #set(HDF5_CXX_COMPILER_NO_INTERROGATE TRUE)
 get_cmake_property(_variableNames VARIABLES)
-foreach (_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
+#foreach (_variableName ${_variableNames})
+#    message(STATUS "${_variableName}=${${_variableName}}")
+#endforeach()
 if(HDF5_FOUND)
     message("Found HDF5:")
     message("   Version:               ${HDF5_VERSION}")
@@ -94,6 +94,9 @@ endforeach()
 
 
 
+
+
+
 ###################################
 #Change flags depending on host
 ###################################
@@ -108,6 +111,7 @@ else()
 #    set(CMAKE_CXX_COMPILER mpicxx)
 #    set(CMAKE_CXX_COMPILER g++)
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-report")
+
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-partial-specialization")
     endif()
@@ -134,4 +138,4 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 include_directories(${INCLUDE_DIRS})
 message("SOURCE FILES: ${SOURCES}")
 add_executable(Finite_DMRG_eigen ${SOURCES})
-
+target_link_libraries(Finite_DMRG_eigen -lstdc++fs)

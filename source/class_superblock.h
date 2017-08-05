@@ -61,9 +61,8 @@ public:
 
     void reset();
 
-    void print_picture(int verbosity);                  /*!< Print a pretty picture of the current chain.*/
-    void print_state_DMRG(int verbosity);               /*!< Compare current DMRG energy with exact value.*/
-    void print_state_TEBD(int verbosity);               /*!< Compare current TEBD energy with exact value.*/
+    void print_picture(bool graphics);                  /*!< Print a pretty picture of the current chain.*/
+    void print_state(int verbosity, string name = ""); /*!< Compare current energy with exact value.*/
 
     /*! Function for eigenvalue solver Spectra
      *  Defines the matrix-vector product in the left side of \f$Av = \lambda \f$*/

@@ -93,44 +93,30 @@ void class_superblock::reset(){
     *this = class_superblock();
 }
 
-void class_superblock::print_picture(int verbosity){
-    if (verbosity >= 1) {
+void class_superblock::print_picture(bool graphics){
+    if (graphics) {
         cout << Lblock.picture << H.picture << Rblock.picture << endl;
     }
 }
 
-void class_superblock::print_state_DMRG(int verbosity) {
+void class_superblock::print_state(int verbosity, string name) {
     if (verbosity >= 1) {
         double energy   = MPS.get_energy(H.asTensor4);
-        Tensor0 entropy = -MPS.LA.contract((MPS.LA.log()/std::log(2.0)).eval(), idxlist1{idx2(0,0)});
-        cout << setprecision(16) << fixed << setw(20) << left;
-        cout << "E_DMRG         =   "   << energy
-             << " Entropy       =   "   << entropy(0)
-             << " Truncation error: "   << std::scientific << truncation_error << endl;
+        double entropy  = MPS.get_entropy();
+        cout << setprecision(16) << fixed << left;
+        cout << setw(20) << "E_" + name << " = "   << energy << endl;
         if(verbosity >= 2) {
-            cout << "E_exact        = " << std::fixed       << Model::energy_exact << endl;
-            cout << "Error          = " << std::scientific  << Model::energy_exact - energy << endl;
+            cout  << setw(20) << "E_exact"              << " = " << setprecision(16) << fixed      << Model::energy_exact << endl;
+            cout  << setw(20) << "Entanglement Entropy" << " = " << setprecision(16) << fixed      << entropy << endl;
+            cout  << setw(20) << "E_error"              << " = " << setprecision(4)  << scientific << energy - Model::energy_exact << endl;
+            cout  << setw(20) << "Truncation error"     << " = " << setprecision(4)  << scientific << truncation_error << endl;
+
+
         }
     }
 }
 
 
-
-void class_superblock::print_state_TEBD(int verbosity) {
-    if (verbosity >= 1){
-        double energy  = MPS.get_energy(H.asTensor4);
-        Tensor0 entropy = -MPS.LA.contract((MPS.LA.log()/std::log(2.0)).eval(), idxlist1{idx2(0,0)});
-        cout << setprecision(16) << fixed << setw(20) << left;
-        cout << "E_TEBD         =   "         << energy
-             << " Entropy       =   "         << entropy(0)
-             << " Truncation error: "   << std::scientific << truncation_error
-             << endl;
-        if(verbosity >= 2){
-            cout << "E_exact        = " << std::fixed       << Model::energy_exact << endl;
-            cout << "Error          = " << std::scientific  << Model::energy_exact - energy << endl;
-        }
-    }
-}
 
 
 

@@ -32,12 +32,12 @@ void class_algorithms::iDMRG(class_superblock &superblock, class_storage &storag
         t_mps.tic();    superblock.update_MPS();                                                t_mps.toc();
         t_sto.tic();    storage.store_insert(superblock);                                       t_sto.toc();
         t_env.tic();    superblock.enlarge_environment();                                       t_env.toc();
-                        superblock.print_picture(params.verbosity);
-                        superblock.print_state_DMRG(params.verbosity);
+                        superblock.print_picture(params.graphics);
+        superblock.print_state(params.verbosity);
                         superblock.swap_AB();
     }
     t_tot.toc();
-    superblock.print_state_DMRG(params.verbosity + 1);
+    superblock.print_state(params.verbosity + 1);
     t_eig.print_time_w_percent();
     t_svd.print_time_w_percent();
     t_env.print_time_w_percent();
@@ -71,7 +71,6 @@ void class_algorithms::fDMRG(class_superblock &superblock, class_storage &storag
                                                         std::max(params.chi_max, params.chi+10)
                                                         : params.chi);
 
-    cout << "Using chi: " << chi_list.transpose() << endl;
     while(sweep < params.max_fdmrg_sweeps) {
                         int chi = chi_list(sweep);
                         storage.load(superblock);
@@ -80,14 +79,14 @@ void class_algorithms::fDMRG(class_superblock &superblock, class_storage &storag
         t_svd.tic();    superblock.truncate         (chi            , params.SVDThreshold);     t_svd.toc();
         t_mps.tic();    superblock.update_MPS();                                                t_mps.toc();
         t_sto.tic();    storage.overwrite_MPS(superblock);                                      t_sto.toc();
-                        superblock.print_picture(params.verbosity);
-                        superblock.print_state_DMRG(params.verbosity);
+                        superblock.print_picture(params.graphics);
+        superblock.print_state(params.verbosity);
         t_env.tic();    superblock.enlarge_environment(direction);                              t_env.toc();
         t_sto.tic();    storage.move(superblock, direction, sweep);                             t_sto.toc();
     }
 
     t_tot.toc();
-    superblock.print_state_DMRG(params.verbosity + 1);
+    superblock.print_state(params.verbosity + 1);
     t_eig.print_time_w_percent();
     t_svd.print_time_w_percent();
     t_env.print_time_w_percent();
@@ -119,7 +118,7 @@ void class_algorithms::iTEBD(class_superblock &superblock){
                         superblock.swap_AB();
     }
     t_tot.toc();
-    superblock.print_state_TEBD(params.verbosity+1);
+    superblock.print_state(params.verbosity+1);
     t_evo.print_time_w_percent();
     t_svd.print_time_w_percent();
     t_mps.print_time_w_percent();

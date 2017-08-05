@@ -1,6 +1,5 @@
 #ifndef FINITE_DMRG_EIGEN_MAIN_H_H
 #define FINITE_DMRG_EIGEN_MAIN_H_H
-/*************************************************************************************************/
 
 /*! \mainpage
  * \brief This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm.
@@ -76,6 +75,5 @@ The following software is required and has been included:
 
 */
 
-/*************************************************************************************************/
 
 #endif //FINITE_DMRG_EIGEN_MAIN_H_H
