@@ -24,10 +24,11 @@ struct parameters{
     int             max_fdmrg_sweeps    = 4;            /*!< Number sweeps along the 1D quantum chain. */
     int             max_itebd_steps     = 5000;         /*!< Number of iTEBD iterations. */
     //Profiling
-    bool            profiling           = false;
-    int             time_prec           = 5;
+    bool            profiling           = false;        /*!< Turns profiling options on/off. */
+    int             time_prec           = 5;            /*!< Sets precision of time output. */
     //Verbosity level
-    int             verbosity           = 0;            /*!< Three-level verbosity */
+    int             verbosity           = 0;            /*!< Three-level verbosity. */
+    bool            graphics            = true;         /*!< Whether to print the chain graphically at each iteration.*/
 
 };
 

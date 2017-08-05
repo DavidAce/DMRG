@@ -9,6 +9,10 @@
 #include <hdf5_hl.h>
 #include <iostream>
 #include <n_tensor_extra.h>
+#include <experimental/filesystem>
+
+namespace fs = std::experimental::filesystem::v1;
+
 using namespace Textra;
 
 
@@ -18,20 +22,28 @@ using namespace Textra;
 
  # HDF5 Class
 
-   
+
 */
 
 class class_hdf5 {
-public:
+private:
     hid_t       file_id;
-    std::string file_name = "dmrg_output.h5";
-    class_hdf5(std::string file_name_ =  "dmrg_output.h5"):file_name(file_name_){
+    fs::path    executable_path    = fs::current_path();
+    fs::path    output_path;
+    fs::path    output_dirname;
+    fs::path    file_name;
+    bool create_dir;
+    void set_output_path();
+
+public:
+
+    class_hdf5(fs::path file_name_ = fs::path("dmrg_output.h5"), fs::path output_dirname_ = fs::path("output"), bool create_dir_ = true):
+            file_name(file_name_),
+            output_dirname(output_dirname_),
+            create_dir(create_dir_)
+    {
+        set_output_path();
         file_id = H5Fcreate (file_name.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
-    }
-
-
-    ~class_hdf5(){
-        H5Fclose (file_id);
     }
 
     void open_file(){
@@ -45,8 +57,11 @@ public:
         hsize_t     dims[rank];
         hid_t scalar = get_ScalarType(tensor);
         std::copy(tensor.dimensions().begin(), tensor.dimensions().end(), dims);
-        std::cout << " Tensor : Rank " << rank << " dims: " << dims[0] << dims[1] << dims[2] << dims[3] << "\n" << tensor << std::endl;
         H5LTmake_dataset(file_id,dataset_name.c_str(), rank, dims,scalar,tensor.data());
+    }
+
+    ~class_hdf5(){
+        H5Fclose (file_id);
     }
 
 private:
