@@ -8,6 +8,5 @@ var annotated_dup =
     [ "class_storage", "classclass__storage.html", "classclass__storage" ],
     [ "class_superblock", "classclass__superblock.html", "classclass__superblock" ],
     [ "class_tic_toc", "classclass__tic__toc.html", "classclass__tic__toc" ],
-    [ "class_TwoSiteHamiltonian", "classclass___two_site_hamiltonian.html", "classclass___two_site_hamiltonian" ],
-    [ "parameters", "structparameters.html", "structparameters" ]
+    [ "class_TwoSiteHamiltonian", "classclass___two_site_hamiltonian.html", "classclass___two_site_hamiltonian" ]
 ];

@@ -52,6 +52,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -131,18 +132,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abdcc763ae90ed86d06b7b159c5ce2a6f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abdcc763ae90ed86d06b7b159c5ce2a6f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>open_file</b> ()</td></tr>
 <tr class="separator:abdcc763ae90ed86d06b7b159c5ce2a6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa75a2bc5384f92b59bf237ca2b4b641c"><td class="memTemplParams" colspan="2"><a class="anchor" id="aa75a2bc5384f92b59bf237ca2b4b641c"></a>
-template&lt;typename TensorType &gt; </td></tr>
-<tr class="memitem:aa75a2bc5384f92b59bf237ca2b4b641c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>write_to_hdf5</b> (const TensorType &amp;tensor, const std::string dataset_name)</td></tr>
-<tr class="separator:aa75a2bc5384f92b59bf237ca2b4b641c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11e105f1db12b8d089cdfce6d7489c18"><td class="memTemplParams" colspan="2"><a class="anchor" id="a11e105f1db12b8d089cdfce6d7489c18"></a>
-template&lt;&gt; </td></tr>
-<tr class="memitem:a11e105f1db12b8d089cdfce6d7489c18"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>write_to_hdf5</b> (const MatrixType &amp;matrix, const std::string dataset_name)</td></tr>
-<tr class="separator:a11e105f1db12b8d089cdfce6d7489c18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11e105f1db12b8d089cdfce6d7489c18"><td class="memTemplParams" colspan="2"><a class="anchor" id="a11e105f1db12b8d089cdfce6d7489c18"></a>
-template&lt;&gt; </td></tr>
-<tr class="memitem:a11e105f1db12b8d089cdfce6d7489c18"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>write_to_hdf5</b> (const MatrixType &amp;matrix, const std::string dataset_name)</td></tr>
-<tr class="separator:a11e105f1db12b8d089cdfce6d7489c18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abab1368cba13f84ea07890ac774c3700"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abab1368cba13f84ea07890ac774c3700"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>create_group</b> (const std::string group_relative_name)</td></tr>
+<tr class="separator:abab1368cba13f84ea07890ac774c3700"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6b79f509d6f8f4c61433647277ab30d"><td class="memTemplParams" colspan="2"><a class="anchor" id="ac6b79f509d6f8f4c61433647277ab30d"></a>
+template&lt;typename DataType &gt; </td></tr>
+<tr class="memitem:ac6b79f509d6f8f4c61433647277ab30d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>write_to_hdf5</b> (const DataType &amp;data, const std::string dataset_relative_name)</td></tr>
+<tr class="separator:ac6b79f509d6f8f4c61433647277ab30d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>source/<a class="el" href="class__hdf5_8h_source.html">class_hdf5.h</a></li>
