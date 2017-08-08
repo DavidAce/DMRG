@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['chi',['chi',['../structparameters.html#afa9322fcb1eaf8fa8a59bbff17147a13',1,'parameters']]],
   ['class_5falgorithms',['class_algorithms',['../classclass__algorithms.html',1,'']]],
   ['class_5fenvironment_5fl',['class_environment_L',['../classclass__environment___l.html',1,'']]],
   ['class_5fenvironment_5fr',['class_environment_R',['../classclass__environment___r.html',1,'']]],

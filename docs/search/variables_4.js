@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['ga',['GA',['../classclass___m_p_s.html#a51e7a57a898c7836bfabbfcc298d63a2',1,'class_MPS']]],
-  ['gb',['GB',['../classclass___m_p_s.html#ab99c3766043b2488a88bf7dc91e36098',1,'class_MPS']]],
-  ['graphics',['graphics',['../structparameters.html#adc41dcf00f8dcdb48693cce3d5d9d027',1,'parameters']]]
+  ['picture',['picture',['../classclass__environment___l.html#aa21df2a11d777fc21d486a578b67551f',1,'class_environment_L::picture()'],['../classclass__environment___r.html#a7ef5549a7d6217cb0b3e9503857e5c8d',1,'class_environment_R::picture()']]]
 ];

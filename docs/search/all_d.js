@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['textra',['Textra',['../namespace_textra.html',1,'']]],
-  ['time_5fprec',['time_prec',['../structparameters.html#a9120ae166500f60e4765072c915eb11e',1,'parameters']]],
-  ['truncate',['truncate',['../classclass__superblock.html#a7e372f4d5721a1d41175bc99359aaf9b',1,'class_superblock']]]
+  ['update_5fbond_5fdimensions',['update_bond_dimensions',['../classclass__superblock.html#abe0ca58bd3b1ba7ee12e8b3a617c2759',1,'class_superblock']]],
+  ['update_5fmps',['update_MPS',['../classclass__superblock.html#ae8df112baac53bd9ede08bc766b26fd5',1,'class_superblock']]]
 ];
