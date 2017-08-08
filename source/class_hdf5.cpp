@@ -8,12 +8,13 @@
 
 // Specializations
 template<>
-void class_hdf5::write_to_hdf5<MatrixType>(const MatrixType &matrix, const std::string dataset_name){
+hid_t class_hdf5::get_DataSpace<MatrixType>(const MatrixType &matrix){
     int rank = 2;
-    hsize_t     dims[rank] = {(hsize_t)matrix.rows(),(hsize_t) matrix.cols()};
-    hid_t scalar = get_ScalarType(matrix);
-    H5LTmake_dataset(file_id,dataset_name.c_str(), rank, dims,scalar,matrix.data());
+    hsize_t dims[rank] = {(hsize_t)matrix.rows(),(hsize_t) matrix.cols()};
+    return H5Screate_simple(rank, dims, nullptr);
 }
+
+
 
 void class_hdf5::set_output_path() {
     output_path = fs::system_complete(output_dirname);

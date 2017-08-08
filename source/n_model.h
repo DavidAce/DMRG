@@ -47,6 +47,7 @@ namespace Model {
     extern std::vector<MatrixXcd> SZ;
 
     void generate_spins(const int sites);
+    void get_exact_energy();
     MatrixType Hamiltonian(const int sites);
     Tensor4 W(const int sites);
 

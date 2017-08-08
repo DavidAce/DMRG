@@ -12,25 +12,24 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 ########################################################
 ### IF HDF5 IS BUILT FROM SOURCE, USE THESE COMMANDS ###
 #set(HDF5_DIR "/usr/local/HDF5-1.10.1-Linux/HDF_Group/HDF5/1.10.1/share/cmake")
-#find_package(HDF5 NAMES hdf5 COMPONENTS CXX CXX_HL REQUIRED static)
-
+#find_package(HDF5 NAMES hdf5 COMPONENTS CXX CXX_HL NO_MODULE REQUIRED static)
+#
 #    link_libraries     (${HDF5_LIBRARIES})
 #    link_libraries     (${HDF5_CXX_STATIC_LIBRARY})
 #    link_libraries     (${HDF5_CXX_HL_STATIC_LIBRARY})
 #    include_directories(${HDF5_INCLUDE_DIR})
 #    add_definitions    (${HDF5_DEFINITIONS})
-
-
+#
+#
 
 
 
 ########################################################
 set(HDF5_USE_STATIC_LIBRARIES ON)
 
-find_package(HDF5 COMPONENTS CXX HL REQUIRED)
-#set(HDF5_COMPILER_NO_INTERROGATE TRUE)
-#set(HDF5_CXX_COMPILER_NO_INTERROGATE TRUE)
-get_cmake_property(_variableNames VARIABLES)
+#find_package(HDF5 COMPONENTS CXX HL REQUIRED)
+find_package(HDF5 COMPONENTS CXX REQUIRED)
+#get_cmake_property(_variableNames VARIABLES)
 #foreach (_variableName ${_variableNames})
 #    message(STATUS "${_variableName}=${${_variableName}}")
 #endforeach()
@@ -137,5 +136,5 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 
 include_directories(${INCLUDE_DIRS})
 message("SOURCE FILES: ${SOURCES}")
-add_executable(Finite_DMRG_eigen ${SOURCES})
+add_executable(Finite_DMRG_eigen ${SOURCES} )
 target_link_libraries(Finite_DMRG_eigen -lstdc++fs)

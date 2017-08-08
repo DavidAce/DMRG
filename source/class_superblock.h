@@ -9,6 +9,7 @@
 #include <class_environment.h>
 #include <class_MPS.h>
 #include <class_TwoSiteHamiltonian.h>
+//#include <class_hdf5.h>
 
 
 /*!
@@ -63,7 +64,7 @@ public:
 
     void print_picture(bool graphics);                  /*!< Print a pretty picture of the current chain.*/
     void print_state(int verbosity, string name = ""); /*!< Compare current energy with exact value.*/
-
+//    void write_state(class_hdf5 &hdf5);
     /*! Function for eigenvalue solver Spectra
      *  Defines the matrix-vector product in the left side of \f$Av = \lambda \f$*/
     void perform_op(const double *x_in, double *y_out) const;

@@ -110,12 +110,18 @@ void class_superblock::print_state(int verbosity, string name) {
             cout  << setw(20) << "Entanglement Entropy" << " = " << setprecision(16) << fixed      << entropy << endl;
             cout  << setw(20) << "E_error"              << " = " << setprecision(4)  << scientific << energy - Model::energy_exact << endl;
             cout  << setw(20) << "Truncation error"     << " = " << setprecision(4)  << scientific << truncation_error << endl;
-
+            cout  << setw(20) << "Chi"                  << " = " << setprecision(4)  << fixed        <<  MPS.GA.dimension(2) << endl;
 
         }
+
     }
 }
 
+//
+//void class_superblock::write_state(class_hdf5 &hdf5){
+//
+//}
+//
 
 
 
