@@ -601,7 +601,7 @@ SORT_GROUP_NAMES       = NO
 SORT_BY_SCOPE_NAME     = NO
 
 # If the STRICT_PROTO_MATCHING option is enabled and doxygen fails to do proper
-# type resolution of all parameters of a function it will reject a match between
+# type resolution of all settings of a function it will reject a match between
 # the prototype and the implementation of a member function even if there is
 # only one candidate or it is obvious which candidate to choose by doing a
 # simple string match. By disabling STRICT_PROTO_MATCHING doxygen will still
@@ -734,15 +734,15 @@ WARNINGS               = YES
 WARN_IF_UNDOCUMENTED   = YES
 
 # If the WARN_IF_DOC_ERROR tag is set to YES, doxygen will generate warnings for
-# potential errors in the documentation, such as not documenting some parameters
-# in a documented function, or documenting parameters that don't exist or using
+# potential errors in the documentation, such as not documenting some settings
+# in a documented function, or documenting settings that don't exist or using
 # markup commands wrongly.
 # The default value is: YES.
 
 WARN_IF_DOC_ERROR      = YES
 
 # This WARN_NO_PARAMDOC option can be enabled to get warnings for functions that
-# are documented, but have no documentation for their parameters or return
+# are documented, but have no documentation for their settings or return
 # value. If set to NO, doxygen will only warn about wrong or incomplete
 # parameter documentation, but not about the absence of documentation.
 # The default value is: NO.

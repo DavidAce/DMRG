@@ -5,6 +5,7 @@
 #include <class_superblock.h>
 #include <class_storage.h>
 #include <class_algorithms.h>
+#include <n_settings.h>
 using namespace std;
 using namespace Eigen;
 using namespace Textra;
@@ -22,27 +23,41 @@ int main() {
     class_superblock superblock;
     class_storage storage;
     class_hdf5 hdf5(string("myfile.h5"), string("../output"), true);
-    //Change some parameters if you don't like the default values
-    algorithms.params.max_idmrg_length  = 100;
-    algorithms.params.max_fdmrg_sweeps  = 4;
-    algorithms.params.max_itebd_steps   = 100000;
-    algorithms.params.delta_t           = 0.0001;
-    algorithms.params.SVDThreshold      = 1e-10;
-    algorithms.params.chi               = 10;
-    algorithms.params.chi_max           = 30;
-    algorithms.params.increasing_chi    = true;
-    algorithms.params.verbosity         = 0;
-    algorithms.params.graphics          = true;
-    algorithms.params.profiling         = true;
+
+
+    //Change some settings if you don't like the default values
+    settings::max_idmrg_length  = 100;
+    settings::max_fdmrg_sweeps  = 4;
+    settings::max_itebd_steps   = 1000;
+    settings::max_fes_steps     = 1000;
+    settings::SVDThreshold      = 1e-8;
+    settings::chi               = 10;
+    settings::max_fes_chi       = 15;
+    settings::verbosity         = 3;
+    settings::graphics          = true;
+    settings::profiling         = true;
 
     //Run the algorithms
-    algorithms.iDMRG(superblock, storage);
-    algorithms.fDMRG(superblock, storage);
-    algorithms.iTEBD(superblock);
+    algorithms.iDMRG(superblock, storage, hdf5);
+    algorithms.fDMRG(superblock, storage, hdf5);
+    algorithms.iTEBD(superblock, hdf5);
+    algorithms.FES(superblock,   hdf5);
 
-    hdf5.write_to_hdf5(superblock.H.asMatrix,        "Hamiltonian");
-    hdf5.write_to_hdf5(superblock.H.asTensor4,       "Hamiltonian MPO");
-    hdf5.write_to_hdf5(superblock.H.asTimeEvolution, "Hamiltonian time evolution");
+
+    /*! \todo  Measure finite-entanglement scaling:
+     *  - Grow the system once with iDMRG
+     *  - Do fDMRG for some sweeps
+     *  - Store mps and all observables to hdf5
+     *  - repeat
+     *
+     *
+     *  .... Or maybe use itebd as explained in the paper Jens H sent.
+     */
+
+    //Write results to file
+    hdf5.write_to_hdf5(superblock.H.asMatrix,        "/Hamiltonian/H");
+    hdf5.write_to_hdf5(superblock.H.asTensor4,       "/Hamiltonian/MPO");
+    hdf5.write_to_hdf5(superblock.H.asTimeEvolution, "/Hamiltonian/time evolution");
     return 0;
 }
 
