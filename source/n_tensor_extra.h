@@ -20,6 +20,20 @@
 
 namespace Textra {
     using Scalar        = double;
+    using idx2          = Eigen::IndexPair<long>;
+    using MatrixType    = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic,Eigen::ColMajor>;
+    using VectorType    = Eigen::Matrix<Scalar,Eigen::Dynamic, 1, Eigen::ColMajor>;
+
+    template<long rank> using idxlist       = Eigen::array<idx2, rank>;
+    template<long rank> using Tensor        = Eigen::Tensor<Scalar,rank,Eigen::ColMajor>;
+    template<long rank> using const_Tensor  = Eigen::Tensor<const Scalar,rank,Eigen::ColMajor>;
+    template<long rank> using array         = Eigen::array<long, rank>;
+
+
+
+
+
+
     using Tensor4       = Eigen::Tensor<Scalar,4,Eigen::ColMajor>;
     using Tensor3       = Eigen::Tensor<Scalar,3,Eigen::ColMajor>;
     using Tensor2       = Eigen::Tensor<Scalar,2,Eigen::ColMajor>;
@@ -30,17 +44,29 @@ namespace Textra {
     using const_Tensor2 = Eigen::Tensor<const Scalar,2,Eigen::ColMajor>;
     using const_Tensor1 = Eigen::Tensor<const Scalar,1,Eigen::ColMajor>;
 
-    using MatrixType    = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic,Eigen::ColMajor>;
-    using VectorType    = Eigen::Matrix<Scalar,Eigen::Dynamic, 1, Eigen::ColMajor>;
     using array4        = Eigen::array<long, 4>;
     using array3        = Eigen::array<long, 3>;
     using array2        = Eigen::array<long, 2>;
     using array1        = Eigen::array<long, 1>;
-    using idx2          = Eigen::IndexPair<int>;
     using idxlist1      = Eigen::array<idx2, 1>;
     using idxlist2      = Eigen::array<idx2, 2>;
     using idxlist3      = Eigen::array<idx2, 3>;
     using idxlist4      = Eigen::array<idx2, 4>;
+
+
+    extern Tensor<2> asDiagonal        (const Eigen::TensorRef<const Tensor<1>> tensor);
+    extern Tensor<2> asInverseDiagonal (const Eigen::TensorRef<const Tensor<1>> tensor);
+    extern Tensor<1> matrix_to_tensor1(const Eigen::Ref<const MatrixType> matrix);
+    extern Tensor<2> matrix_to_tensor2(const Eigen::Ref<const MatrixType> matrix);
+
+
+    template<long rank>
+    Tensor<rank> matrix_to_tensor(const Eigen::Ref<const MatrixType> matrix, array<rank> dims){
+        return Eigen::TensorMap<const_Tensor<rank>>(matrix.data(), dims);
+    }
+
+    extern MatrixType tensor2_to_matrix(const Eigen::TensorRef<const Tensor<2>> tensor);
+
 
 
 
@@ -65,17 +91,6 @@ namespace Textra {
         return out;
     }
 
-
-    extern Tensor3 reshape(MatrixType matrix, array3 dims);
-    extern Tensor2 asDiagonal       (const Eigen::TensorRef<const Tensor1> tensor);
-    extern Tensor2 asInverseDiagonal(const Eigen::TensorRef<const Tensor1> tensor);
-    extern Tensor1 matrix_to_tensor1(const Eigen::Ref<const MatrixType> matrix);
-    extern Tensor2 matrix_to_tensor2(const Eigen::Ref<const MatrixType> matrix);
-    extern Tensor2 matrix_to_tensor2(const Eigen::Ref<const MatrixType> matrix, array2 dims);
-    extern Tensor3 matrix_to_tensor3(const Eigen::Ref<const MatrixType> matrix, array3 dims);
-    extern Tensor4 matrix_to_tensor4(const Eigen::Ref<const MatrixType> matrix, array4 dims);
-//    extern MatrixType tensor2_to_matrix(const Tensor2 &tensor);
-    extern MatrixType tensor2_to_matrix(const Eigen::TensorRef<const Tensor2> tensor);
 };
 
 

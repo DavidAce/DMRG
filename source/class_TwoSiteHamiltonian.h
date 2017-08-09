@@ -20,10 +20,8 @@ public:
     long local_dimension;       // "Spin" dimension
     string picture;             // Graphical representation
     Tensor4 W;                  // MPO representation of Hamiltonian
-    MatrixType asMatrix;        // Matrix   representation of full two-site Hamiltonian
+    MatrixType asMatrix;        // Matrix  representation of full two-site Hamiltonian
     Tensor4 asTensor4;          // Tensor4 representation of full two-site Hamiltonian.
-
-    double delta = 0.005;
     Tensor4 asTimeEvolution;    // Tensor4 unitary time evolution operator for iTEBD.
 };
 

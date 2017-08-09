@@ -51,22 +51,20 @@ void class_MPS::swap_AB(){
 //    L.swap_AB();
 }
 
-double class_MPS::get_energy(const Tensor4 &Hamiltonian) {
-    Tensor4 LGLGL = asDiagonal(L_tail)
+Tensor0 class_MPS::get_energy(const Tensor4 &Hamiltonian) {
+   Tensor4 LGLGL = asDiagonal(L_tail)
             .contract(GA, idxlist1{idx2(1,1)})
             .contract(asDiagonal(LA), idxlist1{idx2(2,0)})
             .contract(GB, idxlist1{idx2(2,1)})
             .contract(asDiagonal(LB), idxlist1{idx2(3,0)})
             .shuffle(array4{1,2,0,3});
 
-    Tensor0 result = Hamiltonian.contract(LGLGL.conjugate(), idxlist2{idx2(0,0), idx2(1,1)})
+    return  Hamiltonian.contract(LGLGL.conjugate(), idxlist2{idx2(0,0), idx2(1,1)})
             .contract(LGLGL, idxlist4{idx2(0,0),idx2(1,1),idx2(2,2),idx2(3,3)});
-    return result(0);
 
 }
 
-double class_MPS::get_entropy() {
+Tensor0 class_MPS::get_entropy() {
 //    Tensor0 result = -LA.contract((LA.log()/std::log(2.0)).eval(), idxlist1{idx2(0,0)});
-    Tensor0 result = -LA.square().contract((LA.square().log()).eval(), idxlist1{idx2(0,0)});
-    return result(0);
+    return -LA.square().contract((LA.square().log()).eval(), idxlist1{idx2(0,0)});
 }

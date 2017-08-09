@@ -38,6 +38,7 @@ IntegerType ipow(IntegerType x, IntegerType p){
 
 
 
+
 //
 //template<typename Input, typename From, typename To>
 //auto prod(const Input &in, const From from, const To to){
