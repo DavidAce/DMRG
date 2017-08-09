@@ -54,7 +54,7 @@ void class_tic_toc::print_time(){
 }
 
 //void class_tic_toc::print_time(high_resolution_clock::duration total_runtime){
-//    if (profiling) {
+//    if (profiling_on) {
 //        cout << name
 //             << fixed << setprecision(print_precision) << setw(print_precision + padding) << left
 //             << duration_cast<duration<double>>(measured_time).count() << " s |"

@@ -2,17 +2,8 @@
 // Created by david on 8/1/17.
 //
 
-#include "class_hdf5.h"
+#include <class_hdf5.h>
 
-
-
-// Specializations
-template<>
-hid_t class_hdf5::get_DataSpace<MatrixType>(const MatrixType &matrix){
-    int rank = 2;
-    hsize_t dims[rank] = {(hsize_t)matrix.rows(),(hsize_t) matrix.cols()};
-    return H5Screate_simple(rank, dims, nullptr);
-}
 
 
 

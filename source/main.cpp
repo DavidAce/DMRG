@@ -17,31 +17,32 @@ int main() {
         \return an integer 0 upon exit success
     */
 
+    //Change some settings if you don't like the default values
+    settings::idmrg_max_length  = 100;
+    settings::fdmrg_max_sweeps  = 4;
+    settings::itebd_max_steps   = 1000;
+    settings::fes_max_steps     = 1000;
+    settings::SVDThreshold      = 1e-8;
+    settings::chi               = 10;
+    settings::fes_max_chi       = 15;
+    settings::hdf5_save_to_file = true;
+    settings::console_verbosity = 3;
+    settings::console_graphics  = true;
+    settings::profiling_on      = true;
 
     //Initialize the algorithm collection, the superblock, storage and hdf5 disk storage classes
     class_algorithms algorithms;
     class_superblock superblock;
     class_storage storage;
-    class_hdf5 hdf5(string("myfile.h5"), string("../output"), true);
+//    class_hdf5 hdf5(string("myfile.h5"), string("../output"), true);
 
 
-    //Change some settings if you don't like the default values
-    settings::max_idmrg_length  = 100;
-    settings::max_fdmrg_sweeps  = 4;
-    settings::max_itebd_steps   = 1000;
-    settings::max_fes_steps     = 1000;
-    settings::SVDThreshold      = 1e-8;
-    settings::chi               = 10;
-    settings::max_fes_chi       = 15;
-    settings::verbosity         = 3;
-    settings::graphics          = true;
-    settings::profiling         = true;
 
     //Run the algorithms
-    algorithms.iDMRG(superblock, storage, hdf5);
-    algorithms.fDMRG(superblock, storage, hdf5);
-    algorithms.iTEBD(superblock, hdf5);
-    algorithms.FES(superblock,   hdf5);
+    algorithms.iDMRG(superblock, storage);
+    algorithms.fDMRG(superblock, storage);
+    algorithms.iTEBD(superblock);
+    algorithms.FES(superblock);
 
 
     /*! \todo  Measure finite-entanglement scaling:
@@ -55,9 +56,9 @@ int main() {
      */
 
     //Write results to file
-    hdf5.write_to_hdf5(superblock.H.asMatrix,        "/Hamiltonian/H");
-    hdf5.write_to_hdf5(superblock.H.asTensor4,       "/Hamiltonian/MPO");
-    hdf5.write_to_hdf5(superblock.H.asTimeEvolution, "/Hamiltonian/time evolution");
+//    hdf5.write_to_file(superblock.H.asMatrix,        "/Hamiltonian/H");
+//    hdf5.write_to_file(superblock.H.asTensor4,       "/Hamiltonian/MPO");
+//    hdf5.write_to_file(superblock.H.asTimeEvolution, "/Hamiltonian/time evolution");
     return 0;
 }
 

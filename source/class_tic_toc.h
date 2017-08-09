@@ -18,7 +18,7 @@ class class_tic_toc {
 private:
     high_resolution_clock::time_point tic_timepoint;
     high_resolution_clock::time_point start_timepoint;
-    bool profiling           = false;           //Whether we are profiling or not.
+    bool profiling           = false;           //Whether we are profiling_on or not.
     int print_precision      = 5 ;
     string name              = "";
     int padding              = 5;

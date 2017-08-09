@@ -32,7 +32,7 @@ void class_superblock::find_ground_state(int eigSteps, double eigThreshold){
         cout << "Eigenvalue solver failed." << endl;
         exit(1);
     }
-    ground_state =  matrix_to_tensor2(eigs.eigenvectors(), shape2);
+    ground_state =  matrix_to_tensor<2>(eigs.eigenvectors(), shape2);
 }
 
 void class_superblock::time_evolve(){
@@ -51,9 +51,9 @@ void class_superblock::truncate(long chi, double SVDThreshold){
 //    truncation_error= SVD.singularValues().tail(SVD.singularValues().size()-chi2).sum();
     double renorm   = SVD.singularValues().head(chi2).norm();
     truncation_error= 1.0-renorm;
-    U               = matrix_to_tensor3(SVD.matrixU().leftCols(chi2),{d,chia,chi2});
-    MPS.LA          = matrix_to_tensor1(SVD.singularValues().head(chi2)) / renorm;
-    V               = matrix_to_tensor3(SVD.matrixV().leftCols(chi2),{d,chib,chi2}).shuffle(array3{0,2,1});
+    U               = matrix_to_tensor<3>(SVD.matrixU().leftCols(chi2),{d,chia,chi2});
+    MPS.LA          = matrix_to_tensor<1>(SVD.singularValues().head(chi2), {chi2}) / renorm;
+    V               = matrix_to_tensor<3>(SVD.matrixV().leftCols(chi2),{d,chib,chi2}).shuffle(array3{0,2,1});
 }
 
 
@@ -101,8 +101,8 @@ void class_superblock::print_picture(bool graphics){
 
 void class_superblock::print_state(int verbosity, string name) {
     if (verbosity >= 1) {
-        double energy   = MPS.get_energy(H.asTensor4);
-        double entropy  = MPS.get_entropy();
+        double energy   = MPS.get_energy(H.asTensor4)(0);
+        double entropy  = MPS.get_entropy()(0);
         cout << setprecision(16) << fixed << left;
         cout << setw(20) << "E_" + name << " = "   << energy << endl;
         if(verbosity >= 2) {
