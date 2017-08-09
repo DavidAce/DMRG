@@ -151,16 +151,16 @@ public:
     }
 
 
-    //Overloads will wrap the input data inside an Eigen-Type.
-    template <typename T, typename std::enable_if<std::is_arithmetic<T>::value>::type>
-    void write_to_file(const T &data, const std::string dataset_relative_name){
-        Eigen::TensorMap<Eigen::Tensor<T,1>> wrapper(*data,1);
+    //Overload for scalar values wraps the input data inside an Eigen-Type.
+    template <typename DataType, typename std::enable_if<std::is_arithmetic<DataType>::value>::type>
+    void write_to_file(const DataType &data, const std::string dataset_relative_name){
+        Eigen::TensorMap<Eigen::Tensor<DataType,1>> wrapper(*data,1);
         write_to_file(wrapper, dataset_relative_name);
     };
-    //Overloads will wrap the input data inside an Eigen-Type.
-    template<typename T>
-    void write_to_file(const std::vector<T> &data, const std::string dataset_relative_name){
-        Eigen::TensorMap<Eigen::Tensor<T,1>> wrapper(data.data(),data.size());
+    //Overload for vector will wraps the input data inside an Eigen-Type.
+    template<typename DataType>
+    void write_to_file(const std::vector<DataType> &data, const std::string dataset_relative_name){
+        Eigen::TensorMap<Eigen::Tensor<DataType,1>> wrapper(data.data(),data.size());
         write_to_file(wrapper, dataset_relative_name);
     }
 
