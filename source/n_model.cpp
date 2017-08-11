@@ -8,19 +8,6 @@
 using namespace std;
 
 namespace Model{
-    double J = 1.0;
-    double g = 0.5;
-    double energy_exact = -1.063544409973372; //Exact ground state energy.
-
-    long local_dimension = 2;
-    Matrix2cd sx;
-    Matrix2cd sy;
-    Matrix2cd sz;
-    Matrix2cd I;
-    std::vector<MatrixXcd> SY;
-    std::vector<MatrixXcd> SZ;
-    std::vector<MatrixXcd> SX;
-
     void generate_spins(const int sites) {
         sx << 0.0, 1.0,
               1.0, 0.0;
@@ -50,21 +37,17 @@ namespace Model{
         }
     }
 
-    void get_exact_energy(){
-
-
-//        f = lambda k, g: -2 * np.sqrt(1 + g ** 2 - 2 * g * np.cos(k)) / np.pi / 2.
-//        E0_exact = integrate.quad(f, 0, np.pi, args=(g,))[0]
-//        print("E_exact =", E0_exact)
+    double get_exact_energy(){
+        return Math::compute_integral([](double x){return -2.0 * sqrt(1.0 + g*g - 2.0*g*cos(x))/M_PI/2.0 ;},{0, M_PI});
     }
 
 
     MatrixType Hamiltonian(const int sites) {
         generate_spins(sites);
-        MatrixType H = MatrixType::Zero(ipow(2, sites), ipow(2, sites));
+        MatrixType H = MatrixType::Zero(Math::ipow(2, sites), Math::ipow(2, sites));
 
         for (int i = 0; i < sites; i++) {
-            H += -0.5 * (J * SZ[i] * SZ[mod(i + 1, sites)] + g * SX[i]).real();
+            H += 0.5 * (J * SZ[i] * SZ[Math::mod(i + 1, sites)] + g * SX[i]).real();
         }
         return H;
     }
@@ -74,10 +57,11 @@ namespace Model{
         //Returns the Hamiltonian as A rank 4 MPO. Notation following Schollwöck (2010)
         generate_spins(sites);
         MatrixXcd W(6,6);
+        W.setZero();
         W.block(0,0,2,2) = I;
         W.block(2,0,2,2) = sz;
-        W.block(4,0,2,2) = -g*sx;
-        W.block(4,2,2,2) = -J*sz;
+        W.block(4,0,2,2) = g*sx;
+        W.block(4,2,2,2) = J*sz;
         W.block(4,4,2,2) = I;
         return matrix_to_tensor2(W.real()).reshape(array4{2,3,2,3}).shuffle(array4{3,1,2,0});
 

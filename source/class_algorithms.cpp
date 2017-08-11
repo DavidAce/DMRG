@@ -28,14 +28,14 @@ void class_algorithms::iDMRG(class_superblock &superblock, class_storage &storag
     t_tot.tic();
     int length = 0;
     while(length < s::idmrg_max_length){
-        length += 2;
+                        length += 2;
                         superblock.update_bond_dimensions();
         t_eig.tic();    superblock.find_ground_state(s::eigSteps, s::eigThreshold);     t_eig.toc();
         t_svd.tic();    superblock.truncate         (s::chi     , s::SVDThreshold);     t_svd.toc();
         t_mps.tic();    superblock.update_MPS();                                        t_mps.toc();
         t_sto.tic();    storage.store_insert(superblock);                               t_sto.toc();
         t_env.tic();    superblock.enlarge_environment();                               t_env.toc();
-                        superblock.print_picture(s::console_graphics);
+        superblock.print_picture(s::console_graphics);
                         superblock.print_state(s::console_verbosity);
                         write_to_file_DMRG(superblock,length);
                         superblock.swap_AB();
@@ -48,6 +48,7 @@ void class_algorithms::iDMRG(class_superblock &superblock, class_storage &storag
     t_sto.print_time_w_percent();
     t_mps.print_time_w_percent();
     t_tot.print_time();
+    write_to_file_model(superblock);
 }
 
 
@@ -142,13 +143,13 @@ void class_algorithms::FES(class_superblock &superblock){
     class_tic_toc t_mps(s::profiling_on, s::profiling_precision, "FES Update MPS           ");
     class_tic_toc t_tot(s::profiling_on, s::profiling_precision, "FES Total Time           ");
 
-    superblock.reset();
     t_tot.tic();
 
     Eigen::ArrayXi chi_list = Eigen::ArrayXi::LinSpaced(s::fes_num_chi,
                                                         s::fes_min_chi,
                                                         s::fes_max_chi);
     for(auto chi = chi_list.data() ; chi != chi_list.data() + chi_list.size() ; ++chi) {
+        superblock.reset();
         for (auto steps = 0; steps < s::fes_max_steps; steps++) {
             superblock.update_bond_dimensions();
             t_evo.tic();    superblock.time_evolve();                               t_evo.toc();

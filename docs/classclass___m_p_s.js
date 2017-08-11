@@ -1,8 +1,8 @@
 var classclass___m_p_s =
 [
     [ "class_MPS", "classclass___m_p_s.html#a383b5c5b2d621af50c2972b031ea86ce", null ],
-    [ "get_energy", "classclass___m_p_s.html#a3c635928be6c0ddcefb8c05d34ab407c", null ],
-    [ "get_entropy", "classclass___m_p_s.html#a0a4c51df564d84ae908bc86fb5380d24", null ],
+    [ "get_energy", "classclass___m_p_s.html#ae2d945f5d325f6d418990f6d1874e6c9", null ],
+    [ "get_entropy", "classclass___m_p_s.html#a77f1de61e41492f209f73a6de8ccee48", null ],
     [ "get_theta", "classclass___m_p_s.html#a931bb52a82a9483434ea8ee3dbfc4b97", null ],
     [ "initialize", "classclass___m_p_s.html#a80efa1edd3f6c6e532a25d3ea61d46de", null ],
     [ "swap_AB", "classclass___m_p_s.html#a27502b59d10647f0037b71e148654d65", null ],

@@ -8,5 +8,6 @@ var searchData=
   ['class_5fstorage',['class_storage',['../classclass__storage.html',1,'class_storage'],['../classclass__storage.html#a07b69b23cc9a322d79207d3170fe165b',1,'class_storage::class_storage()']]],
   ['class_5fsuperblock',['class_superblock',['../classclass__superblock.html',1,'']]],
   ['class_5ftic_5ftoc',['class_tic_toc',['../classclass__tic__toc.html',1,'']]],
-  ['class_5ftwositehamiltonian',['class_TwoSiteHamiltonian',['../classclass___two_site_hamiltonian.html',1,'']]]
+  ['class_5ftwositehamiltonian',['class_TwoSiteHamiltonian',['../classclass___two_site_hamiltonian.html',1,'']]],
+  ['compute_5fintegral',['compute_integral',['../namespace_math.html#a7cd16bfbced6aa47dd31fd44474d07f0',1,'Math']]]
 ];
