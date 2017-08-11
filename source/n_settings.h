@@ -27,7 +27,7 @@ namespace settings{
     //Parameters controlling Finite-entanglement scaling (FES)
     inline int             fes_max_steps       = 1000;         /*!< Number of FES iterations per chi-value. */
     inline int             fes_min_chi         = 10;
-    inline int             fes_max_chi         = 50;
+    inline int             fes_max_chi         = 20;
     inline int             fes_num_chi         = 3;           /*!< Number of chi values for FES. */
 
     //Save data to hdf5

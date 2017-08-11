@@ -13,6 +13,7 @@ using namespace Textra;
 */
 int main() {
 
+    std::cout << "Current git revision: " << GIT_REVISION << '\n';
 
     //Change some settings if you don't like the default values
     settings::hdf5_save_to_file = true;
