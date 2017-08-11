@@ -2,6 +2,18 @@ cmake_minimum_required(VERSION 3.5)
 project(Finite_DMRG_eigen)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
+#######################
+### Get git version ###
+#######################
+execute_process(
+        COMMAND git rev-list HEAD --count
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_REVISION
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+add_definitions("-DGIT_REVISION=${GIT_REVISION}")
+message("Git revision: ${GIT_REVISION}")
+
 # Require MPI for this project:
 # find_package(MPI REQUIRED)
 #include_directories(${MPI_INCLUDE_PATH})
