@@ -181,7 +181,7 @@ private:
         if(std::is_same<DataType, float>::value)        {return  H5Tcopy(H5T_NATIVE_FLOAT);}
         if constexpr (tc::has_member_scalar <DataType>::value)   {return  get_DataType<typename DataType::Scalar>();}
         if constexpr (tc::has_member_value_type<DataType>::value){return  get_DataType<typename DataType::value_type>();}
-        std::cout << "get_DataType can't match the type provided" << std::endl;
+        std::cout << "get_DataType can't match the type provided" << '\n';
         exit(1);
     }
 
@@ -209,7 +209,7 @@ private:
             hsize_t dims[rank] = {1};
             return H5Screate_simple(rank, dims, nullptr);
         }
-        std::cout << "get_DataSpace can't match the type provided" << std::endl;
+        std::cout << "get_DataSpace can't match the type provided" << '\n';
         exit(1);
     }
 
