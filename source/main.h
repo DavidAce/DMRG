@@ -67,19 +67,19 @@ which in code reads
 
  ## Requirements
  The following software is required:
- * [g++-7 for -std=c++17 support](https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test) for newer features. To install in Ubuntu:
+ - [g++-7 for -std=c++17 support](https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test) for newer features. To install in Ubuntu:
     \code
      sudo add-apt-repository ppa:ubuntu-toolchain-r/test
      sudo apt update
      sudo apt install gcc-7 g++-7
     \endcode
- * [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition. **Included, no action needed**
- * [Spectra](https://spectralib.org/)  for eigenvalue-solver. **Included, no action needed**
- * [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support. To install in Ubuntu:
+ - [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition. **Included, no action needed**
+ - [Spectra](https://spectralib.org/)  for eigenvalue-solver. **Included, no action needed**
+ - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support. To install in Ubuntu:
      \code
      sudo apt install libhdf5-dev libhdf5-10 libhdf5-cpp-11
      \endcode
- * [GSL](https://www.gnu.org/software/gsl/) for numerical integration. To install in Ubuntu:
+ - [GSL](https://www.gnu.org/software/gsl/) for numerical integration. To install in Ubuntu:
     \code
     sudo apt install libgsl-dev libgsl2
     \endcode

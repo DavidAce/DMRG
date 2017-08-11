@@ -18,18 +18,16 @@ void class_hdf5::set_output_path() {
         //Try to find the directory
         output_path = executable_path / output_dirname.stem();
         while (true) {
-            std::cout << "Searching for directory: " << output_path << std::endl;
+            std::cout << "Searching for directory: " << output_path << '\n';
             if (fs::exists(output_path)) {
                 output_path = fs::canonical(output_path);
-                std::cout << "Found " << output_dirname << " directory: " << output_path << std::endl;
+                std::cout << "Found " << output_dirname << " directory: " << output_path << '\n';
                 break;
             } else if (output_path.parent_path().has_parent_path()) {
                 output_path = output_path.parent_path().parent_path() / output_dirname.stem();
             } else {
-                std::cout << "ERROR: " << output_dirname << " folder does not exist and create_dir == false"
-                          << std::endl;
-                std::cout << "Either create an " << output_dirname << "  directory manually or pass create_dir = true."
-                          << std::endl;
+                std::cout << "ERROR: " << output_dirname << " folder does not exist and create_dir == false. \n";
+                std::cout << "Either create an " << output_dirname << "  directory manually or pass create_dir = true.\n";
                 exit(1);
             }
         }
