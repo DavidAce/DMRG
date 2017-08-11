@@ -52,7 +52,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
@@ -116,10 +115,7 @@ $(document).ready(function(){initNavTree('main_8cpp.html','');});
 <div class="title">main.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;class_hdf5.h&gt;</code><br />
-<code>#include &lt;class_tic_toc.h&gt;</code><br />
-<code>#include &lt;n_tensor_extra.h&gt;</code><br />
-<code>#include &lt;class_superblock.h&gt;</code><br />
+<div class="textblock"><code>#include &lt;class_superblock.h&gt;</code><br />
 <code>#include &lt;class_storage.h&gt;</code><br />
 <code>#include &lt;class_algorithms.h&gt;</code><br />
 <code>#include &lt;n_settings.h&gt;</code><br />
@@ -127,6 +123,7 @@ $(document).ready(function(){initNavTree('main_8cpp.html','');});
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a> ()</td></tr>
+<tr class="memdesc:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main function. Sets simulation parameters and excecutes the desired algorithms.  <a href="#ae66f6b31b5ad750f1fe042a706a4e3d4">More...</a><br /></td></tr>
 <tr class="separator:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -142,15 +139,9 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Main function. Sets simulation parameters and excecutes the desired algorithms. </p><dl class="section return"><dt>Returns</dt><dd>an integer 0 upon exit success</dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>Measure finite-entanglement scaling:<ul>
-<li>Grow the system once with iDMRG</li>
-<li>Do fDMRG for some sweeps</li>
-<li>Store mps and all observables to hdf5</li>
-<li>repeat</li>
-</ul>
-</dd></dl>
-<p>.... Or maybe use itebd as explained in the paper Jens H sent.</p>
+
+<p>Main function. Sets simulation parameters and excecutes the desired algorithms. </p>
+<dl class="section return"><dt>Returns</dt><dd>an integer 0 upon exit success </dd></dl>
 
 </div>
 </div>

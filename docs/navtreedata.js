@@ -1,7 +1,6 @@
 var NAVTREE =
 [
   [ "DMRG", "index.html", [
-    [ "Todo List", "todo.html", null ],
     [ "Namespaces", null, [
       [ "Namespace List", "namespaces.html", "namespaces" ],
       [ "Namespace Members", "namespacemembers.html", [

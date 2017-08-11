@@ -52,7 +52,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -147,11 +146,8 @@ $(document).ready(function(){initNavTree('index.html','');});
 <pre class="fragment">                                [d] [d]                0   1
             Theta     = [chia]___|___|___[chib] = 2 ___|___|___ 3
 </pre><p>which in code reads</p>
-<div class="fragment"><div class="line">Textra::Tensor4 G(d,d,chia,chib);</div></div><!-- fragment --><h1>Requirements</h1>
-<p>The following software is required and has been included:</p><ul>
-<li><a href="http://eigen.tuxfamily.org">Eigen</a> for linear algebra, tensor and matrix support.</li>
-<li><a href="https://spectralib.org/">Spectra</a> for diagonalization.</li>
-</ul>
+<div class="fragment"><div class="line">Textra::Tensor4 G(d,d,chia,chib);</div></div><!-- fragment --><h2>Requirements</h2>
+<p>The following software is required: <a href="https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test">g++-7 for -std=c++17 support</a> for newer features. To install in Ubuntu: ``` &gt; sudo add-apt-repository ppa:ubuntu-toolchain-r/test &gt; sudo apt update &gt; sudo apt install gcc-7 g++-7 ``` <a href="http://eigen.tuxfamily.org">Eigen</a> for tensor support and SVD decomposition. <b>Included, no action needed</b> <a href="https://spectralib.org/">Spectra</a> for eigenvalue-solver. <b>Included, no action needed</b> <a href="https://support.hdfgroup.org/HDF5/">HDF5</a> for hdf5-file storage support. To install in Ubuntu: ``` sudo apt install libhdf5-dev libhdf5-10 libhdf5-cpp-11 ``` <a href="https://www.gnu.org/software/gsl/">GSL</a> for numerical integration. To install in Ubuntu: ``` sudo apt install libgsl-dev libgsl2 ```</p>
 <h1>Details</h1>
 <dl class="section author"><dt>Author</dt><dd>David Aceituno </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>07-2017 </dd></dl>
