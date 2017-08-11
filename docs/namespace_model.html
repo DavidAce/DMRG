@@ -77,6 +77,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="namespaces.html"><span>Namespace&#160;List</span></a></li>
+      <li><a href="namespacemembers.html"><span>Namespace&#160;Members</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -128,9 +129,9 @@ Functions</h2></td></tr>
 <tr class="memitem:af0f7ca56bea794f847e1c012248b2491"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af0f7ca56bea794f847e1c012248b2491"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>generate_spins</b> (const int sites)</td></tr>
 <tr class="separator:af0f7ca56bea794f847e1c012248b2491"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acae16a735820e2e85540efc93d0cce0a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acae16a735820e2e85540efc93d0cce0a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>get_exact_energy</b> ()</td></tr>
-<tr class="separator:acae16a735820e2e85540efc93d0cce0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1afed37e6ac9168cb2c1c9ba0119886"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1afed37e6ac9168cb2c1c9ba0119886"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>get_exact_energy</b> ()</td></tr>
+<tr class="separator:ab1afed37e6ac9168cb2c1c9ba0119886"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a078365cce2154fc7e300f63941e61b1f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a078365cce2154fc7e300f63941e61b1f"></a>
 MatrixType&#160;</td><td class="memItemRight" valign="bottom"><b>Hamiltonian</b> (const int sites)</td></tr>
 <tr class="separator:a078365cce2154fc7e300f63941e61b1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,17 +142,17 @@ Tensor4&#160;</td><td class="memItemRight" valign="bottom"><b>W</b> (const int s
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:af6938d6571c10a415cb4bd5bfdbe72eb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af6938d6571c10a415cb4bd5bfdbe72eb"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>J</b> = 1.0</td></tr>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>J</b> = -1.0</td></tr>
 <tr class="separator:af6938d6571c10a415cb4bd5bfdbe72eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a582e9bbe9c861dc9090e250f5f35522d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a582e9bbe9c861dc9090e250f5f35522d"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>g</b> = 0.5</td></tr>
 <tr class="separator:a582e9bbe9c861dc9090e250f5f35522d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76650f18a98bc6c404d39a35179a88e3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a76650f18a98bc6c404d39a35179a88e3"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>energy_exact</b> = -1.063544409973372</td></tr>
-<tr class="separator:a76650f18a98bc6c404d39a35179a88e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9373ce073c1c4c4c178ca26c04832825"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9373ce073c1c4c4c178ca26c04832825"></a>
 long&#160;</td><td class="memItemRight" valign="bottom"><b>local_dimension</b> = 2</td></tr>
 <tr class="separator:a9373ce073c1c4c4c178ca26c04832825"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76650f18a98bc6c404d39a35179a88e3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a76650f18a98bc6c404d39a35179a88e3"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>energy_exact</b> = get_exact_energy()</td></tr>
+<tr class="separator:a76650f18a98bc6c404d39a35179a88e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1caa3ad4120b915698234ca32f8c208"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1caa3ad4120b915698234ca32f8c208"></a>
 Matrix2cd&#160;</td><td class="memItemRight" valign="bottom"><b>sx</b></td></tr>
 <tr class="separator:ab1caa3ad4120b915698234ca32f8c208"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,15 +165,15 @@ Matrix2cd&#160;</td><td class="memItemRight" valign="bottom"><b>sz</b></td></tr>
 <tr class="memitem:a60330fa5daf17d8c5ff8947f97417bc0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a60330fa5daf17d8c5ff8947f97417bc0"></a>
 Matrix2cd&#160;</td><td class="memItemRight" valign="bottom"><b>I</b></td></tr>
 <tr class="separator:a60330fa5daf17d8c5ff8947f97417bc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f0c35f39053d515ee464818617f8a43"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f0c35f39053d515ee464818617f8a43"></a>
-std::vector&lt; MatrixXcd &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SY</b></td></tr>
-<tr class="separator:a8f0c35f39053d515ee464818617f8a43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a733fa19ddad414e177e35a8b6ce90bbd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a733fa19ddad414e177e35a8b6ce90bbd"></a>
-std::vector&lt; MatrixXcd &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SZ</b></td></tr>
-<tr class="separator:a733fa19ddad414e177e35a8b6ce90bbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a303942671d61239a486971d87b6de5b6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a303942671d61239a486971d87b6de5b6"></a>
+<tr class="memitem:a456399e72a6ea771a8c23d9004feae19"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a456399e72a6ea771a8c23d9004feae19"></a>
 std::vector&lt; MatrixXcd &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SX</b></td></tr>
-<tr class="separator:a303942671d61239a486971d87b6de5b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a456399e72a6ea771a8c23d9004feae19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf367c211ebbc8fcc614954a81f6a3dc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf367c211ebbc8fcc614954a81f6a3dc"></a>
+std::vector&lt; MatrixXcd &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SY</b></td></tr>
+<tr class="separator:acf367c211ebbc8fcc614954a81f6a3dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5f959b9514345d1197b3e178a8c532a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af5f959b9514345d1197b3e178a8c532a"></a>
+std::vector&lt; MatrixXcd &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SZ</b></td></tr>
+<tr class="separator:af5f959b9514345d1197b3e178a8c532a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

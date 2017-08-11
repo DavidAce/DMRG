@@ -9,7 +9,7 @@
 #include <vector>
 #include <array>
 #include <n_tensor_extra.h>
-#include "funcs.h"
+#include "n_math.h"
 
 using namespace Textra;
 using namespace Eigen;
@@ -30,26 +30,28 @@ using namespace Eigen;
 namespace Model {
 
     //Transverse field Ising model:
+    extern double get_exact_energy();
+    extern void generate_spins(const int sites);
+    extern MatrixType Hamiltonian(const int sites);
+    extern Tensor4 W(const int sites);
 
-    extern double J;
-    extern double g;
-    extern long local_dimension;
-    extern double energy_exact;
+
+    inline double J = -1.0;
+    inline double g = 0.5;
+    inline long local_dimension = 2;
+    inline double energy_exact  = get_exact_energy();  // = -1.063544409973372 if g = 0.5
     //Pauli matrices
-    extern Matrix2cd sx;
-    extern Matrix2cd sy;
-    extern Matrix2cd sz;
-    extern Matrix2cd I;
+    inline Matrix2cd sx;
+    inline Matrix2cd sy;
+    inline Matrix2cd sz;
+    inline Matrix2cd I;
 
     //Spin variables in L-dimensional Hilbert space. L being the particle chain length.
-    extern std::vector<MatrixXcd> SX;
-    extern std::vector<MatrixXcd> SY;
-    extern std::vector<MatrixXcd> SZ;
+    inline std::vector<MatrixXcd> SX;
+    inline std::vector<MatrixXcd> SY;
+    inline std::vector<MatrixXcd> SZ;
 
-    void generate_spins(const int sites);
-    void get_exact_energy();
-    MatrixType Hamiltonian(const int sites);
-    Tensor4 W(const int sites);
+
 
 };
 

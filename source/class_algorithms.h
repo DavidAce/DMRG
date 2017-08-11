@@ -13,9 +13,7 @@
 #include <n_settings.h>
 #include <iostream>
 #include <iomanip>
-
-//namespace s = settings;
-
+#include "n_model.h"
 
 class class_algorithms  {
 private:
@@ -46,6 +44,15 @@ private:
         hdf5.write_to_file(superblock.Rblock.block, group_name + "ENV/Rblock");
         hdf5.write_to_file(superblock.MPS.get_energy(superblock.H.asTensor4), group_name + "Energy");
         hdf5.write_to_file(superblock.MPS.get_entropy(), group_name + "Entropy");
+    }
+
+    void write_to_file_model(class_superblock &superblock){
+        std::string group_name = "/Model/";
+        hdf5.create_group(group_name);
+        hdf5.write_to_file(superblock.H.asTensor4, group_name + "H/asTensor4");
+        hdf5.write_to_file(superblock.H.W, group_name + "H/W");
+        hdf5.write_to_file(superblock.H.asTimeEvolution, group_name + "H/asTimeEvolution");
+        hdf5.write_to_file(superblock.H.asMatrix, group_name + "H/asMatrix");
     }
 
 };

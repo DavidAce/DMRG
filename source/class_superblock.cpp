@@ -29,10 +29,11 @@ void class_superblock::find_ground_state(int eigSteps, double eigThreshold){
     eigs.compute(eigSteps,eigThreshold, Spectra::SMALLEST_ALGE);
 
     if(eigs.info() != Spectra::SUCCESSFUL){
-        cout << "Eigenvalue solver failed." << endl;
+        cout << "Eigenvalue solver failed." << '\n';
         exit(1);
     }
     ground_state =  matrix_to_tensor<2>(eigs.eigenvectors(), shape2);
+
 }
 
 void class_superblock::time_evolve(){
@@ -45,10 +46,6 @@ void class_superblock::truncate(long chi, double SVDThreshold){
     SVD.setThreshold(SVDThreshold);
     SVD.compute(tensor2_to_matrix(ground_state), Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chi2       = std::min(SVD.rank(),chi);
-
-//    cout << "chi chi2 nonzero rank singv: " << chi  << " " << chi2 << " " << SVD.nonzeroSingularValues() << " " << SVD.rank()<< " "<< SVD.singularValues().size() << endl;
-//    double renorm   = 1.0 - SVD.singularValues().tail(SVD.singularValues().size()-chi2).sum();
-//    truncation_error= SVD.singularValues().tail(SVD.singularValues().size()-chi2).sum();
     double renorm   = SVD.singularValues().head(chi2).norm();
     truncation_error= 1.0-renorm;
     U               = matrix_to_tensor<3>(SVD.matrixU().leftCols(chi2),{d,chia,chi2});
@@ -95,7 +92,7 @@ void class_superblock::reset(){
 
 void class_superblock::print_picture(bool graphics){
     if (graphics) {
-        cout << Lblock.picture << H.picture << Rblock.picture << endl;
+        cout << Lblock.picture << H.picture << Rblock.picture << '\n';
     }
 }
 
@@ -104,13 +101,13 @@ void class_superblock::print_state(int verbosity, string name) {
         double energy   = MPS.get_energy(H.asTensor4)(0);
         double entropy  = MPS.get_entropy()(0);
         cout << setprecision(16) << fixed << left;
-        cout << setw(20) << "E_" + name << " = "   << energy << endl;
+        cout << setw(20) << "E_" + name << " = "   << energy << '\n';
         if(verbosity >= 2) {
-            cout  << setw(20) << "E_exact"              << " = " << setprecision(16) << fixed      << Model::energy_exact << endl;
-            cout  << setw(20) << "Entanglement Entropy" << " = " << setprecision(16) << fixed      << entropy << endl;
-            cout  << setw(20) << "E_error"              << " = " << setprecision(4)  << scientific << energy - Model::energy_exact << endl;
-            cout  << setw(20) << "Truncation error"     << " = " << setprecision(4)  << scientific << truncation_error << endl;
-            cout  << setw(20) << "Chi"                  << " = " << setprecision(4)  << fixed        <<  MPS.GA.dimension(2) << endl;
+            cout  << setw(20) << "E_exact"              << " = " << setprecision(16) << fixed      << Model::energy_exact << '\n';
+            cout  << setw(20) << "Entanglement Entropy" << " = " << setprecision(16) << fixed      << entropy << '\n';
+            cout  << setw(20) << "E_error"              << " = " << setprecision(4)  << scientific << energy - Model::energy_exact << '\n';
+            cout  << setw(20) << "Truncation error"     << " = " << setprecision(4)  << scientific << truncation_error << '\n';
+            cout  << setw(20) << "Chi"                  << " = " << setprecision(4)  << fixed        <<  MPS.GA.dimension(2) << '\n';
 
         }
 

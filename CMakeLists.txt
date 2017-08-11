@@ -8,9 +8,9 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 
 # Require HDF5 for this project
-
 ########################################################
 ### IF HDF5 IS BUILT FROM SOURCE, USE THESE COMMANDS ###
+########################################################
 #set(HDF5_DIR "/usr/local/HDF5-1.10.1-Linux/HDF_Group/HDF5/1.10.1/share/cmake")
 #find_package(HDF5 NAMES hdf5 COMPONENTS CXX CXX_HL NO_MODULE REQUIRED static)
 #
@@ -21,13 +21,9 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 #    add_definitions    (${HDF5_DEFINITIONS})
 #
 #
-
-
-
 ########################################################
-set(HDF5_USE_STATIC_LIBRARIES ON)
 
-#find_package(HDF5 COMPONENTS CXX HL REQUIRED)
+set(HDF5_USE_STATIC_LIBRARIES ON)
 find_package(HDF5 COMPONENTS CXX REQUIRED)
 #get_cmake_property(_variableNames VARIABLES)
 #foreach (_variableName ${_variableNames})
@@ -37,24 +33,22 @@ if(HDF5_FOUND)
     message("Found HDF5:")
     message("   Version:               ${HDF5_VERSION}")
     message("   Included dirs:         ${HDF5_INCLUDE_DIRS}")
-    message("   Required        libs:  ${HDF5_LIBRARIES}")
-    message("   Required CXX    libs:  ${HDF5_CXX_LIBRARIES}")
-    message("   Required CXX_HL libs:  ${HDF5_CXX_HL_LIBRARIES}")
-
-    include_directories(${HDF5_INCLUDE_DIR})
     include_directories(${HDF5_INCLUDE_DIRS})
     add_definitions    (${HDF5_DEFINITIONS})
     link_libraries     (${HDF5_LIBRARIES})
-    link_libraries     (${HDF5_HL_LIBRARIES})
-    link_libraries     (${HDF5_CXX_LIBRARIES})
-    link_libraries     (${HDF5_CXX_HL_LIBRARIES})
-#    target_link_libraries(Finite_DMRG_eigen ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
-#    set(CMAKE_CXX_COMPILER ${HDF5_CXX_COMPILER_EXECUTABLE})
 else()
     message("Please install HDF5")
     message(" > sudo apt install libhdf5-cpp-11 libhdf5-10 libhdf5-dev libhdf5-doc")
     message(FATAL_ERROR "HDF5 installation not found!")
 endif()
+
+
+
+#########################################
+### Require GSL library               ###
+#########################################
+find_package(GSL REQUIRED)
+link_libraries(${GSL_LIBRARIES})
 
 
 # Require OpenMP
@@ -65,40 +59,17 @@ include_directories(eigen3)
 include_directories(spectra/include)
 
 
-##################################
-# Check for c++17 compiler support
-##################################
-include(CheckCXXCompilerFlag)
-set(ENABLE_CXXFLAGS_TO_CHECK
-        -std=c++17
-        -std=c++1z
-        -std=c++14
-        -std=c++1y
-        -std=gnu++1y
-        -std=gnu++14
-        -std=c++11
-        -std=gnu++11)
-
-foreach(flag ${ENABLE_CXXFLAGS_TO_CHECK})
-    string(REPLACE "-std=" "_" flag_var ${flag})
-    string(REPLACE "+" "x" flag_var ${flag_var})
-    check_cxx_compiler_flag("${flag}" COMPILER_HAS_CXX_FLAG${flag_var})
-    if(COMPILER_HAS_CXX_FLAG${flag_var})
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
-        message("Found compiler version: ${CMAKE_CXX_COMPILER_VERSION} ${flag}")
-        break()
-    endif()
-endforeach()
+#########################################
+### Demand for c++17 compiler support ###
+#########################################
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+message("Found compiler version: ${CMAKE_CXX_COMPILER_VERSION}. Standard: -std=cxx${CMAKE_CXX_STANDARD}")
 
 
-
-
-
-
-
-###################################
-#Change flags depending on host
-###################################
+######################################
+### Change flags depending on host ###
+######################################
 site_name(this_host)
 if ("${this_host}" MATCHES "triolith")
     message("Host: ${this_host} (Intel) ")
@@ -136,5 +107,9 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 
 include_directories(${INCLUDE_DIRS})
 message("SOURCE FILES: ${SOURCES}")
-add_executable(Finite_DMRG_eigen ${SOURCES} )
-target_link_libraries(Finite_DMRG_eigen -lstdc++fs)
+add_executable(Finite_DMRG_eigen ${SOURCES} ${HEADERS} )
+
+########################################################
+###  target link libraries GO AFTER ADD_EXECUTABLE   ###
+########################################################
+target_link_libraries(Finite_DMRG_eigen -lstdc++fs) # For experimental::filesystem

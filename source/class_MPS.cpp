@@ -17,7 +17,7 @@ void class_MPS::initialize(const long local_dimension_){
     GB(0,0,0) = 1;
     LB.resize(array1{1});
     LB.setConstant(1.0);
-
+    swap = false;
     L_tail = LA;
 
 }
@@ -45,10 +45,6 @@ void class_MPS::swap_AB(){
     tmp1    = LA;
     LA      = LB;
     LB      = tmp1;
-
-//    L_tail = L.A;
-//    G.swap_AB();
-//    L.swap_AB();
 }
 
 Tensor0 class_MPS::get_energy(const Tensor4 &Hamiltonian) {
