@@ -5,8 +5,7 @@ var indexSectionsWithContent =
   2: "mt",
   3: "m",
   4: "cefgilmopstu",
-  5: "bglmprs",
-  6: "t"
+  5: "bglmprs"
 };
 
 var indexSectionNames =
@@ -16,8 +15,7 @@ var indexSectionNames =
   2: "namespaces",
   3: "files",
   4: "functions",
-  5: "variables",
-  6: "pages"
+  5: "variables"
 };
 
 var indexSectionLabels =
@@ -27,7 +25,6 @@ var indexSectionLabels =
   2: "Namespaces",
   3: "Files",
   4: "Functions",
-  5: "Variables",
-  6: "Pages"
+  5: "Variables"
 };
 
