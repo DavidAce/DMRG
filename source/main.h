@@ -63,10 +63,27 @@ which in code reads
  Textra::Tensor4 G(d,d,chia,chib);
 \endcode
 
-# Requirements
-The following software is required and has been included:
-- [Eigen](http://eigen.tuxfamily.org) for linear algebra, tensor and matrix support.
-- [Spectra](https://spectralib.org/) for diagonalization.
+
+
+ ## Requirements
+ The following software is required:
+ * [g++-7 for -std=c++17 support](https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test) for newer features. To install in Ubuntu:
+    ```
+    > sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+    > sudo apt update
+    > sudo apt install gcc-7 g++-7
+    ```
+ * [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition. **Included, no action needed**
+ * [Spectra](https://spectralib.org/)  for eigenvalue-solver. **Included, no action needed**
+ * [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support. To install in Ubuntu:
+     ```
+     sudo apt install libhdf5-dev libhdf5-10 libhdf5-cpp-11
+     ```
+ * [GSL](https://www.gnu.org/software/gsl/) for numerical integration. To install in Ubuntu:
+    ```
+    sudo apt install libgsl-dev libgsl2
+    ```
+
 
 # Details
  \author    David Aceituno
