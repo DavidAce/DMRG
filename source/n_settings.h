@@ -4,45 +4,65 @@
 
 #ifndef FINITE_DMRG_EIGEN_N_SETTINGS_H
 #define FINITE_DMRG_EIGEN_N_SETTINGS_H
+/*! \brief General settings like max iterations, time-step, precision, etc.*/
 
-namespace settings{
+/*!
+ *  \namespace settings
+ *  This namespace contains settings such as time-step length, number of iterations and precision parameters for
+ *  the different algorithms.
+ *
+ */
+namespace settings {
+
     //Parmaters that control eigensolver and SVD precision
-    inline int             chi                 = 10;           /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-    inline int             eigSteps            = 1000;         /*!< Maximum number of steps for eigenvalue solver. */
-    inline double          eigThreshold        = 1e-12;        /*!< Minimum threshold for halting eigenvalue solver. */
-    inline double          SVDThreshold        = 1e-12;        /*!< Minimum threshold value for keeping singular values. */
+    namespace precision {
+        inline int      eigSteps        = 1000;                /*!< Maximum number of steps for eigenvalue solver. */
+        inline double   eigThreshold    = 1e-12;        /*!< Minimum threshold for halting eigenvalue solver. */
+        inline double   SVDThreshold    = 1e-8;        /*!< Minimum threshold value for keeping singular values. */
+    }
 
     //Parameters controlling iDMRG
-    inline int             idmrg_max_length    = 50;           /*!< Final length of 1D quantum chain. */
-
+    namespace idmrg {
+        inline int max_length   = 50;        /*!< Final length of 1D quantum chain. */
+        inline int max_chi      = 20;           /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+    }
     //Parameters controlling fDMRG
-    inline int             fdmrg_max_sweeps    = 1;             /*!< Number sweeps along the 1D quantum chain. */
-    inline int             fdmrg_max_length    = 50;            /*!< Number sweeps along the 1D quantum chain. */
-
+    namespace fdmrg {
+        inline int max_sweeps   = 1;             /*!< Number sweeps along the 1D quantum chain. */
+        inline int max_length   = 50;            /*!< Number sweeps along the 1D quantum chain. */
+        inline int max_chi      = 20;
+    }
 
     //Parameters controlling iTEBD
-    inline int             itebd_max_steps     = 5000;            /*!< Number of iTEBD iterations. */
-    inline double          itebd_delta_t       = 0.01;            /*!< Time step for iTEBD time evolution.*/
-
+    namespace itebd {
+        inline int      max_steps   = 10000;            /*!< Number of iTEBD iterations. */
+        inline double   delta_t     = 0.01;                /*!< Time step for iTEBD time evolution.*/
+        inline int      max_chi     = 25;
+    }
     //Parameters controlling Finite-entanglement scaling (FES)
-    inline int             fes_max_steps       = 1000;         /*!< Number of FES iterations per chi-value. */
-    inline int             fes_min_chi         = 10;
-    inline int             fes_max_chi         = 20;
-    inline int             fes_num_chi         = 3;           /*!< Number of chi values for FES. */
-
+    namespace fes {
+        inline int      max_steps    = 10000;         /*!< Number of FES iterations per chi-value. */
+        inline double   delta_t      = 0.1;                /*!< Time step for iTEBD time evolution.*/
+        inline int      min_chi      = 5;
+        inline int      max_chi      = 25;
+        inline int      num_chi      = 5;           /*!< Number of chi values for FES. */
+    }
     //Save data to hdf5
-    inline bool            hdf5_save_to_file               = true;
-    inline bool            hdf5_create_dir_if_not_found    = true;
-    inline std::string     hdf5_filename                   = "data.h5";
-    inline std::string     hdf5_path                       = "../output";
-
+    namespace hdf5 {
+        inline bool         save_to_file               = true;
+        inline bool         create_dir_if_not_found    = true;
+        inline std::string  filename                   = "data.h5";
+        inline std::string  path                       = "../output";
+    }
     //Profiling
-    inline bool            profiling_on                    = false;        /*!< Turns profiling options on/off. */
-    inline int             profiling_precision             = 5;            /*!< Sets precision of time output. */
-
-    //Verbosity level
-    inline int             console_verbosity           = 0;            /*!< Three-level verbosity. */
-    inline bool            console_graphics            = true;         /*!< Whether to print the chain graphically at each iteration.*/
-
+    namespace profiling {
+        inline bool     on        = false;        /*!< Turns profiling options on/off. */
+        inline int      precision = 5;            /*!< Sets precision of time output. */
+    }
+    //Console settings
+    namespace console {
+        inline int  verbosity = 0;            /*!< Three-level verbosity. */
+        inline bool graphics = true;          /*!< Whether to print the chain graphically at each iteration.*/
+    }
 };
 #endif //FINITE_DMRG_EIGEN_N_SETTINGS_H

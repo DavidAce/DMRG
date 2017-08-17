@@ -3,37 +3,16 @@
 //
 #include <class_superblock.h>
 #include <iomanip>
-#include <Eigen/SVD>
 #include <Eigen/Core>
 #include <n_model.h>
 
 
 using namespace Textra;
+using namespace Eigen;
 
 class_superblock::class_superblock(){
     MPS.initialize(H.local_dimension);
     update_bond_dimensions();
-}
-
-void class_superblock::find_ground_state(int eigSteps, double eigThreshold){
-    //============================================================================//
-    // Find smallest eigenvalue using Spectra
-    //============================================================================//
-    Spectra::SymEigsSolver<double,
-            Spectra::SMALLEST_ALGE,
-            class_superblock>
-            eigs(this, 1, 4);
-
-    Textra::Tensor1 theta = MPS.get_theta().reshape(shape1);
-    eigs.init(theta.data()); //Throw in the initial vector v0 here
-    eigs.compute(eigSteps,eigThreshold, Spectra::SMALLEST_ALGE);
-
-    if(eigs.info() != Spectra::SUCCESSFUL){
-        cout << "Eigenvalue solver failed." << '\n';
-        exit(1);
-    }
-    ground_state =  matrix_to_tensor<2>(eigs.eigenvectors(), shape2);
-
 }
 
 void class_superblock::time_evolve(){
@@ -41,17 +20,7 @@ void class_superblock::time_evolve(){
 
 }
 
-void class_superblock::truncate(long chi, double SVDThreshold){
-    Eigen::BDCSVD<MatrixType> SVD;
-    SVD.setThreshold(SVDThreshold);
-    SVD.compute(tensor2_to_matrix(ground_state), Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long chi2       = std::min(SVD.rank(),chi);
-    double renorm   = SVD.singularValues().head(chi2).norm();
-    truncation_error= 1.0-renorm;
-    U               = matrix_to_tensor<3>(SVD.matrixU().leftCols(chi2),{d,chia,chi2});
-    MPS.LA          = matrix_to_tensor<1>(SVD.singularValues().head(chi2), {chi2}) / renorm;
-    V               = matrix_to_tensor<3>(SVD.matrixV().leftCols(chi2),{d,chib,chi2}).shuffle(array3{0,2,1});
-}
+
 
 
 void class_superblock::update_MPS(){
@@ -76,9 +45,9 @@ void class_superblock::update_bond_dimensions(){
     d       = H.local_dimension;
     chia    = MPS.GA.dimension(1);
     chib    = MPS.GB.dimension(2);
-    shape1  = {H.local_dimension * chia * H.local_dimension * chib};
-    shape2  = {H.local_dimension * chia , H.local_dimension * chib};
-    shape4  = {H.local_dimension , chia , H.local_dimension , chib};
+    shape1  = {d * chia * d * chib};
+    shape2  = {d * chia , d * chib};
+    shape4  = {d , chia , d , chib};
 }
 
 

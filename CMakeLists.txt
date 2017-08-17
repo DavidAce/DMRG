@@ -119,7 +119,7 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 
 include_directories(${INCLUDE_DIRS})
 message("SOURCE FILES: ${SOURCES}")
-add_executable(Finite_DMRG_eigen ${SOURCES} ${HEADERS} )
+add_executable(Finite_DMRG_eigen ${SOURCES} ${HEADERS} source/n_data_containers.h)
 
 ########################################################
 ###  target link libraries GO AFTER ADD_EXECUTABLE   ###

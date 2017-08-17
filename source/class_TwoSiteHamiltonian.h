@@ -7,7 +7,6 @@
 
 #include <n_tensor_extra.h>
 #include <class_environment.h>
-#include <SymEigsSolver.h>
 
 using namespace std;
 using namespace Textra;
@@ -20,9 +19,11 @@ public:
     long local_dimension;       // "Spin" dimension
     string picture;             // Graphical representation
     Tensor4 W;                  // MPO representation of Hamiltonian
+    MatrixType asMatrix2;       // Matrix  representation of full two-site Hamiltonian
     MatrixType asMatrix;        // Matrix  representation of full two-site Hamiltonian
     Tensor4 asTensor4;          // Tensor4 representation of full two-site Hamiltonian.
     Tensor4 asTimeEvolution;    // Tensor4 unitary time evolution operator for iTEBD.
+    Tensor4 asTimeEvolution2;    // Tensor4 unitary time evolution operator for iTEBD.
 };
 
 
