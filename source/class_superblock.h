@@ -9,7 +9,7 @@
 #include <class_environment.h>
 #include <class_MPS.h>
 #include <class_TwoSiteHamiltonian.h>
-//#include <class_hdf5.h>
+#include <Eigen/SVD>
 
 
 /*!
@@ -32,8 +32,8 @@ private:
     //Store temporaries for eigensolver and SVD.
     Tensor2 ground_state;                               /*!< Stores the ground state eigenvector from eigenvalue solver */
     Tensor3 U,V;                                        /*!< Stores the left and right unitary matrices \f$U\f$ and \f$V\f$ after an SVD decomposition \f$A = USV^\dagger\f$.*/
-    double truncation_error;
 public:
+    double truncation_error;
 
 
     class_superblock();
