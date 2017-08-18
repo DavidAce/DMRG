@@ -181,7 +181,7 @@ void class_algorithms::FES(class_superblock &superblock){
 
     for(auto chi = chi_list.data() ; chi != chi_list.data() + chi_list.size() ; ++chi) {
         superblock.reset();
-        double delta_t = s::itebd::delta_t;
+        double delta_t = s::fes::delta_t;
         double phys_time = 0;
         int step = 0;
 
@@ -190,7 +190,7 @@ void class_algorithms::FES(class_superblock &superblock){
         double new_energy= superblock.MPS.get_energy(superblock.H.asTensor4)(0);
         double old_entropy = 0;
         double new_entropy= superblock.MPS.get_entropy()(0);
-        while(delta_t > 1e-4){
+        while(delta_t > 1e-2){
 //        for (auto step = 0; step < s::fes::max_steps; step++) {
             superblock.update_bond_dimensions();
             t_evo.tic();    superblock.time_evolve();                               t_evo.toc();
