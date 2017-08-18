@@ -20,10 +20,17 @@
   > by Ulrich Schollwöck. <br>
 
 
+## Usage
+This code lacks an API or command-line parameters. As such, details of execution have to be
+set in source code, specifically one can edit model and simulation parameters in `source/n_model.h` and `source/n_settings.h`.
+
+The files `source/class_algorithms.cpp` and  `source/class_algorithms.h` contain routines for the infinite-DMRG,
+finite-DMRG and infinite-TEBD that can be called from `main.cpp`. The algorithms should ideally give similar 
+ground-state energies, which is a good sanity check.
 
  ## Requirements
  The following software is required: 
- * [g++-7 for -std=c++17 support](https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test) for newer features. To install in Ubuntu:
+ * [g++-7](https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test), using flag -std=c++17, to have support for newer features such as `if constexpr()` and `<filesystem>`. To install in Ubuntu:
     ```
     > sudo add-apt-repository ppa:ubuntu-toolchain-r/test
     > sudo apt update

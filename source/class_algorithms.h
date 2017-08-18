@@ -44,14 +44,15 @@ private:
         ostr << std::setfill('0') << std::setw(4) << std::abs(length);
         std::string group_name = "/DMRG/L_" + ostr.str() + "/";
         hdf5.create_group(group_name, "Length", length);
-        hdf5.write_to_file(superblock.MPS.GA, group_name + "MPS/GA");
-        hdf5.write_to_file(superblock.MPS.GB, group_name + "MPS/GB");
-        hdf5.write_to_file(superblock.MPS.LA, group_name + "MPS/LA");
-        hdf5.write_to_file(superblock.MPS.LB, group_name + "MPS/LB");
-        hdf5.write_to_file(superblock.Lblock.block, group_name + "ENV/Lblock");
-        hdf5.write_to_file(superblock.Rblock.block, group_name + "ENV/Rblock");
+
+        hdf5.write_to_file(superblock.MPS.GA                                , group_name + "MPS/GA");
+        hdf5.write_to_file(superblock.MPS.GB                                , group_name + "MPS/GB");
+        hdf5.write_to_file(superblock.MPS.LA                                , group_name + "MPS/LA");
+        hdf5.write_to_file(superblock.MPS.LB                                , group_name + "MPS/LB");
+        hdf5.write_to_file(superblock.Lblock.block                          , group_name + "ENV/Lblock");
+        hdf5.write_to_file(superblock.Rblock.block                          , group_name + "ENV/Rblock");
         hdf5.write_to_file(superblock.MPS.get_energy(superblock.H.asTensor4), group_name + "Energy");
-        hdf5.write_to_file(superblock.MPS.get_entropy(), group_name + "Entropy");
+        hdf5.write_to_file(superblock.MPS.get_entropy()                     , group_name + "Entropy");
     }
 
     void write_to_file_FES(tebd_data_container &data, long max_chi){
@@ -59,6 +60,7 @@ private:
         ostr << std::setfill('0') << std::setw(3) << std::abs(max_chi);
         std::string group_name = "/FES/chi_" + ostr.str() + "/";
         hdf5.create_group(group_name, "Max Chi", max_chi);
+
         hdf5.write_to_file(max_chi          , group_name + "max_chi");
         hdf5.write_to_file(data.chi         , group_name + "chi");
         hdf5.write_to_file(data.time_step   , group_name + "delta_t");
