@@ -1,4 +1,15 @@
 ## [Unreleased]
+### Added
+- Added virtual destructors to the `SymEigsSolver` and `UpperHessenbergQR` classes
+  to fix compiler warnings, by [Julian Kent](https://github.com/jkflying)
+- Added a `NUMERICAL_ISSUE` entry to the `COMPUTATION_INFO` enumeration to indicate
+  the status of Cholesky decomposition
+- Added the `info()` member function to `DenseCholesky` and `SparseCholesky` to
+  report the status of the decomposition
+
+### Changed
+- Documentation updates
+- Update project URL to be [https://spectralib.org](https://spectralib.org).
 
 
 ## [0.5.0] - 2017-02-05

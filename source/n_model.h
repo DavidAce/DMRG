@@ -30,44 +30,42 @@ using namespace Eigen;
 namespace Model {
 
 
+    inline double J = 1.0;
+    inline double g = 1.0;
+    inline long local_dimension = 2;
+    inline int sites = 2;
 
     //Transverse field Ising model:
     extern double get_exact_energy();
-    extern void generate_spins(const int sites);
-    extern std::vector<MatrixXcd> generate_manybody_spin(const int sites, Matrix2cd &s);
-
-    extern MatrixType Hamiltonian(const int sites);
-    extern MatrixType Hamiltonian2(const int sites);
-    extern Tensor4 TimeEvolution_4th_order(const int sites, const double delta);
-    extern MatrixType U(const double delta);
-    extern Tensor4 W(const int sites);
-
-    extern Matrix2cd gen_sx();
-    extern Matrix2cd gen_sy();
-    extern Matrix2cd gen_sz();
-
-    extern std::vector<MatrixXcd> gen_SX(const int sites);
-    extern std::vector<MatrixXcd> gen_SY(const int sites);
-    extern std::vector<MatrixXcd> gen_SZ(const int sites);
-
-    inline MatrixType H1;
-    inline MatrixType H2;
-
-    inline double J = -1.0;
-    inline double g =  1.0;
-    inline long local_dimension = 2;
     inline double energy_exact  = get_exact_energy();  // = -1.063544409973372 if g = 0.5
 
     //Pauli matrices
-    inline Matrix2cd sx = gen_sx();
-    inline Matrix2cd sy = gen_sy();
-    inline Matrix2cd sz = gen_sz();
-    inline Matrix2cd I = Matrix2cd::Identity();
+    extern const Matrix2cd sx();
+    extern const Matrix2cd sy();
+    extern const Matrix2cd sz();
+    extern const Matrix2cd I();
 
-    //Spin variables in L-dimensional Hilbert space. L being the particle chain length.
-    inline std::vector<MatrixXcd> SX = generate_manybody_spin(2, sx);
-    inline std::vector<MatrixXcd> SY = generate_manybody_spin(2, sy);
-    inline std::vector<MatrixXcd> SZ = generate_manybody_spin(2, sz);
+
+    //Pauli spin variables in 2-dimensional Hilbert space.
+    extern std::vector<MatrixXcd> gen_twosite_spin(Matrix2cd s);
+    inline std::vector<MatrixXcd> SX = gen_twosite_spin(sx());
+    inline std::vector<MatrixXcd> SY = gen_twosite_spin(sy());
+    inline std::vector<MatrixXcd> SZ = gen_twosite_spin(sz());
+
+
+    extern MatrixXd h();
+    extern MatrixXd H();
+
+    //    extern Tensor4d TimeEvolution_4th_order(const int sites, const double delta);
+    extern Tensor4d TimeEvolution_1st_order(const double delta);
+    extern Tensor4d TimeEvolution_2nd_order(const double delta);
+    extern Tensor4d TimeEvolution_4th_order(const double delta);
+    extern MatrixXd U(const double delta);
+    extern Tensor4d W();
+
+
+
+
 
 
 

@@ -780,12 +780,12 @@ Generating docs for compound class_TwoSiteHamiltonian...
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/class_TwoSiteHamiltonian.h:22: warning: Member W (variable) of class class_TwoSiteHamiltonian is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/class_TwoSiteHamiltonian.h:23: warning: Member asMatrix (variable) of class class_TwoSiteHamiltonian is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/class_TwoSiteHamiltonian.h:24: warning: Member asTensor4 (variable) of class class_TwoSiteHamiltonian is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/class_TwoSiteHamiltonian.h:26: warning: Member MatrixType &H, MatrxiType &H2, const double deltadelta (variable) of class class_TwoSiteHamiltonian is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/class_TwoSiteHamiltonian.h:26: warning: Member MatrixType &H, MatrxiType &H_odd, const double deltadelta (variable) of class class_TwoSiteHamiltonian is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/class_TwoSiteHamiltonian.h:27: warning: Member asTimeEvolution (variable) of class class_TwoSiteHamiltonian is not documented.
 Generating namespace index...
 Generating docs for namespace Model
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_model.h:49: warning: Member generate_spins(const int sites) (function) of namespace Model is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_model.h:50: warning: Member Hamiltonian(const int sites) (function) of namespace Model is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_model.h:50: warning: Member H_two(const int sites) (function) of namespace Model is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_model.h:51: warning: Member W(const int sites) (function) of namespace Model is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_model.h:34: warning: Member J (variable) of namespace Model is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_model.h:35: warning: Member g (variable) of namespace Model is not documented.
@@ -800,15 +800,15 @@ Generating docs for namespace Model
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_model.h:47: warning: Member SZ (variable) of namespace Model is not documented.
 Generating docs for namespace Textra
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:22: warning: Member Scalar (typedef) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:23: warning: Member Tensor4 (typedef) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:24: warning: Member Tensor3 (typedef) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:25: warning: Member Tensor2 (typedef) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:26: warning: Member Tensor1 (typedef) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:27: warning: Member Tensor0 (typedef) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:28: warning: Member const_Tensor4 (typedef) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:29: warning: Member const_Tensor3 (typedef) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:30: warning: Member const_Tensor2 (typedef) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:31: warning: Member const_Tensor1 (typedef) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:23: warning: Member Tensor4d (typedef) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:24: warning: Member Tensor3d (typedef) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:25: warning: Member Tensor2d (typedef) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:26: warning: Member Tensor1d (typedef) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:27: warning: Member Tensor0d (typedef) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:28: warning: Member const_Tensor4d (typedef) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:29: warning: Member const_Tensor3d (typedef) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:30: warning: Member const_Tensor2d (typedef) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:31: warning: Member const_Tensor1d (typedef) of namespace Textra is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:33: warning: Member MatrixType (typedef) of namespace Textra is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:34: warning: Member VectorType (typedef) of namespace Textra is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:35: warning: Member array4 (typedef) of namespace Textra is not documented.
@@ -823,14 +823,14 @@ Generating docs for namespace Textra
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:48: warning: Member operator<<(std::ostream &out, const Eigen::DSizes< AttrType, L > &v) (function) of namespace Textra is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:59: warning: Member operator<<(std::ostream &out, const Eigen::array< AttrType, L > &v) (function) of namespace Textra is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:69: warning: Member reshape(MatrixType matrix, array3 dims) (function) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:70: warning: Member asDiagonal(const Eigen::TensorRef< const Tensor1 > tensor) (function) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:71: warning: Member asInverseDiagonal(const Eigen::TensorRef< const Tensor1 > tensor) (function) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:72: warning: Member matrix_to_tensor1(const Eigen::Ref< const MatrixType > matrix) (function) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:70: warning: Member asDiagonal(const Eigen::TensorRef< const Tensor1d > tensor) (function) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:71: warning: Member asInverseDiagonal(const Eigen::TensorRef< const Tensor1d > tensor) (function) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:72: warning: Member Matrix_to_Tensor1(const Eigen::Ref< const MatrixType > matrix) (function) of namespace Textra is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:73: warning: Member matrix_to_tensor2(const Eigen::Ref< const MatrixType > matrix) (function) of namespace Textra is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:74: warning: Member matrix_to_tensor2(const Eigen::Ref< const MatrixType > matrix, array2 dims) (function) of namespace Textra is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:75: warning: Member matrix_to_tensor3(const Eigen::Ref< const MatrixType > matrix, array3 dims) (function) of namespace Textra is not documented.
 /mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:76: warning: Member matrix_to_tensor4(const Eigen::Ref< const MatrixType > matrix, array4 dims) (function) of namespace Textra is not documented.
-/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:77: warning: Member tensor2_to_matrix(const Tensor2 &tensor) (function) of namespace Textra is not documented.
+/mnt/Ecomint/Dropbox/PhD/Programming/Finite DMRG/Finite_DMRG_eigen/source/n_tensor_extra.h:77: warning: Member tensor2_to_matrix(const Tensor2d &tensor) (function) of namespace Textra is not documented.
 Generating graph info page...
 Generating directory documentation...
 Generating index page...

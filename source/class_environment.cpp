@@ -2,7 +2,7 @@
 // Created by david on 7/21/17.
 //
 
-#include "class_environment.h"
+#include <class_environment.h>
 
 class_environment_L::class_environment_L(){
     size = 0;
@@ -20,11 +20,11 @@ class_environment_R::class_environment_R(){
 }
 
 
-void class_environment_L::enlarge(const class_MPS &MPS, const Tensor4 &W) {
+void class_environment_L::enlarge(const class_MPS &MPS, const Tensor4d &W) {
 
     picture.append(single_picture);
     size++;
-    Tensor3 block_enlarged = block.contract(asDiagonal(MPS.L_tail), idxlist1{idx2(0,0)})
+    Tensor3d block_enlarged = block.contract(asDiagonal(MPS.L_tail), idxlist1{idx2(0,0)})
             .contract(MPS.GA, idxlist1{idx2(2,1)})
             .contract(W, idxlist2{idx2(1,0), idx2(2,2)})
             .contract(asDiagonal(MPS.L_tail), idxlist1{idx2(0,0)})
@@ -34,10 +34,10 @@ void class_environment_L::enlarge(const class_MPS &MPS, const Tensor4 &W) {
 
 }
 
-void class_environment_R::enlarge(const class_MPS &MPS, const Tensor4 &W){
+void class_environment_R::enlarge(const class_MPS &MPS, const Tensor4d &W){
     picture.append(single_picture);
     size++;
-    Tensor3 block_enlarged = block.contract(asDiagonal(MPS.LB), idxlist1{idx2(0,0)})
+    Tensor3d block_enlarged = block.contract(asDiagonal(MPS.LB), idxlist1{idx2(0,0)})
             .contract(MPS.GB, idxlist1{idx2(2,2)})
             .contract(W, idxlist2{idx2(1,1), idx2(2,3)})
             .contract(asDiagonal(MPS.LB), idxlist1{idx2(0,1)})

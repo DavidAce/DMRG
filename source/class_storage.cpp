@@ -4,6 +4,7 @@
 
 #include <class_storage.h>
 #include <class_superblock.h>
+#include <class_environment.h>
 
 
 void class_storage::set_length(int max_length_) {
@@ -12,13 +13,13 @@ void class_storage::set_length(int max_length_) {
 }
 
 
-void class_storage::store_insert(const class_superblock &superblock){
+void class_storage::insert(const class_superblock &superblock){
     if(!length_is_set){print_error_and_exit(1);}
 
     position_L = superblock.Lblock.size;
     position_R = max_length - superblock.Rblock.size - 1;
 
-//    cout << "Storing position L: [" << position_L << " R: " << position_R << "] \n";
+    cout << "Storing position L: [" << position_L << " R: " << position_R << "] \n";
 //    cout << "Lbl: " << superblock.Lblock.block.dimensions() << '\n';
 //    cout << "G.A: " << superblock.MPS.GA.dimensions() << '\n';
 //    cout << "L.A: " << superblock.MPS.LA.dimensions() << '\n';
@@ -40,7 +41,7 @@ void class_storage::store_insert(const class_superblock &superblock){
 
 void class_storage::load(class_superblock &superblock){
 
-//    cout << "Loading position [" << position_L << " " << position_R << "]\n";
+    cout << "Loading position [" << position_L << " " << position_R << "]\n";
     superblock.MPS.GA = G_list.at(position_L);
     superblock.MPS.GB = G_list.at(position_R);
 
@@ -109,7 +110,7 @@ void class_storage::print_storage(){
 
 
 void  class_storage::print_error_and_exit(int error_type){
-    cout << "Maximum chain length has not been set!" << '\n';
+    cout << "Maximum chain chain_length has not been set!" << '\n';
     cout << "try calling class_storage::set_length(int) before using it." << '\n';
     exit(error_type);
 }

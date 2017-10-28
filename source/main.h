@@ -1,5 +1,5 @@
-#ifndef FINITE_DMRG_EIGEN_MAIN_H_H
-#define FINITE_DMRG_EIGEN_MAIN_H_H
+#ifndef DMRG_MAIN_H
+#define DMRG_MAIN_H
 
 /*! \mainpage
  * \brief This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm.
@@ -28,7 +28,7 @@
 
   The files `source/class_algorithms.cpp` and  `source/class_algorithms.h` contain routines for the infinite-DMRG,
   finite-DMRG and infinite-TEBD that can be called from `main.cpp`. The algorithms should ideally give similar
-  ground-state energies, which is a good sanity check.
+  ground state energies, which is a good sanity check.
 
  ## Notation
 
@@ -102,4 +102,4 @@ which in code reads
 */
 
 
-#endif //FINITE_DMRG_EIGEN_MAIN_H_H
+#endif //DMRG_MAIN_H

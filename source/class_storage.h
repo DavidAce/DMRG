@@ -1,6 +1,6 @@
 
-#ifndef FINITE_DMRG_EIGEN_CLASS_STORAGE_H
-#define FINITE_DMRG_EIGEN_CLASS_STORAGE_H
+#ifndef DMRG_CLASS_STORAGE_H
+#define DMRG_CLASS_STORAGE_H
 
 #include <n_tensor_extra.h>
 #include <map>
@@ -30,8 +30,8 @@ class class_environment_R;
 
 class class_storage {
 private:
-    std::map<int, Tensor3> G_list;                                  /*!< A list of stored \f$\Gamma\f$-tensors,  indexed by chain position. */
-    std::map<int, Tensor1> L_list;                                  /*!< A list of stored \f$\Lambda\f$-tensors, indexed by chain position. */
+    std::map<int, Tensor3d> G_list;                                  /*!< A list of stored \f$\Gamma\f$-tensors,  indexed by chain position. */
+    std::map<int, Tensor1d> L_list;                                  /*!< A list of stored \f$\Lambda\f$-tensors, indexed by chain position. */
     std::map<int,class_environment_L> Lblock_list;                  /*!< A list of stored Left block environments,  indexed by chain position. */
     std::map<int,class_environment_R> Rblock_list;                  /*!< A list of stored Right block environments, indexed by chain position. */
 
@@ -44,13 +44,13 @@ public:
 
 
     class_storage(){};
-    class_storage(int max_length_                                   /*!< The maximum length of the chain. */
+    explicit class_storage(int max_length_                                   /*!< The maximum length of the chain. */
     ){
         set_length(max_length_);
     };
 
     void set_length(int max_length_);                                       /*!< Sets the maximum length of the chain. */
-    void store_insert(const class_superblock &superblock);                  /*!< Store current MPS and environments indexed by their respective positions on the chain. */
+    void insert(const class_superblock &superblock);                  /*!< Store current MPS and environments indexed by their respective positions on the chain. */
     void load(class_superblock &superblock);                                /*!< Load MPS and environments according to current position. */
     void overwrite_MPS(const class_superblock &superblock);                 /*!< Update the MPS stored at current position.*/
     void move(class_superblock &superblock, int &direction, int &sweep);    /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
@@ -58,4 +58,4 @@ public:
 };
 
 
-#endif //FINITE_DMRG_EIGEN_CLASS_STORAGE_H
+#endif //DMRG_CLASS_STORAGE_H
