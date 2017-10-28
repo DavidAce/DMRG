@@ -14,6 +14,26 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_integration.h>
 #include <numeric>
+#include <n_settings.h>
+#include <n_tensor_extra.h>
+//#include <GenEigsSolver.h>
+//#include <SymGEigsSolver.h>
+#include <SymEigsSolver.h>
+#include <MatOp/DenseSymMatProd.h>
+#include <GenEigsSolver.h>
+
+
+
+/*! \brief Prints the content of a vector nicely */
+template<typename T>
+std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
+    if (!v.empty()) {
+        out << "[ ";
+        std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
+        out << "]";
+    }
+    return out;
+}
 
 
 /*! \brief Math functions.*/
@@ -40,12 +60,21 @@
  */
 
 
+
 namespace Math {
     /*! \brief       MatLab-style modulo operator */
     template<typename T1, typename T2>
     inline auto mod(const T1 x, const T2 y) {
         return x >= 0 ? x % y : x % y + y;
     }
+
+    template <typename T1, typename T2>
+    inline std::vector<T2> LinSpaced(T1 num, T2 min, T2 max ){
+        static_assert(std::is_integral<T1>::value && "Math::LinSpaced -- Given type is not integral!");
+        Eigen::Array<T2, Eigen::Dynamic, 1> temp =  Eigen::Array<T2, Eigen::Dynamic, 1> :: LinSpaced(num, min, max);
+        return std::vector<T2> (temp.data(), temp.data() + temp.size());
+    }
+
 
     /*! \brief  Product operator for containers such as vector */
     template<typename Input, typename From, typename To>
@@ -64,18 +93,129 @@ namespace Math {
         else return x * tmp * tmp;
     }
 
-    /*! \brief Prints the content of a vector nicely */
-    template<typename T>
-    std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
-        if (!v.empty()) {
-            out << "[ ";
-            std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
-            out << "]";
+
+
+    enum class Handedness {RGHT, LEFT};
+
+template <typename Scalar, Handedness hand = Handedness::RGHT, int Uplo = Eigen::Lower>
+class DenseSymMatProd{
+    private:
+        typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
+        typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
+        typedef Eigen::Map<const Matrix> MapConstMat;
+        typedef Eigen::Map<const Vector> MapConstVec;
+        typedef Eigen::Map<Vector> MapVec;
+
+        typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
+
+        const MapConstMat m_mat;
+
+    public:
+        DenseSymMatProd(ConstGenericMatrix& mat_) :
+            m_mat(mat_.data(), mat_.rows(), mat_.cols())
+        {}
+
+    int rows() const { return m_mat.rows(); }
+    int cols() const { return m_mat.cols(); }
+
+    // y_out = A * x_in
+    void perform_op(const Scalar* x_in, Scalar* y_out) const
+    {
+        MapConstVec x(x_in,  m_mat.cols());
+        MapVec      y(y_out, m_mat.rows());
+        y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
+        switch (hand){
+            case Handedness::RGHT:
+                y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
+                break;
+            case Handedness::LEFT:
+                y.noalias() = x.transpose() * m_mat.template selfadjointView<Uplo>();
+                break;
         }
-        return out;
+
+    }
+};
+
+
+    template <typename Scalar, Handedness hand = Handedness::RGHT>
+    class DenseGenMatProd
+    {
+    private:
+        typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
+        typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
+        typedef Eigen::Map<const Matrix> MapConstMat;
+        typedef Eigen::Map<const Vector> MapConstVec;
+        typedef Eigen::Map<Vector> MapVec;
+        typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
+        const MapConstMat m_mat;
+
+    public:
+        DenseGenMatProd(ConstGenericMatrix& mat_) :
+                m_mat(mat_.data(), mat_.rows(), mat_.cols())
+        {}
+
+        int rows() const { return m_mat.rows(); }
+        int cols() const { return m_mat.cols(); }
+
+        // y_out = A * x_in
+        void perform_op(const Scalar* x_in, Scalar* y_out) const
+        {
+            MapConstVec x(x_in,  m_mat.cols());
+            MapVec      y(y_out, m_mat.rows());
+            switch (hand){
+                case Handedness::RGHT:
+                    y.noalias() = m_mat * x;
+                    break;
+                case Handedness::LEFT:
+                    y.noalias() = x.transpose() * m_mat;
+                    break;
+            }
+        }
+    };
+
+
+    /*! \brief Returns the largest eigenvector of a matrix */
+    template<Handedness hand = Handedness::RGHT>
+    Textra::Tensor<1,Textra::cdouble> dominant_eigenvector(const Textra::Tensor<2, double> &tensor){
+        Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
+        DenseGenMatProd<double, hand> op(mat);
+        int ncv = std::min(settings::precision::eig_max_ncv, 3);
+        Spectra::GenEigsSolver<double, Spectra::LARGEST_REAL, DenseGenMatProd<double,hand>> eigs(&op, 1, ncv);
+        eigs.init();
+        eigs.compute(10000, 1e-12, Spectra::LARGEST_REAL);
+        if(eigs.info() != Spectra::SUCCESSFUL){
+            std::cout << "Eigenvalue solver failed." << '\n';
+//            std::cout << tensor << '\n';
+//            exit(1);
+        }
+        std::cout << "Eigenvalue: " << eigs.eigenvalues()<< std::endl;
+//        double x = eigs.eigenvectors().real().coeff(0);
+//        double sign = (x < 0) ? -1.0/x : 1.0/x;
+//        double sign = 1.0/x;
+        return Textra::Matrix_to_Tensor1<Textra::cdouble>(eigs.eigenvectors());
     }
 
-
+    /*! \brief Returns the largest eigenvector of a matrix */
+    template<Handedness hand = Handedness::RGHT>
+    auto dominant_eigenvector_eigenvalue(const Textra::Tensor<2, double> &tensor, const Textra::array2 out_shape){
+        Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
+        DenseGenMatProd<double, hand> op(mat);
+        int ncv = std::min(settings::precision::eig_max_ncv, 3);
+        Spectra::GenEigsSolver<double, Spectra::LARGEST_REAL, DenseGenMatProd<double,hand>> eigs(&op, 1, ncv);
+        eigs.init();
+        eigs.compute(10000, 1e-12, Spectra::LARGEST_REAL);
+        if(eigs.info() != Spectra::SUCCESSFUL){
+            std::cout << "Eigenvalue solver failed." << '\n';
+//            std::cout << tensor << '\n';
+//            exit(1);
+        }
+        std::cout << "Eigenvalue: " << eigs.eigenvalues()<< std::endl;
+//        double x = eigs.eigenvectors().real().coeff(0);
+//        double sign = (x < 0) ? -1.0/x : 1.0/x;
+//        double sign = 1.0/x;
+//        return {Textra::Matrix_to_Tensor}
+        return {Textra::Matrix_to_Tensor1<Textra::cdouble>(eigs.eigenvectors()), eigs.eigenvalues()};
+    }
 
     /*! \brief class for integration */
     template<typename F>
@@ -144,4 +284,7 @@ namespace Math {
 
 
 }
+
+
+
 #endif //TRAINING_FUNCS_H

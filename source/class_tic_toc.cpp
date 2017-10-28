@@ -73,7 +73,7 @@ void class_tic_toc::print_total_reset(){
     }
 }
 
-double class_tic_toc::get_measured_time() {
+double class_tic_toc::get_age() {
     return duration_cast<duration<double>> (high_resolution_clock::now() - start_timepoint).count();
 }
 

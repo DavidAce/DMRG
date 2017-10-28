@@ -26,7 +26,7 @@ set in source code, specifically one can edit model and simulation parameters in
 
 The files `source/class_algorithms.cpp` and  `source/class_algorithms.h` contain routines for the infinite-DMRG,
 finite-DMRG and infinite-TEBD that can be called from `main.cpp`. The algorithms should ideally give similar 
-ground-state energies, which is a good sanity check.
+ground state energies, which is a good sanity check.
 
  ## Requirements
  The following software is required: 
@@ -63,20 +63,20 @@ Consider a rank-3 tensor `G` with dimensions `d`, `a` and `b`. In diagrammatic t
 where after the second equality the index order is shown. In code this corresponds to
 
 ```
- Textra::Tensor3 G(d,a,b);
+ Textra::Tensor3d G(d,a,b);
 ```
 
 Similarly, we have for a rank-4 tensor `Theta`:
 
 ```
                                     [d] [d]                0   1
-                Theta   =   [chia]___|___|___[chib] = 2 ___|___|___ 3
+                Theta   =   [chiL]___|___|___[chiR] = 2 ___|___|___ 3
 ```
 
 which in code reads
 
 ```
- Textra::Tensor4 G(d,d,chia,chib);
+ Textra::Tensor4d G(d,d,chiL,chiR);
 ```
 
 

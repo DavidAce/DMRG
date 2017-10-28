@@ -2,8 +2,8 @@
 // Created by david on 7/21/17.
 //
 
-#ifndef FINITE_DMRG_EIGEN_CLASS_ENVIRONMENT_H
-#define FINITE_DMRG_EIGEN_CLASS_ENVIRONMENT_H
+#ifndef DMRG_CLASS_ENVIRONMENT_H
+#define DMRG_CLASS_ENVIRONMENT_H
 
 #include <n_tensor_extra.h>
 #include <class_MPS.h>
@@ -30,9 +30,9 @@ public:
     std::string picture;                                    /*!< Pretty string representation of the left environment block. */
     int size;                                               /*!< Number of particles that have been contracted into this left environment. */
 
-    Tensor3 block;                                         /*!< The environment block. */
+    Tensor3d block;                                         /*!< The environment block. */
     class_environment_L();
-    void enlarge(const class_MPS &MPS, const Tensor4 &W);  /*!< Contracts a site into the block. */
+    void enlarge(const class_MPS &MPS, const Tensor4d &W);  /*!< Contracts a site into the block. */
 };
 
 
@@ -57,11 +57,11 @@ public:
     std::string picture;                                    /*!< Pretty string representation of the right environment block. */
     int size;                                               /*!< Number of particles that have been contracted into this right environment. */
 
-    Tensor3 block;                                          /*!< The environment block. */
+    Tensor3d block;                                          /*!< The environment block. */
     class_environment_R();
 
-    void enlarge(const class_MPS &MPS,const Tensor4 &W);    /*!< Contracts a site into the block. */
+    void enlarge(const class_MPS &MPS,const Tensor4d &W);    /*!< Contracts a site into the block. */
 };
 
 
-#endif //FINITE_DMRG_EIGEN_CLASS_ENVIRONMENT_H
+#endif //DMRG_CLASS_ENVIRONMENT_H

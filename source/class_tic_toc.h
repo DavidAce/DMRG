@@ -32,7 +32,7 @@ public:
     void tic();
     void toc();
     void print_time();
-    double get_measured_time();
+    double get_age();
 //    void print_time(high_resolution_clock::duration total_runtime);
     void print_time_w_percent();
     void print_delta();

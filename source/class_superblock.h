@@ -2,14 +2,12 @@
 // Created by david on 7/22/17.
 //
 
-#ifndef FINITE_DMRG_EIGEN_CLASS_SUPERBLOCK_H
-#define FINITE_DMRG_EIGEN_CLASS_SUPERBLOCK_H
-
+#ifndef DMRG_CLASS_SUPERBLOCK_H
+#define DMRG_CLASS_SUPERBLOCK_H
 #include <n_tensor_extra.h>
 #include <class_environment.h>
 #include <class_MPS.h>
 #include <class_TwoSiteHamiltonian.h>
-#include <Eigen/SVD>
 
 
 /*!
@@ -23,17 +21,16 @@ class class_superblock {
 private:
     //Bond dimensions and tensor shapes needed by the eigensolver and SVD.
     long d;                                             /*!< Local, or physical, dimension of each particle. */
-    long chia;                                          /*!< Bond dimension of the previous (left) position. */
-    long chib;                                          /*!< Bond dimension of the next (right) position. */
+    long chiL;                                          /*!< Bond dimension of the previous (left) position. */
+    long chiR;                                          /*!< Bond dimension of the next (right) position. */
     Textra::array1 shape1;                              /*!< Shape for Tensor1 representation of the MPS. */
     Textra::array2 shape2;                              /*!< Shape for Tensor2 representation of the MPS. */
     Textra::array4 shape4;                              /*!< Shape for Tensor4 representation of the MPS. */
 
     //Store temporaries for eigensolver and SVD.
-    Tensor2 ground_state;                               /*!< Stores the ground state eigenvector from eigenvalue solver */
-    Tensor3 U,V;                                        /*!< Stores the left and right unitary matrices \f$U\f$ and \f$V\f$ after an SVD decomposition \f$A = USV^\dagger\f$.*/
+    Tensor2d ground_state;                               /*!< Stores the ground state eigenvector from eigenvalue solver */
+    Tensor3d U,V;                                        /*!< Stores the left and right unitary matrices \f$U\f$ and \f$V\f$ after an SVD decomposition \f$A = USV^\dagger\f$.*/
 public:
-    double truncation_error;
 
 
     class_superblock();
@@ -41,6 +38,12 @@ public:
     class_environment_R         Rblock;                 /*!< Right environment block. */
     class_MPS                   MPS;                    /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
     class_TwoSiteHamiltonian    H;
+
+    long   chi;                                           /*!< Bond dimension of the current (center) position. */
+    long   chi_max ;                                      /*!< Maximum allowed bond dimension, which also defines the SVD cutoff */
+    double truncation_error;
+    int    chain_length = H.sites;
+
 
     void find_ground_state(int eigSteps,                /*!< Maximum number of steps for eigenvalue solver. */
                            double eigThreshold          /*!< Minimum threshold for halting eigenvalue solver. */
@@ -50,11 +53,24 @@ public:
                   double SVDThreshold                   /*!< Minimum threshold value for keeping singular values. */
                     )             __attribute((hot));   /*!< Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps \f$\chi\f$ (`chi`) singular values. */
     void update_MPS();                                  /*!< Update `MPS.G.A` and `MPS.G.B` i.e., \f$\Gamma^A\f$ and \f$\Gamma^B\f$.*/
-    void enlarge_environment();                         /*!< Contract the MPS of current position \f$n\f$ into the left and right environments \f$L\f$ and \f$R\f$, i.e. `Lblock` and `Rblock`.
+    void enlarge_environment(int direction = 0);        /*!< Contract the MPS of current position \f$n\f$ into the left and right environments \f$L\f$ and \f$R\f$, i.e. `Lblock` and `Rblock`.
                                                          * \f[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \f]
                                                          * \f[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \f] */
 
-    void enlarge_environment(long direction);           /*!< Contract the MPS of current position \f$n\f$ into left or right direction. */
+
+    double get_expectationvalue(const Tensor4d &MPO);
+    double get_energy();
+    double get_entropy();
+    double get_variance();
+    void canonicalize_iMPS_vidal();
+    void canonicalize_iMPS_mcculloch();
+    void canonicalize_iMPS();
+    void canonicalize_iMPS_iterative();
+    void canonicalize_iMPS_iterative_again();
+    void canonicalize4();
+    void canonicalize2();
+    void canonicalize3();
+//    void enlarge_environment(long direction);           /*!< Contract the MPS of current position \f$n\f$ into left or right direction. */
     void update_bond_dimensions();                      /*!< Update the MPS by contracting
                                                         * \f[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \f]
                                                         * \f[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \f] */
@@ -73,4 +89,4 @@ public:
 };
 
 
-#endif //FINITE_DMRG_EIGEN_CLASS_SUPERBLOCK_H
+#endif //DMRG_CLASS_SUPERBLOCK_H

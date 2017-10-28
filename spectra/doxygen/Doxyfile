@@ -774,7 +774,7 @@ INPUT_ENCODING         = UTF-8
 # *.h) to filter out the source-files in the directories. If left blank the
 # following patterns are tested:*.c, *.cc, *.cxx, *.cpp, *.c++, *.java, *.ii,
 # *.ixx, *.ipp, *.i++, *.inl, *.idl, *.ddl, *.odl, *.h, *.hh, *.hxx, *.hpp,
-# *.h++, *.cs, *.local_dimension, *.php, *.php4, *.php5, *.phtml, *.inc, *.m, *.markdown,
+# *.h++, *.cs, *.d, *.php, *.php4, *.php5, *.phtml, *.inc, *.m, *.markdown,
 # *.md, *.mm, *.dox, *.py, *.f90, *.f, *.for, *.tcl, *.vhd, *.vhdl, *.ucf,
 # *.qsf, *.as and *.js.
 
@@ -1040,7 +1040,7 @@ HTML_FILE_EXTENSION    = .html
 # that doxygen needs, which is dependent on the configuration options used (e.g.
 # the setting GENERATE_TREEVIEW). It is highly recommended to start with a
 # default header using
-# doxygen -M html new_header.html new_footer.html new_stylesheet.css
+# doxygen -w html new_header.html new_footer.html new_stylesheet.css
 # YourConfigFile
 # and then modify the file new_header.html. See also section "Doxygen usage"
 # for information on how to generate the default header that doxygen normally
@@ -1621,7 +1621,7 @@ EXTRA_PACKAGES         =
 # Note: Only use a user-defined header if you know what you are doing! The
 # following commands have a special meaning inside the header: $title,
 # $datetime, $date, $doxygenversion, $projectname, $projectnumber,
-# $projectbrief, $projectlogo. Doxygen will update $title with the empty
+# $projectbrief, $projectlogo. Doxygen will replace $title with the empty
 # string, for the replacement values of the other commands the user is referred
 # to HTML_HEADER.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
@@ -2100,7 +2100,7 @@ HAVE_DOT               = NO
 # The DOT_NUM_THREADS specifies the number of dot invocations doxygen is allowed
 # to run in parallel. When set to 0 doxygen will base this on the number of
 # processors available in the system. You can set it explicitly to a value
-# larger than 0 to get control over the balance between CPU load_MPS and processing
+# larger than 0 to get control over the balance between CPU load and processing
 # speed.
 # Minimum value: 0, maximum value: 32, default value: 0.
 # This tag requires that the tag HAVE_DOT is set to YES.

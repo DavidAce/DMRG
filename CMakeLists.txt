@@ -1,80 +1,87 @@
-cmake_minimum_required(VERSION 3.5)
-project(Finite_DMRG_eigen)
+cmake_minimum_required(VERSION 3.7)
+include("hunter/HunterGate.cmake")
+### Hunter snapshot that will be used ###
+HunterGate(
+        URL "https://github.com/ruslo/hunter/archive/v0.19.138.tar.gz"
+        SHA1 "0b7c1f758843e73a8f0b3c71a58751377a617c22"
+)
+project(DMRG++)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 #######################
 ### Get git version ###
 #######################
+
+# Get the current working branch
+execute_process(
+        COMMAND git rev-parse --abbrev-ref HEAD
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_BRANCH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the latest abbreviated commit hash of the working branch
+execute_process(
+        COMMAND git log -1 --format=%h
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_COMMIT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the revision count
 execute_process(
         COMMAND git rev-list HEAD --count
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE GIT_REVISION
         OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-add_definitions("-DGIT_REVISION=${GIT_REVISION}")
-message("Git revision: ${GIT_REVISION}")
 
-# Require MPI for this project:
-# find_package(MPI REQUIRED)
-#include_directories(${MPI_INCLUDE_PATH})
+configure_file(
+${CMAKE_SOURCE_DIR}/gitversion/gitversion.h.in
+${CMAKE_BINARY_DIR}/gitversion/gitversion.h
+)
 
-
-# Require HDF5 for this project
-########################################################
-### IF HDF5 IS BUILT FROM SOURCE, USE THESE COMMANDS ###
-########################################################
-#set(HDF5_DIR "/usr/local/HDF5-1.10.1-Linux/HDF_Group/HDF5/1.10.1/share/cmake")
-#find_package(HDF5 NAMES hdf5 COMPONENTS CXX CXX_HL NO_MODULE REQUIRED static)
-#
-#    link_libraries     (${HDF5_LIBRARIES})
-#    link_libraries     (${HDF5_CXX_STATIC_LIBRARY})
-#    link_libraries     (${HDF5_CXX_HL_STATIC_LIBRARY})
-#    include_directories(${HDF5_INCLUDE_DIR})
-#    add_definitions    (${HDF5_DEFINITIONS})
-#
-#
-########################################################
-
-set(HDF5_USE_STATIC_LIBRARIES ON)
-find_package(HDF5 COMPONENTS CXX REQUIRED)
-#get_cmake_property(_variableNames VARIABLES)
-#foreach (_variableName ${_variableNames})
-#    message(STATUS "${_variableName}=${${_variableName}}")
-#endforeach()
-if(HDF5_FOUND)
-    message("Found HDF5:")
-    message("   Version:               ${HDF5_VERSION}")
-    message("   Included dirs:         ${HDF5_INCLUDE_DIRS}")
-    include_directories(${HDF5_INCLUDE_DIRS})
-    add_definitions    (${HDF5_DEFINITIONS})
-    link_libraries     (${HDF5_LIBRARIES})
-else()
-    message("Please install HDF5")
-    message(" > sudo apt install libhdf5-cpp-11 libhdf5-10 libhdf5-dev libhdf5-doc")
-    message(FATAL_ERROR "HDF5 installation not found!")
-endif()
+include_directories(${CMAKE_BINARY_DIR}/gitversion)
 
 
+############################
+### Import Eigen library ###
+############################
+hunter_add_package(Eigen)
+find_package(Eigen3 CONFIG REQUIRED)
 
-#########################################
-### Require GSL library               ###
-#########################################
-find_package(GSL REQUIRED)
-link_libraries(${GSL_LIBRARIES})
+
+############################
+### Import GSL library   ###
+############################
+hunter_add_package(GSL)
+find_package(GSL CONFIG REQUIRED)
+
+############################
+### Import HDF5 library  ###
+############################
+hunter_add_package(hdf5)
+find_package(ZLIB CONFIG REQUIRED)
+find_package(szip CONFIG REQUIRED)
+find_package(hdf5 CONFIG REQUIRED)
 
 
-# Require OpenMP
-# find_package(OpenMP REQUIRED)
-
-# include eigen3 and spectra
-include_directories(eigen3)
 include_directories(spectra/include)
 
 
 #########################################
 ### Demand for c++17 compiler support ###
 #########################################
-set(CMAKE_CXX_STANDARD 17)
+macro(use_cxx17)
+  if (CMAKE_VERSION VERSION_LESS "3.8")
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      set (CMAKE_CXX_FLAGS "-std=c++17 ${CMAKE_CXX_FLAGS}")
+    endif ()
+  else ()
+    set (CMAKE_CXX_STANDARD 17)
+  endif ()
+endmacro(use_cxx17)
+use_cxx17()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 message("Found compiler version: ${CMAKE_CXX_COMPILER_VERSION}. Standard: -std=cxx${CMAKE_CXX_STANDARD}")
 
@@ -93,7 +100,6 @@ else()
 #    set(CMAKE_CXX_COMPILER mpicxx)
 #    set(CMAKE_CXX_COMPILER g++)
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-report")
-
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-partial-specialization")
     endif()
@@ -108,20 +114,20 @@ message("Compiling with: ${CMAKE_CXX_COMPILER_ID}")
 ###########################################
 file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
-
-set (INCLUDE_DIRS "")
-foreach (_headerFile ${HEADERS})
-    get_filename_component(_dir ${_headerFile} PATH)
-    list (APPEND INCLUDE_DIRS ${_dir})
-endforeach()
-list(REMOVE_DUPLICATES INCLUDE_DIRS)
+include_directories("source")
+add_executable(DMRG++ ${SOURCES} ${HEADERS})
 
 
-include_directories(${INCLUDE_DIRS})
-message("SOURCE FILES: ${SOURCES}")
-add_executable(Finite_DMRG_eigen ${SOURCES} ${HEADERS} source/n_data_containers.h)
 
 ########################################################
 ###  target link libraries GO AFTER ADD_EXECUTABLE   ###
 ########################################################
-target_link_libraries(Finite_DMRG_eigen -lstdc++fs) # For experimental::filesystem
+
+##################################
+### For #include <filesystem>  ###
+##################################
+target_link_libraries(DMRG++ -lstdc++fs) # For experimental::filesystem
+target_link_libraries(DMRG++ Eigen3::Eigen)
+target_link_libraries(DMRG++ GSL::gsl)
+target_link_libraries(DMRG++ hdf5)
+

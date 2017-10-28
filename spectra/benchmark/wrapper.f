@@ -93,7 +93,7 @@
 
 
 
-      subroutine dseupdwr(rvec  , howmnyi, select, local_dimension    ,
+      subroutine dseupdwr(rvec  , howmnyi, select, d    ,
      &                    z     , ldz    , sigma , bmati,
      &                    n     , whichi , nev   , tol  ,
      &                    resid , ncv    , v     , ldv  ,
@@ -103,7 +103,7 @@
       implicit none
 
       integer ldz, n, nev, ncv, ldv, iparam(7), ipntr(11), lworkl, info
-      double precision local_dimension(nev), z(ldz, nev), sigma, tol, resid(n)
+      double precision d(nev), z(ldz, nev), sigma, tol, resid(n)
       double precision v(ldv, ncv), workd(2*n), workl(lworkl)
       integer howmnyi, bmati, whichi
       character howmny, bmat, which*2
@@ -115,7 +115,7 @@
       call getbmat(bmati, bmat)
       call getwhich(whichi, which)
 
-      call dseupd(rvec  , howmny, select, local_dimension    ,
+      call dseupd(rvec  , howmny, select, d    ,
      &            z     , ldz   , sigma , bmat ,
      &            n     , which , nev   , tol  ,
      &            resid , ncv   , v     , ldv  ,
