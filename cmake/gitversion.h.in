@@ -1,5 +1,5 @@
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef GITVERSION_H
+#define GITVERSION_H
 
 #include <string>
 //#define GIT_BRANCH "@GIT_BRANCH@"
