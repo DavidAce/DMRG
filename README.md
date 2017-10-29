@@ -43,7 +43,7 @@ is by far the easiest approach. Recommended: [CLion](https://www.jetbrains.com/c
 
 #### Requirements
  Please install the following software before building the project.
- * g++ compiler with -std=c++17 support  (tested with g++ version >= 6)
+ * C++ compiler with support for c++17 standard (tested with GNU GCC version >= 7), for `ìf constexpr` suport.
  * CMake (tested with version >= 3.7)
  * [~~Spectra~~](https://spectralib.org/) ~~for eigenvalue-solver.~~ **Included, no action needed**
  
