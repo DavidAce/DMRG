@@ -28,8 +28,8 @@ execute_process(
 )
 
 configure_file(
-${CMAKE_SOURCE_DIR}/gitversion/gitversion.h.in
-${CMAKE_BINARY_DIR}/gitversion/gitversion.h
+${CMAKE_SOURCE_DIR}/cmake/gitversion.h.in
+${CMAKE_BINARY_DIR}/cmake/gitversion.h
 )
 
 include_directories(${CMAKE_BINARY_DIR}/gitversion)
