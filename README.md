@@ -20,6 +20,47 @@
   > by Ulrich Schollwöck. <br>
 
 
+---
+## Quick Start
+
+#### From command line
+To build project, enter:
+```
+./build.sh
+```
+
+To run executable, enter:
+
+```
+./run.sh
+```
+
+#### From IDE
+Some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This
+is by far the easiest approach. Recommended: [CLion](https://www.jetbrains.com/clion/download) or [Visual Studio Code](https://code.visualstudio.com/) with C++ and CMake Tools extensions.
+
+
+
+#### Requirements
+ Please install the following software before building the project.
+ * g++ compiler with -std=c++17 support  (tested with g++ version >= 6)
+ * CMake (tested with version >= 3.7)
+ * [~~Spectra~~](https://spectralib.org/) ~~for eigenvalue-solver.~~ **Included, no action needed**
+ 
+ 
+ The package manager [Hunter](https://github.com/ruslo/hunter) is included to ease the building process.
+ During the first build, the dependencies listed in CMakeLists.txt will be downloaded and installed by
+ [Hunter](https://github.com/ruslo/hunter) automatically on any platform (Linux/OSX/Win).
+ 
+ The following software is installed by [Hunter](https://github.com/ruslo/hunter):   
+ * [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition.
+ * [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support. 
+ * [GSL](https://www.gnu.org/software/gsl/) for numerical integration.
+ 
+ The default installation folder in Linux is `~/.hunter`.
+
+---
+ 
 ## Usage
 This code lacks an API or command-line parameters. As such, details of execution have to be
 set in source code, specifically one can edit model and simulation parameters in `source/n_model.h` and `source/n_settings.h`.
@@ -27,26 +68,6 @@ set in source code, specifically one can edit model and simulation parameters in
 The files `source/class_algorithms.cpp` and  `source/class_algorithms.h` contain routines for the infinite-DMRG,
 finite-DMRG and infinite-TEBD that can be called from `main.cpp`. The algorithms should ideally give similar 
 ground state energies, which is a good sanity check.
-
- ## Requirements
- The following software is required: 
- * [g++-7](https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test), using flag -std=c++17, to have support for newer features such as `if constexpr()` and `<filesystem>`. To install in Ubuntu:
-    ```
-    > sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-    > sudo apt update
-    > sudo apt install gcc-7 g++-7
-    ```
- * [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition. **Included, no action needed**
- * [Spectra](https://spectralib.org/)  for eigenvalue-solver. **Included, no action needed**
- * [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support. To install in Ubuntu:
-     ```
-     sudo apt install libhdf5-dev libhdf5-10 libhdf5-cpp-11
-     ```
- * [GSL](https://www.gnu.org/software/gsl/) for numerical integration. To install in Ubuntu: 
-    ```
-    sudo apt install libgsl-dev libgsl2
-    ```
- 
 
  ## Tensor index order convention.
  The tensor index order used here follows the convention:
