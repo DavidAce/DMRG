@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
+
 include("hunter/HunterGate.cmake")
 ### Hunter snapshot that will be used ###
 HunterGate(
@@ -6,42 +8,15 @@ HunterGate(
         SHA1 "0b7c1f758843e73a8f0b3c71a58751377a617c22"
 )
 project(DMRG++)
-set(CMAKE_VERBOSE_MAKEFILE OFF)
 
-#######################
-### Get git version ###
-#######################
+################################################################
+### Get git version number                                   ###
+### Generates a header gitversion/gitversion.h               ###
+### Include it using #include <gitversion.h>                 ###
+### Gives a namespace GIT:: with several git version numbers.###
+################################################################
+include(gitversion/gitversion.cmake)
 
-# Get the current working branch
-execute_process(
-        COMMAND git rev-parse --abbrev-ref HEAD
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE GIT_BRANCH
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
-# Get the latest abbreviated commit hash of the working branch
-execute_process(
-        COMMAND git log -1 --format=%h
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE GIT_COMMIT_HASH
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
-# Get the revision count
-execute_process(
-        COMMAND git rev-list HEAD --count
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE GIT_REVISION
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
-configure_file(
-${CMAKE_SOURCE_DIR}/gitversion/gitversion.h.in
-${CMAKE_BINARY_DIR}/gitversion/gitversion.h
-)
-
-include_directories(${CMAKE_BINARY_DIR}/gitversion)
 
 
 ############################
@@ -70,7 +45,7 @@ include_directories(spectra/include)
 
 
 #########################################
-### Demand for c++17 compiler support ###
+### Demand c++17 compiler support     ###
 #########################################
 macro(use_cxx17)
   if (CMAKE_VERSION VERSION_LESS "3.8")
