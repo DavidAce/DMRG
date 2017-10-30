@@ -185,8 +185,8 @@ void class_superblock::canonicalize_iMPS_vidal() {
         //The left/right eigenvectors are only hermitian if LA and LB have the same dimension!
         return;
     }
-    double diffA = 1;
-    double diffB = 1;
+//    double diffA = 1;
+//    double diffB = 1;
     cout << setprecision(16) << endl;
     cout << "LA old: \n" << MPS.LA << endl;
     cout << "LB old: \n" << MPS.LB << endl;
@@ -385,7 +385,7 @@ void class_superblock::canonicalize_iMPS_mcculloch() {
     Tensor4d TR     = Qtheta.contract(Qtheta,idxlist2{idx2(1,1),idx2(2,2)}).shuffle(array4{0,2,1,3});
 
     Tensor2d VL     = Math::dominant_eigenvector<Math::Handedness::LEFT>  (TL.reshape(array2{chiB*chiB,chiB*chiB})).real().reshape(array2{chiB, chiB});
-    Tensor2d VR     = Math::dominant_eigenvector<Math::Handedness::RGHT>  (TR.reshape(array2{chiB*chiB,chiB*chiB})).real().reshape(array2{chiB, chiB});
+    Tensor2d VR     = Math::dominant_eigenvector<Math::Handedness::RGHT>  (TR.reshape(array2{chiA*chiA,chiA*chiA})).real().reshape(array2{chiA, chiA});
 
     //Rescale
 
