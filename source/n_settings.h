@@ -45,7 +45,7 @@ namespace settings {
     }
     //Parameters controlling Finite-entanglement scaling (FES) in iTEBD-mode.
     namespace fes_itebd {
-        inline int       max_steps    = 300000;         /*!< Number of FES iterations per chi-value. */
+        inline int       max_steps    = 200000;         /*!< Number of FES iterations per chi-value. */
         inline double    delta_t      = 0.01;          /*!< Time step for iTEBD time evolution.*/
         inline long      chi_min      = 4;
         inline long      chi_max      = 8;

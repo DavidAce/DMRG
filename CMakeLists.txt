@@ -32,13 +32,12 @@ hunter_add_package(hdf5)                ### Download and install HDF5 Library
 find_package(ZLIB CONFIG REQUIRED)      ### Require ZLIB (for HDF5)
 find_package(szip CONFIG REQUIRED)      ### Require szip (for HDF5)
 find_package(hdf5 CONFIG REQUIRED)      ### Require HDF5
-find_package(OpenMP REQUIRED)           ### Require OpenMP
 
 
 ###################
 ### Setup flags ###
 ###################
-set(COMMON_OPTIONS -g -fopenmp -Wall -march=native -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context)
+set(COMMON_OPTIONS -g -Wall -march=native -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context)
 set(DEBUG_OPTIONS       -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
@@ -66,7 +65,7 @@ target_compile_options(DMRG++ PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>") 
 
 target_include_directories(DMRG++ PRIVATE source)           ### Project source filess
 target_include_directories(DMRG++ PRIVATE spectra/include)  ### Spectra                                 https://spectralib.org/
-target_link_libraries(DMRG++ -lstdc++fs -fopenmp)           ### For experimental::filesystem and OpenMP
+target_link_libraries(DMRG++ -lstdc++fs)                    ### For experimental::filesystem
 target_link_libraries(DMRG++ Eigen3::Eigen)                 ### For Eigen linear algebra header-library http://eigen.tuxfamily.org/
 target_link_libraries(DMRG++ GSL::gsl)                      ### For GSL GNU Scientific Library          https://www.gnu.org/software/gsl/
 target_link_libraries(DMRG++ hdf5)                          ### For HDF5                                https://support.hdfgroup.org/HDF5/
