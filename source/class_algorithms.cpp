@@ -292,7 +292,7 @@ void class_algorithms::FES_iDMRG(){
                 if (std::fabs((new_entropy-old_entropy)/new_entropy) < 1e-6 ){
                     cout << setprecision(16);
                     cout << "Converged | step " << step << ", diff = " << std::fabs((new_entropy-old_entropy)/new_entropy) << endl;
-//                    break;
+                    cout << superblock.MPS.GA << endl;
                 }
             }
 
