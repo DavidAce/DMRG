@@ -275,7 +275,8 @@ void class_algorithms::FES_iDMRG(){
 
             if(Math::mod(step,1)==0){
             }
-
+            superblock.test();
+//            superblock.transfer_matrix_eigenvalues();
 //            superblock.canonicalize_iMPS();
 //            superblock.canonicalize_iMPS_iterative_again();
 //            superblock.canonicalize_iMPS_vidal();
@@ -292,7 +293,6 @@ void class_algorithms::FES_iDMRG(){
                 if (std::fabs((new_entropy-old_entropy)/new_entropy) < 1e-6 ){
                     cout << setprecision(16);
                     cout << "Converged | step " << step << ", diff = " << std::fabs((new_entropy-old_entropy)/new_entropy) << endl;
-                    cout << superblock.MPS.GA << endl;
                 }
             }
 

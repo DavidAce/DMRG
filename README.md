@@ -23,8 +23,31 @@
 ---
 ## Quick Start
 
+
+#### Requirements
+ * C++ compiler with support for c++17 standard. Tested with
+    * GNU GCC version >= 7 
+    * Clang version >= 5.0).
+ * CMake (tested with version >= 3.7)
+ * [~~Spectra~~](https://spectralib.org/) ~~for eigenvalue-solver.~~ **Included, no action needed**
+ 
+#### Optional Requirements 
+ The following packages can be installed from your package manager (e.g. apt in ubuntu or brew in OSX), or built
+ from source and added to PATH:
+ 
+ * [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition.
+ * [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support. 
+ * [GSL](https://www.gnu.org/software/gsl/) for numerical integration.
+
+ If these are not found, the included package manager [Hunter](https://github.com/ruslo/hunter) will download and 
+ install them for you into  `~/.hunter` during the first build. This folder can be **removed safely** after you
+ have finished using this code.
+
+---
+
+
 #### From command line
-To build project, enter:
+To build this project, enter:
 ```
 ./build.sh
 ```
@@ -40,26 +63,6 @@ Some IDE's with CMake support can self-configure from the file CMakeLists.txt fo
 is by far the easiest approach. Recommended: [CLion](https://www.jetbrains.com/clion/download) or [Visual Studio Code](https://code.visualstudio.com/) with C++ and CMake Tools extensions.
 
 
-
-#### Requirements
- Please install the following software before building the project.
- * C++ compiler with support for c++17 standard (tested with GNU GCC version >= 7), for `ìf constexpr` suport.
- * CMake (tested with version >= 3.7)
- * [~~Spectra~~](https://spectralib.org/) ~~for eigenvalue-solver.~~ **Included, no action needed**
- 
- 
- The package manager [Hunter](https://github.com/ruslo/hunter) is included to ease the building process.
- During the first build, the dependencies listed in CMakeLists.txt will be downloaded and installed by
- [Hunter](https://github.com/ruslo/hunter) automatically on any platform (Linux/OSX/Win).
- 
- The following software is installed by [Hunter](https://github.com/ruslo/hunter):   
- * [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition.
- * [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support. 
- * [GSL](https://www.gnu.org/software/gsl/) for numerical integration.
- 
- The default installation folder in Linux is `~/.hunter`.
-
----
  
 ## Usage
 This code lacks an API or command-line parameters. As such, details of execution have to be

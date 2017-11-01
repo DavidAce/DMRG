@@ -196,26 +196,26 @@ class DenseSymMatProd{
     }
 
     /*! \brief Returns the largest eigenvector of a matrix */
-    template<Handedness hand = Handedness::RGHT>
-    auto dominant_eigenvector_eigenvalue(const Textra::Tensor<2, double> &tensor, const Textra::array2 out_shape){
-        Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-        DenseGenMatProd<double, hand> op(mat);
-        int ncv = std::min(settings::precision::eig_max_ncv, 3);
-        Spectra::GenEigsSolver<double, Spectra::LARGEST_REAL, DenseGenMatProd<double,hand>> eigs(&op, 1, ncv);
-        eigs.init();
-        eigs.compute(10000, 1e-12, Spectra::LARGEST_REAL);
-        if(eigs.info() != Spectra::SUCCESSFUL){
-            std::cout << "Eigenvalue solver failed." << '\n';
-//            std::cout << tensor << '\n';
-//            exit(1);
-        }
-        std::cout << "Eigenvalue: " << eigs.eigenvalues()<< std::endl;
-//        double x = eigs.eigenvectors().real().coeff(0);
-//        double sign = (x < 0) ? -1.0/x : 1.0/x;
-//        double sign = 1.0/x;
-//        return {Textra::Matrix_to_Tensor}
-        return {Textra::Matrix_to_Tensor1<Textra::cdouble>(eigs.eigenvectors()), eigs.eigenvalues()};
-    }
+//    template<Handedness hand = Handedness::RGHT>
+//    auto dominant_eigenvector_eigenvalue(const Textra::Tensor<2, double> &tensor, const Textra::array2 out_shape){
+//        Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
+//        DenseGenMatProd<double, hand> op(mat);
+//        int ncv = std::min(settings::precision::eig_max_ncv, 3);
+//        Spectra::GenEigsSolver<double, Spectra::LARGEST_REAL, DenseGenMatProd<double,hand>> eigs(&op, 1, ncv);
+//        eigs.init();
+//        eigs.compute(10000, 1e-12, Spectra::LARGEST_REAL);
+//        if(eigs.info() != Spectra::SUCCESSFUL){
+//            std::cout << "Eigenvalue solver failed." << '\n';
+////            std::cout << tensor << '\n';
+////            exit(1);
+//        }
+//        std::cout << "Eigenvalue: " << eigs.eigenvalues()<< std::endl;
+////        double x = eigs.eigenvectors().real().coeff(0);
+////        double sign = (x < 0) ? -1.0/x : 1.0/x;
+////        double sign = 1.0/x;
+////        return {Textra::Matrix_to_Tensor}
+//        return std{Textra::Matrix_to_Tensor1<Textra::cdouble>(eigs.eigenvectors()), eigs.eigenvalues()};
+//    }
 
     /*! \brief class for integration */
     template<typename F>
