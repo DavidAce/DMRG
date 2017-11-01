@@ -1,4 +1,4 @@
-# Doxyfile 1.8.11
+# Doxyfile 1.8.13
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project.
@@ -32,7 +32,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = DMRG
+PROJECT_NAME           = DMRG++
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -302,6 +302,15 @@ EXTENSION_MAPPING      =
 # The default value is: YES.
 
 MARKDOWN_SUPPORT       = YES
+
+# When the TOC_INCLUDE_HEADINGS tag is set to a non-zero value, all headings up
+# to that level are automatically included in the table of contents, even if
+# they do not have an id attribute.
+# Note: This feature currently applies only to Markdown headings.
+# Minimum value: 0, maximum value: 99, default value: 0.
+# This tag requires that the tag MARKDOWN_SUPPORT is set to YES.
+
+TOC_INCLUDE_HEADINGS   = 0
 
 # When enabled doxygen tries to link words that correspond to documented
 # classes, or namespaces to their corresponding documentation. Such a link can
@@ -601,7 +610,7 @@ SORT_GROUP_NAMES       = NO
 SORT_BY_SCOPE_NAME     = NO
 
 # If the STRICT_PROTO_MATCHING option is enabled and doxygen fails to do proper
-# type resolution of all settings of a function it will reject a match between
+# type resolution of all parameters of a function it will reject a match between
 # the prototype and the implementation of a member function even if there is
 # only one candidate or it is obvious which candidate to choose by doing a
 # simple string match. By disabling STRICT_PROTO_MATCHING doxygen will still
@@ -734,15 +743,15 @@ WARNINGS               = YES
 WARN_IF_UNDOCUMENTED   = YES
 
 # If the WARN_IF_DOC_ERROR tag is set to YES, doxygen will generate warnings for
-# potential errors in the documentation, such as not documenting some settings
-# in a documented function, or documenting settings that don't exist or using
+# potential errors in the documentation, such as not documenting some parameters
+# in a documented function, or documenting parameters that don't exist or using
 # markup commands wrongly.
 # The default value is: YES.
 
 WARN_IF_DOC_ERROR      = YES
 
 # This WARN_NO_PARAMDOC option can be enabled to get warnings for functions that
-# are documented, but have no documentation for their settings or return
+# are documented, but have no documentation for their parameters or return
 # value. If set to NO, doxygen will only warn about wrong or incomplete
 # parameter documentation, but not about the absence of documentation.
 # The default value is: NO.
@@ -803,8 +812,8 @@ INPUT_ENCODING         = UTF-8
 # If left blank the following patterns are tested:*.c, *.cc, *.cxx, *.cpp,
 # *.c++, *.java, *.ii, *.ixx, *.ipp, *.i++, *.inl, *.idl, *.ddl, *.odl, *.h,
 # *.hh, *.hxx, *.hpp, *.h++, *.cs, *.d, *.php, *.php4, *.php5, *.phtml, *.inc,
-# *.m, *.markdown, *.md, *.mm, *.dox, *.py, *.pyw, *.f90, *.f, *.for, *.tcl,
-# *.vhd, *.vhdl, *.ucf, *.qsf, *.as and *.js.
+# *.m, *.markdown, *.md, *.mm, *.dox, *.py, *.pyw, *.f90, *.f95, *.f03, *.f08,
+# *.f, *.for, *.tcl, *.vhd, *.vhdl, *.ucf and *.qsf.
 
 FILE_PATTERNS          = *.c \
                          *.cc \
@@ -2203,7 +2212,7 @@ HIDE_UNDOC_RELATIONS   = YES
 
 # If you set the HAVE_DOT tag to YES then doxygen will assume the dot tool is
 # available from the path. This tool is part of Graphviz (see:
-# http://www.graphviz.org/), a graph visualization toolkit from AT&AttrType and Lucent
+# http://www.graphviz.org/), a graph visualization toolkit from AT&T and Lucent
 # Bell Labs. The other options in this section have no effect if this option is
 # set to NO
 # The default value is: YES.
@@ -2417,6 +2426,11 @@ DIAFILE_DIRS           =
 
 PLANTUML_JAR_PATH      = 
 
+# When using plantuml, the PLANTUML_CFG_FILE tag can be used to specify a
+# configuration file for plantuml.
+
+PLANTUML_CFG_FILE      = 
+
 # When using plantuml, the specified paths are searched for files specified by
 # the !include statement in a plantuml block.
 
@@ -2459,7 +2473,7 @@ MAX_DOT_GRAPH_DEPTH    = 0
 DOT_TRANSPARENT        = NO
 
 # Set the DOT_MULTI_TARGETS tag to YES to allow dot to generate multiple output
-# files in one run (i.e. multiple -o and -AttrType options on the command line). This
+# files in one run (i.e. multiple -o and -T options on the command line). This
 # makes dot run faster, but since only newer versions of dot (>1.8.10) support
 # this, this feature is disabled by default.
 # The default value is: NO.
