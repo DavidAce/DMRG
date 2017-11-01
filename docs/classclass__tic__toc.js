@@ -2,6 +2,7 @@ var classclass__tic__toc =
 [
     [ "class_tic_toc", "classclass__tic__toc.html#aec71e304426b75105ce422dee9f4f2de", null ],
     [ "class_tic_toc", "classclass__tic__toc.html#ae3cbd6f54bc203a76f6d6d4c01077712", null ],
+    [ "get_age", "classclass__tic__toc.html#abdb3f46902102c328384e6160d733124", null ],
     [ "print_delta", "classclass__tic__toc.html#a47731fce833ea5e35097f50ce0b84b21", null ],
     [ "print_time", "classclass__tic__toc.html#a4168168075a8e2998ce1138ceb06e59b", null ],
     [ "print_time_w_percent", "classclass__tic__toc.html#a49634b133c98800736dbe2229bcb1322", null ],

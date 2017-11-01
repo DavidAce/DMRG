@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['l_5ftail',['L_tail',['../classclass___m_p_s.html#a1f3141591083861a11e7707a96f7284c',1,'class_MPS']]],
-  ['la',['LA',['../classclass___m_p_s.html#aa5808a7d9f5efeb5c99c1fb8cd383dd0',1,'class_MPS']]],
-  ['lb',['LB',['../classclass___m_p_s.html#a39c40c3cf7a7970647dff40fd033a120',1,'class_MPS']]],
-  ['lblock',['Lblock',['../classclass__superblock.html#a44835bbcd2237965741a07c6cbb702db',1,'class_superblock']]]
+  ['ga',['GA',['../classclass___m_p_s.html#a0606f58e1aa3b2421f5ec0d9982145cc',1,'class_MPS']]],
+  ['gb',['GB',['../classclass___m_p_s.html#accd89386749b600694e42a1b138fe08c',1,'class_MPS']]]
 ];

@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['fdmrg',['fDMRG',['../classclass__algorithms.html#a3be23f3471911e6722e41589553aecf7',1,'class_algorithms']]],
-  ['fes',['FES',['../classclass__algorithms.html#a1b61c4da5826a788aba145dbcad4e25d',1,'class_algorithms']]],
-  ['find_5fground_5fstate',['find_ground_state',['../classclass__superblock.html#abfdbb85192198cdae650cbd60f01571a',1,'class_superblock']]]
+  ['enlarge',['enlarge',['../classclass__environment___l.html#adbb888e89846e78c696443be98e53946',1,'class_environment_L::enlarge()'],['../classclass__environment___r.html#ac3a5956ce4bec92f91a6a551fbb97c1d',1,'class_environment_R::enlarge()']]],
+  ['enlarge_5fenvironment',['enlarge_environment',['../classclass__superblock.html#a2485636df110a965bf5c97e649df8777',1,'class_superblock']]]
 ];

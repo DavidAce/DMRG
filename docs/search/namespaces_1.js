@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['textra',['Textra',['../namespace_textra.html',1,'']]]
+  ['settings',['settings',['../namespacesettings.html',1,'']]]
 ];

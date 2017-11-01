@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['set_5flength',['set_length',['../classclass__storage.html#aca3b7a1e0ccbef142d85e3c90361a7f3',1,'class_storage']]],
-  ['store_5finsert',['store_insert',['../classclass__storage.html#a27a5109b1b38574b4b3b4587198fb297',1,'class_storage']]],
-  ['swap_5fab',['swap_AB',['../classclass___m_p_s.html#a27502b59d10647f0037b71e148654d65',1,'class_MPS::swap_AB()'],['../classclass__superblock.html#a593c53eaa16bbb4dd67f4a9db95c821e',1,'class_superblock::swap_AB()']]]
+  ['perform_5fop',['perform_op',['../classclass__superblock.html#ae8ca4d0a6dd3706f01d33dfeba2b4c3c',1,'class_superblock']]],
+  ['print_5fpicture',['print_picture',['../classclass__superblock.html#a0145a695293e2f14c510d208118b4e23',1,'class_superblock']]],
+  ['print_5fstate',['print_state',['../classclass__superblock.html#ad9cad5d0f24202e10c2c5343a79d6f8e',1,'class_superblock']]],
+  ['print_5fstorage',['print_storage',['../classclass__storage.html#a1148311a7eaf7ecbc3710502837ecaf0',1,'class_storage']]],
+  ['prod',['prod',['../namespace_math.html#a55a57f4eef5ea3b56fd048142a35d677',1,'Math']]]
 ];

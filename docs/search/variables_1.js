@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['ga',['GA',['../classclass___m_p_s.html#a51e7a57a898c7836bfabbfcc298d63a2',1,'class_MPS']]],
-  ['gb',['GB',['../classclass___m_p_s.html#ab99c3766043b2488a88bf7dc91e36098',1,'class_MPS']]]
+  ['chi',['chi',['../classclass__superblock.html#a32afcea00a52d8f6b8c7aa43232132c9',1,'class_superblock']]],
+  ['chi_5fmax',['chi_max',['../classclass__superblock.html#ad726073f16e00b563eea6192c0780072',1,'class_superblock']]]
 ];

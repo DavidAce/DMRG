@@ -101,7 +101,7 @@ which in code reads
 
 # Details
  \author    David Aceituno
- \date      07-2017
+ \date      10-2017
  \copyright MPL2
 
 */
