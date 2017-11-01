@@ -62,6 +62,8 @@ public:
     double get_energy();
     double get_entropy();
     double get_variance();
+    void test();
+    void transfer_matrix_eigenvalues();
     void canonicalize_iMPS_vidal();
     void canonicalize_iMPS_mcculloch();
     void canonicalize_iMPS();

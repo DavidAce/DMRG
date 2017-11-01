@@ -218,17 +218,17 @@ private:
                 return H5Screate_simple(rank, dims, nullptr);
         }
         if constexpr (std::is_arithmetic<DataType>::value){
-            int rank = 1;
+            const int rank = 1;
             hsize_t dims[rank] = {1};
             return H5Screate_simple(rank, dims, nullptr);
         }
         if constexpr (tc::is_matrix <DataType>::value) {
-                int rank = 2;
+                const int rank = 2;
                 hsize_t dims[rank] = { (hsize_t) data.rows(), (hsize_t) data.cols() };
                 return H5Screate_simple(rank, dims, nullptr);
         }
         if constexpr(tc::is_instance_of<std::vector,DataType>::value){
-            int rankk = 1;
+            const int rankk = 1;
             hsize_t dimss[rankk] = {data.size()};
             return H5Screate_simple(rankk, dimss, nullptr);
         }
@@ -241,7 +241,7 @@ private:
 
 
         if constexpr(std::is_same<std::string, DataType>::value){
-            int rankk = 1;
+            const int rankk = 1;
             hsize_t dimss[rankk] = {1};
             return H5Screate_simple(rankk, dimss, nullptr);
         }

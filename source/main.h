@@ -21,6 +21,31 @@
   > by Ulrich Schollwöck. <br>
 
 
+---
+## Quick Start
+
+
+#### Requirements
+ * C++ compiler with support for c++17 standard. Tested with
+    * GNU GCC version >= 7
+    * Clang version >= 5.0).
+ * CMake (tested with version >= 3.7)
+ * [~~Spectra~~](https://spectralib.org/) ~~for eigenvalue-solver.~~ **Included, no action needed**
+
+#### Optional Requirements
+ The following packages can be installed from your package manager (e.g. apt in ubuntu or brew in OSX), or built
+ from source and added to PATH:
+
+ * [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition.
+ * [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support.
+ * [GSL](https://www.gnu.org/software/gsl/) for numerical integration.
+
+ If these are not found, the included package manager [Hunter](https://github.com/ruslo/hunter) will download and
+ install them for you into  `~/.hunter` during the first build. This folder can be **removed safely** after you
+ have finished using this code.
+
+---
+
 
   ## Usage
   This code lacks an API or command-line parameters. As such, details of execution have to be
@@ -72,26 +97,6 @@ which in code reads
  Textra::Tensor4 G(d,d,chia,chib);
 \endcode
 
-
-
- ## Requirements
- The following software is required:
- - [g++-7 for -std=c++17 support](https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test) for newer features. To install in Ubuntu:
-    \code
-     sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-     sudo apt update
-     sudo apt install gcc-7 g++-7
-    \endcode
- - [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition. **Included, no action needed**
- - [Spectra](https://spectralib.org/)  for eigenvalue-solver. **Included, no action needed**
- - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support. To install in Ubuntu:
-     \code
-     sudo apt install libhdf5-dev libhdf5-10 libhdf5-cpp-11
-     \endcode
- - [GSL](https://www.gnu.org/software/gsl/) for numerical integration. To install in Ubuntu:
-    \code
-    sudo apt install libgsl-dev libgsl2
-    \endcode
 
 
 # Details

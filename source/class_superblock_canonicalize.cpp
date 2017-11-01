@@ -8,6 +8,69 @@
 #include <Eigen/Eigenvalues>
 
 
+void class_superblock::test(){
+    auto tuple = std::make_tuple(1, 'a', 2.3);
+
+    // unpack the tuple into individual variables declared at the call site
+    auto [ i, c, d ] = tuple;
+
+    std::cout << "i=" << i << " c=" << c << " d=" << d << '\n';
+    return;
+}
+
+void class_superblock::transfer_matrix_eigenvalues() {
+
+    if (MPS.LB.size()!= MPS.LA.size()){
+        //The left/right eigenvectors are only hermitian if LA and LB have the same dimension!
+        return;
+    }
+    if (MPS.LB.size() < 2 || MPS.LA.size() < 2 ){
+        //The left/right eigenvectors are only hermitian if LA and LB have the same dimension!
+        return;
+    }
+    cout << setprecision(16);
+    update_bond_dimensions();
+    long chiA = MPS.LA.size();
+    long chiB = MPS.LB.size();
+    Tensor3d GALA = MPS.GA.contract(asDiagonal(MPS.LA), idxlist1{idx2(2, 0)});                          //(eq 107)
+    Tensor3d GBLB = MPS.GB.contract(asDiagonal(MPS.LB), idxlist1{idx2(2, 0)});                          //(eq 109)
+    Tensor3d LBGA = asDiagonal(MPS.LB).contract(MPS.GA, idxlist1{idx2(1, 1)}).shuffle(array3{1, 0, 2}); //(eq 106)
+    Tensor3d LAGB = asDiagonal(MPS.LA).contract(MPS.GB, idxlist1{idx2(1, 1)}).shuffle(array3{1, 0, 2}); //(eq 108)
+
+    Tensor4d TA_R = GALA.contract(GALA.conjugate(), idxlist1{idx2(0, 0)}).shuffle(array4{0,2,1,3});
+    Tensor4d TA_L = LBGA.contract(LBGA.conjugate(), idxlist1{idx2(0, 0)}).shuffle(array4{0,2,1,3});
+    Tensor4d TB_R = GBLB.contract(GBLB.conjugate(), idxlist1{idx2(0, 0)}).shuffle(array4{0,2,1,3});
+    Tensor4d TB_L = LAGB.contract(LAGB.conjugate(), idxlist1{idx2(0, 0)}).shuffle(array4{0,2,1,3});
+
+    Tensor2d VA_R = Math::dominant_eigenvector<Math::Handedness::RGHT>  (TA_R.reshape(array2{chiB*chiB,chiA*chiA})).real().reshape(array2{chiB, chiB});
+    Tensor2d VA_L = Math::dominant_eigenvector<Math::Handedness::LEFT>  (TA_L.reshape(array2{chiB*chiB,chiA*chiA})).real().reshape(array2{chiA, chiA});
+    Tensor2d VB_R = Math::dominant_eigenvector<Math::Handedness::RGHT>  (TB_R.reshape(array2{chiA*chiA,chiB*chiB})).real().reshape(array2{chiA, chiA});
+    Tensor2d VB_L = Math::dominant_eigenvector<Math::Handedness::LEFT>  (TB_L.reshape(array2{chiA*chiA,chiB*chiB})).real().reshape(array2{chiB, chiB});
+    Spectra::DenseGenMatProd<double> op_TA_R(Tensor_to_MatrixXd<4>(TA_R, chiB*chiB,chiA*chiA));
+    Spectra::DenseGenMatProd<double> op_TA_L(Tensor_to_MatrixXd<4>(TA_L, chiB*chiB,chiA*chiA));
+    Spectra::DenseGenMatProd<double> op_TB_R(Tensor_to_MatrixXd<4>(TB_R, chiA*chiA,chiB*chiB));
+    Spectra::DenseGenMatProd<double> op_TB_L(Tensor_to_MatrixXd<4>(TB_L, chiA*chiA,chiB*chiB));
+    int ncv = std::min(settings::precision::eig_max_ncv,4);
+    Spectra::GenEigsSolver<double, Spectra::LARGEST_REAL, Spectra::DenseGenMatProd<double>> eigsTA_R(&op_TA_R, 2, ncv);
+    eigsTA_R.init();
+    eigsTA_R.compute(10000, 1e-12, Spectra::LARGEST_REAL);
+    std::cout << "Eigenvalue TA_R:\n" << eigsTA_R.eigenvalues()<< std::endl;
+    Spectra::GenEigsSolver<double, Spectra::LARGEST_REAL, Spectra::DenseGenMatProd<double>> eigsTA_L(&op_TA_L, 2, ncv);
+    eigsTA_L.init();
+    eigsTA_L.compute(10000, 1e-12, Spectra::LARGEST_REAL);
+    std::cout << "Eigenvalue TA_L:\n" << eigsTA_L.eigenvalues()<< std::endl;
+    Spectra::GenEigsSolver<double, Spectra::LARGEST_REAL, Spectra::DenseGenMatProd<double>> eigsTB_R(&op_TB_R, 2, ncv);
+    eigsTB_R.init();
+    eigsTB_R.compute(10000, 1e-12, Spectra::LARGEST_REAL);
+    std::cout << "Eigenvalue TB_R:\n" << eigsTB_R.eigenvalues()<< std::endl;
+    Spectra::GenEigsSolver<double, Spectra::LARGEST_REAL, Spectra::DenseGenMatProd<double>> eigsTB_L(&op_TB_L, 2, ncv);
+    eigsTB_L.init();
+    eigsTB_L.compute(10000, 1e-12, Spectra::LARGEST_REAL);
+    std::cout << "Eigenvalue TB_L: \n" << eigsTB_L.eigenvalues()<< std::endl;
+
+    return;
+}
+
 void class_superblock::canonicalize_iMPS_iterative_again() {
     if (MPS.L_tail.size() <= 1) {
         return;
@@ -295,8 +358,7 @@ void class_superblock::canonicalize_iMPS_vidal() {
 
     Tensor0d tempA = (LA - LA_old.slice(array1{0}, array1{chiA})).square().sum().sqrt();
     Tensor0d tempB = (LB - LB_old.slice(array1{0}, array1{chiB})).square().sum().sqrt();
-    diffA = tempA(0);
-    diffB = tempB(0);
+
 //         cout << "LA diff: " << diffA << endl;
 //         cout << "LB diff: " << diffB << endl;
 //        if(iter > 100 ){

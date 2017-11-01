@@ -130,7 +130,11 @@ namespace Textra {
         return Eigen::Map<const Eigen::VectorXd>(tensor.data(), tensor.size());
     }
 
-
+    template<long rank, typename sizeType>
+    inline Eigen::MatrixXd Tensor_to_MatrixXd(const Tensor<rank,double> &tensor, sizeType rows, sizeType cols){
+        Tensor<2,double> tensor2d  = tensor.reshape(array2{rows,cols});
+        return Eigen::Map<const Eigen::MatrixXd> (tensor2d.data(), rows ,cols );
+    }
 
 
 
