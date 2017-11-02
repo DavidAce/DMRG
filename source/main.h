@@ -26,19 +26,19 @@
 
 
 #### Requirements
- * C++ compiler with support for c++17 standard. Tested with
-    * GNU GCC version >= 7
-    * Clang version >= 5.0).
- * CMake (tested with version >= 3.7)
- * [~~Spectra~~](https://spectralib.org/) ~~for eigenvalue-solver.~~ **Included, no action needed**
+ - C++ compiler with support for c++17 standard. Tested with
+    - GNU GCC version >= 7
+    - Clang version >= 5.0).
+ - CMake (tested with version >= 3.7)
+ - [Spectra](https://spectralib.org/) <del>for eigenvalue-solver.</del> **Included, no action needed**
 
 #### Optional Requirements
  The following packages can be installed from your package manager (e.g. apt in ubuntu or brew in OSX), or built
  from source and added to PATH:
 
- * [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition.
- * [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support.
- * [GSL](https://www.gnu.org/software/gsl/) for numerical integration.
+ - [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition.
+ - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support.
+ - [GSL](https://www.gnu.org/software/gsl/) for numerical integration.
 
  If these are not found, the included package manager [Hunter](https://github.com/ruslo/hunter) will download and
  install them for you into  `~/.hunter` during the first build. This folder can be **removed safely** after you

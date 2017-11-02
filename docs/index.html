@@ -111,10 +111,22 @@ $(document).ready(function(){initNavTree('index.html','');});
 <hr/>
  <h2>Quick Start</h2>
 <h4>Requirements</h4>
-<p>C++ compiler with support for c++17 standard. Tested with GNU GCC version &gt;= 7 Clang version &gt;= 5.0). CMake (tested with version &gt;= 3.7) <a href="https://spectralib.org/">~~Spectra~~</a> ~~for eigenvalue-solver.~~ <b>Included, no action needed</b></p>
+<ul>
+<li>C++ compiler with support for c++17 standard. Tested with<ul>
+<li>GNU GCC version &gt;= 7</li>
+<li>Clang version &gt;= 5.0).</li>
+</ul>
+</li>
+<li>CMake (tested with version &gt;= 3.7)</li>
+<li><a href="https://spectralib.org/">Spectra</a> &lt;del&gt;for eigenvalue-solver.&lt;/del&gt; <b>Included, no action needed</b></li>
+</ul>
 <h4>Optional Requirements</h4>
 <p>The following packages can be installed from your package manager (e.g. apt in ubuntu or brew in OSX), or built from source and added to PATH:</p>
-<p><a href="http://eigen.tuxfamily.org">Eigen</a> for tensor support and SVD decomposition. <a href="https://support.hdfgroup.org/HDF5/">HDF5</a> for hdf5-file storage support. <a href="https://www.gnu.org/software/gsl/">GSL</a> for numerical integration.</p>
+<ul>
+<li><a href="http://eigen.tuxfamily.org">Eigen</a> for tensor support and SVD decomposition.</li>
+<li><a href="https://support.hdfgroup.org/HDF5/">HDF5</a> for hdf5-file storage support.</li>
+<li><a href="https://www.gnu.org/software/gsl/">GSL</a> for numerical integration.</li>
+</ul>
 <p>If these are not found, the included package manager <a href="https://github.com/ruslo/hunter">Hunter</a> will download and install them for you into <code>~/.hunter</code> during the first build. This folder can be <b>removed safely</b> after you have finished using this code. </p><hr/>
 <h2>Usage</h2>
 <p>This code lacks an API or command-line parameters. As such, details of execution have to be set in source code, specifically one can edit model and simulation parameters in <code><a class="el" href="n__model_8h_source.html">source/n_model.h</a></code> and <code><a class="el" href="n__settings_8h_source.html">source/n_settings.h</a></code>.</p>
