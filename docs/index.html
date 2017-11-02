@@ -109,25 +109,30 @@ $(document).ready(function(){initNavTree('index.html','');});
  </p>
 </blockquote>
 <hr/>
- <h2>Quick Start</h2>
-<h4>Requirements</h4>
-<ul>
+ <h2>Installation</h2>
+<h3>Quick start</h3>
+<p>The project can be built with a single command from a unix terminal. Simply launch the script <code>.\build.sh</code> found in the root folder, containing </p><div class="fragment"><div class="line"><span class="preprocessor">#!/bin/sh</span></div><div class="line">cmake -E make_directory build/Release</div><div class="line">cd build/Release</div><div class="line">cmake -Bbuild/Release --build build -config Release ../../</div><div class="line">make</div></div><!-- fragment --><p> This script will create subdirectories and use CMake to check for dependencies, and download automatically if needed (see <em>Optional Requirements</em> below). If the dependencies are found, the project is built and an executable is generated.</p>
+<p>To run executable, launch <code>.\run.sh</code>, containing</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#!/bin/sh</span></div><div class="line"><span class="preprocessor">./build/Release/DMRG++</span></div></div><!-- fragment --><p>Alternatively** some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This is perhaps an even simpler approach. Recommended: <a href="https://www.jetbrains.com/clion/download">CLion</a> or <a href="https://code.visualstudio.com/">Visual Studio Code</a> with C++ and CMake Tools extensions.</p>
+<h3>Minimum Requirements</h3>
+<p>The following software is required to build the project:</p><ul>
 <li>C++ compiler with support for c++17 standard. Tested with<ul>
 <li>GNU GCC version &gt;= 7</li>
 <li>Clang version &gt;= 5.0).</li>
 </ul>
 </li>
-<li>CMake (tested with version &gt;= 3.7)</li>
-<li><a href="https://spectralib.org/">Spectra</a> &lt;del&gt;for eigenvalue-solver.&lt;/del&gt; <b>Included, no action needed</b></li>
+<li>CMake version &gt;= 3.7</li>
 </ul>
-<h4>Optional Requirements</h4>
-<p>The following packages can be installed from your package manager (e.g. apt in ubuntu or brew in OSX), or built from source and added to PATH:</p>
+<h3>Optional Requirements</h3>
+<p>You can chose to <b>either</b> let the <a href="https://github.com/ruslo/hunter">Hunter</a> package manager install the following software automatically, or install it yourself with your favorite package manager (e.g. apt in ubuntu or brew in OSX).</p>
 <ul>
-<li><a href="http://eigen.tuxfamily.org">Eigen</a> for tensor support and SVD decomposition.</li>
-<li><a href="https://support.hdfgroup.org/HDF5/">HDF5</a> for hdf5-file storage support.</li>
-<li><a href="https://www.gnu.org/software/gsl/">GSL</a> for numerical integration.</li>
+<li><a href="http://eigen.tuxfamily.org">Eigen</a> for tensor support and SVD decomposition (tested with version &gt;= 3.3).</li>
+<li><a href="https://support.hdfgroup.org/HDF5/">HDF5</a> for hdf5-file storage support (tested with version &gt;= 1.8).</li>
+<li><a href="https://www.gnu.org/software/gsl/">GSL</a> for numerical integration (tested with version &gt;= 2.4).</li>
 </ul>
-<p>If these are not found, the included package manager <a href="https://github.com/ruslo/hunter">Hunter</a> will download and install them for you into <code>~/.hunter</code> during the first build. This folder can be <b>removed safely</b> after you have finished using this code. </p><hr/>
+<p>If the software above is not found in your system, <a href="https://github.com/ruslo/hunter">Hunter</a> will download and install them for you into <code>~/.hunter</code> during the first build. This folder can be <b>removed safely</b> after you have finished using this code.</p>
+<p>In addition the <a href="https://spectralib.org/">Spectra</a> header-only library is automatically included as a Git submodule. (<b>No action required</b>).</p>
+<hr/>
 <h2>Usage</h2>
 <p>This code lacks an API or command-line parameters. As such, details of execution have to be set in source code, specifically one can edit model and simulation parameters in <code><a class="el" href="n__model_8h_source.html">source/n_model.h</a></code> and <code><a class="el" href="n__settings_8h_source.html">source/n_settings.h</a></code>.</p>
 <p>The files <code>source/class_algorithms.cpp</code> and <code><a class="el" href="class__algorithms_8h_source.html">source/class_algorithms.h</a></code> contain routines for the infinite-DMRG, finite-DMRG and infinite-TEBD that can be called from <code><a class="el" href="main_8cpp.html">main.cpp</a></code>. The algorithms should ideally give similar ground state energies, which is a good sanity check.</p>
