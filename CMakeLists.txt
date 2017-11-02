@@ -38,9 +38,7 @@ endif()
 
 if (NOT "${hdf5_DIR}" MATCHES "hunter")
     find_package(HDF5 1.8 MODULE COMPONENTS CXX)   ### Find HDF5 installed in system
-#    include_directories(${HDF5_INCLUDE_DIRS})
     add_definitions    (${HDF5_DEFINITIONS})
-#    link_libraries     (${HDF5_LIBRARIES})
     message("Searching for native HDF5 installation. Found: ${HDF5_FOUND}")
 endif()
 if(NOT HDF5_FOUND)
@@ -64,11 +62,7 @@ if (NOT EIGEN3_FOUND)
 endif()
 
 
-##
-#get_cmake_property(_variableNames VARIABLES)
-#foreach (_variableName ${_variableNames})
-#    message(STATUS "${_variableName}=${${_variableName}}")
-#endforeach()
+
 
 ###################
 ### Setup flags ###
@@ -114,3 +108,11 @@ if("${Eigen3_DIR}" MATCHES "hunter")
 else()
     target_include_directories(DMRG++ PRIVATE ${EIGEN3_INCLUDE_DIR})### For Eigen linear algebra header-library http://eigen.tuxfamily.org/
 endif()
+
+
+# To print all variables, use the code below:
+#
+#get_cmake_property(_variableNames VARIABLES)
+#foreach (_variableName ${_variableNames})
+#    message(STATUS "${_variableName}=${${_variableName}}")
+#endforeach()
