@@ -22,27 +22,53 @@
 
 
 ---
-## Quick Start
+## Installation
+### Quick start
+The project can be built with a single command from a unix terminal.
+Simply launch the script `.\build.sh` found in the root folder, containing
+```
+        #!/bin/sh
+        cmake -E make_directory build/Release
+        cd build/Release
+        cmake -Bbuild/Release --build build -config Release ../../
+        make
+```
+This script will create subdirectories and use CMake to check for dependencies, and download automatically if needed (see *Optional Requirements* below).
+If the dependencies are found, the project is built and an executable is generated.
+
+To run executable, launch `.\run.sh`, containing
+
+```
+#!/bin/sh
+./build/Release/DMRG++
+```
 
 
-#### Requirements
+**Alternatively** some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This
+is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.com/clion/download) or [Visual Studio Code](https://code.visualstudio.com/) with C++ and CMake Tools extensions.
+
+
+### Minimum Requirements
+The following software is required to build the project:
  - C++ compiler with support for c++17 standard. Tested with
     - GNU GCC version >= 7
     - Clang version >= 5.0).
- - CMake (tested with version >= 3.7)
- - [Spectra](https://spectralib.org/) <del>for eigenvalue-solver.</del> **Included, no action needed**
+ - CMake version >= 3.7
 
-#### Optional Requirements
- The following packages can be installed from your package manager (e.g. apt in ubuntu or brew in OSX), or built
- from source and added to PATH:
+### Optional Requirements
+ You can chose to **either**  let the [Hunter](https://github.com/ruslo/hunter) package manager install the following
+ software automatically, or install it yourself with your favorite package manager (e.g. apt in ubuntu or brew in OSX).
 
- - [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition.
- - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support.
- - [GSL](https://www.gnu.org/software/gsl/) for numerical integration.
+ - [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition (tested with version >= 3.3).
+ - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support (tested with version >= 1.8).
+ - [GSL](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
 
- If these are not found, the included package manager [Hunter](https://github.com/ruslo/hunter) will download and
+ If the software above is not found in your system, [Hunter](https://github.com/ruslo/hunter) will download and
  install them for you into  `~/.hunter` during the first build. This folder can be **removed safely** after you
  have finished using this code.
+
+In addition the [Spectra](https://spectralib.org/) header-only library is automatically included as a Git submodule. (**No action required**).
+
 
 ---
 
