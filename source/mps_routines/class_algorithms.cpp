@@ -187,7 +187,7 @@ void class_algorithms::FES_iTEBD(){
         double time_step = s::fes_itebd::delta_t;
         class_superblock superblock;
         output_data_container container(hdf5, "FES_iTEBD/chi", chi_max );
-        superblock.H.asTimeEvolution = Model::TimeEvolution_4th_order(time_step);
+        superblock.H.asTimeEvolution = Model::TimeEvolution_1st_order(time_step);
         double phys_time = 0;
         int step = 0;
         double old_entropy = 0;
@@ -210,12 +210,12 @@ void class_algorithms::FES_iTEBD(){
             if(Math::mod(step,1)==0){
                 old_entropy = new_entropy;
                 new_entropy = superblock.MPS.get_entropy();
-                if (std::fabs((new_entropy-old_entropy)/new_entropy) < 1e-2*time_step ){
+                if (std::fabs((new_entropy-old_entropy)/new_entropy) < 1e-6*time_step ){
                     superblock.canonicalize_iMPS_iterative();
                     container.push_back(superblock);
                     container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
-                    time_step *=0.9;
-                    superblock.H.asTimeEvolution = Model::TimeEvolution_4th_order(time_step);
+                    time_step *=0.5;
+                    superblock.H.asTimeEvolution = Model::TimeEvolution_1st_order(time_step);
                 }
             }
             t_upd.toc();
