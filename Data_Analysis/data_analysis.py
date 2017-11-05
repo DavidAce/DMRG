@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from src.h5py_extra import *
 
 plt.close('all')
-filename = 'data10.h5'
+filename = '../output/data.h5'
 from matplotlib import rc
 rc('font',**{'family':'sans-serif','sans-serif':['Helvetica'], 'size':12})
 rc('text', usetex=True)
