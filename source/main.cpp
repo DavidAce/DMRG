@@ -1,6 +1,6 @@
 /*! \file */
-#include <n_settings.h>
-#include <class_algorithms.h>
+#include <sim_parameters/n_sim_settings.h>
+#include <mps_routines/class_algorithms.h>
 #include <gitversion.h>
 
 

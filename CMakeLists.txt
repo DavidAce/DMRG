@@ -29,9 +29,10 @@ if (NOT "${GSL_DIR}" MATCHES "hunter")
     message("Searching for native GSL installation. Found: ${GSL_FOUND}")
 endif()
 if (NOT GSL_FOUND)
+    set(GSL_FOUND 1)
     message("Using GSL provided by Hunter")
-        hunter_add_package(GSL)                             ### Download and install GSL Library
-        find_package(GSL CONFIG REQUIRED)                   ### Find and define includes for GSL Library
+    hunter_add_package(GSL)                             ### Download and install GSL Library
+    find_package(GSL CONFIG REQUIRED)                   ### Find and define includes for GSL Library
 endif()
 
 
@@ -42,6 +43,7 @@ if (NOT "${hdf5_DIR}" MATCHES "hunter")
     message("Searching for native HDF5 installation. Found: ${HDF5_FOUND}")
 endif()
 if(NOT HDF5_FOUND)
+    set(HDF5_FOUND 1)
     message("Using HDF5 provided by Hunter")
     hunter_add_package(hdf5)                            ### Download and install HDF5 Library
     find_package(ZLIB CONFIG REQUIRED)                  ### Require ZLIB (for HDF5)
@@ -56,6 +58,7 @@ if (NOT "${Eigen3_DIR}" MATCHES "hunter")
 endif()
 
 if (NOT EIGEN3_FOUND)
+    set(EIGEN3_FOUND 1)
     message("Using Eigen3 provided by Hunter")
     hunter_add_package(Eigen)                           ### Download and install Eigen library
     find_package(Eigen3 CONFIG REQUIRED)                ### Find and define includes for Eigen Library
