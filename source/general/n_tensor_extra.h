@@ -4,6 +4,8 @@
 
 #ifndef TENSOR_EXTRA_H
 #define TENSOR_EXTRA_H
+//#define EIGEN_USE_MKL_ALL
+
 #include <Eigen/Core>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <iterator>
@@ -19,60 +21,74 @@
  */
 
 namespace Textra {
-//    using Scalar        = double;
+//    using Scalar        = std::complex<double>;
     using cdouble       = std::complex<double>;
-    using idx2          = Eigen::IndexPair<long>;
 
     template<typename Scalar = double> using MatrixType    = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     template<typename Scalar = double> using VectorType    = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
-    template<long rank> using idxlist                                 = Eigen::array<idx2, rank>;
-    template<long rank, typename Scalar = double> using Tensor        = Eigen::Tensor<Scalar,rank,Eigen::ColMajor>;
-    template<long rank, typename Scalar = double> using const_Tensor  = Eigen::Tensor<const Scalar,rank,Eigen::ColMajor>;
+    template<long rank, typename Scalar = cdouble> using Tensor        = Eigen::Tensor<Scalar,rank,Eigen::ColMajor>;
+    template<long rank, typename Scalar = cdouble> using const_Tensor  = Eigen::Tensor<const Scalar,rank,Eigen::ColMajor>;
+    template<long rank, typename Scalar = cdouble> using TensorRef     = Eigen::TensorRef<Eigen::Tensor<Scalar,rank,Eigen::ColMajor>>;
     template<long rank> using array                                   = Eigen::array<long, rank>;
 
-
+    template <long length>
+    inline Eigen::array<Eigen::IndexPair<long>,length> idx (std::initializer_list<long> list1,std::initializer_list<long> list2){
+        //Use numpy-style indexing for contraction. Each list contains a list of indices to be contracted for the respective
+        //tensors. This function zips them together into pairs as used in Eigen::Tensor module.
+        Eigen::array<Eigen::IndexPair<long>,length> pairlistOut;
+        auto it1 = list1.begin();
+        auto it2 = list2.begin();
+        for(int i = 0; i< length; i++){
+            pairlistOut[i] = Eigen::IndexPair<long>{*it1++, *it2++};
+        }
+        return pairlistOut;
+    }
 
     using Tensor4d       = Tensor<4,double>;
     using Tensor3d       = Tensor<3,double>;
     using Tensor2d       = Tensor<2,double>;
     using Tensor1d       = Tensor<1,double>;
     using Tensor0d       = Tensor<0,double>;
-    using Tensor4cd      = Tensor<4,cdouble>;
-    using Tensor3cd      = Tensor<3,cdouble>;
-    using Tensor2cd      = Tensor<2,cdouble>;
-    using Tensor1cd      = Tensor<1,cdouble>;
-    using Tensor0cd      = Tensor<0,cdouble>;
+
+    using Tensor4c       = Tensor<4,cdouble>;
+    using Tensor3c       = Tensor<3,cdouble>;
+    using Tensor2c       = Tensor<2,cdouble>;
+    using Tensor1c       = Tensor<1,cdouble>;
+    using Tensor0c       = Tensor<0,cdouble>;
+
     using const_Tensor4d = Tensor<4,const double>;
     using const_Tensor3d = Tensor<3,const double>;
     using const_Tensor2d = Tensor<2,const double>;
     using const_Tensor1d = Tensor<1,const double>;
+
+    using const_Tensor4c = Tensor<4,const cdouble>;
+    using const_Tensor3c = Tensor<3,const cdouble>;
+    using const_Tensor2c = Tensor<2,const cdouble>;
+    using const_Tensor1c = Tensor<1,const cdouble>;
 
     using array4        = array<4>;
     using array3        = array<3>;
     using array2        = array<2>;
     using array1        = array<1>;
 
-    using idxlist4      = idxlist<4>;
-    using idxlist3      = idxlist<3>;
-    using idxlist2      = idxlist<2>;
-    using idxlist1      = idxlist<1>;
+
 
     template <typename Scalar = double>
     inline Tensor<2,Scalar> asDiagonal(const Tensor<1, Scalar> &tensor) {
-        MatrixType<Scalar> mat = Eigen::Map<const VectorType<Scalar>>(tensor.data(), tensor.size()).asDiagonal();
-        return Eigen::TensorMap<Tensor<2,Scalar>>(mat.data(), mat.rows(), mat.cols());
+        return tensor.inflate(array1{tensor.size()+1}).reshape(array2{tensor.size(),tensor.size()});
     }
+    template <typename Scalar = double>
+    inline Tensor<2,Scalar> asDiagonal_squared(const Tensor<1, Scalar> &tensor) {
+        return tensor.square().inflate(array1{tensor.size()+1}).reshape(array2{tensor.size(), tensor.size()});
+    }
+
 
     template <typename Scalar = double>
     inline Tensor<2, Scalar> asInverseDiagonal(const Tensor<1, Scalar> &tensor) {
         return asDiagonal((Tensor<1, Scalar>)tensor.inverse());
     }
 
-//    inline Tensor2d Tensor2d_inverse(const Tensor2d &tensor) {
-//        Eigen::Map<const Eigen::MatrixXd> map =  Eigen::Map<const Eigen::MatrixXd>(tensor.data(),tensor.dimension(0), tensor.dimension(1));
-//        return Eigen::TensorMap<const_Tensor2d>(map.inverse().eval().data(), array2{map.rows(),map.cols()});
-//    }
 
     inline Tensor1d Tensor1d_normalize(const Tensor1d &tensor) {
         Eigen::Map<const Eigen::VectorXd> map =  Eigen::Map<const Eigen::VectorXd>(tensor.data(),tensor.dimension(0));
@@ -135,14 +151,6 @@ namespace Textra {
         Tensor<2,double> tensor2d  = tensor.reshape(array2{rows,cols});
         return Eigen::Map<const Eigen::MatrixXd> (tensor2d.data(), rows ,cols );
     }
-
-
-
-
-//    template<long rank, typename ...Args>
-//    Tensor<rank, double> matrixXd_to_tensor(Args && ...args){
-//        matrix_to_tensor<rank,double>(std::forward<Args>(args)...);
-//    }
 
 
 

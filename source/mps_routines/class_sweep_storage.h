@@ -3,13 +3,14 @@
 #define DMRG_CLASS_STORAGE_H
 
 #include "general/n_tensor_extra.h"
+#include "class_environment.h"
+#include "sim_parameters/n_model.h"
 #include <map>
 
 using namespace Textra;
 using namespace std;
 class class_superblock;
-class class_environment_L;
-class class_environment_R;
+
 
 /*!
  # Storage Class
@@ -27,13 +28,14 @@ class class_environment_R;
  All objects are stored and indexed by their position relative to the final chain of length `max_length`.
 */
 
-
-class class_fDMRG_storage {
+class class_sweep_storage {
+public:
+    using Scalar = Model::Scalar;
 private:
-    std::map<int, Tensor3d> G_list;                                  /*!< A list of stored \f$\Gamma\f$-tensors,  indexed by chain position. */
-    std::map<int, Tensor1d> L_list;                                  /*!< A list of stored \f$\Lambda\f$-tensors, indexed by chain position. */
-    std::map<int,class_environment_L> Lblock_list;                  /*!< A list of stored Left block environments,  indexed by chain position. */
-    std::map<int,class_environment_R> Rblock_list;                  /*!< A list of stored Right block environments, indexed by chain position. */
+    std::map<int, Textra::Tensor<3,Scalar>> G_list;                                  /*!< A list of stored \f$\Gamma\f$-tensors,  indexed by chain position. */
+    std::map<int, Textra::Tensor<1,Scalar>> L_list;                                  /*!< A list of stored \f$\Lambda\f$-tensors, indexed by chain position. */
+    std::map<int, class_environment<Side::L>> Lblock_list;           /*!< A list of stored Left block environments,  indexed by chain position. */
+    std::map<int, class_environment<Side::R>> Rblock_list;           /*!< A list of stored Right block environments, indexed by chain position. */
 
     int max_length = 0;                                             /*!< The maximum length of the chain */
     int position_L;                                                 /*!< The current position of \f$\Gamma^A\f$ w.r.t the full chain. */
@@ -43,19 +45,21 @@ private:
 public:
 
 
-    class_fDMRG_storage(){};
-    explicit class_fDMRG_storage(int max_length_                                   /*!< The maximum length of the chain. */
+    class_sweep_storage(){};
+    explicit class_sweep_storage(int max_length_                                   /*!< The maximum length of the chain. */
     ){
         set_length(max_length_);
     };
 
     void set_length(int max_length_);                                       /*!< Sets the maximum length of the chain. */
-    void insert(const class_superblock &superblock);                  /*!< Store current MPS and environments indexed by their respective positions on the chain. */
+    void insert(const class_superblock &superblock);                        /*!< Store current MPS and environments indexed by their respective positions on the chain. */
     void load(class_superblock &superblock);                                /*!< Load MPS and environments according to current position. */
     void overwrite_MPS(const class_superblock &superblock);                 /*!< Update the MPS stored at current position.*/
     void move(class_superblock &superblock, int &direction, int &sweep);    /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
     void print_storage();                                                   /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
 };
+
+
 
 
 #endif //DMRG_CLASS_STORAGE_H

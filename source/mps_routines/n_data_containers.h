@@ -7,7 +7,7 @@
 #include <vector>
 #include <general/class_hdf5.h>
 #include <sim_parameters/n_model.h>
-#include "mps_routines/class_superblock.h"
+#include "class_observables.h"
 
 class output_data_container{
 public:
@@ -23,7 +23,7 @@ public:
     class_hdf5_dataset_buffer<double> time_step;
     class_hdf5_dataset_buffer<double> phys_time;
     class_hdf5_dataset_buffer<double> wall_time;
-    class_hdf5_dataset_buffer<int>    length;
+    class_hdf5_dataset_buffer<long>   length;
 
     output_data_container( class_hdf5 &hdf5_,
                            const std::string &group_name,
@@ -46,15 +46,15 @@ public:
     }
 
 
-    void push_back(class_superblock &superblock){
-        chi      .push_back(superblock.chi);
-        chi_max  .push_back(superblock.chi_max);
-        energy   .push_back(superblock.get_energy());
+    void push_back(class_observables &observables){
+        chi      .push_back(observables.get_chi());
+        chi_max  .push_back(observables.get_chi_max());
+        energy   .push_back(observables.get_energy());
         energy_ex.push_back(Model::energy_exact);
-        entropy  .push_back(superblock.get_entropy());
-        variance .push_back(superblock.get_variance());
-        trerror  .push_back(superblock.truncation_error);
-        length   .push_back(superblock.chain_length);
+        entropy  .push_back(observables.get_entropy());
+        variance .push_back(observables.get_variance());
+        trerror  .push_back(observables.get_truncation_error());
+        length   .push_back(observables.get_chain_length());
     }
 
 
@@ -89,6 +89,7 @@ public:
         phys_time.push_back(phys_time_);
         wall_time.push_back(wall_time_);
     }
+
 };
 
 

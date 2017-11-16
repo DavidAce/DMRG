@@ -111,7 +111,7 @@ which in code reads
  Textra::Tensor4d G(d,d,chiL,chiR);
 ```
 
-
+For more information about tensors see the documentation for the [Eigen Tensor Module](https://bitbucket.org/eigen/eigen/src/e8005fc30c6956e3f413a8d7aa2dd6395f330ffe/unsupported/Eigen/CXX11/src/Tensor/README.md?at=default&fileviewer=file-view-default).
 
 
 ## License

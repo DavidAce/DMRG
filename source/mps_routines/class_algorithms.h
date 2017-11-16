@@ -4,10 +4,10 @@
 
 #ifndef DMRG_CLASS_ALGORITHMS_H
 #define DMRG_CLASS_ALGORITHMS_H
+//#define EIGEN_USE_MKL_ALL
 
 
-#include "general/class_tic_toc.h"
-#include "n_data_containers.h"
+#include <general/class_tic_toc.h>
 #include <general/class_hdf5.h>
 #include <sim_parameters/n_sim_settings.h>
 
@@ -38,11 +38,6 @@ public:
     void iTEBD();
     void FES_iTEBD();
     void FES_iDMRG();
-
-private:
-
-
-
 };
 
 

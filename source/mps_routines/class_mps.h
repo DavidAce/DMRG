@@ -1,10 +1,11 @@
 #ifndef DMRG_CLASS_MPS_H
 #define DMRG_CLASS_MPS_H
 
+#include <sim_parameters/n_model.h>
 #include "general/n_tensor_extra.h"
 
-using namespace Textra;
 using namespace std;
+using namespace Textra;
 
 /*! \brief Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites \f$n\f$ and \f$n+1\f$, respectively.*/
 
@@ -42,29 +43,32 @@ using namespace std;
  ### Tensor index order convention: See the <a href="index.html">Home page</a>.
 */
 
-
-class class_MPS {
-private:
-    long local_dimension;                           /*!< Local (or physical) spin or qubit dimension, usually denoted \f$d\f$ elsewhere. */
-    Tensor3d tmp3;                                   /*!< Temporary holder for swapping*/
-    Tensor1d tmp1;                                   /*!< Temporary holder for swapping*/
+class class_mps {
 public:
-    bool swapped;                                   /*!< Tracks the swapped state of A and B positions. */
+    using Scalar = Model::Scalar;
+private:
+    long local_dimension;                          /*!< Local (or physical) spin or qubit dimension, usually denoted \f$d\f$ elsewhere. */
+    Textra::Tensor<3,Scalar> tmp3;                         /*!< Temporary holder for swapping*/
+    Textra::Tensor<1,Scalar> tmp1;                         /*!< Temporary holder for swapping*/
+public:
+    bool swapped;                                  /*!< Tracks the swapped state of A and B positions. */
 
-    Tensor3d GA;                                     /*!< \f$\Gamma^A\f$*/
-    Tensor3d GB;                                     /*!< \f$\Gamma^B\f$*/
-    Tensor1d LA;                                     /*!< \f$\Lambda^A\f$*/
-    Tensor1d LB;                                     /*!< \f$\Lambda^B\f$*/
-    Tensor1d L_tail;                                 /*!< \f$\Lambda^B_{n+1}\f$ or \f$\Lambda^B_{n-1}\f$ in iDMRG or fDMRG respectively.*/
+    Textra::Tensor<3,Scalar> GA;                  /*!< \f$\Gamma^A\f$*/
+    Textra::Tensor<3,Scalar> GB;                  /*!< \f$\Gamma^B\f$*/
+    Textra::Tensor<1,Scalar> LA;                  /*!< \f$\Lambda^A\f$*/
+    Textra::Tensor<1,Scalar> LB;                  /*!< \f$\Lambda^B\f$*/
+    Textra::Tensor<1,Scalar> L_tail;              /*!< \f$\Lambda^B_{n+1}\f$ or \f$\Lambda^B_{n-1}\f$ in iDMRG or fDMRG respectively.*/
 
-    class_MPS(){}
-    void initialize(const long local_dimension_);   /*! Sets local dimension*/
-    Tensor4d get_theta() const;                      /*! Returns rank 4 tensor \f$\Theta\f$.*/
+    class_mps(){}
+    void initialize(long local_dimension_);         /*! Sets local dimension*/
+    Textra::Tensor<4,Scalar> get_theta() const;     /*! Returns rank 4 tensor \f$\Theta\f$.*/
     void swap_AB();                                 /*! Swaps the roles of A and B. Used in infinite DMRG.*/
-    double get_energy(const Tensor4d &Hamiltonian);  /*! Computes the current energy by contracting the current MPS with the Hamiltonian MPO.*/
-    double get_entropy();                           /*! Computes the current entropy \f$ S = - \sum_n \lambda_n log( \lambda_n) \f$, where \f$\lambda_n \f$ are elements of \f$ \Lambda^A\f$ */
-    double get_variance(const Tensor4d &Hamiltonian);                           /*! Computes the current entropy \f$ S = - \sum_n \lambda_n log( \lambda_n) \f$, where \f$\lambda_n \f$ are elements of \f$ \Lambda^A\f$ */
+
 };
+
+
+// Definitions
+
 
 
 #endif //DMRG_CLASS_MPS_H

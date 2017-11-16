@@ -29,11 +29,11 @@ using namespace Eigen;
 
 namespace Model {
 
+    using Scalar = double; //Type for the groundstate wavefunction. Typically just double if the Hamiltonian is Real and Symmetric or Hermitian.
 
     inline double J = 1.0;
     inline double g = 1.0;
     inline long local_dimension = 2;
-    inline int sites = 2;
 
     //Transverse field Ising model:
     extern double get_exact_energy();
@@ -44,32 +44,37 @@ namespace Model {
     extern const Matrix2cd sy();
     extern const Matrix2cd sz();
     extern const Matrix2cd I();
+    //Pauli spin variables in N-dimensional manybody Hilbert space.
+    extern std::vector<MatrixXcd>      gen_manybody_spin(Matrix2cd s);
+    inline bool spins_must_be_generated = true;
+    inline std::vector<MatrixXcd> SX;
+    inline std::vector<MatrixXcd> SY;
+    inline std::vector<MatrixXcd> SZ;
 
 
-    //Pauli spin variables in 2-dimensional Hilbert space.
-    extern std::vector<MatrixXcd> gen_twosite_spin(Matrix2cd s);
-    inline std::vector<MatrixXcd> SX = gen_twosite_spin(sx());
-    inline std::vector<MatrixXcd> SY = gen_twosite_spin(sy());
-    inline std::vector<MatrixXcd> SZ = gen_twosite_spin(sz());
-
-
-    extern MatrixXd h();
-    extern MatrixXd H();
-
-    //    extern Tensor4d TimeEvolution_4th_order(const int sites, const double delta);
-    extern Tensor4d TimeEvolution_1st_order(const double delta);
-    extern Tensor4d TimeEvolution_2nd_order(const double delta);
-    extern Tensor4d TimeEvolution_4th_order(const double delta);
-    extern MatrixXd U(const double delta);
-    extern Tensor4d W();
+    extern MatrixXcd h(int sites, int position);
+    extern Matrix<Scalar,Dynamic,Dynamic> H(int sites);
+    extern Matrix<Scalar,Dynamic,Dynamic> U(double delta, int sites);
 
 
 
+    extern Textra::Tensor<4,Scalar> TimeEvolution_1st_order(double delta, int sites);
+    extern Textra::Tensor<4,Scalar> TimeEvolution_2nd_order(double delta, int sites);
+    extern Textra::Tensor<4,Scalar> TimeEvolution_4th_order(double delta, int sites);
+    extern Textra::Tensor<4,Scalar> M();
+    extern Textra::Tensor<6,Scalar> MM();
 
 
-
+    template<int sites>
+    Textra::Tensor<2*sites,Scalar> H_tensor() {
+        Textra::array<2 * sites> dims;
+        dims.fill(2);
+        Eigen::Matrix<Scalar,Dynamic, Dynamic> HN = H(sites);
+        return Eigen::TensorMap<Textra::Tensor<2 * sites, Scalar>>(HN.data(), dims);
+    }
 
 };
+
 
 
 #endif //MPS_EIGEN_N_MODEL_H

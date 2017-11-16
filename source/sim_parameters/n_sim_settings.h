@@ -48,14 +48,14 @@ namespace settings {
         inline int       max_steps    = 500000;         /*!< Number of FES iterations per chi-value. */
         inline double    delta_t      = 0.01;          /*!< Time step for iTEBD time evolution.*/
         inline long      chi_min      = 4;
-        inline long      chi_max      = 12;
+        inline long      chi_max      = 8;
         inline long      chi_num      = 3;           /*!< Number of chi values for FES. */
     }
     //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
     namespace fes_idmrg {
-        inline int       max_steps    = 5000;          /*!< Number of FES iterations per chi-value. */
+        inline int       max_steps    = 10000;          /*!< Number of FES iterations per chi-value. */
         inline long      chi_min      = 4;
-        inline long      chi_max      = 12;
+        inline long      chi_max      = 8;
         inline long      chi_num      = 3;           /*!< Number of chi values for FES. */
     }
 

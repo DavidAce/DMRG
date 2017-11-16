@@ -1,11 +1,13 @@
 //
 // Created by david on 2017-10-05.
 //
+//#define EIGEN_USE_MKL_ALL
+
 #include "class_superblock.h"
 #include "general/n_math.h"
 #include <iomanip>
 #include <general/class_svd_wrapper.h>
-#include <general/class_eig_wrapper.h>
+#include <general/class_eig_spectra_wrapper.h>
 
 
 // According to Phien, H. N., Mcculloch, I. P., & Vidal, G. (2015). Fast convergence of imaginary time evolution tensor network algorithms by recycling the environment. Physical Review B - Condensed Matter and Materials Physics, 91(11), 1–18. https://doi.org/10.1103/PhysRevB.91.115137
@@ -24,88 +26,79 @@ void class_superblock::canonicalize_iMPS_iterative() {
      double diffA = 1;
      double diffB = 1;
      cout << setprecision(16);
-     class_SVD svd;
-     class_eig eig;
+     class_SVD<Scalar> svd;
+     class_eig<Scalar> eig;
      int iter = 0;
-     Tensor3d GA = MPS.GA;
-     Tensor3d GB = MPS.GB;
-     Tensor1d LA = MPS.LA;
-     Tensor1d LB = MPS.LB;
+     Textra::Tensor<3,Scalar> GA = MPS.GA;
+     Textra::Tensor<3,Scalar> GB = MPS.GB;
+     Textra::Tensor<1,Scalar> LA = MPS.LA;
+     Textra::Tensor<1,Scalar> LB = MPS.LB;
      update_bond_dimensions();
 
-     while (diffA + diffB > 1e-10) {
-//        cout << "diff: " << diff << endl;
+     while (diffA + diffB > 1e-8) {
          iter++;
          //Coarse grain
-         Tensor3d GA_old = GA;
-         Tensor3d GB_old = GB;
-         Tensor1d LA_old = LA;
-         Tensor1d LB_old = LB;
+         Textra::Tensor<3,Scalar> GA_old = GA;
+         Textra::Tensor<3,Scalar> GB_old = GB;
+         Textra::Tensor<1,Scalar> LA_old = LA;
+         Textra::Tensor<1,Scalar> LB_old = LB;
 
          long chiA = LA.size();
          long chiB = LB.size();
-         Tensor3d GALA = GA.contract(asDiagonal(LA), idxlist1{idx2(2, 0)});                          //(eq 107)
-         Tensor3d LBGA = asDiagonal(LB).contract(GA, idxlist1{idx2(1, 1)}).shuffle(array3{1, 0, 2}); //(eq 106)
-         Tensor3d GBLB = GB.contract(asDiagonal(LB), idxlist1{idx2(2, 0)});                          //(eq 109)
-         Tensor3d LAGB = asDiagonal(LA).contract(GB, idxlist1{idx2(1, 1)}).shuffle(array3{1, 0, 2}); //(eq 108)
-
-         Tensor2d VA_R = GALA.contract(GALA.conjugate(), idxlist2{idx2(0, 0), idx2(2, 2)});
-         Tensor2d VA_L = LBGA.contract(LBGA.conjugate(), idxlist2{idx2(0, 0), idx2(1, 1)});
-         Tensor2d VB_R = GBLB.contract(GBLB.conjugate(), idxlist2{idx2(0, 0), idx2(2, 2)});
-         Tensor2d VB_L = LAGB.contract(LAGB.conjugate(), idxlist2{idx2(0, 0), idx2(1, 1)});
-
+         Textra::Tensor<2,Scalar> VA_R = GA.contract(asDiagonal_squared(LA) , idx<1>({2},{0}))
+                           .contract(GA.conjugate()         , idx<2>({0,2},{0,2}));
+         Textra::Tensor<2,Scalar> VA_L = GA.contract(asDiagonal_squared(LB) , idx<1>({1},{1}))
+                           .contract(GA.conjugate()         , idx<2>({0,2},{0,1}));
+         Textra::Tensor<2,Scalar> VB_R = GB.contract(asDiagonal_squared(LB) , idx<1>({2},{0}))
+                           .contract(GB.conjugate()         , idx<2>({0,2},{0,2}));
+         Textra::Tensor<2,Scalar> VB_L = GB.contract(asDiagonal_squared(LA) , idx<1>({1},{1}))
+                           .contract(GB.conjugate()         , idx<2>({0,2},{0,1}));
+         cout << "VA_R: \n" << VA_R << '\n';
+         cout << "VA_L: \n" << VA_L << '\n';
+         cout << "VB_R: \n" << VB_R << '\n';
+         cout << "VB_L: \n" << VB_L << '\n';
          //============ Find square root using Eigenvalue decomposition ============ //
-         auto[XA, XAi] = eig.squareRoot_sym(VA_R);
-         auto[YA, YAi] = eig.squareRoot_sym(VA_L);
-         auto[XB, XBi] = eig.squareRoot_sym(VB_R);
-         auto[YB, YBi] = eig.squareRoot_sym(VB_L);
+         auto[XA, XAi] = eig.squareRoot_w_inverse(VA_R);
+         auto[YA, YAi] = eig.squareRoot_w_inverse(VA_L);
+         auto[XB, XBi] = eig.squareRoot_w_inverse(VB_R);
+         auto[YB, YBi] = eig.squareRoot_w_inverse(VB_L);
 
-         Tensor2d YA_LA_XB = YA
-                 .contract(asDiagonal(LA), idxlist1{idx2(1, 0)})
-                 .contract(XB, idxlist1{idx2(1, 0)});
-         Tensor2d YB_LB_XA = YB
-                 .contract(asDiagonal(LB), idxlist1{idx2(1, 0)})
-                 .contract(XA, idxlist1{idx2(1, 0)});
+         Textra::Tensor<2,Scalar> YA_LA_XB = YA
+                 .contract(asDiagonal(LA),idx<1>({1},{0}))
+                 .contract(XB,            idx<1>({1},{0}));
+         Textra::Tensor<2,Scalar> YB_LB_XA = YB
+                 .contract(asDiagonal(LB),idx<1>({1},{0}))
+                 .contract(XA,            idx<1>({1},{0}));
 
-         Tensor2d UA,VA, UB, VB;
+         Textra::Tensor<2,Scalar> UA,VA, UB, VB;
          std::tie(UA,LA,VA) = svd.decompose(YA_LA_XB, chi_max);
          std::tie(UB,LB,VB) = svd.decompose(YB_LB_XA, chi_max);
          GA = VB
-                 .contract(XAi, idxlist1{idx2(1, 0)})
-                 .contract(GA_old, idxlist1{idx2(1, 1)})
-                 .contract(YAi, idxlist1{idx2(2, 0)})
-                 .contract(UA, idxlist1{idx2(2, 0)})
+                 .contract(XAi,   idx<1>({1},{0}))
+                 .contract(GA_old,idx<1>({1},{1}))
+                 .contract(YAi,   idx<1>({2},{0}))
+                 .contract(UA,    idx<1>({2},{0}))
                  .shuffle(array3{1, 0, 2});
          GB = VA
-                 .contract(XBi, idxlist1{idx2(1, 0)})
-                 .contract(GB_old, idxlist1{idx2(1, 1)})
-                 .contract(YBi, idxlist1{idx2(2, 0)})
-                 .contract(UB, idxlist1{idx2(2, 0)})
+                 .contract(XBi,    idx<1>({1},{0}))
+                 .contract(GB_old, idx<1>({1},{1}))
+                 .contract(YBi,    idx<1>({2},{0}))
+                 .contract(UB,     idx<1>({2},{0}))
                  .shuffle(array3{1, 0, 2});
 
-
-         Tensor0d tempA = (LA - LA_old.slice(array1{0}, array1{chiA})).square().sum().sqrt();
-         Tensor0d tempB = (LB - LB_old.slice(array1{0}, array1{chiB})).square().sum().sqrt();
+         Textra::Tensor<0,Scalar> tempA = (LA - LA_old.slice(array1{0}, array1{chiA})).square().sum().sqrt().abs();
+         Textra::Tensor<0,Scalar> tempB = (LB - LB_old.slice(array1{0}, array1{chiB})).square().sum().sqrt().abs();
          diffA = tempA(0);
          diffB = tempB(0);
      }
-     Tensor3d GALA = GA.contract(asDiagonal(LA), idxlist1{idx2(2, 0)});                          //(eq 107)
-     Tensor3d LBGA = asDiagonal(LB).contract(GA, idxlist1{idx2(1, 1)}).shuffle(array3{1, 0, 2}); //(eq 106)
-     Tensor3d GBLB = GB.contract(asDiagonal(LB), idxlist1{idx2(2, 0)});                          //(eq 109)
-     Tensor3d LAGB = asDiagonal(LA).contract(GB, idxlist1{idx2(1, 1)}).shuffle(array3{1, 0, 2}); //(eq 108)
-
      MPS.GA = GA;
      MPS.GB = GB;
      MPS.LA = LA;
      MPS.LB = LB;
      MPS.L_tail = LB;
-//    TRY USING ROBUST SVD!
-//             Stoudenmire, E. M., & White, S. R. (2013). Real-space parallel density matrix renormalization group. Physical Review B, 87(April), 155137. https://doi.org/10.1103/PhysRevB.87.155137
-}
+     cout << "iter: " << iter << endl;
 
-//     cout << right << setw(112) << -LA.square().contract(LA.square().log().eval(), idxlist1{idx2(0, 0)}) << '\n';
-//     cout << right << setw(112) << -LB.square().contract(LB.square().log().eval(), idxlist1{idx2(0, 0)}) << '\n';
-//     cout << "\n\niter: " << iter << endl;
+}
 
 
 //============================================================================//
@@ -114,196 +107,135 @@ void class_superblock::canonicalize_iMPS_iterative() {
 
 
 // According to Orus and Vidal
-//void class_superblock::canonicalize_iMPS(){
-//    if (MPS.L_tail.size() <= 1){
-//        return;
-//    }
-//    Eigen::JacobiSVD<MatrixXd> SVD;
-//    SelfAdjointEigenSolver<MatrixXd> esR;
-//    SelfAdjointEigenSolver<MatrixXd> esL;
-////    cout << "Swapped: " << MPS.swapped << '\n';
-//    //Coarse grain
-//    update_bond_dimensions(); //Gives us chiL __|__chi__|__chiR
-//
-//    // G is a Tensor4d  chia__|__|__chib where we expect chiL = chiR for infinite algorithms,
-//    // but for finite ones chiL=/=chiR because GA.dimension(1) =/= GB.dimension(2).
-//    Tensor3d GA     = MPS.GA;
-//    Tensor3d GA_old = GA;
-//    //L is simply of size chiR because L = LB;
-//    Tensor1d LA = MPS.LA;
-//    Tensor1d LB = MPS.LB;
-//    long chiLA = LA.size();
-//    long chiLB = LB.size();
-//    Tensor3d GALA = GA.contract(asDiagonal(LA), idxlist1{idx2(2, 0)});
-//    Tensor3d LBGA = asDiagonal(LB).contract(GA, idxlist1{idx2(1, 1)}).shuffle(array3{1,0,2});
-//
-//    //Watch out for a spurious bug without .eval() here!
-//    Tensor2d TR = GALA
-//            .contract(GALA.conjugate(), idxlist1{idx2(0, 0)})
-//            .shuffle(array4{0, 2, 1, 3})
-//            .reshape(array2{chiLB * chiLB, chiLA * chiLA});
-//    Tensor2d TL = LBGA
-//            .contract(LBGA.conjugate(), idxlist1{idx2(0, 0)})
-//            .shuffle(array4{0, 2, 1, 3})
-//            .reshape(array2{chiLB * chiLB, chiLA * chiLA});
-//    cout << setprecision(16);
-//
-//
-//    cout << "LA old: \n" << MPS.LA << endl;
-//    cout << "LB old: \n" << MPS.LB << endl;
-////        return;
-//    cout << "Transf R: \n" << GALA.contract(GALA.conjugate(), idxlist2{idx2(0, 0), idx2(2, 2)}) << endl;
-//    cout << "Transf L: \n"<<  LBGA.contract(LBGA.conjugate(), idxlist2{idx2(0, 0), idx2(1, 1)}) << endl;
-//    cout << "TR\n" << TR << endl;
-//    cout << "TL\n" << TL << endl;
-//
-//    // Wikipedia:
-//    //Left and right eigenvectors[edit]
-////    See also: left and right (algebra)
-////    Many disciplines traditionally represent vectors as matrices with a single column rather than as matrices with a single row. For that reason, the word "eigenvector" in the context of matrices almost always refers to a right eigenvector, namely a column vector that right multiples the n by n matrix A in the defining equation, Equation (1),
-////
-////    {\displaystyle Av=\lambda v.} Av=\lambda v.
-////            The eigenvalue and eigenvector problem can also be defined for row vectors that left multiply matrix A. In this formulation, the defining equation is
-////
-////            {\displaystyle uA=\kappa u,} {\displaystyle uA=\kappa u,}
-////    where κ is a scalar and u is a 1 by n matrix. Any row vector u satisfying this equation is called a left eigenvector of A and κ is its associated eigenvalue. Taking the transpose of this equation,
-////
-////            {\displaystyle A^{T}u^{T}=\kappa u^{T}.} {\displaystyle A^{T}u^{T}=\kappa u^{T}.}
-////    Comparing this equation to Equation (1), it follows immediately that a left eigenvector of A is the same as the transpose of a right eigenvector of AT, with the same eigenvalue. Furthermore, since the characteristic polynomial of AT is the same as the characteristic polynomial of A, the eigenvalues of the left eigenvectors of A are the same as the eigenvalues of the right eigenvectors of AT.
-////
-//    Tensor2d VR = Math::dominant_eigenvector<Math::Handedness::RGHT>(TR).real().reshape(array2{chiLB, chiLB});
-//    Tensor2d VL = Math::dominant_eigenvector<Math::Handedness::RGHT >(TL.shuffle(array2{1,0})).real().reshape(array2{chiLA, chiLA});
-////
-////    esR.compute(Tensor2d_to_MatrixXd(TR));
-////    esL.compute(Tensor2d_to_MatrixXd(TL));
-////    Tensor2d VRe = MatrixXd_to_Tensor2d(esR.eigenvectors().rightCols(1)).reshape(array2{chiR, chiR});
-////    Tensor2d VLe = MatrixXd_to_Tensor2d(esL.eigenvectors().rightCols(1)).reshape(array2{chiR, chiR});
-//
-//    cout << "VR    =  \n" << VR << '\n';
-//    cout << "VL    =  \n" << VL << '\n';
-//
-//
-//    //============================================================================//
-//    // Find square root using SVD decomposition
-//    //============================================================================//
-////    cout << "\n\nSVD:\n";
-////
-////    SVD.compute(Tensor2d_to_MatrixXd(VR), Eigen::ComputeThinU | Eigen::ComputeThinV);
-////    Tensor2d X               = MatrixXd_to_Tensor2d( SVD.matrixU()*SVD.singularValues().cwiseSqrt().asDiagonal()*SVD.matrixU().transpose());
-////    Tensor2d Xi              = Tensor2d_inverse(X);
-////    cout << "X : \n" << X << endl;
-////    cout << "Xi : \n" << Xi << endl;
-//////        cout << "XXi: \n" << X.contract(Xi, idxlist1{idx2(1,0)}) << endl;
-//////        cout << "XXT: \n" << X.contract(XT, idxlist1{idx2(1,0)}) << endl;
-////
-////    SVD.compute(Tensor2d_to_MatrixXd(VL), Eigen::ComputeThinU | Eigen::ComputeThinV);
-////    Tensor2d Y               = MatrixXd_to_Tensor2d( SVD.matrixV().transpose()*SVD.singularValues().cwiseSqrt().asDiagonal()*SVD.matrixV());
-////    Tensor2d Yi              = Tensor2d_inverse(Y);
-////    cout << "Y : \n" << Y << endl;
-////    cout << "Yi : \n" << Yi << endl;
-////        cout << "YTiYT: \n" << YTi.contract(YT, idxlist1{idx2(1,0)}) << endl;
-////        cout << "YTY: \n" << YT.contract(Y, idxlist1{idx2(1,0)}) << endl;
-//
-//
-////    ============================================================================//
-////     Find square root using Eigenvalue decomposition
-////    ============================================================================//
-//    cout << "\n\nEigenvalue:\n";
-//    esR.compute(Tensor2d_to_MatrixXd(VR));
-////    Tensor2d _X    = MatrixXd_to_Tensor2d( esR.eigenvectors()*esR.eigenvalues().asDiagonal().toDenseMatrix().cwiseSqrt());
-////    Tensor2d _XT   = MatrixXd_to_Tensor2d( esR.eigenvalues().asDiagonal().toDenseMatrix().cwiseSqrt() * esR.eigenvectors().transpose());
-////    Tensor2d _Xi   = Tensor2d_inverse(_X);
-//    Tensor2d _X    = MatrixXd_to_Tensor2d(esR.operatorSqrt());
-//    Tensor2d _Xi   = MatrixXd_to_Tensor2d(esR.operatorInverseSqrt());
-////    cout << "X : \n" << _X << endl;
-////    cout << "Xi : \n" << _Xi << endl;
-//
-////        cout << "XXi: \n" << X.contract(Xi, idxlist1{idx2(1,0)}) << endl;
-////        cout << "XXT: \n" << X.contract(XT, idxlist1{idx2(1,0)}) << endl;
-//
-//    esL.compute(Tensor2d_to_MatrixXd(VL));
-//    Tensor2d _Y    = MatrixXd_to_Tensor2d(esL.operatorSqrt());
-//    Tensor2d _Yi   = MatrixXd_to_Tensor2d(esL.operatorInverseSqrt());
-////        cout << "YT : \n"  << _YT << endl;
-////        cout << "YTi : \n" << _YTi << endl;
-////        cout << "YTiYT: \n" << YTi.contract(YT, idxlist1{idx2(1,0)}) << endl;
-////        cout << "YTY: \n"   << YT.contract(Y, idxlist1{idx2(1,0)}) << endl;
-//
-//
-//    Tensor2d YLAX = _Y.contract(asDiagonal(LA), idxlist1{idx2(1,0)})
-//            .contract(_X, idxlist1{idx2(1,0)});
-//
-//    Tensor2d YLBX = _Y.contract(asDiagonal(LB), idxlist1{idx2(1,0)})
-//            .contract(_X, idxlist1{idx2(1,0)});
-//
-//
-//
-//    SVD.compute(Tensor2d_to_MatrixXd(YLAX), Eigen::ComputeThinU | Eigen::ComputeThinV);
-//    Tensor2d UA = MatrixXd_to_Tensor2d(SVD.matrixU());
-//    Tensor2d VA = MatrixXd_to_Tensor2d(SVD.matrixV().transpose());
-////    cout << "U: \n" << U << endl;
-////    cout << "V: \n" << V << endl;
-//    LA         = MatrixXd_to_Tensor1d(SVD.singularValues().normalized());
-//
-//
-//    SVD.compute(Tensor2d_to_MatrixXd(YLBX), Eigen::ComputeThinU | Eigen::ComputeThinV);
-//    Tensor2d UB = MatrixXd_to_Tensor2d(SVD.matrixU());
-//    Tensor2d VB = MatrixXd_to_Tensor2d(SVD.matrixV().transpose());
-////    cout << "U: \n" << U << endl;
-////    cout << "V: \n" << V << endl;
-//    LB         = MatrixXd_to_Tensor1d(SVD.singularValues().normalized());
-//
-//
-//
-//    GA         = VA
-//            .contract(_Xi, idxlist1{idx2(1,0)})
-//            .contract(GA_old, idxlist1{idx2(1,1)})
-//            .contract(_Yi, idxlist1{idx2(2, 0)})
-//            .contract(UB, idxlist1{idx2(2,0)})
-//            .shuffle(array3{1,0,2});
-//
-//
-//    cout << "LA new: \n" << LA << endl;
-//    cout << "LB new: \n" << LB << endl;
-//
-//    cout << "\n\n Sanity check \n" << endl;
-//    GALA = GA.contract(asDiagonal(LA), idxlist1{idx2(2, 0)});
-//    LBGA = asDiagonal(LB).contract(GA, idxlist1{idx2(1, 1)}).shuffle(array3{1,0,2});
-//
-//    //Watch out for a spurious bug without .eval() here!
-//    TR = GALA
-//            .contract(GALA.conjugate(), idxlist1{idx2(0, 0)})
-//            .shuffle(array4{0, 2, 1, 3})
-//            .reshape(array2{chiLB * chiLB, chiLA * chiLA});
-//    TL = LBGA
-//            .contract(LBGA.conjugate(), idxlist1{idx2(0, 0)})
-//            .shuffle(array4{0, 2, 1, 3})
-//            .reshape(array2{chiLB * chiLB, chiLA * chiLA});
-//    cout << setprecision(16);
-//
-//
-//    VR = Math::dominant_eigenvector<Math::Handedness::RGHT>(TR).real().reshape(array2{chiLB, chiLB});
-//    VL = Math::dominant_eigenvector<Math::Handedness::LEFT>(TL).real().reshape(array2{chiLA, chiLA});
-//
-//    cout << "VR    =  \n" << VR << '\n';
-//    cout << "VL    =  \n" << VL << '\n';
-//    cout << "TR    =  \n" << TR << '\n';
-//    cout << "TL    =  \n" << TL << '\n';
-//    cout << "Transf R: \n" << GALA.contract(GALA.conjugate(), idxlist2{idx2(0, 0), idx2(2, 2)}) << endl;
-//    cout << "Transf L: \n"<<  LBGA.contract(LBGA.conjugate(), idxlist2{idx2(0, 0), idx2(1, 1)}) << endl;
-//
-//    cout << "Eigen diagonalizer:\n";
-//    esR.compute(Tensor2d_to_MatrixXd(TR));
-//    esL.compute(Tensor2d_to_MatrixXd(TL));
-//    cout << "VR eigval   =  \n" << esR.eigenvalues() << '\n';
-//    cout << "VR eigvec   =  \n" << esR.eigenvectors() << '\n';
-//    cout << "VL eigval   =  \n" << esL.eigenvalues() << '\n';
-//    cout << "VL eigvec   =  \n" << esL.eigenvectors() << '\n';
-//
-//
-//    update_bond_dimensions(); //Gives us chiL __|__chi__|__chib
-//
-//}
+void class_superblock::canonicalize_iMPS(){
+    if (MPS.L_tail.size() <= 1) {
+        return;
+    }
+    if (MPS.LB.size() != MPS.LA.size()) {
+        //The left/right eigenvectors are only hermitian if LA and LB have the same dimension!
+        return;
+    }
+    if (MPS.LB.size() < 2 || MPS.LA.size() < 2) {
+        //The left/right eigenvectors are only hermitian if LA and LB have the same dimension!
+        return;
+    }
+    class_SVD<Scalar> svd;
+    class_eig<Scalar> eig;
+
+    cout << setprecision(16);
+    update_bond_dimensions(); //Gives us chiL __|__chi__|__chiR
+    Textra::Tensor<3,Scalar> GA = MPS.GA;
+    Textra::Tensor<3,Scalar> GB = MPS.GB;
+    Textra::Tensor<1,Scalar> LA = MPS.LA;
+    Textra::Tensor<1,Scalar> LB = MPS.LB;
+    long chiLA = LA.size();
+    long chiLB = LB.size();
+
+
+    Textra::Tensor<3,Scalar> GALA = GA.contract(asDiagonal(LA), idx<1>({2},{0}));                          //(eq 107)
+    Textra::Tensor<3,Scalar> LBGA = asDiagonal(LB).contract(GA, idx<1>({1},{1})).shuffle(array3{1, 0, 2}); //(eq 106)
+    Textra::Tensor<3,Scalar> GBLB = GB.contract(asDiagonal(LB), idx<1>({2},{0}));                          //(eq 109)
+    Textra::Tensor<3,Scalar> LAGB = asDiagonal(LA).contract(GB, idx<1>({1},{1})).shuffle(array3{1, 0, 2}); //(eq 108)
+    Textra::Tensor<4,Scalar> MR = GALA.contract(GALA.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
+    Textra::Tensor<4,Scalar> ML = LBGA.contract(LBGA.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
+    Textra::Tensor<4,Scalar> NR = GBLB.contract(GBLB.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
+    Textra::Tensor<4,Scalar> NL = LAGB.contract(LAGB.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
+    Textra::Tensor<2,Scalar> NRML = NR.contract(ML,idx<2>({2,3},{0,1})).reshape(array2{chiLA*chiLA,chiLA*chiLA});
+    Textra::Tensor<2,Scalar> NLMR = NL.contract(MR,idx<2>({2,3},{0,1})).reshape(array2{chiLA*chiLA,chiLA*chiLA});
+    Textra::Tensor<2,Scalar> MRNL = MR.contract(NL,idx<2>({2,3},{0,1})).reshape(array2{chiLB*chiLB,chiLB*chiLB});
+    Textra::Tensor<2,Scalar> MLNR = ML.contract(NR,idx<2>({2,3},{0,1})).reshape(array2{chiLB*chiLB,chiLB*chiLB});
+    cout << "NRML: " << NRML.dimensions() << '\n' << NRML << '\n';
+    cout << "NLMR: " << NLMR.dimensions() << '\n' << NLMR << '\n';
+    cout << "MRNL: " << MRNL.dimensions() << '\n' << MRNL << '\n';
+    cout << "MLNR: " << MLNR.dimensions() << '\n' << MLNR << '\n';
+    auto[VA_R, VA_R_val] = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::R>(NRML, 1,
+                                                                                                  {chiLA, chiLA});
+    auto[VA_L, VA_L_val] = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::L>(NLMR, 1,
+                                                                                                  {chiLA, chiLA});
+    auto[VB_R, VB_R_val] = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::R>(MRNL, 1,
+                                                                                                  {chiLB, chiLB});
+    auto[VB_L, VB_L_val] = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::L>(MLNR, 1,
+                                                                                                  {chiLB, chiLB});
+
+    cout << "VA_R eigenvalue: " << VA_R_val << "\nVA_R eigenvector: \n" << VA_R << "\n";
+    cout << "VA_L eigenvalue: " << VA_L_val << "\nVA_L eigenvector: \n" << VA_L << "\n";
+    cout << "VB_R eigenvalue: " << VB_R_val << "\nVB_R eigenvector: \n" << VB_R << "\n";
+    cout << "VB_L eigenvalue: " << VB_L_val << "\nVB_L eigenvector: \n" << VB_L << "\n";
+
+
+    //============ Find square root using Eigenvalue decomposition ============ //
+    auto[XA, XAi] = eig.squareRoot_w_inverse(VA_R.real());
+    auto[YA, YAi] = eig.squareRoot_w_inverse(VA_L.real());
+    auto[XB, XBi] = eig.squareRoot_w_inverse(VB_R.real());
+    auto[YB, YBi] = eig.squareRoot_w_inverse(VB_L.real());
+    cout << "XA: \n" << XA << '\n';
+    cout << "YA: \n" << YA << '\n';
+    cout << "XB: \n" << XB << '\n';
+    cout << "YB: \n" << YB << '\n';
+
+    Textra::Tensor<2,Scalar> YA_LA_XB = YA
+            .contract(asDiagonal(LA),idx<1>({1},{0}))
+            .contract(XB,            idx<1>({1},{0}));
+    Textra::Tensor<2,Scalar> YB_LB_XA = YB
+            .contract(asDiagonal(LB),idx<1>({1},{0}))
+            .contract(XA,            idx<1>({1},{0}));
+    Textra::Tensor<2,Scalar> UA,VA, UB, VB;
+    std::tie(UA,LA,VA) = svd.decompose(YA_LA_XB, chi_max);
+    std::tie(UB,LB,VB) = svd.decompose(YB_LB_XA, chi_max);
+
+    cout << "UA: \n" << UA << '\n';
+    cout << "LA: \n" << LA << '\n';
+    cout << "VA: \n" << VA << '\n';
+
+    GA = VB
+            .contract(XAi,   idx<1>({1},{0}))
+            .contract(MPS.GA,idx<1>({1},{1}))
+            .contract(YAi,   idx<1>({2},{0}))
+            .contract(UA,    idx<1>({2},{0}))
+            .shuffle(array3{1, 0, 2});
+    GB = VA
+            .contract(XBi,    idx<1>({1},{0}))
+            .contract(MPS.GB, idx<1>({1},{1}))
+            .contract(YBi,    idx<1>({2},{0}))
+            .contract(UB,     idx<1>({2},{0}))
+            .shuffle(array3{1, 0, 2});
+
+    cout << "Check:\n" ;
+    GALA = GA.contract(asDiagonal(LA), idx<1>({2},{0}));                          //(eq 107)
+    LBGA = asDiagonal(LB).contract(GA, idx<1>({1},{1})).shuffle(array3{1, 0, 2}); //(eq 106)
+    GBLB = GB.contract(asDiagonal(LB), idx<1>({2},{0}));                          //(eq 109)
+    LAGB = asDiagonal(LA).contract(GB, idx<1>({1},{1})).shuffle(array3{1, 0, 2}); //(eq 108)
+    MR   = GALA.contract(GALA.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
+    ML   = LBGA.contract(LBGA.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
+    NR   = GBLB.contract(GBLB.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
+    NL   = LAGB.contract(LAGB.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
+    NRML = NR.contract(ML,idx<2>({2,3},{0,1})).reshape(array2{chiLA*chiLA,chiLA*chiLA});
+    NLMR = NL.contract(MR,idx<2>({2,3},{0,1})).reshape(array2{chiLA*chiLA,chiLA*chiLA});
+    MRNL = MR.contract(NL,idx<2>({2,3},{0,1})).reshape(array2{chiLB*chiLB,chiLB*chiLB});
+    MLNR = ML.contract(NR,idx<2>({2,3},{0,1})).reshape(array2{chiLB*chiLB,chiLB*chiLB});
+    std::tie(VA_R, VA_R_val) = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::R>(NRML, 1,
+                                                                                                      {chiLA, chiLA});
+    std::tie(VA_L, VA_L_val) = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::L>(NLMR, 1,
+                                                                                                      {chiLA, chiLA});
+    std::tie(VB_R, VB_R_val) = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::R>(MRNL, 1,
+                                                                                                      {chiLB, chiLB});
+    std::tie(VB_L, VB_L_val) = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::L>(MLNR, 1,
+                                                                                                      {chiLB, chiLB});
+
+    cout << "VA_R eigenvalue: " << VA_R_val << "\nVA_R eigenvector: \n" << VA_R << "\n";
+    cout << "VA_L eigenvalue: " << VA_L_val << "\nVA_L eigenvector: \n" << VA_L << "\n";
+    cout << "VB_R eigenvalue: " << VB_R_val << "\nVB_R eigenvector: \n" << VB_R << "\n";
+    cout << "VB_L eigenvalue: " << VB_L_val << "\nVB_L eigenvector: \n" << VB_L << "\n";
+
+//    MPS.GA =  GA;
+//    MPS.GB =  GB;
+//    MPS.LA =  LA;
+//    MPS.LB =  LB;
+//    MPS.L_tail = LB;
+    exit(1);
+    update_bond_dimensions(); //Gives us chiL __|__chi__|__chib
+
+}
 
 
 

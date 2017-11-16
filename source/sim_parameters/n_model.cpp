@@ -14,14 +14,14 @@ namespace Model{
     const Matrix2cd sx(){
         Matrix2cd sx;
         sx << 0.0, 1.0,
-             1.0, 0.0  ;
+              1.0, 0.0  ;
         return sx;
     }
 
     const Matrix2cd sy(){
         Matrix2cd sy;
         sy <<  0.0, -1.0i,
-                1.0i, 0.0;
+               1.0i, 0.0;
         return sy;
     }
 
@@ -29,7 +29,7 @@ namespace Model{
     const Matrix2cd sz() {
         Matrix2cd sz;
         sz << 1.0, 0.0,
-                0.0, -1.0;
+              0.0,-1.0;
         return sz;
     }
 
@@ -37,7 +37,7 @@ namespace Model{
         return Matrix2cd::Identity();
     }
 
-    std::vector<MatrixXcd>  gen_twosite_spin(Matrix2cd s){
+    std::vector<MatrixXcd>  gen_manybody_spin(const Matrix2cd &s, int sites){
         std::vector<MatrixXcd> S;
         MatrixXcd tmp;
         S.clear();
@@ -61,38 +61,46 @@ namespace Model{
     }
 
 
-    MatrixXd h(int pos){
-        int i = Math::mod(pos  ,sites);
-        int j = Math::mod(pos+1,sites);
-//        return 0.5*(-J * SZ[i] * SZ[j] - g * SX[i]).real();
-//        return (-J * SZ[i] * SZ[j] - g * SX[i]).real();
-        return 0.5*(-J * SZ[i] * SZ[j] - 0.5*g*(SX[i] + SX[j])).real();
+    MatrixXcd h(int sites, int position){
+        int i = Math::mod(position   ,sites);
+        int j = Math::mod(position +1,sites);
+        if(spins_must_be_generated){
+            SX = gen_manybody_spin(sx(),sites);
+            SY = gen_manybody_spin(sy(),sites);
+            SZ = gen_manybody_spin(sz(),sites);
+            spins_must_be_generated = false;
+        }
+        return 0.5*(-J * SZ[i] * SZ[j] - 0.5*g*(SX[i] + SX[j]));
     }
 
-    MatrixXd H() {
-//        std::cout << h(0)+ h(1)<<endl << endl;
-        return h(0) + h(1);
-//        return h(0);
+    Matrix<Scalar,Dynamic,Dynamic> H(int sites) {
+        MatrixXcd hi = MatrixXcd::Zero((long)pow(2,sites), (long)pow(2,sites));
+        for (int position = 0; position < sites; position++) {
+            hi  += h(sites,position);
+        }
+        return hi.real();
     }
 
-    Tensor4d TimeEvolution_4th_order(const double delta) {
+
+
+    Textra::Tensor<4,Scalar> TimeEvolution_4th_order(const double delta, int sites) {
         double delta1 = delta /(4.0-pow(4.0,1.0/3.0));
         double delta2 = delta1;
         double delta3 = delta - 2.0*delta1 - 2.0*delta2;
-        return Matrix_to_Tensor<4,double>(U(delta1)*U(delta2)*U(delta3)*U(delta2)*U(delta1), array4{2,2,2,2});
+        return Matrix_to_Tensor<4,Scalar>(U(delta1,sites)*U(delta2,sites)*U(delta3,sites)*U(delta2,sites)*U(delta1,sites), array4{2,2,2,2});
 
     }
-    Tensor4d TimeEvolution_2nd_order(const double delta) {
-        return Matrix_to_Tensor<4,double>( ((-delta*h(0)).exp() * (-delta*h(1)).exp()).eval(), array4{2,2,2,2});
+    Textra::Tensor<4,Scalar> TimeEvolution_2nd_order(const double delta, int sites) {
+        return Matrix_to_Tensor<4,Scalar>( ((-delta*h(sites,0)).exp() * (-delta*h(sites,1)).exp()).real().eval(), array4{2,2,2,2});
     }
-    Tensor4d TimeEvolution_1st_order(const double delta) {
-        return Matrix_to_Tensor<4,double>(U(delta), array4{2,2,2,2});
+    Textra::Tensor<4,Scalar> TimeEvolution_1st_order(const double delta, int sites) {
+        return Matrix_to_Tensor<4,Scalar>(U(delta,sites), array4{2,2,2,2});
     }
-    MatrixXd U(double delta){
-        return (-delta*h(0)/2.0).exp() * (-delta*h(1)).exp() * (-delta * h(0)/2.0).exp();
+    Matrix<Scalar,Dynamic,Dynamic> U(double delta, int sites){
+        return ((-delta*h(sites,0)/2.0).exp() * (-delta*h(sites,1)).exp() * (-delta * h(sites,0)/2.0).exp()).real();
     }
 
-    Tensor4d W() {
+    Textra::Tensor<4,Scalar> M() {
         //Returns the H_two as A rank 4 MPO. Notation following Schollwöck (2010)
         MatrixXcd W(6,6);
         W.setZero();
@@ -101,8 +109,13 @@ namespace Model{
         W.block(4,0,2,2) = -g*sx();
         W.block(4,2,2,2) = -J*sz();
         W.block(4,4,2,2) = I();
+        return (Matrix_to_Tensor<2,Scalar> (W.real(), {6,6})).reshape(array4{2,3,2,3}).shuffle(array4{3,1,2,0});
 
-        return Matrix_to_Tensor2<double>(W.real()).reshape(array4{2,3,2,3}).shuffle(array4{3,1,2,0});
+    }
+
+    Textra::Tensor<6,Scalar> MM() {
+        //Returns a 2-site Hamitlonian MPO of rank 6. Notation following Schollwöck (2010)
+        return M().contract(M(), idx<1>({1},{0})).shuffle(Textra::array<6>{0,3,1,4,2,5});
 
     }
 }
