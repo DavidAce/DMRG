@@ -1,16 +1,19 @@
 import h5py
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from src.h5py_extra import *
-
+import seaborn as sns
 plt.close('all')
-filename = '../output/data.h5'
+# sns.set_style("darkgrid")
+sns.set(style="ticks")
+
+# filename = '../output/data.h5'
+filename = 'data12.h5'
 from matplotlib import rc
 rc('font',**{'family':'sans-serif','sans-serif':['Helvetica'], 'size':12})
 rc('text', usetex=True)
-# now create a subplot which represents the top plot of a grid
-# with 2 rows and 1 column. Since this subplot will overlap the
-# first, the plot (and its axes) previously created, will be removed
+print(sns.style.available)
 
 with h5py.File(filename, 'r') as f:
     group = 'FES_iDMRG'

@@ -1,15 +1,13 @@
 //
 // Created by david on 7/30/17.
 //
+//#define EIGEN_USE_MKL_ALL
 #include <mps_routines/class_algorithms.h>
-#include "mps_routines/class_superblock.h"
-#include "mps_routines/class_sweep_storage.h"
-#include <sim_parameters/n_model.h>
+#include <mps_routines/class_superblock.h>
+#include <mps_routines/class_sweep_storage.h>
+#include <mps_routines/class_observables.h>
 #include <mps_routines/n_data_containers.h>
 
-#include <unsupported/Eigen/MatrixFunctions>
-#include <iostream>
-#include <iomanip>
 
 namespace s = settings;
 
@@ -37,11 +35,6 @@ void class_algorithms::single_TEBD_step(class_superblock &superblock, long chi_m
     t_evo.tic();    superblock.time_evolve();                                       t_evo.toc();
     t_svd.tic();    superblock.truncate   (chi_max, s::precision::SVDThreshold);    t_svd.toc();
     t_mps.tic();    superblock.update_MPS();                                        t_mps.toc();
-//    cout << superblock.MPS.GA <<endl<<endl;
-//    cout << superblock.MPS.GB <<endl<<endl;
-//    cout << superblock.MPS.LA <<endl<<endl;
-//    cout << superblock.MPS.LB <<endl<<endl;
-
 }
 
 
@@ -66,17 +59,19 @@ void class_algorithms::iDMRG(){
 
     t_tot.tic();
     class_superblock superblock;
+    class_observables observables (superblock, SimulationType::iDMRG);
+
     while(superblock.chain_length < s::idmrg::max_length){
         output_data_container container(hdf5, "iDMRG/L", superblock.chain_length);
 
         single_DMRG_step(superblock, s::idmrg::chi_max);
-                        container.push_back(superblock);
+                        container.push_back(observables);
         t_env.tic();    superblock.enlarge_environment();                       t_env.toc();
                         superblock.swap_AB();
 
     }
     t_tot.toc();
-    superblock.print_status_full(s::console::verbosity + 1);
+    observables.print_status_full(s::console::verbosity + 1);
     t_eig.print_time_w_percent();
     t_svd.print_time_w_percent();
     t_env.print_time_w_percent();
@@ -101,8 +96,10 @@ void class_algorithms::fDMRG(){
     t_mps.set_properties(on, precision, "fDMRG Update MPS           ");
 
     t_tot.tic();
-    class_superblock    superblock;
-    class_fDMRG_storage       storage(s::fdmrg::max_length);
+    class_superblock     superblock;
+    class_observables    observables (superblock, SimulationType::fDMRG);
+    class_sweep_storage  storage(s::fdmrg::max_length);
+
     while(superblock.chain_length -2 < s::fdmrg::max_length){
                         single_DMRG_step(superblock, s::fdmrg::chi_max);
         t_sto.tic();    storage.insert(superblock);                  t_sto.toc();
@@ -122,7 +119,7 @@ void class_algorithms::fDMRG(){
     }
 
     t_tot.toc();
-    superblock.print_status_full(s::console::verbosity + 1);
+    observables.print_status_full(s::console::verbosity + 1);
     t_eig.print_time_w_percent();
     t_svd.print_time_w_percent();
     t_env.print_time_w_percent();
@@ -146,18 +143,19 @@ void class_algorithms::iTEBD(){
     class_tic_toc t_tot(on, precision, "iTEBD Total Time           ");
 
     class_superblock superblock;
-    superblock.H.asTimeEvolution = Model::TimeEvolution_1st_order(settings::itebd::delta_t);
+    class_observables observables (superblock, SimulationType::iTEBD);
+    superblock.H.update_timestep(settings::itebd::delta_t);
     t_tot.tic();
     for(auto step = 0; step < s::itebd::max_steps ; step++){
         output_data_container container(hdf5, "iTEBD/step", step);
         single_TEBD_step(superblock, s::itebd::chi_max);
-        if (Math::mod(step,500) == 0) { superblock.print_status_full(1, "itebd:");}
-        container.push_back(superblock);
+        if (Math::mod(step,500) == 0) { observables.print_status_update(step);}
+        container.push_back(observables);
         superblock.swap_AB();
 
     }
     t_tot.toc();
-    superblock.print_status_full(s::console::verbosity + 1);
+    observables.print_status_full(s::console::verbosity + 1);
     t_evo.print_time_w_percent();
     t_svd.print_time_w_percent();
     t_mps.print_time_w_percent();
@@ -186,36 +184,36 @@ void class_algorithms::FES_iTEBD(){
     for(auto &chi_max : chi_max_list) {
         double time_step = s::fes_itebd::delta_t;
         class_superblock superblock;
+        class_observables observables (superblock, SimulationType::FES_iTEBD);
         output_data_container container(hdf5, "FES_iTEBD/chi", chi_max );
-        superblock.H.asTimeEvolution = Model::TimeEvolution_1st_order(time_step);
+        superblock.H.update_timestep(time_step);
+
         double phys_time = 0;
         int step = 0;
         double old_entropy = 0;
-        double new_entropy = superblock.MPS.get_entropy();
+        double new_entropy = observables.get_entropy();
         while(time_step > 1e-6 && step < s::fes_itebd::max_steps){
             single_TEBD_step(superblock, chi_max );
-
             t_upd.tic();
-
-            if(Math::mod(step,1000)==0){
-                cout << "Timestep: " << setprecision(10) << setw(12) << time_step << " ";
-                superblock.print_status_update("iTEBD: ", step);
-            }
-
             if(Math::mod(step,100)==0){
-                container.push_back(superblock);
+                container.push_back(observables);
                 container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
             }
+            if(Math::mod(step,1000)==0){
+                cout << "Timestep: " << setprecision(10) << setw(12) << time_step << " ";
+                observables.print_status_update(step);
+            }
+
+
 
             if(Math::mod(step,1)==0){
                 old_entropy = new_entropy;
-                new_entropy = superblock.MPS.get_entropy();
+                new_entropy = observables.get_entropy();
                 if (std::fabs((new_entropy-old_entropy)/new_entropy) < 1e-6*time_step ){
-                    superblock.canonicalize_iMPS_iterative();
-                    container.push_back(superblock);
+                    container.push_back(observables);
                     container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
                     time_step *=0.5;
-                    superblock.H.asTimeEvolution = Model::TimeEvolution_1st_order(time_step);
+                    superblock.H.update_timestep(time_step);
                 }
             }
             t_upd.toc();
@@ -224,7 +222,11 @@ void class_algorithms::FES_iTEBD(){
 
         }
         cout <<setprecision(16);
-        superblock.print_status_full(s::console::verbosity + 1);
+        superblock.canonicalize_iMPS_iterative();
+        container.push_back(observables);
+        container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
+        observables.print_status_full(s::console::verbosity + 1);
+
     }
 
     t_tot.toc();
@@ -257,27 +259,39 @@ void class_algorithms::FES_iDMRG(){
     for(auto &chi_max : chi_max_list ) {
         output_data_container container(hdf5, "FES_iDMRG/chi", chi_max );
         class_superblock superblock;
+        class_observables observables (superblock, SimulationType::FES_iDMRG);
         superblock.initialize();
         int step = 0;
         while (step  < s::fes_idmrg::max_steps) {
+
             single_DMRG_step(superblock, chi_max);
-            t_env.tic(); superblock.enlarge_environment(); t_env.toc();
-            container.push_back(superblock);
+//            if(Math::mod(step,1)==0) {
+//                superblock.canonicalize_iMPS_iterative();
+//            }
+//            superblock.canonicalize_iMPS();
+            container.push_back(observables);
             container.push_back(step, 0, 0, t_tot.get_age());
 
+            if(Math::mod(step,500)==0) {
+                observables.print_status_update(step);
+            }
+
+            t_env.tic(); superblock.enlarge_environment(); t_env.toc();
+
             superblock.swap_AB();
-            superblock.print_status_update("iDMRG: ", step);
+
             step++;
         }
-        superblock.canonicalize_iMPS_iterative();
-        container.push_back(superblock);
+        container.push_back(observables);
         container.push_back(step, 0, 0, t_tot.get_age());
-        superblock.print_status_full(s::console::verbosity + 1);
+        observables.print_status_full(s::console::verbosity + 1);
     }
     t_tot.toc();
     t_sim.print_time_w_percent();
     t_sto.print_time_w_percent();
     t_tot.print_time();
 }
+
+
 
 

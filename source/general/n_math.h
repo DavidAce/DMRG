@@ -14,9 +14,7 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_integration.h>
 #include <numeric>
-#include <sim_parameters/n_sim_settings.h>
-#include "n_tensor_extra.h"
-
+#include <Eigen/Core>
 
 
 

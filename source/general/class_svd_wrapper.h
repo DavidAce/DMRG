@@ -2,150 +2,88 @@
 // Created by david on 2017-10-04.
 //
 
-#ifndef DMRG_CLASS_EIGENSOLVER_H
-#define DMRG_CLASS_EIGENSOLVER_H
-
-
+#ifndef DMRG_CLASS_SVD_H
+#define DMRG_CLASS_SVD_H
+//#define EIGEN_USE_MKL_ALL
 #include "n_tensor_extra.h"
-
-
+#include <Eigen/SVD>
+template<typename Scalar>
 class class_SVD{
 private:
     double SVDThreshold         = 1e-12;
     double truncation_error     = 0;
     int chi                     = 0;
+
+    using MatrixType  = Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>;
     template <long rankU, long rankS, long rankV>
-    using TensorTuple = std::tuple<Textra::Tensor<rankU,double>, // U
-                                   Textra::Tensor<rankS,double>, // S
-                                   Textra::Tensor<rankV,double>>; // V^T
+    using TensorTuple = std::tuple<Textra::Tensor<rankU,Scalar>, // U
+            Textra::Tensor<rankS,Scalar>, // S
+            Textra::Tensor<rankV,Scalar>>; // V^T
+    Eigen::BDCSVD<MatrixType> SVD;
 public:
+
     double get_truncation_error();
     void setThreshold(double newThreshold);
-    TensorTuple<2,1,2> decompose(const Textra::Tensor2d &tensor);
-    TensorTuple<2,1,2> decompose(const Textra::Tensor2d &tensor, const long chi_max);
-    TensorTuple<3,1,3> schmidt(const Textra::Tensor2d &tensor, long d, long chiL, long chi_max, long chiR);
+    TensorTuple<2,1,2> decompose(const Textra::Tensor<2,Scalar> &tensor);
+    TensorTuple<2,1,2> decompose(const Textra::Tensor<2,Scalar> &tensor, const long chi_max);
+    TensorTuple<3,1,3> schmidt  (const Textra::Tensor<2,Scalar> &tensor, long d, long chiL, long chi_max, long chiR);
 };
 
+//
+// Definitions
+//
+
+template<typename Scalar>
+double class_SVD<Scalar>::get_truncation_error(){
+    return truncation_error;
+}
+
+template<typename Scalar>
+void class_SVD<Scalar>::setThreshold(double newThreshold) {
+    SVD.setThreshold(newThreshold);
+}
+
+
+template<typename Scalar>
+typename class_SVD<Scalar>:: template TensorTuple<2,1,2> class_SVD<Scalar>::decompose(const Textra::Tensor<2,Scalar> &tensor) {
+    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
+    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).sum();
+    return std::make_tuple
+            (
+                    Textra::Matrix_to_Tensor<2,Scalar>(SVD.matrixU(), {SVD.matrixU().rows(), SVD.matrixU().cols() }),
+                    Textra::Matrix_to_Tensor<1,Scalar>(SVD.singularValues().normalized(), {SVD.singularValues().size()}),
+                    Textra::Matrix_to_Tensor<2,Scalar>(SVD.matrixV().transpose(),  {SVD.matrixV().cols(), SVD.matrixV().rows() })
+            );
+}
 
 
 
+template<typename Scalar>
+typename class_SVD<Scalar>:: template TensorTuple<2,1,2> class_SVD<Scalar>::decompose(const Textra::Tensor<2,Scalar> &tensor, const long chi_max) {
+    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
+    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).sum();
+    long chi = std::min(SVD.rank(), chi_max);
+    return std::make_tuple
+            (
+                    Textra::Matrix_to_Tensor<2,Scalar>(SVD.matrixU().leftCols(chi), {SVD.matrixU().rows(), chi}),
+                    Textra::Matrix_to_Tensor<1,Scalar>(SVD.singularValues().head(chi).normalized() , {chi}),
+                    Textra::Matrix_to_Tensor<2,Scalar>(SVD.matrixV().leftCols(chi).transpose() ,  {chi, SVD.matrixV().rows() })
+            );
+}
 
-
-
-//enum class Handedness {RGHT, LEFT};
-//enum class Solver {SYM, GEN};
-//
-//
-//
-//template <typename Scalar, Handedness hand = Handedness::RGHT, int Uplo = Eigen::Lower>
-//class DenseSymMatProd
-//{
-//private:
-//    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-//    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-//    typedef Eigen::Map<const Matrix> MapConstMat;
-//    typedef Eigen::Map<const Vector> MapConstVec;
-//    typedef Eigen::Map<Vector> MapVec;
-//
-//    typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
-//
-//    const MapConstMat m_mat;
-//
-//public:
-//    DenseSymMatProd(ConstGenericMatrix& mat_) :
-//            m_mat(mat_.data(), mat_.rows(), mat_.cols())
-//    {}
-//
-//    int rows() const { return m_mat.rows(); }
-//    int cols() const { return m_mat.cols(); }
-//
-//// y_out = A * x_in
-//    void perform_op(const Scalar* x_in, Scalar* y_out) const
-//    {
-//        MapConstVec x(x_in,  m_mat.cols());
-//        MapVec      y(y_out, m_mat.rows());
-//        y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
-//        switch (hand){
-//            case Handedness::RGHT:
-//                y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
-//                break;
-//            case Handedness::LEFT:
-//                y.noalias() = x.transpose() * m_mat.template selfadjointView<Uplo>();
-//                break;
-//        }
-//
-//    }
-//};
-//
-//
-//template <typename Scalar, Handedness hand = Handedness::RGHT>
-//class DenseGenMatProd
-//{
-//private:
-//    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-//    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-//    typedef Eigen::Map<const Matrix> MapConstMat;
-//    typedef Eigen::Map<const Vector> MapConstVec;
-//    typedef Eigen::Map<Vector> MapVec;
-//    typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
-//    const MapConstMat m_mat;
-//
-//public:
-//    DenseGenMatProd(ConstGenericMatrix& mat_) :
-//            m_mat(mat_.data(), mat_.rows(), mat_.cols())
-//    {}
-//
-//    int rows() const { return m_mat.rows(); }
-//    int cols() const { return m_mat.cols(); }
-//
-//    // y_out = A * x_in
-//    void perform_op(const Scalar* x_in, Scalar* y_out) const
-//    {
-//        MapConstVec x(x_in,  m_mat.cols());
-//        MapVec      y(y_out, m_mat.rows());
-//        switch (hand){
-//            case Handedness::RGHT:
-//                y.noalias() = m_mat * x;
-//                break;
-//            case Handedness::LEFT:
-//                y.noalias() = x.transpose() * m_mat;
-//                break;
-//        }
-//    }
-//};
-
-//
-///*! \brief Returns the largest eigenvector of a matrix */
-//template<Handedness hand = Handedness::RGHT>
-//Textra::Tensor<1,Textra::cdouble> dominant_eigenvector(const Textra::Tensor<2, double> &tensor){
-//    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-//    DenseGenMatProd<double, hand> op(mat);
-//    int ncv = std::min(settings::precision::eig_max_ncv, 3);
-//    Spectra::GenEigsSolver<double, Spectra::LARGEST_REAL, DenseGenMatProd<double,hand>> eigs(&op, 1, ncv);
-//    eigs.init();
-//    eigs.compute(50000, 1e-16, Spectra::LARGEST_REAL);
-//    if(eigs.info() != Spectra::SUCCESSFUL){
-//        std::cout << "Eigenvalue solver failed." << '\n';
-////            std::cout << tensor << '\n';
-////            exit(1);
-//    }
-//    std::cout << "Eigenvalue: " << eigs.eigenvalues()<< std::endl;
-//    return Textra::Matrix_to_Tensor1<Textra::cdouble>(eigs.eigenvectors().real());
-//}
-//
-//
-//template<Solver solver = Solver::GEN, Handedness hand = Handedness::RGHT>
-//class class_eigensolver {
-//private:
-//    DenseGenMatProd<double, hand> op;
-//public:
-//
-//    class_eigensolver(){
-//
-//    }
-//
-//
-//};
-
-
-#endif //DMRG_CLASS_EIGENSOLVER_H
+template<typename Scalar>
+typename class_SVD<Scalar>:: template TensorTuple<3,1,3> class_SVD<Scalar>::schmidt(const Textra::Tensor<2,Scalar> &tensor, long d, long chiL, long chi_max, long chiR) {
+    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
+    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    long chi            = std::min(SVD.rank(),chi_max);
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).sum();
+    return std::make_tuple
+            (
+                    Textra::Matrix_to_Tensor<3, Scalar>(SVD.matrixU().leftCols(chi), {d, chiL, chi}),
+                    Textra::Matrix_to_Tensor<1, Scalar>(SVD.singularValues().head(chi).normalized(), { chi }),
+                    Textra::Matrix_to_Tensor<3, Scalar>(SVD.matrixV().leftCols(chi), { d, chiR, chi }).shuffle(Textra::array3{ 0, 2, 1 })
+            );
+}
+#endif //DMRG_CLASS_SVD_H
