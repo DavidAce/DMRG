@@ -66,7 +66,7 @@ The following software is required to build the project:
  install them for you into  `~/.hunter` during the first build. This folder can be **removed safely** after you
  have finished using this code.
 
-In addition the [Spectra](https://spectralib.org/) header-only library is automatically included as a Git submodule. (**No action required**).
+In addition the [Spectra](https://spectralib.org/) header-only library is automatically included in the folder `spectra/`. (**No action required**).
 
 
 ---
