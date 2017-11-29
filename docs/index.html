@@ -121,21 +121,23 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li>Clang version &gt;= 5.0).</li>
 </ul>
 </li>
+<li>Fortran compiler. Tested with gfortran.</li>
 <li>CMake version &gt;= 3.7</li>
 </ul>
 <h3>Optional Requirements</h3>
-<p>You can chose to <b>either</b> let the <a href="https://github.com/ruslo/hunter">Hunter</a> package manager install the following software automatically, or install it yourself with your favorite package manager (e.g. apt in ubuntu or brew in OSX).</p>
+<p>You can chose to <b>either</b> let <code>cmake</code> install the following software automatically, or install it yourself with your favorite package manager (e.g. <code>apt</code> in ubuntu or <code>brew</code> in OSX). The latter is recommended to reduce configure and compile-time.</p>
 <ul>
 <li><a href="http://eigen.tuxfamily.org">Eigen</a> for tensor support and SVD decomposition (tested with version &gt;= 3.3).</li>
+<li><a href="https://github.com/opencollab/arpack-ng">Arpack</a> Eigenvalue solver based on fortran. Note that this in turn requires Lapack and blas API.</li>
+<li><a href="https://github.com/m-reuter/arpackpp">Arpackpp</a> C++ frontend for arpack.</li>
+<li><a href="https://spectralib.org/">Spectra</a> Another eigenvalue solver. Header only.</li>
 <li><a href="https://support.hdfgroup.org/HDF5/">HDF5</a> for hdf5-file storage support (tested with version &gt;= 1.8).</li>
 <li><a href="https://www.gnu.org/software/gsl/">GSL</a> for numerical integration (tested with version &gt;= 2.4).</li>
 </ul>
-<p>If the software above is not found in your system, <a href="https://github.com/ruslo/hunter">Hunter</a> will download and install them for you into <code>~/.hunter</code> during the first build. This folder can be <b>removed safely</b> after you have finished using this code.</p>
-<p>In addition the <a href="https://spectralib.org/">Spectra</a> header-only library is automatically included as a Git submodule. (<b>No action required</b>).</p>
-<hr/>
+<p>If the software above is not found in your system, the first run of <code>cmake</code> will download and install it for you into a folder <code>libs</code> in the root of this project. </p><hr/>
 <h2>Usage</h2>
-<p>This code lacks an API or command-line parameters. As such, details of execution have to be set in source code, specifically one can edit model and simulation parameters in <code><a class="el" href="n__model_8h_source.html">source/n_model.h</a></code> and <code><a class="el" href="n__settings_8h_source.html">source/n_settings.h</a></code>.</p>
-<p>The files <code>source/class_algorithms.cpp</code> and <code><a class="el" href="class__algorithms_8h_source.html">source/class_algorithms.h</a></code> contain routines for the infinite-DMRG, finite-DMRG and infinite-TEBD that can be called from <code><a class="el" href="main_8cpp.html">main.cpp</a></code>. The algorithms should ideally give similar ground state energies, which is a good sanity check.</p>
+<p>This code lacks an API or command-line parameters. As such, details of execution have to be set in source code, specifically one can edit model and simulation parameters in <code>source/n_model.h</code> and <code>source/n_settings.h</code>.</p>
+<p>The files <code>source/class_algorithms.cpp</code> and <code>source/class_algorithms.h</code> contain routines for the infinite-DMRG, finite-DMRG and infinite-TEBD that can be called from <code><a class="el" href="main_8cpp.html">main.cpp</a></code>. The algorithms should ideally give similar ground state energies, which is a good sanity check.</p>
 <h2>Notation</h2>
 <p>The <em>Vidal canonical form</em>, i.e. \(\Gamma\Lambda\Gamma\Lambda\)"..., is used throughout this code. In code we denote</p>
 <ul>
@@ -152,11 +154,11 @@ $(document).ready(function(){initNavTree('index.html','');});
 <p>In diagrammatic tensor notation this is: </p><pre class="fragment">                        [d]          0
             G     = [a]__|__[b] = 1__|__2
 </pre><p> where after the second equality the index order is shown. In code this corresponds to</p>
-<div class="fragment"><div class="line">Textra::Tensor3 G(d,a,b);</div></div><!-- fragment --><p>Similarly, we have for \(\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}\):</p>
+<div class="fragment"><div class="line">Tensor3 G(d,a,b);</div></div><!-- fragment --><p>Similarly, we have for \(\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}\):</p>
 <pre class="fragment">                                [d] [d]                0   1
             Theta     = [chia]___|___|___[chib] = 2 ___|___|___ 3
 </pre><p>which in code reads</p>
-<div class="fragment"><div class="line">Textra::Tensor4 G(d,d,chia,chib);</div></div><!-- fragment --><h1>Details</h1>
+<div class="fragment"><div class="line">Tensor4 G(d,d,chia,chib);</div></div><!-- fragment --><h1>Details</h1>
 <dl class="section author"><dt>Author</dt><dd>David Aceituno </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>10-2017 </dd></dl>
 <dl class="section copyright"><dt>Copyright</dt><dd>MPL2 </dd></dl>

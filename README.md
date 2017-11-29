@@ -52,22 +52,23 @@ The following software is required to build the project:
  - C++ compiler with support for c++17 standard. Tested with
     - GNU GCC version >= 7
     - Clang version >= 5.0).
+ - Fortran compiler. Tested with gfortran.   
  - CMake version >= 3.7
 
 ### Optional Requirements
- You can chose to **either**  let the [Hunter](https://github.com/ruslo/hunter) package manager install the following
- software automatically, or install it yourself with your favorite package manager (e.g. apt in ubuntu or brew in OSX).
+ You can chose to **either**  let `cmake` install the following software automatically, or install it yourself with your favorite package manager (e.g. `apt` in ubuntu or `brew` in OSX).
+ The latter is recommended to reduce configure and compile-time.
 
  - [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition (tested with version >= 3.3).
+ - [Arpack](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires Lapack and blas API.
+ - [Arpackpp](https://github.com/m-reuter/arpackpp) C++ frontend for arpack.
+ - [Spectra](https://spectralib.org/) Another eigenvalue solver. Header only.
  - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support (tested with version >= 1.8).
  - [GSL](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
 
- If the software above is not found in your system, [Hunter](https://github.com/ruslo/hunter) will download and
- install them for you into  `~/.hunter` during the first build. This folder can be **removed safely** after you
- have finished using this code.
-
-In addition the [Spectra](https://spectralib.org/) header-only library is automatically included in the folder `spectra/`. (**No action required**).
-
+ If the software above is not found in your system, the first run of `cmake` will download and
+ install it for you into a folder `libs` in the root of this project. 
+ 
 
 ---
 
