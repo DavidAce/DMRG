@@ -45,24 +45,86 @@ using namespace Textra;
 
 class class_mps {
 public:
-    using Scalar = Model::Scalar;
+    using Scalar = double;
 private:
     long local_dimension;                          /*!< Local (or physical) spin or qubit dimension, usually denoted \f$d\f$ elsewhere. */
-    Textra::Tensor<3,Scalar> tmp3;                         /*!< Temporary holder for swapping*/
-    Textra::Tensor<1,Scalar> tmp1;                         /*!< Temporary holder for swapping*/
+    Tensor<Scalar,3> tmp3;                         /*!< Temporary holder for swapping*/
+    Tensor<Scalar,1> tmp1;                         /*!< Temporary holder for swapping*/
 public:
     bool swapped;                                  /*!< Tracks the swapped state of A and B positions. */
 
-    Textra::Tensor<3,Scalar> GA;                  /*!< \f$\Gamma^A\f$*/
-    Textra::Tensor<3,Scalar> GB;                  /*!< \f$\Gamma^B\f$*/
-    Textra::Tensor<1,Scalar> LA;                  /*!< \f$\Lambda^A\f$*/
-    Textra::Tensor<1,Scalar> LB;                  /*!< \f$\Lambda^B\f$*/
-    Textra::Tensor<1,Scalar> L_tail;              /*!< \f$\Lambda^B_{n+1}\f$ or \f$\Lambda^B_{n-1}\f$ in iDMRG or fDMRG respectively.*/
+    Tensor<Scalar,3> GA;                  /*!< \f$\Gamma^A\f$*/
+    Tensor<Scalar,3> GB;                  /*!< \f$\Gamma^B\f$*/
+    Tensor<Scalar,1> LA;                  /*!< \f$\Lambda^A\f$*/
+    Tensor<Scalar,1> LB;                  /*!< \f$\Lambda^B\f$*/
+    Tensor<Scalar,1> L_tail;              /*!< \f$\Lambda^B_{n+1}\f$ or \f$\Lambda^B_{n-1}\f$ in iDMRG or fDMRG respectively.*/
 
-    class_mps(){}
+    class_mps(){};
+
     void initialize(long local_dimension_);         /*! Sets local dimension*/
-    Textra::Tensor<4,Scalar> get_theta() const;     /*! Returns rank 4 tensor \f$\Theta\f$.*/
     void swap_AB();                                 /*! Swaps the roles of A and B. Used in infinite DMRG.*/
+
+    Tensor<Scalar,3> A() const;
+    Tensor<Scalar,3> B() const;
+    Tensor<Scalar,4> thetaL() const;
+    Tensor<Scalar,4> thetaR() const;
+
+    Tensor<Scalar,4> get_theta() const;             /*! Returns rank 4 tensor \f$\Theta\f$.*/
+    Tensor<Scalar,4> get_transfer_matrix_L()const;
+    Tensor<Scalar,4> get_transfer_matrix_R()const;
+    Tensor<Scalar,4> get_transfer_2_site_matrix_L()const;
+    Tensor<Scalar,4> get_transfer_2_site_matrix_R()const;
+
+    template<typename T>
+    Tensor<T,6> get_transfer_matrix_L(const Tensor<T,4> &MPO_1site)const{
+        return  A().cast<T>()
+                .contract(MPO_1site, idx<1>({0},{2}))
+                .contract(A().cast<T>().conjugate(), idx<1>({4},{0}))
+                .shuffle(array6{0,4,2,1,5,3});
+    }
+
+    template<typename T>
+    Tensor<T,6> get_transfer_matrix_R(const Tensor<T,4> &MPO_1site)const{
+        return B().cast<T>()
+                .contract(MPO_1site, idx<1>({0},{2}))
+                .contract(B().cast<T>().conjugate(), idx<1>({4},{0}))
+                .shuffle(array6{1,5,3,0,4,2});
+    };
+
+    template<typename T>
+    Tensor<T,6> get_transfer_2_site_matrix_L(const Tensor<T,4> &MPO_1site)const{
+        return thetaL().cast<T>()
+                .contract(MPO_1site,            idx<1>({0}  ,{2}))
+                .contract(MPO_1site,            idx<2>({4,0},{0,2}))
+                .contract(thetaL().cast<T>().conjugate(), idx<2>({3,5},{0,1}))
+                .shuffle(array6{0,4,2,1,5,3});
+//                .shuffle(array6{1,5,3,0,4,2});
+    };
+    template<typename T>
+    Tensor<T,6> get_transfer_2_site_matrix_R(const Tensor<T,4> &MPO_1site)const{
+        return thetaR().cast<T>()
+                .contract(MPO_1site,            idx<1>({0}  ,{2}))
+                .contract(MPO_1site,            idx<2>({4,0},{0,2}))
+                .contract(thetaR().cast<T>().conjugate(), idx<2>({3,5},{0,1}))
+                .shuffle(array6{1,5,3,0,4,2});
+//                .shuffle(array6{0,4,2,1,5,3});
+    };
+
+    template<typename T>
+    Tensor<T,6> get_transfer_2_site_matrix_L(const Tensor<T,6> &MPO_2site)const{
+        return thetaL().cast<T>()
+                .contract(MPO_2site,            idx<2>({0,1},{2,3}))
+                .contract(thetaL().cast<T>().conjugate(), idx<2>({4,5},{0,1}))
+                .shuffle(array6{0,4,2,1,5,3});
+    };
+
+    template<typename T>
+    Tensor<T,6> get_transfer_2_site_matrix_R(const Tensor<T,6> &MPO_2site)const{
+        return thetaR().cast<T>()
+                .contract(MPO_2site,            idx<2>({0,1},{2,3}))
+                .contract(thetaR().cast<T>().conjugate(), idx<2>({4,5},{0,1}))
+                .shuffle(array6{1,5,3,0,4,2});
+    };
 
 };
 

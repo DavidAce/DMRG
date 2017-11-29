@@ -34,12 +34,12 @@ enum class Side {L,R};
 template<Side side>
 class class_environment{
 public:
-    using Scalar = Model::Scalar;
+    using Scalar = class_mps::Scalar;
 private:
 
 public:
     int size;                                               /*!< Number of particles that have been contracted into this left environment. */
-    Textra::Tensor<3,Scalar> block;                         /*!< The environment block. */
+    Tensor<Scalar,3> block;                         /*!< The environment block. */
     class_environment(){
         size = 0;
         block.resize(1, 1, 3);
@@ -54,9 +54,9 @@ public:
         }
     };
 
-    void enlarge(const class_mps &MPS, const Textra::Tensor<4,Scalar> &W){
+    void enlarge(const class_mps &MPS, const Tensor<Scalar,4> &W){
         /*!< Contracts a site into the block. */
-        Textra::Tensor<3,Scalar> block_enlarged;
+        Tensor<Scalar,3> block_enlarged;
         switch (side){
             case (Side::L):
                 /*! # Left environment contraction

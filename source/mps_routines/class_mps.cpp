@@ -21,20 +21,6 @@ void class_mps::initialize(const long local_dimension_){
 }
 
 
-
-Textra::Tensor<4,class_mps::Scalar> class_mps::get_theta() const {
-    return asDiagonal(L_tail) //whatever L_A was in the previous step
-            .contract(GA,             idx<1>({1},{1}))
-            .contract(asDiagonal(LA), idx<1>({2},{0}))
-            .contract(GB,             idx<1>({2},{1}))
-            .contract(asDiagonal(LB), idx<1>({3},{0})).shuffle(array4{1,2,0,3});
-    //Outputs:
-    //      0  1
-    //   2__|__|__3
-}
-
-
-
 void class_mps::swap_AB(){
     swapped    = !swapped;
 
@@ -50,3 +36,61 @@ void class_mps::swap_AB(){
     L_tail  = LB;
 
 }
+
+Tensor<class_mps::Scalar,3> class_mps::A() const{
+    return asDiagonal(L_tail).contract(GA, idx<1>({1},{1})).shuffle(array3{1,0,2});
+};
+Tensor<class_mps::Scalar,3> class_mps::B() const{
+    return GB.contract(asDiagonal(LB), idx<1>({2},{0}));
+};
+
+Tensor<class_mps::Scalar,4> class_mps::thetaL() const{
+    return A()
+            .contract(asDiagonal(LA),idx<1>({2},{0}) )
+            .contract(GB, idx<1>({2},{1}))
+            .shuffle(array4{0,2,1,3});
+};
+Tensor<class_mps::Scalar,4> class_mps::thetaR() const{
+    return GA
+            .contract(asDiagonal(LA),idx<1>({2},{0}) )
+            .contract(B(), idx<1>({2},{1}))
+            .shuffle(array4{0,2,1,3});
+};
+
+
+Tensor<class_mps::Scalar,4> class_mps::get_theta() const {
+    return asDiagonal(L_tail) //whatever L_A was in the previous step
+            .contract(GA,             idx<1>({1},{1}))
+            .contract(asDiagonal(LA), idx<1>({2},{0}))
+            .contract(GB,             idx<1>({2},{1}))
+            .contract(asDiagonal(LB), idx<1>({3},{0})).shuffle(array4{1,2,0,3});
+//    return A()
+//            .contract(asDiagonal(LA),idx<1>({2},{0}) )
+//            .contract(B(), idx<1>({2},{1}))
+//            .shuffle(array4{0,2,1,3});
+    //Outputs:
+    //      0  1
+    //   2__|__|__3
+}
+
+Tensor<class_mps::Scalar,4> class_mps::get_transfer_matrix_L()const{
+    return A().contract(A().conjugate(), idx<1>({0},{0}))
+              .shuffle(array4{0,2,1,3});
+};
+
+Tensor<class_mps::Scalar,4> class_mps::get_transfer_matrix_R()const{
+    return B().contract(B().conjugate(), idx<1>({0},{0}))
+              .shuffle(array4{0,2,1,3});;
+};
+
+
+Tensor<class_mps::Scalar,4> class_mps::get_transfer_2_site_matrix_L()const{
+    return thetaL().contract(thetaL().conjugate(), idx<2>({0,1},{0,1})).shuffle(array4{0,2,1,3});
+};
+
+Tensor<class_mps::Scalar,4> class_mps::get_transfer_2_site_matrix_R()const{
+//    return get_theta().contract(get_theta().conjugate(), idx<2>({0,1},{0,1})).shuffle(array4{0,2,1,3});
+    return thetaR().contract(thetaR().conjugate(), idx<2>({0,1},{0,1})).shuffle(array4{0,2,1,3});
+};
+
+
