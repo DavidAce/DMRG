@@ -52,7 +52,7 @@ The following software is required to build the project:
  - C++ compiler with support for c++17 standard. Tested with
     - GNU GCC version >= 7
     - Clang version >= 5.0).
- - Fortran compiler. Tested with gfortran.   
+ - Fortran compiler. Tested with GNU GFORTRAN version >= 7.
  - CMake version >= 3.7
 
 ### Optional Requirements
