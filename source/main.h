@@ -108,7 +108,7 @@ In diagrammatic tensor notation this is:
 where after the second equality the index order is shown. In code this corresponds to
 
 \code{.cpp}
- Textra::Tensor3 G(d,a,b);
+ Tensor3 G(d,a,b);
 \endcode
 
 Similarly, we have for \f$\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}\f$:
@@ -121,7 +121,7 @@ Similarly, we have for \f$\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}\f$:
 which in code reads
 
 \code{.cpp}
- Textra::Tensor4 G(d,d,chia,chib);
+ Tensor4 G(d,d,chia,chib);
 \endcode
 
 

@@ -19,21 +19,21 @@ class class_superblock;
  is stored in a `class_storage` object, for later use in the finite-DMRG stage.
 
  Specifically, this class stores objects from the current superblock:
- - The left and right environment blocks `Lblock` and `Rblock`, both type `Textra::Tensor3`, and
+ - The left and right environment blocks `Lblock` and `Rblock`, both type `Tensor3`, and
  - the MPS tensors \f$\Gamma^{A,B}=\f$ `MPS.GA, MPS.GB` and \f$\Lambda^{A,B}=\f$ `MPS.LA, MPS.LB`, required for computing \f$\Theta\f$, following
  the notation used in [Frank Pollmann's notes](http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf):
- \f$\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. <br> Here \f$\Gamma^{A,B}\f$ are a rank-3 tensors of type `Textra::Tensor3`  and \f$\Lambda^{A,B}\f$
- are rank-1 tensors of type `Textra::Tensor1`.
+ \f$\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. <br> Here \f$\Gamma^{A,B}\f$ are a rank-3 tensors of type `Tensor3`  and \f$\Lambda^{A,B}\f$
+ are rank-1 tensors of type `Tensor1`.
 
  All objects are stored and indexed by their position relative to the final chain of length `max_length`.
 */
 
 class class_sweep_storage {
 public:
-    using Scalar = Model::Scalar;
+    using Scalar = class_mps::Scalar;
 private:
-    std::map<int, Textra::Tensor<3,Scalar>> G_list;                                  /*!< A list of stored \f$\Gamma\f$-tensors,  indexed by chain position. */
-    std::map<int, Textra::Tensor<1,Scalar>> L_list;                                  /*!< A list of stored \f$\Lambda\f$-tensors, indexed by chain position. */
+    std::map<int, Tensor<Scalar,3>> G_list;                                  /*!< A list of stored \f$\Gamma\f$-tensors,  indexed by chain position. */
+    std::map<int, Tensor<Scalar,1>> L_list;                                  /*!< A list of stored \f$\Lambda\f$-tensors, indexed by chain position. */
     std::map<int, class_environment<Side::L>> Lblock_list;           /*!< A list of stored Left block environments,  indexed by chain position. */
     std::map<int, class_environment<Side::R>> Rblock_list;           /*!< A list of stored Right block environments, indexed by chain position. */
 

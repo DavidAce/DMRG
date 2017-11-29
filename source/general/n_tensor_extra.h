@@ -9,7 +9,6 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <iterator>
-#include <vector>
 #include <iostream>
 /*! \brief **Textra** stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/
 
@@ -20,20 +19,18 @@
  *  The contents of this namespace are quite self-explanatory.
  */
 
+
 namespace Textra {
-//    using Scalar        = std::complex<double>;
+    using namespace Eigen;
     using cdouble       = std::complex<double>;
 
-    template<typename Scalar = double> using MatrixType    = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
-    template<typename Scalar = double> using VectorType    = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-
-    template<long rank, typename Scalar = cdouble> using Tensor        = Eigen::Tensor<Scalar,rank,Eigen::ColMajor>;
-    template<long rank, typename Scalar = cdouble> using const_Tensor  = Eigen::Tensor<const Scalar,rank,Eigen::ColMajor>;
-    template<long rank, typename Scalar = cdouble> using TensorRef     = Eigen::TensorRef<Eigen::Tensor<Scalar,rank,Eigen::ColMajor>>;
-    template<long rank> using array                                   = Eigen::array<long, rank>;
-
+    template<typename Scalar> using MatrixType    = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    template<typename Scalar> using VectorType    = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    template<long rank> using array               = Eigen::array<long, rank>;
+    template <typename Scalar, long length>
+    using idxlistpair = Eigen::array<Eigen::IndexPair<Scalar>,length>;
     template <long length>
-    inline Eigen::array<Eigen::IndexPair<long>,length> idx (std::initializer_list<long> list1,std::initializer_list<long> list2){
+    inline idxlistpair<long,length> idx (std::initializer_list<long> list1,std::initializer_list<long> list2){
         //Use numpy-style indexing for contraction. Each list contains a list of indices to be contracted for the respective
         //tensors. This function zips them together into pairs as used in Eigen::Tensor module.
         Eigen::array<Eigen::IndexPair<long>,length> pairlistOut;
@@ -44,29 +41,33 @@ namespace Textra {
         }
         return pairlistOut;
     }
+    struct idx_dim_pair{
+        long idxA;
+        long idxB;
+        long dimB;
+    };
+    template< long length, long rankB>
+    inline idxlistpair<long,length> __attribute__((hot)) sortIdx (const array<rankB>  dimsB, const std::initializer_list<long> listA, const std::initializer_list<long> listB){
+        Eigen::array<idx_dim_pair,length> idx_dim_pair_list;
+        auto itlistA = listA.begin();
+        auto itlistB = listB.begin();
+        for (int i = 0; i < length; i++ ){
+            idx_dim_pair_list[i] = {*itlistA++, *itlistB, dimsB[*itlistB++]};
+        }
+        std::sort(idx_dim_pair_list.begin(), idx_dim_pair_list.end(), [](const auto& i, const auto& j) { return i.dimB > j.dimB; } );
+        idxlistpair<long,length> pairlistOut;
+        for(int i = 0; i< length; i++){
+            pairlistOut[i] = Eigen::IndexPair<long>{idx_dim_pair_list[i].idxA, idx_dim_pair_list[i].idxB};
+        }
+        return pairlistOut;
+    }
 
-    using Tensor4d       = Tensor<4,double>;
-    using Tensor3d       = Tensor<3,double>;
-    using Tensor2d       = Tensor<2,double>;
-    using Tensor1d       = Tensor<1,double>;
-    using Tensor0d       = Tensor<0,double>;
 
-    using Tensor4c       = Tensor<4,cdouble>;
-    using Tensor3c       = Tensor<3,cdouble>;
-    using Tensor2c       = Tensor<2,cdouble>;
-    using Tensor1c       = Tensor<1,cdouble>;
-    using Tensor0c       = Tensor<0,cdouble>;
 
-    using const_Tensor4d = Tensor<4,const double>;
-    using const_Tensor3d = Tensor<3,const double>;
-    using const_Tensor2d = Tensor<2,const double>;
-    using const_Tensor1d = Tensor<1,const double>;
-
-    using const_Tensor4c = Tensor<4,const cdouble>;
-    using const_Tensor3c = Tensor<3,const cdouble>;
-    using const_Tensor2c = Tensor<2,const cdouble>;
-    using const_Tensor1c = Tensor<1,const cdouble>;
-
+    using array8        = array<8>;
+    using array7        = array<7>;
+    using array6        = array<6>;
+    using array5        = array<5>;
     using array4        = array<4>;
     using array3        = array<3>;
     using array2        = array<2>;
@@ -74,83 +75,85 @@ namespace Textra {
 
 
 
-    template <typename Scalar = double>
-    inline Tensor<2,Scalar> asDiagonal(const Tensor<1, Scalar> &tensor) {
+//
+//    //***************************************//
+//    //Different views fo rank 1 and 2 tensors//
+//    //***************************************//
+//
+    template <typename Scalar>
+    inline Tensor<Scalar,2> __attribute__((always_inline)) asDiagonal(const Tensor<Scalar,1> &tensor) {
         return tensor.inflate(array1{tensor.size()+1}).reshape(array2{tensor.size(),tensor.size()});
     }
-    template <typename Scalar = double>
-    inline Tensor<2,Scalar> asDiagonal_squared(const Tensor<1, Scalar> &tensor) {
+
+    template <typename Scalar>
+    inline Tensor<Scalar,2> __attribute__((always_inline)) asDiagonalSquared(const Tensor<Scalar,1> &tensor) {
         return tensor.square().inflate(array1{tensor.size()+1}).reshape(array2{tensor.size(), tensor.size()});
     }
 
+    template <typename Scalar>
+    inline Tensor<Scalar,2> __attribute__((always_inline)) asDiagonalInversed(const Tensor<Scalar,1> &tensor) {
+        return tensor.inverse().inflate(array1{tensor.size()+1}).reshape(array2{tensor.size(),tensor.size()});
+    }
 
-    template <typename Scalar = double>
-    inline Tensor<2, Scalar> asInverseDiagonal(const Tensor<1, Scalar> &tensor) {
-        return asDiagonal((Tensor<1, Scalar>)tensor.inverse());
+    template<typename Scalar>
+    inline Tensor<Scalar,1>  __attribute__((always_inline)) asNormalized(const Tensor<Scalar,1> &tensor) {
+        Eigen::Map<const VectorType<Scalar>> map (tensor.data(),tensor.size());
+        return Eigen::TensorMap<Tensor<const Scalar,1>>(map.normalized().eval().data(), array1{map.size()});
     }
 
 
-    inline Tensor1d Tensor1d_normalize(const Tensor1d &tensor) {
-        Eigen::Map<const Eigen::VectorXd> map =  Eigen::Map<const Eigen::VectorXd>(tensor.data(),tensor.dimension(0));
-        return Eigen::TensorMap<const_Tensor1d>(map.normalized().eval().data(), array1{map.size()});
+//
+//
+//
+//    //****************************//
+//    //Matrix to tensor conversions//
+//    //****************************//
+//
+
+    template<typename Scalar,int rank>
+    inline Eigen::Tensor<Scalar,rank> __attribute__((always_inline)) Matrix_to_Tensor(const MatrixType<Scalar> &matrix, const array<rank> &dims){
+        return Eigen::TensorMap<Tensor<const Scalar, rank>>(matrix.data(), dims);
     }
-
-
-    //Matrix to tensor conversions
-    template<long rank, typename Scalar>
-    Tensor<rank, Scalar> Matrix_to_Tensor(const MatrixType<Scalar> &matrix, array<rank> dims){
-        return Eigen::TensorMap<const_Tensor<rank, Scalar>>(matrix.data(), dims);
-    }
-
 
 
     template <typename Scalar>
-    inline Tensor<1, Scalar> Matrix_to_Tensor1(const MatrixType<Scalar> &matrix) {
-        return Eigen::TensorMap<const_Tensor<1,Scalar>>(matrix.data(), array1{matrix.size()});
-    }
-
-    inline Tensor1d MatrixXd_to_Tensor1d(const Eigen::MatrixXd &matrix) {
-        return Eigen::TensorMap<const_Tensor1d>(matrix.data(), array1{matrix.size()});
+    inline Eigen::Tensor<Scalar,1> __attribute__((always_inline)) Matrix_to_Tensor1(const MatrixType<Scalar> &matrix) {
+        return Eigen::TensorMap<Tensor<const Scalar,1>>(matrix.data(), array1{matrix.size()});
     }
 
     template <typename Scalar>
-    inline Tensor<2,Scalar> Matrix_to_Tensor2(const MatrixType<Scalar> &matrix) {
-        return Eigen::TensorMap<const_Tensor<2,Scalar>>(matrix.data(), array2{matrix.rows(),matrix.cols()});
-    }
-
-    inline Tensor2d MatrixXd_to_Tensor2d(const Eigen::MatrixXd &matrix) {
-        return Eigen::TensorMap<const_Tensor2d>(matrix.data(), array2{matrix.rows(),matrix.cols()});
+    inline Eigen::Tensor<Scalar,2> __attribute__((always_inline)) Matrix_to_Tensor2(const MatrixType<Scalar> &matrix) {
+        return Eigen::TensorMap<Tensor<const Scalar,2 >>(matrix.data(), array2{matrix.rows(),matrix.cols()});
     }
 
 
 
-    //Tensor to matrix conversions
-
-
+//
+//    //****************************//
+//    //Tensor to matrix conversions//
+//    //****************************//
+//
+//
     template <typename Scalar>
-    inline MatrixType<Scalar> tensor2_to_matrix(const Tensor<2,Scalar> &tensor) {
+    inline MatrixType<Scalar> __attribute__((always_inline)) Tensor2_to_Matrix(const Tensor<Scalar,2> &tensor) {
         return Eigen::Map<const MatrixType<Scalar>>(tensor.data(), tensor.dimension(0), tensor.dimension(1));
     }
 
-    inline Eigen::MatrixXd Tensor2d_to_MatrixXd(const Tensor2d &tensor){
-        return Eigen::Map<const Eigen::MatrixXd>(tensor.data(),tensor.dimension(0), tensor.dimension(1));
-    }
-
-
     template <typename Scalar>
-    inline VectorType<Scalar> Tensor1_to_Vector(const Tensor<1, Scalar> &tensor) {
+    inline VectorType<Scalar> __attribute__((always_inline)) Tensor1_to_Vector(const Tensor<Scalar,1> &tensor) {
         return Eigen::Map<const VectorType<Scalar>>(tensor.data(), tensor.size());
     }
 
-    inline Eigen::VectorXd Tensor1d_to_VectorXd(const Tensor1d &tensor){
-        return Eigen::Map<const Eigen::VectorXd>(tensor.data(), tensor.size());
+    template<typename Scalar,long rank, typename sizeType>
+    inline MatrixType<Scalar> __attribute__((always_inline)) Tensor_to_Matrix(const Tensor<Scalar,rank> &tensor,const sizeType rows,const sizeType cols){
+        return Eigen::Map<const MatrixType<Scalar>> (tensor.data(), rows,cols);
     }
 
-    template<long rank, typename sizeType>
-    inline Eigen::MatrixXd Tensor_to_MatrixXd(const Tensor<rank,double> &tensor, sizeType rows, sizeType cols){
-        Tensor<2,double> tensor2d  = tensor.reshape(array2{rows,cols});
-        return Eigen::Map<const Eigen::MatrixXd> (tensor2d.data(), rows ,cols );
-    }
+
+
+    //******************************************************//
+    //std::cout overloads for dimension() and array objects //
+    //******************************************************//
 
 
 
@@ -178,6 +181,56 @@ namespace Textra {
 
 
 };
+
+//
+//
+//namespace Eigen{
+//    namespace internal{
+//        template<typename Scalar_, int NumIndices_, int Options_, typename IndexType_>
+//        struct traits<Tensor<Scalar_,NumIndices_, Options_, IndexType_> > : public traits<Eigen::Tensor<Scalar_,NumIndices_, Options_, IndexType_> >
+//        {
+//            template<typename...Args>
+//            traits(Args&&... args) : traits<Eigen::Tensor<Scalar_,NumIndices_, Options_, IndexType_>>(std::forward<Args>(args)...){};
+////            typedef Scalar_ Scalar;
+////            typedef Dense StorageKind;
+////            typedef IndexType_ Index;
+////            static const int NumDimensions = NumIndices_;
+////            static const int Layout = Options_ & RowMajor ? RowMajor : ColMajor;
+////            enum {
+////                Options = Options_,
+////                Flags = compute_tensor_flags<Scalar_, Options_>::ret | (is_const<Scalar_>::value ? 0 : LvalueBit)
+////            };
+////            template <typename T> struct MakePointer {
+////                typedef T* Type;
+////            };
+//        };
+//    }
+//
+//}
+//
+//
+//
+//namespace Eigen{
+//    namespace internal{
+//        template<typename Scalar_, int NumIndices_, int Options_, typename IndexType_>
+//        struct traits<Tensor<Scalar_,NumIndices_, Options_, IndexType_> >
+//        {
+//            typedef Scalar_ Scalar;
+//            typedef Dense StorageKind;
+//            typedef IndexType_ Index;
+//            static const int NumDimensions = NumIndices_;
+//            static const int Layout = Options_ & RowMajor ? RowMajor : ColMajor;
+//            enum {
+//                Options = Options_,
+//                Flags = compute_tensor_flags<Scalar_, Options_>::ret | (is_const<Scalar_>::value ? 0 : LvalueBit)
+//            };
+//            template <typename T> struct MakePointer {
+//                typedef T* Type;
+//            };
+//        };
+//    }
+//
+//}
 
 
 

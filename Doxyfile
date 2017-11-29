@@ -279,7 +279,7 @@ OPTIMIZE_OUTPUT_VHDL   = NO
 # extension. Doxygen has a built-in mapping, but you can override or extend it
 # using this tag. The format is ext=language, where ext is a file extension, and
 # language is one of the parsers supported by doxygen: IDL, Java, Javascript,
-# C#, C, C++, D, PHP, Objective-C, Python, Fortran (fixed format Fortran:
+# C#, C, C++, Destination, PHP, Objective-C, Python, Fortran (fixed format Fortran:
 # FortranFixed, free formatted Fortran: FortranFree, unknown formatted Fortran:
 # Fortran. In the later case the parser tries to guess whether the code is fixed
 # or free formatted code, this is the default for Fortran type files), VHDL. For
@@ -1583,7 +1583,7 @@ MATHJAX_CODEFILE       =
 # there is already a search function so this one should typically be disabled.
 # For large projects the javascript based search engine can be slow, then
 # enabling SERVER_BASED_SEARCH may provide a better solution. It is possible to
-# search using the keyboard; to jump to the search box use <access key> + S
+# search using the keyboard; to jump to the search box use <access key> + Source
 # (what the <access key> is depends on the OS and browser, but it is typically
 # <CTRL>, <ALT>/<option>, or both). Inside the search box use the <cursor down
 # key> to jump into the search results window, the results can be navigated
@@ -2095,7 +2095,7 @@ INCLUDE_PATH           =
 INCLUDE_FILE_PATTERNS  = 
 
 # The PREDEFINED tag can be used to specify one or more macro names that are
-# defined before the preprocessor is started (similar to the -D option of e.g.
+# defined before the preprocessor is started (similar to the -Destination option of e.g.
 # gcc). The argument of the tag is a list of macros of the form: name or
 # name=definition (no spaces). If the definition and the "=" are omitted, "=1"
 # is assumed. To prevent a macro definition from being undefined via #undef or

@@ -64,6 +64,19 @@ void class_tic_toc::print_time_w_percent(){
     }
 }
 
+void class_tic_toc::print_time_w_percent(class_tic_toc &parent){
+    if (profiling) {
+        cout << name
+             << fixed << setprecision(print_precision) << setw(print_precision + padding) << left
+             << duration_cast<duration<double>>(measured_time).count() << " s |"
+             << fixed << setprecision(print_precision) << setw(print_precision + padding) << right
+             << 100.0*measured_time.count() / parent.measured_time.count() << " % |"
+             << fixed << setprecision(print_precision) << setw(print_precision + padding) << right
+             << 100.0*measured_time.count() / (high_resolution_clock::now() - start_timepoint).count() << "% of total\n";
+
+    }
+}
+
 void class_tic_toc::print_total_reset(){
     if (profiling) {
         cout << setprecision(print_precision)  << fixed << setw(print_precision + padding)

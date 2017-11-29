@@ -144,7 +144,7 @@ void class_algorithms::iTEBD(){
 
     class_superblock superblock;
     class_observables observables (superblock, SimulationType::iTEBD);
-    superblock.H.update_timestep(settings::itebd::delta_t);
+    superblock.H.update_timestep(settings::itebd::delta_t, 1);
     t_tot.tic();
     for(auto step = 0; step < s::itebd::max_steps ; step++){
         output_data_container container(hdf5, "iTEBD/step", step);
@@ -186,7 +186,7 @@ void class_algorithms::FES_iTEBD(){
         class_superblock superblock;
         class_observables observables (superblock, SimulationType::FES_iTEBD);
         output_data_container container(hdf5, "FES_iTEBD/chi", chi_max );
-        superblock.H.update_timestep(time_step);
+        superblock.H.update_timestep(time_step,1);
 
         double phys_time = 0;
         int step = 0;
@@ -213,7 +213,7 @@ void class_algorithms::FES_iTEBD(){
                     container.push_back(observables);
                     container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
                     time_step *=0.5;
-                    superblock.H.update_timestep(time_step);
+                    superblock.H.update_timestep(time_step ,1);
                 }
             }
             t_upd.toc();
@@ -222,7 +222,7 @@ void class_algorithms::FES_iTEBD(){
 
         }
         cout <<setprecision(16);
-        superblock.canonicalize_iMPS_iterative();
+//        superblock.canonicalize_iMPS_iterative();
         container.push_back(observables);
         container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
         observables.print_status_full(s::console::verbosity + 1);
@@ -250,33 +250,50 @@ void class_algorithms::FES_iDMRG(){
  */
 
     using namespace settings::profiling;
-    t_tot.set_properties(on, precision, "FES_iDMRG Total Time           ");
-    t_sim.set_properties(on, precision, "FES_iDMRG Simulation           ");
-    t_sto.set_properties(on, precision, "FES_iDMRG Store Results        ");
+    t_tot.set_properties(on, precision, "FES_iDMRG *Total Time             ");
+    t_sim.set_properties(on, precision, "FES_iDMRG |--*Simulation          ");
+    t_eig.set_properties(on, precision, "FES_iDMRG    |--Eig. decomp.      ");
+    t_svd.set_properties(on, precision, "FES_iDMRG    |--SVD Truncation    ");
+    t_mps.set_properties(on, precision, "FES_iDMRG    |--Update MPS        ");
+    t_sto.set_properties(on, precision, "FES_iDMRG -Store Results          ");
+    t_env.set_properties(on, precision, "FES_iDMRG -Update Environments    ");
 
     auto chi_max_list = Math::LinSpaced(s::fes_idmrg::chi_num, s::fes_idmrg::chi_min,s::fes_idmrg::chi_max);
-    t_tot.tic();
     for(auto &chi_max : chi_max_list ) {
+         t_tot.reset();
+         t_sim.reset();
+         t_eig.reset();
+         t_svd.reset();
+         t_mps.reset();
+         t_sto.reset();
+        t_tot.tic();
+
         output_data_container container(hdf5, "FES_iDMRG/chi", chi_max );
         class_superblock superblock;
         class_observables observables (superblock, SimulationType::FES_iDMRG);
         superblock.initialize();
         int step = 0;
         while (step  < s::fes_idmrg::max_steps) {
-
+            t_sim.tic();
             single_DMRG_step(superblock, chi_max);
-//            if(Math::mod(step,1)==0) {
-//                superblock.canonicalize_iMPS_iterative();
-//            }
-//            superblock.canonicalize_iMPS();
-            container.push_back(observables);
-            container.push_back(step, 0, 0, t_tot.get_age());
+            t_sim.toc();
+            t_sto.tic();
 
-            if(Math::mod(step,500)==0) {
+
+
+            t_sto.toc();
+            if(Math::mod(step,10)==0) {
                 observables.print_status_update(step);
+                cout << "F E :" << observables.first_moment() << endl;
+            }
+            if(Math::mod(step,500)==0) {
+                container.push_back(observables);
+                container.push_back(step, 0, 0, t_tot.get_age());
             }
 
-            t_env.tic(); superblock.enlarge_environment(); t_env.toc();
+            t_env.tic();
+            superblock.enlarge_environment();
+            t_env.toc();
 
             superblock.swap_AB();
 
@@ -285,11 +302,15 @@ void class_algorithms::FES_iDMRG(){
         container.push_back(observables);
         container.push_back(step, 0, 0, t_tot.get_age());
         observables.print_status_full(s::console::verbosity + 1);
+        t_tot.toc();
+        t_tot.print_time_w_percent();
+        t_sim.print_time_w_percent(t_tot);
+        t_eig.print_time_w_percent(t_sim);
+        t_svd.print_time_w_percent(t_sim);
+        t_mps.print_time_w_percent(t_sim);
+        t_sto.print_time_w_percent(t_tot);
+        t_env.print_time_w_percent(t_tot);
     }
-    t_tot.toc();
-    t_sim.print_time_w_percent();
-    t_sto.print_time_w_percent();
-    t_tot.print_time();
 }
 
 

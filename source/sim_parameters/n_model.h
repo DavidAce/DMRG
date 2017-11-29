@@ -29,7 +29,7 @@ using namespace Eigen;
 
 namespace Model {
 
-    using Scalar = double; //Type for the groundstate wavefunction. Typically just double if the Hamiltonian is Real and Symmetric or Hermitian.
+//    using Scalar = double; //Type for the groundstate wavefunction. Typically just double if the Hamiltonian is Real and Symmetric or Hermitian.
 
     inline double J = 1.0;
     inline double g = 1.0;
@@ -50,28 +50,11 @@ namespace Model {
     inline std::vector<MatrixXcd> SX;
     inline std::vector<MatrixXcd> SY;
     inline std::vector<MatrixXcd> SZ;
-
-
     extern MatrixXcd h(int sites, int position);
-    extern Matrix<Scalar,Dynamic,Dynamic> H(int sites);
-    extern Matrix<Scalar,Dynamic,Dynamic> U(double delta, int sites);
+    extern MatrixXcd H(int sites);
+    extern MatrixXcd MPO_asMatrix();
 
 
-
-    extern Textra::Tensor<4,Scalar> TimeEvolution_1st_order(double delta, int sites);
-    extern Textra::Tensor<4,Scalar> TimeEvolution_2nd_order(double delta, int sites);
-    extern Textra::Tensor<4,Scalar> TimeEvolution_4th_order(double delta, int sites);
-    extern Textra::Tensor<4,Scalar> M();
-    extern Textra::Tensor<6,Scalar> MM();
-
-
-    template<int sites>
-    Textra::Tensor<2*sites,Scalar> H_tensor() {
-        Textra::array<2 * sites> dims;
-        dims.fill(2);
-        Eigen::Matrix<Scalar,Dynamic, Dynamic> HN = H(sites);
-        return Eigen::TensorMap<Textra::Tensor<2 * sites, Scalar>>(HN.data(), dims);
-    }
 
 };
 

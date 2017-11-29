@@ -29,29 +29,29 @@ void class_superblock::canonicalize_iMPS_iterative() {
      class_SVD<Scalar> svd;
      class_eig<Scalar> eig;
      int iter = 0;
-     Textra::Tensor<3,Scalar> GA = MPS.GA;
-     Textra::Tensor<3,Scalar> GB = MPS.GB;
-     Textra::Tensor<1,Scalar> LA = MPS.LA;
-     Textra::Tensor<1,Scalar> LB = MPS.LB;
+     Tensor<Scalar,3> GA = MPS.GA;
+     Tensor<Scalar,3> GB = MPS.GB;
+     Tensor<Scalar,1> LA = MPS.LA;
+     Tensor<Scalar,1> LB = MPS.LB;
      update_bond_dimensions();
 
      while (diffA + diffB > 1e-8) {
          iter++;
          //Coarse grain
-         Textra::Tensor<3,Scalar> GA_old = GA;
-         Textra::Tensor<3,Scalar> GB_old = GB;
-         Textra::Tensor<1,Scalar> LA_old = LA;
-         Textra::Tensor<1,Scalar> LB_old = LB;
+         Tensor<Scalar,3> GA_old = GA;
+         Tensor<Scalar,3> GB_old = GB;
+         Tensor<Scalar,1> LA_old = LA;
+         Tensor<Scalar,1> LB_old = LB;
 
          long chiA = LA.size();
          long chiB = LB.size();
-         Textra::Tensor<2,Scalar> VA_R = GA.contract(asDiagonal_squared(LA) , idx<1>({2},{0}))
+         Tensor<Scalar,2> VA_R = GA.contract(asDiagonalSquared(LA) , idx<1>({2},{0}))
                            .contract(GA.conjugate()         , idx<2>({0,2},{0,2}));
-         Textra::Tensor<2,Scalar> VA_L = GA.contract(asDiagonal_squared(LB) , idx<1>({1},{1}))
+         Tensor<Scalar,2> VA_L = GA.contract(asDiagonalSquared(LB) , idx<1>({1},{1}))
                            .contract(GA.conjugate()         , idx<2>({0,2},{0,1}));
-         Textra::Tensor<2,Scalar> VB_R = GB.contract(asDiagonal_squared(LB) , idx<1>({2},{0}))
+         Tensor<Scalar,2> VB_R = GB.contract(asDiagonalSquared(LB) , idx<1>({2},{0}))
                            .contract(GB.conjugate()         , idx<2>({0,2},{0,2}));
-         Textra::Tensor<2,Scalar> VB_L = GB.contract(asDiagonal_squared(LA) , idx<1>({1},{1}))
+         Tensor<Scalar,2> VB_L = GB.contract(asDiagonalSquared(LA) , idx<1>({1},{1}))
                            .contract(GB.conjugate()         , idx<2>({0,2},{0,1}));
          cout << "VA_R: \n" << VA_R << '\n';
          cout << "VA_L: \n" << VA_L << '\n';
@@ -63,14 +63,14 @@ void class_superblock::canonicalize_iMPS_iterative() {
          auto[XB, XBi] = eig.squareRoot_w_inverse(VB_R);
          auto[YB, YBi] = eig.squareRoot_w_inverse(VB_L);
 
-         Textra::Tensor<2,Scalar> YA_LA_XB = YA
+         Tensor<Scalar,2> YA_LA_XB = YA
                  .contract(asDiagonal(LA),idx<1>({1},{0}))
                  .contract(XB,            idx<1>({1},{0}));
-         Textra::Tensor<2,Scalar> YB_LB_XA = YB
+         Tensor<Scalar,2> YB_LB_XA = YB
                  .contract(asDiagonal(LB),idx<1>({1},{0}))
                  .contract(XA,            idx<1>({1},{0}));
 
-         Textra::Tensor<2,Scalar> UA,VA, UB, VB;
+         Tensor<Scalar,2> UA,VA, UB, VB;
          std::tie(UA,LA,VA) = svd.decompose(YA_LA_XB, chi_max);
          std::tie(UB,LB,VB) = svd.decompose(YB_LB_XA, chi_max);
          GA = VB
@@ -86,8 +86,8 @@ void class_superblock::canonicalize_iMPS_iterative() {
                  .contract(UB,     idx<1>({2},{0}))
                  .shuffle(array3{1, 0, 2});
 
-         Textra::Tensor<0,Scalar> tempA = (LA - LA_old.slice(array1{0}, array1{chiA})).square().sum().sqrt().abs();
-         Textra::Tensor<0,Scalar> tempB = (LB - LB_old.slice(array1{0}, array1{chiB})).square().sum().sqrt().abs();
+         Tensor<Scalar,0> tempA = (LA - LA_old.slice(array1{0}, array1{chiA})).square().sum().sqrt().abs();
+         Tensor<Scalar,0> tempB = (LB - LB_old.slice(array1{0}, array1{chiB})).square().sum().sqrt().abs();
          diffA = tempA(0);
          diffB = tempB(0);
      }
@@ -124,37 +124,37 @@ void class_superblock::canonicalize_iMPS(){
 
     cout << setprecision(16);
     update_bond_dimensions(); //Gives us chiL __|__chi__|__chiR
-    Textra::Tensor<3,Scalar> GA = MPS.GA;
-    Textra::Tensor<3,Scalar> GB = MPS.GB;
-    Textra::Tensor<1,Scalar> LA = MPS.LA;
-    Textra::Tensor<1,Scalar> LB = MPS.LB;
+    Tensor<Scalar,3> GA = MPS.GA;
+    Tensor<Scalar,3> GB = MPS.GB;
+    Tensor<Scalar,1> LA = MPS.LA;
+    Tensor<Scalar,1> LB = MPS.LB;
     long chiLA = LA.size();
     long chiLB = LB.size();
 
 
-    Textra::Tensor<3,Scalar> GALA = GA.contract(asDiagonal(LA), idx<1>({2},{0}));                          //(eq 107)
-    Textra::Tensor<3,Scalar> LBGA = asDiagonal(LB).contract(GA, idx<1>({1},{1})).shuffle(array3{1, 0, 2}); //(eq 106)
-    Textra::Tensor<3,Scalar> GBLB = GB.contract(asDiagonal(LB), idx<1>({2},{0}));                          //(eq 109)
-    Textra::Tensor<3,Scalar> LAGB = asDiagonal(LA).contract(GB, idx<1>({1},{1})).shuffle(array3{1, 0, 2}); //(eq 108)
-    Textra::Tensor<4,Scalar> MR = GALA.contract(GALA.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
-    Textra::Tensor<4,Scalar> ML = LBGA.contract(LBGA.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
-    Textra::Tensor<4,Scalar> NR = GBLB.contract(GBLB.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
-    Textra::Tensor<4,Scalar> NL = LAGB.contract(LAGB.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
-    Textra::Tensor<2,Scalar> NRML = NR.contract(ML,idx<2>({2,3},{0,1})).reshape(array2{chiLA*chiLA,chiLA*chiLA});
-    Textra::Tensor<2,Scalar> NLMR = NL.contract(MR,idx<2>({2,3},{0,1})).reshape(array2{chiLA*chiLA,chiLA*chiLA});
-    Textra::Tensor<2,Scalar> MRNL = MR.contract(NL,idx<2>({2,3},{0,1})).reshape(array2{chiLB*chiLB,chiLB*chiLB});
-    Textra::Tensor<2,Scalar> MLNR = ML.contract(NR,idx<2>({2,3},{0,1})).reshape(array2{chiLB*chiLB,chiLB*chiLB});
+    Tensor<Scalar,3> GALA = GA.contract(asDiagonal(LA), idx<1>({2},{0}));                          //(eq 107)
+    Tensor<Scalar,3> LBGA = asDiagonal(LB).contract(GA, idx<1>({1},{1})).shuffle(array3{1, 0, 2}); //(eq 106)
+    Tensor<Scalar,3> GBLB = GB.contract(asDiagonal(LB), idx<1>({2},{0}));                          //(eq 109)
+    Tensor<Scalar,3> LAGB = asDiagonal(LA).contract(GB, idx<1>({1},{1})).shuffle(array3{1, 0, 2}); //(eq 108)
+    Tensor<Scalar,4> MR = GALA.contract(GALA.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
+    Tensor<Scalar,4> ML = LBGA.contract(LBGA.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
+    Tensor<Scalar,4> NR = GBLB.contract(GBLB.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
+    Tensor<Scalar,4> NL = LAGB.contract(LAGB.conjugate(),idx<1>({0},{0})).shuffle(array4{0,2,1,3});
+    Tensor<Scalar,2> NRML = NR.contract(ML,idx<2>({2,3},{0,1})).reshape(array2{chiLA*chiLA,chiLA*chiLA});
+    Tensor<Scalar,2> NLMR = NL.contract(MR,idx<2>({2,3},{0,1})).reshape(array2{chiLA*chiLA,chiLA*chiLA});
+    Tensor<Scalar,2> MRNL = MR.contract(NL,idx<2>({2,3},{0,1})).reshape(array2{chiLB*chiLB,chiLB*chiLB});
+    Tensor<Scalar,2> MLNR = ML.contract(NR,idx<2>({2,3},{0,1})).reshape(array2{chiLB*chiLB,chiLB*chiLB});
     cout << "NRML: " << NRML.dimensions() << '\n' << NRML << '\n';
     cout << "NLMR: " << NLMR.dimensions() << '\n' << NLMR << '\n';
     cout << "MRNL: " << MRNL.dimensions() << '\n' << MRNL << '\n';
     cout << "MLNR: " << MLNR.dimensions() << '\n' << MLNR << '\n';
-    auto[VA_R, VA_R_val] = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::R>(NRML, 1,
+    auto[VA_R, VA_R_val] = eig.solve_dominant<Spectra::Form::GENERAL, Spectra::Ritz::LARGEST_MAGN, Spectra::Side::R>(NRML, 1,
                                                                                                   {chiLA, chiLA});
-    auto[VA_L, VA_L_val] = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::L>(NLMR, 1,
+    auto[VA_L, VA_L_val] = eig.solve_dominant<Spectra::Form::GENERAL, Spectra::Ritz::LARGEST_MAGN, Spectra::Side::L>(NLMR, 1,
                                                                                                   {chiLA, chiLA});
-    auto[VB_R, VB_R_val] = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::R>(MRNL, 1,
+    auto[VB_R, VB_R_val] = eig.solve_dominant<Spectra::Form::GENERAL, Spectra::Ritz::LARGEST_MAGN, Spectra::Side::R>(MRNL, 1,
                                                                                                   {chiLB, chiLB});
-    auto[VB_L, VB_L_val] = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::L>(MLNR, 1,
+    auto[VB_L, VB_L_val] = eig.solve_dominant<Spectra::Form::GENERAL, Spectra::Ritz::LARGEST_MAGN, Spectra::Side::L>(MLNR, 1,
                                                                                                   {chiLB, chiLB});
 
     cout << "VA_R eigenvalue: " << VA_R_val << "\nVA_R eigenvector: \n" << VA_R << "\n";
@@ -173,13 +173,13 @@ void class_superblock::canonicalize_iMPS(){
     cout << "XB: \n" << XB << '\n';
     cout << "YB: \n" << YB << '\n';
 
-    Textra::Tensor<2,Scalar> YA_LA_XB = YA
+    Tensor<Scalar,2> YA_LA_XB = YA
             .contract(asDiagonal(LA),idx<1>({1},{0}))
             .contract(XB,            idx<1>({1},{0}));
-    Textra::Tensor<2,Scalar> YB_LB_XA = YB
+    Tensor<Scalar,2> YB_LB_XA = YB
             .contract(asDiagonal(LB),idx<1>({1},{0}))
             .contract(XA,            idx<1>({1},{0}));
-    Textra::Tensor<2,Scalar> UA,VA, UB, VB;
+    Tensor<Scalar,2> UA,VA, UB, VB;
     std::tie(UA,LA,VA) = svd.decompose(YA_LA_XB, chi_max);
     std::tie(UB,LB,VB) = svd.decompose(YB_LB_XA, chi_max);
 
@@ -213,13 +213,13 @@ void class_superblock::canonicalize_iMPS(){
     NLMR = NL.contract(MR,idx<2>({2,3},{0,1})).reshape(array2{chiLA*chiLA,chiLA*chiLA});
     MRNL = MR.contract(NL,idx<2>({2,3},{0,1})).reshape(array2{chiLB*chiLB,chiLB*chiLB});
     MLNR = ML.contract(NR,idx<2>({2,3},{0,1})).reshape(array2{chiLB*chiLB,chiLB*chiLB});
-    std::tie(VA_R, VA_R_val) = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::R>(NRML, 1,
+    std::tie(VA_R, VA_R_val) = eig.solve_dominant<Spectra::Form::GENERAL, Spectra::Ritz::LARGEST_MAGN, Spectra::Side::R>(NRML, 1,
                                                                                                       {chiLA, chiLA});
-    std::tie(VA_L, VA_L_val) = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::L>(NLMR, 1,
+    std::tie(VA_L, VA_L_val) = eig.solve_dominant<Spectra::Form::GENERAL, Spectra::Ritz::LARGEST_MAGN, Spectra::Side::L>(NLMR, 1,
                                                                                                       {chiLA, chiLA});
-    std::tie(VB_R, VB_R_val) = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::R>(MRNL, 1,
+    std::tie(VB_R, VB_R_val) = eig.solve_dominant<Spectra::Form::GENERAL, Spectra::Ritz::LARGEST_MAGN, Spectra::Side::R>(MRNL, 1,
                                                                                                       {chiLB, chiLB});
-    std::tie(VB_L, VB_L_val) = eig.solve_dominant<eig_Form::GEN, eig_Mode::LARGEST_MAGN, eig_Side::L>(MLNR, 1,
+    std::tie(VB_L, VB_L_val) = eig.solve_dominant<Spectra::Form::GENERAL, Spectra::Ritz::LARGEST_MAGN, Spectra::Side::L>(MLNR, 1,
                                                                                                       {chiLB, chiLB});
 
     cout << "VA_R eigenvalue: " << VA_R_val << "\nVA_R eigenvector: \n" << VA_R << "\n";
@@ -572,18 +572,18 @@ void class_superblock::canonicalize_iMPS(){
 //        // Find square root using SVD decomposition
 //        //============================================================================//
 //        cout << "\n\nSVD:\n";
-//        SVD.compute(tensor2_to_matrix<double>(VR), Eigen::ComputeThinU | Eigen::ComputeThinV);
+//        SVD.compute(Tensor2_to_Matrix<double>(VR), Eigen::ComputeThinU | Eigen::ComputeThinV);
 //        Tensor2d X               = matrix_to_tensor2<double>( SVD.matrixU()*SVD.singularValues().cwiseSqrt().asDiagonal()*SVD.matrixU().transpose());
 //        Tensor2d XT              = X.shuffle(array2{1,0});
-//        Tensor2d Xi              = matrix_to_tensor2<double>(tensor2_to_matrix(X).inverse());
+//        Tensor2d Xi              = matrix_to_tensor2<double>(Tensor2_to_Matrix(X).inverse());
 //        cout << "X : \n" << X << endl;
 //        cout << "Xi : \n" << Xi << endl;
 ////        cout << "XXi: \n" << X.contract(Xi, idxlist1{idx2(1,0)}) << endl;
 ////        cout << "XXT: \n" << X.contract(XT, idxlist1{idx2(1,0)}) << endl;
 //
-//        SVD.compute(tensor2_to_matrix(VL), Eigen::ComputeThinU | Eigen::ComputeThinV);
+//        SVD.compute(Tensor2_to_Matrix(VL), Eigen::ComputeThinU | Eigen::ComputeThinV);
 //        Tensor2d Y               = matrix_to_tensor2<double>( SVD.matrixU()*SVD.singularValues().cwiseSqrt().asDiagonal()*SVD.matrixU().transpose());
-//        Tensor2d Yi              = matrix_to_tensor2<double>(tensor2_to_matrix(Y).inverse());
+//        Tensor2d Yi              = matrix_to_tensor2<double>(Tensor2_to_Matrix(Y).inverse());
 //        cout << "Y : \n" << Y << endl;
 //        cout << "Yi : \n" << Yi << endl;
 ////        cout << "YTiYT: \n" << YTi.contract(YT, idxlist1{idx2(1,0)}) << endl;
@@ -594,19 +594,19 @@ void class_superblock::canonicalize_iMPS(){
 //        // Find square root using Eigenvalue decomposition
 //        //============================================================================//
 //        cout << "\n\nEigenvalue:\n";
-//        esR.compute(tensor2_to_matrix(VR));
+//        esR.compute(Tensor2_to_Matrix(VR));
 //        Tensor2d _X    = matrix_to_tensor2<double>( esR.eigenvectors()*esR.eigenvalues().asDiagonal().toDenseMatrix().cwiseSqrt());
 //        Tensor2d _XT   = matrix_to_tensor2<double>( esR.eigenvalues().asDiagonal().toDenseMatrix().cwiseSqrt() * esR.eigenvectors().transpose());
-//        Tensor2d _Xi   = matrix_to_tensor2<double>(tensor2_to_matrix(X).inverse());
+//        Tensor2d _Xi   = matrix_to_tensor2<double>(Tensor2_to_Matrix(X).inverse());
 //        cout << "X : \n" << _X << endl;
 //        cout << "Xi : \n" << _Xi << endl;
 ////        cout << "XXi: \n" << X.contract(Xi, idxlist1{idx2(1,0)}) << endl;
 ////        cout << "XXT: \n" << X.contract(XT, idxlist1{idx2(1,0)}) << endl;
 //
-//        esL.compute(tensor2_to_matrix(VL));
+//        esL.compute(Tensor2_to_Matrix(VL));
 //        Tensor2d _Y              = matrix_to_tensor2<double>( esL.eigenvalues().asDiagonal().toDenseMatrix().cwiseSqrt() * esL.eigenvectors().transpose());
 //        Tensor2d _YT             = matrix_to_tensor2<double>( esL.eigenvectors()*esL.eigenvalues().asDiagonal().toDenseMatrix().cwiseSqrt());
-//        Tensor2d _YTi            = matrix_to_tensor2<double>(tensor2_to_matrix(_YT).inverse());
+//        Tensor2d _YTi            = matrix_to_tensor2<double>(Tensor2_to_Matrix(_YT).inverse());
 //        cout << "YT : \n"  << _YT << endl;
 //        cout << "YTi : \n" << _YTi << endl;
 ////        cout << "YTiYT: \n" << YTi.contract(YT, idxlist1{idx2(1,0)}) << endl;
@@ -618,7 +618,7 @@ void class_superblock::canonicalize_iMPS(){
 //
 //
 //
-//        SVD.compute(tensor2_to_matrix(YLX), Eigen::ComputeThinU | Eigen::ComputeThinV);
+//        SVD.compute(Tensor2_to_Matrix(YLX), Eigen::ComputeThinU | Eigen::ComputeThinV);
 //
 //        Tensor2d U = matrix_to_tensor2<double>(SVD.matrixU());
 //        Tensor2d V = matrix_to_tensor2<double>(SVD.matrixV().transpose());
@@ -639,7 +639,7 @@ void class_superblock::canonicalize_iMPS(){
 //                .shuffle(array4{1,0,2,3})
 //                .reshape(array2{G.dimension(0)*G.dimension(2), G.dimension(1)*G.dimension(3)});
 //
-//        SVD.compute(tensor2_to_matrix(LGL), Eigen::ComputeThinU | Eigen::ComputeThinV);
+//        SVD.compute(Tensor2_to_Matrix(LGL), Eigen::ComputeThinU | Eigen::ComputeThinV);
 //        chiL                         = std::min(SVD.rank(),chi_max);
 //        truncation_error             = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiL).sum();
 //        Tensor3d U3                   = matrix_to_tensor<3,double>(SVD.matrixU(),{d,chiR,chiL});
@@ -724,11 +724,11 @@ void class_superblock::canonicalize_iMPS(){
 ////    Tensor2d VA_L = Math::dominant_eigenvector<Math::Handedness::LEFT>  (TA_L.reshape(array2{chiB*chiB,chiA*chiA})).real().reshape(array2{chiA, chiA});
 ////    Tensor2d VB_R = Math::dominant_eigenvector<Math::Handedness::RGHT>  (TB_R.reshape(array2{chiA*chiA,chiB*chiB})).real().reshape(array2{chiA, chiA});
 ////    Tensor2d VB_L = Math::dominant_eigenvector<Math::Handedness::LEFT>  (TB_L.reshape(array2{chiA*chiA,chiB*chiB})).real().reshape(array2{chiB, chiB});
-//    Spectra::DenseGenMatProd<double> op_TA_R(Tensor_to_MatrixXd<4>(TA_R, chiB*chiB,chiA*chiA));
-//    Spectra::DenseGenMatProd<double> op_TA_L(Tensor_to_MatrixXd<4>(TA_L, chiB*chiB,chiA*chiA));
-//    Spectra::DenseGenMatProd<double> op_TB_R(Tensor_to_MatrixXd<4>(TB_R, chiA*chiA,chiB*chiB));
-//    Spectra::DenseGenMatProd<double> op_TB_L(Tensor_to_MatrixXd<4>(TB_L, chiA*chiA,chiB*chiB));
-//    int ncv = std::min(settings::precision::eig_max_ncv,4);
+//    Spectra::DenseGenMatProd<double> op_TA_R(Tensor_to_Matrix<4>(TA_R, chiB*chiB,chiA*chiA));
+//    Spectra::DenseGenMatProd<double> op_TA_L(Tensor_to_Matrix<4>(TA_L, chiB*chiB,chiA*chiA));
+//    Spectra::DenseGenMatProd<double> op_TB_R(Tensor_to_Matrix<4>(TB_R, chiA*chiA,chiB*chiB));
+//    Spectra::DenseGenMatProd<double> op_TB_L(Tensor_to_Matrix<4>(TB_L, chiA*chiA,chiB*chiB));
+//    int ncv = std::min(settings::precision::Spectra::max_ncv,4);
 //    Spectra::GenEigsSolver<double, Spectra::LARGEST_REAL, Spectra::DenseGenMatProd<double>> eigsTA_R(&op_TA_R, 2, ncv);
 //    eigsTA_R.init();
 //    eigsTA_R.compute(10000, 1e-12, Spectra::LARGEST_REAL);

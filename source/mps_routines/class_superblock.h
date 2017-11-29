@@ -9,8 +9,9 @@
 #include "general/n_tensor_extra.h"
 #include "mps_routines/class_environment.h"
 #include "mps_routines/class_mps.h"
-#include "mps_routines/class_hamiltonian.h"
+#include "mps_routines/class_mpo.h"
 #include "sim_parameters/n_model.h"
+#include "class_eigensolver_product.h"
 
 /*!
  # Superblock Class
@@ -21,7 +22,7 @@
 
 class class_superblock {
 public:
-    using Scalar = Model::Scalar;
+    using Scalar = class_mps::Scalar;
 private:
     //Bond dimensions and tensor shapes needed by the eigensolver and SVD.
 
@@ -30,18 +31,20 @@ private:
     long chiR;                                          /*!< Bond dimension of the next (right) position. */
 
     //Store temporaries for eigensolver and SVD.
-    Textra::Tensor<2,Scalar> ground_state;                               /*!< Stores the ground state eigenvector from eigenvalue solver */
-    Textra::Tensor<3,Scalar> U,V;                                        /*!< Stores the left and right unitary matrices \f$U\f$ and \f$V\f$ after an SVD decomposition \f$A = USV^\dagger\f$.*/
+    Tensor<Scalar,2> ground_state;                               /*!< Stores the ground state eigenvector from eigenvalue solver */
+    Tensor<Scalar,3> U,V;                                        /*!< Stores the left and right unitary matrices \f$U\f$ and \f$V\f$ after an SVD decomposition \f$A = USV^\dagger\f$.*/
 public:
 
     class_superblock();
     class_environment<Side::L>  Lblock;                 /*!< Left  environment block. */
     class_environment<Side::R>  Rblock;                 /*!< Right environment block. */
     class_mps                   MPS;                    /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
-    class_hamiltonian           H;
-    Textra::array1              shape1;                 /*!< Shape for Tensor1 representation of the MPS. */
-    Textra::array2              shape2;                 /*!< Shape for Tensor2 representation of the MPS. */
-    Textra::array4              shape4;                 /*!< Shape for Tensor4 representation of the MPS. */
+    class_mpo           H;
+
+    array1              shape1;                 /*!< Shape for Tensor1 representation of the MPS. */
+    array2              shape2;                 /*!< Shape for Tensor2 representation of the MPS. */
+    array4              shape4;                 /*!< Shape for Tensor4 representation of the MPS. */
+
 
     long   chi;                                           /*!< Bond dimension of the current (center) position. */
     long   chi_max ;                                      /*!< Maximum allowed bond dimension, which also defines the SVD cutoff */
@@ -68,14 +71,9 @@ public:
                                                         * \f[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \f] */
     void swap_AB();                                     /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
 
-    void reset();
+//    void reset();
 
 
-    /*! Function for eigenvalue solver Spectra
-     *  Defines the matrix-vector product in the left side of \f$Av = \lambda \f$*/
-    void perform_op(const double *x_in, double *y_out) const;
-    int rows()const;
-    int cols()const;
 };
 
 

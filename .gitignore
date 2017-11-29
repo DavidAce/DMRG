@@ -3,3 +3,5 @@ cmake-*/
 output/
 build/
 .vscode/
+tmp/
+libs/
