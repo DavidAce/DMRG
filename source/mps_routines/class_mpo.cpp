@@ -22,7 +22,8 @@ Tensor<class_mpo::Scalar,4> class_mpo::compute_M() {
      *          |
      *          3
      */
-    return (Matrix_to_Tensor<double,2> (H_MPO_asMatrix, {6,6})).reshape(array4{2,3,2,3}).shuffle(array4{3,1,2,0});
+
+    return Matrix_to_Tensor<double,4> (H_MPO_asMatrix, {2,3,2,3}).shuffle(array4{1,3,0,2});
 
 }
 
@@ -35,6 +36,7 @@ Tensor<class_mpo::Scalar,6> class_mpo::compute_MM() {
      *           |   |
      *           4   5
      */
+    cout << M.dimensions() << endl;
 
     return  M.contract(M, idx<1>({1},{0})).shuffle(array6{0,3,1,4,2,5});
 

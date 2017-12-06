@@ -5,11 +5,14 @@
 #ifndef DMRG_N_DATA_CONTAINERS_H
 #define DMRG_N_DATA_CONTAINERS_H
 #include <vector>
-#include <general/class_hdf5.h>
+#include <general/class_hdf5_dataset_buffer.h>
 #include <sim_parameters/n_model.h>
 #include "class_observables.h"
 
 class output_data_container{
+private:
+    class_hdf5 *hdf5_out; //Pointer is not owned! do not delete
+    bool data_has_been_written_to_file = false;
 public:
     class_hdf5_dataset_buffer<long>   chi;
     class_hdf5_dataset_buffer<long>   chi_max;
@@ -25,26 +28,38 @@ public:
     class_hdf5_dataset_buffer<double> wall_time;
     class_hdf5_dataset_buffer<long>   length;
 
-    output_data_container( class_hdf5 &hdf5_,
-                           const std::string &group_name,
+    output_data_container(const std::string &group_name,
                            const long iteration
                             ):
-            chi        (hdf5_, group_name, iteration, "chi"    ),
-            chi_max    (hdf5_, group_name, iteration, "chi_max"    ),
-            energy     (hdf5_, group_name, iteration, "energy"     ),
-            energy_ex  (hdf5_, group_name, iteration, "energy_ex"  ),
-            entropy    (hdf5_, group_name, iteration, "entropy"    ),
-            variance   (hdf5_, group_name, iteration, "variance"   ),
-            trerror    (hdf5_, group_name, iteration, "truncation_error"    ),
-            e_error    (hdf5_, group_name, iteration, "energy_error"    ),
-            iter_step  (hdf5_, group_name, iteration, "iter_step"  ),
-            time_step  (hdf5_, group_name, iteration, "time_step"  ),
-            phys_time  (hdf5_, group_name, iteration, "phys_time"  ),
-            wall_time  (hdf5_, group_name, iteration, "wall_time"  ),
-            length     (hdf5_, group_name, iteration, "length"     )
+            output_data_container(nullptr,group_name, iteration)
+    {
+    }
+    output_data_container(class_hdf5 * hdf5_out_ ,const std::string &group_name,
+                          const long iteration
+    ):      hdf5_out   (hdf5_out_),
+            chi        (group_name, iteration, "chi"    ),
+            chi_max    (group_name, iteration, "chi_max"    ),
+            energy     (group_name, iteration, "energy"     ),
+            energy_ex  (group_name, iteration, "energy_ex"  ),
+            entropy    (group_name, iteration, "entropy"    ),
+            variance   (group_name, iteration, "variance"   ),
+            trerror    (group_name, iteration, "truncation_error"    ),
+            e_error    (group_name, iteration, "energy_error"    ),
+            iter_step  (group_name, iteration, "iter_step"  ),
+            time_step  (group_name, iteration, "time_step"  ),
+            phys_time  (group_name, iteration, "phys_time"  ),
+            wall_time  (group_name, iteration, "wall_time"  ),
+            length     (group_name, iteration, "length"     )
     {
     }
 
+    ~output_data_container(){
+        if (hdf5_out != nullptr){
+            write_data(*hdf5_out);
+        }else if (!data_has_been_written_to_file){
+            std::cerr << "Output data has not saved to file, yet it is being discarded!\n" << std::endl;
+        }
+    }
 
     void push_back(class_observables &observables){
         chi      .push_back(observables.get_chi());
@@ -79,7 +94,7 @@ public:
                    double phys_time_,
                    double wall_time_)
     {
-        chi  .push_back(chi_cur_);
+        chi      .push_back(chi_cur_);
         chi_max  .push_back(chi_max_);
         energy   .push_back(energy_);
         entropy  .push_back(entropy_);
@@ -88,6 +103,23 @@ public:
         time_step.push_back(time_step_);
         phys_time.push_back(phys_time_);
         wall_time.push_back(wall_time_);
+    }
+
+    void write_data(class_hdf5 & hdf5_out){
+        chi      .write_buffer_to_file(hdf5_out);
+        chi_max  .write_buffer_to_file(hdf5_out);
+        energy   .write_buffer_to_file(hdf5_out);
+        energy_ex.write_buffer_to_file(hdf5_out);
+        entropy  .write_buffer_to_file(hdf5_out);
+        variance .write_buffer_to_file(hdf5_out);
+        trerror  .write_buffer_to_file(hdf5_out);
+        e_error  .write_buffer_to_file(hdf5_out);
+        iter_step.write_buffer_to_file(hdf5_out);
+        time_step.write_buffer_to_file(hdf5_out);
+        phys_time.write_buffer_to_file(hdf5_out);
+        wall_time.write_buffer_to_file(hdf5_out);
+        length   .write_buffer_to_file(hdf5_out);
+        data_has_been_written_to_file = true;
     }
 
 };

@@ -99,6 +99,9 @@ void class_superblock::initialize() {
     MPS.GB(1,0,0) = 0;
     MPS.LB.resize(array1{1});
     MPS.LB.setConstant(1.0);
+
+    cout << H.M.dimensions() << endl;
+
     enlarge_environment(0);
     enlarge_environment(0);
     enlarge_environment(0);

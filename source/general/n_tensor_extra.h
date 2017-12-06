@@ -182,55 +182,6 @@ namespace Textra {
 
 };
 
-//
-//
-//namespace Eigen{
-//    namespace internal{
-//        template<typename Scalar_, int NumIndices_, int Options_, typename IndexType_>
-//        struct traits<Tensor<Scalar_,NumIndices_, Options_, IndexType_> > : public traits<Eigen::Tensor<Scalar_,NumIndices_, Options_, IndexType_> >
-//        {
-//            template<typename...Args>
-//            traits(Args&&... args) : traits<Eigen::Tensor<Scalar_,NumIndices_, Options_, IndexType_>>(std::forward<Args>(args)...){};
-////            typedef Scalar_ Scalar;
-////            typedef Dense StorageKind;
-////            typedef IndexType_ Index;
-////            static const int NumDimensions = NumIndices_;
-////            static const int Layout = Options_ & RowMajor ? RowMajor : ColMajor;
-////            enum {
-////                Options = Options_,
-////                Flags = compute_tensor_flags<Scalar_, Options_>::ret | (is_const<Scalar_>::value ? 0 : LvalueBit)
-////            };
-////            template <typename T> struct MakePointer {
-////                typedef T* Type;
-////            };
-//        };
-//    }
-//
-//}
-//
-//
-//
-//namespace Eigen{
-//    namespace internal{
-//        template<typename Scalar_, int NumIndices_, int Options_, typename IndexType_>
-//        struct traits<Tensor<Scalar_,NumIndices_, Options_, IndexType_> >
-//        {
-//            typedef Scalar_ Scalar;
-//            typedef Dense StorageKind;
-//            typedef IndexType_ Index;
-//            static const int NumDimensions = NumIndices_;
-//            static const int Layout = Options_ & RowMajor ? RowMajor : ColMajor;
-//            enum {
-//                Options = Options_,
-//                Flags = compute_tensor_flags<Scalar_, Options_>::ret | (is_const<Scalar_>::value ? 0 : LvalueBit)
-//            };
-//            template <typename T> struct MakePointer {
-//                typedef T* Type;
-//            };
-//        };
-//    }
-//
-//}
 
 
 
