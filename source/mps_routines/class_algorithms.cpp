@@ -62,7 +62,7 @@ void class_algorithms::iDMRG(){
     class_observables observables (superblock, SimulationType::iDMRG);
 
     while(superblock.chain_length < s::idmrg::max_length){
-        output_data_container container(hdf5, "iDMRG/L", superblock.chain_length);
+        output_data_container container(&hdf5, "iDMRG/L", superblock.chain_length);
 
         single_DMRG_step(superblock, s::idmrg::chi_max);
                         container.push_back(observables);
@@ -147,7 +147,7 @@ void class_algorithms::iTEBD(){
     superblock.H.update_timestep(settings::itebd::delta_t, 1);
     t_tot.tic();
     for(auto step = 0; step < s::itebd::max_steps ; step++){
-        output_data_container container(hdf5, "iTEBD/step", step);
+        output_data_container container(&hdf5, "iTEBD/step", step);
         single_TEBD_step(superblock, s::itebd::chi_max);
         if (Math::mod(step,500) == 0) { observables.print_status_update(step);}
         container.push_back(observables);
@@ -172,20 +172,22 @@ void class_algorithms::FES_iTEBD(){
  * to see how entanglement grows as a function of  \f$\chi\f$ (chi).
  */
     using namespace settings::profiling;
-    t_evo.set_properties(on, precision, "FES_iTEBD Time evolution       ");
-    t_svd.set_properties(on, precision, "FES_iTEBD SVD Truncation       ");
-    t_mps.set_properties(on, precision, "FES_iTEBD Update MPS           ");
-    t_upd.set_properties(on, precision, "FES_iTEBD Update Evolution     ");
-    t_tot.set_properties(on, precision, "FES_iTEBD Total Time           ");
 
 
     auto chi_max_list = Math::LinSpaced(s::fes_itebd::chi_num, s::fes_itebd::chi_min,s::fes_itebd::chi_max);
-    t_tot.tic();
     for(auto &chi_max : chi_max_list) {
+        t_evo.set_properties(on, precision, "FES_iTEBD Time evolution       ");
+        t_svd.set_properties(on, precision, "FES_iTEBD SVD Truncation       ");
+        t_mps.set_properties(on, precision, "FES_iTEBD Update MPS           ");
+        t_upd.set_properties(on, precision, "FES_iTEBD Update Evolution     ");
+        t_tot.set_properties(on, precision, "FES_iTEBD Total Time           ");
+
+        t_tot.tic();
+
         double time_step = s::fes_itebd::delta_t;
         class_superblock superblock;
         class_observables observables (superblock, SimulationType::FES_iTEBD);
-        output_data_container container(hdf5, "FES_iTEBD/chi", chi_max );
+        output_data_container container(&hdf5, "FES_iTEBD/chi", chi_max );
         superblock.H.update_timestep(time_step,1);
 
         double phys_time = 0;
@@ -222,20 +224,19 @@ void class_algorithms::FES_iTEBD(){
 
         }
         cout <<setprecision(16);
-//        superblock.canonicalize_iMPS_iterative();
         container.push_back(observables);
         container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
         observables.print_status_full(s::console::verbosity + 1);
-
+        t_tot.toc();
+        t_evo.print_time_w_percent();
+        t_svd.print_time_w_percent();
+        t_mps.print_time_w_percent();
+        t_upd.print_time_w_percent();
+        t_tot.print_time();
+    }
     }
 
-    t_tot.toc();
-    t_evo.print_time_w_percent();
-    t_svd.print_time_w_percent();
-    t_mps.print_time_w_percent();
-    t_upd.print_time_w_percent();
-    t_tot.print_time();
-}
+
 
 
 
@@ -268,7 +269,7 @@ void class_algorithms::FES_iDMRG(){
          t_sto.reset();
         t_tot.tic();
 
-        output_data_container container(hdf5, "FES_iDMRG/chi", chi_max );
+        output_data_container container(&hdf5, "FES_iDMRG/chi", chi_max );
         class_superblock superblock;
         class_observables observables (superblock, SimulationType::FES_iDMRG);
         superblock.initialize();

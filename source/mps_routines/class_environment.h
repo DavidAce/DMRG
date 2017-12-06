@@ -31,90 +31,53 @@ using namespace std;
  */
 
 enum class Side {L,R};
+
 template<Side side>
 class class_environment{
 public:
     using Scalar = class_mps::Scalar;
-private:
-
-public:
-    int size;                                               /*!< Number of particles that have been contracted into this left environment. */
+    int size;                                       /*!< Number of particles that have been contracted into this left environment. */
     Tensor<Scalar,3> block;                         /*!< The environment block. */
     class_environment(){
         size = 0;
         block.resize(1, 1, 3);
         block.setZero();
-        switch (side){
-            case Side::L:
-                block(0, 0, 0) = 1;
-                break;
-            case Side::R:
-                block(0, 0, 2) = 1;
-                break;
+        if constexpr(side == Side::L){
+//            block(0, 0, 0) = 1;
+            block(0, 0, 2) = 1;
+        }
+        else
+        if constexpr(side== Side::R){
+//            block(0, 0, 2) = 1;
+            block(0, 0, 0) = 1;
         }
     };
 
-    void enlarge(const class_mps &MPS, const Tensor<Scalar,4> &W){
-        /*!< Contracts a site into the block. */
-        Tensor<Scalar,3> block_enlarged;
-        switch (side){
-            case (Side::L):
-                /*! # Left environment contraction
-                 * [      ]--0 0--[LB]--1 1--[ GA conj ]--2
-                 * [      ]                      |
-                 * [      ]                      0
-                 * [      ]
-                 * [      ]                      2
-                 * [      ]                      |
-                 * [ left ]--2            0--[   W    ]--1
-                 * [      ]                      |
-                 * [      ]                      3
-                 * [      ]
-                 * [      ]                      0
-                 * [      ]                      |
-                 * [      ]--1 0--[LB]--1  1--[  GA   ]--2
-                 */
-                size++;
-                block_enlarged =
-                        block.contract(asDiagonal(MPS.L_tail), idx<1>({0},{0}))
-                                .contract(MPS.GA.conjugate(),     idx<1>({2},{1}))
-                                .contract(W,                      idx<2>({1,2},{0,2}))
-                                .contract(asDiagonal(MPS.L_tail), idx<1>({0},{0}))
-                                .contract(MPS.GA,                 idx<2>({2,3},{0,1}))
-                                .shuffle(array3{0,2,1});
-                block = block_enlarged;
-                break;
-            case (Side::R):
-                /*! # Right environment contraction
-                 *  1--[ GB conj ]--2 0--[LB]--1  0--[      ]
-                 *          |                        [      ]
-                 *          0                        [      ]
-                 *                                   [      ]
-                 *          2                        [      ]
-                 *          |                        [      ]
-                 *   0--[   W    ]--1             2--[ right]
-                 *          |                        [      ]
-                 *          3                        [      ]
-                 *                                   [      ]
-                 *          0                        [      ]
-                 *          |                        [      ]
-                 *    1--[  GB   ]--2 0--[LB]--1  1--[      ]
-                */
-
-                size++;
-                block_enlarged =
-                        block.contract(asDiagonal(MPS.LB), idx<1>({0},{1}))
-                                .contract(MPS.GB.conjugate(), idx<1>({2},{2}))
-                                .contract(W,                  idx<2>({1,2},{1,2}))
-                                .contract(asDiagonal(MPS.LB), idx<1>({0},{1}))
-                                .contract(MPS.GB,             idx<2>({2,3},{0,2}))
-                                .shuffle(array3{0,2,1});
-                block = block_enlarged;
-                break;
-        }
-    }
-
+    void enlarge(const class_mps &MPS, const Tensor<Scalar,4> &M);
 };
 
+//
+//template<Side side>
+//class class_environment_var{
+//public:
+//    using Scalar = class_mps::Scalar;
+//    int size;                                       /*!< Number of particles that have been contracted into this left environment. */
+//    Tensor<Scalar,4> block;                         /*!< The environment block. */
+//    class_environment_var(){
+//        size = 0;
+//        block.resize(1, 1, 3, 3) ;
+//        block.setZero();
+//        if constexpr(side == Side::L){
+//            block(0, 0, 0, 0) = 1;
+//            block(0, 0, 0, 0) = 1;
+//        }
+//        else
+//        if constexpr(side== Side::R){
+//            block(0, 0, 2) = 1;
+//        }
+//    };
+//
+//    void enlarge(const class_mps &MPS, const Tensor<Scalar,4> &M);
+//};
 
 #endif //DMRG_CLASS_ENVIRONMENT_H

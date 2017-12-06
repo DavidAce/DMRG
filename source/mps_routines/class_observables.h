@@ -6,6 +6,7 @@
 #define DMRG_CLASS_OBSERVABLES_H
 #include <map>
 #include <general/class_eig_arpack_wrapper.h>
+#include <Eigen/Eigenvalues>
 #include "class_superblock.h"
 using namespace std::complex_literals;
 
@@ -32,11 +33,17 @@ public:
         double a1 = a - h;
         double a2 = a + h;
         using T = std::complex<double>;
+
+
         Textra::array<4> shape4 = superblock.shape4;
         Textra::array<3> shape_Lblock = {shape4[1], shape4[1], superblock.H.M.dimension(0)};
         Textra::array<3> shape_Rblock = {shape4[3], shape4[3], superblock.H.M.dimension(1)};
         long sizeL     = shape4[1] * shape4[1];
         long sizeR     = shape4[3] * shape4[3];
+
+
+
+
         Tensor<T,4> theta = superblock.MPS.thetaR().cast<T>();
         Tensor<T,2> transf_G = theta.contract(superblock.H.compute_G(h), idx<2>({0,1},{0,1}))
                 .contract(theta.conjugate(),          idx<2>({2,3},{0,1}))
