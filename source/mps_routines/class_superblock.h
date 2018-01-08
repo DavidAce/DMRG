@@ -38,6 +38,8 @@ public:
     class_superblock();
     class_environment<Side::L>  Lblock;                 /*!< Left  environment block. */
     class_environment<Side::R>  Rblock;                 /*!< Right environment block. */
+    class_environment_var<Side::L>  Lblock2;                 /*!< Left  environment block used for variance calculation */
+    class_environment_var<Side::R>  Rblock2;                 /*!< Right environment block used for variance calculation */
     class_mps                   MPS;                    /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
     class_mpo           H;
 

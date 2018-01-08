@@ -23,6 +23,8 @@ def h5py_get_datasets(f, group_name='/', dset_name=''):
     temp =[]
     if group_name in f:
         g = f[group_name]
+    else:
+        return []
     for (dset, attr, key, path) in h5py_dataset_iterator(g):
         if(key == dset_name):
             temp.append([dset, attr, key, path ])

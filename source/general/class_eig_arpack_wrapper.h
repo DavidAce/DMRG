@@ -47,7 +47,8 @@ private:
                 for (int j = 0; j < rows; j++) {
                     eigvecs(j, i) = solution.Eigenvector(i, j);
                     if constexpr(std::is_same_v<T_vec, std::complex<double>>){
-                        eigvecs(j, i) *= std::exp(-1.0i * phase);
+                        std::complex<double> inv_phase = -1.0i * phase;
+                        eigvecs(j, i) *= std::exp(inv_phase);
                     }
                 }
             }

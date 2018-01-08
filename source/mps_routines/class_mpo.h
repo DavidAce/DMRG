@@ -39,7 +39,18 @@ private:
     Tensor<Scalar,4>               compute_M();
     Tensor<Scalar,6>               compute_MM();
 
-    MatrixType<std::complex<double>> U      (const double delta_t);
+    template<typename T>
+    MatrixType<std::complex<double>> Suzuki_Trotter_1st_order(T t){
+        return (t*h[0]).exp() * (t*h[1]).exp();
+    }
+
+    template<typename T>
+    MatrixType<std::complex<double>> Suzuki_Trotter_2nd_order(T t){
+        return (t*h[0]/2.0).exp() * (t*h[1]).exp() * (t * h[0]/2.0).exp();
+    }
+
+
+
     Tensor<std::complex<double>,4> TimeEvolution_1st_order(const double delta_t);
     Tensor<std::complex<double>,4> TimeEvolution_2nd_order(const double delta_t);
     Tensor<std::complex<double>,4> TimeEvolution_4th_order(const double delta_t);
@@ -53,8 +64,8 @@ public:
     Tensor<Scalar,4>               Udt  = compute_Udt(0.01, 1);      // Rank-4 of 2-site unitary time evolution operator for iTEBD (non MPO).
     Tensor<Scalar,4>               M    = compute_M();               // MPO representation of 1-site Hamiltonian
     Tensor<Scalar,6>               MM   = compute_MM();              // MPO representation of 2-site Hamiltonian
-    Tensor<std::complex<double>,4> F    = compute_F(0.01);           // MPO representation of 1-site moment generating function
-    Tensor<std::complex<double>,4> G    = compute_G(0.01);           // MPO representation of 1-site characteristic function of the Hamiltonian
+    Tensor<std::complex<double>,4> F    = compute_F(0.0001);           // MPO representation of 1-site moment generating function
+    Tensor<std::complex<double>,4> G    = compute_G(0.0001);           // MPO representation of 1-site characteristic function of the Hamiltonian
     void update_timestep(const double delta_t, const int order);
 };
 

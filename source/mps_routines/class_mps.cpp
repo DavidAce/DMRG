@@ -85,8 +85,8 @@ Tensor<class_mps::Scalar,4> class_mps::get_transfer_matrix_R()const{
 
 
 Tensor<class_mps::Scalar,4> class_mps::get_transfer_2_site_matrix_L()const{
-    return get_theta().contract(get_theta().conjugate(), idx<2>({0,1},{0,1})).shuffle(array4{0,2,1,3});
-//    return thetaL().contract(thetaL().conjugate(), idx<2>({0,1},{0,1})).shuffle(array4{0,2,1,3});
+//    return get_theta().contract(get_theta().conjugate(), idx<2>({0,1},{0,1})).shuffle(array4{0,2,1,3});
+    return thetaL().contract(thetaL().conjugate(), idx<2>({0,1},{0,1})).shuffle(array4{0,2,1,3});
 };
 
 Tensor<class_mps::Scalar,4> class_mps::get_transfer_2_site_matrix_R()const{

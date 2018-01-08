@@ -73,7 +73,7 @@ CREATE_SUBDIRS         = NO
 # If the ALLOW_UNICODE_NAMES tag is set to YES, doxygen will allow non-ASCII
 # characters to appear in the names of generated files. If set to NO, non-ASCII
 # characters will be escaped, for example _xE3_x81_x84 will be used for Unicode
-# U+3044.
+# Suzuki_Trotter_2nd_order+3044.
 # The default value is: NO.
 
 ALLOW_UNICODE_NAMES    = NO

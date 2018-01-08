@@ -19,7 +19,9 @@ public:
     class_hdf5_dataset_buffer<double> energy;
     class_hdf5_dataset_buffer<double> energy_ex; //Exact energy
     class_hdf5_dataset_buffer<double> entropy;
-    class_hdf5_dataset_buffer<double> variance;
+    class_hdf5_dataset_buffer<double> variance1;
+    class_hdf5_dataset_buffer<double> variance2;
+    class_hdf5_dataset_buffer<double> variance3;
     class_hdf5_dataset_buffer<double> trerror;
     class_hdf5_dataset_buffer<double> e_error;
     class_hdf5_dataset_buffer<int>    iter_step;
@@ -42,7 +44,9 @@ public:
             energy     (group_name, iteration, "energy"     ),
             energy_ex  (group_name, iteration, "energy_ex"  ),
             entropy    (group_name, iteration, "entropy"    ),
-            variance   (group_name, iteration, "variance"   ),
+            variance1  (group_name, iteration, "variance1"   ),
+            variance2  (group_name, iteration, "variance2"   ),
+            variance3  (group_name, iteration, "variance3"   ),
             trerror    (group_name, iteration, "truncation_error"    ),
             e_error    (group_name, iteration, "energy_error"    ),
             iter_step  (group_name, iteration, "iter_step"  ),
@@ -67,7 +71,9 @@ public:
         energy   .push_back(observables.get_energy());
         energy_ex.push_back(Model::energy_exact);
         entropy  .push_back(observables.get_entropy());
-        variance .push_back(observables.get_variance());
+        variance1 .push_back(observables.get_variance1());
+        variance2 .push_back(observables.get_variance2());
+        variance3 .push_back(observables.get_variance3());
         trerror  .push_back(observables.get_truncation_error());
         length   .push_back(observables.get_chain_length());
     }
@@ -88,7 +94,9 @@ public:
                    long chi_max_,
                    double energy_,
                    double entropy_,
-                   double variance_,
+                   double variance1_,
+                   double variance2_,
+                   double variance3_,
                    double trunc_error_,
                    double time_step_,
                    double phys_time_,
@@ -98,7 +106,9 @@ public:
         chi_max  .push_back(chi_max_);
         energy   .push_back(energy_);
         entropy  .push_back(entropy_);
-        variance .push_back(variance_);
+        variance1 .push_back(variance1_);
+        variance2 .push_back(variance2_);
+        variance3 .push_back(variance3_);
         trerror  .push_back(trunc_error_);
         time_step.push_back(time_step_);
         phys_time.push_back(phys_time_);
@@ -111,7 +121,9 @@ public:
         energy   .write_buffer_to_file(hdf5_out);
         energy_ex.write_buffer_to_file(hdf5_out);
         entropy  .write_buffer_to_file(hdf5_out);
-        variance .write_buffer_to_file(hdf5_out);
+        variance1 .write_buffer_to_file(hdf5_out);
+        variance2 .write_buffer_to_file(hdf5_out);
+        variance3 .write_buffer_to_file(hdf5_out);
         trerror  .write_buffer_to_file(hdf5_out);
         e_error  .write_buffer_to_file(hdf5_out);
         iter_step.write_buffer_to_file(hdf5_out);

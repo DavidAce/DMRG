@@ -327,8 +327,8 @@ void class_superblock::canonicalize_iMPS(){
 //
 //
 ////    SVD.compute(Tensor2d_to_MatrixXd(YLX), Eigen::ComputeThinU | Eigen::ComputeThinV);
-//    Tensor2d U,V;
-//    std::tie(U,L,V) = SVD.decompose(YLX);
+//    Tensor2d Suzuki_Trotter_2nd_order,V;
+//    std::tie(Suzuki_Trotter_2nd_order,L,V) = SVD.decompose(YLX);
 ////    Tensor2d U = MatrixXd_to_Tensor2d(SVD.matrixU());
 ////    Tensor2d V = MatrixXd_to_Tensor2d(SVD.matrixV().transpose());
 ////    L          = MatrixXd_to_Tensor1d(SVD.singularValues().normalized());
@@ -337,7 +337,7 @@ void class_superblock::canonicalize_iMPS(){
 //            .contract(_Xi, idxlist1{idx2(1,0)})
 //            .contract(G_old, idxlist1{idx2(1,2)})
 //            .contract(_YTi, idxlist1{idx2(3, 0)})
-//            .contract(U, idxlist1{idx2(3,0)})
+//            .contract(Suzuki_Trotter_2nd_order, idxlist1{idx2(3,0)})
 //            .shuffle(array4{1,2,0,3});
 //
 //    cout << "L new: \n" << L << endl;
@@ -620,7 +620,7 @@ void class_superblock::canonicalize_iMPS(){
 //
 //        SVD.compute(Tensor2_to_Matrix(YLX), Eigen::ComputeThinU | Eigen::ComputeThinV);
 //
-//        Tensor2d U = matrix_to_tensor2<double>(SVD.matrixU());
+//        Tensor2d Suzuki_Trotter_2nd_order = matrix_to_tensor2<double>(SVD.matrixU());
 //        Tensor2d V = matrix_to_tensor2<double>(SVD.matrixV().transpose());
 //        L         = Matrix_to_Tensor1<double>(SVD.singularValues().normalized());
 //
@@ -628,7 +628,7 @@ void class_superblock::canonicalize_iMPS(){
 //                   .contract(Xi, idxlist1{idx2(1,0)})
 //                   .contract(G_old, idxlist1{idx2(1,2)})
 //                   .contract(Yi, idxlist1{idx2(3, 0)})
-//                   .contract(U, idxlist1{idx2(3,0)})
+//                   .contract(Suzuki_Trotter_2nd_order, idxlist1{idx2(3,0)})
 //                   .shuffle(array4{1,2,0,3});
 //
 //
@@ -831,14 +831,14 @@ void class_superblock::canonicalize_iMPS(){
 //        chiA = std::min(SVD.rank(), chi_max);
 //        Tensor2d UA = MatrixXd_to_Tensor2d(SVD.matrixU().leftCols(chiA));
 //        Tensor2d VA = MatrixXd_to_Tensor2d(
-//                SVD.matrixV().leftCols(chiA).transpose()); //Transpose is important, U and V are not symmetric!
+//                SVD.matrixV().leftCols(chiA).transpose()); //Transpose is important, Suzuki_Trotter_2nd_order and V are not symmetric!
 //        LA = MatrixXd_to_Tensor1d(SVD.singularValues().head(chiA).normalized());
 //
 //        SVD.compute(Tensor2d_to_MatrixXd(YB_LB_XA), Eigen::ComputeThinU | Eigen::ComputeThinV);
 //        chiB = std::min(SVD.rank(), chi_max);
 //        Tensor2d UB = MatrixXd_to_Tensor2d(SVD.matrixU().leftCols(chiB));
 //        Tensor2d VB = MatrixXd_to_Tensor2d(
-//                SVD.matrixV().leftCols(chiB).transpose()); //Transpose is important, U and V are not symmetric!
+//                SVD.matrixV().leftCols(chiB).transpose()); //Transpose is important, Suzuki_Trotter_2nd_order and V are not symmetric!
 //        LB = MatrixXd_to_Tensor1d(SVD.singularValues().head(chiB).normalized());
 //
 ////    cout << "UA: \n "<< UA << endl;
@@ -1006,14 +1006,14 @@ void class_superblock::canonicalize_iMPS(){
 //    chiA = std::min(SVD.rank(), chi_max);
 //    Tensor2d UA = MatrixXd_to_Tensor2d(SVD.matrixU().leftCols(chiA));
 //    Tensor2d VA = MatrixXd_to_Tensor2d(
-//            SVD.matrixV().leftCols(chiA).transpose()); //Transpose is important, U and V are not symmetric!
+//            SVD.matrixV().leftCols(chiA).transpose()); //Transpose is important, Suzuki_Trotter_2nd_order and V are not symmetric!
 //    LA = MatrixXd_to_Tensor1d(SVD.singularValues().head(chiA).normalized());
 //
 //    SVD.compute(Tensor2d_to_MatrixXd(YB_LB_XA), Eigen::ComputeThinU | Eigen::ComputeThinV);
 //    chiB = std::min(SVD.rank(), chi_max);
 //    Tensor2d UB = MatrixXd_to_Tensor2d(SVD.matrixU().leftCols(chiB));
 //    Tensor2d VB = MatrixXd_to_Tensor2d(
-//            SVD.matrixV().leftCols(chiB).transpose()); //Transpose is important, U and V are not symmetric!
+//            SVD.matrixV().leftCols(chiB).transpose()); //Transpose is important, Suzuki_Trotter_2nd_order and V are not symmetric!
 //    LB = MatrixXd_to_Tensor1d(SVD.singularValues().head(chiB).normalized());
 //
 ////    cout << "UA: \n "<< UA << endl;
@@ -1256,13 +1256,13 @@ void class_superblock::canonicalize_iMPS(){
 //    SVD.compute(Tensor2d_to_MatrixXd(YA_LA_XB), Eigen::ComputeThinU | Eigen::ComputeThinV);
 //    chiA        = std::min(SVD.rank(),chi_max);
 //    Tensor2d UA = MatrixXd_to_Tensor2d(SVD.matrixU().leftCols(chiA));
-//    Tensor2d VA = MatrixXd_to_Tensor2d(SVD.matrixV().leftCols(chiA).transpose()); //Transpose is important, U and V are not symmetric!
+//    Tensor2d VA = MatrixXd_to_Tensor2d(SVD.matrixV().leftCols(chiA).transpose()); //Transpose is important, Suzuki_Trotter_2nd_order and V are not symmetric!
 //    Tensor1d LA = MatrixXd_to_Tensor1d(SVD.singularValues().head(chiA).normalized());
 //
 //    SVD.compute(Tensor2d_to_MatrixXd(YB_LB_XA), Eigen::ComputeThinU | Eigen::ComputeThinV);
 //    chiB        = std::min(SVD.rank(),chi_max);
 //    Tensor2d UB = MatrixXd_to_Tensor2d(SVD.matrixU().leftCols(chiB));
-//    Tensor2d VB = MatrixXd_to_Tensor2d(SVD.matrixV().leftCols(chiB).transpose()); //Transpose is important, U and V are not symmetric!
+//    Tensor2d VB = MatrixXd_to_Tensor2d(SVD.matrixV().leftCols(chiB).transpose()); //Transpose is important, Suzuki_Trotter_2nd_order and V are not symmetric!
 //    Tensor1d LB = MatrixXd_to_Tensor1d(SVD.singularValues().head(chiB).normalized());
 //    cout << "LA new: \n" << LA << endl;
 //    cout << "LB new: \n" << LB << endl;
