@@ -2,6 +2,8 @@ dist: trusty
 sudo: true
 language: cpp
 
+
+
 addons:
   apt:
     sources:
@@ -11,6 +13,10 @@ addons:
       - gfortran-7
       - cmake
 
+env:
+  -
+  - FC=gfortran-7
+  - GXX=g++-7
 
 cache:
   apt: true

@@ -92,29 +92,29 @@ void class_superblock::enlarge_environment(int direction){
 void class_superblock::initialize() {
     MPS.GA.resize(array3{d,1,1});
     MPS.GA.setZero();
-    MPS.GA(0,0,0) = 0;
     MPS.GA(1,0,0) = 1;
+    MPS.GA(0,0,0) = 0;
     MPS.LA.resize(array1{1});
     MPS.LA.setConstant(1.0);
 
     MPS.GB.resize(array3{d,1,1});
     MPS.GB.setZero();
-    MPS.GB(0,0,0) = 1;
-    MPS.GB(1,0,0) = 0;
+    MPS.GB(1,0,0) = 1;
+    MPS.GB(0,0,0) = 0;
     MPS.LB.resize(array1{1});
     MPS.LB.setConstant(1.0);
 
     cout << H.M.dimensions() << endl;
 
-//    enlarge_environment(0);
-//    enlarge_environment(0);
-//    enlarge_environment(0);
-//    enlarge_environment(0);
-//    enlarge_environment(0);
-//    enlarge_environment(0);
-//    enlarge_environment(0);
-//    enlarge_environment(0);
-//    enlarge_environment(0);
+    enlarge_environment(0);
+    enlarge_environment(0);
+    enlarge_environment(0);
+    enlarge_environment(0);
+    enlarge_environment(0);
+    enlarge_environment(0);
+    enlarge_environment(0);
+    enlarge_environment(0);
+    enlarge_environment(0);
 }
 
 

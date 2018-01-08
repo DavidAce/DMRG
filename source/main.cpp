@@ -30,7 +30,6 @@ int main() {
     settings::console::verbosity = 3;
     settings::console::graphics  = true;
     settings::profiling::on      = true;
-
     //Change some model parameters if you don't like the default ones
 
     //Initialize the algorithm class
