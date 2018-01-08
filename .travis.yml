@@ -5,9 +5,12 @@ language: cpp
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+      - sourceline: 'ppa:ubuntu-toolchain-r/test'
     packages:
       - g++-7
+      - gfortran-7
+      - cmake
+
 
 cache:
   apt: true
