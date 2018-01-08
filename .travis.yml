@@ -18,6 +18,10 @@ env:
   - FC=gfortran-7
   - GXX=g++-7
 
+
+notifications:
+  email: false
+
 cache:
   apt: true
 script:
