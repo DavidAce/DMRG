@@ -12,11 +12,9 @@ addons:
     packages:
       - g++-7
       - gfortran-7
+      - clang
       - cmake
 
-compiler:
-  - clang
-  
 notifications:
   email: false
 
@@ -24,6 +22,7 @@ cache:
   apt: true
 
 script:
+  - CXX=/usr/bin/g++-7 CC=/usr/bin/gcc-7 FC=/usr/bin/gfortran-7
   - cmake -E make_directory build/Release
   - cd build/Release
   - cmake -Bbuild/Release --build build -config Release ../../
