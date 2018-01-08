@@ -56,28 +56,32 @@ public:
     void enlarge(const class_mps &MPS, const Tensor<Scalar,4> &M);
 };
 
-//
-//template<Side side>
-//class class_environment_var{
-//public:
-//    using Scalar = class_mps::Scalar;
-//    int size;                                       /*!< Number of particles that have been contracted into this left environment. */
-//    Tensor<Scalar,4> block;                         /*!< The environment block. */
-//    class_environment_var(){
-//        size = 0;
-//        block.resize(1, 1, 3, 3) ;
-//        block.setZero();
-//        if constexpr(side == Side::L){
-//            block(0, 0, 0, 0) = 1;
-//            block(0, 0, 0, 0) = 1;
-//        }
-//        else
-//        if constexpr(side== Side::R){
-//            block(0, 0, 2) = 1;
-//        }
-//    };
-//
-//    void enlarge(const class_mps &MPS, const Tensor<Scalar,4> &M);
-//};
+
+template<Side side>
+class class_environment_var{
+public:
+    using Scalar = class_mps::Scalar;
+    int size;                                       /*!< Number of particles that have been contracted into this left environment. */
+    Tensor<Scalar,4> block;                         /*!< The environment block. */
+    class_environment_var(){
+        size = 0;
+        block.resize(1, 1, 3, 3) ;
+        block.setZero();
+        if constexpr(side == Side::L){
+            block(0, 0, 2 ,2) = 1;
+//            block(0, 0, 2 ,2) = 1;
+//            block(0, 0, 2 ,0) = 1;
+//            block(0, 0, 2 ,1) = 1;
+        }
+        else
+        if constexpr(side== Side::R){
+            block(0, 0, 0, 0) = 1;
+//            block(0, 0, 0, 1) = 1;
+//            block(0, 0, 0, 2) = 1;
+        }
+    };
+
+    void enlarge(const class_mps &MPS, const Tensor<Scalar,4> &M);
+};
 
 #endif //DMRG_CLASS_ENVIRONMENT_H

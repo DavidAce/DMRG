@@ -16,7 +16,7 @@ private:
 
     using MatrixType  = Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>;
     template <long rankU, long rankS, long rankV>
-    using TensorTuple = std::tuple<Tensor<Scalar,rankU>, // U
+    using TensorTuple = std::tuple<Tensor<Scalar,rankU>, // Suzuki_Trotter_2nd_order
             Eigen::Tensor<Scalar,rankS>, // S
             Eigen::Tensor<Scalar,rankV>>; // V^T
     Eigen::BDCSVD<MatrixType> SVD;

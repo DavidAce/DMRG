@@ -52,9 +52,12 @@ Tensor<std::complex<double>,4> class_mpo::compute_F(double a){
     *           [exp(aH)]
     *           |       |
     *           2       3
+    *
     * Where H = H_even + H_odd, so exp(aH) can be Suzuki-Trotter decomposed just as in iTEBD
     */
-    return Matrix_to_Tensor<std::complex<double>,4>((a*h[0]/2.0).exp() * (a*h[1]).exp() * (a * h[0]/2.0).exp(), {2,2,2,2});
+    return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_2nd_order(a), {2,2,2,2});
+
+//    return Matrix_to_Tensor<std::complex<double>,4>((a*h[0]/2.0).exp() * (a*h[1]).exp() * (a * h[0]/2.0).exp(), {2,2,2,2});
 };
 
 
@@ -68,7 +71,10 @@ Tensor<std::complex<double>,4> class_mpo::compute_G(double a){
     *           |         |
     *           2         3
     */
-    return Matrix_to_Tensor<std::complex<double>,4>((1i*a*h[0]/2.0).exp() * (1i*a*h[1]).exp() * (1i*a * h[0]/2.0).exp(), {2,2,2,2});
+    return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_1st_order(1.0i * a), {2,2,2,2});
+
+    //REmember to take the negative or positive "t" in ST
+//    return Matrix_to_Tensor<std::complex<double>,4>((x*h[0]).exp() * (x2*h[1]).exp() * (x*h[0]).exp(), {2,2,2,2});
 };
 
 Tensor<std::complex<double>,4> class_mpo::compute_logG(double a){
@@ -83,15 +89,14 @@ Tensor<std::complex<double>,4> class_mpo::compute_logG(double a){
     return Matrix_to_Tensor<std::complex<double>,4>(((1i*a*h[0]/2.0).exp() * (1i*a*h[1]).exp() * (1i*a * h[0]/2.0).exp()).log(), {2,2,2,2});
 };
 
-MatrixType<std::complex<double>> class_mpo::U(double delta){
-    return (-delta*h[0]/2.0).exp() * (-delta*h[1]).exp() * (-delta * h[0]/2.0).exp();
+
+
+Tensor<std::complex<double>,4> class_mpo::TimeEvolution_1st_order(const double delta_t) {
+    return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_1st_order(-delta_t), array4{2,2,2,2});
 }
 
 Tensor<std::complex<double>,4> class_mpo::TimeEvolution_2nd_order(const double delta_t) {
-    return Matrix_to_Tensor<std::complex<double>,4>( ((-delta_t*h[0]).exp() * (-delta_t*h[1]).exp()), array4{2,2,2,2});
-}
-Tensor<std::complex<double>,4> class_mpo::TimeEvolution_1st_order(const double delta_t) {
-    return Matrix_to_Tensor<std::complex<double>,4>(U(delta_t), array4{2,2,2,2});
+    return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_2nd_order(-delta_t), array4{2,2,2,2});
 }
 
 
@@ -99,7 +104,12 @@ Tensor<std::complex<double>,4> class_mpo::TimeEvolution_4th_order(const double d
     double delta1 = delta_t /(4.0-pow(4.0,1.0/3.0));
     double delta2 = delta1;
     double delta3 = delta_t - 2.0*delta1 - 2.0*delta2;
-    return Matrix_to_Tensor<std::complex<double>,4>(U(delta1)*U(delta2)*U(delta3)*U(delta2)*U(delta1), array4{2,2,2,2});
+    return Matrix_to_Tensor<std::complex<double>,4>( Suzuki_Trotter_2nd_order(-delta1)
+                                                    *Suzuki_Trotter_2nd_order(-delta2)
+                                                    *Suzuki_Trotter_2nd_order(-delta3)
+                                                    *Suzuki_Trotter_2nd_order(-delta2)
+                                                    *Suzuki_Trotter_2nd_order(-delta1),
+                                                     array4{2,2,2,2});
 
 }
 
@@ -124,6 +134,7 @@ Tensor<class_mpo::Scalar,4> class_mpo::compute_Udt(double delta_t, int order){
             return TimeEvolution_1st_order(delta_t).real();
     }
 };
+
 
 void class_mpo::update_timestep(const double delta_t, const int order){
     Udt = compute_Udt(delta_t, order);

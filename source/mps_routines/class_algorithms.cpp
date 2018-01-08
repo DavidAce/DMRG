@@ -197,18 +197,19 @@ void class_algorithms::FES_iTEBD(){
         while(time_step > 1e-6 && step < s::fes_itebd::max_steps){
             single_TEBD_step(superblock, chi_max );
             t_upd.tic();
-            if(Math::mod(step,100)==0){
+            if(Math::mod(step,1000)==0){
                 container.push_back(observables);
                 container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
             }
             if(Math::mod(step,1000)==0){
                 cout << "Timestep: " << setprecision(10) << setw(12) << time_step << " ";
+                cout << observables.first_moment() << endl;
                 observables.print_status_update(step);
             }
 
 
 
-            if(Math::mod(step,1)==0){
+            if(Math::mod(step,1000)==0){
                 old_entropy = new_entropy;
                 new_entropy = observables.get_entropy();
                 if (std::fabs((new_entropy-old_entropy)/new_entropy) < 1e-6*time_step ){
@@ -283,11 +284,13 @@ void class_algorithms::FES_iDMRG(){
 
 
             t_sto.toc();
-            if(Math::mod(step,10)==0) {
+            if(Math::mod(step,1000)==0) {
                 observables.print_status_update(step);
-                cout << "F E :" << observables.first_moment() << endl;
+                cout << observables.first_moment() << endl;
+
             }
-            if(Math::mod(step,500)==0) {
+            if(Math::mod(step,100)==0) {
+                double var = observables.get_variance();
                 container.push_back(observables);
                 container.push_back(step, 0, 0, t_tot.get_age());
             }

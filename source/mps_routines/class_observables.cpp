@@ -21,6 +21,8 @@ class_observables::class_observables(class_superblock &superblockRef, Simulation
 }
 
 
+
+
 double class_observables::get_expectationvalue(const Tensor<double,4> &MPO){
     Tensor<double,4> theta  = superblock.MPS.get_theta();
     Tensor<double,0> result =
@@ -31,6 +33,20 @@ double class_observables::get_expectationvalue(const Tensor<double,4> &MPO){
                     .contract(theta,            idx<3>({0,2,4},{2,0,1}))
                     .contract(superblock.Rblock.block,     idx<3>({0,1,2},{0,2,1}));
     return result(0)/ superblock.chain_length;
+}
+
+double class_observables::get_expectationvalue_sq(const Tensor<double,4> &MPO){
+    Tensor<double,4> theta  = superblock.MPS.get_theta();
+    Tensor<double,0> result =
+            superblock.Lblock2.block
+                    .contract(theta.conjugate(),idx<1>({0}  ,{2}))
+                    .contract(MPO,              idx<2>({1,3},{0,2}))
+                    .contract(MPO,              idx<2>({4,2},{0,2}))
+                    .contract(MPO,              idx<2>({1,3},{0,2}))
+                    .contract(MPO,              idx<2>({4,3},{0,2}))
+                    .contract(theta,            idx<3>({0,3,5},{2,0,1}))
+                    .contract(superblock.Rblock2.block,     idx<4>({0,1,2,3},{0,2,3,1}));
+    return result(0) / superblock.chain_length / superblock.chain_length;
 }
 
 double class_observables::get_expectationvalue(const Tensor<std::complex<double>,4> &MPO){
@@ -46,47 +62,26 @@ double class_observables::get_expectationvalue(const Tensor<std::complex<double>
     return result(0).real()/ superblock.chain_length;
 }
 
-
-double class_observables::get_second_cumulant(){
-
-    array4 shape4 = superblock.shape4;
-    long sizeL_MPO = shape4[1] * shape4[1] * superblock.H.F.dimension(0);
-    long sizeR_MPO = shape4[3] * shape4[3] * superblock.H.F.dimension(1);
-    long sizeL     = shape4[1] * shape4[1];
-    long sizeR     = shape4[3] * shape4[3];
-//
-//    Tensor<std::complex<double>,2> transf_mat_R_MPO = superblock.MPS.get_transfer_2_site_matrix_R(superblock.H.GG).reshape(array2{sizeL_MPO,sizeR_MPO});
-//    Tensor<std::complex<double>,2> transf_mat_R     = superblock.MPS.get_transfer_2_site_matrix_R(superblock.H.IGG).reshape(array2{sizeL_MPO    ,sizeL_MPO});
-
-//    Tensor<double,2> transf_mat_R_MPO = superblock.MPS.get_transfer_matrix_R(superblock.H.F) .reshape(array2{sizeL_MPO,sizeR_MPO});
-//    Tensor<double,2> transf_mat_R     = superblock.MPS.get_transfer_matrix_R(superblock.H.IF).reshape(array2{sizeL_MPO,sizeL_MPO});
-//
-
-
-//    class_eig_arpack eig;
-//    auto largest_eigval_MPO = eig.solve_dominant<arpack::Form::SYMMETRIC, arpack::Ritz::LM, arpack::Side::R, false>(transf_mat_R_MPO, 1);
-//    auto largest_eigval     = eig.solve_dominant<arpack::Form::SYMMETRIC, arpack::Ritz::LM, arpack::Side::R, false>(transf_mat_R    , 1);
-////    cout << "\n hello " << endl;
-//    cout << "\n lm = " << largest_eigval_MPO << endl;
-//    cout << " l  = "   << largest_eigval     << endl;
-//    double G_inf = std::pow(std::fabs(std::norm(largest_eigval_MPO(0))/std::norm(largest_eigval(0))), 0.5);
-//    double G_inf = std::pow(std::fabs(std::norm(largest_eigval_MPO(0))/std::norm(largest_eigval(0))), 1.0);
-    return 1.0;
-
+double class_observables::get_expectationvalue_sq(const Tensor<std::complex<double>,4> &MPO){
+    using T = std::complex<double>;
+    Tensor<T,4> theta  = superblock.MPS.get_theta().cast<T>();
+    Tensor<T,0> result =
+            superblock.Lblock2.block.cast<T>()
+                    .contract(theta.conjugate(),idx<1>({0}  ,{2}))
+                    .contract(MPO,              idx<2>({1,3},{0,2}))
+                    .contract(MPO,              idx<2>({4,2},{0,2}))
+                    .contract(MPO,              idx<2>({1,3},{0,2}))
+                    .contract(MPO,              idx<2>({4,3},{0,2}))
+                    .contract(theta,            idx<3>({0,3,5},{2,0,1}))
+                    .contract(superblock.Rblock2.block.cast<T>(),     idx<4>({0,1,2,3},{0,2,3,1}));
+    return result(0).real() / superblock.chain_length / superblock.chain_length;
 }
 
 
-//double class_observables::get_expectationvalue(const Tensor<Scalar,4> &MPO){
-//    Tensor<Scalar,4> theta  = superblock.MPS.get_theta();
-//    Tensor<Scalar,0> result =
-//            superblock.Lblock.block
-//            .contract(theta.conjugate(),idx<1>({0},{2}))
-//            .contract(MPO,              idx<2>({1,2},{0,2}))
-//            .contract(MPO,              idx<2>({3,1},{0,2}))
-//            .contract(theta,            idx<3>({0,2,4},{2,0,1}))
-//            .contract(superblock.Rblock.block,     idx<3>({0,1,2},{0,2,1}));
-//    return static_cast<double>(result(0))/ superblock.chain_length;
-//}
+double class_observables::get_second_cumulant(){
+    return first_moment();
+}
+
 
 
 double class_observables::get_energy(){
@@ -108,69 +103,6 @@ double class_observables::get_entropy(){
 }
 
 
-//Tensor<std::complex<double>,4> class_observables::get_Lblock_sq(){
-//    class_eig<Scalar> eig;
-//    using T = std::complex<double>;
-//    if (superblock.MPS.LA.size() == superblock.MPS.LB.size()) {
-//        array4 shape = {
-//                superblock.MPS.GA.dimension(2),
-//                superblock.MPS.GA.dimension(2),
-//                superblock.H.M.dimension(1),
-//                superblock.H.M.dimension(1)
-//        };
-//        long sizeL = superblock.MPS.GA.dimension(1)
-//                     * superblock.H.M.dimension(0)
-//                     * superblock.H.M.dimension(0)
-//                     * superblock.MPS.GA.dimension(1);
-//        long sizeR = superblock.MPS.GA.dimension(2)
-//                     * superblock.H.M.dimension(1)
-//                     * superblock.H.M.dimension(1)
-//                     * superblock.MPS.GA.dimension(2);
-//        Tensor<Scalar, 2> LGMPOGL = asDiagonal(superblock.MPS.L_tail).cast<T>()
-//                .contract(superblock.MPS.GA.cast<T>(), idx<1>({1}, {1}))
-//                .contract(superblock.H.M, idx<1>({1}, {2}))
-//                .contract(superblock.H.M, idx<1>({4}, {2}))
-//                .contract(superblock.MPS.GA.cast<T>(), idx<1>({6}, {0}))
-//                .contract(asDiagonal(superblock.MPS.L_tail).cast<T>(), idx<1>({6}, {1}))
-//                .shuffle(array8{0, 7, 2, 4, 1, 6, 3, 5})
-//                .reshape(array2{sizeL, sizeR}).real();
-//        auto[H2, H2val] = eig.solve_dominant<eig_Form::GENERAL, eig_Mode::LARGEST_MAGN, eig_Side::R>(LGMPOGL, 1,{sizeR, 1});
-//        return H2.real().reshape(shape);
-//    }
-//};
-//
-//Tensor<std::complex<double>,4> class_observables::get_Rblock_sq(){
-//    class_eig<Scalar> eig;
-//    using T = std::complex<double>;
-//    if (superblock.MPS.LA.size() == superblock.MPS.LB.size()) {
-//        array4 shape = {
-//                superblock.MPS.GA.dimension(1),
-//                superblock.MPS.GA.dimension(1),
-//                superblock.H.M.dimension(0),
-//                superblock.H.M.dimension(0)
-//        };
-//        long sizeL = superblock.MPS.GB.dimension(1)
-//                     * superblock.H.M.dimension(0)
-//                     * superblock.H.M.dimension(0)
-//                     * superblock.MPS.GB.dimension(1);
-//        long sizeR = superblock.MPS.GB.dimension(2)
-//                     * superblock.H.M.dimension(1)
-//                     * superblock.H.M.dimension(1)
-//                     * superblock.MPS.GB.dimension(2);
-//        Tensor<Scalar, 2> LGMPOGL = asDiagonal(superblock.MPS.LB).cast<T>()
-//                .contract(superblock.MPS.GB.cast<T>(), idx<1>({0}, {2}))
-//                .contract(superblock.H.M, idx<1>({1}, {2}))
-//                .contract(superblock.H.M, idx<1>({4}, {2}))
-//                .contract(superblock.MPS.GA.cast<T>(), idx<1>({6}, {0}))
-//                .contract(asDiagonal(superblock.MPS.LB).cast<T>(), idx<1>({7}, {0}))
-//                .shuffle(array8{0, 7, 3, 5, 1, 6, 3, 5})
-//                .reshape(array2{sizeL, sizeR}).real();
-//
-//        auto[H2, H2val] = eig.solve_dominant<eig_Form::GENERAL, eig_Mode::LARGEST_MAGN, eig_Side::L>(LGMPOGL, 1,{sizeL, 1});
-//        return H2.reshape(shape);
-//    }
-//};
-
 double class_observables::get_variance(){
 
 
@@ -190,6 +122,10 @@ double class_observables::get_variance(){
 
 
 }
+
+double class_observables::get_variance1(){return variance1;};
+double class_observables::get_variance2(){return variance2;};
+double class_observables::get_variance3(){return variance3;};
 
 double class_observables::get_truncation_error(){
     return superblock.truncation_error;

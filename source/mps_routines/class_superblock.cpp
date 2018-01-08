@@ -75,11 +75,15 @@ void class_superblock::update_MPS(){
 void class_superblock::enlarge_environment(int direction){
     if (direction == 1){
         Lblock.enlarge(MPS, H.M);
+        Lblock2.enlarge(MPS, H.M);
     }else if (direction == -1){
         Rblock.enlarge(MPS, H.M);
+        Rblock2.enlarge(MPS, H.M);
     }else if(direction == 0){
         Lblock.enlarge(MPS, H.M);
         Rblock.enlarge(MPS, H.M);
+        Lblock2.enlarge(MPS, H.M);
+        Rblock2.enlarge(MPS, H.M);
         chain_length += 2;
     }
 }
@@ -102,15 +106,15 @@ void class_superblock::initialize() {
 
     cout << H.M.dimensions() << endl;
 
-    enlarge_environment(0);
-    enlarge_environment(0);
-    enlarge_environment(0);
-    enlarge_environment(0);
-    enlarge_environment(0);
-    enlarge_environment(0);
-    enlarge_environment(0);
-    enlarge_environment(0);
-    enlarge_environment(0);
+//    enlarge_environment(0);
+//    enlarge_environment(0);
+//    enlarge_environment(0);
+//    enlarge_environment(0);
+//    enlarge_environment(0);
+//    enlarge_environment(0);
+//    enlarge_environment(0);
+//    enlarge_environment(0);
+//    enlarge_environment(0);
 }
 
 
