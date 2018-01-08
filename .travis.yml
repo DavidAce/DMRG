@@ -1,11 +1,11 @@
 dist: trusty
-sudo: false
+sudo: true
 language: cpp
 
 addons:
   apt:
     sources:
-      -ubuntu-toolchain-r-test
+      - ubuntu-toolchain-r-test
     packages:
       - g++-7
 
@@ -16,3 +16,5 @@ script:
   - cd build/Release
   - cmake -Bbuild/Release --build build -config Release ../../
   - make
+
+
