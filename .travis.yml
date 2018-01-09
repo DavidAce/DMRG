@@ -1,5 +1,5 @@
 dist: trusty
-sudo: true
+sudo: required
 language: cpp
 fast_finish: true
 
@@ -15,6 +15,12 @@ addons:
       - clang
       - cmake
 
+compiler: gcc
+      env: GCC_VERSION=7
+        - CC=gcc-7
+        - CXX=g++-7
+        - FC=gfortran-7
+
 notifications:
   email: false
 
@@ -22,7 +28,6 @@ cache:
   apt: true
 
 script:
-  - CXX=/usr/bin/g++-7 CC=/usr/bin/gcc-7 FC=/usr/bin/gfortran-7
   - cmake -E make_directory build/Release
   - cd build/Release
   - cmake -Bbuild/Release --build build -config Release ../../
