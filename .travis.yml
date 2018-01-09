@@ -11,14 +11,14 @@ addons:
       - sourceline: 'ppa:ubuntu-toolchain-r/test'
     packages:
       - g++-7
-      - gfortran-7
-      - cmake
+      - gfortran
 
 compiler: gcc
 env: GCC_VERSION=7
   - CC=gcc-7
   - CXX=g++-7
-  - FC=gfortran-7
+  - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+
 
 notifications:
   email: false
@@ -27,10 +27,11 @@ cache:
   apt: true
 
 
-
+before_install:
+    - eval "${MATRIX_EVAL}"
 
 script:
-  - export CXX="g++-7" CC="gcc-7" FC="gfortran-7"
+  - export CXX="g++-7" CC="gcc-7"
   - cmake -E make_directory build/Release
   - cd build/Release
   - cmake -Bbuild/Release --build build -config Release ../../
