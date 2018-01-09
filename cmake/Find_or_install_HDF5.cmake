@@ -15,7 +15,7 @@
 #   include(Find_or_install_HDF5.cmake)
 set(HDF5_USE_STATIC_LIBRARIES ON)
 set(HDF5_FIND_DEBUG ON)
-#set(HDF5_CXX_COMPILER_EXECUTABLE "h5c++")
+set(HDF5_CXX_COMPILER_EXECUTABLE "h5c++")
 find_package(HDF5 COMPONENTS CXX)
 
 if (NOT HDF5_FOUND OR "${HDF5_LIBRARIES}" MATCHES "anaconda")

@@ -37,11 +37,17 @@ ExternalProject_Add(GSL
 #        UPDATE_DISCONNECTED 1
         PREFIX              "${INSTALL_DIRECTORY}/gsl"
         CONFIGURE_COMMAND
-            pwd &&
             cd <SOURCE_DIR> &&
-            ./configure --quiet --enable-silent-rules --enable-shared=no --prefix=<INSTALL_DIR>
-        BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} --quiet
-        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} --quiet install
+            pwd &&
+            ./configure --enable-silent-rules --enable-shared=no --prefix=<INSTALL_DIR>
+        BUILD_COMMAND
+            cd <SOURCE_DIR> &&
+            pwd &&
+            ${CMAKE_MAKE_PROGRAM} --quiet
+        INSTALL_COMMAND
+            cd <SOURCE_DIR> &&
+            pwd &&
+            ${CMAKE_MAKE_PROGRAM} --quiet install
         )
 
 ExternalProject_Get_Property(GSL install_dir)
