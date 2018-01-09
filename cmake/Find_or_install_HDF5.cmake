@@ -13,8 +13,26 @@
 #   target_link_libraries(MyTarget ${HDF5_LIBRARIES})
 # To use, simple include it in your CMakeLists.txt
 #   include(Find_or_install_HDF5.cmake)
-
+set(HDF5_USE_STATIC_LIBRARIES ON)
+set(HDF5_FIND_DEBUG ON)
+#set(HDF5_CXX_COMPILER_EXECUTABLE "h5c++")
 find_package(HDF5 COMPONENTS CXX)
+
+if (NOT HDF5_FOUND OR "${HDF5_LIBRARIES}" MATCHES "anaconda")
+    find_package(PkgConfig)
+    pkg_check_modules(HDF5 hdf5)
+endif()
+
+
+if (HDF5_FOUND)
+    message("Found HDF5: ${HDF5_FOUND}")
+    message("   In path: ${HDF5_LIBRARY_DIRS}")
+    message("   LIBRARIES: ${HDF5_LIBRARIES}")
+    message("   LDFLAGS:   ${HDF5_LDFLAGS}")
+    message("   INCLUDE:   ${HDF5_INCLUDE_DIRS}")
+endif()
+
+
 if (HDF5_FOUND AND NOT "${HDF5_LIBRARIES}" MATCHES "anaconda")
         add_definitions    (${HDF5_DEFINITIONS})
         include_directories(${HDF5_INCLUDE_DIRS})

@@ -51,10 +51,10 @@ is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.
 
 ### Minimum Requirements
 The following software is required to build the project:
- - C++ compiler with support for c++17 standard. Tested with
+ - C++ compiler with support for c++17 standard. Tested with both
     - GNU GCC version >= 7
     - Clang version >= 5.0).
- - Fortran compiler. Tested with GNU GFORTRAN version >= 7.
+ - Fortran compiler. Tested with GNU GFORTRAN version >= 4. This is only needed to install libraries from source, see below.
  - CMake version >= 3.7
 
 ### Optional Requirements
@@ -67,8 +67,8 @@ The following software is required to build the project:
  #### Libraries
  
  - [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition (tested with version >= 3.3).
- - [Arpack](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires Lapack and blas API.
- - [Arpackpp](https://github.com/m-reuter/arpackpp) C++ frontend for arpack.
+ - [Arpack](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires LAPACK and BLAS API.
+ - [Arpackpp](https://github.com/m-reuter/arpackpp) C++ frontend for ARPACK.
  - [Spectra](https://spectralib.org/) Another eigenvalue solver. Header only.
  - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support (tested with version >= 1.8).
  - [GSL](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).

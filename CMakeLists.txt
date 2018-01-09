@@ -13,6 +13,7 @@ include(cmake/get_libraries.cmake)
 ################################################################
 include(cmake/gitversion.cmake)
 
+message("Compiling with: ${CMAKE_CXX_COMPILER_ID}")
 
 
 
@@ -49,12 +50,13 @@ set(COMMON_OPTIONS -g -Wall -march=native)
 set(DEBUG_OPTIONS       -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID}")
+
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     message("Special flags for g++:  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context")
     set(COMMON_OPTIONS ${COMMON_OPTIONS}   -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    message("Special flags for Clang: -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual")
-    set(COMMON_OPTIONS ${COMMON_OPTIONS} -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual)
+    message("Special flags for Clang:  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual")
+    set(COMMON_OPTIONS ${COMMON_OPTIONS}  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual)
 endif()
 
 
@@ -90,7 +92,7 @@ target_link_libraries(DMRG++ -lstdc++fs)                              ### For ex
 target_link_libraries(DMRG++ ${ARPACK_LIBRARIES})
 target_link_libraries(DMRG++ ${LAPACK_LIBRARIES})
 target_link_libraries(DMRG++ ${BLAS_LIBRARIES})
-target_link_libraries(DMRG++ ${HDF5_LIBRARIES} -ldl)
+target_link_libraries(DMRG++ ${HDF5_LIBRARIES} ${HDF5_LDFLAGS} -ldl)
 target_link_libraries(DMRG++ ${GSL_LIBRARIES})
 target_link_libraries(DMRG++ ${GFORTRAN_LIB})
 
