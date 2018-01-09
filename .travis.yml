@@ -51,10 +51,6 @@ matrix:
 
 
 script:
-#  - export CXX="g++-7" CC="gcc-7" FC="gfortran"
-  - which $CXX
-  - $CXX --version
-  - which $FC
   - cmake -E make_directory build/Release
   - cd build/Release
   - cmake -Bbuild/Release --build build -config Release ../../
