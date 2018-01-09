@@ -12,7 +12,7 @@ addons:
     packages:
       - g++-7
       - gfortran-7
-      - clang
+      - clang-5.0
       - cmake
 
 compiler: gcc
@@ -27,7 +27,12 @@ notifications:
 cache:
   apt: true
 
+
+
+
 script:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-7" CC="gcc-7" FC="gfortran-7"; fi
+  - if [ "$CXX" = "clang++" ]; then export CXX="clang++-5.0" CC="clang-5.0" FC="gfortran-7"; fi
   - cmake -E make_directory build/Release
   - cd build/Release
   - cmake -Bbuild/Release --build build -config Release ../../
