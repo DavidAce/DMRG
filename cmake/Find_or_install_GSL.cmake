@@ -36,6 +36,7 @@ else()
         message(FATAL_ERROR "GSL not found and failed to install: ${res_var}")
     endif()
     include(${PROJECT_SOURCE_DIR}/libs/gsl/FindGSL.cmake)
+    set(GSL_LIBRARIES "")
     get_libraries(${GSL_LIB_DIR} gsl  GSL_LIBRARIES)
     message("SUCCESSFULLY INSTALLED GSL:   ${GSL_LIBRARIES}")
 
