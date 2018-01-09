@@ -2,37 +2,58 @@ dist: trusty
 sudo: required
 language: cpp
 fast_finish: true
-
-
-
-addons:
-  apt:
-    sources:
-      - sourceline: 'ppa:ubuntu-toolchain-r/test'
-    packages:
-      - g++-7
-      - gfortran
-
-compiler: gcc
-env: GCC_VERSION=7
-  - CC=gcc-7
-  - CXX=g++-7
-  - FC=gfortran
-  - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7 && FC=gfortran"
-
-
 notifications:
   email: false
 
-cache:
-  apt: true
 
 
-before_install:
-    - eval "${MATRIX_EVAL}"
+matrix:
+  include:
+  - os: linux
+    compiler: gcc
+    env: GCC_VERSION=7
+      - CC=gcc-7
+      - CXX=g++-7
+      - FC=gfortran
+      - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7 && FC=gfortran"
+    cache:
+      apt: true
+    addons:
+      apt:
+        sources:
+          - sourceline: 'ppa:ubuntu-toolchain-r/test'
+        packages:
+          - g++-7
+          - gfortran
+    before_install:
+      - eval "${MATRIX_EVAL}"
+
+  - os: linux
+    compiler: clang
+    env: CLANG_VERSION=5.0 LIBCXX=On
+      - CC=clang-5.0
+      - CXX=clang++-5.0
+      - FC=gfortran
+      - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7 && FC=gfortran"
+    cache:
+      apt: true
+    addons:
+      apt:
+        sources:
+          - sourceline: 'llvm-toolchain-trusty-5.0'
+        packages:
+          - clang-5.0
+          - gfortran
+    before_install:
+      - eval "${MATRIX_EVAL}"
+
+
 
 script:
-  - export CXX="g++-7" CC="gcc-7" FC="gfortran"
+#  - export CXX="g++-7" CC="gcc-7" FC="gfortran"
+  - which $CXX
+  - $CXX --version
+  - which $FC
   - cmake -E make_directory build/Release
   - cd build/Release
   - cmake -Bbuild/Release --build build -config Release ../../
