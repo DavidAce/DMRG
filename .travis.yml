@@ -16,10 +16,10 @@ addons:
       - cmake
 
 compiler: gcc
-      env: GCC_VERSION=7
-        - CC=gcc-7
-        - CXX=g++-7
-        - FC=gfortran-7
+env: GCC_VERSION=7
+  - CC=gcc-7
+  - CXX=g++-7
+  - FC=gfortran-7
 
 notifications:
   email: false
