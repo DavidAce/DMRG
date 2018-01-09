@@ -40,9 +40,10 @@ matrix:
     addons:
       apt:
         sources:
-          - sourceline: 'llvm-toolchain-trusty-5.0'
+          - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-5.0 main'
         packages:
           - clang-5.0
+          - llvm-5.0-dev
           - gfortran
     before_install:
       - eval "${MATRIX_EVAL}"
