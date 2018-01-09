@@ -17,7 +17,8 @@ compiler: gcc
 env: GCC_VERSION=7
   - CC=gcc-7
   - CXX=g++-7
-  - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+  - FC=gfortran
+  - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7 && FC=gfortran"
 
 
 notifications:
@@ -31,7 +32,7 @@ before_install:
     - eval "${MATRIX_EVAL}"
 
 script:
-  - export CXX="g++-7" CC="gcc-7"
+  - export CXX="g++-7" CC="gcc-7" FC="gfortran"
   - cmake -E make_directory build/Release
   - cd build/Release
   - cmake -Bbuild/Release --build build -config Release ../../

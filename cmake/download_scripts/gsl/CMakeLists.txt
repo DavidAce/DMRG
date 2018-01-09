@@ -36,7 +36,10 @@ ExternalProject_Add(GSL
 #        GIT_PROGRESS 1
 #        UPDATE_DISCONNECTED 1
         PREFIX              "${INSTALL_DIRECTORY}/gsl"
-        CONFIGURE_COMMAND <SOURCE_DIR>/configure --quiet --enable-silent-rules --enable-shared=no --prefix=<INSTALL_DIR>
+        CONFIGURE_COMMAND
+            pwd &&
+            cd <SOURCE_DIR> &&
+            ./configure --quiet --enable-silent-rules --enable-shared=no --prefix=<INSTALL_DIR>
         BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} --quiet
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} --quiet install
         )
