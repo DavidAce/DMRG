@@ -56,7 +56,7 @@ The following software is required to build the project:
     - GNU GCC version >= 7
     - Clang version >= 5.0).
  - Fortran compiler. Tested with GNU GFORTRAN version >= 4. This is only needed to install libraries from source, see below.
- - CMake version >= 3.7
+ - CMake version >= 3.8
 
 ### Optional Requirements
  You can chose to **either** 

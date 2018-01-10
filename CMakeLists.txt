@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.8)
 enable_language(Fortran)
 project(DMRG++)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
@@ -56,8 +56,8 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     message("Special flags for g++:  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context")
     set(COMMON_OPTIONS ${COMMON_OPTIONS}   -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    message("Special flags for Clang:  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual")
-    set(COMMON_OPTIONS ${COMMON_OPTIONS}  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual)
+    message("Special flags for Clang:  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual")
+    set(COMMON_OPTIONS ${COMMON_OPTIONS}  -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual)
 endif()
 
 
