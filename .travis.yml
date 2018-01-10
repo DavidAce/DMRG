@@ -60,6 +60,9 @@ matrix:
         - CLANG_VERSION=5.0
         - FC=gfortran
         - MATRIX_EVAL="CXX=clang++-5.0 && CC=clang-5.0 && FC=gfortran"
+        before_install:
+          - brew install gcc
+
 
 before_install:
   - eval "${MATRIX_EVAL}"

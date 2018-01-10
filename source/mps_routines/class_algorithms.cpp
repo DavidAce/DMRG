@@ -268,7 +268,7 @@ void class_algorithms::FES_iDMRG(){
          t_svd.reset();
          t_mps.reset();
          t_sto.reset();
-        t_tot.tic();
+         t_tot.tic();
 
         output_data_container container(&hdf5, "FES_iDMRG/chi", chi_max );
         class_superblock superblock;
@@ -281,26 +281,19 @@ void class_algorithms::FES_iDMRG(){
             t_sim.toc();
             t_sto.tic();
 
-
-
             t_sto.toc();
             if(Math::mod(step,1000)==0) {
+                observables.get_variance();
                 observables.print_status_update(step);
-                cout << observables.first_moment() << endl;
-
             }
             if(Math::mod(step,100)==0) {
-                double var = observables.get_variance();
                 container.push_back(observables);
                 container.push_back(step, 0, 0, t_tot.get_age());
             }
-
             t_env.tic();
             superblock.enlarge_environment();
             t_env.toc();
-
             superblock.swap_AB();
-
             step++;
         }
         container.push_back(observables);
