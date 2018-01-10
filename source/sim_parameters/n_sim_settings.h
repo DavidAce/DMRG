@@ -53,7 +53,7 @@ namespace settings {
     }
     //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
     namespace fes_idmrg {
-        inline int       max_steps    = 40000;          /*!< Number of FES iterations per chi-value. */
+        inline int       max_steps    = 4000;          /*!< Number of FES iterations per chi-value. */
         inline long      chi_min      = 6;
         inline long      chi_max      = 6;
         inline long      chi_num      = 1;           /*!< Number of chi values for FES. */

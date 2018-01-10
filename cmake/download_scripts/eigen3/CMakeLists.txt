@@ -22,15 +22,18 @@
 #
 
 #        URL "https://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2"
+#        GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
 #        HG_REPOSITORY https://bitbucket.org/eigen/eigen
 
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.7)
 project(EIGEN3-download NONE)
 include(ExternalProject)
 ExternalProject_Add(EIGEN3
-        URL https://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2
-        PREFIX ${INSTALL_DIRECTORY}/eigen3
+        GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
+        GIT_TAG master
+        GIT_PROGRESS 1
+        PREFIX "${INSTALL_DIRECTORY}/eigen3"
         TEST_COMMAND ""
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>

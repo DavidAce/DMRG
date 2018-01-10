@@ -25,7 +25,7 @@
 #        HG_REPOSITORY https://bitbucket.org/eigen/eigen
 
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.7)
 project(SPECTRA-download NONE)
 include(ExternalProject)
 ExternalProject_Add(SPECTRA
