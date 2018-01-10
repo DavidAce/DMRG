@@ -16,6 +16,7 @@
 set(HDF5_USE_STATIC_LIBRARIES ON)
 set(HDF5_FIND_DEBUG ON)
 set(HDF5_CXX_COMPILER_EXECUTABLE "h5c++")
+message("SEARCHING FOR PRE-INSTALLED LIBRARIES: HDF5")
 find_package(HDF5 COMPONENTS CXX)
 
 if (NOT HDF5_FOUND OR "${HDF5_LIBRARIES}" MATCHES "anaconda")
@@ -25,7 +26,7 @@ endif()
 
 
 if (HDF5_FOUND)
-    message("Found HDF5: ${HDF5_FOUND}")
+    message("FOUND HDF5: ${HDF5_FOUND}")
     message("   In path: ${HDF5_LIBRARY_DIRS}")
     message("   LIBRARIES: ${HDF5_LIBRARIES}")
     message("   LDFLAGS:   ${HDF5_LDFLAGS}")
@@ -36,7 +37,7 @@ endif()
 if (HDF5_FOUND AND NOT "${HDF5_LIBRARIES}" MATCHES "anaconda")
         add_definitions    (${HDF5_DEFINITIONS})
         include_directories(${HDF5_INCLUDE_DIRS})
-        message("FOUND NATIVE HDF5:   ${HDF5_LIBRARIES}")
+        message("FOUND PRE-INSTALLED HDF5:   ${HDF5_LIBRARIES}")
 else()
     message("DOWNLOADING HDF5...")
     execute_process(

@@ -14,10 +14,10 @@
 #   include(Find_or_install_EIGEN3.cmake)
 
 
-
+message("SEARCHING FOR PRE-INSTALLED LIBRARIES: EIGEN3")
 find_package(Eigen3 3.3)                                ### Find and define includes for Eigen Library
 if(EIGEN3_FOUND)
-    message("FOUND NATIVE EIGEN3:   ${EIGEN3_INCLUDE_DIR}")
+    message("FOUND PRE-INSTALLED EIGEN3:   ${EIGEN3_INCLUDE_DIR}")
 else()
     message("DOWNLOADING EIGEN3...")
     execute_process(

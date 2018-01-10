@@ -13,11 +13,11 @@
 #   target_link_libraries(MyTarget ${GSL_LIBRARIES})
 # To use, simple include it in your CMakeLists.txt
 #   include(Find_or_install_GSL.cmake)
-
+message("SEARCHING FOR PRE-INSTALLED LIBRARIES: GSL")
 find_package(GSL)
 if (GSL_FOUND)
     include_directories(${GSL_INCLUDE_DIRS})
-    message("FOUND NATIVE GSL:   ${GSL_LIBRARIES}")
+    message("FOUND PRE-INSTALLED GSL:   ${GSL_LIBRARIES}")
 else()
     message("DOWNLOADING GSL...")
     execute_process(

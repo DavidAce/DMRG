@@ -14,12 +14,12 @@
 #   target_link_libraries(MyTarget ${LAPACK_LIBRARIES} ${BLAS_LIBRARIES})
 # To use, simple include it in your CMakeLists.txt
 #   include(Find_or_install_LAPACK_and_BLAS.cmake)
-
-find_package(BLAS QUIET)
-find_package(LAPACK QUIET)
+message("SEARCHING FOR PRE-INSTALLED LIBRARIES: BLAS, LAPACK")
+find_package(BLAS)
+find_package(LAPACK)
 if(LAPACK_FOUND AND BLAS_FOUND)
-    message("FOUND NATIVE BLAS:     ${BLAS_LIBRARIES}")
-    message("FOUND NATIVE LAPACK:   ${LAPACK_LIBRARIES}")
+    message("FOUND PRE-INSTALLED BLAS:     ${BLAS_LIBRARIES}")
+    message("FOUND PRE-INSTALLED LAPACK:   ${LAPACK_LIBRARIES}")
 else()
     message("DOWNLOADING BLAS AND LAPACK...")
 	execute_process(
