@@ -1,6 +1,6 @@
 dist: trusty
 sudo: false
-language: cpp
+language: generic
 notifications:
   email: false
 
@@ -51,6 +51,15 @@ matrix:
             - libc++abi-dev
             - gfortran
 
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env: COMPILER_NAME='clang'
+        - CXX=clang++-5.0
+        - CC=clang-5.0
+        - CLANG_VERSION=5.0
+        - FC=gfortran
+        - MATRIX_EVAL="CXX=clang++-5.0 && CC=clang-5.0 && FC=gfortran"
 
 before_install:
   - eval "${MATRIX_EVAL}"
