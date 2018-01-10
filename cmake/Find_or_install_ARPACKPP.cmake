@@ -32,6 +32,8 @@ else()
                 -G ${CMAKE_GENERATOR} ../../arpackpp
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpackpp)
     execute_process(
+            OUTPUT_QUIET
+            OUTPUT_FILE ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpackpp/log_build.txt
             COMMAND ${CMAKE_COMMAND} --build .
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpackpp
             RESULT_VARIABLE res_var)
@@ -41,6 +43,8 @@ else()
     include(${PROJECT_SOURCE_DIR}/libs/arpackpp/FindArpackpp.cmake)
     include_directories(${ARPACKPP_INCLUDE_DIR})
     message("SUCCESSFULLY INSTALLED ARPACKPP:   ${ARPACKPP_INCLUDE_DIR}")
+    message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpackpp/log_build.txt")
+
 endif()
 
 

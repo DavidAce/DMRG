@@ -29,6 +29,8 @@ else()
                 -G ${CMAKE_GENERATOR} ../../eigen3
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/eigen3)
     execute_process(
+            OUTPUT_QUIET
+            OUTPUT_FILE ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/eigen3/log_build.txt
             COMMAND ${CMAKE_COMMAND} --build .
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/eigen3
             RESULT_VARIABLE res_var)
@@ -38,8 +40,7 @@ else()
     include(${PROJECT_SOURCE_DIR}/libs/eigen3/FindEigen3.cmake)
     include_directories(${EIGEN3_INCLUDE_DIR})
     message("SUCCESSFULLY INSTALLED EIGEN3:   ${EIGEN3_INCLUDE_DIR}")
-#    message(FATAL_ERROR "Aborted")
-
+    message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/eigen3/log_build.txt")
 endif()
 
 

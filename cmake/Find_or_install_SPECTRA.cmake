@@ -25,6 +25,8 @@ execute_process(
         -G ${CMAKE_GENERATOR} ../../spectra
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/spectra)
 execute_process(
+        OUTPUT_QUIET
+        OUTPUT_FILE ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/spectra/log_build.txt
         COMMAND ${CMAKE_COMMAND} --build .
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/spectra
         RESULT_VARIABLE res_var)
@@ -34,6 +36,7 @@ endif()
 include(${PROJECT_SOURCE_DIR}/libs/spectra/FindSpectra.cmake)
 include_directories(${SPECTRA_INCLUDE_DIR})
 message("SUCCESSFULLY INSTALLED SPECTRA:   ${SPECTRA_INCLUDE_DIR}")
+message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/spectra/log_build.txt")
 
 
 

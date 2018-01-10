@@ -39,11 +39,11 @@ ExternalProject_Add(GSL
         CONFIGURE_COMMAND
             cd <SOURCE_DIR> &&
             pwd &&
-            ./configure --enable-silent-rules --enable-shared=no --prefix=<INSTALL_DIR>
+            ./configure CFLAGS=-Wno-nonportable-include-path --quiet --silent --enable-silent-rules --enable-shared=no --prefix=<INSTALL_DIR>
         BUILD_COMMAND
             cd <SOURCE_DIR> &&
             pwd &&
-            ${CMAKE_MAKE_PROGRAM} --quiet
+            ${CMAKE_MAKE_PROGRAM} --quiet --silent
         INSTALL_COMMAND
             cd <SOURCE_DIR> &&
             pwd &&
