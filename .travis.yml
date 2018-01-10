@@ -31,16 +31,20 @@ matrix:
   - os: linux
     compiler: clang
     env: CLANG_VERSION=5.0 LIBCXX=On
-      - CC=clang
-      - CXX=clang++
+      - CC=clang-5.0
+      - CXX=clang++-5.0
       - FC=gfortran
-      - MATRIX_EVAL="CC=clang && CXX=clang++ && FC=gfortran"
+      - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0 && FC=gfortran"
     cache:
       apt: true
     addons:
       apt:
+        sources:
+        - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-5.0 main'
+          key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
         packages:
-          - clang
+          - llvm-5.0-dev
+          - clang-5.0
           - gfortran
     before_install:
       - eval "${MATRIX_EVAL}"
