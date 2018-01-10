@@ -60,11 +60,10 @@ matrix:
         - CLANG_VERSION=5.0
         - FC=gfortran
         - MATRIX_EVAL="CXX=clang++-5.0 && CC=clang-5.0 && FC=gfortran"
-        before_install:
-          - brew install gcc
 
 
 before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install gcc   ; fi
   - eval "${MATRIX_EVAL}"
 
 script:
