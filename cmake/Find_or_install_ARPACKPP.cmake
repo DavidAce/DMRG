@@ -14,10 +14,10 @@
 #   include(Find_or_install_ARPACKPP.cmake)
 
 
-
+message(SEARCHING FOR PRE-INSTALLED LIBRARIES: ARPACKPP)
 find_library(ARPACKPP_INCLUDE_DIR NAMES libarpack++ arpackpp libarpack++2-dev libarpack++2c2a )                                ### Find and define includes for Eigen Library
 if(ARPACKPP_INCLUDE_DIR)
-    message("FOUND NATIVE ARPACKPP:   ${ARPACKPP_INCLUDE_DIR}")
+    message("FOUND PRE-INSTALLED ARPACKPP:   ${ARPACKPP_INCLUDE_DIR}")
 else()
     message("DOWNLOADING ARPACKPP...")
     execute_process(

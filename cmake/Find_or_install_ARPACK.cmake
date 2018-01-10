@@ -13,10 +13,10 @@
 #   target_link_libraries(MyTarget ${ARPACK_LIBRARIES})
 # To use, simple include it in your CMakeLists.txt
 #   include(Find_or_install_ARPACK.cmake)
-
+message("SEARCHING FOR PRE-INSTALLED LIBRARIES: ARPACK")
 find_library(ARPACK_LIBRARIES NAMES arpack arpack-ng libarpack libarpack2 libarpack2-dev)
 if(ARPACK_LIBRARIES)
-    message("FOUND NATIVE ARPACK:   ${ARPACK_LIBRARIES}")
+    message("FOUND PRE-INSTALLED ARPACK:   ${ARPACK_LIBRARIES}")
 elseif(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
     message("DOWNLOADING ARPACK...")
     execute_process(
