@@ -15,12 +15,13 @@
 # To use, simple include it in your CMakeLists.txt
 #   include(Find_or_install_LAPACK_and_BLAS.cmake)
 
-find_package(BLAS)
-find_package(LAPACK)
+find_package(BLAS QUIET)
+find_package(LAPACK QUIET)
 if(LAPACK_FOUND AND BLAS_FOUND)
     message("FOUND NATIVE BLAS:     ${BLAS_LIBRARIES}")
     message("FOUND NATIVE LAPACK:   ${LAPACK_LIBRARIES}")
 else()
+    message("DOWNLOADING BLAS AND LAPACK...")
 	execute_process(
 		COMMAND ${CMAKE_COMMAND} -E make_directory tmp/lapack
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts)
