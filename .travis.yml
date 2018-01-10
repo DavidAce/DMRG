@@ -1,21 +1,17 @@
 dist: trusty
-sudo: required
+sudo: false
 language: cpp
-fast_finish: true
 notifications:
   email: false
 
 
 
 matrix:
+  fast_finish: true
   include:
   - os: linux
     compiler: gcc
-    env: GCC_VERSION=7
-      - CC=gcc-7
-      - CXX=g++-7
-      - FC=gfortran
-      - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7 && FC=gfortran"
+    env: COMPILER_NAME=gcc GCC_VERSION=7 CC=gcc-7 CXX=g++-7 FC=gfortran
     cache:
       apt: true
     addons:
@@ -25,16 +21,10 @@ matrix:
         packages:
           - g++-7
           - gfortran
-    before_install:
-      - eval "${MATRIX_EVAL}"
 
   - os: linux
     compiler: clang
-    env: CLANG_VERSION=5.0 LIBCXX=On
-      - CC=clang-5.0
-      - CXX=clang++-5.0
-      - FC=gfortran
-      - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0 && FC=gfortran"
+    env: COMPILER_NAME=clang CXX=clang++-5.0 CC=clang-5.0 CLANG_VERSION=5.0 FC=gfortran
     cache:
       apt: true
     addons:
@@ -46,8 +36,6 @@ matrix:
           - llvm-5.0-dev
           - clang-5.0
           - gfortran
-    before_install:
-      - eval "${MATRIX_EVAL}"
 
 
 
