@@ -17,12 +17,13 @@ set(HDF5_USE_STATIC_LIBRARIES ON)
 set(HDF5_FIND_DEBUG ON)
 set(HDF5_CXX_COMPILER_EXECUTABLE "h5c++")
 message("SEARCHING FOR PRE-INSTALLED LIBRARIES: HDF5")
-find_package(HDF5 COMPONENTS CXX)
+#find_package(HDF5 COMPONENTS CXX)
 
-if (NOT HDF5_FOUND OR "${HDF5_LIBRARIES}" MATCHES "anaconda")
-    find_package(PkgConfig)
-    pkg_check_modules(HDF5 hdf5)
-endif()
+#if (NOT HDF5_FOUND OR "${HDF5_LIBRARIES}" MATCHES "anaconda")
+find_package(PkgConfig)
+set(PKG_CONFIG="pkg-config --static") 
+pkg_check_modules(HDF5 hdf5)
+#endif()
 
 
 if (HDF5_FOUND)

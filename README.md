@@ -61,7 +61,7 @@ The following software is required to build the project:
 ### Optional Requirements
  You can chose to **either** 
   - let the build script compile the libraries below from source into `libs/`. This will happen automatically if the library is not found on your system. Note that this does *NOT* make a system-wide install, so you can safely delete the `libs/` folder.
-  - (*recommended*) install the libraries yourself with your favorite package manager (e.g. `apt` in ubuntu or `brew` in OSX). The build script will always attempt to find the libraries in your system.
+  - (*recommended*) install the libraries yourself with your favorite package manager (e.g. `apt` in ubuntu or `brew` in OSX). The build script will always attempt to find the libraries in your system first.
  
  The latter is recommended to avoid a lengthy compilation of these rather large libraries. 
  
@@ -74,9 +74,7 @@ The following software is required to build the project:
  - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support (tested with version >= 1.8).
  - [GSL](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
 
- If the software above is not found in your system, the first run of `./build.sh` will download and
- install it for you into a folder `libs/` in the root of this project. 
- 
+
 
 ---
 
