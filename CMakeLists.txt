@@ -13,7 +13,7 @@ include(cmake/get_libraries.cmake)
 ################################################################
 include(cmake/gitversion.cmake)
 
-message("Compiling with: ${CMAKE_CXX_COMPILER_ID}")
+message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
 
 
@@ -49,8 +49,9 @@ include_directories(libs/spectra/include)
 set(COMMON_OPTIONS -g -Wall -march=native)
 set(DEBUG_OPTIONS       -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
-message("Compiling with: ${CMAKE_CXX_COMPILER_ID}")
-
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     message("Special flags for g++:  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context")
     set(COMMON_OPTIONS ${COMMON_OPTIONS}   -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context)
