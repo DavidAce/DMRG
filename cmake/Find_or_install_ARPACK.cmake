@@ -30,6 +30,8 @@ elseif(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
                 -G ${CMAKE_GENERATOR} ../../arpack-ng
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpack-ng )
     execute_process(
+            OUTPUT_QUIET
+            OUTPUT_FILE ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpack-ng/log_build.txt
             COMMAND ${CMAKE_COMMAND} --build .
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpack-ng
             RESULT_VARIABLE res_var)
@@ -42,6 +44,8 @@ elseif(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
     get_libraries(${ARPACK_LIB_DIR} arpack  ARPACK_LIBRARIES)
     include_directories(${ARPACK_INC_DIR})
     message("SUCCESSFULLY INSTALLED ARPACK:   ${ARPACK_LIBRARIES}")
+    message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpack-ng/log_build.txt")
+
 else()
 
     message("Please install LAPACK and BLAS before ARPACK.")

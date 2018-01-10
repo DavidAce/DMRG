@@ -28,6 +28,8 @@ else()
 		COMMAND ${CMAKE_COMMAND} -DINSTALL_DIRECTORY:PATH=${PROJECT_SOURCE_DIR}/libs -G ${CMAKE_GENERATOR} ../../lapack
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/lapack )
 	execute_process(
+        OUTPUT_QUIET
+        OUTPUT_FILE ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/lapack/log_build.txt
 		COMMAND ${CMAKE_COMMAND} --build .
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/lapack
         RESULT_VARIABLE res_var)
@@ -42,6 +44,7 @@ else()
     include_directories(${LAPACK_INC_DIR})
     message("SUCCESSFULLY INSTALLED LAPACK:   ${LAPACK_LIBRARIES}")
     message("SUCCESSFULLY INSTALLED BLAS:     ${BLAS_LIBRARIES}")
+    message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/lapack/log_build.txt")
 
 endif()
 

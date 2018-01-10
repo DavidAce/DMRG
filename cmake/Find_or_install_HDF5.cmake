@@ -48,6 +48,8 @@ else()
             -G ${CMAKE_GENERATOR} ../../hdf5
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/hdf5)
     execute_process(
+            OUTPUT_QUIET
+            OUTPUT_FILE ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/hdf5/log_build.txt
             COMMAND ${CMAKE_COMMAND} --build .
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/hdf5
             RESULT_VARIABLE res_var)
@@ -59,6 +61,8 @@ else()
     get_libraries(${HDF5_LIB_DIR} hdf5  HDF5_LIBRARIES)
     include_directories(${HDF5_INC_DIR})
     message("SUCCESSFULLY INSTALLED HDF5:   ${HDF5_LIBRARIES}")
+    message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/hdf5/log_build.txt")
+
 endif()
 
 

@@ -29,6 +29,8 @@ else()
             -G ${CMAKE_GENERATOR} ../../gsl
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/gsl )
     execute_process(
+            OUTPUT_QUIET
+            OUTPUT_FILE ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/gsl/log_build.txt
             COMMAND ${CMAKE_COMMAND} --build .
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/gsl
             RESULT_VARIABLE res_var)
@@ -39,6 +41,7 @@ else()
     set(GSL_LIBRARIES "")
     get_libraries(${GSL_LIB_DIR} gsl  GSL_LIBRARIES)
     message("SUCCESSFULLY INSTALLED GSL:   ${GSL_LIBRARIES}")
+    message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/gsl/log_build.txt")
 
 endif()
 
