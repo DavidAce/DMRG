@@ -66,7 +66,7 @@ endif()
 ###########################################
 file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
-add_executable(DMRG++ ${SOURCES} ${HEADERS} source/mps_routines/class_environment.cpp source/general/class_hdf5.cpp source/general/class_hdf5_dataset_buffer.cpp source/general/class_hdf5_dataset_buffer.h)
+add_executable(DMRG++ ${SOURCES} ${HEADERS} source/mps_routines/class_environment.cpp source/general/class_hdf5.cpp source/general/class_hdf5_dataset_buffer.cpp source/general/class_hdf5_dataset_buffer.h source/IO/class_file_reader.cpp source/IO/class_file_reader.h)
 
 
 ###########################################
