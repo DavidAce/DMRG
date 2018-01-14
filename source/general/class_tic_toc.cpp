@@ -5,6 +5,8 @@
 #include "class_tic_toc.h"
 #include <iomanip>
 
+using namespace std;
+using namespace chrono;
 class_tic_toc::class_tic_toc(bool on_off, int prec, string output_text)
         : profiling(on_off),
           print_precision(prec),

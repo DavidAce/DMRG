@@ -9,26 +9,23 @@
 #include <chrono>
 #include <iostream>
 
-using namespace std;
-using namespace chrono;
-
 
 
 class class_tic_toc {
 private:
-    high_resolution_clock::time_point tic_timepoint;
-    high_resolution_clock::time_point start_timepoint;
+    std::chrono::high_resolution_clock::time_point tic_timepoint;
+    std::chrono::high_resolution_clock::time_point start_timepoint;
     bool profiling           = false;           //Whether we are profiling_on or not.
     int print_precision      = 5 ;
-    string name              = "";
+    std::string name         = "";
     int padding              = 5;
 
 public:
-    class_tic_toc(bool on_off, int prec, string output_text);                 //Constructor
+    class_tic_toc(bool on_off, int prec, std::string output_text);                 //Constructor
     class_tic_toc(){};
-    high_resolution_clock::duration delta_time;
-    high_resolution_clock::duration measured_time;
-    void set_properties(bool on_off, int prec, string output_text);
+    std::chrono::high_resolution_clock::duration delta_time;
+    std::chrono::high_resolution_clock::duration measured_time;
+    void set_properties(bool on_off, int prec, std::string output_text);
     void tic();
     void toc();
     void print_time();

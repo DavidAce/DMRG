@@ -7,6 +7,9 @@
 #include "general/class_eig_spectra_wrapper.h"
 #include "general/class_eig_arpack_wrapper.h"
 
+using namespace std;
+using namespace Textra;
+
 class_observables::class_observables(class_superblock &superblockRef, SimulationType sim_)
                     :superblock(superblockRef),
                     sim(sim_)

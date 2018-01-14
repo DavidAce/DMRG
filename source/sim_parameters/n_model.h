@@ -11,8 +11,7 @@
 #include "general/n_tensor_extra.h"
 #include "general/n_math.h"
 
-using namespace Textra;
-using namespace Eigen;
+
 
 /*! \brief Setup the Hamiltonian and corresponding values.*/
 
@@ -40,19 +39,19 @@ namespace Model {
     inline double energy_exact  = get_exact_energy();  // = -1.063544409973372 if g = 0.5
 
     //Pauli matrices
-    extern const Matrix2cd sx();
-    extern const Matrix2cd sy();
-    extern const Matrix2cd sz();
-    extern const Matrix2cd I();
+    extern const Eigen::Matrix2cd sx();
+    extern const Eigen::Matrix2cd sy();
+    extern const Eigen::Matrix2cd sz();
+    extern const Eigen::Matrix2cd I();
     //Pauli spin variables in N-dimensional manybody Hilbert space.
-    extern std::vector<MatrixXcd>      gen_manybody_spin(Matrix2cd s);
+    extern std::vector<Eigen::MatrixXcd>      gen_manybody_spin(Eigen::Matrix2cd s);
     inline bool spins_must_be_generated = true;
-    inline std::vector<MatrixXcd> SX;
-    inline std::vector<MatrixXcd> SY;
-    inline std::vector<MatrixXcd> SZ;
-    extern MatrixXcd h(int sites, int position);
-    extern MatrixXcd H(int sites);
-    extern MatrixXcd MPO_asMatrix();
+    inline std::vector<Eigen::MatrixXcd> SX;
+    inline std::vector<Eigen::MatrixXcd> SY;
+    inline std::vector<Eigen::MatrixXcd> SZ;
+    extern Eigen::MatrixXcd h(int sites, int position);
+    extern Eigen::MatrixXcd H(int sites);
+    extern Eigen::MatrixXcd MPO_asMatrix();
 
 
 

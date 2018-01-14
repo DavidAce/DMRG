@@ -6,6 +6,8 @@
 #include "class_superblock.h"
 
 using namespace std;
+using namespace Textra;
+
 void class_sweep_storage::set_length(int max_length_) {
     max_length = max_length_;
     length_is_set = true;

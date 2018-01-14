@@ -3,6 +3,8 @@
 //
 #include "class_mps.h"
 
+using namespace std;
+using namespace Textra;
 void class_mps::initialize(const long local_dimension_){
     local_dimension = local_dimension_;
     GA.resize(array3{local_dimension,1,1});

@@ -12,8 +12,8 @@
 #include "ardgcomp.h"
 #include "ardssym.h"
 
-using namespace Textra;
-using namespace std::complex_literals;
+//using namespace Textra;
+//using namespace std::complex_literals;
 
 namespace arpack{
     enum class Form{SYMMETRIC, GENERAL, COMPLEX};  // Real Symmetric, Real General or Complex General
@@ -32,15 +32,15 @@ private:
 
     template <bool return_eigenvectors = true,typename Derived>
     auto retrieve_solution(Derived & solution, int nev) {
-
-        if constexpr(return_eigenvectors == true){
+        using namespace std::complex_literals;
+        if constexpr(return_eigenvectors){
             solution.FindEigenvectors();
             using T_vec = decltype(solution.Eigenvector(0, 0));
             using T_val = decltype(solution.Eigenvalue(0));
             int rows = solution.GetN();
             int cols = std::min(nev, solution.GetNev());
-            Tensor<T_vec, 2> eigvecs(rows, cols);
-            Tensor<T_val, 1> eigvals(cols);
+            Textra::Tensor<T_vec, 2> eigvecs(rows, cols);
+            Textra::Tensor<T_val, 1> eigvals(cols);
             for (int i = 0; i < cols; i++) {
                 eigvals(i) = solution.Eigenvalue(0);
                 double phase = std::arg(solution.Eigenvector(i, 0));
@@ -58,7 +58,7 @@ private:
             solution.FindEigenvalues();
             using T_val = decltype(solution.Eigenvalue(0));
             int cols = solution.GetNev();
-            Tensor<T_val, 1> eigvals(cols);
+            Textra::Tensor<T_val, 1> eigvals(cols);
             for (int i = 0; i < cols; i++) {
                 eigvals(i) = solution.Eigenvalue(0);
             }
@@ -85,18 +85,18 @@ public:
 
 
     template<arpack::Form form, arpack::Ritz ritz, arpack::Side side = arpack::Side::R, bool return_eigenvectors = true, typename Scalar>
-    auto solve_dominant(const Tensor<Scalar,2> &tensor, const int nev) {
+    auto solve_dominant(const Textra::Tensor<Scalar,2> &tensor, const int nev) {
         assert(tensor.dimension(0) == tensor.dimension(1) &&
                "Input matrix is not square. Error in Arpack eigenvalue solver.");
         int ncv_max = 80;
         int n = (int)tensor.dimension(0);
         int ncv = std::max(n/2, 4*nev);
         ncv = std::min(ncv, ncv_max);
-        Tensor<Scalar,2> internal_tensor;
+        Textra::Tensor<Scalar,2> internal_tensor;
         if constexpr(side == arpack::Side::R){
             internal_tensor = tensor;
         }else{
-            internal_tensor = tensor.shuffle(array2{1,0});
+            internal_tensor = tensor.shuffle(Textra::array2{1,0});
         }
 
 

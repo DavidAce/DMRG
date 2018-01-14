@@ -31,8 +31,8 @@ private:
     long chiR;                                          /*!< Bond dimension of the next (right) position. */
 
     //Store temporaries for eigensolver and SVD.
-    Tensor<Scalar,2> ground_state;                               /*!< Stores the ground state eigenvector from eigenvalue solver */
-    Tensor<Scalar,3> U,V;                                        /*!< Stores the left and right unitary matrices \f$U\f$ and \f$V\f$ after an SVD decomposition \f$A = USV^\dagger\f$.*/
+    Textra::Tensor<Scalar,2> ground_state;                               /*!< Stores the ground state eigenvector from eigenvalue solver */
+    Textra::Tensor<Scalar,3> U,V;                                        /*!< Stores the left and right unitary matrices \f$U\f$ and \f$V\f$ after an SVD decomposition \f$A = USV^\dagger\f$.*/
 public:
 
     class_superblock();
@@ -43,9 +43,9 @@ public:
     class_mps                   MPS;                    /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
     class_mpo           H;
 
-    array1              shape1;                 /*!< Shape for Tensor1 representation of the MPS. */
-    array2              shape2;                 /*!< Shape for Tensor2 representation of the MPS. */
-    array4              shape4;                 /*!< Shape for Tensor4 representation of the MPS. */
+    Textra::array1              shape1;                 /*!< Shape for Tensor1 representation of the MPS. */
+    Textra::array2              shape2;                 /*!< Shape for Tensor2 representation of the MPS. */
+    Textra::array4              shape4;                 /*!< Shape for Tensor4 representation of the MPS. */
 
 
     long   chi;                                           /*!< Bond dimension of the current (center) position. */

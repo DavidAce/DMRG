@@ -4,6 +4,9 @@
 
 
 #include "class_environment.h"
+using namespace std;
+using namespace Textra;
+
 template<Side side>
 void class_environment<side>::enlarge(const class_mps &MPS, const Tensor<Scalar,4> &M){
     /*!< Contracts a site into the block. */

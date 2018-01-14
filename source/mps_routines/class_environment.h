@@ -9,8 +9,8 @@
 #include "mps_routines/class_mps.h"
 #include "sim_parameters/n_model.h"
 
-using namespace Textra;
-using namespace std;
+//using namespace Textra;
+//using namespace std;
 
 /*! \brief Environment block och type Left or Right.
  *
@@ -37,7 +37,7 @@ class class_environment{
 public:
     using Scalar = class_mps::Scalar;
     int size;                                       /*!< Number of particles that have been contracted into this left environment. */
-    Tensor<Scalar,3> block;                         /*!< The environment block. */
+    Textra::Tensor<Scalar,3> block;                         /*!< The environment block. */
     class_environment(){
         size = 0;
         block.resize(1, 1, 3);
@@ -53,7 +53,7 @@ public:
         }
     };
 
-    void enlarge(const class_mps &MPS, const Tensor<Scalar,4> &M);
+    void enlarge(const class_mps &MPS, const Textra::Tensor<Scalar,4> &M);
 };
 
 
@@ -62,7 +62,7 @@ class class_environment_var{
 public:
     using Scalar = class_mps::Scalar;
     int size;                                       /*!< Number of particles that have been contracted into this left environment. */
-    Tensor<Scalar,4> block;                         /*!< The environment block. */
+    Textra::Tensor<Scalar,4> block;                         /*!< The environment block. */
     class_environment_var(){
         size = 0;
         block.resize(1, 1, 3, 3) ;
@@ -81,7 +81,7 @@ public:
         }
     };
 
-    void enlarge(const class_mps &MPS, const Tensor<Scalar,4> &M);
+    void enlarge(const class_mps &MPS, const Textra::Tensor<Scalar,4> &M);
 };
 
 #endif //DMRG_CLASS_ENVIRONMENT_H

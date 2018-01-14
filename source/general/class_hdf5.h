@@ -23,7 +23,6 @@
 #include <gitversion.h>
 
 namespace fs = std::experimental::filesystem::v1;
-using namespace Textra;
 
 
 
