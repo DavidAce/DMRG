@@ -13,9 +13,8 @@
 #include <Eigen/Sparse>
 #include "class_eigensolver_product.h"
 
-
+using namespace std;
 using namespace Textra;
-using namespace Eigen;
 
 
 class_superblock::class_superblock(){

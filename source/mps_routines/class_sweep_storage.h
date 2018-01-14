@@ -7,8 +7,8 @@
 #include "sim_parameters/n_model.h"
 #include <map>
 
-using namespace Textra;
-using namespace std;
+//using namespace Textra;
+//using namespace std;
 class class_superblock;
 
 
@@ -32,8 +32,8 @@ class class_sweep_storage {
 public:
     using Scalar = class_mps::Scalar;
 private:
-    std::map<int, Tensor<Scalar,3>> G_list;                                  /*!< A list of stored \f$\Gamma\f$-tensors,  indexed by chain position. */
-    std::map<int, Tensor<Scalar,1>> L_list;                                  /*!< A list of stored \f$\Lambda\f$-tensors, indexed by chain position. */
+    std::map<int, Textra::Tensor<Scalar,3>> G_list;                                  /*!< A list of stored \f$\Gamma\f$-tensors,  indexed by chain position. */
+    std::map<int, Textra::Tensor<Scalar,1>> L_list;                                  /*!< A list of stored \f$\Lambda\f$-tensors, indexed by chain position. */
     std::map<int, class_environment<Side::L>> Lblock_list;           /*!< A list of stored Left block environments,  indexed by chain position. */
     std::map<int, class_environment<Side::R>> Rblock_list;           /*!< A list of stored Right block environments, indexed by chain position. */
 

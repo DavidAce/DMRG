@@ -21,7 +21,6 @@ public:
     class_hdf5_dataset_buffer<double> entropy;
     class_hdf5_dataset_buffer<double> variance1;
     class_hdf5_dataset_buffer<double> variance2;
-    class_hdf5_dataset_buffer<double> variance3;
     class_hdf5_dataset_buffer<double> trerror;
     class_hdf5_dataset_buffer<double> e_error;
     class_hdf5_dataset_buffer<int>    iter_step;
@@ -31,13 +30,13 @@ public:
     class_hdf5_dataset_buffer<long>   length;
 
     output_data_container(const std::string &group_name,
-                           const long iteration
+                           const int iteration
                             ):
             output_data_container(nullptr,group_name, iteration)
     {
     }
     output_data_container(class_hdf5 * hdf5_out_ ,const std::string &group_name,
-                          const long iteration
+                          const int iteration
     ):      hdf5_out   (hdf5_out_),
             chi        (group_name, iteration, "chi"    ),
             chi_max    (group_name, iteration, "chi_max"    ),

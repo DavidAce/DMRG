@@ -8,6 +8,8 @@
 #include <unsupported/Eigen/MatrixFunctions>
 
 using namespace std;
+using namespace Eigen;
+using namespace Textra;
 
 namespace Model {
 

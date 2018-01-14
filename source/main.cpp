@@ -6,10 +6,9 @@
 #include <gitversion.h>
 #include <IO/class_file_reader.h>
 
-
-using namespace std;
-using namespace Eigen;
-using namespace Textra;
+//using namespace std;
+//using namespace Eigen;
+//using namespace Textra;
 
 
 
@@ -18,31 +17,27 @@ using namespace Textra;
     \return an integer 0 upon exit success
 */
 
-int main() {
+int main(int argc, char* argv[]) {
 
     // Print current Git status
-    cout << "Branch: "          + GIT::BRANCH +
+    std::cout << "Git Branch: "      + GIT::BRANCH +
             " | Commit hash: "  + GIT::COMMIT_HASH +
-            " | Revision: "     + GIT::REVISION << endl;
+            " | Revision: "     + GIT::REVISION << std::endl << std::flush;
 
-    //Overwrite default settings with the ones in the input file or your own.
-    class_file_reader input("input/input.cfg");
-    settings::fes_idmrg::chi_min = input.find_parameter<int>("fes_idmrg::chi_min");
-    settings::fes_idmrg::chi_max = input.find_parameter<int>("fes_idmrg::chi_max");
-    settings::hdf5::save_to_file = input.find_parameter<bool>("hdf5::save_to_file");
-    settings::console::verbosity = input.find_parameter<int>("console::verbosity");
-    settings::console::graphics  = false;
-    settings::profiling::on      = true;
-    //Change some model parameters if you don't like the default ones
+
+    //If input file is given as command line argument, then use that.
+    std::string inputfile = argc > 1 ? std::string(argv[0]) : std::string("input.cfg") ;
+    class_file_reader indata(inputfile);
+    settings::initialize(indata);
 
     //Initialize the algorithm class
     class_algorithms algorithms;
 
     //Run the algorithms
-//    algorithms.iDMRG();
-//    algorithms.fDMRG();
-//    algorithms.iTEBD();
-//    algorithms.FES_iTEBD();
+    algorithms.iDMRG();
+    algorithms.fDMRG();
+    algorithms.iTEBD();
+    algorithms.FES_iTEBD();
     algorithms.FES_iDMRG();
     return 0;
 }

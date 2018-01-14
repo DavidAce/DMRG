@@ -10,7 +10,8 @@
 
 
 namespace s = settings;
-
+using namespace std;
+using namespace Textra;
 
 
 void class_algorithms::single_DMRG_step(class_superblock &superblock, long chi_max){
@@ -37,10 +38,6 @@ void class_algorithms::single_TEBD_step(class_superblock &superblock, long chi_m
     t_mps.tic();    superblock.update_MPS();                                        t_mps.toc();
 }
 
-
-
-
-
 void class_algorithms::iDMRG(){
 /*!
  * \fn void iDMRG(class_superblock &superblock, class_storage &S, int max_length)
@@ -49,6 +46,8 @@ void class_algorithms::iDMRG(){
  * \param storage A class that stores current MPS and environments at each iteration.
  * \param max_length Maximum chain length after which the algorithm stops.
  */
+
+    if(!settings::idmrg::on){return;}
     using namespace settings::profiling;
     t_tot.set_properties(on, precision, "iDMRG Total Time           ");
     t_eig.set_properties(on, precision, "iDMRG Eigenvalue solver    ");
@@ -80,13 +79,13 @@ void class_algorithms::iDMRG(){
     t_tot.print_time();
 }
 
-
-
 void class_algorithms::fDMRG(){
 /*!
  * \fn void fDMRG()
  * \brief Finite DMRG sweeps across the chain built during iDMRG.
  */
+    if(!settings::fdmrg::on){return;}
+
     using namespace settings::profiling;
     t_tot.set_properties(on, precision, "fDMRG Total Time           ");
     t_eig.set_properties(on, precision, "fDMRG Eigenvalue solver    ");
@@ -128,7 +127,6 @@ void class_algorithms::fDMRG(){
     t_tot.print_time();
 }
 
-
 void class_algorithms::iTEBD(){
 /*!
  * \fn iTEBD(class_superblock &superblock, class_hdf5 &hdf5)
@@ -136,6 +134,7 @@ void class_algorithms::iTEBD(){
  * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
  * \param max_iter Maximum number of iterations.
  */
+    if(!settings::itebd::on){return;}
     using namespace settings::profiling;
     class_tic_toc t_evo(on, precision, "iTEBD Time evolution       ");
     class_tic_toc t_svd(on, precision, "iTEBD SVD Truncation       ");
@@ -171,9 +170,8 @@ void class_algorithms::FES_iTEBD(){
  * This function uses infinite algorithms (iTEBD or iDMRG) until the entropy converges,
  * to see how entanglement grows as a function of  \f$\chi\f$ (chi).
  */
+    if(!settings::fes_itebd::on){return;}
     using namespace settings::profiling;
-
-
     auto chi_max_list = Math::LinSpaced(s::fes_itebd::chi_num, s::fes_itebd::chi_min,s::fes_itebd::chi_max);
     for(auto &chi_max : chi_max_list) {
         t_evo.set_properties(on, precision, "FES_iTEBD Time evolution       ");
@@ -237,10 +235,6 @@ void class_algorithms::FES_iTEBD(){
     }
     }
 
-
-
-
-
 void class_algorithms::FES_iDMRG(){
 /*!
  * \fn FES_iDRMG()
@@ -250,7 +244,7 @@ void class_algorithms::FES_iDMRG(){
  * This function uses infinite algorithms (iTEBD or iDMRG) until the entropy converges,
  * to see how entanglement grows as a function of  \f$\chi\f$ (chi).
  */
-
+    if(!settings::fes_idmrg::on){return;}
     using namespace settings::profiling;
     t_tot.set_properties(on, precision, "FES_iDMRG *Total Time             ");
     t_sim.set_properties(on, precision, "FES_iDMRG |--*Simulation          ");

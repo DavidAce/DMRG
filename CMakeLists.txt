@@ -12,6 +12,7 @@ include(cmake/get_libraries.cmake)
 ### Gives a namespace GIT:: with several git version numbers.###
 ################################################################
 include(cmake/gitversion.cmake)
+include(cmake/directory.cmake)
 
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
@@ -30,6 +31,10 @@ include(cmake/Find_or_install_GSL.cmake)                                        
 include(cmake/Find_or_install_SPECTRA.cmake)                                    ### For Spectra eigenvalue solver           https://github.com/yixuan/spectra
 include(cmake/FindGFortran.cmake)                                               ### For Fortran library
 
+message("======================================")
+message("=== SUMMARY OF CMAKE CONFIGURATION ===")
+message("======================================")
+
 message("FOUND EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
 message("FOUND BLAS     :   ${BLAS_LIBRARIES}")
 message("FOUND LAPACK   :   ${LAPACK_LIBRARIES}")
@@ -38,6 +43,7 @@ message("FOUND ARPACKPP :   ${ARPACKPP_INCLUDE_DIR}")
 message("FOUND HDF5     :   ${HDF5_LIBRARIES}")
 message("FOUND GSL      :   ${GSL_LIBRARIES}")
 message("FOUND SPECTRA  :   ${SPECTRA_INCLUDE_DIR}")
+message("======================================")
 
 include_directories(libs/spectra/include)
 
@@ -66,7 +72,7 @@ endif()
 ###########################################
 file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
-add_executable(DMRG++ ${SOURCES} ${HEADERS} source/mps_routines/class_environment.cpp source/general/class_hdf5.cpp source/general/class_hdf5_dataset_buffer.cpp source/general/class_hdf5_dataset_buffer.h source/IO/class_file_reader.cpp source/IO/class_file_reader.h)
+add_executable(DMRG++ ${SOURCES} ${HEADERS} source/mps_routines/class_environment.cpp source/general/class_hdf5.cpp source/general/class_hdf5_dataset_buffer.cpp source/general/class_hdf5_dataset_buffer.h source/IO/class_file_reader.cpp source/IO/class_file_reader.h source/sim_parameters/n_sim_settings.cpp)
 
 
 ###########################################

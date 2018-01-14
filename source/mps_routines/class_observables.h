@@ -9,7 +9,7 @@
 #include <Eigen/Eigenvalues>
 #include <complex>
 #include "class_superblock.h"
-using namespace std::complex_literals;
+//using namespace std::complex_literals;
 
 enum class SimulationType {iDMRG,fDMRG, FES_iDMRG, iTEBD, FES_iTEBD};
 class class_observables {
@@ -22,8 +22,8 @@ private:
     MapType Sim2String;
     template <typename T>
     double find_slope(std::vector<T> &xvec, std::vector<T> &yvec ){
-        Eigen::Array<T,Eigen::Dynamic, 1> X = Map<Eigen::Array<T,Eigen::Dynamic, 1>>(xvec.data(), xvec.size());             //Cast to eigen array
-        Eigen::Array<T,Eigen::Dynamic, 1> Y = Map<Eigen::Array<T,Eigen::Dynamic, 1>>(yvec.data(), yvec.size());             //Cast to eigen array
+        Eigen::Array<T,Eigen::Dynamic, 1> X = Eigen::Map<Eigen::Array<T,Eigen::Dynamic, 1>>(xvec.data(), xvec.size());             //Cast to eigen array
+        Eigen::Array<T,Eigen::Dynamic, 1> Y = Eigen::Map<Eigen::Array<T,Eigen::Dynamic, 1>>(yvec.data(), yvec.size());             //Cast to eigen array
         auto N = xvec.size();
         double slope = (N * X.cwiseProduct(Y).sum() - X.sum()*Y.sum() )/(N * X.cwiseProduct(X).sum() - X.sum()*X.sum() );
 //        return ((X - X.mean()).cwiseProduct(Y - Y.mean())).sum() / fmax(1, (X - X.mean()).cwiseAbs2().sum());
@@ -48,16 +48,16 @@ public:
         long sizeL     = shape4[1] * shape4[1];
         long sizeR     = shape4[3] * shape4[3];
 
-        Tensor<T,4> theta = superblock.MPS.thetaR().cast<T>();
-        Tensor<T,3> A     = superblock.MPS.A().cast<T>();
-        Tensor<T,2> transf_Ga1 = theta.contract(superblock.H.compute_G(a1), idx<2>({0,1},{0,1})).contract(theta.conjugate(), idx<2>({2,3},{0,1})).shuffle(array4{0,2,1,3}).reshape(array2{sizeL,sizeR}) ;
+        Textra::Tensor<T,4> theta = superblock.MPS.thetaR().cast<T>();
+        Textra::Tensor<T,3> A     = superblock.MPS.A().cast<T>();
+        Textra::Tensor<T,2> transf_Ga1 = theta.contract(superblock.H.compute_G(a1), Textra::idx<2>({0,1},{0,1})).contract(theta.conjugate(), Textra::idx<2>({2,3},{0,1})).shuffle(Textra::array4{0,2,1,3}).reshape(Textra::array2{sizeL,sizeR}) ;
 
 
-        Tensor<T,2> transf_ID = A.contract(A.conjugate(), idx<1>({0},{0}))
-                                     .shuffle(array4{0,2,1,3})
-                                     .reshape(array2{sizeL,sizeR}) ;
+        Textra::Tensor<T,2> transf_ID = A.contract(A.conjugate(), Textra::idx<1>({0},{0}))
+                                     .shuffle(Textra::array4{0,2,1,3})
+                                     .reshape(Textra::array2{sizeL,sizeR}) ;
 
-        Tensor<T,1> lambda_Ga1     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transf_Ga1, 1);
+        Textra::Tensor<T,1> lambda_Ga1     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transf_Ga1, 1);
         T ga1  = (lambda_Ga1(0));
 
 
@@ -73,10 +73,10 @@ public:
 
     class_observables(class_superblock &superblockRef, SimulationType sim_);
     double variance1,variance2,variance3;
-    double get_expectationvalue(const Tensor<double,4> &MPO);
-    double get_expectationvalue(const Tensor<std::complex<double>,4> &MPO);
-    double get_expectationvalue_sq(const Tensor<double,4> &MPO);
-    double get_expectationvalue_sq(const Tensor<std::complex<double>,4> &MPO);
+    double get_expectationvalue(const Textra::Tensor<double,4> &MPO);
+    double get_expectationvalue(const Textra::Tensor<std::complex<double>,4> &MPO);
+    double get_expectationvalue_sq(const Textra::Tensor<double,4> &MPO);
+    double get_expectationvalue_sq(const Textra::Tensor<std::complex<double>,4> &MPO);
     double get_energy();                 /*! Computes the current energy by contracting the current MPS with the Hamiltonian MPO.*/
     double get_entropy();                /*! Computes the current entropy \f$ S = - \sum_n \lambda_n log( \lambda_n) \f$, where \f$\lambda_n \f$ are elements of \f$ \Lambda^A\f$ */
     double get_variance();               /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */

@@ -8,7 +8,8 @@
 #include <iomanip>
 #include <general/class_svd_wrapper.h>
 #include <general/class_eig_spectra_wrapper.h>
-
+using namespace std;
+using namespace Textra;
 
 // According to Phien, H. N., Mcculloch, I. P., & Vidal, G. (2015). Fast convergence of imaginary time evolution tensor network algorithms by recycling the environment. Physical Review B - Condensed Matter and Materials Physics, 91(11), 1–18. https://doi.org/10.1103/PhysRevB.91.115137
 void class_superblock::canonicalize_iMPS_iterative() {

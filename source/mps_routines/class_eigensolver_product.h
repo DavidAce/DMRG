@@ -8,23 +8,23 @@
 
 
 #include "general/n_tensor_extra.h"
-using namespace Textra;
+//using namespace Textra;
 class class_eigensolver_product {
 private:
     using Scalar = double;
-    const Tensor<Scalar,3> &Lblock;
-    const Tensor<Scalar,3> &Rblock;
-    const Tensor<Scalar,6> &MM;
-    const array4         &shape4;
-          array1          shape1;
+    const Textra::Tensor<Scalar,3> &Lblock;
+    const Textra::Tensor<Scalar,3> &Rblock;
+    const Textra::Tensor<Scalar,6> &MM;
+    const Textra::array4         &shape4;
+          Textra::array1          shape1;
 
-    idxlistpair<long, 3> sortedIndices1;
-    idxlistpair<long, 2> sortedIndices2;
+    Textra::idxlistpair<long, 3> sortedIndices1;
+    Textra::idxlistpair<long, 2> sortedIndices2;
 public:
-    explicit class_eigensolver_product(const Tensor<Scalar,3> &Lblock_,
-                                       const Tensor<Scalar,3> &Rblock_,
-                                       const Tensor<Scalar,6> &MM_,
-                                       const array4 &shape4_);
+    explicit class_eigensolver_product(const Textra::Tensor<Scalar,3> &Lblock_,
+                                       const Textra::Tensor<Scalar,3> &Rblock_,
+                                       const Textra::Tensor<Scalar,6> &MM_,
+                                       const Textra::array4 &shape4_);
 
 
     /*! Function for eigenvalue solver Spectra
