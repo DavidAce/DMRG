@@ -5,7 +5,7 @@
 #ifndef DMRG_N_DATA_CONTAINERS_H
 #define DMRG_N_DATA_CONTAINERS_H
 #include <vector>
-#include <general/class_hdf5_dataset_buffer.h>
+#include <IO/class_hdf5_dataset_buffer.h>
 #include <sim_parameters/n_model.h>
 #include "class_observables.h"
 
