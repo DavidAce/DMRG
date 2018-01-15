@@ -22,7 +22,6 @@ namespace arpack{
 }
 
 
-
 class class_eig_arpack {
 private:
     double eigThreshold = 1e-14;
