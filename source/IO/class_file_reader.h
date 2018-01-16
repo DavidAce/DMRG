@@ -16,7 +16,7 @@
 #include <experimental/filesystem>
 #include <algorithm>
 #include <directory.h>
-
+#include <IO/class_custom_cout.h>
 
 namespace fs = std::experimental::filesystem::v1;
 
@@ -25,82 +25,15 @@ class class_file_reader {
 private:
     fs::path    file_path;
     std::ifstream    file;
-
-    bool check_if_input_file_exists(const fs::path &path_to_file){
-        if (path_to_file.has_filename()){
-            if(fs::exists(path_to_file)){
-                std::ifstream in(path_to_file.c_str());
-                if(in.is_open()){
-                    in.close();
-                    std::cout << "Found input file: " << path_to_file << '\n';
-                    return true;
-                }
-            }
-            std::cout << "File does not exist: " << path_to_file << std::endl;
-            return false;
-        }
-        std::cout << "Given path does not point to a file: "  << path_to_file << std::endl;
-        return false;
-    }
-
-    fs::path find_input_file(const fs::path &given_path) {
-
-        //Check if file exists in path as given, relative to the executable.
-        fs::path complete_path = fs::system_complete(given_path);
-        if (check_if_input_file_exists(complete_path)){
-            return fs::canonical(complete_path);
-        }
-
-        //Check if file exists in path as given, relative to the project root folder.
-        complete_path = fs::system_complete(fs::path(directory::SOURCE_DIR) / given_path);
-        if (check_if_input_file_exists(complete_path)){
-            return fs::canonical(complete_path);
-        }
-
-        //As a last resort, search in input/ folder
-        std::vector<fs::path> matching_files;
-        fs::path input_abs_path(directory::INPUT_DIR);
-        fs::path given_filename = given_path.filename();
-        std::cout << "Searching for file " << given_filename << " in folder PROJECT_ROOT/input" << std::endl;
-
-        for(auto& p: fs::recursive_directory_iterator(input_abs_path)) {
-            if (p.path().filename() == given_filename ) {
-                if(check_if_input_file_exists(p)) {
-                    matching_files.emplace_back(p.path());
-                }
-            }
-        }
-
-        if(matching_files.size() > 1){
-            std::cout << std::flush;
-            std::cerr << "Found multiple files with the given filename: [" << given_filename << "]." << std::endl;
-            std::cerr << "Exiting..." << std::endl;
-            exit(1);
-        }else{
-            std::cout << std::flush;
-            return fs::canonical(matching_files[0]);
-        }
-    }
-
-
-    void remove_spaces(std::string &str){
-        str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
-    }
-    bool has_only_digits(const std::string s){
-        return s.find_first_not_of( "+-0123456789" ) == std::string::npos;
-    }
-
-    bool is_parameterline(const std::string s){
-        return s.find("=") != std::string::npos;
-    }
-
-    auto find_comment_character(const std::string s){
-        return s.find_first_of( "/#!*{}()&$@;" );
-    }
-
+    bool check_if_input_file_exists(const fs::path &path_to_file);
+    fs::path find_input_file(const fs::path &given_path);
+    void remove_spaces(std::string &str);
+    bool has_only_digits(const std::string s);
+    bool is_parameterline(const std::string s);
+    std::string::size_type find_comment_character(const std::string s);
+    class_custom_cout ccout;
 public:
-    class_file_reader(){}
-
+    class_file_reader() = default;
     explicit class_file_reader(const fs::path &file_path_): file_path(file_path_) {
         try {
             file.open(find_input_file(file_path).c_str());
@@ -111,22 +44,12 @@ public:
         }
     };
 
-    void set_inputfile(const fs::path &file_path_){
-        file_path = file_path_;
-        try {
-            file.open(find_input_file(file_path).c_str());
-        }
-        catch(std::exception &ex){
-            std::cerr << "Exiting: " << ex.what() << std::endl;
-            exit(1);
-        }    }
-
     template <typename T>
     T find_parameter(std::string param_requested, T default_value){
         if (file.is_open()){
             return find_parameter<T>(param_requested);
         }else{
-            std::cout << "Missing input file: Using default value." << std::endl;
+            ccout(1) << "Missing input file: Using default value." << std::endl;
             return default_value;
         }
     }
@@ -156,7 +79,7 @@ public:
                 std::transform(param_key.begin(), param_key.end(), param_key.begin(), ::tolower);
                 std::transform(param_requested.begin(), param_requested.end(), param_requested.begin(), ::tolower);
                 if (param_requested == param_key && !param_key.empty()) {
-                    std::cout << "Loading line:     " << line << std::endl;
+                    ccout(2) << "Loading line:     " << line << std::endl;
                     if constexpr (std::is_same<T,int>::value){
                         if (has_only_digits(param_val)) {
                             try {

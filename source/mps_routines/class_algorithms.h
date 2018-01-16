@@ -24,12 +24,11 @@ private:
     class_tic_toc t_upd;
     class_tic_toc t_sto;
     class_tic_toc t_mps;
-
     class_hdf5 hdf5;
+    class_custom_cout ccout;
 
 public:
-    class_algorithms():
-    hdf5(class_hdf5(settings::hdf5::filename, settings::hdf5::path, true)){};
+    class_algorithms(){};
     void single_DMRG_step(class_superblock &superblock, long chi_max);
     void single_TEBD_step(class_superblock &superblock, long chi_max);
 

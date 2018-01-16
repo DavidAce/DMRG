@@ -27,7 +27,8 @@ public:
     class_mpo(){};
     using                       Scalar                = double;
     static constexpr int        mps_sites             = 2;                                                                              // Two site MPS
-    long                        local_dimension       = Model::local_dimension;                                                         // "Spin" dimension
+    long                        local_dimension       = Model::local_dimension;    // "Spin" dimension
+    double                      timestep              ;
     Textra::MatrixType<Scalar>  H_asMatrix      = Model::H(mps_sites).real();                                                      // Matrix representation of full 2-site Hamiltonian
     Textra::Tensor<Scalar,4>    H_asTensor      = Textra::Matrix_to_Tensor<std::complex<double>,4>(Model::H(mps_sites), {2,2,2,2}).real(); // Rank-4 representation 2-site Hamiltonian (non MPO).
     Textra::MatrixType<Scalar>  H_MPO_asMatrix  = Model::MPO_asMatrix().real();                                                    // Matrix representation of full 2-site Hamiltonian

@@ -3,58 +3,58 @@
 //
 
 #include "n_sim_settings.h"
-//Parmaters that control eigensolver and SVD precision
+#include <IO/class_file_reader.h>
 using namespace std;
-
 namespace settings{
+    int    precision::eigSteps           = 5000;
+    double precision::eigThreshold       = 1e-12;
+    int    precision::eig_max_ncv        = 20;
+    double precision::SVDThreshold       = 1e-12;
 
-int    precision::eigSteps           = 5000;
-double precision::eigThreshold       = 1e-12;
-int    precision::eig_max_ncv        = 20;
-double precision::SVDThreshold       = 1e-12;
+    //Parameters controlling infinite-DMRG
+    bool   idmrg::on                     = true;
+    int    idmrg::max_length             = 5000;
+    long   idmrg::chi_max                = 8;
+    //Parameters controlling Finite-DMRG
+    bool   fdmrg::on                     = true;
+    int    fdmrg::max_length             = 200;
+    int    fdmrg::max_sweeps             = 4;
+    long   fdmrg::chi_max                = 8;
+    //Parameters controlling imaginary TEBD (Zero temperature)
+    bool   itebd::on                     = true;
+    int    itebd::max_steps              = 10000;
+    double itebd::delta_t                = 0.01;
+    long   itebd::chi_max                = 8;
 
-//Parameters controlling infinite-DMRG
-bool   idmrg::on                     = false;
-int    idmrg::max_length             = 200;
-long   idmrg::chi_max                = 25;
-//Parameters controlling Finite-DMRG
-bool   fdmrg::on                     = false;
-int    fdmrg::max_length             = 200;
-int    fdmrg::max_sweeps             = 2;
-long   fdmrg::chi_max                = 8;
-//Parameters controlling imaginary TEBD (Zero temperature)
-bool   itebd::on                     = false;
-int    itebd::max_steps              = 100000;
-double itebd::delta_t                = 0.01;
-long   itebd::chi_max                = 25;
+    //Parameters controlling Finite-entanglement scaling (FES) in iTEBD-mode.
+    bool   fes_itebd::on                 = true;
+    int    fes_itebd::max_steps          = 10000;
+    double fes_itebd::delta_t            = 0.01;
+    long   fes_itebd::chi_min            = 4;
+    long   fes_itebd::chi_max            = 12;
+    long   fes_itebd::chi_num            = 3;
 
-//Parameters controlling Finite-entanglement scaling (FES) in iTEBD-mode.
-bool   fes_itebd::on                 = false;
-int    fes_itebd::max_steps          = 100000;
-double fes_itebd::delta_t            = 0.01;
-long   fes_itebd::chi_min            = 4;
-long   fes_itebd::chi_max            = 12;
-long   fes_itebd::chi_num            = 3;
+    //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
+    bool   fes_idmrg::on                 = true;
+    int    fes_idmrg::max_steps          = 2000;
+    long   fes_idmrg::chi_min            = 4;
+    long   fes_idmrg::chi_max            = 12;
+    long   fes_idmrg::chi_num            = 3;
 
-//Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
-bool   fes_idmrg::on                 = false;
-int    fes_idmrg::max_steps          = 4000;
-long   fes_idmrg::chi_min            = 4;
-long   fes_idmrg::chi_max            = 12;
-long   fes_idmrg::chi_num            = 3;
+    //Save data to hdf5
+    bool   hdf5::save_to_file             = true;
+    bool   hdf5::create_dir_if_not_found  = true;
+    bool   hdf5::overwrite_file_if_found  = false;
+    string hdf5::output_filename          = "data.h5";
+    string hdf5::output_folder            = "output";
+    bool   hdf5::full_storage             = true;
 
-//Save data to hdf5
-bool   hdf5::save_to_file             = true;
-bool   hdf5::create_dir_if_not_found  = true;
-string hdf5::filename                = "data.h5";
-string hdf5::path                    = "../output";
-bool   hdf5::full_storage             = true;
-
-//Profiling
-bool profiling::on                   = false;
-int  profiling::precision            = 5;
-//Console settings
-int  console::verbosity              = 0;
+    //Profiling
+    bool profiling::on                   = false;
+    int  profiling::precision            = 5;
+    //Console settings
+    int  console::verbosity              = 2;
+    bool console::timestamp              = false;
 
 }
 
@@ -99,13 +99,15 @@ void settings::initialize(class_file_reader &indata){
     //Save data to hdf5
     hdf5::save_to_file             = indata.find_parameter<bool>   ("hdf5::save_to_file"            , hdf5::save_to_file           );
     hdf5::create_dir_if_not_found  = indata.find_parameter<bool>   ("hdf5::create_dir_if_not_found" , hdf5::create_dir_if_not_found);
-    hdf5::filename                 = indata.find_parameter<string> ("hdf5::filename"                , hdf5::filename               );
-    hdf5::path                     = indata.find_parameter<string> ("hdf5::path"                    , hdf5::path                   );
+    hdf5::overwrite_file_if_found  = indata.find_parameter<bool>   ("hdf5::overwrite_file_if_found" , hdf5::overwrite_file_if_found);
+    hdf5::output_filename          = indata.find_parameter<string> ("hdf5::output_filename"         , hdf5::output_filename);
+    hdf5::output_folder            = indata.find_parameter<string> ("hdf5::output_folder"           , hdf5::output_folder);
     hdf5::full_storage             = indata.find_parameter<bool>   ("hdf5::full_storage"            , hdf5::full_storage           );
 
     //Profiling
     profiling::on                  = indata.find_parameter<bool>   ("profiling::on"        , profiling::on        );
     profiling::precision           = indata.find_parameter<int>    ("profiling::precision" , profiling::precision );
     //Console settings
-    console::verbosity             = indata.find_parameter<int>    ("console::verbosity"          , console::verbosity);
+    console::verbosity             = indata.find_parameter<int>    ("console::verbosity"   , console::verbosity);
+    console::timestamp             = indata.find_parameter<bool>   ("console::timestamp"   , console::timestamp);
 }

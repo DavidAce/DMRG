@@ -48,6 +48,7 @@ void class_algorithms::iDMRG(){
  */
 
     if(!settings::idmrg::on){return;}
+    ccout(0) << "Starting normal simulation using infinite-DMRG " << std::endl;
     using namespace settings::profiling;
     t_tot.set_properties(on, precision, "iDMRG Total Time           ");
     t_eig.set_properties(on, precision, "iDMRG Eigenvalue solver    ");
@@ -70,13 +71,14 @@ void class_algorithms::iDMRG(){
 
     }
     t_tot.toc();
-    observables.print_status_full(s::console::verbosity + 1);
+    observables.print_status_full();
     t_eig.print_time_w_percent();
     t_svd.print_time_w_percent();
     t_env.print_time_w_percent();
     t_sto.print_time_w_percent();
     t_mps.print_time_w_percent();
     t_tot.print_time();
+    cout << endl;
 }
 
 void class_algorithms::fDMRG(){
@@ -85,6 +87,7 @@ void class_algorithms::fDMRG(){
  * \brief Finite DMRG sweeps across the chain built during iDMRG.
  */
     if(!settings::fdmrg::on){return;}
+    ccout(0) << "Starting normal simulation using finite-DMRG " << std::endl;
 
     using namespace settings::profiling;
     t_tot.set_properties(on, precision, "fDMRG Total Time           ");
@@ -118,13 +121,14 @@ void class_algorithms::fDMRG(){
     }
 
     t_tot.toc();
-    observables.print_status_full(s::console::verbosity + 1);
+    observables.print_status_full();
     t_eig.print_time_w_percent();
     t_svd.print_time_w_percent();
     t_env.print_time_w_percent();
     t_sto.print_time_w_percent();
     t_mps.print_time_w_percent();
     t_tot.print_time();
+    cout << endl;
 }
 
 void class_algorithms::iTEBD(){
@@ -135,6 +139,7 @@ void class_algorithms::iTEBD(){
  * \param max_iter Maximum number of iterations.
  */
     if(!settings::itebd::on){return;}
+    ccout(0) << "Starting normal simulation using iTEBD " << std::endl;
     using namespace settings::profiling;
     class_tic_toc t_evo(on, precision, "iTEBD Time evolution       ");
     class_tic_toc t_svd(on, precision, "iTEBD SVD Truncation       ");
@@ -154,11 +159,12 @@ void class_algorithms::iTEBD(){
 
     }
     t_tot.toc();
-    observables.print_status_full(s::console::verbosity + 1);
+    observables.print_status_full();
     t_evo.print_time_w_percent();
     t_svd.print_time_w_percent();
     t_mps.print_time_w_percent();
     t_tot.print_time();
+    cout << endl;
 }
 
 void class_algorithms::FES_iTEBD(){
@@ -172,15 +178,24 @@ void class_algorithms::FES_iTEBD(){
  */
     if(!settings::fes_itebd::on){return;}
     using namespace settings::profiling;
+    ccout(0) << "Starting Finite-Entanglement Scaling simulation using iTEBD " << std::endl;
     auto chi_max_list = Math::LinSpaced(s::fes_itebd::chi_num, s::fes_itebd::chi_min,s::fes_itebd::chi_max);
+    t_tot.set_properties(on, precision, "FES_iTEBD +Total Time              ");
+    t_sto.set_properties(on, precision, "          \u21B3 Store Results          ");
+    t_upd.set_properties(on, precision, "          \u21B3 Update Evolution       ");
+    t_sim.set_properties(on, precision, "          \u21B3+Simulation             ");
+    t_evo.set_properties(on, precision, "           \u21B3 Time Evolution        ");
+    t_svd.set_properties(on, precision, "           \u21B3 SVD Truncation        ");
+    t_mps.set_properties(on, precision, "           \u21B3 Update MPS            ");
     for(auto &chi_max : chi_max_list) {
-        t_evo.set_properties(on, precision, "FES_iTEBD Time evolution       ");
-        t_svd.set_properties(on, precision, "FES_iTEBD SVD Truncation       ");
-        t_mps.set_properties(on, precision, "FES_iTEBD Update MPS           ");
-        t_upd.set_properties(on, precision, "FES_iTEBD Update Evolution     ");
-        t_tot.set_properties(on, precision, "FES_iTEBD Total Time           ");
-
+        t_tot.reset();
         t_tot.tic();
+        t_sto.reset();
+        t_upd.reset();
+        t_sim.reset();
+        t_evo.reset();
+        t_svd.reset();
+        t_mps.reset();
 
         double time_step = s::fes_itebd::delta_t;
         class_superblock superblock;
@@ -193,21 +208,25 @@ void class_algorithms::FES_iTEBD(){
         double old_entropy = 0;
         double new_entropy = observables.get_entropy();
         while(time_step > 1e-6 && step < s::fes_itebd::max_steps){
+            t_sim.tic();
             single_TEBD_step(superblock, chi_max );
-            t_upd.tic();
-            if(Math::mod(step,1000)==0){
+            t_sim.toc();
+
+
+            t_sto.tic();
+            if(Math::mod(step,100)==0){
                 container.push_back(observables);
                 container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
             }
-            if(Math::mod(step,1000)==0){
-                cout << "Timestep: " << setprecision(10) << setw(12) << time_step << " ";
-                cout << observables.first_moment() << endl;
+            t_sto.toc();
+            if(Math::mod(step,500)==0){
+//                ccout(1) << observables.first_moment() << endl;
                 observables.print_status_update(step);
             }
 
 
-
-            if(Math::mod(step,1000)==0){
+            t_upd.tic();
+            if(Math::mod(step,500)==0){
                 old_entropy = new_entropy;
                 new_entropy = observables.get_entropy();
                 if (std::fabs((new_entropy-old_entropy)/new_entropy) < 1e-6*time_step ){
@@ -225,13 +244,16 @@ void class_algorithms::FES_iTEBD(){
         cout <<setprecision(16);
         container.push_back(observables);
         container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
-        observables.print_status_full(s::console::verbosity + 1);
+        observables.print_status_full();
         t_tot.toc();
-        t_evo.print_time_w_percent();
-        t_svd.print_time_w_percent();
-        t_mps.print_time_w_percent();
-        t_upd.print_time_w_percent();
-        t_tot.print_time();
+        t_tot.print_time_w_percent();
+        t_sto.print_time_w_percent(t_tot);
+        t_upd.print_time_w_percent(t_tot);
+        t_sim.print_time_w_percent(t_tot);
+        t_evo.print_time_w_percent(t_sim);
+        t_svd.print_time_w_percent(t_sim);
+        t_mps.print_time_w_percent(t_sim);
+        cout << endl;
     }
     }
 
@@ -245,24 +267,26 @@ void class_algorithms::FES_iDMRG(){
  * to see how entanglement grows as a function of  \f$\chi\f$ (chi).
  */
     if(!settings::fes_idmrg::on){return;}
+    ccout(0) << "Starting Finite-Entanglement Scaling simulation using infinite-DMRG " << std::endl;
     using namespace settings::profiling;
-    t_tot.set_properties(on, precision, "FES_iDMRG *Total Time             ");
-    t_sim.set_properties(on, precision, "FES_iDMRG |--*Simulation          ");
-    t_eig.set_properties(on, precision, "FES_iDMRG    |--Eig. decomp.      ");
-    t_svd.set_properties(on, precision, "FES_iDMRG    |--SVD Truncation    ");
-    t_mps.set_properties(on, precision, "FES_iDMRG    |--Update MPS        ");
-    t_sto.set_properties(on, precision, "FES_iDMRG -Store Results          ");
-    t_env.set_properties(on, precision, "FES_iDMRG -Update Environments    ");
+    t_tot.set_properties(on, precision, "FES_iDMRG +Total Time              ");
+    t_sto.set_properties(on, precision, "          \u21B3 Store Results          ");
+    t_env.set_properties(on, precision, "          \u21B3 Update Environments    ");
+    t_sim.set_properties(on, precision, "          \u21B3+Simulation             ");
+    t_eig.set_properties(on, precision, "           \u21B3 Eig. decomp.          ");
+    t_svd.set_properties(on, precision, "           \u21B3 SVD Truncation        ");
+    t_mps.set_properties(on, precision, "           \u21B3 Update MPS            ");
 
     auto chi_max_list = Math::LinSpaced(s::fes_idmrg::chi_num, s::fes_idmrg::chi_min,s::fes_idmrg::chi_max);
     for(auto &chi_max : chi_max_list ) {
-         t_tot.reset();
-         t_sim.reset();
-         t_eig.reset();
-         t_svd.reset();
-         t_mps.reset();
-         t_sto.reset();
-         t_tot.tic();
+        t_tot.reset();
+        t_tot.tic();
+
+        t_sim.reset();
+        t_eig.reset();
+        t_svd.reset();
+        t_mps.reset();
+        t_sto.reset();
 
         output_data_container container(&hdf5, "FES_iDMRG/chi", chi_max );
         class_superblock superblock;
@@ -273,17 +297,18 @@ void class_algorithms::FES_iDMRG(){
             t_sim.tic();
             single_DMRG_step(superblock, chi_max);
             t_sim.toc();
-            t_sto.tic();
 
-            t_sto.toc();
-            if(Math::mod(step,1000)==0) {
+            if(Math::mod(step,100)==0) {
                 observables.get_variance();
                 observables.print_status_update(step);
             }
+            t_sto.tic();
             if(Math::mod(step,100)==0) {
                 container.push_back(observables);
                 container.push_back(step, 0, 0, t_tot.get_age());
             }
+            t_sto.toc();
+
             t_env.tic();
             superblock.enlarge_environment();
             t_env.toc();
@@ -292,15 +317,17 @@ void class_algorithms::FES_iDMRG(){
         }
         container.push_back(observables);
         container.push_back(step, 0, 0, t_tot.get_age());
-        observables.print_status_full(s::console::verbosity + 1);
+        observables.print_status_full();
         t_tot.toc();
         t_tot.print_time_w_percent();
+        t_sto.print_time_w_percent(t_tot);
+        t_env.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
         t_eig.print_time_w_percent(t_sim);
         t_svd.print_time_w_percent(t_sim);
         t_mps.print_time_w_percent(t_sim);
-        t_sto.print_time_w_percent(t_tot);
-        t_env.print_time_w_percent(t_tot);
+
+        cout << endl;
     }
 }
 

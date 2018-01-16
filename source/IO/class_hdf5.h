@@ -20,7 +20,9 @@
 #include <type_traits>
 #include <typeinfo>
 #include "general/n_math.h"
+#include "class_custom_cout.h"
 #include <gitversion.h>
+#include <sim_parameters/n_sim_settings.h>
 
 namespace fs = std::experimental::filesystem::v1;
 
@@ -71,19 +73,20 @@ class class_hdf5 {
 private:
     hid_t       file;
     herr_t      retval;
-    fs::path    file_name          = fs::path("output.h5");
-    fs::path    executable_path    = fs::current_path();
-    fs::path    output_path;
-    fs::path    output_dirname     = fs::path("output");
-    bool create_dir;
-    void set_output_path();
+    fs::path    output_filename;
+    fs::path    output_folder;
+    fs::path    output_file_path;
+    bool        create_dir;
+    bool        overwrite;
+    void set_output_file_path();
+    class_custom_cout ccout;
 
 public:
 
-    explicit class_hdf5(const fs::path &file_name_, const fs::path &output_dirname_ , bool create_dir_ = true);
-
+    explicit class_hdf5(const fs::path &output_filename_, const fs::path &output_dirname_ , bool create_dir_ = true, bool overwrite_ = false);
+    explicit class_hdf5();
+    void initialize();
     ~class_hdf5(){H5Fclose(file);}
-
 
     void open_file();
     void create_group(const std::string &group_relative_name);
@@ -103,8 +106,6 @@ public:
     template <typename AttrType>
     void write_attribute_to_dataset(const std::string &dataset_relative_name,  const AttrType &attribute ,const std::string &attribute_name);
 
-
-
 private:
 
     template<typename DataType>
@@ -117,7 +118,7 @@ private:
         if constexpr (std::is_same<DataType, std::string>::value)  {return  H5Tcopy(H5T_C_S1);}
         if constexpr (tc::has_member_scalar <DataType>::value)   {return  get_DataType<typename DataType::Scalar>();}
         if constexpr (tc::has_member_value_type<DataType>::value){return  get_DataType<typename DataType::value_type>();}
-        std::cout << "get_DataType can't match the type provided" << '\n';
+        std::cerr << "get_DataType could not match the type provided" << std::endl;
         exit(1);
     }
 
@@ -152,20 +153,13 @@ private:
             hsize_t dimss[rankk] = {1};
             return H5Screate_simple(rankk, dimss, nullptr);
         }
-        std::cout << "get_DataSpace can't match the type provided: " << typeid(data).name() << '\n';
+        std::cerr << "get_DataSpace can't match the type provided: " << typeid(data).name() << '\n';
         exit(1);
     }
 
 
 
 };
-
-
-
-
-
-
-
 
 
 

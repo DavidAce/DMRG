@@ -5,7 +5,6 @@
 namespace directory{
 	inline std::string SOURCE_DIR 		= "@CMAKE_SOURCE_DIR@";
 	inline std::string BINARY_DIR		= "@CMAKE_BINARY_DIR@";
-	inline std::string INPUT_DIR		= "@CMAKE_SOURCE_DIR@/input";
-	inline std::string OUTPUT_DIR		= "@CMAKE_SOURCE_DIR@/output";
+	inline std::string PROJECT_DIR 		= "@PROJECT_SOURCE_DIR@";
 }
 #endif

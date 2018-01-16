@@ -14,7 +14,7 @@ class_tic_toc::class_tic_toc(bool on_off, int prec, string output_text)
 {
     if (profiling) {
         if (!name.empty()){
-            name = " " + name + ": ";
+            name = name + ": ";
         }
         measured_time   = measured_time.zero();
         delta_time      = delta_time.zero();
@@ -74,7 +74,7 @@ void class_tic_toc::print_time_w_percent(class_tic_toc &parent){
              << fixed << setprecision(print_precision) << setw(print_precision + padding) << right
              << 100.0*measured_time.count() / parent.measured_time.count() << " % |"
              << fixed << setprecision(print_precision) << setw(print_precision + padding) << right
-             << 100.0*measured_time.count() / (high_resolution_clock::now() - start_timepoint).count() << "% of total\n";
+             << 100.0*measured_time.count() / (high_resolution_clock::now() - start_timepoint).count() << "% of parent\n";
 
     }
 }
@@ -95,6 +95,7 @@ double class_tic_toc::get_age() {
 void class_tic_toc::reset() {
     if (profiling) {
         measured_time = measured_time.zero();
+        start_timepoint = high_resolution_clock::now();
     }
 }
 

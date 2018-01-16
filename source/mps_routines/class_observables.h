@@ -5,10 +5,12 @@
 #ifndef DMRG_CLASS_OBSERVABLES_H
 #define DMRG_CLASS_OBSERVABLES_H
 #include <map>
-#include <general/class_eig_arpack_wrapper.h>
 #include <Eigen/Eigenvalues>
 #include <complex>
-#include "class_superblock.h"
+#include <IO/class_custom_cout.h>
+#include <general/class_eig_arpack_wrapper.h>
+#include <mps_routines/class_superblock.h>
+#include <mps_routines/class_mps.h>
 //using namespace std::complex_literals;
 
 enum class SimulationType {iDMRG,fDMRG, FES_iDMRG, iTEBD, FES_iTEBD};
@@ -20,6 +22,7 @@ private:
     SimulationType sim;
     using MapType = std::map<SimulationType, std::string>;
     MapType Sim2String;
+    class_custom_cout ccout;
     template <typename T>
     double find_slope(std::vector<T> &xvec, std::vector<T> &yvec ){
         Eigen::Array<T,Eigen::Dynamic, 1> X = Eigen::Map<Eigen::Array<T,Eigen::Dynamic, 1>>(xvec.data(), xvec.size());             //Cast to eigen array
@@ -89,7 +92,7 @@ public:
     long   get_chi();
     long   get_chain_length();
 
-    void print_status_full(int verbosity);   /*!< Print out status of all observables.*/
+    void print_status_full();                /*!< Print out status of all observables.*/
     void print_status_update(int step = 0);  /*!< Print out status of all observables.*/
 
 
