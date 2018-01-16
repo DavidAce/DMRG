@@ -52,7 +52,7 @@ public:
         if (hdf5_out != nullptr){
             write_buffer_to_file(*hdf5_out);
         }else if (!data_has_been_written_to_file){
-            std::cerr << "Output data has not saved to file, yet it is being discarded!\n" << std::endl;
+            std::cerr << "Warning: Output data has not been saved to file, yet it is being discarded!\n" << std::endl;
         }
     }
 

@@ -146,30 +146,42 @@ long class_observables::get_chain_length(){
     return superblock.chain_length;
 }
 
-void class_observables::print_status_full(int verbosity) {
-    if (verbosity >= 1) {
-        cout << setprecision(16) << fixed << left;
-        cout << setw(20) << "E_inf_" + Sim2String.at(sim) << " = "   << get_energy() << '\n';
-        if(verbosity >= 2) {
-            cout  << setw(20) << "Entanglement Entropy = " << setprecision(16) << fixed      << get_entropy() << '\n';
-            cout  << setw(20) << "Truncation error     = " << setprecision(4)  << scientific << get_truncation_error() << '\n';
-            cout  << setw(20) << "Variance             = " << setprecision(16) << scientific << get_variance() << '\n';
-            cout  << setw(20) << "chi_max              = " << setprecision(4)  << fixed      << get_chi_max() << '\n';
-            cout  << setw(20) << "chi                  = " << setprecision(4)  << fixed      << get_chi()     << '\n';
-
-        }
-    }
-}
-
 
 void class_observables::print_status_update(int step) {
-    cout << left  << Sim2String.at(sim)
-         << left  << setw(10) << step
-         << left  << "E: "                      << setw(25) << setprecision(16)    << fixed   << get_energy()
-         << left  << "Var(E): "                 << setw(25) << setprecision(16)    << fixed   << get_variance()
-         << left  << "Entanglement Entropy: "   << setw(25) << setprecision(16)    << fixed   << get_entropy()
-         << left  << "SVD truncation: "         << setw(25) << setprecision(16)    << fixed   << get_truncation_error()
-         << left  << "\u03C7_max: "             << setw(3)  << setprecision(4)     << fixed   << get_chi_max()
-         << left  << "\u03C7: "                 << setw(20) << setprecision(4)     << fixed   << get_chi()
-         << '\n';
+    std::cout << setprecision(16) << fixed << left;
+    ccout(1) << left  << Sim2String.at(sim);
+    ccout(1) << left  << "Step: "                   << setw(10) << step;
+    ccout(1) << left  << "E: "                      << setw(21) << setprecision(16)    << fixed   << get_energy();
+    ccout(1) << left  << "Entanglement Entropy: "   << setw(21) << setprecision(16)    << fixed   << get_entropy();
+    ccout(1) << left  << "\u03C7_max: "             << setw(4)  << setprecision(3)     << fixed   << get_chi_max();
+    ccout(1) << left  << "\u03C7: "                 << setw(4)  << setprecision(3)     << fixed   << get_chi();
+    ccout(1) << left  << "Var(E): "                 << setw(21) << setprecision(16)    << fixed   << get_variance();
+    ccout(1) << left  << "SVD truncation: "         << setw(21) << setprecision(16)    << fixed   << get_truncation_error();
+
+    if(Sim2String[sim].find("TEBD") != std::string::npos){
+        ccout(1) << left  << "Timestep: "                 << setw(25) << setprecision(12)    << fixed   << superblock.H.timestep;
+    }
+    if(Sim2String[sim].find("DMRG") != std::string::npos){
+        ccout(1) << left  << "Chain length: "                 << setw(25) << setprecision(12)    << fixed   << superblock.chain_length;
+    }
+    ccout(1) << std::endl;
+}
+
+void class_observables::print_status_full() {
+    std::cout << std::endl;
+    std::cout << " -- Final results -- " << Sim2String.at(sim) << std::endl;
+    ccout(0)  << setw(20) << "Energy               = " << setprecision(16) << fixed      << get_energy()        << std::endl;
+    ccout(0)  << setw(20) << "Entanglement Entropy = " << setprecision(16) << fixed      << get_entropy()       << std::endl;
+    ccout(0)  << setw(20) << "chi_max              = " << setprecision(4)  << fixed      << get_chi_max()       << std::endl;
+    ccout(0)  << setw(20) << "chi                  = " << setprecision(4)  << fixed      << get_chi()           << std::endl;
+    ccout(0)  << setw(20) << "Variance             = " << setprecision(16) << scientific << get_variance()      << std::endl;
+    ccout(0)  << setw(20) << "SVD truncation       = " << setprecision(4)  << scientific << get_truncation_error() << std::endl;
+    if(Sim2String[sim].find("TEBD") != std::string::npos){
+    ccout(0)  << setw(20) << "Timestep             = " << setprecision(12) << fixed   << superblock.H.timestep << std::endl;
+    }
+    if(Sim2String[sim].find("DMRG") != std::string::npos){
+    ccout(0) << setw(20)  << "Chain length         = " << setprecision(12) << fixed   << superblock.chain_length << std::endl;
+    }
+    std::cout << std::endl;
+
 }

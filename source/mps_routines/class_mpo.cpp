@@ -36,7 +36,7 @@ Tensor<class_mpo::Scalar,6> class_mpo::compute_MM() {
      *           |   |
      *           4   5
      */
-    cout << M.dimensions() << endl;
+//    cout << M.dimensions() << endl;
 
     return  M.contract(M, idx<1>({1},{0})).shuffle(array6{0,3,1,4,2,5});
 
@@ -56,8 +56,6 @@ Tensor<std::complex<double>,4> class_mpo::compute_F(double a){
     * Where H = H_even + H_odd, so exp(aH) can be Suzuki-Trotter decomposed just as in iTEBD
     */
     return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_2nd_order(a), {2,2,2,2});
-
-//    return Matrix_to_Tensor<std::complex<double>,4>((a*h[0]/2.0).exp() * (a*h[1]).exp() * (a * h[0]/2.0).exp(), {2,2,2,2});
 };
 
 
@@ -72,9 +70,6 @@ Tensor<std::complex<double>,4> class_mpo::compute_G(double a){
     *           2         3
     */
     return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_1st_order(1.0i * a), {2,2,2,2});
-
-    //REmember to take the negative or positive "t" in ST
-//    return Matrix_to_Tensor<std::complex<double>,4>((x*h[0]).exp() * (x2*h[1]).exp() * (x*h[0]).exp(), {2,2,2,2});
 };
 
 Tensor<std::complex<double>,4> class_mpo::compute_logG(double a){
@@ -122,6 +117,7 @@ Tensor<class_mpo::Scalar,4> class_mpo::compute_Udt(double delta_t, int order){
 *           |         |
 *           2         3
 */
+    timestep = delta_t;
 
     switch (order){
         case 1:
@@ -137,5 +133,6 @@ Tensor<class_mpo::Scalar,4> class_mpo::compute_Udt(double delta_t, int order){
 
 
 void class_mpo::update_timestep(const double delta_t, const int order){
+    timestep = delta_t;
     Udt = compute_Udt(delta_t, order);
 }

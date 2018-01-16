@@ -3,15 +3,29 @@
 //
 
 #include "class_hdf5.h"
+#include <fstream>
+#include <istream>
+#include <directory.h>
 
-class_hdf5::class_hdf5(const fs::path &file_name_, const fs::path &output_dirname_ , bool create_dir_):
-        file_name(file_name_),
-        output_dirname(output_dirname_),
-        create_dir(create_dir_)
-{
-    set_output_path();
-    file = H5Fcreate(file_name.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, H5P_DEFAULT);
+class_hdf5::class_hdf5(const fs::path &output_filename_, const fs::path &output_folder_ , bool create_dir_, bool overwrite_){
+    output_filename = output_filename_;
+    output_folder   = output_folder_;
+    create_dir      = create_dir_;
+    overwrite       = overwrite_;
+    initialize();
+}
 
+class_hdf5::class_hdf5(){
+    output_filename = settings::hdf5::output_filename;
+    output_folder   = settings::hdf5::output_folder;
+    create_dir      = settings::hdf5::create_dir_if_not_found;
+    overwrite       = settings::hdf5::overwrite_file_if_found;
+    initialize();
+}
+
+void class_hdf5::initialize(){
+    set_output_file_path();
+    file = H5Fcreate(output_file_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, H5P_DEFAULT);
     //Put git revision in file attribute
     std::string gitversion = "Branch: " + GIT::BRANCH + " | Commit hash: " + GIT::COMMIT_HASH + " | Revision: " + GIT::REVISION;
     hid_t datatype          = get_DataType<std::string>();
@@ -26,36 +40,100 @@ class_hdf5::class_hdf5(const fs::path &file_name_, const fs::path &output_dirnam
 }
 
 
-void class_hdf5::set_output_path() {
-    output_path = fs::system_complete(output_dirname);
-    if (create_dir) {
-        //Create directory
-        fs::create_directories(output_path);
-        output_path = fs::canonical(output_dirname);
-        file_name = output_path / file_name;
-    } else {
-        //Try to find the directory
-        output_path = executable_path / output_dirname.stem();
-        while (true) {
-            std::cout << "Searching for directory: " << output_path << '\n';
-            if (fs::exists(output_path)) {
-                output_path = fs::canonical(output_path);
-                std::cout << "Found " << output_dirname << " directory: " << output_path << '\n';
-                break;
-            } else if (output_path.parent_path().has_parent_path()) {
-                output_path = output_path.parent_path().parent_path() / output_dirname.stem();
-            } else {
-                std::cout << "ERROR: " << output_dirname << " folder does not exist and create_dir == false. \n";
-                std::cout << "Either create an " << output_dirname << "  directory manually or pass create_dir = true.\n";
-                exit(1);
+void class_hdf5::set_output_file_path() {
+    fs::path project_folder  = fs::canonical(directory::PROJECT_DIR);
+    if(output_folder.has_filename() and output_folder.has_extension()){output_folder.remove_filename();}
+    ccout(1) << "output_folder     = " << output_folder << std::endl;
+    ccout(1) << "output_filename   = " << output_filename << std::endl;
+
+    //Convert the output_folder to a full path. If relative, make it relative to project root folder!
+    fs::path output_folder_abs;
+    if (output_folder.is_relative()) {
+        output_folder_abs = fs::system_complete(project_folder / output_folder);
+    } else if (output_folder.is_absolute()) {
+        output_folder_abs = fs::system_complete(output_folder);
+    }else{
+        std::cerr << "Error: Provided path for hdf5 output folder is neither relative nor absolute: [output_folder]: " << output_folder << std::endl;
+        exit(1);
+    }
+
+    //Create directory if create_dir == true, always relative to project root folder
+    if(create_dir) {
+        if (fs::create_directories(output_folder_abs)){
+            ccout(1) << "Created directory: " <<  output_folder_abs << std::endl;
+        }else{
+            ccout(1) << "Directory already exists: " <<  output_folder_abs << std::endl;
+        }
+    }
+
+    //Now the output_folder_abs may or may not exist
+    //Now the output_file may or may not exist
+
+    //If the folder exists use it.
+    output_file_path = fs::system_complete(output_folder_abs / output_filename);
+    if (fs::exists(output_folder_abs)) {
+        if(fs::exists(output_file_path)) {
+            ccout(1) << "File exists already: " << output_file_path << std::endl;
+            if (settings::hdf5::overwrite_file_if_found) {
+                ccout(1) << "Overwrite mode is TRUE." << std::endl;
+                return;
+            }
+            else{
+                int i = 1;
+                while (fs::exists(output_file_path)){
+                    output_file_path.replace_filename(output_filename.stem().string() + "-" + std::to_string(i++) + output_filename.extension().string() );
+                }
+                ccout(1) << "Renamed output file: " << output_filename << "  -->  " << output_file_path.filename() << std::endl;
+                return;
             }
         }
+        ccout(1) << "Creating new file: " << output_file_path << std::endl;
+        return;
+    }
+    else{
+        ccout(1) << "Output folder does not exist in the given path: " << output_folder_abs << std::endl;
+    }
+
+    //Now the output_folder_abs definitely does not exist in the given path
+    //As a last resort, try finding the output folder somewhere inside the project root folder, excluding .git/ and libs/ and docs/
+    ccout(1) << "Searching recursively for folder " <<  output_folder_abs.stem() << " in project root directory..." << std::endl;
+    for(auto& p: fs::recursive_directory_iterator(project_folder)) {
+        if (p.path().has_filename() and p.path().has_extension()){continue;}
+        fs::path trimmed_path =  p.path().string().substr(p.path().string().find(project_folder) + project_folder.string().size());
+        if (trimmed_path.string().find(std::string(".git")) != std::string::npos){continue;}
+        if (trimmed_path.string().find(std::string("libs")) != std::string::npos){continue;}
+        if (trimmed_path.string().find(std::string("docs")) != std::string::npos){continue;}
+        if (trimmed_path.string().find(std::string("cmake")) != std::string::npos){continue;}
+        if (trimmed_path.string().find(std::string("build")) != std::string::npos){continue;}
+        if (p.path().stem() == output_folder_abs.stem())  {
+            ccout(1) << "Found output folder: " << p.path() << std::endl;
+            output_folder_abs = p.path();
+            output_file_path = fs::system_complete(output_folder_abs / output_filename);
+            break;
+        }
+    }
+
+
+    if(fs::exists(output_file_path)) {
+        ccout(1) << "File exists already: " << output_file_path << std::endl;
+        if (overwrite) {
+            ccout(1) << "Overwrite mode is TRUE." << std::endl;
+            return;
+        } else {
+            int i = 1;
+            while (fs::exists(output_file_path)){
+                output_file_path.replace_filename(output_filename.stem().string() + "-" + std::to_string(i++) + output_filename.extension().string() );
+            }
+            ccout(1) << "Renamed file: " << output_filename << "  -->  " << output_file_path.filename() << std::endl;
+            return;
+        }
+
     }
 }
 
 
 void class_hdf5::open_file(){
-    file = H5Fopen (file_name.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+    file = H5Fopen (output_filename.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
 }
 
 void class_hdf5::create_group(const std::string &group_relative_name){

@@ -19,7 +19,7 @@ void class_sweep_storage::insert(const class_superblock &superblock){
     position_L = superblock.Lblock.size;
     position_R = max_length - superblock.Rblock.size - 1;
 
-    cout << "Storing position L: [" << position_L << " R: " << position_R << "] \n";
+//    cout << "Storing position L: [" << position_L << " R: " << position_R << "] \n";
     G_list.insert(std::make_pair(position_L,superblock.MPS.GA));
     G_list.insert(std::make_pair(position_R,superblock.MPS.GB));
     L_list.insert(std::make_pair(position_L,superblock.MPS.LA));
@@ -32,7 +32,7 @@ void class_sweep_storage::insert(const class_superblock &superblock){
 
 void class_sweep_storage::load(class_superblock &superblock){
 
-    cout << "Loading position [" << position_L << " " << position_R << "]\n";
+//    cout << "Loading position [" << position_L << " " << position_R << "]\n";
     superblock.MPS.GA = G_list.at(position_L);
     superblock.MPS.GB = G_list.at(position_R);
 
