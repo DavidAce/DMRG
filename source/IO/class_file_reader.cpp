@@ -3,6 +3,7 @@
 //
 
 #include "class_file_reader.h"
+#include <directory.h>
 bool class_file_reader::check_if_input_file_exists(const fs::path &path_to_file){
     if (path_to_file.has_filename()){
         if(fs::exists(path_to_file)){
@@ -22,16 +23,18 @@ bool class_file_reader::check_if_input_file_exists(const fs::path &path_to_file)
 
 fs::path class_file_reader::find_input_file(const fs::path &given_path) {
 
-    //Check if file exists in output_folder as given, relative to the executable.
+    //Check if file exists in the given path.
     fs::path complete_path = fs::system_complete(given_path);
     if (check_if_input_file_exists(complete_path)){
         return fs::canonical(complete_path);
     }
 
-    //Check if file exists in output_folder as given, relative to the project root folder.
-    complete_path = fs::system_complete(fs::path(directory::SOURCE_DIR) / given_path);
-    if (check_if_input_file_exists(complete_path)){
-        return fs::canonical(complete_path);
+    //Check if file exists in the given path (if it is relative path!), relative to the project root folder.
+    if (given_path.is_relative()) {
+        complete_path = fs::system_complete(fs::path(directory::PROJECT_DIR) / given_path);
+        if (check_if_input_file_exists(complete_path)) {
+            return fs::canonical(complete_path);
+        }
     }
 
     //As a last resort, search in input/ folder
