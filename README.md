@@ -52,11 +52,14 @@ is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.
 
 ### Minimum Requirements
 The following software is required to build the project:
- - C++ compiler with support for c++17 standard. Tested with both
+ - C++ compiler with support for c++17 standard and libstdc++ standard library implementation. Tested with both
     - GNU GCC version >= 7
-    - Clang version >= 5.0).
+    - Clang version >= 5.0
  - Fortran compiler. Tested with GNU GFORTRAN version >= 4. This is only needed to install libraries from source, see below.
  - CMake version >= 3.8
+ - pkg-config >= version 0.28 (Recommended!)
+ 
+The AppleClang compiler is not supported.
 
 ### Optional Requirements
  You can chose to **either** 

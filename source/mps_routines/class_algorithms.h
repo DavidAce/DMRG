@@ -10,6 +10,7 @@
 #include <general/class_tic_toc.h>
 #include <IO/class_hdf5.h>
 #include <sim_parameters/n_sim_settings.h>
+#include <mps_routines/algorithms/class_infinite_DMRG.h>
 
 class class_superblock;
 
@@ -31,7 +32,7 @@ public:
     class_algorithms(){};
     void single_DMRG_step(class_superblock &superblock, long chi_max);
     void single_TEBD_step(class_superblock &superblock, long chi_max);
-
+    class_infinite_DMRG iDMRG2;
     void iDMRG();
     void fDMRG();
     void iTEBD();

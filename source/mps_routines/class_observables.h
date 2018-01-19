@@ -11,6 +11,7 @@
 #include <general/class_eig_arpack_wrapper.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_mps.h>
+#include <IO/class_multidata_buffer.h>
 //using namespace std::complex_literals;
 
 enum class SimulationType {iDMRG,fDMRG, FES_iDMRG, iTEBD, FES_iTEBD};
@@ -19,10 +20,12 @@ public:
     using Scalar         = class_mps::Scalar;
 private:
     class_superblock &superblock;
+    class_multidata_buffer multibuffer;
+    class_custom_cout ccout;
     SimulationType sim;
+
     using MapType = std::map<SimulationType, std::string>;
     MapType Sim2String;
-    class_custom_cout ccout;
     template <typename T>
     double find_slope(std::vector<T> &xvec, std::vector<T> &yvec ){
         Eigen::Array<T,Eigen::Dynamic, 1> X = Eigen::Map<Eigen::Array<T,Eigen::Dynamic, 1>>(xvec.data(), xvec.size());             //Cast to eigen array
