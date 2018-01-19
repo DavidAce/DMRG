@@ -7,9 +7,9 @@
 #include <vector>
 #include <IO/class_hdf5_dataset_buffer.h>
 #include <sim_parameters/n_model.h>
-#include "class_observables.h"
+#include "mps_routines/class_observables.h"
 
-class output_data_container{
+class class_multidata_buffer{
 private:
     class_hdf5 *hdf5_out; //Pointer is not owned! do not delete
     bool data_has_been_written_to_file = false;
@@ -29,15 +29,16 @@ public:
     class_hdf5_dataset_buffer<double> wall_time;
     class_hdf5_dataset_buffer<long>   length;
 
-    output_data_container(const std::string &group_name,
-                           const int iteration
-                            ):
-            output_data_container(nullptr,group_name, iteration)
-    {
-    }
-    output_data_container(class_hdf5 * hdf5_out_ ,const std::string &group_name,
-                          const int iteration
-    ):      hdf5_out   (hdf5_out_),
+    class_multidata_buffer(const std::string &group_name,
+                           const int iteration):
+            class_multidata_buffer(nullptr,group_name, iteration)
+    {}
+
+
+    class_multidata_buffer(class_hdf5 * hdf5_out_ ,
+                            const std::string &group_name,
+                            const int iteration):
+            hdf5_out   (hdf5_out_),
             chi        (group_name, iteration, "chi"    ),
             chi_max    (group_name, iteration, "chi_max"    ),
             energy     (group_name, iteration, "energy"     ),
@@ -52,13 +53,13 @@ public:
             phys_time  (group_name, iteration, "phys_time"  ),
             wall_time  (group_name, iteration, "wall_time"  ),
             length     (group_name, iteration, "length"     )
-    {
-    }
+    {}
 
-    ~output_data_container(){
+    ~class_multidata_buffer(){
         if (hdf5_out != nullptr){
             write_data(*hdf5_out);
-        }else if (!data_has_been_written_to_file){
+        }else
+        if (!data_has_been_written_to_file){
             std::cerr << "Output data has not saved to file, yet it is being discarded!\n" << std::endl;
         }
     }

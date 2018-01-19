@@ -6,7 +6,7 @@
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_sweep_storage.h>
 #include <mps_routines/class_observables.h>
-#include <mps_routines/n_data_containers.h>
+#include <IO/class_multidata_buffer.h>
 
 
 namespace s = settings;
@@ -62,7 +62,7 @@ void class_algorithms::iDMRG(){
     class_observables observables (superblock, SimulationType::iDMRG);
 
     while(superblock.chain_length < s::idmrg::max_length){
-        output_data_container container(&hdf5, "iDMRG/L", superblock.chain_length);
+        class_multidata_buffer container(&hdf5, "iDMRG/L", superblock.chain_length);
 
         single_DMRG_step(superblock, s::idmrg::chi_max);
                         container.push_back(observables);
@@ -151,7 +151,7 @@ void class_algorithms::iTEBD(){
     superblock.H.update_timestep(settings::itebd::delta_t, 1);
     t_tot.tic();
     for(auto step = 0; step < s::itebd::max_steps ; step++){
-        output_data_container container(&hdf5, "iTEBD/step", step);
+        class_multidata_buffer container(&hdf5, "iTEBD/step", step);
         single_TEBD_step(superblock, s::itebd::chi_max);
         if (Math::mod(step,500) == 0) { observables.print_status_update(step);}
         container.push_back(observables);
@@ -200,7 +200,7 @@ void class_algorithms::FES_iTEBD(){
         double time_step = s::fes_itebd::delta_t;
         class_superblock superblock;
         class_observables observables (superblock, SimulationType::FES_iTEBD);
-        output_data_container container(&hdf5, "FES_iTEBD/chi", chi_max );
+        class_multidata_buffer container(&hdf5, "FES_iTEBD/chi", chi_max );
         superblock.H.update_timestep(time_step,1);
 
         double phys_time = 0;
@@ -288,7 +288,7 @@ void class_algorithms::FES_iDMRG(){
         t_mps.reset();
         t_sto.reset();
 
-        output_data_container container(&hdf5, "FES_iDMRG/chi", chi_max );
+        class_multidata_buffer container(&hdf5, "FES_iDMRG/chi", chi_max );
         class_superblock superblock;
         class_observables observables (superblock, SimulationType::FES_iDMRG);
         superblock.initialize();
