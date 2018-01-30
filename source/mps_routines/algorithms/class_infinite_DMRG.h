@@ -5,56 +5,37 @@
 #ifndef DMRG_CLASS_INFINITE_DMRG_H
 #define DMRG_CLASS_INFINITE_DMRG_H
 
-/*! \brief  Class that runs the infinite DMRG algorithm.*/
 
 
-#include <general/class_tic_toc.h>
 #include "class_base.h"
-
 /*!
- * # infinite DMRG
  *
- * \fn \void iDMRG(class_superblock &superblock, class_storage &S, int max_length)
- * \brief Infinite DMRG, grows the chain from 2 up to `max_idmrg::length` particles.
- * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
- * \param storage A class that stores current MPS and environments at each iteration.
- * \param max_length Maximum chain length after which the algorithm stops.
+ * \brief Class that runs the infinite DMRG algorithm.
+ *
+ * # infinite DMRG class
+ * \param class_hdf5_file An hdf5 class object that handles the output file.
+ * \param class_hdf5_table_buffer A buffer for table entries that goes into the output file
+ * \param class_superblock A class that stores current MPS and environments at each iteration.
+ * \param class_measurement A class that extracts, or measures, quantities from the superblock.
  */
 
 class class_infinite_DMRG : public class_base {
-private:
-    long chi_max     = settings::idmrg::chi_max;
-    int  max_length  = settings::idmrg::max_length;
-
 public:
-    class_infinite_DMRG() = default;
-    explicit class_infinite_DMRG(class_hdf5 &hdf5_):class_base(&hdf5_){
-    }
+    //Inherit the constructor of class_base
+    using class_base::class_base;
+    explicit class_infinite_DMRG(std::shared_ptr<class_hdf5_file> hdf5_);
+    long chi_max    = settings::idmrg::chi_max;
+    long max_length = settings::idmrg::max_length;
+    int  print_freq = settings::idmrg::print_freq;
+    int  iteration  = 0;
 
     void run() override;
-    void run(class_superblock &superblock) override;
 
-    void set(long chi_max_, int max_length_){
-        chi_max     = chi_max_;
-        max_length = max_length_;
-    }
+    void print_status_full()   override;
+    void print_status_update() override;
 
-    void set(long chi_max_, int max_length_, class_hdf5 &hdf5_){
-        chi_max     = chi_max_;
-        max_length = max_length_;
-        hdf5 = &hdf5_;
-
-    }
-    void set(long chi_max_, class_hdf5 &hdf5_){
-        chi_max     = chi_max_;
-        hdf5 = &hdf5_;
-    }
-
-    void set(int max_length_, class_hdf5 &hdf5_){
-        max_length = max_length_;
-        hdf5 = &hdf5_;
-    }
-
+    void store_table_entry()   override;
+    void print_profiling()     override;
 };
 
 

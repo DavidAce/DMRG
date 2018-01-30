@@ -72,8 +72,8 @@ void class_superblock::canonicalize_iMPS_iterative() {
                  .contract(XA,            idx<1>({1},{0}));
 
          Tensor<Scalar,2> UA,VA, UB, VB;
-         std::tie(UA,LA,VA) = svd.decompose(YA_LA_XB, chi_max);
-         std::tie(UB,LB,VB) = svd.decompose(YB_LB_XA, chi_max);
+         std::tie(UA,LA,VA) = svd.decompose(YA_LA_XB, chi);
+         std::tie(UB,LB,VB) = svd.decompose(YB_LB_XA, chi);
          GA = VB
                  .contract(XAi,   idx<1>({1},{0}))
                  .contract(GA_old,idx<1>({1},{1}))
@@ -181,8 +181,8 @@ void class_superblock::canonicalize_iMPS(){
             .contract(asDiagonal(LB),idx<1>({1},{0}))
             .contract(XA,            idx<1>({1},{0}));
     Tensor<Scalar,2> UA,VA, UB, VB;
-    std::tie(UA,LA,VA) = svd.decompose(YA_LA_XB, chi_max);
-    std::tie(UB,LB,VB) = svd.decompose(YB_LB_XA, chi_max);
+    std::tie(UA,LA,VA) = svd.decompose(YA_LA_XB, chi);
+    std::tie(UB,LB,VB) = svd.decompose(YB_LB_XA, chi);
 
     cout << "UA: \n" << UA << '\n';
     cout << "LA: \n" << LA << '\n';

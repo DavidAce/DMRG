@@ -5,35 +5,70 @@
 #ifndef DMRG_CLASS_DMRG_BASE_H
 #define DMRG_CLASS_DMRG_BASE_H
 
-
-#include <IO/class_hdf5.h>
+#include <memory>
+#include <map>
+#include <IO/class_custom_cout.h>
 #include <general/class_tic_toc.h>
-#include <mps_routines/class_observables.h>
+#include <sim_parameters/n_sim_settings.h>
 
 class class_superblock;
+class class_hdf5_file;
+class class_hdf5_table_buffer;
+class class_measurement;
 
+enum class SimulationType{iDMRG,fDMRG, FES_iDMRG, iTEBD, FES_iTEBD, NONE};
 class class_base {
-protected:
-    class_base(class_hdf5 *hdf5_):hdf5(hdf5_){};
 public:
-    class_base(){};
-    bool hdf5_is_valid;
+
+    class_base(std::shared_ptr<class_hdf5_file>         hdf5_,
+               std::shared_ptr<class_hdf5_table_buffer> table_buffer_,
+               std::shared_ptr<class_superblock>        superblock_,
+               std::shared_ptr<class_measurement>       observables_);
+
+    class_base();
+    SimulationType simtype;
+//    std::map<SimulationType, std::string> simType2string;
+//    void set_simtype_labels();
+    void set_profiling_labels ();
+
+
+    //Storage
+    std::shared_ptr<class_hdf5_file>         hdf5;
+    std::shared_ptr<class_hdf5_table_buffer> table_buffer;
+
+    //MPS
+    std::shared_ptr<class_superblock>         superblock;
+    std::shared_ptr<class_measurement>        observables;
+
+    //Console
+    class_custom_cout ccout;
+
+    //Functions
+    virtual void run() = 0;
+    virtual void store_table_entry() = 0;
+    virtual void print_profiling()   = 0;
+
+    virtual void print_status_full()   = 0;  /*!< Print out status of all quantities.*/
+    virtual void print_status_update() = 0;  /*!< Print out status of all quantities.*/
+
+
+    void single_DMRG_step(long chi_max);
+    void single_TEBD_step(long chi_max);
+
+    void enlarge_environment();
+    void swap();
+
+    // Profiling
     class_tic_toc t_tot;
     class_tic_toc t_eig;
     class_tic_toc t_sim;
     class_tic_toc t_svd;
     class_tic_toc t_env;
     class_tic_toc t_evo;
-    class_tic_toc t_upd;
+    class_tic_toc t_udt;
     class_tic_toc t_sto;
     class_tic_toc t_mps;
-    class_hdf5  *hdf5;
-    class_custom_cout ccout;
-    virtual void run() = 0;
-    virtual void run(class_superblock &superblock) = 0;
 
-    void single_DMRG_step(class_superblock &superblock, long chi_max);
-    void single_TEBD_step(class_superblock &superblock, long chi_max);
 };
 
 

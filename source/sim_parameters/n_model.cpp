@@ -4,12 +4,12 @@
 
 #include "n_model.h"
 #include <iomanip>
+#include <general/n_math.h>
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>
 
 using namespace std;
 using namespace Eigen;
-using namespace Textra;
 
 namespace Model {
 

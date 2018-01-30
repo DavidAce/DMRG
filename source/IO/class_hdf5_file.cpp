@@ -2,12 +2,12 @@
 // Created by david on 2017-12-02.
 //
 
-#include "class_hdf5.h"
+#include "class_hdf5_file.h"
 #include <fstream>
 #include <istream>
 #include <directory.h>
 
-class_hdf5::class_hdf5(const fs::path &output_filename_, const fs::path &output_folder_ , bool create_dir_, bool overwrite_){
+class_hdf5_file::class_hdf5_file(const fs::path &output_filename_, const fs::path &output_folder_ , bool create_dir_, bool overwrite_){
     output_filename = output_filename_;
     output_folder   = output_folder_;
     create_dir      = create_dir_;
@@ -15,7 +15,7 @@ class_hdf5::class_hdf5(const fs::path &output_filename_, const fs::path &output_
     initialize();
 }
 
-class_hdf5::class_hdf5(){
+class_hdf5_file::class_hdf5_file(){
     output_filename = settings::hdf5::output_filename;
     output_folder   = settings::hdf5::output_folder;
     create_dir      = settings::hdf5::create_dir_if_not_found;
@@ -23,7 +23,7 @@ class_hdf5::class_hdf5(){
     initialize();
 }
 
-void class_hdf5::initialize(){
+void class_hdf5_file::initialize(){
     set_output_file_path();
     file = H5Fcreate(output_file_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, H5P_DEFAULT);
     //Put git revision in file attribute
@@ -40,7 +40,7 @@ void class_hdf5::initialize(){
 }
 
 
-void class_hdf5::set_output_file_path() {
+void class_hdf5_file::set_output_file_path() {
     fs::path project_folder  = fs::canonical(directory::PROJECT_DIR);
     if(output_folder.has_filename() and output_folder.has_extension()){output_folder.remove_filename();}
     ccout(1) << "output_folder     = " << output_folder << std::endl;
@@ -132,11 +132,11 @@ void class_hdf5::set_output_file_path() {
 }
 
 
-void class_hdf5::open_file(){
+void class_hdf5_file::open_file(){
     file = H5Fopen (output_filename.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
 }
 
-void class_hdf5::create_group(const std::string &group_relative_name){
+void class_hdf5_file::create_group(const std::string &group_relative_name){
     hid_t lcpl            = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
     retval                = H5Pset_create_intermediate_group(lcpl, 1);
     hid_t group           = H5Gcreate(file,group_relative_name.c_str(), lcpl,H5P_DEFAULT,H5P_DEFAULT);
@@ -146,7 +146,7 @@ void class_hdf5::create_group(const std::string &group_relative_name){
 
 
 template <typename AttrType>
-void class_hdf5::create_group(const std::string &group_relative_name, const std::string &attribute_name, const AttrType &attr){
+void class_hdf5_file::create_group(const std::string &group_relative_name, const std::string &attribute_name, const AttrType &attr){
     hid_t lcpl           = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
     retval               = H5Pset_create_intermediate_group(lcpl, 1);
     hid_t group          = H5Gcreate(file,group_relative_name.c_str(), lcpl,H5P_DEFAULT,H5P_DEFAULT);
@@ -162,15 +162,15 @@ void class_hdf5::create_group(const std::string &group_relative_name, const std:
 }
 
 //Explicit instantiations
-template void class_hdf5::create_group(const std::string &, const std::string &, const int &);
-//template void class_hdf5::create_group(const std::string &, const std::string &, const long &);
-//template void class_hdf5::create_group(const std::string &, const std::string &, const double &);
+template void class_hdf5_file::create_group(const std::string &, const std::string &, const int &);
+//template void class_hdf5_file::create_group(const std::string &, const std::string &, const long &);
+//template void class_hdf5_file::create_group(const std::string &, const std::string &, const double &);
 
 
 
 
 template <typename DataType>
-void class_hdf5::write_to_file(const DataType &data, const std::string &dataset_relative_name){
+void class_hdf5_file::write_to_file(const DataType &data, const std::string &dataset_relative_name){
     hid_t dataspace = get_DataSpace(data);
     hid_t datatype  = get_DataType<DataType>();
     hid_t lcpl      = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
@@ -206,21 +206,21 @@ void class_hdf5::write_to_file(const DataType &data, const std::string &dataset_
 }
 
 //Explicit instantiations
-template void class_hdf5::write_to_file(const int &, const std::string &);
-template void class_hdf5::write_to_file(const long &, const std::string &);
-template void class_hdf5::write_to_file(const double &, const std::string &);
-template void class_hdf5::write_to_file(const float &, const std::string &);
-template void class_hdf5::write_to_file(const char &, const std::string &);
-template void class_hdf5::write_to_file(const std::string &, const std::string &);
-template void class_hdf5::write_to_file(const std::vector<int> &, const std::string &);
-template void class_hdf5::write_to_file(const std::vector<long> &, const std::string &);
-template void class_hdf5::write_to_file(const std::vector<double> &, const std::string &);
-template void class_hdf5::write_to_file(const std::vector<std::string> &, const std::string &);
+template void class_hdf5_file::write_to_file(const int &, const std::string &);
+template void class_hdf5_file::write_to_file(const long &, const std::string &);
+template void class_hdf5_file::write_to_file(const double &, const std::string &);
+template void class_hdf5_file::write_to_file(const float &, const std::string &);
+template void class_hdf5_file::write_to_file(const char &, const std::string &);
+template void class_hdf5_file::write_to_file(const std::string &, const std::string &);
+template void class_hdf5_file::write_to_file(const std::vector<int> &, const std::string &);
+template void class_hdf5_file::write_to_file(const std::vector<long> &, const std::string &);
+template void class_hdf5_file::write_to_file(const std::vector<double> &, const std::string &);
+template void class_hdf5_file::write_to_file(const std::vector<std::string> &, const std::string &);
 
 
 
 template <typename AttrType>
-void class_hdf5::write_attribute_to_dataset(const std::string &dataset_relative_name,  const AttrType &attribute ,const std::string &attribute_name){
+void class_hdf5_file::write_attribute_to_dataset(const std::string &dataset_relative_name,  const AttrType &attribute ,const std::string &attribute_name){
     hid_t datatype       = get_DataType<AttrType>();
     hid_t dataspace      = get_DataSpace(attribute);
     hid_t dataset        = H5Dopen(file, dataset_relative_name.c_str(),H5P_DEFAULT);
@@ -233,5 +233,5 @@ void class_hdf5::write_attribute_to_dataset(const std::string &dataset_relative_
 }
 
 //Explicit instantiations
-template void class_hdf5::write_attribute_to_dataset(const std::string &,  const int & ,const std::string &);
-template void class_hdf5::write_attribute_to_dataset(const std::string &,  const long & ,const std::string &);
+template void class_hdf5_file::write_attribute_to_dataset(const std::string &,  const int & ,const std::string &);
+template void class_hdf5_file::write_attribute_to_dataset(const std::string &,  const long & ,const std::string &);

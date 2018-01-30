@@ -10,17 +10,14 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
-#include "general/n_tensor_extra.h"
-#include "general/n_math.h"
 
 #include <experimental/filesystem>
 #include <experimental/type_traits>
+#include <type_traits>
 
 #include <H5Cpp.h>
-#include <type_traits>
 #include <typeinfo>
-#include "general/n_math.h"
-#include "class_custom_cout.h"
+#include <IO/class_custom_cout.h>
 #include <gitversion.h>
 #include <sim_parameters/n_sim_settings.h>
 
@@ -69,11 +66,9 @@ namespace tc = TypeCheck;
 
 */
 
-class class_hdf5 {
+class class_hdf5_file {
 private:
-    hid_t       file;
     herr_t      retval;
-    fs::path    output_filename;
     fs::path    output_folder;
     fs::path    output_file_path;
     bool        create_dir;
@@ -82,11 +77,13 @@ private:
     class_custom_cout ccout;
 
 public:
+    hid_t       file;
+    fs::path    output_filename;
 
-    explicit class_hdf5(const fs::path &output_filename_, const fs::path &output_dirname_ , bool create_dir_ = true, bool overwrite_ = false);
-    explicit class_hdf5();
+    explicit class_hdf5_file(const fs::path &output_filename_, const fs::path &output_dirname_ , bool create_dir_ = true, bool overwrite_ = false);
+    explicit class_hdf5_file();
     void initialize();
-    ~class_hdf5(){H5Fclose(file);}
+    ~class_hdf5_file(){H5Fclose(file);}
 
     void open_file();
     void create_group(const std::string &group_relative_name);

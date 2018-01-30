@@ -26,6 +26,10 @@ void class_tic_toc::set_properties(bool on_off, int prec, string output_text){
     *this = class_tic_toc(on_off, prec, output_text);
 }
 
+void class_tic_toc::set_label(string output_text){
+    *this = class_tic_toc(profiling, print_precision, output_text);
+}
+
 void class_tic_toc::tic(){
     if (profiling) {
         tic_timepoint = high_resolution_clock::now();
@@ -62,7 +66,7 @@ void class_tic_toc::print_time_w_percent(){
              << fixed << setprecision(print_precision) << setw(print_precision + padding) << left
              << duration_cast<duration<double>>(measured_time).count() << " s |"
              << fixed << setprecision(print_precision) << setw(print_precision + padding) << right
-             << 100.0*measured_time.count() / (high_resolution_clock::now() - start_timepoint).count() << " %\n";
+             << 100.0 << " %\n";
     }
 }
 
@@ -72,12 +76,10 @@ void class_tic_toc::print_time_w_percent(class_tic_toc &parent){
              << fixed << setprecision(print_precision) << setw(print_precision + padding) << left
              << duration_cast<duration<double>>(measured_time).count() << " s |"
              << fixed << setprecision(print_precision) << setw(print_precision + padding) << right
-             << 100.0*measured_time.count() / parent.measured_time.count() << " % |"
-             << fixed << setprecision(print_precision) << setw(print_precision + padding) << right
-             << 100.0*measured_time.count() / (high_resolution_clock::now() - start_timepoint).count() << "% of parent\n";
-
+             << 100.0*measured_time.count() / parent.measured_time.count() << " % \n";
     }
 }
+
 
 void class_tic_toc::print_total_reset(){
     if (profiling) {

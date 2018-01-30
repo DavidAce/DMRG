@@ -4,14 +4,11 @@
 
 #ifndef DMRG_CLASS_SUPERBLOCK_H
 #define DMRG_CLASS_SUPERBLOCK_H
-//#define EIGEN_USE_MKL_ALL
 
-#include "general/n_tensor_extra.h"
-#include "mps_routines/class_environment.h"
-#include "mps_routines/class_mps.h"
-#include "mps_routines/class_mpo.h"
-#include "sim_parameters/n_model.h"
-#include "class_eigensolver_product.h"
+#include <general/n_tensor_extra.h>
+#include <mps_routines/class_environment.h>
+#include <mps_routines/class_mps.h>
+#include <mps_routines/class_mpo.h>
 
 /*!
  # Superblock Class
@@ -49,7 +46,7 @@ public:
 
 
     long   chi;                                           /*!< Bond dimension of the current (center) position. */
-    long   chi_max ;                                      /*!< Maximum allowed bond dimension, which also defines the SVD cutoff */
+//    long   chi_max ;                                      /*!< Maximum allowed bond dimension, which also defines the SVD cutoff */
     double truncation_error;
     int    chain_length = H.mps_sites;
 

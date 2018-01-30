@@ -2,95 +2,101 @@
 // Created by david on 2018-01-18.
 //
 
+#include <iomanip>
 #include <sim_parameters/n_sim_settings.h>
-#include <IO/class_multidata_buffer.h>
+#include <IO/class_hdf5_table_buffer.h>
+#include <mps_routines/class_measurement.h>
+#include <mps_routines/class_superblock.h>
+#include <general/n_math.h>
 #include "class_infinite_DMRG.h"
 using namespace std;
 using namespace Textra;
 
-void class_infinite_DMRG::run() {
-/*!
- * \fn void iDMRG(class_superblock &superblock, class_storage &S, int max_length)
- * \brief Infinite DMRG, grows the chain from 2 up to `max_idmrg::length` particles.
- * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
- * \param storage A class that stores current MPS and environments at each iteration.
- * \param max_length Maximum chain length after which the algorithm stops.
- */
-
-        if(!settings::idmrg::on){return;}
-        ccout(0) << "Starting normal simulation using infinite-DMRG " << std::endl;
-        using namespace settings::profiling;
-        t_tot.set_properties(on, precision, "iDMRG Total Time           ");
-        t_eig.set_properties(on, precision, "iDMRG Eigenvalue solver    ");
-        t_svd.set_properties(on, precision, "iDMRG SVD Truncation       ");
-        t_env.set_properties(on, precision, "iDMRG Enlarge environment  ");
-        t_sto.set_properties(on, precision, "iDMRG Store MPS            ");
-        t_mps.set_properties(on, precision, "iDMRG Update MPS           ");
-
-        t_tot.tic();
-        class_superblock superblock;
-        class_observables observables (superblock, SimulationType::iDMRG);
-
-        while(superblock.chain_length < max_length){
-            class_multidata_buffer container(hdf5, "iDMRG/L", superblock.chain_length);
-            single_DMRG_step(superblock, chi_max);
-            container.push_back(observables);
-            t_env.tic();    superblock.enlarge_environment();                       t_env.toc();
-            superblock.swap_AB();
-
-        }
-        t_tot.toc();
-        observables.print_status_full();
-        t_eig.print_time_w_percent();
-        t_svd.print_time_w_percent();
-        t_env.print_time_w_percent();
-        t_sto.print_time_w_percent();
-        t_mps.print_time_w_percent();
-        t_tot.print_time();
-        cout << endl;
-    }
-
-
-
-void class_infinite_DMRG::run(class_superblock &superblock) {
-/*!
- * \fn void iDMRG(class_superblock &superblock, class_storage &S, int max_length)
- * \brief Infinite DMRG, grows the chain from 2 up to `max_idmrg::length` particles.
- * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
- * \param storage A class that stores current MPS and environments at each iteration.
- * \param max_length Maximum chain length after which the algorithm stops.
- */
-
-    if(!settings::idmrg::on){return;}
-    ccout(0) << "Starting normal simulation using infinite-DMRG " << std::endl;
-    using namespace settings::profiling;
-    t_tot.set_properties(on, precision, "iDMRG Total Time           ");
-    t_eig.set_properties(on, precision, "iDMRG Eigenvalue solver    ");
-    t_svd.set_properties(on, precision, "iDMRG SVD Truncation       ");
-    t_env.set_properties(on, precision, "iDMRG Enlarge environment  ");
-    t_sto.set_properties(on, precision, "iDMRG Store MPS            ");
-    t_mps.set_properties(on, precision, "iDMRG Update MPS           ");
-
-    t_tot.tic();
-    class_observables observables (superblock, SimulationType::iDMRG);
-    class_multidata_buffer container(hdf5, "iDMRG/L", superblock.chain_length);
-
-    while(superblock.chain_length < max_length){
-        single_DMRG_step(superblock, chi_max);
-        container.push_back(observables);
-        t_env.tic();    superblock.enlarge_environment();                       t_env.toc();
-        superblock.swap_AB();
-
-    }
-    t_tot.toc();
-    observables.print_status_full();
-    t_eig.print_time_w_percent();
-    t_svd.print_time_w_percent();
-    t_env.print_time_w_percent();
-    t_sto.print_time_w_percent();
-    t_mps.print_time_w_percent();
-    t_tot.print_time();
-    cout << endl;
+class_infinite_DMRG::class_infinite_DMRG(std::shared_ptr<class_hdf5_file> hdf5_)
+    : class_base() {
+    simtype = SimulationType::iDMRG;
+    std::string group_name = "iDMRG";
+    std::string table_name = "iDMRG";
+    hdf5         = std::move(hdf5_);
+    table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, group_name, table_name);
+    superblock   = std::make_shared<class_superblock>();
+    observables  = std::make_shared<class_measurement>(superblock, simtype);
 }
 
 
+
+void class_infinite_DMRG::run() {
+    if (!settings::idmrg::on) { return; }
+    ccout(0) << "\nStarting infinite-DMRG simulation" << std::endl;
+        t_tot.tic();
+        while(superblock->chain_length < max_length){
+            store_table_entry();
+            single_DMRG_step(chi_max);
+            enlarge_environment();
+            swap();
+            iteration++;
+            print_status_update();
+
+        }
+        t_tot.toc();
+        print_status_full();
+        print_profiling();
+
+}
+
+void class_infinite_DMRG::store_table_entry(){
+    t_sto.tic();
+    table_buffer->emplace_back(superblock->chi,
+                               chi_max,
+                               observables->get_energy(),
+                               observables->get_entropy(),
+                               observables->get_variance1(),
+                               observables->get_variance2(),
+                               observables->get_truncation_error(),
+                               iteration,
+                               superblock->chain_length,
+                               0,
+                               t_tot.get_age(),
+                               0);
+    t_sto.toc();
+}
+
+void class_infinite_DMRG::print_profiling(){
+    if (settings::profiling::on) {
+        t_tot.print_time_w_percent();
+        t_sto.print_time_w_percent(t_tot);
+        t_env.print_time_w_percent(t_tot);
+        t_sim.print_time_w_percent(t_tot);
+        t_eig.print_time_w_percent(t_sim);
+        t_svd.print_time_w_percent(t_sim);
+        t_mps.print_time_w_percent(t_sim);
+    }
+}
+
+void class_infinite_DMRG::print_status_update() {
+    if (Math::mod(iteration, print_freq) != 0) {return;}
+    std::cout << setprecision(16) << fixed << left;
+    ccout(1) << left  << "iDMRG - ";
+    ccout(1) << left  << "Step: "                   << setw(10) << iteration;
+    ccout(1) << left  << "E: "                      << setw(21) << setprecision(16)    << fixed   << observables->get_energy();
+    ccout(1) << left  << "S: "                      << setw(21) << setprecision(16)    << fixed   << observables->get_entropy();
+    ccout(1) << left  << "\u03C7_max: "             << setw(4)  << setprecision(3)     << fixed   << chi_max;
+    ccout(1) << left  << "\u03C7: "                 << setw(4)  << setprecision(3)     << fixed   << observables->get_chi();
+    ccout(1) << left  << "Var(E): "                 << setw(21) << setprecision(16)    << fixed   << observables->get_variance();
+    ccout(1) << left  << "SVD truncation: "         << setw(21) << setprecision(16)    << fixed   << observables->get_truncation_error();
+    ccout(1) << left  << "Chain length: "           << setw(25) << setprecision(12)    << fixed   << superblock->chain_length;
+    ccout(1) << std::endl;
+}
+
+void class_infinite_DMRG::print_status_full(){
+    std::cout << std::endl;
+    std::cout << " -- Final results -- iDMRG"  << std::endl;
+    ccout(0)  << setw(20) << "Energy               = " << setprecision(16) << fixed      << observables->get_energy()        << std::endl;
+    ccout(0)  << setw(20) << "Entanglement Entropy = " << setprecision(16) << fixed      << observables->get_entropy()       << std::endl;
+    ccout(0)  << setw(20) << "chi_max              = " << setprecision(4)  << fixed      << chi_max                          << std::endl;
+    ccout(0)  << setw(20) << "chi                  = " << setprecision(4)  << fixed      << observables->get_chi()           << std::endl;
+    ccout(0)  << setw(20) << "Variance             = " << setprecision(16) << scientific << observables->get_variance()      << std::endl;
+    ccout(0)  << setw(20) << "SVD truncation       = " << setprecision(4)  << scientific << observables->get_truncation_error() << std::endl;
+    ccout(0) << setw(20)  << "Chain length         = " << setprecision(12) << fixed      << superblock->chain_length << std::endl;
+    std::cout << std::endl;
+}
