@@ -5,13 +5,9 @@
 
 #include "class_superblock.h"
 #include <iomanip>
-#include <Eigen/Core>
 #include <SymEigsSolver.h>
-#include <sim_parameters/n_model.h>
 #include <general/class_svd_wrapper.h>
-#include <MatOp/SparseSymMatProd.h>
-#include <Eigen/Sparse>
-#include "class_eigensolver_product.h"
+#include <mps_routines/class_eigensolver_product.h>
 
 using namespace std;
 using namespace Textra;
@@ -49,8 +45,7 @@ void class_superblock::find_ground_state(int eigSteps, double eigThreshold){
 void class_superblock::truncate(long chi_max_, double SVDThreshold){
     class_SVD<Scalar> SVD;
     SVD.setThreshold(SVDThreshold);
-    chi_max = chi_max_;
-    std::tie(U, MPS.LA, V) = SVD.schmidt(ground_state, d, chiL, chi_max, chiR);
+    std::tie(U, MPS.LA, V) = SVD.schmidt(ground_state, d, chiL, chi_max_, chiR);
     truncation_error = SVD.get_truncation_error();
 }
 

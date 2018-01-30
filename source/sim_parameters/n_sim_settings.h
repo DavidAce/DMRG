@@ -17,7 +17,8 @@
 class class_file_reader;
 
 namespace settings {
-    extern void initialize(class_file_reader &indata);
+    extern void load_from_file(class_file_reader &indata);
+
 
     //Parmaters that control eigensolver and SVD precision
     namespace precision {
@@ -32,6 +33,7 @@ namespace settings {
         extern bool on         ;                            /*!< Turns iDMRG simulation on/off. */
         extern int  max_length ;                            /*!< Final length of 1D quantum chain. */
         extern long chi_max    ;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        extern int  print_freq ;                            /*!< Print frequency for console output. */
 
     }
     //Parameters controlling fDMRG
@@ -40,6 +42,7 @@ namespace settings {
         extern int  max_length   ;                          /*!< Number sweeps along the 1D quantum chain. */
         extern int  max_sweeps   ;                          /*!< Number sweeps along the 1D quantum chain. */
         extern long chi_max      ;                          /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        extern int  print_freq ;                            /*!< Print frequency for console output. */
     }
 
     //Parameters controlling iTEBD
@@ -48,23 +51,28 @@ namespace settings {
         extern int      max_steps;                          /*!< Number of iTEBD iterations. */
         extern double   delta_t  ;                          /*!< Time step for iTEBD time evolution.*/
         extern long     chi_max  ;                          /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        extern int      print_freq;                         /*!< Print frequency for console output. */
     }
     //Parameters controlling Finite-entanglement scaling (FES) in iTEBD-mode.
     namespace fes_itebd {
-        extern bool on             ;                        /*!< Turns FES-ITEBD simulation on/off. */
+        extern bool      on             ;                   /*!< Turns FES-ITEBD simulation on/off. */
         extern int       max_steps ;                        /*!< Number of FES iterations per chi-value. */
         extern double    delta_t   ;                        /*!< Initial time step for iTEBD time evolution.*/
         extern long      chi_min   ;                        /*!< Minimum chi-value in range. */
         extern long      chi_max   ;                        /*!< Maximum chi-value in range. */
         extern long      chi_num   ;                        /*!< Number of chi values for in range. */
+        extern int       print_freq ;                       /*!< Print frequency for console output. */
+
     }
     //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
     namespace fes_idmrg {
         extern bool on               ;                      /*!< Turns FES-iDMRG simulation on/off. */
-        extern int       max_steps   ;                      /*!< Number of FES iterations per chi-value. */
+        extern int       max_length  ;                      /*!< Number of FES iterations per chi-value. */
         extern long      chi_min     ;                      /*!< Minimum chi-value in range. */
         extern long      chi_max     ;                      /*!< Maximum chi-value in range. */
         extern long      chi_num     ;                      /*!< Number of chi values for in range. */
+        extern int       print_freq  ;                       /*!< Print frequency for console output. */
+
     }
 
 

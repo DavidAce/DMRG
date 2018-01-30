@@ -8,9 +8,7 @@
 
 #include <vector>
 #include <array>
-#include "general/n_tensor_extra.h"
-#include "general/n_math.h"
-
+#include <Eigen/Core>
 
 
 /*! \brief Setup the Hamiltonian and corresponding values.*/

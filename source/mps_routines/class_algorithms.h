@@ -4,40 +4,27 @@
 
 #ifndef DMRG_CLASS_ALGORITHMS_H
 #define DMRG_CLASS_ALGORITHMS_H
-//#define EIGEN_USE_MKL_ALL
 
+#include <memory>
+#include <IO/class_custom_cout.h>
 
-#include <general/class_tic_toc.h>
-#include <IO/class_hdf5.h>
-#include <sim_parameters/n_sim_settings.h>
-#include <mps_routines/algorithms/class_infinite_DMRG.h>
-
-class class_superblock;
+class class_hdf5_file;
 
 class class_algorithms  {
-private:
-    class_tic_toc t_tot;
-    class_tic_toc t_eig;
-    class_tic_toc t_sim;
-    class_tic_toc t_svd;
-    class_tic_toc t_env;
-    class_tic_toc t_evo;
-    class_tic_toc t_upd;
-    class_tic_toc t_sto;
-    class_tic_toc t_mps;
-    class_hdf5 hdf5;
-    class_custom_cout ccout;
-
 public:
-    class_algorithms(){};
-    void single_DMRG_step(class_superblock &superblock, long chi_max);
-    void single_TEBD_step(class_superblock &superblock, long chi_max);
-    class_infinite_DMRG iDMRG2;
-    void iDMRG();
-    void fDMRG();
-    void iTEBD();
-    void FES_iTEBD();
-    void FES_iDMRG();
+
+    std::shared_ptr <class_hdf5_file> hdf5;
+    class_custom_cout       ccout;
+    class_algorithms(std::shared_ptr<class_hdf5_file> hdf5_);
+    class_algorithms();
+
+    void run_algorithms(){
+        run_infinite_DMRG();
+        run_imaginary_TEBD();
+    };
+
+    void run_infinite_DMRG();
+    void run_imaginary_TEBD();
 };
 
 

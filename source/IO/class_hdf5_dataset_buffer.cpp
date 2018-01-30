@@ -13,36 +13,42 @@ std::string class_hdf5_dataset_buffer<DataType, AttrType, IterType>::left_pad(co
 
 
 template<typename DataType, typename AttrType,typename IterType>
-class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(class_hdf5 *hdf5_out_,
+class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(class_hdf5_file *hdf5_out_,
                                                                          const std::string &group_name_,
-                                                                         const int &iteration_,
+                                                                         const IterType &iteration_,
                                                                          const std::string &dataset_name_)
-: hdf5_out(hdf5_out_) {
-    hdf5_set_all(group_name_, iteration_,dataset_name_);
+: hdf5_out(hdf5_out_),
+group_name     (group_name_),
+iteration      (iteration_),
+dataset_name   (dataset_name_)
+{
+    this->reserve(max_elements);
 }
 
 template<typename DataType, typename AttrType,typename IterType>
-class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(const std::string &group_name_,
-                                                                         const int &iteration_,
-                                                                         const std::string &dataset_name_)
-:class_hdf5_dataset_buffer(nullptr, group_name_, iteration_, dataset_name_) {}
-
-
-template<typename DataType, typename AttrType,typename IterType>
-class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(class_hdf5 *hdf5_out_,
-                                                                        const std::string &group_name_,
-                                                                        const IterType &iteration_,
-                                                                        const std::string &dataset_name_,
-                                                                        const AttrType &attribute_,
-                                                                        const std::string &attribute_name_)
+class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(class_hdf5_file *hdf5_out_,
+                                                                                   const std::string &group_name_,
+                                                                                   const IterType &iteration_,
+                                                                                   const std::string &dataset_name_,
+                                                                                   const AttrType &attribute_,
+                                                                                   const std::string &attribute_name_)
         :
         group_name(group_name_),
+        iteration(iteration_),
         dataset_name(dataset_name_),
         attribute(attribute_),
         attribute_name(attribute_name_),
-        attribute_set(true),
-        iteration(iteration_) {};
+        attribute_set(true)
+{
+    this->reserve(max_elements);
+};
 
+template<typename DataType, typename AttrType,typename IterType>
+class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(const std::string &group_name_,
+                                                                         const IterType &iteration_,
+                                                                         const std::string &dataset_name_)
+:class_hdf5_dataset_buffer(nullptr, group_name_, iteration_, dataset_name_)
+{}
 template<typename DataType, typename AttrType,typename IterType>
 class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(const std::string &group_name_,
                                                                          const IterType &iteration_,
@@ -50,8 +56,8 @@ class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buff
                                                                          const AttrType &attribute_,
                                                                          const std::string &attribute_name_)
         :
-        class_hdf5_dataset_buffer(nullptr, group_name_, iteration_, dataset_name_, attribute_, attribute_name_) {
-}
+        class_hdf5_dataset_buffer(nullptr, group_name_, iteration_, dataset_name_, attribute_, attribute_name_)
+{}
 
 
 template<typename DataType, typename AttrType,typename IterType>
@@ -96,7 +102,7 @@ void class_hdf5_dataset_buffer<DataType, AttrType, IterType>::hdf5_refresh_relat
 
 
 template<typename DataType, typename AttrType,typename IterType>
-void class_hdf5_dataset_buffer<DataType, AttrType, IterType>::write_buffer_to_file(class_hdf5 &hdf5_out) {
+void class_hdf5_dataset_buffer<DataType, AttrType, IterType>::write_buffer_to_file(class_hdf5_file &hdf5_out) {
     if (!this->empty()) {
         hdf5_refresh_relative_name();
         if (attribute_set) {

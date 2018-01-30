@@ -72,7 +72,7 @@ endif()
 ###########################################
 file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
-add_executable(DMRG++ ${SOURCES} ${HEADERS} source/mps_routines/class_environment.cpp source/IO/class_hdf5.cpp source/IO/class_hdf5_dataset_buffer.cpp source/IO/class_hdf5_dataset_buffer.h source/IO/class_file_reader.cpp source/IO/class_file_reader.h source/sim_parameters/n_sim_settings.cpp source/IO/class_custom_cout.cpp source/IO/class_custom_cout.h source/mps_routines/algorithms/class_infinite_DMRG.cpp source/mps_routines/algorithms/class_infinite_DMRG.h source/mps_routines/algorithms/class_base.cpp source/mps_routines/algorithms/class_base.h source/mps_routines/algorithms/class_imaginary_TEBD.cpp source/mps_routines/algorithms/class_imaginary_TEBD.h)
+add_executable(DMRG++ ${SOURCES} ${HEADERS})
 
 
 ###########################################
@@ -99,7 +99,7 @@ target_link_libraries(DMRG++ -lstdc++fs)                              ### For ex
 target_link_libraries(DMRG++ ${ARPACK_LIBRARIES})
 target_link_libraries(DMRG++ ${LAPACK_LIBRARIES})
 target_link_libraries(DMRG++ ${BLAS_LIBRARIES})
-target_link_libraries(DMRG++ ${HDF5_LIBRARIES} ${HDF5_LDFLAGS} -ldl)
+target_link_libraries(DMRG++ ${HDF5_LIBRARIES} ${HDF5_LDFLAGS} -lhdf5_hl -ldl)
 target_link_libraries(DMRG++ ${GSL_LIBRARIES})
 target_link_libraries(DMRG++ ${GFORTRAN_LIB})
 

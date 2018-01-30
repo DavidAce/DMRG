@@ -119,7 +119,7 @@ public:
                         return param_val;
                     }
 
-                    std::cerr << "Critical error when reading parameter from file. Possible type mismatch." << std::endl;
+                    std::cerr << "\nCritical error when reading parameter from file. Possible type mismatch." << std::endl;
                     std::cerr << "Requested : [" << param_requested << "]" << " with type: [" << typeid(T).name() << "]"<< std::endl;
                     std::cerr << "Found key : [" << param_key << "]" << std::endl;
                     std::cerr << "Found val : [" << param_val << "]" << std::endl;

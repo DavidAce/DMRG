@@ -6,11 +6,6 @@
 #include <gitversion.h>
 #include <IO/class_file_reader.h>
 
-//using namespace std;
-//using namespace Eigen;
-//using namespace Textra;
-
-
 
 /*!
     \brief  Main function. Sets simulation parameters and excecutes the desired algorithms.
@@ -28,17 +23,16 @@ int main(int argc, char* argv[]) {
     //If input file is given as command line argument, then use that.
     std::string inputfile = argc > 1 ? std::string(argv[0]) : std::string("input.cfg") ;
     class_file_reader indata(inputfile);
-    settings::initialize(indata);
+    settings::load_from_file(indata);
 
     //Initialize the algorithm class
+    //This class stores simulationdata automatically to a file specified in the input file
     class_algorithms algorithms;
 
     //Run the algorithms
-    algorithms.iDMRG();
-    algorithms.fDMRG();
-    algorithms.iTEBD();
-    algorithms.FES_iTEBD();
-    algorithms.FES_iDMRG();
+    algorithms.run_infinite_DMRG();
+    algorithms.run_imaginary_TEBD();
+
     return 0;
 }
 
