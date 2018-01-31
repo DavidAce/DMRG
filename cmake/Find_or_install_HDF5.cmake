@@ -45,17 +45,15 @@ set(HDF5_DIR ${HDF5_ROOT})
 message("FINDING HDF5 LIBRARIES USING CMAKE DEFAULTS")
 find_package (HDF5 COMPONENTS CXX HL)
 if (HDF5_FOUND AND NOT "${HDF5_LIBRARIES}" MATCHES "anaconda")
-#    add_definitions(${HDF5_DEFINITIONS})
-#    include_directories(${HDF5_INCLUDE_DIRS})
+    add_definitions(${HDF5_DEFINITIONS})
     list(APPEND HDF5_LDFLAGS ${HDF5_CXX_LIBRARY_NAMES} ${HDF5_CXX_HL_LIBRARY_NAMES})
     list(APPEND HDF5_LIBRARIES ${HDF5_HL_LIBRARIES})
     list(REMOVE_DUPLICATES HDF5_LIBRARIES)
     message("FOUND HDF5: ${HDF5_FOUND}")
     message("   In path: ${HDF5_INCLUDE_DIRS}")
     message("   HDF5 DEFINITIONS: ${HDF5_DEFINITIONS}")
+    message("   HDF5 LIBRARIES  : ${HDF5_LIBRARIES}")
     return()
-else()
-    set(HDF5_FOUND 0)
 endif()
 
 
@@ -63,6 +61,8 @@ endif()
 
 
 
+set(HDF5_FOUND 0)
+set(HDF5_LIBRARIES "")
 if (NOT HDF5_FOUND OR "${HDF5_LIBRARIES}" MATCHES "anaconda")
     message("DOWNLOADING HDF5...")
     execute_process(
@@ -84,12 +84,20 @@ if (NOT HDF5_FOUND OR "${HDF5_LIBRARIES}" MATCHES "anaconda")
     endif()
     include(${PROJECT_SOURCE_DIR}/libs/hdf5/FindHDF5.cmake)
     find_package(HDF5 COMPONENTS CXX HL PATHS "${HDF5_CMAKE_DIR}"  NO_MODULE REQUIRED static)
-    list(APPEND HDF5_LIBRARIES ${HDF5_CXX_STATIC_LIBRARY} ${HDF5_HL_STATIC_LIBRARY} )
-    message("SUCCESSFULLY INSTALLED HDF5:   ${HDF5_LIBRARIES}")
-    message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/hdf5/log_build.txt")
-
+    if(HDF5_FOUND)
+        list(APPEND HDF5_LIBRARIES ${HDF5_CXX_STATIC_LIBRARY} ${HDF5_HL_STATIC_LIBRARY} )
+        message("SUCCESSFULLY INSTALLED HDF5:   ${HDF5_LIBRARIES}")
+        message("   In path: ${HDF5_INCLUDE_DIRS}")
+        message("   HDF5 DEFINITIONS: ${HDF5_DEFINITIONS}")
+        message("   HDF5 LIBRARIES  : ${HDF5_LIBRARIES}")
+        message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/hdf5/log_build.txt")
+        return()
+    else()
+        exit()
+    endif()
 endif()
 
+exit()
 
 #
 #    get_cmake_property(_variableNames VARIABLES)
