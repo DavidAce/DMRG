@@ -21,12 +21,12 @@ message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}"
 ###########################################
 ###  Find or install all dependencies   ###
 ###########################################
+include(cmake/Find_or_install_HDF5.cmake)                                       ### For HDF5 data storage format            https://support.hdfgroup.org
 
 include(cmake/Find_or_install_EIGEN3.cmake)                                     ### For Eigen linear algebra header-library http://eigen.tuxfamily.org/
 include(cmake/Find_or_install_LAPACK_and_BLAS.cmake)                            ### For Lapack and Blas libraries           https://github.com/Reference-LAPACK/lapack
 include(cmake/Find_or_install_ARPACK.cmake)                                     ### For Arpack-ng, a mantained arpack fork  https://github.com/opencollab/arpack-ng
 include(cmake/Find_or_install_ARPACKPP.cmake)                                   ### For ARPACKPP header-arplibrary          https://github.com/m-reuter/arpackpp
-include(cmake/Find_or_install_HDF5.cmake)                                       ### For HDF5 data storage format            https://support.hdfgroup.org
 include(cmake/Find_or_install_GSL.cmake)                                        ### For GSL Gnu Scientific Library          https://www.gnu.org/software/gsl/
 include(cmake/Find_or_install_SPECTRA.cmake)                                    ### For Spectra eigenvalue solver           https://github.com/yixuan/spectra
 include(cmake/FindGFortran.cmake)                                               ### For Fortran library
@@ -99,7 +99,7 @@ target_link_libraries(DMRG++ -lstdc++fs)                              ### For ex
 target_link_libraries(DMRG++ ${ARPACK_LIBRARIES})
 target_link_libraries(DMRG++ ${LAPACK_LIBRARIES})
 target_link_libraries(DMRG++ ${BLAS_LIBRARIES})
-target_link_libraries(DMRG++ ${HDF5_LIBRARIES} ${HDF5_LDFLAGS} -lhdf5_hl -ldl)
+target_link_libraries(DMRG++ ${HDF5_LIBRARIES} -ldl)
 target_link_libraries(DMRG++ ${GSL_LIBRARIES})
 target_link_libraries(DMRG++ ${GFORTRAN_LIB})
 
