@@ -94,7 +94,7 @@ public:
               "variance1",
               "variance2",
               "truncation_error",
-              "iteration",
+              "position",
               "chain_length",
               "time_step",
               "wall_time",
@@ -147,13 +147,13 @@ public:
                             std::string table_name_);
 
     ~class_hdf5_table_buffer(){
-        if (hdf5_out != nullptr){
-            write_buffer_to_file(*hdf5_out);
+        if (hdf5_out){
+            write_buffer_to_file();
         }else if (!buffer_is_empty){
             std::cerr << "Warning: Output data has not been saved to file, yet it is being discarded!\n" << std::endl;
         }
     }
-    void write_buffer_to_file(class_hdf5_file &hdf5_out);
+    void write_buffer_to_file();
 };
 
 

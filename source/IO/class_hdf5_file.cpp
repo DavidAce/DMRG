@@ -136,29 +136,34 @@ void class_hdf5_file::open_file(){
     file = H5Fopen (output_filename.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
 }
 
-void class_hdf5_file::create_group(const std::string &group_relative_name){
-    hid_t lcpl            = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
-    retval                = H5Pset_create_intermediate_group(lcpl, 1);
-    hid_t group           = H5Gcreate(file,group_relative_name.c_str(), lcpl,H5P_DEFAULT,H5P_DEFAULT);
-    H5Pclose(lcpl);
-    H5Gclose(group);
+void class_hdf5_file::create_group(const std::string &group_relative_name) {
+    //Check if group exists already
+    if (!H5Lexists(file, group_relative_name.c_str(), H5P_DEFAULT)) {
+        hid_t lcpl = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
+        retval = H5Pset_create_intermediate_group(lcpl, 1);
+        hid_t group = H5Gcreate(file, group_relative_name.c_str(), lcpl, H5P_DEFAULT, H5P_DEFAULT);
+        H5Pclose(lcpl);
+        H5Gclose(group);
+    }
 }
 
 
 template <typename AttrType>
 void class_hdf5_file::create_group(const std::string &group_relative_name, const std::string &attribute_name, const AttrType &attr){
-    hid_t lcpl           = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
-    retval               = H5Pset_create_intermediate_group(lcpl, 1);
-    hid_t group          = H5Gcreate(file,group_relative_name.c_str(), lcpl,H5P_DEFAULT,H5P_DEFAULT);
-    hid_t datatype       = get_DataType<AttrType>();
-    hid_t dataspace      = get_DataSpace(attr);
-    hid_t attribute      = H5Acreate(group, attribute_name.c_str(), datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT );
-    retval               = H5Awrite(attribute, datatype, &attr);
-    H5Sclose(dataspace);
-    H5Tclose(datatype);
-    H5Aclose(attribute);
-    H5Pclose(lcpl);
-    H5Gclose(group);
+    if (!H5Lexists(file, group_relative_name.c_str(), H5P_DEFAULT)) {
+        hid_t lcpl           = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
+        retval               = H5Pset_create_intermediate_group(lcpl, 1);
+        hid_t group          = H5Gcreate(file,group_relative_name.c_str(), lcpl,H5P_DEFAULT,H5P_DEFAULT);
+        hid_t datatype       = get_DataType<AttrType>();
+        hid_t dataspace      = get_DataSpace(attr);
+        hid_t attribute      = H5Acreate(group, attribute_name.c_str(), datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT );
+        retval               = H5Awrite(attribute, datatype, &attr);
+        H5Sclose(dataspace);
+        H5Tclose(datatype);
+        H5Aclose(attribute);
+        H5Pclose(lcpl);
+        H5Gclose(group);
+    }
 }
 
 //Explicit instantiations

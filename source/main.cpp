@@ -30,8 +30,7 @@ int main(int argc, char* argv[]) {
     class_algorithms algorithms;
 
     //Run the algorithms
-    algorithms.run_infinite_DMRG();
-    algorithms.run_imaginary_TEBD();
+    algorithms.run_algorithms();
 
     return 0;
 }

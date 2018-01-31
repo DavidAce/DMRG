@@ -4,12 +4,14 @@
 #include <sim_parameters/n_sim_settings.h>
 #include <mps_routines/class_algorithms.h>
 #include <mps_routines/class_superblock.h>
-#include <mps_routines/class_sweep_storage.h>
+#include <mps_routines/class_environment_storage.h>
 #include <mps_routines/class_measurement.h>
 #include <IO/class_hdf5_file.h>
 #include <IO/class_hdf5_table_buffer.h>
-#include <mps_routines/algorithms/class_infinite_DMRG.h>
-#include <mps_routines/algorithms/class_imaginary_TEBD.h>
+#include <algorithms/class_infinite_DMRG.h>
+#include <algorithms/class_finite_DMRG.h>
+#include <algorithms/class_imaginary_TEBD.h>
+#include <algorithms/class_FES_iDMRG.h>
 
 
 namespace s = settings;
@@ -33,10 +35,27 @@ void class_algorithms::run_infinite_DMRG(){
     }
 }
 
+
+void class_algorithms::run_finite_DMRG(){
+    if(settings::fdmrg::on){
+        class_finite_DMRG fDMRG(hdf5);
+        fDMRG.run();
+    }
+}
+
+
 void class_algorithms::run_imaginary_TEBD(){
     if(settings::itebd::on){
         class_imaginary_TEBD iTEBD(hdf5);
         iTEBD.run();
+    }
+}
+
+
+void class_algorithms::run_FES_iDMRG(){
+    if(settings::fes_idmrg::on){
+        class_FES_iDMRG FES_iDMRG(hdf5);
+        FES_iDMRG.run2();
     }
 }
 
@@ -72,7 +91,7 @@ void class_algorithms::run_imaginary_TEBD(){
 // * \fn void iDMRG(class_superblock &superblock, class_storage &S, int max_length)
 // * \brief Infinite DMRG, grows the chain from 2 up to `max_idmrg::length` particles.
 // * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
-// * \param storage A class that stores current MPS and environments at each iteration.
+// * \param env_storage A class that stores current MPS and environments at each position.
 // * \param max_length Maximum chain length after which the algorithm stops.
 // */
 //
@@ -129,11 +148,11 @@ void class_algorithms::run_imaginary_TEBD(){
 //    t_tot.tic();
 //    class_superblock     superblock;
 //    class_measurement    observables (superblock, SimulationType::fDMRG);
-//    class_sweep_storage  storage(s::fdmrg::max_length);
+//    class_environment_storage  env_storage(s::fdmrg::max_length);
 //
 //    while(superblock.chain_length -2 < s::fdmrg::max_length){
 //                        single_DMRG_step(superblock, s::fdmrg::chi_max);
-//        t_sto.tic();    storage.insert(superblock);                  t_sto.toc();
+//        t_sto.tic();    env_storage.insert(superblock);                  t_sto.toc();
 //        t_env.tic();    superblock.enlarge_environment();            t_env.toc();
 //                        superblock.swap_AB();
 //    }
@@ -142,11 +161,11 @@ void class_algorithms::run_imaginary_TEBD(){
 //    int sweep = 0;
 //
 //    while(sweep < s::fdmrg::max_sweeps) {
-//                        storage.load(superblock);
+//                        env_storage.load(superblock);
 //                        single_DMRG_step(superblock, s::fdmrg::chi_max);
-//        t_sto.tic();    storage.overwrite_MPS(superblock);                                  t_sto.toc(); //Needs to occurr after update_MPS...
+//        t_sto.tic();    env_storage.overwrite_MPS(superblock);                                  t_sto.toc(); //Needs to occurr after update_MPS...
 //        t_env.tic();    superblock.enlarge_environment(direction);                          t_env.toc();
-//        t_sto.tic();    storage.move(superblock, direction, sweep);                         t_sto.toc();
+//        t_sto.tic();    env_storage.move(superblock, direction, sweep);                         t_sto.toc();
 //    }
 //
 //    t_tot.toc();

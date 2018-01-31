@@ -74,7 +74,7 @@ The AppleClang compiler is not supported.
  - [Arpack](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires LAPACK and BLAS API.
  - [Arpackpp](https://github.com/m-reuter/arpackpp) C++ frontend for ARPACK.
  - [Spectra](https://spectralib.org/) Another eigenvalue solver. Header only.
- - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support (tested with version >= 1.8).
+ - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file env_storage support (tested with version >= 1.8).
  - [GSL](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
 
 

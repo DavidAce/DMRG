@@ -41,19 +41,20 @@ class_hdf5_table_buffer::class_hdf5_table_buffer(const std::string group_name_,
 
 
 
-//template<typename TableType>
-void class_hdf5_table_buffer::write_buffer_to_file(class_hdf5_file &hdf5_out) {
+void class_hdf5_table_buffer::write_buffer_to_file() {
     if (!this->empty()) {
         hsize_t NRECORDS = this->size();
+        std::string table_path = group_name + "/" + table_name;
+        hdf5_out->create_group(group_name);
         if(table_is_empty) {
 
-            H5TBmake_table("Table Title", hdf5_out.file, table_name.c_str(), meta.NFIELDS, NRECORDS,
+            H5TBmake_table("Table Title", hdf5_out->file, table_path.c_str(), meta.NFIELDS, NRECORDS,
                            meta.dst_size, meta.field_names, meta.dst_offset, meta.field_type,
                            meta.chunk_size, meta.fill_data, meta.compress, this->data());
             table_is_empty = false;
         }
         else{
-            H5TBappend_records(hdf5_out.file, table_name.c_str(), NRECORDS, meta.dst_size, meta.dst_offset, meta.dst_sizes,
+            H5TBappend_records(hdf5_out->file, table_path.c_str(), NRECORDS, meta.dst_size, meta.dst_offset, meta.dst_sizes,
                                this->data());
         }
     }

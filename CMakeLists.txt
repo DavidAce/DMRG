@@ -21,8 +21,7 @@ message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}"
 ###########################################
 ###  Find or install all dependencies   ###
 ###########################################
-include(cmake/Find_or_install_HDF5.cmake)                                       ### For HDF5 data storage format            https://support.hdfgroup.org
-
+include(cmake/Find_or_install_HDF5.cmake)                                       ### For HDF5 data env_storage format            https://support.hdfgroup.org
 include(cmake/Find_or_install_EIGEN3.cmake)                                     ### For Eigen linear algebra header-library http://eigen.tuxfamily.org/
 include(cmake/Find_or_install_LAPACK_and_BLAS.cmake)                            ### For Lapack and Blas libraries           https://github.com/Reference-LAPACK/lapack
 include(cmake/Find_or_install_ARPACK.cmake)                                     ### For Arpack-ng, a mantained arpack fork  https://github.com/opencollab/arpack-ng
@@ -34,13 +33,12 @@ include(cmake/FindGFortran.cmake)                                               
 message("======================================")
 message("=== SUMMARY OF CMAKE CONFIGURATION ===")
 message("======================================")
-
+message("FOUND HDF5     :   ${HDF5_LIBRARIES}")
 message("FOUND EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
 message("FOUND BLAS     :   ${BLAS_LIBRARIES}")
 message("FOUND LAPACK   :   ${LAPACK_LIBRARIES}")
 message("FOUND ARPACK   :   ${ARPACK_LIBRARIES}")
 message("FOUND ARPACKPP :   ${ARPACKPP_INCLUDE_DIR}")
-message("FOUND HDF5     :   ${HDF5_LIBRARIES}")
 message("FOUND GSL      :   ${GSL_LIBRARIES}")
 message("FOUND SPECTRA  :   ${SPECTRA_INCLUDE_DIR}")
 message("======================================")
@@ -72,7 +70,7 @@ endif()
 ###########################################
 file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
-add_executable(DMRG++ ${SOURCES} ${HEADERS})
+add_executable(DMRG++ ${SOURCES} ${HEADERS} source/algorithms/class_finite_DMRG.cpp source/algorithms/class_finite_DMRG.h source/algorithms/class_FES_iDMRG.cpp source/algorithms/class_FES_iDMRG.h source/algorithms/class_FES_TEBD.cpp source/algorithms/class_FES_TEBD.h)
 
 
 ###########################################
