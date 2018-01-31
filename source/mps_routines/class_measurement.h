@@ -10,7 +10,7 @@
 #include <general/n_tensor_extra.h>
 #include <mps_routines/class_mps.h>
 #include <sim_parameters/n_sim_settings.h>
-#include <mps_routines/algorithms/class_base.h>
+#include <algorithms/class_base.h>
 
 class class_superblock;
 class class_measurement {

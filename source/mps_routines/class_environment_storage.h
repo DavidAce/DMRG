@@ -6,10 +6,12 @@
 #include "class_environment.h"
 #include "sim_parameters/n_model.h"
 #include <map>
+#include <memory>
 
 //using namespace Textra;
 //using namespace std;
 class class_superblock;
+class class_hdf5_file;
 
 
 /*!
@@ -28,7 +30,7 @@ class class_superblock;
  All objects are stored and indexed by their position relative to the final chain of length `max_length`.
 */
 
-class class_sweep_storage {
+class class_environment_storage {
 public:
     using Scalar = class_mps::Scalar;
 private:
@@ -37,25 +39,33 @@ private:
     std::map<int, class_environment<Side::L>> Lblock_list;           /*!< A list of stored Left block environments,  indexed by chain position. */
     std::map<int, class_environment<Side::R>> Rblock_list;           /*!< A list of stored Right block environments, indexed by chain position. */
 
+    std::shared_ptr<class_superblock> superblock;
+    std::shared_ptr<class_hdf5_file>  hdf5;
+
     int max_length = 0;                                             /*!< The maximum length of the chain */
     int position_L;                                                 /*!< The current position of \f$\Gamma^A\f$ w.r.t the full chain. */
     int position_R;                                                 /*!< The current position of \f$\Gamma^B\f$ w.r.t the full chain. */
-    bool length_is_set = false;
+    bool max_length_is_set = false;
+    bool superblock_is_set = false;
+    bool hdf5_file_is_set  = false;
+
     void print_error_and_exit(int error_type);
 public:
 
 
-    class_sweep_storage(){};
-    explicit class_sweep_storage(int max_length_                                   /*!< The maximum length of the chain. */
-    ){
-        set_length(max_length_);
-    };
+    class_environment_storage(){};
+    explicit class_environment_storage(int max_length_,                                   /*!< The maximum length of the chain. */
+                                 std::shared_ptr<class_superblock> superblock_,
+                                 std::shared_ptr<class_hdf5_file>  hdf5_
+    );
 
     void set_length(int max_length_);                                       /*!< Sets the maximum length of the chain. */
-    void insert(const class_superblock &superblock);                        /*!< Store current MPS and environments indexed by their respective positions on the chain. */
-    void load(class_superblock &superblock);                                /*!< Load MPS and environments according to current position. */
-    void overwrite_MPS(const class_superblock &superblock);                 /*!< Update the MPS stored at current position.*/
-    void move(class_superblock &superblock, int &direction, int &sweep);    /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
+    void set_superblock(std::shared_ptr<class_superblock> superblock_);     /*!< Sets the pointer to a superblock */
+    void set_hdf5_file (std::shared_ptr<class_hdf5_file>  hdf5_);           /*!< Sets the pointer to an hdf5-file for storage */
+    void insert();                        /*!< Store current MPS and environments indexed by their respective positions on the chain. */
+    void load();                                /*!< Load MPS and environments according to current position. */
+    void overwrite_MPS();                 /*!< Update the MPS stored at current position.*/
+    void move(int &direction, int &sweep);    /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
     void print_storage();                                                   /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
 };
 

@@ -27,11 +27,9 @@ public:
 
     class_base();
     SimulationType simtype;
-//    std::map<SimulationType, std::string> simType2string;
-//    void set_simtype_labels();
+    std::string simulation_name;
+
     void set_profiling_labels ();
-
-
     //Storage
     std::shared_ptr<class_hdf5_file>         hdf5;
     std::shared_ptr<class_hdf5_table_buffer> table_buffer;
@@ -56,6 +54,7 @@ public:
     void single_TEBD_step(long chi_max);
 
     void enlarge_environment();
+    void enlarge_environment(int direction);
     void swap();
 
     // Profiling
@@ -67,6 +66,8 @@ public:
     class_tic_toc t_evo;
     class_tic_toc t_udt;
     class_tic_toc t_sto;
+    class_tic_toc t_ste;
+    class_tic_toc t_obs;
     class_tic_toc t_mps;
 
 };

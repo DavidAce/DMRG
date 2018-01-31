@@ -18,7 +18,7 @@ public:
     using class_base::class_base;
     explicit class_imaginary_TEBD(std::shared_ptr<class_hdf5_file> hdf5_);
     long chi_max    = settings::itebd::chi_max;
-    long max_steps  = settings::itebd::max_steps;
+    int  max_steps  = settings::itebd::max_steps;
     int  print_freq = settings::itebd::print_freq;
     int  iteration  = 0;
     double phys_time = 0;

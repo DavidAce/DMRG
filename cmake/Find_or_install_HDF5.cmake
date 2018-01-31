@@ -59,8 +59,6 @@ endif()
 
 
 
-
-
 set(HDF5_FOUND 0)
 set(HDF5_LIBRARIES "")
 if (NOT HDF5_FOUND OR "${HDF5_LIBRARIES}" MATCHES "anaconda")
@@ -88,7 +86,6 @@ if (NOT HDF5_FOUND OR "${HDF5_LIBRARIES}" MATCHES "anaconda")
         list(APPEND HDF5_LIBRARIES ${HDF5_CXX_STATIC_LIBRARY} ${HDF5_HL_STATIC_LIBRARY} )
         message("SUCCESSFULLY INSTALLED HDF5:   ${HDF5_LIBRARIES}")
         message("   In path: ${HDF5_INCLUDE_DIRS}")
-        message("   HDF5 DEFINITIONS: ${HDF5_DEFINITIONS}")
         message("   HDF5 LIBRARIES  : ${HDF5_LIBRARIES}")
         message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/hdf5/log_build.txt")
         return()

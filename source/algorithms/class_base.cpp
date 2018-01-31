@@ -21,7 +21,6 @@ class_base::class_base(std::shared_ptr<class_hdf5_file>         hdf5_,
                 observables     (std::move(observables_))
 {
     simtype = observables->sim;
-//    set_simtype_labels();
     set_profiling_labels();
 };
 
@@ -58,21 +57,14 @@ void class_base::single_TEBD_step(long chi_max){
     t_sim.toc();
 }
 
-//void class_base::set_simtype_labels() {
-//        simType2string = {
-//            {SimulationType::iDMRG,     "iDMRG"},
-//            {SimulationType::fDMRG,     "fDMRG"},
-//            {SimulationType::FES_iDMRG, "FES_iDMRG"},
-//            {SimulationType::iTEBD,     "iTEBD"},
-//            {SimulationType::FES_iTEBD, "FES_iTEBD"},
-//            {SimulationType::NONE,      "NONE"}
-//    };
-//}
+
 
 void class_base::set_profiling_labels() {
     using namespace settings::profiling;
     t_tot.set_properties(on, precision,"+Total Time              ");
-    t_sto.set_properties(on, precision,"\u21B3 Store Results          ");
+    t_sto.set_properties(on, precision,"\u21B3 Store to file          ");
+    t_ste.set_properties(on, precision,"\u21B3 Store Environment      ");
+    t_obs.set_properties(on, precision,"\u21B3 Printing observables   ");
     t_udt.set_properties(on, precision,"\u21B3 Update Timestep        ");
     t_env.set_properties(on, precision,"\u21B3 Update Environments    ");
     t_sim.set_properties(on, precision,"\u21B3+Simulation             ");
@@ -85,6 +77,11 @@ void class_base::set_profiling_labels() {
 void class_base::enlarge_environment(){
     t_env.tic();
     superblock->enlarge_environment();
+    t_env.toc();
+}
+void class_base::enlarge_environment(int direction){
+    t_env.tic();
+    superblock->enlarge_environment(direction);
     t_env.toc();
 }
 
