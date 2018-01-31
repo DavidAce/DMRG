@@ -4,6 +4,7 @@
 
 #include <IO/class_hdf5_table_buffer.h>
 #include <IO/class_hdf5_file.h>
+#include <H5Cpp.h>
 #include <hdf5_hl.h>
 
 
