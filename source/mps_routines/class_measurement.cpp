@@ -142,6 +142,7 @@ double class_measurement::get_energy(){
             std::cerr << "Simulation Type has not been set." << std::endl;
             exit(1);
     }
+    return 0;
 
 }
 
@@ -176,6 +177,7 @@ double class_measurement::get_variance(){
             std::cerr << "Simulation Type has not been set." << std::endl;
             exit(1);
     }
+    return 0;
 }
 
 double class_measurement::get_variance1(){return variance1;};

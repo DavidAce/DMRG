@@ -2,10 +2,8 @@
 // Created by david on 2018-01-31.
 //
 
-#include "class_finite_DMRG.h"
 
 #include <iomanip>
-
 #include <sim_parameters/n_sim_settings.h>
 #include <IO/class_hdf5_table_buffer.h>
 #include <mps_routines/class_measurement.h>
@@ -17,12 +15,12 @@ using namespace std;
 using namespace Textra;
 
 class_finite_DMRG::class_finite_DMRG(std::shared_ptr<class_hdf5_file> hdf5_)
-        : class_base() {
+        : class_algorithm_base() {
 
     simtype = SimulationType::fDMRG;
     simulation_name = "fDMRG";
-    std::string group_name = simulation_name;
-    std::string table_name = simulation_name;
+    group_name = simulation_name;
+    table_name = simulation_name;
     hdf5         = std::move(hdf5_);
     table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, group_name, table_name);
     superblock   = std::make_shared<class_superblock>();
@@ -120,7 +118,7 @@ void class_finite_DMRG::print_status_update() {
 
     t_obs.tic();
     std::cout << setprecision(16) << fixed << left;
-    ccout(1) << left  << simulation_name;
+    ccout(1) << left  << simulation_name << " ";
     ccout(1) << left  << "Pos: "                    << setw(6) << position;
     ccout(1) << left  << "Dir: "                    << setw(3) << direction;
     ccout(1) << left  << "Sweep: "                  << setw(4) << sweep;

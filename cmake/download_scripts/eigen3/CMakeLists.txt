@@ -25,7 +25,7 @@
 #        GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
 #        HG_REPOSITORY https://bitbucket.org/eigen/eigen
 
-
+set(CMAKE_)
 cmake_minimum_required(VERSION 3.7)
 project(EIGEN3-download NONE)
 include(ExternalProject)
@@ -34,14 +34,22 @@ ExternalProject_Add(EIGEN3
         GIT_TAG master
         GIT_PROGRESS 1
         PREFIX "${INSTALL_DIRECTORY}/eigen3"
+        UPDATE_DISCONNECTED 1
         TEST_COMMAND ""
-        CMAKE_ARGS
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND
+        cmake
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
+        -DBUILD_TESTING=OFF
         -Wno-dev
+        <SOURCE_DIR>
+        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install
         )
 
 ExternalProject_Get_Property(EIGEN3 install_dir)
 set(EIGEN3_INC_DIR ${install_dir}/include/eigen3)
-file(WRITE ${INSTALL_DIRECTORY}/eigen3/FindEigen3.cmake "set(EIGEN3_INCLUDE_DIR   ${EIGEN3_INC_DIR})\n")
+set(EIGEN3_CMAKE_DIR ${install_dir}/share/eigen3/cmake)
 
+file(WRITE  ${INSTALL_DIRECTORY}/eigen3/FindEigen3.cmake "set(EIGEN3_INCLUDE_DIR   ${EIGEN3_INC_DIR})\n")
+file(APPEND ${INSTALL_DIRECTORY}/eigen3/FindEigen3.cmake "set(EIGEN3_CMAKE_DIR     ${EIGEN3_CMAKE_DIR})\n")

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-#include <H5Cpp.h>
+#include <hdf5_hl.h>
 
 
 class class_hdf5_file;
@@ -130,30 +130,49 @@ public:
     class_table_entry_meta meta;
     std::string group_name      = "default_group";
     std::string table_name      = "default_table";
-
-    int max_elements            = 5000;
-    std::string table_relative_name;
+    std::string table_path;
+    hsize_t recorded_elements       = 0;
     bool buffer_is_empty = false;
-    bool table_is_empty  = true;
+    bool table_is_ready  = false;
+    bool mpi_on          = false;
     explicit class_hdf5_table_buffer()=default;
     class_hdf5_table_buffer(std::shared_ptr<class_hdf5_file> hdf5_out_,
                             std::string group_name_,
-                            std::string table_name);
+                            std::string table_name,
+                            bool mpi_on_ = false  );
     class_hdf5_table_buffer(std::nullptr_t nullp,
                             std::string group_name_,
-                            std::string table_name);
+                            std::string table_name,
+                            bool mpi_on_ = false);
 
     class_hdf5_table_buffer(std::string group_name_,
-                            std::string table_name_);
+                            std::string table_name_,
+                            bool mpi_on_ = false );
+    void initialize_table();
+    void write_buffer_to_file();
+
+
 
     ~class_hdf5_table_buffer(){
         if (hdf5_out){
-            write_buffer_to_file();
+            if(mpi_on){
+//                write_buffer_to_file_mpi();
+            }
+            else {
+                write_buffer_to_file();
+            }
         }else if (!buffer_is_empty){
             std::cerr << "Warning: Output data has not been saved to file, yet it is being discarded!\n" << std::endl;
         }
     }
-    void write_buffer_to_file();
+
+    // MPI Functions
+//    int mpi_rank, mpi_size;
+//    void write_buffer_to_file_mpi();
+//    void initialize_table_mpi();
+
+
+
 };
 
 

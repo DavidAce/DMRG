@@ -4,7 +4,7 @@
 
 #ifndef DMRG_CLASS_IMAGINARY_TEBD_H
 #define DMRG_CLASS_IMAGINARY_TEBD_H
-#include "class_base.h"
+#include "class_base_algorithm.h"
 
 /*!
 // * \fn iTEBD(class_superblock &superblock, class_hdf5 &hdf5)
@@ -13,15 +13,25 @@
 // * \param max_iter Maximum number of iterations.
 // */
 
-class class_imaginary_TEBD :public class_base {
+class class_imaginary_TEBD :public class_algorithm_base {
 public:
-    using class_base::class_base;
+    using class_algorithm_base::class_algorithm_base;
     explicit class_imaginary_TEBD(std::shared_ptr<class_hdf5_file> hdf5_);
-    long chi_max    = settings::itebd::chi_max;
-    int  max_steps  = settings::itebd::max_steps;
-    int  print_freq = settings::itebd::print_freq;
-    int  iteration  = 0;
-    double phys_time = 0;
+    long   chi_max    = settings::itebd::chi_max;
+    int    max_steps  = settings::itebd::max_steps;
+    double delta_t0   = settings::itebd::delta_t0;
+    double delta_tmin = settings::itebd::delta_tmin;
+    int    print_freq = settings::itebd::print_freq;
+
+    double delta_t    = delta_t0;
+    int    iteration  = 0;
+    double phys_time  = 0;
+
+    double old_entropy;
+    double new_entropy;
+
+    void reduce_timestep();
+
 
     void run() override;
 

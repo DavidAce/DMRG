@@ -8,10 +8,12 @@
 #include <mps_routines/class_measurement.h>
 #include <IO/class_hdf5_file.h>
 #include <IO/class_hdf5_table_buffer.h>
+
 #include <algorithms/class_infinite_DMRG.h>
 #include <algorithms/class_finite_DMRG.h>
 #include <algorithms/class_imaginary_TEBD.h>
 #include <algorithms/class_FES_iDMRG.h>
+#include <algorithms/class_FES_iTEBD.h>
 
 
 namespace s = settings;
@@ -56,6 +58,13 @@ void class_algorithms::run_FES_iDMRG(){
     if(settings::fes_idmrg::on){
         class_FES_iDMRG FES_iDMRG(hdf5);
         FES_iDMRG.run2();
+    }
+}
+
+void class_algorithms::run_FES_iTEBD(){
+    if(settings::fes_itebd::on){
+        class_FES_iTEBD FES_iTEBD(hdf5);
+        FES_iTEBD.run2();
     }
 }
 
@@ -196,7 +205,7 @@ void class_algorithms::run_FES_iDMRG(){
 //
 //    class_superblock superblock;
 //    class_measurement observables (superblock, SimulationType::iTEBD);
-//    superblock.H.update_timestep(settings::itebd::delta_t, 1);
+//    superblock.H.reduce_timestep(settings::itebd::delta_t0, 1);
 //    t_tot.tic();
 //    for(auto step = 0; step < s::itebd::max_length ; step++){
 //        class_measurement_buffers container(&hdf5, "iTEBD/step", step);
@@ -245,11 +254,11 @@ void class_algorithms::run_FES_iDMRG(){
 //        t_svd.reset();
 //        t_mps.reset();
 //
-//        double time_step = s::fes_itebd::delta_t;
+//        double time_step = s::fes_itebd::delta_t0;
 //        class_superblock superblock;
 //        class_measurement observables (superblock, SimulationType::FES_iTEBD);
 //        class_measurement_buffers container(&hdf5, "FES_iTEBD/chi", chi_max );
-//        superblock.H.update_timestep(time_step,1);
+//        superblock.H.reduce_timestep(time_step,1);
 //
 //        double phys_time = 0;
 //        int step = 0;
@@ -281,7 +290,7 @@ void class_algorithms::run_FES_iDMRG(){
 //                    container.push_back(observables);
 //                    container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
 //                    time_step *=0.5;
-//                    superblock.H.update_timestep(time_step ,1);
+//                    superblock.H.reduce_timestep(time_step ,1);
 //                }
 //            }
 //            t_udt.toc();

@@ -23,12 +23,14 @@ public:
         run_finite_DMRG();
         run_imaginary_TEBD();
         run_FES_iDMRG();
+        run_FES_iTEBD();
     };
 
     void run_infinite_DMRG();
     void run_finite_DMRG();
     void run_imaginary_TEBD();
     void run_FES_iDMRG();
+    void run_FES_iTEBD();
 };
 
 
