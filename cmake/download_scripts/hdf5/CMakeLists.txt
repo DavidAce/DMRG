@@ -34,7 +34,7 @@ include(ExternalProject)
 ExternalProject_Add(HDF5
         URL      https://fossies.org/linux/misc/hdf5-1.10.1.tar.bz2
         PREFIX              "${INSTALL_DIRECTORY}/hdf5"
-        CMAKE_ARGS
+        UPDATE_DISCONNECTED 1
         TEST_COMMAND ""
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>

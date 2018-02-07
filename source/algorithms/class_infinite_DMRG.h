@@ -7,7 +7,7 @@
 
 
 
-#include "class_base.h"
+#include "class_base_algorithm.h"
 /*!
  *
  * \brief Class that runs the infinite DMRG algorithm.
@@ -19,10 +19,10 @@
  * \param shared_ptr<class_measurement> (optional) A class that extracts, or measures, quantities from the superblock.
  */
 
-class class_infinite_DMRG : public class_base {
+class class_infinite_DMRG : public class_algorithm_base {
 public:
-    //Inherit the constructor of class_base
-    using class_base::class_base;
+    //Inherit the constructor of class_algorithm_base
+    using class_algorithm_base::class_algorithm_base;
     explicit class_infinite_DMRG(std::shared_ptr<class_hdf5_file> hdf5_);
     long chi_max    = settings::idmrg::chi_max;
     int  max_length = settings::idmrg::max_length;

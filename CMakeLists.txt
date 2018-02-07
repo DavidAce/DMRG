@@ -21,8 +21,8 @@ message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}"
 ###########################################
 ###  Find or install all dependencies   ###
 ###########################################
-include(cmake/Find_or_install_HDF5.cmake)                                       ### For HDF5 data env_storage format            https://support.hdfgroup.org
 include(cmake/Find_or_install_EIGEN3.cmake)                                     ### For Eigen linear algebra header-library http://eigen.tuxfamily.org/
+include(cmake/Find_or_install_HDF5.cmake)                                       ### For HDF5 data env_storage format            https://support.hdfgroup.org
 include(cmake/Find_or_install_LAPACK_and_BLAS.cmake)                            ### For Lapack and Blas libraries           https://github.com/Reference-LAPACK/lapack
 include(cmake/Find_or_install_ARPACK.cmake)                                     ### For Arpack-ng, a mantained arpack fork  https://github.com/opencollab/arpack-ng
 include(cmake/Find_or_install_ARPACKPP.cmake)                                   ### For ARPACKPP header-arplibrary          https://github.com/m-reuter/arpackpp
@@ -33,8 +33,8 @@ include(cmake/FindGFortran.cmake)                                               
 message("======================================")
 message("=== SUMMARY OF CMAKE CONFIGURATION ===")
 message("======================================")
-message("FOUND HDF5     :   ${HDF5_LIBRARIES}")
 message("FOUND EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
+message("FOUND HDF5     :   ${HDF5_LIBRARIES}")
 message("FOUND BLAS     :   ${BLAS_LIBRARIES}")
 message("FOUND LAPACK   :   ${LAPACK_LIBRARIES}")
 message("FOUND ARPACK   :   ${ARPACK_LIBRARIES}")
@@ -53,16 +53,15 @@ include_directories(libs/spectra/include)
 set(COMMON_OPTIONS -g -Wall -march=native)
 set(DEBUG_OPTIONS       -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    message("Special flags for g++:  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context")
-    set(COMMON_OPTIONS ${COMMON_OPTIONS}   -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context)
+    message("Special flags for g++:  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized")
+    set(COMMON_OPTIONS ${COMMON_OPTIONS}  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    message("Special flags for Clang:  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual")
-    set(COMMON_OPTIONS ${COMMON_OPTIONS}  -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual)
+    message("Special flags for Clang:  -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-maybe-uninitialized")
+    set(COMMON_OPTIONS ${COMMON_OPTIONS}   -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-maybe-uninitialized)
 endif()
+
 
 
 ###########################################
@@ -70,7 +69,7 @@ endif()
 ###########################################
 file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
-add_executable(DMRG++ ${SOURCES} ${HEADERS} source/algorithms/class_finite_DMRG.cpp source/algorithms/class_finite_DMRG.h source/algorithms/class_FES_iDMRG.cpp source/algorithms/class_FES_iDMRG.h source/algorithms/class_FES_TEBD.cpp source/algorithms/class_FES_TEBD.h)
+add_executable(DMRG++ ${SOURCES} ${HEADERS})
 
 
 ###########################################

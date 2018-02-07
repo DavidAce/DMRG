@@ -11,8 +11,20 @@ sns.set(font_scale=1.5)  # crazy big
 # sns.set(style="ticks")
 # print(sns.style.available)
 
-filename = '../output/data.h5'
-# filename = 'data12.h5'
+# filename = '../output/data.h5'
+filename = 'data12.h5'
+
+# with h5py.File(filename,'r') as f:
+#     for key in g.keys():
+#         item = g[key]
+#         path = '{}/{}'.format(prefix, key)
+#         if isinstance(item, h5py.Dataset): # test for dataset
+#             yield (np.asarray(item), dict(g.attrs.items()), key, path)
+#         elif isinstance(item, h5py.Group): # test for group (go down)
+#             yield from h5py_dataset_iterator(item, path)
+#
+#     if isinstance(item, h5py.Dataset):  # test for dataset
+
 
 with h5py.File(filename, 'r') as f:
     group = 'FES_iDMRG'

@@ -67,7 +67,7 @@ public:
     Textra::Tensor<Scalar,6>               MM   = compute_MM();              // MPO representation of 2-site Hamiltonian
     Textra::Tensor<std::complex<double>,4> F    = compute_F(0.0001);           // MPO representation of 1-site moment generating function
     Textra::Tensor<std::complex<double>,4> G    = compute_G(0.0001);           // MPO representation of 1-site characteristic function of the Hamiltonian
-    void update_timestep(const double delta_t, const int order);
+    void update_timestep(const double delta_t, const int susuki_trotter_order);
 };
 
 

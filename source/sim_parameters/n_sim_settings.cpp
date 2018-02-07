@@ -29,24 +29,28 @@ namespace settings{
 
     //Parameters controlling imaginary TEBD (Zero temperature)
     bool   itebd::on                     = true;
-    int    itebd::max_steps              = 10000;
-    double itebd::delta_t                = 0.01;
+    int    itebd::max_steps              = 100000;
+    double itebd::delta_t0               = 0.1;
+    double itebd::delta_tmin             = 0.00001;
+    int    itebd::suzuki_order           = 1;
     long   itebd::chi_max                = 8;
-    int    itebd::print_freq             = 1000;
+    int    itebd::print_freq             = 5000;
 
 
     //Parameters controlling Finite-entanglement scaling (FES) in iTEBD-mode.
     bool   fes_itebd::on                 = true;
-    int    fes_itebd::max_steps          = 10000;
-    double fes_itebd::delta_t            = 0.01;
+    int    fes_itebd::max_steps          = 100000;
+    double fes_itebd::delta_t0           = 0.1;
+    double fes_itebd::delta_tmin         = 0.00001;
+    int    fes_itebd::suzuki_order       = 1;
     long   fes_itebd::chi_min            = 4;
     long   fes_itebd::chi_max            = 12;
     long   fes_itebd::chi_num            = 3;
-    int    fes_itebd::print_freq         = 1000;
+    int    fes_itebd::print_freq         = 5000;
 
     //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
     bool   fes_idmrg::on                 = true;
-    int    fes_idmrg::max_length          = 2000;
+    int    fes_idmrg::max_length         = 2000;
     long   fes_idmrg::chi_min            = 4;
     long   fes_idmrg::chi_max            = 12;
     long   fes_idmrg::chi_num            = 3;
@@ -97,22 +101,26 @@ void settings::load_from_file(class_file_reader &indata){
     }
 
     //Parameters controlling imaginary TEBD (Zero temperature)
-    itebd::on                     = indata.find_parameter<bool>   ("itebd::on"         , itebd::on       );
+    itebd::on                     = indata.find_parameter<bool>   ("itebd::on"          , itebd::on       );
     if(itebd::on){
-        itebd::max_steps          = indata.find_parameter<int>    ("itebd::max_steps " , itebd::max_steps);
-        itebd::delta_t            = indata.find_parameter<double> ("itebd::delta_t "   , itebd::delta_t  );
-        itebd::chi_max            = indata.find_parameter<long>   ("itebd::chi_max"    , itebd::chi_max  );
-        itebd::print_freq         = indata.find_parameter<int>    ("itebd::print_freq" , itebd::print_freq);
+        itebd::max_steps          = indata.find_parameter<int>    ("itebd::max_steps "  , itebd::max_steps);
+        itebd::delta_t0           = indata.find_parameter<double> ("itebd::delta_t0"    , itebd::delta_t0  );
+        itebd::delta_tmin         = indata.find_parameter<double> ("itebd::delta_tmin"  , itebd::delta_tmin);
+        itebd::suzuki_order       = indata.find_parameter<int>    ("itebd::suzuki_order", itebd::suzuki_order);
+        itebd::chi_max            = indata.find_parameter<long>   ("itebd::chi_max"     , itebd::chi_max  );
+        itebd::print_freq         = indata.find_parameter<int>    ("itebd::print_freq"  , itebd::print_freq);
     }
 
     //Parameters controlling Finite-entanglement scaling (FES) in iTEBD-mode.
-    fes_itebd::on                 = indata.find_parameter<bool>   ("fes_itebd::on"         , fes_itebd::on        );
+    fes_itebd::on                 = indata.find_parameter<bool>   ("fes_itebd::on"          , fes_itebd::on        );
     if(fes_itebd::on){
-        fes_itebd::max_steps      = indata.find_parameter<int>    ("fes_itebd::max_steps " , fes_itebd::max_steps );
-        fes_itebd::delta_t        = indata.find_parameter<double> ("fes_itebd::delta_t "   , fes_itebd::delta_t   );
-        fes_itebd::chi_min        = indata.find_parameter<long>   ("fes_itebd::chi_min"    , fes_itebd::chi_min   );
-        fes_itebd::chi_max        = indata.find_parameter<long>   ("fes_itebd::chi_max"    , fes_itebd::chi_max   );
-        fes_itebd::chi_num        = indata.find_parameter<long>   ("fes_itebd::chi_num"    , fes_itebd::chi_num   );
+        fes_itebd::max_steps      = indata.find_parameter<int>    ("fes_itebd::max_steps "  , fes_itebd::max_steps );
+        fes_itebd::delta_t0       = indata.find_parameter<double> ("fes_itebd::delta_t0 "   , fes_itebd::delta_t0   );
+        fes_itebd::delta_tmin     = indata.find_parameter<double> ("fes_itebd::delta_tmin"  , fes_itebd::delta_tmin );
+        fes_itebd::suzuki_order   = indata.find_parameter<int>    ("fes_itebd::suzuki_order", fes_itebd::suzuki_order);
+        fes_itebd::chi_min        = indata.find_parameter<long>   ("fes_itebd::chi_min"     , fes_itebd::chi_min   );
+        fes_itebd::chi_max        = indata.find_parameter<long>   ("fes_itebd::chi_max"     , fes_itebd::chi_max   );
+        fes_itebd::chi_num        = indata.find_parameter<long>   ("fes_itebd::chi_num"     , fes_itebd::chi_num   );
         fes_itebd::print_freq     = indata.find_parameter<int>    ("fes_itebd::print_freq " , fes_itebd::print_freq );
     }
 

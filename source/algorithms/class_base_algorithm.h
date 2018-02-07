@@ -17,22 +17,30 @@ class class_hdf5_table_buffer;
 class class_measurement;
 
 enum class SimulationType{iDMRG,fDMRG, FES_iDMRG, iTEBD, FES_iTEBD, NONE};
-class class_base {
+class class_algorithm_base {
 public:
 
-    class_base(std::shared_ptr<class_hdf5_file>         hdf5_,
+    class_algorithm_base(std::shared_ptr<class_hdf5_file>         hdf5_,
                std::shared_ptr<class_hdf5_table_buffer> table_buffer_,
                std::shared_ptr<class_superblock>        superblock_,
                std::shared_ptr<class_measurement>       observables_);
 
-    class_base();
-    SimulationType simtype;
-    std::string simulation_name;
+    class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
+               std::string group_name_,
+               std::string table_name_,
+               std::string simulation_name_,
+               SimulationType simtype_);
+
+    class_algorithm_base();
 
     void set_profiling_labels ();
     //Storage
     std::shared_ptr<class_hdf5_file>         hdf5;
     std::shared_ptr<class_hdf5_table_buffer> table_buffer;
+    std::string group_name;
+    std::string table_name;
+    std::string simulation_name;
+    SimulationType simtype;
 
     //MPS
     std::shared_ptr<class_superblock>         superblock;

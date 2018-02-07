@@ -5,12 +5,11 @@
 #ifndef DMRG_CLASS_HDF5_DATASET_BUFFER_H
 #define DMRG_CLASS_HDF5_DATASET_BUFFER_H
 
-#include "class_hdf5_file.h"
-
+class class_hdf5_file;
 template<typename DataType, typename AttrType = int, typename IterType = int>
 class class_hdf5_dataset_buffer : public std::vector<DataType>{
 private:
-    class_hdf5_file *hdf5_out;
+    std::shared_ptr<class_hdf5_file> hdf5_out;
     std::string group_name      = "default_group";
     IterType iteration          = 0;
     std::string dataset_name    = "default_data";
@@ -27,7 +26,7 @@ public:
 
     explicit class_hdf5_dataset_buffer()=default;
 
-    class_hdf5_dataset_buffer(class_hdf5_file *hdf5_out_,
+    class_hdf5_dataset_buffer(std::shared_ptr<class_hdf5_file> hdf5_out_,
                               const std::string &group_name_,
                               const IterType &iteration_,
                               const std::string &dataset_name_);
@@ -36,7 +35,7 @@ public:
                               const IterType &iteration_,
                               const std::string &dataset_name_);
 
-    class_hdf5_dataset_buffer(class_hdf5_file *hdf5_out_,
+    class_hdf5_dataset_buffer(std::shared_ptr<class_hdf5_file> hdf5_out_,
                               const std::string &group_name_,
                               const IterType &iteration_,
                               const std::string &dataset_name_,
@@ -52,7 +51,7 @@ public:
 
     ~class_hdf5_dataset_buffer(){
         if (hdf5_out != nullptr){
-            write_buffer_to_file(*hdf5_out);
+            write_buffer_to_file();
         }else if (!data_has_been_written_to_file){
             std::cerr << "Warning: Output data has not been saved to file, yet it is being discarded!\n" << std::endl;
         }
@@ -65,18 +64,16 @@ public:
     void hdf5_set_all(const std::string &group_name_, const IterType iteration_, const std::string &dataset_name_);
     void hdf5_set_attribute(const AttrType &attribute_, const std::string &attribute_name_);
     void hdf5_refresh_relative_name();
-    void write_buffer_to_file(class_hdf5_file &hdf5_out);
+    void write_buffer_to_file();
 
 
     void push_back(const DataType& element) {
-        if (std::vector<DataType>::size() >= max_elements) {
-            write_buffer_to_file(*hdf5_out);
+        if ((int)std::vector<DataType>::size() >= max_elements) {
+            write_buffer_to_file();
         }
         std::vector<DataType>::push_back(element);
         data_has_been_written_to_file = false;
     }
-    //disallow - throw exception or whatever
-
 };
 
 

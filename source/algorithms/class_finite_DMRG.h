@@ -6,7 +6,7 @@
 #define DMRG_CLASS_FINITE_DMRG_H
 
 
-#include "class_base.h"
+#include "class_base_algorithm.h"
 /*!
  *
  * \brief Class that runs the Finite DMRG algorithm.
@@ -18,10 +18,10 @@
  * \param shared_ptr<class_measurement> (optional) A class that extracts, or measures, quantities from the superblock.
  */
 class class_environment_storage;
-class class_finite_DMRG : public class_base {
+class class_finite_DMRG : public class_algorithm_base {
 public:
-    //Inherit the constructor of class_base
-    using class_base::class_base;
+    //Inherit the constructor of class_algorithm_base
+    using class_algorithm_base::class_algorithm_base;
     explicit class_finite_DMRG(std::shared_ptr<class_hdf5_file> hdf5_);
     long chi_max    = settings::fdmrg::chi_max;
     int  max_length = settings::fdmrg::max_length;

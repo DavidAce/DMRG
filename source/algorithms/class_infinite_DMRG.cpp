@@ -13,7 +13,7 @@ using namespace std;
 using namespace Textra;
 
 class_infinite_DMRG::class_infinite_DMRG(std::shared_ptr<class_hdf5_file> hdf5_)
-    : class_base() {
+    : class_algorithm_base() {
     simtype = SimulationType::iDMRG;
     simulation_name        = "iDMRG";
     std::string group_name = simulation_name;
@@ -79,7 +79,7 @@ void class_infinite_DMRG::print_status_update() {
     if (print_freq == 0) {return;}
     t_obs.tic();
     std::cout << setprecision(16) << fixed << left;
-    ccout(1) << left  << simulation_name;
+    ccout(1) << left  << simulation_name << " ";
     ccout(1) << left  << "Step: "                   << setw(10) << iteration;
     ccout(1) << left  << "E: "                      << setw(21) << setprecision(16)    << fixed   << observables->get_energy();
     ccout(1) << left  << "S: "                      << setw(21) << setprecision(16)    << fixed   << observables->get_entropy();

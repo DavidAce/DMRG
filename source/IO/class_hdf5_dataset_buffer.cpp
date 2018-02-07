@@ -1,6 +1,7 @@
 //
 // Created by david on 2017-12-02.
 //
+#include "class_hdf5_file.h"
 
 #include "class_hdf5_dataset_buffer.h"
 
@@ -13,11 +14,11 @@ std::string class_hdf5_dataset_buffer<DataType, AttrType, IterType>::left_pad(co
 
 
 template<typename DataType, typename AttrType,typename IterType>
-class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(class_hdf5_file *hdf5_out_,
+class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(std::shared_ptr<class_hdf5_file> hdf5_out_,
                                                                          const std::string &group_name_,
                                                                          const IterType &iteration_,
                                                                          const std::string &dataset_name_)
-: hdf5_out(hdf5_out_),
+: hdf5_out(std::move(hdf5_out_)),
 group_name     (group_name_),
 iteration      (iteration_),
 dataset_name   (dataset_name_)
@@ -26,7 +27,7 @@ dataset_name   (dataset_name_)
 }
 
 template<typename DataType, typename AttrType,typename IterType>
-class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(class_hdf5_file *hdf5_out_,
+class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(std::shared_ptr<class_hdf5_file> hdf5_out_,
                                                                                    const std::string &group_name_,
                                                                                    const IterType &iteration_,
                                                                                    const std::string &dataset_name_,
@@ -102,14 +103,13 @@ void class_hdf5_dataset_buffer<DataType, AttrType, IterType>::hdf5_refresh_relat
 
 
 template<typename DataType, typename AttrType,typename IterType>
-void class_hdf5_dataset_buffer<DataType, AttrType, IterType>::write_buffer_to_file(class_hdf5_file &hdf5_out) {
+void class_hdf5_dataset_buffer<DataType, AttrType, IterType>::write_buffer_to_file() {
     if (!this->empty()) {
         hdf5_refresh_relative_name();
+        hdf5_out->write_dataset(static_cast<std::vector<DataType>>(*this), dataset_relative_name);
+
         if (attribute_set) {
-            hdf5_out.write_to_file(static_cast<std::vector<DataType>>(*this), dataset_relative_name, attribute,
-                                   attribute_name);
-        } else {
-            hdf5_out.write_to_file(static_cast<std::vector<DataType>>(*this), dataset_relative_name);
+            hdf5_out->write_attribute_to_dataset(dataset_relative_name, attribute, attribute_name);
         }
         this->clear();
     }

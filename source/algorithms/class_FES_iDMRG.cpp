@@ -11,21 +11,23 @@
 #include <general/n_math.h>
 #include "class_FES_iDMRG.h"
 #include "class_infinite_DMRG.h"
-
+#include <thread>
+#include <chrono>
 using namespace std;
 using namespace Textra;
 
 class_FES_iDMRG::class_FES_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
-        : class_base() {
+        : class_algorithm_base() {
     simtype = SimulationType::FES_iDMRG;
     simulation_name        = "FES_iDMRG";
-    std::string group_name = simulation_name;
-    std::string table_name = simulation_name;
+    group_name = simulation_name;
+    table_name = simulation_name;
     hdf5         = std::move(hdf5_);
     table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, group_name, table_name);
     superblock   = std::make_shared<class_superblock>();
     observables  = std::make_shared<class_measurement>(superblock, simtype);
 }
+
 
 
 
@@ -65,14 +67,12 @@ void class_FES_iDMRG::run2() {
     t_tot.tic();
     auto chi_max_list = Math::LinSpaced(chi_num, chi_min, chi_max);
     for(auto &chi_max : chi_max_list ) {
-        class_infinite_DMRG iDMRG(hdf5);
+        std::string table_name_chi =  table_name + to_string(chi_max);
+        std::string sim_name_chi   =  simulation_name +  "(chi_" + to_string(chi_max) + ")";
+        class_infinite_DMRG iDMRG(hdf5, group_name, table_name_chi, sim_name_chi, SimulationType::FES_iDMRG);
         iDMRG.chi_max           = chi_max;
-        iDMRG.simtype           = SimulationType::FES_iDMRG;
-        iDMRG.simulation_name   = "FES_iDMRG (chi_" + to_string(chi_max) + ")";
         iDMRG.max_length        = max_length;
         iDMRG.print_freq        = print_freq;
-        iDMRG.table_buffer->group_name = "FES_iDMRG";
-        iDMRG.table_buffer->table_name = "FES_iDMRG_chi_" + to_string(chi_max);
         iDMRG.run();
     }
 }
@@ -114,7 +114,7 @@ void class_FES_iDMRG::print_status_update() {
     if (print_freq == 0) {return;}
     t_obs.tic();
     std::cout << setprecision(16) << fixed << left;
-    ccout(1) << left  << simulation_name;
+    ccout(1) << left  << simulation_name << " ";
     ccout(1) << left  << "Step: "                   << setw(10) << iteration;
     ccout(1) << left  << "E: "                      << setw(21) << setprecision(16)    << fixed   << observables->get_energy();
     ccout(1) << left  << "S: "                      << setw(21) << setprecision(16)    << fixed   << observables->get_entropy();

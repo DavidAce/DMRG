@@ -2,7 +2,7 @@
 // Created by david on 2018-01-18.
 //
 
-#include "class_base.h"
+#include "class_base_algorithm.h"
 #include <IO/class_hdf5_file.h>
 #include <IO/class_hdf5_table_buffer.h>
 #include <mps_routines/class_superblock.h>
@@ -11,7 +11,7 @@ namespace s = settings;
 using namespace std;
 using namespace Textra;
 
-class_base::class_base(std::shared_ptr<class_hdf5_file>         hdf5_,
+class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file>         hdf5_,
                        std::shared_ptr<class_hdf5_table_buffer> table_buffer_,
                        std::shared_ptr<class_superblock>        superblock_,
                        std::shared_ptr<class_measurement>       observables_)
@@ -24,14 +24,32 @@ class_base::class_base(std::shared_ptr<class_hdf5_file>         hdf5_,
     set_profiling_labels();
 };
 
+class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
+                       std::string group_name_,
+                       std::string table_name_,
+                       std::string simulation_name_,
+                       SimulationType simtype_)
+        :hdf5           (std::move(hdf5_)),
+         group_name     (std::move(group_name_)),
+         table_name     (std::move(table_name_)),
+         simulation_name(std::move(simulation_name_)),
+         simtype(simtype_) {
+    set_profiling_labels();
+    table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, group_name, table_name);
+    superblock   = std::make_shared<class_superblock>();
+    observables  = std::make_shared<class_measurement>(superblock, simtype);
+};
 
-class_base::class_base(){
-//    set_simtype_labels();
+
+
+
+
+class_algorithm_base::class_algorithm_base(){
     set_profiling_labels();
 }
 
 
-void class_base::single_DMRG_step(long chi_max){
+void class_algorithm_base::single_DMRG_step(long chi_max){
 /*!
  * \fn void single_DMRG_step(class_superblock &superblock)
  */
@@ -43,7 +61,7 @@ void class_base::single_DMRG_step(long chi_max){
     t_sim.toc();
 }
 
-void class_base::single_TEBD_step(long chi_max){
+void class_algorithm_base::single_TEBD_step(long chi_max){
 /*!
  * \fn single_iTEBD_step(class_superblock &superblock)
  * \brief infinite Time evolving block decimation.
@@ -59,7 +77,7 @@ void class_base::single_TEBD_step(long chi_max){
 
 
 
-void class_base::set_profiling_labels() {
+void class_algorithm_base::set_profiling_labels() {
     using namespace settings::profiling;
     t_tot.set_properties(on, precision,"+Total Time              ");
     t_sto.set_properties(on, precision,"\u21B3 Store to file          ");
@@ -74,18 +92,18 @@ void class_base::set_profiling_labels() {
     t_mps.set_properties(on, precision," \u21B3 Update MPS            ");
 }
 
-void class_base::enlarge_environment(){
+void class_algorithm_base::enlarge_environment(){
     t_env.tic();
     superblock->enlarge_environment();
     t_env.toc();
 }
-void class_base::enlarge_environment(int direction){
+void class_algorithm_base::enlarge_environment(int direction){
     t_env.tic();
     superblock->enlarge_environment(direction);
     t_env.toc();
 }
 
-void class_base::swap(){
+void class_algorithm_base::swap(){
     superblock->swap_AB();
 }
 

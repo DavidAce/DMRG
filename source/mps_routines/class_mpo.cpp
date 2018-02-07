@@ -132,7 +132,7 @@ Tensor<class_mpo::Scalar,4> class_mpo::compute_Udt(double delta_t, int order){
 };
 
 
-void class_mpo::update_timestep(const double delta_t, const int order){
+void class_mpo::update_timestep(const double delta_t, const int susuki_trotter_order){
     timestep = delta_t;
-    Udt = compute_Udt(delta_t, order);
+    Udt = compute_Udt(delta_t, susuki_trotter_order);
 }

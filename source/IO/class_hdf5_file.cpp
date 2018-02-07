@@ -1,35 +1,49 @@
 //
-// Created by david on 2017-12-02.
+// Created by david on 2018-02-07.
 //
 
-#include "class_hdf5_file.h"
-#include <fstream>
-#include <istream>
-#include <directory.h>
+#include <IO/class_hdf5_file.h>
 
-class_hdf5_file::class_hdf5_file(const fs::path &output_filename_, const fs::path &output_folder_ , bool create_dir_, bool overwrite_){
+class_hdf5_file::class_hdf5_file(const fs::path output_filename_, const fs::path output_folder_ , bool create_dir_, bool overwrite_, bool mpi_io_){
     output_filename = output_filename_;
     output_folder   = output_folder_;
     create_dir      = create_dir_;
     overwrite       = overwrite_;
-    initialize();
+    mpi_io          = mpi_io_;
+    if(mpi_io) {
+//        initialize_mpi();
+    }else{
+        initialize();
+    }
 }
 
-class_hdf5_file::class_hdf5_file(){
+class_hdf5_file::class_hdf5_file(bool mpi_io_){
     output_filename = settings::hdf5::output_filename;
     output_folder   = settings::hdf5::output_folder;
     create_dir      = settings::hdf5::create_dir_if_not_found;
     overwrite       = settings::hdf5::overwrite_file_if_found;
-    initialize();
+    mpi_io          = mpi_io_;
+
+    if(mpi_io) {
+//        initialize_mpi();
+    }else{
+        initialize();
+    }
+
 }
 
 void class_hdf5_file::initialize(){
     set_output_file_path();
+    plist_facc = H5Pcreate(H5P_FILE_ACCESS);
+    plist_lncr = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
+    H5Pset_create_intermediate_group(plist_lncr, 1);
+
+
     file = H5Fcreate(output_file_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, H5P_DEFAULT);
     //Put git revision in file attribute
     std::string gitversion = "Branch: " + GIT::BRANCH + " | Commit hash: " + GIT::COMMIT_HASH + " | Revision: " + GIT::REVISION;
     hid_t datatype          = get_DataType<std::string>();
-    hid_t dataspace         = get_DataSpace(gitversion);
+    hid_t dataspace         = get_MemSpace(gitversion);
     retval                  = H5Tset_size(datatype, gitversion.size());
     retval                  = H5Tset_strpad(datatype,H5T_STR_NULLTERM);
     hid_t attribute         = H5Acreate(file, "GIT REVISION", datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT );
@@ -132,111 +146,46 @@ void class_hdf5_file::set_output_file_path() {
 }
 
 
-void class_hdf5_file::open_file(){
-    file = H5Fopen (output_filename.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
-}
 
-void class_hdf5_file::create_group(const std::string &group_relative_name) {
+
+void class_hdf5_file::create_group_link(const std::string &group_relative_name) {
     //Check if group exists already
     if (!H5Lexists(file, group_relative_name.c_str(), H5P_DEFAULT)) {
-        hid_t lcpl = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
-        retval = H5Pset_create_intermediate_group(lcpl, 1);
-        hid_t group = H5Gcreate(file, group_relative_name.c_str(), lcpl, H5P_DEFAULT, H5P_DEFAULT);
-        H5Pclose(lcpl);
+        hid_t group = H5Gcreate(file, group_relative_name.c_str(), plist_lncr, H5P_DEFAULT, H5P_DEFAULT);
         H5Gclose(group);
     }
 }
 
 
-template <typename AttrType>
-void class_hdf5_file::create_group(const std::string &group_relative_name, const std::string &attribute_name, const AttrType &attr){
-    if (!H5Lexists(file, group_relative_name.c_str(), H5P_DEFAULT)) {
-        hid_t lcpl           = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
-        retval               = H5Pset_create_intermediate_group(lcpl, 1);
-        hid_t group          = H5Gcreate(file,group_relative_name.c_str(), lcpl,H5P_DEFAULT,H5P_DEFAULT);
-        hid_t datatype       = get_DataType<AttrType>();
-        hid_t dataspace      = get_DataSpace(attr);
-        hid_t attribute      = H5Acreate(group, attribute_name.c_str(), datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT );
-        retval               = H5Awrite(attribute, datatype, &attr);
-        H5Sclose(dataspace);
-        H5Tclose(datatype);
-        H5Aclose(attribute);
-        H5Pclose(lcpl);
-        H5Gclose(group);
+void class_hdf5_file::select_hyperslab(hid_t &filespace, hid_t &memspace){
+    const int ndims = H5Sget_simple_extent_ndims(filespace);
+    hsize_t mem_dims[ndims];
+    hsize_t file_dims[ndims];
+    H5Sget_simple_extent_dims(memspace , mem_dims, NULL);
+    H5Sget_simple_extent_dims(filespace, file_dims, NULL);
+    hsize_t start[ndims];
+    for(int i = 0; i < ndims; i++){
+        start[i] = file_dims[i] - mem_dims[i];
     }
+    H5Sselect_hyperslab(filespace, H5S_SELECT_SET, start, NULL, mem_dims, NULL);
+
 }
 
-//Explicit instantiations
-template void class_hdf5_file::create_group(const std::string &, const std::string &, const int &);
-//template void class_hdf5_file::create_group(const std::string &, const std::string &, const long &);
-//template void class_hdf5_file::create_group(const std::string &, const std::string &, const double &);
 
-
-
-
-template <typename DataType>
-void class_hdf5_file::write_to_file(const DataType &data, const std::string &dataset_relative_name){
-    hid_t dataspace = get_DataSpace(data);
-    hid_t datatype  = get_DataType<DataType>();
-    hid_t lcpl      = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
-    retval          = H5Pset_create_intermediate_group(lcpl, 1);
-    hid_t dataset   = H5Dcreate(file,
-                                dataset_relative_name.c_str(),
-                                datatype,
-                                dataspace,
-                                lcpl,
-                                H5P_DEFAULT,
-                                H5P_DEFAULT);
-
-    if constexpr(tc::has_member_data<DataType>::value){
-        retval = H5Dwrite(dataset,
-                          datatype,
-                          H5S_ALL,
-                          H5S_ALL,
-                          H5P_DEFAULT,
-                          data.data());
+void class_hdf5_file::extend_dataset(const std::string & dataset_relative_name, const int dim, const int extent){
+    if (H5Lexists(file, dataset_relative_name.c_str(), H5P_DEFAULT)) {
+        hid_t dataset = H5Dopen(file, dataset_relative_name.c_str(), H5P_DEFAULT);
+        // Retrieve the current size of the dataspace (act as if you don't know it's size and want to append)
+        hid_t filespace = H5Dget_space(dataset);
+        const int ndims = H5Sget_simple_extent_ndims(filespace);
+        hsize_t old_dims[ndims];
+        hsize_t new_dims[ndims];
+        H5Sget_simple_extent_dims(filespace, old_dims, NULL);
+        std::copy(old_dims, old_dims + ndims, new_dims);
+        new_dims[dim] += extent;
+        H5Dset_extent(dataset, new_dims);
+        H5Dclose(dataset);
+        H5Sclose(filespace);
     }
-    if constexpr(std::is_arithmetic<DataType>::value){
-        retval = H5Dwrite(dataset,
-                          datatype,
-                          H5S_ALL,
-                          H5S_ALL,
-                          H5P_DEFAULT,
-                          &data);
-    }
-    H5Sclose(dataspace);
-    H5Tclose(datatype);
-    H5Dclose(dataset);
-    H5Pclose(lcpl);
+
 }
-
-//Explicit instantiations
-template void class_hdf5_file::write_to_file(const int &, const std::string &);
-template void class_hdf5_file::write_to_file(const long &, const std::string &);
-template void class_hdf5_file::write_to_file(const double &, const std::string &);
-template void class_hdf5_file::write_to_file(const float &, const std::string &);
-template void class_hdf5_file::write_to_file(const char &, const std::string &);
-template void class_hdf5_file::write_to_file(const std::string &, const std::string &);
-template void class_hdf5_file::write_to_file(const std::vector<int> &, const std::string &);
-template void class_hdf5_file::write_to_file(const std::vector<long> &, const std::string &);
-template void class_hdf5_file::write_to_file(const std::vector<double> &, const std::string &);
-template void class_hdf5_file::write_to_file(const std::vector<std::string> &, const std::string &);
-
-
-
-template <typename AttrType>
-void class_hdf5_file::write_attribute_to_dataset(const std::string &dataset_relative_name,  const AttrType &attribute ,const std::string &attribute_name){
-    hid_t datatype       = get_DataType<AttrType>();
-    hid_t dataspace      = get_DataSpace(attribute);
-    hid_t dataset        = H5Dopen(file, dataset_relative_name.c_str(),H5P_DEFAULT);
-    hid_t attribute_id   = H5Acreate(dataset, attribute_name.c_str(), datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT );
-    retval               = H5Awrite(attribute_id, datatype, &attribute);
-    H5Sclose(dataspace);
-    H5Tclose(datatype);
-    H5Dclose(dataset);
-    H5Aclose(attribute_id);
-}
-
-//Explicit instantiations
-template void class_hdf5_file::write_attribute_to_dataset(const std::string &,  const int & ,const std::string &);
-template void class_hdf5_file::write_attribute_to_dataset(const std::string &,  const long & ,const std::string &);

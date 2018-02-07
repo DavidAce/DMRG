@@ -1,4 +1,9 @@
 //
+// Created by david on 2018-01-31.
+//
+
+
+//
 // Created by david on 2018-01-18.
 //
 
@@ -8,17 +13,18 @@
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
 #include <general/n_math.h>
-#include "class_imaginary_TEBD.h"
+#include <algorithms/class_imaginary_TEBD.h>
+#include <algorithms/class_FES_iTEBD.h>
 
 using namespace std;
 using namespace Textra;
 
-class_imaginary_TEBD::class_imaginary_TEBD(std::shared_ptr<class_hdf5_file> hdf5_)
+class_FES_iTEBD::class_FES_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_algorithm_base() {
-    simtype = SimulationType::iTEBD;
-    simulation_name = "iTEBD";
-    std::string group_name = simulation_name;
-    std::string table_name = simulation_name;
+    simtype = SimulationType::FES_iTEBD;
+    simulation_name        = "FES_iTEBD";
+    group_name   = simulation_name;
+    table_name   = simulation_name;
     hdf5         = std::move(hdf5_);
     table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, group_name, table_name);
     superblock   = std::make_shared<class_superblock>();
@@ -26,38 +32,58 @@ class_imaginary_TEBD::class_imaginary_TEBD(std::shared_ptr<class_hdf5_file> hdf5
 }
 
 
-void class_imaginary_TEBD::run() {
-    if (!settings::itebd::on) { return; }
+
+void class_FES_iTEBD::run() {
+    if (!settings::fes_itebd::on) { return; }
     ccout(0) << "\nStarting " << simulation_name << " simulation" << std::endl;
     t_tot.tic();
-    superblock->H.update_timestep(settings::itebd::delta_t0, 1);
-    while(delta_t > delta_tmin  and iteration < max_steps) {
-        reduce_timestep();
-        store_table_entry();
-        single_TEBD_step(chi_max);
-        swap();
-        iteration++;
-        phys_time += superblock->H.timestep;
-        print_status_update();
+    auto chi_max_list = Math::LinSpaced(chi_num, chi_min, chi_max);
+    for(auto &chi_max : chi_max_list ) {
+        t_tot.reset();
+        t_tot.tic();
+        t_sim.reset();
+        t_eig.reset();
+        t_svd.reset();
+        t_mps.reset();
+        t_sto.reset();
+        table_buffer->table_name = "FES_iTEBD_chi_" + to_string(chi_max);
+        while (superblock->chain_length < max_steps) {
+            store_table_entry();
+            single_TEBD_step(chi_max);
+            enlarge_environment();
+            swap();
+            iteration++;
+            print_status_update();
+        }
+        t_tot.toc();
+        print_status_full();
+        print_profiling();
+        table_buffer->write_buffer_to_file();
     }
-    t_tot.toc();
-    print_status_full();
-    print_profiling();
-}
-void class_imaginary_TEBD::reduce_timestep(){
-    t_udt.tic();
-    old_entropy = new_entropy;
-    new_entropy = observables->get_entropy();
-    double rel_diff = std::fabs((new_entropy-old_entropy)/new_entropy);
-    if (rel_diff < 1e-6 ){
-        delta_t *=0.5;
-        superblock->H.update_timestep(delta_t, 1);
-    }
-    t_udt.toc();
 }
 
 
-void class_imaginary_TEBD::store_table_entry(){
+void class_FES_iTEBD::run2() {
+    if (!settings::fes_itebd::on) { return; }
+    ccout(0) << "\nStarting " << simulation_name << " simulation" << std::endl;
+    t_tot.tic();
+    auto chi_max_list = Math::LinSpaced(chi_num, chi_min, chi_max);
+    for(auto &chi_max : chi_max_list ) {
+        std::string table_name_chi =  table_name + to_string(chi_max);
+        std::string sim_name_chi   =  simulation_name +  "(chi_" + to_string(chi_max) + ")";
+        class_imaginary_TEBD iTEBD(hdf5, group_name, table_name_chi, sim_name_chi, SimulationType::FES_iTEBD);
+        iTEBD.chi_max           = chi_max;
+        iTEBD.max_steps         = max_steps;
+        iTEBD.delta_t0          = delta_t0;
+        iTEBD.delta_tmin        = delta_tmin;
+        iTEBD.print_freq        = print_freq;
+        iTEBD.run();
+    }
+}
+
+
+
+void class_FES_iTEBD::store_table_entry(){
     t_sto.tic();
     table_buffer->emplace_back(superblock->chi,
                                chi_max,
@@ -68,31 +94,28 @@ void class_imaginary_TEBD::store_table_entry(){
                                observables->get_truncation_error(),
                                iteration,
                                superblock->chain_length,
-                               superblock->H.timestep,
+                               0,
                                t_tot.get_age(),
-                               phys_time);
+                               0);
     t_sto.toc();
 }
 
-void class_imaginary_TEBD::print_profiling(){
+void class_FES_iTEBD::print_profiling(){
     if (settings::profiling::on) {
         t_tot.print_time_w_percent();
         t_sto.print_time_w_percent(t_tot);
-        t_udt.print_time_w_percent(t_tot);
+        t_env.print_time_w_percent(t_tot);
         t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
-        t_evo.print_time_w_percent(t_sim);
+        t_eig.print_time_w_percent(t_sim);
         t_svd.print_time_w_percent(t_sim);
         t_mps.print_time_w_percent(t_sim);
     }
 }
 
-
-
-void class_imaginary_TEBD::print_status_update() {
+void class_FES_iTEBD::print_status_update() {
     if (Math::mod(iteration, print_freq) != 0) {return;}
     if (print_freq == 0) {return;}
-
     t_obs.tic();
     std::cout << setprecision(16) << fixed << left;
     ccout(1) << left  << simulation_name << " ";
@@ -103,12 +126,12 @@ void class_imaginary_TEBD::print_status_update() {
     ccout(1) << left  << "\u03C7: "                 << setw(4)  << setprecision(3)     << fixed   << observables->get_chi();
     ccout(1) << left  << "Var(E): "                 << setw(21) << setprecision(16)    << fixed   << observables->get_variance();
     ccout(1) << left  << "SVD truncation: "         << setw(21) << setprecision(16)    << fixed   << observables->get_truncation_error();
-    ccout(1) << left  << "Timestep: "               << setw(25) << setprecision(12)    << fixed   << superblock->H.timestep;
+    ccout(1) << left  << "Chain length: "           << setw(25) << setprecision(12)    << fixed   << superblock->chain_length;
     ccout(1) << std::endl;
     t_obs.toc();
 }
 
-void class_imaginary_TEBD::print_status_full(){
+void class_FES_iTEBD::print_status_full(){
     std::cout << std::endl;
     std::cout << " -- Final results -- " << simulation_name << std::endl;
     ccout(0)  << setw(20) << "Energy               = " << setprecision(16) << fixed      << observables->get_energy()        << std::endl;
@@ -117,6 +140,6 @@ void class_imaginary_TEBD::print_status_full(){
     ccout(0)  << setw(20) << "chi                  = " << setprecision(4)  << fixed      << observables->get_chi()           << std::endl;
     ccout(0)  << setw(20) << "Variance             = " << setprecision(16) << scientific << observables->get_variance()      << std::endl;
     ccout(0)  << setw(20) << "SVD truncation       = " << setprecision(4)  << scientific << observables->get_truncation_error() << std::endl;
-    ccout(0)  << setw(20) << "Timestep             = " << setprecision(12) << fixed      << superblock->H.timestep << std::endl;
+    ccout(0) << setw(20)  << "Chain length         = " << setprecision(12) << fixed      << superblock->chain_length << std::endl;
     std::cout << std::endl;
 }
