@@ -15,14 +15,23 @@
 #   include(Find_or_install_HDF5.cmake)
 
 # Read more here: http://msarahan.github.io/cmake-and-hdf5-revisited/
-message("SEARCHING FOR PRE-INSTALLED LIBRARIES: HDF5")
+message("SEARCHING FOR LIBRARY: HDF5")
+set(HDF5_CMAKE_DIR_GUESS ${PROJECT_SOURCE_DIR}/libs/hdf5/share/cmake)
+set(HDF5_USE_STATIC_LIBRARIES ON)
+find_package(HDF5 COMPONENTS CXX HL static PATHS "${HDF5_CMAKE_DIR_GUESS}" NO_DEFAULT_PATH NO_MODULE)
+if(HDF5_FOUND)
+    include(${PROJECT_SOURCE_DIR}/libs/hdf5/FindHDF5.cmake)
+    list(APPEND HDF5_LIBRARIES ${HDF5_CXX_STATIC_LIBRARY} ${HDF5_HL_STATIC_LIBRARY} )
+    message(STATUS "FOUND PREVIOUSLY INSTALLED HDF5: ${HDF5_LIBRARIES} ")
+    return()
+endif()
 
 
+
+# Try finding in system
 # Usually there is an executable present in system, "h5c++"
 # Execute "find /usr -name h5c++ -print -quit" in terminal to find out where it is.
 # -quit returns after first match
-
-
 execute_process(
         COMMAND  find /usr -name libhdf5.* -exec dirname {} \; -quit
         OUTPUT_VARIABLE HDF5_ROOT
@@ -36,25 +45,27 @@ execute_process(
 string(STRIP "${HDF5_CXX_COMPILER_EXECUTABLE}" HDF5_CXX_COMPILER_EXECUTABLE)
 string(STRIP "${HDF5_ROOT}" HDF5_ROOT)
 
-message("HDF5_ROOT: ${HDF5_ROOT}")
-message("HDF5_CXX_COMPILER_EXECUTABLE: ${HDF5_CXX_COMPILER_EXECUTABLE}")
+message(STATUS "HDF5_ROOT: ${HDF5_ROOT}")
+message(STATUS "HDF5_CXX_COMPILER_EXECUTABLE: ${HDF5_CXX_COMPILER_EXECUTABLE}")
 
 set(HDF5_USE_STATIC_LIBRARIES OFF)
 set(HDF5_FIND_DEBUG OFF)
 set(HDF5_DIR ${HDF5_ROOT})
-message("FINDING HDF5 LIBRARIES USING CMAKE DEFAULTS")
+message(STATUS "SEARCHING FOR HDF5 IN SYSTEM...")
 find_package (HDF5 COMPONENTS CXX HL)
 if (HDF5_FOUND AND NOT "${HDF5_LIBRARIES}" MATCHES "anaconda")
     add_definitions(${HDF5_DEFINITIONS})
     list(APPEND HDF5_LDFLAGS ${HDF5_CXX_LIBRARY_NAMES} ${HDF5_CXX_HL_LIBRARY_NAMES})
     list(APPEND HDF5_LIBRARIES ${HDF5_HL_LIBRARIES})
     list(REMOVE_DUPLICATES HDF5_LIBRARIES)
-    message("FOUND HDF5: ${HDF5_FOUND}")
-    message("   In path: ${HDF5_INCLUDE_DIRS}")
-    message("   HDF5 DEFINITIONS: ${HDF5_DEFINITIONS}")
-    message("   HDF5 LIBRARIES  : ${HDF5_LIBRARIES}")
+    message(STATUS "FOUND HDF5")
+    message(STATUS "   In path: ${HDF5_INCLUDE_DIRS}")
+    message(STATUS "   HDF5 DEFINITIONS: ${HDF5_DEFINITIONS}")
+    message(STATUS "   HDF5 LIBRARIES  : ${HDF5_LIBRARIES}")
     return()
 endif()
+
+
 
 
 
@@ -62,7 +73,7 @@ endif()
 set(HDF5_FOUND 0)
 set(HDF5_LIBRARIES "")
 if (NOT HDF5_FOUND OR "${HDF5_LIBRARIES}" MATCHES "anaconda")
-    message("DOWNLOADING HDF5...")
+    message(STATUS "DOWNLOADING HDF5...")
     execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory tmp/hdf5
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts)
@@ -84,10 +95,10 @@ if (NOT HDF5_FOUND OR "${HDF5_LIBRARIES}" MATCHES "anaconda")
     find_package(HDF5 COMPONENTS CXX HL PATHS "${HDF5_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE REQUIRED static)
     if(HDF5_FOUND)
         list(APPEND HDF5_LIBRARIES ${HDF5_CXX_STATIC_LIBRARY} ${HDF5_HL_STATIC_LIBRARY} )
-        message("SUCCESSFULLY INSTALLED HDF5:   ${HDF5_LIBRARIES}")
-        message("   In path: ${HDF5_INCLUDE_DIRS}")
-        message("   HDF5 LIBRARIES  : ${HDF5_LIBRARIES}")
-        message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/hdf5/log_build.txt")
+        message(STATUS "SUCCESSFULLY INSTALLED HDF5")
+        message(STATUS "   In path: ${HDF5_INCLUDE_DIRS}")
+        message(STATUS "   HDF5 LIBRARIES  : ${HDF5_LIBRARIES}")
+        message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/hdf5/log_build.txt")
         return()
     else()
         exit()

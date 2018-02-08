@@ -14,12 +14,26 @@
 #   include(Find_or_install_EIGEN3.cmake)
 
 
-message("SEARCHING FOR PRE-INSTALLED LIBRARIES: EIGEN3")
+message("SEARCHING FOR LIBRARY: EIGEN3")
+set(EIGEN3_CMAKE_DIR_GUESS ${PROJECT_SOURCE_DIR}/libs/eigen3/share/eigen3/cmake)
+find_package(Eigen3 3.3 PATHS "${EIGEN3_CMAKE_DIR_GUESS}" NO_DEFAULT_PATH NO_MODULE)
+if(EIGEN3_FOUND)
+    include(${PROJECT_SOURCE_DIR}/libs/eigen3/FindEigen3.cmake)
+    include_directories(${EIGEN3_INCLUDE_DIR})
+    message(STATUS "FOUND PREVIOUSLY INSTALLED EIGEN3:   ${EIGEN3_INCLUDE_DIR}")
+    return()
+endif()
+
+message(STATUS "SEARCHING FOR EIGEN3 IN SYSTEM...")
 find_package(Eigen3 3.3)                                ### Find and define includes for Eigen Library
 if(EIGEN3_FOUND)
-    message("FOUND PRE-INSTALLED EIGEN3:   ${EIGEN3_INCLUDE_DIR}")
-else()
-    message("DOWNLOADING EIGEN3...")
+    include_directories(${EIGEN3_INCLUDE_DIR})
+    message(STATUS "FOUND EIGEN3:   ${EIGEN3_INCLUDE_DIR}")
+    return()
+endif()
+
+if(NOT EIGEN3_FOUND)
+    message(STATUS "DOWNLOADING EIGEN3...")
     execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory tmp/eigen3
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts)
@@ -40,8 +54,8 @@ else()
     include(${PROJECT_SOURCE_DIR}/libs/eigen3/FindEigen3.cmake)
     find_package(Eigen3 3.3 PATHS "${EIGEN3_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE REQUIRED)
     include_directories(${EIGEN3_INCLUDE_DIR})
-    message("SUCCESSFULLY INSTALLED EIGEN3:   ${EIGEN3_INCLUDE_DIR}")
-    message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/eigen3/log_build.txt")
+    message(STATUS "SUCCESSFULLY INSTALLED EIGEN3:   ${EIGEN3_INCLUDE_DIR}")
+    message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/eigen3/log_build.txt")
 endif()
 
 

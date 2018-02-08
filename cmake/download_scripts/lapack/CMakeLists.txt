@@ -41,10 +41,15 @@ ExternalProject_Get_Property(LAPACK install_dir)
 set(LAPACK_LIB_DIR ${install_dir}/lib)
 set(LAPACK_INC_DIR ${install_dir}/include)
 set(LAPACK_BIN_DIR ${install_dir}/bin)
+execute_process(
+        COMMAND  find ${install_dir}/lib -name lapack-config.cmake -exec dirname {} \; -quit
+        OUTPUT_VARIABLE LAPACK_CMAKE_DIR
+)
 
 file(WRITE ${INSTALL_DIRECTORY}/lapack/FindLapack.cmake "set(LAPACK_LIB_DIR   ${LAPACK_LIB_DIR})\n")
 file(APPEND ${INSTALL_DIRECTORY}/lapack/FindLapack.cmake "set(LAPACK_INC_DIR   ${LAPACK_INC_DIR})\n")
 file(APPEND ${INSTALL_DIRECTORY}/lapack/FindLapack.cmake "set(LAPACK_BIN_DIR   ${LAPACK_BIN_DIR})\n")
+file(APPEND ${INSTALL_DIRECTORY}/lapack/FindLapack.cmake "set(LAPACK_CMAKE_DIR   ${LAPACK_CMAKE_DIR})\n")
 
 
 

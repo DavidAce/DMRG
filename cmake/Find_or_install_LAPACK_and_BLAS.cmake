@@ -14,14 +14,32 @@
 #   target_link_libraries(MyTarget ${LAPACK_LIBRARIES} ${BLAS_LIBRARIES})
 # To use, simple include it in your CMakeLists.txt
 #   include(Find_or_install_LAPACK_and_BLAS.cmake)
-message("SEARCHING FOR PRE-INSTALLED LIBRARIES: BLAS, LAPACK")
+
+
+
+
+message("SEARCHING FOR LIBRARIES: LAPACK and BLAS")
+set(LAPACK_CMAKE_DIR_GUESS ${PROJECT_SOURCE_DIR}/libs/lapack/lib/cmake/lapack-3.8.0)
+find_package(LAPACK PATHS "${LAPACK_CMAKE_DIR_GUESS}" NO_DEFAULT_PATH NO_MODULE)
+if(LAPACK_FOUND)
+    include(${PROJECT_SOURCE_DIR}/libs/eigen3/FindEigen3.cmake)
+    set(LAPACK_LIBRARIES ${LAPACK_lapack_LIBRARIES})
+    set(BLAS_LIBRARIES ${LAPACK_blas_LIBRARIES})
+    include_directories(${LAPACK_INC_DIR})
+    message(STATUS "FOUND PREVIOUSLY INSTALLED LAPACK:   ${LAPACK_LIBRARIES}")
+    message(STATUS "FOUND PREVIOUSLY INSTALLED BLAS:     ${BLAS_LIBRARIES}")
+    return()
+endif()
+
+
+message(STATUS "SEARCHING FOR LAPACK AND BLAS IN SYSTEM...")
 find_package(BLAS)
 find_package(LAPACK)
 if(LAPACK_FOUND AND BLAS_FOUND)
-    message("FOUND PRE-INSTALLED BLAS:     ${BLAS_LIBRARIES}")
-    message("FOUND PRE-INSTALLED LAPACK:   ${LAPACK_LIBRARIES}")
+    message(STATUS "FOUND BLAS:     ${BLAS_LIBRARIES}")
+    message(STATUS "FOUND LAPACK:   ${LAPACK_LIBRARIES}")
 else()
-    message("DOWNLOADING BLAS AND LAPACK...")
+    message(STATUS "DOWNLOADING BLAS AND LAPACK...")
 	execute_process(
 		COMMAND ${CMAKE_COMMAND} -E make_directory tmp/lapack
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts)
@@ -40,13 +58,18 @@ else()
 	include(${PROJECT_SOURCE_DIR}/libs/lapack/FindLapack.cmake)
     set(LAPACK_LIBRARIES "")
     set(BLAS_LIBRARIES "")
-    get_libraries(${LAPACK_LIB_DIR} lapack  LAPACK_LIBRARIES)
-    get_libraries(${LAPACK_LIB_DIR} blas    BLAS_LIBRARIES)
+    find_package(LAPACK PATHS "${LAPACK_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE REQUIRED)
+    set(LAPACK_LIBRARIES ${LAPACK_lapack_LIBRARIES})
+    set(BLAS_LIBRARIES ${LAPACK_blas_LIBRARIES})
     include_directories(${LAPACK_INC_DIR})
-    message("SUCCESSFULLY INSTALLED LAPACK:   ${LAPACK_LIBRARIES}")
-    message("SUCCESSFULLY INSTALLED BLAS:     ${BLAS_LIBRARIES}")
-    message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/lapack/log_build.txt")
-
+    message(STATUS "SUCCESSFULLY INSTALLED LAPACK:   ${LAPACK_LIBRARIES}")
+    message(STATUS "SUCCESSFULLY INSTALLED BLAS:     ${BLAS_LIBRARIES}")
+    message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/lapack/log_build.txt")
 endif()
 
-
+#get_cmake_property(_variableNames VARIABLES)
+#    foreach (_variableName ${_variableNames})
+#        if("${_variableName}" MATCHES "BLAS" OR "${_variableName}" MATCHES "LAPACK")
+#            message(STATUS "${_variableName}=${${_variableName}}")
+#        endif()
+#    endforeach()

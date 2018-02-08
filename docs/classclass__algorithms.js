@@ -1,20 +1,13 @@
 var classclass__algorithms =
 [
+    [ "class_algorithms", "classclass__algorithms.html#a9f85773223c921748cab3c50ff955ea2", null ],
     [ "class_algorithms", "classclass__algorithms.html#a76eeddcf855ea8d8930075984a60fd3e", null ],
-    [ "fDMRG", "classclass__algorithms.html#a3e89f9ebd7bc5e2b88ff6a7a78dd30e9", null ],
-    [ "FES_iDMRG", "classclass__algorithms.html#ae1d4e88d82f7f5dd1feb6e4e0a791f60", null ],
-    [ "FES_iTEBD", "classclass__algorithms.html#acd8b56edc0c107cc95fd103420d023bb", null ],
-    [ "iDMRG", "classclass__algorithms.html#abb6dfcfbb7797e15ff4c5aff02f09200", null ],
-    [ "iTEBD", "classclass__algorithms.html#af74d44986a057e74d6adc07812c6d63d", null ],
-    [ "single_DMRG_step", "classclass__algorithms.html#a92dd7ebedbd4fb138fbed692ff3bb22d", null ],
-    [ "single_TEBD_step", "classclass__algorithms.html#adc76e419add7d000d4a034dadd02ffd9", null ],
-    [ "hdf5", "classclass__algorithms.html#ab26e4bf9bb987d67623ef84913c4d24f", null ],
-    [ "t_eig", "classclass__algorithms.html#a6d909609ec4eee9e87c1b323d8e39aeb", null ],
-    [ "t_env", "classclass__algorithms.html#ae9d67170c1a571cd58e146098ffcb40a", null ],
-    [ "t_evo", "classclass__algorithms.html#ad99da4fa0ff4dc9ee7b92517e163bca9", null ],
-    [ "t_mps", "classclass__algorithms.html#acf5e5570d88714ec944a6182f194b4e4", null ],
-    [ "t_sto", "classclass__algorithms.html#a811224b35cca3443cd4aae86aae08836", null ],
-    [ "t_svd", "classclass__algorithms.html#a63611e970a5d20d5da2cc405aedf2d3a", null ],
-    [ "t_tot", "classclass__algorithms.html#a2452e62f648638ba17e9132ddb56b69c", null ],
-    [ "t_upd", "classclass__algorithms.html#a2ec63c78f63757c440917dba98007806", null ]
+    [ "run_algorithms", "classclass__algorithms.html#a51531dc68d6ab13d0752419820491234", null ],
+    [ "run_FES_iDMRG", "classclass__algorithms.html#a254f86baa2ff6839881ab1c00f05d88b", null ],
+    [ "run_FES_iTEBD", "classclass__algorithms.html#aefc34578fd9ff6943aebcadd054b8c37", null ],
+    [ "run_finite_DMRG", "classclass__algorithms.html#addd6426409dc4d56d1235ad81829aaec", null ],
+    [ "run_imaginary_TEBD", "classclass__algorithms.html#a28c9daca4cab3bcf55b80cca4a774391", null ],
+    [ "run_infinite_DMRG", "classclass__algorithms.html#a801367c6e1fa0f3c1870581424c12cbc", null ],
+    [ "ccout", "classclass__algorithms.html#a24b8d52e864472ac5061a47b5fb68d8f", null ],
+    [ "hdf5", "classclass__algorithms.html#a9f249419d1baa03d880a84c4414b5307", null ]
 ];

@@ -14,12 +14,21 @@
 #   include(Find_or_install_ARPACKPP.cmake)
 
 
-message("SEARCHING FOR PRE-INSTALLED LIBRARIES: ARPACKPP")
+message("SEARCHING FOR LIBRARY: ARPACKPP")
+if(EXISTS "${PROJECT_SOURCE_DIR}/libs/arpackpp/FindArpackpp.cmake")
+    include(${PROJECT_SOURCE_DIR}/libs/arpackpp/FindArpackpp.cmake)
+    include_directories(${ARPACKPP_INCLUDE_DIR})
+    message("FOUND PREVIOUSLY INSTALLED ARPACKPP:   ${ARPACKPP_INCLUDE_DIR}")
+    return()
+endif()
+
+message(STATUS "SEARCHING FOR ARPACKPP IN SYSTEM...")
 find_library(ARPACKPP_INCLUDE_DIR NAMES libarpack++ arpackpp libarpack++2-dev libarpack++2c2a )                                ### Find and define includes for Eigen Library
 if(ARPACKPP_INCLUDE_DIR)
-    message("FOUND PRE-INSTALLED ARPACKPP:   ${ARPACKPP_INCLUDE_DIR}")
+    message(STATUS "FOUND ARPACKPP:   ${ARPACKPP_INCLUDE_DIR}")
+    return()
 else()
-    message("DOWNLOADING ARPACKPP...")
+    message(STATUS "DOWNLOADING ARPACKPP...")
     execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory tmp/arpackpp
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts)
@@ -42,8 +51,8 @@ else()
     endif()
     include(${PROJECT_SOURCE_DIR}/libs/arpackpp/FindArpackpp.cmake)
     include_directories(${ARPACKPP_INCLUDE_DIR})
-    message("SUCCESSFULLY INSTALLED ARPACKPP:   ${ARPACKPP_INCLUDE_DIR}")
-    message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpackpp/log_build.txt")
+    message(STATUS "SUCCESSFULLY INSTALLED ARPACKPP:   ${ARPACKPP_INCLUDE_DIR}")
+    message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpackpp/log_build.txt")
 
 endif()
 

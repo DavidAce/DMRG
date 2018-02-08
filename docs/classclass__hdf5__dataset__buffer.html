@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DMRG: class_hdf5_dataset_buffer&lt; DataType, AttrType &gt; Class Template Reference</title>
+<title>DMRG: class_hdf5_dataset_buffer&lt; DataType, AttrType, IterType &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -89,7 +89,7 @@ $(document).ready(function(){initNavTree('classclass__hdf5__dataset__buffer.html
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classclass__hdf5__dataset__buffer-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">class_hdf5_dataset_buffer&lt; DataType, AttrType &gt; Class Template Reference</div>  </div>
+<div class="title">class_hdf5_dataset_buffer&lt; DataType, AttrType, IterType &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -97,42 +97,49 @@ $(document).ready(function(){initNavTree('classclass__hdf5__dataset__buffer.html
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6d4fbd999bc60911e3e3070404486485"><td class="memItemLeft" align="right" valign="top"><a id="a6d4fbd999bc60911e3e3070404486485"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>class_hdf5_dataset_buffer</b> (<a class="el" href="classclass__hdf5.html">class_hdf5</a> &amp;hdf5_)</td></tr>
-<tr class="separator:a6d4fbd999bc60911e3e3070404486485"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a15cd4c0090705c2b561e70faf518c7"><td class="memItemLeft" align="right" valign="top"><a id="a0a15cd4c0090705c2b561e70faf518c7"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>class_hdf5_dataset_buffer</b> (<a class="el" href="classclass__hdf5.html">class_hdf5</a> &amp;hdf5_, const std::string &amp;group_name_, const int &amp;iteration_, const std::string &amp;dataset_name_)</td></tr>
-<tr class="separator:a0a15cd4c0090705c2b561e70faf518c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8fe19a528575f35b71873ea3d82c9cbf"><td class="memItemLeft" align="right" valign="top"><a id="a8fe19a528575f35b71873ea3d82c9cbf"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>class_hdf5_dataset_buffer</b> (<a class="el" href="classclass__hdf5.html">class_hdf5</a> &amp;hdf5_, const std::string &amp;group_name_, const int &amp;iteration_, const std::string &amp;dataset_name_, const AttrType &amp;attribute_, const std::string &amp;attribute_name_)</td></tr>
-<tr class="separator:a8fe19a528575f35b71873ea3d82c9cbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a197f82936d9d6bc18916f4739129d5b9"><td class="memItemLeft" align="right" valign="top"><a id="a197f82936d9d6bc18916f4739129d5b9"></a>
+<tr class="memitem:a02f8444798c778106014077b520a1057"><td class="memItemLeft" align="right" valign="top"><a id="a02f8444798c778106014077b520a1057"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>class_hdf5_dataset_buffer</b> (std::shared_ptr&lt; <a class="el" href="classclass__hdf5__file.html">class_hdf5_file</a> &gt; hdf5_out_, const std::string &amp;group_name_, const IterType &amp;iteration_, const std::string &amp;dataset_name_)</td></tr>
+<tr class="separator:a02f8444798c778106014077b520a1057"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88f82bfaee3587a2cbd95175560f7331"><td class="memItemLeft" align="right" valign="top"><a id="a88f82bfaee3587a2cbd95175560f7331"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>class_hdf5_dataset_buffer</b> (const std::string &amp;group_name_, const IterType &amp;iteration_, const std::string &amp;dataset_name_)</td></tr>
+<tr class="separator:a88f82bfaee3587a2cbd95175560f7331"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab797f7a4b8ff1c13769590ca25584c9c"><td class="memItemLeft" align="right" valign="top"><a id="ab797f7a4b8ff1c13769590ca25584c9c"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>class_hdf5_dataset_buffer</b> (std::shared_ptr&lt; <a class="el" href="classclass__hdf5__file.html">class_hdf5_file</a> &gt; hdf5_out_, const std::string &amp;group_name_, const IterType &amp;iteration_, const std::string &amp;dataset_name_, const AttrType &amp;attribute_, const std::string &amp;attribute_name_)</td></tr>
+<tr class="separator:ab797f7a4b8ff1c13769590ca25584c9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5382fadc6019a72dff38a86580fede7"><td class="memItemLeft" align="right" valign="top"><a id="ad5382fadc6019a72dff38a86580fede7"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>class_hdf5_dataset_buffer</b> (const std::string &amp;group_name_, const IterType &amp;iteration_, const std::string &amp;dataset_name_, const AttrType &amp;attribute_, const std::string &amp;attribute_name_)</td></tr>
+<tr class="separator:ad5382fadc6019a72dff38a86580fede7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6603975e266ff33fec2414baafdc6c3"><td class="memItemLeft" align="right" valign="top"><a id="ab6603975e266ff33fec2414baafdc6c3"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>hdf5_set_group_name</b> (const std::string &amp;group_name_)</td></tr>
-<tr class="separator:a197f82936d9d6bc18916f4739129d5b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad3ada42591dfe8045464c2273743443"><td class="memItemLeft" align="right" valign="top"><a id="aad3ada42591dfe8045464c2273743443"></a>
+<tr class="separator:ab6603975e266ff33fec2414baafdc6c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f6dafc1717d7c4eb37589e5a240d20c"><td class="memItemLeft" align="right" valign="top"><a id="a8f6dafc1717d7c4eb37589e5a240d20c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>hdf5_set_dataset_name</b> (const std::string &amp;dataset_name_)</td></tr>
-<tr class="separator:aad3ada42591dfe8045464c2273743443"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41f1215a0b4d8a8d56f4718af67577f6"><td class="memItemLeft" align="right" valign="top"><a id="a41f1215a0b4d8a8d56f4718af67577f6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>hdf5_set_iteration</b> (const int &amp;iteration_)</td></tr>
-<tr class="separator:a41f1215a0b4d8a8d56f4718af67577f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17bc0c0f4d7d48f64666aa75fb86818d"><td class="memItemLeft" align="right" valign="top"><a id="a17bc0c0f4d7d48f64666aa75fb86818d"></a>
+<tr class="separator:a8f6dafc1717d7c4eb37589e5a240d20c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f8b7c8f7545cd9c7dfa6dbc10c8f649"><td class="memItemLeft" align="right" valign="top"><a id="a7f8b7c8f7545cd9c7dfa6dbc10c8f649"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>hdf5_set_iteration</b> (const IterType &amp;iteration_)</td></tr>
+<tr class="separator:a7f8b7c8f7545cd9c7dfa6dbc10c8f649"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7850b0f2a4d369dd5fe17b0d40bd3f07"><td class="memItemLeft" align="right" valign="top"><a id="a7850b0f2a4d369dd5fe17b0d40bd3f07"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>hdf5_set_width</b> (const int &amp;pad_to_width_)</td></tr>
-<tr class="separator:a17bc0c0f4d7d48f64666aa75fb86818d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a694d19447fffd86e53f70def4d23def0"><td class="memItemLeft" align="right" valign="top"><a id="a694d19447fffd86e53f70def4d23def0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>hdf5_set_all</b> (const std::string &amp;group_name_, const int iteration_, const std::string &amp;dataset_name_)</td></tr>
-<tr class="separator:a694d19447fffd86e53f70def4d23def0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a712d98ceb094a714e1c4c7a8b3945a83"><td class="memItemLeft" align="right" valign="top"><a id="a712d98ceb094a714e1c4c7a8b3945a83"></a>
+<tr class="separator:a7850b0f2a4d369dd5fe17b0d40bd3f07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9e2bb551ff8c7a1735deef34b659729"><td class="memItemLeft" align="right" valign="top"><a id="ab9e2bb551ff8c7a1735deef34b659729"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>hdf5_set_all</b> (const std::string &amp;group_name_, const IterType iteration_, const std::string &amp;dataset_name_)</td></tr>
+<tr class="separator:ab9e2bb551ff8c7a1735deef34b659729"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4dcf9cd34f6f0b7ea4763f992bdc936"><td class="memItemLeft" align="right" valign="top"><a id="ab4dcf9cd34f6f0b7ea4763f992bdc936"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>hdf5_set_attribute</b> (const AttrType &amp;attribute_, const std::string &amp;attribute_name_)</td></tr>
-<tr class="separator:a712d98ceb094a714e1c4c7a8b3945a83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a360d8189442cb02e945519da011bd83a"><td class="memItemLeft" align="right" valign="top"><a id="a360d8189442cb02e945519da011bd83a"></a>
+<tr class="separator:ab4dcf9cd34f6f0b7ea4763f992bdc936"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79f03106cae015fead610878b1cfe92f"><td class="memItemLeft" align="right" valign="top"><a id="a79f03106cae015fead610878b1cfe92f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>hdf5_refresh_relative_name</b> ()</td></tr>
-<tr class="separator:a360d8189442cb02e945519da011bd83a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3fddb2a0566eb7f8286c492980bf60d7"><td class="memItemLeft" align="right" valign="top"><a id="a3fddb2a0566eb7f8286c492980bf60d7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>hdf5_write</b> ()</td></tr>
-<tr class="separator:a3fddb2a0566eb7f8286c492980bf60d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a79f03106cae015fead610878b1cfe92f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a7e8b80f22d664fe148962d74cdcff7"><td class="memItemLeft" align="right" valign="top"><a id="a0a7e8b80f22d664fe148962d74cdcff7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write_buffer_to_file</b> ()</td></tr>
+<tr class="separator:a0a7e8b80f22d664fe148962d74cdcff7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf2169808d48711ddeabd6a3ab77f045"><td class="memItemLeft" align="right" valign="top"><a id="aaf2169808d48711ddeabd6a3ab77f045"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>push_back</b> (const DataType &amp;element)</td></tr>
+<tr class="separator:aaf2169808d48711ddeabd6a3ab77f045"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>source/<a class="el" href="class__hdf5_8h_source.html">class_hdf5.h</a></li>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>source/IO/<a class="el" href="class__hdf5__dataset__buffer_8h_source.html">class_hdf5_dataset_buffer.h</a></li>
+<li>source/IO/class_hdf5_dataset_buffer.cpp</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

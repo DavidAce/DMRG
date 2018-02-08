@@ -13,13 +13,20 @@
 #   target_link_libraries(MyTarget ${GSL_LIBRARIES})
 # To use, simple include it in your CMakeLists.txt
 #   include(Find_or_install_GSL.cmake)
-message("SEARCHING FOR PRE-INSTALLED LIBRARIES: GSL")
+message("SEARCHING FOR LIBRARY: GSL")
+if(EXISTS "${PROJECT_SOURCE_DIR}/libs/gsl/FindGSL.cmake")
+    include(${PROJECT_SOURCE_DIR}/libs/gsl/FindGSL.cmake)
+    get_libraries(${GSL_LIB_DIR} gsl  GSL_LIBRARIES)
+    message(STATUS "FOUND PREVIOUSLY INSTALLED GSL:   ${GSL_LIBRARIES}")
+    return()
+endif()
+message(STATUS "SEARCHING FOR GSL IN SYSTEM...")
 find_package(GSL)
 if (GSL_FOUND)
     include_directories(${GSL_INCLUDE_DIRS})
     message("FOUND PRE-INSTALLED GSL:   ${GSL_LIBRARIES}")
 else()
-    message("DOWNLOADING GSL...")
+    message(STATUS "DOWNLOADING GSL...")
     execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory tmp/gsl
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/)
@@ -40,8 +47,8 @@ else()
     include(${PROJECT_SOURCE_DIR}/libs/gsl/FindGSL.cmake)
     set(GSL_LIBRARIES "")
     get_libraries(${GSL_LIB_DIR} gsl  GSL_LIBRARIES)
-    message("SUCCESSFULLY INSTALLED GSL:   ${GSL_LIBRARIES}")
-    message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/gsl/log_build.txt")
+    message(STATUS "SUCCESSFULLY INSTALLED GSL:   ${GSL_LIBRARIES}")
+    message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/gsl/log_build.txt")
 
 endif()
 

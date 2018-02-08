@@ -56,8 +56,7 @@ The following software is required to build the project:
     - GNU GCC version >= 7
     - Clang version >= 5.0
  - Fortran compiler. Tested with GNU GFORTRAN version >= 4. This is only needed to install libraries from source, see below.
- - CMake version >= 3.8
- - pkg-config >= version 0.28 (Recommended!)
+ - CMake version >= 3.8. If you compile CMake from source, remember to enable `curl` (`./bootstrap --system-curl`). 
  
 The AppleClang compiler is not supported.
 

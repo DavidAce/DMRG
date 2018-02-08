@@ -86,8 +86,10 @@ $(document).ready(function(){initNavTree('namespace_textra.html','');});
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">Textra Namespace Reference</div>  </div>
 </div><!--header-->
@@ -96,80 +98,44 @@ $(document).ready(function(){initNavTree('namespace_textra.html','');});
 <div class="textblock"><p><b><a class="el" href="namespace_textra.html" title="Textra stands for &quot;Tensor Extra&quot;. Provides extra functionality to Eigen::Tensor. ">Textra</a></b> stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor. </p>
 <p>This namespace makes shorthand typedef's to Eigen's unsupported Tensor module, and provides handy functions to interface between <code>Eigen::Tensor</code> and <code>Eigen::Matrix</code> objects. The contents of this namespace are quite self-explanatory. </p>
 </div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_textra_1_1idx__dim__pair.html">idx_dim_pair</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:ad59ad423ffe2196e1b92b0d85e2eff0f"><td class="memItemLeft" align="right" valign="top"><a id="ad59ad423ffe2196e1b92b0d85e2eff0f"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>cdouble</b> = std::complex&lt; double &gt;</td></tr>
 <tr class="separator:ad59ad423ffe2196e1b92b0d85e2eff0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f3967435c086eb46b7974c11b1030a0"><td class="memItemLeft" align="right" valign="top"><a id="a2f3967435c086eb46b7974c11b1030a0"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>idx2</b> = Eigen::IndexPair&lt; long &gt;</td></tr>
-<tr class="separator:a2f3967435c086eb46b7974c11b1030a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7db6974446758b79bad26e168a8daa78"><td class="memTemplParams" colspan="2"><a id="a7db6974446758b79bad26e168a8daa78"></a>
-template&lt;typename Scalar  = double&gt; </td></tr>
+template&lt;typename Scalar &gt; </td></tr>
 <tr class="memitem:a7db6974446758b79bad26e168a8daa78"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>MatrixType</b> = Eigen::Matrix&lt; Scalar, Eigen::Dynamic, Eigen::Dynamic &gt;</td></tr>
 <tr class="separator:a7db6974446758b79bad26e168a8daa78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a358a270e8b355388963a513bd6617131"><td class="memTemplParams" colspan="2"><a id="a358a270e8b355388963a513bd6617131"></a>
-template&lt;typename Scalar  = double&gt; </td></tr>
+template&lt;typename Scalar &gt; </td></tr>
 <tr class="memitem:a358a270e8b355388963a513bd6617131"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>VectorType</b> = Eigen::Matrix&lt; Scalar, Eigen::Dynamic, 1 &gt;</td></tr>
 <tr class="separator:a358a270e8b355388963a513bd6617131"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6932f66e73a8151fd7722323cb88838f"><td class="memTemplParams" colspan="2"><a id="a6932f66e73a8151fd7722323cb88838f"></a>
-template&lt;long rank&gt; </td></tr>
-<tr class="memitem:a6932f66e73a8151fd7722323cb88838f"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>idxlist</b> = Eigen::array&lt; idx2, rank &gt;</td></tr>
-<tr class="separator:a6932f66e73a8151fd7722323cb88838f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6aacd017f4e4b575cec82b57c239a715"><td class="memTemplParams" colspan="2"><a id="a6aacd017f4e4b575cec82b57c239a715"></a>
-template&lt;long rank, typename Scalar  = double&gt; </td></tr>
-<tr class="memitem:a6aacd017f4e4b575cec82b57c239a715"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Tensor</b> = Eigen::Tensor&lt; Scalar, rank, Eigen::ColMajor &gt;</td></tr>
-<tr class="separator:a6aacd017f4e4b575cec82b57c239a715"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1e8fe115194a1c66dd907634ac3592e"><td class="memTemplParams" colspan="2"><a id="ac1e8fe115194a1c66dd907634ac3592e"></a>
-template&lt;long rank, typename Scalar  = double&gt; </td></tr>
-<tr class="memitem:ac1e8fe115194a1c66dd907634ac3592e"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>const_Tensor</b> = Eigen::Tensor&lt; const Scalar, rank, Eigen::ColMajor &gt;</td></tr>
-<tr class="separator:ac1e8fe115194a1c66dd907634ac3592e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac05ac79c4e225739a3c4b44fb5b577df"><td class="memTemplParams" colspan="2"><a id="ac05ac79c4e225739a3c4b44fb5b577df"></a>
 template&lt;long rank&gt; </td></tr>
 <tr class="memitem:ac05ac79c4e225739a3c4b44fb5b577df"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>array</b> = Eigen::array&lt; long, rank &gt;</td></tr>
 <tr class="separator:ac05ac79c4e225739a3c4b44fb5b577df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4281770a6bae08e98c31c30143cb04ae"><td class="memItemLeft" align="right" valign="top"><a id="a4281770a6bae08e98c31c30143cb04ae"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor4d</b> = Tensor&lt; 4, double &gt;</td></tr>
-<tr class="separator:a4281770a6bae08e98c31c30143cb04ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f40986ebc4c55e05394a07b67e8bba3"><td class="memItemLeft" align="right" valign="top"><a id="a3f40986ebc4c55e05394a07b67e8bba3"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor3d</b> = Tensor&lt; 3, double &gt;</td></tr>
-<tr class="separator:a3f40986ebc4c55e05394a07b67e8bba3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ce0732dd9681ea59dd2437888dbaac6"><td class="memItemLeft" align="right" valign="top"><a id="a8ce0732dd9681ea59dd2437888dbaac6"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor2d</b> = Tensor&lt; 2, double &gt;</td></tr>
-<tr class="separator:a8ce0732dd9681ea59dd2437888dbaac6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a000334a1278a3ad2ab12dec21d4416ab"><td class="memItemLeft" align="right" valign="top"><a id="a000334a1278a3ad2ab12dec21d4416ab"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor1d</b> = Tensor&lt; 1, double &gt;</td></tr>
-<tr class="separator:a000334a1278a3ad2ab12dec21d4416ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd4d1806d153598a445cf04773c9e4f8"><td class="memItemLeft" align="right" valign="top"><a id="acd4d1806d153598a445cf04773c9e4f8"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor0d</b> = Tensor&lt; 0, double &gt;</td></tr>
-<tr class="separator:acd4d1806d153598a445cf04773c9e4f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab207c8e7a778d23234e25a2eb8b9b472"><td class="memItemLeft" align="right" valign="top"><a id="ab207c8e7a778d23234e25a2eb8b9b472"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor4cd</b> = Tensor&lt; 4, cdouble &gt;</td></tr>
-<tr class="separator:ab207c8e7a778d23234e25a2eb8b9b472"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ff864f29a349b18f9ef5a26e2956381"><td class="memItemLeft" align="right" valign="top"><a id="a7ff864f29a349b18f9ef5a26e2956381"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor3cd</b> = Tensor&lt; 3, cdouble &gt;</td></tr>
-<tr class="separator:a7ff864f29a349b18f9ef5a26e2956381"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe16272981720b272eac475d4303413f"><td class="memItemLeft" align="right" valign="top"><a id="abe16272981720b272eac475d4303413f"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor2cd</b> = Tensor&lt; 2, cdouble &gt;</td></tr>
-<tr class="separator:abe16272981720b272eac475d4303413f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af50b9f2d3e1e386f5e46a07274f3dc86"><td class="memItemLeft" align="right" valign="top"><a id="af50b9f2d3e1e386f5e46a07274f3dc86"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor1cd</b> = Tensor&lt; 1, cdouble &gt;</td></tr>
-<tr class="separator:af50b9f2d3e1e386f5e46a07274f3dc86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d80afdf9fa1f2b5b3922685a29d8fc4"><td class="memItemLeft" align="right" valign="top"><a id="a1d80afdf9fa1f2b5b3922685a29d8fc4"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor0cd</b> = Tensor&lt; 0, cdouble &gt;</td></tr>
-<tr class="separator:a1d80afdf9fa1f2b5b3922685a29d8fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3157c8a63a911442fd7140ad2ce3668a"><td class="memItemLeft" align="right" valign="top"><a id="a3157c8a63a911442fd7140ad2ce3668a"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>const_Tensor4d</b> = Tensor&lt; 4, const double &gt;</td></tr>
-<tr class="separator:a3157c8a63a911442fd7140ad2ce3668a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7073c0043fb7cdec10dd3c2d101b0b3d"><td class="memItemLeft" align="right" valign="top"><a id="a7073c0043fb7cdec10dd3c2d101b0b3d"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>const_Tensor3d</b> = Tensor&lt; 3, const double &gt;</td></tr>
-<tr class="separator:a7073c0043fb7cdec10dd3c2d101b0b3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dd14ef4236fa18a4057c779f172a5f6"><td class="memItemLeft" align="right" valign="top"><a id="a6dd14ef4236fa18a4057c779f172a5f6"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>const_Tensor2d</b> = Tensor&lt; 2, const double &gt;</td></tr>
-<tr class="separator:a6dd14ef4236fa18a4057c779f172a5f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2056595322f00cad08a5cf87a4179f6"><td class="memItemLeft" align="right" valign="top"><a id="ab2056595322f00cad08a5cf87a4179f6"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>const_Tensor1d</b> = Tensor&lt; 1, const double &gt;</td></tr>
-<tr class="separator:ab2056595322f00cad08a5cf87a4179f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4ea1d05edf6f909513a8ec4af87880a"><td class="memTemplParams" colspan="2"><a id="ac4ea1d05edf6f909513a8ec4af87880a"></a>
+template&lt;typename Scalar , long length&gt; </td></tr>
+<tr class="memitem:ac4ea1d05edf6f909513a8ec4af87880a"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>idxlistpair</b> = Eigen::array&lt; Eigen::IndexPair&lt; Scalar &gt;, length &gt;</td></tr>
+<tr class="separator:ac4ea1d05edf6f909513a8ec4af87880a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10f3538b95c4cbb49de58e66b2f567e7"><td class="memItemLeft" align="right" valign="top"><a id="a10f3538b95c4cbb49de58e66b2f567e7"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>array8</b> = array&lt; 8 &gt;</td></tr>
+<tr class="separator:a10f3538b95c4cbb49de58e66b2f567e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3a3122d06a20ecb2be3789b4c396633"><td class="memItemLeft" align="right" valign="top"><a id="ac3a3122d06a20ecb2be3789b4c396633"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>array7</b> = array&lt; 7 &gt;</td></tr>
+<tr class="separator:ac3a3122d06a20ecb2be3789b4c396633"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accfb4fc520dc9a420a8a272f0d31c613"><td class="memItemLeft" align="right" valign="top"><a id="accfb4fc520dc9a420a8a272f0d31c613"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>array6</b> = array&lt; 6 &gt;</td></tr>
+<tr class="separator:accfb4fc520dc9a420a8a272f0d31c613"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5d67eec58bb02c58a5abb4446fd2e62"><td class="memItemLeft" align="right" valign="top"><a id="aa5d67eec58bb02c58a5abb4446fd2e62"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>array5</b> = array&lt; 5 &gt;</td></tr>
+<tr class="separator:aa5d67eec58bb02c58a5abb4446fd2e62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af66a1cb409abbc5dcc3ddef03d8f9043"><td class="memItemLeft" align="right" valign="top"><a id="af66a1cb409abbc5dcc3ddef03d8f9043"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>array4</b> = array&lt; 4 &gt;</td></tr>
 <tr class="separator:af66a1cb409abbc5dcc3ddef03d8f9043"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -182,71 +148,52 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>array2</b> = array&l
 <tr class="memitem:a95357bf0fb199a2918cecc55e91cfa18"><td class="memItemLeft" align="right" valign="top"><a id="a95357bf0fb199a2918cecc55e91cfa18"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>array1</b> = array&lt; 1 &gt;</td></tr>
 <tr class="separator:a95357bf0fb199a2918cecc55e91cfa18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d0f0eb908aeb70b161bbef831d6f831"><td class="memItemLeft" align="right" valign="top"><a id="a3d0f0eb908aeb70b161bbef831d6f831"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>idxlist4</b> = idxlist&lt; 4 &gt;</td></tr>
-<tr class="separator:a3d0f0eb908aeb70b161bbef831d6f831"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3c2f31a89e8898c1e906ce0cf55cc84"><td class="memItemLeft" align="right" valign="top"><a id="af3c2f31a89e8898c1e906ce0cf55cc84"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>idxlist3</b> = idxlist&lt; 3 &gt;</td></tr>
-<tr class="separator:af3c2f31a89e8898c1e906ce0cf55cc84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e25540efd4b8a6b157c9cc0073b75d7"><td class="memItemLeft" align="right" valign="top"><a id="a9e25540efd4b8a6b157c9cc0073b75d7"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>idxlist2</b> = idxlist&lt; 2 &gt;</td></tr>
-<tr class="separator:a9e25540efd4b8a6b157c9cc0073b75d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b590257487a2ccdbc37847986998120"><td class="memItemLeft" align="right" valign="top"><a id="a4b590257487a2ccdbc37847986998120"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>idxlist1</b> = idxlist&lt; 1 &gt;</td></tr>
-<tr class="separator:a4b590257487a2ccdbc37847986998120"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a13ae768f351278c6829bfdf813c466ca"><td class="memTemplParams" colspan="2"><a id="a13ae768f351278c6829bfdf813c466ca"></a>
-template&lt;typename Scalar  = double&gt; </td></tr>
-<tr class="memitem:a13ae768f351278c6829bfdf813c466ca"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 2, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>asDiagonal</b> (const Tensor&lt; 1, Scalar &gt; &amp;tensor)</td></tr>
-<tr class="separator:a13ae768f351278c6829bfdf813c466ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49375f0fc17b2e0b2fd593e94bcc18d0"><td class="memTemplParams" colspan="2"><a id="a49375f0fc17b2e0b2fd593e94bcc18d0"></a>
-template&lt;typename Scalar  = double&gt; </td></tr>
-<tr class="memitem:a49375f0fc17b2e0b2fd593e94bcc18d0"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 2, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>asInverseDiagonal</b> (const Tensor&lt; 1, Scalar &gt; &amp;tensor)</td></tr>
-<tr class="separator:a49375f0fc17b2e0b2fd593e94bcc18d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2de277e2efa051b118dc7e0b02c7f48"><td class="memItemLeft" align="right" valign="top"><a id="ae2de277e2efa051b118dc7e0b02c7f48"></a>
-Tensor2d&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor2d_inverse</b> (const Tensor2d &amp;tensor)</td></tr>
-<tr class="separator:ae2de277e2efa051b118dc7e0b02c7f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff827802978361ae7d58e47e56eff55c"><td class="memItemLeft" align="right" valign="top"><a id="aff827802978361ae7d58e47e56eff55c"></a>
-Tensor1d&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor1d_normalize</b> (const Tensor1d &amp;tensor)</td></tr>
-<tr class="separator:aff827802978361ae7d58e47e56eff55c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a290bc8c48efbfce33dabe2f963e53905"><td class="memTemplParams" colspan="2"><a id="a290bc8c48efbfce33dabe2f963e53905"></a>
-template&lt;long rank, typename Scalar &gt; </td></tr>
-<tr class="memitem:a290bc8c48efbfce33dabe2f963e53905"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; rank, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Matrix_to_Tensor</b> (const MatrixType&lt; Scalar &gt; &amp;matrix, array&lt; rank &gt; dims)</td></tr>
-<tr class="separator:a290bc8c48efbfce33dabe2f963e53905"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83e0880c7a23a71e906787dd3621bd79"><td class="memTemplParams" colspan="2"><a id="a83e0880c7a23a71e906787dd3621bd79"></a>
+<tr class="memitem:a6a759e207942a6258b8f42d58d527f19"><td class="memTemplParams" colspan="2"><a id="a6a759e207942a6258b8f42d58d527f19"></a>
+template&lt;long length&gt; </td></tr>
+<tr class="memitem:a6a759e207942a6258b8f42d58d527f19"><td class="memTemplItemLeft" align="right" valign="top">idxlistpair&lt; long, length &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>idx</b> (std::initializer_list&lt; long &gt; list1, std::initializer_list&lt; long &gt; list2)</td></tr>
+<tr class="separator:a6a759e207942a6258b8f42d58d527f19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a9c6059354746763139ef723a31ed6d"><td class="memTemplParams" colspan="2"><a id="a9a9c6059354746763139ef723a31ed6d"></a>
+template&lt;long length, long rankB&gt; </td></tr>
+<tr class="memitem:a9a9c6059354746763139ef723a31ed6d"><td class="memTemplItemLeft" align="right" valign="top">idxlistpair&lt; long, length &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>__attribute__</b> ((hot)) sortIdx(const array&lt; rankB &gt; dimsB</td></tr>
+<tr class="separator:a9a9c6059354746763139ef723a31ed6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8487fbbe5e103d6b3f325f128dd28453"><td class="memItemLeft" align="right" valign="top"><a id="a8487fbbe5e103d6b3f325f128dd28453"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>for</b> (int i=0;i&lt; length;i++)</td></tr>
+<tr class="separator:a8487fbbe5e103d6b3f325f128dd28453"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4467bd8f84650e5ed0836adcb336b05"><td class="memTemplParams" colspan="2"><a id="aa4467bd8f84650e5ed0836adcb336b05"></a>
 template&lt;typename Scalar &gt; </td></tr>
-<tr class="memitem:a83e0880c7a23a71e906787dd3621bd79"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Matrix_to_Tensor1</b> (const MatrixType&lt; Scalar &gt; &amp;matrix)</td></tr>
-<tr class="separator:a83e0880c7a23a71e906787dd3621bd79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33f407904f01c084b05164852ab410d6"><td class="memItemLeft" align="right" valign="top"><a id="a33f407904f01c084b05164852ab410d6"></a>
-Tensor1d&#160;</td><td class="memItemRight" valign="bottom"><b>MatrixXd_to_Tensor1d</b> (const Eigen::MatrixXd &amp;matrix)</td></tr>
-<tr class="separator:a33f407904f01c084b05164852ab410d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7097f70f8f1f518deda3849803cd2b00"><td class="memTemplParams" colspan="2"><a id="a7097f70f8f1f518deda3849803cd2b00"></a>
+<tr class="memitem:aa4467bd8f84650e5ed0836adcb336b05"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; Scalar, 2 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>__attribute__</b> ((always_inline)) asDiagonal(const Tensor&lt; Scalar</td></tr>
+<tr class="separator:aa4467bd8f84650e5ed0836adcb336b05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa19398ea397e26e059eab725cbd3da91"><td class="memTemplParams" colspan="2"><a id="aa19398ea397e26e059eab725cbd3da91"></a>
 template&lt;typename Scalar &gt; </td></tr>
-<tr class="memitem:a7097f70f8f1f518deda3849803cd2b00"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 2, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Matrix_to_Tensor2</b> (const MatrixType&lt; Scalar &gt; &amp;matrix)</td></tr>
-<tr class="separator:a7097f70f8f1f518deda3849803cd2b00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad49dd44ed3f78e6fa627002a9fb1b3ac"><td class="memItemLeft" align="right" valign="top"><a id="ad49dd44ed3f78e6fa627002a9fb1b3ac"></a>
-Tensor2d&#160;</td><td class="memItemRight" valign="bottom"><b>MatrixXd_to_Tensor2d</b> (const Eigen::MatrixXd &amp;matrix)</td></tr>
-<tr class="separator:ad49dd44ed3f78e6fa627002a9fb1b3ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a871a21a58c4652c58720f4b693889404"><td class="memTemplParams" colspan="2"><a id="a871a21a58c4652c58720f4b693889404"></a>
+<tr class="memitem:aa19398ea397e26e059eab725cbd3da91"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; Scalar, 1 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>__attribute__</b> ((always_inline)) asNormalized(const Tensor&lt; Scalar</td></tr>
+<tr class="separator:aa19398ea397e26e059eab725cbd3da91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7d6b1e2db5d5940b131e9ed7d91a3cc"><td class="memTemplParams" colspan="2"><a id="ab7d6b1e2db5d5940b131e9ed7d91a3cc"></a>
+template&lt;typename Scalar , int rank&gt; </td></tr>
+<tr class="memitem:ab7d6b1e2db5d5940b131e9ed7d91a3cc"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Tensor&lt; Scalar, rank &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>__attribute__</b> ((always_inline)) Matrix_to_Tensor(const MatrixType&lt; Scalar &gt; &amp;matrix</td></tr>
+<tr class="separator:ab7d6b1e2db5d5940b131e9ed7d91a3cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7184d202f608d67d7c84703276ce939"><td class="memTemplParams" colspan="2"><a id="ae7184d202f608d67d7c84703276ce939"></a>
 template&lt;typename Scalar &gt; </td></tr>
-<tr class="memitem:a871a21a58c4652c58720f4b693889404"><td class="memTemplItemLeft" align="right" valign="top">MatrixType&lt; Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>tensor2_to_matrix</b> (const Tensor&lt; 2, Scalar &gt; &amp;tensor)</td></tr>
-<tr class="separator:a871a21a58c4652c58720f4b693889404"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a807c34fcce84eeab36a0ba857ab36aad"><td class="memItemLeft" align="right" valign="top"><a id="a807c34fcce84eeab36a0ba857ab36aad"></a>
-Eigen::MatrixXd&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor2d_to_MatrixXd</b> (const Tensor2d &amp;tensor)</td></tr>
-<tr class="separator:a807c34fcce84eeab36a0ba857ab36aad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c47f599d3249c190b952f0376acd99a"><td class="memTemplParams" colspan="2"><a id="a6c47f599d3249c190b952f0376acd99a"></a>
+<tr class="memitem:ae7184d202f608d67d7c84703276ce939"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Tensor&lt; Scalar, 1 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>__attribute__</b> ((always_inline)) Matrix_to_Tensor1(const MatrixType&lt; Scalar &gt; &amp;matrix)</td></tr>
+<tr class="separator:ae7184d202f608d67d7c84703276ce939"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0ba3a2c0caa91d536e51a82defc0620"><td class="memTemplParams" colspan="2"><a id="aa0ba3a2c0caa91d536e51a82defc0620"></a>
 template&lt;typename Scalar &gt; </td></tr>
-<tr class="memitem:a6c47f599d3249c190b952f0376acd99a"><td class="memTemplItemLeft" align="right" valign="top">VectorType&lt; Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Tensor1_to_Vector</b> (const Tensor&lt; 1, Scalar &gt; &amp;tensor)</td></tr>
-<tr class="separator:a6c47f599d3249c190b952f0376acd99a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0a5e67363c8a4ac58ea3a46b0f17517"><td class="memItemLeft" align="right" valign="top"><a id="ab0a5e67363c8a4ac58ea3a46b0f17517"></a>
-Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><b>Tensor1d_to_VectorXd</b> (const Tensor1d &amp;tensor)</td></tr>
-<tr class="separator:ab0a5e67363c8a4ac58ea3a46b0f17517"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3aaafd080eb9fadfd3855aab88acbd60"><td class="memTemplParams" colspan="2"><a id="a3aaafd080eb9fadfd3855aab88acbd60"></a>
-template&lt;long rank, typename sizeType &gt; </td></tr>
-<tr class="memitem:a3aaafd080eb9fadfd3855aab88acbd60"><td class="memTemplItemLeft" align="right" valign="top">Eigen::MatrixXd&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Tensor_to_MatrixXd</b> (const Tensor&lt; rank, double &gt; &amp;tensor, sizeType rows, sizeType cols)</td></tr>
-<tr class="separator:a3aaafd080eb9fadfd3855aab88acbd60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0ba3a2c0caa91d536e51a82defc0620"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Tensor&lt; Scalar, 2 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>__attribute__</b> ((always_inline)) Matrix_to_Tensor2(const MatrixType&lt; Scalar &gt; &amp;matrix)</td></tr>
+<tr class="separator:aa0ba3a2c0caa91d536e51a82defc0620"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9b9254cdbce1f496707a2eb02423d25"><td class="memTemplParams" colspan="2"><a id="ac9b9254cdbce1f496707a2eb02423d25"></a>
+template&lt;typename Scalar &gt; </td></tr>
+<tr class="memitem:ac9b9254cdbce1f496707a2eb02423d25"><td class="memTemplItemLeft" align="right" valign="top">MatrixType&lt; Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>__attribute__</b> ((always_inline)) Tensor2_to_Matrix(const Tensor&lt; Scalar</td></tr>
+<tr class="separator:ac9b9254cdbce1f496707a2eb02423d25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03ed68d9ffd6b0f9b75df15340abc0d6"><td class="memTemplParams" colspan="2"><a id="a03ed68d9ffd6b0f9b75df15340abc0d6"></a>
+template&lt;typename Scalar &gt; </td></tr>
+<tr class="memitem:a03ed68d9ffd6b0f9b75df15340abc0d6"><td class="memTemplItemLeft" align="right" valign="top">VectorType&lt; Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>__attribute__</b> ((always_inline)) Tensor1_to_Vector(const Tensor&lt; Scalar</td></tr>
+<tr class="separator:a03ed68d9ffd6b0f9b75df15340abc0d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03e669c4c85416377bdc3b0045d4cd11"><td class="memTemplParams" colspan="2"><a id="a03e669c4c85416377bdc3b0045d4cd11"></a>
+template&lt;typename Scalar , long rank, typename sizeType &gt; </td></tr>
+<tr class="memitem:a03e669c4c85416377bdc3b0045d4cd11"><td class="memTemplItemLeft" align="right" valign="top">MatrixType&lt; Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>__attribute__</b> ((always_inline)) Tensor_to_Matrix(const Tensor&lt; Scalar</td></tr>
+<tr class="separator:a03e669c4c85416377bdc3b0045d4cd11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83480b3f75b0a29f652feb8b2152b475"><td class="memTemplParams" colspan="2"><a id="a83480b3f75b0a29f652feb8b2152b475"></a>
 template&lt;typename T , int L&gt; </td></tr>
 <tr class="memitem:a83480b3f75b0a29f652feb8b2152b475"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;out, const Eigen::DSizes&lt; T, L &gt; &amp;v)</td></tr>
@@ -255,7 +202,90 @@ template&lt;typename T , int L&gt; </td></tr>
 template&lt;typename T , int L&gt; </td></tr>
 <tr class="memitem:a47079abeb81c780b562da5b9a8d1ff19"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;out, const Eigen::array&lt; T, L &gt; &amp;v)</td></tr>
 <tr class="separator:a47079abeb81c780b562da5b9a8d1ff19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:aeeebf1fada3ec948aed241964a817e60"><td class="memItemLeft" align="right" valign="top"><a id="aeeebf1fada3ec948aed241964a817e60"></a>
+idxlistpair&lt; long, length &gt; const std::initializer_list&lt; long &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>listA</b></td></tr>
+<tr class="separator:aeeebf1fada3ec948aed241964a817e60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf8500921b847eaabf696d62d0bc26d8"><td class="memItemLeft" align="right" valign="top">idxlistpair&lt; long, length &gt; const std::initializer_list&lt; long &gt; const std::initializer_list&lt; long &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>listB</b></td></tr>
+<tr class="separator:abf8500921b847eaabf696d62d0bc26d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d54a6c10c193a09b70086e742757b1a"><td class="memItemLeft" align="right" valign="top"><a id="a6d54a6c10c193a09b70086e742757b1a"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><b>itlistA</b> = listA.begin()</td></tr>
+<tr class="separator:a6d54a6c10c193a09b70086e742757b1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76f445785a86d738f81457aeced04dca"><td class="memItemLeft" align="right" valign="top"><a id="a76f445785a86d738f81457aeced04dca"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><b>itlistB</b> = listB.begin()</td></tr>
+<tr class="separator:a76f445785a86d738f81457aeced04dca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2f1697bc0c01cb4c9ac665c5fb66d0a"><td class="memItemLeft" align="right" valign="top"><a id="ab2f1697bc0c01cb4c9ac665c5fb66d0a"></a>
+idxlistpair&lt; long, length &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>pairlistOut</b></td></tr>
+<tr class="separator:ab2f1697bc0c01cb4c9ac665c5fb66d0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01465576ae77ad18c57ee1beba43e5f5"><td class="memItemLeft" align="right" valign="top">Tensor&lt; Scalar, 2 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>tensor</b></td></tr>
+<tr class="separator:a01465576ae77ad18c57ee1beba43e5f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a903297cb5c5ac23d525ca9f20887db04"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; Scalar, rank &gt; const array&lt; rank &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>dims</b></td></tr>
+<tr class="separator:a903297cb5c5ac23d525ca9f20887db04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4436c63f9bf9159556dadb1027113122"><td class="memItemLeft" align="right" valign="top"><a id="a4436c63f9bf9159556dadb1027113122"></a>
+MatrixType&lt; Scalar &gt; rank const sizeType&#160;</td><td class="memItemRight" valign="bottom"><b>rows</b></td></tr>
+<tr class="separator:a4436c63f9bf9159556dadb1027113122"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c773f072ed665da6d780aa68d062f78"><td class="memItemLeft" align="right" valign="top">MatrixType&lt; Scalar &gt; rank const sizeType const sizeType&#160;</td><td class="memItemRight" valign="bottom"><b>cols</b></td></tr>
+<tr class="separator:a0c773f072ed665da6d780aa68d062f78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a0c773f072ed665da6d780aa68d062f78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c773f072ed665da6d780aa68d062f78">&#9670;&nbsp;</a></span>cols</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">MatrixType&lt;Scalar&gt; rank const sizeType const sizeType Textra::cols</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">{</div><div class="line">        <span class="keywordflow">return</span> Eigen::Map&lt;const MatrixType&lt;Scalar&gt;&gt; (tensor.data(), rows,cols)</div></div><!-- fragment -->
+</div>
+</div>
+<a id="a903297cb5c5ac23d525ca9f20887db04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a903297cb5c5ac23d525ca9f20887db04">&#9670;&nbsp;</a></span>dims</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Tensor&lt;Scalar,rank&gt; const array&lt;rank&gt;&amp; Textra::dims</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">{</div><div class="line">        <span class="keywordflow">return</span> Eigen::TensorMap&lt;Tensor&lt;const Scalar, rank&gt;&gt;(matrix.data(), dims)</div></div><!-- fragment -->
+</div>
+</div>
+<a id="abf8500921b847eaabf696d62d0bc26d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf8500921b847eaabf696d62d0bc26d8">&#9670;&nbsp;</a></span>listB</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">idxlistpair&lt;long,length&gt; const std::initializer_list&lt;long&gt; const std::initializer_list&lt;long&gt; Textra::listB</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">{</div><div class="line">        Eigen::array&lt;idx_dim_pair,length&gt; idx_dim_pair_list</div></div><!-- fragment -->
+</div>
+</div>
+<a id="a01465576ae77ad18c57ee1beba43e5f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01465576ae77ad18c57ee1beba43e5f5">&#9670;&nbsp;</a></span>tensor</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">MatrixType&lt; Scalar &gt; rank &amp; Textra::tensor</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">{</div><div class="line">        <span class="keywordflow">return</span> tensor.inflate(array1{tensor.size()+1}).reshape(array2{tensor.size(),tensor.size()})</div></div><!-- fragment -->
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

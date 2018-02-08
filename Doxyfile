@@ -53,8 +53,8 @@ PROJECT_BRIEF          =
 
 PROJECT_LOGO           = 
 
-# The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) output_folder
-# into which the generated documentation will be written. If a relative output_folder is
+# The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
+# into which the generated documentation will be written. If a relative path is
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
@@ -73,7 +73,7 @@ CREATE_SUBDIRS         = NO
 # If the ALLOW_UNICODE_NAMES tag is set to YES, doxygen will allow non-ASCII
 # characters to appear in the names of generated files. If set to NO, non-ASCII
 # characters will be escaped, for example _xE3_x81_x84 will be used for Unicode
-# Suzuki_Trotter_2nd_order+3044.
+# U+3044.
 # The default value is: NO.
 
 ALLOW_UNICODE_NAMES    = NO
@@ -145,17 +145,17 @@ ALWAYS_DETAILED_SEC    = NO
 
 INLINE_INHERITED_MEMB  = NO
 
-# If the FULL_PATH_NAMES tag is set to YES, doxygen will prepend the full output_folder
+# If the FULL_PATH_NAMES tag is set to YES, doxygen will prepend the full path
 # before files name in the file list and in the header files. If set to NO the
-# shortest output_folder that makes the file name unique will be used
+# shortest path that makes the file name unique will be used
 # The default value is: YES.
 
 FULL_PATH_NAMES        = YES
 
-# The STRIP_FROM_PATH tag can be used to strip a user-defined part of the output_folder.
+# The STRIP_FROM_PATH tag can be used to strip a user-defined part of the path.
 # Stripping is only done if one of the specified strings matches the left-hand
-# part of the output_folder. The tag can be used to show relative paths in the file list.
-# If left blank the directory from which doxygen is run is used as the output_folder to
+# part of the path. The tag can be used to show relative paths in the file list.
+# If left blank the directory from which doxygen is run is used as the path to
 # strip.
 #
 # Note that you can specify absolute paths here, but also relative paths, which
@@ -165,7 +165,7 @@ FULL_PATH_NAMES        = YES
 STRIP_FROM_PATH        = 
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of the
-# output_folder mentioned in the documentation of a class, which tells the reader which
+# path mentioned in the documentation of a class, which tells the reader which
 # header file to include in order to use a class. If left blank only the name of
 # the header file containing the class definition is used. Otherwise one should
 # specify the list of include paths that are normally passed to the compiler
@@ -279,7 +279,7 @@ OPTIMIZE_OUTPUT_VHDL   = NO
 # extension. Doxygen has a built-in mapping, but you can override or extend it
 # using this tag. The format is ext=language, where ext is a file extension, and
 # language is one of the parsers supported by doxygen: IDL, Java, Javascript,
-# C#, C, C++, Destination, PHP, Objective-C, Python, Fortran (fixed format Fortran:
+# C#, C, C++, D, PHP, Objective-C, Python, Fortran (fixed format Fortran:
 # FortranFixed, free formatted Fortran: FortranFree, unknown formatted Fortran:
 # Fortran. In the later case the parser tries to guess whether the code is fixed
 # or free formatted code, this is the default for Fortran type files), VHDL. For
@@ -711,7 +711,7 @@ LAYOUT_FILE            = customDoxygenLayout.xml
 # to be installed. See also http://en.wikipedia.org/wiki/BibTeX for more info.
 # For LaTeX the style of the bibliography can be controlled using
 # LATEX_BIB_STYLE. To use this feature you need bibtex and perl available in the
-# search output_folder. See also \cite for info how to create references.
+# search path. See also \cite for info how to create references.
 
 CITE_BIB_FILES         = 
 
@@ -863,7 +863,7 @@ FILE_PATTERNS          = *.c \
 # be searched for input files as well.
 # The default value is: NO.
 
-RECURSIVE              = NO
+RECURSIVE              = YES
 
 # The EXCLUDE tag can be used to specify files and/or directories that should be
 # excluded from the INPUT source files. This way you can easily exclude a
@@ -885,7 +885,7 @@ EXCLUDE_SYMLINKS       = NO
 # EXCLUDE_PATTERNS tag to specify one or more wildcard patterns to exclude
 # certain files from those directories.
 #
-# Note that the wildcards are matched against the file with absolute output_folder, so to
+# Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
 EXCLUDE_PATTERNS       = 
@@ -896,7 +896,7 @@ EXCLUDE_PATTERNS       =
 # wildcard * is used, a substring. Examples: ANamespace, AClass,
 # AClass::ANamespace, ANamespace::*Test
 #
-# Note that the wildcards are matched against the file with absolute output_folder, so to
+# Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories use the pattern */test/*
 
 EXCLUDE_SYMBOLS        = 
@@ -1052,7 +1052,7 @@ SOURCE_TOOLTIPS        = YES
 # - Run doxygen as normal
 #
 # Doxygen will invoke htags (and that will in turn invoke gtags), so these
-# tools must be available from the command line (i.e. in the search output_folder).
+# tools must be available from the command line (i.e. in the search path).
 #
 # The result: instead of the source browser generated by doxygen, the links to
 # source code will now point to the output of htags.
@@ -1128,7 +1128,7 @@ IGNORE_PREFIX          =
 GENERATE_HTML          = YES
 
 # The HTML_OUTPUT tag is used to specify where the HTML docs will be put. If a
-# relative output_folder is entered the value of OUTPUT_DIRECTORY will be put in front of
+# relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
 # it.
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
@@ -1330,16 +1330,16 @@ DOCSET_PUBLISHER_NAME  = Publisher
 GENERATE_HTMLHELP      = NO
 
 # The CHM_FILE tag can be used to specify the file name of the resulting .chm
-# file. You can add a output_folder in front of the file if the result should not be
+# file. You can add a path in front of the file if the result should not be
 # written to the html output directory.
 # This tag requires that the tag GENERATE_HTMLHELP is set to YES.
 
 CHM_FILE               = 
 
-# The HHC_LOCATION tag can be used to specify the location (absolute output_folder
+# The HHC_LOCATION tag can be used to specify the location (absolute path
 # including file name) of the HTML help compiler (hhc.exe). If non-empty,
 # doxygen will try to run the HTML help compiler on the generated index.hhp.
-# The file has to be specified with full output_folder.
+# The file has to be specified with full path.
 # This tag requires that the tag GENERATE_HTMLHELP is set to YES.
 
 HHC_LOCATION           = 
@@ -1382,7 +1382,7 @@ TOC_EXPAND             = NO
 GENERATE_QHP           = NO
 
 # If the QHG_LOCATION tag is specified, the QCH_FILE tag can be used to specify
-# the file name of the resulting .qch file. The output_folder specified is relative to
+# the file name of the resulting .qch file. The path specified is relative to
 # the HTML output folder.
 # This tag requires that the tag GENERATE_QHP is set to YES.
 
@@ -1531,7 +1531,7 @@ FORMULA_TRANSPARENT    = YES
 # http://www.mathjax.org) which uses client side Javascript for the rendering
 # instead of using pre-rendered bitmaps. Use this if you do not have LaTeX
 # installed or if you want to formulas look prettier in the HTML output. When
-# enabled you may also need to install MathJax separately and configure the output_folder
+# enabled you may also need to install MathJax separately and configure the path
 # to it using the MATHJAX_RELPATH option.
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
@@ -1583,7 +1583,7 @@ MATHJAX_CODEFILE       =
 # there is already a search function so this one should typically be disabled.
 # For large projects the javascript based search engine can be slow, then
 # enabling SERVER_BASED_SEARCH may provide a better solution. It is possible to
-# search using the keyboard; to jump to the search box use <access key> + Source
+# search using the keyboard; to jump to the search box use <access key> + S
 # (what the <access key> is depends on the OS and browser, but it is typically
 # <CTRL>, <ALT>/<option>, or both). Inside the search box use the <cursor down
 # key> to jump into the search results window, the results can be navigated
@@ -1672,7 +1672,7 @@ EXTRA_SEARCH_MAPPINGS  =
 GENERATE_LATEX         = NO
 
 # The LATEX_OUTPUT tag is used to specify where the LaTeX docs will be put. If a
-# relative output_folder is entered the value of OUTPUT_DIRECTORY will be put in front of
+# relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
 # it.
 # The default directory is: latex.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
@@ -1843,7 +1843,7 @@ LATEX_TIMESTAMP        = NO
 GENERATE_RTF           = NO
 
 # The RTF_OUTPUT tag is used to specify where the RTF docs will be put. If a
-# relative output_folder is entered the value of OUTPUT_DIRECTORY will be put in front of
+# relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
 # it.
 # The default directory is: rtf.
 # This tag requires that the tag GENERATE_RTF is set to YES.
@@ -1908,7 +1908,7 @@ RTF_SOURCE_CODE        = NO
 GENERATE_MAN           = NO
 
 # The MAN_OUTPUT tag is used to specify where the man pages will be put. If a
-# relative output_folder is entered the value of OUTPUT_DIRECTORY will be put in front of
+# relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
 # it. A directory man3 will be created inside the directory specified by
 # MAN_OUTPUT.
 # The default directory is: man.
@@ -1952,7 +1952,7 @@ MAN_LINKS              = NO
 GENERATE_XML           = NO
 
 # The XML_OUTPUT tag is used to specify where the XML pages will be put. If a
-# relative output_folder is entered the value of OUTPUT_DIRECTORY will be put in front of
+# relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
 # it.
 # The default directory is: xml.
 # This tag requires that the tag GENERATE_XML is set to YES.
@@ -1979,7 +1979,7 @@ XML_PROGRAMLISTING     = YES
 GENERATE_DOCBOOK       = NO
 
 # The DOCBOOK_OUTPUT tag is used to specify where the Docbook pages will be put.
-# If a relative output_folder is entered the value of OUTPUT_DIRECTORY will be put in
+# If a relative path is entered the value of OUTPUT_DIRECTORY will be put in
 # front of it.
 # The default directory is: docbook.
 # This tag requires that the tag GENERATE_DOCBOOK is set to YES.
@@ -2095,7 +2095,7 @@ INCLUDE_PATH           =
 INCLUDE_FILE_PATTERNS  = 
 
 # The PREDEFINED tag can be used to specify one or more macro names that are
-# defined before the preprocessor is started (similar to the -Destination option of e.g.
+# defined before the preprocessor is started (similar to the -D option of e.g.
 # gcc). The argument of the tag is a list of macros of the form: name or
 # name=definition (no spaces). If the definition and the "=" are omitted, "=1"
 # is assumed. To prevent a macro definition from being undefined via #undef or
@@ -2137,8 +2137,8 @@ SKIP_FUNCTION_MACROS   = YES
 # section "Linking to external documentation" for more information about the use
 # of tag files.
 # Note: Each tag file must have a unique name (where the name does NOT include
-# the output_folder). If a tag file is not located in the directory in which doxygen is
-# run, you must also specify the output_folder to the tagfile here.
+# the path). If a tag file is not located in the directory in which doxygen is
+# run, you must also specify the path to the tagfile here.
 
 TAGFILES               = 
 
@@ -2169,9 +2169,9 @@ EXTERNAL_GROUPS        = YES
 
 EXTERNAL_PAGES         = YES
 
-# The PERL_PATH should be the absolute output_folder and name of the perl script
+# The PERL_PATH should be the absolute path and name of the perl script
 # interpreter (i.e. the result of 'which perl').
-# The default file (with absolute output_folder) is: /usr/bin/perl.
+# The default file (with absolute path) is: /usr/bin/perl.
 
 PERL_PATH              = /usr/bin/perl
 
@@ -2193,14 +2193,14 @@ CLASS_DIAGRAMS         = NO
 # http://www.mcternan.me.uk/mscgen/)) to produce the chart and insert it in the
 # documentation. The MSCGEN_PATH tag allows you to specify the directory where
 # the mscgen tool resides. If left empty the tool is assumed to be found in the
-# default search output_folder.
+# default search path.
 
 MSCGEN_PATH            = 
 
 # You can include diagrams made with dia in doxygen documentation. Doxygen will
 # then run dia to produce the diagram and insert it in the documentation. The
 # DIA_PATH tag allows you to specify the directory where the dia binary resides.
-# If left empty dia is assumed to be found in the default search output_folder.
+# If left empty dia is assumed to be found in the default search path.
 
 DIA_PATH               = 
 
@@ -2211,7 +2211,7 @@ DIA_PATH               =
 HIDE_UNDOC_RELATIONS   = YES
 
 # If you set the HAVE_DOT tag to YES then doxygen will assume the dot tool is
-# available from the output_folder. This tool is part of Graphviz (see:
+# available from the path. This tool is part of Graphviz (see:
 # http://www.graphviz.org/), a graph visualization toolkit from AT&T and Lucent
 # Bell Labs. The other options in this section have no effect if this option is
 # set to NO
@@ -2248,7 +2248,7 @@ DOT_FONTSIZE           = 10
 
 # By default doxygen will tell dot to use the default font as specified with
 # DOT_FONTNAME. If you specify a different font using DOT_FONTNAME you can set
-# the output_folder where dot can find it using this tag.
+# the path where dot can find it using this tag.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
 DOT_FONTPATH           = 
@@ -2393,8 +2393,8 @@ DOT_IMAGE_FORMAT       = png
 
 INTERACTIVE_SVG        = NO
 
-# The DOT_PATH tag can be used to specify the output_folder where the dot tool can be
-# found. If left blank, it is assumed the dot tool can be found in the output_folder.
+# The DOT_PATH tag can be used to specify the path where the dot tool can be
+# found. If left blank, it is assumed the dot tool can be found in the path.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
 DOT_PATH               = 
@@ -2419,7 +2419,7 @@ MSCFILE_DIRS           =
 DIAFILE_DIRS           = 
 
 # When using plantuml, the PLANTUML_JAR_PATH tag should be used to specify the
-# output_folder where java can find the plantuml.jar file. If left blank, it is assumed
+# path where java can find the plantuml.jar file. If left blank, it is assumed
 # PlantUML is not used or called during a preprocessing step. Doxygen will
 # generate a warning when it encounters a \startuml command in this case and
 # will not generate output for the diagram.
@@ -2450,7 +2450,7 @@ DOT_GRAPH_MAX_NODES    = 50
 
 # The MAX_DOT_GRAPH_DEPTH tag can be used to set the maximum depth of the graphs
 # generated by dot. A depth value of 3 means that only nodes reachable from the
-# root by following a output_folder via at most 3 edges will be shown. Nodes that lay
+# root by following a path via at most 3 edges will be shown. Nodes that lay
 # further from the root node will be omitted. Note that setting this option to 1
 # or 2 may greatly reduce the computation time needed for large code bases. Also
 # note that the size of a graph can be further restricted by

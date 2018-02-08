@@ -87,7 +87,6 @@ $(document).ready(function(){initNavTree('namespace_math.html','');});
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">Math Namespace Reference</div>  </div>
@@ -100,20 +99,9 @@ $(document).ready(function(){initNavTree('namespace_math.html','');});
 <p>\( \int_0^1 x^2 dx = \) </p><div class="fragment"><div class="line"><a class="code" href="namespace_math.html#a7cd16bfbced6aa47dd31fd44474d07f0">compute_integral</a>([](<span class="keywordtype">double</span> x) { <span class="keywordflow">return</span> x*x; }, {0,1})</div></div><!-- fragment --><p> \( \int_1^\infty x^{-2} dx = \) </p><div class="fragment"><div class="line"><a class="code" href="namespace_math.html#a7cd16bfbced6aa47dd31fd44474d07f0">compute_integral</a>([](<span class="keywordtype">double</span> x) { <span class="keywordflow">return</span> 1/(x*x); }, {1,INFINITY})</div></div><!-- fragment --><p> \( \int_{-\infty}^\infty \exp(-x^2) dx = \) </p><div class="fragment"><div class="line"><a class="code" href="namespace_math.html#a7cd16bfbced6aa47dd31fd44474d07f0">compute_integral</a>([](<span class="keywordtype">double</span> x) { <span class="keywordflow">return</span> std::exp(-x*x); }, {-INFINITY,INFINITY})</div></div><!-- fragment --> </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_math_1_1_dense_gen_mat_prod.html">DenseGenMatProd</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_math_1_1_dense_sym_mat_prod.html">DenseSymMatProd</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_math_1_1gsl__quad.html">gsl_quad</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the largest eigenvector of a matrix.  <a href="class_math_1_1gsl__quad.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">class for integration  <a href="class_math_1_1gsl__quad.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
-Enumerations</h2></td></tr>
-<tr class="memitem:a01fbbd579e137f915839017b0bfec02a"><td class="memItemLeft" align="right" valign="top"><a id="a01fbbd579e137f915839017b0bfec02a"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Handedness</b> { <b>RGHT</b>, 
-<b>LEFT</b>
- }</td></tr>
-<tr class="separator:a01fbbd579e137f915839017b0bfec02a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -136,11 +124,6 @@ template&lt;typename IntegerType , typename  = typename std::enable_if&lt;std::i
 <tr class="memitem:a2ba7d258e03a17abf9707d1fdfd20995"><td class="memTemplItemLeft" align="right" valign="top">IntegerType&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_math.html#a2ba7d258e03a17abf9707d1fdfd20995">ipow</a> (IntegerType x, IntegerType p)</td></tr>
 <tr class="memdesc:a2ba7d258e03a17abf9707d1fdfd20995"><td class="mdescLeft">&#160;</td><td class="mdescRight">"pow", x^p for integers x and p using recursion <br /></td></tr>
 <tr class="separator:a2ba7d258e03a17abf9707d1fdfd20995"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a440d323edd23ad6a9e3cd654e798c299"><td class="memTemplParams" colspan="2"><a id="a440d323edd23ad6a9e3cd654e798c299"></a>
-template&lt;Handedness hand = Handedness::RGHT&gt; </td></tr>
-<tr class="memitem:a440d323edd23ad6a9e3cd654e798c299"><td class="memTemplItemLeft" align="right" valign="top">Textra::Tensor&lt; 1, Textra::cdouble &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_math.html#a440d323edd23ad6a9e3cd654e798c299">dominant_eigenvector</a> (const Textra::Tensor&lt; 2, double &gt; &amp;tensor)</td></tr>
-<tr class="memdesc:a440d323edd23ad6a9e3cd654e798c299"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the largest eigenvector of a matrix. <br /></td></tr>
-<tr class="separator:a440d323edd23ad6a9e3cd654e798c299"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7cd16bfbced6aa47dd31fd44474d07f0"><td class="memTemplParams" colspan="2"><a id="a7cd16bfbced6aa47dd31fd44474d07f0"></a>
 template&lt;typename F &gt; </td></tr>
 <tr class="memitem:a7cd16bfbced6aa47dd31fd44474d07f0"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_math.html#a7cd16bfbced6aa47dd31fd44474d07f0">compute_integral</a> (F func, std::pair&lt; double, double &gt; const &amp;range, double epsabs=1.49e-8, double epsrel=1.49e-8, int limit=50)</td></tr>
