@@ -86,6 +86,7 @@ $(document).ready(function(){initNavTree('classclass__superblock.html','');});
 
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classclass__superblock-members.html">List of all members</a>  </div>
@@ -99,6 +100,12 @@ $(document).ready(function(){initNavTree('classclass__superblock.html','');});
 </div>
 <p><code>#include &lt;<a class="el" href="class__superblock_8h_source.html">class_superblock.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a56d4a4106a815095ef5c89105d4ff287"><td class="memItemLeft" align="right" valign="top"><a id="a56d4a4106a815095ef5c89105d4ff287"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>Scalar</b> = class_mps::Scalar</td></tr>
+<tr class="separator:a56d4a4106a815095ef5c89105d4ff287"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:abfdbb85192198cdae650cbd60f01571a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#abfdbb85192198cdae650cbd60f01571a">find_ground_state</a> (int eigSteps, double eigThreshold) __attribute((hot))</td></tr>
@@ -112,88 +119,48 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>time_evolve</b> ()</t
 <tr class="separator:ae8df112baac53bd9ede08bc766b26fd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2485636df110a965bf5c97e649df8777"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a2485636df110a965bf5c97e649df8777">enlarge_environment</a> (int direction=0)</td></tr>
 <tr class="separator:a2485636df110a965bf5c97e649df8777"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c6c3d2a3a18a28f4d215d5d1c4dba28"><td class="memItemLeft" align="right" valign="top"><a id="a9c6c3d2a3a18a28f4d215d5d1c4dba28"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>get_expectationvalue</b> (const Tensor4d &amp;MPO)</td></tr>
-<tr class="separator:a9c6c3d2a3a18a28f4d215d5d1c4dba28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada57355d3dec354b9843923a66d23cff"><td class="memItemLeft" align="right" valign="top"><a id="ada57355d3dec354b9843923a66d23cff"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>get_energy</b> ()</td></tr>
-<tr class="separator:ada57355d3dec354b9843923a66d23cff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5646932257dd687cba5f73d7e597ea9"><td class="memItemLeft" align="right" valign="top"><a id="aa5646932257dd687cba5f73d7e597ea9"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>get_entropy</b> ()</td></tr>
-<tr class="separator:aa5646932257dd687cba5f73d7e597ea9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51a5f3d427f3f1b2103dc9c7585ec94c"><td class="memItemLeft" align="right" valign="top"><a id="a51a5f3d427f3f1b2103dc9c7585ec94c"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>get_variance</b> ()</td></tr>
-<tr class="separator:a51a5f3d427f3f1b2103dc9c7585ec94c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7944459b864b2f91c600979c6487bf5"><td class="memItemLeft" align="right" valign="top"><a id="ac7944459b864b2f91c600979c6487bf5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>test</b> ()</td></tr>
-<tr class="separator:ac7944459b864b2f91c600979c6487bf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd2075aa1c0c8dd6f48f9cddc0676e4e"><td class="memItemLeft" align="right" valign="top"><a id="afd2075aa1c0c8dd6f48f9cddc0676e4e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>transfer_matrix_eigenvalues</b> ()</td></tr>
-<tr class="separator:afd2075aa1c0c8dd6f48f9cddc0676e4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d7e6eb7e627c3dc30526470a8c94f5a"><td class="memItemLeft" align="right" valign="top"><a id="a3d7e6eb7e627c3dc30526470a8c94f5a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>canonicalize_iMPS_vidal</b> ()</td></tr>
-<tr class="separator:a3d7e6eb7e627c3dc30526470a8c94f5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04f308f5a4c073657a11165f7818c769"><td class="memItemLeft" align="right" valign="top"><a id="a04f308f5a4c073657a11165f7818c769"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>canonicalize_iMPS_mcculloch</b> ()</td></tr>
-<tr class="separator:a04f308f5a4c073657a11165f7818c769"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b26cc612d37120f8b7788d5a2177965"><td class="memItemLeft" align="right" valign="top"><a id="a8b26cc612d37120f8b7788d5a2177965"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>initialize</b> ()</td></tr>
+<tr class="separator:a8b26cc612d37120f8b7788d5a2177965"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1396bcaceb63f5af19e92d21b12c3d3"><td class="memItemLeft" align="right" valign="top"><a id="aa1396bcaceb63f5af19e92d21b12c3d3"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>canonicalize_iMPS</b> ()</td></tr>
 <tr class="separator:aa1396bcaceb63f5af19e92d21b12c3d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55f9bffd8086196ae461056b13974cb2"><td class="memItemLeft" align="right" valign="top"><a id="a55f9bffd8086196ae461056b13974cb2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>canonicalize_iMPS_iterative</b> ()</td></tr>
 <tr class="separator:a55f9bffd8086196ae461056b13974cb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a392188207d0234cd883cc6b2a075a11b"><td class="memItemLeft" align="right" valign="top"><a id="a392188207d0234cd883cc6b2a075a11b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>canonicalize_iMPS_iterative_again</b> ()</td></tr>
-<tr class="separator:a392188207d0234cd883cc6b2a075a11b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c6c446ca5aa4f61574e8a19cf9b6934"><td class="memItemLeft" align="right" valign="top"><a id="a3c6c446ca5aa4f61574e8a19cf9b6934"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>canonicalize4</b> ()</td></tr>
-<tr class="separator:a3c6c446ca5aa4f61574e8a19cf9b6934"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82e3d4e87dfee1479a8b2a36d929f0a2"><td class="memItemLeft" align="right" valign="top"><a id="a82e3d4e87dfee1479a8b2a36d929f0a2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>canonicalize2</b> ()</td></tr>
-<tr class="separator:a82e3d4e87dfee1479a8b2a36d929f0a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d5aaa2a4dfbad91771f502d31dcb5bc"><td class="memItemLeft" align="right" valign="top"><a id="a0d5aaa2a4dfbad91771f502d31dcb5bc"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>canonicalize3</b> ()</td></tr>
-<tr class="separator:a0d5aaa2a4dfbad91771f502d31dcb5bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe0ca58bd3b1ba7ee12e8b3a617c2759"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#abe0ca58bd3b1ba7ee12e8b3a617c2759">update_bond_dimensions</a> ()</td></tr>
 <tr class="separator:abe0ca58bd3b1ba7ee12e8b3a617c2759"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a593c53eaa16bbb4dd67f4a9db95c821e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a593c53eaa16bbb4dd67f4a9db95c821e">swap_AB</a> ()</td></tr>
 <tr class="separator:a593c53eaa16bbb4dd67f4a9db95c821e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac18250c64ae17f054104f050d017d3b7"><td class="memItemLeft" align="right" valign="top"><a id="ac18250c64ae17f054104f050d017d3b7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
-<tr class="separator:ac18250c64ae17f054104f050d017d3b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0145a695293e2f14c510d208118b4e23"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a0145a695293e2f14c510d208118b4e23">print_picture</a> (bool graphics)</td></tr>
-<tr class="separator:a0145a695293e2f14c510d208118b4e23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9cad5d0f24202e10c2c5343a79d6f8e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#ad9cad5d0f24202e10c2c5343a79d6f8e">print_state</a> (int verbosity, string name=&quot;&quot;)</td></tr>
-<tr class="separator:ad9cad5d0f24202e10c2c5343a79d6f8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8ca4d0a6dd3706f01d33dfeba2b4c3c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#ae8ca4d0a6dd3706f01d33dfeba2b4c3c">perform_op</a> (const double *x_in, double *y_out) const</td></tr>
-<tr class="separator:ae8ca4d0a6dd3706f01d33dfeba2b4c3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae47ac66ae4cf95e0f5cff8f60fa2d0bb"><td class="memItemLeft" align="right" valign="top"><a id="ae47ac66ae4cf95e0f5cff8f60fa2d0bb"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>rows</b> () const</td></tr>
-<tr class="separator:ae47ac66ae4cf95e0f5cff8f60fa2d0bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0f82d1cfd874b44b52aabd0e42ef8c9"><td class="memItemLeft" align="right" valign="top"><a id="ac0f82d1cfd874b44b52aabd0e42ef8c9"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>cols</b> () const</td></tr>
-<tr class="separator:ac0f82d1cfd874b44b52aabd0e42ef8c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a44835bbcd2237965741a07c6cbb702db"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__environment___l.html">class_environment_L</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a44835bbcd2237965741a07c6cbb702db">Lblock</a></td></tr>
-<tr class="separator:a44835bbcd2237965741a07c6cbb702db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cb3d611b9a4bd2da1b397059bc98043"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__environment___r.html">class_environment_R</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a1cb3d611b9a4bd2da1b397059bc98043">Rblock</a></td></tr>
-<tr class="separator:a1cb3d611b9a4bd2da1b397059bc98043"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9989ee56695bf210091e4a668777b323"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass___m_p_s.html">class_MPS</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a9989ee56695bf210091e4a668777b323">MPS</a></td></tr>
-<tr class="separator:a9989ee56695bf210091e4a668777b323"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87ddbf7030ccc378a31f0b0e6c28acb4"><td class="memItemLeft" align="right" valign="top"><a id="a87ddbf7030ccc378a31f0b0e6c28acb4"></a>
-<a class="el" href="classclass___two_site_hamiltonian.html">class_TwoSiteHamiltonian</a>&#160;</td><td class="memItemRight" valign="bottom"><b>H</b></td></tr>
-<tr class="separator:a87ddbf7030ccc378a31f0b0e6c28acb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a9c5f435b13201f64738f26d40375d2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__environment.html">class_environment</a>&lt; Side::L &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a2a9c5f435b13201f64738f26d40375d2">Lblock</a></td></tr>
+<tr class="separator:a2a9c5f435b13201f64738f26d40375d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36d03535f7df76d9cb00748743e014c8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__environment.html">class_environment</a>&lt; Side::R &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a36d03535f7df76d9cb00748743e014c8">Rblock</a></td></tr>
+<tr class="separator:a36d03535f7df76d9cb00748743e014c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b2b066d9b8a499e2bb092b451858ff3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__environment__var.html">class_environment_var</a>&lt; Side::L &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a6b2b066d9b8a499e2bb092b451858ff3">Lblock2</a></td></tr>
+<tr class="separator:a6b2b066d9b8a499e2bb092b451858ff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add1eefac58364df3561113dafe2bd482"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__environment__var.html">class_environment_var</a>&lt; Side::R &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#add1eefac58364df3561113dafe2bd482">Rblock2</a></td></tr>
+<tr class="separator:add1eefac58364df3561113dafe2bd482"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6311468d07816822a4a0fa65d16b560e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__mps.html">class_mps</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a6311468d07816822a4a0fa65d16b560e">MPS</a></td></tr>
+<tr class="separator:a6311468d07816822a4a0fa65d16b560e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62f2a593385e4c4d91088accd8a7add7"><td class="memItemLeft" align="right" valign="top"><a id="a62f2a593385e4c4d91088accd8a7add7"></a>
+<a class="el" href="classclass__mpo.html">class_mpo</a>&#160;</td><td class="memItemRight" valign="bottom"><b>H</b></td></tr>
+<tr class="separator:a62f2a593385e4c4d91088accd8a7add7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e866c5bcf8537c249500c0d58fef7f3"><td class="memItemLeft" align="right" valign="top">Textra::array1&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a1e866c5bcf8537c249500c0d58fef7f3">shape1</a></td></tr>
+<tr class="separator:a1e866c5bcf8537c249500c0d58fef7f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac333ff492b1b5247af7f0f8b748361e6"><td class="memItemLeft" align="right" valign="top">Textra::array2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#ac333ff492b1b5247af7f0f8b748361e6">shape2</a></td></tr>
+<tr class="separator:ac333ff492b1b5247af7f0f8b748361e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd07373f6ee47fdd21fb38cb589b6c1c"><td class="memItemLeft" align="right" valign="top">Textra::array4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#acd07373f6ee47fdd21fb38cb589b6c1c">shape4</a></td></tr>
+<tr class="separator:acd07373f6ee47fdd21fb38cb589b6c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32afcea00a52d8f6b8c7aa43232132c9"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#a32afcea00a52d8f6b8c7aa43232132c9">chi</a></td></tr>
 <tr class="separator:a32afcea00a52d8f6b8c7aa43232132c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad726073f16e00b563eea6192c0780072"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__superblock.html#ad726073f16e00b563eea6192c0780072">chi_max</a></td></tr>
-<tr class="separator:ad726073f16e00b563eea6192c0780072"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbd0a610ef1f028520d7d5c6978d486b"><td class="memItemLeft" align="right" valign="top"><a id="afbd0a610ef1f028520d7d5c6978d486b"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>truncation_error</b></td></tr>
 <tr class="separator:afbd0a610ef1f028520d7d5c6978d486b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a732fbb587f8b73e2bdb7b610f38a65b3"><td class="memItemLeft" align="right" valign="top"><a id="a732fbb587f8b73e2bdb7b610f38a65b3"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>chain_length</b> = H.sites</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>chain_length</b> = H.mps_sites</td></tr>
 <tr class="separator:a732fbb587f8b73e2bdb7b610f38a65b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -254,83 +221,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>chain_length</b> = H.s
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="ae8ca4d0a6dd3706f01d33dfeba2b4c3c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae8ca4d0a6dd3706f01d33dfeba2b4c3c">&#9670;&nbsp;</a></span>perform_op()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_superblock::perform_op </td>
-          <td>(</td>
-          <td class="paramtype">const double *&#160;</td>
-          <td class="paramname"><em>x_in</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>y_out</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Function for eigenvalue solver Spectra Defines the matrix-vector product in the left side of \(Av = \lambda \) </p>
-
-</div>
-</div>
-<a id="a0145a695293e2f14c510d208118b4e23"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0145a695293e2f14c510d208118b4e23">&#9670;&nbsp;</a></span>print_picture()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_superblock::print_picture </td>
-          <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>graphics</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Print a pretty picture of the current chain. </p>
-
-</div>
-</div>
-<a id="ad9cad5d0f24202e10c2c5343a79d6f8e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad9cad5d0f24202e10c2c5343a79d6f8e">&#9670;&nbsp;</a></span>print_state()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_superblock::print_state </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>verbosity</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>name</em> = <code>&quot;&quot;</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Compare current energy with exact value. </p>
 
 </div>
 </div>
@@ -445,29 +335,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>chain_length</b> = H.s
 
 </div>
 </div>
-<a id="ad726073f16e00b563eea6192c0780072"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad726073f16e00b563eea6192c0780072">&#9670;&nbsp;</a></span>chi_max</h2>
+<a id="a2a9c5f435b13201f64738f26d40375d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a9c5f435b13201f64738f26d40375d2">&#9670;&nbsp;</a></span>Lblock</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long class_superblock::chi_max</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Maximum allowed bond dimension, which also defines the SVD cutoff </p>
-
-</div>
-</div>
-<a id="a44835bbcd2237965741a07c6cbb702db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a44835bbcd2237965741a07c6cbb702db">&#9670;&nbsp;</a></span>Lblock</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classclass__environment___l.html">class_environment_L</a> class_superblock::Lblock</td>
+          <td class="memname"><a class="el" href="classclass__environment.html">class_environment</a>&lt;Side::L&gt; class_superblock::Lblock</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -475,14 +350,29 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>chain_length</b> = H.s
 
 </div>
 </div>
-<a id="a9989ee56695bf210091e4a668777b323"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9989ee56695bf210091e4a668777b323">&#9670;&nbsp;</a></span>MPS</h2>
+<a id="a6b2b066d9b8a499e2bb092b451858ff3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b2b066d9b8a499e2bb092b451858ff3">&#9670;&nbsp;</a></span>Lblock2</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classclass___m_p_s.html">class_MPS</a> class_superblock::MPS</td>
+          <td class="memname"><a class="el" href="classclass__environment__var.html">class_environment_var</a>&lt;Side::L&gt; class_superblock::Lblock2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Left environment block used for variance calculation </p>
+
+</div>
+</div>
+<a id="a6311468d07816822a4a0fa65d16b560e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6311468d07816822a4a0fa65d16b560e">&#9670;&nbsp;</a></span>MPS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classclass__mps.html">class_mps</a> class_superblock::MPS</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -490,14 +380,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>chain_length</b> = H.s
 
 </div>
 </div>
-<a id="a1cb3d611b9a4bd2da1b397059bc98043"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1cb3d611b9a4bd2da1b397059bc98043">&#9670;&nbsp;</a></span>Rblock</h2>
+<a id="a36d03535f7df76d9cb00748743e014c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36d03535f7df76d9cb00748743e014c8">&#9670;&nbsp;</a></span>Rblock</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classclass__environment___r.html">class_environment_R</a> class_superblock::Rblock</td>
+          <td class="memname"><a class="el" href="classclass__environment.html">class_environment</a>&lt;Side::R&gt; class_superblock::Rblock</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -505,11 +395,70 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>chain_length</b> = H.s
 
 </div>
 </div>
+<a id="add1eefac58364df3561113dafe2bd482"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add1eefac58364df3561113dafe2bd482">&#9670;&nbsp;</a></span>Rblock2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classclass__environment__var.html">class_environment_var</a>&lt;Side::R&gt; class_superblock::Rblock2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Right environment block used for variance calculation </p>
+
+</div>
+</div>
+<a id="a1e866c5bcf8537c249500c0d58fef7f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e866c5bcf8537c249500c0d58fef7f3">&#9670;&nbsp;</a></span>shape1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Textra::array1 class_superblock::shape1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shape for Tensor1 representation of the MPS. </p>
+
+</div>
+</div>
+<a id="ac333ff492b1b5247af7f0f8b748361e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac333ff492b1b5247af7f0f8b748361e6">&#9670;&nbsp;</a></span>shape2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Textra::array2 class_superblock::shape2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shape for Tensor2 representation of the MPS. </p>
+
+</div>
+</div>
+<a id="acd07373f6ee47fdd21fb38cb589b6c1c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd07373f6ee47fdd21fb38cb589b6c1c">&#9670;&nbsp;</a></span>shape4</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Textra::array4 class_superblock::shape4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shape for Tensor4 representation of the MPS. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>source/<a class="el" href="class__superblock_8h_source.html">class_superblock.h</a></li>
-<li>source/class_superblock.cpp</li>
-<li>source/class_superblock_canonicalize.cpp</li>
-<li>source/class_superblock_svd_spectra.cpp</li>
+<li>source/mps_routines/<a class="el" href="class__superblock_8h_source.html">class_superblock.h</a></li>
+<li>source/mps_routines/class_superblock.cpp</li>
+<li>source/mps_routines/class_superblock_canonicalize.cpp</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

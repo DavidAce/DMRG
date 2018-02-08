@@ -43,7 +43,7 @@ message("FOUND GSL      :   ${GSL_LIBRARIES}")
 message("FOUND SPECTRA  :   ${SPECTRA_INCLUDE_DIR}")
 message("======================================")
 
-include_directories(libs/spectra/include)
+
 
 
 
@@ -55,13 +55,28 @@ set(DEBUG_OPTIONS       -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    message("Special flags for g++:  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized")
     set(COMMON_OPTIONS ${COMMON_OPTIONS}  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    message("Special flags for Clang:  -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-maybe-uninitialized")
-    set(COMMON_OPTIONS ${COMMON_OPTIONS}   -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-maybe-uninitialized)
+    set(COMMON_OPTIONS ${COMMON_OPTIONS}   -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
+endif()
+message(STATUS "Default CXX flags:  ${COMMON_OPTIONS} ${CMAKE_CXX_FLAGS}")
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    message(STATUS "Additional Release flags: ${RELEASE_OPTIONS}")
+else()
+    message(STATUS "Additional Debug flags: ${DEBUG_OPTIONS}")
 endif()
 
+
+###################
+### INFORMATION ###
+###################
+message("==================================================================")
+message("")
+message("      To clean cmake files, run './build.sh clean'")
+message("      To clean cmake files downloaded libraries, run './clean.sh '")
+message("      To launch this program,  './run.sh'")
+message("")
+message("==================================================================")
 
 
 ###########################################

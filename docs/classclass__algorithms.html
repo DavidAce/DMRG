@@ -96,232 +96,40 @@ $(document).ready(function(){initNavTree('classclass__algorithms.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a92dd7ebedbd4fb138fbed692ff3bb22d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithms.html#a92dd7ebedbd4fb138fbed692ff3bb22d">single_DMRG_step</a> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock, long chi_max)</td></tr>
-<tr class="separator:a92dd7ebedbd4fb138fbed692ff3bb22d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc76e419add7d000d4a034dadd02ffd9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithms.html#adc76e419add7d000d4a034dadd02ffd9">single_TEBD_step</a> (<a class="el" href="classclass__superblock.html">class_superblock</a> &amp;superblock, long chi_max)</td></tr>
-<tr class="separator:adc76e419add7d000d4a034dadd02ffd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb6dfcfbb7797e15ff4c5aff02f09200"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithms.html#abb6dfcfbb7797e15ff4c5aff02f09200">iDMRG</a> ()</td></tr>
-<tr class="separator:abb6dfcfbb7797e15ff4c5aff02f09200"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e89f9ebd7bc5e2b88ff6a7a78dd30e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithms.html#a3e89f9ebd7bc5e2b88ff6a7a78dd30e9">fDMRG</a> ()</td></tr>
-<tr class="separator:a3e89f9ebd7bc5e2b88ff6a7a78dd30e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af74d44986a057e74d6adc07812c6d63d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithms.html#af74d44986a057e74d6adc07812c6d63d">iTEBD</a> ()</td></tr>
-<tr class="separator:af74d44986a057e74d6adc07812c6d63d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd8b56edc0c107cc95fd103420d023bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithms.html#acd8b56edc0c107cc95fd103420d023bb">FES_iTEBD</a> ()</td></tr>
-<tr class="separator:acd8b56edc0c107cc95fd103420d023bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1d4e88d82f7f5dd1feb6e4e0a791f60"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithms.html#ae1d4e88d82f7f5dd1feb6e4e0a791f60">FES_iDMRG</a> ()</td></tr>
-<tr class="separator:ae1d4e88d82f7f5dd1feb6e4e0a791f60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f85773223c921748cab3c50ff955ea2"><td class="memItemLeft" align="right" valign="top"><a id="a9f85773223c921748cab3c50ff955ea2"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>class_algorithms</b> (std::shared_ptr&lt; <a class="el" href="classclass__hdf5__file.html">class_hdf5_file</a> &gt; hdf5_)</td></tr>
+<tr class="separator:a9f85773223c921748cab3c50ff955ea2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51531dc68d6ab13d0752419820491234"><td class="memItemLeft" align="right" valign="top"><a id="a51531dc68d6ab13d0752419820491234"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>run_algorithms</b> ()</td></tr>
+<tr class="separator:a51531dc68d6ab13d0752419820491234"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a801367c6e1fa0f3c1870581424c12cbc"><td class="memItemLeft" align="right" valign="top"><a id="a801367c6e1fa0f3c1870581424c12cbc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>run_infinite_DMRG</b> ()</td></tr>
+<tr class="separator:a801367c6e1fa0f3c1870581424c12cbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:addd6426409dc4d56d1235ad81829aaec"><td class="memItemLeft" align="right" valign="top"><a id="addd6426409dc4d56d1235ad81829aaec"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>run_finite_DMRG</b> ()</td></tr>
+<tr class="separator:addd6426409dc4d56d1235ad81829aaec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28c9daca4cab3bcf55b80cca4a774391"><td class="memItemLeft" align="right" valign="top"><a id="a28c9daca4cab3bcf55b80cca4a774391"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>run_imaginary_TEBD</b> ()</td></tr>
+<tr class="separator:a28c9daca4cab3bcf55b80cca4a774391"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a254f86baa2ff6839881ab1c00f05d88b"><td class="memItemLeft" align="right" valign="top"><a id="a254f86baa2ff6839881ab1c00f05d88b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>run_FES_iDMRG</b> ()</td></tr>
+<tr class="separator:a254f86baa2ff6839881ab1c00f05d88b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefc34578fd9ff6943aebcadd054b8c37"><td class="memItemLeft" align="right" valign="top"><a id="aefc34578fd9ff6943aebcadd054b8c37"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>run_FES_iTEBD</b> ()</td></tr>
+<tr class="separator:aefc34578fd9ff6943aebcadd054b8c37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a2452e62f648638ba17e9132ddb56b69c"><td class="memItemLeft" align="right" valign="top"><a id="a2452e62f648638ba17e9132ddb56b69c"></a>
-<a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_tot</b></td></tr>
-<tr class="separator:a2452e62f648638ba17e9132ddb56b69c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d909609ec4eee9e87c1b323d8e39aeb"><td class="memItemLeft" align="right" valign="top"><a id="a6d909609ec4eee9e87c1b323d8e39aeb"></a>
-<a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_eig</b></td></tr>
-<tr class="separator:a6d909609ec4eee9e87c1b323d8e39aeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63611e970a5d20d5da2cc405aedf2d3a"><td class="memItemLeft" align="right" valign="top"><a id="a63611e970a5d20d5da2cc405aedf2d3a"></a>
-<a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_svd</b></td></tr>
-<tr class="separator:a63611e970a5d20d5da2cc405aedf2d3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9d67170c1a571cd58e146098ffcb40a"><td class="memItemLeft" align="right" valign="top"><a id="ae9d67170c1a571cd58e146098ffcb40a"></a>
-<a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_env</b></td></tr>
-<tr class="separator:ae9d67170c1a571cd58e146098ffcb40a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad99da4fa0ff4dc9ee7b92517e163bca9"><td class="memItemLeft" align="right" valign="top"><a id="ad99da4fa0ff4dc9ee7b92517e163bca9"></a>
-<a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_evo</b></td></tr>
-<tr class="separator:ad99da4fa0ff4dc9ee7b92517e163bca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ec63c78f63757c440917dba98007806"><td class="memItemLeft" align="right" valign="top"><a id="a2ec63c78f63757c440917dba98007806"></a>
-<a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_upd</b></td></tr>
-<tr class="separator:a2ec63c78f63757c440917dba98007806"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a811224b35cca3443cd4aae86aae08836"><td class="memItemLeft" align="right" valign="top"><a id="a811224b35cca3443cd4aae86aae08836"></a>
-<a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_sto</b></td></tr>
-<tr class="separator:a811224b35cca3443cd4aae86aae08836"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf5e5570d88714ec944a6182f194b4e4"><td class="memItemLeft" align="right" valign="top"><a id="acf5e5570d88714ec944a6182f194b4e4"></a>
-<a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><b>t_mps</b></td></tr>
-<tr class="separator:acf5e5570d88714ec944a6182f194b4e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab26e4bf9bb987d67623ef84913c4d24f"><td class="memItemLeft" align="right" valign="top"><a id="ab26e4bf9bb987d67623ef84913c4d24f"></a>
-<a class="el" href="classclass__hdf5.html">class_hdf5</a>&#160;</td><td class="memItemRight" valign="bottom"><b>hdf5</b></td></tr>
-<tr class="separator:ab26e4bf9bb987d67623ef84913c4d24f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f249419d1baa03d880a84c4414b5307"><td class="memItemLeft" align="right" valign="top"><a id="a9f249419d1baa03d880a84c4414b5307"></a>
+std::shared_ptr&lt; <a class="el" href="classclass__hdf5__file.html">class_hdf5_file</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>hdf5</b></td></tr>
+<tr class="separator:a9f249419d1baa03d880a84c4414b5307"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24b8d52e864472ac5061a47b5fb68d8f"><td class="memItemLeft" align="right" valign="top"><a id="a24b8d52e864472ac5061a47b5fb68d8f"></a>
+<a class="el" href="classclass__custom__cout.html">class_custom_cout</a>&#160;</td><td class="memItemRight" valign="bottom"><b>ccout</b></td></tr>
+<tr class="separator:a24b8d52e864472ac5061a47b5fb68d8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3e89f9ebd7bc5e2b88ff6a7a78dd30e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e89f9ebd7bc5e2b88ff6a7a78dd30e9">&#9670;&nbsp;</a></span>fDMRG()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_algorithms::fDMRG </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Finite DMRG sweeps across the chain built during iDMRG.</p>
-
-</div>
-</div>
-<a id="ae1d4e88d82f7f5dd1feb6e4e0a791f60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1d4e88d82f7f5dd1feb6e4e0a791f60">&#9670;&nbsp;</a></span>FES_iDMRG()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_algorithms::FES_iDMRG </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Finite-entanglement scaling. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">superblock</td><td>A class containing MPS, environment and Hamiltonian MPO objects.</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>This function uses infinite algorithms (iTEBD or iDMRG) until the entropy converges, to see how entanglement grows as a function of \(\chi\) (chi).</p>
-
-</div>
-</div>
-<a id="acd8b56edc0c107cc95fd103420d023bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd8b56edc0c107cc95fd103420d023bb">&#9670;&nbsp;</a></span>FES_iTEBD()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_algorithms::FES_iTEBD </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Finite-entanglement scaling. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">superblock</td><td>A class containing MPS, environment and Hamiltonian MPO objects.</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>This function uses infinite algorithms (iTEBD or iDMRG) until the entropy converges, to see how entanglement grows as a function of \(\chi\) (chi).</p>
-
-</div>
-</div>
-<a id="abb6dfcfbb7797e15ff4c5aff02f09200"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb6dfcfbb7797e15ff4c5aff02f09200">&#9670;&nbsp;</a></span>iDMRG()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_algorithms::iDMRG </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Infinite DMRG, grows the chain from 2 up to <code>max_idmrg::length</code> particles. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">superblock</td><td>A class containing MPS, environment and Hamiltonian MPO objects. </td></tr>
-    <tr><td class="paramname">storage</td><td>A class that stores current MPS and environments at each iteration. </td></tr>
-    <tr><td class="paramname">max_length</td><td>Maximum chain length after which the algorithm stops.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="af74d44986a057e74d6adc07812c6d63d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af74d44986a057e74d6adc07812c6d63d">&#9670;&nbsp;</a></span>iTEBD()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_algorithms::iTEBD </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>infinite Time evolving block decimation. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">superblock</td><td>A class containing MPS, environment and Hamiltonian MPO objects. </td></tr>
-    <tr><td class="paramname">max_iter</td><td>Maximum number of iterations.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a92dd7ebedbd4fb138fbed692ff3bb22d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a92dd7ebedbd4fb138fbed692ff3bb22d">&#9670;&nbsp;</a></span>single_DMRG_step()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_algorithms::single_DMRG_step </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classclass__superblock.html">class_superblock</a> &amp;&#160;</td>
-          <td class="paramname"><em>superblock</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">long&#160;</td>
-          <td class="paramname"><em>chi_max</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="adc76e419add7d000d4a034dadd02ffd9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adc76e419add7d000d4a034dadd02ffd9">&#9670;&nbsp;</a></span>single_TEBD_step()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_algorithms::single_TEBD_step </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classclass__superblock.html">class_superblock</a> &amp;&#160;</td>
-          <td class="paramname"><em>superblock</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">long&#160;</td>
-          <td class="paramname"><em>chi_max</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>infinite Time evolving block decimation. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">superblock</td><td>A class containing MPS, environment and Hamiltonian MPO objects.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>source/<a class="el" href="class__algorithms_8h_source.html">class_algorithms.h</a></li>
-<li>source/class_algorithms.cpp</li>
+<li>source/mps_routines/<a class="el" href="class__algorithms_8h_source.html">class_algorithms.h</a></li>
+<li>source/mps_routines/class_algorithms.cpp</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

@@ -111,7 +111,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <hr/>
  <h2>Installation</h2>
 <h3>Quick start</h3>
-<p>The project can be built with a single command from a unix terminal. Simply launch the script <code>.\build.sh</code> found in the root folder, containing </p><div class="fragment"><div class="line"><span class="preprocessor">#!/bin/sh</span></div><div class="line">cmake -E make_directory build/Release</div><div class="line">cd build/Release</div><div class="line">cmake -Bbuild/Release --build build -config Release ../../</div><div class="line">make</div></div><!-- fragment --><p> This script will create subdirectories and use CMake to check for dependencies, and download automatically if needed (see <em>Optional Requirements</em> below). If the dependencies are found, the project is built and an executable is generated.</p>
+<p>Git clone or copy &amp; extract the project into a folder of your choosing. Make sure there are no spaces in the path!**. The project can be built with a single command from a unix terminal. Simply launch the script <code>.\build.sh</code> found in the root folder, containing </p><div class="fragment"><div class="line"><span class="preprocessor">#!/bin/sh</span></div><div class="line">cmake -E make_directory build/Release</div><div class="line">cd build/Release</div><div class="line">cmake -Bbuild/Release --build build -config Release ../../</div><div class="line">make</div></div><!-- fragment --><p> This script will create subdirectories and use CMake to check for dependencies and download them automatically if needed (see <em>Optional Requirements</em> below). If the dependencies are found, the project is built and an executable is generated.</p>
 <p>To run executable, launch <code>.\run.sh</code>, containing</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#!/bin/sh</span></div><div class="line"><span class="preprocessor">./build/Release/DMRG++</span></div></div><!-- fragment --><p>Alternatively** some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This is perhaps an even simpler approach. Recommended: <a href="https://www.jetbrains.com/clion/download">CLion</a> or <a href="https://code.visualstudio.com/">Visual Studio Code</a> with C++ and CMake Tools extensions.</p>
 <h3>Minimum Requirements</h3>
@@ -125,7 +125,12 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li>CMake version &gt;= 3.7</li>
 </ul>
 <h3>Optional Requirements</h3>
-<p>You can chose to <b>either</b> let <code>cmake</code> install the following software automatically, or install it yourself with your favorite package manager (e.g. <code>apt</code> in ubuntu or <code>brew</code> in OSX). The latter is recommended to reduce configure and compile-time.</p>
+<p>You can chose to <b>either</b></p><ul>
+<li>let the build script compile the libraries below from source into <code>libs/</code>. This will happen automatically if the library is not found on your system. Note that this does <em>NOT</em> make a system-wide install, so you can safely delete the <code>libs/</code> folder.</li>
+<li>(<em>recommended</em>) install the libraries yourself with your favorite package manager (e.g. <code>apt</code> in ubuntu or <code>brew</code> in OSX). The build script will always attempt to find the libraries in your system.</li>
+</ul>
+<p>The latter is recommended to avoid a lengthy compilation of these rather large libraries.</p>
+<h4>Libraries</h4>
 <ul>
 <li><a href="http://eigen.tuxfamily.org">Eigen</a> for tensor support and SVD decomposition (tested with version &gt;= 3.3).</li>
 <li><a href="https://github.com/opencollab/arpack-ng">Arpack</a> Eigenvalue solver based on fortran. Note that this in turn requires Lapack and blas API.</li>
@@ -134,7 +139,8 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li><a href="https://support.hdfgroup.org/HDF5/">HDF5</a> for hdf5-file storage support (tested with version &gt;= 1.8).</li>
 <li><a href="https://www.gnu.org/software/gsl/">GSL</a> for numerical integration (tested with version &gt;= 2.4).</li>
 </ul>
-<p>If the software above is not found in your system, the first run of <code>cmake</code> will download and install it for you into a folder <code>libs</code> in the root of this project. </p><hr/>
+<p>If the software above is not found in your system, the first run of <code>./build.sh</code> will download and install it for you into a folder <code>libs/</code> in the root of this project.</p>
+<hr/>
 <h2>Usage</h2>
 <p>This code lacks an API or command-line parameters. As such, details of execution have to be set in source code, specifically one can edit model and simulation parameters in <code>source/n_model.h</code> and <code>source/n_settings.h</code>.</p>
 <p>The files <code>source/class_algorithms.cpp</code> and <code>source/class_algorithms.h</code> contain routines for the infinite-DMRG, finite-DMRG and infinite-TEBD that can be called from <code><a class="el" href="main_8cpp.html">main.cpp</a></code>. The algorithms should ideally give similar ground state energies, which is a good sanity check.</p>

@@ -13,12 +13,26 @@
 #   target_link_libraries(MyTarget ${ARPACK_LIBRARIES})
 # To use, simple include it in your CMakeLists.txt
 #   include(Find_or_install_ARPACK.cmake)
-message("SEARCHING FOR PRE-INSTALLED LIBRARIES: ARPACK")
+
+message("SEARCHING FOR LIBRARY: ARPACK")
+set(ARPACK_CMAKE_DIR_GUESS "${PROJECT_SOURCE_DIR}/libs/arpack-ng")
+find_package(arpack-ng PATHS "${ARPACK_CMAKE_DIR_GUESS}" NO_DEFAULT_PATH NO_MODULE)
+if(arpack-ng_FOUND)
+    include(${PROJECT_SOURCE_DIR}/libs/arpack-ng/FindArpack.cmake)
+    include_directories(${ARPACK_INC_DIR})
+    set(ARPACK_LIBRARIES ${arpack_ng_LIBRARIES})
+    message(STATUS "FOUND PREVIOUSLY INSTALLED ARPACK:   ${ARPACK_LIBRARIES}")
+    return()
+endif()
+
+
+message(STATUS "SEARCHING FOR ARPACK IN SYSTEM...")
 find_library(ARPACK_LIBRARIES NAMES arpack arpack-ng libarpack libarpack2 libarpack2-dev)
 if(ARPACK_LIBRARIES)
-    message("FOUND PRE-INSTALLED ARPACK:   ${ARPACK_LIBRARIES}")
+    message(STATUS "FOUND ARPACK:   ${ARPACK_LIBRARIES}")
+    return()
 elseif(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
-    message("DOWNLOADING ARPACK...")
+    message(STATUS "DOWNLOADING ARPACK...")
     execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory tmp/arpack-ng
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts)
@@ -38,18 +52,30 @@ elseif(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
     if(NOT "${res_var}" STREQUAL "0")
         message(FATAL_ERROR "ARPACK not found and failed to install: ${res_var}")
     endif()
-
-    include(${PROJECT_SOURCE_DIR}/libs/arpack-ng/FindArpack.cmake)
     set(ARPACK_LIBRARIES "")
-    get_libraries(${ARPACK_LIB_DIR} arpack  ARPACK_LIBRARIES)
-    include_directories(${ARPACK_INC_DIR})
-    message("SUCCESSFULLY INSTALLED ARPACK:   ${ARPACK_LIBRARIES}")
-    message("BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpack-ng/log_build.txt")
+    include(${PROJECT_SOURCE_DIR}/libs/arpack-ng/FindArpack.cmake)
+    find_package(arpack-ng PATHS "${ARPACK_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE REQUIRED)
+    if(arpack-ng_FOUND)
+        get_cmake_property(_variableNames VARIABLES)
+        foreach (_variableName ${_variableNames})
+            if("${_variableName}" MATCHES "arpack*")
+                message(STATUS "${_variableName}=${${_variableName}}")
+            endif()
+        endforeach()
+        include_directories(${ARPACK_INC_DIR})
+        set(ARPACK_LIBRARIES ${arpack_ng_LIBRARIES})
+        message(STATUS "SUCCESSFULLY INSTALLED ARPACK:   ${ARPACK_LIBRARIES}")
+        message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpack-ng/log_build.txt")
+    endif()
 
 else()
-
     message("Please install LAPACK and BLAS before ARPACK.")
-
 endif()
 
-
+#
+#get_cmake_property(_variableNames VARIABLES)
+#foreach (_variableName ${_variableNames})
+#    #        if("${_variableName}" MATCHES "Arpack")
+#    message(STATUS "${_variableName}=${${_variableName}}")
+#    #        endif()
+#endforeach()
