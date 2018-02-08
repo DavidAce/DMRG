@@ -52,13 +52,16 @@ is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.
 
 ### Minimum Requirements
 The following software is required to build the project:
- - C++ compiler with support for c++17 standard and libstdc++ standard library implementation. Tested with both
-    - GNU GCC version >= 7
-    - Clang version >= 5.0
+ - C++ compiler with support for c++17 standard and libstdc++ standard library implementation  (version >= 7). Tested with both
+    - GNU GCC version >= 7 (comes with libstdc++ already)
+    - Clang version >= 5.0. (you need to manually install libstdc++ version >= 7, for instance from `ppa:ubuntu-toolchain-r/test`)
  - Fortran compiler. Tested with GNU GFORTRAN version >= 4. This is only needed to install libraries from source, see below.
  - CMake version >= 3.8. If you compile CMake from source, remember to enable `curl` (`./bootstrap --system-curl`). 
  
-The AppleClang compiler is not supported.
+Ubuntu 17 or higher will have the versions required in the default repositories. For older distributions, use the ppa `ubuntu-toolchain-r/test` to get newer versions.
+
+Mac OSX users are advised to use GNU GCC from homebrew. The AppleClang compiler is *not* supported. 
+
 
 ### Optional Requirements
  You can chose to **either** 
@@ -70,7 +73,7 @@ The AppleClang compiler is not supported.
  #### Libraries
  
  - [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition (tested with version >= 3.3).
- - [Arpack](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires LAPACK and BLAS API.
+ - [Arpack](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires LAPACK and BLAS libraries.
  - [Arpackpp](https://github.com/m-reuter/arpackpp) C++ frontend for ARPACK.
  - [Spectra](https://spectralib.org/) Another eigenvalue solver. Header only.
  - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file env_storage support (tested with version >= 1.8).

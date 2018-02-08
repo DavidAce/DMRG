@@ -15,14 +15,16 @@
 
 
 message("SEARCHING FOR LIBRARY: EIGEN3")
-set(EIGEN3_CMAKE_DIR_GUESS ${PROJECT_SOURCE_DIR}/libs/eigen3/share/eigen3/cmake)
-find_package(Eigen3 3.3 PATHS "${EIGEN3_CMAKE_DIR_GUESS}" NO_DEFAULT_PATH NO_MODULE)
-if(EIGEN3_FOUND)
+if(EXISTS "${PROJECT_SOURCE_DIR}/libs/eigen3/FindEigen3.cmake")
     include(${PROJECT_SOURCE_DIR}/libs/eigen3/FindEigen3.cmake)
-    include_directories(${EIGEN3_INCLUDE_DIR})
-    message(STATUS "FOUND PREVIOUSLY INSTALLED EIGEN3:   ${EIGEN3_INCLUDE_DIR}")
-    return()
+    find_package(Eigen3 3.3 PATHS "${EIGEN3_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE)
+    if(EIGEN3_FOUND)
+        include_directories(${EIGEN3_INCLUDE_DIR})
+        message(STATUS "FOUND PREVIOUSLY INSTALLED EIGEN3:   ${EIGEN3_INCLUDE_DIR}")
+        return()
+    endif()
 endif()
+
 
 message(STATUS "SEARCHING FOR EIGEN3 IN SYSTEM...")
 find_package(Eigen3 3.3)                                ### Find and define includes for Eigen Library
