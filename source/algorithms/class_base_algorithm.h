@@ -16,7 +16,7 @@ class class_hdf5_file;
 class class_hdf5_table_buffer;
 class class_measurement;
 
-enum class SimulationType{iDMRG,fDMRG, FES_iDMRG, iTEBD, FES_iTEBD, NONE};
+enum class SimulationType{iDMRG,fDMRG, esDMRG, FES_iDMRG, iTEBD, FES_iTEBD, NONE};
 class class_algorithm_base {
 public:
 
