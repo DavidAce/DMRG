@@ -87,7 +87,7 @@ void class_hdf5_file::set_output_file_path() {
     output_file_path = fs::system_complete(output_folder_abs / output_filename);
     if (fs::exists(output_folder_abs)) {
         if(fs::exists(output_file_path)) {
-            ccout(1) << "File exists already: " << output_file_path << std::endl;
+            ccout(1) << "File already exists: " << output_file_path << std::endl;
             if (settings::hdf5::overwrite_file_if_found) {
                 ccout(1) << "Overwrite mode is TRUE." << std::endl;
                 return;
