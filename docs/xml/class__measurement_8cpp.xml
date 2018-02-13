@@ -1,0 +1,227 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__measurement_8cpp" kind="file" language="C++">
+    <compoundname>class_measurement.cpp</compoundname>
+    <includes refid="class__measurement_8h" local="yes">class_measurement.h</includes>
+    <includes local="no">iomanip</includes>
+    <includes local="no">complex</includes>
+    <includes local="no">Eigen/Eigenvalues</includes>
+    <includes refid="class__superblock_8h" local="no">mps_routines/class_superblock.h</includes>
+    <includes refid="class__eig__arpack__wrapper_8h" local="no">general/class_eig_arpack_wrapper.h</includes>
+    <incdepgraph>
+      <node id="728">
+        <label>iomanip</label>
+      </node>
+      <node id="713">
+        <label>IO/class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h_source"/>
+        <childnode refid="714" relation="include">
+        </childnode>
+        <childnode refid="715" relation="include">
+        </childnode>
+      </node>
+      <node id="719">
+        <label>iterator</label>
+      </node>
+      <node id="738">
+        <label>ardgcomp.h</label>
+      </node>
+      <node id="735">
+        <label>general/class_eig_arpack_wrapper.h</label>
+        <link refid="class__eig__arpack__wrapper_8h_source"/>
+        <childnode refid="711" relation="include">
+        </childnode>
+        <childnode refid="729" relation="include">
+        </childnode>
+        <childnode refid="716" relation="include">
+        </childnode>
+        <childnode refid="736" relation="include">
+        </childnode>
+        <childnode refid="737" relation="include">
+        </childnode>
+        <childnode refid="738" relation="include">
+        </childnode>
+        <childnode refid="739" relation="include">
+        </childnode>
+      </node>
+      <node id="724">
+        <label>sim_parameters/n_sim_settings.h</label>
+        <link refid="n__sim__settings_8h_source"/>
+        <childnode refid="725" relation="include">
+        </childnode>
+      </node>
+      <node id="717">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="725">
+        <label>string</label>
+      </node>
+      <node id="727">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h_source"/>
+        <childnode refid="714" relation="include">
+        </childnode>
+        <childnode refid="715" relation="include">
+        </childnode>
+      </node>
+      <node id="734">
+        <label>unsupported/Eigen/MatrixFunctions</label>
+      </node>
+      <node id="711">
+        <label>map</label>
+      </node>
+      <node id="718">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="730">
+        <label>Eigen/Eigenvalues</label>
+      </node>
+      <node id="722">
+        <label>vector</label>
+      </node>
+      <node id="720">
+        <label>mps_routines/class_mps.h</label>
+        <link refid="class__mps_8h_source"/>
+        <childnode refid="721" relation="include">
+        </childnode>
+        <childnode refid="716" relation="include">
+        </childnode>
+      </node>
+      <node id="716">
+        <label>general/n_tensor_extra.h</label>
+        <link refid="n__tensor__extra_8h_source"/>
+        <childnode refid="717" relation="include">
+        </childnode>
+        <childnode refid="718" relation="include">
+        </childnode>
+        <childnode refid="719" relation="include">
+        </childnode>
+        <childnode refid="715" relation="include">
+        </childnode>
+      </node>
+      <node id="731">
+        <label>mps_routines/class_superblock.h</label>
+        <link refid="class__superblock_8h_source"/>
+        <childnode refid="716" relation="include">
+        </childnode>
+        <childnode refid="732" relation="include">
+        </childnode>
+        <childnode refid="720" relation="include">
+        </childnode>
+        <childnode refid="733" relation="include">
+        </childnode>
+      </node>
+      <node id="723">
+        <label>array</label>
+      </node>
+      <node id="733">
+        <label>mps_routines/class_mpo.h</label>
+        <link refid="class__mpo_8h_source"/>
+        <childnode refid="734" relation="include">
+        </childnode>
+        <childnode refid="720" relation="include">
+        </childnode>
+        <childnode refid="716" relation="include">
+        </childnode>
+        <childnode refid="721" relation="include">
+        </childnode>
+        <childnode refid="724" relation="include">
+        </childnode>
+      </node>
+      <node id="726">
+        <label>algorithms/class_base_algorithm.h</label>
+        <link refid="class__base__algorithm_8h_source"/>
+        <childnode refid="712" relation="include">
+        </childnode>
+        <childnode refid="711" relation="include">
+        </childnode>
+        <childnode refid="713" relation="include">
+        </childnode>
+        <childnode refid="727" relation="include">
+        </childnode>
+        <childnode refid="724" relation="include">
+        </childnode>
+      </node>
+      <node id="721">
+        <label>sim_parameters/n_model.h</label>
+        <link refid="n__model_8h_source"/>
+        <childnode refid="722" relation="include">
+        </childnode>
+        <childnode refid="723" relation="include">
+        </childnode>
+        <childnode refid="717" relation="include">
+        </childnode>
+      </node>
+      <node id="715">
+        <label>iostream</label>
+      </node>
+      <node id="739">
+        <label>ardssym.h</label>
+      </node>
+      <node id="732">
+        <label>mps_routines/class_environment.h</label>
+        <link refid="class__environment_8h_source"/>
+        <childnode refid="716" relation="include">
+        </childnode>
+        <childnode refid="720" relation="include">
+        </childnode>
+        <childnode refid="721" relation="include">
+        </childnode>
+      </node>
+      <node id="714">
+        <label>chrono</label>
+      </node>
+      <node id="710">
+        <label>class_measurement.h</label>
+        <link refid="class__measurement_8h_source"/>
+        <childnode refid="711" relation="include">
+        </childnode>
+        <childnode refid="712" relation="include">
+        </childnode>
+        <childnode refid="713" relation="include">
+        </childnode>
+        <childnode refid="716" relation="include">
+        </childnode>
+        <childnode refid="720" relation="include">
+        </childnode>
+        <childnode refid="724" relation="include">
+        </childnode>
+        <childnode refid="726" relation="include">
+        </childnode>
+      </node>
+      <node id="737">
+        <label>ardscomp.h</label>
+      </node>
+      <node id="736">
+        <label>ardsnsym.h</label>
+      </node>
+      <node id="729">
+        <label>complex</label>
+      </node>
+      <node id="712">
+        <label>memory</label>
+      </node>
+      <node id="709">
+        <label>source/mps_routines/class_measurement.cpp</label>
+        <link refid="class__measurement_8cpp"/>
+        <childnode refid="710" relation="include">
+        </childnode>
+        <childnode refid="728" relation="include">
+        </childnode>
+        <childnode refid="729" relation="include">
+        </childnode>
+        <childnode refid="730" relation="include">
+        </childnode>
+        <childnode refid="731" relation="include">
+        </childnode>
+        <childnode refid="735" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/mps_routines/class_measurement.cpp"/>
+  </compounddef>
+</doxygen>

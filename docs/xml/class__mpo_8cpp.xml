@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__mpo_8cpp" kind="file" language="C++">
+    <compoundname>class_mpo.cpp</compoundname>
+    <includes local="no">unsupported/Eigen/KroneckerProduct</includes>
+    <includes local="no">unsupported/Eigen/MatrixFunctions</includes>
+    <includes refid="n__tensor__extra_8h" local="yes">general/n_tensor_extra.h</includes>
+    <includes refid="class__mpo_8h" local="yes">class_mpo.h</includes>
+    <incdepgraph>
+      <node id="766">
+        <label>iterator</label>
+      </node>
+      <node id="773">
+        <label>sim_parameters/n_sim_settings.h</label>
+        <link refid="n__sim__settings_8h_source"/>
+        <childnode refid="774" relation="include">
+        </childnode>
+      </node>
+      <node id="764">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="774">
+        <label>string</label>
+      </node>
+      <node id="762">
+        <label>unsupported/Eigen/MatrixFunctions</label>
+      </node>
+      <node id="765">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="771">
+        <label>vector</label>
+      </node>
+      <node id="769">
+        <label>mps_routines/class_mps.h</label>
+        <link refid="class__mps_8h_source"/>
+        <childnode refid="770" relation="include">
+        </childnode>
+        <childnode refid="763" relation="include">
+        </childnode>
+      </node>
+      <node id="763">
+        <label>general/n_tensor_extra.h</label>
+        <link refid="n__tensor__extra_8h_source"/>
+        <childnode refid="764" relation="include">
+        </childnode>
+        <childnode refid="765" relation="include">
+        </childnode>
+        <childnode refid="766" relation="include">
+        </childnode>
+        <childnode refid="767" relation="include">
+        </childnode>
+      </node>
+      <node id="772">
+        <label>array</label>
+      </node>
+      <node id="760">
+        <label>source/mps_routines/class_mpo.cpp</label>
+        <link refid="class__mpo_8cpp"/>
+        <childnode refid="761" relation="include">
+        </childnode>
+        <childnode refid="762" relation="include">
+        </childnode>
+        <childnode refid="763" relation="include">
+        </childnode>
+        <childnode refid="768" relation="include">
+        </childnode>
+      </node>
+      <node id="768">
+        <label>class_mpo.h</label>
+        <link refid="class__mpo_8h_source"/>
+        <childnode refid="762" relation="include">
+        </childnode>
+        <childnode refid="769" relation="include">
+        </childnode>
+        <childnode refid="763" relation="include">
+        </childnode>
+        <childnode refid="770" relation="include">
+        </childnode>
+        <childnode refid="773" relation="include">
+        </childnode>
+      </node>
+      <node id="770">
+        <label>sim_parameters/n_model.h</label>
+        <link refid="n__model_8h_source"/>
+        <childnode refid="771" relation="include">
+        </childnode>
+        <childnode refid="772" relation="include">
+        </childnode>
+        <childnode refid="764" relation="include">
+        </childnode>
+      </node>
+      <node id="767">
+        <label>iostream</label>
+      </node>
+      <node id="761">
+        <label>unsupported/Eigen/KroneckerProduct</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacestd_1_1complex__literals">std::complex_literals</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/mps_routines/class_mpo.cpp"/>
+  </compounddef>
+</doxygen>

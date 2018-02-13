@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="struct_type_check_1_1is__instance__of" kind="struct" language="C++" prot="public">
+    <compoundname>TypeCheck::is_instance_of</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">false_type</basecompoundref>
+    <templateparamlist>
+      <param>
+        <type>template&lt; typename... &gt; class</type>
+        <declname>Template</declname>
+        <defname>Template</defname>
+      </param>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="100">
+        <label>TypeCheck::is_instance_of&lt; Template, T &gt;</label>
+        <link refid="struct_type_check_1_1is__instance__of"/>
+        <childnode refid="101" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="101">
+        <label>std::false_type</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="102">
+        <label>TypeCheck::is_instance_of&lt; Template, T &gt;</label>
+        <link refid="struct_type_check_1_1is__instance__of"/>
+        <childnode refid="103" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="103">
+        <label>std::false_type</label>
+      </node>
+    </collaborationgraph>
+    <location file="source/general/nmspc_type_check.h" line="32" column="1" bodyfile="source/general/nmspc_type_check.h" bodystart="32" bodyend="32"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

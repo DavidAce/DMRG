@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__custom__cout_8h" kind="file" language="C++">
+    <compoundname>class_custom_cout.h</compoundname>
+    <includes local="no">chrono</includes>
+    <includes local="no">iostream</includes>
+    <includedby refid="class__algorithm__launcher_8h" local="no">source/algorithms/class_algorithm_launcher.h</includedby>
+    <includedby refid="class__base__algorithm_8h" local="no">source/algorithms/class_base_algorithm.h</includedby>
+    <includedby refid="class__file__reader_8h" local="no">source/IO/class_file_reader.h</includedby>
+    <includedby refid="class__hdf5__file_8h" local="yes">source/IO/class_hdf5_file.h</includedby>
+    <includedby refid="class__measurement_8h" local="no">source/mps_routines/class_measurement.h</includedby>
+    <incdepgraph>
+      <node id="468">
+        <label>source/IO/class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h"/>
+        <childnode refid="469" relation="include">
+        </childnode>
+        <childnode refid="470" relation="include">
+        </childnode>
+      </node>
+      <node id="470">
+        <label>iostream</label>
+      </node>
+      <node id="469">
+        <label>chrono</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="471">
+        <label>source/IO/class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h"/>
+        <childnode refid="472" relation="include">
+        </childnode>
+        <childnode refid="474" relation="include">
+        </childnode>
+        <childnode refid="482" relation="include">
+        </childnode>
+        <childnode refid="483" relation="include">
+        </childnode>
+        <childnode refid="481" relation="include">
+        </childnode>
+      </node>
+      <node id="483">
+        <label>source/IO/class_hdf5_file.h</label>
+        <link refid="class__hdf5__file_8h_source"/>
+      </node>
+      <node id="478">
+        <label>source/algorithms/class_FES_iTEBD.h</label>
+        <link refid="class___f_e_s__i_t_e_b_d_8h_source"/>
+      </node>
+      <node id="475">
+        <label>source/algorithms/class_excited_state_DMRG.h</label>
+        <link refid="class__excited__state___d_m_r_g_8h_source"/>
+      </node>
+      <node id="472">
+        <label>source/algorithms/class_algorithm_launcher.h</label>
+        <link refid="class__algorithm__launcher_8h_source"/>
+        <childnode refid="473" relation="include">
+        </childnode>
+      </node>
+      <node id="482">
+        <label>source/IO/class_file_reader.h</label>
+        <link refid="class__file__reader_8h_source"/>
+        <childnode refid="473" relation="include">
+        </childnode>
+      </node>
+      <node id="477">
+        <label>source/algorithms/class_infinite_DMRG.h</label>
+        <link refid="class__infinite___d_m_r_g_8h_source"/>
+      </node>
+      <node id="473">
+        <label>source/main.cpp</label>
+        <link refid="main_8cpp"/>
+      </node>
+      <node id="479">
+        <label>source/algorithms/class_finite_DMRG.h</label>
+        <link refid="class__finite___d_m_r_g_8h_source"/>
+      </node>
+      <node id="474">
+        <label>source/algorithms/class_base_algorithm.h</label>
+        <link refid="class__base__algorithm_8h_source"/>
+        <childnode refid="475" relation="include">
+        </childnode>
+        <childnode refid="476" relation="include">
+        </childnode>
+        <childnode refid="477" relation="include">
+        </childnode>
+        <childnode refid="478" relation="include">
+        </childnode>
+        <childnode refid="479" relation="include">
+        </childnode>
+        <childnode refid="480" relation="include">
+        </childnode>
+        <childnode refid="481" relation="include">
+        </childnode>
+      </node>
+      <node id="480">
+        <label>source/algorithms/class_imaginary_TEBD.h</label>
+        <link refid="class__imaginary___t_e_b_d_8h_source"/>
+      </node>
+      <node id="481">
+        <label>source/mps_routines/class_measurement.h</label>
+        <link refid="class__measurement_8h_source"/>
+      </node>
+      <node id="476">
+        <label>source/algorithms/class_FES_iDMRG.h</label>
+        <link refid="class___f_e_s__i_d_m_r_g_8h_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classclass__custom__cout" prot="public">class_custom_cout</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/IO/class_custom_cout.h"/>
+  </compounddef>
+</doxygen>

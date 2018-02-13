@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__excited__state___d_m_r_g_8cpp" kind="file" language="C++">
+    <compoundname>class_excited_state_DMRG.cpp</compoundname>
+    <includes local="no">iomanip</includes>
+    <includes refid="n__sim__settings_8h" local="no">sim_parameters/n_sim_settings.h</includes>
+    <includes refid="class__hdf5__table__buffer_8h" local="no">IO/class_hdf5_table_buffer.h</includes>
+    <includes refid="class__measurement_8h" local="no">mps_routines/class_measurement.h</includes>
+    <includes refid="class__superblock_8h" local="no">mps_routines/class_superblock.h</includes>
+    <includes refid="class__environment__storage_8h" local="no">mps_routines/class_environment_storage.h</includes>
+    <includes refid="n__math_8h" local="no">general/n_math.h</includes>
+    <includes refid="class__excited__state___d_m_r_g_8h" local="yes">class_excited_state_DMRG.h</includes>
+    <incdepgraph>
+      <node id="132">
+        <label>functional</label>
+      </node>
+      <node id="104">
+        <label>iomanip</label>
+      </node>
+      <node id="114">
+        <label>IO/class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h_source"/>
+        <childnode refid="115" relation="include">
+        </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
+      </node>
+      <node id="119">
+        <label>iterator</label>
+      </node>
+      <node id="105">
+        <label>sim_parameters/n_sim_settings.h</label>
+        <link refid="n__sim__settings_8h_source"/>
+        <childnode refid="106" relation="include">
+        </childnode>
+      </node>
+      <node id="131">
+        <label>cmath</label>
+      </node>
+      <node id="136">
+        <label>numeric</label>
+      </node>
+      <node id="117">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="106">
+        <label>string</label>
+      </node>
+      <node id="111">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="124">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h_source"/>
+        <childnode refid="115" relation="include">
+        </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
+      </node>
+      <node id="128">
+        <label>unsupported/Eigen/MatrixFunctions</label>
+      </node>
+      <node id="113">
+        <label>map</label>
+      </node>
+      <node id="118">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="137">
+        <label>class_excited_state_DMRG.h</label>
+        <link refid="class__excited__state___d_m_r_g_8h_source"/>
+        <childnode refid="123" relation="include">
+        </childnode>
+      </node>
+      <node id="103">
+        <label>source/algorithms/class_excited_state_DMRG.cpp</label>
+        <link refid="class__excited__state___d_m_r_g_8cpp"/>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="105" relation="include">
+        </childnode>
+        <childnode refid="107" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+        <childnode refid="129" relation="include">
+        </childnode>
+        <childnode refid="130" relation="include">
+        </childnode>
+        <childnode refid="137" relation="include">
+        </childnode>
+      </node>
+      <node id="129">
+        <label>mps_routines/class_environment_storage.h</label>
+        <link refid="class__environment__storage_8h_source"/>
+        <childnode refid="116" relation="include">
+        </childnode>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="113" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+      </node>
+      <node id="135">
+        <label>gsl/gsl_integration.h</label>
+      </node>
+      <node id="109">
+        <label>vector</label>
+      </node>
+      <node id="120">
+        <label>mps_routines/class_mps.h</label>
+        <link refid="class__mps_8h_source"/>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="116" relation="include">
+        </childnode>
+      </node>
+      <node id="116">
+        <label>general/n_tensor_extra.h</label>
+        <link refid="n__tensor__extra_8h_source"/>
+        <childnode refid="117" relation="include">
+        </childnode>
+        <childnode refid="118" relation="include">
+        </childnode>
+        <childnode refid="119" relation="include">
+        </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
+      </node>
+      <node id="125">
+        <label>mps_routines/class_superblock.h</label>
+        <link refid="class__superblock_8h_source"/>
+        <childnode refid="116" relation="include">
+        </childnode>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+      </node>
+      <node id="133">
+        <label>utility</label>
+      </node>
+      <node id="122">
+        <label>array</label>
+      </node>
+      <node id="127">
+        <label>mps_routines/class_mpo.h</label>
+        <link refid="class__mpo_8h_source"/>
+        <childnode refid="128" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="116" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="105" relation="include">
+        </childnode>
+      </node>
+      <node id="123">
+        <label>algorithms/class_base_algorithm.h</label>
+        <link refid="class__base__algorithm_8h_source"/>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="113" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="124" relation="include">
+        </childnode>
+        <childnode refid="105" relation="include">
+        </childnode>
+      </node>
+      <node id="130">
+        <label>general/n_math.h</label>
+        <link refid="n__math_8h_source"/>
+        <childnode refid="108" relation="include">
+        </childnode>
+        <childnode refid="119" relation="include">
+        </childnode>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="131" relation="include">
+        </childnode>
+        <childnode refid="132" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="133" relation="include">
+        </childnode>
+        <childnode refid="134" relation="include">
+        </childnode>
+        <childnode refid="135" relation="include">
+        </childnode>
+        <childnode refid="136" relation="include">
+        </childnode>
+        <childnode refid="117" relation="include">
+        </childnode>
+      </node>
+      <node id="121">
+        <label>sim_parameters/n_model.h</label>
+        <link refid="n__model_8h_source"/>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="122" relation="include">
+        </childnode>
+        <childnode refid="117" relation="include">
+        </childnode>
+      </node>
+      <node id="108">
+        <label>iostream</label>
+      </node>
+      <node id="126">
+        <label>mps_routines/class_environment.h</label>
+        <link refid="class__environment_8h_source"/>
+        <childnode refid="116" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+      </node>
+      <node id="115">
+        <label>chrono</label>
+      </node>
+      <node id="112">
+        <label>mps_routines/class_measurement.h</label>
+        <link refid="class__measurement_8h_source"/>
+        <childnode refid="113" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="116" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="105" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+      </node>
+      <node id="107">
+        <label>IO/class_hdf5_table_buffer.h</label>
+        <link refid="class__hdf5__table__buffer_8h_source"/>
+        <childnode refid="108" relation="include">
+        </childnode>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="111" relation="include">
+        </childnode>
+      </node>
+      <node id="110">
+        <label>memory</label>
+      </node>
+      <node id="134">
+        <label>gsl/gsl_errno.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/algorithms/class_excited_state_DMRG.cpp"/>
+  </compounddef>
+</doxygen>

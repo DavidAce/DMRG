@@ -3,9 +3,14 @@
 //#define EIGEN_USE_MKL_ALL
 
 /*! \mainpage
- * \brief This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm.
 
-  # DMRG (in development)
+
+  \brief This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm.
+
+  \tableofcontents
+
+  \section intro Description of DMRG++
+
   [Density matrix renormalization group](https://en.wikipedia.org/wiki/Density_matrix_renormalization_group) (DMRG) is a variational numerical technique to study the low-energy physics of many-body quantum systems.
 
   This algorithm constructs and minimizes trial wave functions, in the shape of [Matrix Product States](https://en.wikipedia.org/wiki/Matrix_product_state) (MPS), iteratively in order to find the ground state of one-dimensional quantum systems with high precision.
@@ -23,20 +28,20 @@
 
 
 ---
-## Installation
-### Quick start
+\section installation Installation
+\subsection quickstart Quick start
 Git clone or copy & extract the project into a folder of your choosing.
 **Make sure there are no spaces in the path!**.
 The project can be built with a single command from a unix terminal.
-Simply launch the script `.\build.sh` found in the root folder, containing
+Simply launch the script `.\build.sh` found in the root folder, or run
+
 ```
-        #!/bin/sh
         cmake -E make_directory build/Release
         cd build/Release
         cmake -Bbuild/Release --build build -config Release ../../
         make
 ```
-This script will create subdirectories and use CMake to check for dependencies and download them automatically if needed (see *Optional Requirements* below).
+This will create subdirectories and use CMake to check for dependencies and download them automatically if needed (see *Optional Requirements* below).
 If the dependencies are found, the project is built and an executable is generated.
 
 To run executable, launch `.\run.sh`, containing
@@ -51,7 +56,7 @@ To run executable, launch `.\run.sh`, containing
 is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.com/clion/download) or [Visual Studio Code](https://code.visualstudio.com/) with C++ and CMake Tools extensions.
 
 
-### Minimum Requirements
+\subsection minreqs Minimum Requirements
 The following software is required to build the project:
  - C++ compiler with support for c++17 standard. Tested with
     - GNU GCC version >= 7
@@ -59,7 +64,7 @@ The following software is required to build the project:
  - Fortran compiler. Tested with GNU GFORTRAN version >= 7.
  - CMake version >= 3.7
 
-### Optional Requirements
+\subsection optionalreqs Optional Requirements
  You can chose to **either**
   - let the build script compile the libraries below from source into `libs/`. This will happen automatically if the library is not found on your system. Note that this does *NOT* make a system-wide install, so you can safely delete the `libs/` folder.
   - (*recommended*) install the libraries yourself with your favorite package manager (e.g. `apt` in ubuntu or `brew` in OSX). The build script will always attempt to find the libraries in your system.
@@ -83,7 +88,7 @@ The following software is required to build the project:
 
 
 
-  ## Usage
+  \section usage Usage
   This code lacks an API or command-line parameters. As such, details of execution have to be
   set in source code, specifically one can edit model and simulation parameters in `source/n_model.h` and `source/n_settings.h`.
 
@@ -91,7 +96,7 @@ The following software is required to build the project:
   finite-DMRG and infinite-TEBD that can be called from `main.cpp`. The algorithms should ideally give similar
   ground state energies, which is a good sanity check.
 
- ## Notation
+ \section notation Notation
 
  The *Vidal canonical form*, i.e. \f$\Gamma\Lambda\Gamma\Lambda\f$"..., is used throughout this code.
  In code we denote
@@ -99,12 +104,12 @@ The following software is required to build the project:
  - \f$\Gamma \rightarrow\f$ `G`.
  - \f$\Lambda \rightarrow\f$ `L`.
 
- ## Tensor index order convention.
+ \subsection convention Tensor index order convention.
  The tensor index order used here follows the convention:
  - physical indices first, from left to right or for MPO's, up to down.
  - other dimensions (like bond dimensions) next, from left to right.
 
- #### Example:
+ \subsubsection example Example:
  Consider for some position \f$n\f$ on the chain \f$\Gamma = \Gamma^{\sigma_n}_{a,b}\f$.
 Here \f$\sigma_n \in [-1,1]\f$ is a particle with local (physical) dimension \f$d\f$ = 2, and \f$a,b\f$ are the remaining dimensions, in practice they are
 bond dimensions of \f$\Lambda^{n-1}\f$ and \f$\Lambda^{n}\f$, respectively, which can be numbers \f$\in [1,\chi]\f$.
@@ -135,7 +140,7 @@ which in code reads
 
 
 
-# Details
+\section details Details
  \author    David Aceituno
  \date      10-2017
  \copyright MPL2

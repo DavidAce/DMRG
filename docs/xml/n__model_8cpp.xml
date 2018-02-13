@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="n__model_8cpp" kind="file" language="C++">
+    <compoundname>n_model.cpp</compoundname>
+    <includes refid="n__model_8h" local="yes">n_model.h</includes>
+    <includes local="no">iomanip</includes>
+    <includes refid="n__math_8h" local="no">general/n_math.h</includes>
+    <includes local="no">unsupported/Eigen/KroneckerProduct</includes>
+    <includes local="no">unsupported/Eigen/MatrixFunctions</includes>
+    <incdepgraph>
+      <node id="897">
+        <label>functional</label>
+      </node>
+      <node id="892">
+        <label>iomanip</label>
+      </node>
+      <node id="895">
+        <label>iterator</label>
+      </node>
+      <node id="887">
+        <label>source/sim_parameters/n_model.cpp</label>
+        <link refid="n__model_8cpp"/>
+        <childnode refid="888" relation="include">
+        </childnode>
+        <childnode refid="892" relation="include">
+        </childnode>
+        <childnode refid="893" relation="include">
+        </childnode>
+        <childnode refid="903" relation="include">
+        </childnode>
+        <childnode refid="904" relation="include">
+        </childnode>
+      </node>
+      <node id="896">
+        <label>cmath</label>
+      </node>
+      <node id="902">
+        <label>numeric</label>
+      </node>
+      <node id="891">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="904">
+        <label>unsupported/Eigen/MatrixFunctions</label>
+      </node>
+      <node id="901">
+        <label>gsl/gsl_integration.h</label>
+      </node>
+      <node id="889">
+        <label>vector</label>
+      </node>
+      <node id="899">
+        <label>utility</label>
+      </node>
+      <node id="890">
+        <label>array</label>
+      </node>
+      <node id="893">
+        <label>general/n_math.h</label>
+        <link refid="n__math_8h_source"/>
+        <childnode refid="894" relation="include">
+        </childnode>
+        <childnode refid="895" relation="include">
+        </childnode>
+        <childnode refid="889" relation="include">
+        </childnode>
+        <childnode refid="896" relation="include">
+        </childnode>
+        <childnode refid="897" relation="include">
+        </childnode>
+        <childnode refid="898" relation="include">
+        </childnode>
+        <childnode refid="899" relation="include">
+        </childnode>
+        <childnode refid="900" relation="include">
+        </childnode>
+        <childnode refid="901" relation="include">
+        </childnode>
+        <childnode refid="902" relation="include">
+        </childnode>
+        <childnode refid="891" relation="include">
+        </childnode>
+      </node>
+      <node id="888">
+        <label>n_model.h</label>
+        <link refid="n__model_8h_source"/>
+        <childnode refid="889" relation="include">
+        </childnode>
+        <childnode refid="890" relation="include">
+        </childnode>
+        <childnode refid="891" relation="include">
+        </childnode>
+      </node>
+      <node id="894">
+        <label>iostream</label>
+      </node>
+      <node id="903">
+        <label>unsupported/Eigen/KroneckerProduct</label>
+      </node>
+      <node id="898">
+        <label>memory</label>
+      </node>
+      <node id="900">
+        <label>gsl/gsl_errno.h</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespace_model">Model</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/sim_parameters/n_model.cpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__hdf5__file_8h" kind="file" language="C++">
+    <compoundname>class_hdf5_file.h</compoundname>
+    <includes local="no">hdf5.h</includes>
+    <includes local="no">hdf5_hl.h</includes>
+    <includes local="no">iostream</includes>
+    <includes local="no">string</includes>
+    <includes local="no">iomanip</includes>
+    <includes local="no">experimental/filesystem</includes>
+    <includes local="no">experimental/type_traits</includes>
+    <includes local="no">type_traits</includes>
+    <includes local="no">typeinfo</includes>
+    <includes refid="class__custom__cout_8h" local="yes">class_custom_cout.h</includes>
+    <includes refid="nmspc__type__check_8h" local="no">general/nmspc_type_check.h</includes>
+    <includes local="no">directory.h</includes>
+    <includes local="no">gitversion.h</includes>
+    <includes refid="n__sim__settings_8h" local="no">sim_parameters/n_sim_settings.h</includes>
+    <includes local="no">iterator</includes>
+    <includedby refid="class__algorithm__launcher_8cpp" local="no">source/algorithms/class_algorithm_launcher.cpp</includedby>
+    <includedby refid="class__base__algorithm_8cpp" local="no">source/algorithms/class_base_algorithm.cpp</includedby>
+    <includedby refid="class__hdf5__dataset__buffer_8cpp" local="yes">source/IO/class_hdf5_dataset_buffer.cpp</includedby>
+    <includedby refid="class__hdf5__file_8cpp" local="no">source/IO/class_hdf5_file.cpp</includedby>
+    <includedby refid="class__hdf5__table__buffer_8cpp" local="no">source/IO/class_hdf5_table_buffer.cpp</includedby>
+    <includedby refid="class__environment__storage_8cpp" local="no">source/mps_routines/class_environment_storage.cpp</includedby>
+    <incdepgraph>
+      <node id="557">
+        <label>iomanip</label>
+      </node>
+      <node id="562">
+        <label>class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h_source"/>
+        <childnode refid="563" relation="include">
+        </childnode>
+        <childnode refid="555" relation="include">
+        </childnode>
+      </node>
+      <node id="569">
+        <label>iterator</label>
+      </node>
+      <node id="552">
+        <label>source/IO/class_hdf5_file.h</label>
+        <link refid="class__hdf5__file_8h"/>
+        <childnode refid="553" relation="include">
+        </childnode>
+        <childnode refid="554" relation="include">
+        </childnode>
+        <childnode refid="555" relation="include">
+        </childnode>
+        <childnode refid="556" relation="include">
+        </childnode>
+        <childnode refid="557" relation="include">
+        </childnode>
+        <childnode refid="558" relation="include">
+        </childnode>
+        <childnode refid="559" relation="include">
+        </childnode>
+        <childnode refid="560" relation="include">
+        </childnode>
+        <childnode refid="561" relation="include">
+        </childnode>
+        <childnode refid="562" relation="include">
+        </childnode>
+        <childnode refid="564" relation="include">
+        </childnode>
+        <childnode refid="566" relation="include">
+        </childnode>
+        <childnode refid="567" relation="include">
+        </childnode>
+        <childnode refid="568" relation="include">
+        </childnode>
+        <childnode refid="569" relation="include">
+        </childnode>
+      </node>
+      <node id="568">
+        <label>sim_parameters/n_sim_settings.h</label>
+        <link refid="n__sim__settings_8h_source"/>
+        <childnode refid="556" relation="include">
+        </childnode>
+      </node>
+      <node id="564">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h_source"/>
+        <childnode refid="565" relation="include">
+        </childnode>
+      </node>
+      <node id="565">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="556">
+        <label>string</label>
+      </node>
+      <node id="554">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="559">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="561">
+        <label>typeinfo</label>
+      </node>
+      <node id="567">
+        <label>gitversion.h</label>
+      </node>
+      <node id="553">
+        <label>hdf5.h</label>
+      </node>
+      <node id="566">
+        <label>directory.h</label>
+      </node>
+      <node id="555">
+        <label>iostream</label>
+      </node>
+      <node id="563">
+        <label>chrono</label>
+      </node>
+      <node id="560">
+        <label>type_traits</label>
+      </node>
+      <node id="558">
+        <label>experimental/filesystem</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classclass__hdf5__file" prot="public">class_hdf5_file</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/IO/class_hdf5_file.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,653 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="namespace_textra" kind="namespace" language="C++">
+    <compoundname>Textra</compoundname>
+    <innerclass refid="struct_textra_1_1idx__dim__pair" prot="public">Textra::idx_dim_pair</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespace_textra_1ad59ad423ffe2196e1b92b0d85e2eff0f" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using Textra::cdouble = typedef std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>cdouble</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="25" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1a7db6974446758b79bad26e168a8daa78" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename Scalar</type>
+          </param>
+        </templateparamlist>
+        <type>Eigen::Matrix&lt; Scalar, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
+        <definition>using Textra::MatrixType = typedef Eigen::Matrix&lt;Scalar, Eigen::Dynamic, Eigen::Dynamic&gt;</definition>
+        <argsstring></argsstring>
+        <name>MatrixType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="27" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1a358a270e8b355388963a513bd6617131" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename Scalar</type>
+          </param>
+        </templateparamlist>
+        <type>Eigen::Matrix&lt; Scalar, Eigen::Dynamic, 1 &gt;</type>
+        <definition>using Textra::VectorType = typedef Eigen::Matrix&lt;Scalar, Eigen::Dynamic, 1&gt;</definition>
+        <argsstring></argsstring>
+        <name>VectorType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="28" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1ac05ac79c4e225739a3c4b44fb5b577df" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>long</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+        </templateparamlist>
+        <type>Eigen::array&lt; long, rank &gt;</type>
+        <definition>using Textra::array = typedef Eigen::array&lt;long, rank&gt;</definition>
+        <argsstring></argsstring>
+        <name>array</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="29" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1ac4ea1d05edf6f909513a8ec4af87880a" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename Scalar</type>
+          </param>
+          <param>
+            <type>long</type>
+            <declname>length</declname>
+            <defname>length</defname>
+          </param>
+        </templateparamlist>
+        <type>Eigen::array&lt; Eigen::IndexPair&lt; Scalar &gt;, length &gt;</type>
+        <definition>using Textra::idxlistpair = typedef Eigen::array&lt;Eigen::IndexPair&lt;Scalar&gt;,length&gt;</definition>
+        <argsstring></argsstring>
+        <name>idxlistpair</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="31" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1a10f3538b95c4cbb49de58e66b2f567e7" prot="public" static="no">
+        <type>array&lt; 8 &gt;</type>
+        <definition>using Textra::array8 = typedef array&lt;8&gt;</definition>
+        <argsstring></argsstring>
+        <name>array8</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="67" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1ac3a3122d06a20ecb2be3789b4c396633" prot="public" static="no">
+        <type>array&lt; 7 &gt;</type>
+        <definition>using Textra::array7 = typedef array&lt;7&gt;</definition>
+        <argsstring></argsstring>
+        <name>array7</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="68" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1accfb4fc520dc9a420a8a272f0d31c613" prot="public" static="no">
+        <type>array&lt; 6 &gt;</type>
+        <definition>using Textra::array6 = typedef array&lt;6&gt;</definition>
+        <argsstring></argsstring>
+        <name>array6</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="69" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1aa5d67eec58bb02c58a5abb4446fd2e62" prot="public" static="no">
+        <type>array&lt; 5 &gt;</type>
+        <definition>using Textra::array5 = typedef array&lt;5&gt;</definition>
+        <argsstring></argsstring>
+        <name>array5</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="70" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1af66a1cb409abbc5dcc3ddef03d8f9043" prot="public" static="no">
+        <type>array&lt; 4 &gt;</type>
+        <definition>using Textra::array4 = typedef array&lt;4&gt;</definition>
+        <argsstring></argsstring>
+        <name>array4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="71" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1abf5e9be455f15ce199b2240678183aaa" prot="public" static="no">
+        <type>array&lt; 3 &gt;</type>
+        <definition>using Textra::array3 = typedef array&lt;3&gt;</definition>
+        <argsstring></argsstring>
+        <name>array3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="72" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1a0caeb138a8ea11cca9cd571e5b4b9c83" prot="public" static="no">
+        <type>array&lt; 2 &gt;</type>
+        <definition>using Textra::array2 = typedef array&lt;2&gt;</definition>
+        <argsstring></argsstring>
+        <name>array2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="73" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1a95357bf0fb199a2918cecc55e91cfa18" prot="public" static="no">
+        <type>array&lt; 1 &gt;</type>
+        <definition>using Textra::array1 = typedef array&lt;1&gt;</definition>
+        <argsstring></argsstring>
+        <name>array1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="74" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespace_textra_1aeeebf1fada3ec948aed241964a817e60" prot="public" static="no" mutable="no">
+        <type>idxlistpair&lt; long, length &gt; const std::initializer_list&lt; long &gt;</type>
+        <definition>idxlistpair&lt;long,length&gt; const std::initializer_list&lt;long&gt; Textra::listA</definition>
+        <argsstring></argsstring>
+        <name>listA</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="50" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespace_textra_1abf8500921b847eaabf696d62d0bc26d8" prot="public" static="no" mutable="no">
+        <type>idxlistpair&lt; long, length &gt; const std::initializer_list&lt; long &gt; const std::initializer_list&lt; long &gt;</type>
+        <definition>idxlistpair&lt;long,length&gt; const std::initializer_list&lt;long&gt; const std::initializer_list&lt;long&gt; Textra::listB</definition>
+        <argsstring></argsstring>
+        <name>listB</name>
+        <initializer>{
+        Eigen::array&lt;<ref refid="struct_textra_1_1idx__dim__pair" kindref="compound">idx_dim_pair</ref>,length&gt; idx_dim_pair_list</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="50" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespace_textra_1a6d54a6c10c193a09b70086e742757b1a" prot="public" static="no" mutable="no">
+        <type>auto</type>
+        <definition>auto Textra::itlistA</definition>
+        <argsstring></argsstring>
+        <name>itlistA</name>
+        <initializer>= listA.begin()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="52" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespace_textra_1a76f445785a86d738f81457aeced04dca" prot="public" static="no" mutable="no">
+        <type>auto</type>
+        <definition>auto Textra::itlistB</definition>
+        <argsstring></argsstring>
+        <name>itlistB</name>
+        <initializer>= listB.begin()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="53" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespace_textra_1ab2f1697bc0c01cb4c9ac665c5fb66d0a" prot="public" static="no" mutable="no">
+        <type>idxlistpair&lt; long, length &gt;</type>
+        <definition>return Textra::pairlistOut</definition>
+        <argsstring></argsstring>
+        <name>pairlistOut</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="58" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespace_textra_1a01465576ae77ad18c57ee1beba43e5f5" prot="public" static="no" mutable="no">
+        <type>Tensor&lt; Scalar, 2 &gt; &amp;</type>
+        <definition>MatrixType&lt; Scalar &gt; rank &amp; Textra::tensor</definition>
+        <argsstring></argsstring>
+        <name>tensor</name>
+        <initializer>{
+        return tensor.inflate(array1{tensor.size()+1}).reshape(array2{tensor.size(),tensor.size()})</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="84" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespace_textra_1a903297cb5c5ac23d525ca9f20887db04" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; Scalar, rank &gt; const array&lt; rank &gt; &amp;</type>
+        <definition>Eigen::Tensor&lt;Scalar,rank&gt; const array&lt;rank&gt;&amp; Textra::dims</definition>
+        <argsstring></argsstring>
+        <name>dims</name>
+        <initializer>{
+        return Eigen::TensorMap&lt;Tensor&lt;const Scalar, rank&gt;&gt;(matrix.data(), dims)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="114" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespace_textra_1a4436c63f9bf9159556dadb1027113122" prot="public" static="no" mutable="no">
+        <type>MatrixType&lt; Scalar &gt; rank const sizeType</type>
+        <definition>MatrixType&lt;Scalar&gt; rank const sizeType Textra::rows</definition>
+        <argsstring></argsstring>
+        <name>rows</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="148" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespace_textra_1a0c773f072ed665da6d780aa68d062f78" prot="public" static="no" mutable="no">
+        <type>MatrixType&lt; Scalar &gt; rank const sizeType const sizeType</type>
+        <definition>MatrixType&lt;Scalar&gt; rank const sizeType const sizeType Textra::cols</definition>
+        <argsstring></argsstring>
+        <name>cols</name>
+        <initializer>{
+        return Eigen::Map&lt;const MatrixType&lt;Scalar&gt;&gt; (tensor.data(), rows,cols)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="148" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespace_textra_1a6a759e207942a6258b8f42d58d527f19" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>long</type>
+            <declname>length</declname>
+            <defname>length</defname>
+          </param>
+        </templateparamlist>
+        <type>idxlistpair&lt; long, length &gt;</type>
+        <definition>idxlistpair&lt;long,length&gt; Textra::idx</definition>
+        <argsstring>(std::initializer_list&lt; long &gt; list1, std::initializer_list&lt; long &gt; list2)</argsstring>
+        <name>idx</name>
+        <param>
+          <type>std::initializer_list&lt; long &gt;</type>
+          <declname>list1</declname>
+        </param>
+        <param>
+          <type>std::initializer_list&lt; long &gt;</type>
+          <declname>list2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="33" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="33" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a9a9c6059354746763139ef723a31ed6d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>long</type>
+            <declname>length</declname>
+            <defname>length</defname>
+          </param>
+          <param>
+            <type>long</type>
+            <declname>rankB</declname>
+            <defname>rankB</defname>
+          </param>
+        </templateparamlist>
+        <type>idxlistpair&lt; long, length &gt;</type>
+        <definition>idxlistpair&lt;long,length&gt; Textra::__attribute__</definition>
+        <argsstring>((hot)) sortIdx(const array&lt; rankB &gt; dimsB</argsstring>
+        <name>__attribute__</name>
+        <param>
+          <type>(hot)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="50" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a8487fbbe5e103d6b3f325f128dd28453" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Textra::for</definition>
+        <argsstring>(int i=0;i&lt; length;i++)</argsstring>
+        <name>for</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="54" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="54" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1aa4467bd8f84650e5ed0836adcb336b05" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Scalar</type>
+          </param>
+        </templateparamlist>
+        <type>Tensor&lt; Scalar, 2 &gt;</type>
+        <definition>Tensor&lt; Scalar, 2 &gt; Textra::__attribute__</definition>
+        <argsstring>((always_inline)) asDiagonal(const Tensor&lt; Scalar</argsstring>
+        <name>__attribute__</name>
+        <param>
+          <type>(always_inline)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="84" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1aa19398ea397e26e059eab725cbd3da91" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Scalar</type>
+          </param>
+        </templateparamlist>
+        <type>Tensor&lt; Scalar, 1 &gt;</type>
+        <definition>Tensor&lt;Scalar,1&gt; Textra::__attribute__</definition>
+        <argsstring>((always_inline)) asNormalized(const Tensor&lt; Scalar</argsstring>
+        <name>__attribute__</name>
+        <param>
+          <type>(always_inline)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="99" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1ab7d6b1e2db5d5940b131e9ed7d91a3cc" prot="public" static="no" const="yes" explicit="no" inline="yes" refqual="lvalue" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Scalar</type>
+          </param>
+          <param>
+            <type>int</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+        </templateparamlist>
+        <type>Eigen::Tensor&lt; Scalar, rank &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,rank&gt; Textra::__attribute__</definition>
+        <argsstring>((always_inline)) Matrix_to_Tensor(const MatrixType&lt; Scalar &gt; &amp;matrix</argsstring>
+        <name>__attribute__</name>
+        <param>
+          <type>(always_inline)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="114" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1ae7184d202f608d67d7c84703276ce939" prot="public" static="no" const="yes" explicit="no" inline="yes" refqual="lvalue" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Scalar</type>
+          </param>
+        </templateparamlist>
+        <type>Eigen::Tensor&lt; Scalar, 1 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,1&gt; Textra::__attribute__</definition>
+        <argsstring>((always_inline)) Matrix_to_Tensor1(const MatrixType&lt; Scalar &gt; &amp;matrix)</argsstring>
+        <name>__attribute__</name>
+        <param>
+          <type>(always_inline)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="120" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="120" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1aa0ba3a2c0caa91d536e51a82defc0620" prot="public" static="no" const="yes" explicit="no" inline="yes" refqual="lvalue" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Scalar</type>
+          </param>
+        </templateparamlist>
+        <type>Eigen::Tensor&lt; Scalar, 2 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,2&gt; Textra::__attribute__</definition>
+        <argsstring>((always_inline)) Matrix_to_Tensor2(const MatrixType&lt; Scalar &gt; &amp;matrix)</argsstring>
+        <name>__attribute__</name>
+        <param>
+          <type>(always_inline)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="125" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="125" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1ac9b9254cdbce1f496707a2eb02423d25" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Scalar</type>
+          </param>
+        </templateparamlist>
+        <type>MatrixType&lt; Scalar &gt;</type>
+        <definition>MatrixType&lt;Scalar&gt; Textra::__attribute__</definition>
+        <argsstring>((always_inline)) Tensor2_to_Matrix(const Tensor&lt; Scalar</argsstring>
+        <name>__attribute__</name>
+        <param>
+          <type>(always_inline)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="138" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a03ed68d9ffd6b0f9b75df15340abc0d6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Scalar</type>
+          </param>
+        </templateparamlist>
+        <type>VectorType&lt; Scalar &gt;</type>
+        <definition>VectorType&lt;Scalar&gt; Textra::__attribute__</definition>
+        <argsstring>((always_inline)) Tensor1_to_Vector(const Tensor&lt; Scalar</argsstring>
+        <name>__attribute__</name>
+        <param>
+          <type>(always_inline)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="143" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a03e669c4c85416377bdc3b0045d4cd11" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Scalar</type>
+          </param>
+          <param>
+            <type>long</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+          <param>
+            <type>typename sizeType</type>
+          </param>
+        </templateparamlist>
+        <type>MatrixType&lt; Scalar &gt;</type>
+        <definition>MatrixType&lt;Scalar&gt; Textra::__attribute__</definition>
+        <argsstring>((always_inline)) Tensor_to_Matrix(const Tensor&lt; Scalar</argsstring>
+        <name>__attribute__</name>
+        <param>
+          <type>(always_inline)</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="148" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a83480b3f75b0a29f652feb8b2152b475" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>int</type>
+            <declname>L</declname>
+            <defname>L</defname>
+          </param>
+        </templateparamlist>
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream&amp; Textra::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;out, const Eigen::DSizes&lt; T, L &gt; &amp;v)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const Eigen::DSizes&lt; T, L &gt; &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="161" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="161" bodyend="168"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a47079abeb81c780b562da5b9a8d1ff19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>int</type>
+            <declname>L</declname>
+            <defname>L</defname>
+          </param>
+        </templateparamlist>
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream&amp; Textra::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;out, const Eigen::array&lt; T, L &gt; &amp;v)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const Eigen::array&lt; T, L &gt; &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_tensor_extra.h" line="172" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="172" bodyend="179"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><bold><ref refid="namespace_textra" kindref="compound">Textra</ref></bold> stands for &quot;Tensor Extra&quot;. Provides extra functionality to Eigen::Tensor. </para>    </briefdescription>
+    <detaileddescription>
+<para>This namespace makes shorthand typedef&apos;s to Eigen&apos;s unsupported Tensor module, and provides handy functions to interface between <computeroutput>Eigen::Tensor</computeroutput> and <computeroutput>Eigen::Matrix</computeroutput> objects. The contents of this namespace are quite self-explanatory. </para>    </detaileddescription>
+    <location file="source/general/n_tensor_extra.h" line="16" column="1"/>
+  </compounddef>
+</doxygen>

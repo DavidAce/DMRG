@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__eigensolver__product_8cpp" kind="file" language="C++">
+    <compoundname>class_eigensolver_product.cpp</compoundname>
+    <includes refid="class__eigensolver__product_8h" local="yes">class_eigensolver_product.h</includes>
+    <incdepgraph>
+      <node id="627">
+        <label>iterator</label>
+      </node>
+      <node id="625">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="626">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="622">
+        <label>source/mps_routines/class_eigensolver_product.cpp</label>
+        <link refid="class__eigensolver__product_8cpp"/>
+        <childnode refid="623" relation="include">
+        </childnode>
+      </node>
+      <node id="624">
+        <label>general/n_tensor_extra.h</label>
+        <link refid="n__tensor__extra_8h_source"/>
+        <childnode refid="625" relation="include">
+        </childnode>
+        <childnode refid="626" relation="include">
+        </childnode>
+        <childnode refid="627" relation="include">
+        </childnode>
+        <childnode refid="628" relation="include">
+        </childnode>
+      </node>
+      <node id="628">
+        <label>iostream</label>
+      </node>
+      <node id="623">
+        <label>class_eigensolver_product.h</label>
+        <link refid="class__eigensolver__product_8h_source"/>
+        <childnode refid="624" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/mps_routines/class_eigensolver_product.cpp"/>
+  </compounddef>
+</doxygen>

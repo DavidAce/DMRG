@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="namespacesettings_1_1idmrg" kind="namespace" language="C++">
+    <compoundname>settings::idmrg</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="n__sim__settings_8h_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool settings::idmrg::on</definition>
+        <argsstring></argsstring>
+        <name>on</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Turns iDMRG simulation on/off. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="33" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="n__sim__settings_8h_1a51973513eb1623accef494463769a1ab" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int settings::idmrg::max_length</definition>
+        <argsstring></argsstring>
+        <name>max_length</name>
+        <initializer>= 5000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Final length of 1D quantum chain. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="34" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="n__sim__settings_8h_1a88a9f3be8ff1dcc89152591410c447d6" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long settings::idmrg::chi_max</definition>
+        <argsstring></argsstring>
+        <name>chi_max</name>
+        <initializer>= 8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bond dimension of the current position (maximum number of singular values to keep in SVD). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="35" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="n__sim__settings_8h_1a55074bedfc07bbdb9b60c91194a5d25d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int settings::idmrg::print_freq</definition>
+        <argsstring></argsstring>
+        <name>print_freq</name>
+        <initializer>= 100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Print frequency for console output. (0 = off). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="36" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/sim_parameters/n_sim_settings.h" line="32" column="1"/>
+  </compounddef>
+</doxygen>

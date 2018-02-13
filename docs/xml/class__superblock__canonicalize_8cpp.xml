@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__superblock__canonicalize_8cpp" kind="file" language="C++">
+    <compoundname>class_superblock_canonicalize.cpp</compoundname>
+    <includes refid="class__superblock_8h" local="yes">class_superblock.h</includes>
+    <includes refid="n__math_8h" local="yes">general/n_math.h</includes>
+    <includes local="no">iomanip</includes>
+    <includes refid="class__svd__wrapper_8h" local="no">general/class_svd_wrapper.h</includes>
+    <includes refid="class__eig__spectra__wrapper_8h" local="no">general/class_eig_spectra_wrapper.h</includes>
+    <incdepgraph>
+      <node id="879">
+        <label>iomanip</label>
+      </node>
+      <node id="873">
+        <label>functional</label>
+      </node>
+      <node id="880">
+        <label>general/class_svd_wrapper.h</label>
+        <link refid="class__svd__wrapper_8h_source"/>
+        <childnode refid="857" relation="include">
+        </childnode>
+        <childnode refid="881" relation="include">
+        </childnode>
+      </node>
+      <node id="884">
+        <label>GenEigsSolver.h</label>
+      </node>
+      <node id="860">
+        <label>iterator</label>
+      </node>
+      <node id="883">
+        <label>SymEigsSolver.h</label>
+      </node>
+      <node id="869">
+        <label>sim_parameters/n_sim_settings.h</label>
+        <link refid="n__sim__settings_8h_source"/>
+        <childnode refid="870" relation="include">
+        </childnode>
+      </node>
+      <node id="872">
+        <label>cmath</label>
+      </node>
+      <node id="878">
+        <label>numeric</label>
+      </node>
+      <node id="858">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="870">
+        <label>string</label>
+      </node>
+      <node id="868">
+        <label>unsupported/Eigen/MatrixFunctions</label>
+      </node>
+      <node id="859">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="877">
+        <label>gsl/gsl_integration.h</label>
+      </node>
+      <node id="865">
+        <label>vector</label>
+      </node>
+      <node id="863">
+        <label>mps_routines/class_mps.h</label>
+        <link refid="class__mps_8h_source"/>
+        <childnode refid="864" relation="include">
+        </childnode>
+        <childnode refid="857" relation="include">
+        </childnode>
+      </node>
+      <node id="857">
+        <label>general/n_tensor_extra.h</label>
+        <link refid="n__tensor__extra_8h_source"/>
+        <childnode refid="858" relation="include">
+        </childnode>
+        <childnode refid="859" relation="include">
+        </childnode>
+        <childnode refid="860" relation="include">
+        </childnode>
+        <childnode refid="861" relation="include">
+        </childnode>
+      </node>
+      <node id="856">
+        <label>class_superblock.h</label>
+        <link refid="class__superblock_8h_source"/>
+        <childnode refid="857" relation="include">
+        </childnode>
+        <childnode refid="862" relation="include">
+        </childnode>
+        <childnode refid="863" relation="include">
+        </childnode>
+        <childnode refid="867" relation="include">
+        </childnode>
+      </node>
+      <node id="875">
+        <label>utility</label>
+      </node>
+      <node id="866">
+        <label>array</label>
+      </node>
+      <node id="855">
+        <label>source/mps_routines/class_superblock_canonicalize.cpp</label>
+        <link refid="class__superblock__canonicalize_8cpp"/>
+        <childnode refid="856" relation="include">
+        </childnode>
+        <childnode refid="871" relation="include">
+        </childnode>
+        <childnode refid="879" relation="include">
+        </childnode>
+        <childnode refid="880" relation="include">
+        </childnode>
+        <childnode refid="882" relation="include">
+        </childnode>
+      </node>
+      <node id="867">
+        <label>mps_routines/class_mpo.h</label>
+        <link refid="class__mpo_8h_source"/>
+        <childnode refid="868" relation="include">
+        </childnode>
+        <childnode refid="863" relation="include">
+        </childnode>
+        <childnode refid="857" relation="include">
+        </childnode>
+        <childnode refid="864" relation="include">
+        </childnode>
+        <childnode refid="869" relation="include">
+        </childnode>
+      </node>
+      <node id="871">
+        <label>general/n_math.h</label>
+        <link refid="n__math_8h_source"/>
+        <childnode refid="861" relation="include">
+        </childnode>
+        <childnode refid="860" relation="include">
+        </childnode>
+        <childnode refid="865" relation="include">
+        </childnode>
+        <childnode refid="872" relation="include">
+        </childnode>
+        <childnode refid="873" relation="include">
+        </childnode>
+        <childnode refid="874" relation="include">
+        </childnode>
+        <childnode refid="875" relation="include">
+        </childnode>
+        <childnode refid="876" relation="include">
+        </childnode>
+        <childnode refid="877" relation="include">
+        </childnode>
+        <childnode refid="878" relation="include">
+        </childnode>
+        <childnode refid="858" relation="include">
+        </childnode>
+      </node>
+      <node id="864">
+        <label>sim_parameters/n_model.h</label>
+        <link refid="n__model_8h_source"/>
+        <childnode refid="865" relation="include">
+        </childnode>
+        <childnode refid="866" relation="include">
+        </childnode>
+        <childnode refid="858" relation="include">
+        </childnode>
+      </node>
+      <node id="861">
+        <label>iostream</label>
+      </node>
+      <node id="862">
+        <label>mps_routines/class_environment.h</label>
+        <link refid="class__environment_8h_source"/>
+        <childnode refid="857" relation="include">
+        </childnode>
+        <childnode refid="863" relation="include">
+        </childnode>
+        <childnode refid="864" relation="include">
+        </childnode>
+      </node>
+      <node id="881">
+        <label>Eigen/SVD</label>
+      </node>
+      <node id="882">
+        <label>general/class_eig_spectra_wrapper.h</label>
+        <link refid="class__eig__spectra__wrapper_8h_source"/>
+        <childnode refid="857" relation="include">
+        </childnode>
+        <childnode refid="883" relation="include">
+        </childnode>
+        <childnode refid="884" relation="include">
+        </childnode>
+        <childnode refid="885" relation="include">
+        </childnode>
+      </node>
+      <node id="874">
+        <label>memory</label>
+      </node>
+      <node id="876">
+        <label>gsl/gsl_errno.h</label>
+      </node>
+      <node id="885">
+        <label>experimental/filesystem</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/mps_routines/class_superblock_canonicalize.cpp"/>
+  </compounddef>
+</doxygen>

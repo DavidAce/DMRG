@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class_math_1_1gsl__quad" kind="class" language="C++" prot="public">
+    <compoundname>Math::gsl_quad</compoundname>
+    <includes refid="n__math_8h" local="no">n_math.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>F</declname>
+        <defname>F</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_math_1_1gsl__quad_1a9cba5695f611429d83c4ce29ad1700e1" prot="private" static="no" mutable="no">
+        <type>F</type>
+        <definition>F Math::gsl_quad&lt; F &gt;::f</definition>
+        <argsstring></argsstring>
+        <name>f</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_math.h" line="99" column="1" bodyfile="source/general/n_math.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_math_1_1gsl__quad_1a608383457d42327237c4c3de24bd2123" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Math::gsl_quad&lt; F &gt;::limit</definition>
+        <argsstring></argsstring>
+        <name>limit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_math.h" line="100" column="1" bodyfile="source/general/n_math.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_math_1_1gsl__quad_1adc7cd3b9570407c50d73f852acc1247a" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; gsl_integration_workspace, std::function&lt; void(gsl_integration_workspace *)&gt; &gt;</type>
+        <definition>std::unique_ptr&lt;gsl_integration_workspace, std::function&lt;void(gsl_integration_workspace *)&gt; &gt; Math::gsl_quad&lt; F &gt;::workspace</definition>
+        <argsstring></argsstring>
+        <name>workspace</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_math.h" line="103" column="1" bodyfile="source/general/n_math.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="class_math_1_1gsl__quad_1af8090dd1a263ea88b73d508e60870fda" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double Math::gsl_quad&lt; F &gt;::gsl_wrapper</definition>
+        <argsstring>(double x, void *p)</argsstring>
+        <name>gsl_wrapper</name>
+        <param>
+          <type>double</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_math.h" line="105" column="1" bodyfile="source/general/n_math.h" bodystart="105" bodyend="108"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_math_1_1gsl__quad_1a871c78ede6e08a3bfa9f546600f4e3cd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Math::gsl_quad&lt; F &gt;::gsl_quad</definition>
+        <argsstring>(F f, int limit)</argsstring>
+        <name>gsl_quad</name>
+        <param>
+          <type>F</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>limit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_math.h" line="111" column="1" bodyfile="source/general/n_math.h" bodystart="111" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="class_math_1_1gsl__quad_1a0c4ba9c992bd79a9c8d6c90d3ffc8d78" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Math::gsl_quad&lt; F &gt;::integrate</definition>
+        <argsstring>(double min, double max, double epsabs, double epsrel)</argsstring>
+        <name>integrate</name>
+        <param>
+          <type>double</type>
+          <declname>min</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>max</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>epsabs</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>epsrel</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/n_math.h" line="114" column="1" bodyfile="source/general/n_math.h" bodystart="114" bodyend="139"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>class for integration </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/general/n_math.h" line="98" column="1" bodyfile="source/general/n_math.h" bodystart="98" bodyend="140"/>
+    <listofallmembers>
+      <member refid="class_math_1_1gsl__quad_1a9cba5695f611429d83c4ce29ad1700e1" prot="private" virt="non-virtual"><scope>Math::gsl_quad</scope><name>f</name></member>
+      <member refid="class_math_1_1gsl__quad_1a871c78ede6e08a3bfa9f546600f4e3cd" prot="public" virt="non-virtual"><scope>Math::gsl_quad</scope><name>gsl_quad</name></member>
+      <member refid="class_math_1_1gsl__quad_1af8090dd1a263ea88b73d508e60870fda" prot="private" virt="non-virtual"><scope>Math::gsl_quad</scope><name>gsl_wrapper</name></member>
+      <member refid="class_math_1_1gsl__quad_1a0c4ba9c992bd79a9c8d6c90d3ffc8d78" prot="public" virt="non-virtual"><scope>Math::gsl_quad</scope><name>integrate</name></member>
+      <member refid="class_math_1_1gsl__quad_1a608383457d42327237c4c3de24bd2123" prot="private" virt="non-virtual"><scope>Math::gsl_quad</scope><name>limit</name></member>
+      <member refid="class_math_1_1gsl__quad_1adc7cd3b9570407c50d73f852acc1247a" prot="private" virt="non-virtual"><scope>Math::gsl_quad</scope><name>workspace</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

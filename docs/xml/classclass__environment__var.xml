@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="classclass__environment__var" kind="class" language="C++" prot="public">
+    <compoundname>class_environment_var</compoundname>
+    <templateparamlist>
+      <param>
+        <type>Side</type>
+        <declname>side</declname>
+        <defname>side</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classclass__environment__var_1a2480035eee605c15a6c3327e3f9498fb" prot="public" static="no">
+        <type>class_mps::Scalar</type>
+        <definition>using class_environment_var&lt; side &gt;::Scalar =  class_mps::Scalar</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment.h" line="63" column="1" bodyfile="source/mps_routines/class_environment.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass__environment__var_1a725271b119c5a00a48078f7519663b16" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_environment_var&lt; side &gt;::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of particles that have been contracted into this left environment. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment.h" line="64" column="1" bodyfile="source/mps_routines/class_environment.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__environment__var_1ab5008fbd87e8324ac44f0e4f295e5c14" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Textra::Tensor&lt;Scalar,4&gt; class_environment_var&lt; side &gt;::block</definition>
+        <argsstring></argsstring>
+        <name>block</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The environment block. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment.h" line="65" column="1" bodyfile="source/mps_routines/class_environment.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__environment__var_1a6a06a75032b2559a81dc023d98c11642" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>class_environment_var&lt; side &gt;::class_environment_var</definition>
+        <argsstring>()</argsstring>
+        <name>class_environment_var</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment.h" line="66" column="1" bodyfile="source/mps_routines/class_environment.h" bodystart="66" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__environment__var_1a2294bb2e9f07279a3f83b54c59c78135" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_environment_var&lt; side &gt;::enlarge</definition>
+        <argsstring>(const class_mps &amp;MPS, const Textra::Tensor&lt; Scalar, 4 &gt; &amp;M)</argsstring>
+        <name>enlarge</name>
+        <param>
+          <type>const <ref refid="classclass__mps" kindref="compound">class_mps</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>const Textra::Tensor&lt; Scalar, 4 &gt; &amp;</type>
+          <declname>M</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>&lt; Contracts a site into the block. <linebreak/>
+<linebreak/>
+ <heading level="1">Left environment contraction</heading>
+</para><para>[ ]<ndash/>0 0<ndash/>[LB]<ndash/>1 1<ndash/>[ GA conj ]<ndash/>2 [ ] | [ ] 0 [ ] [ ] 2 [ ] | [ ]<ndash/>2 0<ndash/>[ M ]<ndash/>1 [ ] | [ ] 3 [ left ] [ ] 2 [ ] | [ ]<ndash/>3 0<ndash/>[ M ]<ndash/>1 [ ] | [ ] 3 [ ] [ ] 0 [ ] | [ ]<ndash/>1 0<ndash/>[LB]<ndash/>1 1<ndash/>[ GA ]<ndash/>2</para><para><heading level="1">Right environment contraction</heading>
+</para><para>1<ndash/>[ GB conj ]<ndash/>2 0<ndash/>[LB]<ndash/>1 0<ndash/>[ ] | [ ] 0 [ ] [ ] 2 [ ] | [ ] 0<ndash/>[ M ]<ndash/>1 2<ndash/>[ ] | [ ] 3 [ ] [ right] 2 [ ] | [ ] 0<ndash/>[ M ]<ndash/>1 2<ndash/>[ ] | [ ] 3 [ ] [ ] 0 [ ] | [ ] 1<ndash/>[ GB ]<ndash/>2 0<ndash/>[LB]<ndash/>1 1<ndash/>[ ]</para>        </inbodydescription>
+        <location file="source/mps_routines/class_environment.h" line="84" column="1" bodyfile="source/mps_routines/class_environment.cpp" bodystart="71" bodyend="143"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/mps_routines/class_environment.h" line="61" column="1" bodyfile="source/mps_routines/class_environment.h" bodystart="61" bodyend="85"/>
+    <listofallmembers>
+      <member refid="classclass__environment__var_1ab5008fbd87e8324ac44f0e4f295e5c14" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>block</name></member>
+      <member refid="classclass__environment__var_1a6a06a75032b2559a81dc023d98c11642" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>class_environment_var</name></member>
+      <member refid="classclass__environment__var_1a2294bb2e9f07279a3f83b54c59c78135" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>enlarge</name></member>
+      <member refid="classclass__environment__var_1a2480035eee605c15a6c3327e3f9498fb" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>Scalar</name></member>
+      <member refid="classclass__environment__var_1a725271b119c5a00a48078f7519663b16" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

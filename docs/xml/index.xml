@@ -1,0 +1,891 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.15">
+  <compound refid="classclass__algorithm__base" kind="class"><name>class_algorithm_base</name>
+    <member refid="classclass__algorithm__base_1a52110546990518c431901aa1262e457c" kind="variable"><name>hdf5</name></member>
+    <member refid="classclass__algorithm__base_1ade8066944fb71399e3bf44d30149a923" kind="variable"><name>table_buffer</name></member>
+    <member refid="classclass__algorithm__base_1a0df91637c87540c529273999b7866315" kind="variable"><name>group_name</name></member>
+    <member refid="classclass__algorithm__base_1a199c6b935154ae969e80ae25f37e831d" kind="variable"><name>table_name</name></member>
+    <member refid="classclass__algorithm__base_1a44aea6f57f16f07b0079b382c2ab863e" kind="variable"><name>simulation_name</name></member>
+    <member refid="classclass__algorithm__base_1a2862e4e8b9338ac361d660ef35847d69" kind="variable"><name>simtype</name></member>
+    <member refid="classclass__algorithm__base_1aae9477a03b720e2e3ebbb92f05253774" kind="variable"><name>superblock</name></member>
+    <member refid="classclass__algorithm__base_1aeb4c7ff399543a89181d790c56e8ddf0" kind="variable"><name>observables</name></member>
+    <member refid="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" kind="variable"><name>ccout</name></member>
+    <member refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kind="variable"><name>t_tot</name></member>
+    <member refid="classclass__algorithm__base_1ae378bea3c64eddbcebbb4308506dd0ba" kind="variable"><name>t_eig</name></member>
+    <member refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" kind="variable"><name>t_sim</name></member>
+    <member refid="classclass__algorithm__base_1a62686101ba541b485f091dff78cfc871" kind="variable"><name>t_svd</name></member>
+    <member refid="classclass__algorithm__base_1afc59105de307467cd6719e13bdba4fa0" kind="variable"><name>t_env</name></member>
+    <member refid="classclass__algorithm__base_1a68b62ce7f9da3a7b37686497ded194bb" kind="variable"><name>t_evo</name></member>
+    <member refid="classclass__algorithm__base_1ab7242e6dbb626b5d72a4afefe5c98f3c" kind="variable"><name>t_udt</name></member>
+    <member refid="classclass__algorithm__base_1a51f0cbf257ad5da8152c2c50e09e218d" kind="variable"><name>t_sto</name></member>
+    <member refid="classclass__algorithm__base_1afb38782d7f5134a0a0be8fde91628995" kind="variable"><name>t_ste</name></member>
+    <member refid="classclass__algorithm__base_1a29c0cee1d8f128dd23e6fb833ad9a18f" kind="variable"><name>t_obs</name></member>
+    <member refid="classclass__algorithm__base_1a30db55b403a9abca8a8b063079009174" kind="variable"><name>t_mps</name></member>
+    <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" kind="function"><name>set_profiling_labels</name></member>
+    <member refid="classclass__algorithm__base_1a41b199782e43aeaccf607b8191c3a027" kind="function"><name>run</name></member>
+    <member refid="classclass__algorithm__base_1a0f543b6c9f1ff43baab2bc47628c680e" kind="function"><name>store_table_entry</name></member>
+    <member refid="classclass__algorithm__base_1aeed6c86b2bb499b7b8977a9bca82e6ab" kind="function"><name>print_profiling</name></member>
+    <member refid="classclass__algorithm__base_1a96f34d67e881abd4d1ec4dd2d89728ad" kind="function"><name>print_status_full</name></member>
+    <member refid="classclass__algorithm__base_1a803b366e66ffaef47479278cbdb1a738" kind="function"><name>print_status_update</name></member>
+    <member refid="classclass__algorithm__base_1a15d8f41189fb1685de574b7f3389eee6" kind="function"><name>single_DMRG_step</name></member>
+    <member refid="classclass__algorithm__base_1ac9255cf0edbb29441a2ba4e900459082" kind="function"><name>single_TEBD_step</name></member>
+    <member refid="classclass__algorithm__base_1a68804df41c37620391746d749b267498" kind="function"><name>enlarge_environment</name></member>
+    <member refid="classclass__algorithm__base_1ad516d7415be3c39534429d34d677adf3" kind="function"><name>enlarge_environment</name></member>
+    <member refid="classclass__algorithm__base_1a4ce5f92c32d9bd33877fde7848417e61" kind="function"><name>swap</name></member>
+  </compound>
+  <compound refid="classclass__algorithm__launcher" kind="class"><name>class_algorithm_launcher</name>
+    <member refid="classclass__algorithm__launcher_1a799b7155708a55096bb87780c6c8af40" kind="variable"><name>hdf5</name></member>
+    <member refid="classclass__algorithm__launcher_1a57cebb5d8dd684420ab0b05e0be2e341" kind="variable"><name>ccout</name></member>
+    <member refid="classclass__algorithm__launcher_1a3f6c72c0ee6ea641fbf7306864ac3181" kind="function"><name>class_algorithm_launcher</name></member>
+    <member refid="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" kind="function"><name>class_algorithm_launcher</name></member>
+    <member refid="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" kind="function"><name>run_algorithms</name></member>
+    <member refid="classclass__algorithm__launcher_1ae117630747b3df09a635a4b7dfd23ef4" kind="function"><name>run_infinite_DMRG</name></member>
+    <member refid="classclass__algorithm__launcher_1adf27228d68cc4069f68590d893baac41" kind="function"><name>run_finite_DMRG</name></member>
+    <member refid="classclass__algorithm__launcher_1ae7f15ff3cc9cd026288a72b8bb7d447d" kind="function"><name>run_imaginary_TEBD</name></member>
+    <member refid="classclass__algorithm__launcher_1ad43b46c53ee23d44c6e3d23cb4e3280a" kind="function"><name>run_FES_iDMRG</name></member>
+    <member refid="classclass__algorithm__launcher_1a5d8c8083ae4b50afb1874a30f8b1de83" kind="function"><name>run_FES_iTEBD</name></member>
+  </compound>
+  <compound refid="classclass__custom__cout" kind="class"><name>class_custom_cout</name>
+    <member refid="classclass__custom__cout_1a41c693134f123db4ec21bc858f2b7522" kind="variable"><name>verbosity</name></member>
+    <member refid="classclass__custom__cout_1ac569003df823e772ffac9a2de47f2208" kind="variable"><name>temp_verbosity</name></member>
+    <member refid="classclass__custom__cout_1ad27bfbb4e4b06f1f72d3c8ef42f8ee4a" kind="variable"><name>os</name></member>
+    <member refid="classclass__custom__cout_1afe3ade35c8700c5a766b38151d4c7682" kind="function"><name>class_custom_cout</name></member>
+    <member refid="classclass__custom__cout_1ac9b0737ce7c93bc0d17d568196da3164" kind="function"><name>class_custom_cout</name></member>
+    <member refid="classclass__custom__cout_1a88018822b8bbb1f62c764fdd379dc3e3" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="classclass__custom__cout_1adc5e2f4c3cdcfa3faa64738225a8f29a" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="classclass__custom__cout_1a181b17c16696ffa11ee7f211b2e50ce8" kind="function"><name>operator()</name></member>
+  </compound>
+  <compound refid="classclass__eig" kind="class"><name>class_eig</name>
+    <member refid="classclass__eig_1a982f6238df0e9dd15e75a98ba40a0224" kind="typedef"><name>MatMapR</name></member>
+    <member refid="classclass__eig_1a954c0b9831830e0671ffbe47f4ff2a63" kind="typedef"><name>MatMapL</name></member>
+    <member refid="classclass__eig_1a9d0ead9f5a95d2938aca677614de6f06" kind="typedef"><name>MatrixType</name></member>
+    <member refid="classclass__eig_1adbb058ac1f9b07660a9acd795b015dae" kind="typedef"><name>TensorPair</name></member>
+    <member refid="classclass__eig_1ad23261619a2bade2919e617adde1a574" kind="variable"><name>eigThreshold</name></member>
+    <member refid="classclass__eig_1a19faaf7ee07692793e9b307b7fff98f3" kind="variable"><name>eigMaxIter</name></member>
+    <member refid="classclass__eig_1afefa80178e3ffb0bea4dd39370e71eca" kind="variable"><name>ncv</name></member>
+    <member refid="classclass__eig_1a7f8bfe4839200b4b807064037cea267e" kind="function"><name>setThreshold</name></member>
+    <member refid="classclass__eig_1a87ddcf350d7fe30ff75644778549c8c7" kind="function"><name>setMaxIter</name></member>
+    <member refid="classclass__eig_1a3ffbdb9901ea279b3102f667ba8941ca" kind="function"><name>setncv</name></member>
+    <member refid="classclass__eig_1a514d3579eefda1fec6991a71fe2962c3" kind="function"><name>squareRoot</name></member>
+    <member refid="classclass__eig_1abec74ccbbfe2dd5ff89307bd158e3d80" kind="function"><name>squareRoot_w_inverse</name></member>
+    <member refid="classclass__eig_1adc300f4829a44fe9c4e0765dd3f1ade0" kind="function"><name>solve_gen</name></member>
+    <member refid="classclass__eig_1a53b022f41a67a3ec57e6ab7dddf45da8" kind="function"><name>solve_sym</name></member>
+    <member refid="classclass__eig_1aad55151f2e8e102440f062d0048d2fd4" kind="function"><name>solve_dominant</name></member>
+  </compound>
+  <compound refid="classclass__eig__arpack" kind="class"><name>class_eig_arpack</name>
+    <member refid="classclass__eig__arpack_1ae0f26c7f5e39c76c039960d585e4c047" kind="typedef"><name>MapType</name></member>
+    <member refid="classclass__eig__arpack_1a6e314a353a86389b27757bf46af205d0" kind="variable"><name>eigThreshold</name></member>
+    <member refid="classclass__eig__arpack_1a1bb78a1ecbb609a6834bc20e9ecd8fe2" kind="variable"><name>eigMaxIter</name></member>
+    <member refid="classclass__eig__arpack_1ac9a47e9d293e13d454d58ffc318d882b" kind="variable"><name>RitzToString</name></member>
+    <member refid="classclass__eig__arpack_1ab8d431df9f23bf070c4daa054d74cee5" kind="function"><name>retrieve_solution</name></member>
+    <member refid="classclass__eig__arpack_1af3177fc9f0b2617751f00a3c20f27aa0" kind="function"><name>class_eig_arpack</name></member>
+    <member refid="classclass__eig__arpack_1a2fef2554a1848dc8ca3d2b9425052444" kind="function"><name>solve_dominant</name></member>
+  </compound>
+  <compound refid="classclass__eigensolver__product" kind="class"><name>class_eigensolver_product</name>
+    <member refid="classclass__eigensolver__product_1a3429ff9da56d4a4f9b7f8be283be98e9" kind="typedef"><name>Scalar</name></member>
+    <member refid="classclass__eigensolver__product_1a056048005820dd13967cdb6cadab185f" kind="variable"><name>Lblock</name></member>
+    <member refid="classclass__eigensolver__product_1a8187ccae0f76a853fa927e57a8cb1ea5" kind="variable"><name>Rblock</name></member>
+    <member refid="classclass__eigensolver__product_1a9bb77f563243ea6d8e24de752efdc54d" kind="variable"><name>MM</name></member>
+    <member refid="classclass__eigensolver__product_1a561f8bfdce381849e859e104ddfac118" kind="variable"><name>shape4</name></member>
+    <member refid="classclass__eigensolver__product_1a225681585ffb64e377ebfaf068c05d3c" kind="variable"><name>shape1</name></member>
+    <member refid="classclass__eigensolver__product_1a203a1ce74f3818808d6e6fad82aaaf7a" kind="variable"><name>sortedIndices1</name></member>
+    <member refid="classclass__eigensolver__product_1ae88c3c571d6b164e5bb585d7c2d00453" kind="variable"><name>sortedIndices2</name></member>
+    <member refid="classclass__eigensolver__product_1a4b810171b5bdf7ed0abe28fd40b9079f" kind="function"><name>class_eigensolver_product</name></member>
+    <member refid="classclass__eigensolver__product_1a6daee42bc97d036db665f6804e6b62af" kind="function"><name>rows</name></member>
+    <member refid="classclass__eigensolver__product_1a2e2dbb3084d4e4adad63b613746b3451" kind="function"><name>cols</name></member>
+    <member refid="classclass__eigensolver__product_1a35b8bbcee61e2ec2c115a23685ecf39f" kind="function"><name>perform_op</name></member>
+  </compound>
+  <compound refid="classclass__environment" kind="class"><name>class_environment</name>
+    <member refid="classclass__environment_1a1706e59dc553d41c9811ab8e5abe4ea3" kind="typedef"><name>Scalar</name></member>
+    <member refid="classclass__environment_1a0725c33415ae7840d1627b21d1b4ff03" kind="variable"><name>size</name></member>
+    <member refid="classclass__environment_1a1ce9291a9acb13da67af8f55ea4b234f" kind="variable"><name>block</name></member>
+    <member refid="classclass__environment_1ad46249a17a532c9289f8f82f37592356" kind="function"><name>class_environment</name></member>
+    <member refid="classclass__environment_1a3ac4db106f57332669ceaf370be9cde0" kind="function"><name>enlarge</name></member>
+  </compound>
+  <compound refid="classclass__environment__storage" kind="class"><name>class_environment_storage</name>
+    <member refid="classclass__environment__storage_1a66fb56369e90e50b7f66dd2c5e8b38b8" kind="typedef"><name>Scalar</name></member>
+    <member refid="classclass__environment__storage_1a2bf7b7d6451519628034e2c159839203" kind="variable"><name>G_list</name></member>
+    <member refid="classclass__environment__storage_1a30e03a5b6ecb2b62fd7c2e3ee15ffff2" kind="variable"><name>L_list</name></member>
+    <member refid="classclass__environment__storage_1ab5f12ee790581aa2ce4d7bfdc25e640b" kind="variable"><name>Lblock_list</name></member>
+    <member refid="classclass__environment__storage_1a8a88de4f7adbee515dcae710d36e7a81" kind="variable"><name>Rblock_list</name></member>
+    <member refid="classclass__environment__storage_1ac0efe9be05f9dcd754d2bca27b92a1db" kind="variable"><name>superblock</name></member>
+    <member refid="classclass__environment__storage_1af0946a2447fa522a174f440f0d901cb5" kind="variable"><name>hdf5</name></member>
+    <member refid="classclass__environment__storage_1a4ddd0da190341022462f4848e6b9416c" kind="variable"><name>max_length</name></member>
+    <member refid="classclass__environment__storage_1a9f9f69b124334b85d450106bc3117ae9" kind="variable"><name>position_L</name></member>
+    <member refid="classclass__environment__storage_1a2294b1fd9f02da72485ad0c2a9765098" kind="variable"><name>position_R</name></member>
+    <member refid="classclass__environment__storage_1abc6770f864d2dd29076fa46c9d5c398e" kind="variable"><name>max_length_is_set</name></member>
+    <member refid="classclass__environment__storage_1ae73fc1a0ab19e7408ea82938c2a3f362" kind="variable"><name>superblock_is_set</name></member>
+    <member refid="classclass__environment__storage_1aadea01154a7993932ed8f175faa88641" kind="variable"><name>hdf5_file_is_set</name></member>
+    <member refid="classclass__environment__storage_1a98e9c08936c076a36295ce5ee7ffb1f7" kind="function"><name>print_error_and_exit</name></member>
+    <member refid="classclass__environment__storage_1acbc1d73a80f2a17ff3e16855a622a64f" kind="function"><name>class_environment_storage</name></member>
+    <member refid="classclass__environment__storage_1a4697fac7059d4b7096e53a410bd694a3" kind="function"><name>class_environment_storage</name></member>
+    <member refid="classclass__environment__storage_1a933123c8757c035042091658361253f4" kind="function"><name>set_length</name></member>
+    <member refid="classclass__environment__storage_1a1937501bde4670237fc3ca4233b8b8e2" kind="function"><name>set_superblock</name></member>
+    <member refid="classclass__environment__storage_1a90967684076098400d0ff35a4b29439d" kind="function"><name>set_hdf5_file</name></member>
+    <member refid="classclass__environment__storage_1a4fb24583ad215b4bb924036a337bb10f" kind="function"><name>insert</name></member>
+    <member refid="classclass__environment__storage_1a063c458f0d6e99b6611ad03244985ea3" kind="function"><name>load</name></member>
+    <member refid="classclass__environment__storage_1a76a55f97099ca5329e650e16998fde07" kind="function"><name>overwrite_MPS</name></member>
+    <member refid="classclass__environment__storage_1a22ddeeb9bb7e292e8dfa98aeb5f6d0ec" kind="function"><name>move</name></member>
+    <member refid="classclass__environment__storage_1a9b8b190195d6afaac8f7fa94f42420e7" kind="function"><name>print_storage</name></member>
+  </compound>
+  <compound refid="classclass__environment__var" kind="class"><name>class_environment_var</name>
+    <member refid="classclass__environment__var_1a2480035eee605c15a6c3327e3f9498fb" kind="typedef"><name>Scalar</name></member>
+    <member refid="classclass__environment__var_1a725271b119c5a00a48078f7519663b16" kind="variable"><name>size</name></member>
+    <member refid="classclass__environment__var_1ab5008fbd87e8324ac44f0e4f295e5c14" kind="variable"><name>block</name></member>
+    <member refid="classclass__environment__var_1a6a06a75032b2559a81dc023d98c11642" kind="function"><name>class_environment_var</name></member>
+    <member refid="classclass__environment__var_1a2294bb2e9f07279a3f83b54c59c78135" kind="function"><name>enlarge</name></member>
+  </compound>
+  <compound refid="classclass__excited__state___d_m_r_g" kind="class"><name>class_excited_state_DMRG</name>
+    <member refid="classclass__excited__state___d_m_r_g_1a206fbebb90b577f12ea4ee1fc406199f" kind="variable"><name>chi_max</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a2ef2a65ee68499cd0683a50cb3e69d34" kind="variable"><name>max_length</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a29a3add24ef7150034aa5672f92f24f3" kind="variable"><name>print_freq</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a4c42a4fc92875d5fdf150c40ef71ac72" kind="variable"><name>max_sweeps</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1aeaeb23b3d5e6160b81f1abd6393f4ccd" kind="variable"><name>direction</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a05e7f343358b9edd22eb65a2e179074c" kind="variable"><name>sweep</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a7f55cc62d62f03b1e32fe69e533ab527" kind="variable"><name>position</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1aec25acb974197fb6a8b8a629bad728a2" kind="variable"><name>middle_of_chain</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1aaf6e371c6955c48b44b3b917e3333c38" kind="variable"><name>env_storage</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a7baea67991ce97a2e8fa954cfb5603d9" kind="function"><name>class_excited_state_DMRG</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1aa7dc9748d6b7f2ed0cef096a0f6f38b4" kind="function"><name>run</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1ac4e9da243be844a5323b5be152dc8a3a" kind="function"><name>env_storage_insert</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a21ed9a138fb73711f40b361aa7d2fcad" kind="function"><name>env_storage_load</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1aa3359696cbf25daf32f10cbf42c48457" kind="function"><name>env_storage_overwrite_MPS</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a6cd9491969bc16c0051faa0afbb1edc9" kind="function"><name>env_storage_move</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a3b1a9f46cf7bf6d4c119b32f3e39a159" kind="function"><name>print_status_full</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a17870ec85d13a7c433787c738bb0cbaf" kind="function"><name>print_status_update</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a1a51b9af27e0ae2b32e23d9afd49f0b2" kind="function"><name>store_table_entry</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a63786d117aee6d0e4ef5fd99e23ad12e" kind="function"><name>print_profiling</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__excited__state___d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
+  </compound>
+  <compound refid="classclass___f_e_s__i_d_m_r_g" kind="class"><name>class_FES_iDMRG</name>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1a95fe60a4bc3dc4f5c25d16934e028d6a" kind="variable"><name>chi_min</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1a4982d5bc1809680ac80ec10030df1c64" kind="variable"><name>chi_max</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1add279f4dc1ae6e5739548c3ecf39fae2" kind="variable"><name>chi_num</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1ab371552336985f48432bf4dbc98dfeea" kind="variable"><name>max_length</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1a4cfd8387f6f79a9efa349eb8239c3c76" kind="variable"><name>print_freq</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1a3ee373fbbd1f674d87b753960477bb34" kind="variable"><name>iteration</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1a861ed7b7f197fb88971428adc618ce6c" kind="function"><name>class_FES_iDMRG</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1af243e88dc3994e96c7c15439aeffb6c3" kind="function"><name>run</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1afc3fc5e65c800c71ae7d887b9ae799e5" kind="function"><name>run2</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1a689804d79bf42136291190a572cb77a5" kind="function"><name>print_status_full</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1ab539ff602037ae8453169d7e2b3c3939" kind="function"><name>print_status_update</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1a635d2cefb0a1ad82b4ca0516da1b1981" kind="function"><name>store_table_entry</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1a5a0524eb6a46eb5365022d4ff8716a60" kind="function"><name>print_profiling</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass___f_e_s__i_d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
+  </compound>
+  <compound refid="classclass___f_e_s__i_t_e_b_d" kind="class"><name>class_FES_iTEBD</name>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a72808b554c9b636818d132476be957be" kind="variable"><name>chi_min</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a70d8de0b758b5c002261a0d7694861e4" kind="variable"><name>chi_max</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a7d106c1df6a27ba08b9fda75e5d4c02b" kind="variable"><name>chi_num</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a42bb653f213ee07b02605b6468146e28" kind="variable"><name>max_steps</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1ab4966ca836c22c01e5126f71651c417d" kind="variable"><name>delta_t0</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a420e5c309f3acaadd2ac35dbdc10e6c3" kind="variable"><name>delta_tmin</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1aa50618a8a6075b4383b49576f4061e38" kind="variable"><name>print_freq</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1aba5bc7af92877380f637323a974a6eba" kind="variable"><name>suzuki_trotter_order</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1aad792b3b6a03e796c50b9f71cb922f11" kind="variable"><name>delta_t</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a4f024ec8f050dc01377c91d0706142ca" kind="variable"><name>iteration</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1ad71334df54a0dab8ac2e4c513be1c5e0" kind="function"><name>class_FES_iTEBD</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a4fee90754e2222b75e93000d1daea466" kind="function"><name>run</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1af83a79b7d6882e9633755f3f044109e8" kind="function"><name>run2</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a78dea9f588617416547d1dc5db4a4891" kind="function"><name>print_status_full</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a83c6c1174cb5c287561a360b1911e68b" kind="function"><name>print_status_update</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a857a1dd355a51d6834838623762381e0" kind="function"><name>store_table_entry</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1ac04fc2f39a021216503cb05ecd2e5db7" kind="function"><name>print_profiling</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
+  </compound>
+  <compound refid="classclass__file__reader" kind="class"><name>class_file_reader</name>
+    <member refid="classclass__file__reader_1a72d6ae12c3fb8ea4c93c59474d6af293" kind="variable"><name>file_path</name></member>
+    <member refid="classclass__file__reader_1a1266fbf9b3a4c3ecef270577e6687753" kind="variable"><name>file</name></member>
+    <member refid="classclass__file__reader_1ac5f9f78cb967d73e651ee31cb9c386e8" kind="variable"><name>ccout</name></member>
+    <member refid="classclass__file__reader_1a4f7b045dd91c15aa46cbb55df393d1c7" kind="function"><name>check_if_input_file_exists</name></member>
+    <member refid="classclass__file__reader_1addfafc89e0bdc2da935e21d8a359e55e" kind="function"><name>find_input_file</name></member>
+    <member refid="classclass__file__reader_1a7fb71a05c6f52d71a1fbb2f240cea8ce" kind="function"><name>remove_spaces</name></member>
+    <member refid="classclass__file__reader_1a2c6d6afe8ad456caad09fe1517d71cf3" kind="function"><name>has_only_digits</name></member>
+    <member refid="classclass__file__reader_1af7981ce6e1a59e94313dfde30cebac53" kind="function"><name>is_parameterline</name></member>
+    <member refid="classclass__file__reader_1a6a3bf28903acb0a1a857251b4417afb4" kind="function"><name>find_comment_character</name></member>
+    <member refid="classclass__file__reader_1ac46ecc83e4912e9b67a87b9268dd7983" kind="function"><name>class_file_reader</name></member>
+    <member refid="classclass__file__reader_1a387e18d4cf70cfffa940d3c333ec63f3" kind="function"><name>class_file_reader</name></member>
+    <member refid="classclass__file__reader_1aad5bf9f78a36517d962f66385681c6c8" kind="function"><name>find_parameter</name></member>
+    <member refid="classclass__file__reader_1a24f293b427746c46df8251670619c554" kind="function"><name>find_parameter</name></member>
+  </compound>
+  <compound refid="classclass__finite___d_m_r_g" kind="class"><name>class_finite_DMRG</name>
+    <member refid="classclass__finite___d_m_r_g_1a20b53996379f202a83710e259b8a527b" kind="variable"><name>chi_max</name></member>
+    <member refid="classclass__finite___d_m_r_g_1a707730f73d2df0b4c51e5062267ef301" kind="variable"><name>max_length</name></member>
+    <member refid="classclass__finite___d_m_r_g_1a059159bb19e543b07f7ee32163c3de42" kind="variable"><name>print_freq</name></member>
+    <member refid="classclass__finite___d_m_r_g_1aa062ceaebe5c7088534fc06b4fe5e56b" kind="variable"><name>max_sweeps</name></member>
+    <member refid="classclass__finite___d_m_r_g_1aafa58622778a2450159c3718b448b573" kind="variable"><name>direction</name></member>
+    <member refid="classclass__finite___d_m_r_g_1ad4a163624dfaf0f6bec30c372cabe65d" kind="variable"><name>sweep</name></member>
+    <member refid="classclass__finite___d_m_r_g_1aa46847adf0ac6d0242651ed744a3e379" kind="variable"><name>position</name></member>
+    <member refid="classclass__finite___d_m_r_g_1a7f2c1f66044c858d684e269ccb5e85bf" kind="variable"><name>middle_of_chain</name></member>
+    <member refid="classclass__finite___d_m_r_g_1aee2951a609f29ae90e066a96130ef719" kind="variable"><name>env_storage</name></member>
+    <member refid="classclass__finite___d_m_r_g_1a929a75ddf63fac4992c735ac1933dc19" kind="function"><name>class_finite_DMRG</name></member>
+    <member refid="classclass__finite___d_m_r_g_1a7afa8f68b9b027530ca11f692e70bbee" kind="function"><name>run</name></member>
+    <member refid="classclass__finite___d_m_r_g_1ac715d734d5bc8e31f76dd3ceeba282f2" kind="function"><name>env_storage_insert</name></member>
+    <member refid="classclass__finite___d_m_r_g_1a4e6c32f1de3607ca9e9449c53bba4c5c" kind="function"><name>env_storage_load</name></member>
+    <member refid="classclass__finite___d_m_r_g_1a8b2a480ae9c5cb880b44e32578739a93" kind="function"><name>env_storage_overwrite_MPS</name></member>
+    <member refid="classclass__finite___d_m_r_g_1a14f5a5ff23a5909e198ed14248fbca72" kind="function"><name>env_storage_move</name></member>
+    <member refid="classclass__finite___d_m_r_g_1aaca642ab63eb0c4dd8fd69989961d9fd" kind="function"><name>print_status_full</name></member>
+    <member refid="classclass__finite___d_m_r_g_1a0135fc5a5c286e59caab06ad52418091" kind="function"><name>print_status_update</name></member>
+    <member refid="classclass__finite___d_m_r_g_1afcbb939c4ea67a99c050251a675bd5af" kind="function"><name>store_table_entry</name></member>
+    <member refid="classclass__finite___d_m_r_g_1af59b91be2fe224e459002b44939d8fff" kind="function"><name>print_profiling</name></member>
+    <member refid="classclass__finite___d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__finite___d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__finite___d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
+  </compound>
+  <compound refid="classclass__hdf5__dataset__buffer" kind="class"><name>class_hdf5_dataset_buffer</name>
+    <member refid="classclass__hdf5__dataset__buffer_1ad6cf71bab03f4114bc6beb5ce6f26b1f" kind="variable"><name>hdf5_out</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a2d364279e01e8ab37d491f7e8d507012" kind="variable"><name>group_name</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1aa20ae4d7509f4f7cd342d29400f1921c" kind="variable"><name>iteration</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a2f76e275016ce275f4c9c8e05fd2698f" kind="variable"><name>dataset_name</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a1e1b5972126997fe987b078be4ce48a5" kind="variable"><name>attribute</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1ae79986300cba7d49bb57c57995e6407d" kind="variable"><name>attribute_name</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a210aab15a2f0d5b406f71c8cd2ccec6c" kind="variable"><name>attribute_set</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1ae6015a16ba760ab7e5baae036ef1dfc2" kind="variable"><name>pad_to_width</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a380347d08a1666cd68a9d67c17cee1b8" kind="variable"><name>max_elements</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a2c3164c868a4c70a44a4e0f8f3f8a29b" kind="variable"><name>dataset_relative_name</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a829a33fe2327cb4146c5543260134ac2" kind="variable"><name>data_has_been_written_to_file</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a7c41086a67d045050d10c543dcfbfbec" kind="function"><name>left_pad</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a70303b85ac99dbc38fc686ced2583bae" kind="function"><name>class_hdf5_dataset_buffer</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a02f8444798c778106014077b520a1057" kind="function"><name>class_hdf5_dataset_buffer</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a88f82bfaee3587a2cbd95175560f7331" kind="function"><name>class_hdf5_dataset_buffer</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1ab797f7a4b8ff1c13769590ca25584c9c" kind="function"><name>class_hdf5_dataset_buffer</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1ad5382fadc6019a72dff38a86580fede7" kind="function"><name>class_hdf5_dataset_buffer</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1af72a1adf1a6f706f562d5302bede008d" kind="function"><name>~class_hdf5_dataset_buffer</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1ab6603975e266ff33fec2414baafdc6c3" kind="function"><name>hdf5_set_group_name</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a8f6dafc1717d7c4eb37589e5a240d20c" kind="function"><name>hdf5_set_dataset_name</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a7f8b7c8f7545cd9c7dfa6dbc10c8f649" kind="function"><name>hdf5_set_iteration</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a7850b0f2a4d369dd5fe17b0d40bd3f07" kind="function"><name>hdf5_set_width</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1ab9e2bb551ff8c7a1735deef34b659729" kind="function"><name>hdf5_set_all</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1ab4dcf9cd34f6f0b7ea4763f992bdc936" kind="function"><name>hdf5_set_attribute</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a79f03106cae015fead610878b1cfe92f" kind="function"><name>hdf5_refresh_relative_name</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1a0a7e8b80f22d664fe148962d74cdcff7" kind="function"><name>write_buffer_to_file</name></member>
+    <member refid="classclass__hdf5__dataset__buffer_1aaf2169808d48711ddeabd6a3ab77f045" kind="function"><name>push_back</name></member>
+  </compound>
+  <compound refid="classclass__hdf5__file" kind="class"><name>class_hdf5_file</name>
+    <member refid="classclass__hdf5__file_1a421e66653cfff76f9f574cf549352f1d" kind="variable"><name>retval</name></member>
+    <member refid="classclass__hdf5__file_1ac91370574d6a1a9e03fb07549cf0eab2" kind="variable"><name>output_filename</name></member>
+    <member refid="classclass__hdf5__file_1a52d21aedde772dfe139f7ec050504af1" kind="variable"><name>output_folder</name></member>
+    <member refid="classclass__hdf5__file_1a9c5138b84ab82f7aa7964a52de6fb55d" kind="variable"><name>output_file_path</name></member>
+    <member refid="classclass__hdf5__file_1a85d0621b1189d5b7cff6e0da7874e48e" kind="variable"><name>create_dir</name></member>
+    <member refid="classclass__hdf5__file_1adf4df5784dd63f2e40b7b8c009067c2d" kind="variable"><name>overwrite</name></member>
+    <member refid="classclass__hdf5__file_1abfe2532e59969891cda8f1ed28b9df3d" kind="variable"><name>mpi_io</name></member>
+    <member refid="classclass__hdf5__file_1a8617eceb2b0804c36a4b0c76fe3c9d03" kind="variable"><name>ccout</name></member>
+    <member refid="classclass__hdf5__file_1af654bd65029816d5224c19baab22de37" kind="variable"><name>mpi_size</name></member>
+    <member refid="classclass__hdf5__file_1ae952177e083b45f6f23f15b5fe13f297" kind="variable"><name>mpi_rank</name></member>
+    <member refid="classclass__hdf5__file_1a8f06d166d3ce9b88c84732193003e82d" kind="variable"><name>plist_facc</name></member>
+    <member refid="classclass__hdf5__file_1a644b3884acaff89e0f2f158b77302810" kind="variable"><name>plist_xfer</name></member>
+    <member refid="classclass__hdf5__file_1a418b6363ecb17459a651b1947028057f" kind="variable"><name>plist_lncr</name></member>
+    <member refid="classclass__hdf5__file_1a3e6e3e89568f81ba394dfd40a0f3d7dc" kind="variable"><name>file</name></member>
+    <member refid="classclass__hdf5__file_1abc47df4aa80f2ca2d4b9b43a2b4b021e" kind="function"><name>set_output_file_path</name></member>
+    <member refid="classclass__hdf5__file_1a5b812763504d5a2634ed5995d4bd3698" kind="function"><name>initialize</name></member>
+    <member refid="classclass__hdf5__file_1a6566ab06d91097c8de23a8aa934a2792" kind="function"><name>initialize_mpi</name></member>
+    <member refid="classclass__hdf5__file_1a4379238138083e3c8db11cc875f9d65b" kind="function"><name>extend_dataset</name></member>
+    <member refid="classclass__hdf5__file_1a5890ded75fdc142ce07462342280087c" kind="function"><name>create_dataset_link</name></member>
+    <member refid="classclass__hdf5__file_1a0680dc51b0e4b23a0ef86d05adcd0b7d" kind="function"><name>create_dataset_link</name></member>
+    <member refid="classclass__hdf5__file_1a36bc85032ec1cf5d188f8f7f69cc8c74" kind="function"><name>select_hyperslab</name></member>
+    <member refid="classclass__hdf5__file_1a3d73753284cf54ce27184ed94424b4a5" kind="function"><name>get_DataType</name></member>
+    <member refid="classclass__hdf5__file_1a00ba17d356ce838fa82f9d1a72bade88" kind="function"><name>get_Size</name></member>
+    <member refid="classclass__hdf5__file_1a5d9c5b4c5b782741cc8d9f3899297ecf" kind="function"><name>get_Rank</name></member>
+    <member refid="classclass__hdf5__file_1a75d29a663a7118383093e5257f4dda73" kind="function"><name>get_DataSpace_unlimited</name></member>
+    <member refid="classclass__hdf5__file_1aff11608520f9b7348cbfd26b9861a5d2" kind="function"><name>get_MemSpace</name></member>
+    <member refid="classclass__hdf5__file_1a408e9e521aa12bddaf442d83c8cef4e4" kind="function"><name>set_ChunkDims</name></member>
+    <member refid="classclass__hdf5__file_1a1ce1ed600be43869880fc75198e4ed32" kind="function"><name>class_hdf5_file</name></member>
+    <member refid="classclass__hdf5__file_1a85a21be57364715f399d4af11bfb454d" kind="function"><name>class_hdf5_file</name></member>
+    <member refid="classclass__hdf5__file_1af16bdc7c02f6e929a5109a9246ca899b" kind="function"><name>~class_hdf5_file</name></member>
+    <member refid="classclass__hdf5__file_1aa63c25dbecd82d3a26bd8864c5480e9f" kind="function"><name>extend_dataset</name></member>
+    <member refid="classclass__hdf5__file_1a0983608b054f0cb7ecd6f30a5d7165f4" kind="function"><name>create_group_link</name></member>
+    <member refid="classclass__hdf5__file_1afb716055cac393bad540f4c9a49fc8a0" kind="function"><name>create_group_link</name></member>
+    <member refid="classclass__hdf5__file_1a39abe773ac423910b6b3983d32739989" kind="function"><name>write_dataset</name></member>
+    <member refid="classclass__hdf5__file_1a054cd1efcff405affd62c94f0ba9827c" kind="function"><name>read_dataset</name></member>
+    <member refid="classclass__hdf5__file_1ab11e6cc1cfbe9c90ebce173d1a4388b0" kind="function"><name>write_attribute_to_dataset</name></member>
+    <member refid="classclass__hdf5__file_1a2b5f7e37cabdff664cc52984da4afee8" kind="function"><name>write_attribute_to_group</name></member>
+  </compound>
+  <compound refid="classclass__hdf5__table__buffer" kind="class"><name>class_hdf5_table_buffer</name>
+    <member refid="classclass__hdf5__table__buffer_1aa8ac3c02e80ab9047f6577081e76dfec" kind="variable"><name>hdf5_out</name></member>
+    <member refid="classclass__hdf5__table__buffer_1aebf5557f50b72bfbf7a381cd872b8152" kind="variable"><name>meta</name></member>
+    <member refid="classclass__hdf5__table__buffer_1a05e68b284fbcb0e290a4a85d3a012864" kind="variable"><name>group_name</name></member>
+    <member refid="classclass__hdf5__table__buffer_1ad5912ec4d4fdc45e6e954adc7f68f849" kind="variable"><name>table_name</name></member>
+    <member refid="classclass__hdf5__table__buffer_1a8f1ee73c716a676d08458f850e332d04" kind="variable"><name>table_path</name></member>
+    <member refid="classclass__hdf5__table__buffer_1a151494bb950897df9eebfbaf428104e2" kind="variable"><name>recorded_elements</name></member>
+    <member refid="classclass__hdf5__table__buffer_1abd3991a9ad1fe1f73b4e569914b70efe" kind="variable"><name>buffer_is_empty</name></member>
+    <member refid="classclass__hdf5__table__buffer_1ad5bfb2e7a404f6d6d534efd4170e3cb2" kind="variable"><name>table_is_ready</name></member>
+    <member refid="classclass__hdf5__table__buffer_1a70bc59967518b4466692fd6cdb5c722c" kind="variable"><name>mpi_on</name></member>
+    <member refid="classclass__hdf5__table__buffer_1a82a1fc0b74243b736c8d0d72934899d1" kind="function"><name>class_hdf5_table_buffer</name></member>
+    <member refid="classclass__hdf5__table__buffer_1a71ad1ad36ae7575f5c4f841376cc4ee5" kind="function"><name>class_hdf5_table_buffer</name></member>
+    <member refid="classclass__hdf5__table__buffer_1a32f8c2d9b9b2c26b54ac80e3ad1e4c17" kind="function"><name>class_hdf5_table_buffer</name></member>
+    <member refid="classclass__hdf5__table__buffer_1ab5a6460e0eb0aed00c999a4a25db0259" kind="function"><name>class_hdf5_table_buffer</name></member>
+    <member refid="classclass__hdf5__table__buffer_1aabf4d1b2556c732a82fa75d343eda1b3" kind="function"><name>initialize_table</name></member>
+    <member refid="classclass__hdf5__table__buffer_1af9449f0009e6cb714ac36a18b902c75e" kind="function"><name>write_buffer_to_file</name></member>
+    <member refid="classclass__hdf5__table__buffer_1a1766b77f12496c01ad8edd4e4ddc0256" kind="function"><name>~class_hdf5_table_buffer</name></member>
+  </compound>
+  <compound refid="classclass__imaginary___t_e_b_d" kind="class"><name>class_imaginary_TEBD</name>
+    <member refid="classclass__imaginary___t_e_b_d_1ab51bd56adf5b933e2cefee4f892c5356" kind="variable"><name>chi_max</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a7c4c21ad13cc87df5cdd83a5e7caf4d9" kind="variable"><name>max_steps</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a39537978d66b4dfd1b7cd39d678c8d7d" kind="variable"><name>delta_t0</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1abaed4fb640f15e97d7fcfa1484b387b6" kind="variable"><name>delta_tmin</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1af9a2f04e142d55bb7c6193b8bdd973ec" kind="variable"><name>print_freq</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a6b12630781f88f7f14e253b8da4a5bae" kind="variable"><name>delta_t</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a9bf8d16ae5bdcd46834a6b1d938ee41d" kind="variable"><name>iteration</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a837353d7cfe120bfd59c4e4228de9ab6" kind="variable"><name>phys_time</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a8cf78b0c001203138befc3a267e6b55e" kind="variable"><name>old_entropy</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a2a72e4c4a212abc37382a3bda4895a91" kind="variable"><name>new_entropy</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1ad5b3b22f6b0d8164510388f19829643c" kind="function"><name>class_imaginary_TEBD</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a341508aaa8498c1defe8c9f7383945e7" kind="function"><name>reduce_timestep</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1ac038c83d5c2a802686abaa9bf673b005" kind="function"><name>run</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1ac9faffebd11a7530016378550104b497" kind="function"><name>print_status_full</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a0e1fd656e8273dd071dae8c679d72699" kind="function"><name>print_status_update</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a2fbbcb78748a27ed86cbbb4adca95345" kind="function"><name>store_table_entry</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a64b56b73bb96ad96fbd271a1765c54b6" kind="function"><name>print_profiling</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__imaginary___t_e_b_d_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
+  </compound>
+  <compound refid="classclass__infinite___d_m_r_g" kind="class"><name>class_infinite_DMRG</name>
+    <member refid="classclass__infinite___d_m_r_g_1a8eb15ce418a7fa8ba36f11086a73ba89" kind="variable"><name>chi_max</name></member>
+    <member refid="classclass__infinite___d_m_r_g_1a8615c4b3b1dd01d24e686a4e96d7149b" kind="variable"><name>max_length</name></member>
+    <member refid="classclass__infinite___d_m_r_g_1ae47c6add54afe6fe6dc821630ff0e6b2" kind="variable"><name>print_freq</name></member>
+    <member refid="classclass__infinite___d_m_r_g_1a50df7f3198408d20e0e5505f317920b3" kind="variable"><name>iteration</name></member>
+    <member refid="classclass__infinite___d_m_r_g_1a97aa7e64d385b7b27506ed81c0bda759" kind="function"><name>class_infinite_DMRG</name></member>
+    <member refid="classclass__infinite___d_m_r_g_1a42b5db2f3ca0a4b5dfc3f8b67f8badf3" kind="function"><name>run</name></member>
+    <member refid="classclass__infinite___d_m_r_g_1ace9dd62c05d408a18d2eebcc418372e4" kind="function"><name>print_status_full</name></member>
+    <member refid="classclass__infinite___d_m_r_g_1a69c7a5325d1fa316b98e726373514d77" kind="function"><name>print_status_update</name></member>
+    <member refid="classclass__infinite___d_m_r_g_1af5945b9b1164b8575d8983a75bca3233" kind="function"><name>store_table_entry</name></member>
+    <member refid="classclass__infinite___d_m_r_g_1a681cc5ac0cea05193138bb30b7c7a790" kind="function"><name>print_profiling</name></member>
+    <member refid="classclass__infinite___d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__infinite___d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__infinite___d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
+  </compound>
+  <compound refid="classclass__measurement" kind="class"><name>class_measurement</name>
+    <member refid="classclass__measurement_1a091cbeeb0748e2b35450943006fdf25a" kind="typedef"><name>Scalar</name></member>
+    <member refid="classclass__measurement_1a008eb2eef22d635ec569b7ac94f14840" kind="variable"><name>superblock</name></member>
+    <member refid="classclass__measurement_1a55863a6ce740a6271a168cd916a78404" kind="variable"><name>ccout</name></member>
+    <member refid="classclass__measurement_1acd25e3f13f2c4dd39ad866c241adf848" kind="variable"><name>sim</name></member>
+    <member refid="classclass__measurement_1a66bdf26b1fcb15ae3ad3545c1c4e686f" kind="variable"><name>variance1</name></member>
+    <member refid="classclass__measurement_1a055480ec3e9a2794070a40568db0698b" kind="variable"><name>variance2</name></member>
+    <member refid="classclass__measurement_1a83d9e62bbbdedb60bd8eb8a0a3ff182a" kind="variable"><name>variance3</name></member>
+    <member refid="classclass__measurement_1a4bb2e3bce2982dd529c9c87bd984df80" kind="function"><name>first_moment</name></member>
+    <member refid="classclass__measurement_1a79ee243a034a38491931bab090012cfe" kind="function"><name>class_measurement</name></member>
+    <member refid="classclass__measurement_1aa937c9d7659a102fa58821799ebfb534" kind="function"><name>get_expectationvalue</name></member>
+    <member refid="classclass__measurement_1af850d26831aa946a88646d8e7ee0efaf" kind="function"><name>get_expectationvalue</name></member>
+    <member refid="classclass__measurement_1ae3c7abd82abb831b7a7519a46d2ed75f" kind="function"><name>get_expectationvalue_sq</name></member>
+    <member refid="classclass__measurement_1a28af4f67e1d5bb5938a068afd28dde1c" kind="function"><name>get_expectationvalue_sq</name></member>
+    <member refid="classclass__measurement_1a62aaca25f45b1d5548974f3149c147b2" kind="function"><name>get_energy</name></member>
+    <member refid="classclass__measurement_1a73e89873bd33e9749b3ffc46679ad1ba" kind="function"><name>get_entropy</name></member>
+    <member refid="classclass__measurement_1a45614ac23314d7088810aaaedc4acde8" kind="function"><name>get_variance</name></member>
+    <member refid="classclass__measurement_1afccc947a39a980866ceec2122409a6a1" kind="function"><name>get_variance1</name></member>
+    <member refid="classclass__measurement_1a7b8f6cf52a773b030a8eb0296f11a34c" kind="function"><name>get_variance2</name></member>
+    <member refid="classclass__measurement_1a924851137b094fc95bb6e910ed99d107" kind="function"><name>get_variance3</name></member>
+    <member refid="classclass__measurement_1a27fe622ef8c7af31b631a7ea3f37aa44" kind="function"><name>get_truncation_error</name></member>
+    <member refid="classclass__measurement_1a9755aba9df4f55f90267c5d3937f49d4" kind="function"><name>get_second_cumulant</name></member>
+    <member refid="classclass__measurement_1a39cf00157961886c5383114832d7bc49" kind="function"><name>get_chi</name></member>
+    <member refid="classclass__measurement_1af9b1c1f1de39cbb5d33781d62bb54e21" kind="function"><name>get_chain_length</name></member>
+  </compound>
+  <compound refid="classclass__mpo" kind="class"><name>class_mpo</name>
+    <member refid="classclass__mpo_1a3ed02a21741a381d5ca31135c74acf59" kind="typedef"><name>Scalar</name></member>
+    <member refid="classclass__mpo_1ac30d2d197c8d224851eb3a5c81830337" kind="variable"><name>mps_sites</name></member>
+    <member refid="classclass__mpo_1a71ef3d91fdb8d3c5caaf4e6cd6392758" kind="variable"><name>local_dimension</name></member>
+    <member refid="classclass__mpo_1a15a7017ed98ff537490588d48aeb1ef1" kind="variable"><name>timestep</name></member>
+    <member refid="classclass__mpo_1acfe94449145225a344ad6afda4a09350" kind="variable"><name>H_asMatrix</name></member>
+    <member refid="classclass__mpo_1a8e1f686a4679aa25030ce4a898ddd7b7" kind="variable"><name>H_asTensor</name></member>
+    <member refid="classclass__mpo_1a5ca23eb06dbe0ff2d1e5d60bd4af0f9c" kind="variable"><name>H_MPO_asMatrix</name></member>
+    <member refid="classclass__mpo_1a1fd21a8ea99ac335f970c66cdd55856a" kind="variable"><name>H_MPO_asTensor2</name></member>
+    <member refid="classclass__mpo_1a582e2717f54c0676ff03dbcc72fcd6fb" kind="variable"><name>Udt</name></member>
+    <member refid="classclass__mpo_1abd3a2d3c057fdbb521be975d029aa3a7" kind="variable"><name>M</name></member>
+    <member refid="classclass__mpo_1a7c5055d4ce08d5e461df4e80fdc38bf4" kind="variable"><name>MM</name></member>
+    <member refid="classclass__mpo_1aa989d3848fc845e42e9d21aebfb3d73c" kind="variable"><name>F</name></member>
+    <member refid="classclass__mpo_1ac3ee154cd599b98f049c20ac376c6bce" kind="variable"><name>G</name></member>
+    <member refid="classclass__mpo_1a3cf0d89436080353b4d0f29cf4057a2f" kind="variable"><name>h</name></member>
+    <member refid="classclass__mpo_1a99259f681763912dc3e2649f6c8321e3" kind="function"><name>class_mpo</name></member>
+    <member refid="classclass__mpo_1a295a3733385636498cb8f396b9fad6ae" kind="function"><name>compute_F</name></member>
+    <member refid="classclass__mpo_1aa2ece23d469fa8c767c9ea5c8860be25" kind="function"><name>compute_G</name></member>
+    <member refid="classclass__mpo_1ae760d46427e544650d293b78c63da7ac" kind="function"><name>compute_logG</name></member>
+    <member refid="classclass__mpo_1a8204eaaf9babb68ecc7f898a5754abbd" kind="function"><name>update_timestep</name></member>
+    <member refid="classclass__mpo_1a5450ee9d9509be73bfc56ca4e29abd66" kind="function"><name>compute_M</name></member>
+    <member refid="classclass__mpo_1af6563d2f879bd6e44783f754746d81ae" kind="function"><name>compute_MM</name></member>
+    <member refid="classclass__mpo_1a99756bdfb6cbf9d98490c5f2e991843a" kind="function"><name>Suzuki_Trotter_1st_order</name></member>
+    <member refid="classclass__mpo_1a67aecb779286e3f742b9f23a0fc32731" kind="function"><name>Suzuki_Trotter_2nd_order</name></member>
+    <member refid="classclass__mpo_1a2db528848e1677dcadd555dfe7a36ad8" kind="function"><name>TimeEvolution_1st_order</name></member>
+    <member refid="classclass__mpo_1ab2477b88b10c41e29cfb00bbcd43c281" kind="function"><name>TimeEvolution_2nd_order</name></member>
+    <member refid="classclass__mpo_1a579da1bab92287c19e7497760db8fa61" kind="function"><name>TimeEvolution_4th_order</name></member>
+    <member refid="classclass__mpo_1aa84d310e5561c1872e2cddc056f0dd84" kind="function"><name>compute_Udt</name></member>
+  </compound>
+  <compound refid="classclass__mps" kind="class"><name>class_mps</name>
+    <member refid="classclass__mps_1a2aa011fd39f548fca7e3f46ccee15def" kind="typedef"><name>Scalar</name></member>
+    <member refid="classclass__mps_1a5c50f08af3b2f4bbd4aaeb4a1c8c88f3" kind="variable"><name>local_dimension</name></member>
+    <member refid="classclass__mps_1a267c868d49a5bdb1d36382c0cf7d4e2c" kind="variable"><name>tmp3</name></member>
+    <member refid="classclass__mps_1a502c37bf1f3118c1371530bf1adcf71e" kind="variable"><name>tmp1</name></member>
+    <member refid="classclass__mps_1a75edf60c4a68a4ae2aa8f9014a106ab7" kind="variable"><name>swapped</name></member>
+    <member refid="classclass__mps_1a02186fbc3b68d6c524c483fa7f9d1da7" kind="variable"><name>GA</name></member>
+    <member refid="classclass__mps_1a90f7034eef4c6cba916dec77704d81fc" kind="variable"><name>GB</name></member>
+    <member refid="classclass__mps_1aef24f4c0d05044b169c76b781566ab81" kind="variable"><name>LA</name></member>
+    <member refid="classclass__mps_1a6a6ec148213e5e0a3777907aace69c5f" kind="variable"><name>LB</name></member>
+    <member refid="classclass__mps_1af8e0a279018e8dfb0ac16d6796168d9f" kind="variable"><name>L_tail</name></member>
+    <member refid="classclass__mps_1ad0be4d483d488807f4f5a49e1152fbb1" kind="function"><name>class_mps</name></member>
+    <member refid="classclass__mps_1a9fd08b87e2b6e7aed019b7eff3b2f892" kind="function"><name>initialize</name></member>
+    <member refid="classclass__mps_1ad2663b4931bd182710c94381e56a0aba" kind="function"><name>swap_AB</name></member>
+    <member refid="classclass__mps_1a55418d0ef5c02f5994e71c5a5490bff7" kind="function"><name>A</name></member>
+    <member refid="classclass__mps_1ac1818f73ca75e2f9434026577fc26173" kind="function"><name>B</name></member>
+    <member refid="classclass__mps_1a07d06716141ae3782195819dfdc21057" kind="function"><name>thetaL</name></member>
+    <member refid="classclass__mps_1af2de9e983db0ded95e79ef2cb9ebcf17" kind="function"><name>thetaR</name></member>
+    <member refid="classclass__mps_1a1501eb3c7b6c476f119083c46e3ebec2" kind="function"><name>get_theta</name></member>
+    <member refid="classclass__mps_1a50c7a2e6f49fcc0c9b21458686fb9b2d" kind="function"><name>get_transfer_matrix_L</name></member>
+    <member refid="classclass__mps_1aa9f900c83b1b616e51c07777ad911802" kind="function"><name>get_transfer_matrix_R</name></member>
+    <member refid="classclass__mps_1afc148bceb2440b590b67eb390c5b816c" kind="function"><name>get_transfer_2_site_matrix_L</name></member>
+    <member refid="classclass__mps_1a6f59773603d4758e7bd3a0c9324f9db9" kind="function"><name>get_transfer_2_site_matrix_R</name></member>
+    <member refid="classclass__mps_1acf0d9b2ef0d19b23e84c2368991e1133" kind="function"><name>get_transfer_matrix_L</name></member>
+    <member refid="classclass__mps_1aead23a354e773808a852458f9fcf13c7" kind="function"><name>get_transfer_matrix_R</name></member>
+    <member refid="classclass__mps_1a8b319bb371a1c106c22da8b44be058a9" kind="function"><name>get_transfer_2_site_matrix_L</name></member>
+    <member refid="classclass__mps_1a4008612d0f5d8478e672a1d4b4fb5f77" kind="function"><name>get_transfer_2_site_matrix_R</name></member>
+    <member refid="classclass__mps_1af47f06843d76ee8ba33f881b45f031c1" kind="function"><name>get_transfer_2_site_matrix_L</name></member>
+    <member refid="classclass__mps_1a3a9a6bd31b810041ca5f21d2a9f23748" kind="function"><name>get_transfer_2_site_matrix_R</name></member>
+  </compound>
+  <compound refid="classclass__superblock" kind="class"><name>class_superblock</name>
+    <member refid="classclass__superblock_1a56d4a4106a815095ef5c89105d4ff287" kind="typedef"><name>Scalar</name></member>
+    <member refid="classclass__superblock_1a03a21b086702d83cc5f75b7a35fd83d5" kind="variable"><name>d</name></member>
+    <member refid="classclass__superblock_1a7bf25399b81febaaa6707e7d55ba8a0b" kind="variable"><name>chiL</name></member>
+    <member refid="classclass__superblock_1abdacc200bb18c46759ee8ffbcd1d70f7" kind="variable"><name>chiR</name></member>
+    <member refid="classclass__superblock_1a7b0238de885d864ce3d28a4a13e65551" kind="variable"><name>ground_state</name></member>
+    <member refid="classclass__superblock_1afb7e767c176df6b207c2a78e10970d95" kind="variable"><name>U</name></member>
+    <member refid="classclass__superblock_1a84e812ce631140ceeee7eb2192afd4d3" kind="variable"><name>V</name></member>
+    <member refid="classclass__superblock_1a2a9c5f435b13201f64738f26d40375d2" kind="variable"><name>Lblock</name></member>
+    <member refid="classclass__superblock_1a36d03535f7df76d9cb00748743e014c8" kind="variable"><name>Rblock</name></member>
+    <member refid="classclass__superblock_1a6b2b066d9b8a499e2bb092b451858ff3" kind="variable"><name>Lblock2</name></member>
+    <member refid="classclass__superblock_1add1eefac58364df3561113dafe2bd482" kind="variable"><name>Rblock2</name></member>
+    <member refid="classclass__superblock_1a6311468d07816822a4a0fa65d16b560e" kind="variable"><name>MPS</name></member>
+    <member refid="classclass__superblock_1a62f2a593385e4c4d91088accd8a7add7" kind="variable"><name>H</name></member>
+    <member refid="classclass__superblock_1a1e866c5bcf8537c249500c0d58fef7f3" kind="variable"><name>shape1</name></member>
+    <member refid="classclass__superblock_1ac333ff492b1b5247af7f0f8b748361e6" kind="variable"><name>shape2</name></member>
+    <member refid="classclass__superblock_1acd07373f6ee47fdd21fb38cb589b6c1c" kind="variable"><name>shape4</name></member>
+    <member refid="classclass__superblock_1a32afcea00a52d8f6b8c7aa43232132c9" kind="variable"><name>chi</name></member>
+    <member refid="classclass__superblock_1afbd0a610ef1f028520d7d5c6978d486b" kind="variable"><name>truncation_error</name></member>
+    <member refid="classclass__superblock_1a732fbb587f8b73e2bdb7b610f38a65b3" kind="variable"><name>chain_length</name></member>
+    <member refid="classclass__superblock_1aac2441d35e723218058d8e591dc0937f" kind="function"><name>class_superblock</name></member>
+    <member refid="classclass__superblock_1abfdbb85192198cdae650cbd60f01571a" kind="function"><name>find_ground_state</name></member>
+    <member refid="classclass__superblock_1a3048f4e93977cdf7ab507818c76ef4f4" kind="function"><name>time_evolve</name></member>
+    <member refid="classclass__superblock_1a7e372f4d5721a1d41175bc99359aaf9b" kind="function"><name>truncate</name></member>
+    <member refid="classclass__superblock_1ae8df112baac53bd9ede08bc766b26fd5" kind="function"><name>update_MPS</name></member>
+    <member refid="classclass__superblock_1a2485636df110a965bf5c97e649df8777" kind="function"><name>enlarge_environment</name></member>
+    <member refid="classclass__superblock_1a8b26cc612d37120f8b7788d5a2177965" kind="function"><name>initialize</name></member>
+    <member refid="classclass__superblock_1aa1396bcaceb63f5af19e92d21b12c3d3" kind="function"><name>canonicalize_iMPS</name></member>
+    <member refid="classclass__superblock_1a55f9bffd8086196ae461056b13974cb2" kind="function"><name>canonicalize_iMPS_iterative</name></member>
+    <member refid="classclass__superblock_1abe0ca58bd3b1ba7ee12e8b3a617c2759" kind="function"><name>update_bond_dimensions</name></member>
+    <member refid="classclass__superblock_1a593c53eaa16bbb4dd67f4a9db95c821e" kind="function"><name>swap_AB</name></member>
+  </compound>
+  <compound refid="classclass___s_v_d" kind="class"><name>class_SVD</name>
+    <member refid="classclass___s_v_d_1a4891e69aca40bf3c5da8cf1d74cf9e63" kind="typedef"><name>MatrixType</name></member>
+    <member refid="classclass___s_v_d_1a501234314891e6c949e77bbec59efdcb" kind="typedef"><name>TensorTuple</name></member>
+    <member refid="classclass___s_v_d_1a32178b13edfad5edf804849414b392d8" kind="variable"><name>SVDThreshold</name></member>
+    <member refid="classclass___s_v_d_1aeb5e5609093e5128442beb8153ac33c1" kind="variable"><name>truncation_error</name></member>
+    <member refid="classclass___s_v_d_1a71d0194331693f9c928174d875f20b3a" kind="variable"><name>chi</name></member>
+    <member refid="classclass___s_v_d_1a32be6f974d98cd9473db94fc28580afa" kind="variable"><name>SVD</name></member>
+    <member refid="classclass___s_v_d_1a487d668b0da66c6eb55354a1d347f7fd" kind="function"><name>get_truncation_error</name></member>
+    <member refid="classclass___s_v_d_1a45aa52c93953edf911a16e10ad252a79" kind="function"><name>setThreshold</name></member>
+    <member refid="classclass___s_v_d_1a9186a17e30bde76abd70b201e27dea1b" kind="function"><name>decompose</name></member>
+    <member refid="classclass___s_v_d_1ae7077ee70d1301ed2575af0c26f07e3c" kind="function"><name>decompose</name></member>
+    <member refid="classclass___s_v_d_1a5f0160054cd7fd99fcf1f93b6a119218" kind="function"><name>schmidt</name></member>
+  </compound>
+  <compound refid="classclass__table__entry__meta" kind="class"><name>class_table_entry_meta</name>
+    <member refid="classclass__table__entry__meta_1a33d4d817c86e0a56097f649a01899ef8" kind="variable"><name>NFIELDS</name></member>
+    <member refid="classclass__table__entry__meta_1a8db729c26f846d23615426beec5f9299" kind="variable"><name>dst_size</name></member>
+    <member refid="classclass__table__entry__meta_1a6afb70e4273d78c7f2b6993740abefb4" kind="variable"><name>dst_offset</name></member>
+    <member refid="classclass__table__entry__meta_1ab6c8d3e981e163a89ef2873f2fe4fead" kind="variable"><name>dst_sizes</name></member>
+    <member refid="classclass__table__entry__meta_1a231d61a0b983af5167561efc864dc6c3" kind="variable"><name>field_names</name></member>
+    <member refid="classclass__table__entry__meta_1a380d65e210373e40587545f6ae4ca4f9" kind="variable"><name>field_type</name></member>
+    <member refid="classclass__table__entry__meta_1a79a10b687fd5e049bf501af8bd0a6da4" kind="variable"><name>string_type</name></member>
+    <member refid="classclass__table__entry__meta_1a1bec069a2500d1247b3ca892535e96d0" kind="variable"><name>chunk_size</name></member>
+    <member refid="classclass__table__entry__meta_1a47d20a7470d268ebf7a74413f9df130c" kind="variable"><name>fill_data</name></member>
+    <member refid="classclass__table__entry__meta_1aa395ea6bc55eaa0400b581a351c32955" kind="variable"><name>compress</name></member>
+    <member refid="classclass__table__entry__meta_1aa17a8a3934813eeeab24c91124fe0b81" kind="variable"><name>i</name></member>
+    <member refid="classclass__table__entry__meta_1aed0d28e238f688a61a8ec22f14105c06" kind="function"><name>class_table_entry_meta</name></member>
+  </compound>
+  <compound refid="classclass__tic__toc" kind="class"><name>class_tic_toc</name>
+    <member refid="classclass__tic__toc_1adc52ad4939a529cf6bcb2f21d5da7acd" kind="variable"><name>tic_timepoint</name></member>
+    <member refid="classclass__tic__toc_1ad66c8af4798c5763cd5db868c78eb452" kind="variable"><name>start_timepoint</name></member>
+    <member refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" kind="variable"><name>profiling</name></member>
+    <member refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" kind="variable"><name>print_precision</name></member>
+    <member refid="classclass__tic__toc_1a23a715898e5c4274888d2fd72d974e01" kind="variable"><name>name</name></member>
+    <member refid="classclass__tic__toc_1ad24ca3c43008fae9a0c70bf4bfe2f779" kind="variable"><name>padding</name></member>
+    <member refid="classclass__tic__toc_1aa7910bc2adf5c1a03542d3b880a104b2" kind="variable"><name>delta_time</name></member>
+    <member refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" kind="variable"><name>measured_time</name></member>
+    <member refid="classclass__tic__toc_1a5ebe2ca2214ed4f8953f9e484dc475bb" kind="function"><name>class_tic_toc</name></member>
+    <member refid="classclass__tic__toc_1ae3cbd6f54bc203a76f6d6d4c01077712" kind="function"><name>class_tic_toc</name></member>
+    <member refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kind="function"><name>set_properties</name></member>
+    <member refid="classclass__tic__toc_1abde6b7bfb08a9534a4a7d3d215232e14" kind="function"><name>set_label</name></member>
+    <member refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kind="function"><name>tic</name></member>
+    <member refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kind="function"><name>toc</name></member>
+    <member refid="classclass__tic__toc_1a4168168075a8e2998ce1138ceb06e59b" kind="function"><name>print_time</name></member>
+    <member refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" kind="function"><name>get_age</name></member>
+    <member refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kind="function"><name>print_time_w_percent</name></member>
+    <member refid="classclass__tic__toc_1a7353573b5c8c5ba4888892eb26b47859" kind="function"><name>print_time_w_percent</name></member>
+    <member refid="classclass__tic__toc_1a47731fce833ea5e35097f50ce0b84b21" kind="function"><name>print_delta</name></member>
+    <member refid="classclass__tic__toc_1af3ccb4e4f286036249748458fa653703" kind="function"><name>print_total_reset</name></member>
+    <member refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" kind="function"><name>reset</name></member>
+    <member refid="classclass__tic__toc_1a865195fe25d8d8c85bcc7c3301c3ceb6" kind="friend"><name>operator&lt;&lt;</name></member>
+  </compound>
+  <compound refid="class_math_1_1gsl__quad" kind="class"><name>Math::gsl_quad</name>
+    <member refid="class_math_1_1gsl__quad_1a9cba5695f611429d83c4ce29ad1700e1" kind="variable"><name>f</name></member>
+    <member refid="class_math_1_1gsl__quad_1a608383457d42327237c4c3de24bd2123" kind="variable"><name>limit</name></member>
+    <member refid="class_math_1_1gsl__quad_1adc7cd3b9570407c50d73f852acc1247a" kind="variable"><name>workspace</name></member>
+    <member refid="class_math_1_1gsl__quad_1af8090dd1a263ea88b73d508e60870fda" kind="function"><name>gsl_wrapper</name></member>
+    <member refid="class_math_1_1gsl__quad_1a871c78ede6e08a3bfa9f546600f4e3cd" kind="function"><name>gsl_quad</name></member>
+    <member refid="class_math_1_1gsl__quad_1a0c4ba9c992bd79a9c8d6c90d3ffc8d78" kind="function"><name>integrate</name></member>
+  </compound>
+  <compound refid="struct_textra_1_1idx__dim__pair" kind="struct"><name>Textra::idx_dim_pair</name>
+    <member refid="struct_textra_1_1idx__dim__pair_1a724ad0685bc57ca8644910f24799b2d4" kind="variable"><name>idxA</name></member>
+    <member refid="struct_textra_1_1idx__dim__pair_1a625920459b370f96b9180ae32b71363a" kind="variable"><name>idxB</name></member>
+    <member refid="struct_textra_1_1idx__dim__pair_1a46eef9b204465f51b17d74ecdd48dcc0" kind="variable"><name>dimB</name></member>
+  </compound>
+  <compound refid="struct_type_check_1_1is__instance__of" kind="struct"><name>TypeCheck::is_instance_of</name>
+  </compound>
+  <compound refid="struct_type_check_1_1is__instance__of_3_01_template_00_01_template_3_01_args_8_8_8_01_4_01_4" kind="struct"><name>TypeCheck::is_instance_of&lt; Template, Template&lt; Args... &gt; &gt;</name>
+  </compound>
+  <compound refid="structtable__entry" kind="struct"><name>table_entry</name>
+    <member refid="structtable__entry_1ae70cc95640ef066ae0310e061b4d24d4" kind="variable"><name>chi</name></member>
+    <member refid="structtable__entry_1a8c8a67c9034de9c78051dd51d545a664" kind="variable"><name>chi_max</name></member>
+    <member refid="structtable__entry_1a11bd9e762b98557d57c52dbb0bb0c530" kind="variable"><name>energy</name></member>
+    <member refid="structtable__entry_1a642198e7f0080901e09c8fbc4f596170" kind="variable"><name>entropy</name></member>
+    <member refid="structtable__entry_1a39c06c296856ef02674e066910a5e35e" kind="variable"><name>variance1</name></member>
+    <member refid="structtable__entry_1a229b2c0fcfb5dd6c585290778b2f6873" kind="variable"><name>variance2</name></member>
+    <member refid="structtable__entry_1ae1d4df86c779cb2f21f99dd4d0b2311c" kind="variable"><name>truncation_error</name></member>
+    <member refid="structtable__entry_1a5d16fc3d04a5e678b6bf5c21dc56a306" kind="variable"><name>iteration</name></member>
+    <member refid="structtable__entry_1a4669012a4446acc94f33f570f52bffb5" kind="variable"><name>chain_length</name></member>
+    <member refid="structtable__entry_1a4b38cfa4baa0fbcc8b5200f8c2349737" kind="variable"><name>time_step</name></member>
+    <member refid="structtable__entry_1a73da421f120ff1e736a482610edfc66d" kind="variable"><name>wall_time</name></member>
+    <member refid="structtable__entry_1a17593a71b6f0f47ebc6ba23fa2f1d962" kind="variable"><name>phys_time</name></member>
+    <member refid="structtable__entry_1a605fe761e147a0142bc3394b05d8b8d3" kind="function"><name>table_entry</name></member>
+  </compound>
+  <compound refid="namespacearpack" kind="namespace"><name>arpack</name>
+    <member refid="class__eig__arpack__wrapper_8h_1aef6a37581ed1987839290256a0b581cd" kind="enum"><name>Form</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1aef6a37581ed1987839290256a0b581cda161b3d9016563aba9ac190fc02ada9bb" kind="enumvalue"><name>SYMMETRIC</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1aef6a37581ed1987839290256a0b581cdab61773b9b3968a9988d765d728985862" kind="enumvalue"><name>GENERAL</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1aef6a37581ed1987839290256a0b581cda921a0157a6e61eebbaa0f713fdfbb0f7" kind="enumvalue"><name>COMPLEX</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1aea5db8fdc383c637633f2171736fc66e" kind="enum"><name>Side</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1aea5db8fdc383c637633f2171736fc66ead20caec3b48a1eef164cb4ca81ba2587" kind="enumvalue"><name>L</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1aea5db8fdc383c637633f2171736fc66eae1e1d3d40573127e9ee0480caf1283d6" kind="enumvalue"><name>R</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19e" kind="enum"><name>Ritz</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ea6b40fe07a0e5a93eef07242975e83ec1" kind="enumvalue"><name>LA</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ea3dd6b9265ff18f31dc30df59304b0ca7" kind="enumvalue"><name>SA</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19eadfd5b430bc4db2c2836d0227ad9ac0c4" kind="enumvalue"><name>LM</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ea4e0d4f6ce30646f5a3f3e2a7422c1c5a" kind="enumvalue"><name>SM</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ea90a7c45eaffbd575ca6fb361e6d170a4" kind="enumvalue"><name>LR</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ea8cb2010d27e13509d364436256e972c0" kind="enumvalue"><name>SR</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ea14efbb26a99dc4820b9928957704cb8f" kind="enumvalue"><name>LI</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19eace774d9cab3ae0bdf522cd0839bed364" kind="enumvalue"><name>SI</name></member>
+    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ead3dcf429c679f9af82eb9a3b31c4df44" kind="enumvalue"><name>BE</name></member>
+  </compound>
+  <compound refid="namespacechrono" kind="namespace"><name>chrono</name>
+  </compound>
+  <compound refid="namespace_eigen" kind="namespace"><name>Eigen</name>
+  </compound>
+  <compound refid="namespace_math" kind="namespace"><name>Math</name>
+    <member refid="namespace_math_1a3345264a3373e4542c7baf43f5e1b713" kind="function"><name>mod</name></member>
+    <member refid="namespace_math_1a30ec6673d6cc181cf3e16aad96978f0d" kind="function"><name>LinSpaced</name></member>
+    <member refid="namespace_math_1a55a57f4eef5ea3b56fd048142a35d677" kind="function"><name>prod</name></member>
+    <member refid="namespace_math_1a2ba7d258e03a17abf9707d1fdfd20995" kind="function"><name>ipow</name></member>
+    <member refid="namespace_math_1a7cd16bfbced6aa47dd31fd44474d07f0" kind="function"><name>compute_integral</name></member>
+  </compound>
+  <compound refid="namespace_model" kind="namespace"><name>Model</name>
+    <member refid="namespace_model_1af6938d6571c10a415cb4bd5bfdbe72eb" kind="variable"><name>J</name></member>
+    <member refid="namespace_model_1a582e9bbe9c861dc9090e250f5f35522d" kind="variable"><name>g</name></member>
+    <member refid="namespace_model_1a9373ce073c1c4c4c178ca26c04832825" kind="variable"><name>local_dimension</name></member>
+    <member refid="namespace_model_1a76650f18a98bc6c404d39a35179a88e3" kind="variable"><name>energy_exact</name></member>
+    <member refid="namespace_model_1ab53094eb25adb6962244a62863447d4b" kind="variable"><name>spins_must_be_generated</name></member>
+    <member refid="namespace_model_1afcb66405396954d734d89bd3f5ccc0df" kind="variable"><name>SX</name></member>
+    <member refid="namespace_model_1a3a842f60c5d2ab5afc1bc8363136ea5f" kind="variable"><name>SY</name></member>
+    <member refid="namespace_model_1ae48ac20c10b6d43cd50628db424e5644" kind="variable"><name>SZ</name></member>
+    <member refid="namespace_model_1a36b4ea0e1060b62e53eb99d35380aa1d" kind="function"><name>sx</name></member>
+    <member refid="namespace_model_1ae2817c4883235b6c0872160743f04556" kind="function"><name>sy</name></member>
+    <member refid="namespace_model_1a35a7d4a597cd97c98f6ce83092d20ffd" kind="function"><name>sz</name></member>
+    <member refid="namespace_model_1a0cffb3d08a1a94bc294862657027f5c0" kind="function"><name>I</name></member>
+    <member refid="namespace_model_1af5b2d6e20cdd5dc66493b8955fc77e3f" kind="function"><name>gen_manybody_spin</name></member>
+    <member refid="namespace_model_1ab1afed37e6ac9168cb2c1c9ba0119886" kind="function"><name>get_exact_energy</name></member>
+    <member refid="namespace_model_1aa76e3f2b09b78a2475667775a0e8ffe6" kind="function"><name>h</name></member>
+    <member refid="namespace_model_1a326557fe93a5d029d8cd43c4da0add1b" kind="function"><name>H</name></member>
+    <member refid="namespace_model_1aa6c9a44577b1eadbbc0a5ffce5b8c90f" kind="function"><name>MPO_asMatrix</name></member>
+    <member refid="namespace_model_1a0ffeabd0ba093c4492d1c38c48251e65" kind="function"><name>gen_manybody_spin</name></member>
+  </compound>
+  <compound refid="namespacesettings" kind="namespace"><name>settings</name>
+    <member refid="namespacesettings_1ae1b4e1c2644ce7203ef24caf6d79c63a" kind="function"><name>load_from_file</name></member>
+  </compound>
+  <compound refid="namespacesettings_1_1console" kind="namespace"><name>settings::console</name>
+    <member refid="n__sim__settings_8h_1a02a9fb6a3fdd5b0f91efffb35fb537fb" kind="variable"><name>verbosity</name></member>
+    <member refid="n__sim__settings_8h_1a82c11e45aadd82f57643ef3624d2e7be" kind="variable"><name>timestamp</name></member>
+  </compound>
+  <compound refid="namespacesettings_1_1fdmrg" kind="namespace"><name>settings::fdmrg</name>
+    <member refid="n__sim__settings_8h_1a0efc934acf5c066b92b26f6bbf6ec05a" kind="variable"><name>on</name></member>
+    <member refid="n__sim__settings_8h_1adfd5f775671270c1198c5efbbfbc5a28" kind="variable"><name>max_length</name></member>
+    <member refid="n__sim__settings_8h_1a9d91b1111b853c692cbd1cdf860fafaa" kind="variable"><name>max_sweeps</name></member>
+    <member refid="n__sim__settings_8h_1a591fd10b121c47245c0ededecc4fa238" kind="variable"><name>chi_max</name></member>
+    <member refid="n__sim__settings_8h_1a4fa3a9934449bfe0030c4b6ecdafe07e" kind="variable"><name>print_freq</name></member>
+  </compound>
+  <compound refid="namespacesettings_1_1fes__idmrg" kind="namespace"><name>settings::fes_idmrg</name>
+    <member refid="n__sim__settings_8h_1ac4abbaa610bde307e001a1067199aa33" kind="variable"><name>on</name></member>
+    <member refid="n__sim__settings_8h_1ad471f94a9df3a1d02c5b31ed93ab9efc" kind="variable"><name>max_length</name></member>
+    <member refid="n__sim__settings_8h_1a411e9666e7623c38a48e2bb3784e0687" kind="variable"><name>chi_min</name></member>
+    <member refid="n__sim__settings_8h_1a7c6f51b694d87b3ddc288dca4f847147" kind="variable"><name>chi_max</name></member>
+    <member refid="n__sim__settings_8h_1a3de88113809a8750636df5f40f7a845d" kind="variable"><name>chi_num</name></member>
+    <member refid="n__sim__settings_8h_1a8769689b4b228f91db0f99297afad3bb" kind="variable"><name>print_freq</name></member>
+  </compound>
+  <compound refid="namespacesettings_1_1fes__itebd" kind="namespace"><name>settings::fes_itebd</name>
+    <member refid="n__sim__settings_8h_1a49f96f008a6ad9c5ebc9b86f5747508c" kind="variable"><name>on</name></member>
+    <member refid="n__sim__settings_8h_1ab6c68580629ba83650334ca25584105d" kind="variable"><name>max_steps</name></member>
+    <member refid="n__sim__settings_8h_1a173110fae229e7ace160e82ee4e84db3" kind="variable"><name>delta_t0</name></member>
+    <member refid="n__sim__settings_8h_1aa5853d7419d19033ee66887e66d12e63" kind="variable"><name>delta_tmin</name></member>
+    <member refid="n__sim__settings_8h_1a5b0920dd210674c4add3c1185918c458" kind="variable"><name>suzuki_order</name></member>
+    <member refid="n__sim__settings_8h_1a4928faa4544443991798aed7a5d97f98" kind="variable"><name>chi_min</name></member>
+    <member refid="n__sim__settings_8h_1a20dbd7abd03418a01a1847a850270ce5" kind="variable"><name>chi_max</name></member>
+    <member refid="n__sim__settings_8h_1a4bcd924f1a0a7b246801b742b0f14fe8" kind="variable"><name>chi_num</name></member>
+    <member refid="n__sim__settings_8h_1af9584a5a2e0a91c043fcefaf41c5243a" kind="variable"><name>print_freq</name></member>
+  </compound>
+  <compound refid="namespacesettings_1_1hdf5" kind="namespace"><name>settings::hdf5</name>
+    <member refid="n__sim__settings_8h_1a6db7ee87d788619b5b0d9bd47dcb0cc5" kind="variable"><name>save_to_file</name></member>
+    <member refid="n__sim__settings_8h_1abe3ca3342dd4b5ea5f07c26bcda1c979" kind="variable"><name>create_dir_if_not_found</name></member>
+    <member refid="n__sim__settings_8h_1a8430e1ce7c6f9767a98a503c16affc3d" kind="variable"><name>overwrite_file_if_found</name></member>
+    <member refid="n__sim__settings_8h_1ab62dfa890c06ea5b0ea5dc3a42f263e4" kind="variable"><name>output_filename</name></member>
+    <member refid="n__sim__settings_8h_1adfab1988ea36f168aefc56bd9118e61a" kind="variable"><name>output_folder</name></member>
+    <member refid="n__sim__settings_8h_1a3872287c5b37f1bcbbaaf614f0bd29c7" kind="variable"><name>full_storage</name></member>
+  </compound>
+  <compound refid="namespacesettings_1_1idmrg" kind="namespace"><name>settings::idmrg</name>
+    <member refid="n__sim__settings_8h_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" kind="variable"><name>on</name></member>
+    <member refid="n__sim__settings_8h_1a51973513eb1623accef494463769a1ab" kind="variable"><name>max_length</name></member>
+    <member refid="n__sim__settings_8h_1a88a9f3be8ff1dcc89152591410c447d6" kind="variable"><name>chi_max</name></member>
+    <member refid="n__sim__settings_8h_1a55074bedfc07bbdb9b60c91194a5d25d" kind="variable"><name>print_freq</name></member>
+  </compound>
+  <compound refid="namespacesettings_1_1itebd" kind="namespace"><name>settings::itebd</name>
+    <member refid="n__sim__settings_8h_1ac4ff42bc0a7453d9c9fcf3cc6939db58" kind="variable"><name>on</name></member>
+    <member refid="n__sim__settings_8h_1adc3e7b7b47af4c0fd73587369ae6c2d1" kind="variable"><name>max_steps</name></member>
+    <member refid="n__sim__settings_8h_1afcba9beada5551c3da4c25a8376cd67f" kind="variable"><name>delta_t0</name></member>
+    <member refid="n__sim__settings_8h_1a6b6afcf2968c3cb071bc050b4e805085" kind="variable"><name>delta_tmin</name></member>
+    <member refid="n__sim__settings_8h_1a9ab41edc8a8f73a40977b6969865c644" kind="variable"><name>suzuki_order</name></member>
+    <member refid="n__sim__settings_8h_1aaca4efb978bd41af4ae870824351b5c6" kind="variable"><name>chi_max</name></member>
+    <member refid="n__sim__settings_8h_1aeb74ea89cbbfba318983932061ead184" kind="variable"><name>print_freq</name></member>
+  </compound>
+  <compound refid="namespacesettings_1_1precision" kind="namespace"><name>settings::precision</name>
+    <member refid="n__sim__settings_8h_1accb065fd8bbf4f13541fb236f0e820c1" kind="variable"><name>eigSteps</name></member>
+    <member refid="n__sim__settings_8h_1a83177d10f491bd1482cdca3132e4dfde" kind="variable"><name>eigThreshold</name></member>
+    <member refid="n__sim__settings_8h_1a50a5127ac5538542dcff0260921322bf" kind="variable"><name>eig_max_ncv</name></member>
+    <member refid="n__sim__settings_8h_1a79627ee70c6488a43b5ad3ca27caa92e" kind="variable"><name>SVDThreshold</name></member>
+  </compound>
+  <compound refid="namespacesettings_1_1profiling" kind="namespace"><name>settings::profiling</name>
+    <member refid="n__sim__settings_8h_1abc2a7232a0529e490a87f5b7b4a22aa7" kind="variable"><name>on</name></member>
+    <member refid="n__sim__settings_8h_1a718d6ee20e4c229c892443fbef59c192" kind="variable"><name>precision</name></member>
+  </compound>
+  <compound refid="namespace_spectra" kind="namespace"><name>Spectra</name>
+    <member refid="class__eig__spectra__wrapper_8h_1ab3142ee3cbf48dfc8c430524562e170c" kind="enum"><name>Form</name></member>
+    <member refid="class__eig__spectra__wrapper_8h_1ab3142ee3cbf48dfc8c430524562e170ca161b3d9016563aba9ac190fc02ada9bb" kind="enumvalue"><name>SYMMETRIC</name></member>
+    <member refid="class__eig__spectra__wrapper_8h_1ab3142ee3cbf48dfc8c430524562e170cab61773b9b3968a9988d765d728985862" kind="enumvalue"><name>GENERAL</name></member>
+    <member refid="class__eig__spectra__wrapper_8h_1a44151e8ab86148823f3ac1dab11f5f96" kind="enum"><name>Side</name></member>
+    <member refid="class__eig__spectra__wrapper_8h_1a44151e8ab86148823f3ac1dab11f5f96ad20caec3b48a1eef164cb4ca81ba2587" kind="enumvalue"><name>L</name></member>
+    <member refid="class__eig__spectra__wrapper_8h_1a44151e8ab86148823f3ac1dab11f5f96ae1e1d3d40573127e9ee0480caf1283d6" kind="enumvalue"><name>R</name></member>
+    <member refid="class__eig__spectra__wrapper_8h_1ac6fcf354e30571190b6624b0991026b4" kind="typedef"><name>Ritz</name></member>
+  </compound>
+  <compound refid="namespacestd" kind="namespace"><name>std</name>
+  </compound>
+  <compound refid="namespacestd_1_1complex__literals" kind="namespace"><name>std::complex_literals</name>
+  </compound>
+  <compound refid="namespace_textra" kind="namespace"><name>Textra</name>
+    <member refid="namespace_textra_1ad59ad423ffe2196e1b92b0d85e2eff0f" kind="typedef"><name>cdouble</name></member>
+    <member refid="namespace_textra_1a7db6974446758b79bad26e168a8daa78" kind="typedef"><name>MatrixType</name></member>
+    <member refid="namespace_textra_1a358a270e8b355388963a513bd6617131" kind="typedef"><name>VectorType</name></member>
+    <member refid="namespace_textra_1ac05ac79c4e225739a3c4b44fb5b577df" kind="typedef"><name>array</name></member>
+    <member refid="namespace_textra_1ac4ea1d05edf6f909513a8ec4af87880a" kind="typedef"><name>idxlistpair</name></member>
+    <member refid="namespace_textra_1a10f3538b95c4cbb49de58e66b2f567e7" kind="typedef"><name>array8</name></member>
+    <member refid="namespace_textra_1ac3a3122d06a20ecb2be3789b4c396633" kind="typedef"><name>array7</name></member>
+    <member refid="namespace_textra_1accfb4fc520dc9a420a8a272f0d31c613" kind="typedef"><name>array6</name></member>
+    <member refid="namespace_textra_1aa5d67eec58bb02c58a5abb4446fd2e62" kind="typedef"><name>array5</name></member>
+    <member refid="namespace_textra_1af66a1cb409abbc5dcc3ddef03d8f9043" kind="typedef"><name>array4</name></member>
+    <member refid="namespace_textra_1abf5e9be455f15ce199b2240678183aaa" kind="typedef"><name>array3</name></member>
+    <member refid="namespace_textra_1a0caeb138a8ea11cca9cd571e5b4b9c83" kind="typedef"><name>array2</name></member>
+    <member refid="namespace_textra_1a95357bf0fb199a2918cecc55e91cfa18" kind="typedef"><name>array1</name></member>
+    <member refid="namespace_textra_1aeeebf1fada3ec948aed241964a817e60" kind="variable"><name>listA</name></member>
+    <member refid="namespace_textra_1abf8500921b847eaabf696d62d0bc26d8" kind="variable"><name>listB</name></member>
+    <member refid="namespace_textra_1a6d54a6c10c193a09b70086e742757b1a" kind="variable"><name>itlistA</name></member>
+    <member refid="namespace_textra_1a76f445785a86d738f81457aeced04dca" kind="variable"><name>itlistB</name></member>
+    <member refid="namespace_textra_1ab2f1697bc0c01cb4c9ac665c5fb66d0a" kind="variable"><name>pairlistOut</name></member>
+    <member refid="namespace_textra_1a01465576ae77ad18c57ee1beba43e5f5" kind="variable"><name>tensor</name></member>
+    <member refid="namespace_textra_1a903297cb5c5ac23d525ca9f20887db04" kind="variable"><name>dims</name></member>
+    <member refid="namespace_textra_1a4436c63f9bf9159556dadb1027113122" kind="variable"><name>rows</name></member>
+    <member refid="namespace_textra_1a0c773f072ed665da6d780aa68d062f78" kind="variable"><name>cols</name></member>
+    <member refid="namespace_textra_1a6a759e207942a6258b8f42d58d527f19" kind="function"><name>idx</name></member>
+    <member refid="namespace_textra_1a9a9c6059354746763139ef723a31ed6d" kind="function"><name>__attribute__</name></member>
+    <member refid="namespace_textra_1a8487fbbe5e103d6b3f325f128dd28453" kind="function"><name>for</name></member>
+    <member refid="namespace_textra_1aa4467bd8f84650e5ed0836adcb336b05" kind="function"><name>__attribute__</name></member>
+    <member refid="namespace_textra_1aa19398ea397e26e059eab725cbd3da91" kind="function"><name>__attribute__</name></member>
+    <member refid="namespace_textra_1ab7d6b1e2db5d5940b131e9ed7d91a3cc" kind="function"><name>__attribute__</name></member>
+    <member refid="namespace_textra_1ae7184d202f608d67d7c84703276ce939" kind="function"><name>__attribute__</name></member>
+    <member refid="namespace_textra_1aa0ba3a2c0caa91d536e51a82defc0620" kind="function"><name>__attribute__</name></member>
+    <member refid="namespace_textra_1ac9b9254cdbce1f496707a2eb02423d25" kind="function"><name>__attribute__</name></member>
+    <member refid="namespace_textra_1a03ed68d9ffd6b0f9b75df15340abc0d6" kind="function"><name>__attribute__</name></member>
+    <member refid="namespace_textra_1a03e669c4c85416377bdc3b0045d4cd11" kind="function"><name>__attribute__</name></member>
+    <member refid="namespace_textra_1a83480b3f75b0a29f652feb8b2152b475" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="namespace_textra_1a47079abeb81c780b562da5b9a8d1ff19" kind="function"><name>operator&lt;&lt;</name></member>
+  </compound>
+  <compound refid="namespace_type_check" kind="namespace"><name>TypeCheck</name>
+    <member refid="nmspc__type__check_8h_1a943d73d49d1b8ba15d1780105cb0a302" kind="typedef"><name>Data_t</name></member>
+    <member refid="nmspc__type__check_8h_1a34eb17230046987029c1f1c7d574aa89" kind="typedef"><name>Size_t</name></member>
+    <member refid="nmspc__type__check_8h_1a69b99399a457c54efa8cb178ec239564" kind="typedef"><name>Dims_t</name></member>
+    <member refid="nmspc__type__check_8h_1a5b78114d2bfa9999d5ff53e71c183d90" kind="typedef"><name>Rank_t</name></member>
+    <member refid="nmspc__type__check_8h_1a6ec959351d37f9331b7f795238abcc40" kind="typedef"><name>Setz_t</name></member>
+    <member refid="nmspc__type__check_8h_1ad76016626d2530239e0bc2d09b2084c3" kind="typedef"><name>Matr_t</name></member>
+    <member refid="nmspc__type__check_8h_1afba6d111f934a518472743c1c85aa450" kind="typedef"><name>Scal_t</name></member>
+    <member refid="nmspc__type__check_8h_1af7c6e5e9d9492ac1f52808cc0cf82847" kind="typedef"><name>Valt_t</name></member>
+    <member refid="nmspc__type__check_8h_1a7fab9bae09a9a1780d5811a39d65e1ce" kind="typedef"><name>has_member_data</name></member>
+    <member refid="nmspc__type__check_8h_1adf9e7896f673211b9a8e09aa6a2f7d50" kind="typedef"><name>has_member_size</name></member>
+    <member refid="nmspc__type__check_8h_1af12f6e7c0294a7ba57062bb101042fcd" kind="typedef"><name>has_member_dimensions</name></member>
+    <member refid="nmspc__type__check_8h_1a9c01daf500c30c3a32e465c2903fa19a" kind="typedef"><name>has_member_scalar</name></member>
+    <member refid="nmspc__type__check_8h_1a11011470526cd2f482b0a2c34ee32a69" kind="typedef"><name>has_member_value_type</name></member>
+    <member refid="nmspc__type__check_8h_1ae2cb7633dcce444eb0ecdb1abeb199e2" kind="typedef"><name>is_eigen</name></member>
+    <member refid="nmspc__type__check_8h_1a48a6ef90e8a0c3a4ba0a65a6d2ba4dce" kind="typedef"><name>is_matrix</name></member>
+    <member refid="nmspc__type__check_8h_1a516386ca02c155ab780634deca9c6c53" kind="typedef"><name>is_tensor</name></member>
+    <member refid="nmspc__type__check_8h_1a75531bee90fbf83ffa3c253c1ac9707f" kind="typedef"><name>is_ofEigen</name></member>
+  </compound>
+  <compound refid="class__algorithm__launcher_8cpp" kind="file"><name>class_algorithm_launcher.cpp</name>
+  </compound>
+  <compound refid="class__algorithm__launcher_8h" kind="file"><name>class_algorithm_launcher.h</name>
+  </compound>
+  <compound refid="class__base__algorithm_8cpp" kind="file"><name>class_base_algorithm.cpp</name>
+  </compound>
+  <compound refid="class__base__algorithm_8h" kind="file"><name>class_base_algorithm.h</name>
+    <member refid="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921" kind="enum"><name>SimulationType</name></member>
+    <member refid="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" kind="enumvalue"><name>iDMRG</name></member>
+    <member refid="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9379cfd2380ced1835394b9fb513ccdb" kind="enumvalue"><name>fDMRG</name></member>
+    <member refid="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921a3150b3272653c90490a32df95b103d79" kind="enumvalue"><name>esDMRG</name></member>
+    <member refid="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921a3a6a2aaf168ed7e6639d9e4a962035d0" kind="enumvalue"><name>FES_iDMRG</name></member>
+    <member refid="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kind="enumvalue"><name>iTEBD</name></member>
+    <member refid="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921aa4f17de7fbff40297fafdba8c5f15776" kind="enumvalue"><name>FES_iTEBD</name></member>
+    <member refid="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab50339a10e1de285ac99d4c3990b8693" kind="enumvalue"><name>NONE</name></member>
+  </compound>
+  <compound refid="class__excited__state___d_m_r_g_8cpp" kind="file"><name>class_excited_state_DMRG.cpp</name>
+  </compound>
+  <compound refid="class__excited__state___d_m_r_g_8h" kind="file"><name>class_excited_state_DMRG.h</name>
+  </compound>
+  <compound refid="class___f_e_s__i_d_m_r_g_8cpp" kind="file"><name>class_FES_iDMRG.cpp</name>
+  </compound>
+  <compound refid="class___f_e_s__i_d_m_r_g_8h" kind="file"><name>class_FES_iDMRG.h</name>
+  </compound>
+  <compound refid="class___f_e_s__i_t_e_b_d_8cpp" kind="file"><name>class_FES_iTEBD.cpp</name>
+  </compound>
+  <compound refid="class___f_e_s__i_t_e_b_d_8h" kind="file"><name>class_FES_iTEBD.h</name>
+  </compound>
+  <compound refid="class__finite___d_m_r_g_8cpp" kind="file"><name>class_finite_DMRG.cpp</name>
+  </compound>
+  <compound refid="class__finite___d_m_r_g_8h" kind="file"><name>class_finite_DMRG.h</name>
+  </compound>
+  <compound refid="class__imaginary___t_e_b_d_8cpp" kind="file"><name>class_imaginary_TEBD.cpp</name>
+  </compound>
+  <compound refid="class__imaginary___t_e_b_d_8h" kind="file"><name>class_imaginary_TEBD.h</name>
+  </compound>
+  <compound refid="class__infinite___d_m_r_g_8cpp" kind="file"><name>class_infinite_DMRG.cpp</name>
+  </compound>
+  <compound refid="class__infinite___d_m_r_g_8h" kind="file"><name>class_infinite_DMRG.h</name>
+  </compound>
+  <compound refid="class__eig__arpack__wrapper_8h" kind="file"><name>class_eig_arpack_wrapper.h</name>
+  </compound>
+  <compound refid="class__eig__spectra__wrapper_8h" kind="file"><name>class_eig_spectra_wrapper.h</name>
+  </compound>
+  <compound refid="class__svd__wrapper_8h" kind="file"><name>class_svd_wrapper.h</name>
+  </compound>
+  <compound refid="class__tic__toc_8cpp" kind="file"><name>class_tic_toc.cpp</name>
+    <member refid="class__tic__toc_8cpp_1a9c49adf05a20c65c928eeb2e822556ec" kind="function"><name>operator&lt;&lt;</name></member>
+  </compound>
+  <compound refid="class__tic__toc_8h" kind="file"><name>class_tic_toc.h</name>
+  </compound>
+  <compound refid="n__math_8h" kind="file"><name>n_math.h</name>
+    <member refid="n__math_8h_1a752c44978f0f5abde8919968032102bb" kind="function"><name>operator&lt;&lt;</name></member>
+  </compound>
+  <compound refid="n__tensor__extra_8h" kind="file"><name>n_tensor_extra.h</name>
+  </compound>
+  <compound refid="nmspc__type__check_8h" kind="file"><name>nmspc_type_check.h</name>
+  </compound>
+  <compound refid="class__custom__cout_8cpp" kind="file"><name>class_custom_cout.cpp</name>
+  </compound>
+  <compound refid="class__custom__cout_8h" kind="file"><name>class_custom_cout.h</name>
+  </compound>
+  <compound refid="class__file__reader_8cpp" kind="file"><name>class_file_reader.cpp</name>
+  </compound>
+  <compound refid="class__file__reader_8h" kind="file"><name>class_file_reader.h</name>
+  </compound>
+  <compound refid="class__hdf5__dataset__buffer_8cpp" kind="file"><name>class_hdf5_dataset_buffer.cpp</name>
+  </compound>
+  <compound refid="class__hdf5__dataset__buffer_8h" kind="file"><name>class_hdf5_dataset_buffer.h</name>
+  </compound>
+  <compound refid="class__hdf5__file_8cpp" kind="file"><name>class_hdf5_file.cpp</name>
+  </compound>
+  <compound refid="class__hdf5__file_8h" kind="file"><name>class_hdf5_file.h</name>
+  </compound>
+  <compound refid="class__hdf5__table__buffer_8cpp" kind="file"><name>class_hdf5_table_buffer.cpp</name>
+  </compound>
+  <compound refid="class__hdf5__table__buffer_8h" kind="file"><name>class_hdf5_table_buffer.h</name>
+  </compound>
+  <compound refid="main_8cpp" kind="file"><name>main.cpp</name>
+    <member refid="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" kind="function"><name>main</name></member>
+  </compound>
+  <compound refid="main_8h" kind="file"><name>main.h</name>
+  </compound>
+  <compound refid="class__eigensolver__product_8cpp" kind="file"><name>class_eigensolver_product.cpp</name>
+  </compound>
+  <compound refid="class__eigensolver__product_8h" kind="file"><name>class_eigensolver_product.h</name>
+  </compound>
+  <compound refid="class__environment_8cpp" kind="file"><name>class_environment.cpp</name>
+  </compound>
+  <compound refid="class__environment_8h" kind="file"><name>class_environment.h</name>
+    <member refid="class__environment_8h_1a8c0137d7160ad71b6ed265c53c99ed00" kind="enum"><name>Side</name></member>
+    <member refid="class__environment_8h_1a8c0137d7160ad71b6ed265c53c99ed00ad20caec3b48a1eef164cb4ca81ba2587" kind="enumvalue"><name>L</name></member>
+    <member refid="class__environment_8h_1a8c0137d7160ad71b6ed265c53c99ed00ae1e1d3d40573127e9ee0480caf1283d6" kind="enumvalue"><name>R</name></member>
+  </compound>
+  <compound refid="class__environment__storage_8cpp" kind="file"><name>class_environment_storage.cpp</name>
+  </compound>
+  <compound refid="class__environment__storage_8h" kind="file"><name>class_environment_storage.h</name>
+  </compound>
+  <compound refid="class__measurement_8cpp" kind="file"><name>class_measurement.cpp</name>
+  </compound>
+  <compound refid="class__measurement_8h" kind="file"><name>class_measurement.h</name>
+  </compound>
+  <compound refid="class__mpo_8cpp" kind="file"><name>class_mpo.cpp</name>
+  </compound>
+  <compound refid="class__mpo_8h" kind="file"><name>class_mpo.h</name>
+  </compound>
+  <compound refid="class__mps_8cpp" kind="file"><name>class_mps.cpp</name>
+  </compound>
+  <compound refid="class__mps_8h" kind="file"><name>class_mps.h</name>
+  </compound>
+  <compound refid="class__superblock_8cpp" kind="file"><name>class_superblock.cpp</name>
+  </compound>
+  <compound refid="class__superblock_8h" kind="file"><name>class_superblock.h</name>
+  </compound>
+  <compound refid="class__superblock__canonicalize_8cpp" kind="file"><name>class_superblock_canonicalize.cpp</name>
+  </compound>
+  <compound refid="n__model_8cpp" kind="file"><name>n_model.cpp</name>
+  </compound>
+  <compound refid="n__model_8h" kind="file"><name>n_model.h</name>
+  </compound>
+  <compound refid="n__sim__settings_8cpp" kind="file"><name>n_sim_settings.cpp</name>
+  </compound>
+  <compound refid="n__sim__settings_8h" kind="file"><name>n_sim_settings.h</name>
+  </compound>
+  <compound refid="todo" kind="page"><name>todo</name>
+  </compound>
+  <compound refid="dir_1f1e02da0ed68619c8cd86756bb8077c" kind="dir"><name>source/algorithms</name>
+  </compound>
+  <compound refid="dir_9cdd153f0f1b41b116eb8c6c3efd2239" kind="dir"><name>source/general</name>
+  </compound>
+  <compound refid="dir_4bad7fd7146fd728401435644d9f4ea6" kind="dir"><name>source/IO</name>
+  </compound>
+  <compound refid="dir_7e02b9e11c80399eaf9114c3f9f783cc" kind="dir"><name>source/mps_routines</name>
+  </compound>
+  <compound refid="dir_4f2d6ff8cfa036734dcbc645ee898c57" kind="dir"><name>source/sim_parameters</name>
+  </compound>
+  <compound refid="dir_b2f33c71d4aa5e7af42a1ca61ff5af1b" kind="dir"><name>source</name>
+  </compound>
+  <compound refid="indexpage" kind="page"><name>index</name>
+  </compound>
+</doxygenindex>

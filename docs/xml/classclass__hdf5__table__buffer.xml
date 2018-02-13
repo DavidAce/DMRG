@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="classclass__hdf5__table__buffer" kind="class" language="C++" prot="public">
+    <compoundname>class_hdf5_table_buffer</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">std::vector&lt; table_entry &gt;</basecompoundref>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass__hdf5__table__buffer_1aa8ac3c02e80ab9047f6577081e76dfec" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__hdf5__file" kindref="compound">class_hdf5_file</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;class_hdf5_file&gt; class_hdf5_table_buffer::hdf5_out</definition>
+        <argsstring></argsstring>
+        <name>hdf5_out</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="129" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__hdf5__table__buffer_1aebf5557f50b72bfbf7a381cd872b8152" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__table__entry__meta" kindref="compound">class_table_entry_meta</ref></type>
+        <definition>class_table_entry_meta class_hdf5_table_buffer::meta</definition>
+        <argsstring></argsstring>
+        <name>meta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="130" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__hdf5__table__buffer_1a05e68b284fbcb0e290a4a85d3a012864" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_hdf5_table_buffer::group_name</definition>
+        <argsstring></argsstring>
+        <name>group_name</name>
+        <initializer>= &quot;default_group&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="131" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__hdf5__table__buffer_1ad5912ec4d4fdc45e6e954adc7f68f849" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_hdf5_table_buffer::table_name</definition>
+        <argsstring></argsstring>
+        <name>table_name</name>
+        <initializer>= &quot;default_table&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="132" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__hdf5__table__buffer_1a8f1ee73c716a676d08458f850e332d04" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_hdf5_table_buffer::table_path</definition>
+        <argsstring></argsstring>
+        <name>table_path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="133" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__hdf5__table__buffer_1a151494bb950897df9eebfbaf428104e2" prot="public" static="no" mutable="no">
+        <type>hsize_t</type>
+        <definition>hsize_t class_hdf5_table_buffer::recorded_elements</definition>
+        <argsstring></argsstring>
+        <name>recorded_elements</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="134" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__hdf5__table__buffer_1abd3991a9ad1fe1f73b4e569914b70efe" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_hdf5_table_buffer::buffer_is_empty</definition>
+        <argsstring></argsstring>
+        <name>buffer_is_empty</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="135" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__hdf5__table__buffer_1ad5bfb2e7a404f6d6d534efd4170e3cb2" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_hdf5_table_buffer::table_is_ready</definition>
+        <argsstring></argsstring>
+        <name>table_is_ready</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="136" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__hdf5__table__buffer_1a70bc59967518b4466692fd6cdb5c722c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_hdf5_table_buffer::mpi_on</definition>
+        <argsstring></argsstring>
+        <name>mpi_on</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="137" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__hdf5__table__buffer_1a82a1fc0b74243b736c8d0d72934899d1" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_hdf5_table_buffer::class_hdf5_table_buffer</definition>
+        <argsstring>()=default</argsstring>
+        <name>class_hdf5_table_buffer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="138" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__hdf5__table__buffer_1a71ad1ad36ae7575f5c4f841376cc4ee5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_hdf5_table_buffer::class_hdf5_table_buffer</definition>
+        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_out_, std::string group_name_, std::string table_name, bool mpi_on_=false)</argsstring>
+        <name>class_hdf5_table_buffer</name>
+        <param>
+          <type>std::shared_ptr&lt; <ref refid="classclass__hdf5__file" kindref="compound">class_hdf5_file</ref> &gt;</type>
+          <declname>hdf5_out_</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>group_name_</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>table_name</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>mpi_on_</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="139" column="1" bodyfile="source/IO/class_hdf5_table_buffer.cpp" bodystart="9" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__hdf5__table__buffer_1a32f8c2d9b9b2c26b54ac80e3ad1e4c17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_hdf5_table_buffer::class_hdf5_table_buffer</definition>
+        <argsstring>(std::nullptr_t nullp, std::string group_name_, std::string table_name, bool mpi_on_=false)</argsstring>
+        <name>class_hdf5_table_buffer</name>
+        <param>
+          <type>std::nullptr_t</type>
+          <declname>nullp</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>group_name_</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>table_name</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>mpi_on_</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="143" column="1" bodyfile="source/IO/class_hdf5_table_buffer.cpp" bodystart="29" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__hdf5__table__buffer_1ab5a6460e0eb0aed00c999a4a25db0259" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_hdf5_table_buffer::class_hdf5_table_buffer</definition>
+        <argsstring>(std::string group_name_, std::string table_name_, bool mpi_on_=false)</argsstring>
+        <name>class_hdf5_table_buffer</name>
+        <param>
+          <type>std::string</type>
+          <declname>group_name_</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>table_name_</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>mpi_on_</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="148" column="1" bodyfile="source/IO/class_hdf5_table_buffer.cpp" bodystart="48" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__hdf5__table__buffer_1aabf4d1b2556c732a82fa75d343eda1b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_hdf5_table_buffer::initialize_table</definition>
+        <argsstring>()</argsstring>
+        <name>initialize_table</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="151" column="1" bodyfile="source/IO/class_hdf5_table_buffer.cpp" bodystart="56" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__hdf5__table__buffer_1af9449f0009e6cb714ac36a18b902c75e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_hdf5_table_buffer::write_buffer_to_file</definition>
+        <argsstring>()</argsstring>
+        <name>write_buffer_to_file</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="152" column="1" bodyfile="source/IO/class_hdf5_table_buffer.cpp" bodystart="69" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__hdf5__table__buffer_1a1766b77f12496c01ad8edd4e4ddc0256" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>class_hdf5_table_buffer::~class_hdf5_table_buffer</definition>
+        <argsstring>()</argsstring>
+        <name>~class_hdf5_table_buffer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="156" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="156" bodyend="167"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="59">
+        <label>class_hdf5_table_buffer</label>
+        <link refid="classclass__hdf5__table__buffer"/>
+        <childnode refid="60" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>std::vector&lt; table_entry &gt;</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="61">
+        <label>class_hdf5_table_buffer</label>
+        <link refid="classclass__hdf5__table__buffer"/>
+        <childnode refid="62" relation="public-inheritance">
+        </childnode>
+        <childnode refid="63" relation="usage">
+          <edgelabel>meta</edgelabel>
+        </childnode>
+      </node>
+      <node id="63">
+        <label>class_table_entry_meta</label>
+        <link refid="classclass__table__entry__meta"/>
+      </node>
+      <node id="62">
+        <label>std::vector&lt; table_entry &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="source/IO/class_hdf5_table_buffer.h" line="127" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="127" bodyend="176"/>
+    <listofallmembers>
+      <member refid="classclass__hdf5__table__buffer_1abd3991a9ad1fe1f73b4e569914b70efe" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>buffer_is_empty</name></member>
+      <member refid="classclass__hdf5__table__buffer_1a82a1fc0b74243b736c8d0d72934899d1" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>class_hdf5_table_buffer</name></member>
+      <member refid="classclass__hdf5__table__buffer_1a71ad1ad36ae7575f5c4f841376cc4ee5" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>class_hdf5_table_buffer</name></member>
+      <member refid="classclass__hdf5__table__buffer_1a32f8c2d9b9b2c26b54ac80e3ad1e4c17" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>class_hdf5_table_buffer</name></member>
+      <member refid="classclass__hdf5__table__buffer_1ab5a6460e0eb0aed00c999a4a25db0259" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>class_hdf5_table_buffer</name></member>
+      <member refid="classclass__hdf5__table__buffer_1a05e68b284fbcb0e290a4a85d3a012864" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>group_name</name></member>
+      <member refid="classclass__hdf5__table__buffer_1aa8ac3c02e80ab9047f6577081e76dfec" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>hdf5_out</name></member>
+      <member refid="classclass__hdf5__table__buffer_1aabf4d1b2556c732a82fa75d343eda1b3" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>initialize_table</name></member>
+      <member refid="classclass__hdf5__table__buffer_1aebf5557f50b72bfbf7a381cd872b8152" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>meta</name></member>
+      <member refid="classclass__hdf5__table__buffer_1a70bc59967518b4466692fd6cdb5c722c" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>mpi_on</name></member>
+      <member refid="classclass__hdf5__table__buffer_1a151494bb950897df9eebfbaf428104e2" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>recorded_elements</name></member>
+      <member refid="classclass__hdf5__table__buffer_1ad5bfb2e7a404f6d6d534efd4170e3cb2" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>table_is_ready</name></member>
+      <member refid="classclass__hdf5__table__buffer_1ad5912ec4d4fdc45e6e954adc7f68f849" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>table_name</name></member>
+      <member refid="classclass__hdf5__table__buffer_1a8f1ee73c716a676d08458f850e332d04" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>table_path</name></member>
+      <member refid="classclass__hdf5__table__buffer_1af9449f0009e6cb714ac36a18b902c75e" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>write_buffer_to_file</name></member>
+      <member refid="classclass__hdf5__table__buffer_1a1766b77f12496c01ad8edd4e4ddc0256" prot="public" virt="non-virtual"><scope>class_hdf5_table_buffer</scope><name>~class_hdf5_table_buffer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
