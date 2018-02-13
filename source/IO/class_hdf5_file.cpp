@@ -36,6 +36,7 @@ void class_hdf5_file::initialize(){
     set_output_file_path();
     plist_facc = H5Pcreate(H5P_FILE_ACCESS);
     plist_lncr = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
+    plist_xfer = H5Pcreate(H5P_DATASET_XFER);
     H5Pset_create_intermediate_group(plist_lncr, 1);
 
 

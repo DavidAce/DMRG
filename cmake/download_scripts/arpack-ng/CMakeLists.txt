@@ -44,19 +44,3 @@ ExternalProject_Add(ARPACK
 	-DLAPACK_LIBRARIES:PATH=${LAPACK_LIBRARIES}
         )
 
-ExternalProject_Get_Property(ARPACK install_dir)
-set(ARPACK_LIB_DIR ${install_dir}/lib)
-set(ARPACK_INC_DIR ${install_dir}/include)
-set(ARPACK_BIN_DIR ${install_dir}/bin)
-set(ARPACK_CMAKE_DIR ${install_dir})
-message("ARPACK_CMAKE_DIR: ${ARPACK_CMAKE_DIR}")
-
-file(WRITE  ${INSTALL_DIRECTORY}/arpack-ng/FindArpack.cmake "set(ARPACK_LIB_DIR   ${ARPACK_LIB_DIR})\n")
-file(APPEND ${INSTALL_DIRECTORY}/arpack-ng/FindArpack.cmake "set(ARPACK_INC_DIR   ${ARPACK_INC_DIR})\n")
-file(APPEND ${INSTALL_DIRECTORY}/arpack-ng/FindArpack.cmake "set(ARPACK_BIN_DIR   ${ARPACK_BIN_DIR})\n")
-file(APPEND ${INSTALL_DIRECTORY}/arpack-ng/FindArpack.cmake "set(ARPACK_CMAKE_DIR   ${ARPACK_CMAKE_DIR})\n")
-
-
-
-
-

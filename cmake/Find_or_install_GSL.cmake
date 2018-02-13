@@ -18,21 +18,27 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/libs/gsl/FindGSL.cmake")
     include(${PROJECT_SOURCE_DIR}/libs/gsl/FindGSL.cmake)
     get_libraries(${GSL_LIB_DIR} gsl  GSL_LIBRARIES)
     message(STATUS "FOUND PREVIOUSLY INSTALLED GSL:   ${GSL_LIBRARIES}")
+    target_include_directories(${PROJECT_NAME} PRIVATE ${GSL_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} ${GSL_LIBRARIES})
     return()
 endif()
 message(STATUS "SEARCHING FOR GSL IN SYSTEM...")
 find_package(GSL)
 if (GSL_FOUND)
-    include_directories(${GSL_INCLUDE_DIRS})
     message("FOUND PRE-INSTALLED GSL:   ${GSL_LIBRARIES}")
+    target_include_directories(${PROJECT_NAME} PRIVATE ${GSL_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} ${GSL_LIBRARIES})
+
 else()
     message(STATUS "DOWNLOADING GSL...")
+    set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
+
     execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory tmp/gsl
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/)
     execute_process(
             COMMAND ${CMAKE_COMMAND}
-            -DINSTALL_DIRECTORY:PATH=${PROJECT_SOURCE_DIR}/libs
+            -DINSTALL_DIRECTORY:PATH=${INSTALL_DIRECTORY}
             -G ${CMAKE_GENERATOR} ../../gsl
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/gsl )
     execute_process(
@@ -44,12 +50,24 @@ else()
     if(NOT "${res_var}" STREQUAL "0")
         message(FATAL_ERROR "GSL not found and failed to install: ${res_var}")
     endif()
-    include(${PROJECT_SOURCE_DIR}/libs/gsl/FindGSL.cmake)
+    # Generate a file that can be detected if the library was installed successfully
+    set(GSL_LIB_DIR ${INSTALL_DIRECTORY}/gsl/lib)
+    set(GSL_INC_DIR ${INSTALL_DIRECTORY}/gsl/include)
+    set(GSL_BIN_DIR ${INSTALL_DIRECTORY}/gsl/bin)
+
+    file(WRITE  ${INSTALL_DIRECTORY}/gsl/FindGSL.cmake  "set(GSL_LIB_DIR   ${GSL_LIB_DIR})\n")
+    file(APPEND ${INSTALL_DIRECTORY}/gsl/FindGSL.cmake  "set(GSL_INC_DIR   ${GSL_INC_DIR})\n")
+    file(APPEND ${INSTALL_DIRECTORY}/gsl/FindGSL.cmake  "set(GSL_BIN_DIR   ${GSL_BIN_DIR})\n")
+    file(APPEND ${INSTALL_DIRECTORY}/gsl/FindGSL.cmake  "set(GSL_INCLUDE_DIRS   ${GSL_INC_DIR})\n") # For compatibility with find_package(GSL...)
+
+    #Include that file
+    include(${INSTALL_DIRECTORY}/gsl/FindGSL.cmake)
     set(GSL_LIBRARIES "")
     get_libraries(${GSL_LIB_DIR} gsl  GSL_LIBRARIES)
     message(STATUS "SUCCESSFULLY INSTALLED GSL:   ${GSL_LIBRARIES}")
     message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/gsl/log_build.txt")
-
+    target_include_directories(${PROJECT_NAME} PRIVATE ${GSL_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} ${GSL_LIBRARIES})
 endif()
 
 

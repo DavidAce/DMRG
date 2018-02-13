@@ -2,7 +2,7 @@
 // Created by david on 7/30/17.
 //
 #include <sim_parameters/n_sim_settings.h>
-#include <mps_routines/class_algorithms.h>
+#include <algorithms/class_algorithm_launcher.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment_storage.h>
 #include <mps_routines/class_measurement.h>
@@ -20,17 +20,17 @@ namespace s = settings;
 using namespace std;
 using namespace Textra;
 
-class_algorithms::class_algorithms(std::shared_ptr<class_hdf5_file> hdf5_):hdf5(std::move(hdf5_))
+class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<class_hdf5_file> hdf5_):hdf5(std::move(hdf5_))
 {
 
 };
-class_algorithms::class_algorithms()
+class_algorithm_launcher::class_algorithm_launcher()
 {
     hdf5 = std::make_shared<class_hdf5_file>(settings::hdf5::output_filename, settings::hdf5::output_folder,true, false);
 };
 
 
-void class_algorithms::run_infinite_DMRG(){
+void class_algorithm_launcher::run_infinite_DMRG(){
     if(settings::idmrg::on){
         class_infinite_DMRG iDMRG(hdf5);
         iDMRG.run();
@@ -38,7 +38,7 @@ void class_algorithms::run_infinite_DMRG(){
 }
 
 
-void class_algorithms::run_finite_DMRG(){
+void class_algorithm_launcher::run_finite_DMRG(){
     if(settings::fdmrg::on){
         class_finite_DMRG fDMRG(hdf5);
         fDMRG.run();
@@ -46,7 +46,7 @@ void class_algorithms::run_finite_DMRG(){
 }
 
 
-void class_algorithms::run_imaginary_TEBD(){
+void class_algorithm_launcher::run_imaginary_TEBD(){
     if(settings::itebd::on){
         class_imaginary_TEBD iTEBD(hdf5);
         iTEBD.run();
@@ -54,14 +54,14 @@ void class_algorithms::run_imaginary_TEBD(){
 }
 
 
-void class_algorithms::run_FES_iDMRG(){
+void class_algorithm_launcher::run_FES_iDMRG(){
     if(settings::fes_idmrg::on){
         class_FES_iDMRG FES_iDMRG(hdf5);
         FES_iDMRG.run2();
     }
 }
 
-void class_algorithms::run_FES_iTEBD(){
+void class_algorithm_launcher::run_FES_iTEBD(){
     if(settings::fes_itebd::on){
         class_FES_iTEBD FES_iTEBD(hdf5);
         FES_iTEBD.run2();
@@ -71,7 +71,7 @@ void class_algorithms::run_FES_iTEBD(){
 
 
 //
-//void class_algorithms::single_DMRG_step(class_superblock &superblock, long chi_max){
+//void class_algorithm_launcher::single_DMRG_step(class_superblock &superblock, long chi_max){
 ///*!
 // * \fn void single_DMRG_step(class_superblock &superblock)
 // */
@@ -83,7 +83,7 @@ void class_algorithms::run_FES_iTEBD(){
 //
 //}
 //
-//void class_algorithms::single_TEBD_step(class_superblock &superblock, long chi_max){
+//void class_algorithm_launcher::single_TEBD_step(class_superblock &superblock, long chi_max){
 ///*!
 // * \fn single_iTEBD_step(class_superblock &superblock)
 // * \brief infinite Time evolving block decimation.
@@ -95,7 +95,7 @@ void class_algorithms::run_FES_iTEBD(){
 //    t_mps.tic();    superblock.update_MPS();                                        t_mps.toc();
 //}
 //
-//void class_algorithms::iDMRG(){
+//void class_algorithm_launcher::iDMRG(){
 ///*!
 // * \fn void iDMRG(class_superblock &superblock, class_storage &S, int max_length)
 // * \brief Infinite DMRG, grows the chain from 2 up to `max_idmrg::length` particles.
@@ -138,7 +138,7 @@ void class_algorithms::run_FES_iTEBD(){
 //    cout << endl;
 //}
 //
-//void class_algorithms::fDMRG(){
+//void class_algorithm_launcher::fDMRG(){
 ///*!
 // * \fn void fDMRG()
 // * \brief Finite DMRG sweeps across the chain built during iDMRG.
@@ -188,7 +188,7 @@ void class_algorithms::run_FES_iTEBD(){
 //    cout << endl;
 //}
 //
-//void class_algorithms::iTEBD(){
+//void class_algorithm_launcher::iTEBD(){
 ///*!
 // * \fn iTEBD(class_superblock &superblock, class_hdf5 &hdf5)
 // * \brief infinite Time evolving block decimation.
@@ -224,7 +224,7 @@ void class_algorithms::run_FES_iTEBD(){
 //    cout << endl;
 //}
 //
-//void class_algorithms::FES_iTEBD(){
+//void class_algorithm_launcher::FES_iTEBD(){
 ///*!
 // * \fn FES_iTEBD()
 // * \brief Finite-entanglement scaling.
@@ -314,7 +314,7 @@ void class_algorithms::run_FES_iTEBD(){
 //    }
 //    }
 //
-//void class_algorithms::FES_iDMRG(){
+//void class_algorithm_launcher::FES_iDMRG(){
 ///*!
 // * \fn FES_iDRMG()
 // * \brief Finite-entanglement scaling.

@@ -39,11 +39,5 @@ ExternalProject_Add(ARPACKPP
         -DCMAKE_C_FLAGS=-w
         )
 
-ExternalProject_Get_Property(ARPACKPP install_dir)
-set(ARPACKPP_INC_DIR ${install_dir}/include ${install_dir}/include/arpackpp)
-file(WRITE ${INSTALL_DIRECTORY}/arpackpp/FindArpackpp.cmake "set(ARPACKPP_INCLUDE_DIR   ${ARPACKPP_INC_DIR})\n")
-
-
-
 
 

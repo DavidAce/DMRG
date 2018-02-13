@@ -55,8 +55,7 @@ The following software is required to build the project:
  - C++ compiler with support for c++17 standard and libstdc++ standard library implementation  (version >= 7). Tested with both
     - GNU GCC version >= 7 (comes with libstdc++ already)
     - Clang version >= 5.0. (you need to manually install libstdc++ version >= 7, for instance from `ppa:ubuntu-toolchain-r/test`)
- - Fortran compiler. Tested with GNU GFORTRAN version >= 4. This is only needed to install libraries from source, see below.
- - CMake version >= 3.8. If you compile CMake from source, remember to enable `curl` (`./bootstrap --system-curl`). 
+ - CMake version >= 3.7. If you compile CMake from source, remember to enable `curl` (`./bootstrap --system-curl`). 
  
 Ubuntu 17 or higher will have the versions required in the default repositories. For older distributions, use the ppa `ubuntu-toolchain-r/test` to get newer versions.
 
@@ -73,13 +72,12 @@ Mac OSX users are advised to use GNU GCC from homebrew. The AppleClang compiler 
  #### Libraries
  
  - [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition (tested with version >= 3.3).
+ - [Lapack](https://github.com/Reference-LAPACK/lapack) Required for Arpack. If you auto-install from source a Fortran compiler is required. Tested with GNU GFORTRAN version >= 4.
  - [Arpack](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires LAPACK and BLAS libraries.
  - [Arpackpp](https://github.com/m-reuter/arpackpp) C++ frontend for ARPACK.
  - [Spectra](https://spectralib.org/) Another eigenvalue solver. Header only.
  - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file env_storage support (tested with version >= 1.8).
  - [GSL](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
-
-
 
 ---
 
@@ -88,7 +86,7 @@ Mac OSX users are advised to use GNU GCC from homebrew. The AppleClang compiler 
 This code lacks an API or command-line parameters. As such, details of execution have to be
 set in source code, specifically one can edit model and simulation parameters in `source/n_model.h` and `source/n_settings.h`.
 
-The files `source/class_algorithms.cpp` and  `source/class_algorithms.h` contain routines for the infinite-DMRG,
+The files `source/class_algorithm_launcher.cpp` and  `source/class_algorithm_launcher.h` contain routines for the infinite-DMRG,
 finite-DMRG and infinite-TEBD that can be called from `main.cpp`. The algorithms should ideally give similar 
 ground state energies, which is a good sanity check.
 

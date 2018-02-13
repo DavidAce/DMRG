@@ -10,13 +10,13 @@
 
 class class_hdf5_file;
 
-class class_algorithms  {
+class class_algorithm_launcher  {
 public:
 
     std::shared_ptr <class_hdf5_file> hdf5;
     class_custom_cout       ccout;
-    class_algorithms(std::shared_ptr<class_hdf5_file> hdf5_);
-    class_algorithms();
+    class_algorithm_launcher(std::shared_ptr<class_hdf5_file> hdf5_);
+    class_algorithm_launcher();
 
     void run_algorithms(){
         run_infinite_DMRG();

@@ -2,7 +2,7 @@
 //#define EIGEN_USE_MKL_ALL
 #include <sim_parameters/n_sim_settings.h>
 #include <sim_parameters/n_model.h>
-#include <mps_routines/class_algorithms.h>
+#include <algorithms/class_algorithm_launcher.h>
 #include <gitversion.h>
 #include <IO/class_file_reader.h>
 
@@ -27,10 +27,10 @@ int main(int argc, char* argv[]) {
 
     //Initialize the algorithm class
     //This class stores simulationdata automatically to a file specified in the input file
-    class_algorithms algorithms;
+    class_algorithm_launcher launcher;
 
     //Run the algorithms
-    algorithms.run_algorithms();
+    launcher.run_algorithms();
 
     return 0;
 }
