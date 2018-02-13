@@ -76,6 +76,13 @@ $n+1$
           <h3>Contents</h3>
           <ul>
             <li>
+              <a href="#description">Description</a>
+              <ul>
+                <li><a href="#background">Background</a></li>
+                <li><a href="#diagram">Diagram</a></li>
+              </ul>
+            </li>
+            <li>
               Reference
               <ul>
                 <li><a href="#pub-methods">Public functions</a></li>
@@ -84,7 +91,7 @@ $n+1$
             </li>
           </ul>
         </div>
-<h2>MPS Class</h2><p>During the initial infinite-DMRG stage, sites A and B are swapped in each iteration to mimic the movement between even and odd positions in a translationally invariant chain.</p><h3>Background</h3><p>In both the infinite and finite DMRG algorithms, the MPS in this class will be used to construct <svg class="m-math" style="vertical-align: -0.0pt;" height='10.2117pt' version='1.1' viewBox='0 -8.16937 9.10465 8.16937' width='11.3808pt'>
+<section id="description"><h2><a href="#description">Description</a></h2><p>During the initial infinite-DMRG stage, sites A and B are swapped in each iteration to mimic the movement between even and odd positions in a translationally invariant chain.</p><section id="background"><h3><a href="#background">Background</a></h3><p>In both the infinite and finite DMRG algorithms, the MPS in this class will be used to construct <svg class="m-math" style="vertical-align: -0.0pt;" height='10.2117pt' version='1.1' viewBox='0 -8.16937 9.10465 8.16937' width='11.3808pt'>
 <title>LaTeX Math</title>
 <desc>
 $\Theta$
@@ -207,11 +214,10 @@ $n$
 <g id='eq8-page1'>
 <use x='0' xlink:href='#eq8-g0-110' y='0'/>
 </g>
-</svg>.</li></ul></blockquote><h4>Diagram</h4><p>In diagrammatic tensor notation the two-site MPS is:</p><pre>                                  [d]    [d]
-            Theta     = [chia]__.__|__.__|__.__[chib]
+</svg>.</li></ul></blockquote></section><section id="diagram"><h3><a href="#diagram">Diagram</a></h3><p>In diagrammatic tensor notation the two-site MPS is:</p><pre>                              [d]    [d]
+       Theta     =  [chia]__.__|__.__|__.__[chib]
 
-                               LB  GA LA GB LB
-</pre><p>where the values in [ ] denote the dimension of each leg of the full tensor:</p><ul><li><svg class="m-math" style="vertical-align: -0.0pt;" height='10.3777pt' version='1.1' viewBox='0 -8.30219 6.08269 8.30219' width='7.60337pt'>
+                           LB  GA LA GB LB</pre><p>where the values in [ ] denote the dimension of each leg of the full tensor:</p><ul><li><svg class="m-math" style="vertical-align: -0.0pt;" height='10.3777pt' version='1.1' viewBox='0 -8.30219 6.08269 8.30219' width='7.60337pt'>
 <title>LaTeX Math</title>
 <desc>
 $d$
@@ -286,7 +292,7 @@ $\Lambda^B_{n+1}$
 <use x='13.2632' xlink:href='#eq13-g1-43' y='2.95552'/>
 <use x='19.8497' xlink:href='#eq13-g1-49' y='2.95552'/>
 </g>
-</svg></li></ul><h4>Tensor index order convention: See the </h4>
+</svg></li></ul><p>Tensor index order convention: See the <a href="index.html">Home page</a>.</p></section></section>
         <section id="pub-methods">
           <h2><a href="#pub-methods">Public functions</a></h3>
           <dl class="m-dox">
@@ -299,11 +305,7 @@ $\Lambda^B_{n+1}$
             </dt>
             <dd></dd>
             <dt>
-              <span class="m-dox-wrap-bumper">auto <a href="#a55418d0ef5c02f5994e71c5a5490bff7" class="m-dox">A</a>(</span><span class="m-dox-wrap">) const -&gt; Textra::Tensor&lt;Scalar, 3&gt;</span>
-            </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-dox-wrap-bumper">auto <a href="#a50c7a2e6f49fcc0c9b21458686fb9b2d" class="m-dox">get_transfer_matrix_L</a>(</span><span class="m-dox-wrap">) const -&gt; Textra::Tensor&lt;Scalar, 4&gt;</span>
+              <span class="m-dox-wrap-bumper">auto <a href="#a1501eb3c7b6c476f119083c46e3ebec2" class="m-dox">get_theta</a>(</span><span class="m-dox-wrap">) const -&gt; Textra::Tensor&lt;Scalar, 4&gt;</span>
             </dt>
             <dd></dd>
           </dl>
@@ -331,23 +333,17 @@ $\Lambda^B_{n+1}$
             <h3>
               <span class="m-dox-wrap-bumper">void class_<wbr />mps::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#a9fd08b87e2b6e7aed019b7eff3b2f892" class="m-dox-self">initialize</a>(</span><span class="m-dox-wrap">long local_dimension_)</span></span>
             </h3>
-<aside class="m-note m-dim"><h4><a href="todo.html#_todo000001" class="m-dox">Todo</a></h4><p>, check? was LA before</p></aside>
+<p>Sets local dimension</p><aside class="m-note m-dim"><h4><a href="todo.html#_todo000001" class="m-dox">Todo</a></h4><p>, check? was LA before</p></aside>
           </div></section>
           <section class="m-dox-details" id="ad2663b4931bd182710c94381e56a0aba"><div>
             <h3>
               <span class="m-dox-wrap-bumper">void class_<wbr />mps::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#ad2663b4931bd182710c94381e56a0aba" class="m-dox-self">swap_AB</a>(</span><span class="m-dox-wrap">)</span></span>
             </h3>
-<p>Sets local dimension</p>
-          </div></section>
-          <section class="m-dox-details" id="a55418d0ef5c02f5994e71c5a5490bff7"><div>
-            <h3>
-              <span class="m-dox-wrap-bumper">Textra::Tensor&lt;Scalar, 3&gt; class_<wbr />mps::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#a55418d0ef5c02f5994e71c5a5490bff7" class="m-dox-self">A</a>(</span><span class="m-dox-wrap">) const</span></span>
-            </h3>
 <p>Swaps the roles of A and B. Used in infinite DMRG.</p>
           </div></section>
-          <section class="m-dox-details" id="a50c7a2e6f49fcc0c9b21458686fb9b2d"><div>
+          <section class="m-dox-details" id="a1501eb3c7b6c476f119083c46e3ebec2"><div>
             <h3>
-              <span class="m-dox-wrap-bumper">Textra::Tensor&lt;Scalar, 4&gt; class_<wbr />mps::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#a50c7a2e6f49fcc0c9b21458686fb9b2d" class="m-dox-self">get_transfer_matrix_L</a>(</span><span class="m-dox-wrap">) const</span></span>
+              <span class="m-dox-wrap-bumper">Textra::Tensor&lt;Scalar, 4&gt; class_<wbr />mps::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#a1501eb3c7b6c476f119083c46e3ebec2" class="m-dox-self">get_theta</a>(</span><span class="m-dox-wrap">) const</span></span>
             </h3>
 <p>Returns rank 4 tensor <svg class="m-math" style="vertical-align: -0.0pt;" height='10.2117pt' version='1.1' viewBox='0 -8.16937 9.10465 8.16937' width='11.3808pt'>
 <title>LaTeX Math</title>
@@ -509,7 +505,7 @@ $\Lambda^B_{n-1}$
           <input type="search" id="search-input" placeholder="Loading &hellip;" disabled="disabled" autofocus="autofocus" />
           <noscript class="m-text m-danger m-text-center">Unlike everything else in the docs, the search functionality <em>requires</em> JavaScript.</noscript>
           <div id="search-help" class="m-text m-dim m-text-center">
-            Search for symbols, directories, files, etc.
+            Search for symbols, headers, pages or example source files. You can omit any prefix from the symbol or file path.
           </div>
           <div id="search-notfound" class="m-text m-warning m-text-center">Sorry, nothing was found.</div>
           <ul id="search-results"></ul>
@@ -524,7 +520,7 @@ $\Lambda^B_{n-1}$
   <div class="m-container">
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
-        <p>DMRG++. Created by <a href="http://doxygen.org/">Doxygen</a> 1.8.15 and <a href="http://mcss.mosra.cz/">m.css</a>.</p>
+        <p>DMRG++. Created by <a href="http://doxygen.org/">Doxygen</a> 1.8.13 and <a href="http://mcss.mosra.cz/">m.css</a>.</p>
       </div>
     </div>
   </div>

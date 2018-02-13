@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="classclass___f_e_s__i_d_m_r_g" kind="class" language="C++" prot="public">
     <compoundname>class_FES_iDMRG</compoundname>
     <basecompoundref refid="classclass__algorithm__base" prot="public" virt="non-virtual">class_algorithm_base</basecompoundref>
@@ -17,7 +17,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="26" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="26" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="20" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="20" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_d_m_r_g_1a4982d5bc1809680ac80ec10030df1c64" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -31,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="27" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="27" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="21" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_d_m_r_g_1add279f4dc1ae6e5739548c3ecf39fae2" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="28" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="28" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="22" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="22" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_d_m_r_g_1ab371552336985f48432bf4dbc98dfeea" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="29" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="29" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="23" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="23" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_d_m_r_g_1a4cfd8387f6f79a9efa349eb8239c3c76" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -73,7 +73,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="30" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="30" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="24" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="24" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_d_m_r_g_1a3ee373fbbd1f674d87b753960477bb34" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -87,7 +87,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="32" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="32" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="26" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="26" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -106,7 +106,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="25" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="19" bodyend="29"/>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="19" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="19" bodyend="29"/>
       </memberdef>
       <memberdef kind="function" id="classclass___f_e_s__i_d_m_r_g_1af243e88dc3994e96c7c15439aeffb6c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -120,7 +120,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="34" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="34" bodyend="61"/>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="28" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="34" bodyend="61"/>
       </memberdef>
       <memberdef kind="function" id="classclass___f_e_s__i_d_m_r_g_1afc3fc5e65c800c71ae7d887b9ae799e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -133,7 +133,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="35" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="64" bodyend="78"/>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="29" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="64" bodyend="78"/>
       </memberdef>
       <memberdef kind="function" id="classclass___f_e_s__i_d_m_r_g_1a689804d79bf42136291190a572cb77a5" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -144,10 +144,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print out status of all quantities. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="37" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="130" bodyend="141"/>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="31" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="130" bodyend="141"/>
       </memberdef>
       <memberdef kind="function" id="classclass___f_e_s__i_d_m_r_g_1ab539ff602037ae8453169d7e2b3c3939" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -158,11 +158,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print out status of all quantities. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="38" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="112" bodyend="128"/>
-        <references refid="namespace_math_1a3345264a3373e4542c7baf43f5e1b713" compoundref="n__math_8h" startline="51" endline="53">Math::mod</references>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="32" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="112" bodyend="128"/>
       </memberdef>
       <memberdef kind="function" id="classclass___f_e_s__i_d_m_r_g_1a635d2cefb0a1ad82b4ca0516da1b1981" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -176,7 +175,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="40" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="82" bodyend="97"/>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="34" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="82" bodyend="97"/>
       </memberdef>
       <memberdef kind="function" id="classclass___f_e_s__i_d_m_r_g_1a5a0524eb6a46eb5365022d4ff8716a60" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -190,82 +189,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="41" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="99" bodyend="110"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass___f_e_s__i_d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::shared_ptr&lt; class_hdf5_table_buffer &gt; table_buffer_, std::shared_ptr&lt; class_superblock &gt; superblock_, std::shared_ptr&lt; class_measurement &gt; observables_)</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="24" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="14" bodyend="25"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass___f_e_s__i_d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::string group_name_, std::string table_name_, std::string simulation_name_, SimulationType simtype_)</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="24" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="27" bodyend="41"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass___f_e_s__i_d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>()</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_FES_iDMRG.h" line="24" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="47" bodyend="49"/>
+        <location file="source/algorithms/class_FES_iDMRG.h" line="35" column="1" bodyfile="source/algorithms/class_FES_iDMRG.cpp" bodystart="99" bodyend="110"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
-<para>Class that runs the Finite-entanglement scaling (FES) mode in the DMRG algorithm. </para>    </briefdescription>
+<para>Class that studies Finite-entanglement scaling using the infinite DMRG algorithm. </para>    </briefdescription>
     <detaileddescription>
-<para><heading level="1">Finite-entanglement scaling (FES) DMRG class</heading>
-</para><para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>shared_ptr&lt;class_hdf5_file&gt;</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>An hdf5 class object that handles the output file. </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>shared_ptr&lt;class_hdf5_table_buffer&gt;</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>(optional) A buffer for table entries that goes into the output file </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>shared_ptr&lt;class_superblock&gt;</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>(optional) A class that stores current MPS and environments at each iteration. </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>shared_ptr&lt;class_measurement&gt;</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>(optional) A class that extracts, or measures, quantities from the superblock. </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>    </detaileddescription>
+    </detaileddescription>
     <inheritancegraph>
       <node id="33">
         <label>class_FES_iDMRG</label>
@@ -314,18 +244,15 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="source/algorithms/class_FES_iDMRG.h" line="21" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="21" bodyend="42"/>
+    <location file="source/algorithms/class_FES_iDMRG.h" line="15" column="1" bodyfile="source/algorithms/class_FES_iDMRG.h" bodystart="15" bodyend="36"/>
     <listofallmembers>
       <member refid="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>ccout</name></member>
       <member refid="classclass___f_e_s__i_d_m_r_g_1a4982d5bc1809680ac80ec10030df1c64" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>chi_max</name></member>
       <member refid="classclass___f_e_s__i_d_m_r_g_1a95fe60a4bc3dc4f5c25d16934e028d6a" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>chi_min</name></member>
       <member refid="classclass___f_e_s__i_d_m_r_g_1add279f4dc1ae6e5739548c3ecf39fae2" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>chi_num</name></member>
-      <member refid="classclass___f_e_s__i_d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass___f_e_s__i_d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass___f_e_s__i_d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
       <member refid="classclass___f_e_s__i_d_m_r_g_1a861ed7b7f197fb88971428adc618ce6c" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>class_FES_iDMRG</name></member>
       <member refid="classclass__algorithm__base_1a68804df41c37620391746d749b267498" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>enlarge_environment</name></member>
       <member refid="classclass__algorithm__base_1ad516d7415be3c39534429d34d677adf3" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>enlarge_environment</name></member>

@@ -1,11 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="indexpage" kind="page">
     <compoundname>index</compoundname>
     <title>DMRG++</title>
-    <tableofcontents/>
-    <briefdescription>
-<para>This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm. </para>    </briefdescription>
     <detaileddescription>
 <para>This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm.</para><sect1 id="index_1intro">
 <title>Description of DMRG++</title>
@@ -60,17 +57,17 @@
 <title>Example:</title>
 <para>Consider for some position <formula id="7">$n$</formula> on the chain <formula id="8">$\Gamma = \Gamma^{\sigma_n}_{a,b}$</formula>. Here <formula id="9">$\sigma_n \in [-1,1]$</formula> is a particle with local (physical) dimension <formula id="10">$d$</formula> = 2, and <formula id="11">$a,b$</formula> are the remaining dimensions, in practice they are bond dimensions of <formula id="12">$\Lambda^{n-1}$</formula> and <formula id="13">$\Lambda^{n}$</formula>, respectively, which can be numbers <formula id="14">$\in [1,\chi]$</formula>.</para><para>In diagrammatic tensor notation this is: <verbatim>                        [d]          0
             G     = [a]__|__[b] = 1__|__2
-</verbatim> where after the second equality the index order is shown. In code this corresponds to</para><para><programlisting filename=".cpp"><codeline><highlight class="normal">Tensor3<sp/>G(d,a,b);</highlight></codeline>
+</verbatim> where after the second equality the index order is shown. In code this corresponds to</para><para><programlisting><codeline><highlight class="normal">Tensor3<sp/>G(d,a,b);</highlight></codeline>
 </programlisting></para><para>Similarly, we have for <formula id="15">$\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}$</formula>:</para><para><verbatim>                                [d] [d]                0   1
             Theta     = [chia]___|___|___[chib] = 2 ___|___|___ 3
-</verbatim></para><para>which in code reads</para><para><programlisting filename=".cpp"><codeline><highlight class="normal">Tensor4<sp/>G(d,d,chia,chib);</highlight></codeline>
+</verbatim></para><para>which in code reads</para><para><programlisting><codeline><highlight class="normal">Tensor4<sp/>G(d,d,chia,chib);</highlight></codeline>
 </programlisting></para></sect3>
 </sect2>
 </sect1>
 <sect1 id="index_1details">
 <title>Details</title>
 <para><simplesect kind="author"><para>David Aceituno </para></simplesect>
-<simplesect kind="date"><para>10-2017 </para></simplesect>
+<simplesect kind="date"><para>02-2018 </para></simplesect>
 <simplesect kind="copyright"><para>MPL2 </para></simplesect>
 </para></sect1>
     </detaileddescription>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.15">
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.13">
   <compound refid="classclass__algorithm__base" kind="class"><name>class_algorithm_base</name>
     <member refid="classclass__algorithm__base_1a52110546990518c431901aa1262e457c" kind="variable"><name>hdf5</name></member>
     <member refid="classclass__algorithm__base_1ade8066944fb71399e3bf44d30149a923" kind="variable"><name>table_buffer</name></member>
@@ -158,9 +158,6 @@
     <member refid="classclass__excited__state___d_m_r_g_1a17870ec85d13a7c433787c738bb0cbaf" kind="function"><name>print_status_update</name></member>
     <member refid="classclass__excited__state___d_m_r_g_1a1a51b9af27e0ae2b32e23d9afd49f0b2" kind="function"><name>store_table_entry</name></member>
     <member refid="classclass__excited__state___d_m_r_g_1a63786d117aee6d0e4ef5fd99e23ad12e" kind="function"><name>print_profiling</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
   </compound>
   <compound refid="classclass___f_e_s__i_d_m_r_g" kind="class"><name>class_FES_iDMRG</name>
     <member refid="classclass___f_e_s__i_d_m_r_g_1a95fe60a4bc3dc4f5c25d16934e028d6a" kind="variable"><name>chi_min</name></member>
@@ -176,9 +173,6 @@
     <member refid="classclass___f_e_s__i_d_m_r_g_1ab539ff602037ae8453169d7e2b3c3939" kind="function"><name>print_status_update</name></member>
     <member refid="classclass___f_e_s__i_d_m_r_g_1a635d2cefb0a1ad82b4ca0516da1b1981" kind="function"><name>store_table_entry</name></member>
     <member refid="classclass___f_e_s__i_d_m_r_g_1a5a0524eb6a46eb5365022d4ff8716a60" kind="function"><name>print_profiling</name></member>
-    <member refid="classclass___f_e_s__i_d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass___f_e_s__i_d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass___f_e_s__i_d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
   </compound>
   <compound refid="classclass___f_e_s__i_t_e_b_d" kind="class"><name>class_FES_iTEBD</name>
     <member refid="classclass___f_e_s__i_t_e_b_d_1a72808b554c9b636818d132476be957be" kind="variable"><name>chi_min</name></member>
@@ -188,7 +182,7 @@
     <member refid="classclass___f_e_s__i_t_e_b_d_1ab4966ca836c22c01e5126f71651c417d" kind="variable"><name>delta_t0</name></member>
     <member refid="classclass___f_e_s__i_t_e_b_d_1a420e5c309f3acaadd2ac35dbdc10e6c3" kind="variable"><name>delta_tmin</name></member>
     <member refid="classclass___f_e_s__i_t_e_b_d_1aa50618a8a6075b4383b49576f4061e38" kind="variable"><name>print_freq</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1aba5bc7af92877380f637323a974a6eba" kind="variable"><name>suzuki_trotter_order</name></member>
+    <member refid="classclass___f_e_s__i_t_e_b_d_1a8301077481e60b5dacebee7a1a688ddb" kind="variable"><name>suzuki_order</name></member>
     <member refid="classclass___f_e_s__i_t_e_b_d_1aad792b3b6a03e796c50b9f71cb922f11" kind="variable"><name>delta_t</name></member>
     <member refid="classclass___f_e_s__i_t_e_b_d_1a4f024ec8f050dc01377c91d0706142ca" kind="variable"><name>iteration</name></member>
     <member refid="classclass___f_e_s__i_t_e_b_d_1ad71334df54a0dab8ac2e4c513be1c5e0" kind="function"><name>class_FES_iTEBD</name></member>
@@ -198,9 +192,6 @@
     <member refid="classclass___f_e_s__i_t_e_b_d_1a83c6c1174cb5c287561a360b1911e68b" kind="function"><name>print_status_update</name></member>
     <member refid="classclass___f_e_s__i_t_e_b_d_1a857a1dd355a51d6834838623762381e0" kind="function"><name>store_table_entry</name></member>
     <member refid="classclass___f_e_s__i_t_e_b_d_1ac04fc2f39a021216503cb05ecd2e5db7" kind="function"><name>print_profiling</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
   </compound>
   <compound refid="classclass__file__reader" kind="class"><name>class_file_reader</name>
     <member refid="classclass__file__reader_1a72d6ae12c3fb8ea4c93c59474d6af293" kind="variable"><name>file_path</name></member>
@@ -237,9 +228,6 @@
     <member refid="classclass__finite___d_m_r_g_1a0135fc5a5c286e59caab06ad52418091" kind="function"><name>print_status_update</name></member>
     <member refid="classclass__finite___d_m_r_g_1afcbb939c4ea67a99c050251a675bd5af" kind="function"><name>store_table_entry</name></member>
     <member refid="classclass__finite___d_m_r_g_1af59b91be2fe224e459002b44939d8fff" kind="function"><name>print_profiling</name></member>
-    <member refid="classclass__finite___d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass__finite___d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass__finite___d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
   </compound>
   <compound refid="classclass__hdf5__dataset__buffer" kind="class"><name>class_hdf5_dataset_buffer</name>
     <member refid="classclass__hdf5__dataset__buffer_1ad6cf71bab03f4114bc6beb5ce6f26b1f" kind="variable"><name>hdf5_out</name></member>
@@ -345,9 +333,6 @@
     <member refid="classclass__imaginary___t_e_b_d_1a0e1fd656e8273dd071dae8c679d72699" kind="function"><name>print_status_update</name></member>
     <member refid="classclass__imaginary___t_e_b_d_1a2fbbcb78748a27ed86cbbb4adca95345" kind="function"><name>store_table_entry</name></member>
     <member refid="classclass__imaginary___t_e_b_d_1a64b56b73bb96ad96fbd271a1765c54b6" kind="function"><name>print_profiling</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
   </compound>
   <compound refid="classclass__infinite___d_m_r_g" kind="class"><name>class_infinite_DMRG</name>
     <member refid="classclass__infinite___d_m_r_g_1a8eb15ce418a7fa8ba36f11086a73ba89" kind="variable"><name>chi_max</name></member>
@@ -360,9 +345,6 @@
     <member refid="classclass__infinite___d_m_r_g_1a69c7a5325d1fa316b98e726373514d77" kind="function"><name>print_status_update</name></member>
     <member refid="classclass__infinite___d_m_r_g_1af5945b9b1164b8575d8983a75bca3233" kind="function"><name>store_table_entry</name></member>
     <member refid="classclass__infinite___d_m_r_g_1a681cc5ac0cea05193138bb30b7c7a790" kind="function"><name>print_profiling</name></member>
-    <member refid="classclass__infinite___d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass__infinite___d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass__infinite___d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
   </compound>
   <compound refid="classclass__measurement" kind="class"><name>class_measurement</name>
     <member refid="classclass__measurement_1a091cbeeb0748e2b35450943006fdf25a" kind="typedef"><name>Scalar</name></member>
@@ -565,22 +547,22 @@
   </compound>
   <compound refid="namespacearpack" kind="namespace"><name>arpack</name>
     <member refid="class__eig__arpack__wrapper_8h_1aef6a37581ed1987839290256a0b581cd" kind="enum"><name>Form</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1aef6a37581ed1987839290256a0b581cda161b3d9016563aba9ac190fc02ada9bb" kind="enumvalue"><name>SYMMETRIC</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1aef6a37581ed1987839290256a0b581cdab61773b9b3968a9988d765d728985862" kind="enumvalue"><name>GENERAL</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1aef6a37581ed1987839290256a0b581cda921a0157a6e61eebbaa0f713fdfbb0f7" kind="enumvalue"><name>COMPLEX</name></member>
+    <member refid="dummy_1aef6a37581ed1987839290256a0b581cda161b3d9016563aba9ac190fc02ada9bb" kind="enumvalue"><name>SYMMETRIC</name></member>
+    <member refid="dummy_1aef6a37581ed1987839290256a0b581cdab61773b9b3968a9988d765d728985862" kind="enumvalue"><name>GENERAL</name></member>
+    <member refid="dummy_1aef6a37581ed1987839290256a0b581cda921a0157a6e61eebbaa0f713fdfbb0f7" kind="enumvalue"><name>COMPLEX</name></member>
     <member refid="class__eig__arpack__wrapper_8h_1aea5db8fdc383c637633f2171736fc66e" kind="enum"><name>Side</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1aea5db8fdc383c637633f2171736fc66ead20caec3b48a1eef164cb4ca81ba2587" kind="enumvalue"><name>L</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1aea5db8fdc383c637633f2171736fc66eae1e1d3d40573127e9ee0480caf1283d6" kind="enumvalue"><name>R</name></member>
+    <member refid="dummy_1aea5db8fdc383c637633f2171736fc66ead20caec3b48a1eef164cb4ca81ba2587" kind="enumvalue"><name>L</name></member>
+    <member refid="dummy_1aea5db8fdc383c637633f2171736fc66eae1e1d3d40573127e9ee0480caf1283d6" kind="enumvalue"><name>R</name></member>
     <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19e" kind="enum"><name>Ritz</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ea6b40fe07a0e5a93eef07242975e83ec1" kind="enumvalue"><name>LA</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ea3dd6b9265ff18f31dc30df59304b0ca7" kind="enumvalue"><name>SA</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19eadfd5b430bc4db2c2836d0227ad9ac0c4" kind="enumvalue"><name>LM</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ea4e0d4f6ce30646f5a3f3e2a7422c1c5a" kind="enumvalue"><name>SM</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ea90a7c45eaffbd575ca6fb361e6d170a4" kind="enumvalue"><name>LR</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ea8cb2010d27e13509d364436256e972c0" kind="enumvalue"><name>SR</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ea14efbb26a99dc4820b9928957704cb8f" kind="enumvalue"><name>LI</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19eace774d9cab3ae0bdf522cd0839bed364" kind="enumvalue"><name>SI</name></member>
-    <member refid="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19ead3dcf429c679f9af82eb9a3b31c4df44" kind="enumvalue"><name>BE</name></member>
+    <member refid="dummy_1ab227b082d5a8debba4e75a40eecbc19ea6b40fe07a0e5a93eef07242975e83ec1" kind="enumvalue"><name>LA</name></member>
+    <member refid="dummy_1ab227b082d5a8debba4e75a40eecbc19ea3dd6b9265ff18f31dc30df59304b0ca7" kind="enumvalue"><name>SA</name></member>
+    <member refid="dummy_1ab227b082d5a8debba4e75a40eecbc19eadfd5b430bc4db2c2836d0227ad9ac0c4" kind="enumvalue"><name>LM</name></member>
+    <member refid="dummy_1ab227b082d5a8debba4e75a40eecbc19ea4e0d4f6ce30646f5a3f3e2a7422c1c5a" kind="enumvalue"><name>SM</name></member>
+    <member refid="dummy_1ab227b082d5a8debba4e75a40eecbc19ea90a7c45eaffbd575ca6fb361e6d170a4" kind="enumvalue"><name>LR</name></member>
+    <member refid="dummy_1ab227b082d5a8debba4e75a40eecbc19ea8cb2010d27e13509d364436256e972c0" kind="enumvalue"><name>SR</name></member>
+    <member refid="dummy_1ab227b082d5a8debba4e75a40eecbc19ea14efbb26a99dc4820b9928957704cb8f" kind="enumvalue"><name>LI</name></member>
+    <member refid="dummy_1ab227b082d5a8debba4e75a40eecbc19eace774d9cab3ae0bdf522cd0839bed364" kind="enumvalue"><name>SI</name></member>
+    <member refid="dummy_1ab227b082d5a8debba4e75a40eecbc19ead3dcf429c679f9af82eb9a3b31c4df44" kind="enumvalue"><name>BE</name></member>
   </compound>
   <compound refid="namespacechrono" kind="namespace"><name>chrono</name>
   </compound>
@@ -681,11 +663,11 @@
   </compound>
   <compound refid="namespace_spectra" kind="namespace"><name>Spectra</name>
     <member refid="class__eig__spectra__wrapper_8h_1ab3142ee3cbf48dfc8c430524562e170c" kind="enum"><name>Form</name></member>
-    <member refid="class__eig__spectra__wrapper_8h_1ab3142ee3cbf48dfc8c430524562e170ca161b3d9016563aba9ac190fc02ada9bb" kind="enumvalue"><name>SYMMETRIC</name></member>
-    <member refid="class__eig__spectra__wrapper_8h_1ab3142ee3cbf48dfc8c430524562e170cab61773b9b3968a9988d765d728985862" kind="enumvalue"><name>GENERAL</name></member>
+    <member refid="dummy_1ab3142ee3cbf48dfc8c430524562e170ca161b3d9016563aba9ac190fc02ada9bb" kind="enumvalue"><name>SYMMETRIC</name></member>
+    <member refid="dummy_1ab3142ee3cbf48dfc8c430524562e170cab61773b9b3968a9988d765d728985862" kind="enumvalue"><name>GENERAL</name></member>
     <member refid="class__eig__spectra__wrapper_8h_1a44151e8ab86148823f3ac1dab11f5f96" kind="enum"><name>Side</name></member>
-    <member refid="class__eig__spectra__wrapper_8h_1a44151e8ab86148823f3ac1dab11f5f96ad20caec3b48a1eef164cb4ca81ba2587" kind="enumvalue"><name>L</name></member>
-    <member refid="class__eig__spectra__wrapper_8h_1a44151e8ab86148823f3ac1dab11f5f96ae1e1d3d40573127e9ee0480caf1283d6" kind="enumvalue"><name>R</name></member>
+    <member refid="dummy_1a44151e8ab86148823f3ac1dab11f5f96ad20caec3b48a1eef164cb4ca81ba2587" kind="enumvalue"><name>L</name></member>
+    <member refid="dummy_1a44151e8ab86148823f3ac1dab11f5f96ae1e1d3d40573127e9ee0480caf1283d6" kind="enumvalue"><name>R</name></member>
     <member refid="class__eig__spectra__wrapper_8h_1ac6fcf354e30571190b6624b0991026b4" kind="typedef"><name>Ritz</name></member>
   </compound>
   <compound refid="namespacestd" kind="namespace"><name>std</name>

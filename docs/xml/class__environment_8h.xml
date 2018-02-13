@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="class__environment_8h" kind="file" language="C++">
     <compoundname>class_environment.h</compoundname>
     <includes refid="n__tensor__extra_8h" local="yes">general/n_tensor_extra.h</includes>
@@ -89,8 +89,7 @@
     <innerclass refid="classclass__environment" prot="public">class_environment</innerclass>
     <innerclass refid="classclass__environment__var" prot="public">class_environment_var</innerclass>
       <sectiondef kind="enum">
-      <memberdef kind="enum" id="class__environment_8h_1a8c0137d7160ad71b6ed265c53c99ed00" prot="public" static="no" strong="yes">
-        <type></type>
+      <memberdef kind="enum" id="class__environment_8h_1a8c0137d7160ad71b6ed265c53c99ed00" prot="public" static="no">
         <name>Side</name>
         <enumvalue id="class__environment_8h_1a8c0137d7160ad71b6ed265c53c99ed00ad20caec3b48a1eef164cb4ca81ba2587" prot="public">
           <name>L</name>

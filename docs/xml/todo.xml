@@ -1,10 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="todo" kind="page">
     <compoundname>todo</compoundname>
     <title>Todo List</title>
-    <briefdescription>
-    </briefdescription>
     <detaileddescription>
 <para><variablelist>
 <varlistentry><term><anchor id="todo_1_todo000001"/>Member <ref refid="classclass__mps_1a9fd08b87e2b6e7aed019b7eff3b2f892" kindref="member">class_mps::initialize</ref>  (long local_dimension_)</term></varlistentry>

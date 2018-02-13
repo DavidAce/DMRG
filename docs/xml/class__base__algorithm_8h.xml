@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="class__base__algorithm_8h" kind="file" language="C++">
     <compoundname>class_base_algorithm.h</compoundname>
     <includes local="no">memory</includes>
@@ -118,8 +118,7 @@
     </invincdepgraph>
     <innerclass refid="classclass__algorithm__base" prot="public">class_algorithm_base</innerclass>
       <sectiondef kind="enum">
-      <memberdef kind="enum" id="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921" prot="public" static="no" strong="yes">
-        <type></type>
+      <memberdef kind="enum" id="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921" prot="public" static="no">
         <name>SimulationType</name>
         <enumvalue id="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" prot="public">
           <name>iDMRG</name>

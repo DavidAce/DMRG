@@ -8,14 +8,7 @@
 
 #include "class_base_algorithm.h"
 /*!
- *
- * \brief Class that runs the Finite-entanglement scaling (FES) mode in the DMRG algorithm.
- *
- * # Finite-entanglement scaling (FES) DMRG class
- * \param shared_ptr<class_hdf5_file> An hdf5 class object that handles the output file.
- * \param shared_ptr<class_hdf5_table_buffer> (optional) A buffer for table entries that goes into the output file
- * \param shared_ptr<class_superblock> (optional) A class that stores current MPS and environments at each iteration.
- * \param shared_ptr<class_measurement> (optional) A class that extracts, or measures, quantities from the superblock.
+ * \brief Class that studies Finite-entanglement scaling using the imaginary TEBD algorithm.
  */
 class class_FES_iTEBD : public class_algorithm_base {
 public:
@@ -29,7 +22,7 @@ public:
     double delta_t0   = settings::fes_itebd::delta_t0;
     double delta_tmin = settings::fes_itebd::delta_tmin;
     int    print_freq = settings::fes_itebd::print_freq;
-    int    suzuki_trotter_order = settings::fes_itebd::suzuki_order;
+    int    suzuki_order = settings::fes_itebd::suzuki_order;
     double delta_t    = delta_t0;
     int    iteration  = 0;
 

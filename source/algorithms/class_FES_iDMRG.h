@@ -8,15 +8,9 @@
 
 
 #include "class_base_algorithm.h"
+
 /*!
- *
- * \brief Class that runs the Finite-entanglement scaling (FES) mode in the DMRG algorithm.
- *
- * # Finite-entanglement scaling (FES) DMRG class
- * \param shared_ptr<class_hdf5_file> An hdf5 class object that handles the output file.
- * \param shared_ptr<class_hdf5_table_buffer> (optional) A buffer for table entries that goes into the output file
- * \param shared_ptr<class_superblock> (optional) A class that stores current MPS and environments at each iteration.
- * \param shared_ptr<class_measurement> (optional) A class that extracts, or measures, quantities from the superblock.
+ * \brief Class that studies Finite-entanglement scaling using the infinite DMRG algorithm.
  */
 class class_FES_iDMRG : public class_algorithm_base {
 public:

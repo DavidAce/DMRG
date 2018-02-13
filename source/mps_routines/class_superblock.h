@@ -11,8 +11,8 @@
 #include <mps_routines/class_mpo.h>
 
 /*!
- # Superblock Class
-   This class contains the Hamiltonian MPO, current wave function MPS, left and right environment blocks and routines to contract, diagonalize, truncate
+  \class class_superblock
+  \brief This class contains the Hamiltonian MPO, current wave function MPS, left and right environment blocks and routines to contract, diagonalize, truncate
    and update them.
 */
 

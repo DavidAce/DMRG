@@ -9,16 +9,8 @@
 
 #include "class_base_algorithm.h"
 /*!
- *
  * \brief Class that runs the infinite DMRG algorithm.
- *
- * # Infinite DMRG class
- * \param shared_ptr<class_hdf5_file> An hdf5 class object that handles the output file.
- * \param shared_ptr<class_hdf5_table_buffer> (optional) A buffer for table entries that goes into the output file
- * \param shared_ptr<class_superblock> (optional) A class that stores current MPS and environments at each iteration.
- * \param shared_ptr<class_measurement> (optional) A class that extracts, or measures, quantities from the superblock.
  */
-
 class class_infinite_DMRG : public class_algorithm_base {
 public:
     //Inherit the constructor of class_algorithm_base

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="classclass__environment" kind="class" language="C++" prot="public">
     <compoundname>class_environment</compoundname>
     <templateparamlist>
@@ -84,9 +84,7 @@
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
-<para>&lt; Contracts a site into the block. <linebreak/>
-<linebreak/>
- <heading level="1">Left environment contraction</heading>
+<para>&lt; Contracts a site into the block.</para><para><heading level="1">Left environment contraction</heading>
 </para><para>[ ]<ndash/>0 0<ndash/>[LB]<ndash/>1 1<ndash/>[ GA conj ]<ndash/>2 [ ] | [ ] 0 [ ] [ ] 2 [ ] | [ left ]<ndash/>2 0<ndash/>[ M ]<ndash/>1 [ ] | [ ] 3 [ ] [ ] 0 [ ] | [ ]<ndash/>1 0<ndash/>[LB]<ndash/>1 1<ndash/>[ GA ]<ndash/>2</para><para><heading level="1">Right environment contraction</heading>
 </para><para>1<ndash/>[ GB conj ]<ndash/>2 0<ndash/>[LB]<ndash/>1 0<ndash/>[ ] | [ ] 0 [ ] [ ] 2 [ ] | [ ] 0<ndash/>[ M ]<ndash/>1 2<ndash/>[ right] | [ ] 3 [ ] [ ] 0 [ ] | [ ] 1<ndash/>[ GB ]<ndash/>2 0<ndash/>[LB]<ndash/>1 1<ndash/>[ ]</para>        </inbodydescription>
         <location file="source/mps_routines/class_environment.h" line="56" column="1" bodyfile="source/mps_routines/class_environment.cpp" bodystart="11" bodyend="67"/>

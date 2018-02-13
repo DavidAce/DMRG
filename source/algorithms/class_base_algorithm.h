@@ -17,6 +17,9 @@ class class_hdf5_table_buffer;
 class class_measurement;
 
 enum class SimulationType{iDMRG,fDMRG, esDMRG, FES_iDMRG, iTEBD, FES_iTEBD, NONE};
+
+
+
 class class_algorithm_base {
 public:
 
@@ -37,6 +40,7 @@ public:
     //Storage
     std::shared_ptr<class_hdf5_file>         hdf5;
     std::shared_ptr<class_hdf5_table_buffer> table_buffer;
+
     std::string group_name;
     std::string table_name;
     std::string simulation_name;
@@ -54,8 +58,8 @@ public:
     virtual void store_table_entry() = 0;
     virtual void print_profiling()   = 0;
 
-    virtual void print_status_full()   = 0;  /*!< Print out status of all quantities.*/
-    virtual void print_status_update() = 0;  /*!< Print out status of all quantities.*/
+    virtual void print_status_full()   = 0;
+    virtual void print_status_update() = 0;
 
 
     void single_DMRG_step(long chi_max);

@@ -15,8 +15,8 @@ class class_hdf5_file;
 
 
 /*!
- # Storage Class
-
+ \class class_environment_storage
+ \brief Storage class for environments during finite DMRG
  During the infinite-DMRG part of the algorithm, the current state for each chain-length
  is stored in a `class_storage` object, for later use in the finite-DMRG stage.
 

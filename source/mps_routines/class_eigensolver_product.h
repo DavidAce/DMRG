@@ -8,7 +8,12 @@
 
 
 #include "general/n_tensor_extra.h"
-//using namespace Textra;
+
+/*!
+ * \class class_eigensolver_product
+ * \brief Class that the tensor-vector product needed in the eigensolver Spectra.
+ *  Defines the matrix-vector product in the left side of \f$Av = \lambda \f$
+ */
 class class_eigensolver_product {
 private:
     using Scalar = double;
@@ -27,9 +32,6 @@ public:
                                        const Textra::array4 &shape4_);
 
 
-    /*! Function for eigenvalue solver Spectra
-     *  Defines the matrix-vector product in the left side of \f$Av = \lambda \f$
-     */
     int rows()const;
     int cols()const;
     void perform_op(const double *x_in, double *y_out) const;

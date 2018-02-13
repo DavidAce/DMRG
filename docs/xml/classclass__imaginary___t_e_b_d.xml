@@ -1,8 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="classclass__imaginary___t_e_b_d" kind="class" language="C++" prot="public">
     <compoundname>class_imaginary_TEBD</compoundname>
     <basecompoundref refid="classclass__algorithm__base" prot="public" virt="non-virtual">class_algorithm_base</basecompoundref>
+    <includes refid="class__imaginary___t_e_b_d_8h" local="no">class_imaginary_TEBD.h</includes>
       <sectiondef kind="public-attrib">
       <memberdef kind="variable" id="classclass__imaginary___t_e_b_d_1ab51bd56adf5b933e2cefee4f892c5356" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -16,7 +17,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="20" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="20" bodyend="-1"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="16" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="16" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__imaginary___t_e_b_d_1a7c4c21ad13cc87df5cdd83a5e7caf4d9" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -30,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="21" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="21" bodyend="-1"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="17" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="17" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__imaginary___t_e_b_d_1a39537978d66b4dfd1b7cd39d678c8d7d" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -44,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="22" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="22" bodyend="-1"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="18" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="18" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__imaginary___t_e_b_d_1abaed4fb640f15e97d7fcfa1484b387b6" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -58,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="23" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="23" bodyend="-1"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="19" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__imaginary___t_e_b_d_1af9a2f04e142d55bb7c6193b8bdd973ec" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -72,7 +73,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="24" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="24" bodyend="-1"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="20" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="20" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__imaginary___t_e_b_d_1a6b12630781f88f7f14e253b8da4a5bae" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -86,7 +87,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="26" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="26" bodyend="-1"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="22" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="22" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__imaginary___t_e_b_d_1a9bf8d16ae5bdcd46834a6b1d938ee41d" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -100,7 +101,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="27" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="27" bodyend="-1"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="23" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="23" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__imaginary___t_e_b_d_1a837353d7cfe120bfd59c4e4228de9ab6" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -114,7 +115,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="28" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="28" bodyend="-1"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="24" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="24" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__imaginary___t_e_b_d_1a8cf78b0c001203138befc3a267e6b55e" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -127,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="30" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="30" bodyend="-1"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="26" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="26" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__imaginary___t_e_b_d_1a2a72e4c4a212abc37382a3bda4895a91" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -140,7 +141,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="31" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="31" bodyend="-1"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="27" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="27" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -159,7 +160,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="19" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="16" bodyend="26"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="15" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="16" bodyend="26"/>
       </memberdef>
       <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1a341508aaa8498c1defe8c9f7383945e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -172,7 +173,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="33" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="47" bodyend="57"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="29" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="47" bodyend="57"/>
       </memberdef>
       <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1ac038c83d5c2a802686abaa9bf673b005" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -186,7 +187,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="36" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="29" bodyend="46"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="32" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="29" bodyend="46"/>
       </memberdef>
       <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1ac9faffebd11a7530016378550104b497" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -197,10 +198,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print out status of all quantities. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="38" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="111" bodyend="122"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="34" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="111" bodyend="122"/>
       </memberdef>
       <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1a0e1fd656e8273dd071dae8c679d72699" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -211,11 +212,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print out status of all quantities. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="39" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="92" bodyend="109"/>
-        <references refid="namespace_math_1a3345264a3373e4542c7baf43f5e1b713" compoundref="n__math_8h" startline="51" endline="53">Math::mod</references>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="35" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="92" bodyend="109"/>
       </memberdef>
       <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1a2fbbcb78748a27ed86cbbb4adca95345" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -229,7 +229,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="41" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="60" bodyend="75"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="37" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="60" bodyend="75"/>
       </memberdef>
       <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1a64b56b73bb96ad96fbd271a1765c54b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -243,50 +243,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="42" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="77" bodyend="88"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1a864f4f82b4d453828d391b2044d53fdc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::shared_ptr&lt; class_hdf5_table_buffer &gt; table_buffer_, std::shared_ptr&lt; class_superblock &gt; superblock_, std::shared_ptr&lt; class_measurement &gt; observables_)</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="18" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="14" bodyend="25"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::string group_name_, std::string table_name_, std::string simulation_name_, SimulationType simtype_)</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="18" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="27" bodyend="41"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>()</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="18" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="47" bodyend="49"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="38" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="77" bodyend="88"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
-    </briefdescription>
+<para>Class that runs the imaginary TEBD algorithm. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
@@ -337,16 +298,13 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="source/algorithms/class_imaginary_TEBD.h" line="16" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="16" bodyend="43"/>
+    <location file="source/algorithms/class_imaginary_TEBD.h" line="12" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.h" bodystart="12" bodyend="39"/>
     <listofallmembers>
       <member refid="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>ccout</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1ab51bd56adf5b933e2cefee4f892c5356" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>chi_max</name></member>
-      <member refid="classclass__imaginary___t_e_b_d_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__imaginary___t_e_b_d_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__imaginary___t_e_b_d_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1ad5b3b22f6b0d8164510388f19829643c" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>class_imaginary_TEBD</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1a6b12630781f88f7f14e253b8da4a5bae" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>delta_t</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1a39537978d66b4dfd1b7cd39d678c8d7d" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>delta_t0</name></member>

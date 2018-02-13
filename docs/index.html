@@ -45,35 +45,7 @@
         <h1>
           DMRG++
         </h1>
-        <p>This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm.</p>
-        <div class="m-block m-default">
-          <h3>Contents</h3>
-          <ul>
-            <li><a href="#intro">Description of DMRG++</a></li>
-            <li>
-              <a href="#installation">Installation</a>
-              <ul>
-                <li><a href="#quickstart">Quick start</a></li>
-                <li><a href="#minreqs">Minimum Requirements</a></li>
-                <li><a href="#optionalreqs">Optional Requirements</a></li>
-              </ul>
-            </li>
-            <li><a href="#usage">Usage</a></li>
-            <li>
-              <a href="#notation">Notation</a>
-              <ul>
-                <li>
-                  <a href="#convention">Tensor index order convention.</a>
-                  <ul>
-                    <li><a href="#example">Example:</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-            <li><a href="#details">Details</a></li>
-          </ul>
-        </div>
-<section id="intro"><h2><a href="#intro">Description of DMRG++</a></h2><p><a href="https://en.wikipedia.org/wiki/Density_matrix_renormalization_group">Density matrix renormalization group</a> (DMRG) is a variational numerical technique to study the low-energy physics of many-body quantum systems.</p><p>This algorithm constructs and minimizes trial wave functions, in the shape of <a href="https://en.wikipedia.org/wiki/Matrix_product_state">Matrix Product States</a> (MPS), iteratively in order to find the ground state of one-dimensional quantum systems with high precision.</p><p>This implementation loosely follows the steps outlined in:</p><blockquote><p><a href="https://arxiv.org/abs/1212.6255">Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study.</a><br />by Kjäll, Zaletel, Mong, Bardarson, and Pollmann. Physical Review B 87 (23): 235106.<br /></p></blockquote><blockquote><p><a href="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Efficient Numerical Simulations Using Matrix-Product States</a><br />by Frank Pollmann.<br /></p></blockquote><blockquote><p><a href="https://arxiv.org/abs/1008.3477">The density-matrix renormalization group in the age of matrix product states</a><br />by Ulrich Schollwöck.<br /></p></blockquote></section><section id="installation"><h2><a href="#installation">Installation</a></h2><section id="quickstart"><h3><a href="#quickstart">Quick start</a></h3><p>Git clone or copy &amp; extract the project into a folder of your choosing. Make sure there are no spaces in the path!**. The project can be built with a single command from a unix terminal. Simply launch the script <code>.\build.sh</code> found in the root folder, or run</p><pre class="m-code"><span class="n">cmake</span> <span class="o">-</span><span class="n">E</span> <span class="n">make_directory</span> <span class="n">build</span><span class="o">/</span><span class="n">Release</span>
+<p>This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm.</p><section id="intro"><h2><a href="#intro">Description of DMRG++</a></h2><p><a href="https://en.wikipedia.org/wiki/Density_matrix_renormalization_group">Density matrix renormalization group</a> (DMRG) is a variational numerical technique to study the low-energy physics of many-body quantum systems.</p><p>This algorithm constructs and minimizes trial wave functions, in the shape of <a href="https://en.wikipedia.org/wiki/Matrix_product_state">Matrix Product States</a> (MPS), iteratively in order to find the ground state of one-dimensional quantum systems with high precision.</p><p>This implementation loosely follows the steps outlined in:</p><blockquote><p><a href="https://arxiv.org/abs/1212.6255">Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study.</a><br />by Kjäll, Zaletel, Mong, Bardarson, and Pollmann. Physical Review B 87 (23): 235106.<br /></p></blockquote><blockquote><p><a href="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Efficient Numerical Simulations Using Matrix-Product States</a><br />by Frank Pollmann.<br /></p></blockquote><blockquote><p><a href="https://arxiv.org/abs/1008.3477">The density-matrix renormalization group in the age of matrix product states</a><br />by Ulrich Schollwöck.<br /></p></blockquote></section><section id="installation"><h2><a href="#installation">Installation</a></h2><section id="quickstart"><h3><a href="#quickstart">Quick start</a></h3><p>Git clone or copy &amp; extract the project into a folder of your choosing. Make sure there are no spaces in the path!**. The project can be built with a single command from a unix terminal. Simply launch the script <code>.\build.sh</code> found in the root folder, or run</p><pre class="m-code"><span class="n">cmake</span> <span class="o">-</span><span class="n">E</span> <span class="n">make_directory</span> <span class="n">build</span><span class="o">/</span><span class="n">Release</span>
 <span class="n">cd</span> <span class="n">build</span><span class="o">/</span><span class="n">Release</span>
 <span class="n">cmake</span> <span class="o">-</span><span class="n">Bbuild</span><span class="o">/</span><span class="n">Release</span> <span class="o">--</span><span class="n">build</span> <span class="n">build</span> <span class="o">-</span><span class="n">config</span> <span class="n">Release</span> <span class="p">..</span><span class="o">/</span><span class="p">..</span><span class="o">/</span>
 <span class="n">make</span></pre><p>This will create subdirectories and use CMake to check for dependencies and download them automatically if needed (see <em>Optional Requirements</em> below). If the dependencies are found, the project is built and an executable is generated.</p><p>To run executable, launch <code>.\run.sh</code>, containing</p><pre class="m-code"><span class="cp">#!/bin/sh</span>
@@ -291,7 +263,7 @@ $\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}$
 </g>
 </svg>:</p><pre>                                [d] [d]                0   1
             Theta     = [chia]___|___|___[chib] = 2 ___|___|___ 3
-</pre><p>which in code reads</p><pre class="m-code"><span class="n">Tensor4</span> <span class="nf">G</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">chia</span><span class="p">,</span><span class="n">chib</span><span class="p">);</span></pre></section></section></section><section id="details"><h2><a href="#details">Details</a></h2><aside class="m-note m-default"><h4>Author</h4><p>David Aceituno</p></aside><aside class="m-note m-default"><h4>Date</h4><p>10-2017</p></aside><aside class="m-note m-default"><h4>Copyright</h4><p>MPL2</p></aside></section>
+</pre><p>which in code reads</p><pre class="m-code"><span class="n">Tensor4</span> <span class="nf">G</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">chia</span><span class="p">,</span><span class="n">chib</span><span class="p">);</span></pre></section></section></section><section id="details"><h2><a href="#details">Details</a></h2><aside class="m-note m-default"><h4>Author</h4><p>David Aceituno</p></aside><aside class="m-note m-default"><h4>Date</h4><p>02-2018</p></aside><aside class="m-note m-default"><h4>Copyright</h4><p>MPL2</p></aside></section>
       </div>
     </div>
   </div>
@@ -309,7 +281,7 @@ $\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}$
           <input type="search" id="search-input" placeholder="Loading &hellip;" disabled="disabled" autofocus="autofocus" />
           <noscript class="m-text m-danger m-text-center">Unlike everything else in the docs, the search functionality <em>requires</em> JavaScript.</noscript>
           <div id="search-help" class="m-text m-dim m-text-center">
-            Search for symbols, directories, files, etc.
+            Search for symbols, headers, pages or example source files. You can omit any prefix from the symbol or file path.
           </div>
           <div id="search-notfound" class="m-text m-warning m-text-center">Sorry, nothing was found.</div>
           <ul id="search-results"></ul>
@@ -324,7 +296,7 @@ $\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}$
   <div class="m-container">
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
-        <p>DMRG++. Created by <a href="http://doxygen.org/">Doxygen</a> 1.8.15 and <a href="http://mcss.mosra.cz/">m.css</a>.</p>
+        <p>DMRG++. Created by <a href="http://doxygen.org/">Doxygen</a> 1.8.13 and <a href="http://mcss.mosra.cz/">m.css</a>.</p>
       </div>
     </div>
   </div>

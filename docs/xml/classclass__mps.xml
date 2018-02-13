@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="classclass__mps" kind="class" language="C++" prot="public">
     <compoundname>class_mps</compoundname>
     <includes refid="class__mps_8h" local="no">class_mps.h</includes>
@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="48" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="48" bodyend="-1"/>
+        <location file="source/mps_routines/class_mps.h" line="49" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="49" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -30,7 +30,7 @@
 <para>Local (or physical) spin or qubit dimension, usually denoted <formula id="10">$d$</formula> elsewhere. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="50" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="50" bodyend="-1"/>
+        <location file="source/mps_routines/class_mps.h" line="51" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="51" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__mps_1a267c868d49a5bdb1d36382c0cf7d4e2c" prot="private" static="no" mutable="no">
         <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
@@ -43,7 +43,7 @@
 <para>Temporary holder for swapping </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="51" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="51" bodyend="-1"/>
+        <location file="source/mps_routines/class_mps.h" line="52" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="52" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__mps_1a502c37bf1f3118c1371530bf1adcf71e" prot="private" static="no" mutable="no">
         <type>Textra::Tensor&lt; Scalar, 1 &gt;</type>
@@ -56,7 +56,7 @@
 <para>Temporary holder for swapping </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="52" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="52" bodyend="-1"/>
+        <location file="source/mps_routines/class_mps.h" line="53" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="53" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -71,7 +71,7 @@
 <para>Tracks the swapped state of A and B positions. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="54" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="54" bodyend="-1"/>
+        <location file="source/mps_routines/class_mps.h" line="55" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="55" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__mps_1a02186fbc3b68d6c524c483fa7f9d1da7" prot="public" static="no" mutable="no">
         <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
@@ -84,7 +84,7 @@
 <para><formula id="28">$\Gamma^A$</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="56" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="56" bodyend="-1"/>
+        <location file="source/mps_routines/class_mps.h" line="57" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="57" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__mps_1a90f7034eef4c6cba916dec77704d81fc" prot="public" static="no" mutable="no">
         <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
@@ -97,7 +97,7 @@
 <para><formula id="29">$\Gamma^B$</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="57" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="57" bodyend="-1"/>
+        <location file="source/mps_routines/class_mps.h" line="58" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="58" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__mps_1aef24f4c0d05044b169c76b781566ab81" prot="public" static="no" mutable="no">
         <type>Textra::Tensor&lt; Scalar, 1 &gt;</type>
@@ -107,10 +107,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="41">$\Lambda^A$</formula> </para>        </detaileddescription>
+<para><formula id="42">$\Lambda^A$</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="58" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="58" bodyend="-1"/>
+        <location file="source/mps_routines/class_mps.h" line="59" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="59" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__mps_1a6a6ec148213e5e0a3777907aace69c5f" prot="public" static="no" mutable="no">
         <type>Textra::Tensor&lt; Scalar, 1 &gt;</type>
@@ -120,10 +120,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="42">$\Lambda^B$</formula> </para>        </detaileddescription>
+<para><formula id="43">$\Lambda^B$</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="59" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="59" bodyend="-1"/>
+        <location file="source/mps_routines/class_mps.h" line="60" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="60" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__mps_1af8e0a279018e8dfb0ac16d6796168d9f" prot="public" static="no" mutable="no">
         <type>Textra::Tensor&lt; Scalar, 1 &gt;</type>
@@ -133,10 +133,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="40">$\Lambda^B_{n+1}$</formula> or <formula id="38">$\Lambda^B_{n-1}$</formula> in iDMRG or fDMRG respectively. </para>        </detaileddescription>
+<para><formula id="41">$\Lambda^B_{n+1}$</formula> or <formula id="39">$\Lambda^B_{n-1}$</formula> in iDMRG or fDMRG respectively. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="60" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="60" bodyend="-1"/>
+        <location file="source/mps_routines/class_mps.h" line="61" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="61" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -151,7 +151,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="62" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="62" bodyend="62"/>
+        <location file="source/mps_routines/class_mps.h" line="63" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="63" bodyend="63"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a9fd08b87e2b6e7aed019b7eff3b2f892" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -165,10 +165,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>Sets local dimension </para>        </detaileddescription>
         <inbodydescription>
 <para><xrefsect id="todo_1_todo000001"><xreftitle>Todo</xreftitle><xrefdescription><para>, check? was LA before </para></xrefdescription></xrefsect></para>        </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="64" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="8" bodyend="23"/>
+        <location file="source/mps_routines/class_mps.h" line="65" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="8" bodyend="23"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1ad2663b4931bd182710c94381e56a0aba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -178,10 +178,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Sets local dimension </para>        </detaileddescription>
+<para>Swaps the roles of A and B. Used in infinite DMRG. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="65" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="26" bodyend="40"/>
+        <location file="source/mps_routines/class_mps.h" line="66" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="26" bodyend="40"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a55418d0ef5c02f5994e71c5a5490bff7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
@@ -191,10 +191,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Swaps the roles of A and B. Used in infinite DMRG. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="67" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="42" bodyend="44"/>
+        <location file="source/mps_routines/class_mps.h" line="68" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="42" bodyend="44"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1ac1818f73ca75e2f9434026577fc26173" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
@@ -207,7 +207,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="68" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="45" bodyend="47"/>
+        <location file="source/mps_routines/class_mps.h" line="69" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="45" bodyend="47"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a07d06716141ae3782195819dfdc21057" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -220,7 +220,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="69" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="49" bodyend="54"/>
+        <location file="source/mps_routines/class_mps.h" line="70" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="49" bodyend="54"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1af2de9e983db0ded95e79ef2cb9ebcf17" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -233,7 +233,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="70" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="55" bodyend="60"/>
+        <location file="source/mps_routines/class_mps.h" line="71" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="55" bodyend="60"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a1501eb3c7b6c476f119083c46e3ebec2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -243,10 +243,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>Returns rank 4 tensor <formula id="22">$\Theta$</formula>. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="72" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="63" bodyend="73"/>
+        <location file="source/mps_routines/class_mps.h" line="73" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="63" bodyend="73"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a50c7a2e6f49fcc0c9b21458686fb9b2d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -256,10 +256,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="22">$\Theta$</formula>. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="73" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="75" bodyend="78"/>
+        <location file="source/mps_routines/class_mps.h" line="74" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="75" bodyend="78"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1aa9f900c83b1b616e51c07777ad911802" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -272,7 +272,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="74" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="80" bodyend="83"/>
+        <location file="source/mps_routines/class_mps.h" line="75" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="80" bodyend="83"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1afc148bceb2440b590b67eb390c5b816c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -285,7 +285,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="75" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="86" bodyend="89"/>
+        <location file="source/mps_routines/class_mps.h" line="76" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="86" bodyend="89"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a6f59773603d4758e7bd3a0c9324f9db9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -298,7 +298,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="76" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="91" bodyend="94"/>
+        <location file="source/mps_routines/class_mps.h" line="77" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="91" bodyend="94"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1acf0d9b2ef0d19b23e84c2368991e1133" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -320,7 +320,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="79" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="79" bodyend="84"/>
+        <location file="source/mps_routines/class_mps.h" line="80" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="80" bodyend="85"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1aead23a354e773808a852458f9fcf13c7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -342,7 +342,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="87" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="87" bodyend="92"/>
+        <location file="source/mps_routines/class_mps.h" line="88" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="88" bodyend="93"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a8b319bb371a1c106c22da8b44be058a9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -364,7 +364,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="95" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="95" bodyend="102"/>
+        <location file="source/mps_routines/class_mps.h" line="96" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="96" bodyend="103"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a4008612d0f5d8478e672a1d4b4fb5f77" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -386,7 +386,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="104" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="104" bodyend="111"/>
+        <location file="source/mps_routines/class_mps.h" line="105" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="105" bodyend="112"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1af47f06843d76ee8ba33f881b45f031c1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -408,7 +408,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="114" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="114" bodyend="119"/>
+        <location file="source/mps_routines/class_mps.h" line="115" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="115" bodyend="120"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a3a9a6bd31b810041ca5f21d2a9f23748" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -430,26 +430,30 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="122" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="122" bodyend="127"/>
+        <location file="source/mps_routines/class_mps.h" line="123" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="123" bodyend="128"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
-<para>Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites <formula id="7">$n$</formula> and <formula id="33">$n+1$</formula>, respectively. </para>    </briefdescription>
+<para>Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites <formula id="7">$n$</formula> and <formula id="34">$n+1$</formula>, respectively. </para>    </briefdescription>
     <detaileddescription>
-<para><heading level="1">MPS Class</heading>
-</para><para>During the initial infinite-DMRG stage, sites A and B are swapped in each iteration to mimic the movement between even and odd positions in a translationally invariant chain.</para><para><heading level="2">Background</heading>
-</para><para>In both the infinite and finite DMRG algorithms, the MPS in this class will be used to construct <formula id="22">$\Theta$</formula>, a two-site MPS tensor of rank 4:</para><para><formula id="34">\[ \Theta = \Lambda^B_{n-1} \Gamma^A_{n} \Lambda^A_{n} \Gamma^B_{n+1} \Lambda^B_{n+1}. \]</formula></para><para><blockquote><para>Note that the first <formula id="35">$ \Lambda^B_{n-1} $</formula> is special:<itemizedlist>
-<listitem><para>During infinite-DMRG <formula id="36">$ \Lambda^B_{n-1} = \Lambda^B_{n+1} $</formula> because we expect the MPS to be symmetric about <formula id="7">$n$</formula>.</para></listitem><listitem><para>During finite-DMRG it is simply the bond directly to the left of <formula id="7">$n$</formula>. </para></listitem></itemizedlist>
-</para></blockquote></para><para><heading level="3">Diagram</heading>
-</para><para>In diagrammatic tensor notation the two-site MPS is: <verbatim>                                  [d]    [d]
-            Theta     = [chia]__.__|__.__|__.__[chib]
+<sect1 id="classclass__mps_1description">
+<title>Description</title>
+<para>During the initial infinite-DMRG stage, sites A and B are swapped in each iteration to mimic the movement between even and odd positions in a translationally invariant chain.</para><sect2 id="classclass__mps_1background">
+<title>Background</title>
+<para>In both the infinite and finite DMRG algorithms, the MPS in this class will be used to construct <formula id="22">$\Theta$</formula>, a two-site MPS tensor of rank 4:</para><para><formula id="35">\[ \Theta = \Lambda^B_{n-1} \Gamma^A_{n} \Lambda^A_{n} \Gamma^B_{n+1} \Lambda^B_{n+1}. \]</formula></para><para><blockquote><para>Note that the first <formula id="36">$ \Lambda^B_{n-1} $</formula> is special:<itemizedlist>
+<listitem><para>During infinite-DMRG <formula id="37">$ \Lambda^B_{n-1} = \Lambda^B_{n+1} $</formula> because we expect the MPS to be symmetric about <formula id="7">$n$</formula>.</para></listitem><listitem><para>During finite-DMRG it is simply the bond directly to the left of <formula id="7">$n$</formula>. </para></listitem></itemizedlist>
+</para></blockquote></para></sect2>
+<sect2 id="classclass__mps_1diagram">
+<title>Diagram</title>
+<para>In diagrammatic tensor notation the two-site MPS is: <verbatim>                              [d]    [d]
+       Theta     =  [chia]__.__|__.__|__.__[chib]
 
-                               LB  GA LA GB LB
-</verbatim> where the values in [ ] denote the dimension of each leg of the full tensor:<itemizedlist>
-<listitem><para><formula id="10">$d$</formula> = local (or physical) dimension. Default is 2 for spin-1/2, Ising spins or qubits.</para></listitem><listitem><para><formula id="37">$\chi_a$</formula> = Left dimension equivalent to bond dimension of <formula id="38">$\Lambda^B_{n-1}$</formula></para></listitem><listitem><para><formula id="39">$\chi_b$</formula> = Right dimension equivalent to bond dimension of <formula id="40">$\Lambda^B_{n+1}$</formula></para></listitem></itemizedlist>
-</para><para><heading level="3">Tensor index order convention: See the <ulink url="index.html">Home page</ulink>.</heading>
-</para>    </detaileddescription>
-    <location file="source/mps_routines/class_mps.h" line="46" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="46" bodyend="129"/>
+                           LB  GA LA GB LB</verbatim> where the values in [ ] denote the dimension of each leg of the full tensor:<itemizedlist>
+<listitem><para><formula id="10">$d$</formula> = local (or physical) dimension. Default is 2 for spin-1/2, Ising spins or qubits.</para></listitem><listitem><para><formula id="38">$\chi_a$</formula> = Left dimension equivalent to bond dimension of <formula id="39">$\Lambda^B_{n-1}$</formula></para></listitem><listitem><para><formula id="40">$\chi_b$</formula> = Right dimension equivalent to bond dimension of <formula id="41">$\Lambda^B_{n+1}$</formula></para></listitem></itemizedlist>
+</para><para>Tensor index order convention: See the <ulink url="index.html">Home page</ulink>. </para></sect2>
+</sect1>
+    </detaileddescription>
+    <location file="source/mps_routines/class_mps.h" line="47" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="47" bodyend="130"/>
     <listofallmembers>
       <member refid="classclass__mps_1a55418d0ef5c02f5994e71c5a5490bff7" prot="public" virt="non-virtual"><scope>class_mps</scope><name>A</name></member>
       <member refid="classclass__mps_1ac1818f73ca75e2f9434026577fc26173" prot="public" virt="non-virtual"><scope>class_mps</scope><name>B</name></member>

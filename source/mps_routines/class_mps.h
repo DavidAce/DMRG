@@ -7,14 +7,16 @@
 //using namespace std;
 //using namespace Textra;
 
-/*! \brief Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites \f$n\f$ and \f$n+1\f$, respectively.*/
 
 /*!
- # MPS Class
- During the initial infinite-DMRG stage, sites A and B are swapped in each iteration to mimic the movement between even and odd positions
- in a translationally invariant chain.
+ \class class_mps
+ \brief Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites \f$n\f$ and \f$n+1\f$, respectively.
 
- ## Background
+ \section description Description
+ During the initial infinite-DMRG stage, sites A and B are swapped in each iteration to mimic the movement between even and odd positions
+  in a translationally invariant chain.
+
+ \subsection background Background
  In both the infinite and finite DMRG algorithms, the MPS in this class will be used to construct  \f$\Theta\f$, a two-site MPS tensor of rank 4:
 
  \f[
@@ -25,22 +27,21 @@
  > - During infinite-DMRG \f$ \Lambda^B_{n-1} = \Lambda^B_{n+1} \f$ because we expect the MPS to be symmetric about \f$n\f$.
  > - During finite-DMRG it is simply the bond directly to the left of \f$n\f$.
 
- ### Diagram
+ \subsection diagram Diagram
 
  In diagrammatic tensor notation the two-site MPS is:
-@verbatim
-                 	           	  [d]    [d]
-            Theta     =	[chia]__.__|__.__|__.__[chib]
+  @verbatim
+                	           	  [d]    [d]
+        Theta     =	[chia]__.__|__.__|__.__[chib]
 
-                 	           LB  GA LA GB LB
-@endverbatim
+                	           LB  GA LA GB LB
+  @endverbatim
  where the values in [ ] denote the dimension of each leg of the full tensor:
  - \f$d\f$ = local (or physical) dimension. Default is 2 for spin-1/2, Ising spins or qubits.
  - \f$\chi_a\f$ = Left dimension equivalent to bond dimension of \f$\Lambda^B_{n-1}\f$
  - \f$\chi_b\f$ = Right dimension equivalent to bond dimension of \f$\Lambda^B_{n+1}\f$
 
-
- ### Tensor index order convention: See the <a href="index.html">Home page</a>.
+ Tensor index order convention: See the <a href="index.html">Home page</a>.
 */
 
 class class_mps {
@@ -61,15 +62,15 @@ public:
 
     class_mps(){};
 
-    void initialize(long local_dimension_);         /*! Sets local dimension*/
-    void swap_AB();                                 /*! Swaps the roles of A and B. Used in infinite DMRG.*/
+    void initialize(long local_dimension_);         /*!< Sets local dimension*/
+    void swap_AB();                                 /*!< Swaps the roles of A and B. Used in infinite DMRG.*/
 
     Textra::Tensor<Scalar,3> A() const;
     Textra::Tensor<Scalar,3> B() const;
     Textra::Tensor<Scalar,4> thetaL() const;
     Textra::Tensor<Scalar,4> thetaR() const;
 
-    Textra::Tensor<Scalar,4> get_theta() const;             /*! Returns rank 4 tensor \f$\Theta\f$.*/
+    Textra::Tensor<Scalar,4> get_theta() const;             /*!< Returns rank 4 tensor \f$\Theta\f$.*/
     Textra::Tensor<Scalar,4> get_transfer_matrix_L()const;
     Textra::Tensor<Scalar,4> get_transfer_matrix_R()const;
     Textra::Tensor<Scalar,4> get_transfer_2_site_matrix_L()const;
