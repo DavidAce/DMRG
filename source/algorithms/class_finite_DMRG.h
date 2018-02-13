@@ -29,7 +29,7 @@ public:
     int  max_sweeps = settings::fdmrg::max_sweeps;
     int  direction  = 1;
     int  sweep      = 0;
-    int  position  = 0;
+    int  position   = 0;
     int  middle_of_chain = max_length/2;
 
     std::shared_ptr<class_environment_storage>  env_storage;

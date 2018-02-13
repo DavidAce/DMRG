@@ -9,6 +9,7 @@
 #include "general/n_tensor_extra.h"
 #include <SymEigsSolver.h>
 #include <GenEigsSolver.h>
+#include <experimental/filesystem>
 
 //using namespace Textra;
 

@@ -50,16 +50,6 @@ ExternalProject_Add(GSL
             ${CMAKE_MAKE_PROGRAM} --quiet install
         )
 
-ExternalProject_Get_Property(GSL install_dir)
-set(GSL_LIB_DIR ${install_dir}/lib)
-set(GSL_INC_DIR ${install_dir}/include)
-set(GSL_BIN_DIR ${install_dir}/bin)
-
-
-file(WRITE  ${INSTALL_DIRECTORY}/gsl/FindGSL.cmake  "set(GSL_LIB_DIR   ${GSL_LIB_DIR})\n")
-file(APPEND ${INSTALL_DIRECTORY}/gsl/FindGSL.cmake  "set(GSL_INC_DIR   ${GSL_INC_DIR})\n")
-file(APPEND ${INSTALL_DIRECTORY}/gsl/FindGSL.cmake  "set(GSL_BIN_DIR   ${GSL_BIN_DIR})\n")
-file(APPEND ${INSTALL_DIRECTORY}/gsl/FindGSL.cmake  "set(GSL_INCLUDE_DIRS   ${GSL_INC_DIR})\n") # For compatibility with find_package(GSL...)
 
 
 

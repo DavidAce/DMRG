@@ -15,42 +15,51 @@
 # To use, simple include it in your CMakeLists.txt
 #   include(Find_or_install_LAPACK_and_BLAS.cmake)
 
+#Check first if openblas is installed,
+#set(BLA_VENDOR OpenBLAS)
+#find_package(BLAS)
 
+message("SEARCHING FOR LIBRARY: LAPACK")
+set(USE_OPTIMIZED_BLAS ON)
 
-
-message("SEARCHING FOR LIBRARIES: LAPACK and BLAS")
 if(EXISTS "${PROJECT_SOURCE_DIR}/libs/lapack/FindLapack.cmake" )
+    include(cmake/FindGFortran.cmake)     ### For Fortran library
     include(${PROJECT_SOURCE_DIR}/libs/lapack/FindLapack.cmake)
-    unset(LAPACK_CMAKE_FILE)
-    unset(LAPACK_CMAKE_DIR)
-    FILE(GLOB_RECURSE LAPACK_CMAKE_FILE "${LAPACK_LIB_DIR}/*lapack-config.cmake")
-    get_filename_component(LAPACK_CMAKE_DIR "${LAPACK_CMAKE_FILE}" DIRECTORY)
-    find_package(LAPACK PATHS "${LAPACK_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE)
-    if(LAPACK_FOUND)
-        set(LAPACK_LIBRARIES ${LAPACK_lapack_LIBRARIES})
-        set(BLAS_LIBRARIES ${LAPACK_blas_LIBRARIES})
-        include_directories(${LAPACK_INC_DIR})
+    FILE(GLOB_RECURSE LAPACK_CMAKE_DIR "${LAPACK_CMAKE_DIR}/*lapack-config.cmake")
+    get_filename_component(LAPACK_CMAKE_DIR "${LAPACK_CMAKE_DIR}" DIRECTORY)
+    find_package(LAPACK PATHS "${LAPACK_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE REQUIRED)
+    set(LAPACK_LIBRARIES ${LAPACK_lapack_LIBRARIES})
+    set(BLAS_LIBRARIES ${LAPACK_blas_LIBRARIES})
+    if(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
         message(STATUS "FOUND PREVIOUSLY INSTALLED LAPACK:   ${LAPACK_LIBRARIES}")
         message(STATUS "FOUND PREVIOUSLY INSTALLED BLAS:     ${BLAS_LIBRARIES}")
+        target_link_libraries(${PROJECT_NAME} ${LAPACK_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${BLAS_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${GFORTRAN_LIB})
         return()
     endif()
-    message(FATAL_ERROR "Found 'FindLapack.cmake' in libs/lapack, but failed to configure. Please do a clean build.")
-    exit()
+    message(WARNING "Found 'libs/lapack/FindLAPACK.cmake' in , but failed to configure. You may need a clean build.")
 endif()
 
-message(STATUS "SEARCHING FOR LAPACK AND BLAS IN SYSTEM...")
-find_package(BLAS)
+message(STATUS "SEARCHING FOR LAPACK IN SYSTEM...")
 find_package(LAPACK)
-if(LAPACK_FOUND AND BLAS_FOUND)
+if(LAPACK_FOUND)
     message(STATUS "FOUND BLAS:     ${BLAS_LIBRARIES}")
     message(STATUS "FOUND LAPACK:   ${LAPACK_LIBRARIES}")
+    target_link_libraries(${PROJECT_NAME} ${LAPACK_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} ${BLAS_LIBRARIES})
 else()
-    message(STATUS "DOWNLOADING BLAS AND LAPACK...")
-	execute_process(
+    message(STATUS "DOWNLOADING LAPACK...")
+    set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
+    include(cmake/FindGFortran.cmake)    ### For Fortran library
+
+    execute_process(
 		COMMAND ${CMAKE_COMMAND} -E make_directory tmp/lapack
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts)
 	execute_process(
-		COMMAND ${CMAKE_COMMAND} -DINSTALL_DIRECTORY:PATH=${PROJECT_SOURCE_DIR}/libs -G ${CMAKE_GENERATOR} ../../lapack
+		COMMAND ${CMAKE_COMMAND}
+            -DINSTALL_DIRECTORY:PATH=${INSTALL_DIRECTORY}
+            -G ${CMAKE_GENERATOR} ../../lapack
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/lapack )
 	execute_process(
         OUTPUT_QUIET
@@ -61,20 +70,30 @@ else()
     if(NOT "${res_var}" STREQUAL "0")
         message(FATAL_ERROR "LAPACK and BLAS not found and failed to install: ${res_var}")
     endif()
-	include(${PROJECT_SOURCE_DIR}/libs/lapack/FindLapack.cmake)
-    unset(LAPACK_CMAKE_FILE)
-    unset(LAPACK_CMAKE_DIR)
-    FILE(GLOB_RECURSE LAPACK_CMAKE_FILE "${LAPACK_LIB_DIR}/*lapack-config.cmake")
-    get_filename_component(LAPACK_CMAKE_DIR "${LAPACK_CMAKE_FILE}" DIRECTORY)
-    set(LAPACK_LIBRARIES "")
-    set(BLAS_LIBRARIES "")
+    # Generate a file that can be detected if the library was installed successfully
+    set(LAPACK_CMAKE_DIR ${INSTALL_DIRECTORY}/lapack/lib/cmake)
+    file(WRITE ${INSTALL_DIRECTORY}/lapack/FindLapack.cmake "set(LAPACK_CMAKE_DIR   ${LAPACK_CMAKE_DIR})\n")
+
+    #Include that file
+    include(${INSTALL_DIRECTORY}/lapack/FindLapack.cmake)
+    FILE(GLOB_RECURSE LAPACK_CMAKE_DIR "${LAPACK_CMAKE_DIR}/*lapack-config.cmake")
+    get_filename_component(LAPACK_CMAKE_DIR "${LAPACK_CMAKE_DIR}" DIRECTORY)
     find_package(LAPACK PATHS "${LAPACK_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE REQUIRED)
     set(LAPACK_LIBRARIES ${LAPACK_lapack_LIBRARIES})
     set(BLAS_LIBRARIES ${LAPACK_blas_LIBRARIES})
-    include_directories(${LAPACK_INC_DIR})
-    message(STATUS "SUCCESSFULLY INSTALLED LAPACK:   ${LAPACK_LIBRARIES}")
-    message(STATUS "SUCCESSFULLY INSTALLED BLAS:     ${BLAS_LIBRARIES}")
-    message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/lapack/log_build.txt")
+    if(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
+        message(STATUS "SUCCESSFULLY INSTALLED LAPACK:   ${LAPACK_LIBRARIES}")
+        message(STATUS "SUCCESSFULLY INSTALLED BLAS:     ${BLAS_LIBRARIES}")
+        message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/lapack/log_build.txt")
+        target_link_libraries(${PROJECT_NAME} ${LAPACK_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${BLAS_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${GFORTRAN_LIB})
+
+    else()
+        message(WARNING "LAPACK_LIBRARIES: ${LAPACK_LIBRARIES}")
+        message(WARNING "BLAS_LIBRARIES: ${LAPACK_LIBRARIES}")
+        message(FATAL_ERROR "LAPACK or BLAS could not be found.")
+    endif()
 endif()
 
 #get_cmake_property(_variableNames VARIABLES)

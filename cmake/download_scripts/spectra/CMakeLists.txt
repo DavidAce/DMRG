@@ -12,7 +12,7 @@
 #        execute_process(
 #                COMMAND ${CMAKE_COMMAND} --build .
 #                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts/spectra/build )
-#        
+#
 #        include(${PROJECT_SOURCE_DIR}/libs/spectra/FindSpectra.cmake)
 #        include_directories(${SPECTRA_INCLUDE_DIR})
 #        message("SUCCESSFULLY INSTALLED SPECTRA:   ${SPECTRA_INCLUDE_DIR}")
@@ -43,7 +43,4 @@ ExternalProject_Add(SPECTRA
         -Wno-dev
         )
 
-ExternalProject_Get_Property(SPECTRA install_dir)
-set(SPECTRA_INC_DIR ${install_dir}/src/SPECTRA/include)
-file(WRITE ${INSTALL_DIRECTORY}/spectra/FindSpectra.cmake "set(SPECTRA_INCLUDE_DIR   ${SPECTRA_INC_DIR})\n")
-
+#ExternalProject_Get_Property(SPECTRA install_dir)

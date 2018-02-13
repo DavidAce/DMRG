@@ -17,28 +17,41 @@
 message("SEARCHING FOR LIBRARY: ARPACK")
 if(EXISTS "${PROJECT_SOURCE_DIR}/libs/arpack-ng/FindArpack.cmake" )
     include(${PROJECT_SOURCE_DIR}/libs/arpack-ng/FindArpack.cmake)
-    find_package(arpack-ng PATHS "${ARPACK_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE)
-    if(arpack-ng_FOUND)
-        include_directories(${ARPACK_INC_DIR})
-        set(ARPACK_LIBRARIES ${arpack_ng_LIBRARIES})
+    find_package(arpack-ng PATHS "${ARPACK_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE REQUIRED)
+    set(ARPACK_LIBRARIES ${arpack_ng_LIBRARIES})
+    set(ARPACK_INCLUDE_DIRS ${arpack_ng_INCLUDE_DIRS})
+    if(arpack-ng_FOUND AND LAPACK_LIBRARIES AND BLAS_LIBRARIES)
         message(STATUS "FOUND PREVIOUSLY INSTALLED ARPACK:   ${ARPACK_LIBRARIES}")
+        target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
+        target_link_libraries(${PROJECT_NAME} ${ARPACK_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${LAPACK_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${BLAS_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${GFORTRAN_LIB})
         return()
     endif()
+    message(WARNING "Found 'libs/arpack-ng/FindArpack.cmake' in , but failed to configure. You may need a clean build.")
 endif()
 
 message(STATUS "SEARCHING FOR ARPACK IN SYSTEM...")
-find_library(ARPACK_LIBRARIES NAMES arpack arpack-ng libarpack libarpack2 libarpack2-dev)
+find_library(ARPACK_LIBRARIES
+        NAMES "arpack" "libarpack.a"
+        PATH_SUFFIXES "lib" "lib32" "lib64"
+)
+
 if(ARPACK_LIBRARIES)
     message(STATUS "FOUND ARPACK:   ${ARPACK_LIBRARIES}")
+    target_link_libraries(${PROJECT_NAME} ${ARPACK_LIBRARIES})
+
     return()
 elseif(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
     message(STATUS "DOWNLOADING ARPACK...")
+    set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
     execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory tmp/arpack-ng
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts)
     execute_process(
             COMMAND ${CMAKE_COMMAND}
-                -DINSTALL_DIRECTORY:PATH=${PROJECT_SOURCE_DIR}/libs
+                -DINSTALL_DIRECTORY:PATH=${INSTALL_DIRECTORY}
                 -DBLAS_LIBRARIES:PATH=${BLAS_LIBRARIES}
                 -DLAPACK_LIBRARIES:PATH=${LAPACK_LIBRARIES}
                 -G ${CMAKE_GENERATOR} ../../arpack-ng
@@ -52,24 +65,29 @@ elseif(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
     if(NOT "${res_var}" STREQUAL "0")
         message(FATAL_ERROR "ARPACK not found and failed to install: ${res_var}")
     endif()
-    set(ARPACK_LIBRARIES "")
-    include(${PROJECT_SOURCE_DIR}/libs/arpack-ng/FindArpack.cmake)
+    # Generate a file that can be detected if the library was installed successfully
+    set(ARPACK_CMAKE_DIR ${INSTALL_DIRECTORY}/arpack-ng)
+    file(WRITE ${INSTALL_DIRECTORY}/arpack-ng/FindArpack.cmake "set(ARPACK_CMAKE_DIR  ${ARPACK_CMAKE_DIR})\n")
+
+    # Include that file
+    include(${INSTALL_DIRECTORY}/arpack-ng/FindArpack.cmake)
     find_package(arpack-ng PATHS "${ARPACK_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE REQUIRED)
+    set(ARPACK_LIBRARIES ${arpack_ng_LIBRARIES})
+    set(ARPACK_INCLUDE_DIRS ${arpack_ng_INCLUDE_DIRS})
     if(arpack-ng_FOUND)
-        get_cmake_property(_variableNames VARIABLES)
-        foreach (_variableName ${_variableNames})
-            if("${_variableName}" MATCHES "arpack*")
-                message(STATUS "${_variableName}=${${_variableName}}")
-            endif()
-        endforeach()
-        include_directories(${ARPACK_INC_DIR})
-        set(ARPACK_LIBRARIES ${arpack_ng_LIBRARIES})
         message(STATUS "SUCCESSFULLY INSTALLED ARPACK:   ${ARPACK_LIBRARIES}")
         message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpack-ng/log_build.txt")
+        target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
+        target_link_libraries(${PROJECT_NAME} ${ARPACK_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${LAPACK_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${BLAS_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${GFORTRAN_LIB})
+    else()
+    message(WARNING "ARPACK_LIBRARIES: ${ARPACK_LIBRARIES}")
+    message(FATAL_ERROR "LAPACK or BLAS could not be found.")
     endif()
-
 else()
-    message("Please install LAPACK and BLAS before ARPACK.")
+    message(FATAL_ERROR "Please install LAPACK and BLAS before ARPACK.")
 endif()
 
 #

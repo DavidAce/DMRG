@@ -15,12 +15,13 @@
 message("SEARCHING FOR LIBRARY: SPECTRA")
 if(EXISTS "${PROJECT_SOURCE_DIR}/libs/spectra/FindSpectra.cmake")
     include(${PROJECT_SOURCE_DIR}/libs/spectra/FindSpectra.cmake)
-    include_directories(${SPECTRA_INCLUDE_DIR})
     message(STATUS "FOUND PREVIOUSLY INSTALLED SPECTRA:   ${SPECTRA_INCLUDE_DIR}")
+    target_include_directories(${PROJECT_NAME} PRIVATE ${SPECTRA_INCLUDE_DIR})
     return()
 else()
 
     message(STATUS "DOWNLOADING SPECTRA...")
+    set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
     execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory tmp/spectra
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts)
@@ -38,10 +39,16 @@ else()
     if(NOT "${res_var}" STREQUAL "0")
         message(FATAL_ERROR "Spectra not found and failed to install: ${res_var}")
     endif()
-    include(${PROJECT_SOURCE_DIR}/libs/spectra/FindSpectra.cmake)
-    include_directories(${SPECTRA_INCLUDE_DIR})
+    # Generate a file that can be detected if the library was installed successfully
+    set(SPECTRA_INC_DIR ${INSTALL_DIRECTORY}/spectra/src/SPECTRA/include)
+    file(WRITE ${INSTALL_DIRECTORY}/spectra/FindSpectra.cmake "set(SPECTRA_INCLUDE_DIR   ${SPECTRA_INC_DIR})\n")
+
+    # Include that file
+    include(${INSTALL_DIRECTORY}/spectra/FindSpectra.cmake)
     message(STATUS "SUCCESSFULLY INSTALLED SPECTRA:   ${SPECTRA_INCLUDE_DIR}")
     message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/spectra/log_build.txt")
+    target_include_directories(${PROJECT_NAME} PRIVATE ${SPECTRA_INCLUDE_DIR})
+
 endif()
 
 

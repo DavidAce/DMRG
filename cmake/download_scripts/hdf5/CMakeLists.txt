@@ -50,19 +50,6 @@ ExternalProject_Add(HDF5
         -DCMAKE_C_FLAGS=-w
         )
 
-ExternalProject_Get_Property(HDF5 install_dir)
-set(HDF5_LIB_DIR ${install_dir}/lib)
-set(HDF5_INC_DIR ${install_dir}/include)
-set(HDF5_SHARE_DIR ${install_dir}/share)
-set(HDF5_CMAKE_DIR ${install_dir}/share/cmake)
-
-file(WRITE  ${INSTALL_DIRECTORY}/hdf5/FindHDF5.cmake  "set(HDF5_LIB_DIR   ${HDF5_LIB_DIR})\n")
-file(APPEND ${INSTALL_DIRECTORY}/hdf5/FindHDF5.cmake  "set(HDF5_INC_DIR   ${HDF5_INC_DIR})\n")
-file(APPEND ${INSTALL_DIRECTORY}/hdf5/FindHDF5.cmake  "set(HDF5_SHARE_DIR ${HDF5_SHARE_DIR})\n")
-file(APPEND ${INSTALL_DIRECTORY}/hdf5/FindHDF5.cmake  "set(HDF5_CMAKE_DIR ${HDF5_CMAKE_DIR})\n")
-file(APPEND ${INSTALL_DIRECTORY}/hdf5/FindHDF5.cmake  "set(HDF5_INCLUDE_DIRS   ${HDF5_INC_DIR})\n") # For compatibility with find_package(HDF5...)
-
-
 
 
 
