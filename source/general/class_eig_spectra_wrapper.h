@@ -6,7 +6,7 @@
 #ifndef DMRG_CLASS_EIG_WRAPPER_H
 #define DMRG_CLASS_EIG_WRAPPER_H
 
-#include "general/n_tensor_extra.h"
+#include "general/nmspc_tensor_extra.h"
 #include <SymEigsSolver.h>
 #include <GenEigsSolver.h>
 #include <experimental/filesystem>

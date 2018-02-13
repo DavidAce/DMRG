@@ -5,9 +5,9 @@
 #ifndef DMRG_CLASS_ENVIRONMENT_H
 #define DMRG_CLASS_ENVIRONMENT_H
 
-#include "general/n_tensor_extra.h"
+#include "general/nmspc_tensor_extra.h"
 #include "mps_routines/class_mps.h"
-#include "sim_parameters/n_model.h"
+#include "sim_parameters/nmspc_model.h"
 
 //using namespace Textra;
 //using namespace std;

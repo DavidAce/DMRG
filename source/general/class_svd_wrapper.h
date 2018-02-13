@@ -4,7 +4,7 @@
 
 #ifndef DMRG_CLASS_SVD_H
 #define DMRG_CLASS_SVD_H
-#include "n_tensor_extra.h"
+#include "nmspc_tensor_extra.h"
 #include <Eigen/SVD>
 template<typename Scalar>
 class class_SVD{

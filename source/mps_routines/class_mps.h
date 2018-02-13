@@ -1,8 +1,8 @@
 #ifndef DMRG_CLASS_MPS_H
 #define DMRG_CLASS_MPS_H
 
-#include <sim_parameters/n_model.h>
-#include "general/n_tensor_extra.h"
+#include <sim_parameters/nmspc_model.h>
+#include "general/nmspc_tensor_extra.h"
 //
 //using namespace std;
 //using namespace Textra;

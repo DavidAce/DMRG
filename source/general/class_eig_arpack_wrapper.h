@@ -6,7 +6,7 @@
 #define DMRG_CLASS_EIG_ARPACK_WRAPPER_H
 #include <map>
 #include <complex>
-#include "n_tensor_extra.h"
+#include "nmspc_tensor_extra.h"
 #include "ardsnsym.h"
 #include "ardscomp.h"
 #include "ardgcomp.h"

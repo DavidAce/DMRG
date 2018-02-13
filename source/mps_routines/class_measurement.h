@@ -7,9 +7,9 @@
 #include <map>
 #include <memory>
 #include <IO/class_custom_cout.h>
-#include <general/n_tensor_extra.h>
+#include <general/nmspc_tensor_extra.h>
 #include <mps_routines/class_mps.h>
-#include <sim_parameters/n_sim_settings.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 #include <algorithms/class_base_algorithm.h>
 
 class class_superblock;
