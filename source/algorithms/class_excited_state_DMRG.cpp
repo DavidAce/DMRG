@@ -4,12 +4,13 @@
 
 
 #include <iomanip>
-#include <sim_parameters/n_sim_settings.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 #include <IO/class_hdf5_table_buffer.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment_storage.h>
-#include <general/n_math.h>
+#include <general/nmspc_math.h>
+#include <general/nmspc_random_numbers.h>
 #include "class_excited_state_DMRG.h"
 using namespace std;
 using namespace Textra;
@@ -17,8 +18,8 @@ using namespace Textra;
 class_excited_state_DMRG::class_excited_state_DMRG(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_algorithm_base() {
 
-    simtype = SimulationType::esDMRG;
-    simulation_name = "esDMRG";
+    simtype = SimulationType::xDMRG;
+    simulation_name = "xDMRG";
     group_name = simulation_name;
     table_name = simulation_name;
     hdf5         = std::move(hdf5_);
@@ -31,19 +32,10 @@ class_excited_state_DMRG::class_excited_state_DMRG(std::shared_ptr<class_hdf5_fi
 
 
 void class_excited_state_DMRG::run() {
-    if (!settings::fdmrg::on) { return; }
+    if (!settings::xdmrg::on) { return; }
     ccout(0) << "\nStarting " << simulation_name << " simulation" << std::endl;
     t_tot.tic();
-    while(superblock->chain_length -2 < max_length){
-        store_table_entry();
-        single_DMRG_step(chi_max);
-        env_storage_insert();
-        enlarge_environment();
-        swap();
-        position++;
-        print_status_update();
-    }
-
+    initialize_random_chain();
     while(sweep < max_sweeps) {
         env_storage_load();
         single_DMRG_step(chi_max);
@@ -58,6 +50,33 @@ void class_excited_state_DMRG::run() {
     print_profiling();
 
 }
+
+void class_excited_state_DMRG::initialize_random_chain() {
+    superblock->MPS.GA.resize(array3{superblock->d,1,1});
+    superblock->MPS.GB.resize(array3{superblock->d,1,1});
+    superblock->MPS.GA.setZero();
+    superblock->MPS.GB.setZero();
+
+    superblock->MPS.LA.resize(array1{1});
+    superblock->MPS.LB.resize(array1{1});
+
+    superblock->MPS.LA.setConstant(1.0);
+    superblock->MPS.LB.setConstant(1.0);
+    while(superblock->chain_length -2 < max_length){
+        auto r = rn::uniform_complex_1();
+        auto s1 = r.real();
+        auto s2 = r.imag();
+        superblock->MPS.GA(1,0,0) = s1;
+        superblock->MPS.GA(0,0,0) = s2;
+        superblock->MPS.GB(1,0,0) = s1;
+        superblock->MPS.GB(0,0,0) = s2;
+        env_storage_insert();
+        enlarge_environment();
+        swap();
+        position++;
+    }
+}
+
 
 void class_excited_state_DMRG::env_storage_insert() {
     t_ste.tic();

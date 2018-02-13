@@ -5,7 +5,7 @@
 #ifndef DMRG_CLASS_SUPERBLOCK_H
 #define DMRG_CLASS_SUPERBLOCK_H
 
-#include <general/n_tensor_extra.h>
+#include <general/nmspc_tensor_extra.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_mps.h>
 #include <mps_routines/class_mpo.h>
@@ -21,11 +21,6 @@ class class_superblock {
 public:
     using Scalar = class_mps::Scalar;
 private:
-    //Bond dimensions and tensor shapes needed by the eigensolver and SVD.
-
-    long d;                                             /*!< Local, or physical, dimension of each particle. */
-    long chiL;                                          /*!< Bond dimension of the previous (left) position. */
-    long chiR;                                          /*!< Bond dimension of the next (right) position. */
 
     //Store temporaries for eigensolver and SVD.
     Textra::Tensor<Scalar,2> ground_state;                               /*!< Stores the ground state eigenvector from eigenvalue solver */
@@ -39,6 +34,12 @@ public:
     class_environment_var<Side::R>  Rblock2;                 /*!< Right environment block used for variance calculation */
     class_mps                   MPS;                    /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
     class_mpo           H;
+
+    //Bond dimensions and tensor shapes needed by the eigensolver and SVD.
+
+    long d;                                             /*!< Local, or physical, dimension of each particle. */
+    long chiL;                                          /*!< Bond dimension of the previous (left) position. */
+    long chiR;                                          /*!< Bond dimension of the next (right) position. */
 
     Textra::array1              shape1;                 /*!< Shape for Tensor1 representation of the MPS. */
     Textra::array2              shape2;                 /*!< Shape for Tensor2 representation of the MPS. */
