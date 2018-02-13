@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="classclass__eig" kind="class" language="C++" prot="public">
     <compoundname>class_eig</compoundname>
     <templateparamlist>
@@ -50,18 +50,6 @@
         <location file="source/general/class_eig_spectra_wrapper.h" line="31" column="1" bodyfile="source/general/class_eig_spectra_wrapper.h" bodystart="31" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classclass__eig_1adbb058ac1f9b07660a9acd795b015dae" prot="private" static="no">
-        <templateparamlist>
-          <param>
-            <type>long</type>
-            <declname>rank1</declname>
-            <defname>rank1</defname>
-          </param>
-          <param>
-            <type>long</type>
-            <declname>rank2</declname>
-            <defname>rank2</defname>
-          </param>
-        </templateparamlist>
         <type>std::pair&lt; Textra::Tensor&lt; Scalar, rank1 &gt;, Textra::Tensor&lt; Scalar, rank2 &gt; &gt;</type>
         <definition>using class_eig&lt; Scalar &gt;::TensorPair =  std::pair&lt;Textra::Tensor&lt;Scalar,rank1&gt;, Textra::Tensor&lt;Scalar,rank2&gt; &gt;</definition>
         <argsstring></argsstring>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="namespace_textra" kind="namespace" language="C++">
     <compoundname>Textra</compoundname>
     <innerclass refid="struct_textra_1_1idx__dim__pair" prot="public">Textra::idx_dim_pair</innerclass>
@@ -18,11 +18,6 @@
         <location file="source/general/n_tensor_extra.h" line="25" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="25" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespace_textra_1a7db6974446758b79bad26e168a8daa78" prot="public" static="no">
-        <templateparamlist>
-          <param>
-            <type>typename Scalar</type>
-          </param>
-        </templateparamlist>
         <type>Eigen::Matrix&lt; Scalar, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
         <definition>using Textra::MatrixType = typedef Eigen::Matrix&lt;Scalar, Eigen::Dynamic, Eigen::Dynamic&gt;</definition>
         <argsstring></argsstring>
@@ -36,11 +31,6 @@
         <location file="source/general/n_tensor_extra.h" line="27" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="27" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespace_textra_1a358a270e8b355388963a513bd6617131" prot="public" static="no">
-        <templateparamlist>
-          <param>
-            <type>typename Scalar</type>
-          </param>
-        </templateparamlist>
         <type>Eigen::Matrix&lt; Scalar, Eigen::Dynamic, 1 &gt;</type>
         <definition>using Textra::VectorType = typedef Eigen::Matrix&lt;Scalar, Eigen::Dynamic, 1&gt;</definition>
         <argsstring></argsstring>
@@ -54,13 +44,6 @@
         <location file="source/general/n_tensor_extra.h" line="28" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="28" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespace_textra_1ac05ac79c4e225739a3c4b44fb5b577df" prot="public" static="no">
-        <templateparamlist>
-          <param>
-            <type>long</type>
-            <declname>rank</declname>
-            <defname>rank</defname>
-          </param>
-        </templateparamlist>
         <type>Eigen::array&lt; long, rank &gt;</type>
         <definition>using Textra::array = typedef Eigen::array&lt;long, rank&gt;</definition>
         <argsstring></argsstring>
@@ -74,16 +57,6 @@
         <location file="source/general/n_tensor_extra.h" line="29" column="1" bodyfile="source/general/n_tensor_extra.h" bodystart="29" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespace_textra_1ac4ea1d05edf6f909513a8ec4af87880a" prot="public" static="no">
-        <templateparamlist>
-          <param>
-            <type>typename Scalar</type>
-          </param>
-          <param>
-            <type>long</type>
-            <declname>length</declname>
-            <defname>length</defname>
-          </param>
-        </templateparamlist>
         <type>Eigen::array&lt; Eigen::IndexPair&lt; Scalar &gt;, length &gt;</type>
         <definition>using Textra::idxlistpair = typedef Eigen::array&lt;Eigen::IndexPair&lt;Scalar&gt;,length&gt;</definition>
         <argsstring></argsstring>

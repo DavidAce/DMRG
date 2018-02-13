@@ -13,6 +13,13 @@
 #include <algorithms/class_base_algorithm.h>
 
 class class_superblock;
+
+/*!
+ * \class class_measurement
+ * \brief A class for measuring observables
+ * This class extracts observables, expectation values, like energy and entropy from the MPS, as well as other useful numbers like \f$\chi\f$ and truncation errors.
+*/
+
 class class_measurement {
 public:
     using Scalar = class_mps::Scalar;

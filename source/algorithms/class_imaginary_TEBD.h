@@ -7,12 +7,8 @@
 #include "class_base_algorithm.h"
 
 /*!
-// * \fn iTEBD(class_superblock &superblock, class_hdf5 &hdf5)
-// * \brief infinite Time evolving block decimation.
-// * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
-// * \param max_iter Maximum number of iterations.
-// */
-
+ * \brief Class that runs the imaginary TEBD algorithm.
+ */
 class class_imaginary_TEBD :public class_algorithm_base {
 public:
     using class_algorithm_base::class_algorithm_base;

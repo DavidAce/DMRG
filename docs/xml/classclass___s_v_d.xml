@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="classclass___s_v_d" kind="class" language="C++" prot="public">
     <compoundname>class_SVD</compoundname>
     <templateparamlist>
@@ -24,23 +24,6 @@
         <location file="source/general/class_svd_wrapper.h" line="16" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="16" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classclass___s_v_d_1a501234314891e6c949e77bbec59efdcb" prot="private" static="no">
-        <templateparamlist>
-          <param>
-            <type>long</type>
-            <declname>rankU</declname>
-            <defname>rankU</defname>
-          </param>
-          <param>
-            <type>long</type>
-            <declname>rankS</declname>
-            <defname>rankS</defname>
-          </param>
-          <param>
-            <type>long</type>
-            <declname>rankV</declname>
-            <defname>rankV</defname>
-          </param>
-        </templateparamlist>
         <type>std::tuple&lt; Eigen::Tensor&lt; Scalar, rankU &gt;, Eigen::Tensor&lt; Scalar, rankS &gt;, Eigen::Tensor&lt; Scalar, rankV &gt; &gt;</type>
         <definition>using class_SVD&lt; Scalar &gt;::TensorTuple =  std::tuple&lt;Eigen::Tensor&lt;Scalar,rankU&gt;, Eigen::Tensor&lt;Scalar,rankS&gt;, Eigen::Tensor&lt;Scalar,rankV&gt; &gt;</definition>
         <argsstring></argsstring>

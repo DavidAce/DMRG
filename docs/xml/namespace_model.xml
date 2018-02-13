@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="namespace_model" kind="namespace" language="C++">
     <compoundname>Model</compoundname>
       <sectiondef kind="var">
@@ -201,6 +201,7 @@
         <location file="source/sim_parameters/n_model.cpp" line="61" column="1" bodyfile="source/sim_parameters/n_model.cpp" bodystart="61" bodyend="64"/>
         <references refid="namespace_model_1ab1afed37e6ac9168cb2c1c9ba0119886" compoundref="n__model_8cpp" startline="61" endline="64">get_exact_energy</references>
         <references refid="namespace_math_1a7cd16bfbced6aa47dd31fd44474d07f0" compoundref="n__math_8h" startline="167" endline="174">Math::compute_integral</references>
+        <references refid="namespace_math_1a3345264a3373e4542c7baf43f5e1b713" compoundref="n__math_8h" startline="51" endline="53">Math::mod</references>
       </memberdef>
       <memberdef kind="function" id="namespace_model_1aa76e3f2b09b78a2475667775a0e8ffe6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -275,7 +276,7 @@
     <briefdescription>
 <para>Setup the Hamiltonian and corresponding values. </para>    </briefdescription>
     <detaileddescription>
-<para>This namespace contains model parameters, such as the coupling (or nearest neighbor exchange energy) <formula id="51">$J$</formula>, and the transverse field strength <formula id="52">$g$</formula>. By default the model describes the quantum Ising model with a transverse field:</para><para><formula id="53">\[ H = \frac{1}{2}\sum_{n=1}^L J S^z_n \otimes S^z_{n+1} + gS^x_{n} \]</formula> </para>    </detaileddescription>
+<para>This namespace contains model parameters, such as the coupling (or nearest neighbor exchange energy) <formula id="52">$J$</formula>, and the transverse field strength <formula id="53">$g$</formula>. By default the model describes the quantum Ising model with a transverse field:</para><para><formula id="54">\[ H = \frac{1}{2}\sum_{n=1}^L J S^z_n \otimes S^z_{n+1} + gS^x_{n} \]</formula> </para>    </detaileddescription>
     <location file="source/sim_parameters/n_model.cpp" line="14" column="1"/>
   </compounddef>
 </doxygen>

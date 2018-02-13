@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="classclass__excited__state___d_m_r_g" kind="class" language="C++" prot="public">
     <compoundname>class_excited_state_DMRG</compoundname>
     <basecompoundref refid="classclass__algorithm__base" prot="public" virt="non-virtual">class_algorithm_base</basecompoundref>
@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="27" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="27" bodyend="-1"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="20" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="20" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__excited__state___d_m_r_g_1a2ef2a65ee68499cd0683a50cb3e69d34" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="28" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="28" bodyend="-1"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="21" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__excited__state___d_m_r_g_1a29a3add24ef7150034aa5672f92f24f3" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="29" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="29" bodyend="-1"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="22" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="22" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__excited__state___d_m_r_g_1a4c42a4fc92875d5fdf150c40ef71ac72" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="30" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="30" bodyend="-1"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="23" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="23" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__excited__state___d_m_r_g_1aeaeb23b3d5e6160b81f1abd6393f4ccd" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -72,7 +72,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="31" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="31" bodyend="-1"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="24" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="24" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__excited__state___d_m_r_g_1a05e7f343358b9edd22eb65a2e179074c" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -86,7 +86,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="32" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="32" bodyend="-1"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="25" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="25" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__excited__state___d_m_r_g_1a7f55cc62d62f03b1e32fe69e533ab527" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -100,7 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="33" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="33" bodyend="-1"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="26" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="26" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__excited__state___d_m_r_g_1aec25acb974197fb6a8b8a629bad728a2" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -114,7 +114,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="34" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="34" bodyend="-1"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="27" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="27" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__excited__state___d_m_r_g_1aaf6e371c6955c48b44b3b917e3333c38" prot="public" static="no" mutable="no">
         <type>std::shared_ptr&lt; <ref refid="classclass__environment__storage" kindref="compound">class_environment_storage</ref> &gt;</type>
@@ -127,7 +127,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="36" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="36" bodyend="-1"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="29" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="29" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -146,7 +146,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="26" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="17" bodyend="29"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="19" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="17" bodyend="29"/>
       </memberdef>
       <memberdef kind="function" id="classclass__excited__state___d_m_r_g_1aa7dc9748d6b7f2ed0cef096a0f6f38b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -160,7 +160,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="37" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="33" bodyend="60"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="30" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="33" bodyend="60"/>
       </memberdef>
       <memberdef kind="function" id="classclass__excited__state___d_m_r_g_1ac4e9da243be844a5323b5be152dc8a3a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -173,7 +173,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="39" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="62" bodyend="66"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="32" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="62" bodyend="66"/>
       </memberdef>
       <memberdef kind="function" id="classclass__excited__state___d_m_r_g_1a21ed9a138fb73711f40b361aa7d2fcad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -186,7 +186,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="40" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="67" bodyend="71"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="33" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="67" bodyend="71"/>
       </memberdef>
       <memberdef kind="function" id="classclass__excited__state___d_m_r_g_1aa3359696cbf25daf32f10cbf42c48457" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -199,7 +199,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="41" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="72" bodyend="76"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="34" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="72" bodyend="76"/>
       </memberdef>
       <memberdef kind="function" id="classclass__excited__state___d_m_r_g_1a6cd9491969bc16c0051faa0afbb1edc9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -212,7 +212,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="42" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="77" bodyend="81"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="35" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="77" bodyend="81"/>
       </memberdef>
       <memberdef kind="function" id="classclass__excited__state___d_m_r_g_1a3b1a9f46cf7bf6d4c119b32f3e39a159" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -223,10 +223,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print out status of all quantities. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="45" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="137" bodyend="148"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="38" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="137" bodyend="148"/>
       </memberdef>
       <memberdef kind="function" id="classclass__excited__state___d_m_r_g_1a17870ec85d13a7c433787c738bb0cbaf" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -237,10 +237,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print out status of all quantities. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="46" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="115" bodyend="135"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="39" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="115" bodyend="135"/>
       </memberdef>
       <memberdef kind="function" id="classclass__excited__state___d_m_r_g_1a1a51b9af27e0ae2b32e23d9afd49f0b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -254,7 +254,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="48" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="84" bodyend="99"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="41" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="84" bodyend="99"/>
       </memberdef>
       <memberdef kind="function" id="classclass__excited__state___d_m_r_g_1a63786d117aee6d0e4ef5fd99e23ad12e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -268,46 +268,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="49" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="101" bodyend="113"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__excited__state___d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::shared_ptr&lt; class_hdf5_table_buffer &gt; table_buffer_, std::shared_ptr&lt; class_superblock &gt; superblock_, std::shared_ptr&lt; class_measurement &gt; observables_)</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="25" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="14" bodyend="25"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__excited__state___d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::string group_name_, std::string table_name_, std::string simulation_name_, SimulationType simtype_)</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="25" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="27" bodyend="41"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__excited__state___d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>()</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_excited_state_DMRG.h" line="25" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="47" bodyend="49"/>
+        <location file="source/algorithms/class_excited_state_DMRG.h" line="42" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.cpp" bodystart="101" bodyend="113"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -362,16 +323,13 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="source/algorithms/class_excited_state_DMRG.h" line="22" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="22" bodyend="50"/>
+    <location file="source/algorithms/class_excited_state_DMRG.h" line="15" column="1" bodyfile="source/algorithms/class_excited_state_DMRG.h" bodystart="15" bodyend="43"/>
     <listofallmembers>
       <member refid="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" prot="public" virt="non-virtual"><scope>class_excited_state_DMRG</scope><name>ccout</name></member>
       <member refid="classclass__excited__state___d_m_r_g_1a206fbebb90b577f12ea4ee1fc406199f" prot="public" virt="non-virtual"><scope>class_excited_state_DMRG</scope><name>chi_max</name></member>
-      <member refid="classclass__excited__state___d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_excited_state_DMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__excited__state___d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_excited_state_DMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__excited__state___d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_excited_state_DMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_excited_state_DMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_excited_state_DMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_excited_state_DMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_excited_state_DMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_excited_state_DMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_excited_state_DMRG</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__excited__state___d_m_r_g_1a7baea67991ce97a2e8fa954cfb5603d9" prot="public" virt="non-virtual"><scope>class_excited_state_DMRG</scope><name>class_excited_state_DMRG</name></member>
       <member refid="classclass__excited__state___d_m_r_g_1aeaeb23b3d5e6160b81f1abd6393f4ccd" prot="public" virt="non-virtual"><scope>class_excited_state_DMRG</scope><name>direction</name></member>
       <member refid="classclass__algorithm__base_1a68804df41c37620391746d749b267498" prot="public" virt="non-virtual"><scope>class_excited_state_DMRG</scope><name>enlarge_environment</name></member>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="classclass__infinite___d_m_r_g" kind="class" language="C++" prot="public">
     <compoundname>class_infinite_DMRG</compoundname>
     <basecompoundref refid="classclass__algorithm__base" prot="public" virt="non-virtual">class_algorithm_base</basecompoundref>
@@ -17,7 +17,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="27" column="1" bodyfile="source/algorithms/class_infinite_DMRG.h" bodystart="27" bodyend="-1"/>
+        <location file="source/algorithms/class_infinite_DMRG.h" line="19" column="1" bodyfile="source/algorithms/class_infinite_DMRG.h" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__infinite___d_m_r_g_1a8615c4b3b1dd01d24e686a4e96d7149b" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -31,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="28" column="1" bodyfile="source/algorithms/class_infinite_DMRG.h" bodystart="28" bodyend="-1"/>
+        <location file="source/algorithms/class_infinite_DMRG.h" line="20" column="1" bodyfile="source/algorithms/class_infinite_DMRG.h" bodystart="20" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__infinite___d_m_r_g_1ae47c6add54afe6fe6dc821630ff0e6b2" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="29" column="1" bodyfile="source/algorithms/class_infinite_DMRG.h" bodystart="29" bodyend="-1"/>
+        <location file="source/algorithms/class_infinite_DMRG.h" line="21" column="1" bodyfile="source/algorithms/class_infinite_DMRG.h" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__infinite___d_m_r_g_1a50df7f3198408d20e0e5505f317920b3" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="30" column="1" bodyfile="source/algorithms/class_infinite_DMRG.h" bodystart="30" bodyend="-1"/>
+        <location file="source/algorithms/class_infinite_DMRG.h" line="22" column="1" bodyfile="source/algorithms/class_infinite_DMRG.h" bodystart="22" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -78,7 +78,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="26" column="1" bodyfile="source/algorithms/class_infinite_DMRG.cpp" bodystart="15" bodyend="25"/>
+        <location file="source/algorithms/class_infinite_DMRG.h" line="18" column="1" bodyfile="source/algorithms/class_infinite_DMRG.cpp" bodystart="15" bodyend="25"/>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite___d_m_r_g_1a42b5db2f3ca0a4b5dfc3f8b67f8badf3" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -92,7 +92,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="32" column="1" bodyfile="source/algorithms/class_infinite_DMRG.cpp" bodystart="29" bodyend="45"/>
+        <location file="source/algorithms/class_infinite_DMRG.h" line="24" column="1" bodyfile="source/algorithms/class_infinite_DMRG.cpp" bodystart="29" bodyend="45"/>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite___d_m_r_g_1ace9dd62c05d408a18d2eebcc418372e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -103,10 +103,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print out status of all quantities. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="34" column="1" bodyfile="source/algorithms/class_infinite_DMRG.cpp" bodystart="95" bodyend="106"/>
+        <location file="source/algorithms/class_infinite_DMRG.h" line="26" column="1" bodyfile="source/algorithms/class_infinite_DMRG.cpp" bodystart="95" bodyend="106"/>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite___d_m_r_g_1a69c7a5325d1fa316b98e726373514d77" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -117,11 +117,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print out status of all quantities. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="35" column="1" bodyfile="source/algorithms/class_infinite_DMRG.cpp" bodystart="77" bodyend="93"/>
-        <references refid="namespace_math_1a3345264a3373e4542c7baf43f5e1b713" compoundref="n__math_8h" startline="51" endline="53">Math::mod</references>
+        <location file="source/algorithms/class_infinite_DMRG.h" line="27" column="1" bodyfile="source/algorithms/class_infinite_DMRG.cpp" bodystart="77" bodyend="93"/>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite___d_m_r_g_1af5945b9b1164b8575d8983a75bca3233" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -135,7 +134,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="37" column="1" bodyfile="source/algorithms/class_infinite_DMRG.cpp" bodystart="47" bodyend="62"/>
+        <location file="source/algorithms/class_infinite_DMRG.h" line="29" column="1" bodyfile="source/algorithms/class_infinite_DMRG.cpp" bodystart="47" bodyend="62"/>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite___d_m_r_g_1a681cc5ac0cea05193138bb30b7c7a790" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -149,82 +148,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="38" column="1" bodyfile="source/algorithms/class_infinite_DMRG.cpp" bodystart="64" bodyend="75"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__infinite___d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::shared_ptr&lt; class_hdf5_table_buffer &gt; table_buffer_, std::shared_ptr&lt; class_superblock &gt; superblock_, std::shared_ptr&lt; class_measurement &gt; observables_)</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="25" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="14" bodyend="25"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__infinite___d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::string group_name_, std::string table_name_, std::string simulation_name_, SimulationType simtype_)</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="25" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="27" bodyend="41"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__infinite___d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>()</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_infinite_DMRG.h" line="25" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="47" bodyend="49"/>
+        <location file="source/algorithms/class_infinite_DMRG.h" line="30" column="1" bodyfile="source/algorithms/class_infinite_DMRG.cpp" bodystart="64" bodyend="75"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Class that runs the infinite DMRG algorithm. </para>    </briefdescription>
     <detaileddescription>
-<para><heading level="1">Infinite DMRG class</heading>
-</para><para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>shared_ptr&lt;class_hdf5_file&gt;</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>An hdf5 class object that handles the output file. </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>shared_ptr&lt;class_hdf5_table_buffer&gt;</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>(optional) A buffer for table entries that goes into the output file </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>shared_ptr&lt;class_superblock&gt;</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>(optional) A class that stores current MPS and environments at each iteration. </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>shared_ptr&lt;class_measurement&gt;</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>(optional) A class that extracts, or measures, quantities from the superblock. </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>    </detaileddescription>
+    </detaileddescription>
     <inheritancegraph>
       <node id="70">
         <label>class_infinite_DMRG</label>
@@ -273,16 +203,13 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="source/algorithms/class_infinite_DMRG.h" line="22" column="1" bodyfile="source/algorithms/class_infinite_DMRG.h" bodystart="22" bodyend="39"/>
+    <location file="source/algorithms/class_infinite_DMRG.h" line="14" column="1" bodyfile="source/algorithms/class_infinite_DMRG.h" bodystart="14" bodyend="31"/>
     <listofallmembers>
       <member refid="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>ccout</name></member>
       <member refid="classclass__infinite___d_m_r_g_1a8eb15ce418a7fa8ba36f11086a73ba89" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>chi_max</name></member>
-      <member refid="classclass__infinite___d_m_r_g_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__infinite___d_m_r_g_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__infinite___d_m_r_g_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__infinite___d_m_r_g_1a97aa7e64d385b7b27506ed81c0bda759" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>class_infinite_DMRG</name></member>
       <member refid="classclass__algorithm__base_1a68804df41c37620391746d749b267498" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>enlarge_environment</name></member>
       <member refid="classclass__algorithm__base_1ad516d7415be3c39534429d34d677adf3" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>enlarge_environment</name></member>

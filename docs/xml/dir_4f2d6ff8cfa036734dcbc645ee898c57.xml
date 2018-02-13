@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="dir_4f2d6ff8cfa036734dcbc645ee898c57" kind="dir">
     <compoundname>source/sim_parameters</compoundname>
     <innerfile refid="n__model_8cpp">n_model.cpp</innerfile>

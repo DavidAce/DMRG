@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="class__infinite___d_m_r_g_8h" kind="file" language="C++">
     <compoundname>class_infinite_DMRG.h</compoundname>
     <includes refid="class__base__algorithm_8h" local="yes">class_base_algorithm.h</includes>

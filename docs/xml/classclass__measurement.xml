@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="classclass__measurement" kind="class" language="C++" prot="public">
     <compoundname>class_measurement</compoundname>
+    <includes refid="class__measurement_8h" local="no">class_measurement.h</includes>
       <sectiondef kind="public-type">
       <memberdef kind="typedef" id="classclass__measurement_1a091cbeeb0748e2b35450943006fdf25a" prot="public" static="no">
         <type>class_mps::Scalar</type>
@@ -14,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="18" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="18" bodyend="-1"/>
+        <location file="source/mps_routines/class_measurement.h" line="25" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="25" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -29,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="20" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="20" bodyend="-1"/>
+        <location file="source/mps_routines/class_measurement.h" line="27" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="27" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__measurement_1a55863a6ce740a6271a168cd916a78404" prot="private" static="no" mutable="no">
         <type><ref refid="classclass__custom__cout" kindref="compound">class_custom_cout</ref></type>
@@ -42,7 +43,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="21" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="21" bodyend="-1"/>
+        <location file="source/mps_routines/class_measurement.h" line="28" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="28" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -57,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="24" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="24" bodyend="-1"/>
+        <location file="source/mps_routines/class_measurement.h" line="31" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="31" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__measurement_1a66bdf26b1fcb15ae3ad3545c1c4e686f" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -70,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="29" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="29" bodyend="-1"/>
+        <location file="source/mps_routines/class_measurement.h" line="36" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="36" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__measurement_1a055480ec3e9a2794070a40568db0698b" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -83,7 +84,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="29" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="29" bodyend="-1"/>
+        <location file="source/mps_routines/class_measurement.h" line="36" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="36" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__measurement_1a83d9e62bbbdedb60bd8eb8a0a3ff182a" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -96,7 +97,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="29" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="29" bodyend="-1"/>
+        <location file="source/mps_routines/class_measurement.h" line="36" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="36" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -111,7 +112,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="26" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="26" bodyend="61"/>
+        <location file="source/mps_routines/class_measurement.h" line="33" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="26" bodyend="61"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1a79ee243a034a38491931bab090012cfe" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
         <type></type>
@@ -132,7 +133,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="27" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="19" bodyend="23"/>
+        <location file="source/mps_routines/class_measurement.h" line="34" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="19" bodyend="23"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1aa937c9d7659a102fa58821799ebfb534" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -149,7 +150,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="30" column="1"/>
+        <location file="source/mps_routines/class_measurement.h" line="37" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1af850d26831aa946a88646d8e7ee0efaf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -166,7 +167,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="31" column="1"/>
+        <location file="source/mps_routines/class_measurement.h" line="38" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1ae3c7abd82abb831b7a7519a46d2ed75f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -183,7 +184,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="32" column="1"/>
+        <location file="source/mps_routines/class_measurement.h" line="39" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1a28af4f67e1d5bb5938a068afd28dde1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -200,7 +201,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="33" column="1"/>
+        <location file="source/mps_routines/class_measurement.h" line="40" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1a62aaca25f45b1d5548974f3149c147b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -213,7 +214,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="34" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="125" bodyend="147"/>
+        <location file="source/mps_routines/class_measurement.h" line="41" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="125" bodyend="147"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1a73e89873bd33e9749b3ffc46679ad1ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -226,7 +227,7 @@
 <para>Computes the current energy by contracting the current MPS with the Hamiltonian MPO. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="35" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="149" bodyend="153"/>
+        <location file="source/mps_routines/class_measurement.h" line="42" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="149" bodyend="153"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1a45614ac23314d7088810aaaedc4acde8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -239,7 +240,7 @@
 <para>Computes the current entropy <formula id="30">$ S = - \sum_n \lambda_n log( \lambda_n) $</formula>, where <formula id="31">$\lambda_n $</formula> are elements of <formula id="32">$ \Lambda^A$</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="36" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="156" bodyend="181"/>
+        <location file="source/mps_routines/class_measurement.h" line="43" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="156" bodyend="181"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1afccc947a39a980866ceec2122409a6a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -252,7 +253,7 @@
 <para>Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="37" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="183" bodyend="183"/>
+        <location file="source/mps_routines/class_measurement.h" line="44" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="183" bodyend="183"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1a7b8f6cf52a773b030a8eb0296f11a34c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -265,7 +266,7 @@
 <para>Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="38" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="184" bodyend="184"/>
+        <location file="source/mps_routines/class_measurement.h" line="45" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="184" bodyend="184"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1a924851137b094fc95bb6e910ed99d107" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -278,7 +279,7 @@
 <para>Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="39" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="185" bodyend="185"/>
+        <location file="source/mps_routines/class_measurement.h" line="46" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="185" bodyend="185"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1a27fe622ef8c7af31b631a7ea3f37aa44" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -291,7 +292,7 @@
 <para>Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="40" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="187" bodyend="189"/>
+        <location file="source/mps_routines/class_measurement.h" line="47" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="187" bodyend="189"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1a9755aba9df4f55f90267c5d3937f49d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -304,7 +305,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="41" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="119" bodyend="121"/>
+        <location file="source/mps_routines/class_measurement.h" line="48" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="119" bodyend="121"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1a39cf00157961886c5383114832d7bc49" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -317,7 +318,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="42" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="191" bodyend="193"/>
+        <location file="source/mps_routines/class_measurement.h" line="49" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="191" bodyend="193"/>
       </memberdef>
       <memberdef kind="function" id="classclass__measurement_1af9b1c1f1de39cbb5d33781d62bb54e21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>long</type>
@@ -330,14 +331,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_measurement.h" line="43" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="195" bodyend="197"/>
+        <location file="source/mps_routines/class_measurement.h" line="50" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="195" bodyend="197"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
-    </briefdescription>
+<para>A class for measuring observables This class extracts observables, expectation values, like energy and entropy from the MPS, as well as other useful numbers like <formula id="0">$\chi$</formula> and truncation errors. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="source/mps_routines/class_measurement.h" line="16" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="16" bodyend="44"/>
+    <location file="source/mps_routines/class_measurement.h" line="23" column="1" bodyfile="source/mps_routines/class_measurement.h" bodystart="23" bodyend="51"/>
     <listofallmembers>
       <member refid="classclass__measurement_1a55863a6ce740a6271a168cd916a78404" prot="private" virt="non-virtual"><scope>class_measurement</scope><name>ccout</name></member>
       <member refid="classclass__measurement_1a79ee243a034a38491931bab090012cfe" prot="public" virt="non-virtual"><scope>class_measurement</scope><name>class_measurement</name></member>

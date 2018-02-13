@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="classclass__mpo" kind="class" language="C++" prot="public">
     <compoundname>class_mpo</compoundname>
     <includes refid="class__mpo_8h" local="no">class_mpo.h</includes>
@@ -457,10 +457,9 @@
       </memberdef>
       </sectiondef>
     <briefdescription>
-    </briefdescription>
+<para>MPO representations of the Hamiltonian. Class for the Hamiltonian MPO, either as a rank-4 MPO used in DMRG, or as a time evolution operator <formula id="33">$ \exp(-iH\delta t) $</formula> as used in TEBD. </para>    </briefdescription>
     <detaileddescription>
-<para><heading level="1">Superblock Class</heading>
-</para><para>This class contains the Hamiltonian MPO, current wave function MPS, left and right environment blocks and routines to contract, diagonalize, truncate and update them. </para>    </detaileddescription>
+    </detaileddescription>
     <location file="source/mps_routines/class_mpo.h" line="25" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="25" bodyend="71"/>
     <listofallmembers>
       <member refid="classclass__mpo_1a99259f681763912dc3e2649f6c8321e3" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>class_mpo</name></member>

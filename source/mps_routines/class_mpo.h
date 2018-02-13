@@ -16,9 +16,9 @@
 
 
 /*!
- # Superblock Class
-   This class contains the Hamiltonian MPO, current wave function MPS, left and right environment blocks and routines to contract, diagonalize, truncate
-   and update them.
+ * \class class_mpo
+ * \brief MPO representations of the Hamiltonian.
+ * Class for the Hamiltonian MPO, either as a rank-4 MPO used in DMRG, or as a time evolution operator \f$ \exp(-iH\delta t) \f$ as used in TEBD.
 */
 
 

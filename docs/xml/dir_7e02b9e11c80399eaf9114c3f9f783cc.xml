@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="dir_7e02b9e11c80399eaf9114c3f9f783cc" kind="dir">
     <compoundname>source/mps_routines</compoundname>
     <innerfile refid="class__eigensolver__product_8cpp">class_eigensolver_product.cpp</innerfile>

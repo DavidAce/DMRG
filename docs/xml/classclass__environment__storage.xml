@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="classclass__environment__storage" kind="class" language="C++" prot="public">
     <compoundname>class_environment_storage</compoundname>
     <includes refid="class__environment__storage_8h" local="no">class_environment_storage.h</includes>
@@ -365,10 +365,9 @@
       </memberdef>
       </sectiondef>
     <briefdescription>
-    </briefdescription>
+<para>Storage class for environments during finite DMRG During the infinite-DMRG part of the algorithm, the current state for each chain-length is stored in a <computeroutput>class_storage</computeroutput> object, for later use in the finite-DMRG stage. </para>    </briefdescription>
     <detaileddescription>
-<para><heading level="1">Storage Class</heading>
-</para><para>During the infinite-DMRG part of the algorithm, the current state for each chain-length is stored in a <computeroutput>class_storage</computeroutput> object, for later use in the finite-DMRG stage.</para><para>Specifically, this class stores objects from the current superblock:<itemizedlist>
+<para>Specifically, this class stores objects from the current superblock:<itemizedlist>
 <listitem><para>The left and right environment blocks <computeroutput>Lblock</computeroutput> and <computeroutput>Rblock</computeroutput>, both type <computeroutput>Tensor3</computeroutput>, and</para></listitem><listitem><para>the MPS tensors <formula id="20">$\Gamma^{A,B}=$</formula> <computeroutput>MPS.GA, MPS.GB</computeroutput> and <formula id="21">$\Lambda^{A,B}=$</formula> <computeroutput>MPS.LA, MPS.LB</computeroutput>, required for computing <formula id="22">$\Theta$</formula>, following the notation used in <ulink url="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Frank Pollmann&apos;s notes</ulink>: <formula id="23">$\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B$</formula>. <linebreak/>
  Here <formula id="24">$\Gamma^{A,B}$</formula> are a rank-3 tensors of type <computeroutput>Tensor3</computeroutput> and <formula id="25">$\Lambda^{A,B}$</formula> are rank-1 tensors of type <computeroutput>Tensor1</computeroutput>.</para></listitem></itemizedlist>
 </para><para>All objects are stored and indexed by their position relative to the final chain of length <computeroutput>max_length</computeroutput>. </para>    </detaileddescription>

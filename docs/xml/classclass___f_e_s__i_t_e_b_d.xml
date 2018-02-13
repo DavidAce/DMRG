@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="classclass___f_e_s__i_t_e_b_d" kind="class" language="C++" prot="public">
     <compoundname>class_FES_iTEBD</compoundname>
     <basecompoundref refid="classclass__algorithm__base" prot="public" virt="non-virtual">class_algorithm_base</basecompoundref>
@@ -17,7 +17,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="25" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="25" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="18" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="18" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_t_e_b_d_1a70d8de0b758b5c002261a0d7694861e4" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -31,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="26" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="26" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="19" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_t_e_b_d_1a7d106c1df6a27ba08b9fda75e5d4c02b" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="27" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="27" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="20" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="20" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_t_e_b_d_1a42bb653f213ee07b02605b6468146e28" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="28" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="28" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="21" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_t_e_b_d_1ab4966ca836c22c01e5126f71651c417d" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -73,7 +73,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="29" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="29" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="22" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="22" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_t_e_b_d_1a420e5c309f3acaadd2ac35dbdc10e6c3" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -87,7 +87,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="30" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="30" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="23" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="23" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_t_e_b_d_1aa50618a8a6075b4383b49576f4061e38" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -101,13 +101,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="31" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="31" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="24" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="24" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass___f_e_s__i_t_e_b_d_1aba5bc7af92877380f637323a974a6eba" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="classclass___f_e_s__i_t_e_b_d_1a8301077481e60b5dacebee7a1a688ddb" prot="public" static="no" mutable="no">
         <type>int</type>
-        <definition>int class_FES_iTEBD::suzuki_trotter_order</definition>
+        <definition>int class_FES_iTEBD::suzuki_order</definition>
         <argsstring></argsstring>
-        <name>suzuki_trotter_order</name>
+        <name>suzuki_order</name>
         <initializer>= settings::fes_itebd::suzuki_order</initializer>
         <briefdescription>
         </briefdescription>
@@ -115,7 +115,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="32" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="32" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="25" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="25" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_t_e_b_d_1aad792b3b6a03e796c50b9f71cb922f11" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -129,7 +129,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="33" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="33" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="26" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="26" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___f_e_s__i_t_e_b_d_1a4f024ec8f050dc01377c91d0706142ca" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -143,7 +143,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="34" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="34" bodyend="-1"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="27" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="27" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -162,7 +162,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="24" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="22" bodyend="32"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="17" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="22" bodyend="32"/>
       </memberdef>
       <memberdef kind="function" id="classclass___f_e_s__i_t_e_b_d_1a4fee90754e2222b75e93000d1daea466" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -176,7 +176,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="36" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="36" bodyend="63"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="29" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="36" bodyend="63"/>
       </memberdef>
       <memberdef kind="function" id="classclass___f_e_s__i_t_e_b_d_1af83a79b7d6882e9633755f3f044109e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -189,7 +189,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="37" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="66" bodyend="82"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="30" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="66" bodyend="82"/>
       </memberdef>
       <memberdef kind="function" id="classclass___f_e_s__i_t_e_b_d_1a78dea9f588617416547d1dc5db4a4891" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -200,10 +200,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print out status of all quantities. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="39" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="134" bodyend="145"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="32" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="134" bodyend="145"/>
       </memberdef>
       <memberdef kind="function" id="classclass___f_e_s__i_t_e_b_d_1a83c6c1174cb5c287561a360b1911e68b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -214,11 +214,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print out status of all quantities. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="40" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="116" bodyend="132"/>
-        <references refid="namespace_math_1a3345264a3373e4542c7baf43f5e1b713" compoundref="n__math_8h" startline="51" endline="53">Math::mod</references>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="33" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="116" bodyend="132"/>
       </memberdef>
       <memberdef kind="function" id="classclass___f_e_s__i_t_e_b_d_1a857a1dd355a51d6834838623762381e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -232,7 +231,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="42" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="86" bodyend="101"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="35" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="86" bodyend="101"/>
       </memberdef>
       <memberdef kind="function" id="classclass___f_e_s__i_t_e_b_d_1ac04fc2f39a021216503cb05ecd2e5db7" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -246,82 +245,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="43" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="103" bodyend="114"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass___f_e_s__i_t_e_b_d_1a864f4f82b4d453828d391b2044d53fdc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::shared_ptr&lt; class_hdf5_table_buffer &gt; table_buffer_, std::shared_ptr&lt; class_superblock &gt; superblock_, std::shared_ptr&lt; class_measurement &gt; observables_)</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="23" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="14" bodyend="25"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass___f_e_s__i_t_e_b_d_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::string group_name_, std::string table_name_, std::string simulation_name_, SimulationType simtype_)</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="23" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="27" bodyend="41"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass___f_e_s__i_t_e_b_d_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type></type>
-        <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>()</argsstring>
-        <name>class_algorithm_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_FES_iTEBD.h" line="23" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="47" bodyend="49"/>
+        <location file="source/algorithms/class_FES_iTEBD.h" line="36" column="1" bodyfile="source/algorithms/class_FES_iTEBD.cpp" bodystart="103" bodyend="114"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
-<para>Class that runs the Finite-entanglement scaling (FES) mode in the DMRG algorithm. </para>    </briefdescription>
+<para>Class that studies Finite-entanglement scaling using the imaginary TEBD algorithm. </para>    </briefdescription>
     <detaileddescription>
-<para><heading level="1">Finite-entanglement scaling (FES) DMRG class</heading>
-</para><para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>shared_ptr&lt;class_hdf5_file&gt;</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>An hdf5 class object that handles the output file. </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>shared_ptr&lt;class_hdf5_table_buffer&gt;</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>(optional) A buffer for table entries that goes into the output file </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>shared_ptr&lt;class_superblock&gt;</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>(optional) A class that stores current MPS and environments at each iteration. </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>shared_ptr&lt;class_measurement&gt;</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>(optional) A class that extracts, or measures, quantities from the superblock. </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>    </detaileddescription>
+    </detaileddescription>
     <inheritancegraph>
       <node id="40">
         <label>class_algorithm_base</label>
@@ -370,18 +300,15 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="source/algorithms/class_FES_iTEBD.h" line="20" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="20" bodyend="44"/>
+    <location file="source/algorithms/class_FES_iTEBD.h" line="13" column="1" bodyfile="source/algorithms/class_FES_iTEBD.h" bodystart="13" bodyend="37"/>
     <listofallmembers>
       <member refid="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>ccout</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1a70d8de0b758b5c002261a0d7694861e4" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>chi_max</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1a72808b554c9b636818d132476be957be" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>chi_min</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1a7d106c1df6a27ba08b9fda75e5d4c02b" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>chi_num</name></member>
-      <member refid="classclass___f_e_s__i_t_e_b_d_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass___f_e_s__i_t_e_b_d_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass___f_e_s__i_t_e_b_d_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual" ambiguityscope="class_algorithm_base::"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1ad71334df54a0dab8ac2e4c513be1c5e0" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>class_FES_iTEBD</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1aad792b3b6a03e796c50b9f71cb922f11" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>delta_t</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1ab4966ca836c22c01e5126f71651c417d" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>delta_t0</name></member>
@@ -406,7 +333,7 @@
       <member refid="classclass__algorithm__base_1ac9255cf0edbb29441a2ba4e900459082" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>single_TEBD_step</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1a857a1dd355a51d6834838623762381e0" prot="public" virt="virtual"><scope>class_FES_iTEBD</scope><name>store_table_entry</name></member>
       <member refid="classclass__algorithm__base_1aae9477a03b720e2e3ebbb92f05253774" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>superblock</name></member>
-      <member refid="classclass___f_e_s__i_t_e_b_d_1aba5bc7af92877380f637323a974a6eba" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>suzuki_trotter_order</name></member>
+      <member refid="classclass___f_e_s__i_t_e_b_d_1a8301077481e60b5dacebee7a1a688ddb" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>suzuki_order</name></member>
       <member refid="classclass__algorithm__base_1a4ce5f92c32d9bd33877fde7848417e61" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>swap</name></member>
       <member refid="classclass__algorithm__base_1ae378bea3c64eddbcebbb4308506dd0ba" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>t_eig</name></member>
       <member refid="classclass__algorithm__base_1afc59105de307467cd6719e13bdba4fa0" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>t_env</name></member>

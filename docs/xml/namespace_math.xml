@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="namespace_math" kind="namespace" language="C++">
     <compoundname>Math</compoundname>
     <innerclass refid="class_math_1_1gsl__quad" prot="public">Math::gsl_quad</innerclass>
@@ -230,9 +230,9 @@
         <briefdescription>
 <para>Numerical integrations. </para>        </briefdescription>
         <detaileddescription>
-<para>Examples of integration:</para><para><formula id="1">$ \int_0^1 x^2 dx = $</formula> <programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="namespace_math_1a7cd16bfbced6aa47dd31fd44474d07f0" kindref="member">compute_integral</ref>([](</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>x*x;<sp/>},<sp/>{0,1})</highlight></codeline>
-</programlisting></para><para><formula id="2">$ \int_1^\infty x^{-2} dx = $</formula> <programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="namespace_math_1a7cd16bfbced6aa47dd31fd44474d07f0" kindref="member">compute_integral</ref>([](</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>1/(x*x);<sp/>},<sp/>{1,INFINITY})</highlight></codeline>
-</programlisting></para><para><formula id="3">$ \int_{-\infty}^\infty \exp(-x^2) dx = $</formula> <programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="namespace_math_1a7cd16bfbced6aa47dd31fd44474d07f0" kindref="member">compute_integral</ref>([](</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::exp(-x*x);<sp/>},<sp/>{-INFINITY,INFINITY})</highlight></codeline>
+<para>Examples of integration:</para><para><formula id="1">$ \int_0^1 x^2 dx = $</formula> <programlisting><codeline><highlight class="normal"><ref refid="namespace_math_1a7cd16bfbced6aa47dd31fd44474d07f0" kindref="member">compute_integral</ref>([](</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>x*x;<sp/>},<sp/>{0,1})</highlight></codeline>
+</programlisting></para><para><formula id="2">$ \int_1^\infty x^{-2} dx = $</formula> <programlisting><codeline><highlight class="normal"><ref refid="namespace_math_1a7cd16bfbced6aa47dd31fd44474d07f0" kindref="member">compute_integral</ref>([](</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>1/(x*x);<sp/>},<sp/>{1,INFINITY})</highlight></codeline>
+</programlisting></para><para><formula id="3">$ \int_{-\infty}^\infty \exp(-x^2) dx = $</formula> <programlisting><codeline><highlight class="normal"><ref refid="namespace_math_1a7cd16bfbced6aa47dd31fd44474d07f0" kindref="member">compute_integral</ref>([](</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::exp(-x*x);<sp/>},<sp/>{-INFINITY,INFINITY})</highlight></codeline>
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
