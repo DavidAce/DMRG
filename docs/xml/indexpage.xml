@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="indexpage" kind="page">
+    <compoundname>index</compoundname>
+    <title>DMRG++</title>
+    <tableofcontents/>
+    <briefdescription>
+<para>This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm. </para>    </briefdescription>
+    <detaileddescription>
+<para>This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm.</para><sect1 id="index_1intro">
+<title>Description of DMRG++</title>
+<para><ulink url="https://en.wikipedia.org/wiki/Density_matrix_renormalization_group">Density matrix renormalization group</ulink> (DMRG) is a variational numerical technique to study the low-energy physics of many-body quantum systems.</para><para>This algorithm constructs and minimizes trial wave functions, in the shape of <ulink url="https://en.wikipedia.org/wiki/Matrix_product_state">Matrix Product States</ulink> (MPS), iteratively in order to find the ground state of one-dimensional quantum systems with high precision.</para><para>This implementation loosely follows the steps outlined in:</para><para><blockquote><para><ulink url="https://arxiv.org/abs/1212.6255">Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study.</ulink><linebreak/>
+ by Kjäll, Zaletel, Mong, Bardarson, and Pollmann. Physical Review B 87 (23): 235106. <linebreak/>
+ </para></blockquote></para><para><blockquote><para><ulink url="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Efficient Numerical Simulations Using Matrix-Product States</ulink><linebreak/>
+ by Frank Pollmann. <linebreak/>
+ </para></blockquote></para><para><blockquote><para><ulink url="https://arxiv.org/abs/1008.3477">The density-matrix renormalization group in the age of matrix product states</ulink><linebreak/>
+ by Ulrich Schollwöck. <linebreak/>
+ </para></blockquote></para><para><hruler/>
+ </para></sect1>
+<sect1 id="index_1installation">
+<title>Installation</title>
+<sect2 id="index_1quickstart">
+<title>Quick start</title>
+<para>Git clone or copy &amp; extract the project into a folder of your choosing. Make sure there are no spaces in the path!**. The project can be built with a single command from a unix terminal. Simply launch the script <computeroutput>.\build.sh</computeroutput> found in the root folder, or run</para><para><programlisting><codeline><highlight class="normal">cmake<sp/>-E<sp/>make_directory<sp/>build/Release</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>build/Release</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>-Bbuild/Release<sp/>--build<sp/>build<sp/>-config<sp/>Release<sp/>../../</highlight></codeline>
+<codeline><highlight class="normal">make</highlight></codeline>
+</programlisting> This will create subdirectories and use CMake to check for dependencies and download them automatically if needed (see <emphasis>Optional Requirements</emphasis> below). If the dependencies are found, the project is built and an executable is generated.</para><para>To run executable, launch <computeroutput>.\run.sh</computeroutput>, containing</para><para><programlisting><codeline><highlight class="normal">#!/bin/sh</highlight></codeline>
+<codeline><highlight class="normal">./build/Release/DMRG++</highlight></codeline>
+</programlisting></para><para>Alternatively** some IDE&apos;s with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This is perhaps an even simpler approach. Recommended: <ulink url="https://www.jetbrains.com/clion/download">CLion</ulink> or <ulink url="https://code.visualstudio.com/">Visual Studio Code</ulink> with C++ and CMake Tools extensions.</para></sect2>
+<sect2 id="index_1minreqs">
+<title>Minimum Requirements</title>
+<para>The following software is required to build the project:<itemizedlist>
+<listitem><para>C++ compiler with support for c++17 standard. Tested with<itemizedlist>
+<listitem><para>GNU GCC version &gt;= 7</para></listitem><listitem><para>Clang version &gt;= 5.0).</para></listitem></itemizedlist>
+</para></listitem><listitem><para>Fortran compiler. Tested with GNU GFORTRAN version &gt;= 7.</para></listitem><listitem><para>CMake version &gt;= 3.7</para></listitem></itemizedlist>
+</para></sect2>
+<sect2 id="index_1optionalreqs">
+<title>Optional Requirements</title>
+<para>You can chose to <bold>either</bold><itemizedlist>
+<listitem><para>let the build script compile the libraries below from source into <computeroutput>libs/</computeroutput>. This will happen automatically if the library is not found on your system. Note that this does <emphasis>NOT</emphasis> make a system-wide install, so you can safely delete the <computeroutput>libs/</computeroutput> folder.</para></listitem><listitem><para>(<emphasis>recommended</emphasis>) install the libraries yourself with your favorite package manager (e.g. <computeroutput>apt</computeroutput> in ubuntu or <computeroutput>brew</computeroutput> in OSX). The build script will always attempt to find the libraries in your system.</para></listitem></itemizedlist>
+</para><para>The latter is recommended to avoid a lengthy compilation of these rather large libraries.</para><para><heading level="4">Libraries</heading>
+</para><para><itemizedlist>
+<listitem><para><ulink url="http://eigen.tuxfamily.org">Eigen</ulink> for tensor support and SVD decomposition (tested with version &gt;= 3.3).</para></listitem><listitem><para><ulink url="https://github.com/opencollab/arpack-ng">Arpack</ulink> Eigenvalue solver based on fortran. Note that this in turn requires Lapack and blas API.</para></listitem><listitem><para><ulink url="https://github.com/m-reuter/arpackpp">Arpackpp</ulink> C++ frontend for arpack.</para></listitem><listitem><para><ulink url="https://spectralib.org/">Spectra</ulink> Another eigenvalue solver. Header only.</para></listitem><listitem><para><ulink url="https://support.hdfgroup.org/HDF5/">HDF5</ulink> for hdf5-file storage support (tested with version &gt;= 1.8).</para></listitem><listitem><para><ulink url="https://www.gnu.org/software/gsl/">GSL</ulink> for numerical integration (tested with version &gt;= 2.4).</para></listitem></itemizedlist>
+</para><para>If the software above is not found in your system, the first run of <computeroutput>./build.sh</computeroutput> will download and install it for you into a folder <computeroutput>libs/</computeroutput> in the root of this project.</para><para><hruler/>
+</para></sect2>
+</sect1>
+<sect1 id="index_1usage">
+<title>Usage</title>
+<para>This code lacks an API or command-line parameters. As such, details of execution have to be set in source code, specifically one can edit model and simulation parameters in <computeroutput>source/n_model.h</computeroutput> and <computeroutput>source/n_settings.h</computeroutput>.</para><para>The files <computeroutput>source/class_algorithms.cpp</computeroutput> and <computeroutput>source/class_algorithms.h</computeroutput> contain routines for the infinite-DMRG, finite-DMRG and infinite-TEBD that can be called from <computeroutput><ref refid="main_8cpp" kindref="compound">main.cpp</ref></computeroutput>. The algorithms should ideally give similar ground state energies, which is a good sanity check.</para></sect1>
+<sect1 id="index_1notation">
+<title>Notation</title>
+<para>The <emphasis>Vidal canonical form</emphasis>, i.e. <formula id="4">$\Gamma\Lambda\Gamma\Lambda$</formula>"..., is used throughout this code. In code we denote</para><para><itemizedlist>
+<listitem><para><formula id="5">$\Gamma \rightarrow$</formula> <computeroutput>G</computeroutput>.</para></listitem><listitem><para><formula id="6">$\Lambda \rightarrow$</formula> <computeroutput>L</computeroutput>.</para></listitem></itemizedlist>
+</para><sect2 id="index_1convention">
+<title>Tensor index order convention.</title>
+<para>The tensor index order used here follows the convention:<itemizedlist>
+<listitem><para>physical indices first, from left to right or for MPO&apos;s, up to down.</para></listitem><listitem><para>other dimensions (like bond dimensions) next, from left to right.</para></listitem></itemizedlist>
+</para><sect3 id="index_1example">
+<title>Example:</title>
+<para>Consider for some position <formula id="7">$n$</formula> on the chain <formula id="8">$\Gamma = \Gamma^{\sigma_n}_{a,b}$</formula>. Here <formula id="9">$\sigma_n \in [-1,1]$</formula> is a particle with local (physical) dimension <formula id="10">$d$</formula> = 2, and <formula id="11">$a,b$</formula> are the remaining dimensions, in practice they are bond dimensions of <formula id="12">$\Lambda^{n-1}$</formula> and <formula id="13">$\Lambda^{n}$</formula>, respectively, which can be numbers <formula id="14">$\in [1,\chi]$</formula>.</para><para>In diagrammatic tensor notation this is: <verbatim>                        [d]          0
+            G     = [a]__|__[b] = 1__|__2
+</verbatim> where after the second equality the index order is shown. In code this corresponds to</para><para><programlisting filename=".cpp"><codeline><highlight class="normal">Tensor3<sp/>G(d,a,b);</highlight></codeline>
+</programlisting></para><para>Similarly, we have for <formula id="15">$\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}$</formula>:</para><para><verbatim>                                [d] [d]                0   1
+            Theta     = [chia]___|___|___[chib] = 2 ___|___|___ 3
+</verbatim></para><para>which in code reads</para><para><programlisting filename=".cpp"><codeline><highlight class="normal">Tensor4<sp/>G(d,d,chia,chib);</highlight></codeline>
+</programlisting></para></sect3>
+</sect2>
+</sect1>
+<sect1 id="index_1details">
+<title>Details</title>
+<para><simplesect kind="author"><para>David Aceituno </para></simplesect>
+<simplesect kind="date"><para>10-2017 </para></simplesect>
+<simplesect kind="copyright"><para>MPL2 </para></simplesect>
+</para></sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

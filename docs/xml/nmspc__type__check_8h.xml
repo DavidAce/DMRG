@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="nmspc__type__check_8h" kind="file" language="C++">
+    <compoundname>nmspc_type_check.h</compoundname>
+    <includes local="no">Eigen/Core</includes>
+    <includedby refid="class__hdf5__file_8h" local="no">source/IO/class_hdf5_file.h</includedby>
+    <incdepgraph>
+      <node id="462">
+        <label>source/general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="463" relation="include">
+        </childnode>
+      </node>
+      <node id="463">
+        <label>Eigen/Core</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="465">
+        <label>source/IO/class_hdf5_file.h</label>
+        <link refid="class__hdf5__file_8h_source"/>
+      </node>
+      <node id="464">
+        <label>source/general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="465" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="struct_type_check_1_1is__instance__of" prot="public">TypeCheck::is_instance_of</innerclass>
+    <innerclass refid="struct_type_check_1_1is__instance__of_3_01_template_00_01_template_3_01_args_8_8_8_01_4_01_4" prot="public">TypeCheck::is_instance_of&lt; Template, Template&lt; Args... &gt; &gt;</innerclass>
+    <innernamespace refid="namespace_type_check">TypeCheck</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/general/nmspc_type_check.h"/>
+  </compounddef>
+</doxygen>

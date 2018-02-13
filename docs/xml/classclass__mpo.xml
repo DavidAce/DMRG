@@ -1,0 +1,495 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="classclass__mpo" kind="class" language="C++" prot="public">
+    <compoundname>class_mpo</compoundname>
+    <includes refid="class__mpo_8h" local="no">class_mpo.h</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classclass__mpo_1a3ed02a21741a381d5ca31135c74acf59" prot="public" static="no">
+        <type>double</type>
+        <definition>using class_mpo::Scalar =  double</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="28" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classclass__mpo_1ac30d2d197c8d224851eb3a5c81830337" prot="public" static="yes" mutable="no">
+        <type>constexpr int</type>
+        <definition>constexpr int class_mpo::mps_sites</definition>
+        <argsstring></argsstring>
+        <name>mps_sites</name>
+        <initializer>= 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="29" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass__mpo_1a71ef3d91fdb8d3c5caaf4e6cd6392758" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long class_mpo::local_dimension</definition>
+        <argsstring></argsstring>
+        <name>local_dimension</name>
+        <initializer>= Model::local_dimension</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="30" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mpo_1a15a7017ed98ff537490588d48aeb1ef1" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_mpo::timestep</definition>
+        <argsstring></argsstring>
+        <name>timestep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="31" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mpo_1acfe94449145225a344ad6afda4a09350" prot="public" static="no" mutable="no">
+        <type>Textra::MatrixType&lt; Scalar &gt;</type>
+        <definition>Textra::MatrixType&lt;Scalar&gt; class_mpo::H_asMatrix</definition>
+        <argsstring></argsstring>
+        <name>H_asMatrix</name>
+        <initializer>= Model::H(mps_sites).real()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="32" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mpo_1a8e1f686a4679aa25030ce4a898ddd7b7" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Textra::Tensor&lt;Scalar,4&gt; class_mpo::H_asTensor</definition>
+        <argsstring></argsstring>
+        <name>H_asTensor</name>
+        <initializer>= Textra::Matrix_to_Tensor&lt;std::complex&lt;double&gt;,4&gt;(Model::H(mps_sites), {2,2,2,2}).real()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="33" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mpo_1a5ca23eb06dbe0ff2d1e5d60bd4af0f9c" prot="public" static="no" mutable="no">
+        <type>Textra::MatrixType&lt; Scalar &gt;</type>
+        <definition>Textra::MatrixType&lt;Scalar&gt; class_mpo::H_MPO_asMatrix</definition>
+        <argsstring></argsstring>
+        <name>H_MPO_asMatrix</name>
+        <initializer>= <ref refid="namespace_model_1aa6c9a44577b1eadbbc0a5ffce5b8c90f" kindref="member">Model::MPO_asMatrix</ref>().real()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="34" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mpo_1a1fd21a8ea99ac335f970c66cdd55856a" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; double, 2 &gt;</type>
+        <definition>Textra::Tensor&lt;double,2&gt; class_mpo::H_MPO_asTensor2</definition>
+        <argsstring></argsstring>
+        <name>H_MPO_asTensor2</name>
+        <initializer>= Textra::Matrix_to_Tensor2(<ref refid="namespace_model_1aa6c9a44577b1eadbbc0a5ffce5b8c90f" kindref="member">Model::MPO_asMatrix</ref>()).real()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="35" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mpo_1a582e2717f54c0676ff03dbcc72fcd6fb" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Textra::Tensor&lt;Scalar,4&gt; class_mpo::Udt</definition>
+        <argsstring></argsstring>
+        <name>Udt</name>
+        <initializer>= compute_Udt(0.01, 1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="65" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mpo_1abd3a2d3c057fdbb521be975d029aa3a7" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Textra::Tensor&lt;Scalar,4&gt; class_mpo::M</definition>
+        <argsstring></argsstring>
+        <name>M</name>
+        <initializer>= compute_M()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="66" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mpo_1a7c5055d4ce08d5e461df4e80fdc38bf4" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; Scalar, 6 &gt;</type>
+        <definition>Textra::Tensor&lt;Scalar,6&gt; class_mpo::MM</definition>
+        <argsstring></argsstring>
+        <name>MM</name>
+        <initializer>= compute_MM()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="67" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mpo_1aa989d3848fc845e42e9d21aebfb3d73c" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
+        <definition>Textra::Tensor&lt;std::complex&lt;double&gt;,4&gt; class_mpo::F</definition>
+        <argsstring></argsstring>
+        <name>F</name>
+        <initializer>= <ref refid="classclass__mpo_1a295a3733385636498cb8f396b9fad6ae" kindref="member">compute_F</ref>(0.0001)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="68" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mpo_1ac3ee154cd599b98f049c20ac376c6bce" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
+        <definition>Textra::Tensor&lt;std::complex&lt;double&gt;,4&gt; class_mpo::G</definition>
+        <argsstring></argsstring>
+        <name>G</name>
+        <initializer>= <ref refid="classclass__mpo_1aa2ece23d469fa8c767c9ea5c8860be25" kindref="member">compute_G</ref>(0.0001)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="69" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classclass__mpo_1a3cf0d89436080353b4d0f29cf4057a2f" prot="private" static="no" mutable="no">
+        <type>std::array&lt; Textra::MatrixType&lt; std::complex&lt; double &gt; &gt;, 2 &gt;</type>
+        <definition>std::array&lt;Textra::MatrixType&lt;std::complex&lt;double&gt; &gt;,2&gt; class_mpo::h</definition>
+        <argsstring></argsstring>
+        <name>h</name>
+        <initializer>= {Model::h(mps_sites,0), Model::h(mps_sites,1)}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="39" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__mpo_1a99259f681763912dc3e2649f6c8321e3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>class_mpo::class_mpo</definition>
+        <argsstring>()</argsstring>
+        <name>class_mpo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="27" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="27" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mpo_1a295a3733385636498cb8f396b9fad6ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
+        <definition>Tensor&lt; std::complex&lt; double &gt;, 4 &gt; class_mpo::compute_F</definition>
+        <argsstring>(double a)</argsstring>
+        <name>compute_F</name>
+        <param>
+          <type>double</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>Returns the moment generating function MPO hamiltonian as a rank 4 MPO. F := exp(aM), where a is a small parameter and M is an MPO. <verbatim>    0       1
+    |       |
+    [exp(aH)]
+    |       |
+    2       3
+</verbatim></para><para>Where H = H_even + H_odd, so exp(aH) can be Suzuki-Trotter decomposed just as in iTEBD</para>        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="62" column="1" bodyfile="source/mps_routines/class_mpo.cpp" bodystart="46" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mpo_1aa2ece23d469fa8c767c9ea5c8860be25" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
+        <definition>Tensor&lt; std::complex&lt; double &gt;, 4 &gt; class_mpo::compute_G</definition>
+        <argsstring>(double a)</argsstring>
+        <name>compute_G</name>
+        <param>
+          <type>double</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>Returns the characteristic function MPO hamiltonian as a rank 4 tensor. G := exp(iaM), where a is a small parameter and M is an MPO. 0 1 | | [exp(iaH)] | | 2 3</para>        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="63" column="1" bodyfile="source/mps_routines/class_mpo.cpp" bodystart="63" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mpo_1ae760d46427e544650d293b78c63da7ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
+        <definition>Tensor&lt; std::complex&lt; double &gt;, 4 &gt; class_mpo::compute_logG</definition>
+        <argsstring>(double a)</argsstring>
+        <name>compute_logG</name>
+        <param>
+          <type>double</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>Returns the characteristic function MPO hamiltonian as a rank 4 tensor. G := exp(iaM), where a is a small parameter and M is an MPO. 0 1 | | [exp(iaH)] | | 2 3</para>        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="64" column="1" bodyfile="source/mps_routines/class_mpo.cpp" bodystart="75" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mpo_1a8204eaaf9babb68ecc7f898a5754abbd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mpo::update_timestep</definition>
+        <argsstring>(const double delta_t, const int susuki_trotter_order)</argsstring>
+        <name>update_timestep</name>
+        <param>
+          <type>const double</type>
+          <declname>delta_t</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>susuki_trotter_order</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="70" column="1" bodyfile="source/mps_routines/class_mpo.cpp" bodystart="135" bodyend="138"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classclass__mpo_1a5450ee9d9509be73bfc56ca4e29abd66" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Tensor&lt; class_mpo::Scalar, 4 &gt; class_mpo::compute_M</definition>
+        <argsstring>()</argsstring>
+        <name>compute_M</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>Returns the MPO hamiltonian as a rank 4 MPO. Notation following Schollwöck (2010) <verbatim>    2
+    |
+0---M---1
+    |
+    3
+</verbatim></para>        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="40" column="1" bodyfile="source/mps_routines/class_mpo.cpp" bodystart="16" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mpo_1af6563d2f879bd6e44783f754746d81ae" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 6 &gt;</type>
+        <definition>Tensor&lt; class_mpo::Scalar, 6 &gt; class_mpo::compute_MM</definition>
+        <argsstring>()</argsstring>
+        <name>compute_MM</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>Returns a 2-site Hamitlonian MPO of rank 6. Notation following Schollwöck (2010) <verbatim>     2   3
+     |   |
+ 0---M---M---1
+     |   |
+     4   5
+</verbatim></para>        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="41" column="1" bodyfile="source/mps_routines/class_mpo.cpp" bodystart="30" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mpo_1a99756bdfb6cbf9d98490c5f2e991843a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>Textra::MatrixType&lt; std::complex&lt; double &gt; &gt;</type>
+        <definition>Textra::MatrixType&lt;std::complex&lt;double&gt; &gt; class_mpo::Suzuki_Trotter_1st_order</definition>
+        <argsstring>(T t)</argsstring>
+        <name>Suzuki_Trotter_1st_order</name>
+        <param>
+          <type>T</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="44" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="44" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mpo_1a67aecb779286e3f742b9f23a0fc32731" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>Textra::MatrixType&lt; std::complex&lt; double &gt; &gt;</type>
+        <definition>Textra::MatrixType&lt;std::complex&lt;double&gt; &gt; class_mpo::Suzuki_Trotter_2nd_order</definition>
+        <argsstring>(T t)</argsstring>
+        <name>Suzuki_Trotter_2nd_order</name>
+        <param>
+          <type>T</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="49" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="49" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mpo_1a2db528848e1677dcadd555dfe7a36ad8" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
+        <definition>Tensor&lt; std::complex&lt; double &gt;, 4 &gt; class_mpo::TimeEvolution_1st_order</definition>
+        <argsstring>(const double delta_t)</argsstring>
+        <name>TimeEvolution_1st_order</name>
+        <param>
+          <type>const double</type>
+          <declname>delta_t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="55" column="1" bodyfile="source/mps_routines/class_mpo.cpp" bodystart="89" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mpo_1ab2477b88b10c41e29cfb00bbcd43c281" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
+        <definition>Tensor&lt; std::complex&lt; double &gt;, 4 &gt; class_mpo::TimeEvolution_2nd_order</definition>
+        <argsstring>(const double delta_t)</argsstring>
+        <name>TimeEvolution_2nd_order</name>
+        <param>
+          <type>const double</type>
+          <declname>delta_t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="56" column="1" bodyfile="source/mps_routines/class_mpo.cpp" bodystart="93" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mpo_1a579da1bab92287c19e7497760db8fa61" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
+        <definition>Tensor&lt; std::complex&lt; double &gt;, 4 &gt; class_mpo::TimeEvolution_4th_order</definition>
+        <argsstring>(const double delta_t)</argsstring>
+        <name>TimeEvolution_4th_order</name>
+        <param>
+          <type>const double</type>
+          <declname>delta_t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="57" column="1" bodyfile="source/mps_routines/class_mpo.cpp" bodystart="98" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mpo_1aa84d310e5561c1872e2cddc056f0dd84" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Tensor&lt; class_mpo::Scalar, 4 &gt; class_mpo::compute_Udt</definition>
+        <argsstring>(const double delta_t, const int order)</argsstring>
+        <name>compute_Udt</name>
+        <param>
+          <type>const double</type>
+          <declname>delta_t</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>order</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>Returns a 2-site non-MPO time evolution operator. <verbatim>0         1
+|         |
+[exp(H*dt)]
+|         |
+2         3
+</verbatim></para>        </inbodydescription>
+        <location file="source/mps_routines/class_mpo.h" line="58" column="1" bodyfile="source/mps_routines/class_mpo.cpp" bodystart="111" bodyend="132"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><heading level="1">Superblock Class</heading>
+</para><para>This class contains the Hamiltonian MPO, current wave function MPS, left and right environment blocks and routines to contract, diagonalize, truncate and update them. </para>    </detaileddescription>
+    <location file="source/mps_routines/class_mpo.h" line="25" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="25" bodyend="71"/>
+    <listofallmembers>
+      <member refid="classclass__mpo_1a99259f681763912dc3e2649f6c8321e3" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>class_mpo</name></member>
+      <member refid="classclass__mpo_1a295a3733385636498cb8f396b9fad6ae" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>compute_F</name></member>
+      <member refid="classclass__mpo_1aa2ece23d469fa8c767c9ea5c8860be25" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>compute_G</name></member>
+      <member refid="classclass__mpo_1ae760d46427e544650d293b78c63da7ac" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>compute_logG</name></member>
+      <member refid="classclass__mpo_1a5450ee9d9509be73bfc56ca4e29abd66" prot="private" virt="non-virtual"><scope>class_mpo</scope><name>compute_M</name></member>
+      <member refid="classclass__mpo_1af6563d2f879bd6e44783f754746d81ae" prot="private" virt="non-virtual"><scope>class_mpo</scope><name>compute_MM</name></member>
+      <member refid="classclass__mpo_1aa84d310e5561c1872e2cddc056f0dd84" prot="private" virt="non-virtual"><scope>class_mpo</scope><name>compute_Udt</name></member>
+      <member refid="classclass__mpo_1aa989d3848fc845e42e9d21aebfb3d73c" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>F</name></member>
+      <member refid="classclass__mpo_1ac3ee154cd599b98f049c20ac376c6bce" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>G</name></member>
+      <member refid="classclass__mpo_1a3cf0d89436080353b4d0f29cf4057a2f" prot="private" virt="non-virtual"><scope>class_mpo</scope><name>h</name></member>
+      <member refid="classclass__mpo_1acfe94449145225a344ad6afda4a09350" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>H_asMatrix</name></member>
+      <member refid="classclass__mpo_1a8e1f686a4679aa25030ce4a898ddd7b7" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>H_asTensor</name></member>
+      <member refid="classclass__mpo_1a5ca23eb06dbe0ff2d1e5d60bd4af0f9c" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>H_MPO_asMatrix</name></member>
+      <member refid="classclass__mpo_1a1fd21a8ea99ac335f970c66cdd55856a" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>H_MPO_asTensor2</name></member>
+      <member refid="classclass__mpo_1a71ef3d91fdb8d3c5caaf4e6cd6392758" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>local_dimension</name></member>
+      <member refid="classclass__mpo_1abd3a2d3c057fdbb521be975d029aa3a7" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>M</name></member>
+      <member refid="classclass__mpo_1a7c5055d4ce08d5e461df4e80fdc38bf4" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>MM</name></member>
+      <member refid="classclass__mpo_1ac30d2d197c8d224851eb3a5c81830337" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>mps_sites</name></member>
+      <member refid="classclass__mpo_1a3ed02a21741a381d5ca31135c74acf59" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>Scalar</name></member>
+      <member refid="classclass__mpo_1a99756bdfb6cbf9d98490c5f2e991843a" prot="private" virt="non-virtual"><scope>class_mpo</scope><name>Suzuki_Trotter_1st_order</name></member>
+      <member refid="classclass__mpo_1a67aecb779286e3f742b9f23a0fc32731" prot="private" virt="non-virtual"><scope>class_mpo</scope><name>Suzuki_Trotter_2nd_order</name></member>
+      <member refid="classclass__mpo_1a2db528848e1677dcadd555dfe7a36ad8" prot="private" virt="non-virtual"><scope>class_mpo</scope><name>TimeEvolution_1st_order</name></member>
+      <member refid="classclass__mpo_1ab2477b88b10c41e29cfb00bbcd43c281" prot="private" virt="non-virtual"><scope>class_mpo</scope><name>TimeEvolution_2nd_order</name></member>
+      <member refid="classclass__mpo_1a579da1bab92287c19e7497760db8fa61" prot="private" virt="non-virtual"><scope>class_mpo</scope><name>TimeEvolution_4th_order</name></member>
+      <member refid="classclass__mpo_1a15a7017ed98ff537490588d48aeb1ef1" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>timestep</name></member>
+      <member refid="classclass__mpo_1a582e2717f54c0676ff03dbcc72fcd6fb" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>Udt</name></member>
+      <member refid="classclass__mpo_1a8204eaaf9babb68ecc7f898a5754abbd" prot="public" virt="non-virtual"><scope>class_mpo</scope><name>update_timestep</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

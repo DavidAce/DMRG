@@ -1,0 +1,236 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="classclass___s_v_d" kind="class" language="C++" prot="public">
+    <compoundname>class_SVD</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>Scalar</declname>
+        <defname>Scalar</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classclass___s_v_d_1a4891e69aca40bf3c5da8cf1d74cf9e63" prot="private" static="no">
+        <type>Eigen::Matrix&lt; Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor &gt;</type>
+        <definition>using class_SVD&lt; Scalar &gt;::MatrixType =  Eigen::Matrix&lt;Scalar,Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor&gt;</definition>
+        <argsstring></argsstring>
+        <name>MatrixType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/class_svd_wrapper.h" line="16" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classclass___s_v_d_1a501234314891e6c949e77bbec59efdcb" prot="private" static="no">
+        <templateparamlist>
+          <param>
+            <type>long</type>
+            <declname>rankU</declname>
+            <defname>rankU</defname>
+          </param>
+          <param>
+            <type>long</type>
+            <declname>rankS</declname>
+            <defname>rankS</defname>
+          </param>
+          <param>
+            <type>long</type>
+            <declname>rankV</declname>
+            <defname>rankV</defname>
+          </param>
+        </templateparamlist>
+        <type>std::tuple&lt; Eigen::Tensor&lt; Scalar, rankU &gt;, Eigen::Tensor&lt; Scalar, rankS &gt;, Eigen::Tensor&lt; Scalar, rankV &gt; &gt;</type>
+        <definition>using class_SVD&lt; Scalar &gt;::TensorTuple =  std::tuple&lt;Eigen::Tensor&lt;Scalar,rankU&gt;, Eigen::Tensor&lt;Scalar,rankS&gt;, Eigen::Tensor&lt;Scalar,rankV&gt; &gt;</definition>
+        <argsstring></argsstring>
+        <name>TensorTuple</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/class_svd_wrapper.h" line="18" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classclass___s_v_d_1a32178b13edfad5edf804849414b392d8" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_SVD&lt; Scalar &gt;::SVDThreshold</definition>
+        <argsstring></argsstring>
+        <name>SVDThreshold</name>
+        <initializer>= 1e-12</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/class_svd_wrapper.h" line="12" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass___s_v_d_1aeb5e5609093e5128442beb8153ac33c1" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_SVD&lt; Scalar &gt;::truncation_error</definition>
+        <argsstring></argsstring>
+        <name>truncation_error</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/class_svd_wrapper.h" line="13" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass___s_v_d_1a71d0194331693f9c928174d875f20b3a" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_SVD&lt; Scalar &gt;::chi</definition>
+        <argsstring></argsstring>
+        <name>chi</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/class_svd_wrapper.h" line="14" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass___s_v_d_1a32be6f974d98cd9473db94fc28580afa" prot="private" static="no" mutable="no">
+        <type>Eigen::BDCSVD&lt; MatrixType &gt;</type>
+        <definition>Eigen::BDCSVD&lt;MatrixType&gt; class_SVD&lt; Scalar &gt;::SVD</definition>
+        <argsstring></argsstring>
+        <name>SVD</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/class_svd_wrapper.h" line="21" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass___s_v_d_1a487d668b0da66c6eb55354a1d347f7fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double class_SVD&lt; Scalar &gt;::get_truncation_error</definition>
+        <argsstring>()</argsstring>
+        <name>get_truncation_error</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/class_svd_wrapper.h" line="24" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="36" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass___s_v_d_1a45aa52c93953edf911a16e10ad252a79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_SVD&lt; Scalar &gt;::setThreshold</definition>
+        <argsstring>(double newThreshold)</argsstring>
+        <name>setThreshold</name>
+        <param>
+          <type>double</type>
+          <declname>newThreshold</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/class_svd_wrapper.h" line="25" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="41" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass___s_v_d_1a9186a17e30bde76abd70b201e27dea1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>TensorTuple&lt; 2, 1, 2 &gt;</type>
+        <definition>class_SVD&lt; Scalar &gt;::template TensorTuple&lt; 2, 1, 2 &gt; class_SVD&lt; Scalar &gt;::decompose</definition>
+        <argsstring>(const Textra::Tensor&lt; Scalar, 2 &gt; &amp;tensor)</argsstring>
+        <name>decompose</name>
+        <param>
+          <type>const Textra::Tensor&lt; Scalar, 2 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/class_svd_wrapper.h" line="26" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="47" bodyend="57"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass___s_v_d_1ae7077ee70d1301ed2575af0c26f07e3c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>TensorTuple&lt; 2, 1, 2 &gt;</type>
+        <definition>class_SVD&lt; Scalar &gt;::template TensorTuple&lt; 2, 1, 2 &gt; class_SVD&lt; Scalar &gt;::decompose</definition>
+        <argsstring>(const Textra::Tensor&lt; Scalar, 2 &gt; &amp;tensor, const long chi_max)</argsstring>
+        <name>decompose</name>
+        <param>
+          <type>const Textra::Tensor&lt; Scalar, 2 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <param>
+          <type>const long</type>
+          <declname>chi_max</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/class_svd_wrapper.h" line="27" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="62" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass___s_v_d_1a5f0160054cd7fd99fcf1f93b6a119218" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>TensorTuple&lt; 3, 1, 3 &gt;</type>
+        <definition>class_SVD&lt; Scalar &gt;::template TensorTuple&lt; 3, 1, 3 &gt; class_SVD&lt; Scalar &gt;::schmidt</definition>
+        <argsstring>(const Textra::Tensor&lt; Scalar, 2 &gt; &amp;tensor, long d, long chiL, long chi_max, long chiR)</argsstring>
+        <name>schmidt</name>
+        <param>
+          <type>const Textra::Tensor&lt; Scalar, 2 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>chiL</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>chi_max</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>chiR</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/general/class_svd_wrapper.h" line="28" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="76" bodyend="87"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/general/class_svd_wrapper.h" line="10" column="1" bodyfile="source/general/class_svd_wrapper.h" bodystart="10" bodyend="29"/>
+    <listofallmembers>
+      <member refid="classclass___s_v_d_1a71d0194331693f9c928174d875f20b3a" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>chi</name></member>
+      <member refid="classclass___s_v_d_1a9186a17e30bde76abd70b201e27dea1b" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>decompose</name></member>
+      <member refid="classclass___s_v_d_1ae7077ee70d1301ed2575af0c26f07e3c" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>decompose</name></member>
+      <member refid="classclass___s_v_d_1a487d668b0da66c6eb55354a1d347f7fd" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>get_truncation_error</name></member>
+      <member refid="classclass___s_v_d_1a4891e69aca40bf3c5da8cf1d74cf9e63" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>MatrixType</name></member>
+      <member refid="classclass___s_v_d_1a5f0160054cd7fd99fcf1f93b6a119218" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>schmidt</name></member>
+      <member refid="classclass___s_v_d_1a45aa52c93953edf911a16e10ad252a79" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>setThreshold</name></member>
+      <member refid="classclass___s_v_d_1a32be6f974d98cd9473db94fc28580afa" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>SVD</name></member>
+      <member refid="classclass___s_v_d_1a32178b13edfad5edf804849414b392d8" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>SVDThreshold</name></member>
+      <member refid="classclass___s_v_d_1a501234314891e6c949e77bbec59efdcb" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>TensorTuple</name></member>
+      <member refid="classclass___s_v_d_1aeb5e5609093e5128442beb8153ac33c1" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>truncation_error</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

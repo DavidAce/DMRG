@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="n__tensor__extra_8h" kind="file" language="C++">
+    <compoundname>n_tensor_extra.h</compoundname>
+    <includes local="no">Eigen/Core</includes>
+    <includes local="no">unsupported/Eigen/CXX11/Tensor</includes>
+    <includes local="no">iterator</includes>
+    <includes local="no">iostream</includes>
+    <includedby refid="class__eig__arpack__wrapper_8h" local="yes">source/general/class_eig_arpack_wrapper.h</includedby>
+    <includedby refid="class__eig__spectra__wrapper_8h" local="yes">source/general/class_eig_spectra_wrapper.h</includedby>
+    <includedby refid="class__svd__wrapper_8h" local="yes">source/general/class_svd_wrapper.h</includedby>
+    <includedby refid="class__eigensolver__product_8h" local="yes">source/mps_routines/class_eigensolver_product.h</includedby>
+    <includedby refid="class__environment_8h" local="yes">source/mps_routines/class_environment.h</includedby>
+    <includedby refid="class__environment__storage_8h" local="yes">source/mps_routines/class_environment_storage.h</includedby>
+    <includedby refid="class__measurement_8h" local="no">source/mps_routines/class_measurement.h</includedby>
+    <includedby refid="class__mpo_8cpp" local="yes">source/mps_routines/class_mpo.cpp</includedby>
+    <includedby refid="class__mpo_8h" local="yes">source/mps_routines/class_mpo.h</includedby>
+    <includedby refid="class__mps_8h" local="yes">source/mps_routines/class_mps.h</includedby>
+    <includedby refid="class__superblock_8h" local="no">source/mps_routines/class_superblock.h</includedby>
+    <incdepgraph>
+      <node id="449">
+        <label>iterator</label>
+      </node>
+      <node id="447">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="448">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="446">
+        <label>source/general/n_tensor_extra.h</label>
+        <link refid="n__tensor__extra_8h"/>
+        <childnode refid="447" relation="include">
+        </childnode>
+        <childnode refid="448" relation="include">
+        </childnode>
+        <childnode refid="449" relation="include">
+        </childnode>
+        <childnode refid="450" relation="include">
+        </childnode>
+      </node>
+      <node id="450">
+        <label>iostream</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="454">
+        <label>source/general/class_svd_wrapper.h</label>
+        <link refid="class__svd__wrapper_8h_source"/>
+      </node>
+      <node id="452">
+        <label>source/general/class_eig_arpack_wrapper.h</label>
+        <link refid="class__eig__arpack__wrapper_8h_source"/>
+      </node>
+      <node id="457">
+        <label>source/mps_routines/class_environment_storage.h</label>
+        <link refid="class__environment__storage_8h_source"/>
+      </node>
+      <node id="461">
+        <label>source/mps_routines/class_mps.h</label>
+        <link refid="class__mps_8h_source"/>
+        <childnode refid="456" relation="include">
+        </childnode>
+        <childnode refid="459" relation="include">
+        </childnode>
+        <childnode refid="460" relation="include">
+        </childnode>
+        <childnode refid="458" relation="include">
+        </childnode>
+      </node>
+      <node id="451">
+        <label>source/general/n_tensor_extra.h</label>
+        <link refid="n__tensor__extra_8h"/>
+        <childnode refid="452" relation="include">
+        </childnode>
+        <childnode refid="453" relation="include">
+        </childnode>
+        <childnode refid="454" relation="include">
+        </childnode>
+        <childnode refid="455" relation="include">
+        </childnode>
+        <childnode refid="456" relation="include">
+        </childnode>
+        <childnode refid="457" relation="include">
+        </childnode>
+        <childnode refid="459" relation="include">
+        </childnode>
+        <childnode refid="460" relation="include">
+        </childnode>
+        <childnode refid="461" relation="include">
+        </childnode>
+        <childnode refid="458" relation="include">
+        </childnode>
+      </node>
+      <node id="458">
+        <label>source/mps_routines/class_superblock.h</label>
+        <link refid="class__superblock_8h_source"/>
+      </node>
+      <node id="460">
+        <label>source/mps_routines/class_mpo.h</label>
+        <link refid="class__mpo_8h_source"/>
+        <childnode refid="458" relation="include">
+        </childnode>
+      </node>
+      <node id="456">
+        <label>source/mps_routines/class_environment.h</label>
+        <link refid="class__environment_8h_source"/>
+        <childnode refid="457" relation="include">
+        </childnode>
+        <childnode refid="458" relation="include">
+        </childnode>
+      </node>
+      <node id="455">
+        <label>source/mps_routines/class_eigensolver_product.h</label>
+        <link refid="class__eigensolver__product_8h_source"/>
+      </node>
+      <node id="459">
+        <label>source/mps_routines/class_measurement.h</label>
+        <link refid="class__measurement_8h_source"/>
+      </node>
+      <node id="453">
+        <label>source/general/class_eig_spectra_wrapper.h</label>
+        <link refid="class__eig__spectra__wrapper_8h_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="struct_textra_1_1idx__dim__pair" prot="public">Textra::idx_dim_pair</innerclass>
+    <innernamespace refid="namespace_textra">Textra</innernamespace>
+    <innernamespace refid="namespace_eigen">Eigen</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/general/n_tensor_extra.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,247 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="structtable__entry" kind="struct" language="C++" prot="public">
+    <compoundname>table_entry</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structtable__entry_1ae70cc95640ef066ae0310e061b4d24d4" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long table_entry::chi</definition>
+        <argsstring></argsstring>
+        <name>chi</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="16" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1a8c8a67c9034de9c78051dd51d545a664" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long table_entry::chi_max</definition>
+        <argsstring></argsstring>
+        <name>chi_max</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="17" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1a11bd9e762b98557d57c52dbb0bb0c530" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double table_entry::energy</definition>
+        <argsstring></argsstring>
+        <name>energy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="18" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1a642198e7f0080901e09c8fbc4f596170" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double table_entry::entropy</definition>
+        <argsstring></argsstring>
+        <name>entropy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="19" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1a39c06c296856ef02674e066910a5e35e" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double table_entry::variance1</definition>
+        <argsstring></argsstring>
+        <name>variance1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="20" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1a229b2c0fcfb5dd6c585290778b2f6873" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double table_entry::variance2</definition>
+        <argsstring></argsstring>
+        <name>variance2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="21" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1ae1d4df86c779cb2f21f99dd4d0b2311c" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double table_entry::truncation_error</definition>
+        <argsstring></argsstring>
+        <name>truncation_error</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="22" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1a5d16fc3d04a5e678b6bf5c21dc56a306" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int table_entry::iteration</definition>
+        <argsstring></argsstring>
+        <name>iteration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="23" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1a4669012a4446acc94f33f570f52bffb5" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int table_entry::chain_length</definition>
+        <argsstring></argsstring>
+        <name>chain_length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="24" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1a4b38cfa4baa0fbcc8b5200f8c2349737" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double table_entry::time_step</definition>
+        <argsstring></argsstring>
+        <name>time_step</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="25" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1a73da421f120ff1e736a482610edfc66d" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double table_entry::wall_time</definition>
+        <argsstring></argsstring>
+        <name>wall_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="26" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1a17593a71b6f0f47ebc6ba23fa2f1d962" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double table_entry::phys_time</definition>
+        <argsstring></argsstring>
+        <name>phys_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="27" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structtable__entry_1a605fe761e147a0142bc3394b05d8b8d3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>table_entry::table_entry</definition>
+        <argsstring>(long chi, long chi_max, double energy, double entropy, double variance1, double variance2, double truncation_error, int iteration, int chain_length, double time_step, double wall_time, double phys_time)</argsstring>
+        <name>table_entry</name>
+        <param>
+          <type>long</type>
+          <declname>chi</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>chi_max</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>energy</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>entropy</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>variance1</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>variance2</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>truncation_error</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iteration</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>chain_length</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>time_step</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>wall_time</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>phys_time</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="29" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="29" bodyend="55"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/IO/class_hdf5_table_buffer.h" line="15" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="15" bodyend="56"/>
+    <listofallmembers>
+      <member refid="structtable__entry_1a4669012a4446acc94f33f570f52bffb5" prot="public" virt="non-virtual"><scope>table_entry</scope><name>chain_length</name></member>
+      <member refid="structtable__entry_1ae70cc95640ef066ae0310e061b4d24d4" prot="public" virt="non-virtual"><scope>table_entry</scope><name>chi</name></member>
+      <member refid="structtable__entry_1a8c8a67c9034de9c78051dd51d545a664" prot="public" virt="non-virtual"><scope>table_entry</scope><name>chi_max</name></member>
+      <member refid="structtable__entry_1a11bd9e762b98557d57c52dbb0bb0c530" prot="public" virt="non-virtual"><scope>table_entry</scope><name>energy</name></member>
+      <member refid="structtable__entry_1a642198e7f0080901e09c8fbc4f596170" prot="public" virt="non-virtual"><scope>table_entry</scope><name>entropy</name></member>
+      <member refid="structtable__entry_1a5d16fc3d04a5e678b6bf5c21dc56a306" prot="public" virt="non-virtual"><scope>table_entry</scope><name>iteration</name></member>
+      <member refid="structtable__entry_1a17593a71b6f0f47ebc6ba23fa2f1d962" prot="public" virt="non-virtual"><scope>table_entry</scope><name>phys_time</name></member>
+      <member refid="structtable__entry_1a605fe761e147a0142bc3394b05d8b8d3" prot="public" virt="non-virtual"><scope>table_entry</scope><name>table_entry</name></member>
+      <member refid="structtable__entry_1a4b38cfa4baa0fbcc8b5200f8c2349737" prot="public" virt="non-virtual"><scope>table_entry</scope><name>time_step</name></member>
+      <member refid="structtable__entry_1ae1d4df86c779cb2f21f99dd4d0b2311c" prot="public" virt="non-virtual"><scope>table_entry</scope><name>truncation_error</name></member>
+      <member refid="structtable__entry_1a39c06c296856ef02674e066910a5e35e" prot="public" virt="non-virtual"><scope>table_entry</scope><name>variance1</name></member>
+      <member refid="structtable__entry_1a229b2c0fcfb5dd6c585290778b2f6873" prot="public" virt="non-virtual"><scope>table_entry</scope><name>variance2</name></member>
+      <member refid="structtable__entry_1a73da421f120ff1e736a482610edfc66d" prot="public" virt="non-virtual"><scope>table_entry</scope><name>wall_time</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="n__sim__settings_8h" kind="file" language="C++">
+    <compoundname>n_sim_settings.h</compoundname>
+    <includes local="no">string</includes>
+    <includedby refid="class__algorithm__launcher_8cpp" local="no">source/algorithms/class_algorithm_launcher.cpp</includedby>
+    <includedby refid="class__base__algorithm_8h" local="no">source/algorithms/class_base_algorithm.h</includedby>
+    <includedby refid="class__excited__state___d_m_r_g_8cpp" local="no">source/algorithms/class_excited_state_DMRG.cpp</includedby>
+    <includedby refid="class___f_e_s__i_d_m_r_g_8cpp" local="no">source/algorithms/class_FES_iDMRG.cpp</includedby>
+    <includedby refid="class___f_e_s__i_t_e_b_d_8cpp" local="no">source/algorithms/class_FES_iTEBD.cpp</includedby>
+    <includedby refid="class__finite___d_m_r_g_8cpp" local="no">source/algorithms/class_finite_DMRG.cpp</includedby>
+    <includedby refid="class__imaginary___t_e_b_d_8cpp" local="no">source/algorithms/class_imaginary_TEBD.cpp</includedby>
+    <includedby refid="class__infinite___d_m_r_g_8cpp" local="no">source/algorithms/class_infinite_DMRG.cpp</includedby>
+    <includedby refid="class__hdf5__file_8h" local="no">source/IO/class_hdf5_file.h</includedby>
+    <includedby refid="main_8cpp" local="no">source/main.cpp</includedby>
+    <includedby refid="class__measurement_8h" local="no">source/mps_routines/class_measurement.h</includedby>
+    <includedby refid="class__mpo_8h" local="yes">source/mps_routines/class_mpo.h</includedby>
+    <includedby refid="n__sim__settings_8cpp" local="yes">source/sim_parameters/n_sim_settings.cpp</includedby>
+    <incdepgraph>
+      <node id="931">
+        <label>source/sim_parameters/n_sim_settings.h</label>
+        <link refid="n__sim__settings_8h"/>
+        <childnode refid="932" relation="include">
+        </childnode>
+      </node>
+      <node id="932">
+        <label>string</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="942">
+        <label>source/IO/class_hdf5_file.h</label>
+        <link refid="class__hdf5__file_8h_source"/>
+      </node>
+      <node id="938">
+        <label>source/algorithms/class_FES_iTEBD.h</label>
+        <link refid="class___f_e_s__i_t_e_b_d_8h_source"/>
+      </node>
+      <node id="933">
+        <label>source/sim_parameters/n_sim_settings.h</label>
+        <link refid="n__sim__settings_8h"/>
+        <childnode refid="934" relation="include">
+        </childnode>
+        <childnode refid="942" relation="include">
+        </childnode>
+        <childnode refid="943" relation="include">
+        </childnode>
+        <childnode refid="941" relation="include">
+        </childnode>
+        <childnode refid="944" relation="include">
+        </childnode>
+      </node>
+      <node id="935">
+        <label>source/algorithms/class_excited_state_DMRG.h</label>
+        <link refid="class__excited__state___d_m_r_g_8h_source"/>
+      </node>
+      <node id="937">
+        <label>source/algorithms/class_infinite_DMRG.h</label>
+        <link refid="class__infinite___d_m_r_g_8h_source"/>
+      </node>
+      <node id="943">
+        <label>source/main.cpp</label>
+        <link refid="main_8cpp"/>
+      </node>
+      <node id="939">
+        <label>source/algorithms/class_finite_DMRG.h</label>
+        <link refid="class__finite___d_m_r_g_8h_source"/>
+      </node>
+      <node id="945">
+        <label>source/mps_routines/class_superblock.h</label>
+        <link refid="class__superblock_8h_source"/>
+      </node>
+      <node id="944">
+        <label>source/mps_routines/class_mpo.h</label>
+        <link refid="class__mpo_8h_source"/>
+        <childnode refid="945" relation="include">
+        </childnode>
+      </node>
+      <node id="934">
+        <label>source/algorithms/class_base_algorithm.h</label>
+        <link refid="class__base__algorithm_8h_source"/>
+        <childnode refid="935" relation="include">
+        </childnode>
+        <childnode refid="936" relation="include">
+        </childnode>
+        <childnode refid="937" relation="include">
+        </childnode>
+        <childnode refid="938" relation="include">
+        </childnode>
+        <childnode refid="939" relation="include">
+        </childnode>
+        <childnode refid="940" relation="include">
+        </childnode>
+        <childnode refid="941" relation="include">
+        </childnode>
+      </node>
+      <node id="940">
+        <label>source/algorithms/class_imaginary_TEBD.h</label>
+        <link refid="class__imaginary___t_e_b_d_8h_source"/>
+      </node>
+      <node id="941">
+        <label>source/mps_routines/class_measurement.h</label>
+        <link refid="class__measurement_8h_source"/>
+      </node>
+      <node id="936">
+        <label>source/algorithms/class_FES_iDMRG.h</label>
+        <link refid="class___f_e_s__i_d_m_r_g_8h_source"/>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacesettings">settings</innernamespace>
+    <innernamespace refid="namespacesettings_1_1precision">settings::precision</innernamespace>
+    <innernamespace refid="namespacesettings_1_1idmrg">settings::idmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1fdmrg">settings::fdmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1itebd">settings::itebd</innernamespace>
+    <innernamespace refid="namespacesettings_1_1fes__itebd">settings::fes_itebd</innernamespace>
+    <innernamespace refid="namespacesettings_1_1fes__idmrg">settings::fes_idmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1hdf5">settings::hdf5</innernamespace>
+    <innernamespace refid="namespacesettings_1_1profiling">settings::profiling</innernamespace>
+    <innernamespace refid="namespacesettings_1_1console">settings::console</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/sim_parameters/n_sim_settings.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="main_8cpp" kind="file" language="C++">
+    <compoundname>main.cpp</compoundname>
+    <includes refid="n__sim__settings_8h" local="no">sim_parameters/n_sim_settings.h</includes>
+    <includes refid="n__model_8h" local="no">sim_parameters/n_model.h</includes>
+    <includes refid="class__algorithm__launcher_8h" local="no">algorithms/class_algorithm_launcher.h</includes>
+    <includes local="no">gitversion.h</includes>
+    <includes refid="class__file__reader_8h" local="no">IO/class_file_reader.h</includes>
+    <incdepgraph>
+      <node id="615">
+        <label>iomanip</label>
+      </node>
+      <node id="609">
+        <label>IO/class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h_source"/>
+        <childnode refid="610" relation="include">
+        </childnode>
+        <childnode refid="611" relation="include">
+        </childnode>
+      </node>
+      <node id="601">
+        <label>sim_parameters/n_sim_settings.h</label>
+        <link refid="n__sim__settings_8h_source"/>
+        <childnode refid="602" relation="include">
+        </childnode>
+      </node>
+      <node id="606">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="602">
+        <label>string</label>
+      </node>
+      <node id="607">
+        <label>algorithms/class_algorithm_launcher.h</label>
+        <link refid="class__algorithm__launcher_8h_source"/>
+        <childnode refid="608" relation="include">
+        </childnode>
+        <childnode refid="609" relation="include">
+        </childnode>
+      </node>
+      <node id="614">
+        <label>fstream</label>
+      </node>
+      <node id="613">
+        <label>IO/class_file_reader.h</label>
+        <link refid="class__file__reader_8h_source"/>
+        <childnode refid="611" relation="include">
+        </childnode>
+        <childnode refid="614" relation="include">
+        </childnode>
+        <childnode refid="602" relation="include">
+        </childnode>
+        <childnode refid="615" relation="include">
+        </childnode>
+        <childnode refid="616" relation="include">
+        </childnode>
+        <childnode refid="617" relation="include">
+        </childnode>
+        <childnode refid="618" relation="include">
+        </childnode>
+        <childnode refid="609" relation="include">
+        </childnode>
+      </node>
+      <node id="600">
+        <label>source/main.cpp</label>
+        <link refid="main_8cpp"/>
+        <childnode refid="601" relation="include">
+        </childnode>
+        <childnode refid="603" relation="include">
+        </childnode>
+        <childnode refid="607" relation="include">
+        </childnode>
+        <childnode refid="612" relation="include">
+        </childnode>
+        <childnode refid="613" relation="include">
+        </childnode>
+      </node>
+      <node id="604">
+        <label>vector</label>
+      </node>
+      <node id="612">
+        <label>gitversion.h</label>
+      </node>
+      <node id="605">
+        <label>array</label>
+      </node>
+      <node id="616">
+        <label>cctype</label>
+      </node>
+      <node id="603">
+        <label>sim_parameters/n_model.h</label>
+        <link refid="n__model_8h_source"/>
+        <childnode refid="604" relation="include">
+        </childnode>
+        <childnode refid="605" relation="include">
+        </childnode>
+        <childnode refid="606" relation="include">
+        </childnode>
+      </node>
+      <node id="611">
+        <label>iostream</label>
+      </node>
+      <node id="610">
+        <label>chrono</label>
+      </node>
+      <node id="618">
+        <label>algorithm</label>
+      </node>
+      <node id="608">
+        <label>memory</label>
+      </node>
+      <node id="617">
+        <label>experimental/filesystem</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int main</definition>
+        <argsstring>(int argc, char *argv[])</argsstring>
+        <name>main</name>
+        <param>
+          <type>int</type>
+          <declname>argc</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>argv</declname>
+          <array>[]</array>
+        </param>
+        <briefdescription>
+<para>Main function. Sets simulation parameters and excecutes the desired algorithms. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>an integer 0 upon exit success </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/main.cpp" line="15" column="1" bodyfile="source/main.cpp" bodystart="15" bodyend="36"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/main.cpp"/>
+  </compounddef>
+</doxygen>

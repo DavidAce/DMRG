@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__file__reader_8h" kind="file" language="C++">
+    <compoundname>class_file_reader.h</compoundname>
+    <includes local="no">iostream</includes>
+    <includes local="no">fstream</includes>
+    <includes local="no">string</includes>
+    <includes local="no">iomanip</includes>
+    <includes local="no">cctype</includes>
+    <includes local="no">experimental/filesystem</includes>
+    <includes local="no">algorithm</includes>
+    <includes refid="class__custom__cout_8h" local="no">IO/class_custom_cout.h</includes>
+    <includedby refid="class__file__reader_8cpp" local="yes">source/IO/class_file_reader.cpp</includedby>
+    <includedby refid="main_8cpp" local="no">source/main.cpp</includedby>
+    <includedby refid="n__sim__settings_8cpp" local="no">source/sim_parameters/n_sim_settings.cpp</includedby>
+    <incdepgraph>
+      <node id="501">
+        <label>iomanip</label>
+      </node>
+      <node id="505">
+        <label>IO/class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h_source"/>
+        <childnode refid="506" relation="include">
+        </childnode>
+        <childnode refid="498" relation="include">
+        </childnode>
+      </node>
+      <node id="500">
+        <label>string</label>
+      </node>
+      <node id="499">
+        <label>fstream</label>
+      </node>
+      <node id="497">
+        <label>source/IO/class_file_reader.h</label>
+        <link refid="class__file__reader_8h"/>
+        <childnode refid="498" relation="include">
+        </childnode>
+        <childnode refid="499" relation="include">
+        </childnode>
+        <childnode refid="500" relation="include">
+        </childnode>
+        <childnode refid="501" relation="include">
+        </childnode>
+        <childnode refid="502" relation="include">
+        </childnode>
+        <childnode refid="503" relation="include">
+        </childnode>
+        <childnode refid="504" relation="include">
+        </childnode>
+        <childnode refid="505" relation="include">
+        </childnode>
+      </node>
+      <node id="502">
+        <label>cctype</label>
+      </node>
+      <node id="498">
+        <label>iostream</label>
+      </node>
+      <node id="506">
+        <label>chrono</label>
+      </node>
+      <node id="504">
+        <label>algorithm</label>
+      </node>
+      <node id="503">
+        <label>experimental/filesystem</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="507">
+        <label>source/IO/class_file_reader.h</label>
+        <link refid="class__file__reader_8h"/>
+        <childnode refid="508" relation="include">
+        </childnode>
+      </node>
+      <node id="508">
+        <label>source/main.cpp</label>
+        <link refid="main_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classclass__file__reader" prot="public">class_file_reader</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/IO/class_file_reader.h"/>
+  </compounddef>
+</doxygen>

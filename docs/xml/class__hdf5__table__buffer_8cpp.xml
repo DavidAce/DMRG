@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__hdf5__table__buffer_8cpp" kind="file" language="C++">
+    <compoundname>class_hdf5_table_buffer.cpp</compoundname>
+    <includes refid="class__hdf5__table__buffer_8h" local="no">IO/class_hdf5_table_buffer.h</includes>
+    <includes refid="class__hdf5__file_8h" local="no">IO/class_hdf5_file.h</includes>
+    <incdepgraph>
+      <node id="580">
+        <label>iomanip</label>
+      </node>
+      <node id="585">
+        <label>class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h_source"/>
+        <childnode refid="586" relation="include">
+        </childnode>
+        <childnode refid="573" relation="include">
+        </childnode>
+      </node>
+      <node id="592">
+        <label>iterator</label>
+      </node>
+      <node id="577">
+        <label>IO/class_hdf5_file.h</label>
+        <link refid="class__hdf5__file_8h_source"/>
+        <childnode refid="578" relation="include">
+        </childnode>
+        <childnode refid="576" relation="include">
+        </childnode>
+        <childnode refid="573" relation="include">
+        </childnode>
+        <childnode refid="579" relation="include">
+        </childnode>
+        <childnode refid="580" relation="include">
+        </childnode>
+        <childnode refid="581" relation="include">
+        </childnode>
+        <childnode refid="582" relation="include">
+        </childnode>
+        <childnode refid="583" relation="include">
+        </childnode>
+        <childnode refid="584" relation="include">
+        </childnode>
+        <childnode refid="585" relation="include">
+        </childnode>
+        <childnode refid="587" relation="include">
+        </childnode>
+        <childnode refid="589" relation="include">
+        </childnode>
+        <childnode refid="590" relation="include">
+        </childnode>
+        <childnode refid="591" relation="include">
+        </childnode>
+        <childnode refid="592" relation="include">
+        </childnode>
+      </node>
+      <node id="591">
+        <label>sim_parameters/n_sim_settings.h</label>
+        <link refid="n__sim__settings_8h_source"/>
+        <childnode refid="579" relation="include">
+        </childnode>
+      </node>
+      <node id="587">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h_source"/>
+        <childnode refid="588" relation="include">
+        </childnode>
+      </node>
+      <node id="588">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="579">
+        <label>string</label>
+      </node>
+      <node id="576">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="582">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="571">
+        <label>source/IO/class_hdf5_table_buffer.cpp</label>
+        <link refid="class__hdf5__table__buffer_8cpp"/>
+        <childnode refid="572" relation="include">
+        </childnode>
+        <childnode refid="577" relation="include">
+        </childnode>
+      </node>
+      <node id="584">
+        <label>typeinfo</label>
+      </node>
+      <node id="574">
+        <label>vector</label>
+      </node>
+      <node id="590">
+        <label>gitversion.h</label>
+      </node>
+      <node id="578">
+        <label>hdf5.h</label>
+      </node>
+      <node id="589">
+        <label>directory.h</label>
+      </node>
+      <node id="573">
+        <label>iostream</label>
+      </node>
+      <node id="586">
+        <label>chrono</label>
+      </node>
+      <node id="583">
+        <label>type_traits</label>
+      </node>
+      <node id="572">
+        <label>IO/class_hdf5_table_buffer.h</label>
+        <link refid="class__hdf5__table__buffer_8h_source"/>
+        <childnode refid="573" relation="include">
+        </childnode>
+        <childnode refid="574" relation="include">
+        </childnode>
+        <childnode refid="575" relation="include">
+        </childnode>
+        <childnode refid="576" relation="include">
+        </childnode>
+      </node>
+      <node id="575">
+        <label>memory</label>
+      </node>
+      <node id="581">
+        <label>experimental/filesystem</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/IO/class_hdf5_table_buffer.cpp"/>
+  </compounddef>
+</doxygen>

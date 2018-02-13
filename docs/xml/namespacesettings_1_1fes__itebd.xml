@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="namespacesettings_1_1fes__itebd" kind="namespace" language="C++">
+    <compoundname>settings::fes_itebd</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="n__sim__settings_8h_1a49f96f008a6ad9c5ebc9b86f5747508c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool settings::fes_itebd::on</definition>
+        <argsstring></argsstring>
+        <name>on</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Turns FES-ITEBD simulation on/off. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="60" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="n__sim__settings_8h_1ab6c68580629ba83650334ca25584105d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int settings::fes_itebd::max_steps</definition>
+        <argsstring></argsstring>
+        <name>max_steps</name>
+        <initializer>= 100000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of iTEBD iterations, after which the simulation terminates regardless of convergence. Set high. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="61" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="n__sim__settings_8h_1a173110fae229e7ace160e82ee4e84db3" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double settings::fes_itebd::delta_t0</definition>
+        <argsstring></argsstring>
+        <name>delta_t0</name>
+        <initializer>= 0.1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial time step for iTEBD time evolution. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="62" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="n__sim__settings_8h_1aa5853d7419d19033ee66887e66d12e63" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double settings::fes_itebd::delta_tmin</definition>
+        <argsstring></argsstring>
+        <name>delta_tmin</name>
+        <initializer>= 0.00001</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Final time step for iTEBD time evolution. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="63" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="n__sim__settings_8h_1a5b0920dd210674c4add3c1185918c458" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int settings::fes_itebd::suzuki_order</definition>
+        <argsstring></argsstring>
+        <name>suzuki_order</name>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Order of the suzuki trotter decomposition (1,2 or 4) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="64" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="n__sim__settings_8h_1a4928faa4544443991798aed7a5d97f98" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long settings::fes_itebd::chi_min</definition>
+        <argsstring></argsstring>
+        <name>chi_min</name>
+        <initializer>= 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimum chi-value in range. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="65" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="n__sim__settings_8h_1a20dbd7abd03418a01a1847a850270ce5" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long settings::fes_itebd::chi_max</definition>
+        <argsstring></argsstring>
+        <name>chi_max</name>
+        <initializer>= 12</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum chi-value in range. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="66" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="n__sim__settings_8h_1a4bcd924f1a0a7b246801b742b0f14fe8" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long settings::fes_itebd::chi_num</definition>
+        <argsstring></argsstring>
+        <name>chi_num</name>
+        <initializer>= 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of chi values for in range. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="67" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="n__sim__settings_8h_1af9584a5a2e0a91c043fcefaf41c5243a" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int settings::fes_itebd::print_freq</definition>
+        <argsstring></argsstring>
+        <name>print_freq</name>
+        <initializer>= 5000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Print frequency for console output. (0 = off). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="68" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/sim_parameters/n_sim_settings.h" line="59" column="1"/>
+  </compounddef>
+</doxygen>

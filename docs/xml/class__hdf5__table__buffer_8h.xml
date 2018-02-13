@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__hdf5__table__buffer_8h" kind="file" language="C++">
+    <compoundname>class_hdf5_table_buffer.h</compoundname>
+    <includes local="no">iostream</includes>
+    <includes local="no">vector</includes>
+    <includes local="no">memory</includes>
+    <includes local="no">hdf5_hl.h</includes>
+    <includedby refid="class__algorithm__launcher_8cpp" local="no">source/algorithms/class_algorithm_launcher.cpp</includedby>
+    <includedby refid="class__base__algorithm_8cpp" local="no">source/algorithms/class_base_algorithm.cpp</includedby>
+    <includedby refid="class__excited__state___d_m_r_g_8cpp" local="no">source/algorithms/class_excited_state_DMRG.cpp</includedby>
+    <includedby refid="class___f_e_s__i_d_m_r_g_8cpp" local="no">source/algorithms/class_FES_iDMRG.cpp</includedby>
+    <includedby refid="class___f_e_s__i_t_e_b_d_8cpp" local="no">source/algorithms/class_FES_iTEBD.cpp</includedby>
+    <includedby refid="class__finite___d_m_r_g_8cpp" local="no">source/algorithms/class_finite_DMRG.cpp</includedby>
+    <includedby refid="class__imaginary___t_e_b_d_8cpp" local="no">source/algorithms/class_imaginary_TEBD.cpp</includedby>
+    <includedby refid="class__infinite___d_m_r_g_8cpp" local="no">source/algorithms/class_infinite_DMRG.cpp</includedby>
+    <includedby refid="class__hdf5__table__buffer_8cpp" local="no">source/IO/class_hdf5_table_buffer.cpp</includedby>
+    <incdepgraph>
+      <node id="598">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="596">
+        <label>vector</label>
+      </node>
+      <node id="595">
+        <label>iostream</label>
+      </node>
+      <node id="594">
+        <label>source/IO/class_hdf5_table_buffer.h</label>
+        <link refid="class__hdf5__table__buffer_8h"/>
+        <childnode refid="595" relation="include">
+        </childnode>
+        <childnode refid="596" relation="include">
+        </childnode>
+        <childnode refid="597" relation="include">
+        </childnode>
+        <childnode refid="598" relation="include">
+        </childnode>
+      </node>
+      <node id="597">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structtable__entry" prot="public">table_entry</innerclass>
+    <innerclass refid="classclass__table__entry__meta" prot="public">class_table_entry_meta</innerclass>
+    <innerclass refid="classclass__hdf5__table__buffer" prot="public">class_hdf5_table_buffer</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/IO/class_hdf5_table_buffer.h"/>
+  </compounddef>
+</doxygen>

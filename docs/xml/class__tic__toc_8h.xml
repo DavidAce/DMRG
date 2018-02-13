@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__tic__toc_8h" kind="file" language="C++">
+    <compoundname>class_tic_toc.h</compoundname>
+    <includes local="no">chrono</includes>
+    <includes local="no">iostream</includes>
+    <includedby refid="class__base__algorithm_8h" local="no">source/algorithms/class_base_algorithm.h</includedby>
+    <includedby refid="class__tic__toc_8cpp" local="yes">source/general/class_tic_toc.cpp</includedby>
+    <incdepgraph>
+      <node id="421">
+        <label>source/general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="422" relation="include">
+        </childnode>
+        <childnode refid="423" relation="include">
+        </childnode>
+      </node>
+      <node id="423">
+        <label>iostream</label>
+      </node>
+      <node id="422">
+        <label>chrono</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="429">
+        <label>source/algorithms/class_FES_iTEBD.h</label>
+        <link refid="class___f_e_s__i_t_e_b_d_8h_source"/>
+      </node>
+      <node id="424">
+        <label>source/general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="425" relation="include">
+        </childnode>
+      </node>
+      <node id="426">
+        <label>source/algorithms/class_excited_state_DMRG.h</label>
+        <link refid="class__excited__state___d_m_r_g_8h_source"/>
+      </node>
+      <node id="428">
+        <label>source/algorithms/class_infinite_DMRG.h</label>
+        <link refid="class__infinite___d_m_r_g_8h_source"/>
+      </node>
+      <node id="430">
+        <label>source/algorithms/class_finite_DMRG.h</label>
+        <link refid="class__finite___d_m_r_g_8h_source"/>
+      </node>
+      <node id="425">
+        <label>source/algorithms/class_base_algorithm.h</label>
+        <link refid="class__base__algorithm_8h_source"/>
+        <childnode refid="426" relation="include">
+        </childnode>
+        <childnode refid="427" relation="include">
+        </childnode>
+        <childnode refid="428" relation="include">
+        </childnode>
+        <childnode refid="429" relation="include">
+        </childnode>
+        <childnode refid="430" relation="include">
+        </childnode>
+        <childnode refid="431" relation="include">
+        </childnode>
+        <childnode refid="432" relation="include">
+        </childnode>
+      </node>
+      <node id="431">
+        <label>source/algorithms/class_imaginary_TEBD.h</label>
+        <link refid="class__imaginary___t_e_b_d_8h_source"/>
+      </node>
+      <node id="432">
+        <label>source/mps_routines/class_measurement.h</label>
+        <link refid="class__measurement_8h_source"/>
+      </node>
+      <node id="427">
+        <label>source/algorithms/class_FES_iDMRG.h</label>
+        <link refid="class___f_e_s__i_d_m_r_g_8h_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classclass__tic__toc" prot="public">class_tic_toc</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/general/class_tic_toc.h"/>
+  </compounddef>
+</doxygen>

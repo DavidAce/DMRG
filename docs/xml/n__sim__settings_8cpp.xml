@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="n__sim__settings_8cpp" kind="file" language="C++">
+    <compoundname>n_sim_settings.cpp</compoundname>
+    <includes refid="n__sim__settings_8h" local="yes">n_sim_settings.h</includes>
+    <includes refid="class__file__reader_8h" local="no">IO/class_file_reader.h</includes>
+    <incdepgraph>
+      <node id="924">
+        <label>iomanip</label>
+      </node>
+      <node id="928">
+        <label>IO/class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h_source"/>
+        <childnode refid="929" relation="include">
+        </childnode>
+        <childnode refid="922" relation="include">
+        </childnode>
+      </node>
+      <node id="919">
+        <label>n_sim_settings.h</label>
+        <link refid="n__sim__settings_8h_source"/>
+        <childnode refid="920" relation="include">
+        </childnode>
+      </node>
+      <node id="920">
+        <label>string</label>
+      </node>
+      <node id="923">
+        <label>fstream</label>
+      </node>
+      <node id="921">
+        <label>IO/class_file_reader.h</label>
+        <link refid="class__file__reader_8h_source"/>
+        <childnode refid="922" relation="include">
+        </childnode>
+        <childnode refid="923" relation="include">
+        </childnode>
+        <childnode refid="920" relation="include">
+        </childnode>
+        <childnode refid="924" relation="include">
+        </childnode>
+        <childnode refid="925" relation="include">
+        </childnode>
+        <childnode refid="926" relation="include">
+        </childnode>
+        <childnode refid="927" relation="include">
+        </childnode>
+        <childnode refid="928" relation="include">
+        </childnode>
+      </node>
+      <node id="925">
+        <label>cctype</label>
+      </node>
+      <node id="922">
+        <label>iostream</label>
+      </node>
+      <node id="918">
+        <label>source/sim_parameters/n_sim_settings.cpp</label>
+        <link refid="n__sim__settings_8cpp"/>
+        <childnode refid="919" relation="include">
+        </childnode>
+        <childnode refid="921" relation="include">
+        </childnode>
+      </node>
+      <node id="929">
+        <label>chrono</label>
+      </node>
+      <node id="927">
+        <label>algorithm</label>
+      </node>
+      <node id="926">
+        <label>experimental/filesystem</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacesettings">settings</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/sim_parameters/n_sim_settings.cpp"/>
+  </compounddef>
+</doxygen>

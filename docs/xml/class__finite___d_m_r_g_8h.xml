@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__finite___d_m_r_g_8h" kind="file" language="C++">
+    <compoundname>class_finite_DMRG.h</compoundname>
+    <includes refid="class__base__algorithm_8h" local="yes">class_base_algorithm.h</includes>
+    <includedby refid="class__algorithm__launcher_8cpp" local="no">source/algorithms/class_algorithm_launcher.cpp</includedby>
+    <includedby refid="class__finite___d_m_r_g_8cpp" local="yes">source/algorithms/class_finite_DMRG.cpp</includedby>
+    <incdepgraph>
+      <node id="285">
+        <label>IO/class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h_source"/>
+        <childnode refid="286" relation="include">
+        </childnode>
+        <childnode refid="287" relation="include">
+        </childnode>
+      </node>
+      <node id="289">
+        <label>sim_parameters/n_sim_settings.h</label>
+        <link refid="n__sim__settings_8h_source"/>
+        <childnode refid="290" relation="include">
+        </childnode>
+      </node>
+      <node id="290">
+        <label>string</label>
+      </node>
+      <node id="288">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h_source"/>
+        <childnode refid="286" relation="include">
+        </childnode>
+        <childnode refid="287" relation="include">
+        </childnode>
+      </node>
+      <node id="284">
+        <label>map</label>
+      </node>
+      <node id="281">
+        <label>source/algorithms/class_finite_DMRG.h</label>
+        <link refid="class__finite___d_m_r_g_8h"/>
+        <childnode refid="282" relation="include">
+        </childnode>
+      </node>
+      <node id="282">
+        <label>class_base_algorithm.h</label>
+        <link refid="class__base__algorithm_8h_source"/>
+        <childnode refid="283" relation="include">
+        </childnode>
+        <childnode refid="284" relation="include">
+        </childnode>
+        <childnode refid="285" relation="include">
+        </childnode>
+        <childnode refid="288" relation="include">
+        </childnode>
+        <childnode refid="289" relation="include">
+        </childnode>
+      </node>
+      <node id="287">
+        <label>iostream</label>
+      </node>
+      <node id="286">
+        <label>chrono</label>
+      </node>
+      <node id="283">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classclass__finite___d_m_r_g" prot="public">class_finite_DMRG</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/algorithms/class_finite_DMRG.h"/>
+  </compounddef>
+</doxygen>

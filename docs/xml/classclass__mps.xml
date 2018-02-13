@@ -1,0 +1,484 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="classclass__mps" kind="class" language="C++" prot="public">
+    <compoundname>class_mps</compoundname>
+    <includes refid="class__mps_8h" local="no">class_mps.h</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classclass__mps_1a2aa011fd39f548fca7e3f46ccee15def" prot="public" static="no">
+        <type>double</type>
+        <definition>using class_mps::Scalar =  double</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="48" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classclass__mps_1a5c50f08af3b2f4bbd4aaeb4a1c8c88f3" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long class_mps::local_dimension</definition>
+        <argsstring></argsstring>
+        <name>local_dimension</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Local (or physical) spin or qubit dimension, usually denoted <formula id="10">$d$</formula> elsewhere. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="50" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps_1a267c868d49a5bdb1d36382c0cf7d4e2c" prot="private" static="no" mutable="no">
+        <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
+        <definition>Textra::Tensor&lt;Scalar,3&gt; class_mps::tmp3</definition>
+        <argsstring></argsstring>
+        <name>tmp3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Temporary holder for swapping </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="51" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps_1a502c37bf1f3118c1371530bf1adcf71e" prot="private" static="no" mutable="no">
+        <type>Textra::Tensor&lt; Scalar, 1 &gt;</type>
+        <definition>Textra::Tensor&lt;Scalar,1&gt; class_mps::tmp1</definition>
+        <argsstring></argsstring>
+        <name>tmp1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Temporary holder for swapping </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="52" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass__mps_1a75edf60c4a68a4ae2aa8f9014a106ab7" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_mps::swapped</definition>
+        <argsstring></argsstring>
+        <name>swapped</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Tracks the swapped state of A and B positions. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="54" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps_1a02186fbc3b68d6c524c483fa7f9d1da7" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
+        <definition>Textra::Tensor&lt;Scalar,3&gt; class_mps::GA</definition>
+        <argsstring></argsstring>
+        <name>GA</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><formula id="28">$\Gamma^A$</formula> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="56" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps_1a90f7034eef4c6cba916dec77704d81fc" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
+        <definition>Textra::Tensor&lt;Scalar,3&gt; class_mps::GB</definition>
+        <argsstring></argsstring>
+        <name>GB</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><formula id="29">$\Gamma^B$</formula> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="57" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps_1aef24f4c0d05044b169c76b781566ab81" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; Scalar, 1 &gt;</type>
+        <definition>Textra::Tensor&lt;Scalar,1&gt; class_mps::LA</definition>
+        <argsstring></argsstring>
+        <name>LA</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><formula id="41">$\Lambda^A$</formula> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="58" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps_1a6a6ec148213e5e0a3777907aace69c5f" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; Scalar, 1 &gt;</type>
+        <definition>Textra::Tensor&lt;Scalar,1&gt; class_mps::LB</definition>
+        <argsstring></argsstring>
+        <name>LB</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><formula id="42">$\Lambda^B$</formula> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="59" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps_1af8e0a279018e8dfb0ac16d6796168d9f" prot="public" static="no" mutable="no">
+        <type>Textra::Tensor&lt; Scalar, 1 &gt;</type>
+        <definition>Textra::Tensor&lt;Scalar,1&gt; class_mps::L_tail</definition>
+        <argsstring></argsstring>
+        <name>L_tail</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><formula id="40">$\Lambda^B_{n+1}$</formula> or <formula id="38">$\Lambda^B_{n-1}$</formula> in iDMRG or fDMRG respectively. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="60" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__mps_1ad0be4d483d488807f4f5a49e1152fbb1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>class_mps::class_mps</definition>
+        <argsstring>()</argsstring>
+        <name>class_mps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="62" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="62" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1a9fd08b87e2b6e7aed019b7eff3b2f892" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps::initialize</definition>
+        <argsstring>(long local_dimension_)</argsstring>
+        <name>initialize</name>
+        <param>
+          <type>long</type>
+          <declname>local_dimension_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para><xrefsect id="todo_1_todo000001"><xreftitle>Todo</xreftitle><xrefdescription><para>, check? was LA before </para></xrefdescription></xrefsect></para>        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="64" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="8" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1ad2663b4931bd182710c94381e56a0aba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps::swap_AB</definition>
+        <argsstring>()</argsstring>
+        <name>swap_AB</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets local dimension </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="65" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="26" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1a55418d0ef5c02f5994e71c5a5490bff7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
+        <definition>Tensor&lt; class_mps::Scalar, 3 &gt; class_mps::A</definition>
+        <argsstring>() const</argsstring>
+        <name>A</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Swaps the roles of A and B. Used in infinite DMRG. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="67" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="42" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1ac1818f73ca75e2f9434026577fc26173" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
+        <definition>Tensor&lt; class_mps::Scalar, 3 &gt; class_mps::B</definition>
+        <argsstring>() const</argsstring>
+        <name>B</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="68" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="45" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1a07d06716141ae3782195819dfdc21057" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Tensor&lt; class_mps::Scalar, 4 &gt; class_mps::thetaL</definition>
+        <argsstring>() const</argsstring>
+        <name>thetaL</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="69" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="49" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1af2de9e983db0ded95e79ef2cb9ebcf17" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Tensor&lt; class_mps::Scalar, 4 &gt; class_mps::thetaR</definition>
+        <argsstring>() const</argsstring>
+        <name>thetaR</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="70" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="55" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1a1501eb3c7b6c476f119083c46e3ebec2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Tensor&lt; class_mps::Scalar, 4 &gt; class_mps::get_theta</definition>
+        <argsstring>() const</argsstring>
+        <name>get_theta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="72" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="63" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1a50c7a2e6f49fcc0c9b21458686fb9b2d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Tensor&lt; class_mps::Scalar, 4 &gt; class_mps::get_transfer_matrix_L</definition>
+        <argsstring>() const</argsstring>
+        <name>get_transfer_matrix_L</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns rank 4 tensor <formula id="22">$\Theta$</formula>. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="73" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="75" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1aa9f900c83b1b616e51c07777ad911802" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Tensor&lt; class_mps::Scalar, 4 &gt; class_mps::get_transfer_matrix_R</definition>
+        <argsstring>() const</argsstring>
+        <name>get_transfer_matrix_R</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="74" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="80" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1afc148bceb2440b590b67eb390c5b816c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Tensor&lt; class_mps::Scalar, 4 &gt; class_mps::get_transfer_2_site_matrix_L</definition>
+        <argsstring>() const</argsstring>
+        <name>get_transfer_2_site_matrix_L</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="75" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="86" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1a6f59773603d4758e7bd3a0c9324f9db9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Tensor&lt; class_mps::Scalar, 4 &gt; class_mps::get_transfer_2_site_matrix_R</definition>
+        <argsstring>() const</argsstring>
+        <name>get_transfer_2_site_matrix_R</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="76" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="91" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1acf0d9b2ef0d19b23e84c2368991e1133" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>Textra::Tensor&lt; T, 6 &gt;</type>
+        <definition>Textra::Tensor&lt;T,6&gt; class_mps::get_transfer_matrix_L</definition>
+        <argsstring>(const Textra::Tensor&lt; T, 4 &gt; &amp;MPO_1site) const</argsstring>
+        <name>get_transfer_matrix_L</name>
+        <param>
+          <type>const Textra::Tensor&lt; T, 4 &gt; &amp;</type>
+          <declname>MPO_1site</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="79" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="79" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1aead23a354e773808a852458f9fcf13c7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>Textra::Tensor&lt; T, 6 &gt;</type>
+        <definition>Textra::Tensor&lt;T,6&gt; class_mps::get_transfer_matrix_R</definition>
+        <argsstring>(const Textra::Tensor&lt; T, 4 &gt; &amp;MPO_1site) const</argsstring>
+        <name>get_transfer_matrix_R</name>
+        <param>
+          <type>const Textra::Tensor&lt; T, 4 &gt; &amp;</type>
+          <declname>MPO_1site</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="87" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="87" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1a8b319bb371a1c106c22da8b44be058a9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>Textra::Tensor&lt; T, 6 &gt;</type>
+        <definition>Textra::Tensor&lt;T,6&gt; class_mps::get_transfer_2_site_matrix_L</definition>
+        <argsstring>(const Textra::Tensor&lt; T, 4 &gt; &amp;MPO_1site) const</argsstring>
+        <name>get_transfer_2_site_matrix_L</name>
+        <param>
+          <type>const Textra::Tensor&lt; T, 4 &gt; &amp;</type>
+          <declname>MPO_1site</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="95" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="95" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1a4008612d0f5d8478e672a1d4b4fb5f77" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>Textra::Tensor&lt; T, 6 &gt;</type>
+        <definition>Textra::Tensor&lt;T,6&gt; class_mps::get_transfer_2_site_matrix_R</definition>
+        <argsstring>(const Textra::Tensor&lt; T, 4 &gt; &amp;MPO_1site) const</argsstring>
+        <name>get_transfer_2_site_matrix_R</name>
+        <param>
+          <type>const Textra::Tensor&lt; T, 4 &gt; &amp;</type>
+          <declname>MPO_1site</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="104" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="104" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1af47f06843d76ee8ba33f881b45f031c1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>Textra::Tensor&lt; T, 6 &gt;</type>
+        <definition>Textra::Tensor&lt;T,6&gt; class_mps::get_transfer_2_site_matrix_L</definition>
+        <argsstring>(const Textra::Tensor&lt; T, 6 &gt; &amp;MPO_2site) const</argsstring>
+        <name>get_transfer_2_site_matrix_L</name>
+        <param>
+          <type>const Textra::Tensor&lt; T, 6 &gt; &amp;</type>
+          <declname>MPO_2site</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="114" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="114" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1a3a9a6bd31b810041ca5f21d2a9f23748" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>Textra::Tensor&lt; T, 6 &gt;</type>
+        <definition>Textra::Tensor&lt;T,6&gt; class_mps::get_transfer_2_site_matrix_R</definition>
+        <argsstring>(const Textra::Tensor&lt; T, 6 &gt; &amp;MPO_2site) const</argsstring>
+        <name>get_transfer_2_site_matrix_R</name>
+        <param>
+          <type>const Textra::Tensor&lt; T, 6 &gt; &amp;</type>
+          <declname>MPO_2site</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="122" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="122" bodyend="127"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites <formula id="7">$n$</formula> and <formula id="33">$n+1$</formula>, respectively. </para>    </briefdescription>
+    <detaileddescription>
+<para><heading level="1">MPS Class</heading>
+</para><para>During the initial infinite-DMRG stage, sites A and B are swapped in each iteration to mimic the movement between even and odd positions in a translationally invariant chain.</para><para><heading level="2">Background</heading>
+</para><para>In both the infinite and finite DMRG algorithms, the MPS in this class will be used to construct <formula id="22">$\Theta$</formula>, a two-site MPS tensor of rank 4:</para><para><formula id="34">\[ \Theta = \Lambda^B_{n-1} \Gamma^A_{n} \Lambda^A_{n} \Gamma^B_{n+1} \Lambda^B_{n+1}. \]</formula></para><para><blockquote><para>Note that the first <formula id="35">$ \Lambda^B_{n-1} $</formula> is special:<itemizedlist>
+<listitem><para>During infinite-DMRG <formula id="36">$ \Lambda^B_{n-1} = \Lambda^B_{n+1} $</formula> because we expect the MPS to be symmetric about <formula id="7">$n$</formula>.</para></listitem><listitem><para>During finite-DMRG it is simply the bond directly to the left of <formula id="7">$n$</formula>. </para></listitem></itemizedlist>
+</para></blockquote></para><para><heading level="3">Diagram</heading>
+</para><para>In diagrammatic tensor notation the two-site MPS is: <verbatim>                                  [d]    [d]
+            Theta     = [chia]__.__|__.__|__.__[chib]
+
+                               LB  GA LA GB LB
+</verbatim> where the values in [ ] denote the dimension of each leg of the full tensor:<itemizedlist>
+<listitem><para><formula id="10">$d$</formula> = local (or physical) dimension. Default is 2 for spin-1/2, Ising spins or qubits.</para></listitem><listitem><para><formula id="37">$\chi_a$</formula> = Left dimension equivalent to bond dimension of <formula id="38">$\Lambda^B_{n-1}$</formula></para></listitem><listitem><para><formula id="39">$\chi_b$</formula> = Right dimension equivalent to bond dimension of <formula id="40">$\Lambda^B_{n+1}$</formula></para></listitem></itemizedlist>
+</para><para><heading level="3">Tensor index order convention: See the <ulink url="index.html">Home page</ulink>.</heading>
+</para>    </detaileddescription>
+    <location file="source/mps_routines/class_mps.h" line="46" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="46" bodyend="129"/>
+    <listofallmembers>
+      <member refid="classclass__mps_1a55418d0ef5c02f5994e71c5a5490bff7" prot="public" virt="non-virtual"><scope>class_mps</scope><name>A</name></member>
+      <member refid="classclass__mps_1ac1818f73ca75e2f9434026577fc26173" prot="public" virt="non-virtual"><scope>class_mps</scope><name>B</name></member>
+      <member refid="classclass__mps_1ad0be4d483d488807f4f5a49e1152fbb1" prot="public" virt="non-virtual"><scope>class_mps</scope><name>class_mps</name></member>
+      <member refid="classclass__mps_1a02186fbc3b68d6c524c483fa7f9d1da7" prot="public" virt="non-virtual"><scope>class_mps</scope><name>GA</name></member>
+      <member refid="classclass__mps_1a90f7034eef4c6cba916dec77704d81fc" prot="public" virt="non-virtual"><scope>class_mps</scope><name>GB</name></member>
+      <member refid="classclass__mps_1a1501eb3c7b6c476f119083c46e3ebec2" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_theta</name></member>
+      <member refid="classclass__mps_1afc148bceb2440b590b67eb390c5b816c" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_2_site_matrix_L</name></member>
+      <member refid="classclass__mps_1a8b319bb371a1c106c22da8b44be058a9" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_2_site_matrix_L</name></member>
+      <member refid="classclass__mps_1af47f06843d76ee8ba33f881b45f031c1" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_2_site_matrix_L</name></member>
+      <member refid="classclass__mps_1a6f59773603d4758e7bd3a0c9324f9db9" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_2_site_matrix_R</name></member>
+      <member refid="classclass__mps_1a4008612d0f5d8478e672a1d4b4fb5f77" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_2_site_matrix_R</name></member>
+      <member refid="classclass__mps_1a3a9a6bd31b810041ca5f21d2a9f23748" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_2_site_matrix_R</name></member>
+      <member refid="classclass__mps_1a50c7a2e6f49fcc0c9b21458686fb9b2d" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_matrix_L</name></member>
+      <member refid="classclass__mps_1acf0d9b2ef0d19b23e84c2368991e1133" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_matrix_L</name></member>
+      <member refid="classclass__mps_1aa9f900c83b1b616e51c07777ad911802" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_matrix_R</name></member>
+      <member refid="classclass__mps_1aead23a354e773808a852458f9fcf13c7" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_matrix_R</name></member>
+      <member refid="classclass__mps_1a9fd08b87e2b6e7aed019b7eff3b2f892" prot="public" virt="non-virtual"><scope>class_mps</scope><name>initialize</name></member>
+      <member refid="classclass__mps_1af8e0a279018e8dfb0ac16d6796168d9f" prot="public" virt="non-virtual"><scope>class_mps</scope><name>L_tail</name></member>
+      <member refid="classclass__mps_1aef24f4c0d05044b169c76b781566ab81" prot="public" virt="non-virtual"><scope>class_mps</scope><name>LA</name></member>
+      <member refid="classclass__mps_1a6a6ec148213e5e0a3777907aace69c5f" prot="public" virt="non-virtual"><scope>class_mps</scope><name>LB</name></member>
+      <member refid="classclass__mps_1a5c50f08af3b2f4bbd4aaeb4a1c8c88f3" prot="private" virt="non-virtual"><scope>class_mps</scope><name>local_dimension</name></member>
+      <member refid="classclass__mps_1a2aa011fd39f548fca7e3f46ccee15def" prot="public" virt="non-virtual"><scope>class_mps</scope><name>Scalar</name></member>
+      <member refid="classclass__mps_1ad2663b4931bd182710c94381e56a0aba" prot="public" virt="non-virtual"><scope>class_mps</scope><name>swap_AB</name></member>
+      <member refid="classclass__mps_1a75edf60c4a68a4ae2aa8f9014a106ab7" prot="public" virt="non-virtual"><scope>class_mps</scope><name>swapped</name></member>
+      <member refid="classclass__mps_1a07d06716141ae3782195819dfdc21057" prot="public" virt="non-virtual"><scope>class_mps</scope><name>thetaL</name></member>
+      <member refid="classclass__mps_1af2de9e983db0ded95e79ef2cb9ebcf17" prot="public" virt="non-virtual"><scope>class_mps</scope><name>thetaR</name></member>
+      <member refid="classclass__mps_1a502c37bf1f3118c1371530bf1adcf71e" prot="private" virt="non-virtual"><scope>class_mps</scope><name>tmp1</name></member>
+      <member refid="classclass__mps_1a267c868d49a5bdb1d36382c0cf7d4e2c" prot="private" virt="non-virtual"><scope>class_mps</scope><name>tmp3</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

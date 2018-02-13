@@ -1,0 +1,657 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="classclass__algorithm__base" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>class_algorithm_base</compoundname>
+    <derivedcompoundref refid="classclass__excited__state___d_m_r_g" prot="public" virt="non-virtual">class_excited_state_DMRG</derivedcompoundref>
+    <derivedcompoundref refid="classclass___f_e_s__i_d_m_r_g" prot="public" virt="non-virtual">class_FES_iDMRG</derivedcompoundref>
+    <derivedcompoundref refid="classclass___f_e_s__i_t_e_b_d" prot="public" virt="non-virtual">class_FES_iTEBD</derivedcompoundref>
+    <derivedcompoundref refid="classclass__finite___d_m_r_g" prot="public" virt="non-virtual">class_finite_DMRG</derivedcompoundref>
+    <derivedcompoundref refid="classclass__imaginary___t_e_b_d" prot="public" virt="non-virtual">class_imaginary_TEBD</derivedcompoundref>
+    <derivedcompoundref refid="classclass__infinite___d_m_r_g" prot="public" virt="non-virtual">class_infinite_DMRG</derivedcompoundref>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass__algorithm__base_1a52110546990518c431901aa1262e457c" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__hdf5__file" kindref="compound">class_hdf5_file</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;class_hdf5_file&gt; class_algorithm_base::hdf5</definition>
+        <argsstring></argsstring>
+        <name>hdf5</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="38" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1ade8066944fb71399e3bf44d30149a923" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__hdf5__table__buffer" kindref="compound">class_hdf5_table_buffer</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;class_hdf5_table_buffer&gt; class_algorithm_base::table_buffer</definition>
+        <argsstring></argsstring>
+        <name>table_buffer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="39" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1a0df91637c87540c529273999b7866315" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_algorithm_base::group_name</definition>
+        <argsstring></argsstring>
+        <name>group_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="40" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1a199c6b935154ae969e80ae25f37e831d" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_algorithm_base::table_name</definition>
+        <argsstring></argsstring>
+        <name>table_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="41" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1a44aea6f57f16f07b0079b382c2ab863e" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_algorithm_base::simulation_name</definition>
+        <argsstring></argsstring>
+        <name>simulation_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="42" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1a2862e4e8b9338ac361d660ef35847d69" prot="public" static="no" mutable="no">
+        <type>SimulationType</type>
+        <definition>SimulationType class_algorithm_base::simtype</definition>
+        <argsstring></argsstring>
+        <name>simtype</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="43" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1aae9477a03b720e2e3ebbb92f05253774" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__superblock" kindref="compound">class_superblock</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;class_superblock&gt; class_algorithm_base::superblock</definition>
+        <argsstring></argsstring>
+        <name>superblock</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="46" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1aeb4c7ff399543a89181d790c56e8ddf0" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__measurement" kindref="compound">class_measurement</ref> &gt;</type>
+        <definition>std::shared_ptr&lt;class_measurement&gt; class_algorithm_base::observables</definition>
+        <argsstring></argsstring>
+        <name>observables</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="47" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__custom__cout" kindref="compound">class_custom_cout</ref></type>
+        <definition>class_custom_cout class_algorithm_base::ccout</definition>
+        <argsstring></argsstring>
+        <name>ccout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="50" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_tot</definition>
+        <argsstring></argsstring>
+        <name>t_tot</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="69" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1ae378bea3c64eddbcebbb4308506dd0ba" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_eig</definition>
+        <argsstring></argsstring>
+        <name>t_eig</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="70" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_sim</definition>
+        <argsstring></argsstring>
+        <name>t_sim</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="71" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1a62686101ba541b485f091dff78cfc871" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_svd</definition>
+        <argsstring></argsstring>
+        <name>t_svd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="72" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1afc59105de307467cd6719e13bdba4fa0" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_env</definition>
+        <argsstring></argsstring>
+        <name>t_env</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="73" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1a68b62ce7f9da3a7b37686497ded194bb" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_evo</definition>
+        <argsstring></argsstring>
+        <name>t_evo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="74" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1ab7242e6dbb626b5d72a4afefe5c98f3c" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_udt</definition>
+        <argsstring></argsstring>
+        <name>t_udt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="75" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1a51f0cbf257ad5da8152c2c50e09e218d" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_sto</definition>
+        <argsstring></argsstring>
+        <name>t_sto</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="76" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1afb38782d7f5134a0a0be8fde91628995" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_ste</definition>
+        <argsstring></argsstring>
+        <name>t_ste</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="77" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1a29c0cee1d8f128dd23e6fb833ad9a18f" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_obs</definition>
+        <argsstring></argsstring>
+        <name>t_obs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="78" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1a30db55b403a9abca8a8b063079009174" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_mps</definition>
+        <argsstring></argsstring>
+        <name>t_mps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="79" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_algorithm_base::class_algorithm_base</definition>
+        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::shared_ptr&lt; class_hdf5_table_buffer &gt; table_buffer_, std::shared_ptr&lt; class_superblock &gt; superblock_, std::shared_ptr&lt; class_measurement &gt; observables_)</argsstring>
+        <name>class_algorithm_base</name>
+        <param>
+          <type>std::shared_ptr&lt; <ref refid="classclass__hdf5__file" kindref="compound">class_hdf5_file</ref> &gt;</type>
+          <declname>hdf5_</declname>
+        </param>
+        <param>
+          <type>std::shared_ptr&lt; <ref refid="classclass__hdf5__table__buffer" kindref="compound">class_hdf5_table_buffer</ref> &gt;</type>
+          <declname>table_buffer_</declname>
+        </param>
+        <param>
+          <type>std::shared_ptr&lt; <ref refid="classclass__superblock" kindref="compound">class_superblock</ref> &gt;</type>
+          <declname>superblock_</declname>
+        </param>
+        <param>
+          <type>std::shared_ptr&lt; <ref refid="classclass__measurement" kindref="compound">class_measurement</ref> &gt;</type>
+          <declname>observables_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="23" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="14" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_algorithm_base::class_algorithm_base</definition>
+        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::string group_name_, std::string table_name_, std::string simulation_name_, SimulationType simtype_)</argsstring>
+        <name>class_algorithm_base</name>
+        <param>
+          <type>std::shared_ptr&lt; <ref refid="classclass__hdf5__file" kindref="compound">class_hdf5_file</ref> &gt;</type>
+          <declname>hdf5_</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>group_name_</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>table_name_</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>simulation_name_</declname>
+        </param>
+        <param>
+          <type>SimulationType</type>
+          <declname>simtype_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="28" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="27" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_algorithm_base::class_algorithm_base</definition>
+        <argsstring>()</argsstring>
+        <name>class_algorithm_base</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="34" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="47" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_base::set_profiling_labels</definition>
+        <argsstring>()</argsstring>
+        <name>set_profiling_labels</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="36" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="80" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1a41b199782e43aeaccf607b8191c3a027" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_algorithm_base::run</definition>
+        <argsstring>()=0</argsstring>
+        <name>run</name>
+        <reimplementedby refid="classclass__infinite___d_m_r_g_1a42b5db2f3ca0a4b5dfc3f8b67f8badf3">run</reimplementedby>
+        <reimplementedby refid="classclass___f_e_s__i_d_m_r_g_1af243e88dc3994e96c7c15439aeffb6c3">run</reimplementedby>
+        <reimplementedby refid="classclass__imaginary___t_e_b_d_1ac038c83d5c2a802686abaa9bf673b005">run</reimplementedby>
+        <reimplementedby refid="classclass__finite___d_m_r_g_1a7afa8f68b9b027530ca11f692e70bbee">run</reimplementedby>
+        <reimplementedby refid="classclass___f_e_s__i_t_e_b_d_1a4fee90754e2222b75e93000d1daea466">run</reimplementedby>
+        <reimplementedby refid="classclass__excited__state___d_m_r_g_1aa7dc9748d6b7f2ed0cef096a0f6f38b4">run</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="53" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1a0f543b6c9f1ff43baab2bc47628c680e" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_algorithm_base::store_table_entry</definition>
+        <argsstring>()=0</argsstring>
+        <name>store_table_entry</name>
+        <reimplementedby refid="classclass__infinite___d_m_r_g_1af5945b9b1164b8575d8983a75bca3233">store_table_entry</reimplementedby>
+        <reimplementedby refid="classclass___f_e_s__i_d_m_r_g_1a635d2cefb0a1ad82b4ca0516da1b1981">store_table_entry</reimplementedby>
+        <reimplementedby refid="classclass__imaginary___t_e_b_d_1a2fbbcb78748a27ed86cbbb4adca95345">store_table_entry</reimplementedby>
+        <reimplementedby refid="classclass___f_e_s__i_t_e_b_d_1a857a1dd355a51d6834838623762381e0">store_table_entry</reimplementedby>
+        <reimplementedby refid="classclass__finite___d_m_r_g_1afcbb939c4ea67a99c050251a675bd5af">store_table_entry</reimplementedby>
+        <reimplementedby refid="classclass__excited__state___d_m_r_g_1a1a51b9af27e0ae2b32e23d9afd49f0b2">store_table_entry</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="54" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1aeed6c86b2bb499b7b8977a9bca82e6ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_algorithm_base::print_profiling</definition>
+        <argsstring>()=0</argsstring>
+        <name>print_profiling</name>
+        <reimplementedby refid="classclass__infinite___d_m_r_g_1a681cc5ac0cea05193138bb30b7c7a790">print_profiling</reimplementedby>
+        <reimplementedby refid="classclass___f_e_s__i_d_m_r_g_1a5a0524eb6a46eb5365022d4ff8716a60">print_profiling</reimplementedby>
+        <reimplementedby refid="classclass__imaginary___t_e_b_d_1a64b56b73bb96ad96fbd271a1765c54b6">print_profiling</reimplementedby>
+        <reimplementedby refid="classclass___f_e_s__i_t_e_b_d_1ac04fc2f39a021216503cb05ecd2e5db7">print_profiling</reimplementedby>
+        <reimplementedby refid="classclass__finite___d_m_r_g_1af59b91be2fe224e459002b44939d8fff">print_profiling</reimplementedby>
+        <reimplementedby refid="classclass__excited__state___d_m_r_g_1a63786d117aee6d0e4ef5fd99e23ad12e">print_profiling</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="55" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1a96f34d67e881abd4d1ec4dd2d89728ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_algorithm_base::print_status_full</definition>
+        <argsstring>()=0</argsstring>
+        <name>print_status_full</name>
+        <reimplementedby refid="classclass__infinite___d_m_r_g_1ace9dd62c05d408a18d2eebcc418372e4">print_status_full</reimplementedby>
+        <reimplementedby refid="classclass___f_e_s__i_d_m_r_g_1a689804d79bf42136291190a572cb77a5">print_status_full</reimplementedby>
+        <reimplementedby refid="classclass__imaginary___t_e_b_d_1ac9faffebd11a7530016378550104b497">print_status_full</reimplementedby>
+        <reimplementedby refid="classclass___f_e_s__i_t_e_b_d_1a78dea9f588617416547d1dc5db4a4891">print_status_full</reimplementedby>
+        <reimplementedby refid="classclass__finite___d_m_r_g_1aaca642ab63eb0c4dd8fd69989961d9fd">print_status_full</reimplementedby>
+        <reimplementedby refid="classclass__excited__state___d_m_r_g_1a3b1a9f46cf7bf6d4c119b32f3e39a159">print_status_full</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Print out status of all quantities. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="57" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1a803b366e66ffaef47479278cbdb1a738" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_algorithm_base::print_status_update</definition>
+        <argsstring>()=0</argsstring>
+        <name>print_status_update</name>
+        <reimplementedby refid="classclass__infinite___d_m_r_g_1a69c7a5325d1fa316b98e726373514d77">print_status_update</reimplementedby>
+        <reimplementedby refid="classclass___f_e_s__i_d_m_r_g_1ab539ff602037ae8453169d7e2b3c3939">print_status_update</reimplementedby>
+        <reimplementedby refid="classclass__imaginary___t_e_b_d_1a0e1fd656e8273dd071dae8c679d72699">print_status_update</reimplementedby>
+        <reimplementedby refid="classclass___f_e_s__i_t_e_b_d_1a83c6c1174cb5c287561a360b1911e68b">print_status_update</reimplementedby>
+        <reimplementedby refid="classclass__finite___d_m_r_g_1a0135fc5a5c286e59caab06ad52418091">print_status_update</reimplementedby>
+        <reimplementedby refid="classclass__excited__state___d_m_r_g_1a17870ec85d13a7c433787c738bb0cbaf">print_status_update</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Print out status of all quantities. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="58" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1a15d8f41189fb1685de574b7f3389eee6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_base::single_DMRG_step</definition>
+        <argsstring>(long chi_max)</argsstring>
+        <name>single_DMRG_step</name>
+        <param>
+          <type>long</type>
+          <declname>chi_max</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="61" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1ac9255cf0edbb29441a2ba4e900459082" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_base::single_TEBD_step</definition>
+        <argsstring>(long chi_max)</argsstring>
+        <name>single_TEBD_step</name>
+        <param>
+          <type>long</type>
+          <declname>chi_max</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>infinite Time evolving block decimation. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>superblock</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A class containing MPS, environment and Hamiltonian MPO objects.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="62" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1a68804df41c37620391746d749b267498" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_base::enlarge_environment</definition>
+        <argsstring>()</argsstring>
+        <name>enlarge_environment</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="64" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="95" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1ad516d7415be3c39534429d34d677adf3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_base::enlarge_environment</definition>
+        <argsstring>(int direction)</argsstring>
+        <name>enlarge_environment</name>
+        <param>
+          <type>int</type>
+          <declname>direction</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="65" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="100" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1a4ce5f92c32d9bd33877fde7848417e61" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_base::swap</definition>
+        <argsstring>()</argsstring>
+        <name>swap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="66" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="106" bodyend="108"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="4">
+        <label>class_finite_DMRG</label>
+        <link refid="classclass__finite___d_m_r_g"/>
+        <childnode refid="0" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>class_FES_iDMRG</label>
+        <link refid="classclass___f_e_s__i_d_m_r_g"/>
+        <childnode refid="0" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>class_infinite_DMRG</label>
+        <link refid="classclass__infinite___d_m_r_g"/>
+        <childnode refid="0" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>class_imaginary_TEBD</label>
+        <link refid="classclass__imaginary___t_e_b_d"/>
+        <childnode refid="0" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>class_excited_state_DMRG</label>
+        <link refid="classclass__excited__state___d_m_r_g"/>
+        <childnode refid="0" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="0">
+        <label>class_algorithm_base</label>
+        <link refid="classclass__algorithm__base"/>
+      </node>
+      <node id="3">
+        <label>class_FES_iTEBD</label>
+        <link refid="classclass___f_e_s__i_t_e_b_d"/>
+        <childnode refid="0" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="8">
+        <label>class_custom_cout</label>
+        <link refid="classclass__custom__cout"/>
+      </node>
+      <node id="9">
+        <label>class_tic_toc</label>
+        <link refid="classclass__tic__toc"/>
+      </node>
+      <node id="7">
+        <label>class_algorithm_base</label>
+        <link refid="classclass__algorithm__base"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>ccout</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>t_udt</edgelabel>
+          <edgelabel>t_eig</edgelabel>
+          <edgelabel>t_ste</edgelabel>
+          <edgelabel>t_sim</edgelabel>
+          <edgelabel>t_tot</edgelabel>
+          <edgelabel>t_env</edgelabel>
+          <edgelabel>t_sto</edgelabel>
+          <edgelabel>t_obs</edgelabel>
+          <edgelabel>t_evo</edgelabel>
+          <edgelabel>t_mps</edgelabel>
+          <edgelabel>...</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="source/algorithms/class_base_algorithm.h" line="20" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="20" bodyend="81"/>
+    <listofallmembers>
+      <member refid="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>ccout</name></member>
+      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a68804df41c37620391746d749b267498" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1ad516d7415be3c39534429d34d677adf3" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1a0df91637c87540c529273999b7866315" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>group_name</name></member>
+      <member refid="classclass__algorithm__base_1a52110546990518c431901aa1262e457c" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>hdf5</name></member>
+      <member refid="classclass__algorithm__base_1aeb4c7ff399543a89181d790c56e8ddf0" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>observables</name></member>
+      <member refid="classclass__algorithm__base_1aeed6c86b2bb499b7b8977a9bca82e6ab" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>print_profiling</name></member>
+      <member refid="classclass__algorithm__base_1a96f34d67e881abd4d1ec4dd2d89728ad" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>print_status_full</name></member>
+      <member refid="classclass__algorithm__base_1a803b366e66ffaef47479278cbdb1a738" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>print_status_update</name></member>
+      <member refid="classclass__algorithm__base_1a41b199782e43aeaccf607b8191c3a027" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>run</name></member>
+      <member refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>set_profiling_labels</name></member>
+      <member refid="classclass__algorithm__base_1a2862e4e8b9338ac361d660ef35847d69" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>simtype</name></member>
+      <member refid="classclass__algorithm__base_1a44aea6f57f16f07b0079b382c2ab863e" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>simulation_name</name></member>
+      <member refid="classclass__algorithm__base_1a15d8f41189fb1685de574b7f3389eee6" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>single_DMRG_step</name></member>
+      <member refid="classclass__algorithm__base_1ac9255cf0edbb29441a2ba4e900459082" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>single_TEBD_step</name></member>
+      <member refid="classclass__algorithm__base_1a0f543b6c9f1ff43baab2bc47628c680e" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>store_table_entry</name></member>
+      <member refid="classclass__algorithm__base_1aae9477a03b720e2e3ebbb92f05253774" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>superblock</name></member>
+      <member refid="classclass__algorithm__base_1a4ce5f92c32d9bd33877fde7848417e61" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>swap</name></member>
+      <member refid="classclass__algorithm__base_1ae378bea3c64eddbcebbb4308506dd0ba" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_eig</name></member>
+      <member refid="classclass__algorithm__base_1afc59105de307467cd6719e13bdba4fa0" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_env</name></member>
+      <member refid="classclass__algorithm__base_1a68b62ce7f9da3a7b37686497ded194bb" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_evo</name></member>
+      <member refid="classclass__algorithm__base_1a30db55b403a9abca8a8b063079009174" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_mps</name></member>
+      <member refid="classclass__algorithm__base_1a29c0cee1d8f128dd23e6fb833ad9a18f" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_obs</name></member>
+      <member refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_sim</name></member>
+      <member refid="classclass__algorithm__base_1afb38782d7f5134a0a0be8fde91628995" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_ste</name></member>
+      <member refid="classclass__algorithm__base_1a51f0cbf257ad5da8152c2c50e09e218d" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_sto</name></member>
+      <member refid="classclass__algorithm__base_1a62686101ba541b485f091dff78cfc871" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_svd</name></member>
+      <member refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_tot</name></member>
+      <member refid="classclass__algorithm__base_1ab7242e6dbb626b5d72a4afefe5c98f3c" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_udt</name></member>
+      <member refid="classclass__algorithm__base_1ade8066944fb71399e3bf44d30149a923" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>table_buffer</name></member>
+      <member refid="classclass__algorithm__base_1a199c6b935154ae969e80ae25f37e831d" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>table_name</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

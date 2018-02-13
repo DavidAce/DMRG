@@ -1,0 +1,251 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="classclass__file__reader" kind="class" language="C++" prot="public">
+    <compoundname>class_file_reader</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classclass__file__reader_1a72d6ae12c3fb8ea4c93c59474d6af293" prot="private" static="no" mutable="no">
+        <type>fs::path</type>
+        <definition>fs::path class_file_reader::file_path</definition>
+        <argsstring></argsstring>
+        <name>file_path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="25" column="1" bodyfile="source/IO/class_file_reader.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__file__reader_1a1266fbf9b3a4c3ecef270577e6687753" prot="private" static="no" mutable="no">
+        <type>std::ifstream</type>
+        <definition>std::ifstream class_file_reader::file</definition>
+        <argsstring></argsstring>
+        <name>file</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="26" column="1" bodyfile="source/IO/class_file_reader.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__file__reader_1ac5f9f78cb967d73e651ee31cb9c386e8" prot="private" static="no" mutable="no">
+        <type><ref refid="classclass__custom__cout" kindref="compound">class_custom_cout</ref></type>
+        <definition>class_custom_cout class_file_reader::ccout</definition>
+        <argsstring></argsstring>
+        <name>ccout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="33" column="1" bodyfile="source/IO/class_file_reader.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classclass__file__reader_1a4f7b045dd91c15aa46cbb55df393d1c7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool class_file_reader::check_if_input_file_exists</definition>
+        <argsstring>(const fs::path &amp;path_to_file)</argsstring>
+        <name>check_if_input_file_exists</name>
+        <param>
+          <type>const fs::path &amp;</type>
+          <declname>path_to_file</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="27" column="1" bodyfile="source/IO/class_file_reader.cpp" bodystart="7" bodyend="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__file__reader_1addfafc89e0bdc2da935e21d8a359e55e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>fs::path</type>
+        <definition>fs::path class_file_reader::find_input_file</definition>
+        <argsstring>(const fs::path &amp;given_path)</argsstring>
+        <name>find_input_file</name>
+        <param>
+          <type>const fs::path &amp;</type>
+          <declname>given_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="28" column="1" bodyfile="source/IO/class_file_reader.cpp" bodystart="24" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__file__reader_1a7fb71a05c6f52d71a1fbb2f240cea8ce" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_file_reader::remove_spaces</definition>
+        <argsstring>(std::string &amp;str)</argsstring>
+        <name>remove_spaces</name>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="29" column="1" bodyfile="source/IO/class_file_reader.cpp" bodystart="66" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__file__reader_1a2c6d6afe8ad456caad09fe1517d71cf3" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool class_file_reader::has_only_digits</definition>
+        <argsstring>(const std::string s)</argsstring>
+        <name>has_only_digits</name>
+        <param>
+          <type>const std::string</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="30" column="1" bodyfile="source/IO/class_file_reader.cpp" bodystart="70" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__file__reader_1af7981ce6e1a59e94313dfde30cebac53" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool class_file_reader::is_parameterline</definition>
+        <argsstring>(const std::string s)</argsstring>
+        <name>is_parameterline</name>
+        <param>
+          <type>const std::string</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="31" column="1" bodyfile="source/IO/class_file_reader.cpp" bodystart="74" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__file__reader_1a6a3bf28903acb0a1a857251b4417afb4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string::size_type</type>
+        <definition>std::string::size_type class_file_reader::find_comment_character</definition>
+        <argsstring>(const std::string s)</argsstring>
+        <name>find_comment_character</name>
+        <param>
+          <type>const std::string</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="32" column="1" bodyfile="source/IO/class_file_reader.cpp" bodystart="78" bodyend="80"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__file__reader_1ac46ecc83e4912e9b67a87b9268dd7983" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_file_reader::class_file_reader</definition>
+        <argsstring>()=default</argsstring>
+        <name>class_file_reader</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="35" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__file__reader_1a387e18d4cf70cfffa940d3c333ec63f3" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>class_file_reader::class_file_reader</definition>
+        <argsstring>(const fs::path &amp;file_path_)</argsstring>
+        <name>class_file_reader</name>
+        <param>
+          <type>const fs::path &amp;</type>
+          <declname>file_path_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="36" column="1" bodyfile="source/IO/class_file_reader.h" bodystart="36" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__file__reader_1aad5bf9f78a36517d962f66385681c6c8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T class_file_reader::find_parameter</definition>
+        <argsstring>(std::string param_requested, T default_value)</argsstring>
+        <name>find_parameter</name>
+        <param>
+          <type>std::string</type>
+          <declname>param_requested</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>default_value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="47" column="1" bodyfile="source/IO/class_file_reader.h" bodystart="47" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__file__reader_1a24f293b427746c46df8251670619c554" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T class_file_reader::find_parameter</definition>
+        <argsstring>(std::string param_requested)</argsstring>
+        <name>find_parameter</name>
+        <param>
+          <type>std::string</type>
+          <declname>param_requested</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_file_reader.h" line="57" column="1" bodyfile="source/IO/class_file_reader.h" bodystart="57" bodyend="138"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/IO/class_file_reader.h" line="23" column="1" bodyfile="source/IO/class_file_reader.h" bodystart="23" bodyend="139"/>
+    <listofallmembers>
+      <member refid="classclass__file__reader_1ac5f9f78cb967d73e651ee31cb9c386e8" prot="private" virt="non-virtual"><scope>class_file_reader</scope><name>ccout</name></member>
+      <member refid="classclass__file__reader_1a4f7b045dd91c15aa46cbb55df393d1c7" prot="private" virt="non-virtual"><scope>class_file_reader</scope><name>check_if_input_file_exists</name></member>
+      <member refid="classclass__file__reader_1ac46ecc83e4912e9b67a87b9268dd7983" prot="public" virt="non-virtual"><scope>class_file_reader</scope><name>class_file_reader</name></member>
+      <member refid="classclass__file__reader_1a387e18d4cf70cfffa940d3c333ec63f3" prot="public" virt="non-virtual"><scope>class_file_reader</scope><name>class_file_reader</name></member>
+      <member refid="classclass__file__reader_1a1266fbf9b3a4c3ecef270577e6687753" prot="private" virt="non-virtual"><scope>class_file_reader</scope><name>file</name></member>
+      <member refid="classclass__file__reader_1a72d6ae12c3fb8ea4c93c59474d6af293" prot="private" virt="non-virtual"><scope>class_file_reader</scope><name>file_path</name></member>
+      <member refid="classclass__file__reader_1a6a3bf28903acb0a1a857251b4417afb4" prot="private" virt="non-virtual"><scope>class_file_reader</scope><name>find_comment_character</name></member>
+      <member refid="classclass__file__reader_1addfafc89e0bdc2da935e21d8a359e55e" prot="private" virt="non-virtual"><scope>class_file_reader</scope><name>find_input_file</name></member>
+      <member refid="classclass__file__reader_1aad5bf9f78a36517d962f66385681c6c8" prot="public" virt="non-virtual"><scope>class_file_reader</scope><name>find_parameter</name></member>
+      <member refid="classclass__file__reader_1a24f293b427746c46df8251670619c554" prot="public" virt="non-virtual"><scope>class_file_reader</scope><name>find_parameter</name></member>
+      <member refid="classclass__file__reader_1a2c6d6afe8ad456caad09fe1517d71cf3" prot="private" virt="non-virtual"><scope>class_file_reader</scope><name>has_only_digits</name></member>
+      <member refid="classclass__file__reader_1af7981ce6e1a59e94313dfde30cebac53" prot="private" virt="non-virtual"><scope>class_file_reader</scope><name>is_parameterline</name></member>
+      <member refid="classclass__file__reader_1a7fb71a05c6f52d71a1fbb2f240cea8ce" prot="private" virt="non-virtual"><scope>class_file_reader</scope><name>remove_spaces</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

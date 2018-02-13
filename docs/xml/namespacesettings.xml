@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="namespacesettings" kind="namespace" language="C++">
+    <compoundname>settings</compoundname>
+    <innernamespace refid="namespacesettings_1_1console">settings::console</innernamespace>
+    <innernamespace refid="namespacesettings_1_1fdmrg">settings::fdmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1fes__idmrg">settings::fes_idmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1fes__itebd">settings::fes_itebd</innernamespace>
+    <innernamespace refid="namespacesettings_1_1hdf5">settings::hdf5</innernamespace>
+    <innernamespace refid="namespacesettings_1_1idmrg">settings::idmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1itebd">settings::itebd</innernamespace>
+    <innernamespace refid="namespacesettings_1_1precision">settings::precision</innernamespace>
+    <innernamespace refid="namespacesettings_1_1profiling">settings::profiling</innernamespace>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacesettings_1ae1b4e1c2644ce7203ef24caf6d79c63a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void settings::load_from_file</definition>
+        <argsstring>(class_file_reader &amp;indata)</argsstring>
+        <name>load_from_file</name>
+        <param>
+          <type><ref refid="classclass__file__reader" kindref="compound">class_file_reader</ref> &amp;</type>
+          <declname>indata</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/n_sim_settings.h" line="20" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="79" bodyend="150"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>General settings like max iterations, time-step, precision, etc. </para>    </briefdescription>
+    <detaileddescription>
+<para>This namespace contains settings such as time-step length, number of iterations and precision parameters for the different algorithms. </para>    </detaileddescription>
+    <location file="source/sim_parameters/n_sim_settings.cpp" line="10" column="1"/>
+  </compounddef>
+</doxygen>

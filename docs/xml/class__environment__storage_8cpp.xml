@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.15">
+  <compounddef id="class__environment__storage_8cpp" kind="file" language="C++">
+    <compoundname>class_environment_storage.cpp</compoundname>
+    <includes refid="class__environment__storage_8h" local="yes">class_environment_storage.h</includes>
+    <includes refid="class__superblock_8h" local="no">mps_routines/class_superblock.h</includes>
+    <includes refid="class__hdf5__file_8h" local="no">IO/class_hdf5_file.h</includes>
+    <incdepgraph>
+      <node id="684">
+        <label>iomanip</label>
+      </node>
+      <node id="662">
+        <label>source/mps_routines/class_environment_storage.cpp</label>
+        <link refid="class__environment__storage_8cpp"/>
+        <childnode refid="663" relation="include">
+        </childnode>
+        <childnode refid="676" relation="include">
+        </childnode>
+        <childnode refid="681" relation="include">
+        </childnode>
+      </node>
+      <node id="689">
+        <label>class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h_source"/>
+        <childnode refid="690" relation="include">
+        </childnode>
+        <childnode refid="668" relation="include">
+        </childnode>
+      </node>
+      <node id="667">
+        <label>iterator</label>
+      </node>
+      <node id="681">
+        <label>IO/class_hdf5_file.h</label>
+        <link refid="class__hdf5__file_8h_source"/>
+        <childnode refid="682" relation="include">
+        </childnode>
+        <childnode refid="683" relation="include">
+        </childnode>
+        <childnode refid="668" relation="include">
+        </childnode>
+        <childnode refid="680" relation="include">
+        </childnode>
+        <childnode refid="684" relation="include">
+        </childnode>
+        <childnode refid="685" relation="include">
+        </childnode>
+        <childnode refid="686" relation="include">
+        </childnode>
+        <childnode refid="687" relation="include">
+        </childnode>
+        <childnode refid="688" relation="include">
+        </childnode>
+        <childnode refid="689" relation="include">
+        </childnode>
+        <childnode refid="691" relation="include">
+        </childnode>
+        <childnode refid="692" relation="include">
+        </childnode>
+        <childnode refid="693" relation="include">
+        </childnode>
+        <childnode refid="679" relation="include">
+        </childnode>
+        <childnode refid="667" relation="include">
+        </childnode>
+      </node>
+      <node id="679">
+        <label>sim_parameters/n_sim_settings.h</label>
+        <link refid="n__sim__settings_8h_source"/>
+        <childnode refid="680" relation="include">
+        </childnode>
+      </node>
+      <node id="691">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h_source"/>
+        <childnode refid="665" relation="include">
+        </childnode>
+      </node>
+      <node id="665">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="680">
+        <label>string</label>
+      </node>
+      <node id="683">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="678">
+        <label>unsupported/Eigen/MatrixFunctions</label>
+      </node>
+      <node id="674">
+        <label>map</label>
+      </node>
+      <node id="686">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="666">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="688">
+        <label>typeinfo</label>
+      </node>
+      <node id="663">
+        <label>class_environment_storage.h</label>
+        <link refid="class__environment__storage_8h_source"/>
+        <childnode refid="664" relation="include">
+        </childnode>
+        <childnode refid="669" relation="include">
+        </childnode>
+        <childnode refid="671" relation="include">
+        </childnode>
+        <childnode refid="674" relation="include">
+        </childnode>
+        <childnode refid="675" relation="include">
+        </childnode>
+      </node>
+      <node id="672">
+        <label>vector</label>
+      </node>
+      <node id="670">
+        <label>mps_routines/class_mps.h</label>
+        <link refid="class__mps_8h_source"/>
+        <childnode refid="671" relation="include">
+        </childnode>
+        <childnode refid="664" relation="include">
+        </childnode>
+      </node>
+      <node id="664">
+        <label>general/n_tensor_extra.h</label>
+        <link refid="n__tensor__extra_8h_source"/>
+        <childnode refid="665" relation="include">
+        </childnode>
+        <childnode refid="666" relation="include">
+        </childnode>
+        <childnode refid="667" relation="include">
+        </childnode>
+        <childnode refid="668" relation="include">
+        </childnode>
+      </node>
+      <node id="693">
+        <label>gitversion.h</label>
+      </node>
+      <node id="676">
+        <label>mps_routines/class_superblock.h</label>
+        <link refid="class__superblock_8h_source"/>
+        <childnode refid="664" relation="include">
+        </childnode>
+        <childnode refid="669" relation="include">
+        </childnode>
+        <childnode refid="670" relation="include">
+        </childnode>
+        <childnode refid="677" relation="include">
+        </childnode>
+      </node>
+      <node id="673">
+        <label>array</label>
+      </node>
+      <node id="682">
+        <label>hdf5.h</label>
+      </node>
+      <node id="677">
+        <label>mps_routines/class_mpo.h</label>
+        <link refid="class__mpo_8h_source"/>
+        <childnode refid="678" relation="include">
+        </childnode>
+        <childnode refid="670" relation="include">
+        </childnode>
+        <childnode refid="664" relation="include">
+        </childnode>
+        <childnode refid="671" relation="include">
+        </childnode>
+        <childnode refid="679" relation="include">
+        </childnode>
+      </node>
+      <node id="692">
+        <label>directory.h</label>
+      </node>
+      <node id="671">
+        <label>sim_parameters/n_model.h</label>
+        <link refid="n__model_8h_source"/>
+        <childnode refid="672" relation="include">
+        </childnode>
+        <childnode refid="673" relation="include">
+        </childnode>
+        <childnode refid="665" relation="include">
+        </childnode>
+      </node>
+      <node id="668">
+        <label>iostream</label>
+      </node>
+      <node id="669">
+        <label>class_environment.h</label>
+        <link refid="class__environment_8h_source"/>
+        <childnode refid="664" relation="include">
+        </childnode>
+        <childnode refid="670" relation="include">
+        </childnode>
+        <childnode refid="671" relation="include">
+        </childnode>
+      </node>
+      <node id="690">
+        <label>chrono</label>
+      </node>
+      <node id="687">
+        <label>type_traits</label>
+      </node>
+      <node id="675">
+        <label>memory</label>
+      </node>
+      <node id="685">
+        <label>experimental/filesystem</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/mps_routines/class_environment_storage.cpp"/>
+  </compounddef>
+</doxygen>
