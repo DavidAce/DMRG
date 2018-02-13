@@ -2,9 +2,9 @@
 #ifndef DMRG_CLASS_STORAGE_H
 #define DMRG_CLASS_STORAGE_H
 
-#include "general/n_tensor_extra.h"
+#include "general/nmspc_tensor_extra.h"
 #include "class_environment.h"
-#include "sim_parameters/n_model.h"
+#include "sim_parameters/nmspc_model.h"
 #include <map>
 #include <memory>
 

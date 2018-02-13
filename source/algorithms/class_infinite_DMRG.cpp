@@ -3,11 +3,11 @@
 //
 
 #include <iomanip>
-#include <sim_parameters/n_sim_settings.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 #include <IO/class_hdf5_table_buffer.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
-#include <general/n_math.h>
+#include <general/nmspc_math.h>
 #include "class_infinite_DMRG.h"
 using namespace std;
 using namespace Textra;

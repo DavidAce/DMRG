@@ -9,14 +9,14 @@
 #include <map>
 #include <IO/class_custom_cout.h>
 #include <general/class_tic_toc.h>
-#include <sim_parameters/n_sim_settings.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 
 class class_superblock;
 class class_hdf5_file;
 class class_hdf5_table_buffer;
 class class_measurement;
 
-enum class SimulationType{iDMRG,fDMRG, esDMRG, FES_iDMRG, iTEBD, FES_iTEBD, NONE};
+enum class SimulationType{iDMRG,fDMRG, xDMRG, FES_iDMRG, iTEBD, FES_iTEBD, NONE};
 
 
 

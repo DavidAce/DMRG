@@ -4,7 +4,7 @@
 
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>
-#include "general/n_tensor_extra.h"
+#include "general/nmspc_tensor_extra.h"
 #include "class_mpo.h"
 
 using namespace std;

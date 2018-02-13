@@ -6,9 +6,9 @@
 #define DMRG_CLASS_HAMILTONIAN_H
 #include <unsupported/Eigen/MatrixFunctions>
 #include "mps_routines/class_mps.h"
-#include "general/n_tensor_extra.h"
-#include "sim_parameters/n_model.h"
-#include "sim_parameters/n_sim_settings.h"
+#include "general/nmspc_tensor_extra.h"
+#include "sim_parameters/nmspc_model.h"
+#include "sim_parameters/nmspc_sim_settings.h"
 //
 //using namespace std;
 //using namespace Textra;

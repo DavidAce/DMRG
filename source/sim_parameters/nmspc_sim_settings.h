@@ -45,6 +45,15 @@ namespace settings {
         extern int  print_freq   ;                          /*!< Print frequency for console output. (0 = off). */
     }
 
+    //Parameters controlling xDMRG
+    namespace xdmrg {
+        extern bool on           ;                          /*!< Turns xDMRG simulation on/off. */
+        extern int  max_length   ;                          /*!< Number sweeps along the 1D quantum chain. */
+        extern int  max_sweeps   ;                          /*!< Number sweeps along the 1D quantum chain. */
+        extern long chi_max      ;                          /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        extern int  print_freq   ;                          /*!< Print frequency for console output. (0 = off). */
+    }
+
     //Parameters controlling iTEBD
     namespace itebd {
         extern bool on              ;                       /*!< Turns iTEBD simulation on/off. */

@@ -1,7 +1,7 @@
 /*! \file */
 //#define EIGEN_USE_MKL_ALL
-#include <sim_parameters/n_sim_settings.h>
-#include <sim_parameters/n_model.h>
+#include <sim_parameters/nmspc_sim_settings.h>
+#include <sim_parameters/nmspc_model.h>
 #include <algorithms/class_algorithm_launcher.h>
 #include <gitversion.h>
 #include <IO/class_file_reader.h>
