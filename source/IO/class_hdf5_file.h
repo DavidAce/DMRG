@@ -20,7 +20,7 @@
 #include <general/nmspc_type_check.h>
 #include <directory.h>
 #include <gitversion.h>
-#include <sim_parameters/n_sim_settings.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 #include <iterator>
 
 

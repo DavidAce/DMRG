@@ -4,7 +4,7 @@
 //#define EIGEN_USE_MKL_ALL
 
 #include "class_superblock.h"
-#include "general/n_math.h"
+#include "general/nmspc_math.h"
 #include <iomanip>
 #include <general/class_svd_wrapper.h>
 #include <general/class_eig_spectra_wrapper.h>

@@ -2,7 +2,7 @@
 // Created by david on 2018-01-14.
 //
 
-#include "n_sim_settings.h"
+#include "nmspc_sim_settings.h"
 #include <IO/class_file_reader.h>
 using namespace std;
 
@@ -26,6 +26,13 @@ namespace settings{
     int    fdmrg::max_sweeps             = 4;
     long   fdmrg::chi_max                = 8;
     int    fdmrg::print_freq             = 1;
+
+    //Parameters controlling excited state DMRG
+    bool   xdmrg::on                     = true;
+    int    xdmrg::max_length             = 200;
+    int    xdmrg::max_sweeps             = 4;
+    long   xdmrg::chi_max                = 8;
+    int    xdmrg::print_freq             = 1;
 
     //Parameters controlling imaginary TEBD (Zero temperature)
     bool   itebd::on                     = true;
@@ -99,6 +106,16 @@ void settings::load_from_file(class_file_reader &indata){
         fdmrg::chi_max            = indata.find_parameter<int>    ("fdmrg::chi_max"    , 8);
         fdmrg::print_freq         = indata.find_parameter<int>    ("fdmrg::print_freq ", fdmrg::print_freq);
     }
+
+    //Parameters controlling excited state DMRG
+    xdmrg::on                     = indata.find_parameter<bool>   ("xdmrg::on"         , xdmrg::on);
+    if(xdmrg::on){
+        xdmrg::max_length         = indata.find_parameter<int>    ("xdmrg::max_length ", xdmrg::max_length);
+        xdmrg::max_sweeps         = indata.find_parameter<int>    ("xdmrg::max_sweeps ", xdmrg::max_sweeps);
+        xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"    , 8);
+        xdmrg::print_freq         = indata.find_parameter<int>    ("xdmrg::print_freq ", xdmrg::print_freq);
+    }
+
 
     //Parameters controlling imaginary TEBD (Zero temperature)
     itebd::on                     = indata.find_parameter<bool>   ("itebd::on"          , itebd::on       );

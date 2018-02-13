@@ -7,7 +7,7 @@
 
 
 
-#include "general/n_tensor_extra.h"
+#include "general/nmspc_tensor_extra.h"
 
 /*!
  * \class class_eigensolver_product

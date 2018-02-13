@@ -2,9 +2,9 @@
 // Created by david on 4/25/17.
 //
 
-#include "n_model.h"
+#include "nmspc_model.h"
 #include <iomanip>
-#include <general/n_math.h>
+#include <general/nmspc_math.h>
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>
 
