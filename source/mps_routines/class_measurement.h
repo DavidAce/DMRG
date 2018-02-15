@@ -7,11 +7,8 @@
 #include <map>
 #include <memory>
 #include <IO/class_custom_cout.h>
-#include <general/nmspc_tensor_extra.h>
-#include <mps_routines/class_mps.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 #include <sim_parameters/nmspc_sim_settings.h>
-#include <algorithms/class_base_algorithm.h>
-
 class class_superblock;
 
 /*!
@@ -22,7 +19,7 @@ class class_superblock;
 
 class class_measurement {
 public:
-    using Scalar = class_mps::Scalar;
+    using Scalar = double;
 private:
     std::shared_ptr<class_superblock> superblock;
     class_custom_cout ccout;
@@ -34,10 +31,10 @@ public:
     explicit class_measurement(std::shared_ptr<class_superblock> superblock_, SimulationType sim_);
 
     double variance1,variance2,variance3;
-    double get_expectationvalue(const Textra::Tensor<double,4> &MPO);
-    double get_expectationvalue(const Textra::Tensor<std::complex<double>,4> &MPO);
-    double get_expectationvalue_sq(const Textra::Tensor<double,4> &MPO);
-    double get_expectationvalue_sq(const Textra::Tensor<std::complex<double>,4> &MPO);
+    double get_expectationvalue(const Eigen::Tensor<double,4> &MPO);
+    double get_expectationvalue(const Eigen::Tensor<std::complex<double>,4> &MPO);
+    double get_expectationvalue_sq(const Eigen::Tensor<double,4> &MPO);
+    double get_expectationvalue_sq(const Eigen::Tensor<std::complex<double>,4> &MPO);
     double get_energy();                 /*! Computes the current energy by contracting the current MPS with the Hamiltonian MPO.*/
     double get_entropy();                /*! Computes the current entropy \f$ S = - \sum_n \lambda_n log( \lambda_n) \f$, where \f$\lambda_n \f$ are elements of \f$ \Lambda^A\f$ */
     double get_variance();               /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */

@@ -6,7 +6,9 @@
 #include "class_environment.h"
 #include "sim_parameters/nmspc_model.h"
 #include <map>
+#include <list>
 #include <memory>
+#include <variant>
 
 //using namespace Textra;
 //using namespace std;
@@ -30,19 +32,20 @@ class class_hdf5_file;
  All objects are stored and indexed by their position relative to the final chain of length `max_length`.
 */
 
+
 class class_environment_storage {
 public:
-    using Scalar = class_mps::Scalar;
-private:
-    std::map<int, Textra::Tensor<Scalar,3>> G_list;                                  /*!< A list of stored \f$\Gamma\f$-tensors,  indexed by chain position. */
-    std::map<int, Textra::Tensor<Scalar,1>> L_list;                                  /*!< A list of stored \f$\Lambda\f$-tensors, indexed by chain position. */
-    std::map<int, class_environment<Side::L>> Lblock_list;           /*!< A list of stored Left block environments,  indexed by chain position. */
-    std::map<int, class_environment<Side::R>> Rblock_list;           /*!< A list of stored Right block environments, indexed by chain position. */
+    using Scalar = double;
+public:
+    std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>, Textra::Tensor<Scalar,3>>>  MPS_L;                                  /*!< A list of stored \f$\Gamma\f$-tensors,  indexed by chain position. */
+    std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>, Textra::Tensor<Scalar,3>>>  MPS_R;                                  /*!< A list of stored \f$\Gamma\f$-tensors,  indexed by chain position. */
 
+private:
     std::shared_ptr<class_superblock> superblock;
     std::shared_ptr<class_hdf5_file>  hdf5;
-
+public:
     int max_length = 0;                                             /*!< The maximum length of the chain */
+    int current_length = 0;
     int position_L;                                                 /*!< The current position of \f$\Gamma^A\f$ w.r.t the full chain. */
     int position_R;                                                 /*!< The current position of \f$\Gamma^B\f$ w.r.t the full chain. */
     bool max_length_is_set = false;
@@ -59,13 +62,22 @@ public:
                                  std::shared_ptr<class_hdf5_file>  hdf5_
     );
 
+    template<typename T>
+    void insert_two_in_the_middle(std::list<T>& list, T& objLeft, T&objRight){
+        auto it = list.begin();
+        std::advance(it, std::distance(list.begin(), list.end())/2);
+        list.insert(it, {objLeft,objRight});
+    }
+
+
+
     void set_length(int max_length_);                                       /*!< Sets the maximum length of the chain. */
     void set_superblock(std::shared_ptr<class_superblock> superblock_);     /*!< Sets the pointer to a superblock */
     void set_hdf5_file (std::shared_ptr<class_hdf5_file>  hdf5_);           /*!< Sets the pointer to an hdf5-file for storage */
-    void insert();                        /*!< Store current MPS and environments indexed by their respective positions on the chain. */
-    void load();                                /*!< Load MPS and environments according to current position. */
+    int  insert();                        /*!< Store current MPS and environments indexed by their respective positions on the chain. */
+    int  load();                                /*!< Load MPS and environments according to current position. */
     void overwrite_MPS();                 /*!< Update the MPS stored at current position.*/
-    void move(int &direction, int &sweep);    /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
+    int  move(int &direction, int &sweep);    /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
     void print_storage();                                                   /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
 };
 

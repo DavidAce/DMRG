@@ -16,7 +16,6 @@ class class_hdf5_file;
 class class_hdf5_table_buffer;
 class class_measurement;
 
-enum class SimulationType{iDMRG,fDMRG, xDMRG, FES_iDMRG, iTEBD, FES_iTEBD, NONE};
 
 
 
@@ -26,7 +25,7 @@ public:
     class_algorithm_base(std::shared_ptr<class_hdf5_file>         hdf5_,
                std::shared_ptr<class_hdf5_table_buffer> table_buffer_,
                std::shared_ptr<class_superblock>        superblock_,
-               std::shared_ptr<class_measurement>       observables_);
+               std::shared_ptr<class_measurement>       measurement_);
 
     class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
                std::string group_name_,
@@ -48,7 +47,7 @@ public:
 
     //MPS
     std::shared_ptr<class_superblock>         superblock;
-    std::shared_ptr<class_measurement>        observables;
+    std::shared_ptr<class_measurement>        measurement;
 
     //Console
     class_custom_cout ccout;
@@ -65,8 +64,8 @@ public:
     void single_DMRG_step(long chi_max);
     void single_TEBD_step(long chi_max);
 
-    void enlarge_environment();
-    void enlarge_environment(int direction);
+    int  enlarge_environment();
+    int  enlarge_environment(int direction);
     void swap();
 
     // Profiling

@@ -5,8 +5,8 @@
 #ifndef DMRG_CLASS_ENVIRONMENT_H
 #define DMRG_CLASS_ENVIRONMENT_H
 
+#include <memory>
 #include "general/nmspc_tensor_extra.h"
-#include "mps_routines/class_mps.h"
 #include "sim_parameters/nmspc_model.h"
 
 //using namespace Textra;
@@ -30,58 +30,60 @@
  * where \f$W\f$ is the rank-4 tensor Hamiltonian MPO.
  */
 
-enum class Side {L,R};
+template<typename Scalar> class class_mps;
 
-template<Side side>
+template<typename Scalar>
 class class_environment{
 public:
-    using Scalar = class_mps::Scalar;
+    std::string side;
     int size;                                       /*!< Number of particles that have been contracted into this left environment. */
-    Textra::Tensor<Scalar,3> block;                         /*!< The environment block. */
-    class_environment(){
+    Textra::Tensor<Scalar,3> block;                 /*!< The environment block. */
+    explicit class_environment(std::string side_):side(std::move(side_)){
         size = 0;
         block.resize(1, 1, 3);
         block.setZero();
-        if constexpr(side == Side::L){
-//            block(0, 0, 0) = 1;
+        if (side == "L"){
             block(0, 0, 2) = 1;
         }
         else
-        if constexpr(side== Side::R){
-//            block(0, 0, 2) = 1;
+        if (side == "R"){
             block(0, 0, 0) = 1;
+        }
+        else{
+            std::cerr << "Pass strings L or R to initialize environment" << std::endl;
+            exit(1);
         }
     };
 
-    void enlarge(const class_mps &MPS, const Textra::Tensor<Scalar,4> &M);
+    void enlarge(const std::shared_ptr<class_mps<Scalar>> &MPS, const Textra::Tensor<Scalar,4> &M);
 };
 
 
-template<Side side>
+
+template<typename Scalar>
 class class_environment_var{
 public:
-    using Scalar = class_mps::Scalar;
     int size;                                       /*!< Number of particles that have been contracted into this left environment. */
+    std::string side;
+
     Textra::Tensor<Scalar,4> block;                         /*!< The environment block. */
-    class_environment_var(){
+    explicit class_environment_var(std::string side_):side(std::move(side_)){
         size = 0;
         block.resize(1, 1, 3, 3) ;
         block.setZero();
-        if constexpr(side == Side::L){
+        if (side == "L"){
             block(0, 0, 2 ,2) = 1;
-//            block(0, 0, 2 ,2) = 1;
-//            block(0, 0, 2 ,0) = 1;
-//            block(0, 0, 2 ,1) = 1;
         }
         else
-        if constexpr(side== Side::R){
+        if (side == "R"){
             block(0, 0, 0, 0) = 1;
-//            block(0, 0, 0, 1) = 1;
-//            block(0, 0, 0, 2) = 1;
+        }
+        else{
+            std::cerr << "Pass strings L or R to initialize environment" << std::endl;
+            exit(1);
         }
     };
-
-    void enlarge(const class_mps &MPS, const Textra::Tensor<Scalar,4> &M);
+    void enlarge(const std::shared_ptr<class_mps<Scalar>> &MPS, const Textra::Tensor<Scalar,4> &M);
 };
 
 #endif //DMRG_CLASS_ENVIRONMENT_H

@@ -6,14 +6,12 @@
 #define DMRG_CLASS_EIG_ARPACK_WRAPPER_H
 #include <map>
 #include <complex>
-#include "nmspc_tensor_extra.h"
 #include "ardsnsym.h"
 #include "ardscomp.h"
 #include "ardgcomp.h"
 #include "ardssym.h"
+#include <Eigen/Core>
 
-//using namespace Textra;
-//using namespace std::complex_literals;
 
 namespace arpack{
     enum class Form{SYMMETRIC, GENERAL, COMPLEX};  // Real Symmetric, Real General or Complex General
@@ -21,13 +19,21 @@ namespace arpack{
     enum class Ritz {LA,SA,LM,SM,LR,SR,LI,SI,BE}; //choice of eigenvalue. LA is largest algebraic, and so on.
 }
 
-
-class class_eig_arpack {
+class class_arpackpp_wrapper {
 private:
     double eigThreshold = 1e-14;
     int    eigMaxIter   = 10000;
+
     using  MapType = std::map<arpack::Ritz, std::string>;
     MapType RitzToString;
+
+
+    template<typename T>
+    using  MatrixType = Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>;
+    template<typename T>
+    using  VectorType = Eigen::Matrix<T,Eigen::Dynamic, 1>;
+
+
 
     template <bool return_eigenvectors = true,typename Derived>
     auto retrieve_solution(Derived & solution, int nev) {
@@ -38,8 +44,8 @@ private:
             using T_val = decltype(solution.Eigenvalue(0));
             int rows = solution.GetN();
             int cols = std::min(nev, solution.GetNev());
-            Textra::Tensor<T_vec, 2> eigvecs(rows, cols);
-            Textra::Tensor<T_val, 1> eigvals(cols);
+            MatrixType<T_vec> eigvecs(rows, cols);
+            VectorType<T_val> eigvals(cols);
             for (int i = 0; i < cols; i++) {
                 eigvals(i) = solution.Eigenvalue(0);
                 double phase = std::arg(solution.Eigenvector(i, 0));
@@ -57,7 +63,7 @@ private:
             solution.FindEigenvalues();
             using T_val = decltype(solution.Eigenvalue(0));
             int cols = solution.GetNev();
-            Textra::Tensor<T_val, 1> eigvals(cols);
+            VectorType<T_val> eigvals(cols);
             for (int i = 0; i < cols; i++) {
                 eigvals(i) = solution.Eigenvalue(0);
             }
@@ -66,7 +72,7 @@ private:
     }
 
 public:
-    class_eig_arpack() {
+    class_arpackpp_wrapper() {
         RitzToString = {
                 {arpack::Ritz::LA, "LA"},
                 {arpack::Ritz::SA, "SA"},
@@ -84,36 +90,36 @@ public:
 
 
     template<arpack::Form form, arpack::Ritz ritz, arpack::Side side = arpack::Side::R, bool return_eigenvectors = true, typename Scalar>
-    auto solve_dominant(const Textra::Tensor<Scalar,2> &tensor, const int nev) {
-        assert(tensor.dimension(0) == tensor.dimension(1) &&
-               "Input matrix is not square. Error in Arpack eigenvalue solver.");
+    auto solve_dominant(Scalar *data, int rows, int cols, const int nev) {
+        Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> inputdata(data, rows,cols );
+        assert(rows == cols && "Input matrix is not square. Error in Arpack eigenvalue solver.");
         int ncv_max = 80;
-        int n = (int)tensor.dimension(0);
+        int n = rows;
         int ncv = std::max(n/2, 4*nev);
         ncv = std::min(ncv, ncv_max);
-        Textra::Tensor<Scalar,2> internal_tensor;
+        Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> internal_data;
         if constexpr(side == arpack::Side::R){
-            internal_tensor = tensor;
+            internal_data = inputdata;
         }else{
-            internal_tensor = tensor.shuffle(Textra::array2{1,0});
+            internal_data = inputdata.transpose();
         }
 
 
         if constexpr(form == arpack::Form::SYMMETRIC && std::is_same_v<Scalar, double>){
-            ARdsSymMatrix<double> matrix(n, internal_tensor.data());
-            ARluSymStdEig<double> eigs(nev, matrix, RitzToString.at(ritz), n, eigThreshold, eigMaxIter);
+            ARdsSymMatrix<double> matrix(n, internal_data.data());
+            ARluSymStdEig<double> eigs(nev, matrix, RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter);
             return retrieve_solution<return_eigenvectors>(eigs,nev);
         }
         if constexpr(form == arpack::Form::GENERAL && std::is_same_v<Scalar, double>){
             int nev_temp = nev == 1 ? 2 : nev;
-            ARdsNonSymMatrix<double,double> matrix(n, internal_tensor.data());
-            ARluNonSymStdEig<double> eigs(nev_temp, matrix, RitzToString.at(ritz), n, eigThreshold, eigMaxIter);
+            ARdsNonSymMatrix<double,double> matrix(n, internal_data.data());
+            ARluNonSymStdEig<double> eigs(nev_temp, matrix, RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter);
             return retrieve_solution<return_eigenvectors>(eigs,nev);
         }
 
         if constexpr(form == arpack::Form::COMPLEX && std::is_same_v<Scalar, std::complex<double>>){
-            ARdsNonSymMatrix<std::complex<double>,double> matrix(n, internal_tensor.data());
-            ARluCompStdEig<double> eigs(nev, matrix, RitzToString.at(ritz), n, eigThreshold, eigMaxIter);
+            ARdsNonSymMatrix<std::complex<double>,double> matrix(n, internal_data.data());
+            ARluCompStdEig<double> eigs(nev, matrix, RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter);
             return retrieve_solution<return_eigenvectors>(eigs,nev);
         }
     }

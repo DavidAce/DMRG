@@ -6,9 +6,12 @@
 #define DMRG_CLASS_SUPERBLOCK_H
 
 #include <general/nmspc_tensor_extra.h>
-#include <mps_routines/class_environment.h>
-#include <mps_routines/class_mps.h>
-#include <mps_routines/class_mpo.h>
+#include <memory>
+
+template<typename Scalar> class class_mps;
+template<typename Scalar> class class_mpo;
+template<typename Scalar> class class_environment;
+template<typename Scalar> class class_environment_var;
 
 /*!
   \class class_superblock
@@ -19,7 +22,7 @@
 
 class class_superblock {
 public:
-    using Scalar = class_mps::Scalar;
+    using Scalar = double;
 private:
 
     //Store temporaries for eigensolver and SVD.
@@ -28,12 +31,13 @@ private:
 public:
 
     class_superblock();
-    class_environment<Side::L>  Lblock;                 /*!< Left  environment block. */
-    class_environment<Side::R>  Rblock;                 /*!< Right environment block. */
-    class_environment_var<Side::L>  Lblock2;                 /*!< Left  environment block used for variance calculation */
-    class_environment_var<Side::R>  Rblock2;                 /*!< Right environment block used for variance calculation */
-    class_mps                   MPS;                    /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
-    class_mpo           H;
+    std::shared_ptr<class_mps<Scalar>>               MPS;        /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
+    std::shared_ptr<class_mpo<Scalar>>               H;
+
+    std::shared_ptr<class_environment<Scalar>>       Lblock;     /*!< Left  environment block. */
+    std::shared_ptr<class_environment<Scalar>>       Rblock;     /*!< Right environment block. */
+    std::shared_ptr<class_environment_var<Scalar>>   Lblock2;    /*!< Left  environment block used for variance calculation */
+    std::shared_ptr<class_environment_var<Scalar>>   Rblock2;    /*!< Right environment block used for variance calculation */
 
     //Bond dimensions and tensor shapes needed by the eigensolver and SVD.
 
@@ -46,14 +50,13 @@ public:
     Textra::array4              shape4;                 /*!< Shape for Tensor4 representation of the MPS. */
 
 
-    long   chi;                                           /*!< Bond dimension of the current (center) position. */
-//    long   chi_max ;                                      /*!< Maximum allowed bond dimension, which also defines the SVD cutoff */
-    double truncation_error;
-    int    chain_length = H.mps_sites;
-
-    void find_ground_state(int eigSteps,                /*!< Maximum number of steps for eigenvalue solver. */
+    long   chi = 1;                                     /*!< Bond dimension of the current (center) position. */
+    double truncation_error = 1;
+    int    chain_length;
+    void find_ground_state_arpack(int eigSteps,         /*!< Maximum number of steps for eigenvalue solver. */
                            double eigThreshold          /*!< Minimum threshold for halting eigenvalue solver. */
                             )    __attribute((hot));    /*!< Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using [Spectra](https://github.com/yixuan/spectra). */
+
     void time_evolve();
     void truncate(long chi,                             /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
                   double SVDThreshold                   /*!< Minimum threshold value for keeping singular values. */
@@ -64,8 +67,6 @@ public:
                                                          * \f[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \f] */
 
     void initialize();
-    void canonicalize_iMPS();
-    void canonicalize_iMPS_iterative();
     void update_bond_dimensions();                      /*!< Update the MPS by contracting
                                                         * \f[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \f]
                                                         * \f[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \f] */

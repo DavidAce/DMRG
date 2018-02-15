@@ -6,7 +6,9 @@
 #include <IO/class_hdf5_file.h>
 #include <IO/class_hdf5_table_buffer.h>
 #include <mps_routines/class_superblock.h>
+#include <mps_routines/class_environment.h>
 #include <mps_routines/class_measurement.h>
+
 namespace s = settings;
 using namespace std;
 using namespace Textra;
@@ -14,13 +16,13 @@ using namespace Textra;
 class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file>         hdf5_,
                        std::shared_ptr<class_hdf5_table_buffer> table_buffer_,
                        std::shared_ptr<class_superblock>        superblock_,
-                       std::shared_ptr<class_measurement>       observables_)
+                       std::shared_ptr<class_measurement>       measurement_)
                 :hdf5           (std::move(hdf5_)),
                 table_buffer    (std::move(table_buffer_)),
                 superblock      (std::move(superblock_)),
-                observables     (std::move(observables_))
+                measurement     (std::move(measurement_))
 {
-    simtype = observables->sim;
+    simtype = measurement->sim;
     set_profiling_labels();
 };
 
@@ -37,7 +39,7 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
     set_profiling_labels();
     table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, group_name, table_name);
     superblock   = std::make_shared<class_superblock>();
-    observables  = std::make_shared<class_measurement>(superblock, simtype);
+    measurement  = std::make_shared<class_measurement>(superblock, simtype);
 };
 
 
@@ -55,7 +57,7 @@ void class_algorithm_base::single_DMRG_step(long chi_max){
  */
     t_sim.tic();
     superblock->update_bond_dimensions();
-    t_eig.tic();    superblock->find_ground_state(s::precision::eigSteps, s::precision::eigThreshold);    t_eig.toc();
+    t_eig.tic();    superblock->find_ground_state_arpack(s::precision::eigSteps, s::precision::eigThreshold);    t_eig.toc();
     t_svd.tic();    superblock->truncate         (chi_max,                s::precision::SVDThreshold);    t_svd.toc();
     t_mps.tic();    superblock->update_MPS();                                                             t_mps.toc();
     t_sim.toc();
@@ -82,7 +84,7 @@ void class_algorithm_base::set_profiling_labels() {
     t_tot.set_properties(on, precision,"+Total Time              ");
     t_sto.set_properties(on, precision,"\u21B3 Store to file          ");
     t_ste.set_properties(on, precision,"\u21B3 Store Environment      ");
-    t_obs.set_properties(on, precision,"\u21B3 Printing observables   ");
+    t_obs.set_properties(on, precision,"\u21B3 Printing measurement   ");
     t_udt.set_properties(on, precision,"\u21B3 Update Timestep        ");
     t_env.set_properties(on, precision,"\u21B3 Update Environments    ");
     t_sim.set_properties(on, precision,"\u21B3+Simulation             ");
@@ -92,15 +94,17 @@ void class_algorithm_base::set_profiling_labels() {
     t_mps.set_properties(on, precision," \u21B3 Update MPS            ");
 }
 
-void class_algorithm_base::enlarge_environment(){
+int class_algorithm_base::enlarge_environment(){
     t_env.tic();
     superblock->enlarge_environment();
     t_env.toc();
+    return superblock->Lblock->size;
 }
-void class_algorithm_base::enlarge_environment(int direction){
+int class_algorithm_base::enlarge_environment(int direction){
     t_env.tic();
     superblock->enlarge_environment(direction);
     t_env.toc();
+    return superblock->Lblock->size;
 }
 
 void class_algorithm_base::swap(){

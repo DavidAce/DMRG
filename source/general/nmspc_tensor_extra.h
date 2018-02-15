@@ -4,12 +4,13 @@
 
 #ifndef TENSOR_EXTRA_H
 #define TENSOR_EXTRA_H
-//#define EIGEN_USE_MKL_ALL
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <iterator>
 #include <iostream>
+
+
 /*! \brief **Textra** stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/
 
 /*!
