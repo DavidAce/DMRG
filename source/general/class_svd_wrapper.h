@@ -4,6 +4,11 @@
 
 #ifndef DMRG_CLASS_SVD_H
 #define DMRG_CLASS_SVD_H
+
+#ifdef MKL_AVAILABLE
+#define  EIGEN_USE_MKL_ALL
+#endif
+
 #include "nmspc_tensor_extra.h"
 #include <Eigen/SVD>
 template<typename Scalar>

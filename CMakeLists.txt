@@ -81,6 +81,7 @@ target_link_libraries(${PROJECT_NAME} -lstdc++fs)                              #
 ###########################################
 ###  Find or install all dependencies   ###
 ###########################################
+include(cmake/Find_dont_install_INTELMKL.cmake)                                 ### For Intel MKL library. Note that it conflicts with arpack++
 include(cmake/Find_or_install_EIGEN3.cmake)                                     ### For Eigen linear algebra header-library http://eigen.tuxfamily.org/
 include(cmake/Find_or_install_HDF5.cmake)                                       ### For HDF5 data env_storage format            https://support.hdfgroup.org
 include(cmake/Find_or_install_LAPACK_and_BLAS.cmake)                            ### For Lapack and Blas libraries           https://github.com/Reference-LAPACK/lapack

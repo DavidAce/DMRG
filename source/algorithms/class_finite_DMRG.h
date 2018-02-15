@@ -27,11 +27,11 @@ public:
 
     std::shared_ptr<class_environment_storage>  env_storage;
     void run() override;
-
-    void env_storage_insert();
-    void env_storage_load();
+    int  initialize_chain();
+    int  env_storage_insert();
+    int  env_storage_load();
     void env_storage_overwrite_MPS();
-    void env_storage_move();
+    int  env_storage_move();
 
 
     void print_status_full()   override;

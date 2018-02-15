@@ -16,6 +16,9 @@
 
 class class_file_reader;
 
+enum class SimulationType{iDMRG,fDMRG, xDMRG, FES_iDMRG, iTEBD, FES_iTEBD, NONE};
+
+
 namespace settings {
     extern void load_from_file(class_file_reader &indata);
 

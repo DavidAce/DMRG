@@ -6,6 +6,10 @@
 #ifndef DMRG_CLASS_EIG_WRAPPER_H
 #define DMRG_CLASS_EIG_WRAPPER_H
 
+#ifdef MKL_AVAILABLE
+#define  EIGEN_USE_MKL_ALL
+#endif
+
 #include "general/nmspc_tensor_extra.h"
 #include <SymEigsSolver.h>
 #include <GenEigsSolver.h>
@@ -96,9 +100,16 @@ typename class_eig<Scalar>:: template TensorPair<2,1>  class_eig<Scalar>::solve_
 template<typename Scalar>
 template<Spectra::Form form, Spectra::Ritz mode, Spectra::Side side>
 auto class_eig<Scalar>::solve_dominant(const Textra::Tensor<Scalar,2> &tensor, const int num, Textra::array2 outsize) {
-    int ncv_max = 40;
-    int ncv = std::min((int) std::sqrt(tensor.size()), ncv_max);
-    ncv = std::max(ncv,num+2);
+    int ncv_max = 80;
+    int nev = 1;
+    int n = (int) tensor.dimension(0);
+    int ncv = std::max(n/2, 4*nev);
+    ncv = std::min(ncv, ncv_max);
+
+//
+//    int ncv_max = 40;
+//    int ncv = std::min((int) std::sqrt(tensor.size()), ncv_max);
+//    ncv = std::max(ncv,num+2);
     if constexpr(side == Spectra::Side::R){
         MatMapR mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
         if constexpr(form == Spectra::Form::SYMMETRIC){

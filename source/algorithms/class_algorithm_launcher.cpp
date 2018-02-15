@@ -14,6 +14,7 @@
 #include <algorithms/class_imaginary_TEBD.h>
 #include <algorithms/class_FES_iDMRG.h>
 #include <algorithms/class_FES_iTEBD.h>
+#include "class_excited_state_DMRG.h"
 
 
 namespace s = settings;
@@ -45,6 +46,12 @@ void class_algorithm_launcher::run_finite_DMRG(){
     }
 }
 
+void class_algorithm_launcher::run_excited_state_DMRG(){
+    if(settings::xdmrg::on){
+        class_excited_state_DMRG xDMRG(hdf5);
+        xDMRG.run();
+    }
+}
 
 void class_algorithm_launcher::run_imaginary_TEBD(){
     if(settings::itebd::on){
@@ -116,19 +123,19 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //
 //    t_tot.tic();
 //    class_superblock superblock;
-//    class_measurement observables (superblock, SimulationType::iDMRG);
+//    class_measurement measurement (superblock, SimulationType::iDMRG);
 //
 //    while(superblock.chain_length < s::idmrg::max_length){
 //        class_measurement_buffers container(&hdf5, "iDMRG/L", superblock.chain_length);
 //
 //        single_DMRG_step(superblock, s::idmrg::chi_max);
-//                        container.push_back(observables);
+//                        container.push_back(measurement);
 //        t_env.tic();    superblock.enlarge_environment();                       t_env.toc();
 //                        superblock.swap_AB();
 //
 //    }
 //    t_tot.toc();
-//    observables.print_status_full();
+//    measurement.print_status_full();
 //    t_eig.print_time_w_percent();
 //    t_svd.print_time_w_percent();
 //    t_env.print_time_w_percent();
@@ -156,7 +163,7 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //
 //    t_tot.tic();
 //    class_superblock     superblock;
-//    class_measurement    observables (superblock, SimulationType::fDMRG);
+//    class_measurement    measurement (superblock, SimulationType::fDMRG);
 //    class_environment_storage  env_storage(s::fdmrg::max_length);
 //
 //    while(superblock.chain_length -2 < s::fdmrg::max_length){
@@ -178,7 +185,7 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //    }
 //
 //    t_tot.toc();
-//    observables.print_status_full();
+//    measurement.print_status_full();
 //    t_eig.print_time_w_percent();
 //    t_svd.print_time_w_percent();
 //    t_env.print_time_w_percent();
@@ -204,19 +211,19 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //    class_tic_toc t_tot(on, precision, "iTEBD Total Time           ");
 //
 //    class_superblock superblock;
-//    class_measurement observables (superblock, SimulationType::iTEBD);
+//    class_measurement measurement (superblock, SimulationType::iTEBD);
 //    superblock.H.reduce_timestep(settings::itebd::delta_t0, 1);
 //    t_tot.tic();
 //    for(auto step = 0; step < s::itebd::max_length ; step++){
 //        class_measurement_buffers container(&hdf5, "iTEBD/step", step);
 //        single_TEBD_step(superblock, s::itebd::chi_max);
-//        if (Math::mod(step,500) == 0) { observables.print_status_update(step);}
-//        container.push_back(observables);
+//        if (Math::mod(step,500) == 0) { measurement.print_status_update(step);}
+//        container.push_back(measurement);
 //        superblock.swap_AB();
 //
 //    }
 //    t_tot.toc();
-//    observables.print_status_full();
+//    measurement.print_status_full();
 //    t_evo.print_time_w_percent();
 //    t_svd.print_time_w_percent();
 //    t_mps.print_time_w_percent();
@@ -256,14 +263,14 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //
 //        double time_step = s::fes_itebd::delta_t0;
 //        class_superblock superblock;
-//        class_measurement observables (superblock, SimulationType::FES_iTEBD);
+//        class_measurement measurement (superblock, SimulationType::FES_iTEBD);
 //        class_measurement_buffers container(&hdf5, "FES_iTEBD/chi", chi_max );
 //        superblock.H.reduce_timestep(time_step,1);
 //
 //        double phys_time = 0;
 //        int step = 0;
 //        double old_entropy = 0;
-//        double new_entropy = observables.get_entropy();
+//        double new_entropy = measurement.get_entropy();
 //        while(time_step > 1e-6 && step < s::fes_itebd::max_length){
 //            t_sim.tic();
 //            single_TEBD_step(superblock, chi_max );
@@ -272,22 +279,22 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //
 //            t_sto.tic();
 //            if(Math::mod(step,100)==0){
-//                container.push_back(observables);
+//                container.push_back(measurement);
 //                container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
 //            }
 //            t_sto.toc();
 //            if(Math::mod(step,500)==0){
 ////                ccout(1) << observables.first_moment() << endl;
-//                observables.print_status_update(step);
+//                measurement.print_status_update(step);
 //            }
 //
 //
 //            t_udt.tic();
 //            if(Math::mod(step,500)==0){
 //                old_entropy = new_entropy;
-//                new_entropy = observables.get_entropy();
+//                new_entropy = measurement.get_entropy();
 //                if (std::fabs((new_entropy-old_entropy)/new_entropy) < 1e-6*time_step ){
-//                    container.push_back(observables);
+//                    container.push_back(measurement);
 //                    container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
 //                    time_step *=0.5;
 //                    superblock.H.reduce_timestep(time_step ,1);
@@ -299,9 +306,9 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //
 //        }
 //        cout <<setprecision(16);
-//        container.push_back(observables);
+//        container.push_back(measurement);
 //        container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
-//        observables.print_status_full();
+//        measurement.print_status_full();
 //        t_tot.toc();
 //        t_tot.print_time_w_percent();
 //        t_sto.print_time_w_percent(t_tot);
@@ -347,7 +354,7 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //
 //        class_measurement_buffers container(&hdf5, "FES_iDMRG/chi", chi_max );
 //        class_superblock superblock;
-//        class_measurement observables (superblock, SimulationType::FES_iDMRG);
+//        class_measurement measurement (superblock, SimulationType::FES_iDMRG);
 //        superblock.load_from_file();
 //        int step = 0;
 //        while (step  < s::fes_idmrg::max_length) {
@@ -356,12 +363,12 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //            t_sim.toc();
 //
 //            if(Math::mod(step,100)==0) {
-//                observables.get_variance();
-//                observables.print_status_update(step);
+//                measurement.get_variance();
+//                measurement.print_status_update(step);
 //            }
 //            t_sto.tic();
 //            if(Math::mod(step,100)==0) {
-//                container.push_back(observables);
+//                container.push_back(measurement);
 //                container.push_back(step, 0, 0, t_tot.get_age());
 //            }
 //            t_sto.toc();
@@ -372,9 +379,9 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //            superblock.swap_AB();
 //            step++;
 //        }
-//        container.push_back(observables);
+//        container.push_back(measurement);
 //        container.push_back(step, 0, 0, t_tot.get_age());
-//        observables.print_status_full();
+//        measurement.print_status_full();
 //        t_tot.toc();
 //        t_tot.print_time_w_percent();
 //        t_sto.print_time_w_percent(t_tot);
