@@ -27,7 +27,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>A list of stored <formula id="25">$\Gamma$</formula>-tensors, indexed by chain position. </para>        </detaileddescription>
+<para>A list of stored <formula id="33">$\Gamma$</formula>-tensors, indexed by chain position. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_environment_storage.h" line="40" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="40" bodyend="-1"/>
@@ -40,7 +40,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>A list of stored <formula id="25">$\Gamma$</formula>-tensors, indexed by chain position. </para>        </detaileddescription>
+<para>A list of stored <formula id="33">$\Gamma$</formula>-tensors, indexed by chain position. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_environment_storage.h" line="41" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="41" bodyend="-1"/>
@@ -81,7 +81,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>The current position of <formula id="26">$\Gamma^A$</formula> w.r.t the full chain. </para>        </detaileddescription>
+<para>The current position of <formula id="34">$\Gamma^A$</formula> w.r.t the full chain. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_environment_storage.h" line="49" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="49" bodyend="-1"/>
@@ -94,7 +94,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>The current position of <formula id="27">$\Gamma^B$</formula> w.r.t the full chain. </para>        </detaileddescription>
+<para>The current position of <formula id="35">$\Gamma^B$</formula> w.r.t the full chain. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_environment_storage.h" line="50" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="50" bodyend="-1"/>
@@ -376,7 +376,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print the tensor dimensions for all <formula id="25">$\Gamma$</formula>-tensors. </para>        </detaileddescription>
+<para>Print the tensor dimensions for all <formula id="33">$\Gamma$</formula>-tensors. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_environment_storage.h" line="81" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="103" bodyend="108"/>
@@ -386,8 +386,8 @@
 <para>Storage class for environments during finite DMRG During the infinite-DMRG part of the algorithm, the current state for each chain-length is stored in a <computeroutput>class_storage</computeroutput> object, for later use in the finite-DMRG stage. </para>    </briefdescription>
     <detaileddescription>
 <para>Specifically, this class stores objects from the current superblock:<itemizedlist>
-<listitem><para>The left and right environment blocks <computeroutput>Lblock</computeroutput> and <computeroutput>Rblock</computeroutput>, both type <computeroutput>Tensor3</computeroutput>, and</para></listitem><listitem><para>the MPS tensors <formula id="19">$\Gamma^{A,B}=$</formula> <computeroutput>MPS.GA, MPS.GB</computeroutput> and <formula id="20">$\Lambda^{A,B}=$</formula> <computeroutput>MPS.LA, MPS.LB</computeroutput>, required for computing <formula id="21">$\Theta$</formula>, following the notation used in <ulink url="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Frank Pollmann&apos;s notes</ulink>: <formula id="22">$\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B$</formula>. <linebreak/>
- Here <formula id="23">$\Gamma^{A,B}$</formula> are a rank-3 tensors of type <computeroutput>Tensor3</computeroutput> and <formula id="24">$\Lambda^{A,B}$</formula> are rank-1 tensors of type <computeroutput>Tensor1</computeroutput>.</para></listitem></itemizedlist>
+<listitem><para>The left and right environment blocks <computeroutput>Lblock</computeroutput> and <computeroutput>Rblock</computeroutput>, both type <computeroutput>Tensor3</computeroutput>, and</para></listitem><listitem><para>the MPS tensors <formula id="27">$\Gamma^{A,B}=$</formula> <computeroutput>MPS.GA, MPS.GB</computeroutput> and <formula id="28">$\Lambda^{A,B}=$</formula> <computeroutput>MPS.LA, MPS.LB</computeroutput>, required for computing <formula id="29">$\Theta$</formula>, following the notation used in <ulink url="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Frank Pollmann&apos;s notes</ulink>: <formula id="30">$\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B$</formula>. <linebreak/>
+ Here <formula id="31">$\Gamma^{A,B}$</formula> are a rank-3 tensors of type <computeroutput>Tensor3</computeroutput> and <formula id="32">$\Lambda^{A,B}$</formula> are rank-1 tensors of type <computeroutput>Tensor1</computeroutput>.</para></listitem></itemizedlist>
 </para><para>All objects are stored and indexed by their position relative to the final chain of length <computeroutput>max_length</computeroutput>. </para>    </detaileddescription>
     <location file="source/mps_routines/class_environment_storage.h" line="36" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="36" bodyend="82"/>
     <listofallmembers>

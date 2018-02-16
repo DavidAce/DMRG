@@ -12,8 +12,9 @@
 #include <IO/class_hdf5_table_buffer.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
+#include <mps_routines/class_mpo.h>
 #include <general/nmspc_math.h>
-#include <algorithms/class_imaginary_TEBD.h>
+#include <algorithms/class_iTEBD.h>
 #include <algorithms/class_FES_iTEBD.h>
 
 using namespace std;
@@ -71,7 +72,7 @@ void class_FES_iTEBD::run2() {
     for(auto &chi_max : chi_max_list ) {
         std::string table_name_chi =  table_name + to_string(chi_max);
         std::string sim_name_chi   =  simulation_name +  "(chi_" + to_string(chi_max) + ")";
-        class_imaginary_TEBD iTEBD(hdf5, group_name, table_name_chi, sim_name_chi, SimulationType::FES_iTEBD);
+        class_iTEBD iTEBD(hdf5, group_name, table_name_chi, sim_name_chi, SimulationType::FES_iTEBD);
         iTEBD.chi_max           = chi_max;
         iTEBD.max_steps         = max_steps;
         iTEBD.delta_t0          = delta_t0;
@@ -85,18 +86,20 @@ void class_FES_iTEBD::run2() {
 
 void class_FES_iTEBD::store_table_entry(){
     t_sto.tic();
-    table_buffer->emplace_back(superblock->chi,
+    table_buffer->emplace_back(measurement->get_chi(),
                                chi_max,
                                measurement->get_energy(),
                                measurement->get_entropy(),
+                               measurement->get_variance(),
                                measurement->get_variance1(),
-                               measurement->get_variance2(),
                                measurement->get_truncation_error(),
                                iteration,
                                superblock->chain_length,
                                0,
+                               iteration,
+                               superblock->H->timestep,
                                t_tot.get_age(),
-                               0);
+                               phys_time);
     t_sto.toc();
 }
 

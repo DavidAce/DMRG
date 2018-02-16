@@ -1,70 +1,122 @@
 //
-// Created by david on 2018-01-18.
+// Created by david on 2018-01-31.
 //
+
 
 #include <iomanip>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <IO/class_hdf5_table_buffer.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
+#include <mps_routines/class_environment_storage.h>
 #include <general/nmspc_math.h>
-#include "class_infinite_DMRG.h"
+#include <general/nmspc_random_numbers.h>
+#include "class_fDMRG.h"
+
 using namespace std;
 using namespace Textra;
 
-class_infinite_DMRG::class_infinite_DMRG(std::shared_ptr<class_hdf5_file> hdf5_)
-    : class_algorithm_base() {
-    simtype = SimulationType::iDMRG;
-    simulation_name        = "iDMRG";
-    std::string group_name = simulation_name;
-    std::string table_name = simulation_name;
+class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
+        : class_algorithm_base() {
+
+    simtype = SimulationType::fDMRG;
+    simulation_name = "fDMRG";
+    group_name = simulation_name;
+    table_name = simulation_name;
     hdf5         = std::move(hdf5_);
     table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, group_name, table_name);
     superblock   = std::make_shared<class_superblock>();
     measurement  = std::make_shared<class_measurement>(superblock, simtype);
+    env_storage  = std::make_shared<class_environment_storage>(max_length, superblock, hdf5);
 }
 
 
 
-void class_infinite_DMRG::run() {
-    if (!settings::idmrg::on) { return; }
+void class_fDMRG::run() {
+    if (!settings::fdmrg::on) { return; }
     ccout(0) << "\nStarting " << simulation_name << " simulation" << std::endl;
-        t_tot.tic();
-        while(superblock->chain_length < max_length){
-            store_table_entry();
-            single_DMRG_step(chi_max);
+    t_tot.tic();
+    initialize_chain();
+    while(sweep < max_sweeps) {
+        single_DMRG_step(chi_max);
+        env_storage_overwrite_MPS();         //Needs to occurr after update_MPS...
+        store_table_entry();
+        print_status_update();
+
+        position = enlarge_environment(direction);
+        position = env_storage_move();
+    }
+    t_tot.toc();
+    print_status_full();
+    print_profiling();
+
+}
+
+int class_fDMRG::initialize_chain() {
+    while(true){
+        single_DMRG_step(chi_max);
+        position = env_storage_insert();
+        if (superblock->chain_length < max_length) {
             enlarge_environment();
             swap();
-            iteration++;
-            print_status_update();
+        } else {
+            break;
         }
-        t_tot.toc();
-        print_status_full();
-        print_profiling();
-
+        print_status_update();
+    }
+    return position;
 }
 
-void class_infinite_DMRG::store_table_entry(){
+
+int class_fDMRG::env_storage_insert() {
+    t_ste.tic();
+    int position = env_storage->insert();
+    t_ste.toc();
+    return position;
+}
+int class_fDMRG::env_storage_load(){
+    t_ste.tic();
+    int position = env_storage->load();
+    t_ste.toc();
+    return position;
+}
+void class_fDMRG::env_storage_overwrite_MPS(){
+    t_ste.tic();
+    env_storage->overwrite_MPS();
+    t_ste.toc();
+}
+int class_fDMRG::env_storage_move(){
+    t_ste.tic();
+    int position = env_storage->move(direction, sweep);
+    t_ste.toc();
+    return position;
+}
+
+
+void class_fDMRG::store_table_entry(){
     t_sto.tic();
-    table_buffer->emplace_back(superblock->chi,
+    table_buffer->emplace_back(measurement->get_chi(),
                                chi_max,
                                measurement->get_energy(),
                                measurement->get_entropy(),
                                measurement->get_variance1(),
                                measurement->get_variance2(),
                                measurement->get_truncation_error(),
-                               iteration,
+                               0,
                                superblock->chain_length,
+                               sweep,
+                               position,
                                0,
                                t_tot.get_age(),
                                0);
     t_sto.toc();
 }
 
-void class_infinite_DMRG::print_profiling(){
+void class_fDMRG::print_profiling(){
     if (settings::profiling::on) {
         t_tot.print_time_w_percent();
         t_sto.print_time_w_percent(t_tot);
+        t_ste.print_time_w_percent(t_tot);
         t_env.print_time_w_percent(t_tot);
         t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
@@ -74,13 +126,16 @@ void class_infinite_DMRG::print_profiling(){
     }
 }
 
-void class_infinite_DMRG::print_status_update() {
-    if (Math::mod(iteration, print_freq) != 0) {return;}
+void class_fDMRG::print_status_update() {
+    if (position != middle_of_chain) {return;}
     if (print_freq == 0) {return;}
+
     t_obs.tic();
     std::cout << setprecision(16) << fixed << left;
     ccout(1) << left  << simulation_name << " ";
-    ccout(1) << left  << "Step: "                   << setw(10) << iteration;
+    ccout(1) << left  << "Pos: "                    << setw(6) << position;
+    ccout(1) << left  << "Dir: "                    << setw(3) << direction;
+    ccout(1) << left  << "Sweep: "                  << setw(4) << sweep;
     ccout(1) << left  << "E: "                      << setw(21) << setprecision(16)    << fixed   << measurement->get_energy();
     ccout(1) << left  << "S: "                      << setw(21) << setprecision(16)    << fixed   << measurement->get_entropy();
     ccout(1) << left  << "\u03C7_max: "             << setw(4)  << setprecision(3)     << fixed   << chi_max;
@@ -90,9 +145,10 @@ void class_infinite_DMRG::print_status_update() {
     ccout(1) << left  << "Chain length: "           << setw(25) << setprecision(12)    << fixed   << superblock->chain_length;
     ccout(1) << std::endl;
     t_obs.toc();
+
 }
 
-void class_infinite_DMRG::print_status_full(){
+void class_fDMRG::print_status_full(){
     std::cout << std::endl;
     std::cout << " -- Final results -- " << simulation_name << std::endl;
     ccout(0)  << setw(20) << "Energy               = " << setprecision(16) << fixed      << measurement->get_energy()        << std::endl;

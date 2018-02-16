@@ -237,7 +237,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Computes the current entropy <formula id="28">$ S = - \sum_n \lambda_n log( \lambda_n) $</formula>, where <formula id="29">$\lambda_n $</formula> are elements of <formula id="30">$ \Lambda^A$</formula> </para>        </detaileddescription>
+<para>Computes the current entropy <formula id="36">$ S = - \sum_n \lambda_n log( \lambda_n) $</formula>, where <formula id="37">$\lambda_n $</formula> are elements of <formula id="38">$ \Lambda^A$</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_measurement.h" line="40" column="1" bodyfile="source/mps_routines/class_measurement.cpp" bodystart="165" bodyend="194"/>

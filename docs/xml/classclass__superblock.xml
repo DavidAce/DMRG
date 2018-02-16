@@ -53,7 +53,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Stores the left and right unitary matrices <formula id="42">$U$</formula> and <formula id="43">$V$</formula> after an SVD decomposition <formula id="44">$A = USV^\dagger$</formula>. </para>        </detaileddescription>
+<para>Stores the left and right unitary matrices <formula id="50">$U$</formula> and <formula id="51">$V$</formula> after an SVD decomposition <formula id="52">$A = USV^\dagger$</formula>. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_superblock.h" line="30" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="30" bodyend="-1"/>
@@ -68,7 +68,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Matrix product states for two sites, A and B, in Vidal Canonical Form <formula id="45">$\Gamma^A\Lambda^A\Gamma^B\Lambda^B$</formula>. </para>        </detaileddescription>
+<para>Matrix product states for two sites, A and B, in Vidal Canonical Form <formula id="53">$\Gamma^A\Lambda^A\Gamma^B\Lambda^B$</formula>. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_superblock.h" line="34" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="34" bodyend="-1"/>
@@ -294,6 +294,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_superblock.h" line="56" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="60" bodyend="82"/>
+        <references refid="classclass__custom__contraction_1a468b8288b931f5e5771d56978fada6fe" compoundref="class__custom__contraction_8h" startline="68" endline="68">class_custom_contraction&lt; T &gt;::cols</references>
       </memberdef>
       <memberdef kind="function" id="classclass__superblock_1a3048f4e93977cdf7ab507818c76ef4f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -339,7 +340,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Update <computeroutput>MPS.G.A</computeroutput> and <computeroutput>MPS.G.B</computeroutput> i.e., <formula id="26">$\Gamma^A$</formula> and <formula id="27">$\Gamma^B$</formula>. </para>        </detaileddescription>
+<para>Update <computeroutput>MPS.G.A</computeroutput> and <computeroutput>MPS.G.B</computeroutput> i.e., <formula id="34">$\Gamma^A$</formula> and <formula id="35">$\Gamma^B$</formula>. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_superblock.h" line="64" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="107" bodyend="110"/>
@@ -357,7 +358,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Contract the MPS of current position <formula id="7">$n$</formula> into the left and right environments <formula id="46">$L$</formula> and <formula id="47">$R$</formula>, i.e. <computeroutput>Lblock</computeroutput> and <computeroutput>Rblock</computeroutput>. <formula id="16">\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]</formula> <formula id="18">\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]</formula> </para>        </detaileddescription>
+<para>Contract the MPS of current position <formula id="7">$n$</formula> into the left and right environments <formula id="54">$L$</formula> and <formula id="55">$R$</formula>, i.e. <computeroutput>Lblock</computeroutput> and <computeroutput>Rblock</computeroutput>. <formula id="24">\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]</formula> <formula id="26">\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_superblock.h" line="65" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="112" bodyend="126"/>
@@ -383,7 +384,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Update the MPS by contracting <formula id="48">\[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \]</formula> <formula id="49">\[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \]</formula> </para>        </detaileddescription>
+<para>Update the MPS by contracting <formula id="56">\[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \]</formula> <formula id="57">\[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \]</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_superblock.h" line="70" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="151" bodyend="159"/>

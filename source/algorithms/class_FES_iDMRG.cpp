@@ -10,7 +10,7 @@
 #include <mps_routines/class_superblock.h>
 #include <general/nmspc_math.h>
 #include "class_FES_iDMRG.h"
-#include "class_infinite_DMRG.h"
+#include "class_iDMRG.h"
 #include <thread>
 #include <chrono>
 using namespace std;
@@ -69,7 +69,7 @@ void class_FES_iDMRG::run2() {
     for(auto &chi_max : chi_max_list ) {
         std::string table_name_chi =  table_name + to_string(chi_max);
         std::string sim_name_chi   =  simulation_name +  "(chi_" + to_string(chi_max) + ")";
-        class_infinite_DMRG iDMRG(hdf5, group_name, table_name_chi, sim_name_chi, SimulationType::FES_iDMRG);
+        class_iDMRG iDMRG(hdf5, group_name, table_name_chi, sim_name_chi, SimulationType::FES_iDMRG);
         iDMRG.chi_max           = chi_max;
         iDMRG.max_length        = max_length;
         iDMRG.print_freq        = print_freq;
@@ -81,15 +81,17 @@ void class_FES_iDMRG::run2() {
 
 void class_FES_iDMRG::store_table_entry(){
     t_sto.tic();
-    table_buffer->emplace_back(superblock->chi,
+    table_buffer->emplace_back(measurement->get_chi(),
                                chi_max,
                                measurement->get_energy(),
                                measurement->get_entropy(),
+                               measurement->get_variance(),
                                measurement->get_variance1(),
-                               measurement->get_variance2(),
                                measurement->get_truncation_error(),
                                iteration,
                                superblock->chain_length,
+                               0,
+                               iteration,
                                0,
                                t_tot.get_age(),
                                0);

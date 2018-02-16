@@ -276,7 +276,7 @@
     <briefdescription>
 <para>Setup the Hamiltonian and corresponding values. </para>    </briefdescription>
     <detaileddescription>
-<para>This namespace contains model parameters, such as the coupling (or nearest neighbor exchange energy) <formula id="50">$J$</formula>, and the transverse field strength <formula id="51">$g$</formula>. By default the model describes the quantum Ising model with a transverse field:</para><para><formula id="52">\[ H = \frac{1}{2}\sum_{n=1}^L J S^z_n \otimes S^z_{n+1} + gS^x_{n} \]</formula> </para>    </detaileddescription>
+<para>This namespace contains model parameters, such as the coupling (or nearest neighbor exchange energy) <formula id="58">$J$</formula>, and the transverse field strength <formula id="59">$g$</formula>. By default the model describes the quantum Ising model with a transverse field:</para><para><formula id="60">\[ H = \frac{1}{2}\sum_{n=1}^L J S^z_n \otimes S^z_{n+1} + gS^x_{n} \]</formula> </para>    </detaileddescription>
     <location file="source/sim_parameters/nmspc_model.cpp" line="14" column="1"/>
   </compounddef>
 </doxygen>

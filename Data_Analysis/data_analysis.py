@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from matplotlib import rc
 import matplotlib.pyplot  as plt
 import pandas as pd
+import os.path
 import numpy as np
 import seaborn as sns
 plt.close('all')
@@ -12,44 +13,77 @@ rc('text', usetex=True)
 sns.set(style="darkgrid", font_scale=1.0, font='Helvetica',rc={"lines.linewidth": 0.9})
 paper_rc = {'lines.linewidth': 1, 'lines.markersize': 10}
 sns.set_style({"axes.facecolor": ".9"},rc={'text.usetex' : True})
-filename = '../output/data.h5'
+filename = '../output/data-1.h5'
+
+if(not os.path.exists(filename)):
+    print("File does not exist.")
+    exit(1)
 
 store               = pd.HDFStore(filename)
-iDMRG_exists        = "iDMRG/iDMRG" in store
-fDMRG_exists        = "fDMRG/fDMRG" in store
-iTEBD_exists        = "iTEBD/iTEBD" in store
+iDMRG_exists        = "iDMRG" in store
+fDMRG_exists        = "fDMRG" in store
+xDMRG_exists        = "xDMRG" in store
+iTEBD_exists        = "iTEBD" in store
 FES_iDMRG_exists    = "FES_iDMRG" in store
 FES_iTEBD_exists    = "FES_iTEBD" in store
 
-def plt_graph(table, xkey,ykey, xlabel,ylabel, ax,label='', marker='.'):
+def plt_graph(table, xkey,ykey, xlabel,ylabel, ax,label='', marker='.', scale='linear'):
     ax.plot(store[table].get(xkey),store[table].get(ykey), marker=marker, label=label)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
+    ax.set_yscale(scale)
     ax.legend()
 
 if iDMRG_exists:
+    group = "iDMRG"
+    keys = [s for s in store.keys() if group in s]
     fig, ax = plt.subplots(2, 2, sharex=True)
-    chi_label =  '$\chi=$' + str( store["iDMRG/iDMRG"].chi_max[0])
+    plt.suptitle(group)
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')
-    plt_graph("iDMRG/iDMRG" ,"chain_length", "energy",  "L", "E", ax[0,0], label=chi_label)
-    plt_graph("iDMRG/iDMRG" ,"chain_length", "entropy", "L", "S", ax[0,1], label=chi_label)
-    plt.suptitle("iDMRG")
+    for key in keys:
+        chi_label =  '$\chi=$' + str( store[key].chi_max[0])
+        plt_graph(key,"chain_length", "energy", "L", "E", ax[0,0], label=chi_label)
+        plt_graph(key,"chain_length", "entropy","L", "S", ax[0,1], label=chi_label)
+        plt_graph(key,"chain_length", "variance1", "L", "$\sigma^2$", ax[1,0], label=chi_label, scale = 'logit')
+
 
 if fDMRG_exists:
+    group = "fDMRG"
+    keys = [s for s in store.keys() if group in s]
     fig, ax = plt.subplots(2, 2, sharex=True)
-    chi_label =  '$\chi=$' + str( store["fDMRG/fDMRG"].chi_max[0])
+    plt.suptitle(group)
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')
-    plt_graph("fDMRG/fDMRG","chain_length", "energy",  "L", "E", ax[0,0],label=chi_label)
-    plt_graph("fDMRG/fDMRG","chain_length", "entropy", "L", "S", ax[0,1],label=chi_label)
-    plt.suptitle("fDMRG")
+    for key in keys:
+        chi_label =  '$\chi=$' + str( store[key].chi_max[0])
+        plt_graph(key,"position", "energy", "L", "E", ax[0,0], label=chi_label)
+        plt_graph(key,"position", "entropy","L", "S", ax[0,1], label=chi_label)
+        plt_graph(key,"position", "variance1", "L", "$\sigma^2$", ax[1,0], label=chi_label)
+
+if xDMRG_exists:
+    group = "xDMRG"
+    keys = [s for s in store.keys() if group in s]
+    fig, ax = plt.subplots(2, 2, sharex=True)
+    plt.suptitle(group)
+    ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')
+    for key in keys:
+        chi_label =  '$\chi=$' + str( store[key].chi_max[0])
+        plt_graph(key,"position", "energy", "L", "E", ax[0,0], label=chi_label)
+        plt_graph(key,"position", "entropy","L", "S", ax[0,1], label=chi_label)
+        plt_graph(key,"position", "variance1", "L", "$\sigma^2$", ax[1,0], label=chi_label)
+
+
 
 if iTEBD_exists:
+    group = "iTEBD"
+    keys = [s for s in store.keys() if group in s]
     fig, ax = plt.subplots(2, 2, sharex=True)
-    chi_label =  '$\chi=$' + str( store["iTEBD/iTEBD"].chi_max[0])
+    plt.suptitle(group)
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')
-    plt_graph("iTEBD/iTEBD","position", "energy", "L", "E", ax[0,0], label=chi_label)
-    plt_graph("iTEBD/iTEBD","position", "entropy","L", "S", ax[0,1], label=chi_label)
-    plt.suptitle("iTEBD")
+    for key in keys:
+        chi_label =  '$\chi=$' + str( store[key].chi_max[0])
+        plt_graph(key,"position", "energy", "L", "E", ax[0,0], label=chi_label)
+        plt_graph(key,"position", "entropy","L", "S", ax[0,1], label=chi_label)
+        plt_graph(key,"position", "variance1", "L", "$\sigma^2$", ax[1,0], label=chi_label, scale = 'log')
 
 if FES_iDMRG_exists:
     keys = [s for s in store.keys() if "FES_iDMRG" in s]
@@ -60,6 +94,8 @@ if FES_iDMRG_exists:
         chi_label = '$\chi=$' + str(store[key].chi_max[0])
         plt_graph(key,"chain_length", "energy",  "L", "E", ax[0,0], label=chi_label)
         plt_graph(key,"chain_length", "entropy", "L", "S", ax[0,1], label=chi_label)
+        plt_graph(key,"chain_length", "variance1", "L", "$\sigma^2$", ax[1,0], label=chi_label, scale = 'log')
+
 
 
 if FES_iTEBD_exists:
@@ -71,11 +107,12 @@ if FES_iTEBD_exists:
         chi_label = '$\chi=$' + str(store[key].chi_max[0])
         plt_graph(key,"position", "energy",  "L", "E", ax[0,0], label=chi_label)
         plt_graph(key,"position", "entropy", "L", "S", ax[0,1], label=chi_label)
+        plt_graph(key,"chain_length", "variance1", "L", "$\sigma^2$", ax[1,0], label=chi_label, scale = 'log')
 
 plt.tight_layout()
 plt.subplots_adjust(wspace=.4, hspace=.2)
-plt.show()
 store.close()
+plt.show()
 exit()
 #
 # with h5py.File(filename,'r') as f:

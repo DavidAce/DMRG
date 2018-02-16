@@ -251,39 +251,39 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="60">
-        <label>class_imaginary_TEBD</label>
-        <link refid="classclass__imaginary___t_e_b_d"/>
-        <childnode refid="61" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="61">
-        <label>class_algorithm_base</label>
-        <link refid="classclass__algorithm__base"/>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
-      <node id="64">
-        <label>class_custom_cout</label>
-        <link refid="classclass__custom__cout"/>
-      </node>
       <node id="62">
         <label>class_imaginary_TEBD</label>
         <link refid="classclass__imaginary___t_e_b_d"/>
         <childnode refid="63" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="65">
-        <label>class_tic_toc</label>
-        <link refid="classclass__tic__toc"/>
-      </node>
       <node id="63">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
-        <childnode refid="64" relation="usage">
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="66">
+        <label>class_custom_cout</label>
+        <link refid="classclass__custom__cout"/>
+      </node>
+      <node id="64">
+        <label>class_imaginary_TEBD</label>
+        <link refid="classclass__imaginary___t_e_b_d"/>
+        <childnode refid="65" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>class_tic_toc</label>
+        <link refid="classclass__tic__toc"/>
+      </node>
+      <node id="65">
+        <label>class_algorithm_base</label>
+        <link refid="classclass__algorithm__base"/>
+        <childnode refid="66" relation="usage">
           <edgelabel>ccout</edgelabel>
         </childnode>
-        <childnode refid="65" relation="usage">
+        <childnode refid="67" relation="usage">
           <edgelabel>t_udt</edgelabel>
           <edgelabel>t_eig</edgelabel>
           <edgelabel>t_ste</edgelabel>

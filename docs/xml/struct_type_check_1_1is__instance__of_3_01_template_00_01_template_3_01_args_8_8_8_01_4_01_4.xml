@@ -20,17 +20,6 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="94">
-        <label>TypeCheck::is_instance_of&lt; Template, Template&lt; Args... &gt; &gt;</label>
-        <link refid="struct_type_check_1_1is__instance__of_3_01_template_00_01_template_3_01_args_8_8_8_01_4_01_4"/>
-        <childnode refid="95" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="95">
-        <label>std::true_type</label>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
       <node id="96">
         <label>TypeCheck::is_instance_of&lt; Template, Template&lt; Args... &gt; &gt;</label>
         <link refid="struct_type_check_1_1is__instance__of_3_01_template_00_01_template_3_01_args_8_8_8_01_4_01_4"/>
@@ -38,6 +27,17 @@
         </childnode>
       </node>
       <node id="97">
+        <label>std::true_type</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="98">
+        <label>TypeCheck::is_instance_of&lt; Template, Template&lt; Args... &gt; &gt;</label>
+        <link refid="struct_type_check_1_1is__instance__of_3_01_template_00_01_template_3_01_args_8_8_8_01_4_01_4"/>
+        <childnode refid="99" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="99">
         <label>std::true_type</label>
       </node>
     </collaborationgraph>

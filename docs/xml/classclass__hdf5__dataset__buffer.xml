@@ -503,17 +503,6 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="49">
-        <label>class_hdf5_dataset_buffer&lt; DataType, AttrType, IterType &gt;</label>
-        <link refid="classclass__hdf5__dataset__buffer"/>
-        <childnode refid="50" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="50">
-        <label>std::vector&lt; DataType &gt;</label>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
       <node id="51">
         <label>class_hdf5_dataset_buffer&lt; DataType, AttrType, IterType &gt;</label>
         <link refid="classclass__hdf5__dataset__buffer"/>
@@ -521,6 +510,17 @@
         </childnode>
       </node>
       <node id="52">
+        <label>std::vector&lt; DataType &gt;</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="53">
+        <label>class_hdf5_dataset_buffer&lt; DataType, AttrType, IterType &gt;</label>
+        <link refid="classclass__hdf5__dataset__buffer"/>
+        <childnode refid="54" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="54">
         <label>std::vector&lt; DataType &gt;</label>
       </node>
     </collaborationgraph>

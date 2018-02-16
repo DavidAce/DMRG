@@ -9,12 +9,12 @@
 #include <IO/class_hdf5_file.h>
 #include <IO/class_hdf5_table_buffer.h>
 
-#include <algorithms/class_infinite_DMRG.h>
-#include <algorithms/class_finite_DMRG.h>
-#include <algorithms/class_imaginary_TEBD.h>
+#include <algorithms/class_iDMRG.h>
+#include <algorithms/class_fDMRG.h>
+#include <algorithms/class_iTEBD.h>
 #include <algorithms/class_FES_iDMRG.h>
 #include <algorithms/class_FES_iTEBD.h>
-#include "class_excited_state_DMRG.h"
+#include "class_xDMRG.h"
 
 
 namespace s = settings;
@@ -33,7 +33,7 @@ class_algorithm_launcher::class_algorithm_launcher()
 
 void class_algorithm_launcher::run_infinite_DMRG(){
     if(settings::idmrg::on){
-        class_infinite_DMRG iDMRG(hdf5);
+        class_iDMRG iDMRG(hdf5);
         iDMRG.run();
     }
 }
@@ -41,21 +41,21 @@ void class_algorithm_launcher::run_infinite_DMRG(){
 
 void class_algorithm_launcher::run_finite_DMRG(){
     if(settings::fdmrg::on){
-        class_finite_DMRG fDMRG(hdf5);
+        class_fDMRG fDMRG(hdf5);
         fDMRG.run();
     }
 }
 
 void class_algorithm_launcher::run_excited_state_DMRG(){
     if(settings::xdmrg::on){
-        class_excited_state_DMRG xDMRG(hdf5);
+        class_xDMRG xDMRG(hdf5);
         xDMRG.run();
     }
 }
 
 void class_algorithm_launcher::run_imaginary_TEBD(){
     if(settings::itebd::on){
-        class_imaginary_TEBD iTEBD(hdf5);
+        class_iTEBD iTEBD(hdf5);
         iTEBD.run();
     }
 }

@@ -9,19 +9,19 @@
 /*!
  * \brief Class that runs the imaginary TEBD algorithm.
  */
-class class_imaginary_TEBD :public class_algorithm_base {
+class class_iTEBD :public class_algorithm_base {
 public:
     using class_algorithm_base::class_algorithm_base;
-    explicit class_imaginary_TEBD(std::shared_ptr<class_hdf5_file> hdf5_);
-    long   chi_max    = settings::itebd::chi_max;
-    int    max_steps  = settings::itebd::max_steps;
-    double delta_t0   = settings::itebd::delta_t0;
-    double delta_tmin = settings::itebd::delta_tmin;
-    int    print_freq = settings::itebd::print_freq;
-
-    double delta_t    = delta_t0;
-    int    iteration  = 0;
-    double phys_time  = 0;
+    explicit class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_);
+    long   chi_max      = settings::itebd::chi_max;
+    int    max_steps    = settings::itebd::max_steps;
+    double delta_t0     = settings::itebd::delta_t0;
+    double delta_tmin   = settings::itebd::delta_tmin;
+    int    print_freq   = settings::itebd::print_freq;
+    int    suzuki_order = settings::itebd::suzuki_order;
+    double delta_t      = delta_t0;
+    int    iteration    = 0;
+    double phys_time    = 0;
 
     double old_entropy;
     double new_entropy;
