@@ -47,7 +47,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/general/n_math.h" line="51" column="1" bodyfile="source/general/n_math.h" bodystart="51" bodyend="53"/>
+        <location file="source/general/nmspc_math.h" line="51" column="1" bodyfile="source/general/nmspc_math.h" bodystart="51" bodyend="53"/>
       </memberdef>
       <memberdef kind="function" id="namespace_math_1a30ec6673d6cc181cf3e16aad96978f0d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -103,7 +103,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/general/n_math.h" line="63" column="1" bodyfile="source/general/n_math.h" bodystart="63" bodyend="67"/>
+        <location file="source/general/nmspc_math.h" line="63" column="1" bodyfile="source/general/nmspc_math.h" bodystart="63" bodyend="67"/>
       </memberdef>
       <memberdef kind="function" id="namespace_math_1a55a57f4eef5ea3b56fd048142a35d677" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -162,7 +162,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/general/n_math.h" line="78" column="1" bodyfile="source/general/n_math.h" bodystart="78" bodyend="80"/>
+        <location file="source/general/nmspc_math.h" line="78" column="1" bodyfile="source/general/nmspc_math.h" bodystart="78" bodyend="80"/>
       </memberdef>
       <memberdef kind="function" id="namespace_math_1a2ba7d258e03a17abf9707d1fdfd20995" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -192,7 +192,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/general/n_math.h" line="85" column="1" bodyfile="source/general/n_math.h" bodystart="85" bodyend="91"/>
+        <location file="source/general/nmspc_math.h" line="85" column="1" bodyfile="source/general/nmspc_math.h" bodystart="85" bodyend="91"/>
       </memberdef>
       <memberdef kind="function" id="namespace_math_1a7cd16bfbced6aa47dd31fd44474d07f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -236,13 +236,13 @@
 </programlisting> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/general/n_math.h" line="167" column="1" bodyfile="source/general/n_math.h" bodystart="167" bodyend="174"/>
+        <location file="source/general/nmspc_math.h" line="167" column="1" bodyfile="source/general/nmspc_math.h" bodystart="167" bodyend="174"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Small convenience-type math functions like modulo and numerical integration using GSL. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="source/general/n_math.h" line="35" column="1"/>
+    <location file="source/general/nmspc_math.h" line="35" column="1"/>
   </compounddef>
 </doxygen>

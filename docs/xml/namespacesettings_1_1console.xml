@@ -3,7 +3,7 @@
   <compounddef id="namespacesettings_1_1console" kind="namespace" language="C++">
     <compoundname>settings::console</compoundname>
       <sectiondef kind="var">
-      <memberdef kind="variable" id="n__sim__settings_8h_1a02a9fb6a3fdd5b0f91efffb35fb537fb" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a02a9fb6a3fdd5b0f91efffb35fb537fb" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int settings::console::verbosity</definition>
         <argsstring></argsstring>
@@ -15,9 +15,9 @@
 <para>Level of verbosity desired [0-2]. Level 0 prints almost nothing, level 2 prints everything </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="99" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="72" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="110" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="79" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1a82c11e45aadd82f57643ef3624d2e7be" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a82c11e45aadd82f57643ef3624d2e7be" prot="public" static="no" mutable="no">
         <type>bool</type>
         <definition>bool settings::console::timestamp</definition>
         <argsstring></argsstring>
@@ -29,13 +29,13 @@
 <para>Whether to put a timestamp on console outputs </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="100" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="73" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="111" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="80" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="source/sim_parameters/n_sim_settings.h" line="98" column="1"/>
+    <location file="source/sim_parameters/nmspc_sim_settings.h" line="109" column="1"/>
   </compounddef>
 </doxygen>

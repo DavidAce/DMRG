@@ -11,7 +11,6 @@
  *  \namespace settings
  *  This namespace contains settings such as time-step length, number of iterations and precision parameters for
  *  the different algorithms.
- *
  */
 
 class class_file_reader;

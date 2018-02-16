@@ -10,7 +10,7 @@
 #include <SymEigsSolver.h>
 #include <MatOp/SparseSymMatProd.h>
 #include <general/class_svd_wrapper.h>
-#include <mps_routines/class_arpackpp_product.h>
+#include <mps_routines/class_custom_contraction.h>
 #include "arssym.h"
 #include "symsol.h"
 
@@ -59,18 +59,17 @@ class_superblock::class_superblock():
 //============================================================================//
 void class_superblock::find_ground_state_arpack(int eigSteps, double eigThreshold){
     Tensor<double,1> theta = MPS->get_theta().shuffle(array4{0,2,1,3}).reshape(shape1);
-    class_arpackpp_product<double>  esp(theta,Lblock->block, Rblock->block, H->MM, shape4);
+    class_custom_contraction<double>  esp(theta,Lblock->block, Rblock->block, H->MM, shape4);
     int ncv = std::min(10,(int)theta.size());
     int nev = 1;
     int dim = esp.cols();
-    ARSymStdEig<double, class_arpackpp_product<double>> eig (dim, nev, &esp, &class_arpackpp_product<double>::MultMv, "SA", ncv,eigSteps,eigThreshold,theta.data() );
+    ARSymStdEig<double, class_custom_contraction<double>> eig (dim, nev, &esp, &class_custom_contraction<double>::MultMv, "SA", ncv,eigSteps,eigThreshold,theta.data() );
     eig.FindEigenvectors();
     using T_vec = decltype(eig.Eigenvector(0, 0));
     using T_val = decltype(eig.Eigenvalue(0));
     int rows = eig.GetN();
     int cols = std::min(1, eig.GetNev());
     Textra::Tensor<T_vec, 2> eigvecs(rows, cols);
-
     Textra::Tensor<T_val, 1> eigvals(cols);
     for (int i = 0; i < cols; i++) {
         eigvals(i) = eig.Eigenvalue(0);
@@ -78,6 +77,7 @@ void class_superblock::find_ground_state_arpack(int eigSteps, double eigThreshol
             eigvecs(j, i) = eig.Eigenvector(i, j);
         }
     }
+    std::cout << "E: "<< eigvals(0)/chain_length << std::endl;
     ground_state = eigvecs.reshape(shape2);
 }
 

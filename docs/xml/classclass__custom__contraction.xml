@@ -1,0 +1,236 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__custom__contraction" kind="class" language="C++" prot="public">
+    <compoundname>class_custom_contraction</compoundname>
+    <templateparamlist>
+      <param>
+        <type>class</type>
+        <declname>T</declname>
+        <defname>T</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classclass__custom__contraction_1aaadb11e52186acec2141a8b6df3e047a" prot="private" static="no">
+        <type>double</type>
+        <definition>using class_custom_contraction&lt; T &gt;::Scalar =  double</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="23" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classclass__custom__contraction_1a6ebf553accafdfce74e1f1abf448629f" prot="private" static="no" mutable="no">
+        <type>const Textra::Tensor&lt; Scalar, 1 &gt; &amp;</type>
+        <definition>const Textra::Tensor&lt;Scalar,1&gt;&amp; class_custom_contraction&lt; T &gt;::theta</definition>
+        <argsstring></argsstring>
+        <name>theta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="24" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__custom__contraction_1a136a56285534ae1ef35a1847584efd8f" prot="private" static="no" mutable="no">
+        <type>const Textra::Tensor&lt; Scalar, 3 &gt; &amp;</type>
+        <definition>const Textra::Tensor&lt;Scalar,3&gt;&amp; class_custom_contraction&lt; T &gt;::Lblock</definition>
+        <argsstring></argsstring>
+        <name>Lblock</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="25" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__custom__contraction_1a0c1c438280c02a7dbf6c0ab0ab4a86d2" prot="private" static="no" mutable="no">
+        <type>const Textra::Tensor&lt; Scalar, 3 &gt; &amp;</type>
+        <definition>const Textra::Tensor&lt;Scalar,3&gt;&amp; class_custom_contraction&lt; T &gt;::Rblock</definition>
+        <argsstring></argsstring>
+        <name>Rblock</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="26" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__custom__contraction_1a5d353af14aa598784bf8c70fd22527e2" prot="private" static="no" mutable="no">
+        <type>const Textra::Tensor&lt; Scalar, 6 &gt; &amp;</type>
+        <definition>const Textra::Tensor&lt;Scalar,6&gt;&amp; class_custom_contraction&lt; T &gt;::MM</definition>
+        <argsstring></argsstring>
+        <name>MM</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="27" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__custom__contraction_1ae52923167b3c7ad13d2477c4b2e018ab" prot="private" static="no" mutable="no">
+        <type>const Textra::array4 &amp;</type>
+        <definition>const Textra::array4&amp; class_custom_contraction&lt; T &gt;::shape4</definition>
+        <argsstring></argsstring>
+        <name>shape4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="28" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__custom__contraction_1ab25484f46e504ece440737fb43213a47" prot="private" static="no" mutable="no">
+        <type>Textra::array1</type>
+        <definition>Textra::array1 class_custom_contraction&lt; T &gt;::shape1</definition>
+        <argsstring></argsstring>
+        <name>shape1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="29" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__custom__contraction_1a855e5c06d6b7dfd052cab182de8f8904" prot="private" static="no" mutable="no">
+        <type>Textra::idxlistpair&lt; long, 3 &gt;</type>
+        <definition>Textra::idxlistpair&lt;long, 3&gt; class_custom_contraction&lt; T &gt;::sortedIndices1</definition>
+        <argsstring></argsstring>
+        <name>sortedIndices1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="31" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__custom__contraction_1a1d23da215f36d2542ae814b005aed46a" prot="private" static="no" mutable="no">
+        <type>Textra::idxlistpair&lt; long, 2 &gt;</type>
+        <definition>Textra::idxlistpair&lt;long, 2&gt; class_custom_contraction&lt; T &gt;::sortedIndices2</definition>
+        <argsstring></argsstring>
+        <name>sortedIndices2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="32" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__custom__contraction_1a5ce75af89db4da49a8e6eac5a66305e7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_custom_contraction&lt; T &gt;::rows</definition>
+        <argsstring>() const</argsstring>
+        <name>rows</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="34" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="34" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__custom__contraction_1a468b8288b931f5e5771d56978fada6fe" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_custom_contraction&lt; T &gt;::cols</definition>
+        <argsstring>() const</argsstring>
+        <name>cols</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="35" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="35" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__custom__contraction_1a75444333463a638f874ac6099e0547a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_custom_contraction&lt; T &gt;::MultMv</definition>
+        <argsstring>(T *theta_in_, T *theta_out_)</argsstring>
+        <name>MultMv</name>
+        <param>
+          <type>T *</type>
+          <declname>theta_in_</declname>
+        </param>
+        <param>
+          <type>T *</type>
+          <declname>theta_out_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="36" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="60" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__custom__contraction_1a592636a7774ecb081e1fdd22498c0b7e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>class_custom_contraction&lt; T &gt;::class_custom_contraction</definition>
+        <argsstring>(const Textra::Tensor&lt; Scalar, 1 &gt; &amp;theta_, const Textra::Tensor&lt; Scalar, 3 &gt; &amp;Lblock_, const Textra::Tensor&lt; Scalar, 3 &gt; &amp;Rblock_, const Textra::Tensor&lt; Scalar, 6 &gt; &amp;MM_, const Textra::array4 &amp;shape4_)</argsstring>
+        <name>class_custom_contraction</name>
+        <param>
+          <type>const Textra::Tensor&lt; Scalar, 1 &gt; &amp;</type>
+          <declname>theta_</declname>
+        </param>
+        <param>
+          <type>const Textra::Tensor&lt; Scalar, 3 &gt; &amp;</type>
+          <declname>Lblock_</declname>
+        </param>
+        <param>
+          <type>const Textra::Tensor&lt; Scalar, 3 &gt; &amp;</type>
+          <declname>Rblock_</declname>
+        </param>
+        <param>
+          <type>const Textra::Tensor&lt; Scalar, 6 &gt; &amp;</type>
+          <declname>MM_</declname>
+        </param>
+        <param>
+          <type>const Textra::array4 &amp;</type>
+          <declname>shape4_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_custom_contraction.h" line="38" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="38" bodyend="54"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/mps_routines/class_custom_contraction.h" line="20" column="1" bodyfile="source/mps_routines/class_custom_contraction.h" bodystart="20" bodyend="56"/>
+    <listofallmembers>
+      <member refid="classclass__custom__contraction_1a592636a7774ecb081e1fdd22498c0b7e" prot="public" virt="non-virtual"><scope>class_custom_contraction</scope><name>class_custom_contraction</name></member>
+      <member refid="classclass__custom__contraction_1a468b8288b931f5e5771d56978fada6fe" prot="public" virt="non-virtual"><scope>class_custom_contraction</scope><name>cols</name></member>
+      <member refid="classclass__custom__contraction_1a136a56285534ae1ef35a1847584efd8f" prot="private" virt="non-virtual"><scope>class_custom_contraction</scope><name>Lblock</name></member>
+      <member refid="classclass__custom__contraction_1a5d353af14aa598784bf8c70fd22527e2" prot="private" virt="non-virtual"><scope>class_custom_contraction</scope><name>MM</name></member>
+      <member refid="classclass__custom__contraction_1a75444333463a638f874ac6099e0547a1" prot="public" virt="non-virtual"><scope>class_custom_contraction</scope><name>MultMv</name></member>
+      <member refid="classclass__custom__contraction_1a0c1c438280c02a7dbf6c0ab0ab4a86d2" prot="private" virt="non-virtual"><scope>class_custom_contraction</scope><name>Rblock</name></member>
+      <member refid="classclass__custom__contraction_1a5ce75af89db4da49a8e6eac5a66305e7" prot="public" virt="non-virtual"><scope>class_custom_contraction</scope><name>rows</name></member>
+      <member refid="classclass__custom__contraction_1aaadb11e52186acec2141a8b6df3e047a" prot="private" virt="non-virtual"><scope>class_custom_contraction</scope><name>Scalar</name></member>
+      <member refid="classclass__custom__contraction_1ab25484f46e504ece440737fb43213a47" prot="private" virt="non-virtual"><scope>class_custom_contraction</scope><name>shape1</name></member>
+      <member refid="classclass__custom__contraction_1ae52923167b3c7ad13d2477c4b2e018ab" prot="private" virt="non-virtual"><scope>class_custom_contraction</scope><name>shape4</name></member>
+      <member refid="classclass__custom__contraction_1a855e5c06d6b7dfd052cab182de8f8904" prot="private" virt="non-virtual"><scope>class_custom_contraction</scope><name>sortedIndices1</name></member>
+      <member refid="classclass__custom__contraction_1a1d23da215f36d2542ae814b005aed46a" prot="private" virt="non-virtual"><scope>class_custom_contraction</scope><name>sortedIndices2</name></member>
+      <member refid="classclass__custom__contraction_1a6ebf553accafdfce74e1f1abf448629f" prot="private" virt="non-virtual"><scope>class_custom_contraction</scope><name>theta</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

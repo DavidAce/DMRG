@@ -3,63 +3,64 @@
   <compounddef id="class__excited__state___d_m_r_g_8h" kind="file" language="C++">
     <compoundname>class_excited_state_DMRG.h</compoundname>
     <includes refid="class__base__algorithm_8h" local="yes">class_base_algorithm.h</includes>
+    <includedby refid="class__algorithm__launcher_8cpp" local="yes">source/algorithms/class_algorithm_launcher.cpp</includedby>
     <includedby refid="class__excited__state___d_m_r_g_8cpp" local="yes">source/algorithms/class_excited_state_DMRG.cpp</includedby>
     <incdepgraph>
-      <node id="143">
+      <node id="142">
         <label>IO/class_custom_cout.h</label>
         <link refid="class__custom__cout_8h_source"/>
-        <childnode refid="144" relation="include">
+        <childnode refid="143" relation="include">
         </childnode>
-        <childnode refid="145" relation="include">
+        <childnode refid="144" relation="include">
         </childnode>
       </node>
       <node id="147">
-        <label>sim_parameters/n_sim_settings.h</label>
-        <link refid="n__sim__settings_8h_source"/>
-        <childnode refid="148" relation="include">
-        </childnode>
-      </node>
-      <node id="148">
         <label>string</label>
       </node>
-      <node id="146">
+      <node id="145">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h_source"/>
+        <childnode refid="143" relation="include">
+        </childnode>
         <childnode refid="144" relation="include">
         </childnode>
-        <childnode refid="145" relation="include">
-        </childnode>
       </node>
-      <node id="142">
+      <node id="141">
         <label>map</label>
       </node>
-      <node id="139">
+      <node id="138">
         <label>source/algorithms/class_excited_state_DMRG.h</label>
         <link refid="class__excited__state___d_m_r_g_8h"/>
-        <childnode refid="140" relation="include">
+        <childnode refid="139" relation="include">
         </childnode>
       </node>
-      <node id="140">
+      <node id="146">
+        <label>sim_parameters/nmspc_sim_settings.h</label>
+        <link refid="nmspc__sim__settings_8h_source"/>
+        <childnode refid="147" relation="include">
+        </childnode>
+      </node>
+      <node id="139">
         <label>class_base_algorithm.h</label>
         <link refid="class__base__algorithm_8h_source"/>
+        <childnode refid="140" relation="include">
+        </childnode>
         <childnode refid="141" relation="include">
         </childnode>
         <childnode refid="142" relation="include">
         </childnode>
-        <childnode refid="143" relation="include">
+        <childnode refid="145" relation="include">
         </childnode>
         <childnode refid="146" relation="include">
         </childnode>
-        <childnode refid="147" relation="include">
-        </childnode>
-      </node>
-      <node id="145">
-        <label>iostream</label>
       </node>
       <node id="144">
+        <label>iostream</label>
+      </node>
+      <node id="143">
         <label>chrono</label>
       </node>
-      <node id="141">
+      <node id="140">
         <label>memory</label>
       </node>
     </incdepgraph>

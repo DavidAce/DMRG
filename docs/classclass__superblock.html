@@ -62,7 +62,7 @@
           <h2><a href="#pub-methods">Public functions</a></h3>
           <dl class="m-dox">
             <dt>
-              <span class="m-dox-wrap-bumper">void <a href="#abfdbb85192198cdae650cbd60f01571a" class="m-dox">find_ground_state</a>(</span><span class="m-dox-wrap">int eigSteps,
+              <span class="m-dox-wrap-bumper">void <a href="#ad41e68c715ca1bea9c15c635579b3685" class="m-dox">find_ground_state_arpack</a>(</span><span class="m-dox-wrap">int eigSteps,
               double eigThreshold)</span>
             </dt>
             <dd></dd>
@@ -92,15 +92,21 @@
         <section id="pub-attribs">
           <h2><a href="#pub-attribs">Public variables</a></h3>
           <dl class="m-dox">
-            <dt><a href="classclass__environment.html" class="m-dox">class_<wbr />environment</a>&lt;Side::L&gt; <a href="#a2a9c5f435b13201f64738f26d40375d2" class="m-dox">Lblock</a></dt>
+            <dt>std::shared_ptr&lt;<a href="classclass__mps.html" class="m-dox">class_<wbr />mps</a>&lt;Scalar&gt;&gt; <a href="#ad006783dfd82fa9852da2317114205ef" class="m-dox">MPS</a></dt>
             <dd></dd>
-            <dt><a href="classclass__environment.html" class="m-dox">class_<wbr />environment</a>&lt;Side::R&gt; <a href="#a36d03535f7df76d9cb00748743e014c8" class="m-dox">Rblock</a></dt>
+            <dt>std::shared_ptr&lt;<a href="classclass__environment.html" class="m-dox">class_<wbr />environment</a>&lt;Scalar&gt;&gt; <a href="#abf1f431a94e7ed0991066ff53c20b8d6" class="m-dox">Lblock</a></dt>
             <dd></dd>
-            <dt><a href="classclass__environment__var.html" class="m-dox">class_<wbr />environment_<wbr />var</a>&lt;Side::L&gt; <a href="#a6b2b066d9b8a499e2bb092b451858ff3" class="m-dox">Lblock2</a></dt>
+            <dt>std::shared_ptr&lt;<a href="classclass__environment.html" class="m-dox">class_<wbr />environment</a>&lt;Scalar&gt;&gt; <a href="#a4c0768038cb0c42e4ac3c35d1d4818a4" class="m-dox">Rblock</a></dt>
             <dd></dd>
-            <dt><a href="classclass__environment__var.html" class="m-dox">class_<wbr />environment_<wbr />var</a>&lt;Side::R&gt; <a href="#add1eefac58364df3561113dafe2bd482" class="m-dox">Rblock2</a></dt>
+            <dt>std::shared_ptr&lt;<a href="classclass__environment__var.html" class="m-dox">class_<wbr />environment_<wbr />var</a>&lt;Scalar&gt;&gt; <a href="#a81528a93196cabaa7fedc7220905c5d0" class="m-dox">Lblock2</a></dt>
             <dd></dd>
-            <dt><a href="classclass__mps.html" class="m-dox">class_<wbr />mps</a> <a href="#a6311468d07816822a4a0fa65d16b560e" class="m-dox">MPS</a></dt>
+            <dt>std::shared_ptr&lt;<a href="classclass__environment__var.html" class="m-dox">class_<wbr />environment_<wbr />var</a>&lt;Scalar&gt;&gt; <a href="#a73350cc7cf7e6f65b77c266191e1fd53" class="m-dox">Rblock2</a></dt>
+            <dd></dd>
+            <dt>long <a href="#a03a21b086702d83cc5f75b7a35fd83d5" class="m-dox">d</a></dt>
+            <dd></dd>
+            <dt>long <a href="#a7bf25399b81febaaa6707e7d55ba8a0b" class="m-dox">chiL</a></dt>
+            <dd></dd>
+            <dt>long <a href="#abdacc200bb18c46759ee8ffbcd1d70f7" class="m-dox">chiR</a></dt>
             <dd></dd>
             <dt>Textra::array1 <a href="#a1e866c5bcf8537c249500c0d58fef7f3" class="m-dox">shape1</a></dt>
             <dd></dd>
@@ -114,9 +120,9 @@
         </section>
         <section>
           <h2>Function documentation</h2>
-          <section class="m-dox-details" id="abfdbb85192198cdae650cbd60f01571a"><div>
+          <section class="m-dox-details" id="ad41e68c715ca1bea9c15c635579b3685"><div>
             <h3>
-              <span class="m-dox-wrap-bumper">void class_<wbr />superblock::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#abfdbb85192198cdae650cbd60f01571a" class="m-dox-self">find_ground_state</a>(</span><span class="m-dox-wrap">int eigSteps,
+              <span class="m-dox-wrap-bumper">void class_<wbr />superblock::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#ad41e68c715ca1bea9c15c635579b3685" class="m-dox-self">find_ground_state_arpack</a>(</span><span class="m-dox-wrap">int eigSteps,
               double eigThreshold)</span></span>
             </h3>
 <p>Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using <a href="https://github.com/yixuan/spectra">Spectra</a>.</p>
@@ -384,33 +390,9 @@ $R$
         </section>
         <section>
           <h2>Variable documentation</h2>
-          <section class="m-dox-details" id="a2a9c5f435b13201f64738f26d40375d2"><div>
+          <section class="m-dox-details" id="ad006783dfd82fa9852da2317114205ef"><div>
             <h3>
-              <a href="classclass__environment.html" class="m-dox">class_<wbr />environment</a>&lt;Side::L&gt; class_<wbr />superblock::<wbr /><a href="#a2a9c5f435b13201f64738f26d40375d2" class="m-dox-self">Lblock</a>
-            </h3>
-<p>Left environment block.</p>
-          </div></section>
-          <section class="m-dox-details" id="a36d03535f7df76d9cb00748743e014c8"><div>
-            <h3>
-              <a href="classclass__environment.html" class="m-dox">class_<wbr />environment</a>&lt;Side::R&gt; class_<wbr />superblock::<wbr /><a href="#a36d03535f7df76d9cb00748743e014c8" class="m-dox-self">Rblock</a>
-            </h3>
-<p>Right environment block.</p>
-          </div></section>
-          <section class="m-dox-details" id="a6b2b066d9b8a499e2bb092b451858ff3"><div>
-            <h3>
-              <a href="classclass__environment__var.html" class="m-dox">class_<wbr />environment_<wbr />var</a>&lt;Side::L&gt; class_<wbr />superblock::<wbr /><a href="#a6b2b066d9b8a499e2bb092b451858ff3" class="m-dox-self">Lblock2</a>
-            </h3>
-<p>Left environment block used for variance calculation</p>
-          </div></section>
-          <section class="m-dox-details" id="add1eefac58364df3561113dafe2bd482"><div>
-            <h3>
-              <a href="classclass__environment__var.html" class="m-dox">class_<wbr />environment_<wbr />var</a>&lt;Side::R&gt; class_<wbr />superblock::<wbr /><a href="#add1eefac58364df3561113dafe2bd482" class="m-dox-self">Rblock2</a>
-            </h3>
-<p>Right environment block used for variance calculation</p>
-          </div></section>
-          <section class="m-dox-details" id="a6311468d07816822a4a0fa65d16b560e"><div>
-            <h3>
-              <a href="classclass__mps.html" class="m-dox">class_<wbr />mps</a> class_<wbr />superblock::<wbr /><a href="#a6311468d07816822a4a0fa65d16b560e" class="m-dox-self">MPS</a>
+              std::shared_ptr&lt;<a href="classclass__mps.html" class="m-dox">class_<wbr />mps</a>&lt;Scalar&gt;&gt; class_<wbr />superblock::<wbr /><a href="#ad006783dfd82fa9852da2317114205ef" class="m-dox-self">MPS</a>
             </h3>
 <p>Matrix product states for two sites, A and B, in Vidal Canonical Form <svg class="m-math" style="vertical-align: -0.0pt;" height='12.2308pt' version='1.1' viewBox='0 -9.78467 58.6191 9.78467' width='73.2739pt'>
 <title>LaTeX Math</title>
@@ -434,6 +416,48 @@ $\Gamma^A\Lambda^A\Gamma^B\Lambda^B$
 <use x='51.8389' xlink:href='#eq1-g0-66' y='-4.33844'/>
 </g>
 </svg>.</p>
+          </div></section>
+          <section class="m-dox-details" id="abf1f431a94e7ed0991066ff53c20b8d6"><div>
+            <h3>
+              std::shared_ptr&lt;<a href="classclass__environment.html" class="m-dox">class_<wbr />environment</a>&lt;Scalar&gt;&gt; class_<wbr />superblock::<wbr /><a href="#abf1f431a94e7ed0991066ff53c20b8d6" class="m-dox-self">Lblock</a>
+            </h3>
+<p>Left environment block.</p>
+          </div></section>
+          <section class="m-dox-details" id="a4c0768038cb0c42e4ac3c35d1d4818a4"><div>
+            <h3>
+              std::shared_ptr&lt;<a href="classclass__environment.html" class="m-dox">class_<wbr />environment</a>&lt;Scalar&gt;&gt; class_<wbr />superblock::<wbr /><a href="#a4c0768038cb0c42e4ac3c35d1d4818a4" class="m-dox-self">Rblock</a>
+            </h3>
+<p>Right environment block.</p>
+          </div></section>
+          <section class="m-dox-details" id="a81528a93196cabaa7fedc7220905c5d0"><div>
+            <h3>
+              std::shared_ptr&lt;<a href="classclass__environment__var.html" class="m-dox">class_<wbr />environment_<wbr />var</a>&lt;Scalar&gt;&gt; class_<wbr />superblock::<wbr /><a href="#a81528a93196cabaa7fedc7220905c5d0" class="m-dox-self">Lblock2</a>
+            </h3>
+<p>Left environment block used for variance calculation</p>
+          </div></section>
+          <section class="m-dox-details" id="a73350cc7cf7e6f65b77c266191e1fd53"><div>
+            <h3>
+              std::shared_ptr&lt;<a href="classclass__environment__var.html" class="m-dox">class_<wbr />environment_<wbr />var</a>&lt;Scalar&gt;&gt; class_<wbr />superblock::<wbr /><a href="#a73350cc7cf7e6f65b77c266191e1fd53" class="m-dox-self">Rblock2</a>
+            </h3>
+<p>Right environment block used for variance calculation</p>
+          </div></section>
+          <section class="m-dox-details" id="a03a21b086702d83cc5f75b7a35fd83d5"><div>
+            <h3>
+              long class_<wbr />superblock::<wbr /><a href="#a03a21b086702d83cc5f75b7a35fd83d5" class="m-dox-self">d</a>
+            </h3>
+<p>Local, or physical, dimension of each particle.</p>
+          </div></section>
+          <section class="m-dox-details" id="a7bf25399b81febaaa6707e7d55ba8a0b"><div>
+            <h3>
+              long class_<wbr />superblock::<wbr /><a href="#a7bf25399b81febaaa6707e7d55ba8a0b" class="m-dox-self">chiL</a>
+            </h3>
+<p>Bond dimension of the previous (left) position.</p>
+          </div></section>
+          <section class="m-dox-details" id="abdacc200bb18c46759ee8ffbcd1d70f7"><div>
+            <h3>
+              long class_<wbr />superblock::<wbr /><a href="#abdacc200bb18c46759ee8ffbcd1d70f7" class="m-dox-self">chiR</a>
+            </h3>
+<p>Bond dimension of the next (right) position.</p>
           </div></section>
           <section class="m-dox-details" id="a1e866c5bcf8537c249500c0d58fef7f3"><div>
             <h3>

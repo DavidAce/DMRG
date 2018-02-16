@@ -160,7 +160,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="15" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="16" bodyend="26"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="15" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="17" bodyend="27"/>
       </memberdef>
       <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1a341508aaa8498c1defe8c9f7383945e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -173,7 +173,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="29" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="47" bodyend="57"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="29" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="48" bodyend="58"/>
       </memberdef>
       <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1ac038c83d5c2a802686abaa9bf673b005" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -187,7 +187,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="32" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="29" bodyend="46"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="32" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="30" bodyend="47"/>
       </memberdef>
       <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1ac9faffebd11a7530016378550104b497" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -201,7 +201,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="34" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="111" bodyend="122"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="34" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="112" bodyend="123"/>
       </memberdef>
       <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1a0e1fd656e8273dd071dae8c679d72699" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -215,7 +215,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="35" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="92" bodyend="109"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="35" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="93" bodyend="110"/>
       </memberdef>
       <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1a2fbbcb78748a27ed86cbbb4adca95345" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -229,7 +229,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="37" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="60" bodyend="75"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="37" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="61" bodyend="76"/>
       </memberdef>
       <memberdef kind="function" id="classclass__imaginary___t_e_b_d_1a64b56b73bb96ad96fbd271a1765c54b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -243,7 +243,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_imaginary_TEBD.h" line="38" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="77" bodyend="88"/>
+        <location file="source/algorithms/class_imaginary_TEBD.h" line="38" column="1" bodyfile="source/algorithms/class_imaginary_TEBD.cpp" bodystart="78" bodyend="89"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -251,39 +251,39 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="64">
+      <node id="60">
         <label>class_imaginary_TEBD</label>
         <link refid="classclass__imaginary___t_e_b_d"/>
-        <childnode refid="65" relation="public-inheritance">
+        <childnode refid="61" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="65">
+      <node id="61">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="68">
+      <node id="64">
         <label>class_custom_cout</label>
         <link refid="classclass__custom__cout"/>
       </node>
-      <node id="66">
+      <node id="62">
         <label>class_imaginary_TEBD</label>
         <link refid="classclass__imaginary___t_e_b_d"/>
-        <childnode refid="67" relation="public-inheritance">
+        <childnode refid="63" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="69">
+      <node id="65">
         <label>class_tic_toc</label>
         <link refid="classclass__tic__toc"/>
       </node>
-      <node id="67">
+      <node id="63">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
-        <childnode refid="68" relation="usage">
+        <childnode refid="64" relation="usage">
           <edgelabel>ccout</edgelabel>
         </childnode>
-        <childnode refid="69" relation="usage">
+        <childnode refid="65" relation="usage">
           <edgelabel>t_udt</edgelabel>
           <edgelabel>t_eig</edgelabel>
           <edgelabel>t_ste</edgelabel>
@@ -302,21 +302,21 @@
     <listofallmembers>
       <member refid="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>ccout</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1ab51bd56adf5b933e2cefee4f892c5356" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>chi_max</name></member>
-      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a89a908e197b655ae32018d230edb06f3" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1ad5b3b22f6b0d8164510388f19829643c" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>class_imaginary_TEBD</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1a6b12630781f88f7f14e253b8da4a5bae" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>delta_t</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1a39537978d66b4dfd1b7cd39d678c8d7d" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>delta_t0</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1abaed4fb640f15e97d7fcfa1484b387b6" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>delta_tmin</name></member>
-      <member refid="classclass__algorithm__base_1a68804df41c37620391746d749b267498" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>enlarge_environment</name></member>
-      <member refid="classclass__algorithm__base_1ad516d7415be3c39534429d34d677adf3" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1a843555eba3d2bb4d371d7a8fcf4decf2" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1a55c7268b04fc440dd0287fbd969f202d" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>enlarge_environment</name></member>
       <member refid="classclass__algorithm__base_1a0df91637c87540c529273999b7866315" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>group_name</name></member>
       <member refid="classclass__algorithm__base_1a52110546990518c431901aa1262e457c" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>hdf5</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1a9bf8d16ae5bdcd46834a6b1d938ee41d" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>iteration</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1a7c4c21ad13cc87df5cdd83a5e7caf4d9" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>max_steps</name></member>
+      <member refid="classclass__algorithm__base_1afce57181b8c71747fe662a0db4bf8494" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>measurement</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1a2a72e4c4a212abc37382a3bda4895a91" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>new_entropy</name></member>
-      <member refid="classclass__algorithm__base_1aeb4c7ff399543a89181d790c56e8ddf0" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>observables</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1a8cf78b0c001203138befc3a267e6b55e" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>old_entropy</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1a837353d7cfe120bfd59c4e4228de9ab6" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>phys_time</name></member>
       <member refid="classclass__imaginary___t_e_b_d_1af9a2f04e142d55bb7c6193b8bdd973ec" prot="public" virt="non-virtual"><scope>class_imaginary_TEBD</scope><name>print_freq</name></member>

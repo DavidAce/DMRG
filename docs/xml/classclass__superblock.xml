@@ -4,9 +4,9 @@
     <compoundname>class_superblock</compoundname>
     <includes refid="class__superblock_8h" local="no">class_superblock.h</includes>
       <sectiondef kind="public-type">
-      <memberdef kind="typedef" id="classclass__superblock_1a56d4a4106a815095ef5c89105d4ff287" prot="public" static="no">
-        <type>class_mps::Scalar</type>
-        <definition>using class_superblock::Scalar =  class_mps::Scalar</definition>
+      <memberdef kind="typedef" id="classclass__superblock_1a36e38d61c220c26da852d11227d60800" prot="public" static="no">
+        <type>double</type>
+        <definition>using class_superblock::Scalar =  double</definition>
         <argsstring></argsstring>
         <name>Scalar</name>
         <briefdescription>
@@ -15,49 +15,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="22" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="22" bodyend="-1"/>
+        <location file="source/mps_routines/class_superblock.h" line="25" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="25" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
-      <memberdef kind="variable" id="classclass__superblock_1a03a21b086702d83cc5f75b7a35fd83d5" prot="private" static="no" mutable="no">
-        <type>long</type>
-        <definition>long class_superblock::d</definition>
-        <argsstring></argsstring>
-        <name>d</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Local, or physical, dimension of each particle. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="26" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="26" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__superblock_1a7bf25399b81febaaa6707e7d55ba8a0b" prot="private" static="no" mutable="no">
-        <type>long</type>
-        <definition>long class_superblock::chiL</definition>
-        <argsstring></argsstring>
-        <name>chiL</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Bond dimension of the previous (left) position. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="27" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="27" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__superblock_1abdacc200bb18c46759ee8ffbcd1d70f7" prot="private" static="no" mutable="no">
-        <type>long</type>
-        <definition>long class_superblock::chiR</definition>
-        <argsstring></argsstring>
-        <name>chiR</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Bond dimension of the next (right) position. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="28" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="28" bodyend="-1"/>
-      </memberdef>
       <memberdef kind="variable" id="classclass__superblock_1a7b0238de885d864ce3d28a4a13e65551" prot="private" static="no" mutable="no">
         <type>Textra::Tensor&lt; Scalar, 2 &gt;</type>
         <definition>Textra::Tensor&lt;Scalar,2&gt; class_superblock::ground_state</definition>
@@ -69,7 +30,7 @@
 <para>Stores the ground state eigenvector from eigenvalue solver </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="31" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="31" bodyend="-1"/>
+        <location file="source/mps_routines/class_superblock.h" line="29" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="29" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__superblock_1afb7e767c176df6b207c2a78e10970d95" prot="private" static="no" mutable="no">
         <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
@@ -82,7 +43,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="32" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="32" bodyend="-1"/>
+        <location file="source/mps_routines/class_superblock.h" line="30" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="30" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__superblock_1a84e812ce631140ceeee7eb2192afd4d3" prot="private" static="no" mutable="no">
         <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
@@ -92,81 +53,29 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Stores the left and right unitary matrices <formula id="44">$U$</formula> and <formula id="45">$V$</formula> after an SVD decomposition <formula id="46">$A = USV^\dagger$</formula>. </para>        </detaileddescription>
+<para>Stores the left and right unitary matrices <formula id="42">$U$</formula> and <formula id="43">$V$</formula> after an SVD decomposition <formula id="44">$A = USV^\dagger$</formula>. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="32" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="32" bodyend="-1"/>
+        <location file="source/mps_routines/class_superblock.h" line="30" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="30" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="classclass__superblock_1a2a9c5f435b13201f64738f26d40375d2" prot="public" static="no" mutable="no">
-        <type><ref refid="classclass__environment" kindref="compound">class_environment</ref>&lt; Side::L &gt;</type>
-        <definition>class_environment&lt;Side::L&gt; class_superblock::Lblock</definition>
-        <argsstring></argsstring>
-        <name>Lblock</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Left environment block. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="36" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="36" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__superblock_1a36d03535f7df76d9cb00748743e014c8" prot="public" static="no" mutable="no">
-        <type><ref refid="classclass__environment" kindref="compound">class_environment</ref>&lt; Side::R &gt;</type>
-        <definition>class_environment&lt;Side::R&gt; class_superblock::Rblock</definition>
-        <argsstring></argsstring>
-        <name>Rblock</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Right environment block. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="37" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="37" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__superblock_1a6b2b066d9b8a499e2bb092b451858ff3" prot="public" static="no" mutable="no">
-        <type><ref refid="classclass__environment__var" kindref="compound">class_environment_var</ref>&lt; Side::L &gt;</type>
-        <definition>class_environment_var&lt;Side::L&gt; class_superblock::Lblock2</definition>
-        <argsstring></argsstring>
-        <name>Lblock2</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Left environment block used for variance calculation </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="38" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="38" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__superblock_1add1eefac58364df3561113dafe2bd482" prot="public" static="no" mutable="no">
-        <type><ref refid="classclass__environment__var" kindref="compound">class_environment_var</ref>&lt; Side::R &gt;</type>
-        <definition>class_environment_var&lt;Side::R&gt; class_superblock::Rblock2</definition>
-        <argsstring></argsstring>
-        <name>Rblock2</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Right environment block used for variance calculation </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="39" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="39" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__superblock_1a6311468d07816822a4a0fa65d16b560e" prot="public" static="no" mutable="no">
-        <type><ref refid="classclass__mps" kindref="compound">class_mps</ref></type>
-        <definition>class_mps class_superblock::MPS</definition>
+      <memberdef kind="variable" id="classclass__superblock_1ad006783dfd82fa9852da2317114205ef" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__mps" kindref="compound">class_mps</ref>&lt; Scalar &gt; &gt;</type>
+        <definition>std::shared_ptr&lt;class_mps&lt;Scalar&gt; &gt; class_superblock::MPS</definition>
         <argsstring></argsstring>
         <name>MPS</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Matrix product states for two sites, A and B, in Vidal Canonical Form <formula id="47">$\Gamma^A\Lambda^A\Gamma^B\Lambda^B$</formula>. </para>        </detaileddescription>
+<para>Matrix product states for two sites, A and B, in Vidal Canonical Form <formula id="45">$\Gamma^A\Lambda^A\Gamma^B\Lambda^B$</formula>. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="40" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="40" bodyend="-1"/>
+        <location file="source/mps_routines/class_superblock.h" line="34" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="34" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__superblock_1a62f2a593385e4c4d91088accd8a7add7" prot="public" static="no" mutable="no">
-        <type><ref refid="classclass__mpo" kindref="compound">class_mpo</ref></type>
-        <definition>class_mpo class_superblock::H</definition>
+      <memberdef kind="variable" id="classclass__superblock_1a4ee436ecad7198453e3f102fbddd4dae" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__mpo" kindref="compound">class_mpo</ref>&lt; Scalar &gt; &gt;</type>
+        <definition>std::shared_ptr&lt;class_mpo&lt;Scalar&gt; &gt; class_superblock::H</definition>
         <argsstring></argsstring>
         <name>H</name>
         <briefdescription>
@@ -175,7 +84,98 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="41" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="41" bodyend="-1"/>
+        <location file="source/mps_routines/class_superblock.h" line="35" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__superblock_1abf1f431a94e7ed0991066ff53c20b8d6" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__environment" kindref="compound">class_environment</ref>&lt; Scalar &gt; &gt;</type>
+        <definition>std::shared_ptr&lt;class_environment&lt;Scalar&gt; &gt; class_superblock::Lblock</definition>
+        <argsstring></argsstring>
+        <name>Lblock</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Left environment block. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_superblock.h" line="37" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__superblock_1a4c0768038cb0c42e4ac3c35d1d4818a4" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__environment" kindref="compound">class_environment</ref>&lt; Scalar &gt; &gt;</type>
+        <definition>std::shared_ptr&lt;class_environment&lt;Scalar&gt; &gt; class_superblock::Rblock</definition>
+        <argsstring></argsstring>
+        <name>Rblock</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Right environment block. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_superblock.h" line="38" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__superblock_1a81528a93196cabaa7fedc7220905c5d0" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__environment__var" kindref="compound">class_environment_var</ref>&lt; Scalar &gt; &gt;</type>
+        <definition>std::shared_ptr&lt;class_environment_var&lt;Scalar&gt; &gt; class_superblock::Lblock2</definition>
+        <argsstring></argsstring>
+        <name>Lblock2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Left environment block used for variance calculation </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_superblock.h" line="39" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__superblock_1a73350cc7cf7e6f65b77c266191e1fd53" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__environment__var" kindref="compound">class_environment_var</ref>&lt; Scalar &gt; &gt;</type>
+        <definition>std::shared_ptr&lt;class_environment_var&lt;Scalar&gt; &gt; class_superblock::Rblock2</definition>
+        <argsstring></argsstring>
+        <name>Rblock2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Right environment block used for variance calculation </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_superblock.h" line="40" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__superblock_1a03a21b086702d83cc5f75b7a35fd83d5" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long class_superblock::d</definition>
+        <argsstring></argsstring>
+        <name>d</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Local, or physical, dimension of each particle. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_superblock.h" line="44" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__superblock_1a7bf25399b81febaaa6707e7d55ba8a0b" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long class_superblock::chiL</definition>
+        <argsstring></argsstring>
+        <name>chiL</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bond dimension of the previous (left) position. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_superblock.h" line="45" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__superblock_1abdacc200bb18c46759ee8ffbcd1d70f7" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long class_superblock::chiR</definition>
+        <argsstring></argsstring>
+        <name>chiR</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bond dimension of the next (right) position. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_superblock.h" line="46" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="46" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__superblock_1a1e866c5bcf8537c249500c0d58fef7f3" prot="public" static="no" mutable="no">
         <type>Textra::array1</type>
@@ -188,7 +188,7 @@
 <para>Shape for Tensor1 representation of the MPS. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="43" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="43" bodyend="-1"/>
+        <location file="source/mps_routines/class_superblock.h" line="48" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="48" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__superblock_1ac333ff492b1b5247af7f0f8b748361e6" prot="public" static="no" mutable="no">
         <type>Textra::array2</type>
@@ -201,7 +201,7 @@
 <para>Shape for Tensor2 representation of the MPS. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="44" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="44" bodyend="-1"/>
+        <location file="source/mps_routines/class_superblock.h" line="49" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="49" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__superblock_1acd07373f6ee47fdd21fb38cb589b6c1c" prot="public" static="no" mutable="no">
         <type>Textra::array4</type>
@@ -214,47 +214,48 @@
 <para>Shape for Tensor4 representation of the MPS. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="45" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="45" bodyend="-1"/>
+        <location file="source/mps_routines/class_superblock.h" line="50" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__superblock_1a32afcea00a52d8f6b8c7aa43232132c9" prot="public" static="no" mutable="no">
         <type>long</type>
         <definition>long class_superblock::chi</definition>
         <argsstring></argsstring>
         <name>chi</name>
+        <initializer>= 1</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
 <para>Bond dimension of the current (center) position. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="48" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="48" bodyend="-1"/>
+        <location file="source/mps_routines/class_superblock.h" line="53" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__superblock_1afbd0a610ef1f028520d7d5c6978d486b" prot="public" static="no" mutable="no">
         <type>double</type>
         <definition>double class_superblock::truncation_error</definition>
         <argsstring></argsstring>
         <name>truncation_error</name>
+        <initializer>= 1</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="50" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="50" bodyend="-1"/>
+        <location file="source/mps_routines/class_superblock.h" line="54" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__superblock_1a732fbb587f8b73e2bdb7b610f38a65b3" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int class_superblock::chain_length</definition>
         <argsstring></argsstring>
         <name>chain_length</name>
-        <initializer>= H.mps_sites</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="51" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="51" bodyend="-1"/>
+        <location file="source/mps_routines/class_superblock.h" line="55" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="55" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -269,13 +270,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="35" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="16" bodyend="19"/>
+        <location file="source/mps_routines/class_superblock.h" line="33" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="21" bodyend="33"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__superblock_1abfdbb85192198cdae650cbd60f01571a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__superblock_1ad41e68c715ca1bea9c15c635579b3685" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void class_superblock::find_ground_state</definition>
+        <definition>void class_superblock::find_ground_state_arpack</definition>
         <argsstring>(int eigSteps, double eigThreshold) __attribute((hot))</argsstring>
-        <name>find_ground_state</name>
+        <name>find_ground_state_arpack</name>
         <param>
           <type>int</type>
           <declname>eigSteps</declname>
@@ -292,7 +293,7 @@
 <para>Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using <ulink url="https://github.com/yixuan/spectra">Spectra</ulink>. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="53" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="24" bodyend="40"/>
+        <location file="source/mps_routines/class_superblock.h" line="56" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="60" bodyend="82"/>
       </memberdef>
       <memberdef kind="function" id="classclass__superblock_1a3048f4e93977cdf7ab507818c76ef4f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -305,7 +306,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="56" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="57" bodyend="61"/>
+        <location file="source/mps_routines/class_superblock.h" line="60" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="100" bodyend="104"/>
       </memberdef>
       <memberdef kind="function" id="classclass__superblock_1a7e372f4d5721a1d41175bc99359aaf9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -328,7 +329,7 @@
 <para>Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps <formula id="0">$\chi$</formula> (<computeroutput>chi</computeroutput>) singular values. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="57" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="45" bodyend="50"/>
+        <location file="source/mps_routines/class_superblock.h" line="61" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="88" bodyend="93"/>
       </memberdef>
       <memberdef kind="function" id="classclass__superblock_1ae8df112baac53bd9ede08bc766b26fd5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -338,10 +339,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Update <computeroutput>MPS.G.A</computeroutput> and <computeroutput>MPS.G.B</computeroutput> i.e., <formula id="28">$\Gamma^A$</formula> and <formula id="29">$\Gamma^B$</formula>. </para>        </detaileddescription>
+<para>Update <computeroutput>MPS.G.A</computeroutput> and <computeroutput>MPS.G.B</computeroutput> i.e., <formula id="26">$\Gamma^A$</formula> and <formula id="27">$\Gamma^B$</formula>. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="60" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="64" bodyend="67"/>
+        <location file="source/mps_routines/class_superblock.h" line="64" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="107" bodyend="110"/>
       </memberdef>
       <memberdef kind="function" id="classclass__superblock_1a2485636df110a965bf5c97e649df8777" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -356,10 +357,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Contract the MPS of current position <formula id="7">$n$</formula> into the left and right environments <formula id="48">$L$</formula> and <formula id="49">$R$</formula>, i.e. <computeroutput>Lblock</computeroutput> and <computeroutput>Rblock</computeroutput>. <formula id="17">\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]</formula> <formula id="19">\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]</formula> </para>        </detaileddescription>
+<para>Contract the MPS of current position <formula id="7">$n$</formula> into the left and right environments <formula id="46">$L$</formula> and <formula id="47">$R$</formula>, i.e. <computeroutput>Lblock</computeroutput> and <computeroutput>Rblock</computeroutput>. <formula id="16">\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]</formula> <formula id="18">\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="61" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="69" bodyend="83"/>
+        <location file="source/mps_routines/class_superblock.h" line="65" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="112" bodyend="126"/>
       </memberdef>
       <memberdef kind="function" id="classclass__superblock_1a8b26cc612d37120f8b7788d5a2177965" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -372,33 +373,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="65" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="86" bodyend="100"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__superblock_1aa1396bcaceb63f5af19e92d21b12c3d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_superblock::canonicalize_iMPS</definition>
-        <argsstring>()</argsstring>
-        <name>canonicalize_iMPS</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="66" column="1" bodyfile="source/mps_routines/class_superblock_canonicalize.cpp" bodystart="111" bodyend="239"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__superblock_1a55f9bffd8086196ae461056b13974cb2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_superblock::canonicalize_iMPS_iterative</definition>
-        <argsstring>()</argsstring>
-        <name>canonicalize_iMPS_iterative</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="67" column="1" bodyfile="source/mps_routines/class_superblock_canonicalize.cpp" bodystart="15" bodyend="102"/>
+        <location file="source/mps_routines/class_superblock.h" line="69" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="129" bodyend="145"/>
       </memberdef>
       <memberdef kind="function" id="classclass__superblock_1abe0ca58bd3b1ba7ee12e8b3a617c2759" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -408,10 +383,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Update the MPS by contracting <formula id="50">\[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \]</formula> <formula id="51">\[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \]</formula> </para>        </detaileddescription>
+<para>Update the MPS by contracting <formula id="48">\[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \]</formula> <formula id="49">\[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \]</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="68" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="103" bodyend="111"/>
+        <location file="source/mps_routines/class_superblock.h" line="70" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="151" bodyend="159"/>
       </memberdef>
       <memberdef kind="function" id="classclass__superblock_1a593c53eaa16bbb4dd67f4a9db95c821e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -424,82 +399,32 @@
 <para>Swap the roles of A and B. Used in the infinite-DMRG stage. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_superblock.h" line="71" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="114" bodyend="116"/>
+        <location file="source/mps_routines/class_superblock.h" line="73" column="1" bodyfile="source/mps_routines/class_superblock.cpp" bodystart="162" bodyend="164"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>This class contains the Hamiltonian MPO, current wave function MPS, left and right environment blocks and routines to contract, diagonalize, truncate and update them. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <collaborationgraph>
-      <node id="89">
-        <label>class_environment&lt; Side::L &gt;</label>
-        <link refid="classclass__environment"/>
-      </node>
-      <node id="86">
-        <label>class_mpo</label>
-        <link refid="classclass__mpo"/>
-      </node>
-      <node id="88">
-        <label>class_mps</label>
-        <link refid="classclass__mps"/>
-      </node>
-      <node id="83">
-        <label>class_superblock</label>
-        <link refid="classclass__superblock"/>
-        <childnode refid="84" relation="usage">
-          <edgelabel>Rblock</edgelabel>
-        </childnode>
-        <childnode refid="85" relation="usage">
-          <edgelabel>Lblock2</edgelabel>
-        </childnode>
-        <childnode refid="86" relation="usage">
-          <edgelabel>H</edgelabel>
-        </childnode>
-        <childnode refid="87" relation="usage">
-          <edgelabel>Rblock2</edgelabel>
-        </childnode>
-        <childnode refid="88" relation="usage">
-          <edgelabel>MPS</edgelabel>
-        </childnode>
-        <childnode refid="89" relation="usage">
-          <edgelabel>Lblock</edgelabel>
-        </childnode>
-      </node>
-      <node id="85">
-        <label>class_environment_var&lt; Side::L &gt;</label>
-        <link refid="classclass__environment__var"/>
-      </node>
-      <node id="84">
-        <label>class_environment&lt; Side::R &gt;</label>
-        <link refid="classclass__environment"/>
-      </node>
-      <node id="87">
-        <label>class_environment_var&lt; Side::R &gt;</label>
-        <link refid="classclass__environment__var"/>
-      </node>
-    </collaborationgraph>
-    <location file="source/mps_routines/class_superblock.h" line="20" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="20" bodyend="76"/>
+    <location file="source/mps_routines/class_superblock.h" line="23" column="1" bodyfile="source/mps_routines/class_superblock.h" bodystart="23" bodyend="78"/>
     <listofallmembers>
-      <member refid="classclass__superblock_1aa1396bcaceb63f5af19e92d21b12c3d3" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>canonicalize_iMPS</name></member>
-      <member refid="classclass__superblock_1a55f9bffd8086196ae461056b13974cb2" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>canonicalize_iMPS_iterative</name></member>
       <member refid="classclass__superblock_1a732fbb587f8b73e2bdb7b610f38a65b3" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>chain_length</name></member>
       <member refid="classclass__superblock_1a32afcea00a52d8f6b8c7aa43232132c9" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>chi</name></member>
-      <member refid="classclass__superblock_1a7bf25399b81febaaa6707e7d55ba8a0b" prot="private" virt="non-virtual"><scope>class_superblock</scope><name>chiL</name></member>
-      <member refid="classclass__superblock_1abdacc200bb18c46759ee8ffbcd1d70f7" prot="private" virt="non-virtual"><scope>class_superblock</scope><name>chiR</name></member>
+      <member refid="classclass__superblock_1a7bf25399b81febaaa6707e7d55ba8a0b" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>chiL</name></member>
+      <member refid="classclass__superblock_1abdacc200bb18c46759ee8ffbcd1d70f7" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>chiR</name></member>
       <member refid="classclass__superblock_1aac2441d35e723218058d8e591dc0937f" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>class_superblock</name></member>
-      <member refid="classclass__superblock_1a03a21b086702d83cc5f75b7a35fd83d5" prot="private" virt="non-virtual"><scope>class_superblock</scope><name>d</name></member>
+      <member refid="classclass__superblock_1a03a21b086702d83cc5f75b7a35fd83d5" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>d</name></member>
       <member refid="classclass__superblock_1a2485636df110a965bf5c97e649df8777" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>enlarge_environment</name></member>
-      <member refid="classclass__superblock_1abfdbb85192198cdae650cbd60f01571a" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>find_ground_state</name></member>
+      <member refid="classclass__superblock_1ad41e68c715ca1bea9c15c635579b3685" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>find_ground_state_arpack</name></member>
       <member refid="classclass__superblock_1a7b0238de885d864ce3d28a4a13e65551" prot="private" virt="non-virtual"><scope>class_superblock</scope><name>ground_state</name></member>
-      <member refid="classclass__superblock_1a62f2a593385e4c4d91088accd8a7add7" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>H</name></member>
+      <member refid="classclass__superblock_1a4ee436ecad7198453e3f102fbddd4dae" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>H</name></member>
       <member refid="classclass__superblock_1a8b26cc612d37120f8b7788d5a2177965" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>initialize</name></member>
-      <member refid="classclass__superblock_1a2a9c5f435b13201f64738f26d40375d2" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>Lblock</name></member>
-      <member refid="classclass__superblock_1a6b2b066d9b8a499e2bb092b451858ff3" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>Lblock2</name></member>
-      <member refid="classclass__superblock_1a6311468d07816822a4a0fa65d16b560e" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>MPS</name></member>
-      <member refid="classclass__superblock_1a36d03535f7df76d9cb00748743e014c8" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>Rblock</name></member>
-      <member refid="classclass__superblock_1add1eefac58364df3561113dafe2bd482" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>Rblock2</name></member>
-      <member refid="classclass__superblock_1a56d4a4106a815095ef5c89105d4ff287" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>Scalar</name></member>
+      <member refid="classclass__superblock_1abf1f431a94e7ed0991066ff53c20b8d6" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>Lblock</name></member>
+      <member refid="classclass__superblock_1a81528a93196cabaa7fedc7220905c5d0" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>Lblock2</name></member>
+      <member refid="classclass__superblock_1ad006783dfd82fa9852da2317114205ef" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>MPS</name></member>
+      <member refid="classclass__superblock_1a4c0768038cb0c42e4ac3c35d1d4818a4" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>Rblock</name></member>
+      <member refid="classclass__superblock_1a73350cc7cf7e6f65b77c266191e1fd53" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>Rblock2</name></member>
+      <member refid="classclass__superblock_1a36e38d61c220c26da852d11227d60800" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>Scalar</name></member>
       <member refid="classclass__superblock_1a1e866c5bcf8537c249500c0d58fef7f3" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>shape1</name></member>
       <member refid="classclass__superblock_1ac333ff492b1b5247af7f0f8b748361e6" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>shape2</name></member>
       <member refid="classclass__superblock_1acd07373f6ee47fdd21fb38cb589b6c1c" prot="public" virt="non-virtual"><scope>class_superblock</scope><name>shape4</name></member>

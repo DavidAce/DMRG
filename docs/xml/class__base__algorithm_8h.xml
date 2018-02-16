@@ -6,186 +6,111 @@
     <includes local="no">map</includes>
     <includes refid="class__custom__cout_8h" local="no">IO/class_custom_cout.h</includes>
     <includes refid="class__tic__toc_8h" local="no">general/class_tic_toc.h</includes>
-    <includes refid="n__sim__settings_8h" local="no">sim_parameters/n_sim_settings.h</includes>
-    <includedby refid="class__base__algorithm_8cpp" local="yes">source/algorithms/class_base_algorithm.cpp</includedby>
+    <includes refid="nmspc__sim__settings_8h" local="no">sim_parameters/nmspc_sim_settings.h</includes>
     <includedby refid="class__excited__state___d_m_r_g_8h" local="yes">source/algorithms/class_excited_state_DMRG.h</includedby>
+    <includedby refid="class__base__algorithm_8cpp" local="yes">source/algorithms/class_base_algorithm.cpp</includedby>
     <includedby refid="class___f_e_s__i_d_m_r_g_8h" local="yes">source/algorithms/class_FES_iDMRG.h</includedby>
     <includedby refid="class__infinite___d_m_r_g_8h" local="yes">source/algorithms/class_infinite_DMRG.h</includedby>
     <includedby refid="class___f_e_s__i_t_e_b_d_8h" local="yes">source/algorithms/class_FES_iTEBD.h</includedby>
     <includedby refid="class__finite___d_m_r_g_8h" local="yes">source/algorithms/class_finite_DMRG.h</includedby>
     <includedby refid="class__imaginary___t_e_b_d_8h" local="yes">source/algorithms/class_imaginary_TEBD.h</includedby>
-    <includedby refid="class__measurement_8h" local="no">source/mps_routines/class_measurement.h</includedby>
+    <includedby refid="class__measurement_8cpp" local="no">source/mps_routines/class_measurement.cpp</includedby>
     <incdepgraph>
-      <node id="89">
+      <node id="86">
         <label>IO/class_custom_cout.h</label>
         <link refid="class__custom__cout_8h_source"/>
-        <childnode refid="90" relation="include">
-        </childnode>
-        <childnode refid="91" relation="include">
-        </childnode>
-      </node>
-      <node id="93">
-        <label>sim_parameters/n_sim_settings.h</label>
-        <link refid="n__sim__settings_8h_source"/>
-        <childnode refid="94" relation="include">
-        </childnode>
-      </node>
-      <node id="94">
-        <label>string</label>
-      </node>
-      <node id="92">
-        <label>general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h_source"/>
-        <childnode refid="90" relation="include">
-        </childnode>
-        <childnode refid="91" relation="include">
-        </childnode>
-      </node>
-      <node id="88">
-        <label>map</label>
-      </node>
-      <node id="86">
-        <label>source/algorithms/class_base_algorithm.h</label>
-        <link refid="class__base__algorithm_8h"/>
         <childnode refid="87" relation="include">
         </childnode>
         <childnode refid="88" relation="include">
         </childnode>
-        <childnode refid="89" relation="include">
-        </childnode>
-        <childnode refid="92" relation="include">
-        </childnode>
-        <childnode refid="93" relation="include">
-        </childnode>
       </node>
       <node id="91">
-        <label>iostream</label>
+        <label>string</label>
+      </node>
+      <node id="89">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h_source"/>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+      </node>
+      <node id="85">
+        <label>map</label>
       </node>
       <node id="90">
-        <label>chrono</label>
+        <label>sim_parameters/nmspc_sim_settings.h</label>
+        <link refid="nmspc__sim__settings_8h_source"/>
+        <childnode refid="91" relation="include">
+        </childnode>
+      </node>
+      <node id="83">
+        <label>source/algorithms/class_base_algorithm.h</label>
+        <link refid="class__base__algorithm_8h"/>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+      </node>
+      <node id="88">
+        <label>iostream</label>
       </node>
       <node id="87">
+        <label>chrono</label>
+      </node>
+      <node id="84">
         <label>memory</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="99">
+      <node id="96">
         <label>source/algorithms/class_FES_iTEBD.h</label>
         <link refid="class___f_e_s__i_t_e_b_d_8h_source"/>
       </node>
-      <node id="96">
+      <node id="93">
         <label>source/algorithms/class_excited_state_DMRG.h</label>
         <link refid="class__excited__state___d_m_r_g_8h_source"/>
       </node>
-      <node id="98">
+      <node id="95">
         <label>source/algorithms/class_infinite_DMRG.h</label>
         <link refid="class__infinite___d_m_r_g_8h_source"/>
       </node>
-      <node id="100">
+      <node id="97">
         <label>source/algorithms/class_finite_DMRG.h</label>
         <link refid="class__finite___d_m_r_g_8h_source"/>
       </node>
-      <node id="95">
+      <node id="92">
         <label>source/algorithms/class_base_algorithm.h</label>
         <link refid="class__base__algorithm_8h"/>
+        <childnode refid="93" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+        <childnode refid="95" relation="include">
+        </childnode>
         <childnode refid="96" relation="include">
         </childnode>
         <childnode refid="97" relation="include">
         </childnode>
         <childnode refid="98" relation="include">
         </childnode>
-        <childnode refid="99" relation="include">
-        </childnode>
-        <childnode refid="100" relation="include">
-        </childnode>
-        <childnode refid="101" relation="include">
-        </childnode>
-        <childnode refid="102" relation="include">
-        </childnode>
       </node>
-      <node id="101">
+      <node id="98">
         <label>source/algorithms/class_imaginary_TEBD.h</label>
         <link refid="class__imaginary___t_e_b_d_8h_source"/>
       </node>
-      <node id="102">
-        <label>source/mps_routines/class_measurement.h</label>
-        <link refid="class__measurement_8h_source"/>
-      </node>
-      <node id="97">
+      <node id="94">
         <label>source/algorithms/class_FES_iDMRG.h</label>
         <link refid="class___f_e_s__i_d_m_r_g_8h_source"/>
       </node>
     </invincdepgraph>
     <innerclass refid="classclass__algorithm__base" prot="public">class_algorithm_base</innerclass>
-      <sectiondef kind="enum">
-      <memberdef kind="enum" id="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921" prot="public" static="no">
-        <name>SimulationType</name>
-        <enumvalue id="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" prot="public">
-          <name>iDMRG</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9379cfd2380ced1835394b9fb513ccdb" prot="public">
-          <name>fDMRG</name>
-          <briefdescription>
-<para>Finite DMRG sweeps across the chain built during iDMRG. </para>          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921a3150b3272653c90490a32df95b103d79" prot="public">
-          <name>esDMRG</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921a3a6a2aaf168ed7e6639d9e4a962035d0" prot="public">
-          <name>FES_iDMRG</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" prot="public">
-          <name>iTEBD</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921aa4f17de7fbff40297fafdba8c5f15776" prot="public">
-          <name>FES_iTEBD</name>
-          <briefdescription>
-<para>Finite-entanglement scaling. </para>          </briefdescription>
-          <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>superblock</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>A class containing MPS, environment and Hamiltonian MPO objects.</para></parameterdescription>
-</parameteritem>
-</parameterlist>
-This function uses infinite algorithms (iTEBD or iDMRG) until the entropy converges, to see how entanglement grows as a function of <formula id="0">$\chi$</formula> (chi). </para>          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="class__base__algorithm_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab50339a10e1de285ac99d4c3990b8693" prot="public">
-          <name>NONE</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="19" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="19" bodyend="19"/>
-      </memberdef>
-      </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

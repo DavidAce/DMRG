@@ -2,120 +2,85 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="class__environment_8h" kind="file" language="C++">
     <compoundname>class_environment.h</compoundname>
-    <includes refid="n__tensor__extra_8h" local="yes">general/n_tensor_extra.h</includes>
-    <includes refid="class__mps_8h" local="yes">mps_routines/class_mps.h</includes>
-    <includes refid="n__model_8h" local="yes">sim_parameters/n_model.h</includes>
+    <includes local="no">memory</includes>
+    <includes refid="nmspc__tensor__extra_8h" local="yes">general/nmspc_tensor_extra.h</includes>
+    <includes refid="nmspc__model_8h" local="yes">sim_parameters/nmspc_model.h</includes>
+    <includedby refid="class__base__algorithm_8cpp" local="no">source/algorithms/class_base_algorithm.cpp</includedby>
     <includedby refid="class__environment_8cpp" local="yes">source/mps_routines/class_environment.cpp</includedby>
     <includedby refid="class__environment__storage_8h" local="yes">source/mps_routines/class_environment_storage.h</includedby>
-    <includedby refid="class__superblock_8h" local="no">source/mps_routines/class_superblock.h</includedby>
+    <includedby refid="class__environment__storage_8cpp" local="no">source/mps_routines/class_environment_storage.cpp</includedby>
+    <includedby refid="class__measurement_8cpp" local="no">source/mps_routines/class_measurement.cpp</includedby>
+    <includedby refid="class__superblock_8cpp" local="no">source/mps_routines/class_superblock.cpp</includedby>
     <incdepgraph>
-      <node id="653">
+      <node id="624">
         <label>iterator</label>
       </node>
-      <node id="651">
+      <node id="622">
         <label>Eigen/Core</label>
       </node>
-      <node id="652">
+      <node id="623">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="657">
+      <node id="627">
         <label>vector</label>
       </node>
-      <node id="655">
-        <label>mps_routines/class_mps.h</label>
-        <link refid="class__mps_8h_source"/>
-        <childnode refid="656" relation="include">
-        </childnode>
-        <childnode refid="650" relation="include">
-        </childnode>
-      </node>
-      <node id="650">
-        <label>general/n_tensor_extra.h</label>
-        <link refid="n__tensor__extra_8h_source"/>
-        <childnode refid="651" relation="include">
-        </childnode>
-        <childnode refid="652" relation="include">
-        </childnode>
-        <childnode refid="653" relation="include">
-        </childnode>
-        <childnode refid="654" relation="include">
-        </childnode>
-      </node>
-      <node id="658">
+      <node id="628">
         <label>array</label>
       </node>
-      <node id="656">
-        <label>sim_parameters/n_model.h</label>
-        <link refid="n__model_8h_source"/>
-        <childnode refid="657" relation="include">
-        </childnode>
-        <childnode refid="658" relation="include">
-        </childnode>
-        <childnode refid="651" relation="include">
-        </childnode>
-      </node>
-      <node id="654">
+      <node id="625">
         <label>iostream</label>
       </node>
-      <node id="649">
+      <node id="619">
         <label>source/mps_routines/class_environment.h</label>
         <link refid="class__environment_8h"/>
-        <childnode refid="650" relation="include">
+        <childnode refid="620" relation="include">
         </childnode>
-        <childnode refid="655" relation="include">
+        <childnode refid="621" relation="include">
         </childnode>
-        <childnode refid="656" relation="include">
+        <childnode refid="626" relation="include">
         </childnode>
+      </node>
+      <node id="626">
+        <label>sim_parameters/nmspc_model.h</label>
+        <link refid="nmspc__model_8h_source"/>
+        <childnode refid="627" relation="include">
+        </childnode>
+        <childnode refid="628" relation="include">
+        </childnode>
+        <childnode refid="622" relation="include">
+        </childnode>
+      </node>
+      <node id="621">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h_source"/>
+        <childnode refid="622" relation="include">
+        </childnode>
+        <childnode refid="623" relation="include">
+        </childnode>
+        <childnode refid="624" relation="include">
+        </childnode>
+        <childnode refid="625" relation="include">
+        </childnode>
+      </node>
+      <node id="620">
+        <label>memory</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="660">
+      <node id="630">
         <label>source/mps_routines/class_environment_storage.h</label>
         <link refid="class__environment__storage_8h_source"/>
       </node>
-      <node id="661">
-        <label>source/mps_routines/class_superblock.h</label>
-        <link refid="class__superblock_8h_source"/>
-      </node>
-      <node id="659">
+      <node id="629">
         <label>source/mps_routines/class_environment.h</label>
         <link refid="class__environment_8h"/>
-        <childnode refid="660" relation="include">
-        </childnode>
-        <childnode refid="661" relation="include">
+        <childnode refid="630" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
+    <innerclass refid="classclass__mps" prot="public">class_mps</innerclass>
     <innerclass refid="classclass__environment" prot="public">class_environment</innerclass>
     <innerclass refid="classclass__environment__var" prot="public">class_environment_var</innerclass>
-      <sectiondef kind="enum">
-      <memberdef kind="enum" id="class__environment_8h_1a8c0137d7160ad71b6ed265c53c99ed00" prot="public" static="no">
-        <name>Side</name>
-        <enumvalue id="class__environment_8h_1a8c0137d7160ad71b6ed265c53c99ed00ad20caec3b48a1eef164cb4ca81ba2587" prot="public">
-          <name>L</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="class__environment_8h_1a8c0137d7160ad71b6ed265c53c99ed00ae1e1d3d40573127e9ee0480caf1283d6" prot="public">
-          <name>R</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <briefdescription>
-<para>Environment block och type Left or Right. </para>        </briefdescription>
-        <detaileddescription>
-<para><heading level="1">Left environment</heading>
-</para><para>This class contains the Left environment block as a rank-3 tensor. New sites are contracted into the left environment as <formula id="17">\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]</formula> where <formula id="18">$W$</formula> is the rank-4 tensor Hamiltonian MPO.</para><para><heading level="1">Right environment</heading>
-</para><para>This class contains the Right environment block as a rank-3 tensor. New sites are contracted into the Right environment as <formula id="19">\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]</formula> where <formula id="18">$W$</formula> is the rank-4 tensor Hamiltonian MPO. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_environment.h" line="33" column="1" bodyfile="source/mps_routines/class_environment.h" bodystart="33" bodyend="33"/>
-      </memberdef>
-      </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

@@ -4,97 +4,95 @@
     <compoundname>class_mpo.cpp</compoundname>
     <includes local="no">unsupported/Eigen/KroneckerProduct</includes>
     <includes local="no">unsupported/Eigen/MatrixFunctions</includes>
-    <includes refid="n__tensor__extra_8h" local="yes">general/n_tensor_extra.h</includes>
-    <includes refid="class__mpo_8h" local="yes">class_mpo.h</includes>
+    <includes refid="nmspc__tensor__extra_8h" local="no">general/nmspc_tensor_extra.h</includes>
+    <includes refid="class__mpo_8h" local="no">mps_routines/class_mpo.h</includes>
     <incdepgraph>
-      <node id="766">
+      <node id="727">
         <label>iterator</label>
       </node>
-      <node id="773">
-        <label>sim_parameters/n_sim_settings.h</label>
-        <link refid="n__sim__settings_8h_source"/>
-        <childnode refid="774" relation="include">
-        </childnode>
-      </node>
-      <node id="764">
+      <node id="725">
         <label>Eigen/Core</label>
       </node>
-      <node id="774">
+      <node id="735">
         <label>string</label>
       </node>
-      <node id="762">
+      <node id="723">
         <label>unsupported/Eigen/MatrixFunctions</label>
       </node>
-      <node id="765">
+      <node id="726">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="771">
+      <node id="732">
         <label>vector</label>
       </node>
-      <node id="769">
+      <node id="730">
         <label>mps_routines/class_mps.h</label>
         <link refid="class__mps_8h_source"/>
-        <childnode refid="770" relation="include">
-        </childnode>
-        <childnode refid="763" relation="include">
+        <childnode refid="724" relation="include">
         </childnode>
       </node>
-      <node id="763">
-        <label>general/n_tensor_extra.h</label>
-        <link refid="n__tensor__extra_8h_source"/>
-        <childnode refid="764" relation="include">
-        </childnode>
-        <childnode refid="765" relation="include">
-        </childnode>
-        <childnode refid="766" relation="include">
-        </childnode>
-        <childnode refid="767" relation="include">
-        </childnode>
-      </node>
-      <node id="772">
+      <node id="733">
         <label>array</label>
       </node>
-      <node id="760">
+      <node id="721">
         <label>source/mps_routines/class_mpo.cpp</label>
         <link refid="class__mpo_8cpp"/>
-        <childnode refid="761" relation="include">
+        <childnode refid="722" relation="include">
         </childnode>
-        <childnode refid="762" relation="include">
+        <childnode refid="723" relation="include">
         </childnode>
-        <childnode refid="763" relation="include">
+        <childnode refid="724" relation="include">
         </childnode>
-        <childnode refid="768" relation="include">
+        <childnode refid="729" relation="include">
         </childnode>
       </node>
-      <node id="768">
-        <label>class_mpo.h</label>
+      <node id="734">
+        <label>sim_parameters/nmspc_sim_settings.h</label>
+        <link refid="nmspc__sim__settings_8h_source"/>
+        <childnode refid="735" relation="include">
+        </childnode>
+      </node>
+      <node id="729">
+        <label>mps_routines/class_mpo.h</label>
         <link refid="class__mpo_8h_source"/>
-        <childnode refid="762" relation="include">
+        <childnode refid="723" relation="include">
         </childnode>
-        <childnode refid="769" relation="include">
+        <childnode refid="730" relation="include">
         </childnode>
-        <childnode refid="763" relation="include">
+        <childnode refid="724" relation="include">
         </childnode>
-        <childnode refid="770" relation="include">
+        <childnode refid="731" relation="include">
         </childnode>
-        <childnode refid="773" relation="include">
-        </childnode>
-      </node>
-      <node id="770">
-        <label>sim_parameters/n_model.h</label>
-        <link refid="n__model_8h_source"/>
-        <childnode refid="771" relation="include">
-        </childnode>
-        <childnode refid="772" relation="include">
-        </childnode>
-        <childnode refid="764" relation="include">
+        <childnode refid="734" relation="include">
         </childnode>
       </node>
-      <node id="767">
+      <node id="728">
         <label>iostream</label>
       </node>
-      <node id="761">
+      <node id="731">
+        <label>sim_parameters/nmspc_model.h</label>
+        <link refid="nmspc__model_8h_source"/>
+        <childnode refid="732" relation="include">
+        </childnode>
+        <childnode refid="733" relation="include">
+        </childnode>
+        <childnode refid="725" relation="include">
+        </childnode>
+      </node>
+      <node id="722">
         <label>unsupported/Eigen/KroneckerProduct</label>
+      </node>
+      <node id="724">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h_source"/>
+        <childnode refid="725" relation="include">
+        </childnode>
+        <childnode refid="726" relation="include">
+        </childnode>
+        <childnode refid="727" relation="include">
+        </childnode>
+        <childnode refid="728" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <innernamespace refid="namespacestd_1_1complex__literals">std::complex_literals</innernamespace>

@@ -3,7 +3,7 @@
   <compounddef id="namespacesettings_1_1fdmrg" kind="namespace" language="C++">
     <compoundname>settings::fdmrg</compoundname>
       <sectiondef kind="var">
-      <memberdef kind="variable" id="n__sim__settings_8h_1a0efc934acf5c066b92b26f6bbf6ec05a" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a0efc934acf5c066b92b26f6bbf6ec05a" prot="public" static="no" mutable="no">
         <type>bool</type>
         <definition>bool settings::fdmrg::on</definition>
         <argsstring></argsstring>
@@ -15,9 +15,9 @@
 <para>Turns fDMRG simulation on/off. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="41" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="24" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="43" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="24" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1adfd5f775671270c1198c5efbbfbc5a28" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1adfd5f775671270c1198c5efbbfbc5a28" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int settings::fdmrg::max_length</definition>
         <argsstring></argsstring>
@@ -29,9 +29,9 @@
 <para>Number sweeps along the 1D quantum chain. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="42" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="25" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="44" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="25" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1a9d91b1111b853c692cbd1cdf860fafaa" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a9d91b1111b853c692cbd1cdf860fafaa" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int settings::fdmrg::max_sweeps</definition>
         <argsstring></argsstring>
@@ -43,9 +43,9 @@
 <para>Number sweeps along the 1D quantum chain. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="43" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="26" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="45" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="26" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1a591fd10b121c47245c0ededecc4fa238" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a591fd10b121c47245c0ededecc4fa238" prot="public" static="no" mutable="no">
         <type>long</type>
         <definition>long settings::fdmrg::chi_max</definition>
         <argsstring></argsstring>
@@ -57,9 +57,9 @@
 <para>Bond dimension of the current position (maximum number of singular values to keep in SVD). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="44" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="27" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="46" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="27" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1a4fa3a9934449bfe0030c4b6ecdafe07e" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a4fa3a9934449bfe0030c4b6ecdafe07e" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int settings::fdmrg::print_freq</definition>
         <argsstring></argsstring>
@@ -71,13 +71,13 @@
 <para>Print frequency for console output. (0 = off). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="45" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="28" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="47" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="28" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="source/sim_parameters/n_sim_settings.h" line="40" column="1"/>
+    <location file="source/sim_parameters/nmspc_sim_settings.h" line="42" column="1"/>
   </compounddef>
 </doxygen>

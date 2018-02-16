@@ -3,7 +3,7 @@
   <compounddef id="namespacesettings_1_1fes__idmrg" kind="namespace" language="C++">
     <compoundname>settings::fes_idmrg</compoundname>
       <sectiondef kind="var">
-      <memberdef kind="variable" id="n__sim__settings_8h_1ac4abbaa610bde307e001a1067199aa33" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1ac4abbaa610bde307e001a1067199aa33" prot="public" static="no" mutable="no">
         <type>bool</type>
         <definition>bool settings::fes_idmrg::on</definition>
         <argsstring></argsstring>
@@ -15,9 +15,9 @@
 <para>Turns FES-iDMRG simulation on/off. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="73" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="52" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="84" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="59" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1ad471f94a9df3a1d02c5b31ed93ab9efc" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1ad471f94a9df3a1d02c5b31ed93ab9efc" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int settings::fes_idmrg::max_length</definition>
         <argsstring></argsstring>
@@ -29,9 +29,9 @@
 <para>Number of FES iterations per chi-value. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="74" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="53" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="85" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="60" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1a411e9666e7623c38a48e2bb3784e0687" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a411e9666e7623c38a48e2bb3784e0687" prot="public" static="no" mutable="no">
         <type>long</type>
         <definition>long settings::fes_idmrg::chi_min</definition>
         <argsstring></argsstring>
@@ -43,9 +43,9 @@
 <para>Minimum chi-value in range. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="75" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="54" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="86" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="61" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1a7c6f51b694d87b3ddc288dca4f847147" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a7c6f51b694d87b3ddc288dca4f847147" prot="public" static="no" mutable="no">
         <type>long</type>
         <definition>long settings::fes_idmrg::chi_max</definition>
         <argsstring></argsstring>
@@ -57,9 +57,9 @@
 <para>Maximum chi-value in range. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="76" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="55" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="87" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="62" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1a3de88113809a8750636df5f40f7a845d" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a3de88113809a8750636df5f40f7a845d" prot="public" static="no" mutable="no">
         <type>long</type>
         <definition>long settings::fes_idmrg::chi_num</definition>
         <argsstring></argsstring>
@@ -71,9 +71,9 @@
 <para>Number of chi values for in range. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="77" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="56" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="88" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="63" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1a8769689b4b228f91db0f99297afad3bb" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a8769689b4b228f91db0f99297afad3bb" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int settings::fes_idmrg::print_freq</definition>
         <argsstring></argsstring>
@@ -85,13 +85,13 @@
 <para>Print frequency for console output. (0 = off). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="78" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="57" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="89" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="64" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="source/sim_parameters/n_sim_settings.h" line="72" column="1"/>
+    <location file="source/sim_parameters/nmspc_sim_settings.h" line="83" column="1"/>
   </compounddef>
 </doxygen>

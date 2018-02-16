@@ -15,7 +15,7 @@
     <includes refid="nmspc__type__check_8h" local="no">general/nmspc_type_check.h</includes>
     <includes local="no">directory.h</includes>
     <includes local="no">gitversion.h</includes>
-    <includes refid="n__sim__settings_8h" local="no">sim_parameters/n_sim_settings.h</includes>
+    <includes refid="nmspc__sim__settings_8h" local="no">sim_parameters/nmspc_sim_settings.h</includes>
     <includes local="no">iterator</includes>
     <includedby refid="class__algorithm__launcher_8cpp" local="no">source/algorithms/class_algorithm_launcher.cpp</includedby>
     <includedby refid="class__base__algorithm_8cpp" local="no">source/algorithms/class_base_algorithm.cpp</includedby>
@@ -24,100 +24,100 @@
     <includedby refid="class__hdf5__table__buffer_8cpp" local="no">source/IO/class_hdf5_table_buffer.cpp</includedby>
     <includedby refid="class__environment__storage_8cpp" local="no">source/mps_routines/class_environment_storage.cpp</includedby>
     <incdepgraph>
-      <node id="557">
+      <node id="534">
         <label>iomanip</label>
       </node>
-      <node id="562">
+      <node id="539">
         <label>class_custom_cout.h</label>
         <link refid="class__custom__cout_8h_source"/>
-        <childnode refid="563" relation="include">
+        <childnode refid="540" relation="include">
         </childnode>
-        <childnode refid="555" relation="include">
+        <childnode refid="532" relation="include">
         </childnode>
       </node>
-      <node id="569">
+      <node id="546">
         <label>iterator</label>
       </node>
-      <node id="552">
+      <node id="529">
         <label>source/IO/class_hdf5_file.h</label>
         <link refid="class__hdf5__file_8h"/>
-        <childnode refid="553" relation="include">
+        <childnode refid="530" relation="include">
         </childnode>
-        <childnode refid="554" relation="include">
+        <childnode refid="531" relation="include">
         </childnode>
-        <childnode refid="555" relation="include">
+        <childnode refid="532" relation="include">
         </childnode>
-        <childnode refid="556" relation="include">
+        <childnode refid="533" relation="include">
         </childnode>
-        <childnode refid="557" relation="include">
+        <childnode refid="534" relation="include">
         </childnode>
-        <childnode refid="558" relation="include">
+        <childnode refid="535" relation="include">
         </childnode>
-        <childnode refid="559" relation="include">
+        <childnode refid="536" relation="include">
         </childnode>
-        <childnode refid="560" relation="include">
+        <childnode refid="537" relation="include">
         </childnode>
-        <childnode refid="561" relation="include">
+        <childnode refid="538" relation="include">
         </childnode>
-        <childnode refid="562" relation="include">
+        <childnode refid="539" relation="include">
         </childnode>
-        <childnode refid="564" relation="include">
+        <childnode refid="541" relation="include">
         </childnode>
-        <childnode refid="566" relation="include">
+        <childnode refid="543" relation="include">
         </childnode>
-        <childnode refid="567" relation="include">
+        <childnode refid="544" relation="include">
         </childnode>
-        <childnode refid="568" relation="include">
+        <childnode refid="545" relation="include">
         </childnode>
-        <childnode refid="569" relation="include">
-        </childnode>
-      </node>
-      <node id="568">
-        <label>sim_parameters/n_sim_settings.h</label>
-        <link refid="n__sim__settings_8h_source"/>
-        <childnode refid="556" relation="include">
+        <childnode refid="546" relation="include">
         </childnode>
       </node>
-      <node id="564">
+      <node id="541">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h_source"/>
-        <childnode refid="565" relation="include">
+        <childnode refid="542" relation="include">
         </childnode>
       </node>
-      <node id="565">
+      <node id="542">
         <label>Eigen/Core</label>
       </node>
-      <node id="556">
+      <node id="533">
         <label>string</label>
       </node>
-      <node id="554">
+      <node id="531">
         <label>hdf5_hl.h</label>
       </node>
-      <node id="559">
+      <node id="536">
         <label>experimental/type_traits</label>
       </node>
-      <node id="561">
+      <node id="538">
         <label>typeinfo</label>
       </node>
-      <node id="567">
+      <node id="544">
         <label>gitversion.h</label>
       </node>
-      <node id="553">
+      <node id="530">
         <label>hdf5.h</label>
       </node>
-      <node id="566">
+      <node id="545">
+        <label>sim_parameters/nmspc_sim_settings.h</label>
+        <link refid="nmspc__sim__settings_8h_source"/>
+        <childnode refid="533" relation="include">
+        </childnode>
+      </node>
+      <node id="543">
         <label>directory.h</label>
       </node>
-      <node id="555">
+      <node id="532">
         <label>iostream</label>
       </node>
-      <node id="563">
+      <node id="540">
         <label>chrono</label>
       </node>
-      <node id="560">
+      <node id="537">
         <label>type_traits</label>
       </node>
-      <node id="558">
+      <node id="535">
         <label>experimental/filesystem</label>
       </node>
     </incdepgraph>

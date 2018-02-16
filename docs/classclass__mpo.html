@@ -43,6 +43,7 @@
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
         <h1>
+          <div class="m-dox-template">template&lt;typename Scalar&gt;</div>
           class_mpo <span class="m-thin">class</span>
         </h1>
         <p>MPO representations of the Hamiltonian. Class for the Hamiltonian MPO, either as a rank-4 MPO used in DMRG, or as a time evolution operator <svg class="m-math" style="vertical-align: -3.8pt;" height='14.944pt' version='1.1' viewBox='0 -8.96638 60.7634 11.9552' width='75.9543pt'>
@@ -81,33 +82,70 @@ $ \exp(-iH\delta t) $
             <li>
               Reference
               <ul>
+                <li><a href="#pub-static-attribs">Public static variables</a></li>
                 <li><a href="#pub-methods">Public functions</a></li>
+                <li><a href="#pub-attribs">Public variables</a></li>
               </ul>
             </li>
           </ul>
         </div>
+        <section id="pub-static-attribs">
+          <h2><a href="#pub-static-attribs">Public static variables</a></h3>
+          <dl class="m-dox">
+            <dt>static int <a href="#a6729be688adcc9f842b1a7dae680c1cc" class="m-dox">mps_sites</a> <span class="m-label m-flat m-primary">constexpr</span></dt>
+            <dd></dd>
+          </dl>
+        </section>
         <section id="pub-methods">
           <h2><a href="#pub-methods">Public functions</a></h3>
           <dl class="m-dox">
             <dt>
-              <span class="m-dox-wrap-bumper">auto <a href="#a295a3733385636498cb8f396b9fad6ae" class="m-dox">compute_F</a>(</span><span class="m-dox-wrap">double a) -&gt; Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt;</span>
+              <span class="m-dox-wrap-bumper">auto <a href="#a64cdff78e0f574607cff7a860ddf1ba0" class="m-dox">compute_F</a>(</span><span class="m-dox-wrap">double a) -&gt; Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt;</span>
             </dt>
             <dd></dd>
             <dt>
-              <span class="m-dox-wrap-bumper">auto <a href="#aa2ece23d469fa8c767c9ea5c8860be25" class="m-dox">compute_G</a>(</span><span class="m-dox-wrap">double a) -&gt; Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt;</span>
+              <span class="m-dox-wrap-bumper">auto <a href="#ad1dbe8c583da4e24b44881f018c67bd7" class="m-dox">compute_G</a>(</span><span class="m-dox-wrap">double a) -&gt; Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt;</span>
             </dt>
             <dd></dd>
             <dt>
-              <span class="m-dox-wrap-bumper">auto <a href="#ae760d46427e544650d293b78c63da7ac" class="m-dox">compute_logG</a>(</span><span class="m-dox-wrap">double a) -&gt; Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt;</span>
+              <span class="m-dox-wrap-bumper">auto <a href="#a2d2697ed7dfb39408923e72aa9f75e46" class="m-dox">compute_logG</a>(</span><span class="m-dox-wrap">double a) -&gt; Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt;</span>
             </dt>
+            <dd></dd>
+          </dl>
+        </section>
+        <section id="pub-attribs">
+          <h2><a href="#pub-attribs">Public variables</a></h3>
+          <dl class="m-dox">
+            <dt>long <a href="#a51e8d4b32c3b8a701746d4b8242b0533" class="m-dox">local_dimension</a></dt>
+            <dd></dd>
+            <dt>Textra::MatrixType&lt;Scalar&gt; <a href="#af5c706b681d11c83c1dd275f5227da7c" class="m-dox">H_asMatrix</a></dt>
+            <dd></dd>
+            <dt>Textra::Tensor&lt;Scalar, 4&gt; <a href="#a8faf33a247ebcb5546a875b9b241518c" class="m-dox">H_asTensor</a></dt>
+            <dd></dd>
+            <dt>Textra::MatrixType&lt;Scalar&gt; <a href="#ae4b2b72add9feed3e0c63141ca37fcfd" class="m-dox">H_MPO_asMatrix</a></dt>
+            <dd></dd>
+            <dt>Textra::Tensor&lt;Scalar, 2&gt; <a href="#a880227225e40817fd23e900f321fc461" class="m-dox">H_MPO_asTensor2</a></dt>
+            <dd></dd>
+            <dt>Textra::Tensor&lt;Scalar, 4&gt; <a href="#ab4a985e460cd5da8a4afe8ba578e83aa" class="m-dox">Udt</a></dt>
+            <dd></dd>
+            <dt>Textra::Tensor&lt;Scalar, 4&gt; <a href="#af82254663a4842313d067da6b13496f6" class="m-dox">M</a></dt>
+            <dd></dd>
+            <dt>Textra::Tensor&lt;Scalar, 6&gt; <a href="#af9955a2f9cbef67e37ea91292e01cb3b" class="m-dox">MM</a></dt>
+            <dd></dd>
+            <dt>Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt; <a href="#acf3a3721884639eb8fd90f693f2d5aed" class="m-dox">F</a></dt>
+            <dd></dd>
+            <dt>Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt; <a href="#accc9be25c53e00dc8a7ac8dc33df9d5e" class="m-dox">G</a></dt>
             <dd></dd>
           </dl>
         </section>
         <section>
           <h2>Function documentation</h2>
-          <section class="m-dox-details" id="a295a3733385636498cb8f396b9fad6ae"><div>
+          <section class="m-dox-details" id="a64cdff78e0f574607cff7a860ddf1ba0"><div>
             <h3>
-              <span class="m-dox-wrap-bumper">Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt; class_<wbr />mpo::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#a295a3733385636498cb8f396b9fad6ae" class="m-dox-self">compute_F</a>(</span><span class="m-dox-wrap">double a)</span></span>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              <span class="m-dox-wrap-bumper">Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt; class_<wbr />mpo&lt;Scalar&gt;::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#a64cdff78e0f574607cff7a860ddf1ba0" class="m-dox-self">compute_F</a>(</span><span class="m-dox-wrap">double a)</span></span>
             </h3>
 <p>Returns the moment generating function MPO hamiltonian as a rank 4 MPO. F := exp(aM), where a is a small parameter and M is an MPO.</p><pre>    0       1
     |       |
@@ -116,17 +154,125 @@ $ \exp(-iH\delta t) $
     2       3
 </pre><p>Where H = H_even + H_odd, so exp(aH) can be Suzuki-Trotter decomposed just as in iTEBD</p>
           </div></section>
-          <section class="m-dox-details" id="aa2ece23d469fa8c767c9ea5c8860be25"><div>
+          <section class="m-dox-details" id="ad1dbe8c583da4e24b44881f018c67bd7"><div>
             <h3>
-              <span class="m-dox-wrap-bumper">Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt; class_<wbr />mpo::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#aa2ece23d469fa8c767c9ea5c8860be25" class="m-dox-self">compute_G</a>(</span><span class="m-dox-wrap">double a)</span></span>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              <span class="m-dox-wrap-bumper">Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt; class_<wbr />mpo&lt;Scalar&gt;::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#ad1dbe8c583da4e24b44881f018c67bd7" class="m-dox-self">compute_G</a>(</span><span class="m-dox-wrap">double a)</span></span>
             </h3>
 <p>Returns the characteristic function MPO hamiltonian as a rank 4 tensor. G := exp(iaM), where a is a small parameter and M is an MPO. 0 1 | | [exp(iaH)] | | 2 3</p>
           </div></section>
-          <section class="m-dox-details" id="ae760d46427e544650d293b78c63da7ac"><div>
+          <section class="m-dox-details" id="a2d2697ed7dfb39408923e72aa9f75e46"><div>
             <h3>
-              <span class="m-dox-wrap-bumper">Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt; class_<wbr />mpo::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#ae760d46427e544650d293b78c63da7ac" class="m-dox-self">compute_logG</a>(</span><span class="m-dox-wrap">double a)</span></span>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              <span class="m-dox-wrap-bumper">Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt; class_<wbr />mpo&lt;Scalar&gt;::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#a2d2697ed7dfb39408923e72aa9f75e46" class="m-dox-self">compute_logG</a>(</span><span class="m-dox-wrap">double a)</span></span>
             </h3>
 <p>Returns the characteristic function MPO hamiltonian as a rank 4 tensor. G := exp(iaM), where a is a small parameter and M is an MPO. 0 1 | | [exp(iaH)] | | 2 3</p>
+          </div></section>
+        </section>
+        <section>
+          <h2>Variable documentation</h2>
+          <section class="m-dox-details" id="a6729be688adcc9f842b1a7dae680c1cc"><div>
+            <h3>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              static int class_<wbr />mpo&lt;Scalar&gt;::<wbr /><a href="#a6729be688adcc9f842b1a7dae680c1cc" class="m-dox-self">mps_sites</a> <span class="m-label m-primary">constexpr</span>
+            </h3>
+<p>Two site MPS</p>
+          </div></section>
+          <section class="m-dox-details" id="a51e8d4b32c3b8a701746d4b8242b0533"><div>
+            <h3>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              long class_<wbr />mpo&lt;Scalar&gt;::<wbr /><a href="#a51e8d4b32c3b8a701746d4b8242b0533" class="m-dox-self">local_dimension</a>
+            </h3>
+<p>Local &quot;spin&quot; dimension</p>
+          </div></section>
+          <section class="m-dox-details" id="af5c706b681d11c83c1dd275f5227da7c"><div>
+            <h3>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              Textra::MatrixType&lt;Scalar&gt; class_<wbr />mpo&lt;Scalar&gt;::<wbr /><a href="#af5c706b681d11c83c1dd275f5227da7c" class="m-dox-self">H_asMatrix</a>
+            </h3>
+<p>Matrix representation of full 2-site Hamiltonian</p>
+          </div></section>
+          <section class="m-dox-details" id="a8faf33a247ebcb5546a875b9b241518c"><div>
+            <h3>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              Textra::Tensor&lt;Scalar, 4&gt; class_<wbr />mpo&lt;Scalar&gt;::<wbr /><a href="#a8faf33a247ebcb5546a875b9b241518c" class="m-dox-self">H_asTensor</a>
+            </h3>
+<p>Rank-4 representation 2-site Hamiltonian (non MPO).</p>
+          </div></section>
+          <section class="m-dox-details" id="ae4b2b72add9feed3e0c63141ca37fcfd"><div>
+            <h3>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              Textra::MatrixType&lt;Scalar&gt; class_<wbr />mpo&lt;Scalar&gt;::<wbr /><a href="#ae4b2b72add9feed3e0c63141ca37fcfd" class="m-dox-self">H_MPO_asMatrix</a>
+            </h3>
+<p>Matrix representation of full 2-site Hamiltonian</p>
+          </div></section>
+          <section class="m-dox-details" id="a880227225e40817fd23e900f321fc461"><div>
+            <h3>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              Textra::Tensor&lt;Scalar, 2&gt; class_<wbr />mpo&lt;Scalar&gt;::<wbr /><a href="#a880227225e40817fd23e900f321fc461" class="m-dox-self">H_MPO_asTensor2</a>
+            </h3>
+<p>Matrix representation of full 2-site Hamiltonian</p>
+          </div></section>
+          <section class="m-dox-details" id="ab4a985e460cd5da8a4afe8ba578e83aa"><div>
+            <h3>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              Textra::Tensor&lt;Scalar, 4&gt; class_<wbr />mpo&lt;Scalar&gt;::<wbr /><a href="#ab4a985e460cd5da8a4afe8ba578e83aa" class="m-dox-self">Udt</a>
+            </h3>
+<p>Rank-4 of 2-site unitary time evolution operator for iTEBD (non MPO).</p>
+          </div></section>
+          <section class="m-dox-details" id="af82254663a4842313d067da6b13496f6"><div>
+            <h3>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              Textra::Tensor&lt;Scalar, 4&gt; class_<wbr />mpo&lt;Scalar&gt;::<wbr /><a href="#af82254663a4842313d067da6b13496f6" class="m-dox-self">M</a>
+            </h3>
+<p>MPO representation of 1-site Hamiltonian</p>
+          </div></section>
+          <section class="m-dox-details" id="af9955a2f9cbef67e37ea91292e01cb3b"><div>
+            <h3>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              Textra::Tensor&lt;Scalar, 6&gt; class_<wbr />mpo&lt;Scalar&gt;::<wbr /><a href="#af9955a2f9cbef67e37ea91292e01cb3b" class="m-dox-self">MM</a>
+            </h3>
+<p>MPO representation of 2-site Hamiltonian</p>
+          </div></section>
+          <section class="m-dox-details" id="acf3a3721884639eb8fd90f693f2d5aed"><div>
+            <h3>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt; class_<wbr />mpo&lt;Scalar&gt;::<wbr /><a href="#acf3a3721884639eb8fd90f693f2d5aed" class="m-dox-self">F</a>
+            </h3>
+<p>MPO representation of 1-site moment generating function</p>
+          </div></section>
+          <section class="m-dox-details" id="accc9be25c53e00dc8a7ac8dc33df9d5e"><div>
+            <h3>
+              <div class="m-dox-template">
+                template&lt;typename Scalar&gt;
+              </div>
+              Textra::Tensor&lt;std::complex&lt;double&gt;, 4&gt; class_<wbr />mpo&lt;Scalar&gt;::<wbr /><a href="#accc9be25c53e00dc8a7ac8dc33df9d5e" class="m-dox-self">G</a>
+            </h3>
+<p>MPO representation of 1-site characteristic function of the Hamiltonian</p>
           </div></section>
         </section>
       </div>
