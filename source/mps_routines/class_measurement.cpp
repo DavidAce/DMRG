@@ -62,8 +62,10 @@ double class_measurement::first_moment(){
 //    double E2 = get_expectationvalue(superblock->H->M) * get_expectationvalue(superblock->H->M);
 
 
-    variance1 = 1.0; //H2-E2;
+//    variance1 = 1.0; //H2-E2;
+    variance1 = std::log(std::pow(std::abs(ga1),2));
     variance2 = std::fabs((std::log(std::pow(std::fabs(ga1),2))));
+    variance3 = std::log(std::pow(std::abs(ga1),2));
     return std::log(std::pow(std::abs(ga1),2));
 }
 
@@ -195,7 +197,6 @@ double class_measurement::get_variance(){
 
 double class_measurement::get_variance1(){return variance1;};
 double class_measurement::get_variance2(){return variance2;};
-double class_measurement::get_variance3(){return variance3;};
 
 double class_measurement::get_truncation_error(){
     return superblock->truncation_error;

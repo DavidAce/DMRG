@@ -253,33 +253,33 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="36">
+      <node id="38">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
       </node>
-      <node id="35">
+      <node id="37">
         <label>class_FES_iTEBD</label>
         <link refid="classclass___f_e_s__i_t_e_b_d"/>
-        <childnode refid="36" relation="public-inheritance">
+        <childnode refid="38" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="39">
+      <node id="41">
         <label>class_custom_cout</label>
         <link refid="classclass__custom__cout"/>
       </node>
-      <node id="40">
+      <node id="42">
         <label>class_tic_toc</label>
         <link refid="classclass__tic__toc"/>
       </node>
-      <node id="38">
+      <node id="40">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
-        <childnode refid="39" relation="usage">
+        <childnode refid="41" relation="usage">
           <edgelabel>ccout</edgelabel>
         </childnode>
-        <childnode refid="40" relation="usage">
+        <childnode refid="42" relation="usage">
           <edgelabel>t_udt</edgelabel>
           <edgelabel>t_eig</edgelabel>
           <edgelabel>t_ste</edgelabel>
@@ -293,10 +293,10 @@
           <edgelabel>...</edgelabel>
         </childnode>
       </node>
-      <node id="37">
+      <node id="39">
         <label>class_FES_iTEBD</label>
         <link refid="classclass___f_e_s__i_t_e_b_d"/>
-        <childnode refid="38" relation="public-inheritance">
+        <childnode refid="40" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

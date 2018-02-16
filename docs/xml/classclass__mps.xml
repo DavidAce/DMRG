@@ -71,7 +71,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="26">$\Gamma^A$</formula> </para>        </detaileddescription>
+<para><formula id="34">$\Gamma^A$</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_mps.h" line="54" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="54" bodyend="-1"/>
@@ -84,7 +84,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="27">$\Gamma^B$</formula> </para>        </detaileddescription>
+<para><formula id="35">$\Gamma^B$</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_mps.h" line="55" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="55" bodyend="-1"/>
@@ -97,7 +97,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="40">$\Lambda^A$</formula> </para>        </detaileddescription>
+<para><formula id="48">$\Lambda^A$</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_mps.h" line="56" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="56" bodyend="-1"/>
@@ -110,7 +110,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="41">$\Lambda^B$</formula> </para>        </detaileddescription>
+<para><formula id="49">$\Lambda^B$</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_mps.h" line="57" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="57" bodyend="-1"/>
@@ -123,7 +123,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="39">$\Lambda^B_{n+1}$</formula> or <formula id="37">$\Lambda^B_{n-1}$</formula> in iDMRG or fDMRG respectively. </para>        </detaileddescription>
+<para><formula id="47">$\Lambda^B_{n+1}$</formula> or <formula id="45">$\Lambda^B_{n-1}$</formula> in iDMRG or fDMRG respectively. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_mps.h" line="58" column="1" bodyfile="source/mps_routines/class_mps.h" bodystart="58" bodyend="-1"/>
@@ -233,7 +233,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="21">$\Theta$</formula>. </para>        </detaileddescription>
+<para>Returns rank 4 tensor <formula id="29">$\Theta$</formula>. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_mps.h" line="70" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="78" bodyend="88"/>
@@ -426,14 +426,14 @@
     <briefdescription>
 <para>Environment block och type Left or Right. </para>    </briefdescription>
     <detaileddescription>
-<para>Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites <formula id="7">$n$</formula> and <formula id="32">$n+1$</formula>, respectively.</para><para><heading level="1">Left environment</heading>
-</para><para>This class contains the Left environment block as a rank-3 tensor. New sites are contracted into the left environment as <formula id="16">\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]</formula> where <formula id="17">$W$</formula> is the rank-4 tensor Hamiltonian MPO.</para><para><heading level="1">Right environment</heading>
-</para><para>This class contains the Right environment block as a rank-3 tensor. New sites are contracted into the Right environment as <formula id="18">\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]</formula> where <formula id="17">$W$</formula> is the rank-4 tensor Hamiltonian MPO.</para><sect1 id="classclass__mps_1description">
+<para>Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites <formula id="7">$n$</formula> and <formula id="40">$n+1$</formula>, respectively.</para><para><heading level="1">Left environment</heading>
+</para><para>This class contains the Left environment block as a rank-3 tensor. New sites are contracted into the left environment as <formula id="24">\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]</formula> where <formula id="25">$W$</formula> is the rank-4 tensor Hamiltonian MPO.</para><para><heading level="1">Right environment</heading>
+</para><para>This class contains the Right environment block as a rank-3 tensor. New sites are contracted into the Right environment as <formula id="26">\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]</formula> where <formula id="25">$W$</formula> is the rank-4 tensor Hamiltonian MPO.</para><sect1 id="classclass__mps_1description">
 <title>Description</title>
 <para>During the initial infinite-DMRG stage, sites A and B are swapped in each iteration to mimic the movement between even and odd positions in a translationally invariant chain.</para><sect2 id="classclass__mps_1background">
 <title>Background</title>
-<para>In both the infinite and finite DMRG algorithms, the MPS in this class will be used to construct <formula id="21">$\Theta$</formula>, a two-site MPS tensor of rank 4:</para><para><formula id="33">\[ \Theta = \Lambda^B_{n-1} \Gamma^A_{n} \Lambda^A_{n} \Gamma^B_{n+1} \Lambda^B_{n+1}. \]</formula></para><para><blockquote><para>Note that the first <formula id="34">$ \Lambda^B_{n-1} $</formula> is special:<itemizedlist>
-<listitem><para>During infinite-DMRG <formula id="35">$ \Lambda^B_{n-1} = \Lambda^B_{n+1} $</formula> because we expect the MPS to be symmetric about <formula id="7">$n$</formula>.</para></listitem><listitem><para>During finite-DMRG it is simply the bond directly to the left of <formula id="7">$n$</formula>. </para></listitem></itemizedlist>
+<para>In both the infinite and finite DMRG algorithms, the MPS in this class will be used to construct <formula id="29">$\Theta$</formula>, a two-site MPS tensor of rank 4:</para><para><formula id="41">\[ \Theta = \Lambda^B_{n-1} \Gamma^A_{n} \Lambda^A_{n} \Gamma^B_{n+1} \Lambda^B_{n+1}. \]</formula></para><para><blockquote><para>Note that the first <formula id="42">$ \Lambda^B_{n-1} $</formula> is special:<itemizedlist>
+<listitem><para>During infinite-DMRG <formula id="43">$ \Lambda^B_{n-1} = \Lambda^B_{n+1} $</formula> because we expect the MPS to be symmetric about <formula id="7">$n$</formula>.</para></listitem><listitem><para>During finite-DMRG it is simply the bond directly to the left of <formula id="7">$n$</formula>. </para></listitem></itemizedlist>
 </para></blockquote></para></sect2>
 <sect2 id="classclass__mps_1diagram">
 <title>Diagram</title>
@@ -441,7 +441,7 @@
        Theta     =  [chia]__.__|__.__|__.__[chib]
 
                            LB  GA LA GB LB</verbatim> where the values in [ ] denote the dimension of each leg of the full tensor:<itemizedlist>
-<listitem><para><formula id="10">$d$</formula> = local (or physical) dimension. Default is 2 for spin-1/2, Ising spins or qubits.</para></listitem><listitem><para><formula id="36">$\chi_a$</formula> = Left dimension equivalent to bond dimension of <formula id="37">$\Lambda^B_{n-1}$</formula></para></listitem><listitem><para><formula id="38">$\chi_b$</formula> = Right dimension equivalent to bond dimension of <formula id="39">$\Lambda^B_{n+1}$</formula></para></listitem></itemizedlist>
+<listitem><para><formula id="10">$d$</formula> = local (or physical) dimension. Default is 2 for spin-1/2, Ising spins or qubits.</para></listitem><listitem><para><formula id="44">$\chi_a$</formula> = Left dimension equivalent to bond dimension of <formula id="45">$\Lambda^B_{n-1}$</formula></para></listitem><listitem><para><formula id="46">$\chi_b$</formula> = Right dimension equivalent to bond dimension of <formula id="47">$\Lambda^B_{n+1}$</formula></para></listitem></itemizedlist>
 </para><para>Tensor index order convention: See the <ulink url="index.html">Home page</ulink>. </para></sect2>
 </sect1>
     </detaileddescription>

@@ -58,8 +58,8 @@ class_superblock::class_superblock():
 // Find smallest eigenvalue using Arpack.
 //============================================================================//
 void class_superblock::find_ground_state_arpack(int eigSteps, double eigThreshold){
-    Tensor<double,1> theta = MPS->get_theta().shuffle(array4{0,2,1,3}).reshape(shape1);
-    class_custom_contraction<double>  esp(theta,Lblock->block, Rblock->block, H->MM, shape4);
+    Tensor<Scalar,1> theta = MPS->get_theta().shuffle(array4{0,2,1,3}).reshape(shape1);
+    class_custom_contraction<double>  esp(Lblock->block, Rblock->block, H->MM, shape4);
     int ncv = std::min(10,(int)theta.size());
     int nev = 1;
     int dim = esp.cols();
@@ -77,7 +77,7 @@ void class_superblock::find_ground_state_arpack(int eigSteps, double eigThreshol
             eigvecs(j, i) = eig.Eigenvector(i, j);
         }
     }
-    std::cout << "E: "<< eigvals(0)/chain_length << std::endl;
+    energy = eigvals(0);
     ground_state = eigvecs.reshape(shape2);
 }
 

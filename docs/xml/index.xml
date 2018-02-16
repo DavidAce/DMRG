@@ -60,6 +60,20 @@
     <member refid="classclass__arpackpp__wrapper_1acd082b643939effd763e627a8a76f112" kind="function"><name>class_arpackpp_wrapper</name></member>
     <member refid="classclass__arpackpp__wrapper_1a1be729722627d19fabd5f1f297f748d6" kind="function"><name>solve_dominant</name></member>
   </compound>
+  <compound refid="classclass__custom__contraction" kind="class"><name>class_custom_contraction</name>
+    <member refid="classclass__custom__contraction_1aaadb11e52186acec2141a8b6df3e047a" kind="typedef"><name>Scalar</name></member>
+    <member refid="classclass__custom__contraction_1a136a56285534ae1ef35a1847584efd8f" kind="variable"><name>Lblock</name></member>
+    <member refid="classclass__custom__contraction_1a0c1c438280c02a7dbf6c0ab0ab4a86d2" kind="variable"><name>Rblock</name></member>
+    <member refid="classclass__custom__contraction_1a5d353af14aa598784bf8c70fd22527e2" kind="variable"><name>MM</name></member>
+    <member refid="classclass__custom__contraction_1ae52923167b3c7ad13d2477c4b2e018ab" kind="variable"><name>shape4</name></member>
+    <member refid="classclass__custom__contraction_1ab25484f46e504ece440737fb43213a47" kind="variable"><name>shape1</name></member>
+    <member refid="classclass__custom__contraction_1a855e5c06d6b7dfd052cab182de8f8904" kind="variable"><name>sortedIndices1</name></member>
+    <member refid="classclass__custom__contraction_1a1d23da215f36d2542ae814b005aed46a" kind="variable"><name>sortedIndices2</name></member>
+    <member refid="classclass__custom__contraction_1a5ce75af89db4da49a8e6eac5a66305e7" kind="function"><name>rows</name></member>
+    <member refid="classclass__custom__contraction_1a468b8288b931f5e5771d56978fada6fe" kind="function"><name>cols</name></member>
+    <member refid="classclass__custom__contraction_1a75444333463a638f874ac6099e0547a1" kind="function"><name>MultMv</name></member>
+    <member refid="classclass__custom__contraction_1a026e5ae9cdc78084814871b4bcf2a16e" kind="function"><name>class_custom_contraction</name></member>
+  </compound>
   <compound refid="classclass__custom__cout" kind="class"><name>class_custom_cout</name>
     <member refid="classclass__custom__cout_1a41c693134f123db4ec21bc858f2b7522" kind="variable"><name>verbosity</name></member>
     <member refid="classclass__custom__cout_1ac569003df823e772ffac9a2de47f2208" kind="variable"><name>temp_verbosity</name></member>

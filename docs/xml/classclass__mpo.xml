@@ -436,7 +436,7 @@
       </memberdef>
       </sectiondef>
     <briefdescription>
-<para>MPO representations of the Hamiltonian. Class for the Hamiltonian MPO, either as a rank-4 MPO used in DMRG, or as a time evolution operator <formula id="31">$ \exp(-iH\delta t) $</formula> as used in TEBD. </para>    </briefdescription>
+<para>MPO representations of the Hamiltonian. Class for the Hamiltonian MPO, either as a rank-4 MPO used in DMRG, or as a time evolution operator <formula id="39">$ \exp(-iH\delta t) $</formula> as used in TEBD. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <location file="source/mps_routines/class_mpo.h" line="27" column="1" bodyfile="source/mps_routines/class_mpo.h" bodystart="27" bodyend="71"/>

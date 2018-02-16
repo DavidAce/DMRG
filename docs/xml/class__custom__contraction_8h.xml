@@ -36,6 +36,7 @@
         </childnode>
       </node>
     </incdepgraph>
+    <innerclass refid="classclass__custom__contraction" prot="public">class_custom_contraction</innerclass>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

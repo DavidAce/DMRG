@@ -156,39 +156,39 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="66">
-        <label>class_infinite_DMRG</label>
-        <link refid="classclass__infinite___d_m_r_g"/>
-        <childnode refid="67" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="67">
-        <label>class_algorithm_base</label>
-        <link refid="classclass__algorithm__base"/>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
-      <node id="70">
-        <label>class_custom_cout</label>
-        <link refid="classclass__custom__cout"/>
-      </node>
       <node id="68">
         <label>class_infinite_DMRG</label>
         <link refid="classclass__infinite___d_m_r_g"/>
         <childnode refid="69" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="71">
-        <label>class_tic_toc</label>
-        <link refid="classclass__tic__toc"/>
-      </node>
       <node id="69">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
-        <childnode refid="70" relation="usage">
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="72">
+        <label>class_custom_cout</label>
+        <link refid="classclass__custom__cout"/>
+      </node>
+      <node id="70">
+        <label>class_infinite_DMRG</label>
+        <link refid="classclass__infinite___d_m_r_g"/>
+        <childnode refid="71" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="73">
+        <label>class_tic_toc</label>
+        <link refid="classclass__tic__toc"/>
+      </node>
+      <node id="71">
+        <label>class_algorithm_base</label>
+        <link refid="classclass__algorithm__base"/>
+        <childnode refid="72" relation="usage">
           <edgelabel>ccout</edgelabel>
         </childnode>
-        <childnode refid="71" relation="usage">
+        <childnode refid="73" relation="usage">
           <edgelabel>t_udt</edgelabel>
           <edgelabel>t_eig</edgelabel>
           <edgelabel>t_ste</edgelabel>

@@ -17,41 +17,47 @@ struct table_entry{
     long   chi_max;
     double energy;
     double entropy;
+    double variance;
     double variance1;
-    double variance2;
     double truncation_error;
     int    iteration;
     int    chain_length;
+    int    sweep;
+    int    position;
     double time_step;
     double wall_time;
     double phys_time;
 
     table_entry(
-    long   chi,
-    long   chi_max,
-    double energy,
-    double entropy,
-    double variance1,
-    double variance2,
-    double truncation_error,
-    int    iteration,
-    int    chain_length,
-    double time_step,
-    double wall_time,
-    double phys_time
+    long   chi_,
+    long   chi_max_,
+    double energy_,
+    double entropy_,
+    double variance_,
+    double variance1_,
+    double truncation_error_,
+    int    iteration_,
+    int    chain_length_,
+    int    sweep_,
+    int    position_,
+    double time_step_,
+    double wall_time_,
+    double phys_time_
     ) :
-            chi(chi),
-            chi_max(chi_max),
-            energy(energy),
-            entropy(entropy),
-            variance1(variance1),
-            variance2(variance2),
-            truncation_error(truncation_error),
-            iteration(iteration),
-            chain_length(chain_length),
-            time_step(time_step),
-            wall_time(wall_time),
-            phys_time(phys_time)
+            chi(chi_),
+            chi_max(chi_max_),
+            energy(energy_),
+            entropy(entropy_),
+            variance(variance_),
+            variance1(variance1_),
+            truncation_error(truncation_error_),
+            iteration(iteration_),
+            chain_length(chain_length_),
+            sweep(sweep_),
+            position(position_),
+            time_step(time_step_),
+            wall_time(wall_time_),
+            phys_time(phys_time_)
             {}
 };
 
@@ -59,17 +65,19 @@ struct table_entry{
 
 class class_table_entry_meta{
 public:
-    constexpr static hsize_t NFIELDS = 12;
+    constexpr static hsize_t NFIELDS = 14;
     size_t dst_size = sizeof( table_entry );
     size_t dst_offset[NFIELDS] = { HOFFSET(table_entry, chi),
                                    HOFFSET(table_entry, chi_max),
                                    HOFFSET(table_entry, energy),
                                    HOFFSET(table_entry, entropy),
+                                   HOFFSET(table_entry, variance),
                                    HOFFSET(table_entry, variance1),
-                                   HOFFSET(table_entry, variance2),
                                    HOFFSET(table_entry, truncation_error),
                                    HOFFSET(table_entry, iteration),
                                    HOFFSET(table_entry, chain_length),
+                                   HOFFSET(table_entry, sweep),
+                                   HOFFSET(table_entry, position),
                                    HOFFSET(table_entry, time_step),
                                    HOFFSET(table_entry, wall_time),
                                    HOFFSET(table_entry, phys_time)};
@@ -77,11 +85,13 @@ public:
                                    sizeof(table_entry::chi_max),
                                    sizeof(table_entry::energy),
                                    sizeof(table_entry::entropy),
+                                   sizeof(table_entry::variance),
                                    sizeof(table_entry::variance1),
-                                   sizeof(table_entry::variance2),
                                    sizeof(table_entry::truncation_error),
                                    sizeof(table_entry::iteration),
                                    sizeof(table_entry::chain_length),
+                                   sizeof(table_entry::sweep),
+                                   sizeof(table_entry::position),
                                    sizeof(table_entry::time_step),
                                    sizeof(table_entry::wall_time),
                                    sizeof(table_entry::phys_time)};
@@ -91,11 +101,13 @@ public:
               "chi_max",
               "energy",
               "entropy",
+              "variance",
               "variance1",
-              "variance2",
               "truncation_error",
-              "position",
+              "iteration",
               "chain_length",
+              "sweep",
+              "position",
               "time_step",
               "wall_time",
               "phys_time"};
@@ -109,6 +121,8 @@ public:
                                       H5T_NATIVE_DOUBLE,
                                       H5T_NATIVE_INT,
                                       H5T_NATIVE_INT,
+                                      H5T_NATIVE_INT,
+                                      H5T_NATIVE_INT,
                                       H5T_NATIVE_DOUBLE,
                                       H5T_NATIVE_DOUBLE,
                                       H5T_NATIVE_DOUBLE};
@@ -118,7 +132,7 @@ public:
     int        compress    = 0;
     int        i;
     class_table_entry_meta(){
-        H5Tset_size( string_type, 16 );
+        H5Tset_size( string_type, 24 );
     }
 };
 

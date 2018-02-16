@@ -273,31 +273,31 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="55">
-        <label>class_hdf5_table_buffer</label>
-        <link refid="classclass__hdf5__table__buffer"/>
-        <childnode refid="56" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="56">
-        <label>std::vector&lt; table_entry &gt;</label>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
       <node id="57">
         <label>class_hdf5_table_buffer</label>
         <link refid="classclass__hdf5__table__buffer"/>
         <childnode refid="58" relation="public-inheritance">
         </childnode>
-        <childnode refid="59" relation="usage">
+      </node>
+      <node id="58">
+        <label>std::vector&lt; table_entry &gt;</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="59">
+        <label>class_hdf5_table_buffer</label>
+        <link refid="classclass__hdf5__table__buffer"/>
+        <childnode refid="60" relation="public-inheritance">
+        </childnode>
+        <childnode refid="61" relation="usage">
           <edgelabel>meta</edgelabel>
         </childnode>
       </node>
-      <node id="59">
+      <node id="61">
         <label>class_table_entry_meta</label>
         <link refid="classclass__table__entry__meta"/>
       </node>
-      <node id="58">
+      <node id="60">
         <label>std::vector&lt; table_entry &gt;</label>
       </node>
     </collaborationgraph>

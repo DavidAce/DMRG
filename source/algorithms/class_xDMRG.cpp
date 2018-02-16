@@ -12,11 +12,11 @@
 #include <mps_routines/class_environment_storage.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
-#include "class_excited_state_DMRG.h"
+#include "class_xDMRG.h"
 using namespace std;
 using namespace Textra;
 
-class_excited_state_DMRG::class_excited_state_DMRG(std::shared_ptr<class_hdf5_file> hdf5_)
+class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_algorithm_base() {
 
     simtype = SimulationType::xDMRG;
@@ -32,7 +32,7 @@ class_excited_state_DMRG::class_excited_state_DMRG(std::shared_ptr<class_hdf5_fi
 
 
 
-void class_excited_state_DMRG::run() {
+void class_xDMRG::run() {
     if (!settings::xdmrg::on) { return; }
     ccout(0) << "\nStarting " << simulation_name << " simulation" << std::endl;
     t_tot.tic();
@@ -53,7 +53,7 @@ void class_excited_state_DMRG::run() {
 
 }
 
-int class_excited_state_DMRG::initialize_random_chain() {
+int class_xDMRG::initialize_random_chain() {
 
     while (true) {
         auto r1 = rn::uniform_complex_1();
@@ -76,25 +76,25 @@ int class_excited_state_DMRG::initialize_random_chain() {
 
 
 
-int class_excited_state_DMRG::env_storage_insert() {
+int class_xDMRG::env_storage_insert() {
     t_ste.tic();
     int position = env_storage->insert();
     t_ste.toc();
     return position;
 }
 
-int class_excited_state_DMRG::env_storage_load(){
+int class_xDMRG::env_storage_load(){
     t_ste.tic();
     int position = env_storage->load();
     t_ste.toc();
     return position;
 }
-void class_excited_state_DMRG::env_storage_overwrite_MPS(){
+void class_xDMRG::env_storage_overwrite_MPS(){
     t_ste.tic();
     env_storage->overwrite_MPS();
     t_ste.toc();
 }
-int class_excited_state_DMRG::env_storage_move(){
+int class_xDMRG::env_storage_move(){
     t_ste.tic();
     int position = env_storage->move(direction, sweep);
     t_ste.toc();
@@ -102,24 +102,26 @@ int class_excited_state_DMRG::env_storage_move(){
 }
 
 
-void class_excited_state_DMRG::store_table_entry(){
+void class_xDMRG::store_table_entry(){
     t_sto.tic();
-    table_buffer->emplace_back(superblock->chi,
+    table_buffer->emplace_back(measurement->get_chi(),
                                chi_max,
                                measurement->get_energy(),
                                measurement->get_entropy(),
                                measurement->get_variance1(),
                                measurement->get_variance2(),
                                measurement->get_truncation_error(),
-                               position,
+                               0,
                                superblock->chain_length,
+                               sweep,
+                               position,
                                0,
                                t_tot.get_age(),
                                0);
     t_sto.toc();
 }
 
-void class_excited_state_DMRG::print_profiling(){
+void class_xDMRG::print_profiling(){
     if (settings::profiling::on) {
         t_tot.print_time_w_percent();
         t_sto.print_time_w_percent(t_tot);
@@ -133,7 +135,7 @@ void class_excited_state_DMRG::print_profiling(){
     }
 }
 
-void class_excited_state_DMRG::print_status_update() {
+void class_xDMRG::print_status_update() {
     if (position != middle_of_chain) {return;}
     if (print_freq == 0) {return;}
 
@@ -155,7 +157,7 @@ void class_excited_state_DMRG::print_status_update() {
 
 }
 
-void class_excited_state_DMRG::print_status_full(){
+void class_xDMRG::print_status_full(){
     std::cout << std::endl;
     std::cout << " -- Final results -- " << simulation_name << std::endl;
     ccout(0)  << setw(20) << "Energy               = " << setprecision(16) << fixed      << measurement->get_energy()        << std::endl;

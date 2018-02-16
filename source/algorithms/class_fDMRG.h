@@ -1,34 +1,33 @@
 //
-// Created by david on 2018-02-09.
+// Created by david on 2018-01-31.
 //
 
-#ifndef DMRG_CLASS_EXITED_DMRG_H
-#define DMRG_CLASS_EXITED_DMRG_H
+#ifndef DMRG_CLASS_FINITE_DMRG_H
+#define DMRG_CLASS_FINITE_DMRG_H
+
 
 #include "class_base_algorithm.h"
-
 /*!
- * \brief Class that runs the excited-state DMRG algorithm.
+ * \brief Class that runs the finite DMRG algorithm.
  */
-
 class class_environment_storage;
-class class_excited_state_DMRG : public class_algorithm_base {
+class class_fDMRG : public class_algorithm_base {
 public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_base::class_algorithm_base;
-    explicit class_excited_state_DMRG(std::shared_ptr<class_hdf5_file> hdf5_);
-    long chi_max    = settings::xdmrg::chi_max;
-    int  max_length = settings::xdmrg::max_length;
-    int  print_freq = settings::xdmrg::print_freq;
-    int  max_sweeps = settings::xdmrg::max_sweeps;
+    explicit class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
+    long chi_max    = settings::fdmrg::chi_max;
+    int  max_length = settings::fdmrg::max_length;
+    int  print_freq = settings::fdmrg::print_freq;
+    int  max_sweeps = settings::fdmrg::max_sweeps;
     int  direction  = 1;
     int  sweep      = 0;
-    int  position  = 0;
+    int  position   = 0;
     int  middle_of_chain = max_length/2;
 
     std::shared_ptr<class_environment_storage>  env_storage;
     void run() override;
-    int  initialize_random_chain();
+    int  initialize_chain();
     int  env_storage_insert();
     int  env_storage_load();
     void env_storage_overwrite_MPS();
@@ -40,8 +39,9 @@ public:
 
     void store_table_entry()   override;
     void print_profiling()     override;
+
 };
 
 
 
-#endif //DMRG_CLASS_EXITED_DMRG_H
+#endif //DMRG_CLASS_FINITE_DMRG_H
