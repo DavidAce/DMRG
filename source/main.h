@@ -1,6 +1,5 @@
 #ifndef DMRG_MAIN_H
 #define DMRG_MAIN_H
-//#define EIGEN_USE_MKL_ALL
 
 /*! \mainpage
 

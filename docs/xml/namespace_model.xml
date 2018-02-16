@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.h" line="31" column="1" bodyfile="source/sim_parameters/n_model.h" bodystart="31" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_model.h" line="31" column="1" bodyfile="source/sim_parameters/nmspc_model.h" bodystart="31" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespace_model_1a582e9bbe9c861dc9090e250f5f35522d" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.h" line="32" column="1" bodyfile="source/sim_parameters/n_model.h" bodystart="32" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_model.h" line="32" column="1" bodyfile="source/sim_parameters/nmspc_model.h" bodystart="32" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespace_model_1a9373ce073c1c4c4c178ca26c04832825" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -43,7 +43,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.h" line="33" column="1" bodyfile="source/sim_parameters/n_model.h" bodystart="33" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_model.h" line="33" column="1" bodyfile="source/sim_parameters/nmspc_model.h" bodystart="33" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespace_model_1a76650f18a98bc6c404d39a35179a88e3" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -57,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.h" line="37" column="1" bodyfile="source/sim_parameters/n_model.h" bodystart="37" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_model.h" line="37" column="1" bodyfile="source/sim_parameters/nmspc_model.h" bodystart="37" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespace_model_1ab53094eb25adb6962244a62863447d4b" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -71,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.h" line="46" column="1" bodyfile="source/sim_parameters/n_model.h" bodystart="46" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_model.h" line="46" column="1" bodyfile="source/sim_parameters/nmspc_model.h" bodystart="46" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespace_model_1afcb66405396954d734d89bd3f5ccc0df" prot="public" static="no" mutable="no">
         <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
@@ -84,7 +84,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.h" line="47" column="1" bodyfile="source/sim_parameters/n_model.h" bodystart="47" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_model.h" line="47" column="1" bodyfile="source/sim_parameters/nmspc_model.h" bodystart="47" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespace_model_1a3a842f60c5d2ab5afc1bc8363136ea5f" prot="public" static="no" mutable="no">
         <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
@@ -97,7 +97,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.h" line="48" column="1" bodyfile="source/sim_parameters/n_model.h" bodystart="48" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_model.h" line="48" column="1" bodyfile="source/sim_parameters/nmspc_model.h" bodystart="48" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespace_model_1ae48ac20c10b6d43cd50628db424e5644" prot="public" static="no" mutable="no">
         <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
@@ -110,7 +110,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.h" line="49" column="1" bodyfile="source/sim_parameters/n_model.h" bodystart="49" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_model.h" line="49" column="1" bodyfile="source/sim_parameters/nmspc_model.h" bodystart="49" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
@@ -125,7 +125,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.cpp" line="16" column="1" bodyfile="source/sim_parameters/n_model.cpp" bodystart="16" bodyend="21"/>
+        <location file="source/sim_parameters/nmspc_model.cpp" line="16" column="1" bodyfile="source/sim_parameters/nmspc_model.cpp" bodystart="16" bodyend="21"/>
       </memberdef>
       <memberdef kind="function" id="namespace_model_1ae2817c4883235b6c0872160743f04556" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>const Matrix2cd</type>
@@ -138,7 +138,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.cpp" line="23" column="1" bodyfile="source/sim_parameters/n_model.cpp" bodystart="23" bodyend="28"/>
+        <location file="source/sim_parameters/nmspc_model.cpp" line="23" column="1" bodyfile="source/sim_parameters/nmspc_model.cpp" bodystart="23" bodyend="28"/>
       </memberdef>
       <memberdef kind="function" id="namespace_model_1a35a7d4a597cd97c98f6ce83092d20ffd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>const Matrix2cd</type>
@@ -151,7 +151,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.cpp" line="31" column="1" bodyfile="source/sim_parameters/n_model.cpp" bodystart="31" bodyend="36"/>
+        <location file="source/sim_parameters/nmspc_model.cpp" line="31" column="1" bodyfile="source/sim_parameters/nmspc_model.cpp" bodystart="31" bodyend="36"/>
       </memberdef>
       <memberdef kind="function" id="namespace_model_1a0cffb3d08a1a94bc294862657027f5c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>const Matrix2cd</type>
@@ -164,7 +164,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.cpp" line="38" column="1" bodyfile="source/sim_parameters/n_model.cpp" bodystart="38" bodyend="40"/>
+        <location file="source/sim_parameters/nmspc_model.cpp" line="38" column="1" bodyfile="source/sim_parameters/nmspc_model.cpp" bodystart="38" bodyend="40"/>
       </memberdef>
       <memberdef kind="function" id="namespace_model_1af5b2d6e20cdd5dc66493b8955fc77e3f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; MatrixXcd &gt;</type>
@@ -185,7 +185,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.cpp" line="42" column="1" bodyfile="source/sim_parameters/n_model.cpp" bodystart="42" bodyend="54"/>
+        <location file="source/sim_parameters/nmspc_model.cpp" line="42" column="1" bodyfile="source/sim_parameters/nmspc_model.cpp" bodystart="42" bodyend="54"/>
       </memberdef>
       <memberdef kind="function" id="namespace_model_1ab1afed37e6ac9168cb2c1c9ba0119886" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -198,10 +198,10 @@
 <para>From Zapp, K. Matrix Product States for Lattice Gauge Theories. (2015). and Müller-hermes, B. V. A. Tensor-Network-Methods for Simulating Infinite 1-dimensional Quantum-Many-Body Systems. 1–68 (2010). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.cpp" line="61" column="1" bodyfile="source/sim_parameters/n_model.cpp" bodystart="61" bodyend="64"/>
-        <references refid="namespace_model_1ab1afed37e6ac9168cb2c1c9ba0119886" compoundref="n__model_8cpp" startline="61" endline="64">get_exact_energy</references>
-        <references refid="namespace_math_1a7cd16bfbced6aa47dd31fd44474d07f0" compoundref="n__math_8h" startline="167" endline="174">Math::compute_integral</references>
-        <references refid="namespace_math_1a3345264a3373e4542c7baf43f5e1b713" compoundref="n__math_8h" startline="51" endline="53">Math::mod</references>
+        <location file="source/sim_parameters/nmspc_model.cpp" line="61" column="1" bodyfile="source/sim_parameters/nmspc_model.cpp" bodystart="61" bodyend="64"/>
+        <references refid="namespace_model_1ab1afed37e6ac9168cb2c1c9ba0119886" compoundref="nmspc__model_8cpp" startline="61" endline="64">get_exact_energy</references>
+        <references refid="namespace_math_1a7cd16bfbced6aa47dd31fd44474d07f0" compoundref="nmspc__math_8h" startline="167" endline="174">Math::compute_integral</references>
+        <references refid="namespace_math_1a3345264a3373e4542c7baf43f5e1b713" compoundref="nmspc__math_8h" startline="51" endline="53">Math::mod</references>
       </memberdef>
       <memberdef kind="function" id="namespace_model_1aa76e3f2b09b78a2475667775a0e8ffe6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -222,7 +222,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.cpp" line="67" column="1" bodyfile="source/sim_parameters/n_model.cpp" bodystart="67" bodyend="77"/>
+        <location file="source/sim_parameters/nmspc_model.cpp" line="67" column="1" bodyfile="source/sim_parameters/nmspc_model.cpp" bodystart="67" bodyend="77"/>
       </memberdef>
       <memberdef kind="function" id="namespace_model_1a326557fe93a5d029d8cd43c4da0add1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -239,7 +239,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.cpp" line="79" column="1" bodyfile="source/sim_parameters/n_model.cpp" bodystart="79" bodyend="85"/>
+        <location file="source/sim_parameters/nmspc_model.cpp" line="79" column="1" bodyfile="source/sim_parameters/nmspc_model.cpp" bodystart="79" bodyend="85"/>
       </memberdef>
       <memberdef kind="function" id="namespace_model_1aa6c9a44577b1eadbbc0a5ffce5b8c90f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -252,8 +252,8 @@
         </detaileddescription>
         <inbodydescription>
 <para>Returns the MPO as a matrix. Notation following Schollwöck (2010) </para>        </inbodydescription>
-        <location file="source/sim_parameters/n_model.cpp" line="88" column="1" bodyfile="source/sim_parameters/n_model.cpp" bodystart="88" bodyend="99"/>
-        <references refid="namespace_model_1aa6c9a44577b1eadbbc0a5ffce5b8c90f" compoundref="n__model_8cpp" startline="88" endline="99">MPO_asMatrix</references>
+        <location file="source/sim_parameters/nmspc_model.cpp" line="88" column="1" bodyfile="source/sim_parameters/nmspc_model.cpp" bodystart="88" bodyend="99"/>
+        <references refid="namespace_model_1aa6c9a44577b1eadbbc0a5ffce5b8c90f" compoundref="nmspc__model_8cpp" startline="88" endline="99">MPO_asMatrix</references>
       </memberdef>
       <memberdef kind="function" id="namespace_model_1a0ffeabd0ba093c4492d1c38c48251e65" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
@@ -270,13 +270,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_model.h" line="45" column="1"/>
+        <location file="source/sim_parameters/nmspc_model.h" line="45" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Setup the Hamiltonian and corresponding values. </para>    </briefdescription>
     <detaileddescription>
-<para>This namespace contains model parameters, such as the coupling (or nearest neighbor exchange energy) <formula id="52">$J$</formula>, and the transverse field strength <formula id="53">$g$</formula>. By default the model describes the quantum Ising model with a transverse field:</para><para><formula id="54">\[ H = \frac{1}{2}\sum_{n=1}^L J S^z_n \otimes S^z_{n+1} + gS^x_{n} \]</formula> </para>    </detaileddescription>
-    <location file="source/sim_parameters/n_model.cpp" line="14" column="1"/>
+<para>This namespace contains model parameters, such as the coupling (or nearest neighbor exchange energy) <formula id="50">$J$</formula>, and the transverse field strength <formula id="51">$g$</formula>. By default the model describes the quantum Ising model with a transverse field:</para><para><formula id="52">\[ H = \frac{1}{2}\sum_{n=1}^L J S^z_n \otimes S^z_{n+1} + gS^x_{n} \]</formula> </para>    </detaileddescription>
+    <location file="source/sim_parameters/nmspc_model.cpp" line="14" column="1"/>
   </compounddef>
 </doxygen>

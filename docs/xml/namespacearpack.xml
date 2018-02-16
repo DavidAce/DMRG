@@ -3,7 +3,7 @@
   <compounddef id="namespacearpack" kind="namespace" language="C++">
     <compoundname>arpack</compoundname>
       <sectiondef kind="enum">
-      <memberdef kind="enum" id="class__eig__arpack__wrapper_8h_1aef6a37581ed1987839290256a0b581cd" prot="public" static="no">
+      <memberdef kind="enum" id="class__arpackpp__wrapper_8h_1aef6a37581ed1987839290256a0b581cd" prot="public" static="no">
         <name>Form</name>
         <enumvalue id="dummy_1aef6a37581ed1987839290256a0b581cda161b3d9016563aba9ac190fc02ada9bb" prot="public">
           <name>SYMMETRIC</name>
@@ -32,9 +32,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/general/class_eig_arpack_wrapper.h" line="19" column="1" bodyfile="source/general/class_eig_arpack_wrapper.h" bodystart="19" bodyend="19"/>
+        <location file="source/general/class_arpackpp_wrapper.h" line="21" column="1" bodyfile="source/general/class_arpackpp_wrapper.h" bodystart="21" bodyend="21"/>
       </memberdef>
-      <memberdef kind="enum" id="class__eig__arpack__wrapper_8h_1aea5db8fdc383c637633f2171736fc66e" prot="public" static="no">
+      <memberdef kind="enum" id="class__arpackpp__wrapper_8h_1aea5db8fdc383c637633f2171736fc66e" prot="public" static="no">
         <name>Side</name>
         <enumvalue id="dummy_1aea5db8fdc383c637633f2171736fc66ead20caec3b48a1eef164cb4ca81ba2587" prot="public">
           <name>L</name>
@@ -56,9 +56,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/general/class_eig_arpack_wrapper.h" line="20" column="1" bodyfile="source/general/class_eig_arpack_wrapper.h" bodystart="20" bodyend="20"/>
+        <location file="source/general/class_arpackpp_wrapper.h" line="22" column="1" bodyfile="source/general/class_arpackpp_wrapper.h" bodystart="22" bodyend="22"/>
       </memberdef>
-      <memberdef kind="enum" id="class__eig__arpack__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19e" prot="public" static="no">
+      <memberdef kind="enum" id="class__arpackpp__wrapper_8h_1ab227b082d5a8debba4e75a40eecbc19e" prot="public" static="no">
         <name>Ritz</name>
         <enumvalue id="dummy_1ab227b082d5a8debba4e75a40eecbc19ea6b40fe07a0e5a93eef07242975e83ec1" prot="public">
           <name>LA</name>
@@ -129,13 +129,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/general/class_eig_arpack_wrapper.h" line="21" column="1" bodyfile="source/general/class_eig_arpack_wrapper.h" bodystart="21" bodyend="21"/>
+        <location file="source/general/class_arpackpp_wrapper.h" line="23" column="1" bodyfile="source/general/class_arpackpp_wrapper.h" bodystart="23" bodyend="23"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="source/general/class_eig_arpack_wrapper.h" line="18" column="1"/>
+    <location file="source/general/class_arpackpp_wrapper.h" line="20" column="1"/>
   </compounddef>
 </doxygen>

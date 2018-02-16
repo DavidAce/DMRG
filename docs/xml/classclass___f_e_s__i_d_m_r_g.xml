@@ -197,39 +197,39 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="33">
+      <node id="29">
         <label>class_FES_iDMRG</label>
         <link refid="classclass___f_e_s__i_d_m_r_g"/>
-        <childnode refid="34" relation="public-inheritance">
+        <childnode refid="30" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="34">
+      <node id="30">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="37">
+      <node id="33">
         <label>class_custom_cout</label>
         <link refid="classclass__custom__cout"/>
       </node>
-      <node id="35">
+      <node id="31">
         <label>class_FES_iDMRG</label>
         <link refid="classclass___f_e_s__i_d_m_r_g"/>
-        <childnode refid="36" relation="public-inheritance">
+        <childnode refid="32" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="38">
+      <node id="34">
         <label>class_tic_toc</label>
         <link refid="classclass__tic__toc"/>
       </node>
-      <node id="36">
+      <node id="32">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
-        <childnode refid="37" relation="usage">
+        <childnode refid="33" relation="usage">
           <edgelabel>ccout</edgelabel>
         </childnode>
-        <childnode refid="38" relation="usage">
+        <childnode refid="34" relation="usage">
           <edgelabel>t_udt</edgelabel>
           <edgelabel>t_eig</edgelabel>
           <edgelabel>t_ste</edgelabel>
@@ -250,17 +250,17 @@
       <member refid="classclass___f_e_s__i_d_m_r_g_1a4982d5bc1809680ac80ec10030df1c64" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>chi_max</name></member>
       <member refid="classclass___f_e_s__i_d_m_r_g_1a95fe60a4bc3dc4f5c25d16934e028d6a" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>chi_min</name></member>
       <member refid="classclass___f_e_s__i_d_m_r_g_1add279f4dc1ae6e5739548c3ecf39fae2" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>chi_num</name></member>
-      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a89a908e197b655ae32018d230edb06f3" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>class_algorithm_base</name></member>
       <member refid="classclass___f_e_s__i_d_m_r_g_1a861ed7b7f197fb88971428adc618ce6c" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>class_FES_iDMRG</name></member>
-      <member refid="classclass__algorithm__base_1a68804df41c37620391746d749b267498" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>enlarge_environment</name></member>
-      <member refid="classclass__algorithm__base_1ad516d7415be3c39534429d34d677adf3" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1a843555eba3d2bb4d371d7a8fcf4decf2" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1a55c7268b04fc440dd0287fbd969f202d" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>enlarge_environment</name></member>
       <member refid="classclass__algorithm__base_1a0df91637c87540c529273999b7866315" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>group_name</name></member>
       <member refid="classclass__algorithm__base_1a52110546990518c431901aa1262e457c" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>hdf5</name></member>
       <member refid="classclass___f_e_s__i_d_m_r_g_1a3ee373fbbd1f674d87b753960477bb34" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>iteration</name></member>
       <member refid="classclass___f_e_s__i_d_m_r_g_1ab371552336985f48432bf4dbc98dfeea" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>max_length</name></member>
-      <member refid="classclass__algorithm__base_1aeb4c7ff399543a89181d790c56e8ddf0" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>observables</name></member>
+      <member refid="classclass__algorithm__base_1afce57181b8c71747fe662a0db4bf8494" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>measurement</name></member>
       <member refid="classclass___f_e_s__i_d_m_r_g_1a4cfd8387f6f79a9efa349eb8239c3c76" prot="public" virt="non-virtual"><scope>class_FES_iDMRG</scope><name>print_freq</name></member>
       <member refid="classclass___f_e_s__i_d_m_r_g_1a5a0524eb6a46eb5365022d4ff8716a60" prot="public" virt="virtual"><scope>class_FES_iDMRG</scope><name>print_profiling</name></member>
       <member refid="classclass___f_e_s__i_d_m_r_g_1a689804d79bf42136291190a572cb77a5" prot="public" virt="virtual"><scope>class_FES_iDMRG</scope><name>print_status_full</name></member>

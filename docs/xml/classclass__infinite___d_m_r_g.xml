@@ -156,39 +156,39 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="70">
+      <node id="66">
         <label>class_infinite_DMRG</label>
         <link refid="classclass__infinite___d_m_r_g"/>
-        <childnode refid="71" relation="public-inheritance">
+        <childnode refid="67" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="71">
+      <node id="67">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="74">
+      <node id="70">
         <label>class_custom_cout</label>
         <link refid="classclass__custom__cout"/>
       </node>
-      <node id="72">
+      <node id="68">
         <label>class_infinite_DMRG</label>
         <link refid="classclass__infinite___d_m_r_g"/>
-        <childnode refid="73" relation="public-inheritance">
+        <childnode refid="69" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="75">
+      <node id="71">
         <label>class_tic_toc</label>
         <link refid="classclass__tic__toc"/>
       </node>
-      <node id="73">
+      <node id="69">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
-        <childnode refid="74" relation="usage">
+        <childnode refid="70" relation="usage">
           <edgelabel>ccout</edgelabel>
         </childnode>
-        <childnode refid="75" relation="usage">
+        <childnode refid="71" relation="usage">
           <edgelabel>t_udt</edgelabel>
           <edgelabel>t_eig</edgelabel>
           <edgelabel>t_ste</edgelabel>
@@ -207,17 +207,17 @@
     <listofallmembers>
       <member refid="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>ccout</name></member>
       <member refid="classclass__infinite___d_m_r_g_1a8eb15ce418a7fa8ba36f11086a73ba89" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>chi_max</name></member>
-      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a89a908e197b655ae32018d230edb06f3" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__infinite___d_m_r_g_1a97aa7e64d385b7b27506ed81c0bda759" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>class_infinite_DMRG</name></member>
-      <member refid="classclass__algorithm__base_1a68804df41c37620391746d749b267498" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>enlarge_environment</name></member>
-      <member refid="classclass__algorithm__base_1ad516d7415be3c39534429d34d677adf3" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1a843555eba3d2bb4d371d7a8fcf4decf2" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1a55c7268b04fc440dd0287fbd969f202d" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>enlarge_environment</name></member>
       <member refid="classclass__algorithm__base_1a0df91637c87540c529273999b7866315" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>group_name</name></member>
       <member refid="classclass__algorithm__base_1a52110546990518c431901aa1262e457c" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>hdf5</name></member>
       <member refid="classclass__infinite___d_m_r_g_1a50df7f3198408d20e0e5505f317920b3" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>iteration</name></member>
       <member refid="classclass__infinite___d_m_r_g_1a8615c4b3b1dd01d24e686a4e96d7149b" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>max_length</name></member>
-      <member refid="classclass__algorithm__base_1aeb4c7ff399543a89181d790c56e8ddf0" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>observables</name></member>
+      <member refid="classclass__algorithm__base_1afce57181b8c71747fe662a0db4bf8494" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>measurement</name></member>
       <member refid="classclass__infinite___d_m_r_g_1ae47c6add54afe6fe6dc821630ff0e6b2" prot="public" virt="non-virtual"><scope>class_infinite_DMRG</scope><name>print_freq</name></member>
       <member refid="classclass__infinite___d_m_r_g_1a681cc5ac0cea05193138bb30b7c7a790" prot="public" virt="virtual"><scope>class_infinite_DMRG</scope><name>print_profiling</name></member>
       <member refid="classclass__infinite___d_m_r_g_1ace9dd62c05d408a18d2eebcc418372e4" prot="public" virt="virtual"><scope>class_infinite_DMRG</scope><name>print_status_full</name></member>

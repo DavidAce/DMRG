@@ -20,7 +20,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="41" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="41" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="40" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="40" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1ade8066944fb71399e3bf44d30149a923" prot="public" static="no" mutable="no">
         <type>std::shared_ptr&lt; <ref refid="classclass__hdf5__table__buffer" kindref="compound">class_hdf5_table_buffer</ref> &gt;</type>
@@ -33,7 +33,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="42" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="42" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="41" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="41" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1a0df91637c87540c529273999b7866315" prot="public" static="no" mutable="no">
         <type>std::string</type>
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="44" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="44" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="43" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="43" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1a199c6b935154ae969e80ae25f37e831d" prot="public" static="no" mutable="no">
         <type>std::string</type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="45" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="45" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="44" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="44" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1a44aea6f57f16f07b0079b382c2ab863e" prot="public" static="no" mutable="no">
         <type>std::string</type>
@@ -72,7 +72,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="46" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="46" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="45" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="45" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1a2862e4e8b9338ac361d660ef35847d69" prot="public" static="no" mutable="no">
         <type>SimulationType</type>
@@ -85,7 +85,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="47" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="47" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="46" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="46" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1aae9477a03b720e2e3ebbb92f05253774" prot="public" static="no" mutable="no">
         <type>std::shared_ptr&lt; <ref refid="classclass__superblock" kindref="compound">class_superblock</ref> &gt;</type>
@@ -98,20 +98,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="50" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="50" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="49" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="49" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__base_1aeb4c7ff399543a89181d790c56e8ddf0" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="classclass__algorithm__base_1afce57181b8c71747fe662a0db4bf8494" prot="public" static="no" mutable="no">
         <type>std::shared_ptr&lt; <ref refid="classclass__measurement" kindref="compound">class_measurement</ref> &gt;</type>
-        <definition>std::shared_ptr&lt;class_measurement&gt; class_algorithm_base::observables</definition>
+        <definition>std::shared_ptr&lt;class_measurement&gt; class_algorithm_base::measurement</definition>
         <argsstring></argsstring>
-        <name>observables</name>
+        <name>measurement</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="51" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="51" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="50" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__custom__cout" kindref="compound">class_custom_cout</ref></type>
@@ -124,7 +124,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="54" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="54" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="53" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -137,7 +137,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="73" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="73" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="72" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="72" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1ae378bea3c64eddbcebbb4308506dd0ba" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -150,7 +150,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="74" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="74" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="73" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="73" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -163,7 +163,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="75" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="75" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="74" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="74" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1a62686101ba541b485f091dff78cfc871" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -176,7 +176,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="76" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="76" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="75" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="75" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1afc59105de307467cd6719e13bdba4fa0" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -189,7 +189,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="77" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="77" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="76" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="76" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1a68b62ce7f9da3a7b37686497ded194bb" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -202,7 +202,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="78" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="78" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="77" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="77" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1ab7242e6dbb626b5d72a4afefe5c98f3c" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -215,7 +215,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="79" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="79" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="78" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="78" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1a51f0cbf257ad5da8152c2c50e09e218d" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -228,7 +228,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="80" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="80" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="79" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="79" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1afb38782d7f5134a0a0be8fde91628995" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -241,7 +241,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="81" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="81" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="80" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="80" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1a29c0cee1d8f128dd23e6fb833ad9a18f" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -254,7 +254,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="82" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="82" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="81" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="81" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1a30db55b403a9abca8a8b063079009174" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -267,14 +267,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="83" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="83" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="82" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="82" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__algorithm__base_1a89a908e197b655ae32018d230edb06f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
         <definition>class_algorithm_base::class_algorithm_base</definition>
-        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::shared_ptr&lt; class_hdf5_table_buffer &gt; table_buffer_, std::shared_ptr&lt; class_superblock &gt; superblock_, std::shared_ptr&lt; class_measurement &gt; observables_)</argsstring>
+        <argsstring>(std::shared_ptr&lt; class_hdf5_file &gt; hdf5_, std::shared_ptr&lt; class_hdf5_table_buffer &gt; table_buffer_, std::shared_ptr&lt; class_superblock &gt; superblock_, std::shared_ptr&lt; class_measurement &gt; measurement_)</argsstring>
         <name>class_algorithm_base</name>
         <param>
           <type>std::shared_ptr&lt; <ref refid="classclass__hdf5__file" kindref="compound">class_hdf5_file</ref> &gt;</type>
@@ -290,7 +290,7 @@
         </param>
         <param>
           <type>std::shared_ptr&lt; <ref refid="classclass__measurement" kindref="compound">class_measurement</ref> &gt;</type>
-          <declname>observables_</declname>
+          <declname>measurement_</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -298,7 +298,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="26" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="14" bodyend="25"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="25" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="16" bodyend="27"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -331,7 +331,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="31" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="27" bodyend="41"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="30" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="29" bodyend="43"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -344,7 +344,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="37" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="47" bodyend="49"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="36" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="49" bodyend="51"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -357,7 +357,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="39" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="80" bodyend="93"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="38" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="82" bodyend="95"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a41b199782e43aeaccf607b8191c3a027" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
@@ -376,7 +376,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="57" column="1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="56" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a0f543b6c9f1ff43baab2bc47628c680e" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
@@ -395,7 +395,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="58" column="1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="57" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1aeed6c86b2bb499b7b8977a9bca82e6ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
@@ -414,7 +414,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="59" column="1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="58" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a96f34d67e881abd4d1ec4dd2d89728ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
@@ -433,7 +433,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="61" column="1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="60" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a803b366e66ffaef47479278cbdb1a738" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
@@ -452,7 +452,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="62" column="1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="61" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a15d8f41189fb1685de574b7f3389eee6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -469,7 +469,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="65" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="52" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="64" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1ac9255cf0edbb29441a2ba4e900459082" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -494,11 +494,11 @@
 </parameteritem>
 </parameterlist>
 </para>        </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="66" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="64" bodyend="-1"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="65" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="66" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__base_1a68804df41c37620391746d749b267498" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_algorithm_base::enlarge_environment</definition>
+      <memberdef kind="function" id="classclass__algorithm__base_1a843555eba3d2bb4d371d7a8fcf4decf2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_algorithm_base::enlarge_environment</definition>
         <argsstring>()</argsstring>
         <name>enlarge_environment</name>
         <briefdescription>
@@ -507,11 +507,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="68" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="95" bodyend="99"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="67" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="97" bodyend="102"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__base_1ad516d7415be3c39534429d34d677adf3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_algorithm_base::enlarge_environment</definition>
+      <memberdef kind="function" id="classclass__algorithm__base_1a55c7268b04fc440dd0287fbd969f202d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_algorithm_base::enlarge_environment</definition>
         <argsstring>(int direction)</argsstring>
         <name>enlarge_environment</name>
         <param>
@@ -524,7 +524,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="69" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="100" bodyend="104"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="68" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="103" bodyend="108"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a4ce5f92c32d9bd33877fde7848417e61" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -537,7 +537,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_base_algorithm.h" line="70" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="106" bodyend="108"/>
+        <location file="source/algorithms/class_base_algorithm.h" line="69" column="1" bodyfile="source/algorithms/class_base_algorithm.cpp" bodystart="110" bodyend="112"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -616,17 +616,17 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="source/algorithms/class_base_algorithm.h" line="23" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="23" bodyend="85"/>
+    <location file="source/algorithms/class_base_algorithm.h" line="22" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="22" bodyend="84"/>
     <listofallmembers>
       <member refid="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>ccout</name></member>
-      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a89a908e197b655ae32018d230edb06f3" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>class_algorithm_base</name></member>
-      <member refid="classclass__algorithm__base_1a68804df41c37620391746d749b267498" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>enlarge_environment</name></member>
-      <member refid="classclass__algorithm__base_1ad516d7415be3c39534429d34d677adf3" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1a843555eba3d2bb4d371d7a8fcf4decf2" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1a55c7268b04fc440dd0287fbd969f202d" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>enlarge_environment</name></member>
       <member refid="classclass__algorithm__base_1a0df91637c87540c529273999b7866315" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>group_name</name></member>
       <member refid="classclass__algorithm__base_1a52110546990518c431901aa1262e457c" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>hdf5</name></member>
-      <member refid="classclass__algorithm__base_1aeb4c7ff399543a89181d790c56e8ddf0" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>observables</name></member>
+      <member refid="classclass__algorithm__base_1afce57181b8c71747fe662a0db4bf8494" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>measurement</name></member>
       <member refid="classclass__algorithm__base_1aeed6c86b2bb499b7b8977a9bca82e6ab" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>print_profiling</name></member>
       <member refid="classclass__algorithm__base_1a96f34d67e881abd4d1ec4dd2d89728ad" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>print_status_full</name></member>
       <member refid="classclass__algorithm__base_1a803b366e66ffaef47479278cbdb1a738" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>print_status_update</name></member>

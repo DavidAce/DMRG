@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="39" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="39" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="36" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="36" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__hdf5__file_1ac91370574d6a1a9e03fb07549cf0eab2" prot="private" static="no" mutable="no">
         <type>fs::path</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="40" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="40" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="37" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="37" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__hdf5__file_1a52d21aedde772dfe139f7ec050504af1" prot="private" static="no" mutable="no">
         <type>fs::path</type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="41" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="41" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="38" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="38" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__hdf5__file_1a9c5138b84ab82f7aa7964a52de6fb55d" prot="private" static="no" mutable="no">
         <type>fs::path</type>
@@ -54,7 +54,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="42" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="42" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="39" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="39" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__hdf5__file_1a85d0621b1189d5b7cff6e0da7874e48e" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="43" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="43" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="40" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="40" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__hdf5__file_1adf4df5784dd63f2e40b7b8c009067c2d" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -80,7 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="44" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="44" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="41" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="41" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__hdf5__file_1abfe2532e59969891cda8f1ed28b9df3d" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -94,7 +94,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="45" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="45" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="42" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="42" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__hdf5__file_1a8617eceb2b0804c36a4b0c76fe3c9d03" prot="private" static="no" mutable="no">
         <type><ref refid="classclass__custom__cout" kindref="compound">class_custom_cout</ref></type>
@@ -107,7 +107,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="48" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="48" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="45" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="45" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__hdf5__file_1af654bd65029816d5224c19baab22de37" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -120,7 +120,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="52" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="52" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="49" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="49" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__hdf5__file_1ae952177e083b45f6f23f15b5fe13f297" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -133,7 +133,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="52" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="52" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="49" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="49" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__hdf5__file_1a8f06d166d3ce9b88c84732193003e82d" prot="private" static="no" mutable="no">
         <type>hid_t</type>
@@ -146,7 +146,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="53" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="53" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="50" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__hdf5__file_1a644b3884acaff89e0f2f158b77302810" prot="private" static="no" mutable="no">
         <type>hid_t</type>
@@ -159,7 +159,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="54" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="54" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="51" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="51" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__hdf5__file_1a418b6363ecb17459a651b1947028057f" prot="private" static="no" mutable="no">
         <type>hid_t</type>
@@ -172,7 +172,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="55" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="55" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="52" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="52" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -187,7 +187,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="59" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="59" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_file.h" line="56" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="56" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -202,7 +202,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="47" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="58" bodyend="147"/>
+        <location file="source/IO/class_hdf5_file.h" line="44" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="58" bodyend="147"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a5b812763504d5a2634ed5995d4bd3698" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -215,7 +215,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="97" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="35" bodyend="55"/>
+        <location file="source/IO/class_hdf5_file.h" line="94" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="35" bodyend="55"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a6566ab06d91097c8de23a8aa934a2792" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -228,7 +228,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="98" column="1"/>
+        <location file="source/IO/class_hdf5_file.h" line="95" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a4379238138083e3c8db11cc875f9d65b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -253,7 +253,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="100" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="176" bodyend="192"/>
+        <location file="source/IO/class_hdf5_file.h" line="97" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="176" bodyend="192"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a5890ded75fdc142ce07462342280087c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -279,7 +279,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="103" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="326" bodyend="346"/>
+        <location file="source/IO/class_hdf5_file.h" line="100" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="323" bodyend="343"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a0680dc51b0e4b23a0ef86d05adcd0b7d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -305,7 +305,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="106" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="353" bodyend="375"/>
+        <location file="source/IO/class_hdf5_file.h" line="103" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="350" bodyend="372"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a36bc85032ec1cf5d188f8f7f69cc8c74" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -326,7 +326,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="109" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="161" bodyend="173"/>
+        <location file="source/IO/class_hdf5_file.h" line="106" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="161" bodyend="173"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a3d73753284cf54ce27184ed94424b4a5" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -344,7 +344,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="134" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="134" bodyend="145"/>
+        <location file="source/IO/class_hdf5_file.h" line="131" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="131" bodyend="142"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a00ba17d356ce838fa82f9d1a72bade88" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -366,7 +366,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="150" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="150" bodyend="171"/>
+        <location file="source/IO/class_hdf5_file.h" line="147" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="147" bodyend="168"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a5d9c5b4c5b782741cc8d9f3899297ecf" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -384,7 +384,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="174" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="174" bodyend="195"/>
+        <location file="source/IO/class_hdf5_file.h" line="171" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="171" bodyend="192"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a75d29a663a7118383093e5257f4dda73" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -402,7 +402,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="199" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="199" bodyend="235"/>
+        <location file="source/IO/class_hdf5_file.h" line="196" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="196" bodyend="232"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1aff11608520f9b7348cbfd26b9861a5d2" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -424,7 +424,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="239" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="239" bodyend="270"/>
+        <location file="source/IO/class_hdf5_file.h" line="236" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="236" bodyend="267"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a408e9e521aa12bddaf442d83c8cef4e4" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -450,7 +450,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="274" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="274" bodyend="299"/>
+        <location file="source/IO/class_hdf5_file.h" line="271" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="271" bodyend="296"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -488,7 +488,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="61" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="7" bodyend="18"/>
+        <location file="source/IO/class_hdf5_file.h" line="58" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="7" bodyend="18"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a85a21be57364715f399d4af11bfb454d" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
         <type></type>
@@ -506,7 +506,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="62" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="20" bodyend="33"/>
+        <location file="source/IO/class_hdf5_file.h" line="59" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="20" bodyend="33"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1af16bdc7c02f6e929a5109a9246ca899b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -519,7 +519,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="64" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="64" bodyend="69"/>
+        <location file="source/IO/class_hdf5_file.h" line="61" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="61" bodyend="66"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1aa63c25dbecd82d3a26bd8864c5480e9f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -545,7 +545,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="71" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="383" bodyend="401"/>
+        <location file="source/IO/class_hdf5_file.h" line="68" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="380" bodyend="398"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a0983608b054f0cb7ecd6f30a5d7165f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -562,7 +562,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="73" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="152" bodyend="158"/>
+        <location file="source/IO/class_hdf5_file.h" line="70" column="1" bodyfile="source/IO/class_hdf5_file.cpp" bodystart="152" bodyend="158"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1afb716055cac393bad540f4c9a49fc8a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -592,7 +592,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="76" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="308" bodyend="321"/>
+        <location file="source/IO/class_hdf5_file.h" line="73" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="305" bodyend="318"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a39abe773ac423910b6b3983d32739989" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -618,7 +618,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="80" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="407" bodyend="426"/>
+        <location file="source/IO/class_hdf5_file.h" line="77" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="404" bodyend="423"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a054cd1efcff405affd62c94f0ba9827c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -644,7 +644,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="84" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="430" bodyend="452"/>
+        <location file="source/IO/class_hdf5_file.h" line="81" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="427" bodyend="449"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1ab11e6cc1cfbe9c90ebce173d1a4388b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -674,7 +674,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="87" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="458" bodyend="472"/>
+        <location file="source/IO/class_hdf5_file.h" line="84" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="455" bodyend="469"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__file_1a2b5f7e37cabdff664cc52984da4afee8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -704,15 +704,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_file.h" line="91" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="477" bodyend="491"/>
+        <location file="source/IO/class_hdf5_file.h" line="88" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="474" bodyend="488"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Writes and reads data to a binary hdf5-file. </para>    </briefdescription>
     <detaileddescription>
-<para><heading level="1">HDF5 Class</heading>
-</para>    </detaileddescription>
-    <location file="source/IO/class_hdf5_file.h" line="37" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="37" bodyend="302"/>
+    </detaileddescription>
+    <location file="source/IO/class_hdf5_file.h" line="34" column="1" bodyfile="source/IO/class_hdf5_file.h" bodystart="34" bodyend="299"/>
     <listofallmembers>
       <member refid="classclass__hdf5__file_1a8617eceb2b0804c36a4b0c76fe3c9d03" prot="private" virt="non-virtual"><scope>class_hdf5_file</scope><name>ccout</name></member>
       <member refid="classclass__hdf5__file_1a1ce1ed600be43869880fc75198e4ed32" prot="public" virt="non-virtual"><scope>class_hdf5_file</scope><name>class_hdf5_file</name></member>

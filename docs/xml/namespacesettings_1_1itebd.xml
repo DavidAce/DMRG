@@ -3,7 +3,7 @@
   <compounddef id="namespacesettings_1_1itebd" kind="namespace" language="C++">
     <compoundname>settings::itebd</compoundname>
       <sectiondef kind="var">
-      <memberdef kind="variable" id="n__sim__settings_8h_1ac4ff42bc0a7453d9c9fcf3cc6939db58" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1ac4ff42bc0a7453d9c9fcf3cc6939db58" prot="public" static="no" mutable="no">
         <type>bool</type>
         <definition>bool settings::itebd::on</definition>
         <argsstring></argsstring>
@@ -15,9 +15,9 @@
 <para>Turns iTEBD simulation on/off. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="50" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="31" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="61" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="38" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1adc3e7b7b47af4c0fd73587369ae6c2d1" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1adc3e7b7b47af4c0fd73587369ae6c2d1" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int settings::itebd::max_steps</definition>
         <argsstring></argsstring>
@@ -29,9 +29,9 @@
 <para>Number of iTEBD iterations, after which the simulation terminates regardless of convergence. Set high. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="51" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="32" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="62" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="39" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1afcba9beada5551c3da4c25a8376cd67f" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1afcba9beada5551c3da4c25a8376cd67f" prot="public" static="no" mutable="no">
         <type>double</type>
         <definition>double settings::itebd::delta_t0</definition>
         <argsstring></argsstring>
@@ -43,9 +43,9 @@
 <para>Initial time step for iTEBD time evolution. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="52" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="33" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="63" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="40" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1a6b6afcf2968c3cb071bc050b4e805085" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a6b6afcf2968c3cb071bc050b4e805085" prot="public" static="no" mutable="no">
         <type>double</type>
         <definition>double settings::itebd::delta_tmin</definition>
         <argsstring></argsstring>
@@ -57,9 +57,9 @@
 <para>Final time step for iTEBD time evolution. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="53" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="34" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="64" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="41" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1a9ab41edc8a8f73a40977b6969865c644" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a9ab41edc8a8f73a40977b6969865c644" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int settings::itebd::suzuki_order</definition>
         <argsstring></argsstring>
@@ -71,9 +71,9 @@
 <para>Order of the suzuki trotter decomposition (1,2 or 4) </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="54" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="35" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="65" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="42" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1aaca4efb978bd41af4ae870824351b5c6" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1aaca4efb978bd41af4ae870824351b5c6" prot="public" static="no" mutable="no">
         <type>long</type>
         <definition>long settings::itebd::chi_max</definition>
         <argsstring></argsstring>
@@ -85,9 +85,9 @@
 <para>Bond dimension of the current position (maximum number of singular values to keep in SVD). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="55" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="36" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="66" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="43" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="n__sim__settings_8h_1aeb74ea89cbbfba318983932061ead184" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1aeb74ea89cbbfba318983932061ead184" prot="public" static="no" mutable="no">
         <type>int</type>
         <definition>int settings::itebd::print_freq</definition>
         <argsstring></argsstring>
@@ -99,13 +99,13 @@
 <para>Print frequency for console output. (0 = off). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/n_sim_settings.h" line="56" column="1" bodyfile="source/sim_parameters/n_sim_settings.cpp" bodystart="37" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="67" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="44" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="source/sim_parameters/n_sim_settings.h" line="49" column="1"/>
+    <location file="source/sim_parameters/nmspc_sim_settings.h" line="60" column="1"/>
   </compounddef>
 </doxygen>

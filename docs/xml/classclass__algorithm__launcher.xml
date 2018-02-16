@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_algorithm_launcher.h" line="18" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="23" bodyend="26"/>
+        <location file="source/algorithms/class_algorithm_launcher.h" line="18" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="24" bodyend="27"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_algorithm_launcher.h" line="19" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="27" bodyend="30"/>
+        <location file="source/algorithms/class_algorithm_launcher.h" line="19" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="28" bodyend="31"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -72,7 +72,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_algorithm_launcher.h" line="21" column="1" bodyfile="source/algorithms/class_algorithm_launcher.h" bodystart="21" bodyend="27"/>
+        <location file="source/algorithms/class_algorithm_launcher.h" line="21" column="1" bodyfile="source/algorithms/class_algorithm_launcher.h" bodystart="21" bodyend="28"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1ae117630747b3df09a635a4b7dfd23ef4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -85,7 +85,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_algorithm_launcher.h" line="29" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="33" bodyend="38"/>
+        <location file="source/algorithms/class_algorithm_launcher.h" line="30" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="34" bodyend="39"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1adf27228d68cc4069f68590d893baac41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -98,7 +98,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_algorithm_launcher.h" line="30" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="41" bodyend="46"/>
+        <location file="source/algorithms/class_algorithm_launcher.h" line="31" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="42" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__launcher_1a17902e0f50cb857d4e1aa7cee723adad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_launcher::run_excited_state_DMRG</definition>
+        <argsstring>()</argsstring>
+        <name>run_excited_state_DMRG</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_algorithm_launcher.h" line="32" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="49" bodyend="54"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1ae7f15ff3cc9cd026288a72b8bb7d447d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -111,7 +124,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_algorithm_launcher.h" line="31" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="49" bodyend="54"/>
+        <location file="source/algorithms/class_algorithm_launcher.h" line="33" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="56" bodyend="61"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1ad43b46c53ee23d44c6e3d23cb4e3280a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -124,7 +137,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_algorithm_launcher.h" line="32" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="57" bodyend="62"/>
+        <location file="source/algorithms/class_algorithm_launcher.h" line="34" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="64" bodyend="69"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a5d8c8083ae4b50afb1874a30f8b1de83" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -137,7 +150,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/algorithms/class_algorithm_launcher.h" line="33" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="64" bodyend="69"/>
+        <location file="source/algorithms/class_algorithm_launcher.h" line="35" column="1" bodyfile="source/algorithms/class_algorithm_launcher.cpp" bodystart="71" bodyend="76"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -157,13 +170,14 @@
         <link refid="classclass__custom__cout"/>
       </node>
     </collaborationgraph>
-    <location file="source/algorithms/class_algorithm_launcher.h" line="13" column="1" bodyfile="source/algorithms/class_algorithm_launcher.h" bodystart="13" bodyend="34"/>
+    <location file="source/algorithms/class_algorithm_launcher.h" line="13" column="1" bodyfile="source/algorithms/class_algorithm_launcher.h" bodystart="13" bodyend="36"/>
     <listofallmembers>
       <member refid="classclass__algorithm__launcher_1a57cebb5d8dd684420ab0b05e0be2e341" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>ccout</name></member>
       <member refid="classclass__algorithm__launcher_1a3f6c72c0ee6ea641fbf7306864ac3181" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>class_algorithm_launcher</name></member>
       <member refid="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>class_algorithm_launcher</name></member>
       <member refid="classclass__algorithm__launcher_1a799b7155708a55096bb87780c6c8af40" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>hdf5</name></member>
       <member refid="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_algorithms</name></member>
+      <member refid="classclass__algorithm__launcher_1a17902e0f50cb857d4e1aa7cee723adad" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_excited_state_DMRG</name></member>
       <member refid="classclass__algorithm__launcher_1ad43b46c53ee23d44c6e3d23cb4e3280a" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_FES_iDMRG</name></member>
       <member refid="classclass__algorithm__launcher_1a5d8c8083ae4b50afb1874a30f8b1de83" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_FES_iTEBD</name></member>
       <member refid="classclass__algorithm__launcher_1adf27228d68cc4069f68590d893baac41" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>run_finite_DMRG</name></member>

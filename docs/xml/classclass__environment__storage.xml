@@ -4,9 +4,9 @@
     <compoundname>class_environment_storage</compoundname>
     <includes refid="class__environment__storage_8h" local="no">class_environment_storage.h</includes>
       <sectiondef kind="public-type">
-      <memberdef kind="typedef" id="classclass__environment__storage_1a66fb56369e90e50b7f66dd2c5e8b38b8" prot="public" static="no">
-        <type>class_mps::Scalar</type>
-        <definition>using class_environment_storage::Scalar =  class_mps::Scalar</definition>
+      <memberdef kind="typedef" id="classclass__environment__storage_1a5b0721fd58510d0340d6de9a86d69f20" prot="public" static="no">
+        <type>double</type>
+        <definition>using class_environment_storage::Scalar =  double</definition>
         <argsstring></argsstring>
         <name>Scalar</name>
         <briefdescription>
@@ -15,62 +15,134 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="35" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="35" bodyend="-1"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="private-attrib">
-      <memberdef kind="variable" id="classclass__environment__storage_1a2bf7b7d6451519628034e2c159839203" prot="private" static="no" mutable="no">
-        <type>std::map&lt; int, Textra::Tensor&lt; Scalar, 3 &gt; &gt;</type>
-        <definition>std::map&lt;int, Textra::Tensor&lt;Scalar,3&gt; &gt; class_environment_storage::G_list</definition>
-        <argsstring></argsstring>
-        <name>G_list</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>A list of stored <formula id="26">$\Gamma$</formula>-tensors, indexed by chain position. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="37" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="37" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__environment__storage_1a30e03a5b6ecb2b62fd7c2e3ee15ffff2" prot="private" static="no" mutable="no">
-        <type>std::map&lt; int, Textra::Tensor&lt; Scalar, 1 &gt; &gt;</type>
-        <definition>std::map&lt;int, Textra::Tensor&lt;Scalar,1&gt; &gt; class_environment_storage::L_list</definition>
-        <argsstring></argsstring>
-        <name>L_list</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>A list of stored <formula id="27">$\Lambda$</formula>-tensors, indexed by chain position. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
         <location file="source/mps_routines/class_environment_storage.h" line="38" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="38" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__environment__storage_1ab5f12ee790581aa2ce4d7bfdc25e640b" prot="private" static="no" mutable="no">
-        <type>std::map&lt; int, <ref refid="classclass__environment" kindref="compound">class_environment</ref>&lt; Side::L &gt; &gt;</type>
-        <definition>std::map&lt;int, class_environment&lt;Side::L&gt; &gt; class_environment_storage::Lblock_list</definition>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass__environment__storage_1a608668ce8d3f5d9eddebca7dfb6eddba" prot="public" static="no" mutable="no">
+        <type>std::list&lt; std::tuple&lt; Textra::Tensor&lt; Scalar, 3 &gt;, Textra::Tensor&lt; Scalar, 1 &gt;, Textra::Tensor&lt; Scalar, 3 &gt; &gt; &gt;</type>
+        <definition>std::list&lt;std::tuple&lt;Textra::Tensor&lt;Scalar,3&gt;,Textra::Tensor&lt;Scalar,1&gt;, Textra::Tensor&lt;Scalar,3&gt; &gt; &gt; class_environment_storage::MPS_L</definition>
         <argsstring></argsstring>
-        <name>Lblock_list</name>
+        <name>MPS_L</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>A list of stored Left block environments, indexed by chain position. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="39" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="39" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__environment__storage_1a8a88de4f7adbee515dcae710d36e7a81" prot="private" static="no" mutable="no">
-        <type>std::map&lt; int, <ref refid="classclass__environment" kindref="compound">class_environment</ref>&lt; Side::R &gt; &gt;</type>
-        <definition>std::map&lt;int, class_environment&lt;Side::R&gt; &gt; class_environment_storage::Rblock_list</definition>
-        <argsstring></argsstring>
-        <name>Rblock_list</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>A list of stored Right block environments, indexed by chain position. </para>        </detaileddescription>
+<para>A list of stored <formula id="25">$\Gamma$</formula>-tensors, indexed by chain position. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="source/mps_routines/class_environment_storage.h" line="40" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="40" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="classclass__environment__storage_1a3398b05021f0bdbdffe9964d7f98899b" prot="public" static="no" mutable="no">
+        <type>std::list&lt; std::tuple&lt; Textra::Tensor&lt; Scalar, 3 &gt;, Textra::Tensor&lt; Scalar, 1 &gt;, Textra::Tensor&lt; Scalar, 3 &gt; &gt; &gt;</type>
+        <definition>std::list&lt;std::tuple&lt;Textra::Tensor&lt;Scalar,3&gt;,Textra::Tensor&lt;Scalar,1&gt;, Textra::Tensor&lt;Scalar,3&gt; &gt; &gt; class_environment_storage::MPS_R</definition>
+        <argsstring></argsstring>
+        <name>MPS_R</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A list of stored <formula id="25">$\Gamma$</formula>-tensors, indexed by chain position. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment_storage.h" line="41" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__environment__storage_1a4ddd0da190341022462f4848e6b9416c" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_environment_storage::max_length</definition>
+        <argsstring></argsstring>
+        <name>max_length</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The maximum length of the chain </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment_storage.h" line="47" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__environment__storage_1aeb71046aab313bce6e8b8cadb7e55db9" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_environment_storage::current_length</definition>
+        <argsstring></argsstring>
+        <name>current_length</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment_storage.h" line="48" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__environment__storage_1a9f9f69b124334b85d450106bc3117ae9" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_environment_storage::position_L</definition>
+        <argsstring></argsstring>
+        <name>position_L</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The current position of <formula id="26">$\Gamma^A$</formula> w.r.t the full chain. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment_storage.h" line="49" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__environment__storage_1a2294b1fd9f02da72485ad0c2a9765098" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_environment_storage::position_R</definition>
+        <argsstring></argsstring>
+        <name>position_R</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The current position of <formula id="27">$\Gamma^B$</formula> w.r.t the full chain. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment_storage.h" line="50" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__environment__storage_1abc6770f864d2dd29076fa46c9d5c398e" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_environment_storage::max_length_is_set</definition>
+        <argsstring></argsstring>
+        <name>max_length_is_set</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment_storage.h" line="51" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__environment__storage_1ae73fc1a0ab19e7408ea82938c2a3f362" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_environment_storage::superblock_is_set</definition>
+        <argsstring></argsstring>
+        <name>superblock_is_set</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment_storage.h" line="52" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__environment__storage_1aadea01154a7993932ed8f175faa88641" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_environment_storage::hdf5_file_is_set</definition>
+        <argsstring></argsstring>
+        <name>hdf5_file_is_set</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment_storage.h" line="53" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
       <memberdef kind="variable" id="classclass__environment__storage_1ac0efe9be05f9dcd754d2bca27b92a1db" prot="private" static="no" mutable="no">
         <type>std::shared_ptr&lt; <ref refid="classclass__superblock" kindref="compound">class_superblock</ref> &gt;</type>
         <definition>std::shared_ptr&lt;class_superblock&gt; class_environment_storage::superblock</definition>
@@ -82,7 +154,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="42" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="42" bodyend="-1"/>
+        <location file="source/mps_routines/class_environment_storage.h" line="44" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="44" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__environment__storage_1af0946a2447fa522a174f440f0d901cb5" prot="private" static="no" mutable="no">
         <type>std::shared_ptr&lt; <ref refid="classclass__hdf5__file" kindref="compound">class_hdf5_file</ref> &gt;</type>
@@ -95,93 +167,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="43" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="43" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__environment__storage_1a4ddd0da190341022462f4848e6b9416c" prot="private" static="no" mutable="no">
-        <type>int</type>
-        <definition>int class_environment_storage::max_length</definition>
-        <argsstring></argsstring>
-        <name>max_length</name>
-        <initializer>= 0</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>The maximum length of the chain </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
         <location file="source/mps_routines/class_environment_storage.h" line="45" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="45" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__environment__storage_1a9f9f69b124334b85d450106bc3117ae9" prot="private" static="no" mutable="no">
-        <type>int</type>
-        <definition>int class_environment_storage::position_L</definition>
-        <argsstring></argsstring>
-        <name>position_L</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>The current position of <formula id="28">$\Gamma^A$</formula> w.r.t the full chain. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="46" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="46" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__environment__storage_1a2294b1fd9f02da72485ad0c2a9765098" prot="private" static="no" mutable="no">
-        <type>int</type>
-        <definition>int class_environment_storage::position_R</definition>
-        <argsstring></argsstring>
-        <name>position_R</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>The current position of <formula id="29">$\Gamma^B$</formula> w.r.t the full chain. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="47" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="47" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__environment__storage_1abc6770f864d2dd29076fa46c9d5c398e" prot="private" static="no" mutable="no">
-        <type>bool</type>
-        <definition>bool class_environment_storage::max_length_is_set</definition>
-        <argsstring></argsstring>
-        <name>max_length_is_set</name>
-        <initializer>= false</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="48" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="48" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__environment__storage_1ae73fc1a0ab19e7408ea82938c2a3f362" prot="private" static="no" mutable="no">
-        <type>bool</type>
-        <definition>bool class_environment_storage::superblock_is_set</definition>
-        <argsstring></argsstring>
-        <name>superblock_is_set</name>
-        <initializer>= false</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="49" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="49" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__environment__storage_1aadea01154a7993932ed8f175faa88641" prot="private" static="no" mutable="no">
-        <type>bool</type>
-        <definition>bool class_environment_storage::hdf5_file_is_set</definition>
-        <argsstring></argsstring>
-        <name>hdf5_file_is_set</name>
-        <initializer>= false</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="50" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="50" bodyend="-1"/>
-      </memberdef>
       </sectiondef>
-      <sectiondef kind="private-func">
-      <memberdef kind="function" id="classclass__environment__storage_1a98e9c08936c076a36295ce5ee7ffb1f7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__environment__storage_1a98e9c08936c076a36295ce5ee7ffb1f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void class_environment_storage::print_error_and_exit</definition>
         <argsstring>(int error_type)</argsstring>
@@ -196,10 +186,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="52" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="116" bodyend="120"/>
+        <location file="source/mps_routines/class_environment_storage.h" line="55" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="111" bodyend="115"/>
       </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-func">
       <memberdef kind="function" id="classclass__environment__storage_1acbc1d73a80f2a17ff3e16855a622a64f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
         <definition>class_environment_storage::class_environment_storage</definition>
@@ -211,7 +199,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="56" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="56" bodyend="56"/>
+        <location file="source/mps_routines/class_environment_storage.h" line="59" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="59" bodyend="59"/>
       </memberdef>
       <memberdef kind="function" id="classclass__environment__storage_1a4697fac7059d4b7096e53a410bd694a3" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
         <type></type>
@@ -237,7 +225,37 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="57" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="12" bodyend="20"/>
+        <location file="source/mps_routines/class_environment_storage.h" line="60" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="14" bodyend="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__environment__storage_1a08cac090895c54387ca172a17d9a4d27" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_environment_storage::insert_two_in_the_middle</definition>
+        <argsstring>(std::list&lt; T &gt; &amp;list, T &amp;objLeft, T &amp;objRight)</argsstring>
+        <name>insert_two_in_the_middle</name>
+        <param>
+          <type>std::list&lt; T &gt; &amp;</type>
+          <declname>list</declname>
+        </param>
+        <param>
+          <type>T &amp;</type>
+          <declname>objLeft</declname>
+        </param>
+        <param>
+          <type>T &amp;</type>
+          <declname>objRight</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_environment_storage.h" line="66" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="66" bodyend="70"/>
       </memberdef>
       <memberdef kind="function" id="classclass__environment__storage_1a933123c8757c035042091658361253f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -254,7 +272,7 @@
 <para>Sets the maximum length of the chain. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="62" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="25" bodyend="28"/>
+        <location file="source/mps_routines/class_environment_storage.h" line="74" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="27" bodyend="30"/>
       </memberdef>
       <memberdef kind="function" id="classclass__environment__storage_1a1937501bde4670237fc3ca4233b8b8e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -271,7 +289,7 @@
 <para>Sets the pointer to a superblock </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="63" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="29" bodyend="32"/>
+        <location file="source/mps_routines/class_environment_storage.h" line="75" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="31" bodyend="34"/>
       </memberdef>
       <memberdef kind="function" id="classclass__environment__storage_1a90967684076098400d0ff35a4b29439d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -288,11 +306,11 @@
 <para>Sets the pointer to an hdf5-file for storage </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="64" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="34" bodyend="37"/>
+        <location file="source/mps_routines/class_environment_storage.h" line="76" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="36" bodyend="39"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__environment__storage_1a4fb24583ad215b4bb924036a337bb10f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_environment_storage::insert</definition>
+      <memberdef kind="function" id="classclass__environment__storage_1a11720e1c1345590db6690cc73cd9ecd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_environment_storage::insert</definition>
         <argsstring>()</argsstring>
         <name>insert</name>
         <briefdescription>
@@ -301,11 +319,11 @@
 <para>Store current MPS and environments indexed by their respective positions on the chain. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="65" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="40" bodyend="56"/>
+        <location file="source/mps_routines/class_environment_storage.h" line="77" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="42" bodyend="50"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__environment__storage_1a063c458f0d6e99b6611ad03244985ea3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_environment_storage::load</definition>
+      <memberdef kind="function" id="classclass__environment__storage_1ac517b94b00c491bcd8692ceb18364dd2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_environment_storage::load</definition>
         <argsstring>()</argsstring>
         <name>load</name>
         <briefdescription>
@@ -314,7 +332,7 @@
 <para>Load MPS and environments according to current position. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="66" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="59" bodyend="73"/>
+        <location file="source/mps_routines/class_environment_storage.h" line="78" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="54" bodyend="56"/>
       </memberdef>
       <memberdef kind="function" id="classclass__environment__storage_1a76a55f97099ca5329e650e16998fde07" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -327,11 +345,11 @@
 <para>Update the MPS stored at current position. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="67" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="75" bodyend="83"/>
+        <location file="source/mps_routines/class_environment_storage.h" line="79" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="58" bodyend="62"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__environment__storage_1a22ddeeb9bb7e292e8dfa98aeb5f6d0ec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_environment_storage::move</definition>
+      <memberdef kind="function" id="classclass__environment__storage_1a2c79fe1384a369854c0c421c1093608b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_environment_storage::move</definition>
         <argsstring>(int &amp;direction, int &amp;sweep)</argsstring>
         <name>move</name>
         <param>
@@ -348,7 +366,7 @@
 <para>Move current position to the left (<computeroutput>direction=1</computeroutput>) or right (<computeroutput>direction=-1</computeroutput>), and store the <bold>newly enlarged</bold> environment. Turn direction around if the edge is reached. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="68" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="85" bodyend="105"/>
+        <location file="source/mps_routines/class_environment_storage.h" line="80" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="64" bodyend="100"/>
       </memberdef>
       <memberdef kind="function" id="classclass__environment__storage_1a9b8b190195d6afaac8f7fa94f42420e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -358,45 +376,45 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print the tensor dimensions for all <formula id="26">$\Gamma$</formula>-tensors. </para>        </detaileddescription>
+<para>Print the tensor dimensions for all <formula id="25">$\Gamma$</formula>-tensors. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_environment_storage.h" line="69" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="108" bodyend="113"/>
+        <location file="source/mps_routines/class_environment_storage.h" line="81" column="1" bodyfile="source/mps_routines/class_environment_storage.cpp" bodystart="103" bodyend="108"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Storage class for environments during finite DMRG During the infinite-DMRG part of the algorithm, the current state for each chain-length is stored in a <computeroutput>class_storage</computeroutput> object, for later use in the finite-DMRG stage. </para>    </briefdescription>
     <detaileddescription>
 <para>Specifically, this class stores objects from the current superblock:<itemizedlist>
-<listitem><para>The left and right environment blocks <computeroutput>Lblock</computeroutput> and <computeroutput>Rblock</computeroutput>, both type <computeroutput>Tensor3</computeroutput>, and</para></listitem><listitem><para>the MPS tensors <formula id="20">$\Gamma^{A,B}=$</formula> <computeroutput>MPS.GA, MPS.GB</computeroutput> and <formula id="21">$\Lambda^{A,B}=$</formula> <computeroutput>MPS.LA, MPS.LB</computeroutput>, required for computing <formula id="22">$\Theta$</formula>, following the notation used in <ulink url="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Frank Pollmann&apos;s notes</ulink>: <formula id="23">$\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B$</formula>. <linebreak/>
- Here <formula id="24">$\Gamma^{A,B}$</formula> are a rank-3 tensors of type <computeroutput>Tensor3</computeroutput> and <formula id="25">$\Lambda^{A,B}$</formula> are rank-1 tensors of type <computeroutput>Tensor1</computeroutput>.</para></listitem></itemizedlist>
+<listitem><para>The left and right environment blocks <computeroutput>Lblock</computeroutput> and <computeroutput>Rblock</computeroutput>, both type <computeroutput>Tensor3</computeroutput>, and</para></listitem><listitem><para>the MPS tensors <formula id="19">$\Gamma^{A,B}=$</formula> <computeroutput>MPS.GA, MPS.GB</computeroutput> and <formula id="20">$\Lambda^{A,B}=$</formula> <computeroutput>MPS.LA, MPS.LB</computeroutput>, required for computing <formula id="21">$\Theta$</formula>, following the notation used in <ulink url="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Frank Pollmann&apos;s notes</ulink>: <formula id="22">$\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B$</formula>. <linebreak/>
+ Here <formula id="23">$\Gamma^{A,B}$</formula> are a rank-3 tensors of type <computeroutput>Tensor3</computeroutput> and <formula id="24">$\Lambda^{A,B}$</formula> are rank-1 tensors of type <computeroutput>Tensor1</computeroutput>.</para></listitem></itemizedlist>
 </para><para>All objects are stored and indexed by their position relative to the final chain of length <computeroutput>max_length</computeroutput>. </para>    </detaileddescription>
-    <location file="source/mps_routines/class_environment_storage.h" line="33" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="33" bodyend="70"/>
+    <location file="source/mps_routines/class_environment_storage.h" line="36" column="1" bodyfile="source/mps_routines/class_environment_storage.h" bodystart="36" bodyend="82"/>
     <listofallmembers>
       <member refid="classclass__environment__storage_1acbc1d73a80f2a17ff3e16855a622a64f" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>class_environment_storage</name></member>
       <member refid="classclass__environment__storage_1a4697fac7059d4b7096e53a410bd694a3" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>class_environment_storage</name></member>
-      <member refid="classclass__environment__storage_1a2bf7b7d6451519628034e2c159839203" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>G_list</name></member>
+      <member refid="classclass__environment__storage_1aeb71046aab313bce6e8b8cadb7e55db9" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>current_length</name></member>
       <member refid="classclass__environment__storage_1af0946a2447fa522a174f440f0d901cb5" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>hdf5</name></member>
-      <member refid="classclass__environment__storage_1aadea01154a7993932ed8f175faa88641" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>hdf5_file_is_set</name></member>
-      <member refid="classclass__environment__storage_1a4fb24583ad215b4bb924036a337bb10f" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>insert</name></member>
-      <member refid="classclass__environment__storage_1a30e03a5b6ecb2b62fd7c2e3ee15ffff2" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>L_list</name></member>
-      <member refid="classclass__environment__storage_1ab5f12ee790581aa2ce4d7bfdc25e640b" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>Lblock_list</name></member>
-      <member refid="classclass__environment__storage_1a063c458f0d6e99b6611ad03244985ea3" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>load</name></member>
-      <member refid="classclass__environment__storage_1a4ddd0da190341022462f4848e6b9416c" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>max_length</name></member>
-      <member refid="classclass__environment__storage_1abc6770f864d2dd29076fa46c9d5c398e" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>max_length_is_set</name></member>
-      <member refid="classclass__environment__storage_1a22ddeeb9bb7e292e8dfa98aeb5f6d0ec" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>move</name></member>
+      <member refid="classclass__environment__storage_1aadea01154a7993932ed8f175faa88641" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>hdf5_file_is_set</name></member>
+      <member refid="classclass__environment__storage_1a11720e1c1345590db6690cc73cd9ecd1" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>insert</name></member>
+      <member refid="classclass__environment__storage_1a08cac090895c54387ca172a17d9a4d27" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>insert_two_in_the_middle</name></member>
+      <member refid="classclass__environment__storage_1ac517b94b00c491bcd8692ceb18364dd2" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>load</name></member>
+      <member refid="classclass__environment__storage_1a4ddd0da190341022462f4848e6b9416c" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>max_length</name></member>
+      <member refid="classclass__environment__storage_1abc6770f864d2dd29076fa46c9d5c398e" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>max_length_is_set</name></member>
+      <member refid="classclass__environment__storage_1a2c79fe1384a369854c0c421c1093608b" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>move</name></member>
+      <member refid="classclass__environment__storage_1a608668ce8d3f5d9eddebca7dfb6eddba" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>MPS_L</name></member>
+      <member refid="classclass__environment__storage_1a3398b05021f0bdbdffe9964d7f98899b" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>MPS_R</name></member>
       <member refid="classclass__environment__storage_1a76a55f97099ca5329e650e16998fde07" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>overwrite_MPS</name></member>
-      <member refid="classclass__environment__storage_1a9f9f69b124334b85d450106bc3117ae9" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>position_L</name></member>
-      <member refid="classclass__environment__storage_1a2294b1fd9f02da72485ad0c2a9765098" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>position_R</name></member>
-      <member refid="classclass__environment__storage_1a98e9c08936c076a36295ce5ee7ffb1f7" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>print_error_and_exit</name></member>
+      <member refid="classclass__environment__storage_1a9f9f69b124334b85d450106bc3117ae9" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>position_L</name></member>
+      <member refid="classclass__environment__storage_1a2294b1fd9f02da72485ad0c2a9765098" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>position_R</name></member>
+      <member refid="classclass__environment__storage_1a98e9c08936c076a36295ce5ee7ffb1f7" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>print_error_and_exit</name></member>
       <member refid="classclass__environment__storage_1a9b8b190195d6afaac8f7fa94f42420e7" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>print_storage</name></member>
-      <member refid="classclass__environment__storage_1a8a88de4f7adbee515dcae710d36e7a81" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>Rblock_list</name></member>
-      <member refid="classclass__environment__storage_1a66fb56369e90e50b7f66dd2c5e8b38b8" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>Scalar</name></member>
+      <member refid="classclass__environment__storage_1a5b0721fd58510d0340d6de9a86d69f20" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>Scalar</name></member>
       <member refid="classclass__environment__storage_1a90967684076098400d0ff35a4b29439d" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>set_hdf5_file</name></member>
       <member refid="classclass__environment__storage_1a933123c8757c035042091658361253f4" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>set_length</name></member>
       <member refid="classclass__environment__storage_1a1937501bde4670237fc3ca4233b8b8e2" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>set_superblock</name></member>
       <member refid="classclass__environment__storage_1ac0efe9be05f9dcd754d2bca27b92a1db" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>superblock</name></member>
-      <member refid="classclass__environment__storage_1ae73fc1a0ab19e7408ea82938c2a3f362" prot="private" virt="non-virtual"><scope>class_environment_storage</scope><name>superblock_is_set</name></member>
+      <member refid="classclass__environment__storage_1ae73fc1a0ab19e7408ea82938c2a3f362" prot="public" virt="non-virtual"><scope>class_environment_storage</scope><name>superblock_is_set</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

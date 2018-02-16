@@ -18,24 +18,24 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="100">
+      <node id="90">
         <label>TypeCheck::is_instance_of&lt; Template, T &gt;</label>
         <link refid="struct_type_check_1_1is__instance__of"/>
-        <childnode refid="101" relation="public-inheritance">
+        <childnode refid="91" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="101">
+      <node id="91">
         <label>std::false_type</label>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="102">
+      <node id="92">
         <label>TypeCheck::is_instance_of&lt; Template, T &gt;</label>
         <link refid="struct_type_check_1_1is__instance__of"/>
-        <childnode refid="103" relation="public-inheritance">
+        <childnode refid="93" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="103">
+      <node id="93">
         <label>std::false_type</label>
       </node>
     </collaborationgraph>

@@ -5,7 +5,7 @@
     <title>Todo List</title>
     <detaileddescription>
 <para><variablelist>
-<varlistentry><term><anchor id="todo_1_todo000001"/>Member <ref refid="classclass__mps_1a9fd08b87e2b6e7aed019b7eff3b2f892" kindref="member">class_mps::initialize</ref>  (long local_dimension_)</term></varlistentry>
+<varlistentry><term><anchor id="todo_1_todo000001"/>Member <ref refid="classclass__mps_1a701bea4b7cce46c5653752bf1222ddfc" kindref="member">class_mps&lt; Scalar &gt;::initialize</ref>  (long local_dimension_)</term></varlistentry>
 <listitem><para>, check? was LA before </para></listitem>
 </variablelist>
 </para>    </detaileddescription>

@@ -2,8 +2,7 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="dir_7e02b9e11c80399eaf9114c3f9f783cc" kind="dir">
     <compoundname>source/mps_routines</compoundname>
-    <innerfile refid="class__eigensolver__product_8cpp">class_eigensolver_product.cpp</innerfile>
-    <innerfile refid="class__eigensolver__product_8h">class_eigensolver_product.h</innerfile>
+    <innerfile refid="class__custom__contraction_8h">class_custom_contraction.h</innerfile>
     <innerfile refid="class__environment_8cpp">class_environment.cpp</innerfile>
     <innerfile refid="class__environment_8h">class_environment.h</innerfile>
     <innerfile refid="class__environment__storage_8cpp">class_environment_storage.cpp</innerfile>
@@ -16,7 +15,6 @@
     <innerfile refid="class__mps_8h">class_mps.h</innerfile>
     <innerfile refid="class__superblock_8cpp">class_superblock.cpp</innerfile>
     <innerfile refid="class__superblock_8h">class_superblock.h</innerfile>
-    <innerfile refid="class__superblock__canonicalize_8cpp">class_superblock_canonicalize.cpp</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

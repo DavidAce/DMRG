@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="nmspc__sim__settings_8h" kind="file" language="C++">
+    <compoundname>nmspc_sim_settings.h</compoundname>
+    <includes local="no">string</includes>
+    <includedby refid="class__algorithm__launcher_8cpp" local="no">source/algorithms/class_algorithm_launcher.cpp</includedby>
+    <includedby refid="class__base__algorithm_8h" local="no">source/algorithms/class_base_algorithm.h</includedby>
+    <includedby refid="class__excited__state___d_m_r_g_8cpp" local="no">source/algorithms/class_excited_state_DMRG.cpp</includedby>
+    <includedby refid="class___f_e_s__i_d_m_r_g_8cpp" local="no">source/algorithms/class_FES_iDMRG.cpp</includedby>
+    <includedby refid="class___f_e_s__i_t_e_b_d_8cpp" local="no">source/algorithms/class_FES_iTEBD.cpp</includedby>
+    <includedby refid="class__finite___d_m_r_g_8cpp" local="no">source/algorithms/class_finite_DMRG.cpp</includedby>
+    <includedby refid="class__imaginary___t_e_b_d_8cpp" local="no">source/algorithms/class_imaginary_TEBD.cpp</includedby>
+    <includedby refid="class__infinite___d_m_r_g_8cpp" local="no">source/algorithms/class_infinite_DMRG.cpp</includedby>
+    <includedby refid="class__hdf5__file_8h" local="no">source/IO/class_hdf5_file.h</includedby>
+    <includedby refid="main_8cpp" local="no">source/main.cpp</includedby>
+    <includedby refid="class__measurement_8h" local="no">source/mps_routines/class_measurement.h</includedby>
+    <includedby refid="class__mpo_8h" local="yes">source/mps_routines/class_mpo.h</includedby>
+    <includedby refid="nmspc__sim__settings_8cpp" local="yes">source/sim_parameters/nmspc_sim_settings.cpp</includedby>
+    <incdepgraph>
+      <node id="843">
+        <label>string</label>
+      </node>
+      <node id="842">
+        <label>source/sim_parameters/nmspc_sim_settings.h</label>
+        <link refid="nmspc__sim__settings_8h"/>
+        <childnode refid="843" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="852">
+        <label>source/IO/class_hdf5_file.h</label>
+        <link refid="class__hdf5__file_8h_source"/>
+      </node>
+      <node id="849">
+        <label>source/algorithms/class_FES_iTEBD.h</label>
+        <link refid="class___f_e_s__i_t_e_b_d_8h_source"/>
+      </node>
+      <node id="846">
+        <label>source/algorithms/class_excited_state_DMRG.h</label>
+        <link refid="class__excited__state___d_m_r_g_8h_source"/>
+      </node>
+      <node id="848">
+        <label>source/algorithms/class_infinite_DMRG.h</label>
+        <link refid="class__infinite___d_m_r_g_8h_source"/>
+      </node>
+      <node id="853">
+        <label>source/main.cpp</label>
+        <link refid="main_8cpp"/>
+      </node>
+      <node id="850">
+        <label>source/algorithms/class_finite_DMRG.h</label>
+        <link refid="class__finite___d_m_r_g_8h_source"/>
+      </node>
+      <node id="844">
+        <label>source/sim_parameters/nmspc_sim_settings.h</label>
+        <link refid="nmspc__sim__settings_8h"/>
+        <childnode refid="845" relation="include">
+        </childnode>
+        <childnode refid="852" relation="include">
+        </childnode>
+        <childnode refid="853" relation="include">
+        </childnode>
+        <childnode refid="854" relation="include">
+        </childnode>
+        <childnode refid="855" relation="include">
+        </childnode>
+      </node>
+      <node id="855">
+        <label>source/mps_routines/class_mpo.h</label>
+        <link refid="class__mpo_8h_source"/>
+      </node>
+      <node id="845">
+        <label>source/algorithms/class_base_algorithm.h</label>
+        <link refid="class__base__algorithm_8h_source"/>
+        <childnode refid="846" relation="include">
+        </childnode>
+        <childnode refid="847" relation="include">
+        </childnode>
+        <childnode refid="848" relation="include">
+        </childnode>
+        <childnode refid="849" relation="include">
+        </childnode>
+        <childnode refid="850" relation="include">
+        </childnode>
+        <childnode refid="851" relation="include">
+        </childnode>
+      </node>
+      <node id="851">
+        <label>source/algorithms/class_imaginary_TEBD.h</label>
+        <link refid="class__imaginary___t_e_b_d_8h_source"/>
+      </node>
+      <node id="854">
+        <label>source/mps_routines/class_measurement.h</label>
+        <link refid="class__measurement_8h_source"/>
+      </node>
+      <node id="847">
+        <label>source/algorithms/class_FES_iDMRG.h</label>
+        <link refid="class___f_e_s__i_d_m_r_g_8h_source"/>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacesettings">settings</innernamespace>
+    <innernamespace refid="namespacesettings_1_1precision">settings::precision</innernamespace>
+    <innernamespace refid="namespacesettings_1_1idmrg">settings::idmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1fdmrg">settings::fdmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1xdmrg">settings::xdmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1itebd">settings::itebd</innernamespace>
+    <innernamespace refid="namespacesettings_1_1fes__itebd">settings::fes_itebd</innernamespace>
+    <innernamespace refid="namespacesettings_1_1fes__idmrg">settings::fes_idmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1hdf5">settings::hdf5</innernamespace>
+    <innernamespace refid="namespacesettings_1_1profiling">settings::profiling</innernamespace>
+    <innernamespace refid="namespacesettings_1_1console">settings::console</innernamespace>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921" prot="public" static="no">
+        <name>SimulationType</name>
+        <enumvalue id="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" prot="public">
+          <name>iDMRG</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9379cfd2380ced1835394b9fb513ccdb" prot="public">
+          <name>fDMRG</name>
+          <briefdescription>
+<para>Finite DMRG sweeps across the chain built during iDMRG. </para>          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab5612e395f07bd6a022360eb707e73ae" prot="public">
+          <name>xDMRG</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a3a6a2aaf168ed7e6639d9e4a962035d0" prot="public">
+          <name>FES_iDMRG</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" prot="public">
+          <name>iTEBD</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921aa4f17de7fbff40297fafdba8c5f15776" prot="public">
+          <name>FES_iTEBD</name>
+          <briefdescription>
+<para>Finite-entanglement scaling. </para>          </briefdescription>
+          <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>superblock</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A class containing MPS, environment and Hamiltonian MPO objects.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+This function uses infinite algorithms (iTEBD or iDMRG) until the entropy converges, to see how entanglement grows as a function of <formula id="0">$\chi$</formula> (chi). </para>          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab50339a10e1de285ac99d4c3990b8693" prot="public">
+          <name>NONE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="18" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.h" bodystart="18" bodyend="18"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/sim_parameters/nmspc_sim_settings.h"/>
+  </compounddef>
+</doxygen>

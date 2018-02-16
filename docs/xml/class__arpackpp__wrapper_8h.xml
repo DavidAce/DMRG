@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__arpackpp__wrapper_8h" kind="file" language="C++">
+    <compoundname>class_arpackpp_wrapper.h</compoundname>
+    <includes local="no">map</includes>
+    <includes local="no">complex</includes>
+    <includes local="yes">ardsnsym.h</includes>
+    <includes local="yes">ardscomp.h</includes>
+    <includes local="yes">ardgcomp.h</includes>
+    <includes local="yes">ardssym.h</includes>
+    <includes local="no">Eigen/Core</includes>
+    <includedby refid="class__measurement_8cpp" local="no">source/mps_routines/class_measurement.cpp</includedby>
+    <incdepgraph>
+      <node id="371">
+        <label>ardgcomp.h</label>
+      </node>
+      <node id="366">
+        <label>source/general/class_arpackpp_wrapper.h</label>
+        <link refid="class__arpackpp__wrapper_8h"/>
+        <childnode refid="367" relation="include">
+        </childnode>
+        <childnode refid="368" relation="include">
+        </childnode>
+        <childnode refid="369" relation="include">
+        </childnode>
+        <childnode refid="370" relation="include">
+        </childnode>
+        <childnode refid="371" relation="include">
+        </childnode>
+        <childnode refid="372" relation="include">
+        </childnode>
+        <childnode refid="373" relation="include">
+        </childnode>
+      </node>
+      <node id="373">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="367">
+        <label>map</label>
+      </node>
+      <node id="372">
+        <label>ardssym.h</label>
+      </node>
+      <node id="370">
+        <label>ardscomp.h</label>
+      </node>
+      <node id="369">
+        <label>ardsnsym.h</label>
+      </node>
+      <node id="368">
+        <label>complex</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classclass__arpackpp__wrapper" prot="public">class_arpackpp_wrapper</innerclass>
+    <innernamespace refid="namespacearpack">arpack</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/general/class_arpackpp_wrapper.h"/>
+  </compounddef>
+</doxygen>

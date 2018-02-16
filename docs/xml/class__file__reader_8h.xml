@@ -12,69 +12,69 @@
     <includes refid="class__custom__cout_8h" local="no">IO/class_custom_cout.h</includes>
     <includedby refid="class__file__reader_8cpp" local="yes">source/IO/class_file_reader.cpp</includedby>
     <includedby refid="main_8cpp" local="no">source/main.cpp</includedby>
-    <includedby refid="n__sim__settings_8cpp" local="no">source/sim_parameters/n_sim_settings.cpp</includedby>
+    <includedby refid="nmspc__sim__settings_8cpp" local="no">source/sim_parameters/nmspc_sim_settings.cpp</includedby>
     <incdepgraph>
-      <node id="501">
+      <node id="478">
         <label>iomanip</label>
       </node>
-      <node id="505">
+      <node id="482">
         <label>IO/class_custom_cout.h</label>
         <link refid="class__custom__cout_8h_source"/>
-        <childnode refid="506" relation="include">
+        <childnode refid="483" relation="include">
         </childnode>
-        <childnode refid="498" relation="include">
+        <childnode refid="475" relation="include">
         </childnode>
       </node>
-      <node id="500">
+      <node id="477">
         <label>string</label>
       </node>
-      <node id="499">
+      <node id="476">
         <label>fstream</label>
       </node>
-      <node id="497">
+      <node id="474">
         <label>source/IO/class_file_reader.h</label>
         <link refid="class__file__reader_8h"/>
-        <childnode refid="498" relation="include">
+        <childnode refid="475" relation="include">
         </childnode>
-        <childnode refid="499" relation="include">
+        <childnode refid="476" relation="include">
         </childnode>
-        <childnode refid="500" relation="include">
+        <childnode refid="477" relation="include">
         </childnode>
-        <childnode refid="501" relation="include">
+        <childnode refid="478" relation="include">
         </childnode>
-        <childnode refid="502" relation="include">
+        <childnode refid="479" relation="include">
         </childnode>
-        <childnode refid="503" relation="include">
+        <childnode refid="480" relation="include">
         </childnode>
-        <childnode refid="504" relation="include">
+        <childnode refid="481" relation="include">
         </childnode>
-        <childnode refid="505" relation="include">
+        <childnode refid="482" relation="include">
         </childnode>
       </node>
-      <node id="502">
+      <node id="479">
         <label>cctype</label>
       </node>
-      <node id="498">
+      <node id="475">
         <label>iostream</label>
       </node>
-      <node id="506">
+      <node id="483">
         <label>chrono</label>
       </node>
-      <node id="504">
+      <node id="481">
         <label>algorithm</label>
       </node>
-      <node id="503">
+      <node id="480">
         <label>experimental/filesystem</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="507">
+      <node id="484">
         <label>source/IO/class_file_reader.h</label>
         <link refid="class__file__reader_8h"/>
-        <childnode refid="508" relation="include">
+        <childnode refid="485" relation="include">
         </childnode>
       </node>
-      <node id="508">
+      <node id="485">
         <label>source/main.cpp</label>
         <link refid="main_8cpp"/>
       </node>

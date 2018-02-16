@@ -253,33 +253,33 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="40">
+      <node id="36">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
       </node>
-      <node id="39">
+      <node id="35">
         <label>class_FES_iTEBD</label>
         <link refid="classclass___f_e_s__i_t_e_b_d"/>
-        <childnode refid="40" relation="public-inheritance">
+        <childnode refid="36" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="43">
+      <node id="39">
         <label>class_custom_cout</label>
         <link refid="classclass__custom__cout"/>
       </node>
-      <node id="44">
+      <node id="40">
         <label>class_tic_toc</label>
         <link refid="classclass__tic__toc"/>
       </node>
-      <node id="42">
+      <node id="38">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
-        <childnode refid="43" relation="usage">
+        <childnode refid="39" relation="usage">
           <edgelabel>ccout</edgelabel>
         </childnode>
-        <childnode refid="44" relation="usage">
+        <childnode refid="40" relation="usage">
           <edgelabel>t_udt</edgelabel>
           <edgelabel>t_eig</edgelabel>
           <edgelabel>t_ste</edgelabel>
@@ -293,10 +293,10 @@
           <edgelabel>...</edgelabel>
         </childnode>
       </node>
-      <node id="41">
+      <node id="37">
         <label>class_FES_iTEBD</label>
         <link refid="classclass___f_e_s__i_t_e_b_d"/>
-        <childnode refid="42" relation="public-inheritance">
+        <childnode refid="38" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
@@ -306,20 +306,20 @@
       <member refid="classclass___f_e_s__i_t_e_b_d_1a70d8de0b758b5c002261a0d7694861e4" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>chi_max</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1a72808b554c9b636818d132476be957be" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>chi_min</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1a7d106c1df6a27ba08b9fda75e5d4c02b" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>chi_num</name></member>
-      <member refid="classclass__algorithm__base_1a864f4f82b4d453828d391b2044d53fdc" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a89a908e197b655ae32018d230edb06f3" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>class_algorithm_base</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1ad71334df54a0dab8ac2e4c513be1c5e0" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>class_FES_iTEBD</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1aad792b3b6a03e796c50b9f71cb922f11" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>delta_t</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1ab4966ca836c22c01e5126f71651c417d" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>delta_t0</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1a420e5c309f3acaadd2ac35dbdc10e6c3" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>delta_tmin</name></member>
-      <member refid="classclass__algorithm__base_1a68804df41c37620391746d749b267498" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>enlarge_environment</name></member>
-      <member refid="classclass__algorithm__base_1ad516d7415be3c39534429d34d677adf3" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1a843555eba3d2bb4d371d7a8fcf4decf2" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1a55c7268b04fc440dd0287fbd969f202d" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>enlarge_environment</name></member>
       <member refid="classclass__algorithm__base_1a0df91637c87540c529273999b7866315" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>group_name</name></member>
       <member refid="classclass__algorithm__base_1a52110546990518c431901aa1262e457c" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>hdf5</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1a4f024ec8f050dc01377c91d0706142ca" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>iteration</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1a42bb653f213ee07b02605b6468146e28" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>max_steps</name></member>
-      <member refid="classclass__algorithm__base_1aeb4c7ff399543a89181d790c56e8ddf0" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>observables</name></member>
+      <member refid="classclass__algorithm__base_1afce57181b8c71747fe662a0db4bf8494" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>measurement</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1aa50618a8a6075b4383b49576f4061e38" prot="public" virt="non-virtual"><scope>class_FES_iTEBD</scope><name>print_freq</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1ac04fc2f39a021216503cb05ecd2e5db7" prot="public" virt="virtual"><scope>class_FES_iTEBD</scope><name>print_profiling</name></member>
       <member refid="classclass___f_e_s__i_t_e_b_d_1a78dea9f588617416547d1dc5db4a4891" prot="public" virt="virtual"><scope>class_FES_iTEBD</scope><name>print_status_full</name></member>

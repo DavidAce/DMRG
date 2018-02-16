@@ -2,115 +2,115 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="main_8cpp" kind="file" language="C++">
     <compoundname>main.cpp</compoundname>
-    <includes refid="n__sim__settings_8h" local="no">sim_parameters/n_sim_settings.h</includes>
-    <includes refid="n__model_8h" local="no">sim_parameters/n_model.h</includes>
+    <includes refid="nmspc__sim__settings_8h" local="no">sim_parameters/nmspc_sim_settings.h</includes>
+    <includes refid="nmspc__model_8h" local="no">sim_parameters/nmspc_model.h</includes>
     <includes refid="class__algorithm__launcher_8h" local="no">algorithms/class_algorithm_launcher.h</includes>
     <includes local="no">gitversion.h</includes>
     <includes refid="class__file__reader_8h" local="no">IO/class_file_reader.h</includes>
     <incdepgraph>
-      <node id="615">
+      <node id="592">
         <label>iomanip</label>
       </node>
-      <node id="609">
+      <node id="586">
         <label>IO/class_custom_cout.h</label>
         <link refid="class__custom__cout_8h_source"/>
-        <childnode refid="610" relation="include">
+        <childnode refid="587" relation="include">
         </childnode>
-        <childnode refid="611" relation="include">
-        </childnode>
-      </node>
-      <node id="601">
-        <label>sim_parameters/n_sim_settings.h</label>
-        <link refid="n__sim__settings_8h_source"/>
-        <childnode refid="602" relation="include">
+        <childnode refid="588" relation="include">
         </childnode>
       </node>
-      <node id="606">
+      <node id="583">
         <label>Eigen/Core</label>
       </node>
-      <node id="602">
+      <node id="579">
         <label>string</label>
       </node>
-      <node id="607">
+      <node id="584">
         <label>algorithms/class_algorithm_launcher.h</label>
         <link refid="class__algorithm__launcher_8h_source"/>
-        <childnode refid="608" relation="include">
+        <childnode refid="585" relation="include">
         </childnode>
-        <childnode refid="609" relation="include">
+        <childnode refid="586" relation="include">
         </childnode>
       </node>
-      <node id="614">
+      <node id="591">
         <label>fstream</label>
       </node>
-      <node id="613">
+      <node id="590">
         <label>IO/class_file_reader.h</label>
         <link refid="class__file__reader_8h_source"/>
-        <childnode refid="611" relation="include">
+        <childnode refid="588" relation="include">
         </childnode>
-        <childnode refid="614" relation="include">
+        <childnode refid="591" relation="include">
         </childnode>
-        <childnode refid="602" relation="include">
+        <childnode refid="579" relation="include">
         </childnode>
-        <childnode refid="615" relation="include">
+        <childnode refid="592" relation="include">
         </childnode>
-        <childnode refid="616" relation="include">
+        <childnode refid="593" relation="include">
         </childnode>
-        <childnode refid="617" relation="include">
+        <childnode refid="594" relation="include">
         </childnode>
-        <childnode refid="618" relation="include">
+        <childnode refid="595" relation="include">
         </childnode>
-        <childnode refid="609" relation="include">
+        <childnode refid="586" relation="include">
         </childnode>
       </node>
-      <node id="600">
+      <node id="577">
         <label>source/main.cpp</label>
         <link refid="main_8cpp"/>
-        <childnode refid="601" relation="include">
+        <childnode refid="578" relation="include">
         </childnode>
-        <childnode refid="603" relation="include">
+        <childnode refid="580" relation="include">
         </childnode>
-        <childnode refid="607" relation="include">
+        <childnode refid="584" relation="include">
         </childnode>
-        <childnode refid="612" relation="include">
+        <childnode refid="589" relation="include">
         </childnode>
-        <childnode refid="613" relation="include">
+        <childnode refid="590" relation="include">
         </childnode>
       </node>
-      <node id="604">
+      <node id="581">
         <label>vector</label>
       </node>
-      <node id="612">
+      <node id="589">
         <label>gitversion.h</label>
       </node>
-      <node id="605">
+      <node id="582">
         <label>array</label>
       </node>
-      <node id="616">
+      <node id="578">
+        <label>sim_parameters/nmspc_sim_settings.h</label>
+        <link refid="nmspc__sim__settings_8h_source"/>
+        <childnode refid="579" relation="include">
+        </childnode>
+      </node>
+      <node id="593">
         <label>cctype</label>
       </node>
-      <node id="603">
-        <label>sim_parameters/n_model.h</label>
-        <link refid="n__model_8h_source"/>
-        <childnode refid="604" relation="include">
-        </childnode>
-        <childnode refid="605" relation="include">
-        </childnode>
-        <childnode refid="606" relation="include">
-        </childnode>
-      </node>
-      <node id="611">
+      <node id="588">
         <label>iostream</label>
       </node>
-      <node id="610">
+      <node id="587">
         <label>chrono</label>
       </node>
-      <node id="618">
+      <node id="580">
+        <label>sim_parameters/nmspc_model.h</label>
+        <link refid="nmspc__model_8h_source"/>
+        <childnode refid="581" relation="include">
+        </childnode>
+        <childnode refid="582" relation="include">
+        </childnode>
+        <childnode refid="583" relation="include">
+        </childnode>
+      </node>
+      <node id="595">
         <label>algorithm</label>
       </node>
-      <node id="608">
+      <node id="585">
         <label>memory</label>
       </node>
-      <node id="617">
+      <node id="594">
         <label>experimental/filesystem</label>
       </node>
     </incdepgraph>
@@ -136,7 +136,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/main.cpp" line="15" column="1" bodyfile="source/main.cpp" bodystart="15" bodyend="36"/>
+        <location file="source/main.cpp" line="14" column="1" bodyfile="source/main.cpp" bodystart="14" bodyend="35"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
