@@ -5,96 +5,97 @@
     <includes local="no">string</includes>
     <includedby refid="class__algorithm__launcher_8cpp" local="no">source/algorithms/class_algorithm_launcher.cpp</includedby>
     <includedby refid="class__base__algorithm_8h" local="no">source/algorithms/class_base_algorithm.h</includedby>
-    <includedby refid="class__excited__state___d_m_r_g_8cpp" local="no">source/algorithms/class_excited_state_DMRG.cpp</includedby>
+    <includedby refid="class__f_d_m_r_g_8cpp" local="no">source/algorithms/class_fDMRG.cpp</includedby>
     <includedby refid="class___f_e_s__i_d_m_r_g_8cpp" local="no">source/algorithms/class_FES_iDMRG.cpp</includedby>
     <includedby refid="class___f_e_s__i_t_e_b_d_8cpp" local="no">source/algorithms/class_FES_iTEBD.cpp</includedby>
-    <includedby refid="class__finite___d_m_r_g_8cpp" local="no">source/algorithms/class_finite_DMRG.cpp</includedby>
-    <includedby refid="class__imaginary___t_e_b_d_8cpp" local="no">source/algorithms/class_imaginary_TEBD.cpp</includedby>
-    <includedby refid="class__infinite___d_m_r_g_8cpp" local="no">source/algorithms/class_infinite_DMRG.cpp</includedby>
+    <includedby refid="class__i_d_m_r_g_8cpp" local="no">source/algorithms/class_iDMRG.cpp</includedby>
+    <includedby refid="class__i_t_e_b_d_8cpp" local="no">source/algorithms/class_iTEBD.cpp</includedby>
+    <includedby refid="class__x_d_m_r_g_8cpp" local="no">source/algorithms/class_xDMRG.cpp</includedby>
     <includedby refid="class__hdf5__file_8h" local="no">source/IO/class_hdf5_file.h</includedby>
     <includedby refid="main_8cpp" local="no">source/main.cpp</includedby>
     <includedby refid="class__measurement_8h" local="no">source/mps_routines/class_measurement.h</includedby>
     <includedby refid="class__mpo_8h" local="yes">source/mps_routines/class_mpo.h</includedby>
+    <includedby refid="class__superblock_8cpp" local="no">source/mps_routines/class_superblock.cpp</includedby>
     <includedby refid="nmspc__sim__settings_8cpp" local="yes">source/sim_parameters/nmspc_sim_settings.cpp</includedby>
     <incdepgraph>
-      <node id="843">
+      <node id="883">
         <label>string</label>
       </node>
-      <node id="842">
+      <node id="882">
         <label>source/sim_parameters/nmspc_sim_settings.h</label>
         <link refid="nmspc__sim__settings_8h"/>
-        <childnode refid="843" relation="include">
+        <childnode refid="883" relation="include">
         </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="852">
+      <node id="892">
         <label>source/IO/class_hdf5_file.h</label>
         <link refid="class__hdf5__file_8h_source"/>
       </node>
-      <node id="849">
+      <node id="890">
         <label>source/algorithms/class_FES_iTEBD.h</label>
         <link refid="class___f_e_s__i_t_e_b_d_8h_source"/>
       </node>
-      <node id="846">
-        <label>source/algorithms/class_excited_state_DMRG.h</label>
-        <link refid="class__excited__state___d_m_r_g_8h_source"/>
+      <node id="889">
+        <label>source/algorithms/class_iDMRG.h</label>
+        <link refid="class__i_d_m_r_g_8h_source"/>
       </node>
-      <node id="848">
-        <label>source/algorithms/class_infinite_DMRG.h</label>
-        <link refid="class__infinite___d_m_r_g_8h_source"/>
+      <node id="887">
+        <label>source/algorithms/class_fDMRG.h</label>
+        <link refid="class__f_d_m_r_g_8h_source"/>
       </node>
-      <node id="853">
+      <node id="893">
         <label>source/main.cpp</label>
         <link refid="main_8cpp"/>
       </node>
-      <node id="850">
-        <label>source/algorithms/class_finite_DMRG.h</label>
-        <link refid="class__finite___d_m_r_g_8h_source"/>
+      <node id="886">
+        <label>source/algorithms/class_xDMRG.h</label>
+        <link refid="class__x_d_m_r_g_8h_source"/>
       </node>
-      <node id="844">
+      <node id="884">
         <label>source/sim_parameters/nmspc_sim_settings.h</label>
         <link refid="nmspc__sim__settings_8h"/>
-        <childnode refid="845" relation="include">
+        <childnode refid="885" relation="include">
         </childnode>
-        <childnode refid="852" relation="include">
+        <childnode refid="892" relation="include">
         </childnode>
-        <childnode refid="853" relation="include">
+        <childnode refid="893" relation="include">
         </childnode>
-        <childnode refid="854" relation="include">
+        <childnode refid="894" relation="include">
         </childnode>
-        <childnode refid="855" relation="include">
+        <childnode refid="895" relation="include">
         </childnode>
       </node>
-      <node id="855">
+      <node id="895">
         <label>source/mps_routines/class_mpo.h</label>
         <link refid="class__mpo_8h_source"/>
       </node>
-      <node id="845">
+      <node id="885">
         <label>source/algorithms/class_base_algorithm.h</label>
         <link refid="class__base__algorithm_8h_source"/>
-        <childnode refid="846" relation="include">
+        <childnode refid="886" relation="include">
         </childnode>
-        <childnode refid="847" relation="include">
+        <childnode refid="887" relation="include">
         </childnode>
-        <childnode refid="848" relation="include">
+        <childnode refid="888" relation="include">
         </childnode>
-        <childnode refid="849" relation="include">
+        <childnode refid="889" relation="include">
         </childnode>
-        <childnode refid="850" relation="include">
+        <childnode refid="890" relation="include">
         </childnode>
-        <childnode refid="851" relation="include">
+        <childnode refid="891" relation="include">
         </childnode>
       </node>
-      <node id="851">
-        <label>source/algorithms/class_imaginary_TEBD.h</label>
-        <link refid="class__imaginary___t_e_b_d_8h_source"/>
+      <node id="891">
+        <label>source/algorithms/class_iTEBD.h</label>
+        <link refid="class__i_t_e_b_d_8h_source"/>
       </node>
-      <node id="854">
+      <node id="894">
         <label>source/mps_routines/class_measurement.h</label>
         <link refid="class__measurement_8h_source"/>
       </node>
-      <node id="847">
+      <node id="888">
         <label>source/algorithms/class_FES_iDMRG.h</label>
         <link refid="class___f_e_s__i_d_m_r_g_8h_source"/>
       </node>
@@ -162,13 +163,6 @@
 </parameteritem>
 </parameterlist>
 This function uses infinite algorithms (iTEBD or iDMRG) until the entropy converges, to see how entanglement grows as a function of <formula id="0">$\chi$</formula> (chi). </para>          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab50339a10e1de285ac99d4c3990b8693" prot="public">
-          <name>NONE</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
         </enumvalue>
         <briefdescription>
         </briefdescription>

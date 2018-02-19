@@ -71,21 +71,42 @@ Tensor<Scalar,4> class_mps<Scalar>::thetaR() const{
             .contract(asDiagonal(LA),idx<1>({2},{0}) )
             .contract(B(), idx<1>({2},{1}))
             .shuffle(array4{0,2,1,3});
+
+    //Outputs:
+    //      0  1
+    //   2__|__|__3
 };
 
 
 template<typename Scalar>
 Tensor<Scalar,4> class_mps<Scalar>::get_theta() const {
-    return asDiagonal(L_tail) //whatever L_A was in the previous step
+    return  asDiagonal(L_tail) //whatever L_A was in the previous step
             .contract(GA,             idx<1>({1},{1}))
             .contract(asDiagonal(LA), idx<1>({2},{0}))
             .contract(GB,             idx<1>({2},{1}))
-            .contract(asDiagonal(LB), idx<1>({3},{0})).shuffle(array4{1,2,0,3});
+            .contract(asDiagonal(LB), idx<1>({3},{0}))
+            .shuffle(array4{1,2,0,3});
 
     //Outputs:
     //      0  1
     //   2__|__|__3
 }
+
+template<typename Scalar>
+Tensor<Scalar,4> class_mps<Scalar>::get_theta_swapped() const  {
+    return  asDiagonal(LA) //whatever L_A was in the previous step
+            .contract(GB,             idx<1>({1},{1}))
+            .contract(asDiagonal(LB), idx<1>({2},{0}))
+            .contract(GA,             idx<1>({2},{1}))
+            .contract(asDiagonal(LA), idx<1>({3},{0}))
+            .shuffle(array4{1,2,0,3});
+
+    //Outputs:
+    //      0  1
+    //   2__|__|__3
+}
+
+
 
 template<typename Scalar>
 Tensor<Scalar,4> class_mps<Scalar>::get_transfer_matrix_L()const{
@@ -112,7 +133,6 @@ Tensor<Scalar,4> class_mps<Scalar>::get_transfer_2_site_matrix_R()const{
 };
 
 // Explicit instantiations
-
 template class class_mps<double>;
 template class class_mps<std::complex<double>>;
 

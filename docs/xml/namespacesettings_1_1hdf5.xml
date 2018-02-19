@@ -15,7 +15,7 @@
 <para>If true, saves the simulation data to an HDF5 file instead of just outputting to console </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="96" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="68" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="111" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="81" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="nmspc__sim__settings_8h_1abe3ca3342dd4b5ea5f07c26bcda1c979" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -29,7 +29,7 @@
 <para>If true, an output directory will be created in the project root folder if it isn&apos;t found </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="97" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="69" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="112" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="82" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="nmspc__sim__settings_8h_1a8430e1ce7c6f9767a98a503c16affc3d" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -43,7 +43,7 @@
 <para>If true, an hdf5-file with the provided filename will be overwritten if found in output_folder </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="98" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="70" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="113" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="83" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="nmspc__sim__settings_8h_1ab62dfa890c06ea5b0ea5dc3a42f263e4" prot="public" static="no" mutable="no">
         <type>std::string</type>
@@ -57,7 +57,7 @@
 <para>Name of the output HDF5 file </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="99" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="71" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="114" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="84" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="nmspc__sim__settings_8h_1adfab1988ea36f168aefc56bd9118e61a" prot="public" static="no" mutable="no">
         <type>std::string</type>
@@ -71,7 +71,7 @@
 <para>Path of the output HDF5 file </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="100" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="72" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="115" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="85" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="nmspc__sim__settings_8h_1a3872287c5b37f1bcbbaaf614f0bd29c7" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -85,13 +85,13 @@
 <para>If true, saves more simulation data to file (such as explicit form of MPS). Set to false to reduce output file size. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="101" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="73" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="116" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="86" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="source/sim_parameters/nmspc_sim_settings.h" line="95" column="1"/>
+    <location file="source/sim_parameters/nmspc_sim_settings.h" line="110" column="1"/>
   </compounddef>
 </doxygen>

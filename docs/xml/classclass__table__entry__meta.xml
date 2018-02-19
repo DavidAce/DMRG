@@ -8,14 +8,14 @@
         <definition>constexpr hsize_t class_table_entry_meta::NFIELDS</definition>
         <argsstring></argsstring>
         <name>NFIELDS</name>
-        <initializer>= 12</initializer>
+        <initializer>= 15</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="62" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="62" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="71" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="71" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -31,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="63" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="63" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="72" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="72" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__table__entry__meta_1a6afb70e4273d78c7f2b6993740abefb4" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -42,11 +42,14 @@
                                    HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, chi_max),
                                    HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, energy),
                                    HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, entropy),
-                                   HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, variance1),
+                                   HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, variance),
                                    HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, variance2),
+                                   HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, variance3),
                                    HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, truncation_error),
                                    HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, iteration),
                                    HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, chain_length),
+                                   HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, sweep),
+                                   HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, position),
                                    HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, time_step),
                                    HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, wall_time),
                                    HOFFSET(<ref refid="structtable__entry" kindref="compound">table_entry</ref>, phys_time)}</initializer>
@@ -56,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="64" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="64" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="73" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="73" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__table__entry__meta_1ab6c8d3e981e163a89ef2873f2fe4fead" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -67,11 +70,14 @@
                                    sizeof(table_entry::chi_max),
                                    sizeof(table_entry::energy),
                                    sizeof(table_entry::entropy),
-                                   sizeof(table_entry::variance1),
+                                   sizeof(table_entry::variance),
                                    sizeof(table_entry::variance2),
+                                   sizeof(table_entry::variance3),
                                    sizeof(table_entry::truncation_error),
                                    sizeof(table_entry::iteration),
                                    sizeof(table_entry::chain_length),
+                                   sizeof(table_entry::sweep),
+                                   sizeof(table_entry::position),
                                    sizeof(table_entry::time_step),
                                    sizeof(table_entry::wall_time),
                                    sizeof(table_entry::phys_time)}</initializer>
@@ -81,7 +87,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="76" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="76" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="88" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="88" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__table__entry__meta_1a231d61a0b983af5167561efc864dc6c3" prot="public" static="no" mutable="no">
         <type>const char *</type>
@@ -93,11 +99,14 @@
               &quot;chi_max&quot;,
               &quot;energy&quot;,
               &quot;entropy&quot;,
-              &quot;variance1&quot;,
+              &quot;variance&quot;,
               &quot;variance2&quot;,
+              &quot;variance3&quot;,
               &quot;truncation_error&quot;,
-              &quot;position&quot;,
+              &quot;iteration&quot;,
               &quot;chain_length&quot;,
+              &quot;sweep&quot;,
+              &quot;position&quot;,
               &quot;time_step&quot;,
               &quot;wall_time&quot;,
               &quot;phys_time&quot;}</initializer>
@@ -107,7 +116,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="89" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="89" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="104" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="104" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__table__entry__meta_1a380d65e210373e40587545f6ae4ca4f9" prot="public" static="no" mutable="no">
         <type>hid_t</type>
@@ -121,6 +130,9 @@
                                       H5T_NATIVE_DOUBLE,
                                       H5T_NATIVE_DOUBLE,
                                       H5T_NATIVE_DOUBLE,
+                                      H5T_NATIVE_DOUBLE,
+                                      H5T_NATIVE_INT,
+                                      H5T_NATIVE_INT,
                                       H5T_NATIVE_INT,
                                       H5T_NATIVE_INT,
                                       H5T_NATIVE_DOUBLE,
@@ -132,7 +144,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="103" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="103" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="121" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="121" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__table__entry__meta_1a79a10b687fd5e049bf501af8bd0a6da4" prot="public" static="no" mutable="no">
         <type>hid_t</type>
@@ -146,7 +158,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="115" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="115" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="136" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="136" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__table__entry__meta_1a1bec069a2500d1247b3ca892535e96d0" prot="public" static="no" mutable="no">
         <type>hsize_t</type>
@@ -160,7 +172,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="116" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="116" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="137" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="137" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__table__entry__meta_1a47d20a7470d268ebf7a74413f9df130c" prot="public" static="no" mutable="no">
         <type>int *</type>
@@ -174,7 +186,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="117" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="117" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="138" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="138" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__table__entry__meta_1aa395ea6bc55eaa0400b581a351c32955" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -188,7 +200,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="118" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="118" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="139" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="139" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__table__entry__meta_1aa17a8a3934813eeeab24c91124fe0b81" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -201,7 +213,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="119" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="119" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="140" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="140" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -216,14 +228,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="120" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="120" bodyend="122"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="141" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="141" bodyend="143"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="source/IO/class_hdf5_table_buffer.h" line="60" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="60" bodyend="123"/>
+    <location file="source/IO/class_hdf5_table_buffer.h" line="69" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="69" bodyend="144"/>
     <listofallmembers>
       <member refid="classclass__table__entry__meta_1a1bec069a2500d1247b3ca892535e96d0" prot="public" virt="non-virtual"><scope>class_table_entry_meta</scope><name>chunk_size</name></member>
       <member refid="classclass__table__entry__meta_1aed0d28e238f688a61a8ec22f14105c06" prot="public" virt="non-virtual"><scope>class_table_entry_meta</scope><name>class_table_entry_meta</name></member>

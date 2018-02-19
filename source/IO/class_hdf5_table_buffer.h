@@ -18,7 +18,8 @@ struct table_entry{
     double energy;
     double entropy;
     double variance;
-    double variance1;
+    double variance2;
+    double variance3;
     double truncation_error;
     int    iteration;
     int    chain_length;
@@ -34,7 +35,8 @@ struct table_entry{
     double energy_,
     double entropy_,
     double variance_,
-    double variance1_,
+    double variance2_,
+    double variance3_,
     double truncation_error_,
     int    iteration_,
     int    chain_length_,
@@ -49,7 +51,8 @@ struct table_entry{
             energy(energy_),
             entropy(entropy_),
             variance(variance_),
-            variance1(variance1_),
+            variance2(variance2_),
+            variance3(variance3_),
             truncation_error(truncation_error_),
             iteration(iteration_),
             chain_length(chain_length_),
@@ -65,14 +68,15 @@ struct table_entry{
 
 class class_table_entry_meta{
 public:
-    constexpr static hsize_t NFIELDS = 14;
+    constexpr static hsize_t NFIELDS = 15;
     size_t dst_size = sizeof( table_entry );
     size_t dst_offset[NFIELDS] = { HOFFSET(table_entry, chi),
                                    HOFFSET(table_entry, chi_max),
                                    HOFFSET(table_entry, energy),
                                    HOFFSET(table_entry, entropy),
                                    HOFFSET(table_entry, variance),
-                                   HOFFSET(table_entry, variance1),
+                                   HOFFSET(table_entry, variance2),
+                                   HOFFSET(table_entry, variance3),
                                    HOFFSET(table_entry, truncation_error),
                                    HOFFSET(table_entry, iteration),
                                    HOFFSET(table_entry, chain_length),
@@ -86,7 +90,8 @@ public:
                                    sizeof(table_entry::energy),
                                    sizeof(table_entry::entropy),
                                    sizeof(table_entry::variance),
-                                   sizeof(table_entry::variance1),
+                                   sizeof(table_entry::variance2),
+                                   sizeof(table_entry::variance3),
                                    sizeof(table_entry::truncation_error),
                                    sizeof(table_entry::iteration),
                                    sizeof(table_entry::chain_length),
@@ -102,7 +107,8 @@ public:
               "energy",
               "entropy",
               "variance",
-              "variance1",
+              "variance2",
+              "variance3",
               "truncation_error",
               "iteration",
               "chain_length",
@@ -114,6 +120,7 @@ public:
     /* Define field information */
     hid_t      field_type[NFIELDS] = {H5T_NATIVE_LONG,
                                       H5T_NATIVE_LONG,
+                                      H5T_NATIVE_DOUBLE,
                                       H5T_NATIVE_DOUBLE,
                                       H5T_NATIVE_DOUBLE,
                                       H5T_NATIVE_DOUBLE,

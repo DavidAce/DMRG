@@ -11,158 +11,161 @@
     <includes local="no">MatOp/SparseSymMatProd.h</includes>
     <includes refid="class__svd__wrapper_8h" local="no">general/class_svd_wrapper.h</includes>
     <includes refid="class__custom__contraction_8h" local="no">mps_routines/class_custom_contraction.h</includes>
+    <includes refid="nmspc__sim__settings_8h" local="no">sim_parameters/nmspc_sim_settings.h</includes>
     <includes local="yes">arssym.h</includes>
     <includes local="yes">symsol.h</includes>
     <incdepgraph>
-      <node id="784">
+      <node id="824">
         <label>iomanip</label>
       </node>
-      <node id="787">
+      <node id="827">
         <label>general/class_svd_wrapper.h</label>
         <link refid="class__svd__wrapper_8h_source"/>
-        <childnode refid="769" relation="include">
+        <childnode refid="809" relation="include">
         </childnode>
-        <childnode refid="788" relation="include">
+        <childnode refid="828" relation="include">
         </childnode>
       </node>
-      <node id="772">
+      <node id="812">
         <label>iterator</label>
       </node>
-      <node id="785">
+      <node id="825">
         <label>SymEigsSolver.h</label>
       </node>
-      <node id="770">
+      <node id="810">
         <label>Eigen/Core</label>
       </node>
-      <node id="783">
+      <node id="823">
         <label>string</label>
       </node>
-      <node id="781">
+      <node id="821">
         <label>unsupported/Eigen/MatrixFunctions</label>
       </node>
-      <node id="767">
+      <node id="807">
         <label>source/mps_routines/class_superblock.cpp</label>
         <link refid="class__superblock_8cpp"/>
-        <childnode refid="768" relation="include">
+        <childnode refid="808" relation="include">
         </childnode>
-        <childnode refid="775" relation="include">
+        <childnode refid="815" relation="include">
         </childnode>
-        <childnode refid="779" relation="include">
+        <childnode refid="819" relation="include">
         </childnode>
-        <childnode refid="780" relation="include">
+        <childnode refid="820" relation="include">
         </childnode>
-        <childnode refid="784" relation="include">
+        <childnode refid="824" relation="include">
         </childnode>
-        <childnode refid="785" relation="include">
+        <childnode refid="825" relation="include">
         </childnode>
-        <childnode refid="786" relation="include">
+        <childnode refid="826" relation="include">
         </childnode>
-        <childnode refid="787" relation="include">
+        <childnode refid="827" relation="include">
         </childnode>
-        <childnode refid="789" relation="include">
+        <childnode refid="829" relation="include">
         </childnode>
-        <childnode refid="790" relation="include">
+        <childnode refid="822" relation="include">
         </childnode>
-        <childnode refid="791" relation="include">
+        <childnode refid="830" relation="include">
+        </childnode>
+        <childnode refid="831" relation="include">
         </childnode>
       </node>
-      <node id="771">
+      <node id="811">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="790">
+      <node id="830">
         <label>arssym.h</label>
       </node>
-      <node id="791">
+      <node id="831">
         <label>symsol.h</label>
       </node>
-      <node id="777">
+      <node id="817">
         <label>vector</label>
       </node>
-      <node id="779">
+      <node id="819">
         <label>mps_routines/class_mps.h</label>
         <link refid="class__mps_8h_source"/>
-        <childnode refid="769" relation="include">
+        <childnode refid="809" relation="include">
         </childnode>
       </node>
-      <node id="786">
+      <node id="826">
         <label>MatOp/SparseSymMatProd.h</label>
       </node>
-      <node id="768">
+      <node id="808">
         <label>mps_routines/class_superblock.h</label>
         <link refid="class__superblock_8h_source"/>
-        <childnode refid="769" relation="include">
+        <childnode refid="809" relation="include">
         </childnode>
-        <childnode refid="774" relation="include">
+        <childnode refid="814" relation="include">
         </childnode>
       </node>
-      <node id="778">
+      <node id="818">
         <label>array</label>
       </node>
-      <node id="782">
+      <node id="822">
         <label>sim_parameters/nmspc_sim_settings.h</label>
         <link refid="nmspc__sim__settings_8h_source"/>
-        <childnode refid="783" relation="include">
+        <childnode refid="823" relation="include">
         </childnode>
       </node>
-      <node id="780">
+      <node id="820">
         <label>mps_routines/class_mpo.h</label>
         <link refid="class__mpo_8h_source"/>
-        <childnode refid="781" relation="include">
+        <childnode refid="821" relation="include">
         </childnode>
-        <childnode refid="779" relation="include">
+        <childnode refid="819" relation="include">
         </childnode>
-        <childnode refid="769" relation="include">
+        <childnode refid="809" relation="include">
         </childnode>
-        <childnode refid="776" relation="include">
+        <childnode refid="816" relation="include">
         </childnode>
-        <childnode refid="782" relation="include">
+        <childnode refid="822" relation="include">
         </childnode>
       </node>
-      <node id="773">
+      <node id="813">
         <label>iostream</label>
       </node>
-      <node id="789">
+      <node id="829">
         <label>mps_routines/class_custom_contraction.h</label>
         <link refid="class__custom__contraction_8h_source"/>
-        <childnode refid="769" relation="include">
+        <childnode refid="809" relation="include">
         </childnode>
       </node>
-      <node id="775">
+      <node id="815">
         <label>mps_routines/class_environment.h</label>
         <link refid="class__environment_8h_source"/>
-        <childnode refid="774" relation="include">
+        <childnode refid="814" relation="include">
         </childnode>
-        <childnode refid="769" relation="include">
+        <childnode refid="809" relation="include">
         </childnode>
-        <childnode refid="776" relation="include">
+        <childnode refid="816" relation="include">
         </childnode>
       </node>
-      <node id="776">
+      <node id="816">
         <label>sim_parameters/nmspc_model.h</label>
         <link refid="nmspc__model_8h_source"/>
-        <childnode refid="777" relation="include">
+        <childnode refid="817" relation="include">
         </childnode>
-        <childnode refid="778" relation="include">
+        <childnode refid="818" relation="include">
         </childnode>
-        <childnode refid="770" relation="include">
+        <childnode refid="810" relation="include">
         </childnode>
       </node>
-      <node id="788">
+      <node id="828">
         <label>Eigen/SVD</label>
       </node>
-      <node id="769">
+      <node id="809">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h_source"/>
-        <childnode refid="770" relation="include">
+        <childnode refid="810" relation="include">
         </childnode>
-        <childnode refid="771" relation="include">
+        <childnode refid="811" relation="include">
         </childnode>
-        <childnode refid="772" relation="include">
+        <childnode refid="812" relation="include">
         </childnode>
-        <childnode refid="773" relation="include">
+        <childnode refid="813" relation="include">
         </childnode>
       </node>
-      <node id="774">
+      <node id="814">
         <label>memory</label>
       </node>
     </incdepgraph>

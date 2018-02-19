@@ -1,0 +1,331 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__x_d_m_r_g_8cpp" kind="file" language="C++">
+    <compoundname>class_xDMRG.cpp</compoundname>
+    <includes local="no">iomanip</includes>
+    <includes refid="nmspc__sim__settings_8h" local="no">sim_parameters/nmspc_sim_settings.h</includes>
+    <includes refid="class__hdf5__table__buffer_8h" local="no">IO/class_hdf5_table_buffer.h</includes>
+    <includes refid="class__measurement_8h" local="no">mps_routines/class_measurement.h</includes>
+    <includes refid="class__superblock_8h" local="no">mps_routines/class_superblock.h</includes>
+    <includes refid="class__mps_8h" local="no">mps_routines/class_mps.h</includes>
+    <includes refid="class__mpo_8h" local="no">mps_routines/class_mpo.h</includes>
+    <includes refid="class__environment__storage_8h" local="no">mps_routines/class_environment_storage.h</includes>
+    <includes refid="nmspc__math_8h" local="no">general/nmspc_math.h</includes>
+    <includes refid="nmspc__random__numbers_8h" local="no">general/nmspc_random_numbers.h</includes>
+    <includes local="no">Eigen/Eigenvalues</includes>
+    <includes local="no">Eigen/Core</includes>
+    <includes local="no">Eigen/SparseCore</includes>
+    <includes local="no">Eigen/Sparse</includes>
+    <includes refid="nmspc__tensor__extra_8h" local="no">general/nmspc_tensor_extra.h</includes>
+    <includes refid="class__x_d_m_r_g_8h" local="yes">class_xDMRG.h</includes>
+    <incdepgraph>
+      <node id="373">
+        <label>list</label>
+      </node>
+      <node id="382">
+        <label>general/nmspc_random_numbers.h</label>
+        <link refid="nmspc__random__numbers_8h_source"/>
+        <childnode refid="383" relation="include">
+        </childnode>
+        <childnode refid="353" relation="include">
+        </childnode>
+        <childnode refid="384" relation="include">
+        </childnode>
+        <childnode refid="364" relation="include">
+        </childnode>
+      </node>
+      <node id="377">
+        <label>functional</label>
+      </node>
+      <node id="349">
+        <label>iomanip</label>
+      </node>
+      <node id="359">
+        <label>IO/class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h_source"/>
+        <childnode refid="360" relation="include">
+        </childnode>
+        <childnode refid="353" relation="include">
+        </childnode>
+      </node>
+      <node id="365">
+        <label>iterator</label>
+      </node>
+      <node id="375">
+        <label>general/nmspc_math.h</label>
+        <link refid="nmspc__math_8h_source"/>
+        <childnode refid="353" relation="include">
+        </childnode>
+        <childnode refid="365" relation="include">
+        </childnode>
+        <childnode refid="354" relation="include">
+        </childnode>
+        <childnode refid="376" relation="include">
+        </childnode>
+        <childnode refid="377" relation="include">
+        </childnode>
+        <childnode refid="355" relation="include">
+        </childnode>
+        <childnode refid="378" relation="include">
+        </childnode>
+        <childnode refid="379" relation="include">
+        </childnode>
+        <childnode refid="380" relation="include">
+        </childnode>
+        <childnode refid="381" relation="include">
+        </childnode>
+        <childnode refid="364" relation="include">
+        </childnode>
+      </node>
+      <node id="374">
+        <label>variant</label>
+      </node>
+      <node id="376">
+        <label>cmath</label>
+      </node>
+      <node id="381">
+        <label>numeric</label>
+      </node>
+      <node id="364">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="351">
+        <label>string</label>
+      </node>
+      <node id="356">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="390">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h_source"/>
+        <childnode refid="360" relation="include">
+        </childnode>
+        <childnode refid="353" relation="include">
+        </childnode>
+      </node>
+      <node id="368">
+        <label>unsupported/Eigen/MatrixFunctions</label>
+      </node>
+      <node id="358">
+        <label>map</label>
+      </node>
+      <node id="361">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="385">
+        <label>Eigen/Eigenvalues</label>
+      </node>
+      <node id="348">
+        <label>source/algorithms/class_xDMRG.cpp</label>
+        <link refid="class__x_d_m_r_g_8cpp"/>
+        <childnode refid="349" relation="include">
+        </childnode>
+        <childnode refid="350" relation="include">
+        </childnode>
+        <childnode refid="352" relation="include">
+        </childnode>
+        <childnode refid="357" relation="include">
+        </childnode>
+        <childnode refid="362" relation="include">
+        </childnode>
+        <childnode refid="366" relation="include">
+        </childnode>
+        <childnode refid="367" relation="include">
+        </childnode>
+        <childnode refid="371" relation="include">
+        </childnode>
+        <childnode refid="375" relation="include">
+        </childnode>
+        <childnode refid="382" relation="include">
+        </childnode>
+        <childnode refid="385" relation="include">
+        </childnode>
+        <childnode refid="364" relation="include">
+        </childnode>
+        <childnode refid="386" relation="include">
+        </childnode>
+        <childnode refid="387" relation="include">
+        </childnode>
+        <childnode refid="363" relation="include">
+        </childnode>
+        <childnode refid="388" relation="include">
+        </childnode>
+      </node>
+      <node id="387">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="383">
+        <label>random</label>
+      </node>
+      <node id="371">
+        <label>mps_routines/class_environment_storage.h</label>
+        <link refid="class__environment__storage_8h_source"/>
+        <childnode refid="363" relation="include">
+        </childnode>
+        <childnode refid="372" relation="include">
+        </childnode>
+        <childnode refid="369" relation="include">
+        </childnode>
+        <childnode refid="358" relation="include">
+        </childnode>
+        <childnode refid="373" relation="include">
+        </childnode>
+        <childnode refid="355" relation="include">
+        </childnode>
+        <childnode refid="374" relation="include">
+        </childnode>
+      </node>
+      <node id="380">
+        <label>gsl/gsl_integration.h</label>
+      </node>
+      <node id="354">
+        <label>vector</label>
+      </node>
+      <node id="388">
+        <label>class_xDMRG.h</label>
+        <link refid="class__x_d_m_r_g_8h_source"/>
+        <childnode refid="389" relation="include">
+        </childnode>
+      </node>
+      <node id="366">
+        <label>mps_routines/class_mps.h</label>
+        <link refid="class__mps_8h_source"/>
+        <childnode refid="363" relation="include">
+        </childnode>
+      </node>
+      <node id="362">
+        <label>mps_routines/class_superblock.h</label>
+        <link refid="class__superblock_8h_source"/>
+        <childnode refid="363" relation="include">
+        </childnode>
+        <childnode refid="355" relation="include">
+        </childnode>
+      </node>
+      <node id="378">
+        <label>utility</label>
+      </node>
+      <node id="370">
+        <label>array</label>
+      </node>
+      <node id="350">
+        <label>sim_parameters/nmspc_sim_settings.h</label>
+        <link refid="nmspc__sim__settings_8h_source"/>
+        <childnode refid="351" relation="include">
+        </childnode>
+      </node>
+      <node id="367">
+        <label>mps_routines/class_mpo.h</label>
+        <link refid="class__mpo_8h_source"/>
+        <childnode refid="368" relation="include">
+        </childnode>
+        <childnode refid="366" relation="include">
+        </childnode>
+        <childnode refid="363" relation="include">
+        </childnode>
+        <childnode refid="369" relation="include">
+        </childnode>
+        <childnode refid="350" relation="include">
+        </childnode>
+      </node>
+      <node id="389">
+        <label>class_base_algorithm.h</label>
+        <link refid="class__base__algorithm_8h_source"/>
+        <childnode refid="355" relation="include">
+        </childnode>
+        <childnode refid="358" relation="include">
+        </childnode>
+        <childnode refid="373" relation="include">
+        </childnode>
+        <childnode refid="359" relation="include">
+        </childnode>
+        <childnode refid="390" relation="include">
+        </childnode>
+        <childnode refid="350" relation="include">
+        </childnode>
+        <childnode refid="354" relation="include">
+        </childnode>
+      </node>
+      <node id="386">
+        <label>Eigen/SparseCore</label>
+      </node>
+      <node id="353">
+        <label>iostream</label>
+      </node>
+      <node id="372">
+        <label>class_environment.h</label>
+        <link refid="class__environment_8h_source"/>
+        <childnode refid="355" relation="include">
+        </childnode>
+        <childnode refid="363" relation="include">
+        </childnode>
+        <childnode refid="369" relation="include">
+        </childnode>
+      </node>
+      <node id="360">
+        <label>chrono</label>
+      </node>
+      <node id="369">
+        <label>sim_parameters/nmspc_model.h</label>
+        <link refid="nmspc__model_8h_source"/>
+        <childnode refid="354" relation="include">
+        </childnode>
+        <childnode refid="370" relation="include">
+        </childnode>
+        <childnode refid="364" relation="include">
+        </childnode>
+      </node>
+      <node id="357">
+        <label>mps_routines/class_measurement.h</label>
+        <link refid="class__measurement_8h_source"/>
+        <childnode refid="358" relation="include">
+        </childnode>
+        <childnode refid="355" relation="include">
+        </childnode>
+        <childnode refid="359" relation="include">
+        </childnode>
+        <childnode refid="361" relation="include">
+        </childnode>
+        <childnode refid="350" relation="include">
+        </childnode>
+      </node>
+      <node id="352">
+        <label>IO/class_hdf5_table_buffer.h</label>
+        <link refid="class__hdf5__table__buffer_8h_source"/>
+        <childnode refid="353" relation="include">
+        </childnode>
+        <childnode refid="354" relation="include">
+        </childnode>
+        <childnode refid="355" relation="include">
+        </childnode>
+        <childnode refid="356" relation="include">
+        </childnode>
+      </node>
+      <node id="384">
+        <label>complex</label>
+      </node>
+      <node id="363">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h_source"/>
+        <childnode refid="364" relation="include">
+        </childnode>
+        <childnode refid="361" relation="include">
+        </childnode>
+        <childnode refid="365" relation="include">
+        </childnode>
+        <childnode refid="353" relation="include">
+        </childnode>
+      </node>
+      <node id="355">
+        <label>memory</label>
+      </node>
+      <node id="379">
+        <label>gsl/gsl_errno.h</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/algorithms/class_xDMRG.cpp"/>
+  </compounddef>
+</doxygen>

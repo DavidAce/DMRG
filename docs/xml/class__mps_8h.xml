@@ -3,7 +3,7 @@
   <compounddef id="class__mps_8h" kind="file" language="C++">
     <compoundname>class_mps.h</compoundname>
     <includes refid="nmspc__tensor__extra_8h" local="yes">general/nmspc_tensor_extra.h</includes>
-    <includedby refid="class__excited__state___d_m_r_g_8cpp" local="no">source/algorithms/class_excited_state_DMRG.cpp</includedby>
+    <includedby refid="class__x_d_m_r_g_8cpp" local="no">source/algorithms/class_xDMRG.cpp</includedby>
     <includedby refid="class__environment_8cpp" local="no">source/mps_routines/class_environment.cpp</includedby>
     <includedby refid="class__environment__storage_8cpp" local="no">source/mps_routines/class_environment_storage.cpp</includedby>
     <includedby refid="class__measurement_8cpp" local="no">source/mps_routines/class_measurement.cpp</includedby>
@@ -11,45 +11,45 @@
     <includedby refid="class__mps_8cpp" local="yes">source/mps_routines/class_mps.cpp</includedby>
     <includedby refid="class__superblock_8cpp" local="no">source/mps_routines/class_superblock.cpp</includedby>
     <incdepgraph>
-      <node id="763">
+      <node id="803">
         <label>iterator</label>
       </node>
-      <node id="761">
+      <node id="801">
         <label>Eigen/Core</label>
       </node>
-      <node id="762">
+      <node id="802">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="759">
+      <node id="799">
         <label>source/mps_routines/class_mps.h</label>
         <link refid="class__mps_8h"/>
-        <childnode refid="760" relation="include">
+        <childnode refid="800" relation="include">
         </childnode>
       </node>
-      <node id="764">
+      <node id="804">
         <label>iostream</label>
       </node>
-      <node id="760">
+      <node id="800">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h_source"/>
-        <childnode refid="761" relation="include">
+        <childnode refid="801" relation="include">
         </childnode>
-        <childnode refid="762" relation="include">
+        <childnode refid="802" relation="include">
         </childnode>
-        <childnode refid="763" relation="include">
+        <childnode refid="803" relation="include">
         </childnode>
-        <childnode refid="764" relation="include">
+        <childnode refid="804" relation="include">
         </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="765">
+      <node id="805">
         <label>source/mps_routines/class_mps.h</label>
         <link refid="class__mps_8h"/>
-        <childnode refid="766" relation="include">
+        <childnode refid="806" relation="include">
         </childnode>
       </node>
-      <node id="766">
+      <node id="806">
         <label>source/mps_routines/class_mpo.h</label>
         <link refid="class__mpo_8h_source"/>
       </node>

@@ -14,6 +14,7 @@ namespace rn{
     //RNGType rng;
     //Random functions
     extern std::mt19937 rng;
+    extern void seed(unsigned long n);
 
     inline int __attribute__((hot)) uniform_integer_1(){
         std::uniform_int_distribution<>  rand_int(0, 1);

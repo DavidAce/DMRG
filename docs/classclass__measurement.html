@@ -72,7 +72,11 @@ $\chi$
           <h2><a href="#pub-methods">Public functions</a></h3>
           <dl class="m-dox">
             <dt>
-              <span class="m-dox-wrap-bumper">auto <a href="#a73e89873bd33e9749b3ffc46679ad1ba" class="m-dox">get_entropy</a>(</span><span class="m-dox-wrap">) -&gt; double</span>
+              <span class="m-dox-wrap-bumper">auto <a href="#ab34f7b0b37291e7baded146b5f7c0e2d" class="m-dox">get_entanglement_entropy</a>(</span><span class="m-dox-wrap">) -&gt; double</span>
+            </dt>
+            <dd></dd>
+            <dt>
+              <span class="m-dox-wrap-bumper">auto <a href="#a3c6e80127aac789c89bf19d8cf92460e" class="m-dox">get_full_variance</a>(</span><span class="m-dox-wrap">) -&gt; double</span>
             </dt>
             <dd></dd>
             <dt>
@@ -99,15 +103,15 @@ $\chi$
         </section>
         <section>
           <h2>Function documentation</h2>
-          <section class="m-dox-details" id="a73e89873bd33e9749b3ffc46679ad1ba"><div>
+          <section class="m-dox-details" id="ab34f7b0b37291e7baded146b5f7c0e2d"><div>
             <h3>
-              <span class="m-dox-wrap-bumper">double class_<wbr />measurement::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#a73e89873bd33e9749b3ffc46679ad1ba" class="m-dox-self">get_entropy</a>(</span><span class="m-dox-wrap">)</span></span>
+              <span class="m-dox-wrap-bumper">double class_<wbr />measurement::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#ab34f7b0b37291e7baded146b5f7c0e2d" class="m-dox-self">get_entanglement_entropy</a>(</span><span class="m-dox-wrap">)</span></span>
             </h3>
 <p>Computes the current energy by contracting the current MPS with the Hamiltonian MPO.</p>
           </div></section>
-          <section class="m-dox-details" id="a45614ac23314d7088810aaaedc4acde8"><div>
+          <section class="m-dox-details" id="a3c6e80127aac789c89bf19d8cf92460e"><div>
             <h3>
-              <span class="m-dox-wrap-bumper">double class_<wbr />measurement::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#a45614ac23314d7088810aaaedc4acde8" class="m-dox-self">get_variance</a>(</span><span class="m-dox-wrap">)</span></span>
+              <span class="m-dox-wrap-bumper">double class_<wbr />measurement::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#a3c6e80127aac789c89bf19d8cf92460e" class="m-dox-self">get_full_variance</a>(</span><span class="m-dox-wrap">)</span></span>
             </h3>
 <p>Computes the current entropy <svg class="m-math" style="vertical-align: -4.4pt;" height='15.5668pt' version='1.1' viewBox='0 -8.96645 104.627 12.4535' width='130.783pt'>
 <title>LaTeX Math</title>
@@ -170,6 +174,12 @@ $ \Lambda^A$
 <use x='8.12501' xlink:href='#eq4-g0-65' y='-4.33844'/>
 </g>
 </svg></p>
+          </div></section>
+          <section class="m-dox-details" id="a45614ac23314d7088810aaaedc4acde8"><div>
+            <h3>
+              <span class="m-dox-wrap-bumper">double class_<wbr />measurement::<wbr /></span><span class="m-dox-wrap"><span class="m-dox-wrap-bumper"><a href="#a45614ac23314d7088810aaaedc4acde8" class="m-dox-self">get_variance</a>(</span><span class="m-dox-wrap">)</span></span>
+            </h3>
+<p>Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian.</p>
           </div></section>
           <section class="m-dox-details" id="afccc947a39a980866ceec2122409a6a1"><div>
             <h3>

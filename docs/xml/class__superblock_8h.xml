@@ -6,49 +6,49 @@
     <includes local="no">memory</includes>
     <includedby refid="class__algorithm__launcher_8cpp" local="no">source/algorithms/class_algorithm_launcher.cpp</includedby>
     <includedby refid="class__base__algorithm_8cpp" local="no">source/algorithms/class_base_algorithm.cpp</includedby>
-    <includedby refid="class__excited__state___d_m_r_g_8cpp" local="no">source/algorithms/class_excited_state_DMRG.cpp</includedby>
+    <includedby refid="class__f_d_m_r_g_8cpp" local="no">source/algorithms/class_fDMRG.cpp</includedby>
     <includedby refid="class___f_e_s__i_d_m_r_g_8cpp" local="no">source/algorithms/class_FES_iDMRG.cpp</includedby>
     <includedby refid="class___f_e_s__i_t_e_b_d_8cpp" local="no">source/algorithms/class_FES_iTEBD.cpp</includedby>
-    <includedby refid="class__finite___d_m_r_g_8cpp" local="no">source/algorithms/class_finite_DMRG.cpp</includedby>
-    <includedby refid="class__imaginary___t_e_b_d_8cpp" local="no">source/algorithms/class_imaginary_TEBD.cpp</includedby>
-    <includedby refid="class__infinite___d_m_r_g_8cpp" local="no">source/algorithms/class_infinite_DMRG.cpp</includedby>
+    <includedby refid="class__i_d_m_r_g_8cpp" local="no">source/algorithms/class_iDMRG.cpp</includedby>
+    <includedby refid="class__i_t_e_b_d_8cpp" local="no">source/algorithms/class_iTEBD.cpp</includedby>
+    <includedby refid="class__x_d_m_r_g_8cpp" local="no">source/algorithms/class_xDMRG.cpp</includedby>
     <includedby refid="class__environment__storage_8cpp" local="no">source/mps_routines/class_environment_storage.cpp</includedby>
     <includedby refid="class__measurement_8cpp" local="no">source/mps_routines/class_measurement.cpp</includedby>
     <includedby refid="class__superblock_8cpp" local="no">source/mps_routines/class_superblock.cpp</includedby>
     <incdepgraph>
-      <node id="797">
+      <node id="837">
         <label>iterator</label>
       </node>
-      <node id="795">
+      <node id="835">
         <label>Eigen/Core</label>
       </node>
-      <node id="796">
+      <node id="836">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="793">
+      <node id="833">
         <label>source/mps_routines/class_superblock.h</label>
         <link refid="class__superblock_8h"/>
-        <childnode refid="794" relation="include">
+        <childnode refid="834" relation="include">
         </childnode>
-        <childnode refid="799" relation="include">
+        <childnode refid="839" relation="include">
         </childnode>
       </node>
-      <node id="798">
+      <node id="838">
         <label>iostream</label>
       </node>
-      <node id="794">
+      <node id="834">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h_source"/>
-        <childnode refid="795" relation="include">
+        <childnode refid="835" relation="include">
         </childnode>
-        <childnode refid="796" relation="include">
+        <childnode refid="836" relation="include">
         </childnode>
-        <childnode refid="797" relation="include">
+        <childnode refid="837" relation="include">
         </childnode>
-        <childnode refid="798" relation="include">
+        <childnode refid="838" relation="include">
         </childnode>
       </node>
-      <node id="799">
+      <node id="839">
         <label>memory</label>
       </node>
     </incdepgraph>

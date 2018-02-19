@@ -7,9 +7,11 @@
 
 #include <memory>
 #include <map>
+#include <list>
 #include <IO/class_custom_cout.h>
 #include <general/class_tic_toc.h>
 #include <sim_parameters/nmspc_sim_settings.h>
+#include <vector>
 
 class class_superblock;
 class class_hdf5_file;
@@ -21,29 +23,20 @@ class class_measurement;
 
 class class_algorithm_base {
 public:
-
-    class_algorithm_base(std::shared_ptr<class_hdf5_file>         hdf5_,
-               std::shared_ptr<class_hdf5_table_buffer> table_buffer_,
-               std::shared_ptr<class_superblock>        superblock_,
-               std::shared_ptr<class_measurement>       measurement_);
-
+    class_algorithm_base() = default;
     class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
-               std::string group_name_,
-               std::string table_name_,
-               std::string simulation_name_,
-               SimulationType simtype_);
-
-    class_algorithm_base();
-
+                         std::string sim_name_,
+                         std::string table_name_,
+                         SimulationType sim_type_);
     void set_profiling_labels ();
+
     //Storage
     std::shared_ptr<class_hdf5_file>         hdf5;
     std::shared_ptr<class_hdf5_table_buffer> table_buffer;
 
-    std::string group_name;
+    std::string sim_name;
     std::string table_name;
-    std::string simulation_name;
-    SimulationType simtype;
+    SimulationType sim_type;
 
     //MPS
     std::shared_ptr<class_superblock>         superblock;
@@ -52,18 +45,49 @@ public:
     //Console
     class_custom_cout ccout;
 
-    //Functions
+    //Settings.
+
+    long   chi_max      ;
+    long   chi_min      ;
+    long   chi_num      ;
+    bool   chi_grow     ;
+    int    max_length   ;
+    int    max_sweeps   ;
+    int    print_freq   ;
+    int    store_freq   ;
+    int    max_steps    ;
+    double delta_t0     ;
+    double delta_tmin   ;
+    int    suzuki_order ;
+
+    // Dynamic variables
+    int    sweeps    = 0;
+    int    iteration = 0;
+    int    position  = 0;
+    int    direction = 1;
+    double phys_time = 0;
+    double delta_t   = 0; //Make sure this one gets initialized to delta_t0!
+    long   chi_temp  = 2;
+    bool   simulation_has_converged = false;
+
+
+
+
+    //Virtual Functions
     virtual void run() = 0;
-    virtual void store_table_entry() = 0;
     virtual void print_profiling()   = 0;
 
-    virtual void print_status_full()   = 0;
-    virtual void print_status_update() = 0;
 
-
+    //Common functions
+    void store_table_entry();
+    void print_status_update();
+    void print_status_full();
     void single_DMRG_step(long chi_max);
     void single_TEBD_step(long chi_max);
 
+    void update_chi();
+    bool entropy_has_converged();
+    void initialize_constants();
     int  enlarge_environment();
     int  enlarge_environment(int direction);
     void swap();
@@ -80,6 +104,19 @@ public:
     class_tic_toc t_ste;
     class_tic_toc t_obs;
     class_tic_toc t_mps;
+private:
+    template<typename T>
+    class class_limited_vector : public std::vector<T>{
+    public:
+        void push_back_limited(T val){
+            if (this->size() > 10){
+                this->erase(this->begin());
+            }
+            this->push_back(val);
+        }
+    };
+    class_limited_vector<double> S_vec;
+    class_limited_vector<int>    X_vec;
 
 };
 

@@ -11,23 +11,14 @@
 /*!
  * \brief Class that runs the infinite DMRG algorithm.
  */
+
 class class_iDMRG : public class_algorithm_base {
 public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_base::class_algorithm_base;
     explicit class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
-    long chi_max    = settings::idmrg::chi_max;
-    int  max_length = settings::idmrg::max_length;
-    int  print_freq = settings::idmrg::print_freq;
-    int  iteration  = 0;
-
     void run() override;
-
-    void print_status_full()   override;
-    void print_status_update() override;
-
-    void store_table_entry()   override;
-    void print_profiling()     override;
+    void print_profiling() override;
 };
 
 

@@ -184,7 +184,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="65" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="52" bodyend="54"/>
+        <location file="source/mps_routines/class_mps.h" line="64" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="52" bodyend="54"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a8fde11a1a8a9bc70a21135c1ce17f284" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 3 &gt;</type>
@@ -197,7 +197,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="66" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="56" bodyend="58"/>
+        <location file="source/mps_routines/class_mps.h" line="65" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="56" bodyend="58"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a28389722f496593e52898d5f82c5452f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -210,7 +210,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="67" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="61" bodyend="66"/>
+        <location file="source/mps_routines/class_mps.h" line="66" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="61" bodyend="66"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1ad20851ef185f82f108b0153df2ddfdb2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -223,7 +223,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="68" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="69" bodyend="74"/>
+        <location file="source/mps_routines/class_mps.h" line="67" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="69" bodyend="78"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1ae30407b1ac3c804a9e30ce27a2b76a61" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -236,7 +236,20 @@
 <para>Returns rank 4 tensor <formula id="29">$\Theta$</formula>. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="70" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="78" bodyend="88"/>
+        <location file="source/mps_routines/class_mps.h" line="69" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="82" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps_1a832415ed7db0e248d5b59bd5a0851427" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
+        <definition>Tensor&lt; Scalar, 4 &gt; class_mps&lt; Scalar &gt;::get_theta_swapped</definition>
+        <argsstring>() const</argsstring>
+        <name>get_theta_swapped</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns rank 4 tensor <formula id="29">$\Theta$</formula>, with A and B swapped. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/mps_routines/class_mps.h" line="70" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="96" bodyend="107"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a08345ffe3257d04de783d092aa931266" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -249,7 +262,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="71" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="91" bodyend="94"/>
+        <location file="source/mps_routines/class_mps.h" line="71" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="112" bodyend="115"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1aa9aa5c540121037da4011bb562c68327" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -262,7 +275,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="72" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="97" bodyend="100"/>
+        <location file="source/mps_routines/class_mps.h" line="72" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="118" bodyend="121"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1ad6a93c33891a7ea19f8e3d0d1b87b203" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -275,7 +288,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="73" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="104" bodyend="106"/>
+        <location file="source/mps_routines/class_mps.h" line="73" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="125" bodyend="127"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a2be0f86ddc4034fc05cb14e4da052f63" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Textra::Tensor&lt; Scalar, 4 &gt;</type>
@@ -288,7 +301,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/mps_routines/class_mps.h" line="74" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="110" bodyend="112"/>
+        <location file="source/mps_routines/class_mps.h" line="74" column="1" bodyfile="source/mps_routines/class_mps.cpp" bodystart="131" bodyend="133"/>
       </memberdef>
       <memberdef kind="function" id="classclass__mps_1a28e81d80ba63f636b0b4af615d0916eb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -453,6 +466,7 @@
       <member refid="classclass__mps_1a36141908d17057af41c38ce3ff537237" prot="public" virt="non-virtual"><scope>class_mps</scope><name>GA</name></member>
       <member refid="classclass__mps_1a702d0c9a7a4d195f7d2064b1ea99647d" prot="public" virt="non-virtual"><scope>class_mps</scope><name>GB</name></member>
       <member refid="classclass__mps_1ae30407b1ac3c804a9e30ce27a2b76a61" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_theta</name></member>
+      <member refid="classclass__mps_1a832415ed7db0e248d5b59bd5a0851427" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_theta_swapped</name></member>
       <member refid="classclass__mps_1ad6a93c33891a7ea19f8e3d0d1b87b203" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_2_site_matrix_L</name></member>
       <member refid="classclass__mps_1a3f8828f51da44e019ddf701304ff0376" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_2_site_matrix_L</name></member>
       <member refid="classclass__mps_1aa4851e6dd4571de0e1e2d59a5e090b1a" prot="public" virt="non-virtual"><scope>class_mps</scope><name>get_transfer_2_site_matrix_L</name></member>

@@ -8,7 +8,7 @@
         <definition>int settings::precision::eigSteps</definition>
         <argsstring></argsstring>
         <name>eigSteps</name>
-        <initializer>= 5000</initializer>
+        <initializer>= 1000</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -36,7 +36,7 @@
         <definition>int settings::precision::eig_max_ncv</definition>
         <argsstring></argsstring>
         <name>eig_max_ncv</name>
-        <initializer>= 20</initializer>
+        <initializer>= 5</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>

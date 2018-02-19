@@ -10,97 +10,97 @@
     <includedby refid="class__hdf5__file_8h" local="yes">source/IO/class_hdf5_file.h</includedby>
     <includedby refid="class__measurement_8h" local="no">source/mps_routines/class_measurement.h</includedby>
     <incdepgraph>
-      <node id="445">
+      <node id="484">
         <label>source/IO/class_custom_cout.h</label>
         <link refid="class__custom__cout_8h"/>
-        <childnode refid="446" relation="include">
+        <childnode refid="485" relation="include">
         </childnode>
-        <childnode refid="447" relation="include">
+        <childnode refid="486" relation="include">
         </childnode>
       </node>
-      <node id="447">
+      <node id="486">
         <label>iostream</label>
       </node>
-      <node id="446">
+      <node id="485">
         <label>chrono</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="448">
+      <node id="487">
         <label>source/IO/class_custom_cout.h</label>
         <link refid="class__custom__cout_8h"/>
-        <childnode refid="449" relation="include">
+        <childnode refid="488" relation="include">
         </childnode>
-        <childnode refid="456" relation="include">
+        <childnode refid="495" relation="include">
         </childnode>
-        <childnode refid="458" relation="include">
+        <childnode refid="497" relation="include">
         </childnode>
-        <childnode refid="459" relation="include">
+        <childnode refid="498" relation="include">
         </childnode>
-        <childnode refid="460" relation="include">
+        <childnode refid="499" relation="include">
         </childnode>
       </node>
-      <node id="459">
+      <node id="498">
         <label>source/IO/class_hdf5_file.h</label>
         <link refid="class__hdf5__file_8h_source"/>
       </node>
-      <node id="453">
+      <node id="493">
         <label>source/algorithms/class_FES_iTEBD.h</label>
         <link refid="class___f_e_s__i_t_e_b_d_8h_source"/>
       </node>
-      <node id="450">
-        <label>source/algorithms/class_excited_state_DMRG.h</label>
-        <link refid="class__excited__state___d_m_r_g_8h_source"/>
+      <node id="492">
+        <label>source/algorithms/class_iDMRG.h</label>
+        <link refid="class__i_d_m_r_g_8h_source"/>
       </node>
-      <node id="456">
+      <node id="490">
+        <label>source/algorithms/class_fDMRG.h</label>
+        <link refid="class__f_d_m_r_g_8h_source"/>
+      </node>
+      <node id="495">
         <label>source/algorithms/class_algorithm_launcher.h</label>
         <link refid="class__algorithm__launcher_8h_source"/>
-        <childnode refid="457" relation="include">
+        <childnode refid="496" relation="include">
         </childnode>
       </node>
-      <node id="458">
+      <node id="497">
         <label>source/IO/class_file_reader.h</label>
         <link refid="class__file__reader_8h_source"/>
-        <childnode refid="457" relation="include">
+        <childnode refid="496" relation="include">
         </childnode>
       </node>
-      <node id="452">
-        <label>source/algorithms/class_infinite_DMRG.h</label>
-        <link refid="class__infinite___d_m_r_g_8h_source"/>
-      </node>
-      <node id="457">
+      <node id="496">
         <label>source/main.cpp</label>
         <link refid="main_8cpp"/>
       </node>
-      <node id="454">
-        <label>source/algorithms/class_finite_DMRG.h</label>
-        <link refid="class__finite___d_m_r_g_8h_source"/>
+      <node id="489">
+        <label>source/algorithms/class_xDMRG.h</label>
+        <link refid="class__x_d_m_r_g_8h_source"/>
       </node>
-      <node id="449">
+      <node id="488">
         <label>source/algorithms/class_base_algorithm.h</label>
         <link refid="class__base__algorithm_8h_source"/>
-        <childnode refid="450" relation="include">
+        <childnode refid="489" relation="include">
         </childnode>
-        <childnode refid="451" relation="include">
+        <childnode refid="490" relation="include">
         </childnode>
-        <childnode refid="452" relation="include">
+        <childnode refid="491" relation="include">
         </childnode>
-        <childnode refid="453" relation="include">
+        <childnode refid="492" relation="include">
         </childnode>
-        <childnode refid="454" relation="include">
+        <childnode refid="493" relation="include">
         </childnode>
-        <childnode refid="455" relation="include">
+        <childnode refid="494" relation="include">
         </childnode>
       </node>
-      <node id="455">
-        <label>source/algorithms/class_imaginary_TEBD.h</label>
-        <link refid="class__imaginary___t_e_b_d_8h_source"/>
+      <node id="494">
+        <label>source/algorithms/class_iTEBD.h</label>
+        <link refid="class__i_t_e_b_d_8h_source"/>
       </node>
-      <node id="460">
+      <node id="499">
         <label>source/mps_routines/class_measurement.h</label>
         <link refid="class__measurement_8h_source"/>
       </node>
-      <node id="451">
+      <node id="491">
         <label>source/algorithms/class_FES_iDMRG.h</label>
         <link refid="class___f_e_s__i_d_m_r_g_8h_source"/>
       </node>

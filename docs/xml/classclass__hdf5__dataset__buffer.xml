@@ -186,7 +186,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_dataset_buffer.h" line="22" column="1" bodyfile="source/IO/class_hdf5_dataset_buffer.cpp" bodystart="9" bodyend="13"/>
+        <location file="source/IO/class_hdf5_dataset_buffer.h" line="22" column="1" bodyfile="source/IO/class_hdf5_dataset_buffer.cpp" bodystart="8" bodyend="12"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -230,7 +230,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_dataset_buffer.h" line="29" column="1" bodyfile="source/IO/class_hdf5_dataset_buffer.cpp" bodystart="17" bodyend="27"/>
+        <location file="source/IO/class_hdf5_dataset_buffer.h" line="29" column="1" bodyfile="source/IO/class_hdf5_dataset_buffer.cpp" bodystart="16" bodyend="26"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__dataset__buffer_1a88f82bfaee3587a2cbd95175560f7331" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -292,7 +292,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_dataset_buffer.h" line="38" column="1" bodyfile="source/IO/class_hdf5_dataset_buffer.cpp" bodystart="30" bodyend="45"/>
+        <location file="source/IO/class_hdf5_dataset_buffer.h" line="38" column="1" bodyfile="source/IO/class_hdf5_dataset_buffer.cpp" bodystart="29" bodyend="45"/>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__dataset__buffer_1ad5382fadc6019a72dff38a86580fede7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -503,24 +503,24 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="51">
+      <node id="45">
         <label>class_hdf5_dataset_buffer&lt; DataType, AttrType, IterType &gt;</label>
         <link refid="classclass__hdf5__dataset__buffer"/>
-        <childnode refid="52" relation="public-inheritance">
+        <childnode refid="46" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="52">
+      <node id="46">
         <label>std::vector&lt; DataType &gt;</label>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="53">
+      <node id="47">
         <label>class_hdf5_dataset_buffer&lt; DataType, AttrType, IterType &gt;</label>
         <link refid="classclass__hdf5__dataset__buffer"/>
-        <childnode refid="54" relation="public-inheritance">
+        <childnode refid="48" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="54">
+      <node id="48">
         <label>std::vector&lt; DataType &gt;</label>
       </node>
     </collaborationgraph>

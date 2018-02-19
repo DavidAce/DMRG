@@ -15,7 +15,7 @@
 <para>Turns iTEBD simulation on/off. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="61" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="38" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="69" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="45" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="nmspc__sim__settings_8h_1adc3e7b7b47af4c0fd73587369ae6c2d1" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -29,7 +29,7 @@
 <para>Number of iTEBD iterations, after which the simulation terminates regardless of convergence. Set high. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="62" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="39" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="70" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="46" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="nmspc__sim__settings_8h_1afcba9beada5551c3da4c25a8376cd67f" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -43,7 +43,7 @@
 <para>Initial time step for iTEBD time evolution. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="63" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="40" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="71" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="47" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="nmspc__sim__settings_8h_1a6b6afcf2968c3cb071bc050b4e805085" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -57,7 +57,7 @@
 <para>Final time step for iTEBD time evolution. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="64" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="41" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="72" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="48" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="nmspc__sim__settings_8h_1a9ab41edc8a8f73a40977b6969865c644" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -71,7 +71,7 @@
 <para>Order of the suzuki trotter decomposition (1,2 or 4) </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="65" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="42" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="73" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="49" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="nmspc__sim__settings_8h_1aaca4efb978bd41af4ae870824351b5c6" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -85,7 +85,21 @@
 <para>Bond dimension of the current position (maximum number of singular values to keep in SVD). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="66" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="43" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="74" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1aeeb215c2f571cde123ac0298d61c9941" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool settings::itebd::chi_grow</definition>
+        <argsstring></argsstring>
+        <name>chi_grow</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether to increase chi slowly up to chi_max or go up to chi_max directly. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="75" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="51" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="nmspc__sim__settings_8h_1aeb74ea89cbbfba318983932061ead184" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -99,13 +113,27 @@
 <para>Print frequency for console output. (0 = off). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="67" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="44" bodyend="-1"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="76" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="nmspc__sim__settings_8h_1a3c66599f28990469f0fd69cc4d082b60" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int settings::itebd::store_freq</definition>
+        <argsstring></argsstring>
+        <name>store_freq</name>
+        <initializer>= 100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Store frequency,for output file buffer. (0 = off). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="77" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="53" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="source/sim_parameters/nmspc_sim_settings.h" line="60" column="1"/>
+    <location file="source/sim_parameters/nmspc_sim_settings.h" line="68" column="1"/>
   </compounddef>
 </doxygen>

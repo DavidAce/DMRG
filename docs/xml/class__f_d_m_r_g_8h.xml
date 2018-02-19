@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__f_d_m_r_g_8h" kind="file" language="C++">
+    <compoundname>class_fDMRG.h</compoundname>
+    <includes refid="class__base__algorithm_8h" local="yes">class_base_algorithm.h</includes>
+    <includedby refid="class__algorithm__launcher_8cpp" local="no">source/algorithms/class_algorithm_launcher.cpp</includedby>
+    <includedby refid="class__f_d_m_r_g_8cpp" local="yes">source/algorithms/class_fDMRG.cpp</includedby>
+    <incdepgraph>
+      <node id="154">
+        <label>list</label>
+      </node>
+      <node id="155">
+        <label>IO/class_custom_cout.h</label>
+        <link refid="class__custom__cout_8h_source"/>
+        <childnode refid="156" relation="include">
+        </childnode>
+        <childnode refid="157" relation="include">
+        </childnode>
+      </node>
+      <node id="150">
+        <label>source/algorithms/class_fDMRG.h</label>
+        <link refid="class__f_d_m_r_g_8h"/>
+        <childnode refid="151" relation="include">
+        </childnode>
+      </node>
+      <node id="160">
+        <label>string</label>
+      </node>
+      <node id="158">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h_source"/>
+        <childnode refid="156" relation="include">
+        </childnode>
+        <childnode refid="157" relation="include">
+        </childnode>
+      </node>
+      <node id="153">
+        <label>map</label>
+      </node>
+      <node id="161">
+        <label>vector</label>
+      </node>
+      <node id="159">
+        <label>sim_parameters/nmspc_sim_settings.h</label>
+        <link refid="nmspc__sim__settings_8h_source"/>
+        <childnode refid="160" relation="include">
+        </childnode>
+      </node>
+      <node id="151">
+        <label>class_base_algorithm.h</label>
+        <link refid="class__base__algorithm_8h_source"/>
+        <childnode refid="152" relation="include">
+        </childnode>
+        <childnode refid="153" relation="include">
+        </childnode>
+        <childnode refid="154" relation="include">
+        </childnode>
+        <childnode refid="155" relation="include">
+        </childnode>
+        <childnode refid="158" relation="include">
+        </childnode>
+        <childnode refid="159" relation="include">
+        </childnode>
+        <childnode refid="161" relation="include">
+        </childnode>
+      </node>
+      <node id="157">
+        <label>iostream</label>
+      </node>
+      <node id="156">
+        <label>chrono</label>
+      </node>
+      <node id="152">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classclass__f_d_m_r_g" prot="public">class_fDMRG</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="source/algorithms/class_fDMRG.h"/>
+  </compounddef>
+</doxygen>

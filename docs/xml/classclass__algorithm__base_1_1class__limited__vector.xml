@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__algorithm__base_1_1class__limited__vector" kind="class" language="C++" prot="private">
+    <compoundname>class_algorithm_base::class_limited_vector</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">std::vector&lt; T &gt;</basecompoundref>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>T</declname>
+        <defname>T</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__algorithm__base_1_1class__limited__vector_1adce1d5fb2fa145903a2a0e21a5717571" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_base::class_limited_vector&lt; T &gt;::push_back_limited</definition>
+        <argsstring>(T val)</argsstring>
+        <name>push_back_limited</name>
+        <param>
+          <type>T</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/algorithms/class_base_algorithm.h" line="111" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="111" bodyend="116"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="69">
+        <label>std::vector&lt; T &gt;</label>
+      </node>
+      <node id="68">
+        <label>class_algorithm_base::class_limited_vector&lt; T &gt;</label>
+        <childnode refid="69" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="71">
+        <label>std::vector&lt; T &gt;</label>
+      </node>
+      <node id="70">
+        <label>class_algorithm_base::class_limited_vector&lt; T &gt;</label>
+        <childnode refid="71" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="source/algorithms/class_base_algorithm.h" line="109" column="1" bodyfile="source/algorithms/class_base_algorithm.h" bodystart="109" bodyend="117"/>
+    <listofallmembers>
+      <member refid="classclass__algorithm__base_1_1class__limited__vector_1adce1d5fb2fa145903a2a0e21a5717571" prot="public" virt="non-virtual"><scope>class_algorithm_base::class_limited_vector</scope><name>push_back_limited</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

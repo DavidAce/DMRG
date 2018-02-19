@@ -64,14 +64,14 @@ void class_algorithm_launcher::run_imaginary_TEBD(){
 void class_algorithm_launcher::run_FES_iDMRG(){
     if(settings::fes_idmrg::on){
         class_FES_iDMRG FES_iDMRG(hdf5);
-        FES_iDMRG.run2();
+        FES_iDMRG.run();
     }
 }
 
 void class_algorithm_launcher::run_FES_iTEBD(){
     if(settings::fes_itebd::on){
         class_FES_iTEBD FES_iTEBD(hdf5);
-        FES_iTEBD.run2();
+        FES_iTEBD.run();
     }
 }
 
@@ -270,7 +270,7 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //        double phys_time = 0;
 //        int step = 0;
 //        double old_entropy = 0;
-//        double new_entropy = measurement.get_entropy();
+//        double new_entropy = measurement.get_entanglement_entropy();
 //        while(time_step > 1e-6 && step < s::fes_itebd::max_length){
 //            t_sim.tic();
 //            single_TEBD_step(superblock, chi_max );
@@ -292,7 +292,7 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //            t_udt.tic();
 //            if(Math::mod(step,500)==0){
 //                old_entropy = new_entropy;
-//                new_entropy = measurement.get_entropy();
+//                new_entropy = measurement.get_entanglement_entropy();
 //                if (std::fabs((new_entropy-old_entropy)/new_entropy) < 1e-6*time_step ){
 //                    container.push_back(measurement);
 //                    container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());

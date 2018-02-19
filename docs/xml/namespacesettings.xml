@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/sim_parameters/nmspc_sim_settings.h" line="22" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="86" bodyend="167"/>
+        <location file="source/sim_parameters/nmspc_sim_settings.h" line="22" column="1" bodyfile="source/sim_parameters/nmspc_sim_settings.cpp" bodystart="99" bodyend="192"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

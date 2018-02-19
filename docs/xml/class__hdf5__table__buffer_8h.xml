@@ -8,36 +8,36 @@
     <includes local="no">hdf5_hl.h</includes>
     <includedby refid="class__algorithm__launcher_8cpp" local="no">source/algorithms/class_algorithm_launcher.cpp</includedby>
     <includedby refid="class__base__algorithm_8cpp" local="no">source/algorithms/class_base_algorithm.cpp</includedby>
-    <includedby refid="class__excited__state___d_m_r_g_8cpp" local="no">source/algorithms/class_excited_state_DMRG.cpp</includedby>
+    <includedby refid="class__f_d_m_r_g_8cpp" local="no">source/algorithms/class_fDMRG.cpp</includedby>
     <includedby refid="class___f_e_s__i_d_m_r_g_8cpp" local="no">source/algorithms/class_FES_iDMRG.cpp</includedby>
     <includedby refid="class___f_e_s__i_t_e_b_d_8cpp" local="no">source/algorithms/class_FES_iTEBD.cpp</includedby>
-    <includedby refid="class__finite___d_m_r_g_8cpp" local="no">source/algorithms/class_finite_DMRG.cpp</includedby>
-    <includedby refid="class__imaginary___t_e_b_d_8cpp" local="no">source/algorithms/class_imaginary_TEBD.cpp</includedby>
-    <includedby refid="class__infinite___d_m_r_g_8cpp" local="no">source/algorithms/class_infinite_DMRG.cpp</includedby>
+    <includedby refid="class__i_d_m_r_g_8cpp" local="no">source/algorithms/class_iDMRG.cpp</includedby>
+    <includedby refid="class__i_t_e_b_d_8cpp" local="no">source/algorithms/class_iTEBD.cpp</includedby>
+    <includedby refid="class__x_d_m_r_g_8cpp" local="no">source/algorithms/class_xDMRG.cpp</includedby>
     <includedby refid="class__hdf5__table__buffer_8cpp" local="no">source/IO/class_hdf5_table_buffer.cpp</includedby>
     <incdepgraph>
-      <node id="575">
+      <node id="614">
         <label>hdf5_hl.h</label>
       </node>
-      <node id="573">
+      <node id="612">
         <label>vector</label>
       </node>
-      <node id="572">
+      <node id="611">
         <label>iostream</label>
       </node>
-      <node id="571">
+      <node id="610">
         <label>source/IO/class_hdf5_table_buffer.h</label>
         <link refid="class__hdf5__table__buffer_8h"/>
-        <childnode refid="572" relation="include">
+        <childnode refid="611" relation="include">
         </childnode>
-        <childnode refid="573" relation="include">
+        <childnode refid="612" relation="include">
         </childnode>
-        <childnode refid="574" relation="include">
+        <childnode refid="613" relation="include">
         </childnode>
-        <childnode refid="575" relation="include">
+        <childnode refid="614" relation="include">
         </childnode>
       </node>
-      <node id="574">
+      <node id="613">
         <label>memory</label>
       </node>
     </incdepgraph>

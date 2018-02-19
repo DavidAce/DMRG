@@ -61,13 +61,13 @@ public:
 
     void initialize(long local_dimension_);         /*!< Sets local dimension*/
     void swap_AB();                                 /*!< Swaps the roles of A and B. Used in infinite DMRG.*/
-
     Textra::Tensor<Scalar,3> A() const;
     Textra::Tensor<Scalar,3> B() const;
     Textra::Tensor<Scalar,4> thetaL() const;
     Textra::Tensor<Scalar,4> thetaR() const;
 
-    Textra::Tensor<Scalar,4> get_theta() const;             /*!< Returns rank 4 tensor \f$\Theta\f$.*/
+    Textra::Tensor<Scalar,4> get_theta() const ;             /*!< Returns rank 4 tensor \f$\Theta\f$.*/
+    Textra::Tensor<Scalar,4> get_theta_swapped() const ;     /*!< Returns rank 4 tensor \f$\Theta\f$, with A and B swapped.*/
     Textra::Tensor<Scalar,4> get_transfer_matrix_L()const;
     Textra::Tensor<Scalar,4> get_transfer_matrix_R()const;
     Textra::Tensor<Scalar,4> get_transfer_2_site_matrix_L()const;

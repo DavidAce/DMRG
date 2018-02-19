@@ -26,10 +26,10 @@ public:
 private:
 
     //Store temporaries for eigensolver and SVD.
-    double energy;                                              /*!< Stores the energy obtained in the eigenvalue solver. This energy corresponds to non-truncated MPS, so it will differ a tiny bit from what you see in final resuls. */
-    Textra::Tensor<Scalar,2> ground_state;                      /*!< Stores the ground state eigenvector from eigenvalue solver */
     Textra::Tensor<Scalar,3> U,V;                               /*!< Stores the left and right unitary matrices \f$U\f$ and \f$V\f$ after an SVD decomposition \f$A = USV^\dagger\f$.*/
+    double energy;                                              /*!< Stores the energy obtained in the eigenvalue solver. This energy corresponds to non-truncated MPS, so it will differ a tiny bit from what you see in final resuls. */
 public:
+    Textra::Tensor<Scalar,2> ground_state;                      /*!< Stores the ground state eigenvector from eigenvalue solver */
 
     class_superblock();
     std::shared_ptr<class_mps<Scalar>>               MPS;        /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */

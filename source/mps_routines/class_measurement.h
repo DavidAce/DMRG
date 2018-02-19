@@ -23,23 +23,28 @@ public:
 private:
     std::shared_ptr<class_superblock> superblock;
     class_custom_cout ccout;
-
+    Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic>              lambdaG;
+    Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic> eigvecG;
+    Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic>              lambdaID;
+    Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic> eigvecID;
 public:
     SimulationType sim;
 
     double first_moment();
     explicit class_measurement(std::shared_ptr<class_superblock> superblock_, SimulationType sim_);
 
-    double variance1,variance2,variance3;
+    double variance1 = 1; double variance2 = 1; double variance3 = 1;
     double get_expectationvalue(const Eigen::Tensor<double,4> &MPO);
     double get_expectationvalue(const Eigen::Tensor<std::complex<double>,4> &MPO);
     double get_expectationvalue_sq(const Eigen::Tensor<double,4> &MPO);
     double get_expectationvalue_sq(const Eigen::Tensor<std::complex<double>,4> &MPO);
     double get_energy();                 /*! Computes the current energy by contracting the current MPS with the Hamiltonian MPO.*/
-    double get_entropy();                /*! Computes the current entropy \f$ S = - \sum_n \lambda_n log( \lambda_n) \f$, where \f$\lambda_n \f$ are elements of \f$ \Lambda^A\f$ */
+    double get_entanglement_entropy();                /*! Computes the current entropy \f$ S = - \sum_n \lambda_n log( \lambda_n) \f$, where \f$\lambda_n \f$ are elements of \f$ \Lambda^A\f$ */
+    double get_full_variance();          /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
     double get_variance();               /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
     double get_variance1();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
     double get_variance2();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
+    double get_variance3();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
     double get_truncation_error();
     double get_second_cumulant();
     long   get_chi();

@@ -21,7 +21,7 @@
 
 message("SEARCHING FOR LIBRARY: LAPACK")
 set(USE_OPTIMIZED_BLAS ON)
-
+set(BLAS_FIND_QUIETLY ON)
 if(EXISTS "${PROJECT_SOURCE_DIR}/libs/lapack/FindLapack.cmake" )
     include(cmake/FindGFortran.cmake)     ### For Fortran library
     include(${PROJECT_SOURCE_DIR}/libs/lapack/FindLapack.cmake)
