@@ -32,6 +32,7 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
 double class_measurement::first_moment(){
     superblock->update_bond_dimensions();
     if (superblock->chiL != superblock->chiR) { return 1.0;}
+    if (superblock->MPS->LA.size() != superblock->MPS->LB.size()) { return 1.0;}
     if (superblock->chi <= 2) { return 1.0;}
     using T = std::complex<double>;
     class_arpackpp_wrapper eig;
@@ -44,6 +45,8 @@ double class_measurement::first_moment(){
                                        .contract(thetaR.conjugate(), Textra::idx<2>({2,3},{0,1}))
                                        .shuffle(Textra::array4{0,2,1,3})
                                        .reshape(Textra::array2{sizeL,sizeR}) ;
+//    std::cout << "dimensions:" << A.dimensions() << std::endl;
+//    assert(A.dimension(1) == A.dimension(2) and "Dimensions mismatch of A matrix");
     Textra::Tensor<T,2> transf_ID = A.contract(A.conjugate(), Textra::idx<1>({0},{0}))
         .shuffle(Textra::array4{0,2,1,3})
         .reshape(Textra::array2{sizeL,sizeR}) ;

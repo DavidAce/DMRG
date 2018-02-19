@@ -141,6 +141,7 @@ void class_superblock::initialize() {
     MPS->GB(0,0,0) = 0;
     MPS->LB.resize(array1{1});
     MPS->LB.setConstant(1.0);
+
     MPS->L_tail.resize(array1{1});
     MPS->L_tail.setConstant(1.0);
 }
