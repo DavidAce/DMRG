@@ -2,7 +2,6 @@
 // Created by david on 2017-12-02.
 //
 #include "class_hdf5_file.h"
-
 #include "class_hdf5_dataset_buffer.h"
 
 template<typename DataType, typename AttrType,typename IterType>
@@ -34,6 +33,7 @@ class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buff
                                                                                    const AttrType &attribute_,
                                                                                    const std::string &attribute_name_)
         :
+        hdf5_out(std::move(hdf5_out_)),
         group_name(group_name_),
         iteration(iteration_),
         dataset_name(dataset_name_),

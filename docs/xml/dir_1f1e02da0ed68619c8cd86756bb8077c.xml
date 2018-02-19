@@ -6,18 +6,18 @@
     <innerfile refid="class__algorithm__launcher_8h">class_algorithm_launcher.h</innerfile>
     <innerfile refid="class__base__algorithm_8cpp">class_base_algorithm.cpp</innerfile>
     <innerfile refid="class__base__algorithm_8h">class_base_algorithm.h</innerfile>
-    <innerfile refid="class__excited__state___d_m_r_g_8cpp">class_excited_state_DMRG.cpp</innerfile>
-    <innerfile refid="class__excited__state___d_m_r_g_8h">class_excited_state_DMRG.h</innerfile>
+    <innerfile refid="class__f_d_m_r_g_8cpp">class_fDMRG.cpp</innerfile>
+    <innerfile refid="class__f_d_m_r_g_8h">class_fDMRG.h</innerfile>
     <innerfile refid="class___f_e_s__i_d_m_r_g_8cpp">class_FES_iDMRG.cpp</innerfile>
     <innerfile refid="class___f_e_s__i_d_m_r_g_8h">class_FES_iDMRG.h</innerfile>
     <innerfile refid="class___f_e_s__i_t_e_b_d_8cpp">class_FES_iTEBD.cpp</innerfile>
     <innerfile refid="class___f_e_s__i_t_e_b_d_8h">class_FES_iTEBD.h</innerfile>
-    <innerfile refid="class__finite___d_m_r_g_8cpp">class_finite_DMRG.cpp</innerfile>
-    <innerfile refid="class__finite___d_m_r_g_8h">class_finite_DMRG.h</innerfile>
-    <innerfile refid="class__imaginary___t_e_b_d_8cpp">class_imaginary_TEBD.cpp</innerfile>
-    <innerfile refid="class__imaginary___t_e_b_d_8h">class_imaginary_TEBD.h</innerfile>
-    <innerfile refid="class__infinite___d_m_r_g_8cpp">class_infinite_DMRG.cpp</innerfile>
-    <innerfile refid="class__infinite___d_m_r_g_8h">class_infinite_DMRG.h</innerfile>
+    <innerfile refid="class__i_d_m_r_g_8cpp">class_iDMRG.cpp</innerfile>
+    <innerfile refid="class__i_d_m_r_g_8h">class_iDMRG.h</innerfile>
+    <innerfile refid="class__i_t_e_b_d_8cpp">class_iTEBD.cpp</innerfile>
+    <innerfile refid="class__i_t_e_b_d_8h">class_iTEBD.h</innerfile>
+    <innerfile refid="class__x_d_m_r_g_8cpp">class_xDMRG.cpp</innerfile>
+    <innerfile refid="class__x_d_m_r_g_8h">class_xDMRG.h</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

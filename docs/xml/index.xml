@@ -3,13 +3,32 @@
   <compound refid="classclass__algorithm__base" kind="class"><name>class_algorithm_base</name>
     <member refid="classclass__algorithm__base_1a52110546990518c431901aa1262e457c" kind="variable"><name>hdf5</name></member>
     <member refid="classclass__algorithm__base_1ade8066944fb71399e3bf44d30149a923" kind="variable"><name>table_buffer</name></member>
-    <member refid="classclass__algorithm__base_1a0df91637c87540c529273999b7866315" kind="variable"><name>group_name</name></member>
+    <member refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kind="variable"><name>sim_name</name></member>
     <member refid="classclass__algorithm__base_1a199c6b935154ae969e80ae25f37e831d" kind="variable"><name>table_name</name></member>
-    <member refid="classclass__algorithm__base_1a44aea6f57f16f07b0079b382c2ab863e" kind="variable"><name>simulation_name</name></member>
-    <member refid="classclass__algorithm__base_1a2862e4e8b9338ac361d660ef35847d69" kind="variable"><name>simtype</name></member>
+    <member refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kind="variable"><name>sim_type</name></member>
     <member refid="classclass__algorithm__base_1aae9477a03b720e2e3ebbb92f05253774" kind="variable"><name>superblock</name></member>
     <member refid="classclass__algorithm__base_1afce57181b8c71747fe662a0db4bf8494" kind="variable"><name>measurement</name></member>
     <member refid="classclass__algorithm__base_1aa848d8c21aaa75620c7e8f9ac0ba369a" kind="variable"><name>ccout</name></member>
+    <member refid="classclass__algorithm__base_1a831053ba93028a374854b6af348e25b1" kind="variable"><name>chi_max</name></member>
+    <member refid="classclass__algorithm__base_1a2041457d6f08c66644e02c352b4fa332" kind="variable"><name>chi_min</name></member>
+    <member refid="classclass__algorithm__base_1a1ea967165f45da2c48820b26c5740a7c" kind="variable"><name>chi_num</name></member>
+    <member refid="classclass__algorithm__base_1aef6e7a6737527b7f25f017ef5e434979" kind="variable"><name>chi_grow</name></member>
+    <member refid="classclass__algorithm__base_1ad4ff9406598a9eb4c1d48fc12f17537a" kind="variable"><name>max_length</name></member>
+    <member refid="classclass__algorithm__base_1ad462b875e88a8d44b738d2c1d3d5c3cd" kind="variable"><name>max_sweeps</name></member>
+    <member refid="classclass__algorithm__base_1ab52c2f61bb5695d60e412fa5a5d9c64f" kind="variable"><name>print_freq</name></member>
+    <member refid="classclass__algorithm__base_1ab68231ade1f92254eb5e144acd350d87" kind="variable"><name>store_freq</name></member>
+    <member refid="classclass__algorithm__base_1a5ca8183a6469b3a09f8a59a293b98a35" kind="variable"><name>max_steps</name></member>
+    <member refid="classclass__algorithm__base_1a78d20a5ce078935d6a3bd4142a2a6468" kind="variable"><name>delta_t0</name></member>
+    <member refid="classclass__algorithm__base_1abbe678c8cc56e5bd029eb6df1d1bf47c" kind="variable"><name>delta_tmin</name></member>
+    <member refid="classclass__algorithm__base_1a8f69345da36c6ab4fb543ebf33b0f20b" kind="variable"><name>suzuki_order</name></member>
+    <member refid="classclass__algorithm__base_1aa08b59fc3e501d31fa515f0ac6a8895a" kind="variable"><name>sweeps</name></member>
+    <member refid="classclass__algorithm__base_1a58363d486f75a3ede1acd8e43945d0ad" kind="variable"><name>iteration</name></member>
+    <member refid="classclass__algorithm__base_1ae2de72f79afad0d57064d387a473f62b" kind="variable"><name>position</name></member>
+    <member refid="classclass__algorithm__base_1afd3073023089eaaddff1dda8c758596e" kind="variable"><name>direction</name></member>
+    <member refid="classclass__algorithm__base_1aaecc2632462e637a78cea84e7c8ae49d" kind="variable"><name>phys_time</name></member>
+    <member refid="classclass__algorithm__base_1aeadf82f6ee8dc0314188685686758590" kind="variable"><name>delta_t</name></member>
+    <member refid="classclass__algorithm__base_1a5be3a2b97f146c5dc132d191bf7a9760" kind="variable"><name>chi_temp</name></member>
+    <member refid="classclass__algorithm__base_1a03a87bef331c23b2b8a4aae4aad5780b" kind="variable"><name>simulation_has_converged</name></member>
     <member refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kind="variable"><name>t_tot</name></member>
     <member refid="classclass__algorithm__base_1ae378bea3c64eddbcebbb4308506dd0ba" kind="variable"><name>t_eig</name></member>
     <member refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" kind="variable"><name>t_sim</name></member>
@@ -21,17 +40,21 @@
     <member refid="classclass__algorithm__base_1afb38782d7f5134a0a0be8fde91628995" kind="variable"><name>t_ste</name></member>
     <member refid="classclass__algorithm__base_1a29c0cee1d8f128dd23e6fb833ad9a18f" kind="variable"><name>t_obs</name></member>
     <member refid="classclass__algorithm__base_1a30db55b403a9abca8a8b063079009174" kind="variable"><name>t_mps</name></member>
-    <member refid="classclass__algorithm__base_1a89a908e197b655ae32018d230edb06f3" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass__algorithm__base_1a6a0a5a295b80a31362ea0598cdadf07d" kind="function"><name>class_algorithm_base</name></member>
-    <member refid="classclass__algorithm__base_1a9416e68b36a3005ce4fdf0921e5dbf27" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__algorithm__base_1a94141dc5cf77e48efa835af74e7a55ac" kind="variable"><name>S_vec</name></member>
+    <member refid="classclass__algorithm__base_1a633ec490dc7508f5f4562467e1cd9060" kind="variable"><name>X_vec</name></member>
+    <member refid="classclass__algorithm__base_1a35e482872c1dec9372c74c40a82208d0" kind="function"><name>class_algorithm_base</name></member>
+    <member refid="classclass__algorithm__base_1abdbf379c10c1932bed87f96711692f3e" kind="function"><name>class_algorithm_base</name></member>
     <member refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" kind="function"><name>set_profiling_labels</name></member>
     <member refid="classclass__algorithm__base_1a41b199782e43aeaccf607b8191c3a027" kind="function"><name>run</name></member>
-    <member refid="classclass__algorithm__base_1a0f543b6c9f1ff43baab2bc47628c680e" kind="function"><name>store_table_entry</name></member>
     <member refid="classclass__algorithm__base_1aeed6c86b2bb499b7b8977a9bca82e6ab" kind="function"><name>print_profiling</name></member>
-    <member refid="classclass__algorithm__base_1a96f34d67e881abd4d1ec4dd2d89728ad" kind="function"><name>print_status_full</name></member>
-    <member refid="classclass__algorithm__base_1a803b366e66ffaef47479278cbdb1a738" kind="function"><name>print_status_update</name></member>
+    <member refid="classclass__algorithm__base_1a7b63c87cc3c684c75cb8eed5b344d911" kind="function"><name>store_table_entry</name></member>
+    <member refid="classclass__algorithm__base_1a3b2a7db71b752bf22253a9b6739718cb" kind="function"><name>print_status_update</name></member>
+    <member refid="classclass__algorithm__base_1aeb64d6f7fccaa2a56431dc42306d3315" kind="function"><name>print_status_full</name></member>
     <member refid="classclass__algorithm__base_1a15d8f41189fb1685de574b7f3389eee6" kind="function"><name>single_DMRG_step</name></member>
     <member refid="classclass__algorithm__base_1ac9255cf0edbb29441a2ba4e900459082" kind="function"><name>single_TEBD_step</name></member>
+    <member refid="classclass__algorithm__base_1aa6c2e3ff4ab6c042547c3cd0b38b8635" kind="function"><name>update_chi</name></member>
+    <member refid="classclass__algorithm__base_1a30f0bc0e5f4833b79d870ac39457526c" kind="function"><name>entropy_has_converged</name></member>
+    <member refid="classclass__algorithm__base_1a1167ff1547b5d69a747d9f4e1e4a9df8" kind="function"><name>initialize_constants</name></member>
     <member refid="classclass__algorithm__base_1a843555eba3d2bb4d371d7a8fcf4decf2" kind="function"><name>enlarge_environment</name></member>
     <member refid="classclass__algorithm__base_1a55c7268b04fc440dd0287fbd969f202d" kind="function"><name>enlarge_environment</name></member>
     <member refid="classclass__algorithm__base_1a4ce5f92c32d9bd33877fde7848417e61" kind="function"><name>swap</name></member>
@@ -55,10 +78,11 @@
     <member refid="classclass__arpackpp__wrapper_1afd4df720398daf185d9d4c59a160f382" kind="typedef"><name>VectorType</name></member>
     <member refid="classclass__arpackpp__wrapper_1ab0f2dea3c106d51065a8082226319f41" kind="variable"><name>eigThreshold</name></member>
     <member refid="classclass__arpackpp__wrapper_1a95aa18a73d988c7dc78a810082f44885" kind="variable"><name>eigMaxIter</name></member>
+    <member refid="classclass__arpackpp__wrapper_1a8d0ed74f39e130cc6c165cec44d1280f" kind="variable"><name>ncv_max</name></member>
     <member refid="classclass__arpackpp__wrapper_1aab81ac891ec2f25e32260e8974a67317" kind="variable"><name>RitzToString</name></member>
     <member refid="classclass__arpackpp__wrapper_1a8bf26a326d7ebd7853493dc6398405a0" kind="function"><name>retrieve_solution</name></member>
     <member refid="classclass__arpackpp__wrapper_1acd082b643939effd763e627a8a76f112" kind="function"><name>class_arpackpp_wrapper</name></member>
-    <member refid="classclass__arpackpp__wrapper_1a1be729722627d19fabd5f1f297f748d6" kind="function"><name>solve_dominant</name></member>
+    <member refid="classclass__arpackpp__wrapper_1aa7484dfbb5a6faade08c9c40d3a8ef3a" kind="function"><name>solve_dominant</name></member>
   </compound>
   <compound refid="classclass__custom__contraction" kind="class"><name>class_custom_contraction</name>
     <member refid="classclass__custom__contraction_1aaadb11e52186acec2141a8b6df3e047a" kind="typedef"><name>Scalar</name></member>
@@ -124,60 +148,27 @@
     <member refid="classclass__environment__var_1aa66764d5c94807e15c5388e5ebc688e6" kind="function"><name>class_environment_var</name></member>
     <member refid="classclass__environment__var_1ab876857daa97b769d8ff887e1d0e9559" kind="function"><name>enlarge</name></member>
   </compound>
-  <compound refid="classclass__excited__state___d_m_r_g" kind="class"><name>class_excited_state_DMRG</name>
-    <member refid="classclass__excited__state___d_m_r_g_1a206fbebb90b577f12ea4ee1fc406199f" kind="variable"><name>chi_max</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a2ef2a65ee68499cd0683a50cb3e69d34" kind="variable"><name>max_length</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a29a3add24ef7150034aa5672f92f24f3" kind="variable"><name>print_freq</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a4c42a4fc92875d5fdf150c40ef71ac72" kind="variable"><name>max_sweeps</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1aeaeb23b3d5e6160b81f1abd6393f4ccd" kind="variable"><name>direction</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a05e7f343358b9edd22eb65a2e179074c" kind="variable"><name>sweep</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a7f55cc62d62f03b1e32fe69e533ab527" kind="variable"><name>position</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1aec25acb974197fb6a8b8a629bad728a2" kind="variable"><name>middle_of_chain</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1aaf6e371c6955c48b44b3b917e3333c38" kind="variable"><name>env_storage</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a7baea67991ce97a2e8fa954cfb5603d9" kind="function"><name>class_excited_state_DMRG</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1aa7dc9748d6b7f2ed0cef096a0f6f38b4" kind="function"><name>run</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a6ec0840c391e86fb02cd2df60d3be5bd" kind="function"><name>initialize_random_chain</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a8af7c49931c021deda5648bc6e4e4c1c" kind="function"><name>env_storage_insert</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1aa95ca4cec6293f721f275fd29d5e0f37" kind="function"><name>env_storage_load</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1aa3359696cbf25daf32f10cbf42c48457" kind="function"><name>env_storage_overwrite_MPS</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a2b2c816469de84edc702cc3f81b3c27e" kind="function"><name>env_storage_move</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a3b1a9f46cf7bf6d4c119b32f3e39a159" kind="function"><name>print_status_full</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a17870ec85d13a7c433787c738bb0cbaf" kind="function"><name>print_status_update</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a1a51b9af27e0ae2b32e23d9afd49f0b2" kind="function"><name>store_table_entry</name></member>
-    <member refid="classclass__excited__state___d_m_r_g_1a63786d117aee6d0e4ef5fd99e23ad12e" kind="function"><name>print_profiling</name></member>
+  <compound refid="classclass__f_d_m_r_g" kind="class"><name>class_fDMRG</name>
+    <member refid="classclass__f_d_m_r_g_1a128a0181a2ab2e4eb87caf1463324a41" kind="variable"><name>middle_of_chain</name></member>
+    <member refid="classclass__f_d_m_r_g_1a595f4a1700c4f0896e29d4354a73349b" kind="variable"><name>env_storage</name></member>
+    <member refid="classclass__f_d_m_r_g_1aa1c1ab78cb994ae5baf559e56a3eecd4" kind="function"><name>class_fDMRG</name></member>
+    <member refid="classclass__f_d_m_r_g_1acbd839591beb94d6c1b561b44816ac2b" kind="function"><name>run</name></member>
+    <member refid="classclass__f_d_m_r_g_1abb874aa15a413ec3acfc3e09e4d466a6" kind="function"><name>initialize_chain</name></member>
+    <member refid="classclass__f_d_m_r_g_1a4fe2aa6fb9666d58693061bda4fb2aa3" kind="function"><name>env_storage_insert</name></member>
+    <member refid="classclass__f_d_m_r_g_1a249dce72713845893516c56cd2cedf6e" kind="function"><name>env_storage_overwrite_MPS</name></member>
+    <member refid="classclass__f_d_m_r_g_1a85bc3bd1f4f30cfe78fffb1cba986b5b" kind="function"><name>env_storage_move</name></member>
+    <member refid="classclass__f_d_m_r_g_1a03c240547e71eac74b51ea56f3798b3f" kind="function"><name>print_profiling</name></member>
   </compound>
   <compound refid="classclass___f_e_s__i_d_m_r_g" kind="class"><name>class_FES_iDMRG</name>
-    <member refid="classclass___f_e_s__i_d_m_r_g_1a95fe60a4bc3dc4f5c25d16934e028d6a" kind="variable"><name>chi_min</name></member>
-    <member refid="classclass___f_e_s__i_d_m_r_g_1a4982d5bc1809680ac80ec10030df1c64" kind="variable"><name>chi_max</name></member>
-    <member refid="classclass___f_e_s__i_d_m_r_g_1add279f4dc1ae6e5739548c3ecf39fae2" kind="variable"><name>chi_num</name></member>
-    <member refid="classclass___f_e_s__i_d_m_r_g_1ab371552336985f48432bf4dbc98dfeea" kind="variable"><name>max_length</name></member>
-    <member refid="classclass___f_e_s__i_d_m_r_g_1a4cfd8387f6f79a9efa349eb8239c3c76" kind="variable"><name>print_freq</name></member>
-    <member refid="classclass___f_e_s__i_d_m_r_g_1a3ee373fbbd1f674d87b753960477bb34" kind="variable"><name>iteration</name></member>
     <member refid="classclass___f_e_s__i_d_m_r_g_1a861ed7b7f197fb88971428adc618ce6c" kind="function"><name>class_FES_iDMRG</name></member>
     <member refid="classclass___f_e_s__i_d_m_r_g_1af243e88dc3994e96c7c15439aeffb6c3" kind="function"><name>run</name></member>
     <member refid="classclass___f_e_s__i_d_m_r_g_1afc3fc5e65c800c71ae7d887b9ae799e5" kind="function"><name>run2</name></member>
-    <member refid="classclass___f_e_s__i_d_m_r_g_1a689804d79bf42136291190a572cb77a5" kind="function"><name>print_status_full</name></member>
-    <member refid="classclass___f_e_s__i_d_m_r_g_1ab539ff602037ae8453169d7e2b3c3939" kind="function"><name>print_status_update</name></member>
-    <member refid="classclass___f_e_s__i_d_m_r_g_1a635d2cefb0a1ad82b4ca0516da1b1981" kind="function"><name>store_table_entry</name></member>
     <member refid="classclass___f_e_s__i_d_m_r_g_1a5a0524eb6a46eb5365022d4ff8716a60" kind="function"><name>print_profiling</name></member>
   </compound>
   <compound refid="classclass___f_e_s__i_t_e_b_d" kind="class"><name>class_FES_iTEBD</name>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a72808b554c9b636818d132476be957be" kind="variable"><name>chi_min</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a70d8de0b758b5c002261a0d7694861e4" kind="variable"><name>chi_max</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a7d106c1df6a27ba08b9fda75e5d4c02b" kind="variable"><name>chi_num</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a42bb653f213ee07b02605b6468146e28" kind="variable"><name>max_steps</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1ab4966ca836c22c01e5126f71651c417d" kind="variable"><name>delta_t0</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a420e5c309f3acaadd2ac35dbdc10e6c3" kind="variable"><name>delta_tmin</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1aa50618a8a6075b4383b49576f4061e38" kind="variable"><name>print_freq</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a8301077481e60b5dacebee7a1a688ddb" kind="variable"><name>suzuki_order</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1aad792b3b6a03e796c50b9f71cb922f11" kind="variable"><name>delta_t</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a4f024ec8f050dc01377c91d0706142ca" kind="variable"><name>iteration</name></member>
     <member refid="classclass___f_e_s__i_t_e_b_d_1ad71334df54a0dab8ac2e4c513be1c5e0" kind="function"><name>class_FES_iTEBD</name></member>
     <member refid="classclass___f_e_s__i_t_e_b_d_1a4fee90754e2222b75e93000d1daea466" kind="function"><name>run</name></member>
     <member refid="classclass___f_e_s__i_t_e_b_d_1af83a79b7d6882e9633755f3f044109e8" kind="function"><name>run2</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a78dea9f588617416547d1dc5db4a4891" kind="function"><name>print_status_full</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a83c6c1174cb5c287561a360b1911e68b" kind="function"><name>print_status_update</name></member>
-    <member refid="classclass___f_e_s__i_t_e_b_d_1a857a1dd355a51d6834838623762381e0" kind="function"><name>store_table_entry</name></member>
     <member refid="classclass___f_e_s__i_t_e_b_d_1ac04fc2f39a021216503cb05ecd2e5db7" kind="function"><name>print_profiling</name></member>
   </compound>
   <compound refid="classclass__file__reader" kind="class"><name>class_file_reader</name>
@@ -194,28 +185,6 @@
     <member refid="classclass__file__reader_1a387e18d4cf70cfffa940d3c333ec63f3" kind="function"><name>class_file_reader</name></member>
     <member refid="classclass__file__reader_1aad5bf9f78a36517d962f66385681c6c8" kind="function"><name>find_parameter</name></member>
     <member refid="classclass__file__reader_1a24f293b427746c46df8251670619c554" kind="function"><name>find_parameter</name></member>
-  </compound>
-  <compound refid="classclass__finite___d_m_r_g" kind="class"><name>class_finite_DMRG</name>
-    <member refid="classclass__finite___d_m_r_g_1a20b53996379f202a83710e259b8a527b" kind="variable"><name>chi_max</name></member>
-    <member refid="classclass__finite___d_m_r_g_1a707730f73d2df0b4c51e5062267ef301" kind="variable"><name>max_length</name></member>
-    <member refid="classclass__finite___d_m_r_g_1a059159bb19e543b07f7ee32163c3de42" kind="variable"><name>print_freq</name></member>
-    <member refid="classclass__finite___d_m_r_g_1aa062ceaebe5c7088534fc06b4fe5e56b" kind="variable"><name>max_sweeps</name></member>
-    <member refid="classclass__finite___d_m_r_g_1aafa58622778a2450159c3718b448b573" kind="variable"><name>direction</name></member>
-    <member refid="classclass__finite___d_m_r_g_1ad4a163624dfaf0f6bec30c372cabe65d" kind="variable"><name>sweep</name></member>
-    <member refid="classclass__finite___d_m_r_g_1aa46847adf0ac6d0242651ed744a3e379" kind="variable"><name>position</name></member>
-    <member refid="classclass__finite___d_m_r_g_1a7f2c1f66044c858d684e269ccb5e85bf" kind="variable"><name>middle_of_chain</name></member>
-    <member refid="classclass__finite___d_m_r_g_1aee2951a609f29ae90e066a96130ef719" kind="variable"><name>env_storage</name></member>
-    <member refid="classclass__finite___d_m_r_g_1a929a75ddf63fac4992c735ac1933dc19" kind="function"><name>class_finite_DMRG</name></member>
-    <member refid="classclass__finite___d_m_r_g_1a7afa8f68b9b027530ca11f692e70bbee" kind="function"><name>run</name></member>
-    <member refid="classclass__finite___d_m_r_g_1aefa663d275e414442c32f40a4c972c38" kind="function"><name>initialize_chain</name></member>
-    <member refid="classclass__finite___d_m_r_g_1aa6a13e4eea2fa61a168fd0aed2b2e64e" kind="function"><name>env_storage_insert</name></member>
-    <member refid="classclass__finite___d_m_r_g_1aa5cdf89f05cc7394fffa4227a146087a" kind="function"><name>env_storage_load</name></member>
-    <member refid="classclass__finite___d_m_r_g_1a8b2a480ae9c5cb880b44e32578739a93" kind="function"><name>env_storage_overwrite_MPS</name></member>
-    <member refid="classclass__finite___d_m_r_g_1ab51d79edf99b84d4c31c343a1de690f6" kind="function"><name>env_storage_move</name></member>
-    <member refid="classclass__finite___d_m_r_g_1aaca642ab63eb0c4dd8fd69989961d9fd" kind="function"><name>print_status_full</name></member>
-    <member refid="classclass__finite___d_m_r_g_1a0135fc5a5c286e59caab06ad52418091" kind="function"><name>print_status_update</name></member>
-    <member refid="classclass__finite___d_m_r_g_1afcbb939c4ea67a99c050251a675bd5af" kind="function"><name>store_table_entry</name></member>
-    <member refid="classclass__finite___d_m_r_g_1af59b91be2fe224e459002b44939d8fff" kind="function"><name>print_profiling</name></member>
   </compound>
   <compound refid="classclass__hdf5__dataset__buffer" kind="class"><name>class_hdf5_dataset_buffer</name>
     <member refid="classclass__hdf5__dataset__buffer_1ad6cf71bab03f4114bc6beb5ce6f26b1f" kind="variable"><name>hdf5_out</name></member>
@@ -303,41 +272,27 @@
     <member refid="classclass__hdf5__table__buffer_1af9449f0009e6cb714ac36a18b902c75e" kind="function"><name>write_buffer_to_file</name></member>
     <member refid="classclass__hdf5__table__buffer_1a1766b77f12496c01ad8edd4e4ddc0256" kind="function"><name>~class_hdf5_table_buffer</name></member>
   </compound>
-  <compound refid="classclass__imaginary___t_e_b_d" kind="class"><name>class_imaginary_TEBD</name>
-    <member refid="classclass__imaginary___t_e_b_d_1ab51bd56adf5b933e2cefee4f892c5356" kind="variable"><name>chi_max</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a7c4c21ad13cc87df5cdd83a5e7caf4d9" kind="variable"><name>max_steps</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a39537978d66b4dfd1b7cd39d678c8d7d" kind="variable"><name>delta_t0</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1abaed4fb640f15e97d7fcfa1484b387b6" kind="variable"><name>delta_tmin</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1af9a2f04e142d55bb7c6193b8bdd973ec" kind="variable"><name>print_freq</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a6b12630781f88f7f14e253b8da4a5bae" kind="variable"><name>delta_t</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a9bf8d16ae5bdcd46834a6b1d938ee41d" kind="variable"><name>iteration</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a837353d7cfe120bfd59c4e4228de9ab6" kind="variable"><name>phys_time</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a8cf78b0c001203138befc3a267e6b55e" kind="variable"><name>old_entropy</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a2a72e4c4a212abc37382a3bda4895a91" kind="variable"><name>new_entropy</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1ad5b3b22f6b0d8164510388f19829643c" kind="function"><name>class_imaginary_TEBD</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a341508aaa8498c1defe8c9f7383945e7" kind="function"><name>reduce_timestep</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1ac038c83d5c2a802686abaa9bf673b005" kind="function"><name>run</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1ac9faffebd11a7530016378550104b497" kind="function"><name>print_status_full</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a0e1fd656e8273dd071dae8c679d72699" kind="function"><name>print_status_update</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a2fbbcb78748a27ed86cbbb4adca95345" kind="function"><name>store_table_entry</name></member>
-    <member refid="classclass__imaginary___t_e_b_d_1a64b56b73bb96ad96fbd271a1765c54b6" kind="function"><name>print_profiling</name></member>
+  <compound refid="classclass__i_d_m_r_g" kind="class"><name>class_iDMRG</name>
+    <member refid="classclass__i_d_m_r_g_1a15ff299fc2636fd3ff58117fc404e272" kind="function"><name>class_iDMRG</name></member>
+    <member refid="classclass__i_d_m_r_g_1a42addd0d24580cd9b9431c3e2bb4df38" kind="function"><name>run</name></member>
+    <member refid="classclass__i_d_m_r_g_1a26c28622f09b25e5467082fc1bbb682a" kind="function"><name>print_profiling</name></member>
   </compound>
-  <compound refid="classclass__infinite___d_m_r_g" kind="class"><name>class_infinite_DMRG</name>
-    <member refid="classclass__infinite___d_m_r_g_1a8eb15ce418a7fa8ba36f11086a73ba89" kind="variable"><name>chi_max</name></member>
-    <member refid="classclass__infinite___d_m_r_g_1a8615c4b3b1dd01d24e686a4e96d7149b" kind="variable"><name>max_length</name></member>
-    <member refid="classclass__infinite___d_m_r_g_1ae47c6add54afe6fe6dc821630ff0e6b2" kind="variable"><name>print_freq</name></member>
-    <member refid="classclass__infinite___d_m_r_g_1a50df7f3198408d20e0e5505f317920b3" kind="variable"><name>iteration</name></member>
-    <member refid="classclass__infinite___d_m_r_g_1a97aa7e64d385b7b27506ed81c0bda759" kind="function"><name>class_infinite_DMRG</name></member>
-    <member refid="classclass__infinite___d_m_r_g_1a42b5db2f3ca0a4b5dfc3f8b67f8badf3" kind="function"><name>run</name></member>
-    <member refid="classclass__infinite___d_m_r_g_1ace9dd62c05d408a18d2eebcc418372e4" kind="function"><name>print_status_full</name></member>
-    <member refid="classclass__infinite___d_m_r_g_1a69c7a5325d1fa316b98e726373514d77" kind="function"><name>print_status_update</name></member>
-    <member refid="classclass__infinite___d_m_r_g_1af5945b9b1164b8575d8983a75bca3233" kind="function"><name>store_table_entry</name></member>
-    <member refid="classclass__infinite___d_m_r_g_1a681cc5ac0cea05193138bb30b7c7a790" kind="function"><name>print_profiling</name></member>
+  <compound refid="classclass__i_t_e_b_d" kind="class"><name>class_iTEBD</name>
+    <member refid="classclass__i_t_e_b_d_1a1a9622ad0b5b0d0408edc3a8e04cc20d" kind="function"><name>class_iTEBD</name></member>
+    <member refid="classclass__i_t_e_b_d_1a78f9f9eec5407f48cea56322b81a7bb7" kind="function"><name>run</name></member>
+    <member refid="classclass__i_t_e_b_d_1acaf7357feccf42012bf99a487e6c1bb1" kind="function"><name>print_profiling</name></member>
+  </compound>
+  <compound refid="classclass__algorithm__base_1_1class__limited__vector" kind="class"><name>class_algorithm_base::class_limited_vector</name>
+    <member refid="classclass__algorithm__base_1_1class__limited__vector_1adce1d5fb2fa145903a2a0e21a5717571" kind="function"><name>push_back_limited</name></member>
   </compound>
   <compound refid="classclass__measurement" kind="class"><name>class_measurement</name>
     <member refid="classclass__measurement_1ad50d687d36cd5380211537e414f1dafa" kind="typedef"><name>Scalar</name></member>
     <member refid="classclass__measurement_1a008eb2eef22d635ec569b7ac94f14840" kind="variable"><name>superblock</name></member>
     <member refid="classclass__measurement_1a55863a6ce740a6271a168cd916a78404" kind="variable"><name>ccout</name></member>
+    <member refid="classclass__measurement_1a47d15b1c7dbca772c28bd051bfa63a9a" kind="variable"><name>lambdaG</name></member>
+    <member refid="classclass__measurement_1a0fb65d28c1ced09d27b957411e4c3fe5" kind="variable"><name>eigvecG</name></member>
+    <member refid="classclass__measurement_1aeb25675ea37cfd60266cb67ebaaee7cf" kind="variable"><name>lambdaID</name></member>
+    <member refid="classclass__measurement_1a61bb1c7005cc2e7086bf9e6b50be149e" kind="variable"><name>eigvecID</name></member>
     <member refid="classclass__measurement_1acd25e3f13f2c4dd39ad866c241adf848" kind="variable"><name>sim</name></member>
     <member refid="classclass__measurement_1a66bdf26b1fcb15ae3ad3545c1c4e686f" kind="variable"><name>variance1</name></member>
     <member refid="classclass__measurement_1a055480ec3e9a2794070a40568db0698b" kind="variable"><name>variance2</name></member>
@@ -349,7 +304,8 @@
     <member refid="classclass__measurement_1a95da5dbc822ec7ccea779f0398260991" kind="function"><name>get_expectationvalue_sq</name></member>
     <member refid="classclass__measurement_1a63f60e9386f2467cb16393699fd748dc" kind="function"><name>get_expectationvalue_sq</name></member>
     <member refid="classclass__measurement_1a62aaca25f45b1d5548974f3149c147b2" kind="function"><name>get_energy</name></member>
-    <member refid="classclass__measurement_1a73e89873bd33e9749b3ffc46679ad1ba" kind="function"><name>get_entropy</name></member>
+    <member refid="classclass__measurement_1ab34f7b0b37291e7baded146b5f7c0e2d" kind="function"><name>get_entanglement_entropy</name></member>
+    <member refid="classclass__measurement_1a3c6e80127aac789c89bf19d8cf92460e" kind="function"><name>get_full_variance</name></member>
     <member refid="classclass__measurement_1a45614ac23314d7088810aaaedc4acde8" kind="function"><name>get_variance</name></member>
     <member refid="classclass__measurement_1afccc947a39a980866ceec2122409a6a1" kind="function"><name>get_variance1</name></member>
     <member refid="classclass__measurement_1a7b8f6cf52a773b030a8eb0296f11a34c" kind="function"><name>get_variance2</name></member>
@@ -370,6 +326,7 @@
     <member refid="classclass__mpo_1ab4a985e460cd5da8a4afe8ba578e83aa" kind="variable"><name>Udt</name></member>
     <member refid="classclass__mpo_1af82254663a4842313d067da6b13496f6" kind="variable"><name>M</name></member>
     <member refid="classclass__mpo_1af9955a2f9cbef67e37ea91292e01cb3b" kind="variable"><name>MM</name></member>
+    <member refid="classclass__mpo_1a9ec62faf366213a137aa519b7f3ad530" kind="variable"><name>MMMM</name></member>
     <member refid="classclass__mpo_1acf3a3721884639eb8fd90f693f2d5aed" kind="variable"><name>F</name></member>
     <member refid="classclass__mpo_1accc9be25c53e00dc8a7ac8dc33df9d5e" kind="variable"><name>G</name></member>
     <member refid="classclass__mpo_1aedab7f39f6dac78b41f0abbcaa8e022b" kind="variable"><name>h</name></member>
@@ -380,8 +337,10 @@
     <member refid="classclass__mpo_1ad13d86f64f3d1bdb0a92000663cf5c8e" kind="function"><name>update_timestep</name></member>
     <member refid="classclass__mpo_1af7723b5fcd802e3b28e0667544faa525" kind="function"><name>compute_M</name></member>
     <member refid="classclass__mpo_1aeae4208a653a98d74016b933833803ab" kind="function"><name>compute_MM</name></member>
+    <member refid="classclass__mpo_1a9d95abcfdf3fae89a39380a4364203c9" kind="function"><name>compute_MMMM</name></member>
     <member refid="classclass__mpo_1a8c3f8e7d65f680b6366e41af5250270d" kind="function"><name>Suzuki_Trotter_1st_order</name></member>
     <member refid="classclass__mpo_1a43ecafd8145b0d831397d3a5074ed34c" kind="function"><name>Suzuki_Trotter_2nd_order</name></member>
+    <member refid="classclass__mpo_1a4bdd5bbe83281f5f9bd9c76cb412f7a3" kind="function"><name>Suzuki_Trotter_4th_order</name></member>
     <member refid="classclass__mpo_1a05d3a09c4f824ed8f40192451331bb87" kind="function"><name>TimeEvolution_1st_order</name></member>
     <member refid="classclass__mpo_1a1301379590f9f3c770d6f82dbae80532" kind="function"><name>TimeEvolution_2nd_order</name></member>
     <member refid="classclass__mpo_1a47d1f992f9278d119ad39bb034e16b86" kind="function"><name>TimeEvolution_4th_order</name></member>
@@ -405,6 +364,7 @@
     <member refid="classclass__mps_1a28389722f496593e52898d5f82c5452f" kind="function"><name>thetaL</name></member>
     <member refid="classclass__mps_1ad20851ef185f82f108b0153df2ddfdb2" kind="function"><name>thetaR</name></member>
     <member refid="classclass__mps_1ae30407b1ac3c804a9e30ce27a2b76a61" kind="function"><name>get_theta</name></member>
+    <member refid="classclass__mps_1a832415ed7db0e248d5b59bd5a0851427" kind="function"><name>get_theta_swapped</name></member>
     <member refid="classclass__mps_1a08345ffe3257d04de783d092aa931266" kind="function"><name>get_transfer_matrix_L</name></member>
     <member refid="classclass__mps_1aa9aa5c540121037da4011bb562c68327" kind="function"><name>get_transfer_matrix_R</name></member>
     <member refid="classclass__mps_1ad6a93c33891a7ea19f8e3d0d1b87b203" kind="function"><name>get_transfer_2_site_matrix_L</name></member>
@@ -418,9 +378,10 @@
   </compound>
   <compound refid="classclass__superblock" kind="class"><name>class_superblock</name>
     <member refid="classclass__superblock_1a36e38d61c220c26da852d11227d60800" kind="typedef"><name>Scalar</name></member>
-    <member refid="classclass__superblock_1a7b0238de885d864ce3d28a4a13e65551" kind="variable"><name>ground_state</name></member>
     <member refid="classclass__superblock_1afb7e767c176df6b207c2a78e10970d95" kind="variable"><name>U</name></member>
     <member refid="classclass__superblock_1a84e812ce631140ceeee7eb2192afd4d3" kind="variable"><name>V</name></member>
+    <member refid="classclass__superblock_1aedc698e61d6f2d9902c21ead83c29783" kind="variable"><name>energy</name></member>
+    <member refid="classclass__superblock_1a7b0238de885d864ce3d28a4a13e65551" kind="variable"><name>ground_state</name></member>
     <member refid="classclass__superblock_1ad006783dfd82fa9852da2317114205ef" kind="variable"><name>MPS</name></member>
     <member refid="classclass__superblock_1a4ee436ecad7198453e3f102fbddd4dae" kind="variable"><name>H</name></member>
     <member refid="classclass__superblock_1abf1f431a94e7ed0991066ff53c20b8d6" kind="variable"><name>Lblock</name></member>
@@ -497,6 +458,20 @@
     <member refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" kind="function"><name>reset</name></member>
     <member refid="classclass__tic__toc_1a865195fe25d8d8c85bcc7c3301c3ceb6" kind="friend"><name>operator&lt;&lt;</name></member>
   </compound>
+  <compound refid="classclass__x_d_m_r_g" kind="class"><name>class_xDMRG</name>
+    <member refid="classclass__x_d_m_r_g_1a6f25058275e0f4ff33d49568e7963b71" kind="typedef"><name>Scalar</name></member>
+    <member refid="classclass__x_d_m_r_g_1a7c98fad9c28c52efa882140f1be0d1af" kind="variable"><name>state</name></member>
+    <member refid="classclass__x_d_m_r_g_1a54f1fa6b797621a8ead297b2bbd5424b" kind="variable"><name>env_storage</name></member>
+    <member refid="classclass__x_d_m_r_g_1a4168bf893a010aab72cfa9be1068ed5a" kind="function"><name>class_xDMRG</name></member>
+    <member refid="classclass__x_d_m_r_g_1a4b175219651821e6995f089168704258" kind="function"><name>run</name></member>
+    <member refid="classclass__x_d_m_r_g_1a9a392f627507662bb96e907c57d4d501" kind="function"><name>single_xDMRG_step</name></member>
+    <member refid="classclass__x_d_m_r_g_1a2df71aefd7e1da3feb20a2b441582381" kind="function"><name>find_greatest_overlap</name></member>
+    <member refid="classclass__x_d_m_r_g_1a8840206a3e5474bb3bb9825d6bf9c27d" kind="function"><name>initialize_random_chain</name></member>
+    <member refid="classclass__x_d_m_r_g_1a9417829ca26ed69c3695b1833398a795" kind="function"><name>env_storage_insert</name></member>
+    <member refid="classclass__x_d_m_r_g_1a2e6d5288944e483d85ee89c4e905b8d8" kind="function"><name>env_storage_overwrite_MPS</name></member>
+    <member refid="classclass__x_d_m_r_g_1ae111039733d715204f0f31fa6d47f73f" kind="function"><name>env_storage_move</name></member>
+    <member refid="classclass__x_d_m_r_g_1abf7ce55ecd62b5a7d7aa1e58fafb1393" kind="function"><name>print_profiling</name></member>
+  </compound>
   <compound refid="class_math_1_1gsl__quad" kind="class"><name>Math::gsl_quad</name>
     <member refid="class_math_1_1gsl__quad_1a9cba5695f611429d83c4ce29ad1700e1" kind="variable"><name>f</name></member>
     <member refid="class_math_1_1gsl__quad_1a608383457d42327237c4c3de24bd2123" kind="variable"><name>limit</name></member>
@@ -519,15 +494,18 @@
     <member refid="structtable__entry_1a8c8a67c9034de9c78051dd51d545a664" kind="variable"><name>chi_max</name></member>
     <member refid="structtable__entry_1a11bd9e762b98557d57c52dbb0bb0c530" kind="variable"><name>energy</name></member>
     <member refid="structtable__entry_1a642198e7f0080901e09c8fbc4f596170" kind="variable"><name>entropy</name></member>
-    <member refid="structtable__entry_1a39c06c296856ef02674e066910a5e35e" kind="variable"><name>variance1</name></member>
+    <member refid="structtable__entry_1ae5f1c1ef4609055c2edc29579957c85e" kind="variable"><name>variance</name></member>
     <member refid="structtable__entry_1a229b2c0fcfb5dd6c585290778b2f6873" kind="variable"><name>variance2</name></member>
+    <member refid="structtable__entry_1a9e9a5e56f0b528be17a0c573616c27db" kind="variable"><name>variance3</name></member>
     <member refid="structtable__entry_1ae1d4df86c779cb2f21f99dd4d0b2311c" kind="variable"><name>truncation_error</name></member>
     <member refid="structtable__entry_1a5d16fc3d04a5e678b6bf5c21dc56a306" kind="variable"><name>iteration</name></member>
     <member refid="structtable__entry_1a4669012a4446acc94f33f570f52bffb5" kind="variable"><name>chain_length</name></member>
+    <member refid="structtable__entry_1aaf9bc6c4b216b7e4cb067d9dbd2799ea" kind="variable"><name>sweep</name></member>
+    <member refid="structtable__entry_1a2778dddd89f70398127ee7d721793083" kind="variable"><name>position</name></member>
     <member refid="structtable__entry_1a4b38cfa4baa0fbcc8b5200f8c2349737" kind="variable"><name>time_step</name></member>
     <member refid="structtable__entry_1a73da421f120ff1e736a482610edfc66d" kind="variable"><name>wall_time</name></member>
     <member refid="structtable__entry_1a17593a71b6f0f47ebc6ba23fa2f1d962" kind="variable"><name>phys_time</name></member>
-    <member refid="structtable__entry_1a605fe761e147a0142bc3394b05d8b8d3" kind="function"><name>table_entry</name></member>
+    <member refid="structtable__entry_1a05c7f0ea4ba47198bc3813cdde8581df" kind="function"><name>table_entry</name></member>
   </compound>
   <compound refid="namespacearpack" kind="namespace"><name>arpack</name>
     <member refid="class__arpackpp__wrapper_8h_1aef6a37581ed1987839290256a0b581cd" kind="enum"><name>Form</name></member>
@@ -582,6 +560,7 @@
   <compound refid="namespacern" kind="namespace"><name>rn</name>
     <member refid="nmspc__random__numbers_8cpp_1a3ef7cecaf695dc6bd5b521a805cceb98" kind="variable"><name>rng</name></member>
     <member refid="nmspc__random__numbers_8h_1a3e9807cd3ac7bb7b0d52e8046fc5d772" kind="variable"><name>max</name></member>
+    <member refid="nmspc__random__numbers_8cpp_1a79f3f437463ac68b3889fd1b6f5b8967" kind="function"><name>seed</name></member>
     <member refid="nmspc__random__numbers_8cpp_1a7ace7d5a4b63f8332f590564052ced0e" kind="function"><name>random_with_replacement</name></member>
     <member refid="nmspc__random__numbers_8cpp_1ac0dffdd0e420abeadea4dfc6bdf54c9d" kind="function"><name>random_with_replacement</name></member>
     <member refid="nmspc__random__numbers_8cpp_1a5d02c31ce3de37df2bfae4737711dc71" kind="function"><name>gaussian_truncated</name></member>
@@ -602,7 +581,9 @@
     <member refid="nmspc__sim__settings_8h_1adfd5f775671270c1198c5efbbfbc5a28" kind="variable"><name>max_length</name></member>
     <member refid="nmspc__sim__settings_8h_1a9d91b1111b853c692cbd1cdf860fafaa" kind="variable"><name>max_sweeps</name></member>
     <member refid="nmspc__sim__settings_8h_1a591fd10b121c47245c0ededecc4fa238" kind="variable"><name>chi_max</name></member>
+    <member refid="nmspc__sim__settings_8h_1a1ec29f5e29fb084816e19eb3200232af" kind="variable"><name>chi_grow</name></member>
     <member refid="nmspc__sim__settings_8h_1a4fa3a9934449bfe0030c4b6ecdafe07e" kind="variable"><name>print_freq</name></member>
+    <member refid="nmspc__sim__settings_8h_1afd27dd67424734dce3e200a58249dced" kind="variable"><name>store_freq</name></member>
   </compound>
   <compound refid="namespacesettings_1_1fes__idmrg" kind="namespace"><name>settings::fes_idmrg</name>
     <member refid="nmspc__sim__settings_8h_1ac4abbaa610bde307e001a1067199aa33" kind="variable"><name>on</name></member>
@@ -610,7 +591,9 @@
     <member refid="nmspc__sim__settings_8h_1a411e9666e7623c38a48e2bb3784e0687" kind="variable"><name>chi_min</name></member>
     <member refid="nmspc__sim__settings_8h_1a7c6f51b694d87b3ddc288dca4f847147" kind="variable"><name>chi_max</name></member>
     <member refid="nmspc__sim__settings_8h_1a3de88113809a8750636df5f40f7a845d" kind="variable"><name>chi_num</name></member>
+    <member refid="nmspc__sim__settings_8h_1a3a54bd2f4f0367a01e342b1461c05e07" kind="variable"><name>chi_grow</name></member>
     <member refid="nmspc__sim__settings_8h_1a8769689b4b228f91db0f99297afad3bb" kind="variable"><name>print_freq</name></member>
+    <member refid="nmspc__sim__settings_8h_1a9f32cdb3a4ab9ad916d7e86801333b05" kind="variable"><name>store_freq</name></member>
   </compound>
   <compound refid="namespacesettings_1_1fes__itebd" kind="namespace"><name>settings::fes_itebd</name>
     <member refid="nmspc__sim__settings_8h_1a49f96f008a6ad9c5ebc9b86f5747508c" kind="variable"><name>on</name></member>
@@ -621,7 +604,9 @@
     <member refid="nmspc__sim__settings_8h_1a4928faa4544443991798aed7a5d97f98" kind="variable"><name>chi_min</name></member>
     <member refid="nmspc__sim__settings_8h_1a20dbd7abd03418a01a1847a850270ce5" kind="variable"><name>chi_max</name></member>
     <member refid="nmspc__sim__settings_8h_1a4bcd924f1a0a7b246801b742b0f14fe8" kind="variable"><name>chi_num</name></member>
+    <member refid="nmspc__sim__settings_8h_1a6c88cddf9a5d14de8438c2a0a7939e66" kind="variable"><name>chi_grow</name></member>
     <member refid="nmspc__sim__settings_8h_1af9584a5a2e0a91c043fcefaf41c5243a" kind="variable"><name>print_freq</name></member>
+    <member refid="nmspc__sim__settings_8h_1a127b955597f5bf1d14366915a08dd951" kind="variable"><name>store_freq</name></member>
   </compound>
   <compound refid="namespacesettings_1_1hdf5" kind="namespace"><name>settings::hdf5</name>
     <member refid="nmspc__sim__settings_8h_1a6db7ee87d788619b5b0d9bd47dcb0cc5" kind="variable"><name>save_to_file</name></member>
@@ -635,7 +620,9 @@
     <member refid="nmspc__sim__settings_8h_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" kind="variable"><name>on</name></member>
     <member refid="nmspc__sim__settings_8h_1a51973513eb1623accef494463769a1ab" kind="variable"><name>max_length</name></member>
     <member refid="nmspc__sim__settings_8h_1a88a9f3be8ff1dcc89152591410c447d6" kind="variable"><name>chi_max</name></member>
+    <member refid="nmspc__sim__settings_8h_1aa8fbed186f5dc10147472f92cb11cd6f" kind="variable"><name>chi_grow</name></member>
     <member refid="nmspc__sim__settings_8h_1a55074bedfc07bbdb9b60c91194a5d25d" kind="variable"><name>print_freq</name></member>
+    <member refid="nmspc__sim__settings_8h_1a59c5a0a7cdacb77123c35e67c7e236e1" kind="variable"><name>store_freq</name></member>
   </compound>
   <compound refid="namespacesettings_1_1itebd" kind="namespace"><name>settings::itebd</name>
     <member refid="nmspc__sim__settings_8h_1ac4ff42bc0a7453d9c9fcf3cc6939db58" kind="variable"><name>on</name></member>
@@ -644,7 +631,9 @@
     <member refid="nmspc__sim__settings_8h_1a6b6afcf2968c3cb071bc050b4e805085" kind="variable"><name>delta_tmin</name></member>
     <member refid="nmspc__sim__settings_8h_1a9ab41edc8a8f73a40977b6969865c644" kind="variable"><name>suzuki_order</name></member>
     <member refid="nmspc__sim__settings_8h_1aaca4efb978bd41af4ae870824351b5c6" kind="variable"><name>chi_max</name></member>
+    <member refid="nmspc__sim__settings_8h_1aeeb215c2f571cde123ac0298d61c9941" kind="variable"><name>chi_grow</name></member>
     <member refid="nmspc__sim__settings_8h_1aeb74ea89cbbfba318983932061ead184" kind="variable"><name>print_freq</name></member>
+    <member refid="nmspc__sim__settings_8h_1a3c66599f28990469f0fd69cc4d082b60" kind="variable"><name>store_freq</name></member>
   </compound>
   <compound refid="namespacesettings_1_1precision" kind="namespace"><name>settings::precision</name>
     <member refid="nmspc__sim__settings_8h_1accb065fd8bbf4f13541fb236f0e820c1" kind="variable"><name>eigSteps</name></member>
@@ -661,7 +650,9 @@
     <member refid="nmspc__sim__settings_8h_1a41cf25ea5293231e9c26bd8c0c7fdb5b" kind="variable"><name>max_length</name></member>
     <member refid="nmspc__sim__settings_8h_1afc5c11918ee25e1d36bd1ad5a5c13990" kind="variable"><name>max_sweeps</name></member>
     <member refid="nmspc__sim__settings_8h_1a7cdc55d1f30671a4ac31f4b4fa70a5e9" kind="variable"><name>chi_max</name></member>
+    <member refid="nmspc__sim__settings_8h_1a3c996295abab807a1da990592432ed3f" kind="variable"><name>chi_grow</name></member>
     <member refid="nmspc__sim__settings_8h_1a0f4d94fb090044216164022353cee81f" kind="variable"><name>print_freq</name></member>
+    <member refid="nmspc__sim__settings_8h_1aa947e223663c15a475a4650741718f52" kind="variable"><name>store_freq</name></member>
   </compound>
   <compound refid="namespacestd" kind="namespace"><name>std</name>
   </compound>
@@ -731,9 +722,9 @@
   </compound>
   <compound refid="class__base__algorithm_8h" kind="file"><name>class_base_algorithm.h</name>
   </compound>
-  <compound refid="class__excited__state___d_m_r_g_8cpp" kind="file"><name>class_excited_state_DMRG.cpp</name>
+  <compound refid="class__f_d_m_r_g_8cpp" kind="file"><name>class_fDMRG.cpp</name>
   </compound>
-  <compound refid="class__excited__state___d_m_r_g_8h" kind="file"><name>class_excited_state_DMRG.h</name>
+  <compound refid="class__f_d_m_r_g_8h" kind="file"><name>class_fDMRG.h</name>
   </compound>
   <compound refid="class___f_e_s__i_d_m_r_g_8cpp" kind="file"><name>class_FES_iDMRG.cpp</name>
   </compound>
@@ -743,17 +734,17 @@
   </compound>
   <compound refid="class___f_e_s__i_t_e_b_d_8h" kind="file"><name>class_FES_iTEBD.h</name>
   </compound>
-  <compound refid="class__finite___d_m_r_g_8cpp" kind="file"><name>class_finite_DMRG.cpp</name>
+  <compound refid="class__i_d_m_r_g_8cpp" kind="file"><name>class_iDMRG.cpp</name>
   </compound>
-  <compound refid="class__finite___d_m_r_g_8h" kind="file"><name>class_finite_DMRG.h</name>
+  <compound refid="class__i_d_m_r_g_8h" kind="file"><name>class_iDMRG.h</name>
   </compound>
-  <compound refid="class__imaginary___t_e_b_d_8cpp" kind="file"><name>class_imaginary_TEBD.cpp</name>
+  <compound refid="class__i_t_e_b_d_8cpp" kind="file"><name>class_iTEBD.cpp</name>
   </compound>
-  <compound refid="class__imaginary___t_e_b_d_8h" kind="file"><name>class_imaginary_TEBD.h</name>
+  <compound refid="class__i_t_e_b_d_8h" kind="file"><name>class_iTEBD.h</name>
   </compound>
-  <compound refid="class__infinite___d_m_r_g_8cpp" kind="file"><name>class_infinite_DMRG.cpp</name>
+  <compound refid="class__x_d_m_r_g_8cpp" kind="file"><name>class_xDMRG.cpp</name>
   </compound>
-  <compound refid="class__infinite___d_m_r_g_8h" kind="file"><name>class_infinite_DMRG.h</name>
+  <compound refid="class__x_d_m_r_g_8h" kind="file"><name>class_xDMRG.h</name>
   </compound>
   <compound refid="class__arpackpp__wrapper_8h" kind="file"><name>class_arpackpp_wrapper.h</name>
   </compound>
@@ -840,7 +831,6 @@
     <member refid="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a3a6a2aaf168ed7e6639d9e4a962035d0" kind="enumvalue"><name>FES_iDMRG</name></member>
     <member refid="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kind="enumvalue"><name>iTEBD</name></member>
     <member refid="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921aa4f17de7fbff40297fafdba8c5f15776" kind="enumvalue"><name>FES_iTEBD</name></member>
-    <member refid="nmspc__sim__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab50339a10e1de285ac99d4c3990b8693" kind="enumvalue"><name>NONE</name></member>
   </compound>
   <compound refid="todo" kind="page"><name>todo</name>
   </compound>

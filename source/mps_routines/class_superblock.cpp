@@ -11,6 +11,7 @@
 #include <MatOp/SparseSymMatProd.h>
 #include <general/class_svd_wrapper.h>
 #include <mps_routines/class_custom_contraction.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 #include "arssym.h"
 #include "symsol.h"
 
@@ -59,11 +60,11 @@ class_superblock::class_superblock():
 //============================================================================//
 void class_superblock::find_ground_state_arpack(int eigSteps, double eigThreshold){
     Tensor<Scalar,1> theta = MPS->get_theta().shuffle(array4{0,2,1,3}).reshape(shape1);
-    class_custom_contraction<double>  esp(Lblock->block, Rblock->block, H->MM, shape4);
-    int ncv = std::min(10,(int)theta.size());
+    class_custom_contraction<Scalar>  esp(Lblock->block, Rblock->block, H->MM, shape4);
+    int ncv = std::min(settings::precision::eig_max_ncv,(int)theta.size());
     int nev = 1;
     int dim = esp.cols();
-    ARSymStdEig<double, class_custom_contraction<double>> eig (dim, nev, &esp, &class_custom_contraction<double>::MultMv, "SA", ncv,eigSteps,eigThreshold,theta.data() );
+    ARSymStdEig<Scalar, class_custom_contraction<Scalar>> eig (dim, nev, &esp, &class_custom_contraction<Scalar>::MultMv, "SA", ncv,eigThreshold,eigSteps,theta.data() );
     eig.FindEigenvectors();
     using T_vec = decltype(eig.Eigenvector(0, 0));
     using T_val = decltype(eig.Eigenvalue(0));
@@ -112,15 +113,15 @@ void class_superblock::update_MPS(){
 void class_superblock::enlarge_environment(int direction){
     if (direction == 1){
         Lblock->enlarge(MPS, H->M);
-//        Lblock2.enlarge(MPS, H->M);
+        Lblock2->enlarge(MPS, H->M);
     }else if (direction == -1){
         Rblock->enlarge(MPS, H->M);
-//        Rblock2.enlarge(MPS, H->M);
+        Rblock2->enlarge(MPS, H->M);
     }else if(direction == 0){
         Lblock->enlarge(MPS, H->M);
         Rblock->enlarge(MPS, H->M);
-//        Lblock2.enlarge(MPS, H->M);
-//        Rblock2.enlarge(MPS, H->M);
+        Lblock2->enlarge(MPS, H->M);
+        Rblock2->enlarge(MPS, H->M);
         chain_length += 2;
     }
 }

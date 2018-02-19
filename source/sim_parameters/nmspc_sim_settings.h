@@ -15,7 +15,7 @@
 
 class class_file_reader;
 
-enum class SimulationType{iDMRG,fDMRG, xDMRG, FES_iDMRG, iTEBD, FES_iTEBD, NONE};
+enum class SimulationType{iDMRG,fDMRG, xDMRG, FES_iDMRG, iTEBD, FES_iTEBD};
 
 
 namespace settings {
@@ -35,7 +35,9 @@ namespace settings {
         extern bool on         ;                            /*!< Turns iDMRG simulation on/off. */
         extern int  max_length ;                            /*!< Final length of 1D quantum chain. */
         extern long chi_max    ;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        extern bool chi_grow   ;                            /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         extern int  print_freq ;                            /*!< Print frequency for console output. (0 = off). */
+        extern int  store_freq ;                            /*!< Store frequency,for output file buffer. (0 = off). */
 
     }
     //Parameters controlling fDMRG
@@ -44,7 +46,10 @@ namespace settings {
         extern int  max_length   ;                          /*!< Number sweeps along the 1D quantum chain. */
         extern int  max_sweeps   ;                          /*!< Number sweeps along the 1D quantum chain. */
         extern long chi_max      ;                          /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        extern bool chi_grow   ;                            /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         extern int  print_freq   ;                          /*!< Print frequency for console output. (0 = off). */
+        extern int  store_freq ;                            /*!< Store frequency,for output file buffer. (0 = off). */
+
     }
 
     //Parameters controlling xDMRG
@@ -53,7 +58,10 @@ namespace settings {
         extern int  max_length   ;                          /*!< Number sweeps along the 1D quantum chain. */
         extern int  max_sweeps   ;                          /*!< Number sweeps along the 1D quantum chain. */
         extern long chi_max      ;                          /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        extern bool chi_grow   ;                            /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         extern int  print_freq   ;                          /*!< Print frequency for console output. (0 = off). */
+        extern int  store_freq ;                            /*!< Store frequency,for output file buffer. (0 = off). */
+
     }
 
     //Parameters controlling iTEBD
@@ -64,7 +72,10 @@ namespace settings {
         extern double   delta_tmin  ;                       /*!< Final time step for iTEBD time evolution.*/
         extern int      suzuki_order;                       /*!< Order of the suzuki trotter decomposition (1,2 or 4) */
         extern long     chi_max     ;                       /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        extern bool     chi_grow    ;                       /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         extern int      print_freq  ;                       /*!< Print frequency for console output. (0 = off).*/
+        extern int      store_freq  ;                       /*!< Store frequency,for output file buffer. (0 = off). */
+
     }
     //Parameters controlling Finite-entanglement scaling (FES) in iTEBD-mode.
     namespace fes_itebd {
@@ -76,7 +87,9 @@ namespace settings {
         extern long      chi_min     ;                      /*!< Minimum chi-value in range. */
         extern long      chi_max     ;                      /*!< Maximum chi-value in range. */
         extern long      chi_num     ;                      /*!< Number of chi values for in range. */
+        extern bool      chi_grow    ;                      /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         extern int       print_freq  ;                      /*!< Print frequency for console output. (0 = off).*/
+        extern int       store_freq  ;                      /*!< Store frequency,for output file buffer. (0 = off). */
 
     }
     //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
@@ -86,7 +99,9 @@ namespace settings {
         extern long      chi_min     ;                      /*!< Minimum chi-value in range. */
         extern long      chi_max     ;                      /*!< Maximum chi-value in range. */
         extern long      chi_num     ;                      /*!< Number of chi values for in range. */
-        extern int       print_freq  ;                       /*!< Print frequency for console output. (0 = off).*/
+        extern bool      chi_grow    ;                      /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
+        extern int       print_freq  ;                      /*!< Print frequency for console output. (0 = off).*/
+        extern int       store_freq  ;                      /*!< Store frequency,for output file buffer. (0 = off). */
 
     }
 

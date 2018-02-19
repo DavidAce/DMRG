@@ -9,30 +9,37 @@ using namespace std;
 
 namespace settings{
 
-    int    precision::eigSteps           = 5000;
-    double precision::eigThreshold       = 1e-12;
-    int    precision::eig_max_ncv        = 20;
-    double precision::SVDThreshold       = 1e-12;
+    int    precision::eigSteps           = 1000   ;
+    double precision::eigThreshold       = 1e-12  ;
+    int    precision::eig_max_ncv        = 5      ;
+    double precision::SVDThreshold       = 1e-12  ;
 
     //Parameters controlling infinite-DMRG
     bool   idmrg::on                     = true;
     int    idmrg::max_length             = 5000;
     long   idmrg::chi_max                = 8;
-    int    idmrg::print_freq             = 100;
+    bool   idmrg::chi_grow               = true;
+    int    idmrg::print_freq             = 1000;
+    int    idmrg::store_freq             = 100;
 
     //Parameters controlling Finite-DMRG
     bool   fdmrg::on                     = true;
     int    fdmrg::max_length             = 200;
     int    fdmrg::max_sweeps             = 4;
     long   fdmrg::chi_max                = 8;
-    int    fdmrg::print_freq             = 1;
+    bool   fdmrg::chi_grow               = true;
+    int    fdmrg::print_freq             = 100;
+    int    fdmrg::store_freq             = 100;
+
 
     //Parameters controlling excited state DMRG
     bool   xdmrg::on                     = true;
     int    xdmrg::max_length             = 200;
     int    xdmrg::max_sweeps             = 4;
     long   xdmrg::chi_max                = 8;
-    int    xdmrg::print_freq             = 1;
+    bool   xdmrg::chi_grow               = true;
+    int    xdmrg::print_freq             = 100;
+    int    xdmrg::store_freq             = 100;
 
     //Parameters controlling imaginary TEBD (Zero temperature)
     bool   itebd::on                     = true;
@@ -41,7 +48,9 @@ namespace settings{
     double itebd::delta_tmin             = 0.00001;
     int    itebd::suzuki_order           = 1;
     long   itebd::chi_max                = 8;
+    bool   itebd::chi_grow               = true;
     int    itebd::print_freq             = 5000;
+    int    itebd::store_freq             = 100;
 
 
     //Parameters controlling Finite-entanglement scaling (FES) in iTEBD-mode.
@@ -53,7 +62,9 @@ namespace settings{
     long   fes_itebd::chi_min            = 4;
     long   fes_itebd::chi_max            = 12;
     long   fes_itebd::chi_num            = 3;
+    bool   fes_itebd::chi_grow           = true;
     int    fes_itebd::print_freq         = 5000;
+    int    fes_itebd::store_freq         = 100;
 
     //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
     bool   fes_idmrg::on                 = true;
@@ -61,7 +72,9 @@ namespace settings{
     long   fes_idmrg::chi_min            = 4;
     long   fes_idmrg::chi_max            = 12;
     long   fes_idmrg::chi_num            = 3;
-    int    fes_idmrg::print_freq         = 500;
+    bool   fes_idmrg::chi_grow           = true;
+    int    fes_idmrg::print_freq         = 1000;
+    int    fes_idmrg::store_freq         = 100;
 
 
     //Save data to hdf5
@@ -95,7 +108,9 @@ void settings::load_from_file(class_file_reader &indata){
     if(idmrg::on){
         idmrg::max_length         = indata.find_parameter<int>    ("idmrg::max_length ", idmrg::max_length);
         idmrg::chi_max            = indata.find_parameter<long>   ("idmrg::chi_max"    , idmrg::chi_max);
+        idmrg::chi_grow           = indata.find_parameter<bool>   ("idmrg::chi_grow"   , idmrg::chi_grow);
         idmrg::print_freq         = indata.find_parameter<int>    ("idmrg::print_freq ", idmrg::print_freq);
+        idmrg::store_freq         = indata.find_parameter<int>    ("idmrg::store_freq ", idmrg::store_freq);
     }
 
     //Parameters controlling Finite-DMRG
@@ -104,7 +119,9 @@ void settings::load_from_file(class_file_reader &indata){
         fdmrg::max_length         = indata.find_parameter<int>    ("fdmrg::max_length ", fdmrg::max_length);
         fdmrg::max_sweeps         = indata.find_parameter<int>    ("fdmrg::max_sweeps ", fdmrg::max_sweeps);
         fdmrg::chi_max            = indata.find_parameter<int>    ("fdmrg::chi_max"    , 8);
+        fdmrg::chi_grow           = indata.find_parameter<bool>   ("fdmrg::chi_grow"   , fdmrg::chi_grow);
         fdmrg::print_freq         = indata.find_parameter<int>    ("fdmrg::print_freq ", fdmrg::print_freq);
+        fdmrg::store_freq         = indata.find_parameter<int>    ("fdmrg::store_freq ", fdmrg::store_freq);
     }
 
     //Parameters controlling excited state DMRG
@@ -113,7 +130,9 @@ void settings::load_from_file(class_file_reader &indata){
         xdmrg::max_length         = indata.find_parameter<int>    ("xdmrg::max_length ", xdmrg::max_length);
         xdmrg::max_sweeps         = indata.find_parameter<int>    ("xdmrg::max_sweeps ", xdmrg::max_sweeps);
         xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"    , 8);
+        xdmrg::chi_grow           = indata.find_parameter<bool>   ("xdmrg::chi_grow"   , xdmrg::chi_grow);
         xdmrg::print_freq         = indata.find_parameter<int>    ("xdmrg::print_freq ", xdmrg::print_freq);
+        xdmrg::store_freq         = indata.find_parameter<int>    ("xdmrg::store_freq ", xdmrg::store_freq);
     }
 
 
@@ -125,7 +144,9 @@ void settings::load_from_file(class_file_reader &indata){
         itebd::delta_tmin         = indata.find_parameter<double> ("itebd::delta_tmin"  , itebd::delta_tmin);
         itebd::suzuki_order       = indata.find_parameter<int>    ("itebd::suzuki_order", itebd::suzuki_order);
         itebd::chi_max            = indata.find_parameter<long>   ("itebd::chi_max"     , itebd::chi_max  );
+        itebd::chi_grow           = indata.find_parameter<bool>   ("itebd::chi_grow"    , itebd::chi_grow);
         itebd::print_freq         = indata.find_parameter<int>    ("itebd::print_freq"  , itebd::print_freq);
+        itebd::store_freq         = indata.find_parameter<int>    ("itebd::store_freq"  , itebd::store_freq);
     }
 
     //Parameters controlling Finite-entanglement scaling (FES) in iTEBD-mode.
@@ -138,7 +159,9 @@ void settings::load_from_file(class_file_reader &indata){
         fes_itebd::chi_min        = indata.find_parameter<long>   ("fes_itebd::chi_min"     , fes_itebd::chi_min   );
         fes_itebd::chi_max        = indata.find_parameter<long>   ("fes_itebd::chi_max"     , fes_itebd::chi_max   );
         fes_itebd::chi_num        = indata.find_parameter<long>   ("fes_itebd::chi_num"     , fes_itebd::chi_num   );
+        fes_itebd::chi_grow       = indata.find_parameter<bool>   ("fes_itebd::chi_grow"    , fes_itebd::chi_grow);
         fes_itebd::print_freq     = indata.find_parameter<int>    ("fes_itebd::print_freq " , fes_itebd::print_freq );
+        fes_itebd::store_freq     = indata.find_parameter<int>    ("fes_itebd::store_freq " , fes_itebd::store_freq );
     }
 
     //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
@@ -148,7 +171,9 @@ void settings::load_from_file(class_file_reader &indata){
         fes_idmrg::chi_min        = indata.find_parameter<long>   ("fes_idmrg::chi_min"    , fes_idmrg::chi_min  );
         fes_idmrg::chi_max        = indata.find_parameter<long>   ("fes_idmrg::chi_max"    , fes_idmrg::chi_max  );
         fes_idmrg::chi_num        = indata.find_parameter<long>   ("fes_idmrg::chi_num"    , fes_idmrg::chi_num  );
+        fes_idmrg::chi_grow       = indata.find_parameter<bool>   ("fes_idmrg::chi_grow"   , fes_idmrg::chi_grow);
         fes_idmrg::print_freq     = indata.find_parameter<int>    ("fes_idmrg::print_freq" , fes_idmrg::print_freq);
+        fes_idmrg::store_freq     = indata.find_parameter<int>    ("fes_idmrg::store_freq" , fes_idmrg::store_freq);
     }
     //Save data to hdf5
     hdf5::save_to_file             = indata.find_parameter<bool>   ("hdf5::save_to_file"            , hdf5::save_to_file           );

@@ -7,65 +7,65 @@
     <includedby refid="class__base__algorithm_8h" local="no">source/algorithms/class_base_algorithm.h</includedby>
     <includedby refid="class__tic__toc_8cpp" local="yes">source/general/class_tic_toc.cpp</includedby>
     <incdepgraph>
-      <node id="389">
+      <node id="428">
         <label>source/general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="390" relation="include">
+        <childnode refid="429" relation="include">
         </childnode>
-        <childnode refid="391" relation="include">
+        <childnode refid="430" relation="include">
         </childnode>
       </node>
-      <node id="391">
+      <node id="430">
         <label>iostream</label>
       </node>
-      <node id="390">
+      <node id="429">
         <label>chrono</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="397">
+      <node id="437">
         <label>source/algorithms/class_FES_iTEBD.h</label>
         <link refid="class___f_e_s__i_t_e_b_d_8h_source"/>
       </node>
-      <node id="392">
+      <node id="436">
+        <label>source/algorithms/class_iDMRG.h</label>
+        <link refid="class__i_d_m_r_g_8h_source"/>
+      </node>
+      <node id="434">
+        <label>source/algorithms/class_fDMRG.h</label>
+        <link refid="class__f_d_m_r_g_8h_source"/>
+      </node>
+      <node id="431">
         <label>source/general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="393" relation="include">
+        <childnode refid="432" relation="include">
         </childnode>
       </node>
-      <node id="394">
-        <label>source/algorithms/class_excited_state_DMRG.h</label>
-        <link refid="class__excited__state___d_m_r_g_8h_source"/>
+      <node id="433">
+        <label>source/algorithms/class_xDMRG.h</label>
+        <link refid="class__x_d_m_r_g_8h_source"/>
       </node>
-      <node id="396">
-        <label>source/algorithms/class_infinite_DMRG.h</label>
-        <link refid="class__infinite___d_m_r_g_8h_source"/>
-      </node>
-      <node id="398">
-        <label>source/algorithms/class_finite_DMRG.h</label>
-        <link refid="class__finite___d_m_r_g_8h_source"/>
-      </node>
-      <node id="393">
+      <node id="432">
         <label>source/algorithms/class_base_algorithm.h</label>
         <link refid="class__base__algorithm_8h_source"/>
-        <childnode refid="394" relation="include">
+        <childnode refid="433" relation="include">
         </childnode>
-        <childnode refid="395" relation="include">
+        <childnode refid="434" relation="include">
         </childnode>
-        <childnode refid="396" relation="include">
+        <childnode refid="435" relation="include">
         </childnode>
-        <childnode refid="397" relation="include">
+        <childnode refid="436" relation="include">
         </childnode>
-        <childnode refid="398" relation="include">
+        <childnode refid="437" relation="include">
         </childnode>
-        <childnode refid="399" relation="include">
+        <childnode refid="438" relation="include">
         </childnode>
       </node>
-      <node id="399">
-        <label>source/algorithms/class_imaginary_TEBD.h</label>
-        <link refid="class__imaginary___t_e_b_d_8h_source"/>
+      <node id="438">
+        <label>source/algorithms/class_iTEBD.h</label>
+        <link refid="class__i_t_e_b_d_8h_source"/>
       </node>
-      <node id="395">
+      <node id="435">
         <label>source/algorithms/class_FES_iDMRG.h</label>
         <link refid="class___f_e_s__i_d_m_r_g_8h_source"/>
       </node>

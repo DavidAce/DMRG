@@ -33,42 +33,75 @@ double class_measurement::first_moment(){
     superblock->update_bond_dimensions();
     if (superblock->chiL != superblock->chiR) { return 1.0;}
     if (superblock->chi <= 2) { return 1.0;}
-    double h = 0.0000001;
-
-    double a = 0.0;
-    double a1  = a - h;
-
     using T = std::complex<double>;
     class_arpackpp_wrapper eig;
-
     Textra::array<4> shape4 = superblock->shape4;
     long sizeL     = shape4[1] * shape4[1];
     long sizeR     = shape4[3] * shape4[3];
-
-    Textra::Tensor<T,4> theta = superblock->MPS->thetaR().cast<T>();
-    Textra::Tensor<T,3> A     = superblock->MPS->A().cast<T>();
-    Textra::Tensor<T,2> transf_Ga1 = theta.contract(superblock->H->compute_G(a1), Textra::idx<2>({0,1},{0,1})).contract(theta.conjugate(), Textra::idx<2>({2,3},{0,1})).shuffle(Textra::array4{0,2,1,3}).reshape(Textra::array2{sizeL,sizeR}) ;
-
-
+    Textra::Tensor<T,4> thetaR      = superblock->MPS->thetaR().cast<T>();
+    Textra::Tensor<T,3> A           = superblock->MPS->A().cast<T>();
+    Textra::Tensor<T,2> transf_G    = thetaR.contract(superblock->H->G, Textra::idx<2>({0,1},{0,1}))
+                                       .contract(thetaR.conjugate(), Textra::idx<2>({2,3},{0,1}))
+                                       .shuffle(Textra::array4{0,2,1,3})
+                                       .reshape(Textra::array2{sizeL,sizeR}) ;
     Textra::Tensor<T,2> transf_ID = A.contract(A.conjugate(), Textra::idx<1>({0},{0}))
-            .shuffle(Textra::array4{0,2,1,3})
-            .reshape(Textra::array2{sizeL,sizeR}) ;
+        .shuffle(Textra::array4{0,2,1,3})
+        .reshape(Textra::array2{sizeL,sizeR}) ;
 
-    auto lambda_Ga1     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transf_Ga1.data(),transf_Ga1.dimension(0),transf_Ga1.dimension(1), 1);
-    T ga1  = (lambda_Ga1(0));
+    if(eigvecG.size() == transf_ID.dimension(0)) {
+        std::tie(eigvecG, lambdaG) = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, true>(transf_G.data() , sizeL,sizeR, 1, eigvecG.data());
+        std::tie(eigvecID,lambdaID)= eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, true>(transf_ID.data(), sizeL,sizeR, 1, eigvecID.data());
+    }else{
+        std::tie(eigvecG, lambdaG) = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, true>(transf_G.data() , sizeL,sizeR, 1);
+        std::tie(eigvecID,lambdaID)= eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, true>(transf_ID.data(), sizeL,sizeR, 1);
+    }
+
+    T G             = (lambdaG(0));
+    T ID            = (lambdaID(0));
+    T G_ID          = G/ID;   //
+    T sqrtG_ID      = std::sqrt(G)/ID; //Gives spikes
+    T sqrtG_sqrtID  = std::sqrt(G_ID);// --> best yet. It is very stable and doesnt give spikes. It should be squared later, as in the paper
 
 
-//    double H2 = get_expectationvalue_sq(superblock->H->M);
-//    double E2 = get_expectationvalue(superblock->H->M) * get_expectationvalue(superblock->H->M);
+    switch(sim){
+        case SimulationType::iTEBD:
+        case SimulationType ::FES_iTEBD:
+            variance1 = 1;
+            break;
+        default:
+            variance1 = get_full_variance();
+    }
+
+    variance2 = std::abs(std::log(std::pow(std::abs(sqrtG_sqrtID),2)));
+    variance3 = variance2;//std::abs(std::log(Fa2) + std::log(Fa1));
+
+    //NOTES:
+    //  std::abs(std::log(Fa2) + std::log(Fa1)); // gives exactly the same result as      std::abs(std::log(std::pow(std::abs(sqrtG_sqrtID),2)));
 
 
-//    variance1 = 1.0; //H2-E2;
-    variance1 = std::log(std::pow(std::abs(ga1),2));
-    variance2 = std::fabs((std::log(std::pow(std::fabs(ga1),2))));
-    variance3 = std::log(std::pow(std::abs(ga1),2));
-    return std::log(std::pow(std::abs(ga1),2));
+    return variance1;
 }
 
+
+double class_measurement::get_full_variance(){
+    Tensor<double,4> theta  = superblock->MPS->get_theta();
+    Tensor<double,0> E =
+            superblock->Lblock->block
+                    .contract(theta.conjugate(),        idx<1>({0},{2}))
+                    .contract(superblock->H->MM ,       idx<3>({1,2,3},{0,2,3}))//  idx<3>({1,2,3},{0,4,5}))
+                    .contract(theta,                    idx<3>({0,3,4},{2,0,1}))
+                    .contract(superblock->Rblock->block,idx<3>({0,2,1},{0,1,2}));
+
+    Tensor<double,0> E2 =
+            superblock->Lblock2->block
+                    .contract(theta.conjugate()  ,         idx<1>({0},{2}))
+                    .contract(superblock->H->MMMM,         idx<4>({2,1,3,4},{2,0,4,5}))
+                    .contract(theta,                       idx<3>({0,4,5},{2,0,1}))
+                    .contract(superblock->Rblock2->block,  idx<4>({0,3,1,2},{0,1,2,3}));
+
+    return std::abs(E2(0) - E(0)*E(0))/ superblock->chain_length / superblock->chain_length;
+
+}
 
 double class_measurement::get_expectationvalue(const Tensor<double,4> &MPO){
     Tensor<double,4> theta  = superblock->MPS->get_theta();
@@ -132,71 +165,65 @@ double class_measurement::get_second_cumulant(){
 
 
 double class_measurement::get_energy(){
+    Tensor<double,4> theta  = superblock->MPS->get_theta();
+    Tensor<double,0> EA,EB;
     switch (sim){
         case SimulationType::iDMRG:
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
         case SimulationType::FES_iDMRG:
-            return get_expectationvalue(superblock->H->M);
+            EA =
+                    superblock->Lblock->block
+                            .contract(theta.conjugate(),        idx<1>({0},{2}))
+                            .contract(superblock->H->MM ,       idx<3>({1,2,3},{0,2,3}))//  idx<3>({1,2,3},{0,4,5}))
+                            .contract(theta,                    idx<3>({0,3,4},{2,0,1}))
+                            .contract(superblock->Rblock->block,idx<3>({0,2,1},{0,1,2}));
+//            theta = superblock->MPS->get_theta_swapped();
+//            EB =
+//                    superblock->Lblock->block
+//                            .contract(theta.conjugate(),        idx<1>({0},{2}))
+//                            .contract(superblock->H->MM ,       idx<3>({1,2,3},{0,2,3}))//  idx<3>({1,2,3},{0,4,5}))
+//                            .contract(theta,                    idx<3>({0,3,4},{2,0,1}))
+//                            .contract(superblock->Rblock->block,idx<3>({0,2,1},{0,1,2}));
+//        std::cout << setprecision(8);
+//            std::cout << "\nEA:" << EA(0)/ superblock->chain_length << std::endl;
+//            std::cout << "EB:" << EB(0)/ superblock->chain_length << std::endl;
 
-        case SimulationType::iTEBD: case SimulationType::FES_iTEBD:
-        {
-            auto theta  = superblock->MPS->get_theta();
 
-            Tensor<double,0> E1     = superblock->H->H_asTensor
-                    .contract(theta.conjugate(), idx<2>({0,1},{0,1}))
-                    .contract(theta,             idx<4>({0,1,2,3},{0,1,2,3}));
-            return E1(0);
-        }
+//            return 0.5*(EA(0)+EB(0))/ superblock->chain_length;
+            return EA(0)/ superblock->chain_length;
 
-        case SimulationType::NONE:
-            std::cerr << "Simulation Type has not been set." << std::endl;
-            exit(1);
+        case SimulationType::iTEBD:
+        case SimulationType::FES_iTEBD:
+            EA = superblock->H->H_asTensor
+                    .contract(theta.conjugate(), idx<2>({0, 1}, {0, 1}))
+                    .contract(theta, idx<4>({0, 1, 2, 3}, {0, 1, 2, 3}));
+
+            theta = superblock->MPS->get_theta_swapped();
+            EB = superblock->H->H_asTensor
+                    .contract(theta.conjugate(), idx<2>({0, 1}, {0, 1}))
+                    .contract(theta, idx<4>({0, 1, 2, 3}, {0, 1, 2, 3}));
+            return static_cast<double>(0.5 * (EA(0) + EB(0))) ;
+
     }
-    return 0;
-
 }
 
-double class_measurement::get_entropy(){
-    Tensor<Scalar,0> result1  = -superblock->MPS->LA.square()
+double class_measurement::get_entanglement_entropy(){
+    Tensor<Scalar,0> SA  = -superblock->MPS->LA.square()
             .contract(superblock->MPS->LA.square().log().eval(), idx<1>({0},{0}));
-    return static_cast<double>(result1(0)) ;
+    Tensor<Scalar,0> SB  = -superblock->MPS->LB.square()
+            .contract(superblock->MPS->LB.square().log().eval(), idx<1>({0},{0}));
+    return static_cast<double>(0.5*(SA(0)+SB(0))) ;
 }
 
 
 double class_measurement::get_variance(){
-    switch (sim) {
-        case SimulationType::iDMRG:
-        case SimulationType::fDMRG:
-        case SimulationType::xDMRG:
-        case SimulationType::FES_iDMRG:
-            if (superblock->MPS->LA.size() == superblock->MPS->LB.size()) {
-                return get_second_cumulant();
-            }else{
-                return 1;
-            }
-
-
-        case SimulationType::iTEBD:
-        case SimulationType::FES_iTEBD:
-        {
-            Tensor<double, 4> theta = superblock->MPS->get_theta();
-            Tensor<double, 4> H_sq = superblock->H->H_asTensor.contract(superblock->H->H_asTensor,
-                                                                       idx<2>({0, 1}, {2, 3}));
-            Tensor<double, 0> Var = H_sq.contract(theta.conjugate(), idx<2>({0, 1}, {0, 1}))
-                    .contract(theta, idx<4>({0, 1, 2, 3}, {0, 1, 2, 3}));
-            return (Var(0) - std::pow(get_energy(), 2));
-        }
-
-        case SimulationType::NONE:
-            std::cerr << "Simulation Type has not been set." << std::endl;
-            exit(1);
-    }
-    return 0;
+    return get_second_cumulant();
 }
 
 double class_measurement::get_variance1(){return variance1;};
 double class_measurement::get_variance2(){return variance2;};
+double class_measurement::get_variance3(){return variance3;};
 
 double class_measurement::get_truncation_error(){
     return superblock->truncation_error;

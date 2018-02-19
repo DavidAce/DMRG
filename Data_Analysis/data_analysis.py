@@ -13,7 +13,7 @@ rc('text', usetex=True)
 sns.set(style="darkgrid", font_scale=1.0, font='Helvetica',rc={"lines.linewidth": 0.9})
 paper_rc = {'lines.linewidth': 1, 'lines.markersize': 10}
 sns.set_style({"axes.facecolor": ".9"},rc={'text.usetex' : True})
-filename = '../output/data-1.h5'
+filename = '../output/data-154.h5'
 
 if(not os.path.exists(filename)):
     print("File does not exist.")
@@ -36,78 +36,92 @@ def plt_graph(table, xkey,ykey, xlabel,ylabel, ax,label='', marker='.', scale='l
 
 if iDMRG_exists:
     group = "iDMRG"
-    keys = [s for s in store.keys() if group in s]
-    fig, ax = plt.subplots(2, 2, sharex=True)
+    keys = [s for s in store.keys() if "/"+group in s]
+    fig, ax = plt.subplots(2, 2, sharex=False)
     plt.suptitle(group)
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')
     for key in keys:
         chi_label =  '$\chi=$' + str( store[key].chi_max[0])
         plt_graph(key,"chain_length", "energy", "L", "E", ax[0,0], label=chi_label)
         plt_graph(key,"chain_length", "entropy","L", "S", ax[0,1], label=chi_label)
-        plt_graph(key,"chain_length", "variance1", "L", "$\sigma^2$", ax[1,0], label=chi_label, scale = 'logit')
+        plt_graph(key,"chain_length", "variance", "L", "$\sigma^2$", ax[1,0], label="variance",   scale = 'log')
+        plt_graph(key,"chain_length", "variance2", "L", "$\sigma^2$", ax[1,0], label="variance2", scale = 'log')
+        plt_graph(key,"chain_length", "variance3", "L", "$\sigma^2$", ax[1,0], label="variance3", scale = 'log')
 
 
 if fDMRG_exists:
     group = "fDMRG"
-    keys = [s for s in store.keys() if group in s]
-    fig, ax = plt.subplots(2, 2, sharex=True)
+    keys = [s for s in store.keys() if "/"+group in s]
+    fig, ax = plt.subplots(2, 2, sharex=False)
     plt.suptitle(group)
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')
     for key in keys:
         chi_label =  '$\chi=$' + str( store[key].chi_max[0])
         plt_graph(key,"position", "energy", "L", "E", ax[0,0], label=chi_label)
         plt_graph(key,"position", "entropy","L", "S", ax[0,1], label=chi_label)
-        plt_graph(key,"position", "variance1", "L", "$\sigma^2$", ax[1,0], label=chi_label)
+        plt_graph(key,"chain_length", "variance", "L", "$\sigma^2$", ax[1,0], label="variance", scale = 'log')
+        plt_graph(key,"chain_length", "variance2", "L", "$\sigma^2$", ax[1,0], label="variance2", scale = 'log')
+        plt_graph(key,"chain_length", "variance3", "L", "$\sigma^2$", ax[1,0], label="variance3", scale = 'log')
+
 
 if xDMRG_exists:
     group = "xDMRG"
-    keys = [s for s in store.keys() if group in s]
-    fig, ax = plt.subplots(2, 2, sharex=True)
+    keys = [s for s in store.keys() if "/"+group in s]
+    fig, ax = plt.subplots(2, 2, sharex=False)
     plt.suptitle(group)
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')
     for key in keys:
         chi_label =  '$\chi=$' + str( store[key].chi_max[0])
         plt_graph(key,"position", "energy", "L", "E", ax[0,0], label=chi_label)
         plt_graph(key,"position", "entropy","L", "S", ax[0,1], label=chi_label)
-        plt_graph(key,"position", "variance1", "L", "$\sigma^2$", ax[1,0], label=chi_label)
-
+        plt_graph(key,"chain_length", "variance", "L", "$\sigma^2$", ax[1,0], label="variance", scale = 'log')
+        plt_graph(key,"chain_length", "variance2", "L", "$\sigma^2$", ax[1,0], label="variance2", scale = 'log')
+        plt_graph(key,"chain_length", "variance3", "L", "$\sigma^2$", ax[1,0], label="variance3", scale = 'log')
 
 
 if iTEBD_exists:
     group = "iTEBD"
-    keys = [s for s in store.keys() if group in s]
-    fig, ax = plt.subplots(2, 2, sharex=True)
+    keys = [s for s in store.keys() if "/"+group in s]
+    fig, ax = plt.subplots(2, 2, sharex=False)
     plt.suptitle(group)
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')
     for key in keys:
         chi_label =  '$\chi=$' + str( store[key].chi_max[0])
-        plt_graph(key,"position", "energy", "L", "E", ax[0,0], label=chi_label)
-        plt_graph(key,"position", "entropy","L", "S", ax[0,1], label=chi_label)
-        plt_graph(key,"position", "variance1", "L", "$\sigma^2$", ax[1,0], label=chi_label, scale = 'log')
+        plt_graph(key,"iteration", "energy",    "Step", "E", ax[0,0], label=chi_label)
+        plt_graph(key,"iteration", "entropy",   "Step", "S", ax[0,1], label=chi_label)
+        plt_graph(key,"iteration", "variance",  "Step", "$\sigma^2$", ax[1,0], label="variance" , scale = 'log')
+        plt_graph(key,"iteration", "variance2", "Step", "$\sigma^2$", ax[1,0], label="variance2", scale = 'log')
+        plt_graph(key,"iteration", "variance3", "Step", "$\sigma^2$", ax[1,0], label="variance3", scale = 'log')
+        plt_graph(key,"phys_time", "entropy", "Time", "$S$", ax[1,1], label=chi_label, scale = 'log')
+
+
 
 if FES_iDMRG_exists:
     keys = [s for s in store.keys() if "FES_iDMRG" in s]
-    fig, ax = plt.subplots(2, 2, sharex=True)
+    fig, ax = plt.subplots(2, 2, sharex=False)
     plt.suptitle("FES iDMRG")
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0, label='$\chi = \infty$')
     for key in keys:
         chi_label = '$\chi=$' + str(store[key].chi_max[0])
         plt_graph(key,"chain_length", "energy",  "L", "E", ax[0,0], label=chi_label)
         plt_graph(key,"chain_length", "entropy", "L", "S", ax[0,1], label=chi_label)
-        plt_graph(key,"chain_length", "variance1", "L", "$\sigma^2$", ax[1,0], label=chi_label, scale = 'log')
-
+        plt_graph(key,"chain_length", "variance", "L", "$\sigma^2$", ax[1,0], label="variance", scale = 'log')
+        plt_graph(key,"chain_length", "variance2", "L", "$\sigma^2$", ax[1,0], label="variance2", scale = 'log')
+        plt_graph(key,"chain_length", "variance3", "L", "$\sigma^2$", ax[1,0], label="variance3", scale = 'log')
 
 
 if FES_iTEBD_exists:
     keys = [s for s in store.keys() if "FES_iTEBD" in s]
-    fig, ax = plt.subplots(2, 2, sharex=True)
+    fig, ax = plt.subplots(2, 2, sharex=False)
     plt.suptitle("FES iTEBD")
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0, label='$\chi = \infty$')
     for key in keys:
         chi_label = '$\chi=$' + str(store[key].chi_max[0])
-        plt_graph(key,"position", "energy",  "L", "E", ax[0,0], label=chi_label)
-        plt_graph(key,"position", "entropy", "L", "S", ax[0,1], label=chi_label)
-        plt_graph(key,"chain_length", "variance1", "L", "$\sigma^2$", ax[1,0], label=chi_label, scale = 'log')
+        plt_graph(key,"iteration", "energy",    "Step", "E", ax[0,0], label=chi_label)
+        plt_graph(key,"iteration", "entropy",   "Step", "S", ax[0,1], label=chi_label)
+        plt_graph(key,"iteration", "variance",  "Step", "$\sigma^2$", ax[1,0], label="variance", scale = 'log')
+        plt_graph(key,"iteration", "variance2", "Step", "$\sigma^2$", ax[1,0], label="variance2", scale = 'log')
+        plt_graph(key,"iteration", "variance3", "Step", "$\sigma^2$", ax[1,0], label="variance3", scale = 'log')
 
 plt.tight_layout()
 plt.subplots_adjust(wspace=.4, hspace=.2)

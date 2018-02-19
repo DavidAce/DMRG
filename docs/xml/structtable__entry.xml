@@ -55,11 +55,11 @@
         </inbodydescription>
         <location file="source/IO/class_hdf5_table_buffer.h" line="19" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="19" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="structtable__entry_1a39c06c296856ef02674e066910a5e35e" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="structtable__entry_1ae5f1c1ef4609055c2edc29579957c85e" prot="public" static="no" mutable="no">
         <type>double</type>
-        <definition>double table_entry::variance1</definition>
+        <definition>double table_entry::variance</definition>
         <argsstring></argsstring>
-        <name>variance1</name>
+        <name>variance</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -81,6 +81,19 @@
         </inbodydescription>
         <location file="source/IO/class_hdf5_table_buffer.h" line="21" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="21" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1a9e9a5e56f0b528be17a0c573616c27db" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double table_entry::variance3</definition>
+        <argsstring></argsstring>
+        <name>variance3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="22" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="structtable__entry_1ae1d4df86c779cb2f21f99dd4d0b2311c" prot="public" static="no" mutable="no">
         <type>double</type>
         <definition>double table_entry::truncation_error</definition>
@@ -92,7 +105,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="22" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="22" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="23" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="23" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtable__entry_1a5d16fc3d04a5e678b6bf5c21dc56a306" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -105,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="23" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="23" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="24" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="24" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtable__entry_1a4669012a4446acc94f33f570f52bffb5" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -118,7 +131,33 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="24" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="24" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="25" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1aaf9bc6c4b216b7e4cb067d9dbd2799ea" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int table_entry::sweep</definition>
+        <argsstring></argsstring>
+        <name>sweep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="26" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtable__entry_1a2778dddd89f70398127ee7d721793083" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int table_entry::position</definition>
+        <argsstring></argsstring>
+        <name>position</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="27" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="27" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtable__entry_1a4b38cfa4baa0fbcc8b5200f8c2349737" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -131,7 +170,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="25" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="25" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="28" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="28" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtable__entry_1a73da421f120ff1e736a482610edfc66d" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -144,7 +183,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="26" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="26" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="29" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="29" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtable__entry_1a17593a71b6f0f47ebc6ba23fa2f1d962" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -157,62 +196,74 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="27" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="27" bodyend="-1"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="30" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="30" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="structtable__entry_1a605fe761e147a0142bc3394b05d8b8d3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="structtable__entry_1a05c7f0ea4ba47198bc3813cdde8581df" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
         <definition>table_entry::table_entry</definition>
-        <argsstring>(long chi, long chi_max, double energy, double entropy, double variance1, double variance2, double truncation_error, int iteration, int chain_length, double time_step, double wall_time, double phys_time)</argsstring>
+        <argsstring>(long chi_, long chi_max_, double energy_, double entropy_, double variance_, double variance2_, double variance3_, double truncation_error_, int iteration_, int chain_length_, int sweep_, int position_, double time_step_, double wall_time_, double phys_time_)</argsstring>
         <name>table_entry</name>
         <param>
           <type>long</type>
-          <declname>chi</declname>
+          <declname>chi_</declname>
         </param>
         <param>
           <type>long</type>
-          <declname>chi_max</declname>
+          <declname>chi_max_</declname>
         </param>
         <param>
           <type>double</type>
-          <declname>energy</declname>
+          <declname>energy_</declname>
         </param>
         <param>
           <type>double</type>
-          <declname>entropy</declname>
+          <declname>entropy_</declname>
         </param>
         <param>
           <type>double</type>
-          <declname>variance1</declname>
+          <declname>variance_</declname>
         </param>
         <param>
           <type>double</type>
-          <declname>variance2</declname>
+          <declname>variance2_</declname>
         </param>
         <param>
           <type>double</type>
-          <declname>truncation_error</declname>
+          <declname>variance3_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>truncation_error_</declname>
         </param>
         <param>
           <type>int</type>
-          <declname>iteration</declname>
+          <declname>iteration_</declname>
         </param>
         <param>
           <type>int</type>
-          <declname>chain_length</declname>
+          <declname>chain_length_</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sweep_</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>position_</declname>
         </param>
         <param>
           <type>double</type>
-          <declname>time_step</declname>
+          <declname>time_step_</declname>
         </param>
         <param>
           <type>double</type>
-          <declname>wall_time</declname>
+          <declname>wall_time_</declname>
         </param>
         <param>
           <type>double</type>
-          <declname>phys_time</declname>
+          <declname>phys_time_</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -220,14 +271,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="source/IO/class_hdf5_table_buffer.h" line="29" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="29" bodyend="55"/>
+        <location file="source/IO/class_hdf5_table_buffer.h" line="32" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="32" bodyend="64"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="source/IO/class_hdf5_table_buffer.h" line="15" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="15" bodyend="56"/>
+    <location file="source/IO/class_hdf5_table_buffer.h" line="15" column="1" bodyfile="source/IO/class_hdf5_table_buffer.h" bodystart="15" bodyend="65"/>
     <listofallmembers>
       <member refid="structtable__entry_1a4669012a4446acc94f33f570f52bffb5" prot="public" virt="non-virtual"><scope>table_entry</scope><name>chain_length</name></member>
       <member refid="structtable__entry_1ae70cc95640ef066ae0310e061b4d24d4" prot="public" virt="non-virtual"><scope>table_entry</scope><name>chi</name></member>
@@ -236,11 +287,14 @@
       <member refid="structtable__entry_1a642198e7f0080901e09c8fbc4f596170" prot="public" virt="non-virtual"><scope>table_entry</scope><name>entropy</name></member>
       <member refid="structtable__entry_1a5d16fc3d04a5e678b6bf5c21dc56a306" prot="public" virt="non-virtual"><scope>table_entry</scope><name>iteration</name></member>
       <member refid="structtable__entry_1a17593a71b6f0f47ebc6ba23fa2f1d962" prot="public" virt="non-virtual"><scope>table_entry</scope><name>phys_time</name></member>
-      <member refid="structtable__entry_1a605fe761e147a0142bc3394b05d8b8d3" prot="public" virt="non-virtual"><scope>table_entry</scope><name>table_entry</name></member>
+      <member refid="structtable__entry_1a2778dddd89f70398127ee7d721793083" prot="public" virt="non-virtual"><scope>table_entry</scope><name>position</name></member>
+      <member refid="structtable__entry_1aaf9bc6c4b216b7e4cb067d9dbd2799ea" prot="public" virt="non-virtual"><scope>table_entry</scope><name>sweep</name></member>
+      <member refid="structtable__entry_1a05c7f0ea4ba47198bc3813cdde8581df" prot="public" virt="non-virtual"><scope>table_entry</scope><name>table_entry</name></member>
       <member refid="structtable__entry_1a4b38cfa4baa0fbcc8b5200f8c2349737" prot="public" virt="non-virtual"><scope>table_entry</scope><name>time_step</name></member>
       <member refid="structtable__entry_1ae1d4df86c779cb2f21f99dd4d0b2311c" prot="public" virt="non-virtual"><scope>table_entry</scope><name>truncation_error</name></member>
-      <member refid="structtable__entry_1a39c06c296856ef02674e066910a5e35e" prot="public" virt="non-virtual"><scope>table_entry</scope><name>variance1</name></member>
+      <member refid="structtable__entry_1ae5f1c1ef4609055c2edc29579957c85e" prot="public" virt="non-virtual"><scope>table_entry</scope><name>variance</name></member>
       <member refid="structtable__entry_1a229b2c0fcfb5dd6c585290778b2f6873" prot="public" virt="non-virtual"><scope>table_entry</scope><name>variance2</name></member>
+      <member refid="structtable__entry_1a9e9a5e56f0b528be17a0c573616c27db" prot="public" virt="non-virtual"><scope>table_entry</scope><name>variance3</name></member>
       <member refid="structtable__entry_1a73da421f120ff1e736a482610edfc66d" prot="public" virt="non-virtual"><scope>table_entry</scope><name>wall_time</name></member>
     </listofallmembers>
   </compounddef>

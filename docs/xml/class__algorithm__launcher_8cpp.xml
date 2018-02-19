@@ -9,12 +9,12 @@
     <includes refid="class__measurement_8h" local="no">mps_routines/class_measurement.h</includes>
     <includes refid="class__hdf5__file_8h" local="no">IO/class_hdf5_file.h</includes>
     <includes refid="class__hdf5__table__buffer_8h" local="no">IO/class_hdf5_table_buffer.h</includes>
-    <includes refid="class__infinite___d_m_r_g_8h" local="no">algorithms/class_infinite_DMRG.h</includes>
-    <includes refid="class__finite___d_m_r_g_8h" local="no">algorithms/class_finite_DMRG.h</includes>
-    <includes refid="class__imaginary___t_e_b_d_8h" local="no">algorithms/class_imaginary_TEBD.h</includes>
+    <includes refid="class__i_d_m_r_g_8h" local="no">algorithms/class_iDMRG.h</includes>
+    <includes refid="class__f_d_m_r_g_8h" local="no">algorithms/class_fDMRG.h</includes>
+    <includes refid="class__i_t_e_b_d_8h" local="no">algorithms/class_iTEBD.h</includes>
     <includes refid="class___f_e_s__i_d_m_r_g_8h" local="no">algorithms/class_FES_iDMRG.h</includes>
     <includes refid="class___f_e_s__i_t_e_b_d_8h" local="no">algorithms/class_FES_iTEBD.h</includes>
-    <includes refid="class__excited__state___d_m_r_g_8h" local="yes">class_excited_state_DMRG.h</includes>
+    <includes refid="class__x_d_m_r_g_8h" local="yes">class_xDMRG.h</includes>
     <incdepgraph>
       <node id="19">
         <label>list</label>
@@ -76,6 +76,18 @@
       <node id="20">
         <label>variant</label>
       </node>
+      <node id="34">
+        <label>algorithms/class_iDMRG.h</label>
+        <link refid="class__i_d_m_r_g_8h_source"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>algorithms/class_fDMRG.h</label>
+        <link refid="class__f_d_m_r_g_8h_source"/>
+        <childnode refid="35" relation="include">
+        </childnode>
+      </node>
       <node id="30">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h_source"/>
@@ -108,24 +120,12 @@
       <node id="11">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="41">
-        <label>class_excited_state_DMRG.h</label>
-        <link refid="class__excited__state___d_m_r_g_8h_source"/>
-        <childnode refid="35" relation="include">
-        </childnode>
-      </node>
       <node id="3">
         <label>algorithms/class_algorithm_launcher.h</label>
         <link refid="class__algorithm__launcher_8h_source"/>
         <childnode refid="4" relation="include">
         </childnode>
         <childnode refid="5" relation="include">
-        </childnode>
-      </node>
-      <node id="34">
-        <label>algorithms/class_infinite_DMRG.h</label>
-        <link refid="class__infinite___d_m_r_g_8h_source"/>
-        <childnode refid="35" relation="include">
         </childnode>
       </node>
       <node id="29">
@@ -179,14 +179,14 @@
         <childnode refid="41" relation="include">
         </childnode>
       </node>
-      <node id="37">
-        <label>algorithms/class_finite_DMRG.h</label>
-        <link refid="class__finite___d_m_r_g_8h_source"/>
-        <childnode refid="35" relation="include">
-        </childnode>
-      </node>
       <node id="16">
         <label>vector</label>
+      </node>
+      <node id="41">
+        <label>class_xDMRG.h</label>
+        <link refid="class__x_d_m_r_g_8h_source"/>
+        <childnode refid="35" relation="include">
+        </childnode>
       </node>
       <node id="32">
         <label>gitversion.h</label>
@@ -218,17 +218,15 @@
         </childnode>
         <childnode refid="18" relation="include">
         </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
         <childnode refid="5" relation="include">
         </childnode>
         <childnode refid="36" relation="include">
         </childnode>
         <childnode refid="1" relation="include">
         </childnode>
-      </node>
-      <node id="38">
-        <label>algorithms/class_imaginary_TEBD.h</label>
-        <link refid="class__imaginary___t_e_b_d_8h_source"/>
-        <childnode refid="35" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
       </node>
       <node id="31">
@@ -236,6 +234,12 @@
       </node>
       <node id="7">
         <label>iostream</label>
+      </node>
+      <node id="38">
+        <label>algorithms/class_iTEBD.h</label>
+        <link refid="class__i_t_e_b_d_8h_source"/>
+        <childnode refid="35" relation="include">
+        </childnode>
       </node>
       <node id="14">
         <label>class_environment.h</label>

@@ -4,94 +4,57 @@
     <compoundname>class_base_algorithm.h</compoundname>
     <includes local="no">memory</includes>
     <includes local="no">map</includes>
+    <includes local="no">list</includes>
     <includes refid="class__custom__cout_8h" local="no">IO/class_custom_cout.h</includes>
     <includes refid="class__tic__toc_8h" local="no">general/class_tic_toc.h</includes>
     <includes refid="nmspc__sim__settings_8h" local="no">sim_parameters/nmspc_sim_settings.h</includes>
-    <includedby refid="class__excited__state___d_m_r_g_8h" local="yes">source/algorithms/class_excited_state_DMRG.h</includedby>
+    <includes local="no">vector</includes>
+    <includedby refid="class__x_d_m_r_g_8h" local="yes">source/algorithms/class_xDMRG.h</includedby>
     <includedby refid="class__base__algorithm_8cpp" local="yes">source/algorithms/class_base_algorithm.cpp</includedby>
+    <includedby refid="class__f_d_m_r_g_8h" local="yes">source/algorithms/class_fDMRG.h</includedby>
     <includedby refid="class___f_e_s__i_d_m_r_g_8h" local="yes">source/algorithms/class_FES_iDMRG.h</includedby>
-    <includedby refid="class__infinite___d_m_r_g_8h" local="yes">source/algorithms/class_infinite_DMRG.h</includedby>
+    <includedby refid="class__i_d_m_r_g_8h" local="yes">source/algorithms/class_iDMRG.h</includedby>
     <includedby refid="class___f_e_s__i_t_e_b_d_8h" local="yes">source/algorithms/class_FES_iTEBD.h</includedby>
-    <includedby refid="class__finite___d_m_r_g_8h" local="yes">source/algorithms/class_finite_DMRG.h</includedby>
-    <includedby refid="class__imaginary___t_e_b_d_8h" local="yes">source/algorithms/class_imaginary_TEBD.h</includedby>
+    <includedby refid="class__i_t_e_b_d_8h" local="yes">source/algorithms/class_iTEBD.h</includedby>
     <includedby refid="class__measurement_8cpp" local="no">source/mps_routines/class_measurement.cpp</includedby>
     <incdepgraph>
-      <node id="86">
+      <node id="97">
+        <label>list</label>
+      </node>
+      <node id="98">
         <label>IO/class_custom_cout.h</label>
         <link refid="class__custom__cout_8h_source"/>
-        <childnode refid="87" relation="include">
+        <childnode refid="99" relation="include">
         </childnode>
-        <childnode refid="88" relation="include">
+        <childnode refid="100" relation="include">
         </childnode>
       </node>
-      <node id="91">
+      <node id="103">
         <label>string</label>
       </node>
-      <node id="89">
+      <node id="101">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h_source"/>
-        <childnode refid="87" relation="include">
+        <childnode refid="99" relation="include">
         </childnode>
-        <childnode refid="88" relation="include">
+        <childnode refid="100" relation="include">
         </childnode>
       </node>
-      <node id="85">
+      <node id="96">
         <label>map</label>
       </node>
-      <node id="90">
+      <node id="104">
+        <label>vector</label>
+      </node>
+      <node id="102">
         <label>sim_parameters/nmspc_sim_settings.h</label>
         <link refid="nmspc__sim__settings_8h_source"/>
-        <childnode refid="91" relation="include">
+        <childnode refid="103" relation="include">
         </childnode>
       </node>
-      <node id="83">
+      <node id="94">
         <label>source/algorithms/class_base_algorithm.h</label>
         <link refid="class__base__algorithm_8h"/>
-        <childnode refid="84" relation="include">
-        </childnode>
-        <childnode refid="85" relation="include">
-        </childnode>
-        <childnode refid="86" relation="include">
-        </childnode>
-        <childnode refid="89" relation="include">
-        </childnode>
-        <childnode refid="90" relation="include">
-        </childnode>
-      </node>
-      <node id="88">
-        <label>iostream</label>
-      </node>
-      <node id="87">
-        <label>chrono</label>
-      </node>
-      <node id="84">
-        <label>memory</label>
-      </node>
-    </incdepgraph>
-    <invincdepgraph>
-      <node id="96">
-        <label>source/algorithms/class_FES_iTEBD.h</label>
-        <link refid="class___f_e_s__i_t_e_b_d_8h_source"/>
-      </node>
-      <node id="93">
-        <label>source/algorithms/class_excited_state_DMRG.h</label>
-        <link refid="class__excited__state___d_m_r_g_8h_source"/>
-      </node>
-      <node id="95">
-        <label>source/algorithms/class_infinite_DMRG.h</label>
-        <link refid="class__infinite___d_m_r_g_8h_source"/>
-      </node>
-      <node id="97">
-        <label>source/algorithms/class_finite_DMRG.h</label>
-        <link refid="class__finite___d_m_r_g_8h_source"/>
-      </node>
-      <node id="92">
-        <label>source/algorithms/class_base_algorithm.h</label>
-        <link refid="class__base__algorithm_8h"/>
-        <childnode refid="93" relation="include">
-        </childnode>
-        <childnode refid="94" relation="include">
-        </childnode>
         <childnode refid="95" relation="include">
         </childnode>
         <childnode refid="96" relation="include">
@@ -100,17 +63,67 @@
         </childnode>
         <childnode refid="98" relation="include">
         </childnode>
+        <childnode refid="101" relation="include">
+        </childnode>
+        <childnode refid="102" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
       </node>
-      <node id="98">
-        <label>source/algorithms/class_imaginary_TEBD.h</label>
-        <link refid="class__imaginary___t_e_b_d_8h_source"/>
+      <node id="100">
+        <label>iostream</label>
       </node>
-      <node id="94">
+      <node id="99">
+        <label>chrono</label>
+      </node>
+      <node id="95">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="110">
+        <label>source/algorithms/class_FES_iTEBD.h</label>
+        <link refid="class___f_e_s__i_t_e_b_d_8h_source"/>
+      </node>
+      <node id="109">
+        <label>source/algorithms/class_iDMRG.h</label>
+        <link refid="class__i_d_m_r_g_8h_source"/>
+      </node>
+      <node id="107">
+        <label>source/algorithms/class_fDMRG.h</label>
+        <link refid="class__f_d_m_r_g_8h_source"/>
+      </node>
+      <node id="106">
+        <label>source/algorithms/class_xDMRG.h</label>
+        <link refid="class__x_d_m_r_g_8h_source"/>
+      </node>
+      <node id="105">
+        <label>source/algorithms/class_base_algorithm.h</label>
+        <link refid="class__base__algorithm_8h"/>
+        <childnode refid="106" relation="include">
+        </childnode>
+        <childnode refid="107" relation="include">
+        </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="111" relation="include">
+        </childnode>
+      </node>
+      <node id="111">
+        <label>source/algorithms/class_iTEBD.h</label>
+        <link refid="class__i_t_e_b_d_8h_source"/>
+      </node>
+      <node id="108">
         <label>source/algorithms/class_FES_iDMRG.h</label>
         <link refid="class___f_e_s__i_d_m_r_g_8h_source"/>
       </node>
     </invincdepgraph>
     <innerclass refid="classclass__algorithm__base" prot="public">class_algorithm_base</innerclass>
+    <innerclass refid="classclass__algorithm__base_1_1class__limited__vector" prot="private">class_algorithm_base::class_limited_vector</innerclass>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

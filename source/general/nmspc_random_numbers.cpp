@@ -7,6 +7,9 @@ using namespace Eigen;
 using namespace std;
 namespace rn{
     std::mt19937 rng;
+    void seed(unsigned long n){
+        rng.seed(n);
+    }
 
     ArrayXd random_with_replacement(const ArrayXd & in){
         vector<double> boot;

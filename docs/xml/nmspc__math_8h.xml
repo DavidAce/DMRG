@@ -13,71 +13,72 @@
     <includes local="no">gsl/gsl_integration.h</includes>
     <includes local="no">numeric</includes>
     <includes local="no">Eigen/Core</includes>
-    <includedby refid="class__excited__state___d_m_r_g_8cpp" local="no">source/algorithms/class_excited_state_DMRG.cpp</includedby>
+    <includedby refid="class__base__algorithm_8cpp" local="no">source/algorithms/class_base_algorithm.cpp</includedby>
+    <includedby refid="class__f_d_m_r_g_8cpp" local="no">source/algorithms/class_fDMRG.cpp</includedby>
     <includedby refid="class___f_e_s__i_d_m_r_g_8cpp" local="no">source/algorithms/class_FES_iDMRG.cpp</includedby>
     <includedby refid="class___f_e_s__i_t_e_b_d_8cpp" local="no">source/algorithms/class_FES_iTEBD.cpp</includedby>
-    <includedby refid="class__finite___d_m_r_g_8cpp" local="no">source/algorithms/class_finite_DMRG.cpp</includedby>
-    <includedby refid="class__imaginary___t_e_b_d_8cpp" local="no">source/algorithms/class_imaginary_TEBD.cpp</includedby>
-    <includedby refid="class__infinite___d_m_r_g_8cpp" local="no">source/algorithms/class_infinite_DMRG.cpp</includedby>
+    <includedby refid="class__i_d_m_r_g_8cpp" local="no">source/algorithms/class_iDMRG.cpp</includedby>
+    <includedby refid="class__i_t_e_b_d_8cpp" local="no">source/algorithms/class_iTEBD.cpp</includedby>
+    <includedby refid="class__x_d_m_r_g_8cpp" local="no">source/algorithms/class_xDMRG.cpp</includedby>
     <includedby refid="nmspc__model_8cpp" local="no">source/sim_parameters/nmspc_model.cpp</includedby>
     <incdepgraph>
-      <node id="405">
+      <node id="444">
         <label>functional</label>
       </node>
-      <node id="402">
+      <node id="441">
         <label>iterator</label>
       </node>
-      <node id="400">
+      <node id="439">
         <label>source/general/nmspc_math.h</label>
         <link refid="nmspc__math_8h"/>
-        <childnode refid="401" relation="include">
+        <childnode refid="440" relation="include">
         </childnode>
-        <childnode refid="402" relation="include">
+        <childnode refid="441" relation="include">
         </childnode>
-        <childnode refid="403" relation="include">
+        <childnode refid="442" relation="include">
         </childnode>
-        <childnode refid="404" relation="include">
+        <childnode refid="443" relation="include">
         </childnode>
-        <childnode refid="405" relation="include">
+        <childnode refid="444" relation="include">
         </childnode>
-        <childnode refid="406" relation="include">
+        <childnode refid="445" relation="include">
         </childnode>
-        <childnode refid="407" relation="include">
+        <childnode refid="446" relation="include">
         </childnode>
-        <childnode refid="408" relation="include">
+        <childnode refid="447" relation="include">
         </childnode>
-        <childnode refid="409" relation="include">
+        <childnode refid="448" relation="include">
         </childnode>
-        <childnode refid="410" relation="include">
+        <childnode refid="449" relation="include">
         </childnode>
-        <childnode refid="411" relation="include">
+        <childnode refid="450" relation="include">
         </childnode>
       </node>
-      <node id="404">
+      <node id="443">
         <label>cmath</label>
       </node>
-      <node id="410">
+      <node id="449">
         <label>numeric</label>
       </node>
-      <node id="411">
+      <node id="450">
         <label>Eigen/Core</label>
       </node>
-      <node id="409">
+      <node id="448">
         <label>gsl/gsl_integration.h</label>
       </node>
-      <node id="403">
+      <node id="442">
         <label>vector</label>
       </node>
-      <node id="407">
+      <node id="446">
         <label>utility</label>
       </node>
-      <node id="401">
+      <node id="440">
         <label>iostream</label>
       </node>
-      <node id="406">
+      <node id="445">
         <label>memory</label>
       </node>
-      <node id="408">
+      <node id="447">
         <label>gsl/gsl_errno.h</label>
       </node>
     </incdepgraph>

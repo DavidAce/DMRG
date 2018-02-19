@@ -8,7 +8,7 @@
 
 #include <unsupported/Eigen/MatrixFunctions>
 #include "mps_routines/class_mps.h"
-#include "general/nmspc_tensor_extra.h"
+#include <general/nmspc_tensor_extra.h>
 #include "sim_parameters/nmspc_model.h"
 #include "sim_parameters/nmspc_sim_settings.h"
 //
@@ -41,6 +41,7 @@ public:
     Textra::Tensor<Scalar,4>               Udt;                 /*!< Rank-4 of 2-site unitary time evolution operator for iTEBD (non MPO). */
     Textra::Tensor<Scalar,4>               M  ;                 /*!< MPO representation of 1-site Hamiltonian */
     Textra::Tensor<Scalar,6>               MM ;                 /*!< MPO representation of 2-site Hamiltonian */
+    Textra::Tensor<Scalar,8>               MMMM ;               /*!< MPO representation of 2-site Hamiltonian */
     Textra::Tensor<std::complex<double>,4> F  ;                 /*!< MPO representation of 1-site moment generating function */
     Textra::Tensor<std::complex<double>,4> G  ;                 /*!< MPO representation of 1-site characteristic function of the Hamiltonian */
     void update_timestep(const double delta_t, const int susuki_trotter_order);
@@ -52,6 +53,7 @@ private:
 
     Textra::Tensor<Scalar,4>  compute_M();      /*!< Returns an MPO representation of 1-site Hamiltonian */
     Textra::Tensor<Scalar,6>  compute_MM();     /*!< Returns an MPO representation of 2-site Hamiltonian */
+    Textra::Tensor<Scalar,8>  compute_MMMM();   /*!< Returns an MPO representation of 2-site double Hamiltonian */
 
     template<typename T>
     Textra::MatrixType<std::complex<double>> Suzuki_Trotter_1st_order(T t){
@@ -61,6 +63,19 @@ private:
     template<typename T>
     Textra::MatrixType<std::complex<double>> Suzuki_Trotter_2nd_order(T t){
         return (t*h[0]/2.0).exp() * (t*h[1]).exp() * (t * h[0]/2.0).exp();
+    }
+
+
+    template<typename T>
+    Textra::MatrixType<std::complex<double>> Suzuki_Trotter_4th_order(T t){
+        T t1 = t /(4.0-pow(4.0,1.0/3.0));
+        T t2 = t1;
+        T t3 = t - 2.0*t1 - 2.0*t2;
+        return Suzuki_Trotter_2nd_order(t1)
+               *Suzuki_Trotter_2nd_order(t2)
+               *Suzuki_Trotter_2nd_order(t3)
+               *Suzuki_Trotter_2nd_order(t2)
+               *Suzuki_Trotter_2nd_order(t1);
     }
 
     Textra::Tensor<std::complex<double>,4> TimeEvolution_1st_order(const double delta_t);

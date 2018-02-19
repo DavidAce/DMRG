@@ -40,8 +40,9 @@ class_mpo<Scalar>::class_mpo() {
     Udt                   = compute_Udt(0.01, 1);
     M                     = compute_M();
     MM                    = compute_MM();
-    F                     = compute_F(0.0001);
-    G                     = compute_G(0.0001);
+    MMMM                  = compute_MMMM();
+    F                     = compute_F(1e-14);
+    G                     = compute_G(1e-14);
 
 
 }
@@ -49,49 +50,67 @@ class_mpo<Scalar>::class_mpo() {
 
 
 template <typename Scalar>
-Tensor<Scalar,4> class_mpo<Scalar>::compute_M() {
-    /*! Returns the MPO hamiltonian as a rank 4 MPO. Notation following Schollwöck (2010)
-     *
-     *          2
-     *          |
-     *      0---M---1
-     *          |
-     *          3
-     */
-
+Tensor<Scalar,4> class_mpo<Scalar>::compute_M()
+/*! Returns the MPO hamiltonian as a rank 4 MPO. Notation following Schollwöck (2010)
+ *
+ *          2
+ *          |
+ *      0---M---1
+ *          |
+ *          3
+ */
+{
     return Matrix_to_Tensor<Scalar,4> (H_MPO_asMatrix, {2,3,2,3}).shuffle(array4{1,3,0,2});
-
 }
 
 template <typename Scalar>
-Tensor<Scalar,6> class_mpo<Scalar>::compute_MM() {
-    /*! Returns a 2-site Hamitlonian MPO of rank 6. Notation following Schollwöck (2010)
-     *
-     *           2   3
-     *           |   |
-     *       0---M---M---1
-     *           |   |
-     *           4   5
-     */
-//    cout << M.dimensions() << endl;
-
+Tensor<Scalar,6> class_mpo<Scalar>::compute_MM()
+/*! Returns a 2-site Hamitlonian MPO of rank 6. Notation following Schollwöck (2010)
+ *
+ *           2   3
+ *           |   |
+ *       0---M---M---1
+ *           |   |
+ *           4   5
+ */
+{
     return  M.contract(M, idx<1>({1},{0})).shuffle(array6{0,3,1,4,2,5});
-
 }
 
 template <typename Scalar>
-Tensor<std::complex<double>,4> class_mpo<Scalar>::compute_F(double a){
-    /*! Returns the moment generating function MPO hamiltonian as a rank 4 MPO.
-    *   F := exp(aM), where a is a small parameter and M is an MPO.
-    *
-    *           0       1
-    *           |       |
-    *           [exp(aH)]
-    *           |       |
-    *           2       3
-    *
-    * Where H = H_even + H_odd, so exp(aH) can be Suzuki-Trotter decomposed just as in iTEBD
-    */
+Tensor<Scalar,8> class_mpo<Scalar>::compute_MMMM()
+/*! Returns a 2-site Hamitlonian MPO of rank 6. Notation following Schollwöck (2010)
+ *
+ *           4   5
+ *           |   |
+ *       0---M---M---1
+ *           |   |
+ *       2---M---M---3
+ *           |   |
+ *           6   7
+ */
+{
+
+    return  MM.contract(MM, idx<2>({2,3},{4,5})).shuffle(array8{0,1,4,5,2,3,6,7});
+
+}
+
+
+template <typename Scalar>
+Tensor<std::complex<double>,4> class_mpo<Scalar>::compute_F(double a)
+/*! Returns the moment generating function MPO hamiltonian as a rank 4 MPO.
+   *   F := exp(aM), where a is a small parameter and M is an MPO.
+   *
+   *           0       1
+   *           |       |
+   *           [exp(aH)]
+   *           |       |
+   *           2       3
+   *
+   * Where H = H_even + H_odd, so exp(aH) can be Suzuki-Trotter decomposed just as in iTEBD
+   */
+{
+
     return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_2nd_order(a), {2,2,2,2});
 };
 
@@ -106,7 +125,7 @@ Tensor<std::complex<double>,4> class_mpo<Scalar>::compute_G(double a){
     *           |         |
     *           2         3
     */
-    return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_1st_order(1.0i * a), {2,2,2,2});
+    return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_4th_order(1.0i * a), {2,2,2,2});
 };
 
 
@@ -139,16 +158,7 @@ Tensor<std::complex<double>,4> class_mpo<Scalar>::TimeEvolution_2nd_order(const 
 
 template <typename Scalar>
 Tensor<std::complex<double>,4> class_mpo<Scalar>::TimeEvolution_4th_order(const double delta_t) {
-    double delta1 = delta_t /(4.0-pow(4.0,1.0/3.0));
-    double delta2 = delta1;
-    double delta3 = delta_t - 2.0*delta1 - 2.0*delta2;
-    return Matrix_to_Tensor<std::complex<double>,4>( Suzuki_Trotter_2nd_order(-delta1)
-                                                    *Suzuki_Trotter_2nd_order(-delta2)
-                                                    *Suzuki_Trotter_2nd_order(-delta3)
-                                                    *Suzuki_Trotter_2nd_order(-delta2)
-                                                    *Suzuki_Trotter_2nd_order(-delta1),
-                                                     array4{2,2,2,2});
-
+    return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_4th_order(-delta_t), array4{2,2,2,2});
 }
 
 template <typename Scalar>
