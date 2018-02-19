@@ -4,9 +4,9 @@
 
 #ifndef DMRG_CLASS_EIG_ARPACK_WRAPPER_H
 #define DMRG_CLASS_EIG_ARPACK_WRAPPER_H
-#ifdef MKL_AVAILABLE
-#define  EIGEN_USE_MKL_ALL
-#endif
+//#ifdef MKL_AVAILABLE
+//#define  EIGEN_USE_MKL_ALL
+//#endif
 
 #include <map>
 #include <complex>
@@ -122,9 +122,9 @@ public:
         }
 
         if constexpr(form == arpack::Form::COMPLEX && std::is_same_v<Scalar, std::complex<double>>){
-            int nev_temp = nev == 1 ? 2 : nev;
+//            int nev_temp = nev == 1 ? 2 : nev;
             ARdsNonSymMatrix<std::complex<double>,double> matrix(n, internal_data.data());
-            ARluCompStdEig<double> eigs(nev_temp, matrix, RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter,residp);
+            ARluCompStdEig<double> eigs(nev, matrix, RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter,residp);
 //            std::cout << "rows: " << rows << std::endl
 //                      << "cols: " << cols << std::endl
 //                      << "ncv:  " << ncv  << std::endl
