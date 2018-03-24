@@ -22,11 +22,10 @@ void class_iDMRG::run() {
     if (!settings::idmrg::on) { return; }
     ccout(0) << "\nStarting " << table_name << " simulation" << std::endl;
         t_tot.tic();
-        while(superblock->chain_length < max_length and !simulation_has_converged){
+        while(iteration < max_steps){
             single_DMRG_step(chi_temp);
             print_status_update();
             store_table_entry();
-
             position = enlarge_environment();
             iteration++;
             update_chi();
@@ -42,11 +41,13 @@ void class_iDMRG::print_profiling(){
     if (settings::profiling::on) {
         t_tot.print_time_w_percent();
         t_sto.print_time_w_percent(t_tot);
-        t_env.print_time_w_percent(t_tot);
         t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
         t_eig.print_time_w_percent(t_sim);
         t_svd.print_time_w_percent(t_sim);
-        t_mps.print_time_w_percent(t_sim);
+        t_env.print_time_w_percent(t_sim);
+        t_chi.print_time_w_percent(t_sim);
+
+//        t_mps.print_time_w_percent(t_sim);
     }
 }

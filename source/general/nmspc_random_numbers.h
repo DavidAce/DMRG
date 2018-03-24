@@ -32,7 +32,7 @@ namespace rn{
     }
 
     inline std::complex<double> __attribute__((hot)) uniform_complex_1(){
-        std::uniform_real_distribution<>  rand_real(0,M_2_PI);
+        std::uniform_real_distribution<>  rand_real(0,2.0*M_PI);
         return std::polar(1.0,rand_real(rng));
     }
 

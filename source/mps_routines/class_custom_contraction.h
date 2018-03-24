@@ -10,7 +10,7 @@
 #endif
 
 #include "general/nmspc_tensor_extra.h"
-
+#include <iomanip>
 
 /*!
  \class class_custom_contraction
@@ -54,15 +54,15 @@ template<class T>
 class class_custom_contraction {
 
 private:
-    using Scalar = double;
+    using Scalar = std::complex<double>;
     const Textra::Tensor<Scalar,3> &Lblock;
     const Textra::Tensor<Scalar,3> &Rblock;
-    const Textra::Tensor<Scalar,6> &MM;
+    const Textra::Tensor<Scalar,4> &M;
     const Textra::array4           &shape4;
     Textra::array1                 shape1;
 
-    Textra::idxlistpair<long, 3> sortedIndices1;
-    Textra::idxlistpair<long, 2> sortedIndices2;
+//    Textra::idxlistpair<long, 3> sortedIndices1;
+//    Textra::idxlistpair<long, 2> sortedIndices2;
 public:
     int rows()const {return (int)shape1[0];};               /*!< The "matrix" \f$ H \f$ a has rows = columns = \f$d^2 \times \chi_L \times \chi_R \f$  */
     int cols()const {return (int)shape1[0];};               /*!< The "matrix" \f$ H \f$ a has rows = columns = \f$d^2 \times \chi_L \times \chi_R \f$  */
@@ -71,17 +71,18 @@ public:
     class_custom_contraction(
             const Textra::Tensor<Scalar,3> &Lblock_,        /*!< The left block tensor.  */
             const Textra::Tensor<Scalar,3> &Rblock_,        /*!< The right block tensor.  */
-            const Textra::Tensor<Scalar,6> &MM_,            /*!< The two Hamiltonian MPO's already contracted into one  */
+            const Textra::Tensor<Scalar,4> &MM_,            /*!< The two Hamiltonian MPO's already contracted into one  */
             const Textra::array4           &shape4_         /*!< An array containing the shapes of theta  */
     ):                                                      /*!< Initializes the custom contraction. */
             Lblock(Lblock_),
             Rblock(Rblock_),
-            MM(MM_),
-            shape4(shape4_)
+            M(MM_),
+            shape4(shape4_),
+            shape1({shape4[0] * shape4[1] * shape4[2] * shape4[3]})
     {
-        shape1[0] = shape4[0] * shape4[1] * shape4[2] * shape4[3];
-        sortedIndices1 = Textra::sortIdx<3, 6>(MM.dimensions(), {1, 2, 3}, {0, 4, 5});
-        sortedIndices2 = Textra::sortIdx<2, 3>(Rblock.dimensions(), {1, 2}, {1, 2});
+//        sortedIndices1 = Textra::sortIdx(M.dimensions(), {1, 2, 3}, {0, 2, 3});
+//        sortedIndices2 = Textra::sortIdx(Rblock.dimensions(), {1, 2}, {0, 2});
+
     }
 
 };
@@ -89,16 +90,22 @@ public:
 
 template<class T>
 void class_custom_contraction<T>::MultMv(T* theta_in_, T* theta_out_) {
-    Eigen::TensorMap<Textra::Tensor<const double, 4>> theta_in (theta_in_, shape4);
-    Eigen::TensorMap<Textra::Tensor<double, 1>>       theta_out(theta_out_, shape1);
-    //Best yet! The sparcity of the effective hamiltonian (Lblock MM Rblock) is about 58% nonzeros.
+    Eigen::TensorMap<Textra::Tensor<const T, 4>> theta_in (theta_in_, shape4);
+    Eigen::TensorMap<Textra::Tensor<T, 1>>       theta_out(theta_out_, shape1);
+    //Best yet! The sparcity of the effective hamiltonian (Lblock M Rblock) is about 58% nonzeros.
+//    theta_out = Lblock
+//            .contract(theta_in, Textra::idx({0},{1}))
+//            .contract(M ,     sortedIndices1)//  idx({1,2,3},{0,4,5}))
+//            .contract(Rblock,  sortedIndices2)
+//            .shuffle(Textra::array4{1,0,2,3})
+//            .reshape(shape1);
     theta_out = Lblock
-            .contract(theta_in, Textra::idx<1>({1},{1}))
-            .contract(MM ,     sortedIndices1)//  idx<3>({1,2,3},{0,4,5}))
-            .contract(Rblock,  sortedIndices2)
+            .contract(theta_in, Textra::idx({0},{1}))
+            .contract(M ,     Textra::idx({1,2},{0,2}))//  idx({1,2,3},{0,4,5}))
+            .contract(M ,     Textra::idx({3,1},{0,2}))//  idx({1,2,3},{0,4,5}))
+            .contract(Rblock,  Textra::idx({1,3},{0,2}))
             .shuffle(Textra::array4{1,0,2,3})
             .reshape(shape1);
-
 }
 
 

@@ -12,7 +12,7 @@
 #include <general/class_tic_toc.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <vector>
-
+#include <unsupported/Eigen/CXX11/Tensor>
 class class_superblock;
 class class_hdf5_file;
 class class_hdf5_table_buffer;
@@ -23,6 +23,7 @@ class class_measurement;
 
 class class_algorithm_base {
 public:
+    using Scalar = std::complex<double>;
     class_algorithm_base() = default;
     class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
                          std::string sim_name_,
@@ -44,7 +45,6 @@ public:
 
     //Console
     class_custom_cout ccout;
-
     //Settings.
 
     long   chi_max      ;
@@ -104,6 +104,7 @@ public:
     class_tic_toc t_ste;
     class_tic_toc t_obs;
     class_tic_toc t_mps;
+    class_tic_toc t_chi;
 private:
     template<typename T>
     class class_limited_vector : public std::vector<T>{

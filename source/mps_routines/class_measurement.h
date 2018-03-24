@@ -6,11 +6,14 @@
 #define DMRG_CLASS_OBSERVABLES_H
 #include <map>
 #include <memory>
+#include <complex>
 #include <IO/class_custom_cout.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <sim_parameters/nmspc_sim_settings.h>
-class class_superblock;
+using namespace std::complex_literals;
 
+class class_superblock;
+class class_mps;
 /*!
  * \class class_measurement
  * \brief A class for measuring observables
@@ -19,34 +22,61 @@ class class_superblock;
 
 class class_measurement {
 public:
-    using Scalar = double;
+    using Scalar = std::complex<double>;
 private:
     std::shared_ptr<class_superblock> superblock;
     class_custom_cout ccout;
-    Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic>              lambdaG;
-    Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic> eigvecG;
-    Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic>              lambdaID;
-    Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic> eigvecID;
-public:
+    Scalar moment_generating_function(std::shared_ptr<class_mps> MPS_original,
+                                                       std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
+
+
+    Scalar a  = (0.0 + 1.0i) *5e-2;
+    Scalar b  = (0.0 + 1.0i) *1e-2;
+    Scalar c  = (0.0 + 1.0i) *5e-3;
+    Scalar d  = (0.0 + 1.0i) *1e-3;
+    std::vector<Eigen::Tensor<Scalar,4>> mom_vecA;
+    std::vector<Eigen::Tensor<Scalar,4>> mom_vecB;
+    std::vector<Eigen::Tensor<Scalar,4>> mom_vecC;
+    std::vector<Eigen::Tensor<Scalar,4>> mom_vecD;
+
+private:
+    double compute_energy_MPO();
+    double compute_energy_H();
+    double compute_entanglement_entropy();
+    double compute_infinite_variance_MPO();
+    double compute_infinite_variance_H();
+    std::pair<double,double> compute_infinite_moments_G(Scalar a, std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
+
+
+    double energy1   = 0; double energy2   = 0; double energy3   = 0; double energy4   = 0; double energy5   = 0; double energy6   = 0;
+    double variance1 = 0; double variance2 = 0; double variance3 = 0; double variance4 = 0; double variance5 = 0; double variance6 = 0;
+    double entanglement_entropy = 1;
+
+    Eigen::Tensor<Scalar,0> E_evn, E_odd;
+
+    public:
     SimulationType sim;
+    bool is_measured = false;
 
-    double first_moment();
     explicit class_measurement(std::shared_ptr<class_superblock> superblock_, SimulationType sim_);
+    void   do_full_measurement();
 
-    double variance1 = 1; double variance2 = 1; double variance3 = 1;
-    double get_expectationvalue(const Eigen::Tensor<double,4> &MPO);
-    double get_expectationvalue(const Eigen::Tensor<std::complex<double>,4> &MPO);
-    double get_expectationvalue_sq(const Eigen::Tensor<double,4> &MPO);
-    double get_expectationvalue_sq(const Eigen::Tensor<std::complex<double>,4> &MPO);
-    double get_energy();                 /*! Computes the current energy by contracting the current MPS with the Hamiltonian MPO.*/
-    double get_entanglement_entropy();                /*! Computes the current entropy \f$ S = - \sum_n \lambda_n log( \lambda_n) \f$, where \f$\lambda_n \f$ are elements of \f$ \Lambda^A\f$ */
-    double get_full_variance();          /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
-    double get_variance();               /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
+    double get_energy1();               /*! Computes the current energy.*/
+    double get_energy2();               /*! Computes the current energy.*/
+    double get_energy3();               /*! Computes the current energy.*/
+    double get_energy4();               /*! Computes the current energy.*/
+    double get_energy5();               /*! Computes the current energy.*/
+    double get_energy6();               /*! Computes the current energy.*/
+
+
     double get_variance1();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
     double get_variance2();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
     double get_variance3();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
+    double get_variance4();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
+    double get_variance5();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
+    double get_variance6();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
+    double get_entanglement_entropy();
     double get_truncation_error();
-    double get_second_cumulant();
     long   get_chi();
     long   get_chain_length();
 };

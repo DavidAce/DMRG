@@ -83,9 +83,9 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 // * \fn void single_DMRG_step(class_superblock &superblock)
 // */
 //
-//                    superblock.update_bond_dimensions();
+//                    superblock.set_current_dimensions();
 //    t_eig.tic();    superblock.find_ground_state(s::precision::eigSteps, s::precision::eigThreshold);    t_eig.toc();
-//    t_svd.tic();    superblock.truncate         (chi_max,                s::precision::SVDThreshold);    t_svd.toc();
+//    t_svd.tic();    superblock.truncate_MPS         (chi_max,                s::precision::SVDThreshold);    t_svd.toc();
 //    t_mps.tic();    superblock.update_MPS();                                                             t_mps.toc();
 //
 //}
@@ -96,19 +96,19 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 // * \brief infinite Time evolving block decimation.
 // * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
 // */
-//                    superblock.update_bond_dimensions();
-//    t_evo.tic();    superblock.time_evolve();                                       t_evo.toc();
-//    t_svd.tic();    superblock.truncate   (chi_max, s::precision::SVDThreshold);    t_svd.toc();
+//                    superblock.set_current_dimensions();
+//    t_evo.tic();    superblock.evolve_MPS();                                       t_evo.toc();
+//    t_svd.tic();    superblock.truncate_MPS   (chi_max, s::precision::SVDThreshold);    t_svd.toc();
 //    t_mps.tic();    superblock.update_MPS();                                        t_mps.toc();
 //}
 //
 //void class_algorithm_launcher::iDMRG(){
 ///*!
-// * \fn void iDMRG(class_superblock &superblock, class_storage &S, int max_length)
+// * \fn void iDMRG(class_superblock &superblock, class_storage &S, int max_steps)
 // * \brief Infinite DMRG, grows the chain from 2 up to `max_idmrg::length` particles.
 // * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
 // * \param env_storage A class that stores current MPS and environments at each position.
-// * \param max_length Maximum chain length after which the algorithm stops.
+// * \param max_steps Maximum chain length after which the algorithm stops.
 // */
 //
 //    if(!settings::idmrg::on){return;}
@@ -125,7 +125,7 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //    class_superblock superblock;
 //    class_measurement measurement (superblock, SimulationType::iDMRG);
 //
-//    while(superblock.chain_length < s::idmrg::max_length){
+//    while(superblock.chain_length < s::idmrg::max_steps){
 //        class_measurement_buffers container(&hdf5, "iDMRG/L", superblock.chain_length);
 //
 //        single_DMRG_step(superblock, s::idmrg::chi_max);
@@ -164,9 +164,9 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //    t_tot.tic();
 //    class_superblock     superblock;
 //    class_measurement    measurement (superblock, SimulationType::fDMRG);
-//    class_environment_storage  env_storage(s::fdmrg::max_length);
+//    class_environment_storage  env_storage(s::fdmrg::max_steps);
 //
-//    while(superblock.chain_length -2 < s::fdmrg::max_length){
+//    while(superblock.chain_length -2 < s::fdmrg::max_steps){
 //                        single_DMRG_step(superblock, s::fdmrg::chi_max);
 //        t_sto.tic();    env_storage.insert(superblock);                  t_sto.toc();
 //        t_env.tic();    superblock.enlarge_environment();            t_env.toc();
@@ -214,7 +214,7 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //    class_measurement measurement (superblock, SimulationType::iTEBD);
 //    superblock.H.reduce_timestep(settings::itebd::delta_t0, 1);
 //    t_tot.tic();
-//    for(auto step = 0; step < s::itebd::max_length ; step++){
+//    for(auto step = 0; step < s::itebd::max_steps ; step++){
 //        class_measurement_buffers container(&hdf5, "iTEBD/step", step);
 //        single_TEBD_step(superblock, s::itebd::chi_max);
 //        if (Math::mod(step,500) == 0) { measurement.print_status_update(step);}
@@ -270,8 +270,8 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //        double phys_time = 0;
 //        int step = 0;
 //        double old_entropy = 0;
-//        double new_entropy = measurement.get_entanglement_entropy();
-//        while(time_step > 1e-6 && step < s::fes_itebd::max_length){
+//        double new_entropy = measurement.compute_entanglement_entropy();
+//        while(time_step > 1e-6 && step < s::fes_itebd::max_steps){
 //            t_sim.tic();
 //            single_TEBD_step(superblock, chi_max );
 //            t_sim.toc();
@@ -292,7 +292,7 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //            t_udt.tic();
 //            if(Math::mod(step,500)==0){
 //                old_entropy = new_entropy;
-//                new_entropy = measurement.get_entanglement_entropy();
+//                new_entropy = measurement.compute_entanglement_entropy();
 //                if (std::fabs((new_entropy-old_entropy)/new_entropy) < 1e-6*time_step ){
 //                    container.push_back(measurement);
 //                    container.push_back(step, time_step, phys_time += time_step, t_tot.get_age());
@@ -357,13 +357,13 @@ void class_algorithm_launcher::run_FES_iTEBD(){
 //        class_measurement measurement (superblock, SimulationType::FES_iDMRG);
 //        superblock.load_from_file();
 //        int step = 0;
-//        while (step  < s::fes_idmrg::max_length) {
+//        while (step  < s::fes_idmrg::max_steps) {
 //            t_sim.tic();
 //            single_DMRG_step(superblock, chi_max);
 //            t_sim.toc();
 //
 //            if(Math::mod(step,100)==0) {
-//                measurement.get_variance();
+//                measurement.compute_infinite_moments_G();
 //                measurement.print_status_update(step);
 //            }
 //            t_sto.tic();

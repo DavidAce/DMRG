@@ -16,7 +16,7 @@ namespace settings{
 
     //Parameters controlling infinite-DMRG
     bool   idmrg::on                     = true;
-    int    idmrg::max_length             = 5000;
+    int    idmrg::max_steps              = 5000;
     long   idmrg::chi_max                = 8;
     bool   idmrg::chi_grow               = true;
     int    idmrg::print_freq             = 1000;
@@ -68,7 +68,7 @@ namespace settings{
 
     //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
     bool   fes_idmrg::on                 = true;
-    int    fes_idmrg::max_length         = 2000;
+    int    fes_idmrg::max_steps          = 2000;
     long   fes_idmrg::chi_min            = 4;
     long   fes_idmrg::chi_max            = 12;
     long   fes_idmrg::chi_num            = 3;
@@ -106,7 +106,7 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters controlling infinite-DMRG
     idmrg::on                     = indata.find_parameter<bool>   ("idmrg::on"         , idmrg::on);
     if(idmrg::on){
-        idmrg::max_length         = indata.find_parameter<int>    ("idmrg::max_length ", idmrg::max_length);
+        idmrg::max_steps         = indata.find_parameter<int>     ("idmrg::max_steps ",  idmrg::max_steps);
         idmrg::chi_max            = indata.find_parameter<long>   ("idmrg::chi_max"    , idmrg::chi_max);
         idmrg::chi_grow           = indata.find_parameter<bool>   ("idmrg::chi_grow"   , idmrg::chi_grow);
         idmrg::print_freq         = indata.find_parameter<int>    ("idmrg::print_freq ", idmrg::print_freq);
@@ -116,7 +116,7 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters controlling Finite-DMRG
     fdmrg::on                     = indata.find_parameter<bool>   ("fdmrg::on"         , fdmrg::on);
     if(fdmrg::on){
-        fdmrg::max_length         = indata.find_parameter<int>    ("fdmrg::max_length ", fdmrg::max_length);
+        fdmrg::max_length         = indata.find_parameter<int>    ("fdmrg::max_steps ",  fdmrg::max_length);
         fdmrg::max_sweeps         = indata.find_parameter<int>    ("fdmrg::max_sweeps ", fdmrg::max_sweeps);
         fdmrg::chi_max            = indata.find_parameter<int>    ("fdmrg::chi_max"    , 8);
         fdmrg::chi_grow           = indata.find_parameter<bool>   ("fdmrg::chi_grow"   , fdmrg::chi_grow);
@@ -127,7 +127,7 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters controlling excited state DMRG
     xdmrg::on                     = indata.find_parameter<bool>   ("xdmrg::on"         , xdmrg::on);
     if(xdmrg::on){
-        xdmrg::max_length         = indata.find_parameter<int>    ("xdmrg::max_length ", xdmrg::max_length);
+        xdmrg::max_length         = indata.find_parameter<int>    ("xdmrg::max_steps ", xdmrg::max_length);
         xdmrg::max_sweeps         = indata.find_parameter<int>    ("xdmrg::max_sweeps ", xdmrg::max_sweeps);
         xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"    , 8);
         xdmrg::chi_grow           = indata.find_parameter<bool>   ("xdmrg::chi_grow"   , xdmrg::chi_grow);
@@ -167,7 +167,7 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
     fes_idmrg::on                 = indata.find_parameter<bool>   ("fes_idmrg::on"         , fes_idmrg::on       );
     if(fes_idmrg::on){
-        fes_idmrg::max_length     = indata.find_parameter<int>    ("fes_idmrg::max_length" , fes_idmrg::max_length);
+        fes_idmrg::max_steps      = indata.find_parameter<int>    ("fes_idmrg::max_steps"  , fes_idmrg::max_steps);
         fes_idmrg::chi_min        = indata.find_parameter<long>   ("fes_idmrg::chi_min"    , fes_idmrg::chi_min  );
         fes_idmrg::chi_max        = indata.find_parameter<long>   ("fes_idmrg::chi_max"    , fes_idmrg::chi_max  );
         fes_idmrg::chi_num        = indata.find_parameter<long>   ("fes_idmrg::chi_num"    , fes_idmrg::chi_num  );

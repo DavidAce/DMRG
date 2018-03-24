@@ -35,16 +35,6 @@ void class_xDMRG::run() {
     ccout(0) << "\nStarting " << table_name << " simulation" << std::endl;
     t_tot.tic();
     chi_temp = chi_max;
-//    while(superblock->chain_length < max_length and !simulation_has_converged){
-//        single_xDMRG_step(chi_temp);
-//        print_status_update();
-//        store_table_entry();
-//
-//        position = enlarge_environment();
-//        iteration++;
-//        update_chi();
-//        swap();
-//    }
     initialize_random_chain();
     while(sweeps < max_sweeps) {
         single_xDMRG_step(chi_temp);
@@ -55,6 +45,7 @@ void class_xDMRG::run() {
         position = enlarge_environment(direction);
         position = env_storage_move();
         update_chi();
+//        if(iteration > 10 ){exit(0);}
     }
     t_tot.toc();
     print_status_full();
@@ -62,27 +53,16 @@ void class_xDMRG::run() {
 
 }
 
-void class_xDMRG::single_xDMRG_step(long chi_max) {
-/*!
- * \fn void single_DMRG_step(class_superblock &superblock)
- */
-    t_sim.tic();
-    superblock->update_bond_dimensions();
-    t_eig.tic();    find_greatest_overlap();    t_eig.toc();
-    t_svd.tic();    superblock->truncate         (chi_max, settings::precision::SVDThreshold);                   t_svd.toc();
-    t_mps.tic();    superblock->update_MPS();                                                                    t_mps.toc();
-    t_sim.toc();
-}
 
-
-void class_xDMRG::find_greatest_overlap(){
-    Eigen::Tensor<Scalar,1> theta = superblock->MPS->get_theta().shuffle(array4{0,2,1,3}).reshape(superblock->shape1);
-    //Best yet! The sparcity of the effective hamiltonian (Lblock MM Rblock) is about 58% nonzeros.
+auto class_xDMRG::find_greatest_overlap(){
+    Eigen::Tensor<Scalar,1> theta = superblock->MPS->get_theta().reshape(superblock->shape1);
     Eigen::Tensor<Scalar,2> H_local =
             superblock->Lblock->block
-            .contract(superblock->H->MM ,        Textra::idx<1>({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
-            .contract(superblock->Rblock->block, Textra::idx<1>({2},{2}))
-            .shuffle(Textra::array8{2,0,3,6,4,1,5,7})
+            .contract(superblock->H->M ,         Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
+            .contract(superblock->H->M ,         Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
+            .contract(superblock->Rblock->block, Textra::idx({4},{2}))
+//                    .shuffle(Textra::array8{2,0,3,6,4,1,5,7})
+            .shuffle(Textra::array8{2,0,4,6,3,1,5,7})
             .reshape(Textra::array2{superblock->shape1[0], superblock->shape1[0]});
 
     using SparseType = Eigen::SparseMatrix<Scalar>;
@@ -91,36 +71,33 @@ void class_xDMRG::find_greatest_overlap(){
     SparseType H_sparse = H_matrix.sparseView();
 
     Eigen::SelfAdjointEigenSolver<SparseType> es(H_sparse);
-    Textra::VectorType<double> overlaps = theta_matrix.transpose() * es.eigenvectors();
+    Textra::VectorType<Scalar> overlaps = theta_matrix.transpose() * es.eigenvectors();
 
     int best_state;
     overlaps.cwiseAbs().maxCoeff(&best_state);
-    Textra::MatrixType<double> state = es.eigenvectors().col(best_state);
+    Textra::MatrixType<Scalar> state = es.eigenvectors().col(best_state);
 
-    superblock->ground_state = Textra::Matrix_to_Tensor<Scalar,2>(state, superblock->shape2);
-    std::cout << setprecision(16);
-
-//    std::cout << "eigenvalue: "<< es.eigenvalues().coeff(best_state)/superblock->chain_length << std::endl;// <<  es.eigenvalues().transpose()/superblock->chain_length << std::endl;
-//    SparseType H_sparse = H_matrix.sparseView();
-
-//    H_sparse = H_sparse.selfadjointView<Eigen::Upper>();
-//    std::cout<<setprecision(8) << "H_matrix\n" <<H_matrix - H_matrix.transpose() << std::endl;
-//    std::cout << "H_matrix: \n"<< H_matrix << std::endl;
-//    std::cout << "theta_matrix: \n"<< theta_matrix.transpose() << std::endl;
-//    std::cout << "eigenvectors: \n"<< es.eigenvectors() << std::endl;
-//    std::cout << "overlaps:     \n"<< overlaps.transpose() << std::endl;
-//    state *= overlaps.array().sign().coeff(best_state);
-
-//    Textra::Tensor<Scalar,0> E =
-//            H_local.contract(superblock->ground_state.reshape(superblock->shape1),             Textra::idx<1>({0},{0}))
-//                   .contract(superblock->ground_state.reshape(superblock->shape1).conjugate(), Textra::idx<1>({0},{0}) );
-////    std::cout << "chosen (" << best_state << "):     \n" << superblock->ground_state << std::endl;
-//    exit(0);
-//    std::cout << "E check: " << E(0)/superblock->chain_length << std::endl;
+    return Textra::Matrix_to_Tensor(state, superblock->shape4);
 }
 
+
+void class_xDMRG::single_xDMRG_step(long chi_max) {
+/*!
+ * \fn void single_DMRG_step(class_superblock &superblock)
+ */
+    t_sim.tic();
+    superblock->set_current_dimensions();
+    t_eig.tic();    Textra::Tensor<Scalar,4>  theta = find_greatest_overlap();    t_eig.toc();
+    t_svd.tic();
+    superblock->truncate_MPS(theta, chi_max, settings::precision::SVDThreshold);                   t_svd.toc();
+//    t_mps.tic();    superblock->update_MPS();                                                                    t_mps.toc();
+    t_sim.toc();
+}
+
+
+
 int class_xDMRG::initialize_random_chain() {
-    rn::seed(5);
+    rn::seed(7);
 
     while (true) {
         auto r1 = rn::uniform_complex_1();

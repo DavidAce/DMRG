@@ -5,6 +5,9 @@ import pandas as pd
 import os.path
 import numpy as np
 import seaborn as sns
+
+import itertools
+
 plt.close('all')
 rc('font', **{'family': 'serif', 'serif': ['Palatino']})
 rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
@@ -13,7 +16,9 @@ rc('text', usetex=True)
 sns.set(style="darkgrid", font_scale=1.0, font='Helvetica',rc={"lines.linewidth": 0.9})
 paper_rc = {'lines.linewidth': 1, 'lines.markersize': 10}
 sns.set_style({"axes.facecolor": ".9"},rc={'text.usetex' : True})
-filename = '../output/data-154.h5'
+sns.set_palette(sns.color_palette("husl", 7))
+
+filename = '../output/data-731.h5'
 
 if(not os.path.exists(filename)):
     print("File does not exist.")
@@ -27,8 +32,11 @@ iTEBD_exists        = "iTEBD" in store
 FES_iDMRG_exists    = "FES_iDMRG" in store
 FES_iTEBD_exists    = "FES_iTEBD" in store
 
-def plt_graph(table, xkey,ykey, xlabel,ylabel, ax,label='', marker='.', scale='linear'):
-    ax.plot(store[table].get(xkey),store[table].get(ykey), marker=marker, label=label)
+
+markerlist = itertools.cycle(('<', '>', '^','v'))
+
+def plt_graph(table, xkey,ykey, xlabel,ylabel, ax,label='', scale='linear'):
+    ax.plot(store[table].get(xkey),store[table].get(ykey), marker=next(markerlist), label=label, alpha=.90, markersize=4)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_yscale(scale)
@@ -42,12 +50,28 @@ if iDMRG_exists:
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')
     for key in keys:
         chi_label =  '$\chi=$' + str( store[key].chi_max[0])
-        plt_graph(key,"chain_length", "energy", "L", "E", ax[0,0], label=chi_label)
-        plt_graph(key,"chain_length", "entropy","L", "S", ax[0,1], label=chi_label)
-        plt_graph(key,"chain_length", "variance", "L", "$\sigma^2$", ax[1,0], label="variance",   scale = 'log')
-        plt_graph(key,"chain_length", "variance2", "L", "$\sigma^2$", ax[1,0], label="variance2", scale = 'log')
-        plt_graph(key,"chain_length", "variance3", "L", "$\sigma^2$", ax[1,0], label="variance3", scale = 'log')
+        plt_graph(key,"iteration", "energy1", "L", "E/L", ax[0,0], label="MPO")
+        plt_graph(key,"iteration", "energy2", "L", "E/L", ax[0,0], label="$\langle H \\rangle$")
+        plt_graph(key,"iteration", "energy3", "L", "E/L", ax[0,0], label="$d\log{G1(a)} / d a$")
+        plt_graph(key,"iteration", "energy4", "L", "E/L", ax[0,0], label="$d\log{G1(b)} / d b$")
+        plt_graph(key,"iteration", "energy5", "L", "E/L", ax[0,0], label="$d\log{G1(c)} / d c$")
+        plt_graph(key,"iteration", "energy6", "L", "E/L", ax[0,0], label="$d\log{G1(d)} / d d$")
+        plt_graph(key,"iteration", "entropy", "L", "S"  , ax[0,1], label=chi_label)
+        plt_graph(key,"iteration", "truncation_error", "L", "$\sigma^2(E)/L$", ax[1,0], label="trunc err", scale = 'log')
 
+        plt_graph(key,"iteration", "variance1", "L", "$\sigma^2(E)/L$", ax[1,0], label="MPO"                         , scale = 'log')
+        plt_graph(key,"iteration", "variance2", "L", "$\sigma^2(E)/L$", ax[1,0], label="$\langle (H-E)^2 \\rangle$"  , scale = 'log')
+        plt_graph(key,"iteration", "variance3", "L", "$\sigma^2(E)/L$", ax[1,0], label="$log(|G1(a)|^2) / a^2$"      , scale = 'log')
+        plt_graph(key,"iteration", "variance4", "L", "$\sigma^2(E)/L$", ax[1,0], label="$log(|G1(b)|^2) / b^2$"      , scale = 'log')
+        plt_graph(key,"iteration", "variance5", "L", "$\sigma^2(E)/L$", ax[1,0], label="$log(|G1(c)|^2) / c^2$"      , scale = 'log')
+        plt_graph(key,"iteration", "variance6", "L", "$\sigma^2(E)/L$", ax[1,0], label="$log(|G1(d)|^2) / d^2$"      , scale = 'log')
+        plt_graph(key,"iteration", "truncation_error", "L", "$\sigma^2(E)/L$", ax[1,1], label="trunc err", scale = 'linear')
+        plt_graph(key,"iteration", "variance1", "L", "$\sigma^2(E)/L$", ax[1,1], label="MPO"                         , scale = 'linear')
+        plt_graph(key,"iteration", "variance2", "L", "$\sigma^2(E)/L$", ax[1,1], label="$\langle (H-E)^2 \\rangle_1$", scale = 'linear')
+        plt_graph(key,"iteration", "variance3", "L", "$\sigma^2(E)/L$", ax[1,1], label="$log(|G1(a)|^2) / a^2$"      , scale = 'linear')
+        plt_graph(key,"iteration", "variance4", "L", "$\sigma^2(E)/L$", ax[1,1], label="$log(|G1(b)|^2) / b^2$"      , scale = 'linear')
+        plt_graph(key,"iteration", "variance5", "L", "$\sigma^2(E)/L$", ax[1,1], label="$log(|G1(c)|^2) / c^2$"      , scale = 'linear')
+        plt_graph(key,"iteration", "variance6", "L", "$\sigma^2(E)/L$", ax[1,1], label="$log(|G1(d)|^2) / d^2$"      , scale = 'linear')
 
 if fDMRG_exists:
     group = "fDMRG"
@@ -57,11 +81,28 @@ if fDMRG_exists:
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')
     for key in keys:
         chi_label =  '$\chi=$' + str( store[key].chi_max[0])
-        plt_graph(key,"position", "energy", "L", "E", ax[0,0], label=chi_label)
-        plt_graph(key,"position", "entropy","L", "S", ax[0,1], label=chi_label)
-        plt_graph(key,"chain_length", "variance", "L", "$\sigma^2$", ax[1,0], label="variance", scale = 'log')
-        plt_graph(key,"chain_length", "variance2", "L", "$\sigma^2$", ax[1,0], label="variance2", scale = 'log')
-        plt_graph(key,"chain_length", "variance3", "L", "$\sigma^2$", ax[1,0], label="variance3", scale = 'log')
+        plt_graph(key, "iteration", "energy1", "L", "E/L", ax[0, 0], label="MPO")
+        plt_graph(key, "iteration", "energy2", "L", "E/L", ax[0, 0], label="$\langle H \\rangle$")
+        plt_graph(key, "iteration", "energy3", "L", "E/L", ax[0, 0], label="$d\log{G1(a)} / da$")
+        plt_graph(key, "iteration", "energy4", "L", "E/L", ax[0, 0], label="$d\log{G1(b)} / db$")
+        plt_graph(key, "iteration", "energy5", "L", "E/L", ax[0, 0], label="$d\log{G1(c)} / dc$")
+        plt_graph(key, "iteration", "energy6", "L", "E/L", ax[0, 0], label="$d\log{G1(d)} / dd$")
+        plt_graph(key,"iteration", "entropy","L", "S", ax[0,1], label=chi_label)
+        plt_graph(key,"iteration", "truncation_error", "L", "$\sigma^2(E)/L$", ax[1,0], label="trunc err", scale = 'log')
+        plt_graph(key,"iteration", "variance1", "L", "$\sigma^2(E)/L$", ax[1,0], label="MPO"                         , scale = 'log')
+        plt_graph(key,"iteration", "variance2", "L", "$\sigma^2(E)/L$", ax[1,0], label="$\langle (H-E)^2 \\rangle_1$", scale = 'log')
+        plt_graph(key,"iteration", "variance3", "L", "$\sigma^2(E)/L$", ax[1,0], label="$log(|G1(a)|^2) / a^2$"      , scale = 'log')
+        plt_graph(key,"iteration", "variance4", "L", "$\sigma^2(E)/L$", ax[1,0], label="$log(|G1(b)|^2) / b^2$"      , scale = 'log')
+        plt_graph(key,"iteration", "variance5", "L", "$\sigma^2(E)/L$", ax[1,0], label="$log(|G1(c)|^2) / c^2$"      , scale = 'log')
+        plt_graph(key,"iteration", "variance6", "L", "$\sigma^2(E)/L$", ax[1,0], label="$log(|G1(d)|^2) / d^2$"      , scale = 'log')
+        plt_graph(key,"iteration", "truncation_error", "L", "$\sigma^2(E)/L$", ax[1,1], label="trunc err", scale = 'linear')
+        plt_graph(key,"iteration", "variance1", "L", "$\sigma^2(E)/L$", ax[1,1], label="MPO"                         , scale = 'linear')
+        plt_graph(key,"iteration", "variance2", "L", "$\sigma^2(E)/L$", ax[1,1], label="$\langle (H-E)^2 \\rangle_1$", scale = 'linear')
+        plt_graph(key,"iteration", "variance3", "L", "$\sigma^2(E)/L$", ax[1,1], label="$log(|G1(a)|^2) / a^2$"      , scale = 'linear')
+        plt_graph(key,"iteration", "variance4", "L", "$\sigma^2(E)/L$", ax[1,1], label="$log(|G1(b)|^2) / b^2$"      , scale = 'linear')
+        plt_graph(key,"iteration", "variance5", "L", "$\sigma^2(E)/L$", ax[1,1], label="$log(|G1(c)|^2) / c^2$"      , scale = 'linear')
+        plt_graph(key,"iteration", "variance6", "L", "$\sigma^2(E)/L$", ax[1,1], label="$log(|G1(d)|^2) / d^2$"      , scale = 'linear')
+
 
 
 if xDMRG_exists:
@@ -72,11 +113,16 @@ if xDMRG_exists:
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')
     for key in keys:
         chi_label =  '$\chi=$' + str( store[key].chi_max[0])
-        plt_graph(key,"position", "energy", "L", "E", ax[0,0], label=chi_label)
+        plt_graph(key,"iteration", "energy1", "L", "E1", ax[0,0], label=chi_label)
+        plt_graph(key,"iteration", "energy2", "L", "E2", ax[0,0], label=chi_label)
+        plt_graph(key,"iteration", "energy3", "L", "E3", ax[0,0], label=chi_label)
+        plt_graph(key,"iteration", "energy4", "L", "E4", ax[0,0], label=chi_label)
+        plt_graph(key,"iteration", "energy5", "L", "E5", ax[0,0], label=chi_label)
+        plt_graph(key,"iteration", "energy6", "L", "E6", ax[0,0], label=chi_label)
         plt_graph(key,"position", "entropy","L", "S", ax[0,1], label=chi_label)
-        plt_graph(key,"chain_length", "variance", "L", "$\sigma^2$", ax[1,0], label="variance", scale = 'log')
-        plt_graph(key,"chain_length", "variance2", "L", "$\sigma^2$", ax[1,0], label="variance2", scale = 'log')
-        plt_graph(key,"chain_length", "variance3", "L", "$\sigma^2$", ax[1,0], label="variance3", scale = 'log')
+        plt_graph(key,"chain_length", "variance", "L", "$\sigma^2(E)/L$", ax[1,0], label="variance", scale = 'log')
+        plt_graph(key,"chain_length", "variance2", "L", "$\sigma^2(E)/L$", ax[1,0], label="variance2", scale = 'log')
+        plt_graph(key,"chain_length", "variance3", "L", "$\sigma^2(E)/L$", ax[1,0], label="variance3", scale = 'log')
 
 
 if iTEBD_exists:
@@ -87,12 +133,27 @@ if iTEBD_exists:
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')
     for key in keys:
         chi_label =  '$\chi=$' + str( store[key].chi_max[0])
-        plt_graph(key,"iteration", "energy",    "Step", "E", ax[0,0], label=chi_label)
-        plt_graph(key,"iteration", "entropy",   "Step", "S", ax[0,1], label=chi_label)
-        plt_graph(key,"iteration", "variance",  "Step", "$\sigma^2$", ax[1,0], label="variance" , scale = 'log')
-        plt_graph(key,"iteration", "variance2", "Step", "$\sigma^2$", ax[1,0], label="variance2", scale = 'log')
-        plt_graph(key,"iteration", "variance3", "Step", "$\sigma^2$", ax[1,0], label="variance3", scale = 'log')
-        plt_graph(key,"phys_time", "entropy", "Time", "$S$", ax[1,1], label=chi_label, scale = 'log')
+        plt_graph(key, "iteration", "energy1", "L", "E/L", ax[0, 0], label="MPO")
+        plt_graph(key, "iteration", "energy2", "L", "E/L", ax[0, 0], label="$\langle H \\rangle$")
+        plt_graph(key, "iteration", "energy3", "L", "E/L", ax[0, 0], label="$d \log{G1(a)} / da$")
+        plt_graph(key, "iteration", "energy4", "L", "E/L", ax[0, 0], label="$d \log{G1(b)} / db$")
+        plt_graph(key, "iteration", "energy5", "L", "E/L", ax[0, 0], label="$d \log{G1(c)} / dc$")
+        plt_graph(key, "iteration", "energy6", "L", "E/L", ax[0, 0], label="$d \log{G1(d)} / dd$")
+        plt_graph(key,"iteration", "entropy","step", "S", ax[0,1], label=chi_label)
+        plt_graph(key,"iteration", "truncation_error", "L", "$\sigma^2(E)/L$", ax[1,0], label="trunc err", scale = 'log')
+        plt_graph(key,"iteration", "variance1", "step", "$\sigma^2(E)/L$", ax[1,0], label="MPO"                         , scale = 'log')
+        plt_graph(key,"iteration", "variance2", "step", "$\sigma^2(E)/L$", ax[1,0], label="$\langle (H-E)^2 \\rangle_1$", scale = 'log')
+        plt_graph(key,"iteration", "variance3", "step", "$\sigma^2(E)/L$", ax[1,0], label="$log(|G1(a)|^2) / a^2$"      , scale = 'log')
+        plt_graph(key,"iteration", "variance4", "step", "$\sigma^2(E)/L$", ax[1,0], label="$log(|G1(b)|^2) / b^2$"      , scale = 'log')
+        plt_graph(key,"iteration", "variance5", "step", "$\sigma^2(E)/L$", ax[1,0], label="$log(|G1(c)|^2) / c^2$"      , scale = 'log')
+        plt_graph(key,"iteration", "variance6", "step", "$\sigma^2(E)/L$", ax[1,0], label="$log(|G1(d)|^2) / d^2$"      , scale = 'log')
+        plt_graph(key,"iteration", "truncation_error", "L", "$\sigma^2(E)/L$", ax[1,1], label="trunc err", scale = 'linear')
+        plt_graph(key,"iteration", "variance1", "step", "$\sigma^2(E)/L$", ax[1,1], label="MPO"                         , scale = 'linear')
+        plt_graph(key,"iteration", "variance2", "step", "$\sigma^2(E)/L$", ax[1,1], label="$\langle (H-E)^2 \\rangle_1$", scale = 'linear')
+        plt_graph(key,"iteration", "variance3", "step", "$\sigma^2(E)/L$", ax[1,1], label="$log(|G1(a)|^2) / a^2$"      , scale = 'linear')
+        plt_graph(key,"iteration", "variance4", "step", "$\sigma^2(E)/L$", ax[1,1], label="$log(|G1(b)|^2) / b^2$"      , scale = 'linear')
+        plt_graph(key,"iteration", "variance5", "step", "$\sigma^2(E)/L$", ax[1,1], label="$log(|G1(c)|^2) / c^2$"      , scale = 'linear')
+        plt_graph(key,"iteration", "variance6", "step", "$\sigma^2(E)/L$", ax[1,1], label="$log(|G1(d)|^2) / d^2$"      , scale = 'linear')
 
 
 
@@ -103,11 +164,11 @@ if FES_iDMRG_exists:
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0, label='$\chi = \infty$')
     for key in keys:
         chi_label = '$\chi=$' + str(store[key].chi_max[0])
-        plt_graph(key,"chain_length", "energy",  "L", "E", ax[0,0], label=chi_label)
+        plt_graph(key,"chain_length", "energy1",  "L", "E", ax[0,0], label=chi_label)
         plt_graph(key,"chain_length", "entropy", "L", "S", ax[0,1], label=chi_label)
-        plt_graph(key,"chain_length", "variance", "L", "$\sigma^2$", ax[1,0], label="variance", scale = 'log')
-        plt_graph(key,"chain_length", "variance2", "L", "$\sigma^2$", ax[1,0], label="variance2", scale = 'log')
-        plt_graph(key,"chain_length", "variance3", "L", "$\sigma^2$", ax[1,0], label="variance3", scale = 'log')
+        plt_graph(key,"chain_length", "variance1", "L", "$\sigma^2(E)/L$", ax[1,0], label="variance", scale = 'log')
+        plt_graph(key,"chain_length", "variance2", "L", "$\sigma^2(E)/L$", ax[1,0], label="variance2", scale = 'log')
+        plt_graph(key,"chain_length", "variance3", "L", "$\sigma^2(E)/L$", ax[1,0], label="variance3", scale = 'log')
 
 
 if FES_iTEBD_exists:
@@ -117,11 +178,11 @@ if FES_iTEBD_exists:
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0, label='$\chi = \infty$')
     for key in keys:
         chi_label = '$\chi=$' + str(store[key].chi_max[0])
-        plt_graph(key,"iteration", "energy",    "Step", "E", ax[0,0], label=chi_label)
+        plt_graph(key,"iteration", "energy1",    "Step", "E", ax[0,0], label=chi_label)
         plt_graph(key,"iteration", "entropy",   "Step", "S", ax[0,1], label=chi_label)
-        plt_graph(key,"iteration", "variance",  "Step", "$\sigma^2$", ax[1,0], label="variance", scale = 'log')
-        plt_graph(key,"iteration", "variance2", "Step", "$\sigma^2$", ax[1,0], label="variance2", scale = 'log')
-        plt_graph(key,"iteration", "variance3", "Step", "$\sigma^2$", ax[1,0], label="variance3", scale = 'log')
+        plt_graph(key,"iteration", "variance",  "Step", "$\sigma^2(E)/L$", ax[1,0], label="variance", scale = 'log')
+        plt_graph(key,"iteration", "variance2", "Step", "$\sigma^2(E)/L$", ax[1,0], label="variance2", scale = 'log')
+        plt_graph(key,"iteration", "variance3", "Step", "$\sigma^2(E)/L$", ax[1,0], label="variance3", scale = 'log')
 
 plt.tight_layout()
 plt.subplots_adjust(wspace=.4, hspace=.2)

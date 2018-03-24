@@ -14,7 +14,6 @@
 class class_environment_storage;
 class class_xDMRG : public class_algorithm_base {
 private:
-    using Scalar = double;
     Eigen::Tensor<Scalar,4> state;
 public:
     //Inherit the constructor of class_algorithm_base
@@ -23,7 +22,7 @@ public:
     std::shared_ptr<class_environment_storage>  env_storage;
     void run() override;
     void single_xDMRG_step(long chi_max);
-    void find_greatest_overlap();
+    auto find_greatest_overlap();
     int  initialize_random_chain();
     int  env_storage_insert();
     void env_storage_overwrite_MPS();

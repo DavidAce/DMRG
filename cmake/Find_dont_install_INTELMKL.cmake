@@ -23,13 +23,12 @@ if (MKL_FOUND)
     find_package(BLAS REQUIRED)
     set(LAPACK_LIBRARIES ${BLAS_LIBRARIES})
     find_package(LAPACK REQUIRED)
-
     target_include_directories(${PROJECT_NAME} PRIVATE ${MKL_INCLUDE_DIR})
     target_link_libraries(${PROJECT_NAME} ${MKL_LIBRARIES})
     target_compile_options(${PROJECT_NAME} PUBLIC -Wno-unknown-pragmas -Wno-parentheses -Wno-unused-variable)                                   ### Common options
 endif()
 
-
+#include <mkl.h>
 
 #get_cmake_property(_variableNames VARIABLES)
 #foreach (_variableName ${_variableNames})

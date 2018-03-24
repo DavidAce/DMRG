@@ -3,6 +3,8 @@
 //
 
 #include "nmspc_random_numbers.h"
+
+
 using namespace Eigen;
 using namespace std;
 namespace rn{

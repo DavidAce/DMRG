@@ -35,7 +35,7 @@ class class_hdf5_file;
 
 class class_environment_storage {
 public:
-    using Scalar = double;
+    using Scalar = std::complex<double>;
 public:
     std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>, Textra::Tensor<Scalar,3>>>  MPS_L;  /*!< A list of stored \f$ \Gamma^A \Gamma^B...  \f$-tensors with corresponding,  \f$ \Lambda^A \Lambda^B...  \f$ and left environments  indexed by chain position. */
     std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>, Textra::Tensor<Scalar,3>>>  MPS_R;  /*!< A list of stored \f$ \Gamma^A \Gamma^B...  \f$-tensors with corresponding,  \f$ \Lambda^A \Lambda^B...  \f$ and right environments indexed by chain position. */

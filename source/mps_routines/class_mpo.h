@@ -6,15 +6,9 @@
 #define DMRG_CLASS_HAMILTONIAN_H
 
 
-#include <unsupported/Eigen/MatrixFunctions>
-#include "mps_routines/class_mps.h"
 #include <general/nmspc_tensor_extra.h>
-#include "sim_parameters/nmspc_model.h"
-#include "sim_parameters/nmspc_sim_settings.h"
-//
-//using namespace std;
-//using namespace Textra;
-//using namespace Eigen;
+
+using namespace std::complex_literals;
 
 
 /*!
@@ -23,65 +17,41 @@
  * Class for the Hamiltonian MPO, either as a rank-4 MPO used in DMRG, or as a time evolution operator \f$ \exp(-iH\delta t) \f$ as used in TEBD.
 */
 
-template <typename Scalar>
 class class_mpo{
+
 public:
+    using Scalar = std::complex<double>;
     class_mpo();
-    static constexpr int        mps_sites = 2  ;    /*!< Two site MPS */
-    long                        local_dimension;    /*!< Local "spin" dimension */
-    double                      timestep;
-    Textra::MatrixType<Scalar>  H_asMatrix;         /*!< Matrix representation of full 2-site Hamiltonian */
-    Textra::Tensor<Scalar,4>    H_asTensor;         /*!< Rank-4 representation 2-site Hamiltonian (non MPO). */
-    Textra::MatrixType<Scalar>  H_MPO_asMatrix;     /*!< Matrix representation of full 2-site Hamiltonian */
-    Textra::Tensor<Scalar,2>    H_MPO_asTensor2;    /*!< Matrix representation of full 2-site Hamiltonian */
+    static constexpr int        mps_sites = 2  ;   /*!< Two site MPS */
+    long                        local_dimension;   /*!< Local "spin" dimension */
+    double                      step_size;
+    Textra::MatrixType<Scalar>  H_asMatrix;        /*!< Matrix representation of full 2-site Hamiltonian */
+    Textra::Tensor<Scalar,4>    H_asTensor;        /*!< Rank-4 representation 2-site Hamiltonian (non MPO). */
+    Textra::Tensor<Scalar,4>    H_asTensor_sq;     /*!< Rank-4 representation 2-site Hamiltonian squared (non MPO). */
+    Textra::MatrixType<Scalar>  H_MPO_asMatrix;    /*!< Matrix representation of full 2-site Hamiltonian */
+    Textra::Tensor<Scalar,2>    H_MPO_asTensor2;   /*!< Matrix representation of full 2-site Hamiltonian */
+    std::array<Textra::MatrixType<Scalar>,2> h;    /*!< Local even and odd hamiltonians */
 
-    Textra::Tensor<std::complex<double>,4> compute_F(double a);
-    Textra::Tensor<std::complex<double>,4> compute_G(double a);
-    Textra::Tensor<std::complex<double>,4> compute_logG(double a);
-    Textra::Tensor<Scalar,4>               Udt;                 /*!< Rank-4 of 2-site unitary time evolution operator for iTEBD (non MPO). */
-    Textra::Tensor<Scalar,4>               M  ;                 /*!< MPO representation of 1-site Hamiltonian */
-    Textra::Tensor<Scalar,6>               MM ;                 /*!< MPO representation of 2-site Hamiltonian */
-    Textra::Tensor<Scalar,8>               MMMM ;               /*!< MPO representation of 2-site Hamiltonian */
-    Textra::Tensor<std::complex<double>,4> F  ;                 /*!< MPO representation of 1-site moment generating function */
-    Textra::Tensor<std::complex<double>,4> G  ;                 /*!< MPO representation of 1-site characteristic function of the Hamiltonian */
-    void update_timestep(const double delta_t, const int susuki_trotter_order);
+    std::vector<Textra::Tensor<Scalar,4>>  U  ;    /*!< Set of rank-4 of 2-site unitary evolution operators (non-MPO). */
+    Textra::Tensor<Scalar,4>               M  ;    /*!< MPO representation of 1-site Hamiltonian */
+//    Textra::Tensor<Scalar,6>               MM ;    /*!< MPO representation of 2-site Hamiltonian */
+//    Textra::Tensor<Scalar,8>               MMMM ;  /*!< MPO representation of 2-site Hamiltonian */
+    std::vector<Textra::Tensor<Scalar,4>>  G0;     /*!< MPO representation of 1-site moment generating function */
+    std::vector<Textra::Tensor<Scalar,4>>  G1;     /*!< MPO representation of 1-site characteristic function of the Hamiltonian */
 
+    std::vector<Textra::Tensor<Scalar,4>> compute_G(Scalar a, int susuki_trotter_order);
+    std::vector<Textra::Tensor<Scalar,4>> get_2site_evolution_gates(const Scalar t,int susuki_trotter_order);
+    void update_evolution_step_size(const Scalar dt, const int susuki_trotter_order);
+
+    Textra::Tensor<Scalar,4>  compute_M   (Scalar k = 0.0);         /*!< Returns an MPO representation of 1-site Hamiltonian */
+//    Textra::Tensor<Scalar,6>  compute_MM  (Scalar k = 0.0);        /*!< Returns an MPO representation of 2-site Hamiltonian */
+//    Textra::Tensor<Scalar,8>  compute_MMMM(Scalar k = 0.0);      /*!< Returns an MPO representation of 2-site double Hamiltonian */
 private:
 
+    std::vector<Textra::MatrixType<Scalar>> Suzuki_Trotter_1st_order(Scalar t);
+    std::vector<Textra::MatrixType<Scalar>> Suzuki_Trotter_2nd_order(Scalar t);
+    std::vector<Textra::MatrixType<Scalar>> Suzuki_Trotter_4th_order(Scalar t);
 
-    std::array<Textra::MatrixType<std::complex<double>>,2> h;  /*!< Local even and odd hamiltonians */
-
-    Textra::Tensor<Scalar,4>  compute_M();      /*!< Returns an MPO representation of 1-site Hamiltonian */
-    Textra::Tensor<Scalar,6>  compute_MM();     /*!< Returns an MPO representation of 2-site Hamiltonian */
-    Textra::Tensor<Scalar,8>  compute_MMMM();   /*!< Returns an MPO representation of 2-site double Hamiltonian */
-
-    template<typename T>
-    Textra::MatrixType<std::complex<double>> Suzuki_Trotter_1st_order(T t){
-        return (t*h[0]).exp() * (t*h[1]).exp();
-    }
-
-    template<typename T>
-    Textra::MatrixType<std::complex<double>> Suzuki_Trotter_2nd_order(T t){
-        return (t*h[0]/2.0).exp() * (t*h[1]).exp() * (t * h[0]/2.0).exp();
-    }
-
-
-    template<typename T>
-    Textra::MatrixType<std::complex<double>> Suzuki_Trotter_4th_order(T t){
-        T t1 = t /(4.0-pow(4.0,1.0/3.0));
-        T t2 = t1;
-        T t3 = t - 2.0*t1 - 2.0*t2;
-        return Suzuki_Trotter_2nd_order(t1)
-               *Suzuki_Trotter_2nd_order(t2)
-               *Suzuki_Trotter_2nd_order(t3)
-               *Suzuki_Trotter_2nd_order(t2)
-               *Suzuki_Trotter_2nd_order(t1);
-    }
-
-    Textra::Tensor<std::complex<double>,4> TimeEvolution_1st_order(const double delta_t);
-    Textra::Tensor<std::complex<double>,4> TimeEvolution_2nd_order(const double delta_t);
-    Textra::Tensor<std::complex<double>,4> TimeEvolution_4th_order(const double delta_t);
-    Textra::Tensor<Scalar,4>               compute_Udt(const double delta_t, const int order);
 
 };
 
