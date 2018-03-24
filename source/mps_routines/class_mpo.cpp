@@ -9,6 +9,7 @@
 
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>
+#include <sim_parameters/nmspc_model.h>
 #include <general/nmspc_tensor_extra.h>
 #include <mps_routines/class_mpo.h>
 
@@ -16,41 +17,29 @@ using namespace std;
 using namespace Textra;
 using namespace Eigen;
 using namespace std::complex_literals;
+using Scalar = class_mpo::Scalar;
 
-template<typename Scalar>
-class_mpo<Scalar>::class_mpo() {
+class_mpo::class_mpo() {
     local_dimension       = Model::local_dimension;
-    h  = {Model::h(mps_sites,0), Model::h(mps_sites,1)};
+    h                     = {Model::h(mps_sites,0), Model::h(mps_sites,1)};
+    H_asMatrix            = Model::H(mps_sites);
+    H_asTensor            = Textra::Matrix_to_Tensor(Model::H(mps_sites), 2,2,2,2);
+    H_asTensor_sq         = Textra::Matrix_to_Tensor(Model::Hsq(mps_sites), 2,2,2,2);
+    H_MPO_asMatrix        = Model::MPO_asMatrix();
+    H_MPO_asTensor2       = Textra::Matrix_to_Tensor2(Model::MPO_asMatrix());
 
-    if constexpr (is_same_v<Scalar,std::complex<double>>){
-        H_asMatrix      = Model::H(mps_sites);
-        H_asTensor      = Textra::Matrix_to_Tensor<std::complex<double>,4>(Model::H(mps_sites), {2,2,2,2});
-        H_MPO_asMatrix  = Model::MPO_asMatrix();
-        H_MPO_asTensor2 = Textra::Matrix_to_Tensor2(Model::MPO_asMatrix());
-    }else if constexpr (is_same_v<Scalar,double>){
-        H_asMatrix      = Model::H(mps_sites).real();
-        H_asTensor      = Textra::Matrix_to_Tensor<std::complex<double>,4>(Model::H(mps_sites), {2,2,2,2}).real();
-        H_MPO_asMatrix  = Model::MPO_asMatrix().real();
-        H_MPO_asTensor2 = Textra::Matrix_to_Tensor2(Model::MPO_asMatrix()).real();
-    }else{
-        std::cerr << "MPO not real or complex" << std::endl;
-        exit(1);
-    }
 
-    Udt                   = compute_Udt(0.01, 1);
+    update_evolution_step_size(-0.01, 2);
     M                     = compute_M();
-    MM                    = compute_MM();
-    MMMM                  = compute_MMMM();
-    F                     = compute_F(1e-14);
-    G                     = compute_G(1e-14);
-
-
+//    MM                    = compute_MM();
+//    MMMM                  = compute_MMMM();
+    G0                    = compute_G( 0.0i*1e-2, 4);
+    G1                    = compute_G( 1.0i*1e-2, 4);
 }
 
 
 
-template <typename Scalar>
-Tensor<Scalar,4> class_mpo<Scalar>::compute_M()
+Tensor<Scalar,4> class_mpo::compute_M(Scalar k)
 /*! Returns the MPO hamiltonian as a rank 4 MPO. Notation following Schollwöck (2010)
  *
  *          2
@@ -60,152 +49,127 @@ Tensor<Scalar,4> class_mpo<Scalar>::compute_M()
  *          3
  */
 {
-    return Matrix_to_Tensor<Scalar,4> (H_MPO_asMatrix, {2,3,2,3}).shuffle(array4{1,3,0,2});
-}
-
-template <typename Scalar>
-Tensor<Scalar,6> class_mpo<Scalar>::compute_MM()
-/*! Returns a 2-site Hamitlonian MPO of rank 6. Notation following Schollwöck (2010)
- *
- *           2   3
- *           |   |
- *       0---M---M---1
- *           |   |
- *           4   5
- */
-{
-    return  M.contract(M, idx<1>({1},{0})).shuffle(array6{0,3,1,4,2,5});
-}
-
-template <typename Scalar>
-Tensor<Scalar,8> class_mpo<Scalar>::compute_MMMM()
-/*! Returns a 2-site Hamitlonian MPO of rank 6. Notation following Schollwöck (2010)
- *
- *           4   5
- *           |   |
- *       0---M---M---1
- *           |   |
- *       2---M---M---3
- *           |   |
- *           6   7
- */
-{
-
-    return  MM.contract(MM, idx<2>({2,3},{4,5})).shuffle(array8{0,1,4,5,2,3,6,7});
-
+    return Matrix_to_Tensor(Model::MPO_asMatrix(k), 2,3,2,3).shuffle(array4{1,3,0,2});
 }
 
 
-template <typename Scalar>
-Tensor<std::complex<double>,4> class_mpo<Scalar>::compute_F(double a)
-/*! Returns the moment generating function MPO hamiltonian as a rank 4 MPO.
-   *   F := exp(aM), where a is a small parameter and M is an MPO.
-   *
-   *           0       1
-   *           |       |
-   *           [exp(aH)]
-   *           |       |
-   *           2       3
-   *
-   * Where H = H_even + H_odd, so exp(aH) can be Suzuki-Trotter decomposed just as in iTEBD
-   */
-{
-
-    return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_2nd_order(a), {2,2,2,2});
-};
-
-
-template <typename Scalar>
-Tensor<std::complex<double>,4> class_mpo<Scalar>::compute_G(double a){
-    /*! Returns the characteristic function MPO hamiltonian as a rank 4 tensor.
-    *   G := exp(iaM), where a is a small parameter and M is an MPO.
-    *           0         1
-    *           |         |
-    *           [exp(iaH)]
-    *           |         |
-    *           2         3
-    */
-    return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_4th_order(1.0i * a), {2,2,2,2});
-};
-
-
-template <typename Scalar>
-Tensor<std::complex<double>,4> class_mpo<Scalar>::compute_logG(double a){
-    /*! Returns the characteristic function MPO hamiltonian as a rank 4 tensor.
-    *   G := exp(iaM), where a is a small parameter and M is an MPO.
-    *           0         1
-    *           |         |
-    *           [exp(iaH)]
-    *           |         |
-    *           2         3
-    */
-    return Matrix_to_Tensor<std::complex<double>,4>(((1i*a*h[0]/2.0).exp() * (1i*a*h[1]).exp() * (1i*a * h[0]/2.0).exp()).log(), {2,2,2,2});
-};
-
-
-
-template <typename Scalar>
-Tensor<std::complex<double>,4> class_mpo<Scalar>::TimeEvolution_1st_order(const double delta_t) {
-    return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_1st_order(-delta_t), array4{2,2,2,2});
-}
-
-
-template <typename Scalar>
-Tensor<std::complex<double>,4> class_mpo<Scalar>::TimeEvolution_2nd_order(const double delta_t) {
-    return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_2nd_order(-delta_t), array4{2,2,2,2});
-}
-
-
-template <typename Scalar>
-Tensor<std::complex<double>,4> class_mpo<Scalar>::TimeEvolution_4th_order(const double delta_t) {
-    return Matrix_to_Tensor<std::complex<double>,4>(Suzuki_Trotter_4th_order(-delta_t), array4{2,2,2,2});
-}
-
-template <typename Scalar>
-Tensor<Scalar,4> class_mpo<Scalar>::compute_Udt(double delta_t, int order) {
-    /*! Returns a 2-site non-MPO time evolution operator.
+std::vector<Textra::Tensor<Scalar,4>> class_mpo::compute_G(Scalar a, int susuki_trotter_order)
+/*! Returns the moment generating function, or characteristic function (if a is imaginary) for the Hamiltonian as a rank 4 tensor.
+*   G := exp(iaM) or exp(aM), where a is a small parameter and M is an MPO.
+*   Note that G(-a) = G(a)* if  exp(iaM) !
 *
-*           0         1
-*           |         |
-*           [exp(H*dt)]
-*           |         |
-*           2         3
+@verbatim
+            0         1
+            |         |
+            [ exp(aH) ]
+            |         |
+            2         3
+@endverbatim
 */
-    timestep = delta_t;
-    if constexpr(std::is_same_v<Scalar, std::complex<double>>) {
-        switch (order) {
-            case 1:
-                return TimeEvolution_1st_order(delta_t);
-            case 2:
-                return TimeEvolution_2nd_order(delta_t);
-            case 4:
-                return TimeEvolution_4th_order(delta_t);
-            default:
-                return TimeEvolution_1st_order(delta_t);
-        }
-    } else if constexpr(std::is_same_v<Scalar, double>) {
-        switch (order) {
-            case 1:
-                return TimeEvolution_1st_order(delta_t).real();
-            case 2:
-                return TimeEvolution_2nd_order(delta_t).real();
-            case 4:
-                return TimeEvolution_4th_order(delta_t).real();
-            default:
-                return TimeEvolution_1st_order(delta_t).real();
-        }
-    };
+{
+    return get_2site_evolution_gates(a,susuki_trotter_order);
+};
+
+
+
+std::vector<Textra::MatrixType<Scalar>> class_mpo::Suzuki_Trotter_1st_order(Scalar t){
+    return {(t*h[0]).exp(),
+            (t*h[1]).exp() };
 }
 
-template <typename Scalar>
-void class_mpo<Scalar>::update_timestep(const double delta_t, const int susuki_trotter_order){
-    timestep = delta_t;
-    Udt = compute_Udt(delta_t, susuki_trotter_order);
+std::vector<Textra::MatrixType<Scalar>> class_mpo::Suzuki_Trotter_2nd_order(Scalar t){
+    return {(t*h[0]/2.0).exp(),
+            (t*h[1]).exp(),
+            (t*h[0]/2.0).exp()};
 }
 
-//Explicit instantiations
+
+std::vector<Textra::MatrixType<Scalar>> class_mpo::Suzuki_Trotter_4th_order(Scalar t)
+/*!
+ * Implementation based on
+ * Janke, W., & Sauer, T. (1992).
+ * Properties of higher-order Trotter formulas.
+ * Physics Letters A, 165(3), 199–205.
+ * https://doi.org/10.1016/0375-9601(92)90035-K
+ * */
+{
+    double cbrt2 = pow(2.0,1.0/3.0);
+    double beta1 = 1.0/(2.0 - cbrt2);
+    double beta2 = - cbrt2 *beta1;
+    double alph1 = 0.5*beta1;
+    double alph2 = (1.0 - cbrt2)/2.0 * beta1;
+
+    std::vector<Textra::MatrixType<Scalar>> temp;
+
+    temp.emplace_back( (alph1 *  t*h[0]).exp() );
+    temp.emplace_back( (beta1 *  t*h[1]).exp() );
+    temp.emplace_back( (alph2 *  t*h[0]).exp() );
+    temp.emplace_back( (beta2 *  t*h[1]).exp() );
+    temp.emplace_back( (alph2 *  t*h[0]).exp() );
+    temp.emplace_back( (beta1 *  t*h[1]).exp() );
+    temp.emplace_back( (alph1 *  t*h[0]).exp() );
+    return temp;
+}
 
 
-template class class_mpo<double>;
-template class class_mpo<std::complex<double>>;
+std::vector<Textra::Tensor<Scalar,4>> class_mpo::get_2site_evolution_gates(const Scalar t,int susuki_trotter_order)
+/*! Returns a set of 2-site unitary gates, using Suzuki Trotter decomposition to order 1, 2 or 3.
+ * These gates need to be applied to the MPS one at a time with a swap in between.
+ */
+{
+    std::vector<Textra::MatrixType<Scalar>> matrix_vec;
+    switch (susuki_trotter_order) {
+        case 1:  matrix_vec = Suzuki_Trotter_1st_order(t);break;
+        case 2:  matrix_vec = Suzuki_Trotter_2nd_order(t);break;
+        case 4:  matrix_vec = Suzuki_Trotter_4th_order(t);break;
+        default: matrix_vec = Suzuki_Trotter_2nd_order(t);break;
+    }
+    std::vector<Textra::Tensor<Scalar ,4>> tensor_vec;
+    for(auto &m : matrix_vec){
+        tensor_vec.emplace_back(Textra::Matrix_to_Tensor(m, 2,2,2,2));
+    }
+    return tensor_vec;
+}
 
+
+void class_mpo::update_evolution_step_size(const Scalar dt, const int susuki_trotter_order){
+    /*! Returns a set of 2-site unitary gates for the time evolution operator. */
+    step_size = std::abs(dt);
+    U = get_2site_evolution_gates(dt, susuki_trotter_order);
+}
+
+
+
+
+//
+//Tensor<Scalar,6> class_mpo::compute_MM(Scalar k)
+///*! Returns a 2-site Hamitlonian MPO of rank 6. Notation following Schollwöck (2010)
+// *
+// *           2   3
+// *           |   |
+// *       0---M---M---1
+// *           |   |
+// *           4   5
+// */
+//{
+//    auto M = compute_M(k);
+//    return  M.contract(M, idx({1},{0})).shuffle(array6{0,3,1,4,2,5});
+//}
+
+//
+//Tensor<Scalar,8> class_mpo::compute_MMMM(Scalar k)
+///*! Returns a 2-site Hamitlonian MPO of rank 6. Notation following Schollwöck (2010)
+// *
+// *           4   5
+// *           |   |
+// *       0---M---M---1
+// *           |   |
+// *       2---M---M---3
+// *           |   |
+// *           6   7
+// */
+//{
+//    auto MM = compute_MM(k);
+//    return  MM.contract(MM, idx({4,5},{2,3})).shuffle(array8{0,1,4,5,2,3,6,7});
+////    return  M.contract(M, idx({2,3},{4,5})).shuffle(array8{0,1,4,5,2,3,6,7});
+//}

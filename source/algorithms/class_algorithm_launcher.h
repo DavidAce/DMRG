@@ -25,6 +25,7 @@ public:
         run_imaginary_TEBD();
         run_FES_iDMRG();
         run_FES_iTEBD();
+        std::cout << "All algorithms finished." << std::endl;
     };
 
     void run_infinite_DMRG();

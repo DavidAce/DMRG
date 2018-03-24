@@ -2438,7 +2438,7 @@ PLANTUML_INCLUDE_PATH  =
 
 # The DOT_GRAPH_MAX_NODES tag can be used to set the maximum number of nodes
 # that will be shown in the graph. If the number of nodes in a graph becomes
-# larger than this value, doxygen will truncate the graph, which is visualized
+# larger than this value, doxygen will truncate_MPS the graph, which is visualized
 # by representing a node as a red box. Note that doxygen if the number of direct
 # children of the root node in a graph is already larger than
 # DOT_GRAPH_MAX_NODES then the graph will not be shown at all. Also note that

@@ -73,7 +73,7 @@ namespace Model {
             SZ = gen_manybody_spin(sz(), sites);
             spins_must_be_generated = false;
         }
-        return 0.5 * (-J * SZ[i] * SZ[j] - 0.5 * g * (SX[i] + SX[j]));
+        return (-J * SX[i] * SX[j] - 0.5 * g * (SZ[i] + SZ[j]));
     }
 
     MatrixXcd H(int sites) {
@@ -84,16 +84,26 @@ namespace Model {
         return hi;
     }
 
+    MatrixXcd Hsq(int sites) {
+        MatrixXcd hi = MatrixXcd::Zero((long) pow(2, sites), (long) pow(2, sites));
+//        hi = h(sites, 0) * h(sites, 0) +  h(sites, 1) * h(sites, 1) + h(sites, 0) * h(sites, 1) + h(sites, 1) * h(sites, 0);
+        for (int position1 = 0; position1 < sites; position1++) {
+            for(int position2 = 0; position2 < sites; position2++){
+                hi += h(sites, position1) * h(sites, position2);
+            }
+        }
+        return hi;
+    }
 
-    MatrixXcd MPO_asMatrix() {
+    MatrixXcd MPO_asMatrix(Scalar k) {
         /*! Returns the MPO as a matrix. Notation following Schollwöck (2010) */
 
         MatrixXcd W(6, 6);
         W.setZero();
         W.block(0, 0, 2, 2) = I();
-        W.block(2, 0, 2, 2) = sz();
-        W.block(4, 0, 2, 2) = -g * sx();
-        W.block(4, 2, 2, 2) = -J * sz();
+        W.block(2, 0, 2, 2) = sx();
+        W.block(4, 0, 2, 2) = -g * sz() - k * I(); // Optionally subtract a constant. Default is k = 0.
+        W.block(4, 2, 2, 2) = -J * sx();
         W.block(4, 4, 2, 2) = I();
         return W;
     }

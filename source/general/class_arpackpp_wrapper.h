@@ -27,7 +27,7 @@ class class_arpackpp_wrapper {
 private:
     double eigThreshold = 1e-12;
     int    eigMaxIter   = 1000;
-    int    ncv_max = 10;
+    int    ncv_max = 20;
 
     using  MapType = std::map<arpack::Ritz, std::string>;
     MapType RitzToString;
@@ -57,7 +57,7 @@ private:
                 for (int j = 0; j < rows; j++) {
                     eigvecs(j, i) = solution.Eigenvector(i, j);
                     if constexpr(std::is_same_v<T_vec, std::complex<double>>){
-                        std::complex<double> inv_phase = -1.0i * phase;
+                        T_vec inv_phase = -1.0i * phase;
                         eigvecs(j, i) *= std::exp(inv_phase);
                     }
                 }
@@ -92,10 +92,12 @@ public:
 
     }
 
+    void setThreshold(double newThreshold) {
+        eigThreshold = newThreshold;
+    }
 
-
-    template<arpack::Form form, arpack::Ritz ritz, arpack::Side side = arpack::Side::R, bool return_eigenvectors = true, typename Scalar>
-    auto solve_dominant(Scalar *data, int rows, int cols, const int nev, Scalar *residp =  NULL) {
+    template<arpack::Form form, arpack::Ritz ritz, arpack::Side side = arpack::Side::R, bool return_eigenvectors = true, typename Scalar, typename SizeType>
+    auto solve_dominant(Scalar *data, SizeType rows, SizeType cols, const int nev, Scalar *residp =  NULL) {
         Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> inputdata(data, rows,cols );
         assert(rows == cols && "Input matrix is not square. Error in Arpack eigenvalue solver.");
         int n   = rows;
@@ -110,27 +112,21 @@ public:
 
 
         if constexpr(form == arpack::Form::SYMMETRIC && std::is_same_v<Scalar, double>){
-            ARdsSymMatrix<double> matrix(n, internal_data.data());
-            ARluSymStdEig<double> eigs(nev, matrix, RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter, residp);
+            ARdsSymMatrix<Scalar> matrix(n, internal_data.data());
+            ARluSymStdEig<Scalar> eigs(nev, matrix, RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter, residp);
             return retrieve_solution<return_eigenvectors>(eigs,nev);
         }
         if constexpr(form == arpack::Form::GENERAL && std::is_same_v<Scalar, double>){
             int nev_temp = nev == 1 ? 2 : nev;
-            ARdsNonSymMatrix<double,double> matrix(n, internal_data.data());
-            ARluNonSymStdEig<double> eigs(nev_temp, matrix, RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter,residp);
+            ARdsNonSymMatrix<Scalar,Scalar> matrix(n, internal_data.data());
+            ARluNonSymStdEig<Scalar> eigs(nev_temp, matrix, RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter,residp);
             return retrieve_solution<return_eigenvectors>(eigs,nev);
         }
 
         if constexpr(form == arpack::Form::COMPLEX && std::is_same_v<Scalar, std::complex<double>>){
-//            int nev_temp = nev == 1 ? 2 : nev;
             ARdsNonSymMatrix<std::complex<double>,double> matrix(n, internal_data.data());
             ARluCompStdEig<double> eigs(nev, matrix, RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter,residp);
-//            std::cout << "rows: " << rows << std::endl
-//                      << "cols: " << cols << std::endl
-//                      << "ncv:  " << ncv  << std::endl
-//                      << "Ritz: " << RitzToString.at(ritz) <<std::endl;
             return retrieve_solution<return_eigenvectors>(eigs,nev);
-
         }
     }
 };

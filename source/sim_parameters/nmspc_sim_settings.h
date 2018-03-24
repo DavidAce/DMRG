@@ -33,7 +33,7 @@ namespace settings {
     //Parameters controlling iDMRG
     namespace idmrg {
         extern bool on         ;                            /*!< Turns iDMRG simulation on/off. */
-        extern int  max_length ;                            /*!< Final length of 1D quantum chain. */
+        extern int  max_steps ;                             /*!< Final length of 1D quantum chain. */
         extern long chi_max    ;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         extern bool chi_grow   ;                            /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         extern int  print_freq ;                            /*!< Print frequency for console output. (0 = off). */
@@ -95,7 +95,7 @@ namespace settings {
     //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
     namespace fes_idmrg {
         extern bool on               ;                      /*!< Turns FES-iDMRG simulation on/off. */
-        extern int       max_length  ;                      /*!< Number of FES iterations per chi-value. */
+        extern int       max_steps  ;                       /*!< Number of FES iterations per chi-value. */
         extern long      chi_min     ;                      /*!< Minimum chi-value in range. */
         extern long      chi_max     ;                      /*!< Maximum chi-value in range. */
         extern long      chi_num     ;                      /*!< Number of chi values for in range. */

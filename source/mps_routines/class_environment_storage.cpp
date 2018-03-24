@@ -11,6 +11,7 @@
 
 using namespace std;
 using namespace Textra;
+using Scalar = class_environment_storage::Scalar;
 
 class_environment_storage::class_environment_storage(
         int max_length_,
@@ -119,7 +120,7 @@ int class_environment_storage::move(int &direction, int &sweep){
     }
 
     //Check if the middle is passed
-    if(direction == 1 && MPS_L.size() == max_length/2  -1){
+    if(direction == 1 && (int)MPS_L.size() == max_length/2  -1){
         sweep++;
     }
     return (int)MPS_L.size();

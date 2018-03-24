@@ -26,7 +26,7 @@
 
 namespace Model {
 
-//    using Scalar = double; //Type for the groundstate wavefunction. Typically just double if the Hamiltonian is Real and Symmetric or Hermitian.
+    using Scalar = std::complex<double>; //Type for the groundstate wavefunction. Typically just double if the Hamiltonian is Real and Symmetric or Hermitian.
 
     inline double J = 1.0;
     inline double g = 1.0;
@@ -49,7 +49,8 @@ namespace Model {
     inline std::vector<Eigen::MatrixXcd> SZ;
     extern Eigen::MatrixXcd h(int sites, int position);
     extern Eigen::MatrixXcd H(int sites);
-    extern Eigen::MatrixXcd MPO_asMatrix();
+    extern Eigen::MatrixXcd Hsq(int sites);
+    extern Eigen::MatrixXcd MPO_asMatrix(Scalar k = 0.0);
 
 
 

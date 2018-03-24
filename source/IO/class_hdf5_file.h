@@ -63,6 +63,7 @@ public:
         H5Pclose(plist_xfer);
         H5Pclose(plist_lncr);
         H5Fclose(file);
+        std::cout << "Data written to file: " << output_file_path << std::endl;
     }
     template<typename DataType>
     void extend_dataset(const DataType &data, const std::string & dataset_relative_name);

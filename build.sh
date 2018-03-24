@@ -44,5 +44,5 @@ fi
 echo "Starting Build"
 cmake -E make_directory build/${buildtype}
 cd build/${buildtype}
-cmake -DCMAKE_BUILD_TYPE=${buildtype} -G "CodeBlocks - Unix Makefiles" ../../
+cmake  ${dcmake_c_compiler} ${dcmake_cxx_compiler} -DCMAKE_BUILD_TYPE=${buildtype} -G "CodeBlocks - Unix Makefiles" ../../
 cmake --build . --target DMRG++ -- -j 4

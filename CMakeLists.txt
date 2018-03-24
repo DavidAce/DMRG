@@ -7,6 +7,15 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 include(cmake/get_libraries.cmake)
 
 ################################################################
+### Use cotire (compile time reducer) to speed up compile    ###
+################################################################
+#include(cotire)
+#set_property(DIRECTORY PROPERTY COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY")
+
+
+
+
+################################################################
 ### Get git version number                                   ###
 ### Generates a header gitversion/gitversion.h               ###
 ### Include it using #include <gitversion.h>                 ###
@@ -51,8 +60,9 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_compile_options (${PROJECT_NAME} PUBLIC ${COMMON_OPTIONS})                                   ### Common options
 target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
 target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
-target_link_libraries  (${PROJECT_NAME} -flto)                                                       ### Link time optimization flag
-
+target_link_libraries  (${PROJECT_NAME} -flto)                                                      ### Link time optimization flag
+target_link_libraries  (${PROJECT_NAME} -lstdc++fs)                                                 ### For experimental::filesystem
+#target_link_libraries  (${PROJECT_NAME} -lc++experimental)                                         ### For experimental::filesystem
 ######################################################
 ###  Require c++17 support and test that it works  ###
 ######################################################
@@ -64,7 +74,14 @@ check_include_file_cxx(experimental/type_traits has_experimental_type_traits -st
 if(has_experimental_filesystem AND has_experimental_type_traits)
     message(STATUS "C++17 experimental features are supported.")
 else()
-    message(FATAL_ERROR "Missing experimental headers for C++17. Check your compiler and libstdc++ versions")
+    message(WARNING "Missing experimental headers for C++17. Checking alternative...")
+    check_include_file_cxx(filesystem  has_filesystem -std=c++17)
+    check_include_file_cxx(type_traits has_type_traits -std=c++17)
+    if(has_filesystem AND has_type_traits)
+        message(STATUS "C++17 experimental features are supported.")
+    else()
+        message(FATAL_ERROR "Missing experimental headers for C++17. Check your compiler and libstdc++ versions")
+    endif()
 endif()
 
 
@@ -75,13 +92,13 @@ endif()
 #######################################
 
 target_include_directories(${PROJECT_NAME} PRIVATE source)
-target_link_libraries(${PROJECT_NAME} -lstdc++fs)                              ### For experimental::filesystem
+#set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY-UNITY")
 
 
 ###########################################
 ###  Find or install all dependencies   ###
 ###########################################
-#include(cmake/Find_dont_install_INTELMKL.cmake)          ### For Intel MKL library. Note that it conflicts with arpack++
+#include(cmake/Find_dont_install_INTELMKL.cmake)         ### For Intel MKL library. Note that it conflicts with arpack++
 include(cmake/Find_or_install_EIGEN3.cmake)              ### For Eigen linear algebra header-library http://eigen.tuxfamily.org/
 include(cmake/Find_or_install_HDF5.cmake)                ### For HDF5 data env_storage format            https://support.hdfgroup.org
 include(cmake/Find_or_install_LAPACK_and_BLAS.cmake)     ### For Lapack and Blas libraries           https://github.com/Reference-LAPACK/lapack
@@ -121,7 +138,10 @@ message("")
 message("==================================================================")
 
 
-
+#set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j6")
+#set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER TRUE)
+#set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_ADD_UNITY_BUILD TRUE)
+#cotire(${PROJECT_NAME})
 
 
 # To print all variables, use the code below:

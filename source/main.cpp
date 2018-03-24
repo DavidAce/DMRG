@@ -14,7 +14,7 @@
 int main(int argc, char* argv[]) {
 
     // Print current Git status
-    std::cout << "Git Branch: "      + GIT::BRANCH +
+    std::cout << "Git Branch: " + GIT::BRANCH +
             " | Commit hash: "  + GIT::COMMIT_HASH +
             " | Revision: "     + GIT::REVISION << std::endl << std::flush;
 
@@ -30,6 +30,7 @@ int main(int argc, char* argv[]) {
 
     //Run the algorithms
     launcher.run_algorithms();
+
 
     return 0;
 }
