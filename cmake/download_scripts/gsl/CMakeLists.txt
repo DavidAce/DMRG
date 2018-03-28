@@ -39,7 +39,7 @@ ExternalProject_Add(GSL
         CONFIGURE_COMMAND
             cd <SOURCE_DIR> &&
             pwd &&
-            ./configure CFLAGS=-w --quiet --silent --enable-silent-rules --enable-shared=no --prefix=<INSTALL_DIR>
+            ./configure CFLAGS= --enable-shared=no --prefix=<INSTALL_DIR>
         BUILD_COMMAND
             cd <SOURCE_DIR> &&
             pwd &&
@@ -52,6 +52,6 @@ ExternalProject_Add(GSL
 
 
 
-
+#-w --quiet --silent --enable-silent-rules
 
 
