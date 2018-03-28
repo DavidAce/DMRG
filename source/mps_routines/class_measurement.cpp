@@ -80,7 +80,6 @@ double class_measurement::compute_energy_H(){
                     .contract(superblock->MPS->r_odd,                           idx({0,1},{0,1}));
     assert(abs(imag(E_evn(0)+ E_odd(0))) < 1e-10 and "Energy has an imaginary part!!!" );
     return 0.5*std::real(E_evn(0) + E_odd(0)) ;
-
 }
 
 

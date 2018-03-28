@@ -6,6 +6,8 @@
 
   \brief This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm.
 
+  Link to the [working notes](https://github.com/DavidAce/Notebooks/blob/master/DMRG%2B%2B/DMRG%2B%2B.pdf) on the theoretical aspects of this implementation.
+
   \tableofcontents
 
   \section intro Description of DMRG++

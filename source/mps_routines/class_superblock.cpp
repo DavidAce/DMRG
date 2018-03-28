@@ -147,18 +147,18 @@ void class_superblock::enlarge_environment(int direction){
             .contract(MPS->theta.conjugate(),   idx({0,2,4},{1,0,2}))
             .contract(Rblock->block,            idx({0,2,1},{0,1,2}));
 
-    Tensor<Scalar, 0>  Etest2 =
-            Lblock->block
-                    .contract(MPS->theta,               idx({0},{1}))
-                    .contract(M_minus_E,                     idx({1,2},{0,2}))
-                    .contract(M_minus_E,                     idx({3,1},{0,2}))
-                    .contract(MPS->theta.conjugate(),   idx({0,2,4},{1,0,2}))
-                    .contract(Rblock->block,            idx({0,2,1},{0,1,2}));
-    Tensor<Scalar, 0>  Etest3 =
-            Lblock->block
-                    .contract(asDiagonal(MPS->LA), idx({0},{0}))
-                    .contract(asDiagonal(MPS->LA), idx({0},{0}))
-                    .contract(Rblock->block,       idx({1,2,0},{0,1,2}));
+//    Tensor<Scalar, 0>  Etest2 =
+//            Lblock->block
+//                    .contract(MPS->theta,               idx({0},{1}))
+//                    .contract(M_minus_E,                     idx({1,2},{0,2}))
+//                    .contract(M_minus_E,                     idx({3,1},{0,2}))
+//                    .contract(MPS->theta.conjugate(),   idx({0,2,4},{1,0,2}))
+//                    .contract(Rblock->block,            idx({0,2,1},{0,1,2}));
+//    Tensor<Scalar, 0>  Etest3 =
+//            Lblock->block
+//                    .contract(asDiagonal(MPS->LA), idx({0},{0}))
+//                    .contract(asDiagonal(MPS->LA), idx({0},{0}))
+//                    .contract(Rblock->block,       idx({1,2,0},{0,1,2}));
 
     double E_one_site = E_two_site(0).real()/2.0;
 
@@ -177,16 +177,16 @@ void class_superblock::enlarge_environment(int direction){
         Lblock2->enlarge(MPS, M_minus_E);
         Rblock2->enlarge(MPS, M_minus_E);
         chain_length += 2;
-
-        Tensor<Scalar, 0>  Etest =
-                Lblock->block
-                        .contract(asDiagonal(MPS->LA), idx({0},{0}))
-                        .contract(asDiagonal(MPS->LA), idx({0},{0}))
-                        .contract(Rblock->block,       idx({1,2,0},{0,1,2}));
-
-        std::cout << Etest << std::endl;
-        std::cout << Etest2 << std::endl;
-        std::cout << Etest3 << std::endl;
+//
+//        Tensor<Scalar, 0>  Etest =
+//                Lblock->block
+//                        .contract(asDiagonal(MPS->LA), idx({0},{0}))
+//                        .contract(asDiagonal(MPS->LA), idx({0},{0}))
+//                        .contract(Rblock->block,       idx({1,2,0},{0,1,2}));
+//
+//        std::cout << Etest << std::endl;
+//        std::cout << Etest2 << std::endl;
+//        std::cout << Etest3 << std::endl;
     }
 }
 

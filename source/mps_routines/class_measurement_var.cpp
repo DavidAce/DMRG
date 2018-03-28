@@ -219,13 +219,13 @@ std::pair<double,double> class_measurement::compute_infinite_moments_G(Scalar a,
 
 
 double class_measurement::compute_infinite_variance_MPO(){
-    Tensor<Scalar, 0> E2 =
+    Tensor<Scalar, 0> deltaH2 =
             superblock->Lblock2->block
                     .contract(asDiagonal(superblock->MPS->LA), idx({0},{0}))
                     .contract(asDiagonal(superblock->MPS->LA), idx({0},{0}))
             .contract(superblock->Rblock2->block, idx({2, 3, 0, 1}, {0, 1, 2, 3}));
-    double L = superblock->chain_length;
-    return std::real( E2(0)/ (L - 2.0));
+    double L =  superblock->Lblock2->size + superblock->Rblock2->size;
+    return std::real( deltaH2(0)/ L );
 }
 
 double class_measurement::compute_infinite_variance_H(){
