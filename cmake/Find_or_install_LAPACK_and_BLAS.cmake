@@ -19,6 +19,11 @@
 #set(BLA_VENDOR OpenBLAS)
 #find_package(BLAS)
 
+if(MKL_LIBRARIES)
+    return()
+endif()
+
+
 message("SEARCHING FOR LIBRARY: LAPACK")
 set(USE_OPTIMIZED_BLAS ON)
 set(BLAS_FIND_QUIETLY ON)
@@ -28,13 +33,15 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/libs/lapack/FindLapack.cmake" )
     FILE(GLOB_RECURSE LAPACK_CMAKE_DIR "${LAPACK_CMAKE_DIR}/*lapack-config.cmake")
     get_filename_component(LAPACK_CMAKE_DIR "${LAPACK_CMAKE_DIR}" DIRECTORY)
     find_package(LAPACK PATHS "${LAPACK_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE REQUIRED)
-    set(LAPACK_LIBRARIES ${LAPACK_lapack_LIBRARIES})
-    set(BLAS_LIBRARIES ${LAPACK_blas_LIBRARIES})
-    if(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
-        message(STATUS "FOUND PREVIOUSLY INSTALLED LAPACK:   ${LAPACK_LIBRARIES}")
-        message(STATUS "FOUND PREVIOUSLY INSTALLED BLAS:     ${BLAS_LIBRARIES}")
-        target_link_libraries(${PROJECT_NAME} ${LAPACK_LIBRARIES})
-        target_link_libraries(${PROJECT_NAME} ${BLAS_LIBRARIES})
+#    set(LAPACK_LIBRARIES ${LAPACK_lapack_LIBRARIES})
+#    set(BLAS_LIBRARIES ${LAPACK_blas_LIBRARIES})
+    get_property(LAPACK_LIBRARIES TARGET ${LAPACK_lapack_LIBRARIES} PROPERTY LOCATION)
+    get_property(BLAS_LIBRARIES TARGET ${LAPACK_blas_LIBRARIES} PROPERTY LOCATION)
+    if(LAPACK_lapack_LIBRARIES AND LAPACK_blas_LIBRARIES)
+        message(STATUS "FOUND PREVIOUSLY INSTALLED LAPACK:   ${LAPACK_lapack_LIBRARIES} (Location -- ${LAPACK_LIBRARIES})")
+        message(STATUS "FOUND PREVIOUSLY INSTALLED BLAS:     ${LAPACK_blas_LIBRARIES}   (Location -- ${BLAS_LIBRARIES})")
+        target_link_libraries(${PROJECT_NAME} ${LAPACK_lapack_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${LAPACK_blas_LIBRARIES})
         target_link_libraries(${PROJECT_NAME} ${GFORTRAN_LIB})
         return()
     endif()
@@ -52,6 +59,8 @@ else()
     message(STATUS "DOWNLOADING LAPACK...")
     set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
     include(cmake/FindGFortran.cmake)    ### For Fortran library
+    unset(BLAS_LIBRARIES)
+    unset(LAPACK_LIBRARIES)
 
     execute_process(
 		COMMAND ${CMAKE_COMMAND} -E make_directory tmp/lapack
@@ -79,15 +88,34 @@ else()
     FILE(GLOB_RECURSE LAPACK_CMAKE_DIR "${LAPACK_CMAKE_DIR}/*lapack-config.cmake")
     get_filename_component(LAPACK_CMAKE_DIR "${LAPACK_CMAKE_DIR}" DIRECTORY)
     find_package(LAPACK PATHS "${LAPACK_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE REQUIRED)
-    set(LAPACK_LIBRARIES ${LAPACK_lapack_LIBRARIES})
-    set(BLAS_LIBRARIES ${LAPACK_blas_LIBRARIES})
-    if(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
-        message(STATUS "SUCCESSFULLY INSTALLED LAPACK:   ${LAPACK_LIBRARIES}")
-        message(STATUS "SUCCESSFULLY INSTALLED BLAS:     ${BLAS_LIBRARIES}")
+
+
+
+#    set(LAPACK_LIBRARIES ${LAPACK_lapack_LIBRARIES})
+#    set(BLAS_LIBRARIES ${LAPACK_blas_LIBRARIES})
+    get_cmake_property(_variableNames VARIABLES)
+    foreach (_variableName ${_variableNames})
+        if("${_variableName}" MATCHES "BLAS" OR "${_variableName}" MATCHES "LAPACK" OR "${_variableName}" MATCHES "blas")
+            message(STATUS "${_variableName}=${${_variableName}}")
+        endif()
+    endforeach()
+
+    get_property(LAPACK_LIBRARIES TARGET ${LAPACK_lapack_LIBRARIES} PROPERTY LOCATION)
+    get_property(BLAS_LIBRARIES TARGET ${LAPACK_blas_LIBRARIES} PROPERTY LOCATION)
+
+    if(LAPACK_lapack_LIBRARIES AND LAPACK_blas_LIBRARIES)
+        message(STATUS "SUCCESSFULLY INSTALLED LAPACK:   ${LAPACK_lapack_LIBRARIES}")
+        message(STATUS "SUCCESSFULLY INSTALLED BLAS:     ${LAPACK_blas_LIBRARIES}")
         message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/lapack/log_build.txt")
-        target_link_libraries(${PROJECT_NAME} ${LAPACK_LIBRARIES})
-        target_link_libraries(${PROJECT_NAME} ${BLAS_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${LAPACK_lapack_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} ${LAPACK_blas_LIBRARIES})
         target_link_libraries(${PROJECT_NAME} ${GFORTRAN_LIB})
+
+
+#        get_property(blas_location TARGET blas PROPERTY LOCATION)
+#        message (STATUS "blas_location == ${blas_location}")
+
+
 
     else()
         message(WARNING "LAPACK_LIBRARIES: ${LAPACK_LIBRARIES}")
@@ -95,10 +123,3 @@ else()
         message(FATAL_ERROR "LAPACK or BLAS could not be found.")
     endif()
 endif()
-
-#get_cmake_property(_variableNames VARIABLES)
-#    foreach (_variableName ${_variableNames})
-#        if("${_variableName}" MATCHES "BLAS" OR "${_variableName}" MATCHES "LAPACK")
-#            message(STATUS "${_variableName}=${${_variableName}}")
-#        endif()
-#    endforeach()

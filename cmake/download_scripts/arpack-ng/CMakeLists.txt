@@ -31,16 +31,25 @@
 cmake_minimum_required(VERSION 3.7)
 
 project(ARPACK-download NONE)
+#set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-Wl --no-as-needed")
 include(ExternalProject)
 ExternalProject_Add(ARPACK
 	GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
+#	GIT_TAG             3.5.0
 	GIT_TAG             master
 	PREFIX              "${INSTALL_DIRECTORY}/arpack-ng"
 	CMAKE_ARGS
 	-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 	-DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
 	-DCMAKE_C_FLAGS=-w
+	-DEXAMPLES=OFF
+	-DCOVERALLS=OFF
+	-DCMAKE_BUILD_TYPE=Release
+	-DMPI=OFF
+	-DBUILD_SHARED_LIBS=OFF
+	-DICB=OFF
 	-DBLAS_LIBRARIES:PATH=${BLAS_LIBRARIES}
 	-DLAPACK_LIBRARIES:PATH=${LAPACK_LIBRARIES}
-        )
+	-DEXTRA_LDLAGS=mkl_gf_lp64
+	)
 

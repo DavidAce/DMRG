@@ -106,60 +106,16 @@ namespace Textra {
     }
 
 
-//
-//
-//
+
 //    //****************************//
 //    //Matrix to tensor conversions//
 //    //****************************//
-//
-//    template<typename Scalar,auto rank>
-//    constexpr auto Matrix_to_Tensor(const MatrixType<Scalar> &matrix, const array<rank> &dims){
-////        using Scalar =  typename Derived::Scalar;
-//        return Eigen::TensorMap<Tensor<const Scalar, rank>>(matrix.derived().eval().data(), dims);
-//    }
-//
-//    template<typename Scalar, typename... Dims>
-//    constexpr auto Matrix_to_Tensor(const MatrixType<Scalar> &matrix, Dims... dims){
-////        using Scalar =  typename Derived::Scalar;
-//        constexpr int rank = sizeof... (Dims);
-//        return Eigen::TensorMap<Eigen::Tensor<const Scalar, rank>>(matrix.derived().eval().data(), {dims...});
-//    }
-
-//    template<typename Derived,auto rank>
-//    auto Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const array<rank> &dims){
-//        using Scalar =  typename Derived::Scalar;
-//        return Eigen::TensorMap<Tensor<const Scalar, rank>>(matrix.derived().eval().data(), dims);
-//    }
-//
-//    template<typename Derived, typename... Dims>
-//    auto Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, Dims... dims){
-//        using Scalar =  typename Derived::Scalar;
-//        constexpr int rank = sizeof... (Dims);
-//        return Eigen::TensorMap<Eigen::Tensor<const Scalar, rank>>(matrix.derived().eval().data(), {dims...});
-//    }
-//
-//    template<typename Derived,auto rank>
-//    constexpr auto Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const array<rank> &dims){
-//        using Scalar =  typename Derived::Scalar;
-//        return Eigen::TensorMap<Tensor<const Scalar, rank>>(matrix.derived().eval().data(), dims);
-//    }
-//
-//    template<typename Derived, typename... Dims>
-//    auto Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, Dims... dims){
-//        using Scalar =  typename Derived::Scalar;
-//        constexpr int rank = sizeof... (Dims);
-//        return Eigen::TensorMap<Eigen::Tensor<const Scalar, rank>>(matrix.derived().eval().data(), dims...);
-//    }
-//
-
 
 
     //Detects if Derived is a plain object, like "MatrixXd" or similar.
     //std::decay removes pointer or ref qualifiers if present
     template<typename Derived>
     using is_plainObject_v  = std::is_base_of<Eigen::PlainObjectBase<std::decay_t<Derived> >, std::decay_t<Derived> > ;
-
 
     template<typename Derived,auto rank>
     constexpr Tensor<typename Derived::Scalar, rank> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const array<rank> &dims){
@@ -180,28 +136,14 @@ namespace Textra {
     }
 
 
-
-//
-//    template<typename Derived,auto rank>
-//    constexpr Tensor<typename Derived::Scalar, rank> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const array<rank> &dims){
-//        //        return TensorMap<Tensor<const Scalar, rank>>(matrix.derived().eval().data(), dims...);
-//        return TensorMap<Tensor<typename Derived::Scalar, rank>>(const_cast<typename Derived::Scalar*>(matrix.derived().eval().data()), dims);
-//    }
-//
-//    template<typename Derived, typename... Dims>
-//    constexpr Tensor<typename Derived::Scalar, sizeof... (Dims)> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, Dims... dims){
-//       return TensorMap<Tensor<typename Derived::Scalar, sizeof... (Dims)>>(const_cast<typename Derived::Scalar*>(matrix.derived().eval().data()), dims...);
-//    }
-
-
-    template <typename Scalar>
-    constexpr auto Matrix_to_Tensor1(const MatrixType<Scalar> &matrix) {
-        return Eigen::TensorMap<Tensor<const Scalar,1>>(matrix.data(), array1{matrix.size()});
+    template <typename Derived>
+    constexpr auto Matrix_to_Tensor1(const Eigen::EigenBase<Derived> &matrix) {
+        return Matrix_to_Tensor(matrix, matrix.size());
     }
 
-    template <typename Scalar>
-    constexpr auto Matrix_to_Tensor2(const MatrixType<Scalar> &matrix) {
-        return Eigen::TensorMap<Tensor<const Scalar,2 >>(matrix.data(), array2{matrix.rows(),matrix.cols()});
+    template <typename Derived>
+    constexpr auto Matrix_to_Tensor2(const Eigen::EigenBase<Derived> &matrix) {
+        return Matrix_to_Tensor(matrix, matrix.rows(),matrix.cols());
     }
 
 

@@ -8,7 +8,7 @@
 #include <IO/class_hdf5_table_buffer.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
-#include <mps_routines/class_environment_storage.h>
+#include <mps_routines/class_finite_chain_storage.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include "class_fDMRG.h"
@@ -17,8 +17,8 @@ using namespace std;
 using namespace Textra;
 
 class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
-        : class_algorithm_base(std::move(hdf5_),"fDMRG", "fDMRG", SimulationType::fDMRG) {
-    env_storage  = std::make_shared<class_environment_storage>(max_length, superblock, hdf5);
+        : class_base_algorithm(std::move(hdf5_),"fDMRG", "fDMRG", SimulationType::fDMRG) {
+    env_storage  = std::make_shared<class_finite_chain_storage>(max_length, superblock, hdf5);
 }
 
 
@@ -84,12 +84,22 @@ void class_fDMRG::print_profiling(){
         t_tot.print_time_w_percent();
         t_sto.print_time_w_percent(t_tot);
         t_ste.print_time_w_percent(t_tot);
-        t_env.print_time_w_percent(t_tot);
+        t_prt.print_time_w_percent(t_tot);
         t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
-        t_eig.print_time_w_percent(t_sim);
-        t_svd.print_time_w_percent(t_sim);
-        t_mps.print_time_w_percent(t_sim);
+        print_profiling_sim(t_sim);
+        measurement->print_profiling(t_obs);
     }
 }
 
+void class_fDMRG::print_profiling_sim(class_tic_toc &t_parent){
+    if (settings::profiling::on) {
+        std::cout << "\nSimulation breakdown:" << std::endl;
+        std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
+        t_opt.print_time_w_percent(t_parent);
+        t_svd.print_time_w_percent(t_parent);
+        t_env.print_time_w_percent(t_parent);
+        t_mps.print_time_w_percent(t_parent);
+        t_chi.print_time_w_percent(t_parent);
+    }
+}

@@ -9,17 +9,20 @@
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_measurement.h>
+#include <mps_routines/class_hamiltonian.h>
 #include <mps_routines/class_mpo.h>
 #include <mps_routines/class_mps.h>
 #include <general/nmspc_math.h>
+#include <general/nmspc_random_numbers.h>
+#include <general/class_svd_wrapper.h>
 
 namespace s = settings;
 using namespace std;
 using namespace Textra;
 using namespace std::complex_literals;
-using Scalar = class_algorithm_base::Scalar;
+using Scalar = class_base_algorithm::Scalar;
 
-class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
+class_base_algorithm::class_base_algorithm(std::shared_ptr<class_hdf5_file> hdf5_,
                                            std::string sim_name_,
                                            std::string table_name_,
                                            SimulationType sim_type_)
@@ -32,30 +35,46 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
     table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, sim_name, table_name);
     superblock   = std::make_shared<class_superblock>();
     measurement  = std::make_shared<class_measurement>(superblock, sim_type);
+    initialize_state(settings::model::initial_state);
+
 };
 
 
-void class_algorithm_base::single_DMRG_step(long chi_max){
+void class_base_algorithm::single_DMRG_step(long chi_max){
 /*!
  * \fn void single_DMRG_step(class_superblock &superblock)
  */
     t_sim.tic();
 
+//    superblock->set_current_dimensions();
+//    t_opt.tic();
+//    theta_memory = superblock->optimize_MPS(theta_memory, s::precision::eigSteps, s::precision::eigThreshold);
+//    t_opt.toc();
+//
+//    t_svd.tic();
+//    superblock->MPS->theta = superblock->truncate_MPS(theta_memory, chi_max, s::precision::SVDThreshold);
+//    theta_memory = superblock->MPS->theta;
+//    t_svd.toc();
+//    measurement->is_measured = false;
+//    t_sim.toc();
+////
+
+    t_sim.tic();
     superblock->set_current_dimensions();
     superblock->MPS->theta = superblock->MPS->get_theta();
-    t_eig.tic();
+    t_opt.tic();
     superblock->MPS->theta = superblock->optimize_MPS(superblock->MPS->theta, s::precision::eigSteps, s::precision::eigThreshold);
-    t_eig.toc();
-
+    t_opt.toc();
     t_svd.tic();
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, s::precision::SVDThreshold);
     t_svd.toc();
     measurement->is_measured = false;
     t_sim.toc();
+
 }
 
 
-void class_algorithm_base::single_TEBD_step(long chi_max){
+void class_base_algorithm::single_TEBD_step(long chi_max){
 /*!
  * \fn single_iTEBD_step(class_superblock &superblock)
  * \brief infinite Time evolving block decimation.
@@ -79,7 +98,7 @@ void class_algorithm_base::single_TEBD_step(long chi_max){
     t_sim.toc();
 }
 
-void class_algorithm_base::update_chi(){
+void class_base_algorithm::update_chi(){
     t_chi.tic();
     if(entropy_has_converged()) {
         switch(sim_type){
@@ -108,7 +127,7 @@ void class_algorithm_base::update_chi(){
 }
 
 
-bool class_algorithm_base::entropy_has_converged() {
+bool class_base_algorithm::entropy_has_converged() {
     //Based on the the slope of entanglement entropy
     int last_measurement = X_vec.empty() ? 0 : X_vec.back();
     if (iteration - last_measurement < 100){return false;}
@@ -140,10 +159,10 @@ bool class_algorithm_base::entropy_has_converged() {
 
 
 
-void class_algorithm_base::store_table_entry(){
+void class_base_algorithm::store_table_entry(){
     if (Math::mod(iteration, store_freq) != 0) {return;}
+    compute_observables();
     t_sto.tic();
-    measurement->do_full_measurement();
     table_buffer->emplace_back(measurement->get_chi(),
                                chi_max,
                                measurement->get_energy1(),
@@ -160,6 +179,7 @@ void class_algorithm_base::store_table_entry(){
                                measurement->get_variance5(),
                                measurement->get_variance6(),
                                measurement->get_truncation_error(),
+                               measurement->get_parity(),
                                iteration,
                                measurement->get_chain_length(),
                                sweeps,
@@ -170,7 +190,7 @@ void class_algorithm_base::store_table_entry(){
     t_sto.toc();
 }
 
-void class_algorithm_base::initialize_constants(){
+void class_base_algorithm::initialize_constants(){
     using namespace settings;
     switch(sim_type){
         case SimulationType::iDMRG:
@@ -231,48 +251,206 @@ void class_algorithm_base::initialize_constants(){
 }
 
 
-void class_algorithm_base::set_profiling_labels() {
-    using namespace settings::profiling;
-    t_tot.set_properties(on, precision,"+Total Time              ");
-    t_sto.set_properties(on, precision,"↳ Store to file          ");
-    t_ste.set_properties(on, precision,"↳ Store Environment      ");
-    t_obs.set_properties(on, precision,"↳ Printing measurement   ");
-    t_sim.set_properties(on, precision,"↳+Simulation             ");
-    t_evo.set_properties(on, precision," ↳ Time Evolution        ");
-    t_eig.set_properties(on, precision," ↳ Eig. decomp.          ");
-    t_svd.set_properties(on, precision," ↳ SVD Truncation        ");
-    t_udt.set_properties(on, precision," ↳ Update Timestep       ");
-    t_env.set_properties(on, precision," ↳ Update Environments   ");
-    t_chi.set_properties(on, precision," ↳ Update Chi            ");
-//    t_mps.set_properties(on, precision," ↳ Update MPS            ");
+void class_base_algorithm::initialize_state(std::string initial_state ) {
+    //Set the size and initial values for the MPS and environments
+    //Choose between GHZ, W, Random, Product state (up, down, etc), None, etc...
+
+    long d  = superblock->d;
+    if(settings::model::initial_state == "upup"){
+        std::cout << "Initializing Up-Up-state  |up,up>" << std::endl;
+        superblock->MPS->GA.resize(array3{d,1,1});
+        superblock->MPS->GA.setZero();
+        superblock->MPS->LA.resize(array1{1});
+        superblock->MPS->LA.setConstant(1.0);
+        superblock->MPS->GB.resize(array3{d,1,1});
+        superblock->MPS->GB.setZero();
+        superblock->MPS->LB.resize(array1{1});
+        superblock->MPS->LB.setConstant(1.0);
+        superblock->MPS->LB_left = superblock->MPS->LB;
+        superblock->MPS->GA(0, 0, 0) = 1;
+        superblock->MPS->GA(1, 0, 0) = 0;
+        superblock->MPS->GB(0, 0, 0) = 1;
+        superblock->MPS->GB(1, 0, 0) = 0;
+        superblock->MPS->theta = superblock->MPS->get_theta();
+    }else if(settings::model::initial_state == "updown"){
+        std::cout << "Initializing Up down -state  |up,down>" << std::endl;
+        superblock->MPS->GA.resize(array3{d,1,1});
+        superblock->MPS->GA.setZero();
+        superblock->MPS->LA.resize(array1{1});
+        superblock->MPS->LA.setConstant(1.0);
+        superblock->MPS->GB.resize(array3{d,1,1});
+        superblock->MPS->GB.setZero();
+        superblock->MPS->LB.resize(array1{1});
+        superblock->MPS->LB.setConstant(1.0);
+        superblock->MPS->LB_left = superblock->MPS->LB;
+        superblock->MPS->GA(0, 0, 0) = 1;
+        superblock->MPS->GA(1, 0, 0) = 0;
+        superblock->MPS->GB(0, 0, 0) = 0;
+        superblock->MPS->GB(1, 0, 0) = 1;
+        superblock->MPS->theta = superblock->MPS->get_theta();
+
+    }else if(settings::model::initial_state == "ghz"){
+        std::cout << "Initializing GHZ-state" << std::endl;
+        // GHZ state (|up,up> + |down, down > ) /sqrt(2)
+        superblock->MPS->GA.resize(array3{d,1,2});
+        superblock->MPS->GA.setZero();
+        superblock->MPS->LA.resize(array1{2});
+        superblock->MPS->LA.setConstant(1.0/std::sqrt(2));
+        superblock->MPS->GB.resize(array3{d,2,1});
+        superblock->MPS->GB.setZero();
+        superblock->MPS->LB.resize(array1{1});
+        superblock->MPS->LB.setConstant(1.0);
+        superblock->MPS->LB_left = superblock->MPS->LB;
+        // GA^0 = (1,0)
+        // GA^1 = (0,1)
+        // GB^0 = (1,0)^T
+        // GB^1 = (0,1)^T
+        superblock->MPS->GA(0, 0, 0) = 1;
+        superblock->MPS->GA(0, 0, 1) = 0;
+        superblock->MPS->GA(1, 0, 0) = 0;
+        superblock->MPS->GA(1, 0, 1) = 1;
+        superblock->MPS->GB(0, 0, 0) = 1;
+        superblock->MPS->GB(0, 1, 0) = 0;
+        superblock->MPS->GB(1, 0, 0) = 0;
+        superblock->MPS->GB(1, 1, 0) = 1;
+        superblock->MPS->theta = superblock->MPS->get_theta();
+
+    }else if(settings::model::initial_state == "w"){
+        std::cout << "Initializing W-state" << std::endl;
+        // W state (|up,down> + |down, up > ) /sqrt(2)
+        superblock->MPS->GA.resize(array3{d,1,2});
+        superblock->MPS->GA.setZero();
+        superblock->MPS->LA.resize(array1{2});
+        superblock->MPS->LA.setConstant(1.0/std::sqrt(2));
+        superblock->MPS->GB.resize(array3{d,2,1});
+        superblock->MPS->GB.setZero();
+        superblock->MPS->LB.resize(array1{1});
+        superblock->MPS->LB.setConstant(1.0);
+        superblock->MPS->LB_left = superblock->MPS->LB;
+        // GA^0 = (1,0)
+        // GA^1 = (0,1)
+        // GB^0 = (0,1)^T
+        // GB^1 = (1,0)^T
+        superblock->MPS->GA(0, 0, 0) = 1;
+        superblock->MPS->GA(0, 0, 1) = 0;
+        superblock->MPS->GA(1, 0, 0) = 0;
+        superblock->MPS->GA(1, 0, 1) = 1;
+        superblock->MPS->GB(0, 0, 0) = 0;
+        superblock->MPS->GB(0, 1, 0) = 1;
+        superblock->MPS->GB(1, 0, 0) = 1;
+        superblock->MPS->GB(1, 1, 0) = 0;
+        superblock->MPS->theta = superblock->MPS->get_theta();
+
+    }
+
+    else if (settings::model::initial_state == "rps"){
+        // Random product state
+        std::cout << "Initializing random product state" << std::endl;
+        superblock->MPS->GA.resize(array3{d,1,1});
+        superblock->MPS->GA.setZero();
+        superblock->MPS->LA.resize(array1{1});
+        superblock->MPS->LA.setConstant(1.0);
+        superblock->MPS->GB.resize(array3{d,1,1});
+        superblock->MPS->GB.setZero();
+        superblock->MPS->LB.resize(array1{1});
+        superblock->MPS->LB.setConstant(1.0);
+        superblock->MPS->LB_left = superblock->MPS->LB;
+        //Initialize to as spinors
+        auto r1 = rn::uniform_complex_1();
+        auto r2 = rn::uniform_complex_1();
+        superblock->MPS->GA(1, 0, 0) = r1.real();
+        superblock->MPS->GA(0, 0, 0) = r1.imag();
+        superblock->MPS->GB(1, 0, 0) = r2.real();
+        superblock->MPS->GB(0, 0, 0) = r2.imag();
+        superblock->MPS->theta = superblock->MPS->get_theta();
+
+    }else{
+        // Random state
+        std::cout << "Initializing random state with bond dimension chi = " << chi_max << std::endl;
+        chi_temp = chi_max;
+        superblock->MPS->GA.resize(array3{d,chi_max,chi_max});
+        superblock->MPS->GA.setZero();
+        superblock->MPS->LA.resize(array1{chi_max});
+        superblock->MPS->LA.setConstant(1.0/sqrt(chi_max));
+        superblock->MPS->GB.resize(array3{d,chi_max,chi_max});
+        superblock->MPS->GB.setZero();
+        superblock->MPS->LB.resize(array1{chi_max});
+        superblock->MPS->LB.setConstant(1.0/sqrt(chi_max));
+        superblock->MPS->LB_left = superblock->MPS->LB;
+        superblock->Lblock->block.resize(array3{chi_max,chi_max, superblock->HA->MPO.dimension(0)});
+        superblock->Rblock->block.resize(array3{chi_max,chi_max, superblock->HB->MPO.dimension(1)});
+        superblock->Lblock2->block.resize(array4{chi_max,chi_max, superblock->HA->MPO.dimension(0), superblock->HA->MPO.dimension(0)});
+        superblock->Rblock2->block.resize(array4{chi_max,chi_max, superblock->HB->MPO.dimension(1), superblock->HB->MPO.dimension(1)});
+        for (long i = 0; i < chi_max; i++){
+            superblock->Lblock->block(i,i,2) = 1;
+            superblock->Rblock->block(i,i,0) = 1;
+            superblock->Lblock2->block(i,i,2,2) = 1;
+            superblock->Rblock2->block(i,i,0,0) = 1;
+        }
+        superblock->MPS->theta = Textra::Matrix_to_Tensor(Eigen::MatrixXd::Random(d*chi_max,d*chi_max).cast<Scalar>(),d,chi_max,d,chi_max);
+    }
+    //Put the initial state into the environment as a starting point for the algorithm.
+    superblock->set_current_dimensions();
+
+    superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, settings::precision::SVDThreshold);
+//        Tensor<Scalar, 0>  E_two_site =
+//            superblock->Lblock->block
+//                    .contract( superblock->MPS->theta,               idx({0},{1}))
+//                    .contract( superblock->HA->MPO_zero_site_energy(),    idx({1,2},{0,2}))
+//                    .contract( superblock->HB->MPO_zero_site_energy(),    idx({3,1},{0,2}))
+//                    .contract( superblock->MPS->theta.conjugate(),   idx({0,2,4},{1,0,2}))
+//                    .contract( superblock->Rblock->block,            idx({0,2,1},{0,1,2}));
+//
+//    double E_one_site = E_two_site(0).real()/2.0;
+//
+//    superblock->HA->update_site_energy(E_one_site);
+//    superblock->HB->update_site_energy(E_one_site);
+
+
+    superblock->Lblock->enlarge (superblock->MPS,  superblock->HA->MPO);
+    superblock->Rblock->enlarge (superblock->MPS,  superblock->HB->MPO);
+    superblock->Lblock2->enlarge(superblock->MPS,  superblock->HA->MPO);
+    superblock->Rblock2->enlarge(superblock->MPS,  superblock->HB->MPO);
+    superblock->chain_length += 2;
+
+    superblock->MPS->swapped = false;
 }
 
-int class_algorithm_base::enlarge_environment(){
+
+
+void class_base_algorithm::compute_observables(){
+    t_obs.tic();
+    measurement->compute_all_observables();
+    t_obs.toc();
+}
+
+
+int class_base_algorithm::enlarge_environment(){
     t_env.tic();
     superblock->enlarge_environment();
     t_env.toc();
     return superblock->Lblock->size;
 }
-int class_algorithm_base::enlarge_environment(int direction){
+int class_base_algorithm::enlarge_environment(int direction){
     t_env.tic();
     superblock->enlarge_environment(direction);
     t_env.toc();
     return superblock->Lblock->size;
 }
 
-void class_algorithm_base::swap(){
+void class_base_algorithm::swap(){
     superblock->swap_AB();
 }
 //
 
 
-void class_algorithm_base::print_status_update() {
+void class_base_algorithm::print_status_update() {
     if (Math::mod(iteration, print_freq) != 0) {return;}
     if (2+(2*position) != superblock->chain_length){return;}
     if (print_freq == 0) {return;}
 
-    t_obs.tic();
-    measurement->do_full_measurement();
+    compute_observables();
+    t_prt.tic();
     std::cout << setprecision(16) << fixed << left;
     ccout(1) << left  << table_name << " ";
     ccout(1) << left  << "Step: "                       << setw(10) << iteration;
@@ -280,8 +458,9 @@ void class_algorithm_base::print_status_update() {
     ccout(1) << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << measurement->get_entanglement_entropy();
     ccout(1) << left  << "χmax: "                       << setw(4)  << setprecision(3)     << fixed   << chi_max;
     ccout(1) << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << measurement->get_chi();
-    ccout(1) << left  << "log₁₀ σ²(E): "                << setw(12) << setprecision(4)     << fixed   << log10(measurement->get_variance2());
-    ccout(1) << left  << " "                            << setw(12) << setprecision(4)     << fixed   << log10(measurement->get_variance3());
+    ccout(1) << left  << "log₁₀ σ²(E): "                << setw(12) << setprecision(4)     << fixed   << log10(measurement->get_variance1());
+    ccout(1) << left  << " "                            << setw(12) << setprecision(4)     << fixed   << log10(measurement->get_variance2());
+    ccout(1) << left  << " "                            << setw(12) << setprecision(4)     << fixed   << log10(measurement->get_variance4());
     ccout(1) << left  << "log₁₀ truncation: "           << setw(12) << setprecision(4)     << fixed   << log10(measurement->get_truncation_error());
     ccout(1) << left  << "Chain length: "               << setw(12) << setprecision(1)     << fixed   << measurement->get_chain_length();
     switch(sim_type){
@@ -300,17 +479,21 @@ void class_algorithm_base::print_status_update() {
             break;
     }
     ccout(1) << std::endl;
-    t_obs.toc();
+    t_prt.toc();
 }
 
-void class_algorithm_base::print_status_full(){
+void class_base_algorithm::print_status_full(){
+    compute_observables();
+    t_prt.tic();
     std::cout << std::endl;
     std::cout << " -- Final results -- " << sim_name << "/" << table_name << std::endl;
     ccout(0)  << setw(20) << "Energy               = " << setprecision(16) << fixed      << measurement->get_energy1()                << std::endl;
     ccout(0)  << setw(20) << "Entanglement Entropy = " << setprecision(16) << fixed      << measurement->get_entanglement_entropy()   << std::endl;
     ccout(0)  << setw(20) << "χmax                 = " << setprecision(4)  << fixed      << chi_max                                   << std::endl;
     ccout(0)  << setw(20) << "χ                    = " << setprecision(4)  << fixed      << measurement->get_chi()                    << std::endl;
-    ccout(0)  << setw(20) << "log₁₀ σ²(E):         = " << setprecision(16) << fixed      << log10(measurement->get_variance2())       << std::endl;
+    ccout(0)  << setw(20) << "log₁₀ σ²(E) MPO:     = " << setprecision(16) << fixed      << log10(measurement->get_variance1())       << std::endl;
+    ccout(0)  << setw(20) << "log₁₀ σ²(E) HAM:     = " << setprecision(16) << fixed      << log10(measurement->get_variance2())       << std::endl;
+    ccout(0)  << setw(20) << "log₁₀ σ²(E) GEN:     = " << setprecision(16) << fixed      << log10(measurement->get_variance4())       << std::endl;
     ccout(0)  << setw(20) << "log₁₀ truncation:    = " << setprecision(4)  << fixed      << log10(measurement->get_truncation_error())<< std::endl;
     ccout(0)  << setw(20) << "Chain length         = " << setprecision(1)  << fixed      << measurement->get_chain_length()           << std::endl;
 
@@ -329,5 +512,21 @@ void class_algorithm_base::print_status_full(){
     }
 
     std::cout << std::endl;
+    t_prt.toc();
 }
 
+void class_base_algorithm::set_profiling_labels() {
+    using namespace settings::profiling;
+    t_tot.set_properties(on, precision,"+Total Time              ");
+    t_sto.set_properties(on, precision,"↳ Store to file          ");
+    t_ste.set_properties(on, precision,"↳ Finite chain storage   ");
+    t_prt.set_properties(on, precision,"↳ Printing to console    ");
+    t_obs.set_properties(on, precision,"↳ Computing observables  ");
+    t_sim.set_properties(on, precision,"↳+Simulation             ");
+    t_evo.set_properties(on, precision,"↳ Time Evolution         ");
+    t_opt.set_properties(on, precision,"↳ Optimize MPS           ");
+    t_svd.set_properties(on, precision,"↳ SVD Truncation         ");
+    t_udt.set_properties(on, precision,"↳ Update Timestep        ");
+    t_env.set_properties(on, precision,"↳ Update Environments    ");
+    t_chi.set_properties(on, precision,"↳ Update Chi             ");
+}

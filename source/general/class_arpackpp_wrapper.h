@@ -10,11 +10,11 @@
 
 #include <map>
 #include <complex>
-#include "ardsnsym.h"
-#include "ardscomp.h"
-#include "ardgcomp.h"
-#include "ardssym.h"
 #include <Eigen/Core>
+#include <arpackpp/ardsnsym.h>
+#include <arpackpp/ardscomp.h>
+#include <arpackpp/ardgcomp.h>
+#include <arpackpp/ardssym.h>
 
 
 namespace arpack{
@@ -27,8 +27,8 @@ class class_arpackpp_wrapper {
 private:
     double eigThreshold = 1e-12;
     int    eigMaxIter   = 1000;
-    int    ncv_max = 20;
-
+    int    ncv_max = 10;
+    int    Iter   = 0;
     using  MapType = std::map<arpack::Ritz, std::string>;
     MapType RitzToString;
 
@@ -45,6 +45,7 @@ private:
         using namespace std::complex_literals;
         if constexpr(return_eigenvectors){
             solution.FindEigenvectors();
+            Iter = solution.GetIter();
             using T_vec = decltype(solution.Eigenvector(0, 0));
             using T_val = decltype(solution.Eigenvalue(0));
             int rows = solution.GetN();
@@ -66,6 +67,7 @@ private:
         }
         if constexpr (return_eigenvectors == false){
             solution.FindEigenvalues();
+            Iter = solution.GetIter();
             using T_val = decltype(solution.Eigenvalue(0));
             int cols = solution.GetNev();
             VectorType<T_val> eigvals(cols);
@@ -94,6 +96,10 @@ public:
 
     void setThreshold(double newThreshold) {
         eigThreshold = newThreshold;
+    }
+
+    int GetIter(){
+        return Iter;
     }
 
     template<arpack::Form form, arpack::Ritz ritz, arpack::Side side = arpack::Side::R, bool return_eigenvectors = true, typename Scalar, typename SizeType>

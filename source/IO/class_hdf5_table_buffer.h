@@ -29,6 +29,7 @@ struct table_entry{
     double variance5;
     double variance6;
     double truncation_error;
+    double parity;
     int    iteration;
     int    chain_length;
     int    sweep;
@@ -54,6 +55,7 @@ struct table_entry{
     double variance5_,
     double variance6_,
     double truncation_error_,
+    double parity_,
     int    iteration_,
     int    chain_length_,
     int    sweep_,
@@ -78,6 +80,7 @@ struct table_entry{
             variance5(variance5_),
             variance6(variance6_),
             truncation_error(truncation_error_),
+            parity(parity_),
             iteration(iteration_),
             chain_length(chain_length_),
             sweep(sweep_),
@@ -92,7 +95,7 @@ struct table_entry{
 
 class class_table_entry_meta{
 public:
-    constexpr static hsize_t NFIELDS = 23;
+    constexpr static hsize_t NFIELDS = 24;
     size_t dst_size = sizeof( table_entry );
     size_t dst_offset[NFIELDS] = { HOFFSET(table_entry, chi),
                                    HOFFSET(table_entry, chi_max),
@@ -110,6 +113,7 @@ public:
                                    HOFFSET(table_entry, variance5),
                                    HOFFSET(table_entry, variance6),
                                    HOFFSET(table_entry, truncation_error),
+                                   HOFFSET(table_entry, parity),
                                    HOFFSET(table_entry, iteration),
                                    HOFFSET(table_entry, chain_length),
                                    HOFFSET(table_entry, sweep),
@@ -133,6 +137,7 @@ public:
                                    sizeof(table_entry::variance5),
                                    sizeof(table_entry::variance6),
                                    sizeof(table_entry::truncation_error),
+                                   sizeof(table_entry::parity),
                                    sizeof(table_entry::iteration),
                                    sizeof(table_entry::chain_length),
                                    sizeof(table_entry::sweep),
@@ -158,6 +163,7 @@ public:
               "variance5",
               "variance6",
               "truncation_error",
+              "parity",
               "iteration",
               "chain_length",
               "sweep",
@@ -168,6 +174,7 @@ public:
     /* Define field information */
     hid_t      field_type[NFIELDS] = {H5T_NATIVE_LONG,
                                       H5T_NATIVE_LONG,
+                                      H5T_NATIVE_DOUBLE,
                                       H5T_NATIVE_DOUBLE,
                                       H5T_NATIVE_DOUBLE,
                                       H5T_NATIVE_DOUBLE,

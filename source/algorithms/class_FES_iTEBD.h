@@ -10,13 +10,15 @@
 /*!
  * \brief Class that studies Finite-entanglement scaling using the imaginary TEBD algorithm.
  */
-class class_FES_iTEBD : public class_algorithm_base {
+class class_FES_iTEBD : public class_base_algorithm {
 public:
-    //Inherit the constructor of class_algorithm_base
-    using class_algorithm_base::class_algorithm_base;
+    //Inherit the constructor of class_base_algorithm
+    using class_base_algorithm::class_base_algorithm;
     explicit class_FES_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_);
     void run() override;
     void run2();
     void print_profiling()     override;
+    void print_profiling_sim(class_tic_toc &t_parent) override;
+
 };
 #endif //DMRG_FES_TEBD_H

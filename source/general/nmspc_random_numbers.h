@@ -31,6 +31,12 @@ namespace rn{
         return rand_real(rng);
     }
 
+    inline double __attribute__((hot)) uniform_double(const double min, const double max){
+        std::uniform_real_distribution<>  rand_real(min,max);
+        return rand_real(rng);
+    }
+
+
     inline std::complex<double> __attribute__((hot)) uniform_complex_1(){
         std::uniform_real_distribution<>  rand_real(0,2.0*M_PI);
         return std::polar(1.0,rand_real(rng));

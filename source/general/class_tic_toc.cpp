@@ -30,6 +30,15 @@ void class_tic_toc::set_label(string output_text){
     *this = class_tic_toc(profiling, print_precision, output_text);
 }
 
+std::string class_tic_toc::get_name(){
+    return name;
+}
+
+double class_tic_toc::get_measured_time(){
+    return duration_cast<duration<double>>(measured_time).count();
+}
+
+
 void class_tic_toc::tic(){
     if (profiling) {
         tic_timepoint = high_resolution_clock::now();

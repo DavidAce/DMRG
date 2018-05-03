@@ -3,9 +3,9 @@
 //
 
 
-#ifdef MKL_AVAILABLE
-#define  EIGEN_USE_MKL_ALL
-#endif
+//#ifdef MKL_AVAILABLE
+//#define  EIGEN_USE_MKL_ALL
+//#endif
 
 #include "class_environment.h"
 #include <mps_routines/class_mps.h>
@@ -35,10 +35,10 @@ void class_environment::enlarge(const std::shared_ptr<class_mps> &MPS, const Ten
              */
             size++;
             block_enlarged =
-                    block.contract(asDiagonal(MPS->L_tail),   idx({0},{0}))
+                    block.contract(asDiagonal(MPS->LB_left),   idx({0},{0}))
                             .contract(MPS->GA,                idx({2},{1}))
                             .contract(M,                      idx({1,2},{0,2}))
-                            .contract(asDiagonal(MPS->L_tail),idx({0},{0}))
+                            .contract(asDiagonal(MPS->LB_left),idx({0},{0}))
                             .contract(MPS->GA.conjugate(),    idx({3,2},{1,0}))
                             .shuffle(array3{0,2,1});
             block = block_enlarged;
@@ -99,13 +99,17 @@ void class_environment_var::enlarge(const std::shared_ptr<class_mps> &MPS, const
          * [      ]--1 0--[LB]--1  1--[GA conj ]--2
          */
         size++;
+//        std::cout << "LB_left: " << MPS->LB_left.dimensions() << std::endl;
+//        std::cout << "GA     : " << MPS->GA.dimensions() << std::endl;
+//        std::cout << "M      : " << M.dimensions() << std::endl;
+
         block_enlarged =
-                block.contract(asDiagonal(MPS->L_tail),    idx({0},{0}))
-                        .contract(MPS->GA,                 idx({3},{1}))
-                        .contract(M,                       idx({1,3},{0,2}))
-                        .contract(M,                       idx({1,4},{0,2}))
-                        .contract(asDiagonal(MPS->L_tail), idx({0},{0}))
-                        .contract(MPS->GA.conjugate(),     idx({4,3},{1,0}))
+                block.contract(asDiagonal(MPS->LB_left),    idx({0},{0}))
+                        .contract(MPS->GA,                  idx({3},{1}))
+                        .contract(M,                        idx({1,3},{0,2}))
+                        .contract(M,                        idx({1,4},{0,2}))
+                        .contract(asDiagonal(MPS->LB_left), idx({0},{0}))
+                        .contract(MPS->GA.conjugate(),      idx({4,3},{1,0}))
                         .shuffle(array4{0,3,1,2});
         block = block_enlarged;
 

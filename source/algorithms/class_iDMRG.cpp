@@ -13,7 +13,7 @@ using namespace std;
 using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
-    : class_algorithm_base(std::move(hdf5_),"iDMRG","iDMRG", SimulationType::iDMRG) {
+    : class_base_algorithm(std::move(hdf5_),"iDMRG","iDMRG", SimulationType::iDMRG) {
 }
 
 
@@ -41,13 +41,22 @@ void class_iDMRG::print_profiling(){
     if (settings::profiling::on) {
         t_tot.print_time_w_percent();
         t_sto.print_time_w_percent(t_tot);
+        t_prt.print_time_w_percent(t_tot);
         t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
-        t_eig.print_time_w_percent(t_sim);
-        t_svd.print_time_w_percent(t_sim);
-        t_env.print_time_w_percent(t_sim);
-        t_chi.print_time_w_percent(t_sim);
+        print_profiling_sim(t_sim);
+        measurement->print_profiling(t_obs);
+    }
+}
 
-//        t_mps.print_time_w_percent(t_sim);
+void class_iDMRG::print_profiling_sim(class_tic_toc &t_parent){
+    if (settings::profiling::on) {
+        std::cout << "\n Simulation breakdown:" << std::endl;
+        std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
+        t_opt.print_time_w_percent(t_parent);
+        t_svd.print_time_w_percent(t_parent);
+        t_env.print_time_w_percent(t_parent);
+        t_mps.print_time_w_percent(t_parent);
+        t_chi.print_time_w_percent(t_parent);
     }
 }

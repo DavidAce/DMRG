@@ -33,9 +33,9 @@ public:
     std::array<Textra::MatrixType<Scalar>,2> h;    /*!< Local even and odd hamiltonians */
 
     std::vector<Textra::Tensor<Scalar,4>>  U  ;    /*!< Set of rank-4 of 2-site unitary evolution operators (non-MPO). */
-    Textra::Tensor<Scalar,4>               M  ;    /*!< MPO representation of 1-site Hamiltonian */
-//    Textra::Tensor<Scalar,6>               MM ;    /*!< MPO representation of 2-site Hamiltonian */
-//    Textra::Tensor<Scalar,8>               MMMM ;  /*!< MPO representation of 2-site Hamiltonian */
+    Textra::Tensor<Scalar,4>               HA  ;    /*!< MPO representation of 1-site Hamiltonian */
+    Textra::Tensor<Scalar,4>               HB  ;    /*!< MPO representation of 1-site Hamiltonian */
+
     std::vector<Textra::Tensor<Scalar,4>>  G0;     /*!< MPO representation of 1-site moment generating function */
     std::vector<Textra::Tensor<Scalar,4>>  G1;     /*!< MPO representation of 1-site characteristic function of the Hamiltonian */
 
@@ -43,16 +43,13 @@ public:
     std::vector<Textra::Tensor<Scalar,4>> get_2site_evolution_gates(const Scalar t,int susuki_trotter_order);
     void update_evolution_step_size(const Scalar dt, const int susuki_trotter_order);
 
-    Textra::Tensor<Scalar,4>  compute_M   (Scalar k = 0.0);         /*!< Returns an MPO representation of 1-site Hamiltonian */
-//    Textra::Tensor<Scalar,6>  compute_MM  (Scalar k = 0.0);        /*!< Returns an MPO representation of 2-site Hamiltonian */
-//    Textra::Tensor<Scalar,8>  compute_MMMM(Scalar k = 0.0);      /*!< Returns an MPO representation of 2-site double Hamiltonian */
-private:
+    Textra::Tensor<Scalar,4>  compute_H_MPO(double e = 0.0);                   /*!< Returns an MPO representation of 1-site Hamiltonian with subtracted per site energy e */
+    Textra::Tensor<Scalar,4>  compute_H_MPO_custom_field(double g, double e = 0.0);         /*!< Returns an MPO representation of 1-site Hamiltonian with random field b*/
 
+private:
     std::vector<Textra::MatrixType<Scalar>> Suzuki_Trotter_1st_order(Scalar t);
     std::vector<Textra::MatrixType<Scalar>> Suzuki_Trotter_2nd_order(Scalar t);
     std::vector<Textra::MatrixType<Scalar>> Suzuki_Trotter_4th_order(Scalar t);
-
-
 };
 
 

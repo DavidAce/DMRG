@@ -1,14 +1,16 @@
 
 #ifndef DMRG_CLASS_STORAGE_H
 #define DMRG_CLASS_STORAGE_H
-
-#include "general/nmspc_tensor_extra.h"
-#include "class_environment.h"
-#include "sim_parameters/nmspc_model.h"
 #include <map>
 #include <list>
 #include <memory>
 #include <variant>
+#include <complex>
+#include <general/nmspc_tensor_extra.h>
+#include <mps_routines/class_environment.h>
+#include <mps_routines/class_hamiltonian.h>
+#include <sim_parameters/nmspc_model.h>
+
 
 //using namespace Textra;
 //using namespace std;
@@ -33,16 +35,27 @@ class class_hdf5_file;
 */
 
 
-class class_environment_storage {
+class class_finite_chain_storage {
 public:
     using Scalar = std::complex<double>;
 public:
-    std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>, Textra::Tensor<Scalar,3>>>  MPS_L;  /*!< A list of stored \f$ \Gamma^A \Gamma^B...  \f$-tensors with corresponding,  \f$ \Lambda^A \Lambda^B...  \f$ and left environments  indexed by chain position. */
-    std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>, Textra::Tensor<Scalar,3>>>  MPS_R;  /*!< A list of stored \f$ \Gamma^A \Gamma^B...  \f$-tensors with corresponding,  \f$ \Lambda^A \Lambda^B...  \f$ and right environments indexed by chain position. */
-    std::list<Textra::Tensor<Scalar,4>>  MPO_L; /*!< A list of stored Hamiltonian MPO tensors,  indexed by chain position. */
-    std::list<Textra::Tensor<Scalar,4>>  MPO_R; /*!< A list of stored Hamiltonian MPO tensors,  indexed by chain position. */
-    std::list<Textra::Tensor<Scalar,4>>  block_Sq_L; /*!< A list of stored Hamiltonian MPO tensors,  indexed by chain position. */
-    std::list<Textra::Tensor<Scalar,4>>  block_Sq_R; /*!< A list of stored Hamiltonian MPO tensors,  indexed by chain position. */
+
+    std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>>>  MPS_L;  /*!< A list of stored \f$ \Gamma^A \Gamma^B...  \f$-tensors with corresponding,  \f$ \Lambda^A \Lambda^B...  \f$ and left environments  indexed by chain position. */
+    std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>>>  MPS_R;  /*!< A list of stored \f$ \Gamma^A \Gamma^B...  \f$-tensors with corresponding,  \f$ \Lambda^A \Lambda^B...  \f$ and right environments indexed by chain position. */
+//    std::list<Textra::Tensor<Scalar,3>> Lblock;
+//    std::list<Textra::Tensor<Scalar,3>> Rblock;
+    std::list<class_environment> Lblock_list;
+    std::list<class_environment> Rblock_list;
+    std::list<class_environment_var> Lblock2_list;
+    std::list<class_environment_var> Rblock2_list;
+//    std::list<Textra::Tensor<Scalar,4>> Lblock2; /*!< A list of stored Hamiltonian MPO tensors,  indexed by chain position. */
+//    std::list<Textra::Tensor<Scalar,4>> Rblock2; /*!< A list of stored Hamiltonian MPO tensors,  indexed by chain position. */
+//    std::list<Textra::Tensor<Scalar,4>> MPO_L;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+//    std::list<Textra::Tensor<Scalar,4>> MPO_R;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<class_hamiltonian> MPO_L;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<class_hamiltonian> MPO_R;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+
+
 
 private:
     std::shared_ptr<class_superblock> superblock;
@@ -60,8 +73,8 @@ public:
 public:
 
 
-    class_environment_storage(){};
-    explicit class_environment_storage(int max_length_,                                   /*!< The maximum length of the chain. */
+    class_finite_chain_storage(){};
+    explicit class_finite_chain_storage(int max_length_,                                   /*!< The maximum length of the chain. */
                                  std::shared_ptr<class_superblock> superblock_,
                                  std::shared_ptr<class_hdf5_file>  hdf5_
     );

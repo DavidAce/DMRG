@@ -21,31 +21,31 @@ using namespace std::complex_literals;
 
 
 Scalar class_measurement::moment_generating_function(std::shared_ptr<class_mps> MPS_original,
-                                                               std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
+                                                     std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
+    t_temp1.tic();
     std::shared_ptr<class_mps> MPS_evolved = std::make_shared<class_mps>(*MPS_original);
     class_SVD<Scalar> SVD;
     class_arpackpp_wrapper eig;
     SVD.setThreshold(1e-12);
     eig.setThreshold(1e-12);
+    long chi_max = 4*MPS_evolved->LA.dimension(0);
     for (auto &Op: Op_vec) {
         //Evolve
         Textra::Tensor<Scalar, 4> theta_evo = Op.contract(MPS_evolved->get_theta(), idx({0, 1}, {0, 2})).shuffle(array4{0, 2, 1, 3});
         auto chiL = theta_evo.dimension(1);
         auto chiR = theta_evo.dimension(3);
-        auto[U, S, V] = SVD.schmidt(theta_evo, 2, chiL, chiR);
+        auto[U, S, V] = SVD.schmidt(theta_evo, 2, chiL,chi_max,chiR);
         MPS_evolved->LA= S;
         MPS_evolved->GA = asDiagonalInversed(MPS_evolved->LB).contract(U, idx({1}, {1})).shuffle(array3{1, 0, 2});
         MPS_evolved->GB = V.contract(asDiagonalInversed(MPS_evolved->LB), idx({2}, {0}));
         if (&Op != &Op_vec.back()) {
             MPS_evolved->swap_AB();
         }
-
     }
     long sizeLB = MPS_evolved->LB.size() * MPS_evolved->LB.size();
-
     //Normalize
-    Tensor<Scalar,2> theta_evn_mat       = MPS_evolved->get_transfer_matrix_theta_evn().reshape(array2{sizeLB,sizeLB});
-    VectorType<Scalar> eigval_R_evn      = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(theta_evn_mat.data(),sizeLB,sizeLB, 1);
+    Tensor<Scalar,2> transfer_matrix_theta_evn       = MPS_evolved->get_transfer_matrix_theta_evn().reshape(array2{sizeLB,sizeLB});
+    VectorType<Scalar> eigval_R_evn      = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transfer_matrix_theta_evn.data(),sizeLB,sizeLB, 1);
     auto new_theta_evn_normalized        = MPS_evolved->get_theta_evn(sqrt(eigval_R_evn(0)));
 
     long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original->theta_evn_normalized.dimension(1);
@@ -56,32 +56,101 @@ Scalar class_measurement::moment_generating_function(std::shared_ptr<class_mps> 
             .shuffle(array4{0,2,1,3})
             .reshape(array2{sizeL,sizeR});
     //Compute the characteristic function G(a).
-    eig.setThreshold(1e-14);
     VectorType <Scalar> lambdaG  = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transfer_matrix_G.data(), transfer_matrix_G.dimension(0),transfer_matrix_G.dimension(1), 1);
+    int iter = eig.GetIter();
+//    std::cout <<setprecision(15) << "lambdaG: " << lambdaG(0) <<" Iter: " << iter  << std::endl;
+    t_temp1.toc();
     return lambdaG(0);
+}
 
+
+Scalar class_measurement::moment_generating_function_2(std::shared_ptr<class_mps> MPS_original,
+                                                       std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
+    t_temp2.tic();
+    std::shared_ptr<class_mps> MPS_evolved  = std::make_shared<class_mps>(*MPS_original);
+    std::shared_ptr<class_mps> MPS_evolved0 = std::make_shared<class_mps>(*MPS_original);
+    Textra::Tensor<Scalar, 4> theta_evo;
+    Textra::Tensor<Scalar, 4> theta_evo0;
+    class_SVD<Scalar> SVD;
+    class_arpackpp_wrapper eig;
+    SVD.setThreshold(1e-12);
+    eig.setThreshold(1e-12);
+    long chi_max = 4*MPS_evolved->LA.dimension(0);
+    for (auto &Op: Op_vec) {
+        //Evolve
+        theta_evo = Op.contract(MPS_evolved->get_theta(), idx({0, 1}, {0, 2})).shuffle(array4{0, 2, 1, 3});
+        auto chiL = theta_evo.dimension(1);
+        auto chiR = theta_evo.dimension(3);
+        auto[U, S, V] = SVD.schmidt(theta_evo, 2, chiL,chi_max, chiR);
+        MPS_evolved->LA= S;
+        MPS_evolved->GA = asDiagonalInversed(MPS_evolved->LB).contract(U, idx({1}, {1})).shuffle(array3{1, 0, 2});
+        MPS_evolved->GB = V.contract(asDiagonalInversed(MPS_evolved->LB), idx({2}, {0}));
+        if (&Op != &Op_vec.back()) {
+            MPS_evolved->swap_AB();
+        }
+    }
+
+    for (auto &Op: mom_vec0) {
+        //Evolve
+        theta_evo0 = Op.contract(MPS_evolved0->get_theta(), idx({0, 1}, {0, 2})).shuffle(array4{0, 2, 1, 3});
+        auto chiL = theta_evo0.dimension(1);
+        auto chiR = theta_evo0.dimension(3);
+        auto[U, S, V] = SVD.schmidt(theta_evo0, 2, chiL, chiR);
+        MPS_evolved0->LA= S;
+        MPS_evolved0->GA = asDiagonalInversed(MPS_evolved0->LB).contract(U, idx({1}, {1})).shuffle(array3{1, 0, 2});
+        MPS_evolved0->GB = V.contract(asDiagonalInversed(MPS_evolved0->LB), idx({2}, {0}));
+        if (&Op != &mom_vec0.back()) {
+            MPS_evolved0->swap_AB();
+        }
+    }
+
+    theta_evo  = MPS_evolved->get_theta_evn();
+//    theta_evo0 = MPS_original->get_theta_evn();
+    theta_evo0 = MPS_evolved0->get_theta_evn();
+
+
+    //Normalize
+
+    Tensor<Scalar,2> transfer_matrix_G =   theta_evo
+            .contract(theta_evo0.conjugate(), idx({0,2},{0,2}))
+            .shuffle(array4{0,2,1,3})
+            .reshape(array2{theta_evo0.dimension(1) * theta_evo.dimension(1),theta_evo0.dimension(3) * theta_evo.dimension(3)});
+
+    Tensor<Scalar,2> transfer_matrix_G0 =   theta_evo0
+            .contract(theta_evo0.conjugate(), idx({0,2},{0,2}))
+            .shuffle(array4{0,2,1,3})
+            .reshape(array2{theta_evo0.dimension(1)*theta_evo0.dimension(1),theta_evo0.dimension(3)*theta_evo0.dimension(3)});
+
+    VectorType <Scalar> lambdaG  = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transfer_matrix_G.data() , transfer_matrix_G.dimension(0) ,transfer_matrix_G.dimension(1), 1);
+    long iter = eig.GetIter();
+    VectorType <Scalar> lambdaG0 = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transfer_matrix_G0.data(), transfer_matrix_G0.dimension(0),transfer_matrix_G0.dimension(1), 1);
+    long iter0 = eig.GetIter();
+    t_temp2.toc();
+//    std::cout <<setprecision(15) << "lambdaG: " << lambdaG(0) <<" Iter: " << iter << "  lambdaG0: " << lambdaG0(0)  <<" Iter: " << iter0  << std::endl;
+    return lambdaG(0)/lambdaG0(0);
 }
 
 
 
 std::pair<double,double> class_measurement::compute_infinite_moments_G(Scalar a, std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
+    t_var_gen.tic();
     using T = Scalar;
     using LT = std::complex<long double>;
     LT al = (LT) a;
     //The following only works if superblock->MPS has been normalized! I.e, you have to have run MPS->compute_mps_components() prior.
     LT lambdaG  = (LT) moment_generating_function(superblock->MPS, Op_vec);
+//    LT lambdaG2 = (LT) moment_generating_function_2(superblock->MPS, Op_vec);
     LT l        = (LT) (superblock->H->mps_sites*1.0l);
     LT G        = pow(lambdaG,1.0l/l);
     LT logG     = log(lambdaG) * (1.0l/l);
     LT logGc    = log(conj(lambdaG) ) * (1.0l/l);
     LT O        = (logG - logGc)/(2.0l*al);
     LT VarO     = 2.0l*log(abs(G))/ (al*al);
+    t_var_gen.toc();
     return std::make_pair(real(O), real(VarO));
 
 
 
-
-//
 //    T l2 = 2.0+0.0i;
 //    Eigen::ComplexEigenSolver<Textra::MatrixType<T>> esA(Tensor2_to_Matrix(transf_GA));
 //    Eigen::ComplexEigenSolver<Textra::MatrixType<T>> esB(Tensor2_to_Matrix(transf_GB));
@@ -219,16 +288,19 @@ std::pair<double,double> class_measurement::compute_infinite_moments_G(Scalar a,
 
 
 double class_measurement::compute_infinite_variance_MPO(){
+    t_var_mpo.tic();
     Tensor<Scalar, 0> deltaH2 =
             superblock->Lblock2->block
                     .contract(asDiagonal(superblock->MPS->LA), idx({0},{0}))
                     .contract(asDiagonal(superblock->MPS->LA), idx({0},{0}))
             .contract(superblock->Rblock2->block, idx({2, 3, 0, 1}, {0, 1, 2, 3}));
     double L =  superblock->Lblock2->size + superblock->Rblock2->size;
+    t_var_mpo.toc();
     return std::real( deltaH2(0)/ L );
 }
 
 double class_measurement::compute_infinite_variance_H(){
+    t_var_ham.tic();
     const Tensor<Scalar,4> & theta                      = superblock->MPS->theta;
     const Tensor<Scalar,4> & theta_sw                   = superblock->MPS->theta_sw;
     const Tensor<Scalar,4> & theta_evn                  = superblock->MPS->theta_evn_normalized;
@@ -239,10 +311,10 @@ double class_measurement::compute_infinite_variance_H(){
     const Tensor<Scalar,2> & r_evn                      = superblock->MPS->r_evn;
     const Tensor<Scalar,2> & l_odd                      = superblock->MPS->l_odd;
     const Tensor<Scalar,2> & r_odd                      = superblock->MPS->r_odd;
-    const Tensor<Scalar,4> & transfer_matrix_evn        = superblock->MPS-> transfer_matrix_evn;
-    const Tensor<Scalar,4> & transfer_matrix_odd        = superblock->MPS-> transfer_matrix_odd;
-    const Tensor<Scalar,4> & transfer_matrix_LBGA       = superblock->MPS-> transfer_matrix_LBGA;
-    const Tensor<Scalar,4> & transfer_matrix_LAGB       = superblock->MPS-> transfer_matrix_LAGB;
+    const Tensor<Scalar,4> & transfer_matrix_evn        = superblock->MPS->transfer_matrix_evn;
+    const Tensor<Scalar,4> & transfer_matrix_odd        = superblock->MPS->transfer_matrix_odd;
+    const Tensor<Scalar,4> & transfer_matrix_LBGA       = superblock->MPS->transfer_matrix_LBGA;
+    const Tensor<Scalar,4> & transfer_matrix_LAGB       = superblock->MPS->transfer_matrix_LAGB;
 
 //    Tensor<Scalar,4> h0_   = Textra::Matrix_to_Tensor(superblock->H->h[0], 2,2,2,2);
 //    Tensor<Scalar,4> h1_   = Textra::Matrix_to_Tensor(superblock->H->h[1], 2,2,2,2);
@@ -399,6 +471,7 @@ double class_measurement::compute_infinite_variance_H(){
 //    std::cout << " e2lrpbaab        = " <<  e2lrpbaab        << std::endl;
 
     Scalar VarE  = 0.5*(e2ab + e2ba) + 0.5*(e2aba_1  + e2bab_1  + e2aba_2  + e2bab_2 )  + e2lrpabab + e2lrpabba + e2lrpbaba  + e2lrpbaab ;
+    t_var_ham.toc();
     return real(VarE) ;
 }
 

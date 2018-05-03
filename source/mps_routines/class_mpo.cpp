@@ -3,16 +3,16 @@
 //
 
 
-#ifdef MKL_AVAILABLE
-#define  EIGEN_USE_MKL_ALL
-#endif
+//#ifdef MKL_AVAILABLE
+//#define  EIGEN_USE_MKL_ALL
+//#endif
 
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <sim_parameters/nmspc_model.h>
 #include <general/nmspc_tensor_extra.h>
 #include <mps_routines/class_mpo.h>
-
+#include <mps_routines/class_hamiltonian.h>
 using namespace std;
 using namespace Textra;
 using namespace Eigen;
@@ -25,32 +25,47 @@ class_mpo::class_mpo() {
     H_asMatrix            = Model::H(mps_sites);
     H_asTensor            = Textra::Matrix_to_Tensor(Model::H(mps_sites), 2,2,2,2);
     H_asTensor_sq         = Textra::Matrix_to_Tensor(Model::Hsq(mps_sites), 2,2,2,2);
-    H_MPO_asMatrix        = Model::MPO_asMatrix();
-    H_MPO_asTensor2       = Textra::Matrix_to_Tensor2(Model::MPO_asMatrix());
+    H_MPO_asMatrix        = Model::H_MPO();
+    H_MPO_asTensor2       = Textra::Matrix_to_Tensor2(Model::H_MPO());
 
 
     update_evolution_step_size(-0.01, 2);
-    M                     = compute_M();
-//    MM                    = compute_MM();
-//    MMMM                  = compute_MMMM();
+    HA                    = compute_H_MPO();
+    HB                    = compute_H_MPO();
     G0                    = compute_G( 0.0i*1e-2, 4);
     G1                    = compute_G( 1.0i*1e-2, 4);
 }
 
 
 
-Tensor<Scalar,4> class_mpo::compute_M(Scalar k)
+Tensor<Scalar,4> class_mpo::compute_H_MPO(double k)
 /*! Returns the MPO hamiltonian as a rank 4 MPO. Notation following Schollwöck (2010)
  *
  *          2
  *          |
- *      0---M---1
+ *      0---H---1
  *          |
  *          3
  */
 {
-    return Matrix_to_Tensor(Model::MPO_asMatrix(k), 2,3,2,3).shuffle(array4{1,3,0,2});
+    return Matrix_to_Tensor(Model::H_MPO(k), 2,3,2,3).shuffle(array4{1,3,0,2});
 }
+
+Tensor<Scalar,4> class_mpo::compute_H_MPO_custom_field(double g, double e)
+/*! Returns the MPO hamiltonian as a rank 4 MPO. Notation following Schollwöck (2010)
+ *
+ *          2
+ *          |
+ *      0---H---1
+ *          |
+ *          3
+ */
+{
+    return Matrix_to_Tensor(Model::H_MPO_random_field(g,e), 2,3,2,3).shuffle(array4{1,3,0,2});
+}
+
+
+
 
 
 std::vector<Textra::Tensor<Scalar,4>> class_mpo::compute_G(Scalar a, int susuki_trotter_order)
@@ -147,13 +162,13 @@ void class_mpo::update_evolution_step_size(const Scalar dt, const int susuki_tro
 // *
 // *           2   3
 // *           |   |
-// *       0---M---M---1
+// *       0---HA---HA---1
 // *           |   |
 // *           4   5
 // */
 //{
-//    auto M = compute_M(k);
-//    return  M.contract(M, idx({1},{0})).shuffle(array6{0,3,1,4,2,5});
+//    auto HA = compute_H_MPO(k);
+//    return  HA.contract(HA, idx({1},{0})).shuffle(array6{0,3,1,4,2,5});
 //}
 
 //
@@ -162,9 +177,9 @@ void class_mpo::update_evolution_step_size(const Scalar dt, const int susuki_tro
 // *
 // *           4   5
 // *           |   |
-// *       0---M---M---1
+// *       0---HA---HA---1
 // *           |   |
-// *       2---M---M---3
+// *       2---HA---HA---3
 // *           |   |
 // *           6   7
 // */

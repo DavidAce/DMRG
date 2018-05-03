@@ -1,14 +1,16 @@
 //
 // Created by david on 2017-11-13.
 //
-#ifdef MKL_AVAILABLE
-#define  EIGEN_USE_MKL_ALL
-#endif
-#include "class_mps.h"
+//#ifdef MKL_AVAILABLE
+//#define  EIGEN_USE_MKL_ALL
+//#endif
+#include <Eigen/QR>
+#include <mps_routines/class_mps.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <general/class_arpackpp_wrapper.h>
-#include <Eigen/QR>
+#include <sim_parameters/nmspc_sim_settings.h>
+
 using namespace std;
 using namespace Textra;
 
@@ -19,6 +21,7 @@ using Scalar = class_mps::Scalar;
 void class_mps::initialize(const long local_dimension_){
     local_dimension = local_dimension_;
     long d = local_dimension;
+    // Default is a random product state
     GA.resize(array3{d,1,1});
     GA.setZero();
     LA.resize(array1{1});
@@ -35,7 +38,7 @@ void class_mps::initialize(const long local_dimension_){
     GB(1, 0, 0) = r2.real();
     GB(0, 0, 0) = r2.imag();
     swapped = false;
-    L_tail = LB;
+    LB_left = LB;
     theta = get_theta();
 }
 
@@ -51,7 +54,7 @@ void class_mps::swap_AB(){
     tmp1    = LA;
     LA      = LB;
     LB      = tmp1;
-    L_tail  = LB;
+    LB_left  = LB;
 
 }
 
@@ -151,7 +154,7 @@ Tensor<Scalar,4> class_mps::get_theta(Scalar norm) const
      @endverbatim
  */
 {
-    return  asDiagonal(L_tail) //whatever L_A was in the previous step
+    return  asDiagonal(LB_left) //whatever L_A was in the previous step
             .contract(GA,             idx({1},{1}))
             .contract(asDiagonal(LA), idx({2},{0}))
             .contract(GB,             idx({2},{1}))
@@ -184,7 +187,7 @@ Tensor<Scalar,4> class_mps::get_theta_swapped(Scalar norm) const
 
 
 Tensor<Scalar,3> class_mps::A() const{
-    return asDiagonal(L_tail).contract(GA, idx({1},{1})).shuffle(array3{1,0,2});
+    return asDiagonal(LB_left).contract(GA, idx({1},{1})).shuffle(array3{1,0,2});
 };
 
 Tensor<Scalar,3> class_mps::B() const{

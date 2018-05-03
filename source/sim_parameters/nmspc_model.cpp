@@ -4,73 +4,39 @@
 
 #include "nmspc_model.h"
 #include <iomanip>
-#include <general/nmspc_math.h>
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>
+#include <sim_parameters/nmspc_sim_settings.h>
+#include <general/nmspc_quantum_mechanics.h>
+#include <general/nmspc_math.h>
 
 using namespace std;
 using namespace Eigen;
-
+using namespace qm;
 namespace Model {
-
-    const Matrix2cd sx() {
-        Matrix2cd sx;
-        sx << 0.0, 1.0,
-                1.0, 0.0;
-        return sx;
-    }
-
-    const Matrix2cd sy() {
-        Matrix2cd sy;
-        sy << 0.0, -1.0i,
-                1.0i, 0.0;
-        return sy;
-    }
-
-
-    const Matrix2cd sz() {
-        Matrix2cd sz;
-        sz << 1.0, 0.0,
-                0.0, -1.0;
-        return sz;
-    }
-
-    const Matrix2cd I() {
-        return Matrix2cd::Identity();
-    }
-
-    std::vector<MatrixXcd> gen_manybody_spin(const Matrix2cd &s, int sites) {
-        std::vector<MatrixXcd> S;
-        MatrixXcd tmp;
-        S.clear();
-        for (int i = 0; i < sites; i++) {
-            tmp = i == 0 ? s : I();
-            for (int j = 1; j < sites; j++) {
-                tmp = kroneckerProduct(tmp, i == j ? s : I()).eval();
-            }
-            S.emplace_back(tmp);
-        }
-        return S;
-    }
 
 
     /*! From Zapp, K. Matrix Product States for Lattice Gauge Theories. (2015).
      * and
      * Müller-hermes, B. V. A. Tensor-Network-Methods for Simulating Infinite 1-dimensional Quantum-Many-Body Systems. 1–68 (2010).
      */
+
+
     double get_exact_energy() {
+        using namespace settings::model;
         return (-1.0 / M_PI / 2.0) *
                Math::compute_integral([](double x) { return sqrt(1.0 + g * g - 2.0 * g * cos(x)); }, {-M_PI, M_PI});
     }
 
 
     MatrixXcd h(int sites, int position) {
+        using namespace settings::model;
         int i = Math::mod(position, sites);
         int j = Math::mod(position + 1, sites);
         if (spins_must_be_generated) {
-            SX = gen_manybody_spin(sx(), sites);
-            SY = gen_manybody_spin(sy(), sites);
-            SZ = gen_manybody_spin(sz(), sites);
+            SX = qm::gen_manybody_spin(sx, sites);
+            SY = qm::gen_manybody_spin(sy, sites);
+            SZ = qm::gen_manybody_spin(sz, sites);
             spins_must_be_generated = false;
         }
         return (-J * SX[i] * SX[j] - 0.5 * g * (SZ[i] + SZ[j]));
@@ -95,16 +61,29 @@ namespace Model {
         return hi;
     }
 
-    MatrixXcd MPO_asMatrix(Scalar k) {
+    MatrixXcd H_MPO(double e) {
         /*! Returns the MPO as a matrix. Notation following Schollwöck (2010) */
-
+        using namespace settings::model;
         MatrixXcd W(6, 6);
         W.setZero();
-        W.block(0, 0, 2, 2) = I();
-        W.block(2, 0, 2, 2) = sx();
-        W.block(4, 0, 2, 2) = -g * sz() - k * I(); // Optionally subtract a constant. Default is k = 0.
-        W.block(4, 2, 2, 2) = -J * sx();
-        W.block(4, 4, 2, 2) = I();
+        W.block(0, 0, 2, 2) = I;
+        W.block(2, 0, 2, 2) = sx;
+        W.block(4, 0, 2, 2) = -g * sz - e * I; // Optionally subtract a constant. Default is k = 0.
+        W.block(4, 2, 2, 2) = -J * sx;
+        W.block(4, 4, 2, 2) = I;
+        return W;
+    }
+
+    MatrixXcd H_MPO_random_field(double g, double e) {
+        /*! Returns the MPO as a matrix. Notation following Schollwöck (2010) */
+        using namespace settings::model;
+        MatrixXcd W(6, 6);
+        W.setZero();
+        W.block(0, 0, 2, 2) = I;
+        W.block(2, 0, 2, 2) = sx;
+        W.block(4, 0, 2, 2) = -g * sz - e*I; // Optionally subtract a constant. Default is k = 0.
+        W.block(4, 2, 2, 2) = -J * sx;
+        W.block(4, 4, 2, 2) = I;
         return W;
     }
 }

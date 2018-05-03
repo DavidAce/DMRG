@@ -11,6 +11,7 @@
 
 class class_mps;
 class class_mpo;
+class class_hamiltonian;
 class class_environment;
 class class_environment_var;
 template<typename Scalar> class class_SVD;
@@ -36,7 +37,8 @@ public:
     class_superblock();
     std::shared_ptr<class_mps>               MPS;        /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
     std::shared_ptr<class_mpo>               H;
-
+    std::shared_ptr<class_hamiltonian>       HA;
+    std::shared_ptr<class_hamiltonian>       HB;
     std::shared_ptr<class_environment>       Lblock;     /*!< Left  environment block. */
     std::shared_ptr<class_environment>       Rblock;     /*!< Right environment block. */
     std::shared_ptr<class_environment_var>   Lblock2;    /*!< Left  environment block used for variance calculation */
@@ -55,8 +57,7 @@ public:
 
     long   chi = 1;                                     /*!< Bond dimension of the current (center) position. */
     int    chain_length;
-    Textra::Tensor<Scalar, 4> M_minus_E;
-    Textra::Tensor<Scalar, 6> MM_minus_E;
+
     Textra::Tensor<Scalar, 4>
     optimize_MPS(Textra::Tensor<Scalar, 4> &theta,
                  int eigSteps,              /*!< Maximum number of steps for eigenvalue solver. */
@@ -75,7 +76,7 @@ public:
 
     void truncate_MPS(
             const Textra::Tensor<Scalar, 4> &theta,/*!< The 2-site MPS to truncate */
-            const std::shared_ptr<class_mps> &MPS,
+            const std::shared_ptr<class_mps> &MPS_out,
             long chi,                              /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
             double SVDThreshold                    /*!< Minimum threshold value for keeping singular values. */
     )             __attribute((hot));              /*!< Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps \f$\chi\f$ (`chi`) singular values. */
@@ -98,10 +99,7 @@ public:
                                                         * \f[ \Gamma^A \leftarrow (\Lambda^B_{n-1})^{-1} U \f]
                                                         * \f[ \Gamma^B \leftarrow V (\Lambda^B_{n+1})^{-1} \f] */
     void swap_AB();                                     /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
-
 //    void reset();
-
-
 };
 
 

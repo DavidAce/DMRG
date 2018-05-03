@@ -9,6 +9,7 @@
 #include <vector>
 #include <array>
 #include <Eigen/Core>
+#include <complex>
 
 
 /*! \brief Setup the Hamiltonian and corresponding values.*/
@@ -28,21 +29,16 @@ namespace Model {
 
     using Scalar = std::complex<double>; //Type for the groundstate wavefunction. Typically just double if the Hamiltonian is Real and Symmetric or Hermitian.
 
-    inline double J = 1.0;
-    inline double g = 1.0;
+//    inline double J = 1.0;
+//    inline double g = 1.0;
     inline long local_dimension = 2;
 
     //Transverse field Ising model:
     extern double get_exact_energy();
     inline double energy_exact  = get_exact_energy();  // = -1.063544409973372 if g = 0.5
 
-    //Pauli matrices
-    extern const Eigen::Matrix2cd sx();
-    extern const Eigen::Matrix2cd sy();
-    extern const Eigen::Matrix2cd sz();
-    extern const Eigen::Matrix2cd I();
+
     //Pauli spin variables in N-dimensional manybody Hilbert space.
-    extern std::vector<Eigen::MatrixXcd>      gen_manybody_spin(Eigen::Matrix2cd s);
     inline bool spins_must_be_generated = true;
     inline std::vector<Eigen::MatrixXcd> SX;
     inline std::vector<Eigen::MatrixXcd> SY;
@@ -50,9 +46,8 @@ namespace Model {
     extern Eigen::MatrixXcd h(int sites, int position);
     extern Eigen::MatrixXcd H(int sites);
     extern Eigen::MatrixXcd Hsq(int sites);
-    extern Eigen::MatrixXcd MPO_asMatrix(Scalar k = 0.0);
-
-
+    extern Eigen::MatrixXcd H_MPO(double e = 0.0);
+    extern Eigen::MatrixXcd H_MPO_random_field(double g, double e=0.0);
 
 };
 

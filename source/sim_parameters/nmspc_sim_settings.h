@@ -20,7 +20,12 @@ enum class SimulationType{iDMRG,fDMRG, xDMRG, FES_iDMRG, iTEBD, FES_iTEBD};
 
 namespace settings {
     extern void load_from_file(class_file_reader &indata);
-
+    //Parameters for the model Hamiltonian
+    namespace model {
+        extern double       J             ;                      /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
+        extern double       g             ;                      /*!< Transverse field strength */
+        extern std::string initial_state  ;                      /*!< Choose initial state of the MPS, either "cat" or "random". Default "random". */
+    }
 
     //Parmaters that control eigensolver and SVD precision
     namespace precision {
