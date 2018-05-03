@@ -38,19 +38,27 @@ find_library(ARPACK_LIBRARIES
         PATH_SUFFIXES "lib" "lib32" "lib64"
 )
 
+
+
+
 if(ARPACK_LIBRARIES)
     message(STATUS "FOUND ARPACK:   ${ARPACK_LIBRARIES}")
     target_link_libraries(${PROJECT_NAME} ${ARPACK_LIBRARIES})
-
     return()
 elseif(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
     message(STATUS "DOWNLOADING ARPACK...")
+    message("Using BLAS_LIBRARIES  : ${BLAS_LIBRARIES}")
+    message("Using LAPACK_LIBRARIES: ${LAPACK_LIBRARIES}")
     set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
+    execute_process(COMMAND  export PATH="$PATH:/opt/intel/bin")
+    execute_process(COMMAND  export LD_LIBRARY_PATH="$PATH:opt/intel/mkl/lib/intel64")
     execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory tmp/arpack-ng
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts)
     execute_process(
-            COMMAND ${CMAKE_COMMAND}
+            OUTPUT_FILE ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpack-ng/log_commands.txt
+            COMMAND
+                ${CMAKE_COMMAND}
                 -DINSTALL_DIRECTORY:PATH=${INSTALL_DIRECTORY}
                 -DBLAS_LIBRARIES:PATH=${BLAS_LIBRARIES}
                 -DLAPACK_LIBRARIES:PATH=${LAPACK_LIBRARIES}
@@ -66,7 +74,7 @@ elseif(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
         message(FATAL_ERROR "ARPACK not found and failed to install: ${res_var}")
     endif()
     # Generate a file that can be detected if the library was installed successfully
-    set(ARPACK_CMAKE_DIR ${INSTALL_DIRECTORY}/arpack-ng)
+    set(ARPACK_CMAKE_DIR ${INSTALL_DIRECTORY}/arpack-ng/lib/cmake)
     file(WRITE ${INSTALL_DIRECTORY}/arpack-ng/FindArpack.cmake "set(ARPACK_CMAKE_DIR  ${ARPACK_CMAKE_DIR})\n")
 
     # Include that file
@@ -74,6 +82,32 @@ elseif(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
     find_package(arpack-ng PATHS "${ARPACK_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE REQUIRED)
     set(ARPACK_LIBRARIES ${arpack_ng_LIBRARIES})
     set(ARPACK_INCLUDE_DIRS ${arpack_ng_INCLUDE_DIRS})
+
+#
+
+
+
+
+
+
+
+
+
+#    # Generate a file that can be detected if the library was installed successfully
+#    set(ARPACK_CMAKE_DIR ${INSTALL_DIRECTORY}/arpack-ng)
+#    file(WRITE ${INSTALL_DIRECTORY}/arpack-ng/FindArpack.cmake "set(ARPACK_CMAKE_DIR  ${ARPACK_CMAKE_DIR})\n")
+#
+#    # Include that file
+#    include(${INSTALL_DIRECTORY}/arpack-ng/FindArpack.cmake)
+#    find_package(arpack-ng PATHS "${ARPACK_CMAKE_DIR}" NO_DEFAULT_PATH NO_MODULE REQUIRED)
+#    set(ARPACK_LIBRARIES ${arpack_ng_LIBRARIES})
+#    set(ARPACK_INCLUDE_DIRS ${arpack_ng_INCLUDE_DIRS})
+#
+#
+
+
+
+
     if(arpack-ng_FOUND)
         message(STATUS "SUCCESSFULLY INSTALLED ARPACK:   ${ARPACK_LIBRARIES}")
         message(STATUS "BUILD LOG SAVED TO:   ${PROJECT_SOURCE_DIR}/cmake/download_scripts/tmp/arpack-ng/log_build.txt")

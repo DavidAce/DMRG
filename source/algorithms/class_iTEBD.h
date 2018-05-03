@@ -9,12 +9,14 @@
 /*!
  * \brief Class that runs the imaginary TEBD algorithm.
  */
-class class_iTEBD :public class_algorithm_base {
+class class_iTEBD :public class_base_algorithm {
 public:
-    using class_algorithm_base::class_algorithm_base;
+    using class_base_algorithm::class_base_algorithm;
     explicit class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_);
     void run() override;
     void print_profiling()   override;
+    void print_profiling_sim(class_tic_toc &t_parent) override;
+
 };
 
 

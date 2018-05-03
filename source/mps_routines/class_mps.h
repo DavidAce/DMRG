@@ -56,7 +56,7 @@ public:
     Textra::Tensor<Scalar,3> GB;                  /*!< \f$\Gamma^B\f$*/
     Textra::Tensor<Scalar,1> LA;                  /*!< \f$\Lambda^A\f$*/
     Textra::Tensor<Scalar,1> LB;                  /*!< \f$\Lambda^B\f$*/
-    Textra::Tensor<Scalar,1> L_tail;              /*!< \f$\Lambda^B_{n+1}\f$ or \f$\Lambda^B_{n-1}\f$ in iDMRG or fDMRG respectively.*/
+    Textra::Tensor<Scalar,1> LB_left;              /*!< \f$\Lambda^B_{n+1}\f$ or \f$\Lambda^B_{n-1}\f$ in iDMRG or fDMRG respectively.*/
 
 
     Textra::Tensor<Scalar,4> theta,theta_evn_normalized, theta_odd_normalized;

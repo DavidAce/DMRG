@@ -27,6 +27,10 @@ public:
     std::chrono::high_resolution_clock::duration measured_time;
     void set_properties(bool on_off, int prec, std::string output_text);
     void set_label(std::string output_text);
+    std::string  get_name();
+    double get_measured_time();
+
+
     void tic();
     void toc();
     void print_time();

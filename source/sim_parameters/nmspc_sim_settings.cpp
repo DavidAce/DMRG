@@ -7,7 +7,17 @@
 using namespace std;
 
 
+/*
+ * The section below defines default values for all the parameters,
+ * in case an input file is not found, or if values are missing in that file.
+ *
+*/
+
 namespace settings{
+    //Parameters for the model Hamiltonian
+    double model::J                      = -1  ;                          /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
+    double model::g                      =  1  ;                          /*!< Transverse field strength */
+    std::string model::initial_state     = "random";                      /*!< Choose initial state of the MPS, either "cat" or "random". Default "random". */
 
     int    precision::eigSteps           = 1000   ;
     double precision::eigThreshold       = 1e-12  ;
@@ -96,7 +106,24 @@ namespace settings{
 
 
 
+
+
+
+
+
+
+
+/*
+ * The section below attempts to find and read the parameters from the given inputfile.
+ *
+*/
+
+
 void settings::load_from_file(class_file_reader &indata){
+    //Parameters for the model Hamiltonian
+    model::J                       = indata.find_parameter<double> ("model::J", model::J);
+    model::g                       = indata.find_parameter<double> ("model::g", model::g);
+    model::initial_state           = indata.find_parameter<string> ("model::initial_state", model::initial_state);
     //Parmaters that control eigensolver and SVD precision
     precision::eigSteps           = indata.find_parameter<int>    ("precision::eigSteps"    , precision::eigSteps);
     precision::eigThreshold       = indata.find_parameter<double> ("precision::eigThreshold", precision::eigThreshold);
@@ -116,7 +143,7 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters controlling Finite-DMRG
     fdmrg::on                     = indata.find_parameter<bool>   ("fdmrg::on"         , fdmrg::on);
     if(fdmrg::on){
-        fdmrg::max_length         = indata.find_parameter<int>    ("fdmrg::max_steps ",  fdmrg::max_length);
+        fdmrg::max_length         = indata.find_parameter<int>    ("fdmrg::max_length ", fdmrg::max_length);
         fdmrg::max_sweeps         = indata.find_parameter<int>    ("fdmrg::max_sweeps ", fdmrg::max_sweeps);
         fdmrg::chi_max            = indata.find_parameter<int>    ("fdmrg::chi_max"    , 8);
         fdmrg::chi_grow           = indata.find_parameter<bool>   ("fdmrg::chi_grow"   , fdmrg::chi_grow);
@@ -127,7 +154,7 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters controlling excited state DMRG
     xdmrg::on                     = indata.find_parameter<bool>   ("xdmrg::on"         , xdmrg::on);
     if(xdmrg::on){
-        xdmrg::max_length         = indata.find_parameter<int>    ("xdmrg::max_steps ", xdmrg::max_length);
+        xdmrg::max_length         = indata.find_parameter<int>    ("xdmrg::max_length ", xdmrg::max_length);
         xdmrg::max_sweeps         = indata.find_parameter<int>    ("xdmrg::max_sweeps ", xdmrg::max_sweeps);
         xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"    , 8);
         xdmrg::chi_grow           = indata.find_parameter<bool>   ("xdmrg::chi_grow"   , xdmrg::chi_grow);

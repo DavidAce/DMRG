@@ -39,6 +39,7 @@ ExternalProject_Add(LAPACK
 	-DBLA_VENDOR=${BLA_VENDOR}
 	-DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
 	-DCMAKE_C_FLAGS=-w
+	-DBUILD_SHARED_LIBS=ON #Otherwise it wont work with the new arpack-ng
 	-DUSE_OPTIMIZED_BLAS:bool=ON
 	)
 ExternalProject_Get_Property(LAPACK install_dir)

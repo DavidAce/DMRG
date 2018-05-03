@@ -21,11 +21,11 @@ class class_measurement;
 
 
 
-class class_algorithm_base {
+class class_base_algorithm {
 public:
     using Scalar = std::complex<double>;
-    class_algorithm_base() = default;
-    class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
+    class_base_algorithm() = default;
+    class_base_algorithm(std::shared_ptr<class_hdf5_file> hdf5_,
                          std::string sim_name_,
                          std::string table_name_,
                          SimulationType sim_type_);
@@ -76,7 +76,7 @@ public:
     //Virtual Functions
     virtual void run() = 0;
     virtual void print_profiling()   = 0;
-
+    virtual void print_profiling_sim(class_tic_toc &t_parent) = 0;
 
     //Common functions
     void store_table_entry();
@@ -88,13 +88,16 @@ public:
     void update_chi();
     bool entropy_has_converged();
     void initialize_constants();
+    void initialize_state(std::string initial_state);
+
+    void compute_observables();
     int  enlarge_environment();
     int  enlarge_environment(int direction);
     void swap();
 
     // Profiling
     class_tic_toc t_tot;
-    class_tic_toc t_eig;
+    class_tic_toc t_opt;
     class_tic_toc t_sim;
     class_tic_toc t_svd;
     class_tic_toc t_env;
@@ -102,6 +105,7 @@ public:
     class_tic_toc t_udt;
     class_tic_toc t_sto;
     class_tic_toc t_ste;
+    class_tic_toc t_prt;
     class_tic_toc t_obs;
     class_tic_toc t_mps;
     class_tic_toc t_chi;

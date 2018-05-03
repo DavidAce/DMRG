@@ -5,9 +5,9 @@
 #ifndef DMRG_CLASS_SVD_H
 #define DMRG_CLASS_SVD_H
 
-#ifdef MKL_AVAILABLE
-#define  EIGEN_USE_MKL_ALL
-#endif
+//#ifdef MKL_AVAILABLE
+//#define  EIGEN_USE_MKL_ALL
+//#endif
 
 #include "nmspc_tensor_extra.h"
 #include <Eigen/SVD>
@@ -52,7 +52,7 @@ Textra::Tensor<Scalar, 2> class_SVD<Scalar>::pseudo_inverse(const Textra::Tensor
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
     setThreshold(1e-8);
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).sum();
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).squaredNorm();
     long chi = SVD.rank();
     Textra::Tensor<Scalar, 2> U = Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chi), SVD.matrixU().rows(), chi);
     Textra::Tensor<Scalar, 1> S = Textra::Matrix_to_Tensor(SVD.singularValues().head(chi).template cast<Scalar>() , chi);
@@ -69,7 +69,7 @@ template<typename Scalar>
 auto class_SVD<Scalar>::decompose(const Textra::Tensor<Scalar,2> &tensor) {
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).sum();
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).squaredNorm();
     long chi = SVD.rank();
     return std::make_tuple
             <Textra::Tensor<Scalar, 2> ,Textra::Tensor<Scalar, 1>, Textra::Tensor<Scalar, 2> >
@@ -86,7 +86,7 @@ template<typename Scalar>
 auto class_SVD<Scalar>::decompose(const Textra::Tensor<Scalar,2> &tensor, const long chi_max) {
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).sum();
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).squaredNorm();
     long chi = std::min(SVD.rank(), chi_max);
     return std::make_tuple
             <Textra::Tensor<Scalar, 2> ,Textra::Tensor<Scalar, 1>, Textra::Tensor<Scalar, 2> >
@@ -102,7 +102,7 @@ auto class_SVD<Scalar>::schmidt(const Textra::Tensor<Scalar,2> &tensor, long d, 
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chi            = std::min(SVD.rank(),chi_max);
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).sum();
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).squaredNorm();
     return std::make_tuple
             <Textra::Tensor<Scalar, 3> ,Textra::Tensor<Scalar, 1>, Textra::Tensor<Scalar, 3> >
             (
@@ -118,7 +118,7 @@ auto class_SVD<Scalar>::schmidt(const Textra::Tensor<Scalar,2> &tensor, long d, 
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chi            = SVD.rank();
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).sum();
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).squaredNorm();
     return std::make_tuple
             <Textra::Tensor<Scalar, 3> ,Textra::Tensor<Scalar, 1>, Textra::Tensor<Scalar, 3> >
             (
@@ -134,7 +134,7 @@ auto class_SVD<Scalar>::schmidt(const Textra::Tensor<Scalar,4> &tensor, long d, 
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chi            = SVD.rank();
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).sum();
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).squaredNorm();
     return std::make_tuple
             <Textra::Tensor<Scalar, 3> ,Textra::Tensor<Scalar, 1>, Textra::Tensor<Scalar, 3> >
             (
@@ -149,7 +149,7 @@ auto class_SVD<Scalar>::schmidt(const Textra::Tensor<Scalar,4> &tensor, long d, 
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chi            = std::min(SVD.rank(),chi_max);
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).sum();
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).squaredNorm();
     return std::make_tuple
             <Textra::Tensor<Scalar, 3> ,Textra::Tensor<Scalar, 1>, Textra::Tensor<Scalar, 3> >
             (

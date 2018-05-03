@@ -44,10 +44,22 @@ void class_FES_iDMRG::print_profiling(){
         t_tot.print_time_w_percent();
         t_sto.print_time_w_percent(t_tot);
         t_env.print_time_w_percent(t_tot);
+        t_prt.print_time_w_percent(t_tot);
         t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
-        t_eig.print_time_w_percent(t_sim);
-        t_svd.print_time_w_percent(t_sim);
-        t_mps.print_time_w_percent(t_sim);
+        print_profiling_sim(t_sim);
+        measurement->print_profiling(t_obs);
+    }
+}
+
+void class_FES_iDMRG::print_profiling_sim(class_tic_toc &t_parent){
+    if (settings::profiling::on) {
+        std::cout << "\n Simulation breakdown:" << std::endl;
+        std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
+        t_opt.print_time_w_percent(t_parent);
+        t_svd.print_time_w_percent(t_parent);
+        t_env.print_time_w_percent(t_parent);
+        t_mps.print_time_w_percent(t_parent);
+        t_chi.print_time_w_percent(t_parent);
     }
 }
