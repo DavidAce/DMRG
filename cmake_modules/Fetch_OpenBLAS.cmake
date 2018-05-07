@@ -24,18 +24,27 @@ else()
             GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
             GIT_TAG             v0.2.20
             PREFIX              "${INSTALL_DIRECTORY}/OpenBLAS"
+#            UPDATE_COMMAND ""
+#            TEST_COMMAND ""
+#
+#            CMAKE_ARGS
+#            -j8
+#            -DBUILD_SHARED_LIBS=OFF
+#            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+#            -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
+#            -DCMAKE_C_FLAGS=-w
+#            -DCMAKE_CXX_FLAGS=-w
+#            -DCMAKE_FORTRAN_FLAGS=-w
+#            -DCMAKE_BUILD_TYPE=Release
+
+
+
             UPDATE_COMMAND ""
             TEST_COMMAND ""
-
-            CMAKE_ARGS
-            -j8
-            -DBUILD_SHARED_LIBS=OFF
-            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
-            -DCMAKE_C_FLAGS=-w
-            -DCMAKE_CXX_FLAGS=-w
-            -DCMAKE_FORTRAN_FLAGS=-w
-            -DCMAKE_BUILD_TYPE=Release
+            CONFIGURE_COMMAND ""
+            BUILD_IN_SOURCE 1
+            BUILD_COMMAND $(MAKE) USE_THREAD=1 USE_OPENMP=0 NO_LAPACKE=1 NO_CBLAS=1 BINARY64=1
+            INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             )
 
     ExternalProject_Get_Property(project_OpenBLAS INSTALL_DIR)

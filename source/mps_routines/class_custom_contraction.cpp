@@ -23,20 +23,20 @@ void class_custom_contraction<T>::MultMv(T* theta_in_, T* theta_out_) {
             .reshape(shape1);
     counter++;
 
-//    Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>> mymat(mytens.data(), shape1[0],shape1[0]);
-//    Eigen::TensorMap<Textra::Tensor<const T, 1>> theta_in(theta_in_, shape1[0]);
-//    Eigen::TensorMap<Textra::Tensor<T, 1>>       theta_out(theta_out_, shape1[0]);
+//    Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>> mymat(mytens.data(), shape_theta1[0],shape_theta1[0]);
+//    Eigen::TensorMap<Textra::Tensor<const T, 1>> theta_in(theta_in_, shape_theta1[0]);
+//    Eigen::TensorMap<Textra::Tensor<T, 1>>       theta_out(theta_out_, shape_theta1[0]);
 //    theta_out = mytens.contract(theta_in, Textra::idx({1},{0}));
 
 //
-//    Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic,1>> theta_in(theta_in_, shape1[0]);
-//    Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic,1>> theta_out(theta_out_, shape1[0]);
+//    Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic,1>> theta_in(theta_in_, shape_theta1[0]);
+//    Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic,1>> theta_out(theta_out_, shape_theta1[0]);
 //    theta_out = mymat * theta_in;
 //
 
 
-//    Eigen::TensorMap<Textra::Tensor<const T, 4>> theta_in (theta_in_, shape4);
-//    Eigen::TensorMap<Textra::Tensor<T, 1>>       theta_out(theta_out_, shape1);
+//    Eigen::TensorMap<Textra::Tensor<const T, 4>> theta_in (theta_in_, shape_theta4);
+//    Eigen::TensorMap<Textra::Tensor<T, 1>>       theta_out(theta_out_, shape_theta1);
 //    //Best yet! The sparcity of the effective hamiltonian (Lblock HA Rblock) is about 58% nonzeros.
 //
 //    theta_out = theta_in
@@ -45,14 +45,14 @@ void class_custom_contraction<T>::MultMv(T* theta_in_, T* theta_out_) {
 //            .contract(HB ,     Textra::idx({3,0},{0,2}))//  idx({1,2,3},{0,4,5}))
 //            .contract(Rblock,  Textra::idx({0,3},{0,2}))
 //            .shuffle(Textra::array4{1,0,2,3})
-//            .reshape(shape1);
+//            .reshape(shape_theta1);
 //
 //
 
 
 //
-//    Eigen::TensorMap<Textra::Tensor<const T, 4>> theta_in (theta_in_, shape4);
-//    Eigen::TensorMap<Textra::Tensor<T, 1>>       theta_out(theta_out_, shape1);
+//    Eigen::TensorMap<Textra::Tensor<const T, 4>> theta_in (theta_in_, shape_theta4);
+//    Eigen::TensorMap<Textra::Tensor<T, 1>>       theta_out(theta_out_, shape_theta1);
 //    //Best yet! The sparcity of the effective hamiltonian (Lblock HA Rblock) is about 58% nonzeros.
 //
 //    theta_out = Lblock
@@ -61,7 +61,7 @@ void class_custom_contraction<T>::MultMv(T* theta_in_, T* theta_out_) {
 //            .contract(HA ,         Textra::idx({1,2},{0,2}))//  idx({1,2,3},{0,4,5}))
 //            .contract(HB,          Textra::idx({4,3,1},{0,1,2}))
 //            .shuffle(Textra::array4{2,0,3,1})
-//            .reshape(shape1);
+//            .reshape(shape_theta1);
 //
 
 

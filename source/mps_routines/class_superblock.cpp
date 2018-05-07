@@ -2,6 +2,7 @@
 // Created by david on 7/22/17.
 //
 
+#include <mps_routines/class_optimize_mps.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_hamiltonian.h>
 #include <mps_routines/class_environment.h>
@@ -11,9 +12,9 @@
 //#include <SymEigsSolver.h>
 //#include <MatOp/SparseSymMatProd.h>
 #include <general/class_svd_wrapper.h>
-#include <mps_routines/class_custom_contraction.h>
+//#include <mps_routines/class_custom_contraction.h>
 #include <sim_parameters/nmspc_sim_settings.h>
-#include <arpackpp/arscomp.h>
+//#include <arpackpp/arscomp.h>
 
 
 using namespace std;
@@ -45,37 +46,71 @@ class_superblock::class_superblock():
 // Find smallest eigenvalue using Arpack.
 //============================================================================//
 
-Textra::Tensor<Scalar,4> class_superblock::optimize_MPS(Textra::Tensor<Scalar, 4> &theta, int eigSteps, double eigThreshold){
+//Textra::Tensor<Scalar,4> class_superblock::optimize_MPS(Textra::Tensor<Scalar, 4> &theta, int eigSteps, double eigThreshold){
+//    Eigen::Tensor<Scalar,4> HA0 = HA->MPO_zero_site_energy();
+//    Eigen::Tensor<Scalar,4> HB0 = HB->MPO_zero_site_energy();
+//    class_custom_contraction<Scalar>  esp(Lblock->block, Rblock->block, HA0, HB0, shape4);
+//    int ncv = std::min(settings::precision::eig_max_ncv,(int)theta.size());
+////    ncv = 16;
+//    int nev = 1;
+//    int dim = esp.cols();
+////    t_eig.tic();
+//    //The operator A in "Ax = Ex" should be real and symmetric, so the eigenvector should be real as well, but might come out with a complex phase factor that can be removed.
+//    ARCompStdEig<double, class_custom_contraction<Scalar>> eig (dim, nev, &esp, &class_custom_contraction<Scalar>::MultMv, "SR", ncv,eigThreshold,eigSteps, theta.data());
+//    eig.ChangeTol(1e-12);
+//    eig.FindEigenvectors();
+//    int rows = eig.GetN();
+//    int cols = std::min(1, eig.GetNev());
+//    Textra::Tensor<Scalar, 2> eigvecs = TensorMap<Tensor<Scalar,2>> (eig.RawEigenvectors(), rows,cols);
+//    Textra::Tensor<Scalar, 1> eigvals = TensorMap<Tensor<Scalar,1>> (eig.RawEigenvalues(), cols);
+//    Scalar inv_phase = -1.0i * std::arg(eigvecs(0,0));
+//    eigvecs = (eigvecs *  std::exp(inv_phase)); //Rotate the phase of the eigenvector back so that it becomes real.
+//    eigvecs =  eigvecs.real().cast<Scalar>();    //Remove the, now negligible, imaginary part
+////    t_eig.toc();
+//
+//    using namespace chrono;
+//    energy = std::real(eigvals(0));
+//
+////    std::cout << "Time: " << duration_cast<duration<double>>(t_eig.measured_time).count() << " ";
+////    t_eig.print_delta();
+////    std::cout << " iter: " << eig.GetIter() << " counter: " << esp.counter << " energy: " << energy << "\n";
+//    return eigvecs.reshape(shape4);
+//}
+
+
+
+Textra::Tensor<Scalar,4> class_superblock::optimize_MPS2(Textra::Tensor<Scalar, 4> &theta, int eigSteps, double eigThreshold){
     Eigen::Tensor<Scalar,4> HA0 = HA->MPO_zero_site_energy();
     Eigen::Tensor<Scalar,4> HB0 = HB->MPO_zero_site_energy();
-    class_custom_contraction<Scalar>  esp(Lblock->block, Rblock->block, HA0, HB0, shape4);
-    int ncv = std::min(settings::precision::eig_max_ncv,(int)theta.size());
-//    ncv = 16;
-    int nev = 1;
-    int dim = esp.cols();
+    std::array<long,4> shape_theta4 = theta.dimensions();
+    std::array<long,4> shape_mpo4 = HA0.dimensions();
+//    Eigen::Tensor<Scalar,2> mytens =
+//                    Lblock->block
+//                      .contract(HA0, Textra::idx({2},{0}))
+//                      .contract(HB0, Textra::idx({2},{0}))
+//                      .contract(Rblock->block, Textra::idx({4},{2}))
+//                      .shuffle(Textra::array8{2,0,4,6,3,1,5,7})
+//                      .reshape(Textra::array2{shape1[0], shape1[0]});
+
+    class_optimize_mps  opt(Lblock->block.data(), Rblock->block.data(), HA0.data(), HB0.data(), shape_theta4, shape_mpo4, theta.data());
     t_eig.tic();
-    //The operator A in "Ax = Ex" should be real and symmetric, so the eigenvector should be real as well, but might come out with a complex phase factor that can be removed.
-    ARCompStdEig<double, class_custom_contraction<Scalar>> eig (dim, nev, &esp, &class_custom_contraction<Scalar>::MultMv, "SR", ncv,eigThreshold,eigSteps, theta.data());
-    eig.ChangeTol(1e-12);
-    eig.FindEigenvectors();
-    int rows = eig.GetN();
-    int cols = std::min(1, eig.GetNev());
-    Textra::Tensor<Scalar, 2> eigvecs = TensorMap<Tensor<Scalar,2>> (eig.RawEigenvectors(), rows,cols);
-    Textra::Tensor<Scalar, 1> eigvals = TensorMap<Tensor<Scalar,1>> (eig.RawEigenvalues(), cols);
+    opt.optimize_mps(1);
+    t_eig.toc();
+
+    TensorMap<Tensor<Scalar,2>> eigvecs (opt.eigvecs.data(), opt.rows, opt.cols);
+    TensorMap<Tensor<Scalar,1>> eigvals (opt.eigvals.data(), opt.cols);
     Scalar inv_phase = -1.0i * std::arg(eigvecs(0,0));
     eigvecs = (eigvecs *  std::exp(inv_phase)); //Rotate the phase of the eigenvector back so that it becomes real.
     eigvecs =  eigvecs.real().cast<Scalar>();    //Remove the, now negligible, imaginary part
-    t_eig.toc();
 
     using namespace chrono;
     energy = std::real(eigvals(0));
 
-    std::cout << "Time: " << duration_cast<duration<double>>(t_eig.measured_time).count() << " ";
-    t_eig.print_delta();
-    std::cout << " iter: " << eig.GetIter() << " counter: " << esp.counter << " energy: " << energy << "\n";
-    return eigvecs.reshape(shape4);
+//    std::cout << "Time: " << duration_cast<duration<double>>(t_eig.measured_time).count() << " ";
+//    t_eig.print_delta();
+//    std::cout << " iter: " << opt.iter << " counter: " << opt.counter << " energy: " << energy <<  " shape4: " << theta.dimensions() << "\n";
+    return eigvecs.reshape(shape_theta4);
 }
-
 
 
 

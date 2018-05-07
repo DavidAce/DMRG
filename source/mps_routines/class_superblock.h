@@ -64,6 +64,14 @@ public:
                  double eigThreshold          /*!< Minimum threshold for halting eigenvalue solver. */
     )    __attribute((hot));    /*!< Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using [Spectra](https://github.com/yixuan/spectra). */
 
+
+    Textra::Tensor<Scalar, 4>
+    optimize_MPS2(Textra::Tensor<Scalar, 4> &theta,
+                 int eigSteps,              /*!< Maximum number of steps for eigenvalue solver. */
+                 double eigThreshold          /*!< Minimum threshold for halting eigenvalue solver. */
+    )    __attribute((hot));    /*!< Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using [Spectra](https://github.com/yixuan/spectra). */
+
+
     Textra::Tensor<Scalar, 4>
     evolve_MPS(const Textra::Tensor<Scalar, 4> &U);
     Textra::Tensor<Scalar, 4>
