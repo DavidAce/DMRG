@@ -8,7 +8,7 @@
 //#ifdef MKL_AVAILABLE
 //#endif
 
-#include "general/nmspc_tensor_extra.h"
+#include <general/nmspc_tensor_extra.h>
 #include <iomanip>
 
 /*!
@@ -91,13 +91,13 @@ public:
 //                      .contract(HB, Textra::idx({2},{0}))
 //                      .contract(Rblock, Textra::idx({4},{2}))
 //                      .shuffle(Textra::array8{2,0,4,6,3,1,5,7})
-//                      .reshape(shape2);
+//                      .reshape(shape_theta2);
 
 //        mytens = HA.contract(HB, Textra::idx({1},{0}))
 //                .contract(Lblock, Textra::idx({0},{2}))
 //                .contract(Rblock, Textra::idx({2},{2}))
 //                .shuffle(Textra::array8{0,4,2,6,1,5,3,7})
-//                .reshape(shape2);
+//                .reshape(shape_theta2);
 //        mymat = Textra::Tensor2_to_Matrix(mytens);
     }
 
@@ -151,8 +151,8 @@ public:
 ////
 //
 //
-//    Eigen::TensorMap<Textra::Tensor<const T, 4>> theta_in (theta_in_, shape4);
-//    Eigen::TensorMap<Textra::Tensor<T, 1>>       theta_out(theta_out_, shape1);
+//    Eigen::TensorMap<Textra::Tensor<const T, 4>> theta_in (theta_in_, shape_theta4);
+//    Eigen::TensorMap<Textra::Tensor<T, 1>>       theta_out(theta_out_, shape_theta1);
 //    //Best yet! The sparcity of the effective hamiltonian (Lblock HA Rblock) is about 58% nonzeros.
 //
 //    theta_out = Lblock
@@ -161,7 +161,7 @@ public:
 //            .contract(HB ,     Textra::idx({3,1},{0,2}))//  idx({1,2,3},{0,4,5}))
 //            .contract(Rblock,  Textra::idx({1,3},{0,2}))
 //            .shuffle(Textra::array4{1,0,2,3})
-//            .reshape(shape1);
+//            .reshape(shape_theta1);
 //}
 
 

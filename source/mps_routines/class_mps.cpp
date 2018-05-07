@@ -67,8 +67,8 @@ void class_mps::compute_mps_components(){
 //    Tensor<Scalar,2> LAGB_mat            = get_transfer_matrix_LAGB().reshape(array2{sizeLA*sizeLA,sizeLB*sizeLB});
     Tensor<Scalar,2> theta_evn_mat       = get_transfer_matrix_theta_evn()  .reshape(array2{sizeLB*sizeLB,sizeLB*sizeLB});
     Tensor<Scalar,2> theta_odd_mat       = get_transfer_matrix_theta_odd()  .reshape(array2{sizeLA*sizeLA,sizeLA*sizeLA});
-//    auto eigval_R_LBGA                   = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(LBGA_mat.data(), sizeLB*sizeLB,sizeLA*sizeLA, 1);
-//    auto eigval_R_LAGB                   = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(LAGB_mat.data(), sizeLA*sizeLA,sizeLB*sizeLB, 1);
+//    auto eigval_R_LBGA                   = eig.solve_dominant<arpack::Form::COMPLEX_GENERAL, arpack::Ritz::LM, arpack::Side::R, false>(LBGA_mat.data(), sizeLB*sizeLB,sizeLA*sizeLA, 1);
+//    auto eigval_R_LAGB                   = eig.solve_dominant<arpack::Form::COMPLEX_GENERAL, arpack::Ritz::LM, arpack::Side::R, false>(LAGB_mat.data(), sizeLA*sizeLA,sizeLB*sizeLB, 1);
     auto [eigvec_R_evn,eigval_R_evn]     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, true>(theta_evn_mat.data(),sizeLB*sizeLB,sizeLB*sizeLB, 1);
     auto [eigvec_L_evn,eigval_L_evn]     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::L, true>(theta_evn_mat.data(),sizeLB*sizeLB,sizeLB*sizeLB, 1);
     auto [eigvec_R_odd,eigval_R_odd]     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, true>(theta_odd_mat.data(),sizeLA*sizeLA,sizeLA*sizeLA, 1);

@@ -34,6 +34,7 @@ void class_iDMRG::run() {
         t_tot.toc();
         print_status_full();
         print_profiling();
+        superblock->t_eig.print_time();
 
 }
 

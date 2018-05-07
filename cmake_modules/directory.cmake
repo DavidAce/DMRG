@@ -1,6 +1,6 @@
 
 configure_file(
-        ${CMAKE_SOURCE_DIR}/cmake/directory.h.in
+        ${CMAKE_SOURCE_DIR}/cmake_modules/directory.h.in
         ${CMAKE_BINARY_DIR}/directory/directory.h
 )
 

@@ -3,7 +3,7 @@ project(DMRG++)
 
 
 set(CMAKE_VERBOSE_MAKEFILE OFF)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
 #include(cmake/get_libraries.cmake)
 
 ################################################################
@@ -21,8 +21,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 ### Include it using #include <gitversion.h>                 ###
 ### Gives a namespace GIT:: with several git version numbers.###
 ################################################################
-include(cmake/gitversion.cmake)
-include(cmake/directory.cmake)
+include(cmake_modules/gitversion.cmake)
+include(cmake_modules/directory.cmake)
 
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
@@ -32,7 +32,7 @@ message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}"
 ###################
 ### Setup flags ###
 ###################
-set(COMMON_OPTIONS -fopenmp -g -Wall -march=native)
+set(COMMON_OPTIONS -g -Wall -march=native)
 set(DEBUG_OPTIONS       -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3 -mavx -mfma)
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
@@ -97,26 +97,18 @@ target_include_directories(${PROJECT_NAME} PRIVATE source)
 #set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY-UNITY")
 
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
-include(cmake/FindGFortran.cmake)    ### For Fortran library
+include(cmake_modules/FindGFortran.cmake)    ### For Fortran library
 
 ###########################################
 ###  Find or install all dependencies   ###
 ###########################################
 #include(cmake/Find_dont_install_INTELMKL.cmake)         ### For Intel MKL library. Note that it conflicts with arpack++
-include(cmake/cmake/Fetch_OpenBLAS.cmake)
-include(cmake/cmake/Fetch_Eigen3.cmake)
-include(cmake/cmake/Fetch_HDF5.cmake)
-include(cmake/cmake/Fetch_Arpack-ng.cmake)
-include(cmake/cmake/Fetch_Arpackpp.cmake)
-include(cmake/cmake/Fetch_GSL.cmake)
-#include(cmake/Find_or_install_EIGEN3.cmake)              ### For Eigen linear algebra header-library http://eigen.tuxfamily.org/
-#include(cmake/Find_or_install_HDF5.cmake)                ### For HDF5 data env_storage format            https://support.hdfgroup.org
-#include(cmake/Find_or_install_LAPACK_and_BLAS.cmake)     ### For Lapack and Blas libraries           https://github.com/Reference-LAPACK/lapack
-#include(cmake/Find_or_install_ARPACK.cmake)              ### For Arpack-ng, a mantained arpack fork  https://github.com/opencollab/arpack-ng
-#include(cmake/Find_or_install_ARPACKPP.cmake)            ### For ARPACKPP header-arplibrary          https://github.com/m-reuter/arpackpp
-#include(cmake/Find_or_install_GSL.cmake)                 ### For GSL Gnu Scientific Library          https://www.gnu.org/software/gsl/
-#include(cmake/Find_or_install_SPECTRA.cmake)             ### For Spectra eigenvalue solver           https://github.com/yixuan/spectra
-
+include(cmake_modules/Fetch_OpenBLAS.cmake)
+include(cmake_modules/Fetch_Eigen3.cmake)
+include(cmake_modules/Fetch_HDF5.cmake)
+include(cmake_modules/Fetch_Arpack-ng.cmake)
+include(cmake_modules/Fetch_Arpackpp.cmake)
+include(cmake_modules/Fetch_GSL.cmake)
 
 
 
@@ -134,17 +126,20 @@ message("    ARPACKPP :   ${ARPACKPP_INCLUDE_DIR}")
 message("    GSL      :   ${GSL_LIBRARIES} ${GSLCBLAS_LIBRARIES}")
 message("    INTEL MKL:   ${MKL_LIBRARIES}")
 message("=============================================================================")
+message("")
 
 ###################
 ### INFORMATION ###
 ###################
-message("==================================================================")
+message("")
+message("=============================================================================")
 message("")
 message("      To clean cmake files, run './build.sh clean'")
 message("      To clean cmake files downloaded libraries, run './clean.sh '")
 message("      To launch this program,  './run.sh'")
 message("")
-message("==================================================================")
+message("=============================================================================")
+message("")
 
 
 #set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j6")

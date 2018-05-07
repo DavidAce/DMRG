@@ -12,6 +12,7 @@
 #include <mps_routines/class_mpo.h>
 #include <general/class_arpackpp_wrapper.h>
 #include <general/class_svd_wrapper.h>
+#include <general/class_arpackpp_wrapper2.h>
 #include <Eigen/QR>
 
 using namespace std;
@@ -25,9 +26,7 @@ Scalar class_measurement::moment_generating_function(std::shared_ptr<class_mps> 
     t_temp1.tic();
     std::shared_ptr<class_mps> MPS_evolved = std::make_shared<class_mps>(*MPS_original);
     class_SVD<Scalar> SVD;
-    class_arpackpp_wrapper eig;
     SVD.setThreshold(1e-12);
-    eig.setThreshold(1e-12);
     long chi_max = 4*MPS_evolved->LA.dimension(0);
     for (auto &Op: Op_vec) {
         //Evolve
@@ -45,8 +44,18 @@ Scalar class_measurement::moment_generating_function(std::shared_ptr<class_mps> 
     long sizeLB = MPS_evolved->LB.size() * MPS_evolved->LB.size();
     //Normalize
     Tensor<Scalar,2> transfer_matrix_theta_evn       = MPS_evolved->get_transfer_matrix_theta_evn().reshape(array2{sizeLB,sizeLB});
+    t_temp2.tic();
+    class_arpackpp_wrapper eig;
+    eig.setThreshold(1e-12);
     VectorType<Scalar> eigval_R_evn      = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transfer_matrix_theta_evn.data(),sizeLB,sizeLB, 1);
-    auto new_theta_evn_normalized        = MPS_evolved->get_theta_evn(sqrt(eigval_R_evn(0)));
+    t_temp2.toc();
+    t_temp3.tic();
+    class_arpackpp_wrapper2<Scalar, Form::COMPLEX_GENERAL> solver;
+    solver.eig(transfer_matrix_theta_evn.data(), Ritz::LM, (int)sizeLB, 1, 16, false);
+    t_temp3.toc();
+//    VectorType<Scalar> eigval_R_evn = Eigen::Map <
+//    auto new_theta_evn_normalized        = MPS_evolved->get_theta_evn(sqrt(eigval_R_evn(0)));
+    auto new_theta_evn_normalized        = MPS_evolved->get_theta_evn(sqrt(solver.get_eigvals()[0]));
 
     long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original->theta_evn_normalized.dimension(1);
     long sizeR = new_theta_evn_normalized.dimension(3) * MPS_original->theta_evn_normalized.dimension(3);
@@ -56,9 +65,17 @@ Scalar class_measurement::moment_generating_function(std::shared_ptr<class_mps> 
             .shuffle(array4{0,2,1,3})
             .reshape(array2{sizeL,sizeR});
     //Compute the characteristic function G(a).
+    t_temp2.tic();
     VectorType <Scalar> lambdaG  = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transfer_matrix_G.data(), transfer_matrix_G.dimension(0),transfer_matrix_G.dimension(1), 1);
     int iter = eig.GetIter();
-//    std::cout <<setprecision(15) << "lambdaG: " << lambdaG(0) <<" Iter: " << iter  << std::endl;
+    t_temp2.toc();
+    t_temp3.tic();
+    solver.eig(transfer_matrix_G.data(), Ritz::LM, (int)transfer_matrix_G.dimension(0), 1, 16, false);
+    lambdaG(0) = solver.get_eigvals()[0];
+    t_temp3.toc();
+
+
+    //    std::cout <<setprecision(15) << "lambdaG: " << lambdaG(0) <<" Iter: " << iter  << std::endl;
     t_temp1.toc();
     return lambdaG(0);
 }
