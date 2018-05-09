@@ -75,8 +75,10 @@ void class_hdf5_file::set_output_file_path() {
     //Create directory if create_dir == true, always relative to project root folder
     if(create_dir) {
         if (fs::create_directories(output_folder_abs)){
+            output_folder_abs = fs::canonical(output_folder_abs);
             ccout(1) << "Created directory: " <<  output_folder_abs << std::endl;
         }else{
+            output_folder_abs = fs::canonical(output_folder_abs);
             ccout(1) << "Directory already exists: " <<  output_folder_abs << std::endl;
         }
     }
@@ -88,6 +90,7 @@ void class_hdf5_file::set_output_file_path() {
     output_file_path = fs::system_complete(output_folder_abs / output_filename);
     if (fs::exists(output_folder_abs)) {
         if(fs::exists(output_file_path)) {
+            output_file_path = fs::canonical(output_file_path);
             ccout(1) << "File already exists: " << output_file_path << std::endl;
             if (settings::hdf5::overwrite_file_if_found) {
                 ccout(1) << "Overwrite mode is TRUE." << std::endl;
@@ -130,6 +133,7 @@ void class_hdf5_file::set_output_file_path() {
 
 
     if(fs::exists(output_file_path)) {
+        output_file_path = fs::canonical(output_file_path);
         ccout(1) << "File exists already: " << output_file_path << std::endl;
         if (overwrite) {
             ccout(1) << "Overwrite mode is TRUE." << std::endl;
