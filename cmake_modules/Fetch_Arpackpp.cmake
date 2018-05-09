@@ -26,7 +26,8 @@ else()
             CONFIGURE_COMMAND ""
             BUILD_COMMAND
             ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include && find <INSTALL_DIR>/include -maxdepth 1 -type l -delete &&
-            ln -sT <SOURCE_DIR>/include <INSTALL_DIR>/include/arpackpp
+#            ln -sT <SOURCE_DIR>/include <INSTALL_DIR>/include/arpackpp
+            ${CMAKE_COMMAND} -E create_symlink <SOURCE_DIR>/include <INSTALL_DIR>/include/arpackpp
             DEPENDS blas lapack arpack
     )
 

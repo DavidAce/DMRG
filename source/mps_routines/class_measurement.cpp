@@ -104,7 +104,7 @@ double class_measurement::compute_entanglement_entropy(){
 //
 //double class_measurement::compute_parity(){
 ////    t_ene_mpo.tic();
-//    Tensor<Scalar, 0>  E_two_site = superblock->MPS->theta
+//    Tensor<T, 0>  E_two_site = superblock->MPS->theta
 //                    .contract(parity_mpo.MPO,     idx({0},{0}))
 //                    .contract(parity_mpo.MPO,     idx({1},{0}))
 //                    .contract(superblock->MPS->theta.conjugate(),         idx({0,1,2,3},{1,3,0,2}));

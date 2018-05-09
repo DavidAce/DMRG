@@ -48,7 +48,7 @@ void class_base_algorithm::single_DMRG_step(long chi_max){
 
 //    superblock->set_current_dimensions();
 //    t_opt.tic();
-//    theta_memory = superblock->optimize_MPS(theta_memory, s::precision::eigSteps, s::precision::eigThreshold);
+//    theta_memory = superblock->optimize_MPS(theta_memory, s::precision::eigMaxIter, s::precision::eigThreshold);
 //    t_opt.toc();
 //
 //    t_svd.tic();
@@ -63,7 +63,7 @@ void class_base_algorithm::single_DMRG_step(long chi_max){
     superblock->set_current_dimensions();
     superblock->MPS->theta = superblock->MPS->get_theta();
     t_opt.tic();
-    superblock->MPS->theta = superblock->optimize_MPS2(superblock->MPS->theta, s::precision::eigSteps, s::precision::eigThreshold);
+    superblock->MPS->theta = superblock->optimize_MPS2(superblock->MPS->theta, s::precision::eigMaxIter, s::precision::eigThreshold);
     t_opt.toc();
     t_svd.tic();
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, s::precision::SVDThreshold);
@@ -393,7 +393,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
     superblock->set_current_dimensions();
 
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, settings::precision::SVDThreshold);
-//        Tensor<Scalar, 0>  E_two_site =
+//        Tensor<T, 0>  E_two_site =
 //            superblock->Lblock->block
 //                    .contract( superblock->MPS->theta,               idx({0},{1}))
 //                    .contract( superblock->HA->MPO_zero_site_energy(),    idx({1,2},{0,2}))

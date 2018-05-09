@@ -18,7 +18,7 @@ void class_optimize_mps::optimize_mps(int nev)
 //    std::cout << "shape_mpo4  : " << shape_mpo4[0]  << " " << shape_mpo4[1]  << " " << shape_mpo4[2]  << " " << shape_mpo4[3] << std::endl;
 //    std::cout << "shape_mpo4" << shape_mpo4 << std:endl;
 
-    ARCompStdEig<double, class_contraction<Scalar>> eig (dim, nev, &contraction, &class_contraction<Scalar>::MultMv, "SR", ncv,settings::precision::eigThreshold,settings::precision::eigSteps, resid);
+    ARCompStdEig<double, class_contraction<Scalar>> eig (dim, nev, &contraction, &class_contraction<Scalar>::MultMv, "SR", ncv,settings::precision::eigThreshold,settings::precision::eigMaxIter, resid);
     eig.FindEigenvectors();
     rows = eig.GetN();
     cols = eig.GetNev();

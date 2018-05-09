@@ -27,11 +27,17 @@ else()
     ExternalProject_Get_Property(project_EIGEN3 INSTALL_DIR)
     add_library(EIGEN3 INTERFACE)
     set(EIGEN3_INCLUDE_DIR ${INSTALL_DIR}/include/eigen3)
-#    target_compile_options(${PROJECT_NAME} PRIVATE -DEIGEN_USE_BLAS)
-#    add_definitions(-DEIGEN_USE_LAPACK)
-
     add_dependencies(EIGEN3 project_EIGEN3)
 endif()
 
 target_link_libraries(${PROJECT_NAME} EIGEN3)
+if(BLAS_LIBRARIES)
+    if(MKL_FOUND)
+        target_compile_options(${PROJECT_NAME} PUBLIC -DEIGEN_USE_MKL_ALL  -Wno-parentheses)
+    else()
+    target_compile_options(${PROJECT_NAME} PUBLIC -DEIGEN_USE_BLAS  -Wno-parentheses)
+    endif()
+endif()
+
+
 target_include_directories(${PROJECT_NAME} PRIVATE ${EIGEN3_INCLUDE_DIR})

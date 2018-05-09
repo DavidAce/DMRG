@@ -3,10 +3,6 @@
 //
 
 
-//#ifdef MKL_AVAILABLE
-//#define  EIGEN_USE_MKL_ALL
-//#endif
-
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <sim_parameters/nmspc_model.h>
@@ -157,7 +153,7 @@ void class_mpo::update_evolution_step_size(const Scalar dt, const int susuki_tro
 
 
 //
-//Tensor<Scalar,6> class_mpo::compute_MM(Scalar k)
+//Tensor<T,6> class_mpo::compute_MM(T k)
 ///*! Returns a 2-site Hamitlonian MPO of rank 6. Notation following Schollwöck (2010)
 // *
 // *           2   3
@@ -172,7 +168,7 @@ void class_mpo::update_evolution_step_size(const Scalar dt, const int susuki_tro
 //}
 
 //
-//Tensor<Scalar,8> class_mpo::compute_MMMM(Scalar k)
+//Tensor<T,8> class_mpo::compute_MMMM(T k)
 ///*! Returns a 2-site Hamitlonian MPO of rank 6. Notation following Schollwöck (2010)
 // *
 // *           4   5

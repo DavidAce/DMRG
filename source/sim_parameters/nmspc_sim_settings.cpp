@@ -19,7 +19,7 @@ namespace settings{
     double model::g                      =  1  ;                          /*!< Transverse field strength */
     std::string model::initial_state     = "random";                      /*!< Choose initial state of the MPS, either "cat" or "random". Default "random". */
 
-    int    precision::eigSteps           = 1000   ;
+    int    precision::eigMaxIter         = 1000   ;
     double precision::eigThreshold       = 1e-12  ;
     int    precision::eig_max_ncv        = 5      ;
     double precision::SVDThreshold       = 1e-12  ;
@@ -125,7 +125,7 @@ void settings::load_from_file(class_file_reader &indata){
     model::g                       = indata.find_parameter<double> ("model::g", model::g);
     model::initial_state           = indata.find_parameter<string> ("model::initial_state", model::initial_state);
     //Parmaters that control eigensolver and SVD precision
-    precision::eigSteps           = indata.find_parameter<int>    ("precision::eigSteps"    , precision::eigSteps);
+    precision::eigMaxIter         = indata.find_parameter<int>    ("precision::eigMaxIter"  , precision::eigMaxIter);
     precision::eigThreshold       = indata.find_parameter<double> ("precision::eigThreshold", precision::eigThreshold);
     precision::eig_max_ncv        = indata.find_parameter<int>    ("precision::eig_max_ncv" , precision::eig_max_ncv);
     precision::SVDThreshold       = indata.find_parameter<double> ("precision::eigThreshold", precision::SVDThreshold);
