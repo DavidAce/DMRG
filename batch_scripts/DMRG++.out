@@ -1,0 +1,87 @@
+Git Branch: development | Commit hash: 3b644bcc | Revision: 162
+Input argument [0] : condor_exec.exe
+Input argument [1] : ../input/input.cfg
+Input argument [2] : ../output/mytestoutput.h5
+Found input file: "/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/input/input.cfg"
+Loading line:     model::J                        = 1                         /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
+Loading line:     model::g                        = 1                         /*!< Transverse field strength */
+Loading line:     model::initial_state            = rands                      /*!< Choose initial state of the MPS, either "cat" or "random". Default "random". Without quotes! */
+Loading line:     precision::eigMaxIter           = 1000                      /*!< Maximum number of steps for eigenvalue solver. */
+Loading line:     precision::eigThreshold         = 1e-12                     /*!< Minimum threshold for halting eigenvalue solver. */
+Loading line:     precision::eig_max_ncv          = 16                        /*!< Parameter controlling the column space? of the Lanczos solver. 16 is close to optimum when chi = 16. Coincidence? */
+Loading line:     precision::eigThreshold         = 1e-12                     /*!< Minimum threshold for halting eigenvalue solver. */
+Loading line:     idmrg::on                       = true                      /*!< Turns iDMRG simulation on/off. */
+Loading line:     idmrg::max_steps                = 3000                      /*!< Number of steps for the simulation. */
+Loading line:     idmrg::chi_max                  = 12                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+Loading line:     idmrg::chi_grow                 = false                     /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
+Loading line:     idmrg::print_freq               = 500                       /*!< Print frequency for console output. (0 = off).*/
+Loading line:     idmrg::store_freq               = 500                       /*!< Store frequency,for output file buffer. (0 = off). */
+Loading line:     fdmrg::on                       = false                      /*!< Turns fDMRG simulation on/off. */
+Loading line:     xdmrg::on                       = false                     /*!< Turns xDMRG simulation on/off. */
+Loading line:     itebd::on                       = false                     /*!< Turns iTEBD simulation on/off. */
+Loading line:     fes_itebd::on                   = false                     /*!< Turns FES-ITEBD simulation on/off. */
+Loading line:     fes_idmrg::on                   = false                     /*!< Turns FES-iDMRG simulation on/off. */
+Loading line:     hdf5::save_to_file              = true                      /*!< (Not implemented yet) If true, saves the simulation data to an HDF5 file instead of just outputting to console */
+Loading line:     hdf5::create_dir_if_not_found   = true                      /*!< If true, an output directory will be created in the project root folder if it isn't found */
+Loading line:     hdf5::overwrite_file_if_found   = false                     /*!< If true, an hdf5-file with the provided filename will be overwritten if found in output_folder */
+Loading line:     hdf5::output_filename           = state-rands.h5               /*!< Name of the output HDF5 file. Without quotes! */
+Loading line:     hdf5::output_folder             = output                    /*!< Path of the output HDF5 file */
+Loading line:     hdf5::full_storage              = false                     /*!< (Not implemented yet) If true, saves more simulation data to file (such as explicit form of MPS). Set to false to reduce output file size. */
+Loading line:     profiling::on                   = true                      /*!< If true, turns on profiling and timings will be shown on console. */
+Loading line:     profiling::precision            = 5                         /*!< Sets precision (number of decimals) of time output. */
+Loading line:     console::verbosity              = 1                         /*!< (PARTIALLY IMPLEMENTED) Level of verbosity desired [0-2]. Level 0 prints almost nothing, level 2 prints everything */
+Loading line:     console::timestamp              = false                     /*!< (NOT IMPLEMENTED) Whether to put a timestamp on console outputs */
+output_folder     = "output"
+output_filename   = "../output/mytestoutput.h5"
+Directory already exists: "/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/output"
+File already exists: "/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/output/mytestoutput.h5"
+Renamed output file: "../output/mytestoutput.h5"  -->  "mytestoutput-1.h5"
+Initializing random state with bond dimension chi = 12
+
+Starting iDMRG simulation
+iDMRG Step: 500       E: -1.2732390495352603  S: 0.4514109463969554   χmax: 12  χ: 12  log₁₀ σ²(E): -3.6022      -5.8384      -5.8385     log₁₀ truncation: -7.4327     Chain length: 1004        
+iDMRG Step: 1000      E: -1.2732390751532361  S: 0.4279705295666021   χmax: 12  χ: 12  log₁₀ σ²(E): -3.9005      -5.9218      -5.9219     log₁₀ truncation: -7.5360     Chain length: 2004        
+iDMRG Step: 1500      E: -1.2732390769298778  S: 0.4246226999066406   χmax: 12  χ: 12  log₁₀ σ²(E): -4.0745      -5.9352      -5.9354     log₁₀ truncation: -7.5528     Chain length: 3004        
+iDMRG Step: 2000      E: -1.2732390770744373  S: 0.4241793068534633   χmax: 12  χ: 12  log₁₀ σ²(E): -4.1973      -5.9370      -5.9375     log₁₀ truncation: -7.5550     Chain length: 4004        
+iDMRG Step: 2500      E: -1.2732390770917454  S: 0.4241210662974192   χmax: 12  χ: 12  log₁₀ σ²(E): -4.2922      -5.9372      -5.9374     log₁₀ truncation: -7.5553     Chain length: 5004        
+
+ -- Final results -- iDMRG/iDMRG
+Energy               = -1.2732390844010690
+Entanglement Entropy = 0.4241134339072184
+χmax                 = 12
+χ                    = 12
+log₁₀ σ²(E) MPO:     = -4.3694417895171727
+log₁₀ σ²(E) HAM:     = -5.9372784067495576
+log₁₀ σ²(E) GEN:     = -5.9376424631151554
+log₁₀ truncation:    = -7.5554
+Chain length         = 6004
+
++Total Time              : 28.83535   s | 100.00000 %
+↳ Store to file          : 0.00002    s |   0.00008 % 
+↳ Printing to console    : 0.00026    s |   0.00091 % 
+↳ Computing observables  : 1.13129    s |   3.92329 % 
+↳+Simulation             : 26.55147   s |  92.07961 % 
+
+ Simulation breakdown:
++Total                   26.55147    s
+↳ Optimize MPS           : 25.77433   s |  97.07307 % 
+↳ SVD Truncation         : 0.71528    s |   2.69394 % 
+↳ Update Environments    : 1.32229    s |   4.98010 % 
+↳ Update Chi             : 0.00040    s |   0.00149 % 
+
+Computing observables breakdown:
++Total                   1.13129    s
+↳ Energy (MPO)           : 0.00053    s |   0.04643 % 
+↳ Energy (Ham)           : 0.00170    s |   0.15065 % 
+↳ Energy (Gen)           : 0.00000    s |   0.00000 % 
+↳ Variance (MPO)         : 0.00034    s |   0.02980 % 
+↳ Variance (Ham)         : 0.16340    s |  14.44364 % 
+↳ Variance (Gen)         : 0.92763    s |  81.99689 % 
+↳ Ent. Entropy           : 0.00003    s |   0.00243 % 
+↳ Temp1                  : 0.92726    s |  81.96459 % 
+↳ Temp2                  : 0.00000    s |   0.00000 % 
+↳ Temp3                  : 0.00000    s |   0.00000 % 
+↳ Temp4                  : 0.00000    s |   0.00000 % 
+ Time: : 25.76726   s
+All algorithms finished.
+Data written to file: "/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/output/mytestoutput-1.h5"

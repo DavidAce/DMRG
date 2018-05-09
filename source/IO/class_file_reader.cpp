@@ -10,7 +10,7 @@ bool class_file_reader::check_if_input_file_exists(const fs::path &path_to_file)
             std::ifstream in(path_to_file.c_str());
             if(in.is_open()){
                 in.close();
-                ccout(1) << "Found input file: " << path_to_file << '\n';
+                ccout(1) << "Found input file: " << fs::canonical(path_to_file) << '\n';
                 return true;
             }
         }
