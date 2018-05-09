@@ -4,7 +4,6 @@ project(DMRG++)
 
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
-#include(cmake/get_libraries.cmake)
 
 ################################################################
 ### Use cotire (compile time reducer) to speed up compile    ###
@@ -102,7 +101,7 @@ include(cmake_modules/FindGFortran.cmake)    ### For Fortran library
 ###########################################
 ###  Find or install all dependencies   ###
 ###########################################
-#include(cmake/Find_dont_install_INTELMKL.cmake)         ### For Intel MKL library. Note that it conflicts with arpack++
+include(cmake_modules/Find_dont_install_INTELMKL.cmake)         ### For Intel MKL library. Note that it conflicts with arpack++
 include(cmake_modules/Fetch_OpenBLAS.cmake)
 include(cmake_modules/Fetch_Eigen3.cmake)
 include(cmake_modules/Fetch_HDF5.cmake)

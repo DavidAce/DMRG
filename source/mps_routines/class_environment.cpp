@@ -3,10 +3,6 @@
 //
 
 
-//#ifdef MKL_AVAILABLE
-//#define  EIGEN_USE_MKL_ALL
-//#endif
-
 #include "class_environment.h"
 #include <mps_routines/class_mps.h>
 

@@ -69,8 +69,8 @@ public:
     Textra::Tensor<Scalar,4> transfer_matrix_LAGB;
     Textra::Tensor<Scalar,4> transfer_matrix_evn;
     Textra::Tensor<Scalar,4> transfer_matrix_odd;
-//    Textra::Tensor<Scalar,4> transfer_matrix_thetaL;
-//    Textra::Tensor<Scalar,4> transfer_matrix_thetaR_Sw;
+//    Textra::Tensor<T,4> transfer_matrix_thetaL;
+//    Textra::Tensor<T,4> transfer_matrix_thetaR_Sw;
 
 
 
@@ -99,25 +99,25 @@ public:
     Textra::Tensor<Scalar,4> get_transfer_matrix_AB(int p)const;
 private:
 
-//    Textra::Tensor<Scalar,4> get_regularization_fixpointA()const;
-//    Textra::Tensor<Scalar,4> get_regularization_fixpointB()const;
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_LBGA_regularized()const;
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_GALA_regularized()const;
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_GBLB_regularized()const;
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_LAGB_regularized()const;
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_AB_regularized()const;
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_BA_regularized()const;
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_AB_regularized_term(int p)const;
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_regularized_inverseA()const;
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_regularized_inverseB()const;
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_regularized_inverseAB()const;
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_regularized_inverseBA()const;
+//    Textra::Tensor<T,4> get_regularization_fixpointA()const;
+//    Textra::Tensor<T,4> get_regularization_fixpointB()const;
+//    Textra::Tensor<T,4> get_transfer_matrix_LBGA_regularized()const;
+//    Textra::Tensor<T,4> get_transfer_matrix_GALA_regularized()const;
+//    Textra::Tensor<T,4> get_transfer_matrix_GBLB_regularized()const;
+//    Textra::Tensor<T,4> get_transfer_matrix_LAGB_regularized()const;
+//    Textra::Tensor<T,4> get_transfer_matrix_AB_regularized()const;
+//    Textra::Tensor<T,4> get_transfer_matrix_BA_regularized()const;
+//    Textra::Tensor<T,4> get_transfer_matrix_AB_regularized_term(int p)const;
+//    Textra::Tensor<T,4> get_transfer_matrix_regularized_inverseA()const;
+//    Textra::Tensor<T,4> get_transfer_matrix_regularized_inverseB()const;
+//    Textra::Tensor<T,4> get_transfer_matrix_regularized_inverseAB()const;
+//    Textra::Tensor<T,4> get_transfer_matrix_regularized_inverseBA()const;
 
 };
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_L()const;
-//    Textra::Tensor<Scalar,4> get_transfer_matrix_R()const;
-//    Textra::Tensor<Scalar,4> get_transfer_2_site_matrix_L()const;
-//    Textra::Tensor<Scalar,4> get_transfer_2_site_matrix_R()const;
+//    Textra::Tensor<T,4> get_transfer_matrix_L()const;
+//    Textra::Tensor<T,4> get_transfer_matrix_R()const;
+//    Textra::Tensor<T,4> get_transfer_2_site_matrix_L()const;
+//    Textra::Tensor<T,4> get_transfer_2_site_matrix_R()const;
 
 
 //

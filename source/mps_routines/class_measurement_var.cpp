@@ -4,16 +4,13 @@
 #include <iomanip>
 #include <complex>
 #include <mps_routines/class_measurement.h>
-#include <general/nmspc_tensor_extra.h>
-#include <Eigen/Eigenvalues>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_mps.h>
 #include <mps_routines/class_mpo.h>
-#include <general/class_arpackpp_wrapper.h>
+#include <general/nmspc_tensor_extra.h>
 #include <general/class_svd_wrapper.h>
-#include <general/class_arpackpp_wrapper2.h>
-#include <Eigen/QR>
+#include <general/class_arpack_eigsolver.h>
 
 using namespace std;
 using namespace Textra;
@@ -44,18 +41,9 @@ Scalar class_measurement::moment_generating_function(std::shared_ptr<class_mps> 
     long sizeLB = MPS_evolved->LB.size() * MPS_evolved->LB.size();
     //Normalize
     Tensor<Scalar,2> transfer_matrix_theta_evn       = MPS_evolved->get_transfer_matrix_theta_evn().reshape(array2{sizeLB,sizeLB});
-    t_temp2.tic();
-    class_arpackpp_wrapper eig;
-    eig.setThreshold(1e-12);
-    VectorType<Scalar> eigval_R_evn      = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transfer_matrix_theta_evn.data(),sizeLB,sizeLB, 1);
-    t_temp2.toc();
-    t_temp3.tic();
-    class_arpackpp_wrapper2<Scalar, Form::COMPLEX_GENERAL> solver;
-    solver.eig(transfer_matrix_theta_evn.data(), Ritz::LM, (int)sizeLB, 1, 16, false);
-    t_temp3.toc();
-//    VectorType<Scalar> eigval_R_evn = Eigen::Map <
-//    auto new_theta_evn_normalized        = MPS_evolved->get_theta_evn(sqrt(eigval_R_evn(0)));
-    auto new_theta_evn_normalized        = MPS_evolved->get_theta_evn(sqrt(solver.get_eigvals()[0]));
+    class_arpack_eigsolver<Scalar, Form::GENERAL> solver;
+    solver.eig(transfer_matrix_theta_evn.data(), Ritz::LM, Side::R, (int)sizeLB, 1, 16, false);
+    auto new_theta_evn_normalized        = MPS_evolved->get_theta_evn(sqrt(solver.ref_eigvals()[0]));
 
     long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original->theta_evn_normalized.dimension(1);
     long sizeR = new_theta_evn_normalized.dimension(3) * MPS_original->theta_evn_normalized.dimension(3);
@@ -65,242 +53,27 @@ Scalar class_measurement::moment_generating_function(std::shared_ptr<class_mps> 
             .shuffle(array4{0,2,1,3})
             .reshape(array2{sizeL,sizeR});
     //Compute the characteristic function G(a).
-    t_temp2.tic();
-    VectorType <Scalar> lambdaG  = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transfer_matrix_G.data(), transfer_matrix_G.dimension(0),transfer_matrix_G.dimension(1), 1);
-    int iter = eig.GetIter();
-    t_temp2.toc();
-    t_temp3.tic();
-    solver.eig(transfer_matrix_G.data(), Ritz::LM, (int)transfer_matrix_G.dimension(0), 1, 16, false);
-    lambdaG(0) = solver.get_eigvals()[0];
-    t_temp3.toc();
-
-
-    //    std::cout <<setprecision(15) << "lambdaG: " << lambdaG(0) <<" Iter: " << iter  << std::endl;
+    solver.eig(transfer_matrix_G.data(), Ritz::LM, Side::R, (int)transfer_matrix_G.dimension(0), 1, 16, false);
+    Scalar lambdaG = solver.ref_eigvals()[0];
     t_temp1.toc();
-    return lambdaG(0);
+    return lambdaG;
 }
-
-
-Scalar class_measurement::moment_generating_function_2(std::shared_ptr<class_mps> MPS_original,
-                                                       std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
-    t_temp2.tic();
-    std::shared_ptr<class_mps> MPS_evolved  = std::make_shared<class_mps>(*MPS_original);
-    std::shared_ptr<class_mps> MPS_evolved0 = std::make_shared<class_mps>(*MPS_original);
-    Textra::Tensor<Scalar, 4> theta_evo;
-    Textra::Tensor<Scalar, 4> theta_evo0;
-    class_SVD<Scalar> SVD;
-    class_arpackpp_wrapper eig;
-    SVD.setThreshold(1e-12);
-    eig.setThreshold(1e-12);
-    long chi_max = 4*MPS_evolved->LA.dimension(0);
-    for (auto &Op: Op_vec) {
-        //Evolve
-        theta_evo = Op.contract(MPS_evolved->get_theta(), idx({0, 1}, {0, 2})).shuffle(array4{0, 2, 1, 3});
-        auto chiL = theta_evo.dimension(1);
-        auto chiR = theta_evo.dimension(3);
-        auto[U, S, V] = SVD.schmidt(theta_evo, 2, chiL,chi_max, chiR);
-        MPS_evolved->LA= S;
-        MPS_evolved->GA = asDiagonalInversed(MPS_evolved->LB).contract(U, idx({1}, {1})).shuffle(array3{1, 0, 2});
-        MPS_evolved->GB = V.contract(asDiagonalInversed(MPS_evolved->LB), idx({2}, {0}));
-        if (&Op != &Op_vec.back()) {
-            MPS_evolved->swap_AB();
-        }
-    }
-
-    for (auto &Op: mom_vec0) {
-        //Evolve
-        theta_evo0 = Op.contract(MPS_evolved0->get_theta(), idx({0, 1}, {0, 2})).shuffle(array4{0, 2, 1, 3});
-        auto chiL = theta_evo0.dimension(1);
-        auto chiR = theta_evo0.dimension(3);
-        auto[U, S, V] = SVD.schmidt(theta_evo0, 2, chiL, chiR);
-        MPS_evolved0->LA= S;
-        MPS_evolved0->GA = asDiagonalInversed(MPS_evolved0->LB).contract(U, idx({1}, {1})).shuffle(array3{1, 0, 2});
-        MPS_evolved0->GB = V.contract(asDiagonalInversed(MPS_evolved0->LB), idx({2}, {0}));
-        if (&Op != &mom_vec0.back()) {
-            MPS_evolved0->swap_AB();
-        }
-    }
-
-    theta_evo  = MPS_evolved->get_theta_evn();
-//    theta_evo0 = MPS_original->get_theta_evn();
-    theta_evo0 = MPS_evolved0->get_theta_evn();
-
-
-    //Normalize
-
-    Tensor<Scalar,2> transfer_matrix_G =   theta_evo
-            .contract(theta_evo0.conjugate(), idx({0,2},{0,2}))
-            .shuffle(array4{0,2,1,3})
-            .reshape(array2{theta_evo0.dimension(1) * theta_evo.dimension(1),theta_evo0.dimension(3) * theta_evo.dimension(3)});
-
-    Tensor<Scalar,2> transfer_matrix_G0 =   theta_evo0
-            .contract(theta_evo0.conjugate(), idx({0,2},{0,2}))
-            .shuffle(array4{0,2,1,3})
-            .reshape(array2{theta_evo0.dimension(1)*theta_evo0.dimension(1),theta_evo0.dimension(3)*theta_evo0.dimension(3)});
-
-    VectorType <Scalar> lambdaG  = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transfer_matrix_G.data() , transfer_matrix_G.dimension(0) ,transfer_matrix_G.dimension(1), 1);
-    long iter = eig.GetIter();
-    VectorType <Scalar> lambdaG0 = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, false>(transfer_matrix_G0.data(), transfer_matrix_G0.dimension(0),transfer_matrix_G0.dimension(1), 1);
-    long iter0 = eig.GetIter();
-    t_temp2.toc();
-//    std::cout <<setprecision(15) << "lambdaG: " << lambdaG(0) <<" Iter: " << iter << "  lambdaG0: " << lambdaG0(0)  <<" Iter: " << iter0  << std::endl;
-    return lambdaG(0)/lambdaG0(0);
-}
-
 
 
 std::pair<double,double> class_measurement::compute_infinite_moments_G(Scalar a, std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
     t_var_gen.tic();
     using T = Scalar;
-    using LT = std::complex<long double>;
-    LT al = (LT) a;
     //The following only works if superblock->MPS has been normalized! I.e, you have to have run MPS->compute_mps_components() prior.
-    LT lambdaG  = (LT) moment_generating_function(superblock->MPS, Op_vec);
+    T lambdaG  = moment_generating_function(superblock->MPS, Op_vec);
 //    LT lambdaG2 = (LT) moment_generating_function_2(superblock->MPS, Op_vec);
-    LT l        = (LT) (superblock->H->mps_sites*1.0l);
-    LT G        = pow(lambdaG,1.0l/l);
-    LT logG     = log(lambdaG) * (1.0l/l);
-    LT logGc    = log(conj(lambdaG) ) * (1.0l/l);
-    LT O        = (logG - logGc)/(2.0l*al);
-    LT VarO     = 2.0l*log(abs(G))/ (al*al);
+    T l        = superblock->H->mps_sites;
+    T G        = pow(lambdaG,1.0/l);
+    T logG     = log(lambdaG) * 1.0/l;
+    T logGc    = log(conj(lambdaG) ) * 1.0/l;
+    T O        = (logG - logGc)/(2.0*a);
+    T VarO     = 2.0*log(abs(G))/ (a*a);
     t_var_gen.toc();
     return std::make_pair(real(O), real(VarO));
-
-
-
-//    T l2 = 2.0+0.0i;
-//    Eigen::ComplexEigenSolver<Textra::MatrixType<T>> esA(Tensor2_to_Matrix(transf_GA));
-//    Eigen::ComplexEigenSolver<Textra::MatrixType<T>> esB(Tensor2_to_Matrix(transf_GB));
-//    Eigen::ComplexEigenSolver<Textra::MatrixType<T>> esC(Tensor2_to_Matrix(transf_GC));
-//    Eigen::ComplexEigenSolver<Textra::MatrixType<T>> esD(Tensor2_to_Matrix(transf_GD));
-//    Eigen::ComplexEigenSolver<Textra::MatrixType<T>> esiA(Tensor2_to_Matrix(transf_ID_A));
-//    Eigen::ComplexEigenSolver<Textra::MatrixType<T>> esiB(Tensor2_to_Matrix(transf_ID_B));
-//    Eigen::ComplexEigenSolver<Textra::MatrixType<T>> esiC(Tensor2_to_Matrix(transf_ID_C));
-//    Eigen::ComplexEigenSolver<Textra::MatrixType<T>> esiD(Tensor2_to_Matrix(transf_ID_D));
-//    Eigen::ArrayXcd eigvA  = esA.eigenvalues();
-//    Eigen::ArrayXcd eigvB  = esB.eigenvalues();
-//    Eigen::ArrayXcd eigvC  = esC.eigenvalues();
-//    Eigen::ArrayXcd eigvD  = esD.eigenvalues();
-//    Eigen::ArrayXcd eigviA = esiA.eigenvalues();
-//    Eigen::ArrayXcd eigviB = esiB.eigenvalues();
-//    Eigen::ArrayXcd eigviC = esiC.eigenvalues();
-//    Eigen::ArrayXcd eigviD = esiD.eigenvalues();
-////    Eigen::ArrayXcd eigviB = esib.eigenvalues();
-//    T largestA = eigvA.tail(1).coeff(0);
-//    T largestB = eigvB.tail(1).coeff(0);
-//    T largestC = eigvC.tail(1).coeff(0);
-//    T largestD = eigvD.tail(1).coeff(0);
-//    T largestia = eigviA.tail(1).coeff(0);
-//    T largestib = eigviB.tail(1).coeff(0);
-//    T largestic = eigviC.tail(1).coeff(0);
-//    T largestid = eigviD.tail(1).coeff(0);
-////    T largestib = eigviB.tail(1).coeff(0);
-//    Eigen::ArrayXcd eigvA_j = eigvA.head(eigvA.size()-1);
-//    Eigen::ArrayXcd eigvB_j = eigvB.head(eigvB.size()-1);
-//    Eigen::ArrayXcd eigvC_j = eigvC.head(eigvC.size()-1);
-//    Eigen::ArrayXcd eigvD_j = eigvD.head(eigvD.size()-1);
-//    Eigen::ArrayXcd eigviA_j = eigviA.head(eigviA.size()-1);
-//    Eigen::ArrayXcd eigviB_j = eigviB.head(eigviB.size()-1);
-//    Eigen::ArrayXcd eigviC_j = eigviC.head(eigviC.size()-1);
-//    Eigen::ArrayXcd eigviD_j = eigviD.head(eigviD.size()-1);
-////    Eigen::ArrayXcd eigviB_j = eigviB.head(eigviB.size()-1);
-//    T logg2a  = (L/l2) * std::log(largestA) + std::log(1.0 + (L/l2* (eigvA_j/largestA).log()).exp().sum());
-//    T logg2b  = (L/l2) * std::log(largestB) + std::log(1.0 + (L/l2* (eigvB_j/largestB).log()).exp().sum());
-//    T logg2c  = (L/l2) * std::log(largestC) + std::log(1.0 + (L/l2* (eigvC_j/largestC).log()).exp().sum());
-//    T logg2d  = (L/l2) * std::log(largestD) + std::log(1.0 + (L/l2* (eigvD_j/largestD).log()).exp().sum());
-//    T logg2ac = (L/l2) * std::log(conj(largestA)) + std::log(1.0 + (L/l2* (eigvB_j/largestA).conjugate().log()).exp().sum());
-//    T logg2bc = (L/l2) * std::log(conj(largestB)) + std::log(1.0 + (L/l2* (eigvB_j/largestB).conjugate().log()).exp().sum());
-//    T logg2cc = (L/l2) * std::log(conj(largestC)) + std::log(1.0 + (L/l2* (eigvC_j/largestC).conjugate().log()).exp().sum());
-//    T logg2cd = (L/l2) * std::log(conj(largestD)) + std::log(1.0 + (L/l2* (eigvD_j/largestD).conjugate().log()).exp().sum());
-//    T logg2ia = (L/l2) * std::log(largestia) + std::log(1.0 + (L/l2* (eigviA_j/largestia).log()).exp().sum());
-//    T logg2ib = (L/l2) * std::log(largestib) + std::log(1.0 + (L/l2* (eigviB_j/largestib).log()).exp().sum());
-//    T logg2ic = (L/l2) * std::log(largestic) + std::log(1.0 + (L/l2* (eigviC_j/largestic).log()).exp().sum());
-//    T logg2id = (L/l2) * std::log(largestid) + std::log(1.0 + (L/l2* (eigviD_j/largestid).log()).exp().sum());
-//    T logG2A = logg2a  - logg2ia;
-//    T logG2B = logg2b  - logg2ib;
-//    T logG2C = logg2c  - logg2ic;
-//    T logG2D = logg2d  - logg2id;
-//    T logG2Ac= logg2ac - logg2ia;
-//    T logG2Bc= logg2bc - logg2ib;
-//    T logG2Cc= logg2cc - logg2ic;
-//    T logG2Dc= logg2cd - logg2id;
-//    T g2a  = eigvA.pow(L/l2).sum();
-//    T g2b  = eigvB.pow(L/l2).sum();
-//    T g2c  = eigvC.pow(L/l2).sum();
-//    T g2d  = eigvD.pow(L/l2).sum();
-//    T g2ia = eigviA.pow(L/l2).sum();
-//    T g2ib = eigviB.pow(L/l2).sum();
-//    T g2ic = eigviC.pow(L/l2).sum();
-//    T g2id = eigviD.pow(L/l2).sum();
-//    T G2A     = g2a/g2ia;
-//    T G2B     = g2b/g2ib;
-//    T G2C     = g2c/g2ic;
-//    T G2D     = g2d/g2id;
-
-//    T e2a     = (logG2A - logG2Ac)/(2.0*a);
-//    T e2b     = (logG2B - logG2Bc)/(2.0*b);
-//    T e2c     = (logG2C - logG2Cc)/(2.0*c);
-//    T e2d     = (logG2D - logG2Dc)/(2.0*d);
-//    T varHE2a  = (logG2A + logG2Ac)/(a*a)/L;
-//    T varHE2b  = (logG2B + logG2Bc)/(b*b)/L;
-//    T varHE2c  = (logG2C + logG2Cc)/(c*c)/L;
-//    T varHE2d  = (logG2D + logG2Dc)/(d*d)/L;
-//    T test_varHE2a  =  (logG2A + logG2Ac)/ (a*a*L)  ;
-//    T test_varHE2b  =  (logG2B + logG2Bc)/ (b*b*L)  ;
-//    T test_varHE2c  =  (logG2C + logG2Cc)/ (c*c*L)  ;
-//    T test_varHE2d  =  (logG2D + logG2Dc)/ (d*d*L)  ;
-//    std::cout << "E2A           = " << setw(30)  << e2a/L                                               << std::endl;
-//    std::cout << "E2B           = " << setw(30)  << e2b/L                                               << std::endl;
-//    std::cout << "E2C           = " << setw(30)  << e2c/L                                               << std::endl;
-//    std::cout << "E2D           = " << setw(30)  << e2d/L                                               << std::endl;
-//    std::cout << "varHE2a       = " << setw(45)  << varHE2a           << " -> " <<  std::log10(varHE2a )   << std::endl;
-//    std::cout << "varHE2b       = " << setw(45)  << varHE2b           << " -> " <<  std::log10(varHE2b )   << std::endl;
-//    std::cout << "varHE2c       = " << setw(45)  << varHE2c           << " -> " <<  std::log10(varHE2c )   << std::endl;
-//    std::cout << "varHE2d       = " << setw(45)  << varHE2d           << " -> " <<  std::log10(varHE2d )   << std::endl;
-//    std::cout << "test_varHE2a  = " << setw(45)  << test_varHE2a      << " -> " <<  std::log10(test_varHE2a)   << std::endl;
-//    std::cout << "test_varHE2b  = " << setw(45)  << test_varHE2b      << " -> " <<  std::log10(test_varHE2b)   << std::endl;
-//    std::cout << "test_varHE2c  = " << setw(45)  << test_varHE2c      << " -> " <<  std::log10(test_varHE2c)   << std::endl;
-//    std::cout << "test_varHE2d  = " << setw(45)  << test_varHE2d      << " -> " <<  std::log10(test_varHE2d)   << std::endl;
-
-
-
-
-
-
-
-
-
-    //    T G2A = g2a/std::abs(g2a);
-//    T G2B = g2b/std::abs(g2b);
-//    G2A /= abs(G2A);
-//    G2B /= abs(G2B);
-//    T e10     = (G1B - std::conj(G1B))/(2.0*a) * l ;
-//    T e11     = (std::log(G1B) - std::log(std::conj(G1B)))/(2.0*a)*l;
-//    T e1b     = (logG1B - conj(logG1B))/(2.0*a)*l;
-
-//    T H10     = (G1B + std::conj(G1B) - 2.0) / (a*a)*l*l;
-//    T H11     = (G1B + std::conj(G1B) - 2.0) / (a*a)*l*l;
-//    T E10     = e10*std::conj(e10);
-//    T E11     = e11*std::conj(e11);
-//    T E12     = e1b*std::conj(e1b);
-
-//    T varHE10 = H10 - E10;
-//    T varHE11 = H10 - E11;
-//    T varHE12 = std::log(std::pow(G1B*std::conj(G1B), 1.0/l))/(a*a);
-
-
-//    T e20      = L * ( l_j_Ll1.cwiseProduct(l_j_p)  ).sum() / l_j_Ll.sum();
-//    T e21     = (std::log(G2B) - std::log(conj(G2B)))/(2.0*a)*l2 ;
-//    T e2b     = (logG2B - conj(logG2B))/(2.0*a)*l2;
-
-//    T H20     = (G2B + std::conj(G2B) - 2.0) / (a*a*L*L)*l2*l2;
-//    T E20     = (e20)* std::conj(e20) / L / L;
-//    T E21     = (e21)*std::conj(e21) /L / L;
-//    T E22     = (e2b)*std::conj(e2b) /L / L;
-//    T varHE20 = (H20 - E20);
-//    T varHE21 = (H20 - E21);
-//    T varHE22 = (  std::log(G2B) + std::log( std::conj(G2B) )  )/(L*a*a);
-
 }
 
 
@@ -318,8 +91,6 @@ double class_measurement::compute_infinite_variance_MPO(){
 
 double class_measurement::compute_infinite_variance_H(){
     t_var_ham.tic();
-    const Tensor<Scalar,4> & theta                      = superblock->MPS->theta;
-    const Tensor<Scalar,4> & theta_sw                   = superblock->MPS->theta_sw;
     const Tensor<Scalar,4> & theta_evn                  = superblock->MPS->theta_evn_normalized;
     const Tensor<Scalar,4> & theta_odd                  = superblock->MPS->theta_odd_normalized;
     const Tensor<Scalar,3> & LBGA                       = superblock->MPS->LBGA;
@@ -332,28 +103,6 @@ double class_measurement::compute_infinite_variance_H(){
     const Tensor<Scalar,4> & transfer_matrix_odd        = superblock->MPS->transfer_matrix_odd;
     const Tensor<Scalar,4> & transfer_matrix_LBGA       = superblock->MPS->transfer_matrix_LBGA;
     const Tensor<Scalar,4> & transfer_matrix_LAGB       = superblock->MPS->transfer_matrix_LAGB;
-
-//    Tensor<Scalar,4> h0_   = Textra::Matrix_to_Tensor(superblock->H->h[0], 2,2,2,2);
-//    Tensor<Scalar,4> h1_   = Textra::Matrix_to_Tensor(superblock->H->h[1], 2,2,2,2);
-//
-//    Tensor<Scalar,0> EAB   =
-//            theta_evn
-//                    .contract(h0_,                   idx({0, 2}, {0, 1}))
-//                    .contract(theta_evn.conjugate(),idx({2, 3}, {0, 2}))
-//                    .contract(l_evn,                idx({0, 2}, {0, 1}))
-//                    .contract(r_evn,                idx({0, 1}, {0, 1}));
-//
-//    Tensor<Scalar,0> EBA   =
-//            theta_odd
-//                    .contract(h1_, idx({0, 2}, {0, 1}))
-//                    .contract(theta_odd.conjugate(),  idx({2, 3}, {0,2}))
-//                    .contract(l_odd, idx({0,2}, {0,1}))
-//                    .contract(r_odd, idx({0,1},{0,1}));
-////
-//            Tensor<Scalar,4> I_EAB = Matrix_to_Tensor((EAB(0)*MatrixType<Scalar>::Identity(4,4)).eval() , 2,2,2,2);
-//            Tensor<Scalar,4> I_EBA = Matrix_to_Tensor((EBA(0)*MatrixType<Scalar>::Identity(4,4)).eval() , 2,2,2,2);
-//            Tensor<Scalar,4> h0   = h0_ - I_EAB;
-//            Tensor<Scalar,4> h1   = h1_ - I_EBA;
 
     Tensor<Scalar,4> h0 =  Matrix_to_Tensor((superblock->H->h[0] - E_evn(0)*MatrixType<Scalar>::Identity(4,4)).eval(), 2,2,2,2);
     Tensor<Scalar,4> h1 =  Matrix_to_Tensor((superblock->H->h[1] - E_odd(0)*MatrixType<Scalar>::Identity(4,4)).eval(), 2,2,2,2);
@@ -467,25 +216,6 @@ double class_measurement::compute_infinite_variance_H(){
     Scalar e2lrpabba      = E2LRP_ABBA(0);
     Scalar e2lrpbaba      = E2LRP_BABA(0);
     Scalar e2lrpbaab      = E2LRP_BAAB(0);
-//    std::cout << setprecision(16);
-//    double e_exact = -1.2732395447351625;
-//    std::cout << " e_exact          =  "<<  e_exact  << std::endl;
-//    std::cout << " e_new            = " <<  e_new           << std::endl;
-//    std::cout << " e2_exact         =  "<<  pow(e_exact,2.0) << std::endl;
-//    std::cout << " e2ab             = " <<  e2ab            << std::endl;
-//    std::cout << " e2ba             = " <<  e2ba            << std::endl;
-//    std::cout << " e2aba_1          = " <<  e2aba_1         << std::endl;
-//    std::cout << " e2bab_1          = " <<  e2bab_1         << std::endl;
-//    std::cout << " e2aba_2          = " <<  e2aba_2         << std::endl;
-//    std::cout << " e2bab_2          = " <<  e2bab_2         << std::endl;
-//    std::cout << " e2abab_1         = " <<  e2abab_1        << std::endl;
-//    std::cout << " e2baba_2         = " <<  e2baba_2        << std::endl;
-//    std::cout << " e2baba_3         = " <<  e2baba_3        << std::endl;
-//    std::cout << " e2abab_4         = " <<  e2abab_4        << std::endl;
-//    std::cout << " e2lrpabab        = " <<  e2lrpabab        << std::endl;
-//    std::cout << " e2lrpabba        = " <<  e2lrpabba        << std::endl;
-//    std::cout << " e2lrpbaba        = " <<  e2lrpbaba        << std::endl;
-//    std::cout << " e2lrpbaab        = " <<  e2lrpbaab        << std::endl;
 
     Scalar VarE  = 0.5*(e2ab + e2ba) + 0.5*(e2aba_1  + e2bab_1  + e2aba_2  + e2bab_2 )  + e2lrpabab + e2lrpabba + e2lrpbaba  + e2lrpbaab ;
     t_var_ham.toc();

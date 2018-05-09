@@ -2,7 +2,7 @@
 // Created by david on 7/22/17.
 //
 
-#include <mps_routines/class_optimize_mps.h>
+//#include <mps_routines/class_optimize_mps.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_hamiltonian.h>
 #include <mps_routines/class_environment.h>
@@ -15,6 +15,7 @@
 //#include <mps_routines/class_custom_contraction.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 //#include <arpackpp/arscomp.h>
+#include <general/class_arpack_eigsolver.h>
 
 
 using namespace std;
@@ -46,26 +47,26 @@ class_superblock::class_superblock():
 // Find smallest eigenvalue using Arpack.
 //============================================================================//
 
-//Textra::Tensor<Scalar,4> class_superblock::optimize_MPS(Textra::Tensor<Scalar, 4> &theta, int eigSteps, double eigThreshold){
-//    Eigen::Tensor<Scalar,4> HA0 = HA->MPO_zero_site_energy();
-//    Eigen::Tensor<Scalar,4> HB0 = HB->MPO_zero_site_energy();
-//    class_custom_contraction<Scalar>  esp(Lblock->block, Rblock->block, HA0, HB0, shape4);
+//Textra::Tensor<T,4> class_superblock::optimize_MPS(Textra::Tensor<T, 4> &theta, int eigMaxIter, double eigThreshold){
+//    Eigen::Tensor<T,4> HA0 = HA->MPO_zero_site_energy();
+//    Eigen::Tensor<T,4> HB0 = HB->MPO_zero_site_energy();
+//    class_custom_contraction<T>  esp(Lblock->block, Rblock->block, HA0, HB0, shape4);
 //    int ncv = std::min(settings::precision::eig_max_ncv,(int)theta.size());
 ////    ncv = 16;
 //    int nev = 1;
 //    int dim = esp.cols();
 ////    t_eig.tic();
 //    //The operator A in "Ax = Ex" should be real and symmetric, so the eigenvector should be real as well, but might come out with a complex phase factor that can be removed.
-//    ARCompStdEig<double, class_custom_contraction<Scalar>> eig (dim, nev, &esp, &class_custom_contraction<Scalar>::MultMv, "SR", ncv,eigThreshold,eigSteps, theta.data());
+//    ARCompStdEig<double, class_custom_contraction<T>> eig (dim, nev, &esp, &class_custom_contraction<T>::MultMv, "SR", ncv,eigThreshold,eigMaxIter, theta.data());
 //    eig.ChangeTol(1e-12);
 //    eig.FindEigenvectors();
 //    int rows = eig.GetN();
 //    int cols = std::min(1, eig.GetNev());
-//    Textra::Tensor<Scalar, 2> eigvecs = TensorMap<Tensor<Scalar,2>> (eig.RawEigenvectors(), rows,cols);
-//    Textra::Tensor<Scalar, 1> eigvals = TensorMap<Tensor<Scalar,1>> (eig.RawEigenvalues(), cols);
-//    Scalar inv_phase = -1.0i * std::arg(eigvecs(0,0));
+//    Textra::Tensor<T, 2> eigvecs = TensorMap<Tensor<T,2>> (eig.RawEigenvectors(), rows,cols);
+//    Textra::Tensor<T, 1> eigvals = TensorMap<Tensor<T,1>> (eig.RawEigenvalues(), cols);
+//    T inv_phase = -1.0i * std::arg(eigvecs(0,0));
 //    eigvecs = (eigvecs *  std::exp(inv_phase)); //Rotate the phase of the eigenvector back so that it becomes real.
-//    eigvecs =  eigvecs.real().cast<Scalar>();    //Remove the, now negligible, imaginary part
+//    eigvecs =  eigvecs.real().cast<T>();    //Remove the, now negligible, imaginary part
 ////    t_eig.toc();
 //
 //    using namespace chrono;
@@ -84,24 +85,26 @@ Textra::Tensor<Scalar,4> class_superblock::optimize_MPS2(Textra::Tensor<Scalar, 
     Eigen::Tensor<Scalar,4> HB0 = HB->MPO_zero_site_energy();
     std::array<long,4> shape_theta4 = theta.dimensions();
     std::array<long,4> shape_mpo4 = HA0.dimensions();
-//    Eigen::Tensor<Scalar,2> mytens =
+//    Eigen::Tensor<T,2> mytens =
 //                    Lblock->block
 //                      .contract(HA0, Textra::idx({2},{0}))
 //                      .contract(HB0, Textra::idx({2},{0}))
 //                      .contract(Rblock->block, Textra::idx({4},{2}))
 //                      .shuffle(Textra::array8{2,0,4,6,3,1,5,7})
 //                      .reshape(Textra::array2{shape1[0], shape1[0]});
-
-    class_optimize_mps  opt(Lblock->block.data(), Rblock->block.data(), HA0.data(), HB0.data(), shape_theta4, shape_mpo4, theta.data());
     t_eig.tic();
-    opt.optimize_mps(1);
+    int nev = 1;
+    class_arpack_eigsolver<Scalar, Form::GENERAL> solver(Lblock->block.data(), Rblock->block.data(), HA0.data(), HB0.data(), shape_theta4, shape_mpo4, Ritz::SR, nev, settings::precision::eig_max_ncv, true ,theta.data());
     t_eig.toc();
 
-    TensorMap<Tensor<Scalar,2>> eigvecs (opt.eigvecs.data(), opt.rows, opt.cols);
-    TensorMap<Tensor<Scalar,1>> eigvals (opt.eigvals.data(), opt.cols);
-    Scalar inv_phase = -1.0i * std::arg(eigvecs(0,0));
-    eigvecs = (eigvecs *  std::exp(inv_phase)); //Rotate the phase of the eigenvector back so that it becomes real.
-    eigvecs =  eigvecs.real().cast<Scalar>();    //Remove the, now negligible, imaginary part
+//    class_optimize_mps  opt(Lblock->block.data(), Rblock->block.data(), HA0.data(), HB0.data(), shape_theta4, shape_mpo4, theta.data());
+//    opt.optimize_mps(1);
+
+    TensorMap<const Tensor<const Scalar,2>> eigvecs (solver.ref_eigvecs().data(), shape_theta4[0]*shape_theta4[1], shape_theta4[2]*shape_theta4[3]);
+    TensorMap<const Tensor<const Scalar,1>> eigvals (solver.ref_eigvals().data(), nev);
+//    Scalar inv_phase = -1.0i * std::arg(eigvecs(0,0));
+//    eigvecs = (eigvecs *  std::exp(inv_phase)); //Rotate the phase of the eigenvector back so that it becomes real.
+//    eigvecs =  eigvecs.real().cast<Scalar>();    //Remove the, now negligible, imaginary part
 
     using namespace chrono;
     energy = std::real(eigvals(0));

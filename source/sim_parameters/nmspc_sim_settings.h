@@ -29,7 +29,7 @@ namespace settings {
 
     //Parmaters that control eigensolver and SVD precision
     namespace precision {
-        extern int      eigSteps     ;                      /*!< Maximum number of steps for eigenvalue solver. */
+        extern int      eigMaxIter   ;                      /*!< Maximum number of steps for eigenvalue solver. */
         extern double   eigThreshold ;                      /*!< Minimum threshold for halting eigenvalue solver. */
         extern int      eig_max_ncv  ;                      /*!< Parameter controlling the column space? of the Lanczos solver. */
         extern double   SVDThreshold ;                      /*!< Minimum threshold value for keeping singular values. */

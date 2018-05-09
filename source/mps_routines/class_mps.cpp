@@ -1,15 +1,14 @@
 //
 // Created by david on 2017-11-13.
 //
-//#ifdef MKL_AVAILABLE
-//#define  EIGEN_USE_MKL_ALL
-//#endif
-#include <Eigen/QR>
+
+
 #include <mps_routines/class_mps.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
-#include <general/class_arpackpp_wrapper.h>
 #include <sim_parameters/nmspc_sim_settings.h>
+#include <general/class_arpack_eigsolver.h>
+#include <iomanip>
 
 using namespace std;
 using namespace Textra;
@@ -59,39 +58,69 @@ void class_mps::swap_AB(){
 }
 
 void class_mps::compute_mps_components(){
-    class_arpackpp_wrapper eig;
+//    class_arpackpp_wrapper eig;
 
     long sizeLA = LA.size();
     long sizeLB = LB.size();
-//    Tensor<Scalar,2> LBGA_mat            = get_transfer_matrix_LBGA().reshape(array2{sizeLB*sizeLB,sizeLA*sizeLA});
-//    Tensor<Scalar,2> LAGB_mat            = get_transfer_matrix_LAGB().reshape(array2{sizeLA*sizeLA,sizeLB*sizeLB});
-    Tensor<Scalar,2> theta_evn_mat       = get_transfer_matrix_theta_evn()  .reshape(array2{sizeLB*sizeLB,sizeLB*sizeLB});
-    Tensor<Scalar,2> theta_odd_mat       = get_transfer_matrix_theta_odd()  .reshape(array2{sizeLA*sizeLA,sizeLA*sizeLA});
+//    Tensor<T,2> LBGA_mat            = get_transfer_matrix_LBGA().reshape(array2{sizeLB*sizeLB,sizeLA*sizeLA});
+//    Tensor<T,2> LAGB_mat            = get_transfer_matrix_LAGB().reshape(array2{sizeLA*sizeLA,sizeLB*sizeLB});
+    Tensor<Scalar,2> theta_evn_transfer_mat       = get_transfer_matrix_theta_evn()  .reshape(array2{sizeLB*sizeLB,sizeLB*sizeLB});
+    Tensor<Scalar,2> theta_odd_transfer_mat       = get_transfer_matrix_theta_odd()  .reshape(array2{sizeLA*sizeLA,sizeLA*sizeLA});
 //    auto eigval_R_LBGA                   = eig.solve_dominant<arpack::Form::COMPLEX_GENERAL, arpack::Ritz::LM, arpack::Side::R, false>(LBGA_mat.data(), sizeLB*sizeLB,sizeLA*sizeLA, 1);
 //    auto eigval_R_LAGB                   = eig.solve_dominant<arpack::Form::COMPLEX_GENERAL, arpack::Ritz::LM, arpack::Side::R, false>(LAGB_mat.data(), sizeLA*sizeLA,sizeLB*sizeLB, 1);
-    auto [eigvec_R_evn,eigval_R_evn]     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, true>(theta_evn_mat.data(),sizeLB*sizeLB,sizeLB*sizeLB, 1);
-    auto [eigvec_L_evn,eigval_L_evn]     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::L, true>(theta_evn_mat.data(),sizeLB*sizeLB,sizeLB*sizeLB, 1);
-    auto [eigvec_R_odd,eigval_R_odd]     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, true>(theta_odd_mat.data(),sizeLA*sizeLA,sizeLA*sizeLA, 1);
-    auto [eigvec_L_odd,eigval_L_odd]     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::L, true>(theta_odd_mat.data(),sizeLA*sizeLA,sizeLA*sizeLA, 1);
+//    auto [eigvec_R_evn,eigval_R_evn]     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, true>(theta_evn_transfer_mat.data(),sizeLB*sizeLB,sizeLB*sizeLB, 1);
+//    auto [eigvec_L_evn,eigval_L_evn]     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::L, true>(theta_evn_transfer_mat.data(),sizeLB*sizeLB,sizeLB*sizeLB, 1);
+//    auto [eigvec_R_odd,eigval_R_odd]     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::R, true>(theta_odd_transfer_mat.data(),sizeLA*sizeLA,sizeLA*sizeLA, 1);
+//    auto [eigvec_L_odd,eigval_L_odd]     = eig.solve_dominant<arpack::Form::COMPLEX, arpack::Ritz::LM, arpack::Side::L, true>(theta_odd_transfer_mat.data(),sizeLA*sizeLA,sizeLA*sizeLA, 1);
+
+    class_arpack_eigsolver<Scalar, Form::GENERAL> solver;
+
+    int nA = (int)(sizeLA*sizeLA);
+    int nB = (int)(sizeLB*sizeLB);
+    int ncvA = std::min(10, nA);
+    int ncvB = std::min(10, nB);
+    auto[eigvec_R_evn,eigval_R_evn]  = solver.eig_get_vec_val(theta_evn_transfer_mat.data(), Ritz::LM, Side::R,
+                                                              sizeLB * sizeLB, 1, ncvB, true);
+    auto[eigvec_L_evn,eigval_L_evn]  = solver.eig_get_vec_val(theta_evn_transfer_mat.data(), Ritz::LM, Side::L,
+                                                              sizeLB * sizeLB, 1, ncvB, true);
+    auto[eigvec_R_odd,eigval_R_odd]  = solver.eig_get_vec_val(theta_odd_transfer_mat.data(), Ritz::LM, Side::R,
+                                                              sizeLA * sizeLA, 1, ncvA, true);
+    auto[eigvec_L_odd,eigval_L_odd]  = solver.eig_get_vec_val(theta_odd_transfer_mat.data(), Ritz::LM, Side::L,
+                                                              sizeLA * sizeLA, 1, ncvA, true);
+
+    MatrixType<Scalar> eigvec_R_evn_map = Eigen::Map<const MatrixType<Scalar>>(eigvec_R_evn.data(), eigvec_R_evn.size(),1);
+    MatrixType<Scalar> eigvec_L_evn_map = Eigen::Map<const MatrixType<Scalar>>(eigvec_L_evn.data(), eigvec_L_evn.size(),1);
+    MatrixType<Scalar> eigvec_R_odd_map = Eigen::Map<const MatrixType<Scalar>>(eigvec_R_odd.data(), eigvec_R_odd.size(),1);
+    MatrixType<Scalar> eigvec_L_odd_map = Eigen::Map<const MatrixType<Scalar>>(eigvec_L_odd.data(), eigvec_L_odd.size(),1);
 
 
-    Scalar normalization_evn = sqrt((eigvec_L_evn.transpose() * eigvec_R_evn).sum());
-    Scalar normalization_odd = sqrt((eigvec_L_odd.transpose() * eigvec_R_odd).sum());
+    //    auto eigvec_R_evn_   = Eigen::Map<const MatrixType<Scalar>>(solver.get_eigvecs().data(), solver.ref_eigvecs().size(),1);
+//    Scalar eigval_R_evn_ = solver.ref_eigvals()[0];
+//
+//    solver.eig(theta_evn_transfer_mat.data(), Ritz::LM,sizeLB*sizeLB, 1,16, true);
+//    auto eigvec_R_evn_   = Eigen::Map<const MatrixType<Scalar>>(solver.get_eigvecs().data(), solver.ref_eigvecs().size(),1);
+//    Scalar eigval_R_evn_ = solver.ref_eigvals()[0];
 
 
-    r_evn = Matrix_to_Tensor2(eigvec_R_evn).reshape(array2{sizeLB,sizeLB})/normalization_evn;
-    l_evn = Matrix_to_Tensor2(eigvec_L_evn).reshape(array2{sizeLB,sizeLB})/normalization_evn;
-    r_odd = Matrix_to_Tensor2(eigvec_R_odd).reshape(array2{sizeLA,sizeLA})/normalization_odd;
-    l_odd = Matrix_to_Tensor2(eigvec_L_odd).reshape(array2{sizeLA,sizeLA})/normalization_odd;
+
+
+    Scalar normalization_evn = sqrt((eigvec_L_evn_map.transpose() * eigvec_R_evn_map).sum());
+    Scalar normalization_odd = sqrt((eigvec_L_odd_map.transpose() * eigvec_R_odd_map).sum());
+
+
+    r_evn = Matrix_to_Tensor2(eigvec_R_evn_map).reshape(array2{sizeLB,sizeLB})/normalization_evn;
+    l_evn = Matrix_to_Tensor2(eigvec_L_evn_map).reshape(array2{sizeLB,sizeLB})/normalization_evn;
+    r_odd = Matrix_to_Tensor2(eigvec_R_odd_map).reshape(array2{sizeLA,sizeLA})/normalization_odd;
+    l_odd = Matrix_to_Tensor2(eigvec_L_odd_map).reshape(array2{sizeLA,sizeLA})/normalization_odd;
 
     theta                = get_theta();
     theta_sw             = get_theta_swapped();
-    theta_evn_normalized = get_theta_evn(sqrt(eigval_R_evn(0)));
-    theta_odd_normalized = get_theta_odd(sqrt(eigval_R_odd(0)));
+    theta_evn_normalized = get_theta_evn(sqrt(eigval_R_evn[0]));
+    theta_odd_normalized = get_theta_odd(sqrt(eigval_R_odd[0]));
 //    theta_evn_normalized            = get_theta_evn();
 //    theta_odd_normalized            = get_theta_odd();
-    LBGA                 = asDiagonal(LB).contract(GA, idx({1},{1})).shuffle(array3{1,0,2});// / (Scalar) sqrt(eigval_R_LBGA(0));
-    LAGB                 = asDiagonal(LA).contract(GB, idx({1},{1})).shuffle(array3{1,0,2});// / (Scalar) sqrt(eigval_R_LAGB(0));
+    LBGA                 = asDiagonal(LB).contract(GA, idx({1},{1})).shuffle(array3{1,0,2});// / (T) sqrt(eigval_R_LBGA(0));
+    LAGB                 = asDiagonal(LA).contract(GB, idx({1},{1})).shuffle(array3{1,0,2});// / (T) sqrt(eigval_R_LAGB(0));
 
     transfer_matrix_evn    = theta_evn_normalized.contract(theta_evn_normalized.conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3});
     transfer_matrix_odd    = theta_odd_normalized.contract(theta_odd_normalized.conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3});
@@ -124,7 +153,7 @@ void class_mps::compute_mps_components(){
 
 
 //
-//Tensor<Scalar,4> class_mps::get_thetaL(Scalar norm) const
+//Tensor<T,4> class_mps::get_thetaL(T norm) const
 ///*!
 // * Returns a left normalized two-site MPS
 //     @verbatim
@@ -236,7 +265,7 @@ Tensor<Scalar,4> class_mps::get_theta_odd(Scalar norm) const
 
 
 //
-//Tensor<Scalar,4> class_mps::get_thetaR_swapped() const
+//Tensor<T,4> class_mps::get_thetaR_swapped() const
 ///*!
 // * Returns a two-site MPS with A and B swapped
 //     @verbatim
@@ -329,34 +358,34 @@ Tensor<Scalar,4> class_mps::get_transfer_matrix_AB(int p) const {
 
 
 //
-//Tensor<Scalar,4> class_mps::get_regularization_fixpointA() const {
+//Tensor<T,4> class_mps::get_regularization_fixpointA() const {
 //    Eigen::array<Eigen::IndexPair<long>,0> pair = {};
 //    return asDiagonalSquared(LB).contract(asDiagonalSquared(LA),pair);
 //}
 //
-//Tensor<Scalar,4> class_mps::get_regularization_fixpointB() const {
+//Tensor<T,4> class_mps::get_regularization_fixpointB() const {
 //    Eigen::array<Eigen::IndexPair<long>,0> pair = {};
 //    return asDiagonalSquared(LA).contract(asDiagonalSquared(LB),pair);
 //}
 //
 //
-//Tensor<Scalar,4> class_mps::get_transfer_matrix_LBGA_regularized() const {
+//Tensor<T,4> class_mps::get_transfer_matrix_LBGA_regularized() const {
 //    return get_transfer_matrix_LBGA() - get_regularization_fixpointA();
 //}
 //
-//Tensor<Scalar,4> class_mps::get_transfer_matrix_GALA_regularized() const {
+//Tensor<T,4> class_mps::get_transfer_matrix_GALA_regularized() const {
 //    return get_transfer_matrix_GALA() - get_regularization_fixpointB();
 //}
 //
-//Tensor<Scalar,4> class_mps::get_transfer_matrix_GBLB_regularized() const {
+//Tensor<T,4> class_mps::get_transfer_matrix_GBLB_regularized() const {
 //    return get_transfer_matrix_GBLB() - get_regularization_fixpointA();
 //}
 //
-//Tensor<Scalar,4> class_mps::get_transfer_matrix_LAGB_regularized() const {
+//Tensor<T,4> class_mps::get_transfer_matrix_LAGB_regularized() const {
 //    return get_transfer_matrix_LAGB() - get_regularization_fixpointB();
 //}
 //
-//Tensor<Scalar,4> class_mps::get_transfer_matrix_AB_regularized() const {
+//Tensor<T,4> class_mps::get_transfer_matrix_AB_regularized() const {
 ////    return get_transfer_matrix_theta_evn() ;
 //
 //    return get_transfer_matrix_LBGA_regularized()
@@ -364,7 +393,7 @@ Tensor<Scalar,4> class_mps::get_transfer_matrix_AB(int p) const {
 ////    return get_transfer_matrix_theta_evn();
 //}
 //
-//Tensor<Scalar,4> class_mps::get_transfer_matrix_BA_regularized() const {
+//Tensor<T,4> class_mps::get_transfer_matrix_BA_regularized() const {
 //    return get_transfer_matrix_LAGB_regularized().contract(get_transfer_matrix_LBGA_regularized(), idx({2,3},{0,1}));
 //
 ////    return get_transfer_matrix_theta_odd();
@@ -373,9 +402,9 @@ Tensor<Scalar,4> class_mps::get_transfer_matrix_AB(int p) const {
 //
 //
 //
-//Tensor<Scalar,4> class_mps::get_transfer_matrix_AB_regularized_term(int p) const {
-//    Tensor<Scalar,4> temp = get_transfer_matrix_zero() ;
-//    Tensor<Scalar,4> temp2;
+//Tensor<T,4> class_mps::get_transfer_matrix_AB_regularized_term(int p) const {
+//    Tensor<T,4> temp = get_transfer_matrix_zero() ;
+//    Tensor<T,4> temp2;
 //    for (int i = 0; i < p-2; i++){
 //        if(Math::mod(i,2) == 0){
 //            temp2 = temp.contract(get_transfer_matrix_LBGA_regularized(), idx({2,3},{0,1}));
@@ -390,11 +419,11 @@ Tensor<Scalar,4> class_mps::get_transfer_matrix_AB(int p) const {
 //}
 //
 //
-//Textra::Tensor<Scalar,4> class_mps::get_transfer_matrix_regularized_inverseA()const{
+//Textra::Tensor<T,4> class_mps::get_transfer_matrix_regularized_inverseA()const{
 //    long sizeL = LB.size();
 //    long sizeR = LA.size();
-//    MatrixType<Scalar> one_minus_regularized_transfer_matrix =
-//            MatrixType<Scalar>::Identity(sizeL*sizeL, sizeR*sizeR)
+//    MatrixType<T> one_minus_regularized_transfer_matrix =
+//            MatrixType<T>::Identity(sizeL*sizeL, sizeR*sizeR)
 //          - Tensor_to_Matrix(get_transfer_matrix_LBGA_regularized(), sizeL*sizeL,sizeR*sizeR );
 ////    MatrixType<Scalar> pinv = Ereg.completeOrthogonalDecomposition().pseudoInverse();
 //    //Return the pseudoinverse
@@ -402,11 +431,11 @@ Tensor<Scalar,4> class_mps::get_transfer_matrix_AB(int p) const {
 //};
 //
 //
-//Textra::Tensor<Scalar,4> class_mps::get_transfer_matrix_regularized_inverseB()const{
+//Textra::Tensor<T,4> class_mps::get_transfer_matrix_regularized_inverseB()const{
 //    long sizeL = LA.size();
 //    long sizeR = LB.size();
-//    MatrixType<Scalar> one_minus_regularized_transfer_matrix =
-//            MatrixType<Scalar>::Identity(sizeL*sizeL, sizeR*sizeR)
+//    MatrixType<T> one_minus_regularized_transfer_matrix =
+//            MatrixType<T>::Identity(sizeL*sizeL, sizeR*sizeR)
 //            - Tensor_to_Matrix(get_transfer_matrix_GBLB_regularized(), sizeL*sizeL,sizeR*sizeR );
 ////    MatrixType<Scalar> pinv = Ereg.completeOrthogonalDecomposition().pseudoInverse();
 //    //Return the pseudoinverse
@@ -416,21 +445,21 @@ Tensor<Scalar,4> class_mps::get_transfer_matrix_AB(int p) const {
 //
 //
 //
-//Textra::Tensor<Scalar,4> class_mps::get_transfer_matrix_regularized_inverseAB()const{
+//Textra::Tensor<T,4> class_mps::get_transfer_matrix_regularized_inverseAB()const{
 //    long sizeL = LB.size();
 //    long sizeR = LB.size();
-//    MatrixType<Scalar> one_minus_regularized_transfer_matrix =
-//            MatrixType<Scalar>::Identity(sizeL*sizeL, sizeR*sizeR)
+//    MatrixType<T> one_minus_regularized_transfer_matrix =
+//            MatrixType<T>::Identity(sizeL*sizeL, sizeR*sizeR)
 //          - Tensor_to_Matrix(get_transfer_matrix_AB_regularized(), sizeL*sizeL,sizeR*sizeR );
 //    //Return the pseudoinverse
 //    return Matrix_to_Tensor( one_minus_regularized_transfer_matrix.completeOrthogonalDecomposition().pseudoInverse() ,sizeL,sizeL,sizeR,sizeR);
 //};
 //
-//Textra::Tensor<Scalar,4> class_mps::get_transfer_matrix_regularized_inverseBA()const{
+//Textra::Tensor<T,4> class_mps::get_transfer_matrix_regularized_inverseBA()const{
 //    long sizeL = LA.size();
 //    long sizeR = LA.size();
-//    MatrixType<Scalar> one_minus_regularized_transfer_matrix =
-//            MatrixType<Scalar>::Identity(sizeL*sizeL, sizeR*sizeR)
+//    MatrixType<T> one_minus_regularized_transfer_matrix =
+//            MatrixType<T>::Identity(sizeL*sizeL, sizeR*sizeR)
 //          - Tensor_to_Matrix(get_transfer_matrix_BA_regularized(), sizeL*sizeL,sizeR*sizeR );
 //    //Return the pseudoinverse
 //    return Matrix_to_Tensor( one_minus_regularized_transfer_matrix.completeOrthogonalDecomposition().pseudoInverse() ,sizeL,sizeL,sizeR,sizeR);
@@ -438,22 +467,22 @@ Tensor<Scalar,4> class_mps::get_transfer_matrix_AB(int p) const {
 //
 //
 
-//Tensor<Scalar,4> class_mps::get_transfer_matrix_L()const{
+//Tensor<T,4> class_mps::get_transfer_matrix_L()const{
 //    return A().contract(A().conjugate(), idx({0},{0}))
 //              .shuffle(array4{0,2,1,3});
 //};
 //
-//Tensor<Scalar,4> class_mps::get_transfer_matrix_R()const{
+//Tensor<T,4> class_mps::get_transfer_matrix_R()const{
 //    return B().contract(B().conjugate(), idx({0},{0}))
 //              .shuffle(array4{0,2,1,3});;
 //};
 //
 //
-//Tensor<Scalar,4> class_mps::get_transfer_2_site_matrix_L()const{
+//Tensor<T,4> class_mps::get_transfer_2_site_matrix_L()const{
 //    return thetaL().contract(get_thetaL().conjugate(), idx({0,1},{0,1})).shuffle(array4{0,2,1,3});
 //};
 //
 //
-//Tensor<Scalar,4> class_mps::get_transfer_2_site_matrix_R()const{
+//Tensor<T,4> class_mps::get_transfer_2_site_matrix_R()const{
 //    return theta_evn_normalized().contract(get_theta_evn().conjugate(), idx({0,1},{0,1})).shuffle(array4{0,2,1,3});
 //};

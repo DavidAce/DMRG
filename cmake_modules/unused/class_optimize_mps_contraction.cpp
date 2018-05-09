@@ -7,7 +7,6 @@
 #include <general/nmspc_tensor_extra.h>
 //#include <mkl.h>
 //#include <omp.h>
-using Scalar = std::complex<double>;
 
 template<class T>
 void class_contraction<T>::MultMv(T* theta_in_, T* theta_out_) {
@@ -31,4 +30,4 @@ void class_contraction<T>::MultMv(T* theta_in_, T* theta_out_) {
     counter++;
 }
 
-template class class_contraction<Scalar>;
+template class class_contraction<std::complex<double>>;

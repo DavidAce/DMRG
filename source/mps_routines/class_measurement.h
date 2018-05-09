@@ -32,9 +32,9 @@ private:
     Scalar moment_generating_function(std::shared_ptr<class_mps> MPS_original,
                                                        std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
 
-    Scalar moment_generating_function_2(std::shared_ptr<class_mps> MPS_original,
-                                      std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
-
+//    Scalar moment_generating_function_2(std::shared_ptr<class_mps> MPS_original,
+//                                      std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
+//
 
 //    class_parity_mpo parity_mpo;
     Scalar a0 = (0.0 + 1.0i) *0.0 ;

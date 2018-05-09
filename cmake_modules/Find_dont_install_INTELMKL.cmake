@@ -4,7 +4,7 @@
 # Adding a -DEIGEN_USE_MKL_ALL here may conflict with arpack++
 
 set(MKL_USE_STATIC_LIBS OFF)
-set(MKL_MULTI_THREADED ON)
+set(MKL_MULTI_THREADED OFF)
 set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF)
 find_package(MKL)
 if (MKL_FOUND)

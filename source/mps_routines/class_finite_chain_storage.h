@@ -42,16 +42,16 @@ public:
 
     std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>>>  MPS_L;  /*!< A list of stored \f$ \Gamma^A \Gamma^B...  \f$-tensors with corresponding,  \f$ \Lambda^A \Lambda^B...  \f$ and left environments  indexed by chain position. */
     std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>>>  MPS_R;  /*!< A list of stored \f$ \Gamma^A \Gamma^B...  \f$-tensors with corresponding,  \f$ \Lambda^A \Lambda^B...  \f$ and right environments indexed by chain position. */
-//    std::list<Textra::Tensor<Scalar,3>> Lblock;
-//    std::list<Textra::Tensor<Scalar,3>> Rblock;
+//    std::list<Textra::Tensor<T,3>> Lblock;
+//    std::list<Textra::Tensor<T,3>> Rblock;
     std::list<class_environment> Lblock_list;
     std::list<class_environment> Rblock_list;
     std::list<class_environment_var> Lblock2_list;
     std::list<class_environment_var> Rblock2_list;
-//    std::list<Textra::Tensor<Scalar,4>> Lblock2; /*!< A list of stored Hamiltonian MPO tensors,  indexed by chain position. */
-//    std::list<Textra::Tensor<Scalar,4>> Rblock2; /*!< A list of stored Hamiltonian MPO tensors,  indexed by chain position. */
-//    std::list<Textra::Tensor<Scalar,4>> MPO_L;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
-//    std::list<Textra::Tensor<Scalar,4>> MPO_R;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+//    std::list<Textra::Tensor<T,4>> Lblock2; /*!< A list of stored Hamiltonian MPO tensors,  indexed by chain position. */
+//    std::list<Textra::Tensor<T,4>> Rblock2; /*!< A list of stored Hamiltonian MPO tensors,  indexed by chain position. */
+//    std::list<Textra::Tensor<T,4>> MPO_L;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+//    std::list<Textra::Tensor<T,4>> MPO_R;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
     std::list<class_hamiltonian> MPO_L;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
     std::list<class_hamiltonian> MPO_R;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
 
