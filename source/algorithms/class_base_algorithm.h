@@ -13,6 +13,8 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <vector>
 #include <unsupported/Eigen/CXX11/Tensor>
+#include <mps_routines/class_finite_chain_storage.h>
+
 class class_superblock;
 class class_hdf5_file;
 class class_hdf5_table_buffer;
@@ -40,13 +42,15 @@ public:
     SimulationType sim_type;
 
     //MPS
-    std::shared_ptr<class_superblock>         superblock;
-    std::shared_ptr<class_measurement>        measurement;
+    std::shared_ptr<class_superblock>            superblock;
+    std::shared_ptr<class_measurement>           measurement;
+    std::shared_ptr<class_finite_chain_storage>  env_storage;
 
     //Console
     class_custom_cout ccout;
     //Settings.
 
+    // Static variables
     long   chi_max      ;
     long   chi_min      ;
     long   chi_num      ;
@@ -60,7 +64,12 @@ public:
     double delta_tmin   ;
     int    suzuki_order ;
 
-    // Dynamic variables
+    // Variables for excited state DMRG
+    int    seed         ;
+    double r_strength   ;  //Randomness strength for the random field.
+
+
+    // Variables that monitor the simulation
     int    sweeps    = 0;
     int    iteration = 0;
     int    position  = 0;
@@ -94,6 +103,12 @@ public:
     int  enlarge_environment();
     int  enlarge_environment(int direction);
     void swap();
+
+    //Functions for finite_chains
+    int  env_storage_insert();
+    void env_storage_overwrite_MPS();
+    int  env_storage_move();
+
 
     // Profiling
     class_tic_toc t_tot;

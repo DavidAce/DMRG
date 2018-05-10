@@ -48,6 +48,8 @@ namespace settings{
     int    xdmrg::max_sweeps             = 4;
     long   xdmrg::chi_max                = 8;
     bool   xdmrg::chi_grow               = true;
+    int    xdmrg::seed                   = 1;                       /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
+    double xdmrg::r_strength             = 1;                       /*!< Randomness strength for the random field distribution */
     int    xdmrg::print_freq             = 100;
     int    xdmrg::store_freq             = 100;
 
@@ -158,6 +160,8 @@ void settings::load_from_file(class_file_reader &indata){
         xdmrg::max_sweeps         = indata.find_parameter<int>    ("xdmrg::max_sweeps ", xdmrg::max_sweeps);
         xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"    , 8);
         xdmrg::chi_grow           = indata.find_parameter<bool>   ("xdmrg::chi_grow"   , xdmrg::chi_grow);
+        xdmrg::seed               = indata.find_parameter<int>    ("xdmrg::seed"       , xdmrg::seed);
+        xdmrg::r_strength         = indata.find_parameter<double> ("xdmrg::r_strength" , xdmrg::r_strength);
         xdmrg::print_freq         = indata.find_parameter<int>    ("xdmrg::print_freq ", xdmrg::print_freq);
         xdmrg::store_freq         = indata.find_parameter<int>    ("xdmrg::store_freq ", xdmrg::store_freq);
     }

@@ -38,7 +38,7 @@ else()
     message(STATUS "HDF5 will be installed into ${INSTALL_DIRECTORY}/hdf5 on first build.")
 
     include(ExternalProject)
-    ExternalProject_Add(project_HDF5
+    ExternalProject_Add(library_HDF5
             URL      https://fossies.org/linux/misc/hdf5-1.10.1.tar.bz2
             PREFIX              "${INSTALL_DIRECTORY}/hdf5"
             UPDATE_DISCONNECTED 1
@@ -57,7 +57,7 @@ else()
             -DCMAKE_C_FLAGS=-w
             )
 
-    ExternalProject_Get_Property(project_HDF5 INSTALL_DIR)
+    ExternalProject_Get_Property(library_HDF5 INSTALL_DIR)
 
     add_library(hdf5::hdf5-static           STATIC IMPORTED)
     add_library(hdf5::hdf5_hl-static        STATIC IMPORTED)
@@ -86,10 +86,10 @@ else()
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
 
-    add_dependencies(hdf5::hdf5-static          project_HDF5)
-    add_dependencies(hdf5::hdf5_hl-static       project_HDF5)
-    add_dependencies(hdf5::hdf5_cpp-static      project_HDF5)
-    add_dependencies(hdf5::hdf5_hl_cpp-static   project_HDF5)
+    add_dependencies(hdf5::hdf5-static          library_HDF5)
+    add_dependencies(hdf5::hdf5_hl-static       library_HDF5)
+    add_dependencies(hdf5::hdf5_cpp-static      library_HDF5)
+    add_dependencies(hdf5::hdf5_hl_cpp-static   library_HDF5)
 
     target_link_libraries(${PROJECT_NAME} hdf5::hdf5-static)
     target_link_libraries(${PROJECT_NAME} hdf5::hdf5_hl-static)

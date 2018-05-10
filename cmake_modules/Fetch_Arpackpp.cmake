@@ -14,7 +14,7 @@ if(ARPACKPP_LIBRARIES)
 else()
     message(STATUS "Arpackpp will be installed into ${INSTALL_DIRECTORY}/arpackpp on first build.")
     include(ExternalProject)
-    ExternalProject_Add(project_ARPACKPP
+    ExternalProject_Add(library_ARPACKPP
             GIT_REPOSITORY      https://github.com/m-reuter/arpackpp.git
             GIT_TAG             master
             PREFIX              "${INSTALL_DIRECTORY}/arpackpp"
@@ -31,7 +31,7 @@ else()
             DEPENDS blas lapack arpack
     )
 
-    ExternalProject_Get_Property(project_ARPACKPP INSTALL_DIR)
+    ExternalProject_Get_Property(library_ARPACKPP INSTALL_DIR)
     add_library(arpackpp INTERFACE)
     set(ARPACKPP_INCLUDE_DIR ${INSTALL_DIR}/include)
     set_target_properties(arpackpp PROPERTIES
@@ -40,7 +40,7 @@ else()
             INTERFACE_LINK_LIBRARIES lapack
             INTERFACE_LINK_LIBRARIES EIGEN3
             )
-    add_dependencies(arpackpp project_ARPACKPP)
+    add_dependencies(arpackpp library_ARPACKPP)
     target_link_libraries(${PROJECT_NAME} arpackpp)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACKPP_INCLUDE_DIR})
 endif()

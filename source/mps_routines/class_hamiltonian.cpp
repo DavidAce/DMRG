@@ -48,6 +48,12 @@ void class_hamiltonian::update_site_field(double field_g) {
     MPO.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-g * sz - e * I);
 }
 
+
+double class_hamiltonian::get_site_coupling()const {return J;}
+double class_hamiltonian::get_site_energy()const {return e;}
+double class_hamiltonian::get_site_field()const {return g;}
+
+
 Eigen::Tensor<Scalar,4> class_hamiltonian::MPO_zero_site_energy() {
     Eigen::Tensor<Scalar,4> temp  = MPO;
     temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-g * sz);
