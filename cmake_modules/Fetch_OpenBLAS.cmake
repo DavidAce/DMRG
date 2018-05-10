@@ -20,7 +20,7 @@ else()
 
     enable_language(Fortran)
     include(ExternalProject)
-    ExternalProject_Add(project_OpenBLAS
+    ExternalProject_Add(library_OpenBLAS
             GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
             GIT_TAG             v0.2.20
             PREFIX              "${INSTALL_DIRECTORY}/OpenBLAS"
@@ -47,14 +47,14 @@ else()
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             )
 
-    ExternalProject_Get_Property(project_OpenBLAS INSTALL_DIR)
+    ExternalProject_Get_Property(library_OpenBLAS INSTALL_DIR)
 
     set(BLAS_INCLUDE_DIRS ${INSTALL_DIR}/include)
     set(BLAS_LOCATION ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
     add_library(blas UNKNOWN IMPORTED)
     add_library(lapack UNKNOWN IMPORTED)
-    add_dependencies(blas project_OpenBLAS)
-    add_dependencies(lapack project_OpenBLAS)
+    add_dependencies(blas library_OpenBLAS)
+    add_dependencies(lapack library_OpenBLAS)
 
 endif()
 

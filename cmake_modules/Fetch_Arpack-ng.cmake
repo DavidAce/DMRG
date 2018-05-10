@@ -15,7 +15,7 @@ if(ARPACK_LIBRARIES)
 else()
     message(STATUS "Arpack-ng will be installed into ${INSTALL_DIRECTORY}/arpack-ng on first build.")
     include(ExternalProject)
-    ExternalProject_Add(project_ARPACK
+    ExternalProject_Add(library_ARPACK
             GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
             GIT_TAG             3.5.0 # Latest version has problems with fortran linking. so stick with this version instead.
             PREFIX              "${INSTALL_DIRECTORY}/arpack-ng"
@@ -37,14 +37,14 @@ else()
             DEPENDS blas lapack
             )
 
-    ExternalProject_Get_Property(project_ARPACK INSTALL_DIR)
+    ExternalProject_Get_Property(library_ARPACK INSTALL_DIR)
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
     add_library(arpack UNKNOWN IMPORTED)
     set_target_properties(arpack PROPERTIES
             IMPORTED_LOCATION ${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX}
             INTERFACE_LINK_LIBRARIES "${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
-    add_dependencies(arpack project_ARPACK)
+    add_dependencies(arpack library_ARPACK)
 
     target_link_libraries(${PROJECT_NAME} arpack)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})

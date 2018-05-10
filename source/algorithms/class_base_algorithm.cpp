@@ -35,6 +35,7 @@ class_base_algorithm::class_base_algorithm(std::shared_ptr<class_hdf5_file> hdf5
     table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, sim_name, table_name);
     superblock   = std::make_shared<class_superblock>();
     measurement  = std::make_shared<class_measurement>(superblock, sim_type);
+    env_storage  = std::make_shared<class_finite_chain_storage>(max_length, superblock, hdf5);
     initialize_state(settings::model::initial_state);
 
 };
@@ -215,6 +216,8 @@ void class_base_algorithm::initialize_constants(){
             chi_grow     = xdmrg::chi_grow  ;
             print_freq   = xdmrg::print_freq;
             store_freq   = xdmrg::store_freq;
+            seed         = xdmrg::seed      ;
+            r_strength   = xdmrg::r_strength;
             break;
         case SimulationType::iTEBD:
             max_steps    = itebd::max_steps   ;
@@ -411,8 +414,13 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
     superblock->Rblock->enlarge (superblock->MPS,  superblock->HB->MPO);
     superblock->Lblock2->enlarge(superblock->MPS,  superblock->HA->MPO);
     superblock->Rblock2->enlarge(superblock->MPS,  superblock->HB->MPO);
-    superblock->chain_length += 2;
 
+    if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
+        position = env_storage_insert();
+    }else{
+        position++;
+    }
+    superblock->chain_length += 2;
     superblock->MPS->swapped = false;
 }
 
@@ -441,7 +449,30 @@ int class_base_algorithm::enlarge_environment(int direction){
 void class_base_algorithm::swap(){
     superblock->swap_AB();
 }
-//
+
+int class_base_algorithm::env_storage_insert() {
+    t_ste.tic();
+    int position = env_storage->insert();
+    t_ste.toc();
+    return position;
+}
+
+void class_base_algorithm::env_storage_overwrite_MPS(){
+    t_ste.tic();
+    env_storage->overwrite_MPS();
+    t_ste.toc();
+}
+
+int class_base_algorithm::env_storage_move(){
+    t_ste.tic();
+    int position = env_storage->move(direction, sweeps);
+    t_ste.toc();
+    return position;
+}
+
+
+
+
 
 
 void class_base_algorithm::print_status_update() {

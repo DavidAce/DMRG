@@ -18,7 +18,6 @@ using namespace Textra;
 
 class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_base_algorithm(std::move(hdf5_),"fDMRG", "fDMRG", SimulationType::fDMRG) {
-    env_storage  = std::make_shared<class_finite_chain_storage>(max_length, superblock, hdf5);
 }
 
 
@@ -33,6 +32,10 @@ void class_fDMRG::run() {
         env_storage_overwrite_MPS();         //Needs to occurr after update_MPS...
         store_table_entry();
         print_status_update();
+//            Check edge
+//        if (env_storage->MPS_L.size() == 1 or env_storage->MPS_R.size() == 1) {
+//            direction *= -1;
+//        }
         position = enlarge_environment(direction);
         position = env_storage_move();
         update_chi();
@@ -58,25 +61,6 @@ int class_fDMRG::initialize_chain() {
     return position;
 }
 
-
-int class_fDMRG::env_storage_insert() {
-    t_ste.tic();
-    int position = env_storage->insert();
-    t_ste.toc();
-    return position;
-}
-
-void class_fDMRG::env_storage_overwrite_MPS(){
-    t_ste.tic();
-    env_storage->overwrite_MPS();
-    t_ste.toc();
-}
-int class_fDMRG::env_storage_move(){
-    t_ste.tic();
-    int position = env_storage->move(direction, sweeps);
-    t_ste.toc();
-    return position;
-}
 
 
 void class_fDMRG::print_profiling(){

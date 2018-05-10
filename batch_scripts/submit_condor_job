@@ -1,0 +1,8 @@
+ID         = $(Process) 
+universe   = vanilla
+executable = ../cmake-build-release/DMRG++
+arguments  = $(inputfiles)
+log        = logs/DMRG++_$(ID).log
+output     = logs/DMRG++_$(ID).out
+error      = logs/DMRG++_$(ID).error
+queue inputfiles matching files ../input/test_*.cfg

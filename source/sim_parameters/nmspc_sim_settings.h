@@ -24,7 +24,7 @@ namespace settings {
     namespace model {
         extern double       J             ;                      /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
         extern double       g             ;                      /*!< Transverse field strength */
-        extern std::string initial_state  ;                      /*!< Choose initial state of the MPS, either "cat" or "random". Default "random". */
+        extern std::string  initial_state ;                      /*!< Choose initial state of the MPS, either "cat" or "random". Default "random". */
     }
 
     //Parmaters that control eigensolver and SVD precision
@@ -59,13 +59,15 @@ namespace settings {
 
     //Parameters controlling xDMRG
     namespace xdmrg {
-        extern bool on           ;                          /*!< Turns xDMRG simulation on/off. */
-        extern int  max_length   ;                          /*!< Number sweeps along the 1D quantum chain. */
-        extern int  max_sweeps   ;                          /*!< Number sweeps along the 1D quantum chain. */
-        extern long chi_max      ;                          /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        extern bool chi_grow   ;                            /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
-        extern int  print_freq   ;                          /*!< Print frequency for console output. (0 = off). */
-        extern int  store_freq ;                            /*!< Store frequency,for output file buffer. (0 = off). */
+        extern bool    on           ;                       /*!< Turns xDMRG simulation on/off. */
+        extern int     max_length   ;                       /*!< Number sweeps along the 1D quantum chain. */
+        extern int     max_sweeps   ;                       /*!< Number sweeps along the 1D quantum chain. */
+        extern long    chi_max      ;                       /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        extern bool    chi_grow     ;                       /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
+        extern int     seed         ;                       /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
+        extern double  r_strength   ;                       /*!< Randomness strength for the random field distribution */
+        extern int     print_freq   ;                       /*!< Print frequency for console output. (0 = off). */
+        extern int     store_freq   ;                       /*!< Store frequency,for output file buffer. (0 = off). */
 
     }
 

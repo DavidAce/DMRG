@@ -24,8 +24,6 @@ using namespace Textra;
 
 class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_base_algorithm(std::move(hdf5_), "xDMRG", "xDMRG",SimulationType::xDMRG) {
-    env_storage  = std::make_shared<class_finite_chain_storage>(max_length, superblock, hdf5);
-
 }
 
 
@@ -35,7 +33,6 @@ void class_xDMRG::run() {
     ccout(0) << "\nStarting " << table_name << " simulation" << std::endl;
     t_tot.tic();
     chi_temp = chi_max;
-    randomness_strength = 1;
     initialize_random_chain();
     while(sweeps < max_sweeps) {
         single_xDMRG_step(chi_temp);
@@ -99,18 +96,21 @@ void class_xDMRG::single_xDMRG_step(long chi_max) {
 
 
 int class_xDMRG::initialize_random_chain() {
-    rn::seed(7);
+//    rn::seed(7);
+    rn::seed((unsigned long)seed);
     while (true) {
-        auto r1 = rn::uniform_complex_1();
-        auto r2 = rn::uniform_complex_1();
-        superblock->MPS->GA(1, 0, 0) = r1.real();
-        superblock->MPS->GA(0, 0, 0) = r1.imag();
-        superblock->MPS->GB(1, 0, 0) = r2.real();
-        superblock->MPS->GB(0, 0, 0) = r2.imag();
-        superblock->H->HA = superblock->H->compute_H_MPO_custom_field(
-                rn::uniform_double(-randomness_strength, randomness_strength), 0.0);
-        superblock->H->HB = superblock->H->compute_H_MPO_custom_field(
-                rn::uniform_double(-randomness_strength, randomness_strength), 0.0);
+        long d    = superblock->MPS->GA.dimension(0);
+        long chiB = superblock->MPS->GA.dimension(1);
+        long chiA = superblock->MPS->GA.dimension(2);
+        superblock->MPS->theta = Textra::Matrix_to_Tensor(Eigen::MatrixXd::Random(d*chiB,d*chiA).cast<Scalar>(),d,chiB,d,chiA);
+        superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chiA, settings::precision::SVDThreshold);
+
+
+        double gA = rn::uniform_double(-r_strength, r_strength);
+        double gB = rn::uniform_double(-r_strength, r_strength);
+        superblock->HA = std::make_shared<class_hamiltonian>(class_hamiltonian(settings::model::J, gA, 0));
+        superblock->HB = std::make_shared<class_hamiltonian>(class_hamiltonian(settings::model::J, gB, 0));
+
         position = env_storage_insert();
         if (superblock->chain_length < max_length) {
             enlarge_environment();
@@ -123,25 +123,25 @@ int class_xDMRG::initialize_random_chain() {
 }
 
 
-
-int class_xDMRG::env_storage_insert() {
-    t_ste.tic();
-    int position = env_storage->insert();
-    t_ste.toc();
-    return position;
-}
-
-void class_xDMRG::env_storage_overwrite_MPS(){
-    t_ste.tic();
-    env_storage->overwrite_MPS();
-    t_ste.toc();
-}
-int class_xDMRG::env_storage_move(){
-    t_ste.tic();
-    int position = env_storage->move(direction, sweeps);
-    t_ste.toc();
-    return position;
-}
+//
+//int class_xDMRG::env_storage_insert() {
+//    t_ste.tic();
+//    int position = env_storage->insert();
+//    t_ste.toc();
+//    return position;
+//}
+//
+//void class_xDMRG::env_storage_overwrite_MPS(){
+//    t_ste.tic();
+//    env_storage->overwrite_MPS();
+//    t_ste.toc();
+//}
+//int class_xDMRG::env_storage_move(){
+//    t_ste.tic();
+//    int position = env_storage->move(direction, sweeps);
+//    t_ste.toc();
+//    return position;
+//}
 
 
 

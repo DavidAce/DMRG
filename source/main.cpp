@@ -13,7 +13,6 @@
 */
 
 int main(int argc, char* argv[]) {
-
     // Print current Git status
     std::cout << "Git Branch: " + GIT::BRANCH +
             " | Commit hash: "  + GIT::COMMIT_HASH +
@@ -22,7 +21,6 @@ int main(int argc, char* argv[]) {
     //Print all given parameters
     //Load input and output files from command line. If none were given use defaults.
     //Normally an output filename is given in the input file. But it can also be given from command line.
-
     std::string inputfile  = "input.cfg";
     std::string outputfile;
     bool outputfile_given  = false;
@@ -38,6 +36,7 @@ int main(int argc, char* argv[]) {
 
     //If an output filename was given explicitly, overwrite the default , if it was given explicitly in command line.
     settings::hdf5::output_filename = outputfile_given ? outputfile : settings::hdf5::output_filename;
+
     //Initialize the algorithm class
     //This class stores simulationdata automatically to a file specified in the input file
     class_algorithm_launcher launcher;

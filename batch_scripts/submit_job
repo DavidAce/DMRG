@@ -1,7 +1,0 @@
-Universe   = vanilla
-Executable = ../cmake-build-release/DMRG++
-Arguments  = ../input/input.cfg ../output/mytestoutput.h5
-Log        = DMRG++.log
-Output     = DMRG++.out
-Error      = DMRG++.error
-Queue

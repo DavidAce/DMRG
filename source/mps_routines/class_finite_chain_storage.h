@@ -12,8 +12,6 @@
 #include <sim_parameters/nmspc_model.h>
 
 
-//using namespace Textra;
-//using namespace std;
 class class_superblock;
 class class_hdf5_file;
 
@@ -35,23 +33,20 @@ class class_hdf5_file;
 */
 
 
+
 class class_finite_chain_storage {
 public:
     using Scalar = std::complex<double>;
 public:
 
-    std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>>>  MPS_L;  /*!< A list of stored \f$ \Gamma^A \Gamma^B...  \f$-tensors with corresponding,  \f$ \Lambda^A \Lambda^B...  \f$ and left environments  indexed by chain position. */
-    std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>>>  MPS_R;  /*!< A list of stored \f$ \Gamma^A \Gamma^B...  \f$-tensors with corresponding,  \f$ \Lambda^A \Lambda^B...  \f$ and right environments indexed by chain position. */
-//    std::list<Textra::Tensor<T,3>> Lblock;
-//    std::list<Textra::Tensor<T,3>> Rblock;
-    std::list<class_environment> Lblock_list;
-    std::list<class_environment> Rblock_list;
-    std::list<class_environment_var> Lblock2_list;
-    std::list<class_environment_var> Rblock2_list;
-//    std::list<Textra::Tensor<T,4>> Lblock2; /*!< A list of stored Hamiltonian MPO tensors,  indexed by chain position. */
-//    std::list<Textra::Tensor<T,4>> Rblock2; /*!< A list of stored Hamiltonian MPO tensors,  indexed by chain position. */
-//    std::list<Textra::Tensor<T,4>> MPO_L;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
-//    std::list<Textra::Tensor<T,4>> MPO_R;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<std::tuple<Textra::Tensor<Scalar,1>,Textra::Tensor<Scalar,3>>>  MPS_L;  /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
+    std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>>>  MPS_R;  /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
+//    std::listTextra::Tensor<Scalar,1>> MPS_C; /*!< A list of stored \f$ \Lambda^A\f$-tensors, i.e. center bond matrices. */
+    Textra::Tensor<Scalar,1> LA;  //Current center bond matrix;
+    std::list<class_environment> ENV_L;
+    std::list<class_environment> ENV_R;
+    std::list<class_environment_var> ENV2_L;
+    std::list<class_environment_var> ENV2_R;
     std::list<class_hamiltonian> MPO_L;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
     std::list<class_hamiltonian> MPO_R;   /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
 
@@ -96,6 +91,9 @@ public:
     void overwrite_MPS();                 /*!< Update the MPS stored at current position.*/
     int  move(int &direction, int &sweep);    /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
     void print_storage();                                                   /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
+
+    void print_hamiltonian_energies();
+
 };
 
 
