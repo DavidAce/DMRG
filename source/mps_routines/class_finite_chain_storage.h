@@ -20,16 +20,13 @@ class class_hdf5_file;
  \class class_environment_storage
  \brief Storage class for environments during finite DMRG
  During the infinite-DMRG part of the algorithm, the current state for each chain-length
- is stored in a `class_storage` object, for later use in the finite-DMRG stage.
+ is stored in a `class_finite_chain_storage` object, for later use in the finite-DMRG stage.
 
- Specifically, this class stores objects from the current superblock:
- - The left and right environment blocks `Lblock` and `Rblock`, both type `Tensor3`, and
- - the MPS tensors \f$\Gamma^{A,B}=\f$ `MPS.GA, MPS.GB` and \f$\Lambda^{A,B}=\f$ `MPS.LA, MPS.LB`, required for computing \f$\Theta\f$, following
- the notation used in [Frank Pollmann's notes](http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf):
- \f$\Theta= \Lambda^B\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. <br> Here \f$\Gamma^{A,B}\f$ are a rank-3 tensors of type `Tensor3`  and \f$\Lambda^{A,B}\f$
- are rank-1 tensors of type `Tensor1`.
+ There are as many elements in storage as there are particles on the finite shain.
+ The only exception to this rule is for the environments, which have an extra element each: the particle-less edges of the system.
 
- All objects are stored and indexed by their position relative to the final chain of length `max_length`.
+ The storage is always partitioned in two lists, corresponding to the two halves about the current position.
+ The back and front of these lists correspond to the current state of the superblock's left and right parts, respectively.
 */
 
 
@@ -57,9 +54,10 @@ private:
     std::shared_ptr<class_hdf5_file>  hdf5;
 public:
     int max_length = 0;                                             /*!< The maximum length of the chain */
-    int current_length = 0;
-    int position_L;                                                 /*!< The current position of \f$\Gamma^A\f$ w.r.t the full chain. */
-    int position_R;                                                 /*!< The current position of \f$\Gamma^B\f$ w.r.t the full chain. */
+//    int current_length = 0;
+//    int position_L;                                                 /*!< The current position of \f$\Gamma^A\f$ w.r.t the full chain. */
+//    int position_R;                                                 /*!< The current position of \f$\Gamma^B\f$ w.r.t the full chain. */
+    long current_length = 0;
     bool max_length_is_set = false;
     bool superblock_is_set = false;
     bool hdf5_file_is_set  = false;
@@ -68,7 +66,7 @@ public:
 public:
 
 
-    class_finite_chain_storage(){};
+    class_finite_chain_storage()=default;
     explicit class_finite_chain_storage(int max_length_,                                   /*!< The maximum length of the chain. */
                                  std::shared_ptr<class_superblock> superblock_,
                                  std::shared_ptr<class_hdf5_file>  hdf5_
@@ -83,14 +81,17 @@ public:
 
 
 
-    void set_length(int max_length_);                                       /*!< Sets the maximum length of the chain. */
+    void set_max_length(int max_length_);                                       /*!< Sets the maximum length of the chain. */
     void set_superblock(std::shared_ptr<class_superblock> superblock_);     /*!< Sets the pointer to a superblock */
     void set_hdf5_file (std::shared_ptr<class_hdf5_file>  hdf5_);           /*!< Sets the pointer to an hdf5-file for storage */
+    void update_current_length();
     int  insert();                        /*!< Store current MPS and environments indexed by their respective positions on the chain. */
+    int  insert_edges();
     int  load();                                /*!< Load MPS and environments according to current position. */
     void overwrite_MPS();                 /*!< Update the MPS stored at current position.*/
     int  move(int &direction, int &sweep);    /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
     void print_storage();                                                   /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
+    void print_storage_compact();                                                   /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
 
     void print_hamiltonian_energies();
 

@@ -17,7 +17,7 @@ namespace settings{
     //Parameters for the model Hamiltonian
     double model::J                      = -1  ;                          /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
     double model::g                      =  1  ;                          /*!< Transverse field strength */
-    std::string model::initial_state     = "random";                      /*!< Choose initial state of the MPS, either "cat" or "random". Default "random". */
+    std::string model::initial_state     = "rps";                         /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi)} "cat" or "random". Default "rps". Note that "random_chi" works poorly for finite algorithms */
 
     int    precision::eigMaxIter         = 1000   ;
     double precision::eigThreshold       = 1e-12  ;

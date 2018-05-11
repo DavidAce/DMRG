@@ -37,7 +37,7 @@ class_superblock::class_superblock():
     MPS->initialize(H->local_dimension);
     HA->set_parameters(settings::model::J, settings::model::g, 0.0);
     HB->set_parameters(settings::model::J, settings::model::g, 0.0);
-    chain_length = H->mps_sites;
+//    chain_length = H->mps_sites;
     set_current_dimensions();
 
 }
@@ -47,71 +47,25 @@ class_superblock::class_superblock():
 // Find smallest eigenvalue using Arpack.
 //============================================================================//
 
-//Textra::Tensor<T,4> class_superblock::optimize_MPS(Textra::Tensor<T, 4> &theta, int eigMaxIter, double eigThreshold){
-//    Eigen::Tensor<T,4> HA0 = HA->MPO_zero_site_energy();
-//    Eigen::Tensor<T,4> HB0 = HB->MPO_zero_site_energy();
-//    class_custom_contraction<T>  esp(Lblock->block, Rblock->block, HA0, HB0, shape4);
-//    int ncv = std::min(settings::precision::eig_max_ncv,(int)theta.size());
-////    ncv = 16;
-//    int nev = 1;
-//    int dim = esp.cols();
-////    t_eig.tic();
-//    //The operator A in "Ax = Ex" should be real and symmetric, so the eigenvector should be real as well, but might come out with a complex phase factor that can be removed.
-//    ARCompStdEig<double, class_custom_contraction<T>> eig (dim, nev, &esp, &class_custom_contraction<T>::MultMv, "SR", ncv,eigThreshold,eigMaxIter, theta.data());
-//    eig.ChangeTol(1e-12);
-//    eig.FindEigenvectors();
-//    int rows = eig.GetN();
-//    int cols = std::min(1, eig.GetNev());
-//    Textra::Tensor<T, 2> eigvecs = TensorMap<Tensor<T,2>> (eig.RawEigenvectors(), rows,cols);
-//    Textra::Tensor<T, 1> eigvals = TensorMap<Tensor<T,1>> (eig.RawEigenvalues(), cols);
-//    T inv_phase = -1.0i * std::arg(eigvecs(0,0));
-//    eigvecs = (eigvecs *  std::exp(inv_phase)); //Rotate the phase of the eigenvector back so that it becomes real.
-//    eigvecs =  eigvecs.real().cast<T>();    //Remove the, now negligible, imaginary part
-////    t_eig.toc();
-//
-//    using namespace chrono;
-//    energy = std::real(eigvals(0));
-//
-////    std::cout << "Time: " << duration_cast<duration<double>>(t_eig.measured_time).count() << " ";
-////    t_eig.print_delta();
-////    std::cout << " iter: " << eig.GetIter() << " counter: " << esp.counter << " energy: " << energy << "\n";
-//    return eigvecs.reshape(shape4);
-//}
 
 
-
-Textra::Tensor<Scalar,4> class_superblock::optimize_MPS2(Textra::Tensor<Scalar, 4> &theta, int eigSteps, double eigThreshold){
-    Eigen::Tensor<Scalar,4> HA0 = HA->MPO_zero_site_energy();
-    Eigen::Tensor<Scalar,4> HB0 = HB->MPO_zero_site_energy();
+Textra::Tensor<Scalar,4> class_superblock::optimize_MPS(Textra::Tensor<Scalar, 4> &theta, int eigSteps, double eigThreshold){
     std::array<long,4> shape_theta4 = theta.dimensions();
-    std::array<long,4> shape_mpo4 = HA0.dimensions();
-//    Eigen::Tensor<T,2> mytens =
-//                    Lblock->block
-//                      .contract(HA0, Textra::idx({2},{0}))
-//                      .contract(HB0, Textra::idx({2},{0}))
-//                      .contract(Rblock->block, Textra::idx({4},{2}))
-//                      .shuffle(Textra::array8{2,0,4,6,3,1,5,7})
-//                      .reshape(Textra::array2{shape1[0], shape1[0]});
+    std::array<long,4> shape_mpo4   = HA->MPO.dimensions();
+
     t_eig.tic();
     int nev = 1;
-    class_arpack_eigsolver<Scalar, Form::GENERAL> solver(Lblock->block.data(), Rblock->block.data(), HA0.data(), HB0.data(), shape_theta4, shape_mpo4, Ritz::SR, nev, settings::precision::eig_max_ncv, true ,theta.data());
+    class_arpack_eigsolver<Scalar, Form::GENERAL> solver(Lblock->block.data(), Rblock->block.data(), HA->MPO.data(), HB->MPO.data(), shape_theta4, shape_mpo4, Ritz::SR, nev, settings::precision::eig_max_ncv, true ,theta.data());
     t_eig.toc();
-
-//    class_optimize_mps  opt(Lblock->block.data(), Rblock->block.data(), HA0.data(), HB0.data(), shape_theta4, shape_mpo4, theta.data());
-//    opt.optimize_mps(1);
 
     TensorMap<const Tensor<const Scalar,2>> eigvecs (solver.ref_eigvecs().data(), shape_theta4[0]*shape_theta4[1], shape_theta4[2]*shape_theta4[3]);
     TensorMap<const Tensor<const Scalar,1>> eigvals (solver.ref_eigvals().data(), nev);
-//    Scalar inv_phase = -1.0i * std::arg(eigvecs(0,0));
-//    eigvecs = (eigvecs *  std::exp(inv_phase)); //Rotate the phase of the eigenvector back so that it becomes real.
-//    eigvecs =  eigvecs.real().cast<Scalar>();    //Remove the, now negligible, imaginary part
 
-    using namespace chrono;
-    energy = std::real(eigvals(0));
-
+    E_one_site = std::real(eigvals(0))/2.0;
+//    using namespace chrono;
 //    std::cout << "Time: " << duration_cast<duration<double>>(t_eig.measured_time).count() << " ";
 //    t_eig.print_delta();
-//    std::cout << " iter: " << opt.iter << " counter: " << opt.counter << " energy: " << energy <<  " shape4: " << theta.dimensions() << "\n";
+//    std::cout << " iter: " << opt.iter << " counter: " << opt.counter << " E_one_site: " << E_one_site <<  " shape4: " << theta.dimensions() << "\n";
     return eigvecs.reshape(shape_theta4);
 }
 
@@ -185,18 +139,6 @@ void class_superblock::truncate_MPS(const Textra::Tensor<Scalar, 4> &theta, cons
 
 
 void class_superblock::enlarge_environment(int direction){
-    Tensor<Scalar, 0>  E_two_site =
-            Lblock->block
-            .contract(MPS->theta,               idx({0},{1}))
-            .contract(HA->MPO_zero_site_energy(),    idx({1,2},{0,2}))
-            .contract(HB->MPO_zero_site_energy(),    idx({3,1},{0,2}))
-            .contract(MPS->theta.conjugate(),   idx({0,2,4},{1,0,2}))
-            .contract(Rblock->block,            idx({0,2,1},{0,1,2}));
-
-    double E_one_site = E_two_site(0).real()/2.0;
-
-    HA->update_site_energy(E_one_site);
-    HB->update_site_energy(E_one_site);
     if (direction == 1){
         Lblock->enlarge(MPS,  HA->MPO);
         Lblock2->enlarge(MPS, HA->MPO);

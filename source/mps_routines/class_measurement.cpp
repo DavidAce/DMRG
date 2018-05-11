@@ -62,15 +62,28 @@ void class_measurement::compute_all_observables(){
 
 double class_measurement::compute_energy_MPO(){
     t_ene_mpo.tic();
-    Tensor<Scalar, 0>  E_two_site =
+    Tensor<Scalar, 0>  E_two_sites =
             superblock->Lblock->block
-            .contract(superblock->MPS->theta,                     idx({0},{1}))
-            .contract(superblock->HA->MPO_zero_site_energy(),     idx({1,2},{0,2}))
-            .contract(superblock->HB->MPO_zero_site_energy(),     idx({3,1},{0,2}))
-            .contract(superblock->MPS->theta.conjugate(),         idx({0,2,4},{1,0,2}))
-            .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
-    t_ene_mpo.toc();
-    return std::real(E_two_site(0) / 2.0 );
+                    .contract(superblock->MPS->theta,                     idx({0},{1}))
+                    .contract(superblock->HA->MPO,                        idx({1,2},{0,2}))
+                    .contract(superblock->HB->MPO,                        idx({3,1},{0,2}))
+                    .contract(superblock->MPS->theta.conjugate(),         idx({0,2,4},{1,0,2}))
+                    .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
+    if(sim == SimulationType::iDMRG or sim == SimulationType::FES_iDMRG){
+
+        t_ene_mpo.toc();
+        return std::real(E_two_sites(0) / 2.0 );
+    }else{
+        Tensor<Scalar, 0> E_all_sites =
+                superblock->Lblock->block
+                .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
+                .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
+                .contract(superblock->Rblock->block, idx({1, 2, 0}, {0, 1, 2}));
+        double L = superblock->Lblock->size + superblock->Rblock->size;
+        t_ene_mpo.toc();
+        std::cout <<setprecision(10)<< "E a: " <<std::real(E_all_sites(0)) <<  " E 1: " << std::real(E_two_sites(0)) << " L: " << L << std::endl;
+        return std::real(E_all_sites(0))/L;
+    }
 }
 
 
