@@ -79,14 +79,26 @@ std::pair<double,double> class_measurement::compute_infinite_moments_G(Scalar a,
 
 double class_measurement::compute_infinite_variance_MPO(){
     t_var_mpo.tic();
-    Tensor<Scalar, 0> deltaH2 =
-            superblock->Lblock2->block
-                    .contract(asDiagonal(superblock->MPS->LA), idx({0},{0}))
-                    .contract(asDiagonal(superblock->MPS->LA), idx({0},{0}))
-            .contract(superblock->Rblock2->block, idx({2, 3, 0, 1}, {0, 1, 2, 3}));
-    double L =  superblock->Lblock2->size + superblock->Rblock2->size;
-    t_var_mpo.toc();
-    return std::real( deltaH2(0)/ L );
+    if (sim == SimulationType::iDMRG or sim == SimulationType::FES_iDMRG) {
+        Tensor<Scalar, 0> H2_minus_E2 =
+                superblock->Lblock2->block
+                        .contract(asDiagonal(superblock->MPS->LA), idx({0},{0}))
+                        .contract(asDiagonal(superblock->MPS->LA), idx({0},{0}))
+                        .contract(superblock->Rblock2->block, idx({2, 3, 0, 1}, {0, 1, 2, 3}));
+        double L =  superblock->Lblock2->size + superblock->Rblock2->size;
+        t_var_mpo.toc();
+        return std::real( H2_minus_E2(0)/ L );
+    }else{
+        Tensor<Scalar, 0> H2 =
+                superblock->Lblock2->block
+                        .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
+                        .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
+                        .contract(superblock->Rblock2->block, idx({2, 3, 0, 1}, {0, 1, 2, 3}));
+        double L = superblock->Lblock2->size + superblock->Rblock2->size;
+        t_var_mpo.toc();
+        std::cout << "H2 = " << std::real(H2(0)) << " E2 = " <<  energy1*L*energy1*L << " L: " << L << std::endl;
+        return std::real(H2(0) - energy1*energy1*L*L ) / L;
+    }
 }
 
 double class_measurement::compute_infinite_variance_H(){

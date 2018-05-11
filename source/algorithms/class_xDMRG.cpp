@@ -56,8 +56,8 @@ auto class_xDMRG::find_greatest_overlap(){
     Eigen::Tensor<Scalar,1> theta = superblock->MPS->get_theta().reshape(superblock->shape1);
     Eigen::Tensor<Scalar,2> H_local =
             superblock->Lblock->block
-            .contract(superblock->HA->MPO_zero_site_energy() ,         Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
-            .contract(superblock->HB->MPO_zero_site_energy() ,         Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
+            .contract(superblock->HA->MPO      , Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
+            .contract(superblock->HB->MPO      , Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
             .contract(superblock->Rblock->block, Textra::idx({4},{2}))
             .shuffle(Textra::array8{2,0,4,6,3,1,5,7})
             .reshape(Textra::array2{superblock->shape1[0], superblock->shape1[0]});

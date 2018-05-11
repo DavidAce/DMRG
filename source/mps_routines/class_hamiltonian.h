@@ -27,7 +27,12 @@ private:
     };
 
     Eigen::Tensor<Scalar,4> MPO;
+    Eigen::Tensor<Scalar,4> MPO_reduced;
+//    Eigen::Tensor<Scalar,4> MPO_zero_site_energy();
+
     void build_mpo();
+    void build_mpo_reduced();
+
     void set_parameters(double coupling_J, double field_g, double energy_e);
     void update_site_coupling(double coupling_J);
     void update_site_energy(double energy_e);
@@ -37,7 +42,6 @@ private:
     double get_site_energy() const;
     double get_site_field() const;
 
-    Eigen::Tensor<Scalar,4> MPO_zero_site_energy();
 
 };
 

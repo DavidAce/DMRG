@@ -235,8 +235,8 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
     DenseHamiltonianProduct<Scalar>  hamiltonianProduct(Lblock, Rblock, HA, HB, shape_theta4,shape_mpo4);
     int dim  = hamiltonianProduct.cols();
     int size = hamiltonianProduct.cols() * hamiltonianProduct.rows();
-    int ncv_internal = std::min(settings::precision::eig_max_ncv,size);
-    ncv_internal = std::max(2*nev, ncv);
+    int ncv_internal = std::max(dim/2, 4*nev);
+    ncv_internal = std::min(ncv, ncv_internal);
 
     if constexpr(std::is_same_v<Scalar, std::complex<double>>) {
         ARCompStdEig<double, DenseHamiltonianProduct<Scalar>> eigsolver(dim, nev, &hamiltonianProduct,

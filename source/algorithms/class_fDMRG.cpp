@@ -27,15 +27,12 @@ void class_fDMRG::run() {
     ccout(0) << "\nStarting " << table_name << " simulation" << std::endl;
     t_tot.tic();
     initialize_chain();
+    chi_temp = chi_max;
     while(sweeps < max_sweeps) {
         single_DMRG_step(chi_temp);
         env_storage_overwrite_MPS();         //Needs to occurr after update_MPS...
         store_table_entry();
         print_status_update();
-//            Check edge
-//        if (env_storage->MPS_L.size() == 1 or env_storage->MPS_R.size() == 1) {
-//            direction *= -1;
-//        }
         position = enlarge_environment(direction);
         position = env_storage_move();
         update_chi();
@@ -49,11 +46,13 @@ void class_fDMRG::run() {
 int class_fDMRG::initialize_chain() {
     while(true){
         single_DMRG_step(chi_max);
-        position = env_storage_insert();
         if (superblock->chain_length < max_length) {
             enlarge_environment();
+            position = env_storage_insert();
             swap();
         } else {
+            //Undo the last increment, because the last enlargement was just to add the state to storage.
+//            superblock->chain_length -= 2;
             break;
         }
         print_status_update();

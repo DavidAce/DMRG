@@ -37,7 +37,6 @@ class_base_algorithm::class_base_algorithm(std::shared_ptr<class_hdf5_file> hdf5
     measurement  = std::make_shared<class_measurement>(superblock, sim_type);
     env_storage  = std::make_shared<class_finite_chain_storage>(max_length, superblock, hdf5);
     initialize_state(settings::model::initial_state);
-
 };
 
 
@@ -64,13 +63,20 @@ void class_base_algorithm::single_DMRG_step(long chi_max){
     superblock->set_current_dimensions();
     superblock->MPS->theta = superblock->MPS->get_theta();
     t_opt.tic();
-    superblock->MPS->theta = superblock->optimize_MPS2(superblock->MPS->theta, s::precision::eigMaxIter, s::precision::eigThreshold);
+    superblock->MPS->theta = superblock->optimize_MPS(superblock->MPS->theta, s::precision::eigMaxIter,
+                                                      s::precision::eigThreshold);
     t_opt.toc();
     t_svd.tic();
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, s::precision::SVDThreshold);
     t_svd.toc();
     measurement->is_measured = false;
     t_sim.toc();
+    //Reduce the hamiltonians if you are doing infinite systems:
+    if(sim_type == SimulationType::iDMRG or  sim_type == SimulationType::FES_iDMRG){
+        superblock->HA->update_site_energy(superblock->E_one_site);
+        superblock->HB->update_site_energy(superblock->E_one_site);
+    }
+
 
 }
 
@@ -257,8 +263,16 @@ void class_base_algorithm::initialize_constants(){
 void class_base_algorithm::initialize_state(std::string initial_state ) {
     //Set the size and initial values for the MPS and environments
     //Choose between GHZ, W, Random, Product state (up, down, etc), None, etc...
-
     long d  = superblock->d;
+    //First make sure to set a random field on the MPO's if you are doing xDMRG
+    if(sim_type == SimulationType::xDMRG){
+        double gA = rn::uniform_double(-r_strength, r_strength);
+        double gB = rn::uniform_double(-r_strength, r_strength);
+        superblock->HA = std::make_shared<class_hamiltonian>(class_hamiltonian(settings::model::J, gA, 0));
+        superblock->HB = std::make_shared<class_hamiltonian>(class_hamiltonian(settings::model::J, gB, 0));
+    }
+
+
     if(settings::model::initial_state == "upup"){
         std::cout << "Initializing Up-Up-state  |up,up>" << std::endl;
         superblock->MPS->GA.resize(array3{d,1,1});
@@ -380,6 +394,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         superblock->MPS->LB.resize(array1{chi_max});
         superblock->MPS->LB.setConstant(1.0/sqrt(chi_max));
         superblock->MPS->LB_left = superblock->MPS->LB;
+
         superblock->Lblock->block.resize(array3{chi_max,chi_max, superblock->HA->MPO.dimension(0)});
         superblock->Rblock->block.resize(array3{chi_max,chi_max, superblock->HB->MPO.dimension(1)});
         superblock->Lblock2->block.resize(array4{chi_max,chi_max, superblock->HA->MPO.dimension(0), superblock->HA->MPO.dimension(0)});
@@ -394,34 +409,23 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
     }
     //Put the initial state into the environment as a starting point for the algorithm.
     superblock->set_current_dimensions();
+    if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
+        position = env_storage_insert_edges();
+    }
 
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, settings::precision::SVDThreshold);
-//        Tensor<T, 0>  E_two_site =
-//            superblock->Lblock->block
-//                    .contract( superblock->MPS->theta,               idx({0},{1}))
-//                    .contract( superblock->HA->MPO_zero_site_energy(),    idx({1,2},{0,2}))
-//                    .contract( superblock->HB->MPO_zero_site_energy(),    idx({3,1},{0,2}))
-//                    .contract( superblock->MPS->theta.conjugate(),   idx({0,2,4},{1,0,2}))
-//                    .contract( superblock->Rblock->block,            idx({0,2,1},{0,1,2}));
-//
-//    double E_one_site = E_two_site(0).real()/2.0;
-//
-//    superblock->HA->update_site_energy(E_one_site);
-//    superblock->HB->update_site_energy(E_one_site);
-
-
     superblock->Lblock->enlarge (superblock->MPS,  superblock->HA->MPO);
     superblock->Rblock->enlarge (superblock->MPS,  superblock->HB->MPO);
     superblock->Lblock2->enlarge(superblock->MPS,  superblock->HA->MPO);
     superblock->Rblock2->enlarge(superblock->MPS,  superblock->HB->MPO);
-
+    superblock->chain_length += 2;
     if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
         position = env_storage_insert();
     }else{
         position++;
     }
-    superblock->chain_length += 2;
-    superblock->MPS->swapped = false;
+    superblock->swap_AB();
+//    superblock->MPS->swapped = true;
 }
 
 
@@ -456,6 +460,14 @@ int class_base_algorithm::env_storage_insert() {
     t_ste.toc();
     return position;
 }
+
+int class_base_algorithm::env_storage_insert_edges() {
+    t_ste.tic();
+    int position = env_storage->insert_edges();
+    t_ste.toc();
+    return position;
+}
+
 
 void class_base_algorithm::env_storage_overwrite_MPS(){
     t_ste.tic();
