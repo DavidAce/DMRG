@@ -46,18 +46,6 @@ void class_base_algorithm::single_DMRG_step(long chi_max){
  */
     t_sim.tic();
 
-//    superblock->set_current_dimensions();
-//    t_opt.tic();
-//    theta_memory = superblock->optimize_MPS(theta_memory, s::precision::eigMaxIter, s::precision::eigThreshold);
-//    t_opt.toc();
-//
-//    t_svd.tic();
-//    superblock->MPS->theta = superblock->truncate_MPS(theta_memory, chi_max, s::precision::SVDThreshold);
-//    theta_memory = superblock->MPS->theta;
-//    t_svd.toc();
-//    measurement->is_measured = false;
-//    t_sim.toc();
-////
 
     t_sim.tic();
     superblock->set_current_dimensions();
@@ -264,16 +252,11 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
     //Set the size and initial values for the MPS and environments
     //Choose between GHZ, W, Random, Product state (up, down, etc), None, etc...
     long d  = superblock->d;
-    //First make sure to set a random field on the MPO's if you are doing xDMRG
-    if(sim_type == SimulationType::xDMRG){
-        double gA = rn::uniform_double(-r_strength, r_strength);
-        double gB = rn::uniform_double(-r_strength, r_strength);
-        superblock->HA = std::make_shared<class_hamiltonian>(class_hamiltonian(settings::model::J, gA, 0));
-        superblock->HB = std::make_shared<class_hamiltonian>(class_hamiltonian(settings::model::J, gB, 0));
-    }
+    std::srand((unsigned int) 1);
 
 
-    if(settings::model::initial_state == "upup"){
+
+    if(initial_state == "upup"){
         std::cout << "Initializing Up-Up-state  |up,up>" << std::endl;
         superblock->MPS->GA.resize(array3{d,1,1});
         superblock->MPS->GA.setZero();
@@ -289,7 +272,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         superblock->MPS->GB(0, 0, 0) = 1;
         superblock->MPS->GB(1, 0, 0) = 0;
         superblock->MPS->theta = superblock->MPS->get_theta();
-    }else if(settings::model::initial_state == "updown"){
+    }else if(initial_state == "updown"){
         std::cout << "Initializing Up down -state  |up,down>" << std::endl;
         superblock->MPS->GA.resize(array3{d,1,1});
         superblock->MPS->GA.setZero();
@@ -306,7 +289,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         superblock->MPS->GB(1, 0, 0) = 1;
         superblock->MPS->theta = superblock->MPS->get_theta();
 
-    }else if(settings::model::initial_state == "ghz"){
+    }else if(initial_state == "ghz"){
         std::cout << "Initializing GHZ-state" << std::endl;
         // GHZ state (|up,up> + |down, down > ) /sqrt(2)
         superblock->MPS->GA.resize(array3{d,1,2});
@@ -332,7 +315,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         superblock->MPS->GB(1, 1, 0) = 1;
         superblock->MPS->theta = superblock->MPS->get_theta();
 
-    }else if(settings::model::initial_state == "w"){
+    }else if(initial_state == "w"){
         std::cout << "Initializing W-state" << std::endl;
         // W state (|up,down> + |down, up > ) /sqrt(2)
         superblock->MPS->GA.resize(array3{d,1,2});
@@ -360,7 +343,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
 
     }
 
-    else if (settings::model::initial_state == "rps"){
+    else if (initial_state == "rps"){
         // Random product state
         std::cout << "Initializing random product state" << std::endl;
         superblock->MPS->GA.resize(array3{d,1,1});
@@ -381,7 +364,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         superblock->MPS->GB(0, 0, 0) = r2.imag();
         superblock->MPS->theta = superblock->MPS->get_theta();
 
-    }else{
+    }else if (initial_state == "random_chi"){
         // Random state
         std::cout << "Initializing random state with bond dimension chi = " << chi_max << std::endl;
         chi_temp = chi_max;
@@ -394,37 +377,69 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         superblock->MPS->LB.resize(array1{chi_max});
         superblock->MPS->LB.setConstant(1.0/sqrt(chi_max));
         superblock->MPS->LB_left = superblock->MPS->LB;
-
-        superblock->Lblock->block.resize(array3{chi_max,chi_max, superblock->HA->MPO.dimension(0)});
-        superblock->Rblock->block.resize(array3{chi_max,chi_max, superblock->HB->MPO.dimension(1)});
-        superblock->Lblock2->block.resize(array4{chi_max,chi_max, superblock->HA->MPO.dimension(0), superblock->HA->MPO.dimension(0)});
-        superblock->Rblock2->block.resize(array4{chi_max,chi_max, superblock->HB->MPO.dimension(1), superblock->HB->MPO.dimension(1)});
-        for (long i = 0; i < chi_max; i++){
-            superblock->Lblock->block(i,i,2) = 1;
-            superblock->Rblock->block(i,i,0) = 1;
-            superblock->Lblock2->block(i,i,2,2) = 1;
-            superblock->Rblock2->block(i,i,0,0) = 1;
-        }
         superblock->MPS->theta = Textra::Matrix_to_Tensor(Eigen::MatrixXd::Random(d*chi_max,d*chi_max).cast<Scalar>(),d,chi_max,d,chi_max);
-    }
-    //Put the initial state into the environment as a starting point for the algorithm.
-    superblock->set_current_dimensions();
-    if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
-        position = env_storage_insert_edges();
+    }else{
+        std::cerr << "Invalid state given for initialization. Check 'model::initial_state' your input file. Please choose one of: " << std::endl;
+        std::cerr << "  upup" << std::endl;
+        std::cerr << "  updown" << std::endl;
+        std::cerr << "  GHZ" << std::endl;
+        std::cerr << "  W" << std::endl;
+        std::cerr << "  rps" << std::endl;
+        std::cerr << "  random_chi" << std::endl;
+        exit(1);
     }
 
+    //Get a properly normalized initial state.
+    superblock->set_current_dimensions();
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, settings::precision::SVDThreshold);
-    superblock->Lblock->enlarge (superblock->MPS,  superblock->HA->MPO);
-    superblock->Rblock->enlarge (superblock->MPS,  superblock->HB->MPO);
-    superblock->Lblock2->enlarge(superblock->MPS,  superblock->HA->MPO);
-    superblock->Rblock2->enlarge(superblock->MPS,  superblock->HB->MPO);
-    superblock->chain_length += 2;
+
+
+
+    //Reset the environment blocks to the correct dimensions
+    superblock->Lblock->set_edge_dims(superblock->MPS, superblock->HA->MPO);
+    superblock->Rblock->set_edge_dims(superblock->MPS, superblock->HB->MPO);
+    superblock->Lblock2->set_edge_dims(superblock->MPS, superblock->HA->MPO);
+    superblock->Rblock2->set_edge_dims(superblock->MPS, superblock->HB->MPO);
+
+    superblock->environment_size = superblock->Lblock->size + superblock->Rblock->size;
+
     if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
         position = env_storage_insert();
-    }else{
-        position++;
     }
-    superblock->swap_AB();
+
+    position = enlarge_environment();
+
+
+    //Compute the current energy given the edge state defined above.
+//    Tensor<Scalar, 0> E_edges =
+//            superblock->Lblock->block
+//                    .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
+//                    .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
+//                    .contract(superblock->Rblock->block, idx({1, 2, 0}, {0, 1, 2}));
+//    double L = superblock->Lblock->size + superblock->Rblock->size;
+//    std::cout <<setprecision(10)<< "E initial: " << E_edges << std::endl;
+//    std::cout <<setprecision(10)<< "E initial: " <<std::real(E_edges(0)) << " L: " << L << " " << superblock->environment_size << std::endl;
+//
+//    //Subtract this energy from the chain by removing half from each MPO.
+//    superblock->Lblock->set_edge_dims(superblock->MPS, superblock->HA->MPO_reduced(0.5*std::real(E_edges(0))));
+//    superblock->Rblock->set_edge_dims(superblock->MPS, superblock->HB->MPO_reduced(0.5*std::real(E_edges(0))));
+//    superblock->Lblock2->set_edge_dims(superblock->MPS, superblock->HA->MPO_reduced(0.5*std::real(E_edges(0))));
+//    superblock->Rblock2->set_edge_dims(superblock->MPS, superblock->HB->MPO_reduced(0.5*std::real(E_edges(0))));
+
+    //Put these new edges into the finite chain storage if you are doing finite algorithms
+//    if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
+//        position = env_storage_insert_edges();
+//    }
+
+//    E_edges =
+//            superblock->Lblock->block
+//                    .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
+//                    .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
+//                    .contract(superblock->Rblock->block, idx({1, 2, 0}, {0, 1, 2}));
+//    L = superblock->Lblock->size + superblock->Rblock->size;
+//    std::cout <<setprecision(10)<< "E initial: " <<std::real(E_edges(0)) << " L: " << L << " " << superblock->environment_size + 2 << std::endl;
+
+//    superblock->swap_AB();
 //    superblock->MPS->swapped = true;
 }
 
@@ -432,7 +447,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
 
 void class_base_algorithm::compute_observables(){
     t_obs.tic();
-    measurement->compute_all_observables();
+    measurement->compute_all_observables_from_superblock();
     t_obs.toc();
 }
 
@@ -461,12 +476,12 @@ int class_base_algorithm::env_storage_insert() {
     return position;
 }
 
-int class_base_algorithm::env_storage_insert_edges() {
-    t_ste.tic();
-    int position = env_storage->insert_edges();
-    t_ste.toc();
-    return position;
-}
+//int class_base_algorithm::env_storage_insert_edges() {
+//    t_ste.tic();
+//    int position = env_storage->insert_edges();
+//    t_ste.toc();
+//    return position;
+//}
 
 
 void class_base_algorithm::env_storage_overwrite_MPS(){
@@ -489,7 +504,7 @@ int class_base_algorithm::env_storage_move(){
 
 void class_base_algorithm::print_status_update() {
     if (Math::mod(iteration, print_freq) != 0) {return;}
-    if (2+(2*position) != superblock->chain_length){return;}
+    if ((2*position) != superblock->environment_size){return;}
     if (print_freq == 0) {return;}
 
     compute_observables();

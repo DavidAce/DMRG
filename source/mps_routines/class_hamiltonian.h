@@ -26,13 +26,12 @@ private:
         set_parameters(coupling_J, field_g, energy_e);
     };
 
+
     Eigen::Tensor<Scalar,4> MPO;
-    Eigen::Tensor<Scalar,4> MPO_reduced;
-//    Eigen::Tensor<Scalar,4> MPO_zero_site_energy();
+    Eigen::Tensor<Scalar,4> MPO_reduced();
+    Eigen::Tensor<Scalar,4> MPO_reduced(double energy_e_temporary);
 
     void build_mpo();
-    void build_mpo_reduced();
-
     void set_parameters(double coupling_J, double field_g, double energy_e);
     void update_site_coupling(double coupling_J);
     void update_site_energy(double energy_e);

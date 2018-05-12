@@ -46,16 +46,14 @@ void class_fDMRG::run() {
 int class_fDMRG::initialize_chain() {
     while(true){
         single_DMRG_step(chi_max);
-        if (superblock->chain_length < max_length) {
-            enlarge_environment();
-            position = env_storage_insert();
+        print_status_update();
+        position = env_storage_insert();
+        if (superblock->environment_size + 2 < max_length) {
+            position = enlarge_environment();
             swap();
         } else {
-            //Undo the last increment, because the last enlargement was just to add the state to storage.
-//            superblock->chain_length -= 2;
             break;
         }
-        print_status_update();
     }
     return position;
 }

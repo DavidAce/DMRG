@@ -56,6 +56,7 @@ public:
     };
 
     void enlarge(const std::shared_ptr<class_mps> &MPS, const Textra::Tensor<Scalar,4> &M);
+    void set_edge_dims(const std::shared_ptr<class_mps> &MPS, const Textra::Tensor<Scalar, 4> &M);
 };
 
 
@@ -84,6 +85,7 @@ public:
         }
     };
     void enlarge(const std::shared_ptr<class_mps> &MPS, const Textra::Tensor<Scalar,4> &M);
+    void set_edge_dims(const std::shared_ptr<class_mps> &MPS, const Textra::Tensor<Scalar, 4> &M);
 };
 
 #endif //DMRG_CLASS_ENVIRONMENT_H

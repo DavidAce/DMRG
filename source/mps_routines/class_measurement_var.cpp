@@ -8,6 +8,7 @@
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_mps.h>
 #include <mps_routines/class_mpo.h>
+#include <mps_routines/class_hamiltonian.h>
 #include <general/nmspc_tensor_extra.h>
 #include <general/class_svd_wrapper.h>
 #include <general/class_arpack_eigsolver.h>
@@ -80,24 +81,45 @@ std::pair<double,double> class_measurement::compute_infinite_moments_G(Scalar a,
 double class_measurement::compute_infinite_variance_MPO(){
     t_var_mpo.tic();
     if (sim == SimulationType::iDMRG or sim == SimulationType::FES_iDMRG) {
-        Tensor<Scalar, 0> H2_minus_E2 =
+        Tensor<Scalar, 0> H2_minus_E2_two_sites =
                 superblock->Lblock2->block
-                        .contract(asDiagonal(superblock->MPS->LA), idx({0},{0}))
-                        .contract(asDiagonal(superblock->MPS->LA), idx({0},{0}))
-                        .contract(superblock->Rblock2->block, idx({2, 3, 0, 1}, {0, 1, 2, 3}));
-        double L =  superblock->Lblock2->size + superblock->Rblock2->size;
+                .contract(superblock->MPS->theta,             idx({0}  ,{1}))
+                .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
+                .contract(superblock->HB->MPO,                idx({4,2},{0,2}))
+                .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
+                .contract(superblock->HB->MPO,                idx({4,3},{0,2}))
+                .contract(superblock->MPS->theta.conjugate(), idx({0,3,5},{1,0,2}))
+                .contract(superblock->Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
+//        Tensor<Scalar, 0> H2_minus_E2 =
+//                superblock->Lblock2->block
+//                        .contract(asDiagonal(superblock->MPS->LA), idx({0},{0}))
+//                        .contract(asDiagonal(superblock->MPS->LA), idx({0},{0}))
+//                        .contract(superblock->Rblock2->block, idx({2, 3, 0, 1}, {0, 1, 2, 3}));
+        double L =  superblock->Lblock2->size + superblock->Rblock2->size + 2;
         t_var_mpo.toc();
-        return std::real( H2_minus_E2(0)/ L );
+        return std::real( H2_minus_E2_two_sites(0)/ 2.0 /  L );
     }else{
-        Tensor<Scalar, 0> H2 =
+        Tensor<Scalar, 0> H2_all_sites =
                 superblock->Lblock2->block
-                        .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
-                        .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
-                        .contract(superblock->Rblock2->block, idx({2, 3, 0, 1}, {0, 1, 2, 3}));
-        double L = superblock->Lblock2->size + superblock->Rblock2->size;
+                        .contract(superblock->MPS->theta,             idx({0}  ,{1}))
+                        .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
+                        .contract(superblock->HB->MPO,                idx({4,2},{0,2}))
+                        .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
+                        .contract(superblock->HB->MPO,                idx({4,3},{0,2}))
+                        .contract(superblock->MPS->theta.conjugate(), idx({0,3,5},{1,0,2}))
+                        .contract(superblock->Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
+
+//
+//
+//        Tensor<Scalar, 0> H2 =
+//                superblock->Lblock2->block
+//                        .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
+//                        .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
+//                        .contract(superblock->Rblock2->block, idx({2, 3, 0, 1}, {0, 1, 2, 3}));
+        double L = superblock->Lblock2->size + superblock->Rblock2->size + 2;
         t_var_mpo.toc();
-        std::cout << "H2 = " << std::real(H2(0)) << " E2 = " <<  energy1*L*energy1*L << " L: " << L << std::endl;
-        return std::real(H2(0) - energy1*energy1*L*L ) / L;
+//        std::cout << "H2 = " << std::real(H2(0)) << " E2 = " <<  energy1*L*energy1*L << " L: " << L << std::endl;
+        return std::real(H2_all_sites(0) - energy1*energy1*L*L ) / L;
     }
 }
 

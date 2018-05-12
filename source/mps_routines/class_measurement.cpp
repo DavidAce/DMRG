@@ -36,7 +36,7 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
 }
 
 
-void class_measurement::compute_all_observables(){
+void class_measurement::compute_all_observables_from_superblock(){
     if(!is_measured) {
         superblock->set_current_dimensions();
         if (superblock->chiL != superblock->chiR) { return;}
@@ -60,28 +60,38 @@ void class_measurement::compute_all_observables(){
 }
 
 
+
+
+
 double class_measurement::compute_energy_MPO(){
     t_ene_mpo.tic();
-    Tensor<Scalar, 0>  E_two_sites =
-            superblock->Lblock->block
-                    .contract(superblock->MPS->theta,                     idx({0},{1}))
-                    .contract(superblock->HA->MPO,                        idx({1,2},{0,2}))
-                    .contract(superblock->HB->MPO,                        idx({3,1},{0,2}))
-                    .contract(superblock->MPS->theta.conjugate(),         idx({0,2,4},{1,0,2}))
-                    .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
-    if(sim == SimulationType::iDMRG or sim == SimulationType::FES_iDMRG){
 
-        t_ene_mpo.toc();
-        return std::real(E_two_sites(0) / 2.0 );
-    }else{
-        Tensor<Scalar, 0> E_all_sites =
+    if(sim == SimulationType::iDMRG or sim == SimulationType::FES_iDMRG){
+//    if(sim == SimulationType::FES_iDMRG){
+
+        Tensor<Scalar, 0>  E_two_sites =
                 superblock->Lblock->block
-                .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
-                .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
-                .contract(superblock->Rblock->block, idx({1, 2, 0}, {0, 1, 2}));
-        double L = superblock->Lblock->size + superblock->Rblock->size;
+                        .contract(superblock->MPS->theta,                     idx({0},{1}))
+                        .contract(superblock->HA->MPO,                        idx({1,2},{0,2}))
+                        .contract(superblock->HB->MPO,                        idx({3,1},{0,2}))
+                        .contract(superblock->MPS->theta.conjugate(),         idx({0,2,4},{1,0,2}))
+                        .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
         t_ene_mpo.toc();
-        std::cout <<setprecision(10)<< "E a: " <<std::real(E_all_sites(0)) <<  " E 1: " << std::real(E_two_sites(0)) << " L: " << L << std::endl;
+        double L = superblock->Lblock->size + superblock->Rblock->size + 2;
+        std::cout <<setprecision(10)<< "E a: " <<std::real(E_two_sites(0)/2.0) << " L: " << L << " " << superblock->environment_size + 2 << std::endl;
+        return std::real(E_two_sites(0) / 2.0 );
+
+    }else{
+        Tensor<Scalar, 0>  E_all_sites =
+                superblock->Lblock->block
+                        .contract(superblock->MPS->theta,                     idx({0},{1}))
+                        .contract(superblock->HA->MPO,                        idx({1,2},{0,2}))
+                        .contract(superblock->HB->MPO,                        idx({3,1},{0,2}))
+                        .contract(superblock->MPS->theta.conjugate(),         idx({0,2,4},{1,0,2}))
+                        .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
+        double L = superblock->Lblock->size + superblock->Rblock->size + 2;
+        t_ene_mpo.toc();
+        std::cout <<setprecision(10)<< "E a: " <<std::real(E_all_sites(0)) << "  per particle: "  <<std::real(E_all_sites(0))/L << " L: " << L << " " << superblock->environment_size + 2 << std::endl;
         return std::real(E_all_sites(0))/L;
     }
 }
@@ -158,7 +168,7 @@ long class_measurement::get_chi(){
 }
 
 long class_measurement::get_chain_length(){
-    return superblock->chain_length;
+    return superblock->environment_size + 2;
 }
 
 
