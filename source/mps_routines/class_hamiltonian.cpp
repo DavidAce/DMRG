@@ -23,56 +23,44 @@ void class_hamiltonian::build_mpo()
     MPO.setZero();
     MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
     MPO.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sx);
-    MPO.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-g * sz);
+    MPO.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-g * sz - e * I);
     MPO.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J * sx);
     MPO.slice(Eigen::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
 }
 
-
-
-void class_hamiltonian::build_mpo_reduced()
-/*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
- *
- *          2
- *          |
- *      0---H---1
- *          |
- *          3
- */
-{
-    /*! Returns the MPO as a tensor. Notation following Schollwöck (2010) */
-    MPO_reduced.resize(3, 3, 2, 2);
-    MPO_reduced.setZero();
-    MPO_reduced.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
-    MPO_reduced.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sx);
-    MPO_reduced.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-g * sz - e * I);
-    MPO_reduced.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J * sx);
-    MPO_reduced.slice(Eigen::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
+Eigen::Tensor<Scalar,4> class_hamiltonian::MPO_reduced() {
+    if (e == 0){return MPO;}
+    Eigen::Tensor<Scalar,4> temp  = MPO;
+    temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-g * sz - e * I);
+    return temp;
 }
 
+Eigen::Tensor<Scalar,4> class_hamiltonian::MPO_reduced(double energy_e_temporary) {
+    if (energy_e_temporary == 0){return MPO;}
+    Eigen::Tensor<Scalar,4> temp  = MPO;
+    temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-g * sz - energy_e_temporary * I);
+    return temp;
+}
 
 void class_hamiltonian::set_parameters(double coupling_J, double field_g, double energy_e) {
     J = coupling_J;
     e = energy_e;
     g = field_g;
     build_mpo();
-    build_mpo_reduced();
 }
 
 void class_hamiltonian::update_site_coupling(double coupling_J) {
     J = coupling_J;
     MPO        .slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J * sx);
-    MPO_reduced.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J * sx);
 
 }
 void class_hamiltonian::update_site_energy(double energy_e) {
     e = energy_e;
-    MPO_reduced.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-g * sz - e * I);
 }
+
 void class_hamiltonian::update_site_field(double field_g) {
     g = field_g;
     MPO        .slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-g * sz);
-    MPO_reduced.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-g * sz - e * I);
 }
 
 
@@ -81,8 +69,3 @@ double class_hamiltonian::get_site_energy()const {return e;}
 double class_hamiltonian::get_site_field()const {return g;}
 
 
-//Eigen::Tensor<Scalar,4> class_hamiltonian::MPO_zero_site_energy() {
-//    Eigen::Tensor<Scalar,4> temp  = MPO;
-//    temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-g * sz);
-//    return temp;
-//}

@@ -106,7 +106,7 @@ public:
 
     //Functions for finite_chains
     int  env_storage_insert();
-    int  env_storage_insert_edges();
+//    int  env_storage_insert_edges();
     void env_storage_overwrite_MPS();
     int  env_storage_move();
 

@@ -37,7 +37,6 @@ class_superblock::class_superblock():
     MPS->initialize(H->local_dimension);
     HA->set_parameters(settings::model::J, settings::model::g, 0.0);
     HB->set_parameters(settings::model::J, settings::model::g, 0.0);
-//    chain_length = H->mps_sites;
     set_current_dimensions();
 
 }
@@ -61,8 +60,11 @@ Textra::Tensor<Scalar,4> class_superblock::optimize_MPS(Textra::Tensor<Scalar, 4
     TensorMap<const Tensor<const Scalar,2>> eigvecs (solver.ref_eigvecs().data(), shape_theta4[0]*shape_theta4[1], shape_theta4[2]*shape_theta4[3]);
     TensorMap<const Tensor<const Scalar,1>> eigvals (solver.ref_eigvals().data(), nev);
 
+
     E_one_site = std::real(eigvals(0))/2.0;
-//    using namespace chrono;
+//    double L = Lblock->size + Rblock->size;
+//    std::cout <<setprecision(16) << "E_lanczos: " <<  std::real(eigvals(0))  << " L : " << L << " " << environment_size + 2 << std::endl;
+    //    using namespace chrono;
 //    std::cout << "Time: " << duration_cast<duration<double>>(t_eig.measured_time).count() << " ";
 //    t_eig.print_delta();
 //    std::cout << " iter: " << opt.iter << " counter: " << opt.counter << " E_one_site: " << E_one_site <<  " shape4: " << theta.dimensions() << "\n";
@@ -140,17 +142,17 @@ void class_superblock::truncate_MPS(const Textra::Tensor<Scalar, 4> &theta, cons
 
 void class_superblock::enlarge_environment(int direction){
     if (direction == 1){
-        Lblock->enlarge(MPS,  HA->MPO);
-        Lblock2->enlarge(MPS, HA->MPO);
+        Lblock->enlarge(MPS,  HA->MPO_reduced());
+        Lblock2->enlarge(MPS, HA->MPO_reduced());
     }else if (direction == -1){
-        Rblock->enlarge(MPS,  HB->MPO);
-        Rblock2->enlarge(MPS, HB->MPO);
+        Rblock->enlarge(MPS,  HB->MPO_reduced());
+        Rblock2->enlarge(MPS, HB->MPO_reduced());
     }else if(direction == 0){
-        Lblock->enlarge(MPS,  HA->MPO);
-        Rblock->enlarge(MPS,  HB->MPO);
-        Lblock2->enlarge(MPS, HA->MPO);
-        Rblock2->enlarge(MPS, HB->MPO);
-        chain_length += 2;
+        Lblock->enlarge(MPS,  HA->MPO_reduced());
+        Rblock->enlarge(MPS,  HB->MPO_reduced());
+        Lblock2->enlarge(MPS, HA->MPO_reduced());
+        Rblock2->enlarge(MPS, HB->MPO_reduced());
+        environment_size = Lblock->size + Rblock->size;
     }
 }
 

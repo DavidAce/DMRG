@@ -41,21 +41,26 @@ void class_finite_chain_storage::set_hdf5_file(std::shared_ptr<class_hdf5_file> 
 }
 
 void class_finite_chain_storage::update_current_length() {
-    current_length = ENV_L.back().size + ENV_R.front().size;
-    assert(current_length == superblock->chain_length);
+    current_length = ENV_L.back().size + ENV_R.front().size + 2;
+    assert(current_length == superblock->environment_size + 2);
 }
 
-int class_finite_chain_storage::insert_edges(){
-    assert(ENV_L.empty() and ENV_R.empty() and ENV2_L.empty() and ENV2_R.empty());
-    ENV_L.emplace_back(*superblock->Lblock);
-    ENV_R.emplace_front(*superblock->Rblock);
-    ENV2_L.emplace_back(*superblock->Lblock2);
-    ENV2_R.emplace_front(*superblock->Rblock2);
-//    std::cout << "Inserted edge: " << std::endl;
-//    print_storage();
-//    print_hamiltonian_energies();
-    return 0;
-};
+//int class_finite_chain_storage::insert_edges(){
+//    if(ENV_L.empty() and ENV_R.empty() and ENV2_L.empty() and ENV2_R.empty()) {
+//        //Create one
+//        ENV_L.emplace_back(*superblock->Lblock);
+//        ENV_R.emplace_front(*superblock->Rblock);
+//        ENV2_L.emplace_back(*superblock->Lblock2);
+//        ENV2_R.emplace_front(*superblock->Rblock2);
+//    }else{
+//        //Replace existing
+//        ENV_L.front()  = *superblock->Lblock;
+//        ENV_R.back()   = *superblock->Rblock;
+//        ENV2_L.front() = *superblock->Lblock2;
+//        ENV2_R.back()  = *superblock->Rblock2;
+//    }
+//    return 0;
+//};
 
 
 
@@ -66,10 +71,12 @@ int class_finite_chain_storage::insert(){
     if(!superblock_is_set){print_error_and_exit(1);}
     if(!hdf5_file_is_set){print_error_and_exit(1);}
 
-    assert(ENV_L.back().size   + 1  == superblock->Lblock->size);
-    assert(ENV_R.front().size  + 1  == superblock->Rblock->size);
-    assert(ENV2_L.back().size  + 1  == superblock->Lblock2->size);
-    assert(ENV2_R.front().size + 1  == superblock->Rblock2->size);
+    assert(ENV_L.size() + ENV_L.size() <= max_length);
+    assert(MPS_L.size() + MPS_R.size() <= max_length);
+    assert(ENV_L.size()        == superblock->Lblock->size);
+    assert(ENV_R.size()        == superblock->Rblock->size);
+    assert(ENV2_L.size()       == superblock->Lblock2->size);
+    assert(ENV2_R.size()       == superblock->Rblock2->size);
 
 
     MPS_L.emplace_back (std::make_tuple(superblock->MPS->LB_left, superblock->MPS->GA));
@@ -82,10 +89,13 @@ int class_finite_chain_storage::insert(){
     ENV2_R.emplace_front(*superblock->Rblock2);
     MPO_L.emplace_back      (*superblock->HA);
     MPO_R.emplace_front     (*superblock->HB);
+
+    update_current_length();
+
 //    std::cout << "Inserted -- New state reflects current superblock: " << std::endl;
 //    print_storage();
 //    print_hamiltonian_energies();
-    assert(ENV_L.back().size + ENV_R.front().size == superblock->chain_length);
+    assert(ENV_L.back().size + ENV_R.front().size == superblock->environment_size);
     assert(ENV_L.back().size   == superblock->Lblock->size);
     assert(ENV_R.front().size  == superblock->Rblock->size);
     assert(ENV2_L.back().size  == superblock->Lblock2->size);
@@ -102,6 +112,8 @@ int class_finite_chain_storage::load(){
 void class_finite_chain_storage::overwrite_MPS() {
 //    std::cout << "Overwriting positions: "  << MPS_L.size() << " and " <<  MPS_R.size()  << std::endl;
     assert(!MPS_L.empty() and !MPS_R.empty());
+    assert(ENV_L.size() + ENV_R.size() <= max_length);
+    assert(MPS_L.size() + MPS_R.size() <= max_length);
     assert(ENV_L.back().size   == superblock->Lblock->size);
     assert(ENV_R.front().size  == superblock->Rblock->size);
     assert(ENV2_L.back().size  == superblock->Lblock2->size);
@@ -128,8 +140,9 @@ int class_finite_chain_storage::move(int &direction, int &sweep){
 //    std::cout << "Starting move in direction: " << direction << " MPS_R size: " << MPS_R.size() << " current e " << superblock->HB->get_site_energy()<< std::endl;
     assert(!MPS_L.empty() and !MPS_R.empty());
     assert(MPS_L.size() + MPS_R.size() == max_length);
-    assert(ENV_L.size() + ENV_R.size() == max_length + 2);
-    assert(ENV_L.back().size + ENV_R.front().size == superblock->chain_length);
+    assert(ENV_L.size() + ENV_R.size() == max_length);
+    assert(ENV_L.back().size + ENV_R.front().size == max_length - 2);
+    assert(ENV_L.back().size + ENV_R.front().size == superblock->environment_size);
 
     if (direction == 1){
         //Note that Lblock must just have grown!!
@@ -220,11 +233,9 @@ int class_finite_chain_storage::move(int &direction, int &sweep){
 
 
 void class_finite_chain_storage::print_storage(){
-//    auto it1 = MPS_L.begin();
-//    auto it2 = MPS_
     int i = 0;
     std::cout << setprecision(10);
-    std::cout << "Current chain length: " << superblock->chain_length
+    std::cout << "Current environment size: " << superblock->environment_size
               << " | Storage length: " << MPS_L.size() + MPS_R.size()
               << " | Particles in environment: " << ENV_L.back().size + ENV_R.front().size
               << std::endl;
@@ -235,7 +246,6 @@ void class_finite_chain_storage::print_storage(){
                   << "G[" << setw(3) << i  <<  "]: " << std::get<1>(it).dimensions()  << " ";
         if(&it == &MPS_L.back()){
             std::cout << " <--- Position A";
-//            std::cout << " -- ENV_L[" << i << "] size: " << ENV_L.back().size ;
         }
         std::cout << std::endl;
         i++;
@@ -246,22 +256,19 @@ void class_finite_chain_storage::print_storage(){
                   << "L[" << setw(3) << i  <<  "]: " << std::get<1>(it).dimensions()  << " ";
         if(&it == &MPS_R.front()){
             std::cout << " <--- Position B" ;
-//            std::cout << " -- ENV_R[" << i << "] size: " << ENV_R.front().size ;
         }
         std::cout << std::endl;
         i++;
     }
-    if(!ENV_R.empty()){std::cout << "ENV_R[" <<setw(3) << ENV_R.size()-1 << "]: " << ENV_R.front().block.dimensions() << " Particles: " << ENV_R.front().size << " <--- Also current environment R"  << std::endl;}
+    if(!ENV_R.empty()){std::cout << "ENV_R[" << setw(3) << ENV_R.size()-1 << "]: " << ENV_R.front().block.dimensions() << " Particles: " << ENV_R.front().size << " <--- Also current environment R"  << std::endl;}
 
 }
 
 
 void class_finite_chain_storage::print_storage_compact(){
-//    auto it1 = MPS_L.begin();
-//    auto it2 = MPS_
-//    int i = 0;
+
     std::cout << setprecision(10);
-    std::cout << "Current chain length: " << superblock->chain_length
+    std::cout << "Current environment size: " << superblock->environment_size
               << " | Storage length: " << MPS_L.size() + MPS_R.size()
               << " | Particles in environment: " << ENV_L.back().size + ENV_R.front().size
               << std::endl;

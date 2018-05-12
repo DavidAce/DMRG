@@ -165,7 +165,7 @@ public:
               "truncation_error",
               "parity",
               "iteration",
-              "chain_length",
+              "environment_size",
               "sweep",
               "position",
               "time_step",

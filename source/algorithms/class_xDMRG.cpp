@@ -112,7 +112,7 @@ int class_xDMRG::initialize_random_chain() {
         superblock->HB = std::make_shared<class_hamiltonian>(class_hamiltonian(settings::model::J, gB, 0));
 
         position = env_storage_insert();
-        if (superblock->chain_length < max_length) {
+        if (superblock->environment_size < max_length) {
             enlarge_environment();
             position++;
         } else {

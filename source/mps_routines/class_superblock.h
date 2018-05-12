@@ -51,7 +51,7 @@ public:
     class_tic_toc t_eig;
 
     long   chi = 1;                                     /*!< Bond dimension of the current (center) position. */
-    int    chain_length = 0;
+    int    environment_size = 0;
 
     Textra::Tensor<Scalar, 4>
     optimize_MPS(Textra::Tensor<Scalar, 4> &theta,

@@ -67,6 +67,27 @@ void class_environment::enlarge(const std::shared_ptr<class_mps> &MPS, const Ten
     }
 }
 
+void class_environment::set_edge_dims(const std::shared_ptr<class_mps> &MPS, const Tensor<Scalar, 4> &M) {
+    if (side == "L") {
+        long chiL = MPS->LB_left.dimension(0);
+        block.resize(array3{chiL,chiL, M.dimension(0)});
+        block.setZero();
+        for (long i = 0; i < chiL; i++){
+            block(i,i,2) = 1;
+        }
+    }
+    if(side == "R"){
+        long chiR = MPS->LB.dimension(0);
+        block.resize(array3{chiR,chiR, M.dimension(1)});
+        block.setZero();
+        for (long i = 0; i < chiR; i++){
+            block(i,i,0) = 1;
+        }
+    }
+//    enlarge(MPS,M);
+    size = 0;
+}
+
 
 void class_environment_var::enlarge(const std::shared_ptr<class_mps> &MPS, const Tensor<Scalar,4> &M){
     /*!< Contracts a site into the block. */
@@ -147,3 +168,25 @@ void class_environment_var::enlarge(const std::shared_ptr<class_mps> &MPS, const
 }
 
 
+
+void class_environment_var::set_edge_dims(const std::shared_ptr<class_mps> &MPS, const Tensor<Scalar, 4> &M) {
+    if (side == "L") {
+        long chiL = MPS->LB_left.dimension(0);
+        block.resize(array4{chiL,chiL, M.dimension(0), M.dimension(0)});
+        block.setZero();
+        for (long i = 0; i < chiL; i++){
+            block(i,i,2,2) = 1;
+        }
+
+    }
+    if(side == "R"){
+        long chiR = MPS->LB.dimension(0);
+        block.resize(array4{chiR,chiR, M.dimension(1),M.dimension(1)});
+        block.setZero();
+        for (long i = 0; i < chiR; i++){
+            block(i,i,0,0) = 1;
+        }
+    }
+//    enlarge(MPS,M);
+    size = 0;
+}

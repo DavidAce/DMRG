@@ -16,6 +16,7 @@ using namespace std::complex_literals;
 
 class class_superblock;
 class class_mps;
+class class_finite_chain_storage;
 /*!
  * \class class_measurement
  * \brief A class for measuring observables
@@ -27,6 +28,7 @@ public:
     using Scalar = std::complex<double>;
 private:
     std::shared_ptr<class_superblock> superblock;
+    std::shared_ptr<class_finite_chain_storage> env_storage;
     class_custom_cout ccout;
     Scalar moment_generating_function(std::shared_ptr<class_mps> MPS_original,
                                                        std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
@@ -69,7 +71,8 @@ private:
     bool is_measured = false;
 
     explicit class_measurement(std::shared_ptr<class_superblock> superblock_, SimulationType sim_);
-    void   compute_all_observables();
+    void   compute_all_observables_from_superblock();
+    void   compute_all_observables_from_finite_chain();
 
     double get_energy1();               /*! Computes the current energy.*/
     double get_energy2();               /*! Computes the current energy.*/
