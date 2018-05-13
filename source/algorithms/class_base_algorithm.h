@@ -13,9 +13,9 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <vector>
 #include <unsupported/Eigen/CXX11/Tensor>
-#include <mps_routines/class_finite_chain_storage.h>
 
 class class_superblock;
+class class_finite_chain_storage;
 class class_hdf5_file;
 class class_hdf5_table_buffer;
 class class_measurement;

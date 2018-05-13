@@ -64,31 +64,6 @@ namespace settings{
     int    itebd::print_freq             = 5000;
     int    itebd::store_freq             = 100;
 
-
-    //Parameters controlling Finite-entanglement scaling (FES) in iTEBD-mode.
-    bool   fes_itebd::on                 = true;
-    int    fes_itebd::max_steps          = 100000;
-    double fes_itebd::delta_t0           = 0.1;
-    double fes_itebd::delta_tmin         = 0.00001;
-    int    fes_itebd::suzuki_order       = 1;
-    long   fes_itebd::chi_min            = 4;
-    long   fes_itebd::chi_max            = 12;
-    long   fes_itebd::chi_num            = 3;
-    bool   fes_itebd::chi_grow           = true;
-    int    fes_itebd::print_freq         = 5000;
-    int    fes_itebd::store_freq         = 100;
-
-    //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
-    bool   fes_idmrg::on                 = true;
-    int    fes_idmrg::max_steps          = 2000;
-    long   fes_idmrg::chi_min            = 4;
-    long   fes_idmrg::chi_max            = 12;
-    long   fes_idmrg::chi_num            = 3;
-    bool   fes_idmrg::chi_grow           = true;
-    int    fes_idmrg::print_freq         = 1000;
-    int    fes_idmrg::store_freq         = 100;
-
-
     //Save data to hdf5
     bool   hdf5::save_to_file             = true;
     bool   hdf5::create_dir_if_not_found  = true;
@@ -180,32 +155,6 @@ void settings::load_from_file(class_file_reader &indata){
         itebd::store_freq         = indata.find_parameter<int>    ("itebd::store_freq"  , itebd::store_freq);
     }
 
-    //Parameters controlling Finite-entanglement scaling (FES) in iTEBD-mode.
-    fes_itebd::on                 = indata.find_parameter<bool>   ("fes_itebd::on"          , fes_itebd::on        );
-    if(fes_itebd::on){
-        fes_itebd::max_steps      = indata.find_parameter<int>    ("fes_itebd::max_steps "  , fes_itebd::max_steps );
-        fes_itebd::delta_t0       = indata.find_parameter<double> ("fes_itebd::delta_t0 "   , fes_itebd::delta_t0   );
-        fes_itebd::delta_tmin     = indata.find_parameter<double> ("fes_itebd::delta_tmin"  , fes_itebd::delta_tmin );
-        fes_itebd::suzuki_order   = indata.find_parameter<int>    ("fes_itebd::suzuki_order", fes_itebd::suzuki_order);
-        fes_itebd::chi_min        = indata.find_parameter<long>   ("fes_itebd::chi_min"     , fes_itebd::chi_min   );
-        fes_itebd::chi_max        = indata.find_parameter<long>   ("fes_itebd::chi_max"     , fes_itebd::chi_max   );
-        fes_itebd::chi_num        = indata.find_parameter<long>   ("fes_itebd::chi_num"     , fes_itebd::chi_num   );
-        fes_itebd::chi_grow       = indata.find_parameter<bool>   ("fes_itebd::chi_grow"    , fes_itebd::chi_grow);
-        fes_itebd::print_freq     = indata.find_parameter<int>    ("fes_itebd::print_freq " , fes_itebd::print_freq );
-        fes_itebd::store_freq     = indata.find_parameter<int>    ("fes_itebd::store_freq " , fes_itebd::store_freq );
-    }
-
-    //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
-    fes_idmrg::on                 = indata.find_parameter<bool>   ("fes_idmrg::on"         , fes_idmrg::on       );
-    if(fes_idmrg::on){
-        fes_idmrg::max_steps      = indata.find_parameter<int>    ("fes_idmrg::max_steps"  , fes_idmrg::max_steps);
-        fes_idmrg::chi_min        = indata.find_parameter<long>   ("fes_idmrg::chi_min"    , fes_idmrg::chi_min  );
-        fes_idmrg::chi_max        = indata.find_parameter<long>   ("fes_idmrg::chi_max"    , fes_idmrg::chi_max  );
-        fes_idmrg::chi_num        = indata.find_parameter<long>   ("fes_idmrg::chi_num"    , fes_idmrg::chi_num  );
-        fes_idmrg::chi_grow       = indata.find_parameter<bool>   ("fes_idmrg::chi_grow"   , fes_idmrg::chi_grow);
-        fes_idmrg::print_freq     = indata.find_parameter<int>    ("fes_idmrg::print_freq" , fes_idmrg::print_freq);
-        fes_idmrg::store_freq     = indata.find_parameter<int>    ("fes_idmrg::store_freq" , fes_idmrg::store_freq);
-    }
     //Save data to hdf5
     hdf5::save_to_file             = indata.find_parameter<bool>   ("hdf5::save_to_file"            , hdf5::save_to_file           );
     hdf5::create_dir_if_not_found  = indata.find_parameter<bool>   ("hdf5::create_dir_if_not_found" , hdf5::create_dir_if_not_found);

@@ -10,6 +10,7 @@
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_hamiltonian.h>
+#include <mps_routines/class_finite_chain_storage.h>
 #include <mps_routines/class_mpo.h>
 #include <mps_routines/class_mps.h>
 #include <general/nmspc_math.h>
@@ -34,8 +35,13 @@ class_base_algorithm::class_base_algorithm(std::shared_ptr<class_hdf5_file> hdf5
     set_profiling_labels();
     table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, sim_name, table_name);
     superblock   = std::make_shared<class_superblock>();
-    measurement  = std::make_shared<class_measurement>(superblock, sim_type);
-    env_storage  = std::make_shared<class_finite_chain_storage>(max_length, superblock, hdf5);
+    if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG){
+        env_storage  = std::make_shared<class_finite_chain_storage>(max_length, superblock, hdf5);
+        measurement  = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
+    }else{
+        measurement  = std::make_shared<class_measurement>(superblock, sim_type);
+    }
+
     initialize_state(settings::model::initial_state);
 };
 
@@ -46,11 +52,9 @@ void class_base_algorithm::single_DMRG_step(long chi_max){
  */
     t_sim.tic();
 
-
-    t_sim.tic();
     superblock->set_current_dimensions();
-    superblock->MPS->theta = superblock->MPS->get_theta();
     t_opt.tic();
+    superblock->MPS->theta = superblock->MPS->get_theta();
     superblock->MPS->theta = superblock->optimize_MPS(superblock->MPS->theta, s::precision::eigMaxIter,
                                                       s::precision::eigThreshold);
     t_opt.toc();
@@ -58,12 +62,12 @@ void class_base_algorithm::single_DMRG_step(long chi_max){
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, s::precision::SVDThreshold);
     t_svd.toc();
     measurement->is_measured = false;
-    t_sim.toc();
     //Reduce the hamiltonians if you are doing infinite systems:
-    if(sim_type == SimulationType::iDMRG or  sim_type == SimulationType::FES_iDMRG){
+    if(sim_type == SimulationType::iDMRG){
         superblock->HA->update_site_energy(superblock->E_one_site);
         superblock->HB->update_site_energy(superblock->E_one_site);
     }
+    t_sim.toc();
 
 
 }
@@ -100,11 +104,9 @@ void class_base_algorithm::update_chi(){
             case SimulationType::iDMRG:
             case SimulationType::fDMRG:
             case SimulationType::xDMRG:
-            case SimulationType::FES_iDMRG:
                 simulation_has_converged = chi_temp == chi_max;
                 break;
             case SimulationType::iTEBD:
-            case SimulationType ::FES_iTEBD:
                 simulation_has_converged = chi_temp == chi_max and delta_t <= delta_tmin;
                 if (chi_temp == chi_max and delta_t > delta_tmin) {
                     delta_t = std::max(delta_tmin, delta_t * 0.5);
@@ -222,27 +224,6 @@ void class_base_algorithm::initialize_constants(){
             chi_grow     = itebd::chi_grow    ;
             print_freq   = itebd::print_freq  ;
             store_freq   = itebd::store_freq  ;
-            break;
-        case SimulationType::FES_iTEBD:
-            max_steps    = fes_itebd::max_steps;
-            delta_t0     = fes_itebd::delta_t0;
-            delta_tmin   = fes_itebd::delta_tmin;
-            suzuki_order = fes_itebd::suzuki_order;
-            chi_min      = fes_itebd::chi_min;
-            chi_max      = fes_itebd::chi_max;
-            chi_num      = fes_itebd::chi_num;
-            chi_grow     = fes_itebd::chi_grow;
-            print_freq   = fes_itebd::print_freq;
-            store_freq   = fes_itebd::store_freq;
-            break;
-        case SimulationType::FES_iDMRG:
-            max_steps    = fes_idmrg::max_steps ;
-            chi_min      = fes_idmrg::chi_min   ;
-            chi_max      = fes_idmrg::chi_max   ;
-            chi_num      = fes_idmrg::chi_num   ;
-            chi_grow     = fes_idmrg::chi_grow  ;
-            print_freq   = fes_idmrg::print_freq;
-            store_freq   = fes_idmrg::store_freq;
             break;
     }
 }
@@ -408,39 +389,6 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
     }
 
     position = enlarge_environment();
-
-
-    //Compute the current energy given the edge state defined above.
-//    Tensor<Scalar, 0> E_edges =
-//            superblock->Lblock->block
-//                    .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
-//                    .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
-//                    .contract(superblock->Rblock->block, idx({1, 2, 0}, {0, 1, 2}));
-//    double L = superblock->Lblock->size + superblock->Rblock->size;
-//    std::cout <<setprecision(10)<< "E initial: " << E_edges << std::endl;
-//    std::cout <<setprecision(10)<< "E initial: " <<std::real(E_edges(0)) << " L: " << L << " " << superblock->environment_size << std::endl;
-//
-//    //Subtract this energy from the chain by removing half from each MPO.
-//    superblock->Lblock->set_edge_dims(superblock->MPS, superblock->HA->MPO_reduced(0.5*std::real(E_edges(0))));
-//    superblock->Rblock->set_edge_dims(superblock->MPS, superblock->HB->MPO_reduced(0.5*std::real(E_edges(0))));
-//    superblock->Lblock2->set_edge_dims(superblock->MPS, superblock->HA->MPO_reduced(0.5*std::real(E_edges(0))));
-//    superblock->Rblock2->set_edge_dims(superblock->MPS, superblock->HB->MPO_reduced(0.5*std::real(E_edges(0))));
-
-    //Put these new edges into the finite chain storage if you are doing finite algorithms
-//    if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
-//        position = env_storage_insert_edges();
-//    }
-
-//    E_edges =
-//            superblock->Lblock->block
-//                    .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
-//                    .contract(asDiagonal(superblock->MPS->LA), idx({0}, {0}))
-//                    .contract(superblock->Rblock->block, idx({1, 2, 0}, {0, 1, 2}));
-//    L = superblock->Lblock->size + superblock->Rblock->size;
-//    std::cout <<setprecision(10)<< "E initial: " <<std::real(E_edges(0)) << " L: " << L << " " << superblock->environment_size + 2 << std::endl;
-
-//    superblock->swap_AB();
-//    superblock->MPS->swapped = true;
 }
 
 
@@ -476,14 +424,6 @@ int class_base_algorithm::env_storage_insert() {
     return position;
 }
 
-//int class_base_algorithm::env_storage_insert_edges() {
-//    t_ste.tic();
-//    int position = env_storage->insert_edges();
-//    t_ste.toc();
-//    return position;
-//}
-
-
 void class_base_algorithm::env_storage_overwrite_MPS(){
     t_ste.tic();
     env_storage->overwrite_MPS();
@@ -498,13 +438,9 @@ int class_base_algorithm::env_storage_move(){
 }
 
 
-
-
-
-
 void class_base_algorithm::print_status_update() {
     if (Math::mod(iteration, print_freq) != 0) {return;}
-    if ((2*position) != superblock->environment_size){return;}
+    if ((position) != superblock->environment_size/2){return;}
     if (print_freq == 0) {return;}
 
     compute_observables();
@@ -529,7 +465,6 @@ void class_base_algorithm::print_status_update() {
             ccout(1) << left  << "Sweep: "                  << setw(4)  << sweeps;
             break;
         case SimulationType::iTEBD:
-        case SimulationType ::FES_iTEBD:
             ccout(1) << left  << "δt: "               << setw(13) << setprecision(12)    << fixed   << superblock->H->step_size;
             ccout(1) << left  << " conv: " << simulation_has_converged;
             break;
@@ -561,7 +496,6 @@ void class_base_algorithm::print_status_full(){
     ccout(0)  << setw(20) << "Sweep                = " << setprecision(1)  << fixed      << sweeps << std::endl;
             break;
         case SimulationType::iTEBD:
-        case SimulationType ::FES_iTEBD:
     ccout(0)  << setw(20) << "δt:                  = " << setprecision(16) << fixed      << superblock->H->step_size << std::endl;
     ccout(0)  << setw(20) << "conv:                = " << setprecision(1)  << fixed      << simulation_has_converged << std::endl;
             break;

@@ -32,14 +32,14 @@ void class_xDMRG::run() {
     if (!settings::xdmrg::on) { return; }
     ccout(0) << "\nStarting " << table_name << " simulation" << std::endl;
     t_tot.tic();
-    chi_temp = chi_max;
+//    chi_temp = chi_max;
     initialize_random_chain();
     while(sweeps < max_sweeps) {
         single_xDMRG_step(chi_temp);
         env_storage_overwrite_MPS();         //Needs to occurr after update_MPS...
         store_table_entry();
         print_status_update();
-        iteration++;
+//        iteration++;
         position = enlarge_environment(direction);
         position = env_storage_move();
         update_chi();
@@ -48,12 +48,14 @@ void class_xDMRG::run() {
     t_tot.toc();
     print_status_full();
     print_profiling();
+    env_storage->print_storage();
+    measurement->compute_finite_energy();
+    measurement->compute_finite_variance();
 
 }
 
-
-auto class_xDMRG::find_greatest_overlap(){
-    Eigen::Tensor<Scalar,1> theta = superblock->MPS->get_theta().reshape(superblock->shape1);
+auto class_xDMRG::find_greatest_overlap(Eigen::Tensor<Scalar,4> &theta){
+//    Eigen::Tensor<Scalar,1> theta = superblock->MPS->get_theta().reshape(superblock->shape1);
     Eigen::Tensor<Scalar,2> H_local =
             superblock->Lblock->block
             .contract(superblock->HA->MPO      , Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
@@ -61,15 +63,11 @@ auto class_xDMRG::find_greatest_overlap(){
             .contract(superblock->Rblock->block, Textra::idx({4},{2}))
             .shuffle(Textra::array8{2,0,4,6,3,1,5,7})
             .reshape(Textra::array2{superblock->shape1[0], superblock->shape1[0]});
-
-    using SparseType = Eigen::SparseMatrix<Scalar>;
-    Eigen::Map<Textra::MatrixType<Scalar>> H_matrix     (H_local.data(),H_local.dimension(0),H_local.dimension(1));
-    Eigen::Map<Textra::VectorType<Scalar>> theta_matrix (theta.data(),theta.dimension(0));
-    SparseType H_sparse = H_matrix.sparseView();
-
-    Eigen::SelfAdjointEigenSolver<SparseType> es(H_sparse);
-    Textra::VectorType<Scalar> overlaps = theta_matrix.transpose() * es.eigenvectors();
-
+    Eigen::SparseMatrix<Scalar> H_sparse = Eigen::Map<Textra::MatrixType<Scalar>>(H_local.data(),H_local.dimension(0),H_local.dimension(1)).sparseView();
+    Eigen::Map<Textra::VectorType<Scalar>> theta_vector (theta.data(),theta.size());
+    //Sparcity seems to be about 5-15%.
+    Eigen::SelfAdjointEigenSolver<Eigen::SparseMatrix<Scalar>> es(H_sparse);
+    Textra::VectorType<Scalar> overlaps = theta_vector.transpose() * es.eigenvectors();
     int best_state;
     overlaps.cwiseAbs().maxCoeff(&best_state);
     Textra::MatrixType<Scalar> state = es.eigenvectors().col(best_state);
@@ -85,7 +83,8 @@ void class_xDMRG::single_xDMRG_step(long chi_max) {
     t_sim.tic();
     superblock->set_current_dimensions();
     t_opt.tic();
-    superblock->MPS->theta = find_greatest_overlap();
+    superblock->MPS->theta = superblock->MPS->get_theta();
+    superblock->MPS->theta = find_greatest_overlap(superblock->MPS->theta);
     t_opt.toc();
     t_svd.tic();
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, settings::precision::SVDThreshold);
@@ -111,38 +110,17 @@ int class_xDMRG::initialize_random_chain() {
         superblock->HA = std::make_shared<class_hamiltonian>(class_hamiltonian(settings::model::J, gA, 0));
         superblock->HB = std::make_shared<class_hamiltonian>(class_hamiltonian(settings::model::J, gB, 0));
 
+        print_status_update();
         position = env_storage_insert();
-        if (superblock->environment_size < max_length) {
-            enlarge_environment();
-            position++;
+        if (superblock->environment_size + 2< max_length) {
+            position = enlarge_environment();
+            swap();
         } else {
             break;
         }
     }
     return position;
 }
-
-
-//
-//int class_xDMRG::env_storage_insert() {
-//    t_ste.tic();
-//    int position = env_storage->insert();
-//    t_ste.toc();
-//    return position;
-//}
-//
-//void class_xDMRG::env_storage_overwrite_MPS(){
-//    t_ste.tic();
-//    env_storage->overwrite_MPS();
-//    t_ste.toc();
-//}
-//int class_xDMRG::env_storage_move(){
-//    t_ste.tic();
-//    int position = env_storage->move(direction, sweeps);
-//    t_ste.toc();
-//    return position;
-//}
-
 
 
 void class_xDMRG::print_profiling(){

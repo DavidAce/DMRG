@@ -23,8 +23,6 @@ public:
         run_finite_DMRG();
         run_excited_state_DMRG();
         run_imaginary_TEBD();
-        run_FES_iDMRG();
-        run_FES_iTEBD();
         std::cout << "All algorithms finished." << std::endl;
     };
 
@@ -32,8 +30,6 @@ public:
     void run_finite_DMRG();
     void run_excited_state_DMRG();
     void run_imaginary_TEBD();
-    void run_FES_iDMRG();
-    void run_FES_iTEBD();
 };
 
 

@@ -8,13 +8,12 @@
 #include <complex>
 #include <mps_routines/class_measurement.h>
 #include <general/nmspc_tensor_extra.h>
-#include <Eigen/Eigenvalues>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_hamiltonian.h>
 #include <mps_routines/class_mps.h>
 #include <mps_routines/class_mpo.h>
-#include <algorithms/class_base_algorithm.h>
+#include <mps_routines/class_finite_chain_storage.h>
 
 using namespace std;
 using namespace Textra;
@@ -33,6 +32,15 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
     mom_vecD = superblock->H->compute_G(d,4);
     set_profiling_labels();
 
+}
+
+class_measurement::class_measurement(std::shared_ptr<class_superblock> superblock_,
+                                     std::shared_ptr<class_finite_chain_storage> env_storage_,
+                                     SimulationType sim_)
+        :class_measurement(superblock_,sim_)
+
+{
+        env_storage = std::move(env_storage_);
 }
 
 
@@ -66,9 +74,7 @@ void class_measurement::compute_all_observables_from_superblock(){
 double class_measurement::compute_energy_MPO(){
     t_ene_mpo.tic();
 
-    if(sim == SimulationType::iDMRG or sim == SimulationType::FES_iDMRG){
-//    if(sim == SimulationType::FES_iDMRG){
-
+    if(sim == SimulationType::iDMRG){
         Tensor<Scalar, 0>  E_two_sites =
                 superblock->Lblock->block
                         .contract(superblock->MPS->theta,                     idx({0},{1}))
@@ -134,6 +140,63 @@ double class_measurement::compute_entanglement_entropy(){
 ////    t_ene_mpo.toc();
 //    return std::real(E_two_site(0) / 2.0 );
 //}
+
+
+double class_measurement::compute_finite_energy(){
+    Eigen::Tensor<Scalar,3> L = env_storage->ENV_L.front().block;
+    Eigen::Tensor<Scalar,3> R = env_storage->ENV_R.back().block;
+    Eigen::Tensor<Scalar,3> temp = L;
+
+    auto mpsL  = std::begin(env_storage->MPS_L);
+    auto mpoL  = std::begin(env_storage->MPO_L);
+    auto endL  = std::end(env_storage->MPS_L);
+    while(mpsL != endL){
+        auto &LB_left = std::get<0>(*mpsL);
+        auto &GA      = std::get<1>(*mpsL);
+        temp = L.contract(asDiagonal(LB_left),       idx({0},{0}))
+                .contract(asDiagonal(LB_left),       idx({0},{0}))
+                .contract(mpoL->MPO,     idx({0},{0}))
+                .contract(GA,            idx({0,3},{1,0}))
+                .contract(GA.conjugate(),idx({0,2},{1,0}))
+                .shuffle(array3{1,2,0});
+        L = temp;
+        mpsL++;
+        mpoL++;
+    }
+
+
+    //Contract the center point
+    auto &LA = env_storage->LA;
+    temp = L.contract(asDiagonal(LA) , idx({0},{0}))
+            .contract(asDiagonal(LA) , idx({0},{0}))
+            .shuffle(array3{1,2,0});
+    L = temp;
+
+    //Contract the right half of the chain
+    auto mpsR  = std::begin(env_storage->MPS_R);
+    auto mpoR  = std::begin(env_storage->MPO_R);
+    auto endR  = std::end  (env_storage->MPS_R);
+    while(mpsR != endR){
+        auto &GB      = std::get<0>(*mpsR);
+        auto &LB      = std::get<1>(*mpsR);
+        temp = L.contract(GB,            idx({0},{1}))
+                .contract(GB.conjugate(),idx({0},{1}))
+                .contract(mpoR->MPO,     idx({0,1,3},{0,2,3}))
+                .contract(asDiagonal(LB),idx({0},{0}))
+                .contract(asDiagonal(LB),idx({0},{0}))
+                .shuffle(array3{1,2,0});
+        L = temp;
+        mpsR++;
+        mpoR++;
+    }
+
+
+    Eigen::Tensor<Scalar,0> E_all_sites = L.contract(R, idx({0,1,2},{0,1,2}));
+    std::cout << "E all sites: " << E_all_sites(0) << "  per site (" << env_storage->current_length << ") : " << std::real(E_all_sites(0))/env_storage->current_length << std::endl;
+    energy_chain = std::real(E_all_sites(0));
+    return std::real(E_all_sites(0));
+}
+
 
 
 double class_measurement::get_energy1(){return energy1;};
