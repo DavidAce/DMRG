@@ -15,7 +15,7 @@
 
 class class_file_reader;
 
-enum class SimulationType{iDMRG,fDMRG, xDMRG, FES_iDMRG, iTEBD, FES_iTEBD};
+enum class SimulationType{iDMRG,fDMRG, xDMRG, iTEBD};
 
 
 namespace settings {
@@ -84,34 +84,6 @@ namespace settings {
         extern int      store_freq  ;                       /*!< Store frequency,for output file buffer. (0 = off). */
 
     }
-    //Parameters controlling Finite-entanglement scaling (FES) in iTEBD-mode.
-    namespace fes_itebd {
-        extern bool      on          ;                      /*!< Turns FES-ITEBD simulation on/off. */
-        extern int       max_steps   ;                      /*!< Number of iTEBD iterations, after which the simulation terminates regardless of convergence. Set high.*/
-        extern double    delta_t0    ;                      /*!< Initial time step for iTEBD time evolution.*/
-        extern double    delta_tmin  ;                      /*!< Final time step for iTEBD time evolution.*/
-        extern int       suzuki_order;                      /*!< Order of the suzuki trotter decomposition (1,2 or 4) */
-        extern long      chi_min     ;                      /*!< Minimum chi-value in range. */
-        extern long      chi_max     ;                      /*!< Maximum chi-value in range. */
-        extern long      chi_num     ;                      /*!< Number of chi values for in range. */
-        extern bool      chi_grow    ;                      /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
-        extern int       print_freq  ;                      /*!< Print frequency for console output. (0 = off).*/
-        extern int       store_freq  ;                      /*!< Store frequency,for output file buffer. (0 = off). */
-
-    }
-    //Parameters controlling Finite-entanglement scaling (FES) in iDMRG-mode.
-    namespace fes_idmrg {
-        extern bool on               ;                      /*!< Turns FES-iDMRG simulation on/off. */
-        extern int       max_steps  ;                       /*!< Number of FES iterations per chi-value. */
-        extern long      chi_min     ;                      /*!< Minimum chi-value in range. */
-        extern long      chi_max     ;                      /*!< Maximum chi-value in range. */
-        extern long      chi_num     ;                      /*!< Number of chi values for in range. */
-        extern bool      chi_grow    ;                      /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
-        extern int       print_freq  ;                      /*!< Print frequency for console output. (0 = off).*/
-        extern int       store_freq  ;                      /*!< Store frequency,for output file buffer. (0 = off). */
-
-    }
-
 
     //Save data to hdf5 (NOT FULLY IMPLEMENTED YET)
     namespace hdf5 {

@@ -193,7 +193,7 @@ class_arpack_eigsolver<Scalar,form>::eig_ref_vec_val(Scalar *matrix_data,
                                                       Scalar *residp
 )
 {
-    eig(matrix_data,ritz,side, n, nev, ncv,true,bool_dephase);
+    eig(matrix_data,ritz,side, n, nev, ncv,true,bool_dephase,residp);
     return make_pair(ref_eigvecs(), ref_eigvals());
 };
 
@@ -209,7 +209,7 @@ class_arpack_eigsolver<Scalar,form>::eig_get_vec_val(Scalar *matrix_data,
                                                       Scalar *residp
 )
 {
-    eig(matrix_data,ritz,side, n, nev, ncv,true,bool_dephase);
+    eig(matrix_data,ritz,side, n, nev, ncv,true,bool_dephase,residp);
     return make_pair(get_eigvecs(), get_eigvals());
 };
 
@@ -234,7 +234,7 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
     eigvals_found = false;
     DenseHamiltonianProduct<Scalar>  hamiltonianProduct(Lblock, Rblock, HA, HB, shape_theta4,shape_mpo4);
     int dim  = hamiltonianProduct.cols();
-    int size = hamiltonianProduct.cols() * hamiltonianProduct.rows();
+//    int size = hamiltonianProduct.cols() * hamiltonianProduct.rows();
     int ncv_internal = std::max(dim/2, 4*nev);
     ncv_internal = std::min(ncv, ncv_internal);
 
@@ -259,7 +259,7 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
 
     if constexpr(std::is_same_v<Scalar, double>) {
         ARNonSymStdEig <double, DenseHamiltonianProduct<Scalar>> eigsolver(dim, nev, &hamiltonianProduct,
-                                                                        &DenseHamiltonianProduct<Scalar>::MultMv, "SR",
+                                                                        &DenseHamiltonianProduct<Scalar>::MultMv, RitzToString.at(ritz),
                                                                         ncv_internal, eigThreshold, eigMaxIter, resid);
 
         eigsolver.FindEigenvectors();

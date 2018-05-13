@@ -11,10 +11,8 @@
 
 #include <algorithms/class_iDMRG.h>
 #include <algorithms/class_fDMRG.h>
+#include <algorithms/class_xDMRG.h>
 #include <algorithms/class_iTEBD.h>
-#include <algorithms/class_FES_iDMRG.h>
-#include <algorithms/class_FES_iTEBD.h>
-#include "class_xDMRG.h"
 
 
 namespace s = settings;
@@ -60,17 +58,3 @@ void class_algorithm_launcher::run_imaginary_TEBD(){
     }
 }
 
-
-void class_algorithm_launcher::run_FES_iDMRG(){
-    if(settings::fes_idmrg::on){
-        class_FES_iDMRG FES_iDMRG(hdf5);
-        FES_iDMRG.run();
-    }
-}
-
-void class_algorithm_launcher::run_FES_iTEBD(){
-    if(settings::fes_itebd::on){
-        class_FES_iTEBD FES_iTEBD(hdf5);
-        FES_iTEBD.run();
-    }
-}

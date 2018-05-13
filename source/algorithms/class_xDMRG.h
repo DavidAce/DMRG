@@ -21,7 +21,7 @@ public:
     explicit class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
     void run() override;
     void single_xDMRG_step(long chi_max);
-    auto find_greatest_overlap();
+    auto find_greatest_overlap(Eigen::Tensor<Scalar,4> &theta);
     int  initialize_random_chain();
     void print_profiling()     override;
     void print_profiling_sim(class_tic_toc &t_parent) override;
