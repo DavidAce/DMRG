@@ -30,9 +30,9 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "OS: Mac OSX"
     echo "Checking if GCC installed in in brew..."
     if brew ls gcc | grep -q 'g++'; then
-        c_compiler=$(brew ls gcc | -e '/bin/gcc-[0-9]' | head -n 1)
-        cxx_compiler=$(brew ls gcc | -e '/bin/g++-[0-9]' | head -n 1)
-        fortran_compiler=$(brew ls gcc | -e '/bin/gfortran-[0-9]' | head -n 1)
+        c_compiler=$(brew ls gcc | grep -e '/bin/gcc-[0-9]' | head -n 1)
+        cxx_compiler=$(brew ls gcc | grep  -e '/bin/g++-[0-9]' | head -n 1)
+        fortran_compiler=$(brew ls gcc | grep -e '/bin/gfortran-[0-9]' | head -n 1)
         versionnumber=$(cxx_compiler -dumpversion)
         echo "GCC-${versionnumber} is installed"
         export CC=${c_compiler}
@@ -43,9 +43,9 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         dcmake_fortran_compiler="-DCMAKE_Fortran_COMPILER=${fortran_compiler}"
 
     elif brew ls llvm | grep -q 'clang++'; then
-        c_compiler=$(brew ls llvm | -e '/bin/clang' | head -n 1)
-        cxx_compiler=$(brew ls gcc | -e '/bin/clang++' | head -n 1)
-        fortran_compiler=$(brew ls gcc | -e '/bin/gfortran-[0-9]' | head -n 1)
+        c_compiler=$(brew ls llvm | grep -e '/bin/clang' | head -n 1)
+        cxx_compiler=$(brew ls gcc | grep -e '/bin/clang++' | head -n 1)
+        fortran_compiler=$(brew ls gcc | grep -e '/bin/gfortran-[0-9]' | head -n 1)
         versionnumber=$(cxx_compiler -dumpversion)
         if ${versionnumber} < 5; then
             echo "Clang version number: ${versionnumber} is too low."
