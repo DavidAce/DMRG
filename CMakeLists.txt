@@ -22,9 +22,6 @@ include(cmake_modules/directory.cmake)
 
 
 
-
-
-
 ###################
 ### Setup flags ###
 ###################
@@ -60,6 +57,7 @@ target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTION
 target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
 target_link_libraries  (${PROJECT_NAME} -flto -fopenmp)                                                      ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} -lstdc++fs)                                                 ### For experimental::filesystem
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_LIBRARY_PATH})
 #target_link_libraries  (${PROJECT_NAME} -lc++experimental)                                         ### For experimental::filesystem
 ######################################################
 ###  Require c++17 support and test that it works  ###

@@ -37,6 +37,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 
     echo "Checking if libstdc++ is available"
     standard_library=$(brew ls gcc | grep -e '[0-9]/lib/gcc/[0-9]/libstdc++.a' | head -n 1)
+    standard_library_path=$(dirname ${standard_library})
     if [ -z "${standard_library}" ];then
         echo "Please install standard library available in gcc first."
         echo "  brew install gcc"
@@ -59,14 +60,14 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         echo "  brew install llvm"
         exit
     fi
-    export LIBRARY_PATH=${standard_library}
+    export LIBRARY_PATH=${standard_library_path}
     export CC=${c_compiler}
     export CXX=${cxx_compiler}
     export FC=${fortran_compiler}
     dcmake_c_compiler="-DCMAKE_C_COMPILER=${c_compiler}"
     dcmake_cxx_compiler="-DCMAKE_CXX_COMPILER=${cxx_compiler}"
     dcmake_fortran_compiler="-DCMAKE_Fortran_COMPILER=${fortran_compiler}"
-    dcmake_library_path="-DCMAKE_LIBRARY_PATH=${standard_library}"
+    dcmake_library_path="-DCMAKE_LIBRARY_PATH=${standard_library_path}"
 else
         echo "Could not identify OS"
         exit
