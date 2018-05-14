@@ -5,11 +5,12 @@
 #ifndef NMSPC_QUANTUM_MECHANICS_H
 #define NMSPC_QUANTUM_MECHANICS_H
 #include <Eigen/Core>
+#include <complex>
 #include <general/nmspc_tensor_extra.h>
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>
 
-
+using namespace std::complex_literals;
 namespace qm{
     using namespace Eigen;
     inline Matrix2cd sx = (Matrix2cd() << 0.0,  1.0,  1.0,  0.0).finished();
