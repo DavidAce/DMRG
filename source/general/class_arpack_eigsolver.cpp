@@ -240,7 +240,7 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
 
     if constexpr(std::is_same_v<Scalar, std::complex<double>>) {
         ARCompStdEig<double, DenseHamiltonianProduct<Scalar>> eigsolver(dim, nev, &hamiltonianProduct,
-                                                                        &DenseHamiltonianProduct<Scalar>::MultMv, "SR",
+                                                                        &DenseHamiltonianProduct<Scalar>::MultMv, RitzToString.at(ritz),
                                                                         ncv_internal, eigThreshold, eigMaxIter, resid);
 
         eigsolver.FindEigenvectors();

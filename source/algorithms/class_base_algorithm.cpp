@@ -55,8 +55,7 @@ void class_base_algorithm::single_DMRG_step(long chi_max){
     superblock->set_current_dimensions();
     t_opt.tic();
     superblock->MPS->theta = superblock->MPS->get_theta();
-    superblock->MPS->theta = superblock->optimize_MPS(superblock->MPS->theta, s::precision::eigMaxIter,
-                                                      s::precision::eigThreshold);
+    superblock->MPS->theta = superblock->optimize_MPS(superblock->MPS->theta);
     t_opt.toc();
     t_svd.tic();
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, s::precision::SVDThreshold);

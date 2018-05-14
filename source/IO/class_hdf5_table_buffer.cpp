@@ -26,7 +26,7 @@ class_hdf5_table_buffer::class_hdf5_table_buffer(std::shared_ptr<class_hdf5_file
 
 };
 
-class_hdf5_table_buffer::class_hdf5_table_buffer(std::nullptr_t nullp,
+class_hdf5_table_buffer::class_hdf5_table_buffer([[maybe_unused]] std::nullptr_t nullp,
                                                  const std::string group_name_,
                                                  const std::string table_name_,
                                                  const bool mpi_on_   )

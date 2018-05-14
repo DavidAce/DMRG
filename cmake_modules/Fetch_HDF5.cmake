@@ -1,57 +1,36 @@
 
 # Try finding in system. While avoiding Python anaconda's version.
 # Usually there is an executable present in system, "h5c++"
-# Execute "find /usr -name h5c++ -print -quit" in terminal to find out where it is.
-# -quit returns after first match
 
-
-#execute_process(
-#        COMMAND  find /usr -name libhdf5.* -exec dirname {} \; -quit
-#        OUTPUT_VARIABLE HDF5_ROOT
-#)
-
-#Try to find the compiler wrapper
-#execute_process(
-#        COMMAND  find /usr/bin -name h5c++ -print -quit
-#        OUTPUT_VARIABLE HDF5_CXX_COMPILER_EXECUTABLE
-#        RESULT_VARIABLE HDF5_success
-#)
-#if(NOT HDF5_success)
-#    execute_process(
-#            COMMAND  find /usr/ -name h5pfc -print -quit
-#            OUTPUT_VARIABLE HDF5_CXX_COMPILER_EXECUTABLE
-#            RESULT_VARIABLE HDF5_success
-#    )
-#endif()
-#string(STRIP "${HDF5_CXX_COMPILER_EXECUTABLE}" HDF5_CXX_COMPILER_EXECUTABLE)
-
-find_file(HDF5_CXX_COMPILER_EXECUTABLE NAMES h5c++ h5pfc PATHS /usr/bin /usr/local/bin)
-
-
+find_file(HDF5_CXX_COMPILER_EXECUTABLE NAMES h5c++ h5cc h5fc h5pfc PATHS /usr/bin /usr/local/bin)
 set(HDF5_USE_STATIC_LIBRARIES ON)
-set(HDF5_FIND_DEBUG OFF)
-find_package(HDF5 COMPONENTS CXX HL)
+set(HDF5_FIND_DEBUG ON)
+find_package(HDF5 COMPONENTS C CXX HL)
 if(HDF5_LIBRARIES MATCHES "anaconda")
+    message("Found anaconda version. Ignoring...")
+    set(HDF5_ANACONDA ON)
     unset(HDF5_FOUND)
     unset(HDF5_LIBRARIES)
     unset(HDF5_INCLUDE_DIR)
     unset(HDF5_DEFINITIONS)
-
 endif()
-if(HDF5_FOUND AND HDF5_LIBRARIES AND HDF5_CXX_LIBRARIES AND HDF5_HL_LIBRARIES AND HDF5_CXX_HL_LIBRARIES)
-    message(STATUS "HDF5 FOUND IN SYSTEM: ${HDF5_LIBRARIES}")
-    add_definitions(${HDF5_DEFINITIONS})
-    list(APPEND HDF5_LDFLAGS ${HDF5_CXX_LIBRARY_NAMES} ${HDF5_CXX_HL_LIBRARY_NAMES})
-    list(APPEND HDF5_LIBRARIES ${HDF5_HL_LIBRARIES})
-    list(REMOVE_DUPLICATES HDF5_LIBRARIES)
 
+
+
+
+if(HDF5_FOUND AND HDF5_LIBRARIES AND HDF5_CXX_LIBRARIES AND HDF5_HL_LIBRARIES AND HDF5_CXX_HL_LIBRARIES AND NOT HDF5_ANACONDA)
+    message(STATUS "HDF5 FOUND IN SYSTEM: ${HDF5_LIBRARIES}")
     message(STATUS "FOUND HDF5")
     message(STATUS "   In path: ${HDF5_INCLUDE_DIR}")
     message(STATUS "   HDF5 DEFINITIONS: ${HDF5_DEFINITIONS}")
     message(STATUS "   HDF5 LIBRARIES  : ${HDF5_LIBRARIES}")
+    message(STATUS "   HDF5 LDFLAGS    : ${HDF5_LDFLAGS}")
 
     target_include_directories(${PROJECT_NAME} PRIVATE ${HDF5_INCLUDE_DIR})
-    target_link_libraries(${PROJECT_NAME} ${HDF5_LIBRARIES} -ldl)
+    target_link_libraries(${PROJECT_NAME} ${HDF5_C_LIBRARIES} ${HDF5_C_HL_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES} -ldl)
+    target_link_libraries(${PROJECT_NAME} ${HDF5_LDFLAGS})
+    add_definitions(${HDF5_DEFINITIONS})
+
 else()
     message(STATUS "HDF5 will be installed into ${INSTALL_DIRECTORY}/hdf5 on first build.")
 
