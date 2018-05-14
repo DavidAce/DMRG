@@ -29,15 +29,14 @@
 Git clone or copy & extract the project into a folder of your choosing.
 **Make sure there are no spaces in the output_folder!**.
 The project can be built with a single command from a unix terminal. 
-Simply launch the script `.\build.sh` found in the root folder, containing
+Simply launch the script `.\build.sh` found in the root folder. If you are feeling lucky, try
 ```
-        #!/bin/sh
         cmake -E make_directory build/Release
         cd build/Release
         cmake -Bbuild/Release --build build -config Release ../../
         make
 ```
-This script will create subdirectories and use CMake to check for dependencies and download them automatically if needed (see *Optional Requirements* below).
+The build script will create subdirectories and use CMake to check for dependencies and download them automatically if needed (see *Optional Requirements* below).
 If the dependencies are found, the project is built and an executable is generated.
 
 To run executable, launch `.\run.sh`, containing
@@ -55,13 +54,13 @@ is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.
 ### Minimum Requirements
 The following software is required to build the project:
  - C++ compiler with support for c++17 standard and libstdc++ standard library implementation  (version >= 7). Tested with both
-    - GNU GCC version >= 7 (comes with libstdc++ already)
-    - Clang version >= 5.0. (you need to manually install libstdc++ version >= 7, for instance from `ppa:ubuntu-toolchain-r/test`)
- - CMake version >= 3.8. If you compile CMake from source, remember to enable `curl` (`./bootstrap --system-curl`). 
+    - GNU GCC versions 7 and 8 (come with libstdc++ already)
+    - Clang version >= 5.0. (you need to manually install libstdc++ version >= 7, that comes bundled with gcc, for instance from `ppa:ubuntu-toolchain-r/test`)
+ - CMake version >= 3.10. If you compile CMake from source, remember to enable `curl` (`./bootstrap --system-curl`). 
  
 **Ubuntu** 17 or higher will have the versions required in the default repositories. For older distributions, use the ppa `ubuntu-toolchain-r/test` to get newer versions.
 
-**Mac OSX** users are advised to use GNU GCC version 7 from homebrew. Install with `brew install gcc@7`. Newer versions of gcc, e.g. gcc-8, have problems compiling the hdf5 library. If you insist on using gcc-8, then the hdf5 library must be installed manually. The AppleClang compiler is *not* supported. 
+**Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with `brew install gcc`. Clang and AppleClang compilers are not supported on OSX. 
 
 
 ### Optional Requirements

@@ -3,6 +3,7 @@ buildtype="Release"
 dcmake_c_compiler=""
 dcmake_cxx_compiler=""
 dcmake_fortran_compiler=""
+
 if [[ "$@" == *"ebug"* ]]
 then
 	buildtype="Debug"
@@ -27,18 +28,40 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
     fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "OS: Mac OSX"
-    echo "Checking that GCC is installed in homebrew: [brew ls gcc@8 | grep -q 'g++-8']"
-    if brew ls gcc@8 | grep -q 'g++-8'; then
-        echo "GCC-8 is installed"
-        export CC=gcc-8
-        export CXX=g++-8
-        export FC=gfortran-8
-        dcmake_c_compiler="-DCMAKE_C_COMPILER=gcc-8"
-        dcmake_cxx_compiler="-DCMAKE_CXX_COMPILER=g++-8"
-        dcmake_fortran_compiler="-DCMAKE_Fortran_COMPILER=gfortran-8"
+    echo "Checking if GCC installed in in brew..."
+    if brew ls gcc | grep -q 'g++'; then
+        c_compiler=$(brew ls gcc | -e '/bin/gcc-[0-9]' | head -n 1)
+        cxx_compiler=$(brew ls gcc | -e '/bin/g++-[0-9]' | head -n 1)
+        fortran_compiler=$(brew ls gcc | -e '/bin/gfortran-[0-9]' | head -n 1)
+        versionnumber=$(cxx_compiler -dumpversion)
+        echo "GCC-${versionnumber} is installed"
+        export CC=${c_compiler}
+        export CXX=${cxx_compiler}
+        export FC=${fortran_compiler}
+        dcmake_c_compiler="-DCMAKE_C_COMPILER=${c_compiler}"
+        dcmake_cxx_compiler="-DCMAKE_CXX_COMPILER=${cxx_compiler}"
+        dcmake_fortran_compiler="-DCMAKE_Fortran_COMPILER=${fortran_compiler}"
+
+    elif brew ls llvm | grep -q 'clang++'; then
+        c_compiler=$(brew ls llvm | -e '/bin/clang' | head -n 1)
+        cxx_compiler=$(brew ls gcc | -e '/bin/clang++' | head -n 1)
+        fortran_compiler=$(brew ls gcc | -e '/bin/gfortran-[0-9]' | head -n 1)
+        versionnumber=$(cxx_compiler -dumpversion)
+        if ${versionnumber} < 5; then
+            echo "Clang version number: ${versionnumber} is too low."
+            exit
+        fi
+        echo "clang-${versionnumber} is installed"
+        export CC=${c_compiler}
+        export CXX=${cxx_compiler}
+        export FC=${fortran_compiler}
+        dcmake_c_compiler="-DCMAKE_C_COMPILER=${c_compiler}"
+        dcmake_cxx_compiler="-DCMAKE_CXX_COMPILER=${cxx_compiler}"
+        dcmake_fortran_compiler="-DCMAKE_Fortran_COMPILER=${fortran_compiler}"
     else
-        echo "Please install gcc (version 8) through homebrew"
-        echo "  brew install gcc@8"
+        echo "Please install gcc (version 7 or higher) or gcc + llvm (version 6 or higher) through brew"
+        echo "  brew install gcc"
+        echo "  brew install llvm"
         exit
     fi
 else
