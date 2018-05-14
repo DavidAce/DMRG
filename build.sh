@@ -2,6 +2,7 @@
 buildtype="Release"
 dcmake_c_compiler=""
 dcmake_cxx_compiler=""
+dcmake_fortran_compiler=""
 if [[ "$@" == *"ebug"* ]]
 then
 	buildtype="Debug"
@@ -31,8 +32,10 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         echo "GCC-7 is installed"
         export CC=gcc-7
         export CXX=g++-7
+        export FC=gfortran-7
         dcmake_c_compiler="-DCMAKE_C_COMPILER=gcc-7"
         dcmake_cxx_compiler="-DCMAKE_CXX_COMPILER=g++-7"
+        dcmake_fortran_compiler="-DCMAKE_Fortran_COMPILER=gfortran-7"
     else
         echo "Please install GCC (version 7) through homebrew"
         exit
@@ -46,5 +49,5 @@ fi
 echo "Starting Build"
 cmake -E make_directory build/${buildtype}
 cd build/${buildtype}
-cmake  ${dcmake_c_compiler} ${dcmake_cxx_compiler} -DCMAKE_BUILD_TYPE=${buildtype} -G "CodeBlocks - Unix Makefiles" ../../
+cmake  ${dcmake_c_compiler} ${dcmake_cxx_compiler} ${dcmake_fortran_compiler} -DCMAKE_BUILD_TYPE=${buildtype} -G "CodeBlocks - Unix Makefiles" ../../
 cmake --build . --target DMRG++ -- -j 4
