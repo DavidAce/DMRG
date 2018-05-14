@@ -25,7 +25,6 @@ include(cmake_modules/directory.cmake)
 
 
 
-
 ###################
 ### Setup flags ###
 ###################
