@@ -30,7 +30,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "OS: Mac OSX"
     echo "Checking if fortran compiler is available"
     fortran_compiler=$(brew ls gcc | grep -e '/bin/gfortran-[0-9]' | head -n 1)
-    if [ -z "$VAR" ];then
+    if [ -z "${fortran_compiler}" ];then
         echo "Fortran compiler is not available. Automatic library installation (e.g. GSL and Arpack) will not work"
         echo "Either install gfortran (bundled with gcc) or install these libraries manually."
     fi
