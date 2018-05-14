@@ -55,7 +55,7 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_compile_options (${PROJECT_NAME} PUBLIC ${COMMON_OPTIONS})                                   ### Common options
 target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
 target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
-target_link_libraries  (${PROJECT_NAME} -flto -fopenmp)                                                      ### Link time optimization flag
+target_link_libraries  (${PROJECT_NAME} -flto)                                                      ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} -lstdc++fs)                                                 ### For experimental::filesystem
 #target_link_libraries  (${PROJECT_NAME} -lc++experimental)                                         ### For experimental::filesystem
 
@@ -67,8 +67,9 @@ set_target_properties  (${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)                                         ### Demand c++17 compiler support
 include(CheckCXXCompilerFlag)
 set(CMAKE_REQUIRED_FLAGS "-lstdc++fs -std=c++17")
-check_cxx_compiler_flag("-std=c++17" _support_cxx_std_17)
-check_cxx_compiler_flag("-lstdc++fs" _support_lstdcxxfs)
+check_cxx_compiler_flag(-std=c++17 _support_cxx_std_17)
+check_cxx_compiler_flag(-lstdc++fs _support_lstdcxxfs)
+check_cxx_compiler_flag(-stdlib=libstdc++ _support_stdlib_libstdcxx)
 
 include(CheckIncludeFileCXX)
 check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -std=c++17)
