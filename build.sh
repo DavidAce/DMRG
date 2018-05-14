@@ -26,7 +26,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
     fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "OS: Mac OSX"
-    echo "Checking that GCC is installed in homebrew: [brew ls gcc | grep -q 'g++-7']"
+    echo "Checking that GCC is installed in homebrew: [brew ls gcc@7 | grep -q 'g++-7']"
     if brew ls gcc | grep -q 'g++-7'; then
         echo "GCC-7 is installed"
         export CC=gcc-7
@@ -35,9 +35,11 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         dcmake_cxx_compiler="-DCMAKE_CXX_COMPILER=g++-7"
     else
         echo "Please install GCC (version 7) through homebrew"
+        exit
     fi
 else
         echo "Could not identify OS"
+        exit
 fi
 
 

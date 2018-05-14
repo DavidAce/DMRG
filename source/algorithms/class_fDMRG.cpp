@@ -42,6 +42,7 @@ void class_fDMRG::run() {
     print_status_full();
     print_profiling();
     env_storage->print_storage();
+    measurement->compute_finite_norm();
     measurement->compute_finite_energy();
     measurement->compute_finite_variance();
 
