@@ -39,7 +39,7 @@ else()
 
     include(ExternalProject)
     ExternalProject_Add(library_HDF5
-            URL      https://www.hdfgroup.org/package/source-bzip2-2/?wpdmdl=11811
+            URL      https://www.hdfgroup.org/package/source-bzip2-2/?wpdmdl=11811 # version 1.10.2
             PREFIX              "${INSTALL_DIRECTORY}/hdf5"
             UPDATE_DISCONNECTED 1
             TEST_COMMAND ""
@@ -59,49 +59,49 @@ else()
 
     ExternalProject_Get_Property(library_HDF5 INSTALL_DIR)
 
-    add_library(hdf5::hdf5-static           STATIC IMPORTED)
-    add_library(hdf5::hdf5_hl-static        STATIC IMPORTED)
-    add_library(hdf5::hdf5_cpp-static       STATIC IMPORTED)
-    add_library(hdf5::hdf5_hl_cpp-static    STATIC IMPORTED)
+    add_library(hdf5::hdf5           STATIC IMPORTED)
+    add_library(hdf5::hdf5_hl        STATIC IMPORTED)
+    add_library(hdf5::hdf5_cpp       STATIC IMPORTED)
+    add_library(hdf5::hdf5_hl_cpp    STATIC IMPORTED)
 
 
-    set_target_properties(hdf5::hdf5-static PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5-static${CMAKE_STATIC_LIBRARY_SUFFIX}
+    set_target_properties(hdf5::hdf5 PROPERTIES
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5${CMAKE_STATIC_LIBRARY_SUFFIX}
             INTERFACE_LINK_LIBRARIES "m;dl;dl"
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
-    set_target_properties(hdf5::hdf5_hl-static PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl-static${CMAKE_STATIC_LIBRARY_SUFFIX}
-            INTERFACE_LINK_LIBRARIES hdf5::hdf5-static
+    set_target_properties(hdf5::hdf5_hl PROPERTIES
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl${CMAKE_STATIC_LIBRARY_SUFFIX}
+            INTERFACE_LINK_LIBRARIES hdf5::hdf5
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
-    set_target_properties(hdf5::hdf5_cpp-static PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_cpp-static${CMAKE_STATIC_LIBRARY_SUFFIX}
-            INTERFACE_LINK_LIBRARIES hdf5::hdf5-static
+    set_target_properties(hdf5::hdf5_cpp PROPERTIES
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_cpp${CMAKE_STATIC_LIBRARY_SUFFIX}
+            INTERFACE_LINK_LIBRARIES hdf5::hdf5
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
-    set_target_properties(hdf5::hdf5_hl_cpp-static PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl_cpp-static${CMAKE_STATIC_LIBRARY_SUFFIX}
-            INTERFACE_LINK_LIBRARIES "hdf5::hdf5_hl-static;hdf5::hdf5-static"
+    set_target_properties(hdf5::hdf5_hl_cpp PROPERTIES
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl_cpp${CMAKE_STATIC_LIBRARY_SUFFIX}
+            INTERFACE_LINK_LIBRARIES "hdf5::hdf5_hl;hdf5::hdf5"
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
 
-    add_dependencies(hdf5::hdf5-static          library_HDF5)
-    add_dependencies(hdf5::hdf5_hl-static       library_HDF5)
-    add_dependencies(hdf5::hdf5_cpp-static      library_HDF5)
-    add_dependencies(hdf5::hdf5_hl_cpp-static   library_HDF5)
+    add_dependencies(hdf5::hdf5          library_HDF5)
+    add_dependencies(hdf5::hdf5_hl       library_HDF5)
+    add_dependencies(hdf5::hdf5_cpp      library_HDF5)
+    add_dependencies(hdf5::hdf5_hl_cpp   library_HDF5)
 
-    target_link_libraries(${PROJECT_NAME} hdf5::hdf5-static)
-    target_link_libraries(${PROJECT_NAME} hdf5::hdf5_hl-static)
-    target_link_libraries(${PROJECT_NAME} hdf5::hdf5_cpp-static)
-    target_link_libraries(${PROJECT_NAME} hdf5::hdf5_hl_cpp-static)
+    target_link_libraries(${PROJECT_NAME} hdf5::hdf5)
+    target_link_libraries(${PROJECT_NAME} hdf5::hdf5_hl)
+    target_link_libraries(${PROJECT_NAME} hdf5::hdf5_cpp)
+    target_link_libraries(${PROJECT_NAME} hdf5::hdf5_hl_cpp)
     target_link_libraries(${PROJECT_NAME} -ldl)
     target_include_directories(${PROJECT_NAME} PRIVATE ${INSTALL_DIR}/include)
     #For convenience, define these variables
-    get_target_property(HDF5_LIBRARIES          hdf5::hdf5-static        IMPORTED_LOCATION)
-    get_target_property(HDF5_HL_LIBRARIES       hdf5::hdf5_hl-static     IMPORTED_LOCATION)
-    get_target_property(HDF5_CXX_LIBRARIES      hdf5::hdf5_cpp-static    IMPORTED_LOCATION)
-    get_target_property(HDF5_CXX_HL_LIBRARIES   hdf5::hdf5_hl_cpp-static IMPORTED_LOCATION)
+    get_target_property(HDF5_LIBRARIES          hdf5::hdf5        IMPORTED_LOCATION)
+    get_target_property(HDF5_HL_LIBRARIES       hdf5::hdf5_hl     IMPORTED_LOCATION)
+    get_target_property(HDF5_CXX_LIBRARIES      hdf5::hdf5_cpp    IMPORTED_LOCATION)
+    get_target_property(HDF5_CXX_HL_LIBRARIES   hdf5::hdf5_hl_cpp IMPORTED_LOCATION)
 endif()
 
 

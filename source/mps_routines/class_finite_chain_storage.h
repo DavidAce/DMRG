@@ -64,7 +64,7 @@ private:
     std::shared_ptr<class_superblock> superblock;
     std::shared_ptr<class_hdf5_file>  hdf5;
 public:
-    int max_length = 0;                                             /*!< The maximum length of the chain */
+    unsigned long max_length = 0;                                             /*!< The maximum length of the chain */
 //    int current_length = 0;
 //    int position_L;                                                 /*!< The current position of \f$\Gamma^A\f$ w.r.t the full chain. */
 //    int position_R;                                                 /*!< The current position of \f$\Gamma^B\f$ w.r.t the full chain. */

@@ -36,7 +36,7 @@ class class_environment{
 public:
     using Scalar = std::complex<double>;
     std::string side;
-    int size;                                       /*!< Number of particles that have been contracted into this left environment. */
+    unsigned long size;                                       /*!< Number of particles that have been contracted into this left environment. */
     Textra::Tensor<Scalar,3> block;                 /*!< The environment block. */
     explicit class_environment(std::string side_):side(std::move(side_)){
         size = 0;
@@ -64,7 +64,7 @@ public:
 class class_environment_var{
 public:
     using Scalar = std::complex<double>;
-    int size;                                       /*!< Number of particles that have been contracted into this left environment. */
+    unsigned long size;                                       /*!< Number of particles that have been contracted into this left environment. */
     std::string side;
 
     Textra::Tensor<Scalar,4> block;                         /*!< The environment block. */
