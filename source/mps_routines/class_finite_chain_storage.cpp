@@ -224,7 +224,7 @@ int class_finite_chain_storage::move(int &direction, int &sweep){
     }
 
     //Check if the middle is passed
-    if(direction == 1 && (int)MPS_L.size() == max_length/2  -1){
+    if(direction == 1 && MPS_L.size() == max_length/2ul  - 1ul){
         sweep++;
     }
     return (int)MPS_L.size();
