@@ -39,7 +39,7 @@ else()
 
     include(ExternalProject)
     ExternalProject_Add(library_HDF5
-            URL      https://fossies.org/linux/misc/hdf5-1.10.1.tar.bz2
+            URL      https://www.hdfgroup.org/package/source-bzip2-2/?wpdmdl=11811
             PREFIX              "${INSTALL_DIRECTORY}/hdf5"
             UPDATE_DISCONNECTED 1
             TEST_COMMAND ""

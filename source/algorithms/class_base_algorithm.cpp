@@ -389,6 +389,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
     }
 
     position = enlarge_environment();
+    swap();
 }
 
 

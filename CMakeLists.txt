@@ -5,14 +5,6 @@ project(DMRG++)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-################################################################
-### Use cotire (compile time reducer) to speed up compile    ###
-################################################################
-#include(cotire)
-#set_property(DIRECTORY PROPERTY COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY")
-
-
-
 
 ################################################################
 ### Get git version number                                   ###
@@ -21,11 +13,19 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
 ### Gives a namespace GIT:: with several git version numbers.###
 ################################################################
 include(cmake_modules/gitversion.cmake)
+
+
+##################################################################
+### Define variables for directory paths accessible at runtime ###
+##################################################################
 include(cmake_modules/directory.cmake)
+
+
+
+
 
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
-#-lmkl_gf_lp64 -lmkl_core -lmkl_sequential -lpthread   -m64 -lm -lgfortran
 
 
 ###################
@@ -36,7 +36,7 @@ set(DEBUG_OPTIONS       -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3 -mavx -mfma)
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    set(COMMON_OPTIONS ${COMMON_OPTIONS}  -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare)
+    set(COMMON_OPTIONS ${COMMON_OPTIONS} -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     set(COMMON_OPTIONS ${COMMON_OPTIONS}   -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
 endif()
@@ -98,10 +98,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE source)
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
 include(cmake_modules/FindGFortran.cmake)    ### For Fortran library
 
+
+
 ###########################################
-###  Find or install all dependencies   ###
+###  Find or fetch all dependencies   ###
 ###########################################
-include(cmake_modules/Find_dont_install_INTELMKL.cmake)         ### For Intel MKL library. Note that it conflicts with arpack++
+include(cmake_modules/Find_dont_install_INTELMKL.cmake)    # If MKL is not found openblas will be used instead.
 include(cmake_modules/Fetch_OpenBLAS.cmake)
 include(cmake_modules/Fetch_Eigen3.cmake)
 include(cmake_modules/Fetch_HDF5.cmake)
@@ -127,6 +129,9 @@ message("    INTEL MKL:   ${MKL_LIBRARIES}")
 message("=============================================================================")
 message("")
 
+
+
+
 ###################
 ### INFORMATION ###
 ###################
@@ -141,10 +146,6 @@ message("=======================================================================
 message("")
 
 
-#set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j6")
-#set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER TRUE)
-#set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_ADD_UNITY_BUILD TRUE)
-#cotire(${PROJECT_NAME})
 
 
 # To print all variables, use the code below:
