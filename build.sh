@@ -36,10 +36,11 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     fi
 
     echo "Checking if libstdc++ is available"
-    standard_library=$(brew ls gcc | grep -e '/[0-9]/lib/gcc/[0-9]/libstdc++.a' | head -n 1)
+    standard_library=$(brew ls gcc | grep -e '[0-9]/lib/gcc/[0-9]/libstdc++.a' | head -n 1)
     if [ -z "${standard_library}" ];then
-        echo "Please install standard library available in gcc first"
+        echo "Please install standard library available in gcc first."
         echo "  brew install gcc"
+        exit
     fi
 
     echo "Checking if clang is installed through brew..."
