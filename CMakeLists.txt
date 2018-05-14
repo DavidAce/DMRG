@@ -57,14 +57,20 @@ target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTION
 target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
 target_link_libraries  (${PROJECT_NAME} -flto -fopenmp)                                                      ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} -lstdc++fs)                                                 ### For experimental::filesystem
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_LIBRARY_PATH})
 #target_link_libraries  (${PROJECT_NAME} -lc++experimental)                                         ### For experimental::filesystem
+
+
 ######################################################
 ###  Require c++17 support and test that it works  ###
 ######################################################
 set_target_properties  (${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)                                         ### Demand c++17 compiler support
-INCLUDE(CheckIncludeFileCXX)
+include(CheckCXXCompilerFlag)
+set(CMAKE_REQUIRED_FLAGS "-lstdc++fs -std=c++17")
+check_cxx_compiler_flag("-std=c++17" _support_cxx_std_17)
+check_cxx_compiler_flag("-lstdc++fs" _support_lstdcxxfs)
+
+include(CheckIncludeFileCXX)
 check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -std=c++17)
 check_include_file_cxx(experimental/type_traits has_experimental_type_traits -std=c++17)
 if(has_experimental_filesystem AND has_experimental_type_traits)
@@ -80,6 +86,15 @@ else()
     endif()
 endif()
 
+
+
+#SET(CMAKE_REQUIRED_FLAGS "-Wl,--nonono-undefined")
+#CHECK_C_COMPILER_FLAG("" RESULT2)
+#IF(RESULT2)
+#    MESSAGE("Supported: -Wl,--nonono-undefined")
+#ELSE()
+#    MESSAGE("Not supported: -Wl,--nonono-undefined")
+#ENDIF()
 
 
 
