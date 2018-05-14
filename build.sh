@@ -27,17 +27,18 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
     fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "OS: Mac OSX"
-    echo "Checking that GCC is installed in homebrew: [brew ls gcc@7 | grep -q 'g++-7']"
-    if brew ls gcc@7 | grep -q 'g++-7'; then
-        echo "GCC-7 is installed"
-        export CC=gcc-7
-        export CXX=g++-7
-        export FC=gfortran-7
-        dcmake_c_compiler="-DCMAKE_C_COMPILER=gcc-7"
-        dcmake_cxx_compiler="-DCMAKE_CXX_COMPILER=g++-7"
-        dcmake_fortran_compiler="-DCMAKE_Fortran_COMPILER=gfortran-7"
+    echo "Checking that GCC is installed in homebrew: [brew ls gcc@8 | grep -q 'g++-8']"
+    if brew ls gcc@8 | grep -q 'g++-8'; then
+        echo "GCC-8 is installed"
+        export CC=gcc-8
+        export CXX=g++-8
+        export FC=gfortran-8
+        dcmake_c_compiler="-DCMAKE_C_COMPILER=gcc-8"
+        dcmake_cxx_compiler="-DCMAKE_CXX_COMPILER=g++-8"
+        dcmake_fortran_compiler="-DCMAKE_Fortran_COMPILER=gfortran-8"
     else
-        echo "Please install GCC (version 7) through homebrew"
+        echo "Please install gcc (version 8) through homebrew"
+        echo "  brew install gcc@8"
         exit
     fi
 else
