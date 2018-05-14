@@ -33,8 +33,12 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         c_compiler=$(brew ls gcc | grep -e '/bin/gcc-[0-9]' | head -n 1)
         cxx_compiler=$(brew ls gcc | grep  -e '/bin/g++-[0-9]' | head -n 1)
         fortran_compiler=$(brew ls gcc | grep -e '/bin/gfortran-[0-9]' | head -n 1)
-        versionnumber=$(cxx_compiler -dumpversion)
-        echo "GCC-${versionnumber} is installed"
+        versionnumber=$(${cxx_compiler} -dumpversion)
+        if ${versionnumber} < 7; then
+            echo "GCC version number: ${versionnumber} is too low."
+            exit
+        fi
+        echo "gcc-${versionnumber} is installed"
         export CC=${c_compiler}
         export CXX=${cxx_compiler}
         export FC=${fortran_compiler}
@@ -46,7 +50,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         c_compiler=$(brew ls llvm | grep -e '/bin/clang' | head -n 1)
         cxx_compiler=$(brew ls gcc | grep -e '/bin/clang++' | head -n 1)
         fortran_compiler=$(brew ls gcc | grep -e '/bin/gfortran-[0-9]' | head -n 1)
-        versionnumber=$(cxx_compiler -dumpversion)
+        versionnumber=$(${cxx_compiler} -dumpversion)
         if ${versionnumber} < 5; then
             echo "Clang version number: ${versionnumber} is too low."
             exit
