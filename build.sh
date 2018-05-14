@@ -28,13 +28,13 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
     fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "OS: Mac OSX"
-    echo "Checking if GCC installed in in brew..."
+    echo "Checking if gcc or clang is installed through brew..."
     if brew ls gcc | grep -q 'g++'; then
         c_compiler=$(brew ls gcc | grep -e '/bin/gcc-[0-9]' | head -n 1)
         cxx_compiler=$(brew ls gcc | grep  -e '/bin/g++-[0-9]' | head -n 1)
         fortran_compiler=$(brew ls gcc | grep -e '/bin/gfortran-[0-9]' | head -n 1)
         versionnumber=$(${cxx_compiler} -dumpversion)
-        if ${versionnumber} < 7; then
+        if "${versionnumber}" -lt "7"; then
             echo "GCC version number: ${versionnumber} is too low."
             exit
         fi
@@ -51,7 +51,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         cxx_compiler=$(brew ls gcc | grep -e '/bin/clang++' | head -n 1)
         fortran_compiler=$(brew ls gcc | grep -e '/bin/gfortran-[0-9]' | head -n 1)
         versionnumber=$(${cxx_compiler} -dumpversion)
-        if ${versionnumber} < 5; then
+        if "${versionnumber}" -lt "5"; then
             echo "Clang version number: ${versionnumber} is too low."
             exit
         fi
