@@ -17,7 +17,7 @@
 #)
 #string(STRIP "${HDF5_CXX_COMPILER_EXECUTABLE}" HDF5_CXX_COMPILER_EXECUTABLE)
 
-set(HDF5_USE_STATIC_LIBRARIES ON)
+set(HDF5_USE_SHARED_LIBRARIES OFF)
 set(HDF5_FIND_DEBUG ON)
 find_package(HDF5 COMPONENTS CXX HL)
 if(HDF5_FOUND AND HDF5_LIBRARIES AND HDF5_CXX_LIBRARIES AND HDF5_HL_LIBRARIES AND HDF5_CXX_HL_LIBRARIES)
@@ -39,13 +39,13 @@ else()
 
     include(ExternalProject)
     ExternalProject_Add(library_HDF5
-            URL      https://www.hdfgroup.org/package/source-bzip2-2/?wpdmdl=11811 # version 1.10.2
+            URL     https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.2/src/hdf5-1.10.2.tar.bz2 # version 1.10.2
             PREFIX              "${INSTALL_DIRECTORY}/hdf5"
             UPDATE_DISCONNECTED 1
             TEST_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DBUILD_SHARED_LIBS:BOOL=OFF
+            -DBUILD_SHARED_LIBS:BOOL=ON
             -DHDF5_ENABLE_PARALLEL=OFF
             -DALLOW_UNSUPPORTED=ON
             -DBUILD_TESTING:BOOL=OFF
@@ -59,29 +59,29 @@ else()
 
     ExternalProject_Get_Property(library_HDF5 INSTALL_DIR)
 
-    add_library(hdf5::hdf5           STATIC IMPORTED)
-    add_library(hdf5::hdf5_hl        STATIC IMPORTED)
-    add_library(hdf5::hdf5_cpp       STATIC IMPORTED)
-    add_library(hdf5::hdf5_hl_cpp    STATIC IMPORTED)
+    add_library(hdf5::hdf5           SHARED IMPORTED)
+    add_library(hdf5::hdf5_hl        SHARED IMPORTED)
+    add_library(hdf5::hdf5_cpp       SHARED IMPORTED)
+    add_library(hdf5::hdf5_hl_cpp    SHARED IMPORTED)
 
 
     set_target_properties(hdf5::hdf5 PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5${CMAKE_STATIC_LIBRARY_SUFFIX}
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5${CMAKE_SHARED_LIBRARY_SUFFIX}
             INTERFACE_LINK_LIBRARIES "m;dl;dl"
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
     set_target_properties(hdf5::hdf5_hl PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl${CMAKE_STATIC_LIBRARY_SUFFIX}
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl${CMAKE_SHARED_LIBRARY_SUFFIX}
             INTERFACE_LINK_LIBRARIES hdf5::hdf5
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
     set_target_properties(hdf5::hdf5_cpp PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_cpp${CMAKE_STATIC_LIBRARY_SUFFIX}
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_cpp${CMAKE_SHARED_LIBRARY_SUFFIX}
             INTERFACE_LINK_LIBRARIES hdf5::hdf5
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
     set_target_properties(hdf5::hdf5_hl_cpp PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl_cpp${CMAKE_STATIC_LIBRARY_SUFFIX}
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl_cpp${CMAKE_SHARED_LIBRARY_SUFFIX}
             INTERFACE_LINK_LIBRARIES "hdf5::hdf5_hl;hdf5::hdf5"
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
