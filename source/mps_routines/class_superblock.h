@@ -54,9 +54,7 @@ public:
     unsigned long    environment_size = 0;
 
     Textra::Tensor<Scalar, 4>
-    optimize_MPS(Textra::Tensor<Scalar, 4> &theta,
-                 int eigSteps,                          /*!< Maximum number of steps for eigenvalue solver. */
-                 double eigThreshold                    /*!< Minimum threshold for halting eigenvalue solver. */
+    optimize_MPS(Textra::Tensor<Scalar, 4> &theta
     )    __attribute((hot));                            /*!< Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using [Spectra](https://github.com/yixuan/spectra). */
 
 

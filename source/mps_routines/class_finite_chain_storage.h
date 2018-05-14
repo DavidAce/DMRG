@@ -68,7 +68,7 @@ public:
 //    int current_length = 0;
 //    int position_L;                                                 /*!< The current position of \f$\Gamma^A\f$ w.r.t the full chain. */
 //    int position_R;                                                 /*!< The current position of \f$\Gamma^B\f$ w.r.t the full chain. */
-    long current_length = 0;
+    unsigned long current_length = 0;
     bool max_length_is_set = false;
     bool superblock_is_set = false;
     bool hdf5_file_is_set  = false;

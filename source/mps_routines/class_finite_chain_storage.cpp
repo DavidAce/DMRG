@@ -41,8 +41,8 @@ void class_finite_chain_storage::set_hdf5_file(std::shared_ptr<class_hdf5_file> 
 }
 
 void class_finite_chain_storage::update_current_length() {
-    current_length = ENV_L.back().size + ENV_R.front().size + 2;
-    assert(current_length == superblock->environment_size + 2);
+    current_length = ENV_L.back().size + ENV_R.front().size + 2ul;
+    assert(current_length == superblock->environment_size + 2ul);
 }
 
 //int class_finite_chain_storage::insert_edges(){

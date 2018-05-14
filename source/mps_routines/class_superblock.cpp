@@ -48,7 +48,7 @@ class_superblock::class_superblock():
 
 
 
-Textra::Tensor<Scalar,4> class_superblock::optimize_MPS(Textra::Tensor<Scalar, 4> &theta, int eigSteps, double eigThreshold){
+Textra::Tensor<Scalar,4> class_superblock::optimize_MPS(Textra::Tensor<Scalar, 4> &theta){
     std::array<long,4> shape_theta4 = theta.dimensions();
     std::array<long,4> shape_mpo4   = HA->MPO.dimensions();
 
