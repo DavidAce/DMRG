@@ -55,7 +55,7 @@ public:
     long   chi_min      ;
     long   chi_num      ;
     bool   chi_grow     ;
-    int    max_length   ;
+    int   max_length   ;
     int    max_sweeps   ;
     int    print_freq   ;
     int    store_freq   ;

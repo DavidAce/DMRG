@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 project(DMRG++)
 
 
@@ -36,7 +36,7 @@ set(RELEASE_OPTIONS     -DNDEBUG -O3 -mavx -mfma)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     set(COMMON_OPTIONS ${COMMON_OPTIONS} -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(COMMON_OPTIONS ${COMMON_OPTIONS}   -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
+    set(COMMON_OPTIONS ${COMMON_OPTIONS} -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
 endif()
 message(STATUS "Default CXX flags:  ${COMMON_OPTIONS} ${CMAKE_CXX_FLAGS}")
 if (CMAKE_BUILD_TYPE STREQUAL "Release")

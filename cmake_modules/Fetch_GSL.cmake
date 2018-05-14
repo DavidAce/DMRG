@@ -6,6 +6,7 @@ if(GSL_FOUND)
     message(STATUS "GSL FOUND IN SYSTEM: ${GSL_LIBRARIES}")
 else()
     message(STATUS "GSL will be installed into ${INSTALL_DIRECTORY}/gsl on first build.")
+    enable_language(Fortran)
     include(ExternalProject)
     ExternalProject_Add(library_GSL
             URL      http://ftp.acc.umu.se/mirror/gnu.org/gnu/gsl/gsl-2.4.tar.gz

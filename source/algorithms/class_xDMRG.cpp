@@ -114,7 +114,7 @@ int class_xDMRG::initialize_random_chain() {
 
         print_status_update();
         position = env_storage_insert();
-        if (superblock->environment_size + 2< max_length) {
+        if (superblock->environment_size + 2ul < (unsigned long) max_length) {
             position = enlarge_environment();
             swap();
         } else {

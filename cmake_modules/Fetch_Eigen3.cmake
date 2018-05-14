@@ -39,5 +39,8 @@ if(BLAS_LIBRARIES)
     endif()
 endif()
 
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
+    target_compile_options (${PROJECT_NAME} PUBLIC -Wno-unused-but-set-variable)           ### Release build options
+endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${EIGEN3_INCLUDE_DIR})

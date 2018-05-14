@@ -441,7 +441,7 @@ int class_base_algorithm::env_storage_move(){
 
 void class_base_algorithm::print_status_update() {
     if (Math::mod(iteration, print_freq) != 0) {return;}
-    if ((position) != superblock->environment_size/2){return;}
+    if ((unsigned long)position != superblock->environment_size/2ul){return;}
     if (print_freq == 0) {return;}
 
     compute_observables();
