@@ -11,20 +11,21 @@
 #)
 
 #Try to find the compiler wrapper
-execute_process(
-        COMMAND  find /usr/bin -name h5c++ -print -quit
-        OUTPUT_VARIABLE HDF5_CXX_COMPILER_EXECUTABLE
-        RESULT_VARIABLE HDF5_success
-)
-if(NOT HDF5_success)
-    execute_process(
-            COMMAND  find /usr/ -name h5pfc -print -quit
-            OUTPUT_VARIABLE HDF5_CXX_COMPILER_EXECUTABLE
-            RESULT_VARIABLE HDF5_success
-    )
-endif()
-string(STRIP "${HDF5_CXX_COMPILER_EXECUTABLE}" HDF5_CXX_COMPILER_EXECUTABLE)
+#execute_process(
+#        COMMAND  find /usr/bin -name h5c++ -print -quit
+#        OUTPUT_VARIABLE HDF5_CXX_COMPILER_EXECUTABLE
+#        RESULT_VARIABLE HDF5_success
+#)
+#if(NOT HDF5_success)
+#    execute_process(
+#            COMMAND  find /usr/ -name h5pfc -print -quit
+#            OUTPUT_VARIABLE HDF5_CXX_COMPILER_EXECUTABLE
+#            RESULT_VARIABLE HDF5_success
+#    )
+#endif()
+#string(STRIP "${HDF5_CXX_COMPILER_EXECUTABLE}" HDF5_CXX_COMPILER_EXECUTABLE)
 
+find_file(HDF5_CXX_COMPILER_EXECUTABLE NAMES h5c++ h5pfc PATHS /usr/bin /usr/local/bin)
 
 
 set(HDF5_USE_STATIC_LIBRARIES ON)
@@ -86,22 +87,22 @@ else()
 
 
     set_target_properties(hdf5::hdf5 PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5${CMAKE_STATIC_LIBRARY_SUFFIX}
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5-static${CMAKE_STATIC_LIBRARY_SUFFIX}
             INTERFACE_LINK_LIBRARIES "m;dl;dl"
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
     set_target_properties(hdf5::hdf5_hl PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl${CMAKE_STATIC_LIBRARY_SUFFIX}
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl-static${CMAKE_STATIC_LIBRARY_SUFFIX}
             INTERFACE_LINK_LIBRARIES hdf5::hdf5
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
     set_target_properties(hdf5::hdf5_cpp PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_cpp${CMAKE_STATIC_LIBRARY_SUFFIX}
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_cpp-static${CMAKE_STATIC_LIBRARY_SUFFIX}
             INTERFACE_LINK_LIBRARIES hdf5::hdf5
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
     set_target_properties(hdf5::hdf5_hl_cpp PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl_cpp${CMAKE_STATIC_LIBRARY_SUFFIX}
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl_cpp-static${CMAKE_STATIC_LIBRARY_SUFFIX}
             INTERFACE_LINK_LIBRARIES "hdf5::hdf5_hl;hdf5::hdf5"
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
