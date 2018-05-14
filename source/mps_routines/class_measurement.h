@@ -65,8 +65,11 @@ private:
 
     double energy1   = 0; double energy2   = 0; double energy3   = 0; double energy4   = 0; double energy5   = 0; double energy6   = 0;
     double variance1 = 0; double variance2 = 0; double variance3 = 0; double variance4 = 0; double variance5 = 0; double variance6 = 0;
+
+    double norm_chain   = 0;
     double energy_chain = 0;
     double variance_chain = 0;
+
     double entanglement_entropy = 0;
     double truncation_error = 0;
     double parity = 0;
@@ -80,9 +83,9 @@ private:
     explicit class_measurement(std::shared_ptr<class_superblock> superblock_, std::shared_ptr<class_finite_chain_storage> env_storage_, SimulationType sim_);
     void   compute_all_observables_from_superblock();
     void   compute_all_observables_from_finite_chain();
+    double compute_finite_norm();
     double compute_finite_energy();
     double compute_finite_variance();
-
     double get_energy1();               /*! Computes the current energy.*/
     double get_energy2();               /*! Computes the current energy.*/
     double get_energy3();               /*! Computes the current energy.*/

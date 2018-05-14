@@ -89,6 +89,7 @@ void class_xDMRG::single_xDMRG_step(long chi_max) {
     t_svd.tic();
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, settings::precision::SVDThreshold);
     t_svd.toc();
+    measurement->is_measured = false;
     t_sim.toc();
 }
 

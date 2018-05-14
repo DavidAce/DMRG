@@ -198,6 +198,72 @@ double class_measurement::compute_finite_energy(){
 }
 
 
+double class_measurement::compute_finite_norm(){
+
+    auto mpsL  = std::begin(env_storage->MPS_L);
+    auto endL  = std::end(env_storage->MPS_L);
+
+    Eigen::Tensor<Scalar,1> &L = std::get<0>(*mpsL);
+    Eigen::Tensor<Scalar,3> &G = std::get<1>(*mpsL);
+
+
+    Eigen::Tensor<Scalar,2> chain = asDiagonal(L)
+            .contract(asDiagonal(L), idx({0},{1}))
+            .contract(G            , idx({1},{1}))
+            .contract(G.conjugate(), idx({0,1},{1,0}));
+
+    mpsL++;
+    while(mpsL != endL){
+        Eigen::Tensor<Scalar,1> &L = std::get<0>(*mpsL);
+        Eigen::Tensor<Scalar,3> &G = std::get<1>(*mpsL);
+
+
+        Eigen::Tensor<Scalar,2> temp = chain
+                .contract(asDiagonal(L), idx({0},{0}))
+                .contract(asDiagonal(L), idx({0},{0}))
+                .contract(G            , idx({0},{1}))
+                .contract(G.conjugate(), idx({0,1},{1,0}));
+
+        chain = temp;
+        mpsL++;
+    }
+    std::cout << "Chain: \n" << chain << std::endl;
+
+    //Contract the center point
+//    auto &LA = env_storage->LA;
+//    temp = L.contract(asDiagonal(LA) , idx({0},{0}))
+//            .contract(asDiagonal(LA) , idx({0},{0}))
+//            .shuffle(array3{1,2,0});
+//    L = temp;
+//
+//    //Contract the right half of the chain
+//    auto mpsR  = std::begin(env_storage->MPS_R);
+//    auto mpoR  = std::begin(env_storage->MPO_R);
+//    auto endR  = std::end  (env_storage->MPS_R);
+//    while(mpsR != endR){
+//        auto &GB      = std::get<0>(*mpsR);
+//        auto &LB      = std::get<1>(*mpsR);
+//        temp = L.contract(GB,            idx({0},{1}))
+//                .contract(GB.conjugate(),idx({0},{1}))
+//                .contract(mpoR->MPO,     idx({0,1,3},{0,2,3}))
+//                .contract(asDiagonal(LB),idx({0},{0}))
+//                .contract(asDiagonal(LB),idx({0},{0}))
+//                .shuffle(array3{1,2,0});
+//        L = temp;
+//        mpsR++;
+//        mpoR++;
+//    }
+//
+//
+//    Eigen::Tensor<Scalar,0> E_all_sites = L.contract(R, idx({0,1,2},{0,1,2}));
+//    std::cout << "E all sites: " << E_all_sites(0) << "  per site (" << env_storage->current_length << ") : " << std::real(E_all_sites(0))/env_storage->current_length << std::endl;
+//    energy_chain = std::real(E_all_sites(0));
+    return 1;
+}
+
+
+
+
 
 double class_measurement::get_energy1(){return energy1;};
 double class_measurement::get_energy2(){return energy2;};
