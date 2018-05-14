@@ -4,7 +4,7 @@
 
 find_file(HDF5_CXX_COMPILER_EXECUTABLE NAMES h5c++ h5cc h5fc h5pfc PATHS /usr/bin /usr/local/bin)
 set(HDF5_USE_STATIC_LIBRARIES ON)
-set(HDF5_FIND_DEBUG ON)
+set(HDF5_FIND_DEBUG OFF)
 find_package(HDF5 COMPONENTS C CXX HL)
 if(HDF5_LIBRARIES MATCHES "anaconda")
     message("Found anaconda version. Ignoring...")
