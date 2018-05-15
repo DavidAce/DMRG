@@ -7,50 +7,37 @@ endif()
 
 message(STATUS "SEARCHING FOR BLAS IN SYSTEM...")
 set(BLA_VENDOR Open)
-set(BLAS_VERBOSE ON)
-
+set(BLAS_VERBOSE OFF)
 find_package(BLAS)
-
 if(BLAS_FOUND)
     message(STATUS "BLAS FOUND IN SYSTEM: ${BLAS_openblas_LIBRARY}")
-#    message(STATUS "SEARCHING FOR LAPACK IN SYSTEM...")
-#    set(BLAS_DIR ${BLAS_openblas_LIBRARY}) # Let Lapack find the same BLAS implementation
-#    set(BLA_VENDOR OpenBLAS)        # BLA_VENDOR variable is different for this cmake module
-#    set(LAPACK_DIR ${BLAS_openblas_LIBRARY})
-#    find_package(LAPACK)
-#    if(LAPACK_FOUND)
-#        message(STATUS "LAPACK FOUND IN SYSTEM: ${LAPACK_openblas_LIBRARY}")
-
-#        set(BLAS_LOCATION ${BLAS_openblas_LIBRARY})
-#        set(LAPACK_LOCATION ${LAPACK_openblas_LIBRARY})
-#    endif()
-    get_cmake_property(_variableNames VARIABLES)
-    foreach (_variableName ${_variableNames})
-        if("${_variableName}" MATCHES "blas"  OR "${_variableName}" MATCHES "BLAS" OR "${_variableName}" MATCHES "LAPACK")
-            message(STATUS "${_variableName}=${${_variableName}}")
-        endif()
-    endforeach()
     include(CheckCXXCompilerFlag)
-#    check_cxx_compiler_flag(-lblas _support_lblas)
-    check_cxx_compiler_flag(-llapack _support_llapack)
     check_cxx_compiler_flag(-lopenblas _support_lopenblas)
-    add_library(blas INTERFACE)
-    add_library(lapack INTERFACE)
-    target_link_libraries(${PROJECT_NAME} -lopenblas)
-    target_link_libraries(${PROJECT_NAME} -llapack)
-    set_target_properties(blas PROPERTIES
-            INTERFACE_LINK_LIBRARIES "-lopenblas")
-    set_target_properties(lapack PROPERTIES
-            INTERFACE_LINK_LIBRARIES "-llapack -lopenblas")
+    check_cxx_compiler_flag(-llapack _support_llapack)
+    if(_support_lopenblas AND _support_llapack)
 
-    #For convenience, define these variables
-    set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
-    set(LAPACK_LIBRARIES   ${BLAS_openblas_LIBRARY})
-    return()
+
+        target_link_libraries(${PROJECT_NAME} openblas)
+        target_link_libraries(${PROJECT_NAME} lapack)
+        # Make dummy library blas and lapack pointing to openblas
+        add_library(blas INTERFACE)
+        add_library(lapack INTERFACE)
+        set_target_properties(blas PROPERTIES
+                INTERFACE_LINK_LIBRARIES "openblas")
+        set_target_properties(lapack PROPERTIES
+                INTERFACE_LINK_LIBRARIES "lapack;openblas")
+
+        #For convenience, define these variables
+        set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
+        set(LAPACK_LIBRARIES   ${BLAS_openblas_LIBRARY})
+        return()
+    else()
+        unset(BLAS_FOUND)
+    endif()
 endif()
 #exit (1)
 
-if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
+if(NOT BLAS_FOUND)
     message(STATUS "OpenBLAS will be installed into ${INSTALL_DIRECTORY}/OpenBLAS on first build.")
 
     enable_language(Fortran)
@@ -59,21 +46,6 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
             GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
             GIT_TAG             v0.2.20
             PREFIX              "${INSTALL_DIRECTORY}/OpenBLAS"
-#            UPDATE_COMMAND ""
-#            TEST_COMMAND ""
-#
-#            CMAKE_ARGS
-#            -j8
-#            -DBUILD_SHARED_LIBS=OFF
-#            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-#            -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
-#            -DCMAKE_C_FLAGS=-w
-#            -DCMAKE_CXX_FLAGS=-w
-#            -DCMAKE_FORTRAN_FLAGS=-w
-#            -DCMAKE_BUILD_TYPE=Release
-
-
-
             UPDATE_COMMAND ""
             TEST_COMMAND ""
             CONFIGURE_COMMAND ""
@@ -83,28 +55,23 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
             )
 
     ExternalProject_Get_Property(library_OpenBLAS INSTALL_DIR)
-
     set(BLAS_INCLUDE_DIRS ${INSTALL_DIR}/include)
-    set(BLAS_LOCATION ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(LAPACK_LOCATION ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
-    add_library(openblas UNKNOWN IMPORTED)
+    set(BLAS_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(LAPACK_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
+    add_library(blas UNKNOWN IMPORTED)
     add_library(lapack UNKNOWN IMPORTED)
-    add_dependencies(openblas library_OpenBLAS)
+    add_dependencies(blas library_OpenBLAS)
     add_dependencies(lapack library_OpenBLAS)
     set_target_properties(blas PROPERTIES
-            IMPORTED_LOCATION ${BLAS_LOCATION}
+            IMPORTED_LOCATION ${BLAS_LIBRARIES}
             INCLUDE_DIRECTORIES BLAS_INCLUDE_DIRS)
     set_target_properties(lapack PROPERTIES
-            IMPORTED_LOCATION ${LAPACK_LOCATION}
+            IMPORTED_LOCATION ${LAPACK_LIBRARIES}
             INCLUDE_DIRECTORIES BLAS_INCLUDE_DIRS)
 
     target_link_libraries(${PROJECT_NAME} blas)
     target_link_libraries(${PROJECT_NAME} lapack)
     target_include_directories(${PROJECT_NAME} PUBLIC ${BLAS_INCLUDE_DIRS})
-    #For convenience, define these variables
-    set(BLAS_LIBRARIES     ${BLAS_LOCATION})
-    set(LAPACK_LIBRARIES   ${LAPACK_LOCATION})
-
 endif()
 
 
