@@ -28,7 +28,20 @@ include(cmake_modules/directory.cmake)
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 set(COMMON_OPTIONS -g -Wall -march=native)
 set(DEBUG_OPTIONS       -Wextra -O0)
-set(RELEASE_OPTIONS     -DNDEBUG -O3 -mavx -mfma)
+set(RELEASE_OPTIONS     -DNDEBUG -O3)
+
+##########################
+### OS dependent flags ###
+##########################
+if(${CMAKE_HOST_APPLE})
+    list(APPEND COMMON_OPTIONS -mmacosx_min_version=10.13)
+else()
+    list(APPEND COMMON_OPTIONS -mavx -mfma)
+endif()
+
+################################
+### Compiler dependent flags ###
+################################
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     set(COMMON_OPTIONS ${COMMON_OPTIONS} -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
@@ -69,7 +82,6 @@ include(CheckCXXCompilerFlag)
 set(CMAKE_REQUIRED_FLAGS "-lstdc++fs -std=c++17")
 check_cxx_compiler_flag(-std=c++17 _support_cxx_std_17)
 check_cxx_compiler_flag(-lstdc++fs _support_lstdcxxfs)
-check_cxx_compiler_flag(-stdlib=libstdc++ _support_stdlib_libstdcxx)
 
 include(CheckIncludeFileCXX)
 check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -std=c++17)

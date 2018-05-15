@@ -13,7 +13,6 @@ if [[ "$@" == *"lean"* ]]
 then
     echo "Cleaning build"
 	rm -rf build
-	rm -rf cmake/download_scripts/tmp/
     exit 0
 fi
 
@@ -61,7 +60,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         echo "Please install gcc (version 7 or higher) through brew"
         echo "  brew install gcc"
 #        echo "  brew install llvm"
-        exit
+        exit 1
     fi
     export CC=${c_compiler}
     export CXX=${cxx_compiler}
@@ -71,7 +70,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     dcmake_fortran_compiler="-DCMAKE_Fortran_COMPILER=${fortran_compiler}"
 else
         echo "Could not identify OS"
-        exit
+        exit 1
 fi
 
 

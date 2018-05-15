@@ -73,57 +73,22 @@ The following software is required to build the project:
  #### Libraries
  
  - [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition (tested with version >= 3.3).
- - [Lapack](https://github.com/Reference-LAPACK/lapack) Required for Arpack. If you auto-install from source a Fortran compiler is required. Tested with GNU GFORTRAN version >= 4.
+ - [OpenBLAS](https://github.com/xianyi/OpenBLAS) Required for Arpack. If you auto-install from source a Fortran compiler is required. Tested with gfortran version >= 7.
  - [Arpack](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires LAPACK and BLAS libraries.
  - [Arpackpp](https://github.com/m-reuter/arpackpp) C++ frontend for ARPACK.
- - [Spectra](https://spectralib.org/) Another eigenvalue solver. Header only.
- - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file env_storage support (tested with version >= 1.8).
+ - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file env_storage support (tested with version >= 1.10).
  - [GSL](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
 
 ---
 
  
 ## Usage
-This code lacks an API or command-line parameters. As such, details of execution have to be
-set in source code, specifically one can edit model and simulation parameters in `source/n_model.h` and `source/n_settings.h`.
 
-The files `source/class_algorithm_launcher.cpp` and  `source/class_algorithm_launcher.h` contain routines for the infinite-DMRG,
-finite-DMRG and infinite-TEBD that can be called from `main.cpp`. The algorithms should ideally give similar 
-ground state energies, which is a good sanity check.
+The executable `./build/Release/DMRG++` can be run without input parameters. By default it will try to find `./input/input.cfg` the file
+where the simulation parameters are defined. You can modify these parameters, o create a new input file and pass its (full or relative) path as a command-line argument.
 
- ## Tensor index order convention.
- The tensor index order used here follows the convention:
- - physical indices first, from left to right or for MPO's, up to down.
- - other dimensions (like bond dimensions) next, from left to right.
-
- #### Example:
-Consider a rank-3 tensor `G` with dimensions `d`, `a` and `b`. In diagrammatic tensor notation this is:
-```
-                 	    [d]          0
-            G     =	[a]__|__[b] = 1__|__2
-```
-
-where after the second equality the index order is shown. In code this corresponds to
-
-```
- Textra::Tensor3d G(d,a,b);
-```
-
-Similarly, we have for a rank-4 tensor `Theta`:
-
-```
-                                    [d] [d]                0   1
-                Theta   =   [chiL]___|___|___[chiR] = 2 ___|___|___ 3
-```
-
-which in code reads
-
-```
- Textra::Tensor4d G(d,d,chiL,chiR);
-```
-
-For more information about tensors see the documentation for the [Eigen Tensor Module](https://bitbucket.org/eigen/eigen/src/e8005fc30c6956e3f413a8d7aa2dd6395f330ffe/unsupported/Eigen/CXX11/src/Tensor/README.md?at=default&fileviewer=file-view-default).
-
+The script `Data_analysis/data_analysis.py` can be used to analyze the simulation data, which is in hdf5 binary format. You can install
+`h5py` from pip or conda to open such files.
 
 ## License
 Open source under [MPL2](https://www.mozilla.org/MPL/2.0/).
