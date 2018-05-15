@@ -25,6 +25,15 @@ if(HDF5_FOUND AND HDF5_LIBRARIES AND HDF5_CXX_LIBRARIES AND HDF5_HL_LIBRARIES AN
     message(STATUS "   HDF5 LIBRARIES  : ${HDF5_LIBRARIES}")
     message(STATUS "   HDF5 LDFLAGS    : ${HDF5_LDFLAGS}")
 
+
+
+    # To print all variables, use the code below:
+    #
+    get_cmake_property(_variableNames VARIABLES)
+    foreach (_variableName ${_variableNames})
+        message(STATUS "${_variableName}=${${_variableName}}")
+    endforeach()
+
     target_include_directories(${PROJECT_NAME} PRIVATE ${HDF5_INCLUDE_DIR})
     target_link_libraries(${PROJECT_NAME} ${HDF5_C_LIBRARIES} ${HDF5_C_HL_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES} -ldl)
     target_link_libraries(${PROJECT_NAME} ${HDF5_LDFLAGS})
