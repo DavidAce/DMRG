@@ -34,7 +34,7 @@ set(RELEASE_OPTIONS     -DNDEBUG -O3)
 ### OS dependent flags ###
 ##########################
 if(${CMAKE_HOST_APPLE})
-    list(APPEND COMMON_OPTIONS -mmacosx_min_version=10.13)
+    list(APPEND COMMON_OPTIONS -mmacosx_version_min=10.13)
 else()
     list(APPEND COMMON_OPTIONS -mavx -mfma)
 endif()
@@ -47,11 +47,11 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     set(COMMON_OPTIONS ${COMMON_OPTIONS} -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
 endif()
-message(STATUS "Default CXX flags:  ${COMMON_OPTIONS} ${CMAKE_CXX_FLAGS}")
+message(STATUS "COMMON CXX flags:  ${COMMON_OPTIONS} ${CMAKE_CXX_FLAGS}")
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    message(STATUS "Additional Release flags: ${RELEASE_OPTIONS}")
+    message(STATUS "RELEASE flags: ${RELEASE_OPTIONS}")
 else()
-    message(STATUS "Additional Debug flags: ${DEBUG_OPTIONS}")
+    message(STATUS "DEBUG flags: ${DEBUG_OPTIONS}")
 endif()
 
 
