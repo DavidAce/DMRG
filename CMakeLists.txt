@@ -34,7 +34,7 @@ set(RELEASE_OPTIONS     -DNDEBUG -O3)
 ### OS dependent flags ###
 ##########################
 if(${CMAKE_HOST_APPLE})
-    list(APPEND COMMON_OPTIONS -mmacosx_version_min=10.13)
+    list(APPEND COMMON_OPTIONS -mmacosx-version-min=10.13)
 else()
     list(APPEND COMMON_OPTIONS -mavx -mfma)
 endif()
