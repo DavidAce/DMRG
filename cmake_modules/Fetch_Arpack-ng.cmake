@@ -47,6 +47,8 @@ else()
     add_dependencies(arpack library_ARPACK)
 
     target_link_libraries(${PROJECT_NAME} arpack)
+    target_link_libraries(${PROJECT_NAME} blas)
+    target_link_libraries(${PROJECT_NAME} lapack)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
     #For convenience, define these variables
     get_target_property(ARPACK_LIBRARIES arpack IMPORTED_LOCATION)
