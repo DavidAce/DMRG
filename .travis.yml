@@ -87,7 +87,7 @@ matrix:
         - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install gcc   ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew cask uninstall oclint ; brew install gcc;   ; fi
   - eval "${MATRIX_EVAL}"
 
 script:
