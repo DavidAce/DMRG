@@ -97,7 +97,12 @@ matrix:
             - gfortran-7
             - libhdf5-dev
             - libhdf5-serial-dev
-            -
+            - hdf5-helpers
+            - hdf5-tools
+            - libgsl0-dev
+            - libopenblas-dev
+            - libarpack2-dev
+
 
     - os: osx
       osx_image: xcode9.3
