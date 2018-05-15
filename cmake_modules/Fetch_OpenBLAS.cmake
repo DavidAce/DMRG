@@ -4,6 +4,7 @@ if(MKL_FOUND)
     return()
 endif()
 
+
 message(STATUS "SEARCHING FOR BLAS IN SYSTEM...")
 set(BLA_VENDOR Open)
 set(BLAS_VERBOSE ON)
@@ -15,6 +16,7 @@ if(BLAS_FOUND)
     message(STATUS "SEARCHING FOR LAPACK IN SYSTEM...")
     set(BLAS_DIR ${BLAS_openblas_LIBRARY}) # Let Lapack find the same BLAS implementation
     set(BLA_VENDOR OpenBLAS)        # BLA_VENDOR variable is different for this cmake module
+    set(LAPACK_DIR ${BLAS_openblas_LIBRARY})
     find_package(LAPACK)
     if(LAPACK_FOUND)
         message(STATUS "LAPACK FOUND IN SYSTEM: ${LAPACK_openblas_LIBRARY}")
@@ -29,6 +31,11 @@ if(BLAS_FOUND)
             message(STATUS "${_variableName}=${${_variableName}}")
         endif()
     endforeach()
+    include(CheckCXXCompilerFlag)
+    check_cxx_compiler_flag(-lblas _support_lblas)
+    check_cxx_compiler_flag(-llapack _support_llapack)
+    check_cxx_compiler_flag(-lopenblas _support_lopenblas)
+
 endif()
 #exit (1)
 
@@ -69,9 +76,9 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
     set(BLAS_INCLUDE_DIRS ${INSTALL_DIR}/include)
     set(BLAS_LOCATION ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
     set(LAPACK_LOCATION ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
-    add_library(blas UNKNOWN IMPORTED)
+    add_library(openblas UNKNOWN IMPORTED)
     add_library(lapack UNKNOWN IMPORTED)
-    add_dependencies(blas library_OpenBLAS)
+    add_dependencies(openblas library_OpenBLAS)
     add_dependencies(lapack library_OpenBLAS)
 
 endif()
@@ -83,9 +90,10 @@ set_target_properties(blas PROPERTIES
 set_target_properties(lapack PROPERTIES
         IMPORTED_LOCATION ${LAPACK_LOCATION}
         INCLUDE_DIRECTORIES BLAS_INCLUDE_DIRS)
-target_link_libraries(${PROJECT_NAME} blas -lpthread)
+
+target_link_libraries(${PROJECT_NAME} openblas)
 target_link_libraries(${PROJECT_NAME} lapack)
 target_include_directories(${PROJECT_NAME} PUBLIC ${BLAS_INCLUDE_DIRS})
 #For convenience, define these variables
-get_target_property(BLAS_LIBRARIES blas IMPORTED_LOCATION)
-get_target_property(LAPACK_LIBRARIES lapack IMPORTED_LOCATION)
+set(BLAS_LIBRARIES     ${BLAS_LOCATION})
+set(LAPACK_LIBRARIES   ${LAPACK_LOCATION})
