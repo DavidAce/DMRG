@@ -46,7 +46,7 @@ Simply launch the script `.\build.sh` found in the root folder. If you are feeli
         make
 ```
 
-The CMakeLists.txt script lets CMake to check for dependencies and download them automatically if needed (see *Optional Requirements* below).
+The CMakeLists.txt script lets CMake check for dependencies and download them automatically if needed (see *Optional Requirements* below).
 If the dependencies are found, the project is built and an executable is generated.
 
 To run the executable, launch `.\run.sh`, containing
@@ -72,8 +72,7 @@ The following software is required to build the project:
  
 **Ubuntu** 17 or higher will have the versions required in the default repositories. For older distributions, use the ppa `ubuntu-toolchain-r/test` to get newer versions.
 
-**Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with `brew install gcc`. Clang from llvm 6.0 might work but you will have to link to GNU's `libstdc++.so` or `libstdc++.a` manually.
- AppleClang family of compilers are not supported at all. 
+**Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with `brew install gcc`. Clang from llvm 6.0 might work but you will have to link to GNU's `libstdc++.so` or `libstdc++.a` manually. The AppleClang compiler is not supported at all. 
 
 
 ### Optional Requirements
@@ -84,7 +83,7 @@ The compilation of DMRG++ requires several libraries. To meet the requirements, 
  
  The latter is recommended to avoid a lengthy compilation of these rather large libraries. If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from your package manager.
  
- #### Libraries
+ #### List of libraries
  
  - **BLAS** and **LAPACK**. Required for Arpack. You can choose either [Intel MKL](https://software.intel.com/en-us/mkl) or [OpenBLAS](https://github.com/xianyi/OpenBLAS) (OpenBLAS requires Fortran to compile from source). If both MKL and OpenBLAS are found in the system, MKL is preferred.
  - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).

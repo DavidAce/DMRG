@@ -50,7 +50,7 @@ Simply launch the script `.\build.sh` found in the root folder. If you are feeli
 ```
 
 
-The CMakeLists.txt script lets CMake to check for dependencies and download them automatically if needed (see *Optional Requirements* below).
+The CMakeLists.txt script lets CMake check for dependencies and download them automatically if needed (see *Optional Requirements* below).
 If the dependencies are found, the project is built and an executable is generated.
 
 To run the executable, launch `.\run.sh`, containing
@@ -88,7 +88,7 @@ The compilation of DMRG++ requires several libraries. To meet the requirements, 
 
  The latter is recommended to avoid a lengthy compilation of these rather large libraries. If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from your package manager.
 
- #### Libraries
+ #### List of libraries
 
  - **BLAS** and **LAPACK**. Required for Arpack. You can choose either [Intel MKL](https://software.intel.com/en-us/mkl) or [OpenBLAS](https://github.com/xianyi/OpenBLAS) (OpenBLAS requires Fortran to compile from source). If both MKL and OpenBLAS are found in the system, MKL is preferred.
  - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
