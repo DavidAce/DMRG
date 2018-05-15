@@ -34,6 +34,7 @@ else()
 #            -DICB=OFF
             -DBLAS_LIBRARIES:PATH=${BLAS_LIBRARIES}
             -DLAPACK_LIBRARIES:PATH=${LAPACK_LIBRARIES}
+            -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
             DEPENDS blas lapack
             )
 
