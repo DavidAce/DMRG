@@ -16,9 +16,9 @@
 
   This algorithm constructs and minimizes trial wave functions, in the shape of [Matrix Product States](https://en.wikipedia.org/wiki/Matrix_product_state) (MPS), iteratively in order to find the ground state of one-dimensional quantum systems with high precision.
 
-  This implementation loosely follows the steps outlined in:
+  This implementation is inspired by the notation and steps in these articles:
 
-  > [Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study.](https://arxiv.org/abs/1212.6255)<br>
+  > [Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study](https://arxiv.org/abs/1212.6255)<br>
   > by Kjäll, Zaletel, Mong, Bardarson, and Pollmann. Physical Review B 87 (23): 235106. <br>
 
   > [Efficient Numerical Simulations Using Matrix-Product States](http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf)<br>
@@ -27,25 +27,33 @@
   > [The density-matrix renormalization group in the age of matrix product states](https://arxiv.org/abs/1008.3477)<br>
   > by Ulrich Schollwöck. <br>
 
+  > [The iTEBD algorithm beyond unitary evolution](https://doi.org/10.1103/PhysRevB.78.155117)<br>
+  > by Orus & Vidal. Arxiv, 070201 <br>
+
+  > [Infinite size density matrix renormalization group, revisited](http://arxiv.org/abs/0804.2509)<br>
+  > by McCulloch <br>
+
+
 
 ---
 \section installation Installation
 \subsection quickstart Quick start
 Git clone or copy & extract the project into a folder of your choosing.
-**Make sure there are no spaces in the path!**.
+**Make sure there are no spaces in the output_folder!**.
 The project can be built with a single command from a unix terminal.
-Simply launch the script `.\build.sh` found in the root folder, or run
-
+Simply launch the script `.\build.sh` found in the root folder. If you are feeling lucky, try
 ```
         cmake -E make_directory build/Release
         cd build/Release
         cmake -Bbuild/Release --build build -config Release ../../
         make
 ```
-This will create subdirectories and use CMake to check for dependencies and download them automatically if needed (see *Optional Requirements* below).
+
+The CMakeLists.txt script lets CMake to check for dependencies and download them automatically if needed (see *Optional Requirements* below).
 If the dependencies are found, the project is built and an executable is generated.
 
-To run executable, launch `.\run.sh`, containing
+To run the executable, launch `.\run.sh`, containing
+To clean cmake-related files (except for libraries) run the build script with argument: `./build.sh clean`, or just remove the `build/` folder.
 
 ```
 #!/bin/sh
@@ -53,54 +61,56 @@ To run executable, launch `.\run.sh`, containing
 ```
 
 
-**Alternatively** some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This
-is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.com/clion/download) or [Visual Studio Code](https://code.visualstudio.com/) with C++ and CMake Tools extensions.
+**Alternatively**, if you intend to develop or study the source code, some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This
+is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.com/clion/download) or [Visual Studio Code](https://code.visualstudio.com/) with the C++ and CMake Tools extensions.
 
 
 \subsection minreqs Minimum Requirements
 The following software is required to build the project:
- - C++ compiler with support for c++17 standard. Tested with
-    - GNU GCC version >= 7
-    - Clang version >= 5.0).
- - Fortran compiler. Tested with GNU GFORTRAN version >= 7.
- - CMake version >= 3.7
+ - C++ compiler with support for c++17 standard and libstdc++ standard library implementation  (version >= 7). Tested with two compilers:
+    - GNU GCC versions 7 and 8 (these bundle libstdc++)
+    - Clang version >= 5.0. (you need to manually install libstdc++ version >= 7, that comes bundled with gcc, for instance from `ppa:ubuntu-toolchain-r/test`)
+ - CMake version >= 3.9. If you compile CMake from source, remember to enable `curl` (`./bootstrap --system-curl`).
+ - *(For library compilation only) Fortran compiler, tested with gfortran-7 and gfortran-8.*
+
+**Ubuntu** 17 or higher will have the versions required in the default repositories. For older distributions, use the ppa `ubuntu-toolchain-r/test` to get newer versions.
+
+**Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with `brew install gcc`. Clang from llvm 6.0 might work but you will have to link to GNU's `libstdc++.so` or `libstdc++.a` manually.
+ AppleClang family of compilers are not supported at all.
+
 
 \subsection optionalreqs Optional Requirements
- You can chose to **either**
-  - let the build script compile the libraries below from source into `libs/`. This will happen automatically if the library is not found on your system. Note that this does *NOT* make a system-wide install, so you can safely delete the `libs/` folder.
-  - (*recommended*) install the libraries yourself with your favorite package manager (e.g. `apt` in ubuntu or `brew` in OSX). The build script will always attempt to find the libraries in your system.
+The compilation of DMRG++ requires several libraries. To meet the requirements, you have two options:
 
- The latter is recommended to avoid a lengthy compilation of these rather large libraries.
+  1. **Automatic**: let cmake download and compile the libraries below from source into a local folder `libs/`. This is the default behavior if the library is not found on your system. Note that this does *NOT* make a system-wide install, so you can safely delete the `libs/` folder.
+  2. **Manual**: install the libraries yourself with your favorite package manager (e.g. `apt` in ubuntu or `brew` in OSX). The build script will always attempt to find the libraries in your system first.
+
+ The latter is recommended to avoid a lengthy compilation of these rather large libraries. If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from your package manager.
 
  #### Libraries
 
- - [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition (tested with version >= 3.3).
- - [Arpack](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires Lapack and blas API.
- - [Arpackpp](https://github.com/m-reuter/arpackpp) C++ frontend for arpack.
- - [Spectra](https://spectralib.org/) Another eigenvalue solver. Header only.
- - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file storage support (tested with version >= 1.8).
- - [GSL](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
-
- If the software above is not found in your system, the first run of `./build.sh` will download and
- install it for you into a folder `libs/` in the root of this project.
-
+ - **BLAS** and **LAPACK**. Required for Arpack. You can choose either [Intel MKL](https://software.intel.com/en-us/mkl) or [OpenBLAS](https://github.com/xianyi/OpenBLAS) (OpenBLAS requires Fortran to compile from source). If both MKL and OpenBLAS are found in the system, MKL is preferred.
+ - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
+ - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
+ - [**Arpackpp**](https://github.com/m-reuter/arpackpp) c++ frontend for Arpack.
+ - [**HDF5**](https://support.hdfgroup.org/HDF5/) for hdf5 binary output file support (tested with version >= 1.10).
+ - [**GSL**](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
 
 ---
 
 
 
-  \section usage Usage
-  This code lacks an API or command-line parameters. As such, details of execution have to be
-  set in source code, specifically one can edit model and simulation parameters in `source/n_model.h` and `source/n_settings.h`.
+\section usage Usage
+The executable `build/Release/DMRG++` can be run without input parameters. By default it will try to find `input/input.cfg` the file
+where the simulation parameters are defined. You can modify these parameters, o create a new input file and pass its (full or relative) path as a command-line argument.
 
-  The files `source/class_algorithms.cpp` and  `source/class_algorithms.h` contain routines for the infinite-DMRG,
-  finite-DMRG and infinite-TEBD that can be called from `main.cpp`. The algorithms should ideally give similar
-  ground state energies, which is a good sanity check.
+The script `Data_analysis/data_analysis.py` can be used to analyze the simulation data, which is in hdf5 binary format. You can install
+`h5py` from pip or conda to open such files.
 
- \section notation Notation
+\section notation Notation
 
- The *Vidal canonical form*, i.e. \f$\Gamma\Lambda\Gamma\Lambda\f$"..., is used throughout this code.
- In code we denote
+The *Vidal canonical form*, i.e. \f$\Gamma\Lambda\Gamma\Lambda\f$"..., is used throughout this code.
+In code we denote
 
  - \f$\Gamma \rightarrow\f$ `G`.
  - \f$\Lambda \rightarrow\f$ `L`.
@@ -110,8 +120,8 @@ The following software is required to build the project:
  - physical indices first, from left to right or for MPO's, up to down.
  - other dimensions (like bond dimensions) next, from left to right.
 
- \subsubsection example Example:
- Consider for some position \f$n\f$ on the chain \f$\Gamma = \Gamma^{\sigma_n}_{a,b}\f$.
+\subsubsection example Example:
+Consider for some position \f$n\f$ on the chain \f$\Gamma = \Gamma^{\sigma_n}_{a,b}\f$.
 Here \f$\sigma_n \in [-1,1]\f$ is a particle with local (physical) dimension \f$d\f$ = 2, and \f$a,b\f$ are the remaining dimensions, in practice they are
 bond dimensions of \f$\Lambda^{n-1}\f$ and \f$\Lambda^{n}\f$, respectively, which can be numbers \f$\in [1,\chi]\f$.
 

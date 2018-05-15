@@ -11,9 +11,9 @@
 
   This algorithm constructs and minimizes trial wave functions, in the shape of [Matrix Product States](https://en.wikipedia.org/wiki/Matrix_product_state) (MPS), iteratively in order to find the ground state of one-dimensional quantum systems with high precision.
 
-  This implementation loosely follows the Iter outlined in:
+  This implementation is inspired by the notation and steps in these articles:
 
-  > [Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study.](https://arxiv.org/abs/1212.6255)<br>
+  > [Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study](https://arxiv.org/abs/1212.6255)<br>
   > by Kjäll, Zaletel, Mong, Bardarson, and Pollmann. Physical Review B 87 (23): 235106. <br>
 
   > [Efficient Numerical Simulations Using Matrix-Product States](http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf)<br>
@@ -21,6 +21,15 @@
 
   > [The density-matrix renormalization group in the age of matrix product states](https://arxiv.org/abs/1008.3477)<br>
   > by Ulrich Schollwöck. <br>
+  
+  > [The iTEBD algorithm beyond unitary evolution](https://doi.org/10.1103/PhysRevB.78.155117)<br>
+  > by Orus & Vidal. Arxiv, 070201 <br>
+
+  > [Infinite size density matrix renormalization group, revisited](http://arxiv.org/abs/0804.2509)<br>
+  > by McCulloch <br>
+
+
+
 
 
 ---
@@ -36,10 +45,12 @@ Simply launch the script `.\build.sh` found in the root folder. If you are feeli
         cmake -Bbuild/Release --build build -config Release ../../
         make
 ```
-The build script will create subdirectories and use CMake to check for dependencies and download them automatically if needed (see *Optional Requirements* below).
+
+The CMakeLists.txt script lets CMake to check for dependencies and download them automatically if needed (see *Optional Requirements* below).
 If the dependencies are found, the project is built and an executable is generated.
 
-To run executable, launch `.\run.sh`, containing
+To run the executable, launch `.\run.sh`, containing
+To clean cmake-related files (except for libraries) run the build script with argument: `./build.sh clean`, or just remove the `build/` folder.
 
 ```
 #!/bin/sh 
@@ -47,44 +58,47 @@ To run executable, launch `.\run.sh`, containing
 ```
 
 
-**Alternatively** some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This
-is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.com/clion/download) or [Visual Studio Code](https://code.visualstudio.com/) with C++ and CMake Tools extensions.
+**Alternatively**, if you intend to develop or study the source code, some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This
+is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.com/clion/download) or [Visual Studio Code](https://code.visualstudio.com/) with the C++ and CMake Tools extensions.
 
 
 ### Minimum Requirements
 The following software is required to build the project:
- - C++ compiler with support for c++17 standard and libstdc++ standard library implementation  (version >= 7). Tested with both
-    - GNU GCC versions 7 and 8 (come with libstdc++ already)
+ - C++ compiler with support for c++17 standard and libstdc++ standard library implementation  (version >= 7). Tested with two compilers:
+    - GNU GCC versions 7 and 8 (these bundle libstdc++)
     - Clang version >= 5.0. (you need to manually install libstdc++ version >= 7, that comes bundled with gcc, for instance from `ppa:ubuntu-toolchain-r/test`)
- - CMake version >= 3.10. If you compile CMake from source, remember to enable `curl` (`./bootstrap --system-curl`). 
+ - CMake version >= 3.9. If you compile CMake from source, remember to enable `curl` (`./bootstrap --system-curl`). 
+ - *(For library compilation only) Fortran compiler, tested with gfortran-7 and gfortran-8.*
  
 **Ubuntu** 17 or higher will have the versions required in the default repositories. For older distributions, use the ppa `ubuntu-toolchain-r/test` to get newer versions.
 
-**Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with `brew install gcc`. Clang and AppleClang compilers are not supported on OSX. 
+**Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with `brew install gcc`. Clang from llvm 6.0 might work but you will have to link to GNU's `libstdc++.so` or `libstdc++.a` manually.
+ AppleClang family of compilers are not supported at all. 
 
 
 ### Optional Requirements
- You can chose to **either** 
-  - let the build script compile the libraries below from source into `libs/`. This will happen automatically if the library is not found on your system. Note that this does *NOT* make a system-wide install, so you can safely delete the `libs/` folder.
-  - (*recommended*) install the libraries yourself with your favorite package manager (e.g. `apt` in ubuntu or `brew` in OSX). The build script will always attempt to find the libraries in your system first.
+The compilation of DMRG++ requires several libraries. To meet the requirements, you have two options:
+
+  1. **Automatic**: let cmake download and compile the libraries below from source into a local folder `libs/`. This is the default behavior if the library is not found on your system. Note that this does *NOT* make a system-wide install, so you can safely delete the `libs/` folder.
+  2. **Manual**: install the libraries yourself with your favorite package manager (e.g. `apt` in ubuntu or `brew` in OSX). The build script will always attempt to find the libraries in your system first.
  
- The latter is recommended to avoid a lengthy compilation of these rather large libraries. 
+ The latter is recommended to avoid a lengthy compilation of these rather large libraries. If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from your package manager.
  
  #### Libraries
  
- - [Eigen](http://eigen.tuxfamily.org) for tensor support and SVD decomposition (tested with version >= 3.3).
- - [OpenBLAS](https://github.com/xianyi/OpenBLAS) Required for Arpack. If you auto-install from source a Fortran compiler is required. Tested with gfortran version >= 7.
- - [Arpack](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires LAPACK and BLAS libraries.
- - [Arpackpp](https://github.com/m-reuter/arpackpp) C++ frontend for ARPACK.
- - [HDF5](https://support.hdfgroup.org/HDF5/) for hdf5-file env_storage support (tested with version >= 1.10).
- - [GSL](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
+ - **BLAS** and **LAPACK**. Required for Arpack. You can choose either [Intel MKL](https://software.intel.com/en-us/mkl) or [OpenBLAS](https://github.com/xianyi/OpenBLAS) (OpenBLAS requires Fortran to compile from source). If both MKL and OpenBLAS are found in the system, MKL is preferred.
+ - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
+ - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
+ - [**Arpackpp**](https://github.com/m-reuter/arpackpp) c++ frontend for Arpack.
+ - [**HDF5**](https://support.hdfgroup.org/HDF5/) for hdf5 binary output file support (tested with version >= 1.10).
+ - [**GSL**](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
 
 ---
 
  
 ## Usage
 
-The executable `./build/Release/DMRG++` can be run without input parameters. By default it will try to find `./input/input.cfg` the file
+The executable `build/Release/DMRG++` can be run without input parameters. By default it will try to find `input/input.cfg` the file
 where the simulation parameters are defined. You can modify these parameters, o create a new input file and pass its (full or relative) path as a command-line argument.
 
 The script `Data_analysis/data_analysis.py` can be used to analyze the simulation data, which is in hdf5 binary format. You can install
