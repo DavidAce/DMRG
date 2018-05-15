@@ -43,7 +43,7 @@ else()
             TEST_COMMAND ""
             CONFIGURE_COMMAND ""
             BUILD_IN_SOURCE 1
-            BUILD_COMMAND $(MAKE) USE_THREAD=1 USE_OPENMP=0 NO_LAPACKE=1 NO_CBLAS=1 BINARY64=1
+            BUILD_COMMAND $(MAKE) USE_THREAD=0 USE_OPENMP=0 NO_LAPACKE=1 NO_CBLAS=1 BINARY64=1
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             )
 
@@ -65,7 +65,7 @@ set_target_properties(blas PROPERTIES
 set_target_properties(lapack PROPERTIES
         IMPORTED_LOCATION ${BLAS_LOCATION}
         INCLUDE_DIRECTORIES BLAS_INCLUDE_DIRS)
-target_link_libraries(${PROJECT_NAME} blas)
+target_link_libraries(${PROJECT_NAME} blas -lpthread)
 target_link_libraries(${PROJECT_NAME} lapack)
 target_include_directories(${PROJECT_NAME} PRIVATE ${BLAS_INCLUDE_DIRS})
 #For convenience, define these variables

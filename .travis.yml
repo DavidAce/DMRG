@@ -75,6 +75,32 @@ matrix:
             - libstdc++-7-dev
             - gfortran-7
 
+    - os: linux
+      compiler: clang
+      env:
+        - COMPILER_NAME=clang
+        - CXX=clang++-6.0
+        - CC=clang-6.0
+        - CLANG_VERSION=6.0
+        - FC=gfortran
+        - MATRIX_EVAL="CXX=clang++-6.0 && CC=clang-6.0 && FC=gfortran-7"
+      cache:
+        apt: true
+      addons:
+        apt:
+          update: true
+          sources:
+          - sourceline:  'ppa:ubuntu-toolchain-r/test'
+          - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
+            key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - llvm-6.0-dev
+            - clang-6.0
+            - libstdc++-7-dev
+            - gfortran-7
+            - libhdf5
+
+
     - os: osx
       osx_image: xcode9.3
       compiler: gcc
