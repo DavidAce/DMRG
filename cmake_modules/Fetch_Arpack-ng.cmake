@@ -3,7 +3,7 @@
 
 message(STATUS "SEARCHING FOR ARPACK IN SYSTEM...")
 find_library(ARPACK_LIBRARIES
-        NAMES "arpack" "libarpack.a"
+        NAMES "arpack" "libarpack.a" "libarpack.so"
         PATH_SUFFIXES "lib" "lib32" "lib64"
         )
 
@@ -26,11 +26,11 @@ else()
             -DCMAKE_C_FLAGS=-w
 #            -DCMAKE_CXX_FLAGS=-w
 #            -DCMAKE_FORTRAN_FLAGS=-w
-            -DEXAMPLES=OFF
+            -DEXAMPLES=ON
 #            -DCOVERALLS=OFF
             -DCMAKE_BUILD_TYPE=Release
             -DMPI=OFF
-            -DBUILD_SHARED_LIBS=OFF
+            -DBUILD_SHARED_LIBS=ON
 #            -DICB=OFF
             -DBLAS_LIBRARIES:PATH=${BLAS_LIBRARIES}
             -DLAPACK_LIBRARIES:PATH=${LAPACK_LIBRARIES}
@@ -41,7 +41,7 @@ else()
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
     add_library(arpack UNKNOWN IMPORTED)
     set_target_properties(arpack PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX}
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libarpack${CMAKE_SHARED_LIBRARY_SUFFIX}
             INTERFACE_LINK_LIBRARIES "${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
     add_dependencies(arpack library_ARPACK)
