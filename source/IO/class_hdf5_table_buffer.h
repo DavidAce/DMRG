@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <hdf5.h>
 #include <hdf5_hl.h>
 
 
