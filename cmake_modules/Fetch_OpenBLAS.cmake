@@ -15,10 +15,6 @@ if(BLAS_FOUND)
     check_cxx_compiler_flag(-lopenblas _support_lopenblas)
     check_cxx_compiler_flag(-llapack _support_llapack)
     if(_support_lopenblas AND _support_llapack)
-
-
-        target_link_libraries(${PROJECT_NAME} openblas)
-        target_link_libraries(${PROJECT_NAME} lapack)
         # Make dummy library blas and lapack pointing to openblas
         add_library(blas INTERFACE)
         add_library(lapack INTERFACE)
@@ -30,6 +26,8 @@ if(BLAS_FOUND)
         #For convenience, define these variables
         set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
         set(LAPACK_LIBRARIES   ${BLAS_openblas_LIBRARY})
+        target_link_libraries(${PROJECT_NAME} openblas)
+        target_link_libraries(${PROJECT_NAME} lapack)
         return()
     else()
         unset(BLAS_FOUND)
