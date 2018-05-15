@@ -19,9 +19,9 @@ if(BLAS_FOUND)
         add_library(blas INTERFACE)
         add_library(lapack INTERFACE)
         set_target_properties(blas PROPERTIES
-                INTERFACE_LINK_LIBRARIES "openblas")
+                INTERFACE_LINK_LIBRARIES "-lopenblas")
         set_target_properties(lapack PROPERTIES
-                INTERFACE_LINK_LIBRARIES "lapack;openblas")
+                INTERFACE_LINK_LIBRARIES "-lopenblas;-llapack")
 
         #For convenience, define these variables
         set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
