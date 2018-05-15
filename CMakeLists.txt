@@ -31,7 +31,7 @@ set(DEBUG_OPTIONS       -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
 
 ##########################
-### OS dependent flags ###
+### OS-dependent flags ###
 ##########################
 if(${CMAKE_HOST_APPLE})
     list(APPEND COMMON_OPTIONS -mmacosx-version-min=10.13)
@@ -40,19 +40,27 @@ else()
 endif()
 
 ################################
-### Compiler dependent flags ###
+### Compiler-dependent flags ###
 ################################
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    set(COMMON_OPTIONS ${COMMON_OPTIONS} -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare)
+    list(APPEND COMMON_OPTIONS -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(COMMON_OPTIONS ${COMMON_OPTIONS} -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
+    list(APPEND COMMON_OPTIONS -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
 endif()
+
+
+################################
+### Print current CXX flags  ###
+################################
 message(STATUS "COMMON CXX flags:  ${COMMON_OPTIONS} ${CMAKE_CXX_FLAGS}")
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    message(STATUS "RELEASE flags: ${RELEASE_OPTIONS}")
-else()
-    message(STATUS "DEBUG flags: ${DEBUG_OPTIONS}")
+    message(STATUS "RELEASE CXX flags: ${RELEASE_OPTIONS}")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "DEBUG CXX flags: ${DEBUG_OPTIONS}")
 endif()
+
+
+
 
 
 ###########################################
@@ -100,39 +108,27 @@ else()
 endif()
 
 
-
-#SET(CMAKE_REQUIRED_FLAGS "-Wl,--nonono-undefined")
-#CHECK_C_COMPILER_FLAG("" RESULT2)
-#IF(RESULT2)
-#    MESSAGE("Supported: -Wl,--nonono-undefined")
-#ELSE()
-#    MESSAGE("Not supported: -Wl,--nonono-undefined")
-#ENDIF()
-
-
-
 #######################################
 ###  Link and include dependencies  ###
 #######################################
 
 target_include_directories(${PROJECT_NAME} PRIVATE source)
-#set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY-UNITY")
-
-set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
-include(cmake_modules/FindGFortran.cmake)    ### For Fortran library
 
 
 
 ###########################################
 ###  Find or fetch all dependencies   ###
 ###########################################
-include(cmake_modules/Find_dont_install_INTELMKL.cmake)    # If MKL is not found openblas will be used instead.
-include(cmake_modules/Fetch_OpenBLAS.cmake)
-include(cmake_modules/Fetch_Eigen3.cmake)
-include(cmake_modules/Fetch_HDF5.cmake)
-include(cmake_modules/Fetch_Arpack-ng.cmake)
-include(cmake_modules/Fetch_Arpackpp.cmake)
-include(cmake_modules/Fetch_GSL.cmake)
+
+set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
+include(cmake_modules/FindGFortran.cmake)                   # For Fortran library, needed to build some of the libraries
+include(cmake_modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+include(cmake_modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
+include(cmake_modules/Fetch_Eigen3.cmake)                   # Eigen library
+include(cmake_modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
+include(cmake_modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
+include(cmake_modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
+include(cmake_modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
 
 
 
@@ -141,14 +137,14 @@ include(cmake_modules/Fetch_GSL.cmake)
 message("=============================================================================")
 message("=== SUMMARY OF CMAKE CONFIGURATION:  THE FOLLOWING LIBRARIES WILL BE USED ===")
 message("=============================================================================")
-message("    EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
-message("    HDF5     :   ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES}")
+message("    INTEL MKL:   ${MKL_LIBRARIES}")
 message("    BLAS     :   ${BLAS_LIBRARIES}")
 message("    LAPACK   :   ${LAPACK_LIBRARIES}")
+message("    EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
+message("    HDF5     :   ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES}")
 message("    ARPACK   :   ${ARPACK_LIBRARIES}")
 message("    ARPACKPP :   ${ARPACKPP_INCLUDE_DIR}")
 message("    GSL      :   ${GSL_LIBRARIES} ${GSLCBLAS_LIBRARIES}")
-message("    INTEL MKL:   ${MKL_LIBRARIES}")
 message("=============================================================================")
 message("")
 
