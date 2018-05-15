@@ -2,9 +2,15 @@
 # Try finding in system. While avoiding Python anaconda's version.
 # Usually there is an executable present in system, "h5c++"
 
-find_file(HDF5_CXX_COMPILER_EXECUTABLE NAMES h5c++ h5cc h5fc h5pfc PATHS /usr/bin /usr/local/bin)
+find_file(HDF5_C_COMPILER_EXECUTABLE NAMES h5cc PATHS /usr/bin /usr/local/bin NO_DEFAULT_PATH)
+find_file(HDF5_CXX_COMPILER_EXECUTABLE NAMES h5c++ h5cc h5fc h5pfc PATHS /usr/bin /usr/local/bin NO_DEFAULT_PATH)
+find_file(HDF5_Fortran_COMPILER_EXECUTABLE NAMES h5fc h5pfc PATHS /usr/bin /usr/local/bin NO_DEFAULT_PATH)
+
+message("HDF5 C compiler wrapper             : ${HDF5_C_COMPILER_EXECUTABLE}")
+message("HDF5 CXX compiler wrapper           : ${HDF5_CXX_COMPILER_EXECUTABLE}")
+message("HDF5 Fortran compiler wrapper       : ${HDF5_Fortran_COMPILER_EXECUTABLE}")
 set(HDF5_USE_STATIC_LIBRARIES ON)
-set(HDF5_FIND_DEBUG OFF)
+set(HDF5_FIND_DEBUG ON)
 find_package(HDF5 COMPONENTS C CXX HL)
 if(HDF5_LIBRARIES MATCHES "anaconda")
     message("Found anaconda version. Ignoring...")
@@ -21,21 +27,27 @@ if(HDF5_FOUND AND HDF5_LIBRARIES AND HDF5_CXX_LIBRARIES AND HDF5_HL_LIBRARIES AN
     message(STATUS "HDF5 FOUND IN SYSTEM: ${HDF5_LIBRARIES}")
     message(STATUS "FOUND HDF5")
     message(STATUS "   In path: ${HDF5_INCLUDE_DIR}")
-    message(STATUS "   HDF5 DEFINITIONS: ${HDF5_DEFINITIONS}")
-    message(STATUS "   HDF5 LIBRARIES  : ${HDF5_LIBRARIES}")
-    message(STATUS "   HDF5 LDFLAGS    : ${HDF5_LDFLAGS}")
+    message(STATUS "   HDF5 DEFINITIONS         : ${HDF5_DEFINITIONS}")
+    message(STATUS "   HDF5 LIBRARIES           : ${HDF5_LIBRARIES}")
+    message(STATUS "   HDF5_C_LIBRARIES         : ${HDF5_C_LIBRARY_NAMES}")
+    message(STATUS "   HDF5_C_HL_LIBRARIES      : ${HDF5_C_HL_LIBRARY_NAMES}")
+    message(STATUS "   HDF5_CXX_LIBRARIES       : ${HDF5_CXX_LIBRARY_NAMES}")
+    message(STATUS "   HDF5_CXX_HL_LIBRARIES    : ${HDF5_CXX_HL_LIBRARY_NAMES}")
+    message(STATUS "   HDF5 LDFLAGS             : ${HDF5_LDFLAGS}")
 
 
 
     # To print all variables, use the code below:
     #
-    get_cmake_property(_variableNames VARIABLES)
-    foreach (_variableName ${_variableNames})
-        message(STATUS "${_variableName}=${${_variableName}}")
-    endforeach()
+#    get_cmake_property(_variableNames VARIABLES)
+#    foreach (_variableName ${_variableNames})
+#        message(STATUS "${_variableName}=${${_variableName}}")
+#    endforeach()
+#    exit(1)
 
     target_include_directories(${PROJECT_NAME} PRIVATE ${HDF5_INCLUDE_DIR})
-    target_link_libraries(${PROJECT_NAME} ${HDF5_C_LIBRARIES} ${HDF5_C_HL_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES} -ldl)
+    target_link_libraries(${PROJECT_NAME} ${HDF5_C_LIBRARIES} ${HDF5_C_HL_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES} -ldl)
+#    target_link_libraries(${PROJECT_NAME} ${HDF5_C_LIBRARY_NAMES} ${HDF5_C_HL_LIBRARY_NAMES} ${HDF5_CXX_LIBRARY_NAMES} ${HDF5_CXX_HL_LIBRARY_NAMES} ${HDF5_CXX_HL_LIBRARIES} -ldl)
     target_link_libraries(${PROJECT_NAME} ${HDF5_LDFLAGS})
     add_definitions(${HDF5_DEFINITIONS})
 
