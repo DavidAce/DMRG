@@ -5,37 +5,32 @@ if(MKL_FOUND)
 endif()
 
 
-message(STATUS "SEARCHING FOR BLAS IN SYSTEM...")
+message(STATUS "SEARCHING FOR OpenBLAS IN SYSTEM...")
 set(BLA_VENDOR Open)
 set(BLAS_VERBOSE OFF)
 find_package(BLAS)
-if(BLAS_FOUND)
+set(BLA_VENDOR OpenBLAS)
+find_package(LAPACK)
+if(BLAS_FOUND AND LAPACK_FOUND)
     message(STATUS "BLAS FOUND IN SYSTEM: ${BLAS_openblas_LIBRARY}")
-    include(CheckCXXCompilerFlag)
-    check_cxx_compiler_flag(-lopenblas _support_lopenblas)
-    check_cxx_compiler_flag(-llapack _support_llapack)
-    if(_support_lopenblas AND _support_llapack)
-        # Make dummy library blas and lapack pointing to openblas
-        add_library(blas INTERFACE)
-        add_library(lapack INTERFACE)
-        set_target_properties(blas PROPERTIES
-                INTERFACE_LINK_LIBRARIES "-lopenblas")
-        set_target_properties(lapack PROPERTIES
-                INTERFACE_LINK_LIBRARIES "-lopenblas;-llapack")
+    message(STATUS "LAPACK FOUND IN SYSTEM: ${LAPACK_openblas_LIBRARY}")
+    add_library(blas UNKNOWN IMPORTED)
+    add_library(lapack UNKNOWN IMPORTED)
+    set_target_properties(blas PROPERTIES
+            IMPORTED_LOCATION ${BLAS_openblas_LIBRARY})
+    set_target_properties(lapack PROPERTIES
+            IMPORTED_LOCATION ${LAPACK_openblas_LIBRARY})
 
-        #For convenience, define these variables
-        set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
-        set(LAPACK_LIBRARIES   ${BLAS_openblas_LIBRARY})
-        target_link_libraries(${PROJECT_NAME} openblas)
-        target_link_libraries(${PROJECT_NAME} lapack)
-        return()
-    else()
-        unset(BLAS_FOUND)
-    endif()
+    #For convenience, define these variables
+    set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
+    set(LAPACK_LIBRARIES   ${LAPACK_openblas_LIBRARY})
+    target_link_libraries(${PROJECT_NAME} blas)
+    target_link_libraries(${PROJECT_NAME} lapack)
+    return()
 endif()
 #exit (1)
 
-if(NOT BLAS_FOUND)
+if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
     message(STATUS "OpenBLAS will be installed into ${INSTALL_DIRECTORY}/OpenBLAS on first build.")
 
     enable_language(Fortran)
