@@ -36,7 +36,7 @@
 ## Installation
 ### Quick start
 Git clone or copy & extract the project into a folder of your choosing.
-**Make sure there are no spaces in the output_folder!**.
+**Make sure there are no spaces in your path!**.
 The project can be built with a single command from a unix terminal. 
 Simply launch the script `.\build.sh` found in the root folder. If you are feeling lucky, try
 ```
