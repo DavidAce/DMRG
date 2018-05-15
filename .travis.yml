@@ -10,66 +10,84 @@ matrix:
   fast_finish: true
   include:
     - os: linux
-      compiler: gcc
+      compiler: g++-7
       env: COMPILER_NAME=gcc
         - GCC_VERSION=7
         - CC=gcc-7
         - CXX=g++-7
-        - FC=gfortran
-        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran"
+        - FC=gfortran-7
+        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-8"
       cache:
         apt: true
       addons:
         apt:
+          update: true
           sources:
             - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
+            - gcc-7
             - g++-7
-            - gfortran
+            - gfortran-7
 
     - os: linux
-      compiler: clang
+          compiler: g++-8
+          env: COMPILER_NAME=gcc
+            - GCC_VERSION=8
+            - CC=gcc-8
+            - CXX=g++-8
+            - FC=gfortran
+            - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
+          cache:
+            apt: true
+          addons:
+            apt:
+              update: true
+              sources:
+                - sourceline: 'ppa:ubuntu-toolchain-r/test'
+              packages:
+                - gcc-8
+                - g++-8
+                - gfortran-8
+
+
+    - os: linux
+      compiler: clang++-6
       env: COMPILER_NAME=clang
-        - CXX=clang++-5.0
-        - CC=clang-5.0
-        - CLANG_VERSION=5.0
+        - CXX=clang++-6.0
+        - CC=clang-6.0
+        - CLANG_VERSION=6.0
         - FC=gfortran
-        - MATRIX_EVAL="CXX=clang++-5.0 && CC=clang-5.0 && FC=gfortran"
+        - MATRIX_EVAL="CXX=clang++-6.0 && CC=clang-6.0 && FC=gfortran-7"
       cache:
         apt: true
       addons:
         apt:
+          update: true
           sources:
           - sourceline:  'ppa:ubuntu-toolchain-r/test'
-          - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-5.0 main'
+          - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
             key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
-            - llvm-5.0-dev
-            - clang-5.0
+            - llvm-6.0-dev
+            - clang-6.0
             - libstdc++-7-dev
-            - libc++-dev
-            - libc++abi-dev
-            - gfortran
+            - gfortran-7
 
-#    - os: osx
-#      osx_image: xcode9.2
-#      compiler: clang
-#      env: COMPILER_NAME='clang'
-#        - CXX=clang++-5.0
-#        - CC=clang-5.0
-#        - CLANG_VERSION=5.0
-#        - FC=gfortran
-#        - MATRIX_EVAL="CXX=clang++-5.0 && CC=clang-5.0 && FC=gfortran"
-
+    - os: osx
+      osx_image: xcode9.1
+      compiler: gcc
+      env: COMPILER_NAME='gcc'
+        - GCC_VERSION=8
+        - CXX=g++-8
+        - CC=gcc-8
+        - FC=gfortran-8
+        - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install gcc   ; fi
   - eval "${MATRIX_EVAL}"
 
 script:
-  - cmake -E make_directory build/Release
-  - cd build/Release
-  - cmake -Bbuild/Release --build build -config Release ../../
-  - make
+  - ./build.sh
 
 
