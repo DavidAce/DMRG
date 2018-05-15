@@ -39,7 +39,7 @@
 \section installation Installation
 \subsection quickstart Quick start
 Git clone or copy & extract the project into a folder of your choosing.
-**Make sure there are no spaces in the output_folder!**.
+**Make sure there are no spaces in your path!**.
 The project can be built with a single command from a unix terminal.
 Simply launch the script `.\build.sh` found in the root folder. If you are feeling lucky, try
 ```
@@ -48,6 +48,7 @@ Simply launch the script `.\build.sh` found in the root folder. If you are feeli
         cmake -Bbuild/Release --build build -config Release ../../
         make
 ```
+
 
 The CMakeLists.txt script lets CMake to check for dependencies and download them automatically if needed (see *Optional Requirements* below).
 If the dependencies are found, the project is built and an executable is generated.
