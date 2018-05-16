@@ -3,44 +3,31 @@
 # If you want to use Eigen and MKL you need to add #define EIGEN_USE_MKL_ALL before including <Eigen..>
 # Adding a -DEIGEN_USE_MKL_ALL here may conflict with arpack++
 
-set(MKL_USE_STATIC_LIBS ON)
+set(MKL_USE_STATIC_LIBS OFF)
 set(MKL_MULTI_THREADED OFF)
-set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF)
+set(MKL_USE_SINGLE_DYNAMIC_LIBRARY ON)
 find_package(MKL)
 if (MKL_FOUND)
     add_definitions(-DMKL_AVAILABLE)
-    set(MKL_FLAGS -DMKL_LP64 -m64 -I${MKL_ROOT}/include)
-    # Link with lmkl_gf_lp64 so that arpack-ng works (it is compiled with gnu fortran and not intels fortran)
-    if(MKL_MULTI_THREADED)
-        set(MKL_LFLAGS -L${MKL_ROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl)
-    else()
-        set(MKL_LFLAGS -L${MKL_ROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl)
-    endif()
-
-    add_library(mkl INTERFACE)
+    set(MKL_FLAGS -v -m64 -I${MKLROOT}/include)
+    set(MKL_LFLAGS -v -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_rt -lpthread -lm -ldl)
+    add_library(mkl SHARED IMPORTED)
     set_target_properties(mkl PROPERTIES
-            INTERFACE_LINK_LIBRARIES "${MKL_LIBRARIES}"
-            INTERFACE_COMPILE_OPTIONS "${MKL_FLAGS}"
-            INTERFACE_INCLUDE_DIRECTORIES "${MKL_INCLUDE_DIR}"
-            INTERFACE_POSITION_INDEPENDENT_CODE ON
+            IMPORTED_LOCATION "${MKL_LIBRARIES}"
+            INCLUDE_DIRECTORIES "${MKL_INCLUDE_DIR}"
+            LINK_FLAGS "${MKL_LFLAGS}"
+            COMPILE_FLAGS "${MKL_FLAGS}"
             )
-    target_link_libraries(mkl INTERFACE ${MKL_LFLAGS})
-
-    target_include_directories(${PROJECT_NAME} PUBLIC ${MKL_INCLUDE_DIR})
     target_link_libraries(${PROJECT_NAME} PUBLIC mkl)
-    target_compile_options(${PROJECT_NAME} PUBLIC ${MKL_FLAGS})
-
-
 
     # Make the rest of the build structure aware of blas and lapack included in MKL.
-
     add_library(blas INTERFACE)
     set_target_properties(blas PROPERTIES
-            INTERFACE_LINK_LIBRARIES mkl)
+            INTERFACE_LINK_LIBRARIES "${MKL_LIBRARIES}")
 
     add_library(lapack INTERFACE)
     set_target_properties(lapack PROPERTIES
-            INTERFACE_LINK_LIBRARIES mkl)
+            INTERFACE_LINK_LIBRARIES "${MKL_LIBRARIES}")
 
 
     set(BLAS_LIBRARIES   ${MKL_LIBRARIES})
@@ -81,7 +68,6 @@ if (MKL_FOUND)
     message("LAPACK_LIBRARIES                          : ${LAPACK_LIBRARIES}" )
     message("========================")
     message("")
-#    target_link_libraries(${PROJECT_NAME} ${MKL_LIBRARIES} ${MKL_LFLAGS})
 endif()
 
 

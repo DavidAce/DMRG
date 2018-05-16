@@ -3,23 +3,33 @@
 
 message(STATUS "SEARCHING FOR ARPACK IN SYSTEM...")
 find_library(ARPACK_LIBRARIES
-        NAMES "arpack" "libarpack.a"
-        PATH_SUFFIXES "lib" "lib32" "lib64"
+        NAMES arpack libarpack.a libarpack2.a libarpack.so libarpack2.so
+        PATH_SUFFIXES lib lib32 lib64
         )
 
 if(ARPACK_LIBRARIES)
-    message(STATUS "Arpack-ng FOUND IN SYSTEM: ${ARPACK_LIBRARIES}")
-    message(STATUS "FOUND ARPACK:   ${ARPACK_LIBRARIES}")
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${ARPACK_LIBRARIES})
+    message(STATUS "ARPACK found in system:   ${ARPACK_LIBRARIES}")
+    add_library(arpack UNKNOWN IMPORTED)
+    set_target_properties(arpack PROPERTIES
+            IMPORTED_LOCATION "${ARPACK_LIBRARIES}")
+    target_link_libraries(${PROJECT_NAME} PUBLIC arpack)
     return()
 else()
     message(STATUS "Arpack-ng will be installed into ${INSTALL_DIRECTORY}/arpack-ng on first build.")
     include(ExternalProject)
     ExternalProject_Add(library_ARPACK
             GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
+#            GIT_TAG             master # Latest version has problems with fortran linking. so stick with this version instead.
             GIT_TAG             3.5.0 # Latest version has problems with fortran linking. so stick with this version instead.
             PREFIX              "${INSTALL_DIRECTORY}/arpack-ng"
             UPDATE_COMMAND ""
+#            BUILD_IN_SOURCE 1
+#            CONFIGURE_COMMAND
+#                ./bootstrap &&
+#                ./configure --prefix=<INSTALL_DIR>
+#            BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} && ${CMAKE_MAKE_PROGRAM} check
+#            INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install
+
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console

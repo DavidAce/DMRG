@@ -5,10 +5,10 @@
 #include "class_arpack_eigsolver.h"
 #include <assert.h>
 #include <algorithm>
-#include <arpackpp/ardsnsym.h>
-#include <arpackpp/ardscomp.h>
-#include <arpackpp/ardgcomp.h>
-#include <arpackpp/ardssym.h>
+#include <arpack++/ardsnsym.h>
+#include <arpack++/ardscomp.h>
+#include <arpack++/ardgcomp.h>
+#include <arpack++/ardssym.h>
 #include <general/class_arpack_custom_products.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 
@@ -143,13 +143,15 @@ void class_arpack_eigsolver<Scalar,form>::eig(Scalar *matrix_data,
     eigvals_found = false;
     eigvals.clear();
     eigvecs.clear();
+    char ritz_char[2];
+    RitzToString.at(ritz).copy(ritz_char,2);
 
     if constexpr(std::is_same_v<Scalar, double> and form == Form::GENERAL) {
         int nev_temp = nev == 1 ? 2 : nev;
         DenseMatrixProduct<Scalar, form> matrix(n, matrix_data, side);
         ARNonSymStdEig<Scalar, DenseMatrixProduct<Scalar, form>> eig(n, nev_temp, &matrix,
                                                                      &DenseMatrixProduct<Scalar, form>::MultMv,
-                                                                     RitzToString.at(ritz), ncv, eigThreshold,
+                                                                     ritz_char, ncv, eigThreshold,
                                                                      eigMaxIter, residp);
         counter = matrix.counter;
         find_solution(eig, nev, bool_find_eigvecs);
@@ -159,7 +161,7 @@ void class_arpack_eigsolver<Scalar,form>::eig(Scalar *matrix_data,
         DenseMatrixProduct<Scalar, form> matrix(n, matrix_data, side);
         ARSymStdEig<Scalar, DenseMatrixProduct<Scalar, form>> eig(n, nev, &matrix,
                                                                   &DenseMatrixProduct<Scalar, form>::MultMv,
-                                                                  RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter,
+                                                                  ritz_char, ncv, eigThreshold, eigMaxIter,
                                                                   residp);
         counter = matrix.counter;
         find_solution(eig, nev, bool_find_eigvecs);
@@ -169,7 +171,7 @@ void class_arpack_eigsolver<Scalar,form>::eig(Scalar *matrix_data,
         DenseMatrixProduct<Scalar, form> matrix(n, matrix_data, side);
         ARCompStdEig<double, DenseMatrixProduct<Scalar, form>> eig(n, nev, &matrix,
                                                                    &DenseMatrixProduct<Scalar, form>::MultMv,
-                                                                   RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter,
+                                                                   ritz_char, ncv, eigThreshold, eigMaxIter,
                                                                    residp);
         counter = matrix.counter;
         find_solution(eig, nev, bool_find_eigvecs);
@@ -232,15 +234,18 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
     eigvecs.clear();
     eigvecs_found = false;
     eigvals_found = false;
+    char ritz_char[2];
+    RitzToString.at(ritz).copy(ritz_char,2);
+
     DenseHamiltonianProduct<Scalar>  hamiltonianProduct(Lblock, Rblock, HA, HB, shape_theta4,shape_mpo4);
     int dim  = hamiltonianProduct.cols();
 //    int size = hamiltonianProduct.cols() * hamiltonianProduct.rows();
-    int ncv_internal = std::max(dim/2, 4*nev);
+    int ncv_internal = std::max(dim/2, 2*nev);
     ncv_internal = std::min(ncv, ncv_internal);
-
+//    ncv_internal = 2;
     if constexpr(std::is_same_v<Scalar, std::complex<double>>) {
         ARCompStdEig<double, DenseHamiltonianProduct<Scalar>> eigsolver(dim, nev, &hamiltonianProduct,
-                                                                        &DenseHamiltonianProduct<Scalar>::MultMv, RitzToString.at(ritz),
+                                                                        &DenseHamiltonianProduct<Scalar>::MultMv, "SR",
                                                                         ncv_internal, eigThreshold, eigMaxIter, resid);
 
         eigsolver.FindEigenvectors();
@@ -259,7 +264,7 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
 
     if constexpr(std::is_same_v<Scalar, double>) {
         ARNonSymStdEig <double, DenseHamiltonianProduct<Scalar>> eigsolver(dim, nev, &hamiltonianProduct,
-                                                                        &DenseHamiltonianProduct<Scalar>::MultMv, RitzToString.at(ritz),
+                                                                        &DenseHamiltonianProduct<Scalar>::MultMv, ritz_char,
                                                                         ncv_internal, eigThreshold, eigMaxIter, resid);
 
         eigsolver.FindEigenvectors();

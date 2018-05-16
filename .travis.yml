@@ -104,7 +104,7 @@ matrix:
             - libgsl0-dev
             - libopenblas-dev
             - libarpack2-dev
-
+            - libarpack++2-dev
 
     - os: osx
       osx_image: xcode9.3
