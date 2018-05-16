@@ -41,8 +41,8 @@ else()
 endif()
 
 
-target_link_libraries(${PROJECT_NAME} GSL::gsl)
-target_link_libraries(${PROJECT_NAME} GSL::gslcblas)
-target_include_directories(${PROJECT_NAME} PUBLIC ${GSL_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE GSL::gsl)
+target_link_libraries(${PROJECT_NAME} PRIVATE GSL::gslcblas)
+target_include_directories(${PROJECT_NAME} PRIVATE ${GSL_INCLUDE_DIRS})
 get_target_property(GSL_LIBRARIES        GSL::gsl       IMPORTED_LOCATION)
 get_target_property(GSLCBLAS_LIBRARIES   GSL::gslcblas  IMPORTED_LOCATION)

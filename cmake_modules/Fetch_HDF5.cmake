@@ -36,8 +36,8 @@ if(HDF5_FOUND AND HDF5_LIBRARIES AND HDF5_CXX_LIBRARIES AND HDF5_HL_LIBRARIES AN
     message(STATUS "   HDF5 LDFLAGS             : ${HDF5_LDFLAGS}")
 
     target_include_directories(${PROJECT_NAME} PRIVATE ${HDF5_INCLUDE_DIR})
-    target_link_libraries(${PROJECT_NAME} ${HDF5_C_LIBRARIES} ${HDF5_C_HL_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES} -ldl)
-    target_link_libraries(${PROJECT_NAME} ${HDF5_LDFLAGS})
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${HDF5_C_LIBRARIES} ${HDF5_C_HL_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES} -ldl)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${HDF5_LDFLAGS})
     add_definitions(${HDF5_DEFINITIONS})
 
 else()
@@ -68,6 +68,7 @@ else()
 
     ExternalProject_Get_Property(library_HDF5 INSTALL_DIR)
 
+
     add_library(hdf5::hdf5           STATIC IMPORTED)
     add_library(hdf5::hdf5_hl        STATIC IMPORTED)
     add_library(hdf5::hdf5_cpp       STATIC IMPORTED)
@@ -94,19 +95,17 @@ else()
             INTERFACE_LINK_LIBRARIES "hdf5::hdf5_hl;hdf5::hdf5"
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
-
     add_dependencies(hdf5::hdf5          library_HDF5)
     add_dependencies(hdf5::hdf5_hl       library_HDF5)
     add_dependencies(hdf5::hdf5_cpp      library_HDF5)
     add_dependencies(hdf5::hdf5_hl_cpp   library_HDF5)
-
-    target_link_libraries(${PROJECT_NAME} hdf5::hdf5)
-    target_link_libraries(${PROJECT_NAME} hdf5::hdf5_hl)
-    target_link_libraries(${PROJECT_NAME} hdf5::hdf5_cpp)
-    target_link_libraries(${PROJECT_NAME} hdf5::hdf5_hl_cpp)
-    target_link_libraries(${PROJECT_NAME} -ldl)
+    target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5)
+    target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_hl)
+    target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_cpp)
+    target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_hl_cpp)
+    target_link_libraries(${PROJECT_NAME} PRIVATE -ldl)
     target_include_directories(${PROJECT_NAME} PRIVATE ${INSTALL_DIR}/include)
-    #For convenience, define these variables
+#    For convenience, define these variables
     get_target_property(HDF5_LIBRARIES          hdf5::hdf5        IMPORTED_LOCATION)
     get_target_property(HDF5_HL_LIBRARIES       hdf5::hdf5_hl     IMPORTED_LOCATION)
     get_target_property(HDF5_CXX_LIBRARIES      hdf5::hdf5_cpp    IMPORTED_LOCATION)

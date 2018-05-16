@@ -30,17 +30,17 @@ else()
     add_dependencies(EIGEN3 library_EIGEN3)
 endif()
 
-target_link_libraries(${PROJECT_NAME} EIGEN3)
+target_link_libraries(${PROJECT_NAME} INTERFACE EIGEN3)
 if(BLAS_LIBRARIES)
     if(MKL_FOUND)
-        target_compile_options(${PROJECT_NAME} PUBLIC -DEIGEN_USE_MKL_ALL  -Wno-parentheses)
+        target_compile_options(${PROJECT_NAME} INTERFACE -DEIGEN_USE_MKL_ALL  -Wno-parentheses)
     else()
-    target_compile_options(${PROJECT_NAME} PUBLIC -DEIGEN_USE_BLAS  -Wno-parentheses)
+    target_compile_options(${PROJECT_NAME} INTERFACE -DEIGEN_USE_BLAS  -Wno-parentheses)
     endif()
 endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    target_compile_options (${PROJECT_NAME} PUBLIC -Wno-unused-but-set-variable)           ### Release build options
+    target_compile_options (${PROJECT_NAME} INTERFACE -Wno-unused-but-set-variable)           ### Release build options
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${EIGEN3_INCLUDE_DIR})

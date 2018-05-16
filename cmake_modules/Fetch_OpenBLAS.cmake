@@ -4,6 +4,9 @@ if(MKL_FOUND)
     return()
 endif()
 
+# It seems that libopenblas from "apt" includes lapack in newer versions of Ubuntu. Trusty LTS 14.04 does not
+# libopenblas bundled with lapack. Therefore we test if both lapack and blas are present to distinghuish these cases.
+# Otherwise, arpack-ng will complain later about undefined references.
 
 message(STATUS "SEARCHING FOR OpenBLAS IN SYSTEM...")
 set(BLA_VENDOR Open)
@@ -24,8 +27,8 @@ if(BLAS_FOUND AND LAPACK_FOUND)
     #For convenience, define these variables
     set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
     set(LAPACK_LIBRARIES   ${LAPACK_openblas_LIBRARY})
-    target_link_libraries(${PROJECT_NAME} blas)
-    target_link_libraries(${PROJECT_NAME} lapack)
+    target_link_libraries(${PROJECT_NAME} PUBLIC blas)
+    target_link_libraries(${PROJECT_NAME} PUBLIC lapack)
     return()
 endif()
 #exit (1)
@@ -62,8 +65,8 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
             IMPORTED_LOCATION ${LAPACK_LIBRARIES}
             INCLUDE_DIRECTORIES BLAS_INCLUDE_DIRS)
 
-    target_link_libraries(${PROJECT_NAME} blas)
-    target_link_libraries(${PROJECT_NAME} lapack)
+    target_link_libraries(${PROJECT_NAME} PUBLIC blas)
+    target_link_libraries(${PROJECT_NAME} PUBLIC lapack)
     target_include_directories(${PROJECT_NAME} PUBLIC ${BLAS_INCLUDE_DIRS})
 endif()
 
