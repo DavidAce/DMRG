@@ -41,7 +41,7 @@ else()
             INTERFACE_LINK_LIBRARIES EIGEN3
             )
     add_dependencies(arpackpp library_ARPACKPP)
-    target_link_libraries(${PROJECT_NAME} arpackpp)
+    target_link_libraries(${PROJECT_NAME} PRIVATE arpackpp)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACKPP_INCLUDE_DIR})
 endif()
 

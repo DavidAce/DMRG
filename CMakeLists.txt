@@ -76,8 +76,8 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_compile_options (${PROJECT_NAME} PUBLIC ${COMMON_OPTIONS})                                   ### Common options
 target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
 target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
-target_link_libraries  (${PROJECT_NAME} -flto)                                                      ### Link time optimization flag
-target_link_libraries  (${PROJECT_NAME} -lstdc++fs)                                                 ### For experimental::filesystem
+target_link_libraries  (${PROJECT_NAME} PUBLIC -flto)                                               ### Link time optimization flag
+target_link_libraries  (${PROJECT_NAME} PUBLIC -lstdc++fs)                                          ### For experimental::filesystem
 #target_link_libraries  (${PROJECT_NAME} -lc++experimental)                                         ### For experimental::filesystem
 
 
@@ -87,24 +87,15 @@ target_link_libraries  (${PROJECT_NAME} -lstdc++fs)                             
 set_target_properties  (${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)                                         ### Demand c++17 compiler support
 include(CheckCXXCompilerFlag)
-set(CMAKE_REQUIRED_FLAGS "-lstdc++fs -std=c++17")
 check_cxx_compiler_flag(-std=c++17 _support_cxx_std_17)
 check_cxx_compiler_flag(-lstdc++fs _support_lstdcxxfs)
-
 include(CheckIncludeFileCXX)
-check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -std=c++17)
-check_include_file_cxx(experimental/type_traits has_experimental_type_traits -std=c++17)
+check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -std=c++17 -lstdc++fs)
+check_include_file_cxx(experimental/type_traits has_experimental_type_traits -std=c++17 -lstdc++fs)
 if(has_experimental_filesystem AND has_experimental_type_traits)
     message(STATUS "C++17 experimental features are supported.")
 else()
-    message(WARNING "Missing experimental headers for C++17. Checking alternative...")
-    check_include_file_cxx(filesystem  has_filesystem -std=c++17)
-    check_include_file_cxx(type_traits has_type_traits -std=c++17)
-    if(has_filesystem AND has_type_traits)
-        message(STATUS "C++17 experimental features are supported.")
-    else()
-        message(FATAL_ERROR "Missing experimental headers for C++17. Check your compiler and libstdc++ versions")
-    endif()
+    message(FATAL_ERROR "Missing experimental headers for C++17.")
 endif()
 
 
@@ -112,7 +103,7 @@ endif()
 ###  Link and include dependencies  ###
 #######################################
 
-target_include_directories(${PROJECT_NAME} PRIVATE source)
+target_include_directories(${PROJECT_NAME} PUBLIC source)
 
 
 
@@ -122,7 +113,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE source)
 
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
 include(cmake_modules/FindGFortran.cmake)                   # For Fortran library, needed to build some of the libraries
-#include(cmake_modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+include(cmake_modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake_modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake_modules/Fetch_Eigen3.cmake)                   # Eigen library
 include(cmake_modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
@@ -137,7 +128,7 @@ include(cmake_modules/Fetch_GSL.cmake)                      # GSL for computing 
 message("=============================================================================")
 message("=== SUMMARY OF CMAKE CONFIGURATION:  THE FOLLOWING LIBRARIES WILL BE USED ===")
 message("=============================================================================")
-#message("    INTEL MKL:   ${MKL_LIBRARIES}")
+message("    INTEL MKL:   ${MKL_LIBRARIES}")
 message("    BLAS     :   ${BLAS_LIBRARIES}")
 message("    LAPACK   :   ${LAPACK_LIBRARIES}")
 message("    EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
