@@ -48,8 +48,8 @@ else()
             -DCMAKE_C_FLAGS=-w
             -DEXAMPLES=ON
             -DCMAKE_BUILD_TYPE=Release
-            -DMPI=ON
-            -DBUILD_SHARED_LIBS=ON
+            -DMPI=OFF
+            -DBUILD_SHARED_LIBS=OFF
             -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR}
             -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES_GENERATOR}
             -DEXTRA_LDLAGS=${EXTRA_LDLAGS_GENERATOR}
@@ -60,7 +60,7 @@ else()
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
     add_library(arpack UNKNOWN IMPORTED)
     set_target_properties(arpack PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libarpack${CMAKE_SHARED_LIBRARY_SUFFIX}
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX}
             INTERFACE_LINK_LIBRARIES "${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
             INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
     add_dependencies(arpack library_ARPACK)
