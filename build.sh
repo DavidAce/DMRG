@@ -19,11 +19,11 @@ EOF
   exit 1
 }
 
-target=default_target
-mode=default_mode
+target=$default_target
+mode=$default_mode
 clear_cmake=""
 clear_libs=""
-threads=default_threads
+threads=$default_threads
 while getopts t:m:clj: o; do
   case $o in
     (t) target=$OPTARG;;
@@ -107,7 +107,7 @@ fi
 
 
 echo "Starting Build"
-cmake -E make_directory build/${mode}
-cd build/${mode}
-cmake ${dcmake_c_compiler} ${dcmake_cxx_compiler} -DCMAKE_BUILD_TYPE=${mode} -G "CodeBlocks - Unix Makefiles" ../../
+cmake -E make_directory build/$mode
+cd build/$mode
+cmake $dcmake_c_compiler $dcmake_cxx_compiler -DCMAKE_BUILD_TYPE=$mode -G "CodeBlocks - Unix Makefiles" ../../
 cmake --build . --target ${target} -- -j ${threads}

@@ -113,7 +113,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC source)
 
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
 include(cmake_modules/FindGFortran.cmake)                   # For Fortran library, needed to build some of the libraries
-#include(cmake_modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+include(cmake_modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake_modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake_modules/Fetch_Eigen3.cmake)                   # Eigen library
 include(cmake_modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
@@ -165,6 +165,7 @@ enable_testing()
 include(tests/arpack++_simple_test.cmake)
 include(tests/arpack++_mps_test.cmake)
 add_custom_target( all_tests ALL
+        DEPENDS ${PROJECT_NAME}
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
         )
@@ -175,6 +176,7 @@ add_custom_command(
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failures
         DEPENDS all_tests
+        DEPENDS ${PROJECT_NAME}
 )
 
 

@@ -125,6 +125,6 @@ before_install:
   - eval "${MATRIX_EVAL}"
 
 script:
-  - ./build.sh -t Debug -j2
+  - ./build.sh -m Debug -j2
 
 
