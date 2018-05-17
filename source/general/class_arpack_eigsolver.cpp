@@ -29,15 +29,15 @@ class_arpack_eigsolver<Scalar,form>::class_arpack_eigsolver() {
 }
 template<typename Scalar, Form form>
 class_arpack_eigsolver<Scalar, form>::class_arpack_eigsolver(Scalar *matrix_data,
-                                                                     Ritz ritz,
-                                                                     Side side,
-                                                                     const int n,
-                                                                     const int nev,
-                                                                     const int ncv,
-                                                                     bool getvecs,
-                                                                     bool dephase,
-                                                                     Scalar *residp)
-: class_arpack_eigsolver()
+                                                             Ritz ritz,
+                                                             Side side,
+                                                             const int n,
+                                                             const int nev,
+                                                             const int ncv,
+                                                             bool getvecs,
+                                                             bool dephase,
+                                                             Scalar *residp)
+        : class_arpack_eigsolver()
 {
     eig(matrix_data,ritz,side,n,nev,ncv,getvecs,dephase,residp);
 }
@@ -54,10 +54,10 @@ class_arpack_eigsolver<Scalar, form>::class_arpack_eigsolver(
         int ncv,
         bool bool_dephase,
         Scalar *resid)
-: class_arpack_eigsolver()
+        : class_arpack_eigsolver()
 
 {
- optimize_mps(Lblock,Rblock, HA,HB, shape_theta4, shape_mpo4, ritz, nev, ncv, bool_dephase, resid);
+    optimize_mps(Lblock,Rblock, HA,HB, shape_theta4, shape_mpo4, ritz, nev, ncv, bool_dephase, resid);
 }
 
 
@@ -121,7 +121,7 @@ void class_arpack_eigsolver<Scalar,form>::subtract_phase() {
 //                           std::bind1st(std::multiplies<Scalar>(), exp_inv_phase));
             std::transform(begin, end, begin,
                            [exp_inv_phase](std::complex<double> num) -> std::complex<double>
-                                   { return (num * exp_inv_phase).real(); });
+                           { return (num * exp_inv_phase).real(); });
         }
     }
 }
@@ -129,29 +129,27 @@ void class_arpack_eigsolver<Scalar,form>::subtract_phase() {
 
 template<typename Scalar,Form form>
 void class_arpack_eigsolver<Scalar,form>::eig(Scalar *matrix_data,
-                                          Ritz ritz,
-                                          Side side,
-                                          const int n,
-                                          const int nev,
-                                          const int ncv,
-                                          bool bool_find_eigvecs,
-                                          bool bool_dephase,
-                                          Scalar *residp
+                                              Ritz ritz,
+                                              Side side,
+                                              const int n,
+                                              const int nev,
+                                              const int ncv,
+                                              bool bool_find_eigvecs,
+                                              bool bool_dephase,
+                                              Scalar *residp
 ) {
 
     eigvecs_found = false;
     eigvals_found = false;
     eigvals.clear();
     eigvecs.clear();
-    char ritz_char[2];
-    RitzToString.at(ritz).copy(ritz_char,2);
 
     if constexpr(std::is_same_v<Scalar, double> and form == Form::GENERAL) {
         int nev_temp = nev == 1 ? 2 : nev;
         DenseMatrixProduct<Scalar, form> matrix(n, matrix_data, side);
         ARNonSymStdEig<Scalar, DenseMatrixProduct<Scalar, form>> eig(n, nev_temp, &matrix,
                                                                      &DenseMatrixProduct<Scalar, form>::MultMv,
-                                                                     ritz_char, ncv, eigThreshold,
+                                                                     RitzToString.at(ritz), ncv, eigThreshold,
                                                                      eigMaxIter, residp);
         counter = matrix.counter;
         find_solution(eig, nev, bool_find_eigvecs);
@@ -161,7 +159,7 @@ void class_arpack_eigsolver<Scalar,form>::eig(Scalar *matrix_data,
         DenseMatrixProduct<Scalar, form> matrix(n, matrix_data, side);
         ARSymStdEig<Scalar, DenseMatrixProduct<Scalar, form>> eig(n, nev, &matrix,
                                                                   &DenseMatrixProduct<Scalar, form>::MultMv,
-                                                                  ritz_char, ncv, eigThreshold, eigMaxIter,
+                                                                  RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter,
                                                                   residp);
         counter = matrix.counter;
         find_solution(eig, nev, bool_find_eigvecs);
@@ -171,7 +169,7 @@ void class_arpack_eigsolver<Scalar,form>::eig(Scalar *matrix_data,
         DenseMatrixProduct<Scalar, form> matrix(n, matrix_data, side);
         ARCompStdEig<double, DenseMatrixProduct<Scalar, form>> eig(n, nev, &matrix,
                                                                    &DenseMatrixProduct<Scalar, form>::MultMv,
-                                                                   ritz_char, ncv, eigThreshold, eigMaxIter,
+                                                                   RitzToString.at(ritz), ncv, eigThreshold, eigMaxIter,
                                                                    residp);
         counter = matrix.counter;
         find_solution(eig, nev, bool_find_eigvecs);
@@ -186,13 +184,13 @@ void class_arpack_eigsolver<Scalar,form>::eig(Scalar *matrix_data,
 template<typename Scalar, Form form>
 const std::pair<const std::vector<Scalar>&,const std::vector<Scalar>&>
 class_arpack_eigsolver<Scalar,form>::eig_ref_vec_val(Scalar *matrix_data,
-                                                      Ritz ritz,
-                                                      Side side,
-                                                      const int n,
-                                                      const int nev,
-                                                      const int ncv,
-                                                      bool bool_dephase,
-                                                      Scalar *residp
+                                                     Ritz ritz,
+                                                     Side side,
+                                                     const int n,
+                                                     const int nev,
+                                                     const int ncv,
+                                                     bool bool_dephase,
+                                                     Scalar *residp
 )
 {
     eig(matrix_data,ritz,side, n, nev, ncv,true,bool_dephase,residp);
@@ -202,13 +200,13 @@ class_arpack_eigsolver<Scalar,form>::eig_ref_vec_val(Scalar *matrix_data,
 template<typename Scalar, Form form>
 const std::pair<const std::vector<Scalar>,const std::vector<Scalar>>
 class_arpack_eigsolver<Scalar,form>::eig_get_vec_val(Scalar *matrix_data,
-                                                      Ritz ritz,
-                                                      Side side,
-                                                      const int n,
-                                                      const int nev,
-                                                      const int ncv,
-                                                      bool bool_dephase,
-                                                      Scalar *residp
+                                                     Ritz ritz,
+                                                     Side side,
+                                                     const int n,
+                                                     const int nev,
+                                                     const int ncv,
+                                                     bool bool_dephase,
+                                                     Scalar *residp
 )
 {
     eig(matrix_data,ritz,side, n, nev, ncv,true,bool_dephase,residp);
@@ -234,18 +232,15 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
     eigvecs.clear();
     eigvecs_found = false;
     eigvals_found = false;
-    char ritz_char[2];
-    RitzToString.at(ritz).copy(ritz_char,2);
-
     DenseHamiltonianProduct<Scalar>  hamiltonianProduct(Lblock, Rblock, HA, HB, shape_theta4,shape_mpo4);
     int dim  = hamiltonianProduct.cols();
 //    int size = hamiltonianProduct.cols() * hamiltonianProduct.rows();
-    int ncv_internal = std::max(dim/2, 2*nev);
+    int ncv_internal = std::max(dim/2, 4*nev);
     ncv_internal = std::min(ncv, ncv_internal);
-//    ncv_internal = 2;
+
     if constexpr(std::is_same_v<Scalar, std::complex<double>>) {
         ARCompStdEig<double, DenseHamiltonianProduct<Scalar>> eigsolver(dim, nev, &hamiltonianProduct,
-                                                                        &DenseHamiltonianProduct<Scalar>::MultMv, "SR",
+                                                                        &DenseHamiltonianProduct<Scalar>::MultMv, RitzToString.at(ritz),
                                                                         ncv_internal, eigThreshold, eigMaxIter, resid);
 
         eigsolver.FindEigenvectors();
@@ -264,8 +259,8 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
 
     if constexpr(std::is_same_v<Scalar, double>) {
         ARNonSymStdEig <double, DenseHamiltonianProduct<Scalar>> eigsolver(dim, nev, &hamiltonianProduct,
-                                                                        &DenseHamiltonianProduct<Scalar>::MultMv, ritz_char,
-                                                                        ncv_internal, eigThreshold, eigMaxIter, resid);
+                                                                           &DenseHamiltonianProduct<Scalar>::MultMv, RitzToString.at(ritz),
+                                                                           ncv_internal, eigThreshold, eigMaxIter, resid);
 
         eigsolver.FindEigenvectors();
         eigvals_found = eigsolver.EigenvaluesFound();
@@ -281,7 +276,7 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
 
     }
 
-   if (bool_dephase){
+    if (bool_dephase){
         subtract_phase();
     }
 }
@@ -297,4 +292,3 @@ template class class_arpack_eigsolver<std::complex<double>, Form::SYMMETRIC> ;
 
 template class class_arpack_eigsolver<double, Form::GENERAL> ;
 template class class_arpack_eigsolver<double, Form::SYMMETRIC> ;
-

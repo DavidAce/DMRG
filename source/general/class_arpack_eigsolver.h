@@ -66,32 +66,32 @@ private:
             eigvals.insert(eigvals.begin(), solution.RawEigenvalues(), solution.RawEigenvalues() + cols);
         }
     }
-    public:
+public:
 
 
 
     class_arpack_eigsolver();
     class_arpack_eigsolver(Scalar *matrix_data,
-                            Ritz ritz,
-                            Side side,
-                            const int n,
-                            const int nev,
-                            const int ncv,
-                            bool getvecs=false,
-                            bool dephase=false,
-                            Scalar *residp = NULL);
+                           Ritz ritz,
+                           Side side,
+                           const int n,
+                           const int nev,
+                           const int ncv,
+                           bool getvecs=false,
+                           bool dephase=false,
+                           Scalar *residp = NULL);
 
     class_arpack_eigsolver(const Scalar *Lblock,        /*!< The left block tensor.  */
-                            const Scalar *Rblock,        /*!< The right block tensor.  */
-                            const Scalar *HA,            /*!< The left Hamiltonian MPO's  */
-                            const Scalar *HB,            /*!< The right Hamiltonian MPO's */
-                            const std::array<long,4> shape_theta4,         /*!< An array containing the shapes of theta  */
-                            const std::array<long,4> shape_mpo4 ,           /*!< An array containing the shapes of the MPO  */
-                            Ritz ritz,
-                            int nev,
-                            int ncv,
-                            bool bool_dephase=true,
-                            Scalar *resid = nullptr);
+                           const Scalar *Rblock,        /*!< The right block tensor.  */
+                           const Scalar *HA,            /*!< The left Hamiltonian MPO's  */
+                           const Scalar *HB,            /*!< The right Hamiltonian MPO's */
+                           const std::array<long,4> shape_theta4,         /*!< An array containing the shapes of theta  */
+                           const std::array<long,4> shape_mpo4 ,           /*!< An array containing the shapes of the MPO  */
+                           Ritz ritz,
+                           int nev,
+                           int ncv,
+                           bool bool_dephase=true,
+                           Scalar *resid = nullptr);
 
 
     const std::vector<Scalar> & ref_eigvecs() const;
