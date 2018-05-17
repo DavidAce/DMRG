@@ -17,19 +17,9 @@ find_package(LAPACK)
 if(BLAS_FOUND AND LAPACK_FOUND)
     message(STATUS "BLAS FOUND IN SYSTEM: ${BLAS_openblas_LIBRARY}")
     message(STATUS "LAPACK FOUND IN SYSTEM: ${LAPACK_openblas_LIBRARY}")
-    add_library(blas UNKNOWN IMPORTED)
-    add_library(lapack UNKNOWN IMPORTED)
-    set_target_properties(blas PROPERTIES
-            IMPORTED_LOCATION ${BLAS_openblas_LIBRARY})
-    set_target_properties(lapack PROPERTIES
-            IMPORTED_LOCATION ${LAPACK_openblas_LIBRARY})
-
-    #For convenience, define these variables
+       #For convenience, define these variables
     set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
     set(LAPACK_LIBRARIES   ${LAPACK_openblas_LIBRARY})
-    target_link_libraries(${PROJECT_NAME} PUBLIC blas)
-    target_link_libraries(${PROJECT_NAME} PUBLIC lapack)
-    return()
 endif()
 #exit (1)
 
@@ -54,21 +44,37 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
     set(BLAS_INCLUDE_DIRS ${INSTALL_DIR}/include)
     set(BLAS_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
     set(LAPACK_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
-    add_library(blas UNKNOWN IMPORTED)
-    add_library(lapack UNKNOWN IMPORTED)
-    add_dependencies(blas library_OpenBLAS)
-    add_dependencies(lapack library_OpenBLAS)
-    set_target_properties(blas PROPERTIES
-            IMPORTED_LOCATION ${BLAS_LIBRARIES}
-            INCLUDE_DIRECTORIES BLAS_INCLUDE_DIRS)
-    set_target_properties(lapack PROPERTIES
-            IMPORTED_LOCATION ${LAPACK_LIBRARIES}
-            INCLUDE_DIRECTORIES BLAS_INCLUDE_DIRS)
 
-    target_link_libraries(${PROJECT_NAME} PUBLIC blas)
-    target_link_libraries(${PROJECT_NAME} PUBLIC lapack)
-    target_include_directories(${PROJECT_NAME} PUBLIC ${BLAS_INCLUDE_DIRS})
+
+#
+#    add_library(blas UNKNOWN IMPORTED)
+#    add_library(lapack UNKNOWN IMPORTED)
+#    add_dependencies(blas library_OpenBLAS)
+#    add_dependencies(lapack library_OpenBLAS)
+#    set_target_properties(blas PROPERTIES
+#            IMPORTED_LOCATION ${BLAS_LIBRARIES}
+#            INCLUDE_DIRECTORIES BLAS_INCLUDE_DIRS)
+#    set_target_properties(lapack PROPERTIES
+#            IMPORTED_LOCATION ${LAPACK_LIBRARIES}
+#            INCLUDE_DIRECTORIES BLAS_INCLUDE_DIRS)
+
+
 endif()
 
+add_library(blas INTERFACE)
+set_target_properties(blas PROPERTIES
+        INTERFACE_LINK_LIBRARIES        "${BLAS_LIBRARIES}"
+        INTERFACE_INCLUDE_DIRECTORY     "${BLAS_INCLUDE_DIRS}"
+        )
+
+add_library(lapack INTERFACE)
+set_target_properties(lapack PROPERTIES
+        INTERFACE_LINK_LIBRARIES        "${LAPACK_LIBRARIES}"
+        INTERFACE_INCLUDE_DIRECTORY     "${BLAS_INCLUDE_DIRS}"
+        )
 
 
+
+target_link_libraries(${PROJECT_NAME} PUBLIC blas)
+target_link_libraries(${PROJECT_NAME} PUBLIC lapack)
+target_include_directories(${PROJECT_NAME} PUBLIC ${BLAS_INCLUDE_DIRS})
