@@ -43,8 +43,9 @@ Scalar class_measurement::moment_generating_function(std::shared_ptr<class_mps> 
     long sizeLB = MPS_evolved->LB.size() * MPS_evolved->LB.size();
     //Normalize
     Tensor<Scalar,2> transfer_matrix_theta_evn       = MPS_evolved->get_transfer_matrix_theta_evn().reshape(array2{sizeLB,sizeLB});
+    using namespace settings::precision;
     class_arpack_eigsolver<Scalar, Form::GENERAL> solver;
-    solver.eig(transfer_matrix_theta_evn.data(), Ritz::LM, Side::R, (int)sizeLB, 1, 16, false);
+    solver.eig(transfer_matrix_theta_evn.data(), Ritz::LM, Side::R, (int)sizeLB, 1, eigMaxNcv, eigThreshold,eigMaxIter, false);
     auto new_theta_evn_normalized        = MPS_evolved->get_theta_evn(sqrt(solver.ref_eigvals()[0]));
 
     long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original->theta_evn_normalized.dimension(1);
@@ -55,7 +56,7 @@ Scalar class_measurement::moment_generating_function(std::shared_ptr<class_mps> 
             .shuffle(array4{0,2,1,3})
             .reshape(array2{sizeL,sizeR});
     //Compute the characteristic function G(a).
-    solver.eig(transfer_matrix_G.data(), Ritz::LM, Side::R, (int)transfer_matrix_G.dimension(0), 1, 16, false);
+    solver.eig(transfer_matrix_G.data(), Ritz::LM, Side::R, (int)transfer_matrix_G.dimension(0), 1, eigMaxNcv, eigThreshold,eigMaxIter, false);
     Scalar lambdaG = solver.ref_eigvals()[0];
     t_temp1.toc();
     return lambdaG;
