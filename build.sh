@@ -1,19 +1,52 @@
 #!/bin/bash
-buildtype="Release"
+PROGNAME=$0
 dcmake_c_compiler=""
 dcmake_cxx_compiler=""
-dcmake_fortran_compiler=""
+default_target="all"
+default_mode="Release"
+default_threads="2"
 
-if [[ "$@" == *"ebug"* ]]
+usage() {
+  cat << EOF >&2
+Usage: $PROGNAME [-t <target>] [-m <mode>] [-c]  [-l] [-j <num_threads>]
+
+-t <target>      : DMRG++    | all   | any test target
+-m <mode>        : Release   | Debug
+-c               : Clear CMake files before build (delete ./build)
+-l               : Clear downloaded libraries (delete ./libs)
+-j <num_threads> : Number of threads used by CMake
+EOF
+  exit 1
+}
+
+target=default_target
+mode=default_mode
+clear_cmake=""
+clear_libs=""
+threads=default_threads
+while getopts t:m:clj: o; do
+  case $o in
+    (t) target=$OPTARG;;
+    (m) mode=$OPTARG;;
+    (c) clear_cmake="true";;
+    (l) clear_libs="true";;
+    (j) threads=$OPTARG;;
+    (*) usage
+  esac
+done
+shift "$((OPTIND - 1))"
+
+
+if [ "${clear_cmake}" = "true" ]
 then
-	buildtype="Debug"
+    echo "Clearing CMake files from build."
+	rm -rf ./build
 fi
 
-if [[ "$@" == *"lean"* ]]
+if [ "${clear_libs}" = "true" ]
 then
-    echo "Cleaning build"
-	rm -rf build
-    exit 0
+    echo "Clearing downloaded libraries."
+	rm -rf ./libs
 fi
 
 if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
@@ -59,7 +92,6 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     else
         echo "Please install gcc (version 7 or higher) through brew"
         echo "  brew install gcc"
-#        echo "  brew install llvm"
         exit 1
     fi
     export CC=${c_compiler}
@@ -75,7 +107,7 @@ fi
 
 
 echo "Starting Build"
-cmake -E make_directory build/${buildtype}
-cd build/${buildtype}
-cmake  ${dcmake_c_compiler} ${dcmake_cxx_compiler} ${dcmake_fortran_compiler} -DCMAKE_BUILD_TYPE=${buildtype} -G "CodeBlocks - Unix Makefiles" ../../
-cmake --build . --target DMRG++ -- -j 2
+cmake -E make_directory build/${mode}
+cd build/${mode}
+cmake ${dcmake_c_compiler} ${dcmake_cxx_compiler} -DCMAKE_BUILD_TYPE=${mode} -G "CodeBlocks - Unix Makefiles" ../../
+cmake --build . --target ${target} -- -j ${threads}

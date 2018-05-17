@@ -44,7 +44,6 @@ else()
             INTERFACE_LINK_LIBRARIES arpack
             INTERFACE_LINK_LIBRARIES blas
             INTERFACE_LINK_LIBRARIES lapack
-            INTERFACE_LINK_LIBRARIES EIGEN3
             INTERFACE_INCLUDE_DIRECTORIES ${ARPACKPP_INCLUDE_DIR}
             )
     add_dependencies(arpackpp library_ARPACKPP)

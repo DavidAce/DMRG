@@ -9,7 +9,7 @@
 
 template<typename T,Form form>
 void DenseMatrixProduct<T,form>::MultMv(T* x_in, T* x_out) {
-    Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>> A_mat(A,n,n);
+    Eigen::Map<const Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>> A_mat(A,n,n);
     if constexpr(form == Form::GENERAL) {
         if (side == Side::R) {
             Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic,1>> x_vec_in  (x_in, n);

@@ -10,11 +10,11 @@
 template <typename T, Form form = Form::GENERAL>
 class DenseMatrixProduct {
 private:
-    T *A; //A pointer to the matrix "A"
-    int n;    // The dimension of the problem.
-    Side side;
+    const T *A; //A pointer to the matrix "A"
+    const int n;    // The dimension of the problem.
+    const Side side;
 public:
-    DenseMatrixProduct(int n_, T *A_, Side side_):A(A_), n(n_), side(side_){}
+    DenseMatrixProduct(const int n_, const T *A_, const Side side_):A(A_), n(n_), side(side_){}
 
     int counter = 0;
     int rows() const {return n;};

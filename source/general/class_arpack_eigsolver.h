@@ -9,7 +9,6 @@
 #include <complex>
 #include <vector>
 #include <iostream>
-#include <sim_parameters/nmspc_sim_settings.h>
 
 namespace arpackpp{
     enum class Form{SYMMETRIC, GENERAL};  // Real Symmetric, Real General or Complex General
@@ -24,8 +23,9 @@ class class_arpack_eigsolver {
 
 private:
 //    using T = std::complex<double>;
-    double  eigThreshold    = settings::precision::eigThreshold;
-    int     eigMaxIter      = settings::precision::eigMaxIter;
+    double  eigThreshold    = 1e-12;
+    int     eigMaxIter      = 1000;
+    int     eigMaxNcv       = 16;
     int     Iter            = 0;
     int     rows            = 0;
     int     cols            = 0;
@@ -40,6 +40,7 @@ private:
 
     using  MapType = std::map<arpackpp::Ritz, std::string>;
     MapType RitzToString;
+    char ritz_char[2];
 
     template <typename Derived>
     void find_solution(Derived &solution, int nev, bool compute_eigv) {
@@ -71,15 +72,39 @@ public:
 
 
     class_arpack_eigsolver();
-    class_arpack_eigsolver(Scalar *matrix_data,
-                           Ritz ritz,
-                           Side side,
+    class_arpack_eigsolver(const Scalar *matrix_data,
+                           const Ritz ritz,
+                           const Side side,
                            const int n,
                            const int nev,
                            const int ncv,
-                           bool getvecs=false,
-                           bool dephase=false,
+                           const double threshold,
+                           const int MaxIter,
+                           const bool getvecs=false,
+                           const bool dephase=false,
                            Scalar *residp = NULL);
+    class_arpack_eigsolver(const Scalar *matrix_data,
+                           const Ritz ritz,
+                           const Side side,
+                           const int n,
+                           const int nev,
+                           const int ncv,
+                           const bool getvecs=false,
+                           const bool dephase=false,
+                           Scalar *residp = NULL);
+
+
+    class_arpack_eigsolver(const Scalar *Lblock,                            /*!< The left block tensor.  */
+                           const Scalar *Rblock,                            /*!< The right block tensor.  */
+                           const Scalar *HA,                                /*!< The left Hamiltonian MPO's  */
+                           const Scalar *HB,                                /*!< The right Hamiltonian MPO's */
+                           const std::array<long,4> shape_theta4,           /*!< An array containing the shapes of theta  */
+                           const std::array<long,4> shape_mpo4 ,            /*!< An array containing the shapes of the MPO  */
+                           const Ritz ritz,
+                           const int nev,
+                           const int ncv,
+                           const bool bool_dephase=true,
+                           Scalar *resid = nullptr);
 
     class_arpack_eigsolver(const Scalar *Lblock,        /*!< The left block tensor.  */
                            const Scalar *Rblock,        /*!< The right block tensor.  */
@@ -87,11 +112,15 @@ public:
                            const Scalar *HB,            /*!< The right Hamiltonian MPO's */
                            const std::array<long,4> shape_theta4,         /*!< An array containing the shapes of theta  */
                            const std::array<long,4> shape_mpo4 ,           /*!< An array containing the shapes of the MPO  */
-                           Ritz ritz,
-                           int nev,
-                           int ncv,
-                           bool bool_dephase=true,
+                           const Ritz ritz,
+                           const int nev,
+                           const int ncv,
+                           const double threshold,
+                           const int MaxIter,
+                           const bool bool_dephase=true,
                            Scalar *resid = nullptr);
+
+
 
 
     const std::vector<Scalar> & ref_eigvecs() const;
@@ -108,41 +137,51 @@ public:
     void setThreshold(double newThreshold) {
         eigThreshold = newThreshold;
     }
+    void setMaxIter(int newMaxIter) {
+        eigMaxIter = newMaxIter;
+    }
+
+    void setMaxNcv(int newMaxNcv) {
+        eigMaxNcv = newMaxNcv;
+    }
+
 
     int GetIter(){
         return Iter;
     }
 
-    void eig(Scalar *matrix_data,
-             Ritz ritz,
-             Side side,
+    void eig(const Scalar *matrix_data,
+             const Ritz ritz,
+             const Side side,
              const int n,
              const int nev,
              const int ncv,
-             bool bool_find_eigvecs=false,
-             bool bool_dephase=false,
+             const double threshold,
+             const int  MaxIter,
+             const bool bool_find_eigvecs=false,
+             const bool bool_dephase=false,
              Scalar *residp = nullptr
     );
 
     const std::pair<const std::vector<Scalar>&,const std::vector<Scalar>&>
-    eig_ref_vec_val(Scalar *matrix_data,
-                    Ritz ritz,
-                    Side side,
+    eig_ref_vec_val(const Scalar *matrix_data,
+                    const Ritz ritz,
+                    const Side side,
                     const int n,
                     const int nev,
                     const int ncv,
-                    bool bool_dephase = false,
+                    const bool bool_dephase = false,
                     Scalar *residp = nullptr
     );
 
     const std::pair<const std::vector<Scalar>,const std::vector<Scalar>>
-    eig_get_vec_val(Scalar *matrix_data,
-                    Ritz ritz,
-                    Side side,
+    eig_get_vec_val(const Scalar *matrix_data,
+                    const Ritz ritz,
+                    const Side side,
                     const int n,
                     const int nev,
                     const int ncv,
-                    bool bool_dephase = false,
+                    const bool bool_dephase = false,
                     Scalar *residp = nullptr
     );
 
@@ -153,10 +192,12 @@ public:
             const Scalar *HB_,            /*!< The right Hamiltonian MPO's */
             const std::array<long,4> shape_theta4_,         /*!< An array containing the shapes of theta  */
             const std::array<long,4> shape_mpo4_ ,           /*!< An array containing the shapes of the MPO  */
-            Ritz ritz,
-            int nev,
-            int ncv,
-            bool bool_dephase = true,
+            const Ritz ritz,
+            const int nev,
+            const int ncv,
+            const double threshold,
+            const int MaxIter,
+            const bool bool_dephase = true,
             Scalar *residp = nullptr);
 
 };
