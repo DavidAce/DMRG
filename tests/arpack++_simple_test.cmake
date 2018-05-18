@@ -2,7 +2,7 @@ enable_language(Fortran)
 include(cmake_modules/FindGFortran.cmake)
 
 add_executable(arpack++_simple_test_target tests/arpack++_simple_test.cpp)
-set_target_properties(arpack++_simple_test_target PROPERTIES OUTPUT_NAME  arpack++_simple_test_object)
+set_target_properties(arpack++_simple_test_target PROPERTIES OUTPUT_NAME  arpack++_simple_test)
 target_link_libraries(arpack++_simple_test_target PRIVATE arpack arpack++ blas lapack)
 target_compile_options(arpack++_simple_test_target
         PRIVATE
