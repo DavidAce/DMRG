@@ -4,7 +4,7 @@
 
 #ifndef NMSPC_TYPE_CHECK_H
 #define NMSPC_TYPE_CHECK_H
-
+#include <experimental/type_traits>
 #include <Eigen/Core>
 
 namespace TypeCheck{

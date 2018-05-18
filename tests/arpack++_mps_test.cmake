@@ -4,7 +4,7 @@ add_executable(arpack++_mps_test_target tests/arpack++_mps_test.cpp source/gener
 set_target_properties(arpack++_mps_test_target PROPERTIES OUTPUT_NAME  arpack++_mps_test)
 
 
-target_link_libraries(arpack++_mps_test_target PRIVATE arpack arpack++ blas lapack EIGEN3)
+target_link_libraries(arpack++_mps_test_target PRIVATE arpack arpack++ blas lapack EIGEN3 -lstdc++fs -flto)
 target_compile_options(arpack++_mps_test_target
         PRIVATE
         $<TARGET_PROPERTY:arpack,INTERFACE_COMPILE_OPTIONS>
