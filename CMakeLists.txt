@@ -164,25 +164,25 @@ enable_testing()
 
 include(tests/arpack++_simple_test.cmake)
 include(tests/arpack++_mps_test.cmake)
-add_custom_target( all_tests ALL
-        DEPENDS ${PROJECT_NAME}
-        DEPENDS blas
-        DEPENDS lapack
-        DEPENDS EIGEN3
-        DEPENDS hdf5::hdf5_hl_cpp
+add_custom_target(all_tests ALL
+#        DEPENDS ${PROJECT_NAME}
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
         )
+
+
 add_custom_command(
         TARGET all_tests
         COMMENT "Running Tests"
-        POST_BUILD
+        PRE_BUILD
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failures
-        DEPENDS all_tests
+#        DEPENDS all_tests
         DEPENDS ${PROJECT_NAME}
 )
 
+
+add_dependencies(${PROJECT_NAME} all_tests blas lapack EIGEN3 hdf5::hdf5_hl_cpp GSL::gsl)
 
 # To print all variables, use the code below:
 #
