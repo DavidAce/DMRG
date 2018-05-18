@@ -23,8 +23,8 @@ Therefore, local installations of Arpack++ will be ignored in favor of the most 
 if (false)
 #if(ARPACKPP_LIBRARIES AND ARPACKPP_INCLUDE_DIR)
 
-    add_library(arpackpp UNKNOWN IMPORTED)
-    set_target_properties(arpackpp PROPERTIES
+    add_library(arpack++ UNKNOWN IMPORTED)
+    set_target_properties(arpack++ PROPERTIES
             IMPORTED_LOCATION "${ARPACKPP_LIBRARIES}"
             INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}")
     target_link_libraries(${PROJECT_NAME} PRIVATE arpackpp)
@@ -33,7 +33,7 @@ else()
     message(STATUS "Arpack++ will be installed into ${INSTALL_DIRECTORY}/arpackpp on first build.")
     enable_language(Fortran)
     include(ExternalProject)
-    ExternalProject_Add(library_ARPACKPP
+    ExternalProject_Add(library_ARPACK++
             GIT_REPOSITORY      https://github.com/m-reuter/arpackpp.git
             GIT_TAG             master
             PREFIX              "${INSTALL_DIRECTORY}/arpack++"
@@ -47,17 +47,17 @@ else()
             DEPENDS blas lapack arpack
     )
 
-    ExternalProject_Get_Property(library_ARPACKPP INSTALL_DIR)
-    add_library(arpackpp INTERFACE)
+    ExternalProject_Get_Property(library_ARPACK++ INSTALL_DIR)
+    add_library(arpack++ INTERFACE)
     set(ARPACKPP_INCLUDE_DIR ${INSTALL_DIR}/include)
-    set_target_properties(arpackpp PROPERTIES
+    set_target_properties(arpack++ PROPERTIES
             INTERFACE_LINK_LIBRARIES arpack
             INTERFACE_LINK_LIBRARIES blas
             INTERFACE_LINK_LIBRARIES lapack
             INTERFACE_INCLUDE_DIRECTORIES ${ARPACKPP_INCLUDE_DIR}
             )
-    add_dependencies(arpackpp library_ARPACKPP)
-    target_link_libraries(${PROJECT_NAME} PRIVATE arpackpp)
+    add_dependencies(arpack++ library_ARPACK++)
+    target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 endif()
 
 

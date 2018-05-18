@@ -14,7 +14,7 @@ else()
             CONFIGURE_COMMAND
                 cd <SOURCE_DIR> &&
                 pwd &&
-                ./configure CFLAGS= --enable-shared=no --prefix=<INSTALL_DIR>
+                ./configure --enable-silent-rules CFLAGS= --enable-shared=no --prefix=<INSTALL_DIR>
             BUILD_COMMAND
                 cd <SOURCE_DIR> &&
                 pwd &&
