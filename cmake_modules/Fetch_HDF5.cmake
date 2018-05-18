@@ -28,18 +28,30 @@ if(HDF5_FOUND AND HDF5_LIBRARIES AND HDF5_CXX_LIBRARIES AND HDF5_HL_LIBRARIES AN
     message(STATUS "FOUND HDF5")
     message(STATUS "   In path: ${HDF5_INCLUDE_DIR}")
     message(STATUS "   HDF5 DEFINITIONS         : ${HDF5_DEFINITIONS}")
-    message(STATUS "   HDF5 LIBRARIES           : ${HDF5_LIBRARIES}")
-    message(STATUS "   HDF5_C_LIBRARIES         : ${HDF5_C_LIBRARY_NAMES}")
-    message(STATUS "   HDF5_C_HL_LIBRARIES      : ${HDF5_C_HL_LIBRARY_NAMES}")
-    message(STATUS "   HDF5_CXX_LIBRARIES       : ${HDF5_CXX_LIBRARY_NAMES}")
-    message(STATUS "   HDF5_CXX_HL_LIBRARIES    : ${HDF5_CXX_HL_LIBRARY_NAMES}")
+    message(STATUS "   HDF5_LIBRARIES           : ${HDF5_CXX_LIBRARY_hdf5}")
+    message(STATUS "   HDF5_HL_LIBRARIES        : ${HDF5_CXX_LIBRARY_hdf5_hl}")
+    message(STATUS "   HDF5_CXX_LIBRARIES       : ${HDF5_CXX_LIBRARY_hdf5_cpp}")
+    message(STATUS "   HDF5_HL_CXX_LIBRARIES    : ${HDF5_CXX_LIBRARY_hdf5_hl_cpp}")
     message(STATUS "   HDF5 LDFLAGS             : ${HDF5_LDFLAGS}")
+    get_cmake_property(_variableNames VARIABLES)
+    foreach (_variableName ${_variableNames})
+        if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5")
+            message(STATUS "${_variableName}=${${_variableName}}")
+        endif()
+    endforeach()
+    set(HDF5_LIBRARIES_ORIGINAL         ${HDF5_LIBRARIES})
 
-    target_include_directories(${PROJECT_NAME} PRIVATE ${HDF5_INCLUDE_DIR})
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${HDF5_C_LIBRARIES} ${HDF5_C_HL_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES} -ldl)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${HDF5_LDFLAGS})
+    set(HDF5_LIBRARIES         ${HDF5_CXX_LIBRARY_hdf5})
+    set(HDF5_HL_LIBRARIES      ${HDF5_CXX_LIBRARY_hdf5_hl})
+    set(HDF5_CXX_LIBRARIES     ${HDF5_CXX_LIBRARY_hdf5_cpp})
+    set(HDF5_HL_CXX_LIBRARIES  ${HDF5_CXX_LIBRARY_hdf5_hl_cpp})
+    set(HDF5_LINKER_FLAGS -lpthread -lsz -lz -ldl -lm)
     add_definitions(${HDF5_DEFINITIONS})
-
+    # Add convenience libraries
+    add_library(hdf5::hdf5           STATIC IMPORTED)
+    add_library(hdf5::hdf5_hl        STATIC IMPORTED)
+    add_library(hdf5::hdf5_cpp       STATIC IMPORTED)
+    add_library(hdf5::hdf5_hl_cpp    STATIC IMPORTED)
 else()
     message(STATUS "HDF5 will be installed into ${INSTALL_DIRECTORY}/hdf5 on first build.")
 
@@ -67,50 +79,46 @@ else()
             )
 
     ExternalProject_Get_Property(library_HDF5 INSTALL_DIR)
-
-
     add_library(hdf5::hdf5           STATIC IMPORTED)
     add_library(hdf5::hdf5_hl        STATIC IMPORTED)
     add_library(hdf5::hdf5_cpp       STATIC IMPORTED)
     add_library(hdf5::hdf5_hl_cpp    STATIC IMPORTED)
 
-
-    set_target_properties(hdf5::hdf5 PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5-static${CMAKE_STATIC_LIBRARY_SUFFIX}
-            INTERFACE_LINK_LIBRARIES "m;dl;dl"
-            INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
-
-    set_target_properties(hdf5::hdf5_hl PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl-static${CMAKE_STATIC_LIBRARY_SUFFIX}
-            INTERFACE_LINK_LIBRARIES hdf5::hdf5
-            INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
-
-    set_target_properties(hdf5::hdf5_cpp PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_cpp-static${CMAKE_STATIC_LIBRARY_SUFFIX}
-            INTERFACE_LINK_LIBRARIES hdf5::hdf5
-            INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
-
-    set_target_properties(hdf5::hdf5_hl_cpp PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libhdf5_hl_cpp-static${CMAKE_STATIC_LIBRARY_SUFFIX}
-            INTERFACE_LINK_LIBRARIES "hdf5::hdf5_hl;hdf5::hdf5"
-            INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
-
     add_dependencies(hdf5::hdf5          library_HDF5)
     add_dependencies(hdf5::hdf5_hl       library_HDF5)
     add_dependencies(hdf5::hdf5_cpp      library_HDF5)
     add_dependencies(hdf5::hdf5_hl_cpp   library_HDF5)
-    target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5)
-    target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_hl)
-    target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_cpp)
-    target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_hl_cpp)
-    target_link_libraries(${PROJECT_NAME} PRIVATE -ldl)
-    target_include_directories(${PROJECT_NAME} PRIVATE ${INSTALL_DIR}/include)
-#    For convenience, define these variables
-    get_target_property(HDF5_LIBRARIES          hdf5::hdf5        IMPORTED_LOCATION)
-    get_target_property(HDF5_HL_LIBRARIES       hdf5::hdf5_hl     IMPORTED_LOCATION)
-    get_target_property(HDF5_CXX_LIBRARIES      hdf5::hdf5_cpp    IMPORTED_LOCATION)
-    get_target_property(HDF5_CXX_HL_LIBRARIES   hdf5::hdf5_hl_cpp IMPORTED_LOCATION)
+    set(HDF5_LIBRARIES        ${INSTALL_DIR}/lib/libhdf5-static${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(HDF5_HL_LIBRARIES     ${INSTALL_DIR}/lib/libhdf5_hl-static${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(HDF5_CXX_LIBRARIES    ${INSTALL_DIR}/lib/libhdf5_cpp-static${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(HDF5_HL_CXX_LIBRARIES ${INSTALL_DIR}/lib/libhdf5_hl_cpp-static${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(HDF5_INCLUDE_DIR      ${INSTALL_DIR}/include)
 endif()
 
+set_target_properties(hdf5::hdf5 PROPERTIES
+        IMPORTED_LOCATION ${HDF5_LIBRARIES}
+        INTERFACE_LINK_LIBRARIES "${HDF5_LDFLAGS};${HDF5_LINKER_FLAGS}"
+        INCLUDE_DIRECTORIES ${HDF5_INCLUDE_DIR})
+
+set_target_properties(hdf5::hdf5_hl PROPERTIES
+        IMPORTED_LOCATION ${HDF5_HL_LIBRARIES}
+        INTERFACE_LINK_LIBRARIES hdf5::hdf5
+        INCLUDE_DIRECTORIES ${HDF5_INCLUDE_DIR})
+
+set_target_properties(hdf5::hdf5_cpp PROPERTIES
+        IMPORTED_LOCATION ${HDF5_CXX_LIBRARIES}
+        INTERFACE_LINK_LIBRARIES hdf5::hdf5
+        INCLUDE_DIRECTORIES ${HDF5_INCLUDE_DIR})
+
+set_target_properties(hdf5::hdf5_hl_cpp PROPERTIES
+        IMPORTED_LOCATION ${HDF5_HL_CXX_LIBRARIES}
+        INTERFACE_LINK_LIBRARIES "hdf5::hdf5_hl;hdf5::hdf5"
+        INCLUDE_DIRECTORIES ${HDF5_INCLUDE_DIR})
 
 
+target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5)
+target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_hl)
+target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_hl_cpp)
+target_include_directories(${PROJECT_NAME} PRIVATE ${HDF5_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${HDF5_LDFLAGS} ${HDF5_LINKER_FLAGS})
