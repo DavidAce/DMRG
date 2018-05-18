@@ -39,7 +39,15 @@ if(HDF5_FOUND AND HDF5_LIBRARIES AND HDF5_CXX_LIBRARIES AND HDF5_HL_LIBRARIES AN
     set(HDF5_HL_LIBRARIES      ${HDF5_CXX_LIBRARY_hdf5_hl})
     set(HDF5_CXX_LIBRARIES     ${HDF5_CXX_LIBRARY_hdf5_cpp})
     set(HDF5_HL_CXX_LIBRARIES  ${HDF5_CXX_LIBRARY_hdf5_hl_cpp})
-    set(HDF5_LINKER_FLAGS -lpthread -lsz -lz -ldl -lm)
+
+    get_cmake_property(_variableNames VARIABLES)
+    foreach (_variableName ${_variableNames})
+        if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5")
+            message(STATUS "${_variableName}=${${_variableName}}")
+        endif()
+    endforeach()
+
+    set(HDF5_LINKER_FLAGS $HDF5_CXX_LIBRARY_NAMES})
     add_definitions(${HDF5_DEFINITIONS})
     # Add convenience libraries
     add_library(hdf5::hdf5           STATIC IMPORTED)
