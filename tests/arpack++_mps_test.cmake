@@ -1,3 +1,5 @@
+enable_language(Fortran)
+
 get_target_property(BLAS_LIBRARIES        blas INTERFACE_LINK_LIBRARIES    )
 get_target_property(BLAS_INCLUDE_DIRS     blas INTERFACE_INCLUDE_DIRECTORY )
 get_target_property(BLAS_LINK_FLAGS       blas INTERFACE_LINK_FLAGS        )

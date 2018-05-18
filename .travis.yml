@@ -39,7 +39,7 @@ matrix:
         - GCC_VERSION=8
         - CC=gcc-8
         - CXX=g++-8
-        - FC=gfortran
+        - FC=gfortran-8
         - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
       cache:
         apt: true
@@ -60,7 +60,7 @@ matrix:
         - CXX=clang++-6.0
         - CC=clang-6.0
         - CLANG_VERSION=6.0
-        - FC=gfortran
+        - FC=gfortran-7
         - MATRIX_EVAL="CXX=clang++-6.0 && CC=clang-6.0 && FC=gfortran-7"
       cache:
         apt: true

@@ -27,7 +27,6 @@ endif()
 
 if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
     message(STATUS "OpenBLAS will be installed into ${INSTALL_DIRECTORY}/OpenBLAS on first build.")
-
     enable_language(Fortran)
     include(ExternalProject)
     ExternalProject_Add(library_OpenBLAS

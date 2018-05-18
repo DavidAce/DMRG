@@ -5,7 +5,6 @@ project(DMRG++)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-
 ################################################################
 ### Get git version number                                   ###
 ### Generates a header gitversion/gitversion.h               ###
@@ -112,8 +111,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC source)
 ###########################################
 
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
-include(cmake_modules/FindGFortran.cmake)                   # For Fortran library, needed to build some of the libraries
-#include(cmake_modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+include(cmake_modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake_modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake_modules/Fetch_Eigen3.cmake)                   # Eigen library
 include(cmake_modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
