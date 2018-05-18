@@ -46,5 +46,6 @@ set_target_properties(EIGEN3 PROPERTIES
         INTERFACE_INCLUDE_DIRECTORY     "${EIGEN3_INCLUDE_DIR}"
         INTERFACE_COMPILE_OPTIONS       "${EIGEN3_COMPILER_FLAGS}"
         )
-target_include_directories(${PROJECT_NAME} PUBLIC ${EIGEN3_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE EIGEN3)
+target_include_directories(${PROJECT_NAME} PRIVATE ${EIGEN3_INCLUDE_DIR})
 target_compile_options(${PROJECT_NAME} PRIVATE ${EIGEN3_COMPILER_FLAGS})

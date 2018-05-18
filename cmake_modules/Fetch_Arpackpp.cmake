@@ -28,7 +28,7 @@ if (false)
     set_target_properties(arpack++ PROPERTIES
             IMPORTED_LOCATION "${ARPACKPP_LIBRARIES}"
             INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}")
-    target_link_libraries(${PROJECT_NAME} PRIVATE arpackpp)
+    target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 
 else()
     message(STATUS "Arpack++ will be installed into ${INSTALL_DIRECTORY}/arpackpp on first build.")
@@ -48,7 +48,7 @@ else()
     )
 
     ExternalProject_Get_Property(library_ARPACK++ INSTALL_DIR)
-    add_library(arpack++ INTERFACE)
+    add_library(arpack++ INTERFACE IMPORTED)
     set(ARPACKPP_INCLUDE_DIR ${INSTALL_DIR}/include)
     set_target_properties(arpack++ PROPERTIES
             INTERFACE_LINK_LIBRARIES "arpack;blas;lapack"
@@ -56,6 +56,7 @@ else()
             )
     add_dependencies(arpack++ library_ARPACK++)
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACKPP_INCLUDE_DIR})
 endif()
 
 

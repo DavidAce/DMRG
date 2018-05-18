@@ -21,8 +21,8 @@ if(BLAS_FOUND AND LAPACK_FOUND)
     message(STATUS "BLAS FOUND IN SYSTEM: ${BLAS_openblas_LIBRARY}")
     message(STATUS "LAPACK FOUND IN SYSTEM: ${LAPACK_openblas_LIBRARY}")
        #For convenience, define these variables
-    add_library(blas INTERFACE)
-    add_library(lapack INTERFACE)
+    add_library(blas UNKNOWN IMPORTED)
+    add_library(lapack UNKNOWN IMPORTED)
     set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
     set(LAPACK_LIBRARIES   ${LAPACK_openblas_LIBRARY})
 endif()
@@ -45,8 +45,8 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
             )
 
     ExternalProject_Get_Property(library_OpenBLAS INSTALL_DIR)
-    add_library(blas INTERFACE)
-    add_library(lapack INTERFACE)
+    add_library(blas UNKNOWN IMPORTED)
+    add_library(lapack UNKNOWN IMPORTED)
     add_dependencies(blas         library_OpenBLAS)
     add_dependencies(lapack       library_OpenBLAS)
     set(BLAS_INCLUDE_DIRS ${INSTALL_DIR}/include)
@@ -56,6 +56,7 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
 endif()
 
 set_target_properties(blas PROPERTIES
+        IMPORTED_LOCATION               "${BLAS_LIBRARIES}"
         INTERFACE_LINK_LIBRARIES        "${BLAS_LIBRARIES}"
         INTERFACE_INCLUDE_DIRECTORY     "${BLAS_INCLUDE_DIRS}"
         INTERFACE_LINK_FLAGS            ""
@@ -63,6 +64,7 @@ set_target_properties(blas PROPERTIES
         )
 
 set_target_properties(lapack PROPERTIES
+        IMPORTED_LOCATION               "${LAPACK_LIBRARIES}"
         INTERFACE_LINK_LIBRARIES        "${LAPACK_LIBRARIES}"
         INTERFACE_INCLUDE_DIRECTORY     "${BLAS_INCLUDE_DIRS}"
         INTERFACE_LINK_FLAGS            ""
@@ -71,6 +73,6 @@ set_target_properties(lapack PROPERTIES
 
 
 
-target_link_libraries(${PROJECT_NAME} PUBLIC blas)
-target_link_libraries(${PROJECT_NAME} PUBLIC lapack)
-target_include_directories(${PROJECT_NAME} PUBLIC ${BLAS_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE blas)
+target_link_libraries(${PROJECT_NAME} PRIVATE lapack)
+target_include_directories(${PROJECT_NAME} PRIVATE ${BLAS_INCLUDE_DIRS})

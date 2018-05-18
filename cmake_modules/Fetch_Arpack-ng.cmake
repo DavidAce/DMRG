@@ -11,11 +11,17 @@ find_library(ARPACK_LIBRARIES
 
 if(ARPACK_LIBRARIES)
     message(STATUS "ARPACK found in system:   ${ARPACK_LIBRARIES}")
-    add_library(arpack INTERFACE)
+    add_library(arpack UNKNOWN IMPORTED)
     set_target_properties(arpack
             PROPERTIES
-            INTERFACE_LINK_LIBRARIES "${ARPACK_LIBRARIES};${GFORTRAN_LIB}"
+            IMPORTED_LOCATION "${ARPACK_LIBRARIES}"
+            INTERFACE_LINK_LIBRARIES "${GFORTRAN_LIB}"
             )
+#    add_library(arpack INTERFACE)
+#    set_target_properties(arpack
+#            PROPERTIES
+#            INTERFACE_LINK_LIBRARIES "${ARPACK_LIBRARIES};${GFORTRAN_LIB}"
+#            )
     target_link_libraries(${PROJECT_NAME} PUBLIC arpack)
     return()
 else()
@@ -62,15 +68,21 @@ else()
 
     ExternalProject_Get_Property(library_ARPACK INSTALL_DIR)
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
-    add_library(arpack INTERFACE)
+    add_library(arpack UNKNOWN IMPORTED)
     set_target_properties(arpack
             PROPERTIES
-            INTERFACE_LINK_LIBRARIES "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX};${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
+            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX}
+            INTERFACE_LINK_LIBRARIES "${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
             INTERFACE_INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
+#    add_library(arpack INTERFACE)
+#    set_target_properties(arpack
+#            PROPERTIES
+#            INTERFACE_LINK_LIBRARIES "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX};${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
+#            INTERFACE_INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
     add_dependencies(arpack library_ARPACK)
 
-    target_link_libraries(${PROJECT_NAME} PUBLIC arpack)
-    target_include_directories(${PROJECT_NAME} PUBLIC ${ARPACK_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
     #For convenience, define these variables
     get_target_property(ARPACK_LIBRARIES arpack IMPORTED_LOCATION)
 endif()

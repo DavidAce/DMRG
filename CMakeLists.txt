@@ -171,7 +171,7 @@ include(tests/arpack++_mps_test.cmake)
 add_custom_target(all_tests ALL
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
-        DEPENDS blas lapack EIGEN3 arpack arpack++ hdf5::hdf5 GSL::gsl
+        DEPENDS blas lapack EIGEN3 arpack arpack++ hdf5::hdf5 GSL
         )
 
 
