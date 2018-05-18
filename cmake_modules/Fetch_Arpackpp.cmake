@@ -31,6 +31,7 @@ if (false)
 
 else()
     message(STATUS "Arpack++ will be installed into ${INSTALL_DIRECTORY}/arpackpp on first build.")
+    enable_language(Fortran)
     include(ExternalProject)
     ExternalProject_Add(library_ARPACKPP
             GIT_REPOSITORY      https://github.com/m-reuter/arpackpp.git

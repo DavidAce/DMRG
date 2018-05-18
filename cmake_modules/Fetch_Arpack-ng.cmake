@@ -16,6 +16,8 @@ if(ARPACK_LIBRARIES)
     return()
 else()
     message(STATUS "Arpack-ng will be installed into ${INSTALL_DIRECTORY}/arpack-ng on first build.")
+    include(CheckLanguage)
+    enable_language(Fortran)
 
     #####################################################################
     ### Prepare lists with generator expressions, replacing all semicolons.
