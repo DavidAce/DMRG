@@ -33,12 +33,6 @@ if(HDF5_FOUND AND HDF5_LIBRARIES AND HDF5_CXX_LIBRARIES AND HDF5_HL_LIBRARIES AN
     message(STATUS "   HDF5_CXX_LIBRARIES       : ${HDF5_CXX_LIBRARY_hdf5_cpp}")
     message(STATUS "   HDF5_HL_CXX_LIBRARIES    : ${HDF5_CXX_LIBRARY_hdf5_hl_cpp}")
     message(STATUS "   HDF5 LDFLAGS             : ${HDF5_LDFLAGS}")
-    get_cmake_property(_variableNames VARIABLES)
-    foreach (_variableName ${_variableNames})
-        if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5")
-            message(STATUS "${_variableName}=${${_variableName}}")
-        endif()
-    endforeach()
     set(HDF5_LIBRARIES_ORIGINAL         ${HDF5_LIBRARIES})
 
     set(HDF5_LIBRARIES         ${HDF5_CXX_LIBRARY_hdf5})
