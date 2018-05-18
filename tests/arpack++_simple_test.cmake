@@ -13,8 +13,8 @@ get_target_property(LAPACK_COMPILE_FLAGS    lapack INTERFACE_COMPILE_OPTIONS   )
 add_executable(arpack++_simple_test_target tests/arpack++_simple_test.cpp)
 
 set_target_properties(arpack++_simple_test_target PROPERTIES OUTPUT_NAME  arpack++_simple_test_object)
-target_link_libraries(arpack++_simple_test_target PRIVATE arpack arpackpp blas lapack ${BLAS_LINK_FLAGS} ${LAPACK_LINK_FLAGS})
-target_include_directories(arpack++_simple_test_target PRIVATE ${arpack++_INCLUDE_DIR} ${BLAS_INCLUDE_DIRS} ${LAPACK_INCLUDE_DIRS})
+target_link_libraries(arpack++_simple_test_target PRIVATE arpack arpack++ blas lapack ${BLAS_LINK_FLAGS} ${LAPACK_LINK_FLAGS})
+target_include_directories(arpack++_simple_test_target PRIVATE ${ARPACKPP_INCLUDE_DIR} ${BLAS_INCLUDE_DIRS} ${LAPACK_INCLUDE_DIRS})
 target_compile_options(arpack++_simple_test_target PRIVATE ${BLAS_COMPILE_FLAGS} ${LAPACK_COMPILE_FLAGS})
 set_target_properties  (arpack++_simple_test_target PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(arpack++_simple_test_target PRIVATE cxx_std_17)
@@ -24,3 +24,4 @@ target_compile_options (arpack++_simple_test_target PRIVATE "$<$<CONFIG:RELEASE>
 
 add_test(NAME arpack++_simple_test COMMAND arpack++_simple_test_target)
 
+add_dependencies(arpack++_simple_test_target blas lapack arpack arpack++)

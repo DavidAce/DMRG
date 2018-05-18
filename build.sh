@@ -1,8 +1,5 @@
 #!/bin/bash
 PROGNAME=$0
-default_target="all"
-default_mode="Release"
-default_threads="2"
 
 usage() {
   cat << EOF >&2
@@ -17,11 +14,13 @@ EOF
   exit 1
 }
 
-target=$default_target
-mode=$default_mode
+
+target="all"
+mode="Release"
 clear_cmake=""
 clear_libs=""
-threads=$default_threads
+threads="2"
+
 while getopts t:m:clj: o; do
   case $o in
     (t) target=$OPTARG;;
@@ -29,19 +28,20 @@ while getopts t:m:clj: o; do
     (c) clear_cmake="true";;
     (l) clear_libs="true";;
     (j) threads=$OPTARG;;
+    (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
     (*) usage
   esac
 done
 shift "$((OPTIND - 1))"
 
 
-if [ "${clear_cmake}" = "true" ]
+if [ "$clear_cmake" = "true" ]
 then
     echo "Clearing CMake files from build."
 	rm -rf ./build
 fi
 
-if [ "${clear_libs}" = "true" ]
+if [ "$clear_libs" = "true" ]
 then
     echo "Clearing downloaded libraries."
 	rm -rf ./libs
@@ -73,7 +73,11 @@ fi
 
 
 echo "Starting Build"
+echo "Target          :   $target"
+echo "Build threads   :   $threads"
+echo "Mode            :   $mode"
+
 cmake -E make_directory build/$mode
 cd build/$mode
 cmake -DCMAKE_BUILD_TYPE=$mode -G "CodeBlocks - Unix Makefiles" ../../
-cmake --build . --target ${target} -- -j ${threads}
+cmake --build . --target $target -- -j $threads
