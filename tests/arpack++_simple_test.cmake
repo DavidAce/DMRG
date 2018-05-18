@@ -12,7 +12,7 @@ add_executable(arpack++_simple_test_target tests/arpack++_simple_test.cpp)
 
 set_target_properties(arpack++_simple_test_target PROPERTIES OUTPUT_NAME  arpack++_simple_test_object)
 target_link_libraries(arpack++_simple_test_target PRIVATE arpack arpackpp blas lapack ${BLAS_LINK_FLAGS} ${LAPACK_LINK_FLAGS})
-target_include_directories(arpack++_simple_test_target PRIVATE ${arpack++_INCLUDE_DIR} ${BLAS_INCLUDE_DIRS} ${LAPACK_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIRS})
+target_include_directories(arpack++_simple_test_target PRIVATE ${arpack++_INCLUDE_DIR} ${BLAS_INCLUDE_DIRS} ${LAPACK_INCLUDE_DIRS})
 target_compile_options(arpack++_simple_test_target PRIVATE ${BLAS_COMPILE_FLAGS} ${LAPACK_COMPILE_FLAGS})
 set_target_properties  (arpack++_simple_test_target PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(arpack++_simple_test_target PRIVATE cxx_std_17)

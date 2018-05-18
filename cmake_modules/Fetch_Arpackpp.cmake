@@ -15,11 +15,14 @@ find_path(ARPACKPP_INCLUDE_DIR
 if(ARPACKPP_LIBRARIES AND ARPACKPP_INCLUDE_DIR)
     message(STATUS "Arpack++ library found in system: ${ARPACKPP_LIBRARIES}")
     message(STATUS "Arpack++ include found in system: ${ARPACKPP_INCLUDE_DIR}")
+    message(WARNING "Due to a bug, older versions of Arpack++ require -fpermissive flag to compile. This is now enabled for compatibility.")
     add_library(arpackpp UNKNOWN IMPORTED)
     set_target_properties(arpackpp PROPERTIES
             IMPORTED_LOCATION "${ARPACKPP_LIBRARIES}"
-            INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}" )
+            INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}"
+            COMPILE_FLAGS -fpermissive)
     target_link_libraries(${PROJECT_NAME} PRIVATE arpackpp)
+
 else()
     message(STATUS "Arpack++ will be installed into ${INSTALL_DIRECTORY}/arpackpp on first build.")
     include(ExternalProject)
