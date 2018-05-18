@@ -128,7 +128,7 @@ include(cmake_modules/Fetch_GSL.cmake)                      # GSL for computing 
 message("=============================================================================")
 message("=== SUMMARY OF CMAKE CONFIGURATION:  THE FOLLOWING LIBRARIES WILL BE USED ===")
 message("=============================================================================")
-#message("    INTEL MKL:   ${MKL_LIBRARIES}")
+message("    INTEL MKL:   ${MKL_LIBRARIES}")
 message("    BLAS     :   ${BLAS_LIBRARIES}")
 message("    LAPACK   :   ${LAPACK_LIBRARIES}")
 message("    EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
@@ -165,7 +165,6 @@ enable_testing()
 include(tests/arpack++_simple_test.cmake)
 include(tests/arpack++_mps_test.cmake)
 add_custom_target(all_tests ALL
-#        DEPENDS ${PROJECT_NAME}
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
         )
@@ -177,12 +176,11 @@ add_custom_command(
         PRE_BUILD
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failures
-#        DEPENDS all_tests
         DEPENDS ${PROJECT_NAME}
 )
 
 
-add_dependencies(${PROJECT_NAME} all_tests blas lapack EIGEN3 hdf5::hdf5_hl_cpp GSL::gsl)
+add_dependencies(${PROJECT_NAME} all_tests)
 
 # To print all variables, use the code below:
 #

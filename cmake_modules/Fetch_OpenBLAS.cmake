@@ -45,20 +45,6 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
     set(BLAS_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
     set(LAPACK_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
 
-
-#
-#    add_library(blas UNKNOWN IMPORTED)
-#    add_library(lapack UNKNOWN IMPORTED)
-#    add_dependencies(blas library_OpenBLAS)
-#    add_dependencies(lapack library_OpenBLAS)
-#    set_target_properties(blas PROPERTIES
-#            IMPORTED_LOCATION ${BLAS_LIBRARIES}
-#            INCLUDE_DIRECTORIES BLAS_INCLUDE_DIRS)
-#    set_target_properties(lapack PROPERTIES
-#            IMPORTED_LOCATION ${LAPACK_LIBRARIES}
-#            INCLUDE_DIRECTORIES BLAS_INCLUDE_DIRS)
-
-
 endif()
 
 add_library(blas INTERFACE)
