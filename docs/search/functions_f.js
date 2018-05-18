@@ -14,6 +14,8 @@ var searchData=
   ['set_5fprofiling_5flabels',['set_profiling_labels',['../classclass__base__algorithm.html#a392f90b92c4f4e00be5dd51747a19202',1,'class_base_algorithm::set_profiling_labels()'],['../classclass__measurement.html#a8eb5577b6ec603f5c43f1098fe768d9f',1,'class_measurement::set_profiling_labels()']]],
   ['set_5fproperties',['set_properties',['../classclass__tic__toc.html#a235fdbf16b92fac52940f351d8459ab3',1,'class_tic_toc']]],
   ['set_5fsuperblock',['set_superblock',['../classclass__finite__chain__storage.html#ab748bdd22c8b6837ed496ba9fba2f04d',1,'class_finite_chain_storage']]],
+  ['setmaxiter',['setMaxIter',['../classclass__arpack__eigsolver.html#a5a389360985a1892bc856798419ec587',1,'class_arpack_eigsolver']]],
+  ['setmaxncv',['setMaxNcv',['../classclass__arpack__eigsolver.html#aad2549edc5af76747edf47f9e495ae54',1,'class_arpack_eigsolver']]],
   ['setthreshold',['setThreshold',['../classclass__arpack__eigsolver.html#a064a44110b20c0ac2ed7bde53151b525',1,'class_arpack_eigsolver::setThreshold()'],['../classclass___s_v_d.html#a45aa52c93953edf911a16e10ad252a79',1,'class_SVD::setThreshold()']]],
   ['single_5fdmrg_5fstep',['single_DMRG_step',['../classclass__base__algorithm.html#a65c251104d1b92c3b0fa04ce99b21c0e',1,'class_base_algorithm']]],
   ['single_5ftebd_5fstep',['single_TEBD_step',['../classclass__base__algorithm.html#a9d7bb6caf737320cae7300e38bf4a8ce',1,'class_base_algorithm']]],

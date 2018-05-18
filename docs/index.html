@@ -141,7 +141,7 @@ Description of DMRG++</h1>
 Installation</h1>
 <h2><a class="anchor" id="quickstart"></a>
 Quick start</h2>
-<p>Git clone or copy &amp; extract the project into a folder of your choosing. Make sure there are no spaces in the output_folder!**. The project can be built with a single command from a unix terminal. Simply launch the script <code>.\build.sh</code> found in the root folder. If you are feeling lucky, try </p><div class="fragment"><div class="line">cmake -E make_directory build/Release</div><div class="line">cd build/Release</div><div class="line">cmake -Bbuild/Release --build build -config Release ../../</div><div class="line">make</div></div><!-- fragment --><p>The CMakeLists.txt script lets CMake to check for dependencies and download them automatically if needed (see <em>Optional Requirements</em> below). If the dependencies are found, the project is built and an executable is generated.</p>
+<p>Git clone or copy &amp; extract the project into a folder of your choosing. Make sure there are no spaces in your path!**. The project can be built with a single command from a unix terminal. Simply launch the script <code>.\build.sh</code> found in the root folder. If you are feeling lucky, try </p><div class="fragment"><div class="line">cmake -E make_directory build/Release</div><div class="line">cd build/Release</div><div class="line">cmake -Bbuild/Release --build build -config Release ../../</div><div class="line">make</div></div><!-- fragment --><p>The CMakeLists.txt script lets CMake check for dependencies and download them automatically if needed (see <em>Optional Requirements</em> below). If the dependencies are found, the project is built and an executable is generated.</p>
 <p>To run the executable, launch <code>.\run.sh</code>, containing To clean cmake-related files (except for libraries) run the build script with argument: <code>./build.sh clean</code>, or just remove the <code>build/</code> folder.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#!/bin/sh</span></div><div class="line"><span class="preprocessor">./build/Release/DMRG++</span></div></div><!-- fragment --><p>Alternatively**, if you intend to develop or study the source code, some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This is perhaps an even simpler approach. Recommended: <a href="https://www.jetbrains.com/clion/download">CLion</a> or <a href="https://code.visualstudio.com/">Visual Studio Code</a> with the C++ and CMake Tools extensions.</p>
 <h2><a class="anchor" id="minreqs"></a>
@@ -155,7 +155,7 @@ Minimum Requirements</h2>
 <li>CMake version &gt;= 3.9. If you compile CMake from source, remember to enable <code>curl</code> (<code>./bootstrap --system-curl</code>).</li>
 <li><p class="startli">*(For library compilation only) Fortran compiler, tested with gfortran-7 and gfortran-8.*</p>
 <p class="startli">Ubuntu** 17 or higher will have the versions required in the default repositories. For older distributions, use the ppa <code>ubuntu-toolchain-r/test</code> to get newer versions.</p>
-<p class="startli">Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with <code>brew install gcc</code>. Clang from llvm 6.0 might work but you will have to link to GNU's <code>libstdc++.so</code> or <code>libstdc++.a</code> manually. AppleClang family of compilers are not supported at all.</p>
+<p class="startli">Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with <code>brew install gcc</code>. Clang from llvm 6.0 might work but you will have to link to GNU's <code>libstdc++.so</code> or <code>libstdc++.a</code> manually. The AppleClang compiler is not supported at all.</p>
 </li>
 </ul>
 <h2><a class="anchor" id="optionalreqs"></a>
@@ -166,7 +166,7 @@ Optional Requirements</h2>
 <li><b>Manual</b>: install the libraries yourself with your favorite package manager (e.g. <code>apt</code> in ubuntu or <code>brew</code> in OSX). The build script will always attempt to find the libraries in your system first.</li>
 </ol>
 <p>The latter is recommended to avoid a lengthy compilation of these rather large libraries. If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from your package manager.</p>
-<h4>Libraries</h4>
+<h4>List of libraries</h4>
 <ul>
 <li><b>BLAS</b> and <b>LAPACK</b>. Required for Arpack. You can choose either <a href="https://software.intel.com/en-us/mkl">Intel MKL</a> or <a href="https://github.com/xianyi/OpenBLAS">OpenBLAS</a> (OpenBLAS requires Fortran to compile from source). If both MKL and OpenBLAS are found in the system, MKL is preferred.</li>
 <li><a href="http://eigen.tuxfamily.org"><b>Eigen</b></a> for tensor and matrix and linear algebra (tested with version &gt;= 3.3).</li>

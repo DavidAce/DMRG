@@ -18,6 +18,7 @@ var searchData=
   ['reset',['reset',['../classclass__tic__toc.html#a39004b41f3748228508857edfd6fe656',1,'class_tic_toc']]],
   ['retval',['retval',['../classclass__hdf5__file.html#a421e66653cfff76f9f574cf549352f1d',1,'class_hdf5_file']]],
   ['ritz',['Ritz',['../namespacearpackpp.html#a6b2726968794d55a35453f02623eb854',1,'arpackpp']]],
+  ['ritz_5fchar',['ritz_char',['../classclass__arpack__eigsolver.html#afb6bb4bc0484571109f2914eaab12047',1,'class_arpack_eigsolver']]],
   ['ritztostring',['RitzToString',['../classclass__arpack__eigsolver.html#ae00a0e43ce6041b5595f57fda1c6e17b',1,'class_arpack_eigsolver']]],
   ['rn',['rn',['../namespacern.html',1,'']]],
   ['rng',['rng',['../namespacern.html#a3ef7cecaf695dc6bd5b521a805cceb98',1,'rn']]],
