@@ -11,7 +11,7 @@ var searchData=
   ['delta_5ftime',['delta_time',['../classclass__tic__toc.html#aa7910bc2adf5c1a03542d3b880a104b2',1,'class_tic_toc']]],
   ['delta_5ftmin',['delta_tmin',['../classclass__base__algorithm.html#af799c2333bb65d95c1f3b2897c835b55',1,'class_base_algorithm::delta_tmin()'],['../namespacesettings_1_1itebd.html#a6b6afcf2968c3cb071bc050b4e805085',1,'settings::itebd::delta_tmin()']]],
   ['densehamiltonianproduct',['DenseHamiltonianProduct',['../class_dense_hamiltonian_product.html',1,'DenseHamiltonianProduct&lt; T &gt;'],['../class_dense_hamiltonian_product.html#a8b9b6883067cd1634abb53fc420ddf78',1,'DenseHamiltonianProduct::DenseHamiltonianProduct()']]],
-  ['densematrixproduct',['DenseMatrixProduct',['../class_dense_matrix_product.html',1,'DenseMatrixProduct&lt; T, form &gt;'],['../class_dense_matrix_product.html#a377e07418af0c1722ee507e5373cbfc9',1,'DenseMatrixProduct::DenseMatrixProduct()']]],
+  ['densematrixproduct',['DenseMatrixProduct',['../class_dense_matrix_product.html',1,'DenseMatrixProduct&lt; T, form &gt;'],['../class_dense_matrix_product.html#a306d4a01e6bd756090f0ca51dc4d748c',1,'DenseMatrixProduct::DenseMatrixProduct()']]],
   ['dimb',['dimB',['../struct_textra_1_1idx__dim__pair.html#ad9e7197a027ca16a3d1a1b067a843f68',1,'Textra::idx_dim_pair']]],
   ['dims_5ft',['Dims_t',['../namespace_type_check.html#a69b99399a457c54efa8cb178ec239564',1,'TypeCheck']]],
   ['direction',['direction',['../classclass__base__algorithm.html#ad73800cc0e348de53b7b33fd0c7b307c',1,'class_base_algorithm']]],

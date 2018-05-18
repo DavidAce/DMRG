@@ -7,6 +7,7 @@ var searchData=
   ['rblock2',['Rblock2',['../classclass__superblock.html#adfe3c822132ec6320929979ebcd5a60e',1,'class_superblock']]],
   ['recorded_5felements',['recorded_elements',['../classclass__hdf5__table__buffer.html#a151494bb950897df9eebfbaf428104e2',1,'class_hdf5_table_buffer']]],
   ['retval',['retval',['../classclass__hdf5__file.html#a421e66653cfff76f9f574cf549352f1d',1,'class_hdf5_file']]],
+  ['ritz_5fchar',['ritz_char',['../classclass__arpack__eigsolver.html#afb6bb4bc0484571109f2914eaab12047',1,'class_arpack_eigsolver']]],
   ['ritztostring',['RitzToString',['../classclass__arpack__eigsolver.html#ae00a0e43ce6041b5595f57fda1c6e17b',1,'class_arpack_eigsolver']]],
   ['rng',['rng',['../namespacern.html#a3ef7cecaf695dc6bd5b521a805cceb98',1,'rn']]],
   ['rows',['rows',['../classclass__arpack__eigsolver.html#ae5fc1dd7e9254c1ef37fda282f986fd1',1,'class_arpack_eigsolver']]]

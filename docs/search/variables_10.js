@@ -10,7 +10,7 @@ var searchData=
   ['shape_5ftheta1',['shape_theta1',['../class_dense_hamiltonian_product.html#ad645de71743caa8e0044b36afc35a16c',1,'DenseHamiltonianProduct']]],
   ['shape_5ftheta2',['shape_theta2',['../class_dense_hamiltonian_product.html#a2d641ab6bb8fd4a5ff24d6f2eef67e91',1,'DenseHamiltonianProduct']]],
   ['shape_5ftheta4',['shape_theta4',['../class_dense_hamiltonian_product.html#a7de17fb2cc98e2069ec9d48807d4e0f2',1,'DenseHamiltonianProduct']]],
-  ['side',['side',['../class_dense_matrix_product.html#a5c5ed31ff49f6f1fa495e5aa07a5060b',1,'DenseMatrixProduct::side()'],['../classclass__environment.html#aa04ac64fd8b1983b7dd1216befbfbece',1,'class_environment::side()'],['../classclass__environment__var.html#a02d289de66235a377e00771303afd817',1,'class_environment_var::side()']]],
+  ['side',['side',['../class_dense_matrix_product.html#a6a08aa58dc8074b5a7acadd6cc1d2db9',1,'DenseMatrixProduct::side()'],['../classclass__environment.html#aa04ac64fd8b1983b7dd1216befbfbece',1,'class_environment::side()'],['../classclass__environment__var.html#a02d289de66235a377e00771303afd817',1,'class_environment_var::side()']]],
   ['sim',['sim',['../classclass__measurement.html#acd25e3f13f2c4dd39ad866c241adf848',1,'class_measurement']]],
   ['sim_5fname',['sim_name',['../classclass__base__algorithm.html#a0dc3be3538690cc8b3967ec6cafe705e',1,'class_base_algorithm']]],
   ['sim_5ftype',['sim_type',['../classclass__base__algorithm.html#a1b0aa51dcaba106a3c7371565c04dd8d',1,'class_base_algorithm']]],
