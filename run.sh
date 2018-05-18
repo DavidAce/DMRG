@@ -12,7 +12,7 @@ EOF
   exit 1
 }
 
-target="all"
+target="DMRG++"
 mode="Release"
 file="input.cfg"
 
