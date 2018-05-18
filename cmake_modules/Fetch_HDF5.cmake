@@ -47,7 +47,6 @@ if(HDF5_FOUND AND HDF5_LIBRARIES AND HDF5_CXX_LIBRARIES AND HDF5_HL_LIBRARIES AN
 
     add_definitions(${HDF5_DEFINITIONS})
     # Add convenience libraries
-    add_library(hdf5::total          STATIC IMPORTED)
     add_library(hdf5::hdf5           STATIC IMPORTED)
     add_library(hdf5::hdf5_hl        STATIC IMPORTED)
     add_library(hdf5::hdf5_cpp       STATIC IMPORTED)

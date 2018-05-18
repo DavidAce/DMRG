@@ -14,7 +14,6 @@
 #include <experimental/filesystem>
 #include <experimental/type_traits>
 
-#include <type_traits>
 #include <typeinfo>
 #include "class_custom_cout.h"
 #include <general/nmspc_type_check.h>
@@ -24,7 +23,7 @@
 #include <iterator>
 
 
-namespace fs = std::experimental::filesystem::v1;
+namespace fs = std::experimental::filesystem;
 namespace tc = TypeCheck;
 
 /*!

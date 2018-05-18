@@ -68,48 +68,7 @@ endif()
 file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
-
-###########################################
-###  Apply RELEASE/DEBUG compile flags  ###
-###########################################
-target_compile_options (${PROJECT_NAME} PUBLIC ${COMMON_OPTIONS})                                   ### Common options
-target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
-target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
-target_link_libraries  (${PROJECT_NAME} PUBLIC -flto)                                               ### Link time optimization flag
-target_link_libraries  (${PROJECT_NAME} PUBLIC -lstdc++fs)                                          ### For experimental::filesystem
-#target_link_libraries  (${PROJECT_NAME} -lc++experimental)                                         ### For experimental::filesystem
-
-
-######################################################
-###  Require c++17 support and test that it works  ###
-######################################################
-set_target_properties  (${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED 17)
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)                                         ### Demand c++17 compiler support
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag(-std=c++17 _support_cxx_std_17)
-check_cxx_compiler_flag(-lstdc++fs _support_lstdcxxfs)
-include(CheckIncludeFileCXX)
-check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -std=c++17 -lstdc++fs)
-check_include_file_cxx(experimental/type_traits has_experimental_type_traits -std=c++17 -lstdc++fs)
-if(has_experimental_filesystem AND has_experimental_type_traits)
-    message(STATUS "C++17 experimental features are supported.")
-else()
-    message(FATAL_ERROR "Missing experimental headers for C++17.")
-endif()
-
-
-#######################################
-###  Link and include dependencies  ###
-#######################################
-
 target_include_directories(${PROJECT_NAME} PUBLIC source)
-
-get_cmake_property(_variableNames VARIABLES)
-foreach (_variableName ${_variableNames})
-    if("${_variableName}" MATCHES "ortran" OR "${_variableName}" MATCHES "ORTRAN")
-        message(STATUS "${_variableName}=${${_variableName}}")
-    endif()
-endforeach()
 
 
 ###########################################
@@ -125,6 +84,35 @@ include(cmake_modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenval
 include(cmake_modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake_modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
 
+
+
+
+
+######################################################
+###  Require c++17 support and test that it works  ###
+######################################################
+set_target_properties  (${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED 17)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)                                         ### Demand c++17 compiler support
+include(CheckIncludeFileCXX)
+check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -std=c++17 -lstdc++fs)
+check_include_file_cxx(experimental/type_traits has_experimental_type_traits -std=c++17 -lstdc++fs)
+if(has_experimental_filesystem AND has_experimental_type_traits)
+    message(STATUS "C++17 features are supported.")
+else()
+    message(FATAL_ERROR "Missing headers for C++17. Consider using a newer compiler (GCC 7 or above, Clang 6 or above.")
+endif()
+
+
+
+###########################################
+###  Apply RELEASE/DEBUG compile flags  ###
+###########################################
+target_compile_options (${PROJECT_NAME} PUBLIC ${COMMON_OPTIONS})                                   ### Common options
+target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
+target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
+target_link_libraries  (${PROJECT_NAME} PUBLIC -flto)                                               ### Link time optimization flag
+target_link_libraries  (${PROJECT_NAME} PUBLIC -lstdc++fs)                                          ### For experimental::filesystem
+#target_link_libraries  (${PROJECT_NAME} -lc++experimental)                                         ### For experimental::filesystem
 
 
 
