@@ -6,7 +6,7 @@ set_target_properties(arpack++_mps_test_target PROPERTIES OUTPUT_NAME  arpack++_
 
 target_link_libraries(arpack++_mps_test_target PRIVATE arpack arpack++ blas lapack EIGEN3)
 target_compile_options(arpack++_mps_test_target
-        PRIVATE 
+        PRIVATE
         $<TARGET_PROPERTY:arpack,INTERFACE_COMPILE_OPTIONS>
         $<TARGET_PROPERTY:arpack++,INTERFACE_COMPILE_OPTIONS>
         $<TARGET_PROPERTY:blas,INTERFACE_COMPILE_OPTIONS>
