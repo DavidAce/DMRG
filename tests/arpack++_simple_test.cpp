@@ -1,6 +1,7 @@
 #include <arpack++/arcomp.h>
 #include <arpack++/ardscomp.h>
 #include <arpack++/ardnsmat.h>
+using namespace std::complex_literals;
 
 
 int main()
