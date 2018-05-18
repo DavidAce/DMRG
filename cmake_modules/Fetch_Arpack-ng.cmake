@@ -1,5 +1,7 @@
 
 
+enable_language(Fortran)
+include(cmake_modules/FindGFortran.cmake)
 
 message(STATUS "SEARCHING FOR ARPACK IN SYSTEM...")
 find_library(ARPACK_LIBRARIES
@@ -9,15 +11,15 @@ find_library(ARPACK_LIBRARIES
 
 if(ARPACK_LIBRARIES)
     message(STATUS "ARPACK found in system:   ${ARPACK_LIBRARIES}")
-    add_library(arpack UNKNOWN IMPORTED)
-    set_target_properties(arpack PROPERTIES
-            IMPORTED_LOCATION "${ARPACK_LIBRARIES}")
+    add_library(arpack INTERFACE)
+    set_target_properties(arpack
+            PROPERTIES
+            INTERFACE_LINK_LIBRARIES "${ARPACK_LIBRARIES};${GFORTRAN_LIB}"
+            )
     target_link_libraries(${PROJECT_NAME} PUBLIC arpack)
     return()
 else()
     message(STATUS "Arpack-ng will be installed into ${INSTALL_DIRECTORY}/arpack-ng on first build.")
-    include(CheckLanguage)
-    enable_language(Fortran)
 
     #####################################################################
     ### Prepare lists with generator expressions, replacing all semicolons.
@@ -60,11 +62,11 @@ else()
 
     ExternalProject_Get_Property(library_ARPACK INSTALL_DIR)
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
-    add_library(arpack UNKNOWN IMPORTED)
-    set_target_properties(arpack PROPERTIES
-            IMPORTED_LOCATION ${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX}
-            INTERFACE_LINK_LIBRARIES "${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
-            INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
+    add_library(arpack INTERFACE)
+    set_target_properties(arpack
+            PROPERTIES
+            INTERFACE_LINK_LIBRARIES "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX};${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
+            INTERFACE_INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
     add_dependencies(arpack library_ARPACK)
 
     target_link_libraries(${PROJECT_NAME} PUBLIC arpack)

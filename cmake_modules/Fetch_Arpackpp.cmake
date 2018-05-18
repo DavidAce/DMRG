@@ -17,7 +17,8 @@ message(WARNING
 "Due to a bug, older versions of Arpack++ require -fpermissive flag to compile. \
 Therefore, local installations of Arpack++ will be ignored in favor of the most resent version.")
 
-
+enable_language(Fortran)
+include(cmake_modules/FindGFortran.cmake)
 
 
 if (false)
@@ -31,7 +32,6 @@ if (false)
 
 else()
     message(STATUS "Arpack++ will be installed into ${INSTALL_DIRECTORY}/arpackpp on first build.")
-    enable_language(Fortran)
     include(ExternalProject)
     ExternalProject_Add(library_ARPACK++
             GIT_REPOSITORY      https://github.com/m-reuter/arpackpp.git
@@ -51,9 +51,7 @@ else()
     add_library(arpack++ INTERFACE)
     set(ARPACKPP_INCLUDE_DIR ${INSTALL_DIR}/include)
     set_target_properties(arpack++ PROPERTIES
-            INTERFACE_LINK_LIBRARIES arpack
-            INTERFACE_LINK_LIBRARIES blas
-            INTERFACE_LINK_LIBRARIES lapack
+            INTERFACE_LINK_LIBRARIES "arpack;blas;lapack"
             INTERFACE_INCLUDE_DIRECTORIES ${ARPACKPP_INCLUDE_DIR}
             )
     add_dependencies(arpack++ library_ARPACK++)

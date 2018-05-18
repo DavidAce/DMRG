@@ -21,9 +21,9 @@ if (MKL_FOUND)
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
     set_target_properties(mkl PROPERTIES
-            INTERFACE_LINK_LIBRARY "${MKL_LIBRARIES}"
+            INTERFACE_LINK_LIBRARY "${MKL_LIBRARIES};${MKL_LFLAGS}"
             INTERFACE_INCLUDE_DIRECTORY "${MKL_INCLUDE_DIR}"
-            INTERFACE_LINK_FLAGS "${MKL_LFLAGS}"
+#            INTERFACE_LINK_FLAGS "${MKL_LFLAGS}"
             INTERFACE_COMPILE_OPTIONS "${MKL_FLAGS}"
             )
     target_link_libraries(${PROJECT_NAME} PUBLIC mkl ${MKL_LIBRARIES} ${MKL_LFLAGS})
@@ -40,17 +40,17 @@ if (MKL_FOUND)
     # Make the rest of the build structure aware of blas and lapack included in MKL.
     add_library(blas INTERFACE)
     set_target_properties(blas PROPERTIES
-            INTERFACE_LINK_LIBRARIES        "${BLAS_LIBRARIES}"
+            INTERFACE_LINK_LIBRARIES        "${BLAS_LIBRARIES};${MKL_LFLAGS}"
             INTERFACE_INCLUDE_DIRECTORY     "${MKL_INCLUDE_DIR}"
-            INTERFACE_LINK_FLAGS            "${MKL_LFLAGS}"
+#            INTERFACE_LINK_FLAGS            "${MKL_LFLAGS}"
             INTERFACE_COMPILE_OPTIONS       "${MKL_FLAGS}"
             )
 
     add_library(lapack INTERFACE)
     set_target_properties(lapack PROPERTIES
-            INTERFACE_LINK_LIBRARIES        "${LAPACK_LIBRARIES}"
+            INTERFACE_LINK_LIBRARIES        "${LAPACK_LIBRARIES};${MKL_LFLAGS}"
             INTERFACE_INCLUDE_DIRECTORY     "${MKL_INCLUDE_DIR}"
-            INTERFACE_LINK_FLAGS            "${MKL_LFLAGS}"
+#            INTERFACE_LINK_FLAGS            "${MKL_LFLAGS}"
             INTERFACE_COMPILE_OPTIONS       "${MKL_FLAGS}"
             )
 
