@@ -107,12 +107,12 @@ set_target_properties(hdf5::hdf5_hl PROPERTIES
 
 set_target_properties(hdf5::hdf5_cpp PROPERTIES
         IMPORTED_LOCATION ${HDF5_CXX_LIBRARIES}
-        INTERFACE_LINK_LIBRARIES hdf5::hdf5
+        INTERFACE_LINK_LIBRARIES "hdf5::hdf5;hdf5::hdf5_hl"
         INCLUDE_DIRECTORIES ${HDF5_INCLUDE_DIR})
 
 set_target_properties(hdf5::hdf5_hl_cpp PROPERTIES
         IMPORTED_LOCATION ${HDF5_HL_CXX_LIBRARIES}
-        INTERFACE_LINK_LIBRARIES "hdf5::hdf5_hl;hdf5::hdf5"
+        INTERFACE_LINK_LIBRARIES "hdf5::hdf5;hdf5::hdf5_hl;hdf5::hdf5_cpp"
         INCLUDE_DIRECTORIES ${HDF5_INCLUDE_DIR})
 
 
