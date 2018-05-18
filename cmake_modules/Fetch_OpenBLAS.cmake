@@ -65,12 +65,16 @@ add_library(blas INTERFACE)
 set_target_properties(blas PROPERTIES
         INTERFACE_LINK_LIBRARIES        "${BLAS_LIBRARIES}"
         INTERFACE_INCLUDE_DIRECTORY     "${BLAS_INCLUDE_DIRS}"
+        INTERFACE_LINK_FLAGS            ""
+        INTERFACE_COMPILE_OPTIONS       ""
         )
 
 add_library(lapack INTERFACE)
 set_target_properties(lapack PROPERTIES
         INTERFACE_LINK_LIBRARIES        "${LAPACK_LIBRARIES}"
         INTERFACE_INCLUDE_DIRECTORY     "${BLAS_INCLUDE_DIRS}"
+        INTERFACE_LINK_FLAGS            ""
+        INTERFACE_COMPILE_OPTIONS       ""
         )
 
 
