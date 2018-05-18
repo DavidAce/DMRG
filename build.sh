@@ -3,13 +3,13 @@ PROGNAME=$0
 
 usage() {
   cat << EOF >&2
-Usage: $PROGNAME [-t <target>] [-m <mode>] [-c]  [-l] [-j <num_threads>]
-
--t <target>      : DMRG++    | all   | any test target
--m <mode>        : Release   | Debug
+Usage: $PROGNAME [-h ] [-t <target>] [-m <mode>] [-c]  [-l] [-j <num_threads>]
 -c               : Clear CMake files before build (delete ./build)
--l               : Clear downloaded libraries (delete ./libs)
+-h               : Help. Shows this text.
 -j <num_threads> : Number of threads used by CMake
+-l               : Clear downloaded libraries (delete ./libs)
+-m <mode>        : Release   | Debug
+-t <target>      : DMRG++    | all   | any test target
 EOF
   exit 1
 }
@@ -21,15 +21,16 @@ clear_cmake=""
 clear_libs=""
 threads="2"
 
-while getopts t:m:clj: o; do
-  case $o in
-    (t) target=$OPTARG;;
-    (m) mode=$OPTARG;;
-    (c) clear_cmake="true";;
-    (l) clear_libs="true";;
-    (j) threads=$OPTARG;;
-    (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
-    (*) usage
+while getopts chj:lm:t: o; do
+    case $o in
+        (c) clear_cmake="true";;
+        (h) usage ;;
+        (j) threads=$OPTARG;;
+        (l) clear_libs="true";;
+        (m) mode=$OPTARG;;
+        (t) target=$OPTARG;;
+        (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
+        (*) usage ;;
   esac
 done
 shift "$((OPTIND - 1))"
