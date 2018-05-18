@@ -80,11 +80,6 @@ else()
             )
 
     ExternalProject_Get_Property(library_HDF5 INSTALL_DIR)
-    add_library(hdf5::total STATIC IMPORTED)
-    add_dependencies(hdf5::total          library_HDF5)
-
-
-
     add_library(hdf5::hdf5           STATIC IMPORTED)
     add_library(hdf5::hdf5_hl        STATIC IMPORTED)
     add_library(hdf5::hdf5_cpp       STATIC IMPORTED)
@@ -98,6 +93,7 @@ else()
     set(HDF5_HL_LIBRARIES     ${INSTALL_DIR}/lib/libhdf5_hl-static${CMAKE_STATIC_LIBRARY_SUFFIX})
     set(HDF5_CXX_LIBRARIES    ${INSTALL_DIR}/lib/libhdf5_cpp-static${CMAKE_STATIC_LIBRARY_SUFFIX})
     set(HDF5_HL_CXX_LIBRARIES ${INSTALL_DIR}/lib/libhdf5_hl_cpp-static${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(HDF5_LINKER_FLAGS "m;dl")
     set(HDF5_INCLUDE_DIR      ${INSTALL_DIR}/include)
 endif()
 
@@ -121,6 +117,13 @@ set_target_properties(hdf5::hdf5_hl_cpp PROPERTIES
         IMPORTED_LOCATION "${HDF5_HL_CXX_LIBRARIES}"
         INTERFACE_LINK_LIBRARIES "hdf5::hdf5;hdf5::hdf5_hl;hdf5::hdf5_cpp"
         INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIR}")
+
+    get_cmake_property(_variableNames VARIABLES)
+    foreach (_variableName ${_variableNames})
+        if("${_variableName}" MATCHES "hdf5" OR "${_variableName}" MATCHES "HDF5")
+            message(STATUS "${_variableName}=${${_variableName}}")
+        endif()
+    endforeach()
 
 
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5)
