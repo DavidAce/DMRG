@@ -11,16 +11,22 @@ find_path(ARPACKPP_INCLUDE_DIR
         NAMES ardsnsym.h
         PATHS /usr/include/arpack++ /usr/include /usr/local/
         )
+message(STATUS "Arpack++ library found in system: ${ARPACKPP_LIBRARIES}")
+message(STATUS "Arpack++ include found in system: ${ARPACKPP_INCLUDE_DIR}")
+message(WARNING
+"Due to a bug, older versions of Arpack++ require -fpermissive flag to compile. \
+Therefore, local installations of Arpack++ will be ignored in favor of the most resent version.")
 
-if(ARPACKPP_LIBRARIES AND ARPACKPP_INCLUDE_DIR)
-    message(STATUS "Arpack++ library found in system: ${ARPACKPP_LIBRARIES}")
-    message(STATUS "Arpack++ include found in system: ${ARPACKPP_INCLUDE_DIR}")
-    message(WARNING "Due to a bug, older versions of Arpack++ require -fpermissive flag to compile. This is now enabled for compatibility.")
+
+
+
+if (false)
+#if(ARPACKPP_LIBRARIES AND ARPACKPP_INCLUDE_DIR)
+
     add_library(arpackpp UNKNOWN IMPORTED)
     set_target_properties(arpackpp PROPERTIES
             IMPORTED_LOCATION "${ARPACKPP_LIBRARIES}"
-            INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}"
-            COMPILE_FLAGS -fpermissive)
+            INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}")
     target_link_libraries(${PROJECT_NAME} PRIVATE arpackpp)
 
 else()
