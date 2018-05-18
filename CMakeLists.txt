@@ -104,6 +104,12 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC source)
 
+get_cmake_property(_variableNames VARIABLES)
+foreach (_variableName ${_variableNames})
+    if("${_variableName}" MATCHES "ortran" OR "${_variableName}" MATCHES "ORTRAN")
+        message(STATUS "${_variableName}=${${_variableName}}")
+    endif()
+endforeach()
 
 
 ###########################################

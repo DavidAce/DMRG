@@ -1,29 +1,34 @@
 enable_language(Fortran)
 
-get_target_property(BLAS_LIBRARIES        blas INTERFACE_LINK_LIBRARIES    )
-get_target_property(BLAS_INCLUDE_DIRS     blas INTERFACE_INCLUDE_DIRECTORY )
-get_target_property(BLAS_LINK_FLAGS       blas INTERFACE_LINK_FLAGS        )
-get_target_property(BLAS_COMPILE_FLAGS    blas INTERFACE_COMPILE_OPTIONS   )
-#
-get_target_property(LAPACK_LIBRARIES        lapack INTERFACE_LINK_LIBRARIES    )
-get_target_property(LAPACK_INCLUDE_DIRS     lapack INTERFACE_INCLUDE_DIRECTORY )
-get_target_property(LAPACK_LINK_FLAGS       lapack INTERFACE_LINK_FLAGS        )
-get_target_property(LAPACK_COMPILE_FLAGS    lapack INTERFACE_COMPILE_OPTIONS   )
-#
-
-get_target_property(EIGEN3_COMPILER_FLAGS    EIGEN3 INTERFACE_COMPILE_OPTIONS   )
-get_target_property(EIGEN3_INCLUDE_DIRS      EIGEN3 INTERFACE_INCLUDE_DIRECTORY )
-
 add_executable(arpack++_mps_test_target tests/arpack++_mps_test.cpp source/general/class_arpack_eigsolver.cpp source/general/class_arpack_custom_products.cpp)
 set_target_properties(arpack++_mps_test_target PROPERTIES OUTPUT_NAME  arpack++_mps_test_object)
-target_link_libraries(arpack++_mps_test_target EIGEN3 arpack arpack++  blas lapack ${BLAS_LINK_FLAGS} ${LAPACK_LINK_FLAGS})
-target_include_directories(arpack++_mps_test_target PRIVATE ${ARPACKPP_INCLUDE_DIR} ${BLAS_INCLUDE_DIRS} ${LAPACK_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIRS} source)
-target_compile_options(arpack++_mps_test_target PRIVATE ${BLAS_COMPILE_FLAGS} ${LAPACK_COMPILE_FLAGS} ${EIGEN3_COMPILE_FLAGS})
+
+
+target_link_libraries(arpack++_mps_test_target PRIVATE -v arpack arpack++ blas lapack EIGEN3)
+target_compile_options(arpack++_mps_test_target
+        PRIVATE -v
+        $<TARGET_PROPERTY:arpack,INTERFACE_COMPILE_OPTIONS>
+        $<TARGET_PROPERTY:arpack++,INTERFACE_COMPILE_OPTIONS>
+        $<TARGET_PROPERTY:blas,INTERFACE_COMPILE_OPTIONS>
+        $<TARGET_PROPERTY:lapack,INTERFACE_COMPILE_OPTIONS>
+        $<TARGET_PROPERTY:EIGEN3,INTERFACE_COMPILE_OPTIONS>
+        )
+
+target_include_directories(arpack++_mps_test_target
+        PRIVATE
+        source
+        $<TARGET_PROPERTY:arpack,INTERFACE_INCLUDE_DIRECTORY>
+        $<TARGET_PROPERTY:arpack++,INTERFACE_INCLUDE_DIRECTORY>
+        $<TARGET_PROPERTY:blas,INTERFACE_INCLUDE_DIRECTORY>
+        $<TARGET_PROPERTY:lapack,INTERFACE_INCLUDE_DIRECTORY>
+        $<TARGET_PROPERTY:EIGEN3,INTERFACE_INCLUDE_DIRECTORY>
+        )
+
 set_target_properties  (arpack++_mps_test_target PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(arpack++_mps_test_target PRIVATE cxx_std_17)
 target_compile_options (arpack++_mps_test_target PRIVATE ${COMMON_OPTIONS})                                   ### Common options
 target_compile_options (arpack++_mps_test_target PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
 target_compile_options (arpack++_mps_test_target PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
-add_test(NAME arpack++_mps_test COMMAND arpack++_mps_test_target)
 
+add_test(NAME arpack++_mps_test COMMAND arpack++_mps_test_target)
 add_dependencies(arpack++_mps_test_target blas lapack arpack arpack++ EIGEN3)

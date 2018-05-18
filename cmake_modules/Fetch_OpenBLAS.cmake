@@ -8,6 +8,9 @@ endif()
 # libopenblas bundled with lapack. Therefore we test if both lapack and blas are present to distinghuish these cases.
 # Otherwise, arpack-ng will complain later about undefined references.
 
+enable_language(Fortran)
+include(cmake_modules/FindGFortran.cmake)
+
 message(STATUS "SEARCHING FOR OpenBLAS IN SYSTEM...")
 set(BLA_VENDOR Open)
 set(BLAS_VERBOSE OFF)
@@ -27,7 +30,7 @@ endif()
 
 if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
     message(STATUS "OpenBLAS will be installed into ${INSTALL_DIRECTORY}/OpenBLAS on first build.")
-    enable_language(Fortran)
+
     include(ExternalProject)
     ExternalProject_Add(library_OpenBLAS
             GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
@@ -37,7 +40,7 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
             TEST_COMMAND ""
             CONFIGURE_COMMAND ""
             BUILD_IN_SOURCE 1
-            BUILD_COMMAND $(MAKE) USE_THREAD=0 USE_OPENMP=0 NO_LAPACKE=1 NO_CBLAS=1 BINARY64=1
+            BUILD_COMMAND $(MAKE) USE_THREAD=0 USE_OPENMP=0 NO_LAPACKE=1 NO_CBLAS=1 BINARY64=1 QUIET_MAKE=1
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             )
 
