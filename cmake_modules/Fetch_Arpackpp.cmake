@@ -24,10 +24,10 @@ include(cmake_modules/FindGFortran.cmake)
 if (false)
 #if(ARPACKPP_LIBRARIES AND ARPACKPP_INCLUDE_DIR)
     message(FATAL_ERROR "YOU REALLY SHLOULD PREFER THE LATEST ARPACK INSTEAD")
-    add_library(arpack++ UNKNOWN IMPORTED)
+    add_library(arpack++ INTERFACE)
     set_target_properties(arpack++ PROPERTIES
-            IMPORTED_LOCATION "${ARPACKPP_LIBRARIES}"
-            INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}")
+            INTERFACE_LINK_LIBRARIES "blas;lapack;arpack;${ARPACKPP_LIBRARIES}"
+            INTERFACE_INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}")
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 
 else()
@@ -48,7 +48,7 @@ else()
     )
 
     ExternalProject_Get_Property(library_ARPACK++ INSTALL_DIR)
-    add_library(arpack++ INTERFACE IMPORTED)
+    add_library(arpack++ INTERFACE)
     set(ARPACKPP_INCLUDE_DIR ${INSTALL_DIR}/include)
     set_target_properties(arpack++ PROPERTIES
             INTERFACE_LINK_LIBRARIES "arpack;blas;lapack"
