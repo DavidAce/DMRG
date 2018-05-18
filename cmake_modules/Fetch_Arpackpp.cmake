@@ -23,7 +23,7 @@ include(cmake_modules/FindGFortran.cmake)
 
 if (false)
 #if(ARPACKPP_LIBRARIES AND ARPACKPP_INCLUDE_DIR)
-
+    message(FATAL_ERROR "YOU REALLY SHLOULD PREFER THE LATEST ARPACK INSTEAD")
     add_library(arpack++ UNKNOWN IMPORTED)
     set_target_properties(arpack++ PROPERTIES
             IMPORTED_LOCATION "${ARPACKPP_LIBRARIES}"

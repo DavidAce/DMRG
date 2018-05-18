@@ -41,25 +41,14 @@
 Git clone or copy & extract the project into a folder of your choosing.
 **Make sure there are no spaces in your path!**.
 The project can be built with a single command from a unix terminal.
-Simply launch the script `.\build.sh` found in the root folder. If you are feeling lucky, try
-```
-        cmake -E make_directory build/Release
-        cd build/Release
-        cmake -Bbuild/Release --build build -config Release ../../
-        make
-```
+Simply launch the script `.\build.sh` found in the root folder to trigger a CMake build.
 
+The script takes optional arguments, run `.\build.sh -h` to learn more.
 
-The CMakeLists.txt script lets CMake check for dependencies and download them automatically if needed (see *Optional Requirements* below).
+The CMake build will check for dependencies and download them automatically if needed (see *Optional Requirements* below).
 If the dependencies are found, the project is built and an executable is generated.
 
-To run the executable, launch `.\run.sh`, containing
-To clean cmake-related files (except for libraries) run the build script with argument: `./build.sh clean`, or just remove the `build/` folder.
-
-```
-#!/bin/sh
-./build/Release/DMRG++
-```
+To run the executable, launch `.\run.sh`, or  `.\run.sh -h` to learn more.
 
 
 **Alternatively**, if you intend to develop or study the source code, some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This
