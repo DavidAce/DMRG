@@ -108,8 +108,8 @@ include(cmake_modules/Fetch_GSL.cmake)                      # GSL for computing 
 set_target_properties  (${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)                                         ### Demand c++17 compiler support
 include(CheckIncludeFileCXX)
-check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -std=c++17 -lstdc++fs)
-check_include_file_cxx(experimental/type_traits has_experimental_type_traits -std=c++17 -lstdc++fs)
+check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -lstdc++fs)
+check_include_file_cxx(experimental/type_traits has_experimental_type_traits)
 if(has_experimental_filesystem AND has_experimental_type_traits)
     message(STATUS "C++17 features are supported.")
 else()
