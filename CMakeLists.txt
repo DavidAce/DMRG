@@ -107,13 +107,23 @@ include(cmake_modules/Fetch_GSL.cmake)                      # GSL for computing 
 ######################################################
 set_target_properties  (${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)                                         ### Demand c++17 compiler support
+
+
+######################################
+###  Require experimental headers  ###
+######################################
+execute_process(COMMAND ${CMAKE_CXX_COMPILER} -print-file-name=libstdc++fs.a
+        OUTPUT_VARIABLE PATH_TO_LIBSTDCXXFS
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
 include(CheckIncludeFileCXX)
-check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -lstdc++fs)
+set(CMAKE_REQUIRED_FLAGS "-l${PATH_TO_LIBSTDCXXFS}")
+message("Path to filesystem library: ${PATH_TO_LIBSTDCXXFS}")
+check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -lstdc++fs -l${PATH_TO_LIBSTDCXXFS})
 check_include_file_cxx(experimental/type_traits has_experimental_type_traits)
 if(has_experimental_filesystem AND has_experimental_type_traits)
     message(STATUS "C++17 features are supported.")
 else()
-    message(FATAL_ERROR "Missing headers for C++17. Consider using a newer compiler (GCC 7 or above, Clang 6 or above.")
+    message(WARNING "Missing headers for C++17.\n Consider using a newer compiler (GCC 7 or above, Clang 6 or above.\n Compilation may fail.")
 endif()
 
 
