@@ -155,16 +155,21 @@ message("Path to filesystem headers: ${PATH_TO_HEADER}")
 # https://stackoverflow.com/questions/47213356/cmake-using-corrext-c-standard-when-checking-for-header-files
 cmake_policy(SET CMP0067 NEW)
 include(CheckIncludeFileCXX)
-#set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs -l${PATH_TO_LIBSTDCXXFS})
-#set(CMAKE_REQUIRED_INCLUDES ${PATH_TO_HEADER})
+set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs -l${PATH_TO_LIBSTDCXXFS})
 check_include_file_cxx(experimental/filesystem    has_experimental_filesystem)
 check_include_file_cxx(experimental/type_traits   has_experimental_type_traits)
 if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
-    message(WARNING "Missing <experimental/type_traits>.\n\
+    message(WARNING "Missing one or more experimental headers.\n\
      Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
-     or checking the compiler flags")
+     or checking the compiler flags.\n\
+     For debug info, try finding the defines that should be present in the headers.")
+    include(CheckCXXSymbolExists)
+    check_cxx_symbol_exists(_GLIBCXX_EXPERIMENTAL_FILESYSTEM experimental/filesystem HAVE_EXP_FS)
+    check_cxx_symbol_exists(_GLIBCXX_EXPERIMENTAL_TYPE_TRAITS experimental/type_traits HAVE_EXP_TT)
+    if (NOT HAVE_EXP_FS OR NOT )
+        message(STATUS "Could not find symbols either.\n Compilation may fail!")
+    endif()
 endif()
-
 
 
 
