@@ -93,32 +93,9 @@ include(cmake_modules/Fetch_GSL.cmake)                      # GSL for computing 
 ######################################################
 set_target_properties  (${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)                                         ### Demand c++17 compiler support
-
-find_path(EXPERIMENTAL_INCLUDE_DIR
-        NAMES experimental/type_traits.h type_traits.h
-        HINTS
-            /usr/include
-            /usr/include/c++
-            /usr/local/include
-            /usr/local/Cellar/gcc/${CMAKE_CXX_COMPILER_VERSION}
-            /usr/local/Cellar/gcc/${CMAKE_CXX_COMPILER_VERSION}/include/c++/${CMAKE_CXX_COMPILER_VERSION}
-        PATH_SUFFIXES 7 8 ${CMAKE_CXX_COMPILER_VERSION} experimental exp ext bits
-        PATH_PREFIXES
-)
-#file(GLOB_RECURSE variable [RELATIVE path]
-#        [FOLLOW_SYMLINKS] [globbing expressions]...)
 include(CheckIncludeFileCXX)
-message("EXPERIMENTAL_INCLUDE_DIR               : ${EXPERIMENTAL_INCLUDE_DIR}")
-message("CMAKE_SYSTEM_INCLUDE_DIR               : ${CMAKE_SYSTEM_INCLUDE_DIR}")
-message("CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES : ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}")
-message("CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES : ${CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES}")
-message("CMAKE_SYSTEM_INCLUDE_PATH              : ${CMAKE_SYSTEM_INCLUDE_PATH}")
-message("CMAKE_SYSTEM_LIBRARY_PATH              : ${CMAKE_SYSTEM_LIBRARY_PATH}")
-message("CMAKE_CXX_COMPILER_VERSION              : ${CMAKE_CXX_COMPILER_VERSION}")
-message("CMAKE_SYSTEM_LIBRARY_PATH              : ${CMAKE_PATH}")
-set(CMAKE_REQUIRED_INCLUDES ${CMAKE_INCLUDE_PATH})
 check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -std=c++17 -lstdc++fs)
-check_include_file_cxx(experimental/type_traits has_experimental_type_traits -std=c++17  -lstdc++fs)
+check_include_file_cxx(experimental/type_traits has_experimental_type_traits -std=c++17 -lstdc++fs)
 if(has_experimental_filesystem AND has_experimental_type_traits)
     message(STATUS "C++17 features are supported.")
 else()
@@ -135,7 +112,6 @@ target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTION
 target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
 target_link_libraries  (${PROJECT_NAME} PUBLIC -flto)                                               ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} PUBLIC -lstdc++fs)                                          ### For experimental::filesystem
-#target_link_libraries  (${PROJECT_NAME} -lc++experimental)                                         ### For experimental::filesystem
 
 
 
@@ -163,8 +139,8 @@ message("")
 message("")
 message("=============================================================================")
 message("")
-message("      To clean cmake files, run './build.sh clean'")
-message("      To clean cmake files downloaded libraries, run './clean.sh '")
+message("      To clean cmake files, run './build.sh -c'")
+message("      To clean cmake files downloaded libraries, run './build.sh -l '")
 message("      To launch this program,  './run.sh'")
 message("")
 message("=============================================================================")
