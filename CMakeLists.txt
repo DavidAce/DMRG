@@ -85,6 +85,34 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC source)
 
 
+
+###########################################
+###  Apply RELEASE/DEBUG compile flags  ###
+###########################################
+target_compile_options (${PROJECT_NAME} PRIVATE ${COMMON_OPTIONS})                                   ### Common options
+target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
+target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
+target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                                               ### Link time optimization flag
+target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
+
+
+###############################
+###  Require c++17 support  ###
+###############################
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+set_target_properties(${PROJECT_NAME}
+        PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF)
+
+
+
+
+
+
 ###########################################
 ###  Find or fetch all dependencies   ###
 ###########################################
@@ -101,14 +129,6 @@ include(cmake_modules/Fetch_GSL.cmake)                      # GSL for computing 
 
 
 
-
-######################################################
-###  Require c++17 support and test that it works  ###
-######################################################
-set_target_properties  (${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED 17)
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)                                         ### Demand c++17 compiler support
-
-
 ######################################
 ###  Require experimental headers  ###
 ######################################
@@ -118,29 +138,43 @@ execute_process(COMMAND ${CMAKE_CXX_COMPILER} -print-file-name=libstdc++fs.a
 execute_process(COMMAND find /usr -name filesystem
         OUTPUT_VARIABLE PATH_TO_HEADER
         OUTPUT_STRIP_TRAILING_WHITESPACE)
-include(CheckIncludeFileCXX)
-set(CMAKE_REQUIRED_FLAGS "-l${PATH_TO_LIBSTDCXXFS}")
-
+message(STATUS "Remove absolute part of the paths")
+string(REPLACE "\n" " " PATH_TO_HEADER ${PATH_TO_HEADER})
+set(_tmplist)
+foreach (_parts ${PATH_TO_HEADER})
+    set(_tmpvar)
+    get_filename_component(_tmpvar "${_parts}" DIRECTORY)
+    list(APPEND _tmplist "${_tmpvar}")
+endforeach()
+set(PATH_TO_HEADER "${_tmplist}")
 message("Path to filesystem library: ${PATH_TO_LIBSTDCXXFS}")
 message("Path to filesystem headers: ${PATH_TO_HEADER}")
-check_include_file_cxx(experimental/filesystem  has_experimental_filesystem  -std=c++17 -lstdc++fs -l${PATH_TO_LIBSTDCXXFS})
-check_include_file_cxx(experimental/type_traits has_experimental_type_traits -std=c++17)
-if(has_experimental_filesystem AND has_experimental_type_traits)
-    message(STATUS "C++17 features are supported.")
+
+
+cmake_policy(SET CMP0067 NEW) # Lets try_compile honor current CMAKE_CXX_STANDARD setting
+include(CheckIncludeFileCXX)
+#set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs -l${PATH_TO_LIBSTDCXXFS})
+#set(CMAKE_REQUIRED_INCLUDES ${PATH_TO_HEADER})
+check_include_file_cxx(experimental/filesystem    has_experimental_filesystem)
+check_include_file_cxx(experimental/type_traits   has_experimental_type_traits)
+if(has_experimental_filesystem)
+    message(STATUS "<experimental/filesystem> header supported.")
 else()
-    message(WARNING "Missing headers for C++17.\n Consider using a newer compiler (GCC 7 or above, Clang 6 or above.\n Compilation may fail.")
+    message(FATAL_ERROR "Missing <experimental/filesystem>.\n\
+     Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
+     or checking the compiler flags")
+endif()
+
+if(has_experimental_type_traits)
+    message(STATUS "<experimental/type_traits> header supported.")
+else()
+    message(FATAL_ERROR "Missing <experimental/type_traits>.\n\
+     Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
+     or checking the compiler flags")
 endif()
 
 
 
-###########################################
-###  Apply RELEASE/DEBUG compile flags  ###
-###########################################
-target_compile_options (${PROJECT_NAME} PUBLIC ${COMMON_OPTIONS})                                   ### Common options
-target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
-target_compile_options (${PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
-target_link_libraries  (${PROJECT_NAME} PUBLIC -flto)                                               ### Link time optimization flag
-target_link_libraries  (${PROJECT_NAME} PUBLIC -lstdc++fs)                                          ### For experimental::filesystem
 
 
 
