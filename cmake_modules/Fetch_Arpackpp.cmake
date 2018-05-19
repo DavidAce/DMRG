@@ -2,7 +2,7 @@
 
 
 
-message(STATUS "SEARCHING FOR ARPACKPP IN SYSTEM...")
+message(STATUS "SEARCHING FOR ARPACK++ IN SYSTEM...")
 find_library(ARPACKPP_LIBRARIES
         NAMES arpackpp arpack++ libarpack2++ libarpack++ libarpackpp
         PATH_SUFFIXES lib lib32 lib64
@@ -11,19 +11,14 @@ find_path(ARPACKPP_INCLUDE_DIR
         NAMES ardsnsym.h
         PATHS /usr/include/arpack++ /usr/include /usr/local/
         )
-message(STATUS "Arpack++ library found in system: ${ARPACKPP_LIBRARIES}")
-message(STATUS "Arpack++ include found in system: ${ARPACKPP_INCLUDE_DIR}")
-message(WARNING
-"Due to a bug, older versions of Arpack++ require -fpermissive flag to compile. \
-Therefore, local installations of Arpack++ will be ignored in favor of the most resent version.")
 
 enable_language(Fortran)
 include(cmake_modules/FindGFortran.cmake)
 
-
-if (false)
-#if(ARPACKPP_LIBRARIES AND ARPACKPP_INCLUDE_DIR)
-    message(FATAL_ERROR "YOU REALLY SHLOULD PREFER THE LATEST ARPACK INSTEAD")
+message(STATUS "Note that old versions of Arpack++ (e.g. the default in Ubuntu Trusty 14.04 LTS) may fail to compile, requiring '-fpermissive'.")
+if (ARPACKPP_LIBRARIES AND NOT "${OS_PROPERTIES}" MATCHES "trusty" )
+    message(STATUS "Arpack++ library found in system: ${ARPACKPP_LIBRARIES}")
+    message(STATUS "Arpack++ include found in system: ${ARPACKPP_INCLUDE_DIR}")
     add_library(arpack++ INTERFACE)
     set_target_properties(arpack++ PROPERTIES
             INTERFACE_LINK_LIBRARIES "blas;lapack;arpack;${ARPACKPP_LIBRARIES}"

@@ -117,14 +117,6 @@ set_target_properties(hdf5::hdf5_hl_cpp PROPERTIES
         INTERFACE_LINK_LIBRARIES "hdf5::hdf5;hdf5::hdf5_hl;hdf5::hdf5_cpp"
         INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIR}")
 
-    get_cmake_property(_variableNames VARIABLES)
-    foreach (_variableName ${_variableNames})
-        if("${_variableName}" MATCHES "hdf5" OR "${_variableName}" MATCHES "HDF5")
-            message(STATUS "${_variableName}=${${_variableName}}")
-        endif()
-    endforeach()
-
-
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_hl)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_cpp)

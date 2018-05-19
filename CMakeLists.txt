@@ -20,6 +20,20 @@ include(cmake_modules/gitversion.cmake)
 include(cmake_modules/directory.cmake)
 
 
+##################################################################
+### Get operating system properties into a variable            ###
+##################################################################
+set(GET_OS_INFO_CMD lsb_release -a)
+if(${CMAKE_HOST_APPLE})
+    set(GET_OS_INFO_CMD "sw_vers")
+endif()
+execute_process(COMMAND ${GET_OS_INFO_CMD}
+        OUTPUT_VARIABLE OS_PROPERTIES
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+message("========= DETECTED OS =========")
+message("${OS_PROPERTIES}")
+message("===============================")
+
 
 ###################
 ### Setup flags ###
