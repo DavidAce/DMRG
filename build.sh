@@ -54,12 +54,12 @@ if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
     echo "OS: Linux"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "OS: Mac OSX"
-    echo "Checking if gcc compiler is available"
-    if brew ls gcc | grep -q 'g++'; then
-        echo " -- gcc was found!"
-        export CC=$(brew ls gcc | grep -e '/bin/gcc-[0-9]' | head -n 1)
-        export CXX=$(brew ls gcc | grep  -e '/bin/g++-[0-9]' | head -n 1)
-        export FC=$(brew ls gcc | grep -e '/bin/gfortran-[0-9]' | head -n 1)
+    echo "Checking if gcc-7 compiler is available"
+    if brew ls gcc@7 | grep -q 'g++-7'; then
+        echo " gcc-7 was found!"
+        export CC=gcc-7
+        export CXX=g++-7
+        export FC=gfortran-7
     else
         echo "Please install gcc (version 7 or higher) through brew"
         echo "  brew install gcc"
