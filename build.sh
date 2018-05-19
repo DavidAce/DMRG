@@ -66,7 +66,6 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     else
         echo "Please install gcc (version 7 or higher) through brew."
         echo "Command:   brew install gcc@7"
-#        exit 1
     fi
 fi
 
