@@ -57,12 +57,14 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Checking if gcc-7 compiler is available"
     if brew ls gcc@7 | grep -q 'g++-7'; then
         echo " gcc-7 was found!"
-#        export CC=gcc-7
-#        export CXX=g++-7
-#        export FC=gfortran-7
+        if [ CC != "gcc-7" ]; then
+            echo "Please export before running: "
+            echo "  export CC=gcc-7"
+            echo "  export CXX=g++-7"
+            echo "  export FC=gfortran-7"
     else
-        echo "Please install gcc (version 7 or higher) through brew"
-        echo "  brew install gcc"
+        echo "Please install gcc (version 7 or higher) through brew."
+        echo "Command:   brew install gcc@7"
 #        exit 1
     fi
 fi
