@@ -98,7 +98,6 @@ matrix:
       before_install:
         - brew cask uninstall oclint
         - brew update
-        - brew upgrade
         - brew install gcc@7
         - brew list --versions
         - brew cask list --versions
