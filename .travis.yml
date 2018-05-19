@@ -33,27 +33,6 @@ matrix:
             - gfortran-7
 
     - os: linux
-      compiler: gcc-8
-      env:
-        - COMPILER_NAME=gcc
-        - GCC_VERSION=8
-        - CC=gcc-8
-        - CXX=g++-8
-        - FC=gfortran-8
-        - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
-      cache:
-        apt: true
-      addons:
-        apt:
-          update: true
-          sources:
-            - sourceline: 'ppa:ubuntu-toolchain-r/test'
-          packages:
-            - gcc-8
-            - g++-8
-            - gfortran-8
-
-    - os: linux
       compiler: clang
       env:
         - COMPILER_NAME=clang
@@ -111,11 +90,11 @@ matrix:
       compiler: gcc
       env:
         - COMPILER_NAME='gcc'
-        - GCC_VERSION=8
-        - CXX=g++-8
-        - CC=gcc-8
-        - FC=gfortran-8
-        - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
+        - GCC_VERSION=7
+        - CXX=g++-7
+        - CC=gcc-7
+        - FC=gfortran-7
+        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
       before_install:
         - brew cask uninstall oclint
         - brew install gcc
