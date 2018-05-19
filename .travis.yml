@@ -97,7 +97,11 @@ matrix:
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
       before_install:
         - brew cask uninstall oclint
+        - brew upgrade
         - brew install gcc@7
+        - brew list --versions
+        - brew cask list --versions
+        - gcc --version
 
 before_install:
   - eval "${MATRIX_EVAL}"
