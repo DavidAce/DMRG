@@ -57,7 +57,7 @@ matrix:
             - gfortran-7
 
     - os: linux
-      compiler: gcc-7
+      compiler: gcc-7 (preinstalled libs)
       env:
         - COMPILER_NAME=gcc
         - GCC_VERSION=7
@@ -87,9 +87,9 @@ matrix:
 
     - os: osx
       osx_image: xcode9.3
-      compiler: gcc
+      compiler: gcc-7
       env:
-        - COMPILER_NAME='gcc'
+        - COMPILER_NAME=gcc
         - GCC_VERSION=7
         - CXX=g++-7
         - CC=gcc-7
@@ -97,7 +97,7 @@ matrix:
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
       before_install:
         - brew cask uninstall oclint
-        - brew install gcc
+        - brew install gcc@7
 
 before_install:
   - eval "${MATRIX_EVAL}"
