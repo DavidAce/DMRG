@@ -86,7 +86,7 @@ matrix:
 #            - libarpack++2-dev
 
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode9.1
       compiler: gcc-7
       env:
         - COMPILER_NAME=gcc
@@ -97,12 +97,7 @@ matrix:
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
       before_install:
         - brew cask uninstall oclint
-        - brew update
         - brew install gcc@7
-        - brew list --versions
-        - brew cask list --versions
-        - gcc --version
-        - find /usr/local -name libstdc++fs.a
 
 before_install:
   - eval "${MATRIX_EVAL}"
