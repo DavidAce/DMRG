@@ -132,25 +132,7 @@ include(cmake_modules/Fetch_GSL.cmake)                      # GSL for computing 
 ######################################
 ###  Require experimental headers  ###
 ######################################
-execute_process(COMMAND ${CMAKE_CXX_COMPILER} -print-file-name=libstdc++fs.a
-        OUTPUT_VARIABLE PATH_TO_LIBSTDCXXFS
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-execute_process(COMMAND find /usr -name filesystem
-        OUTPUT_VARIABLE PATH_TO_HEADER
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-message(STATUS "Remove absolute part of the paths")
-string(REPLACE "\n" " " PATH_TO_HEADER ${PATH_TO_HEADER})
-set(_tmplist)
-foreach (_parts ${PATH_TO_HEADER})
-    set(_tmpvar)
-    get_filename_component(_tmpvar "${_parts}" DIRECTORY)
-    list(APPEND _tmplist "${_tmpvar}")
-endforeach()
-set(PATH_TO_HEADER "${_tmplist}")
-message("Path to filesystem library: ${PATH_TO_LIBSTDCXXFS}")
-message("Path to filesystem headers: ${PATH_TO_HEADER}")
-
-# Let try_compile honor current CMAKE_CXX_STANDARD setting.
+# Use cmake_policy CMP0067 to let try_compile honor current CMAKE_CXX_STANDARD setting.
 # See here
 # https://stackoverflow.com/questions/47213356/cmake-using-corrext-c-standard-when-checking-for-header-files
 cmake_policy(SET CMP0067 NEW)
@@ -159,16 +141,10 @@ set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs -l${PATH_TO_LIBSTDCXXFS})
 check_include_file_cxx(experimental/filesystem    has_experimental_filesystem)
 check_include_file_cxx(experimental/type_traits   has_experimental_type_traits)
 if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
-    message(WARNING "Missing one or more experimental headers.\n\
-     Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
-     or checking the compiler flags.\n\
-     For debug info, try finding the defines that should be present in the headers.")
-    include(CheckCXXSymbolExists)
-    check_cxx_symbol_exists(_GLIBCXX_EXPERIMENTAL_FILESYSTEM experimental/filesystem HAVE_EXP_FS)
-    check_cxx_symbol_exists(_GLIBCXX_EXPERIMENTAL_TYPE_TRAITS experimental/type_traits HAVE_EXP_TT)
-    if (NOT HAVE_EXP_FS OR NOT )
-        message(STATUS "Could not find symbols either.\n Compilation may fail!")
-    endif()
+    message(FATAL_ERROR "\n\
+        Missing one or more experimental headers.\n\
+        Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
+        or checking the compiler flags.")
 endif()
 
 
