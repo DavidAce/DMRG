@@ -57,7 +57,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Checking if gcc-7 compiler is available"
     if brew ls gcc@7 | grep -q 'g++-7'; then
         echo " gcc-7 was found!"
-        if [ CC != "gcc-7" ]; then
+        if [[ "${CC}" != "gcc-7" ]]; then
             echo "Please export before running: "
             echo "  export CC=gcc-7"
             echo "  export CXX=g++-7"
