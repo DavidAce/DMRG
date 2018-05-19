@@ -115,11 +115,16 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)                      
 execute_process(COMMAND ${CMAKE_CXX_COMPILER} -print-file-name=libstdc++fs.a
         OUTPUT_VARIABLE PATH_TO_LIBSTDCXXFS
         OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND find /usr -name filesystem
+        OUTPUT_VARIABLE PATH_TO_HEADER
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
 include(CheckIncludeFileCXX)
 set(CMAKE_REQUIRED_FLAGS "-l${PATH_TO_LIBSTDCXXFS}")
+
 message("Path to filesystem library: ${PATH_TO_LIBSTDCXXFS}")
-check_include_file_cxx(experimental/filesystem  has_experimental_filesystem -lstdc++fs -l${PATH_TO_LIBSTDCXXFS})
-check_include_file_cxx(experimental/type_traits has_experimental_type_traits)
+message("Path to filesystem headers: ${PATH_TO_HEADER}")
+check_include_file_cxx(experimental/filesystem  has_experimental_filesystem  -std=c++17 -lstdc++fs -l${PATH_TO_LIBSTDCXXFS})
+check_include_file_cxx(experimental/type_traits has_experimental_type_traits -std=c++17)
 if(has_experimental_filesystem AND has_experimental_type_traits)
     message(STATUS "C++17 features are supported.")
 else()
