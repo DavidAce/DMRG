@@ -150,25 +150,17 @@ set(PATH_TO_HEADER "${_tmplist}")
 message("Path to filesystem library: ${PATH_TO_LIBSTDCXXFS}")
 message("Path to filesystem headers: ${PATH_TO_HEADER}")
 
-
-cmake_policy(SET CMP0067 NEW) # Lets try_compile honor current CMAKE_CXX_STANDARD setting
+# Let try_compile honor current CMAKE_CXX_STANDARD setting.
+# See here
+# https://stackoverflow.com/questions/47213356/cmake-using-corrext-c-standard-when-checking-for-header-files
+cmake_policy(SET CMP0067 NEW)
 include(CheckIncludeFileCXX)
 #set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs -l${PATH_TO_LIBSTDCXXFS})
 #set(CMAKE_REQUIRED_INCLUDES ${PATH_TO_HEADER})
 check_include_file_cxx(experimental/filesystem    has_experimental_filesystem)
 check_include_file_cxx(experimental/type_traits   has_experimental_type_traits)
-if(has_experimental_filesystem)
-    message(STATUS "<experimental/filesystem> header supported.")
-else()
-    message(FATAL_ERROR "Missing <experimental/filesystem>.\n\
-     Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
-     or checking the compiler flags")
-endif()
-
-if(has_experimental_type_traits)
-    message(STATUS "<experimental/type_traits> header supported.")
-else()
-    message(FATAL_ERROR "Missing <experimental/type_traits>.\n\
+if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
+    message(WARNING "Missing <experimental/type_traits>.\n\
      Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
      or checking the compiler flags")
 endif()
