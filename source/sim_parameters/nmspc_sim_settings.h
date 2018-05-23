@@ -24,14 +24,14 @@ namespace settings {
     namespace model {
         extern double       J             ;                      /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
         extern double       g             ;                      /*!< Transverse field strength */
-        extern std::string  initial_state ;                      /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi)} "cat" or "random". Default "rps". */
+        extern std::string  initial_state ;                      /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
     }
 
     //Parmaters that control eigensolver and SVD precision
     namespace precision {
         extern int      eigMaxIter   ;                      /*!< Maximum number of steps for eigenvalue solver. */
         extern double   eigThreshold ;                      /*!< Minimum threshold for halting eigenvalue solver. */
-        extern int      eigMaxNcv  ;                      /*!< Parameter controlling the column space? of the Lanczos solver. */
+        extern int      eigMaxNcv  ;                        /*!< Parameter controlling the column space? of the Lanczos solver. */
         extern double   SVDThreshold ;                      /*!< Minimum threshold value for keeping singular values. */
     }
 

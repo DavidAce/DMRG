@@ -46,7 +46,7 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
 
 void class_measurement::compute_all_observables_from_superblock(){
     if(!is_measured) {
-        superblock->set_current_dimensions();
+//        superblock->set_current_dimensions();
         if (superblock->chiL != superblock->chiR) { return;}
         if (superblock->MPS->LA.size() != superblock->MPS->LB.size()) { return ;}
         if (superblock->chi <= 2) { return; }
@@ -74,7 +74,7 @@ void class_measurement::compute_all_observables_from_superblock(){
 double class_measurement::compute_energy_MPO(){
     t_ene_mpo.tic();
 
-    if(sim == SimulationType::iDMRG){
+    if(sim == SimulationType::iDMRG ){
         Tensor<Scalar, 0>  E_two_sites =
                 superblock->Lblock->block
                         .contract(superblock->MPS->theta,                     idx({0},{1}))
@@ -84,7 +84,6 @@ double class_measurement::compute_energy_MPO(){
                         .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
         t_ene_mpo.toc();
         double L = superblock->Lblock->size + superblock->Rblock->size + 2;
-        std::cout <<setprecision(10)<< "E a: " <<std::real(E_two_sites(0)/2.0) << " L: " << L << " " << superblock->environment_size + 2 << std::endl;
         return std::real(E_two_sites(0) / 2.0 );
 
     }else{
@@ -97,7 +96,6 @@ double class_measurement::compute_energy_MPO(){
                         .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
         double L = superblock->Lblock->size + superblock->Rblock->size + 2;
         t_ene_mpo.toc();
-        std::cout <<setprecision(10)<< "E a: " <<std::real(E_all_sites(0)) << "  per particle: "  <<std::real(E_all_sites(0))/L << " L: " << L << " " << superblock->environment_size + 2 << std::endl;
         return std::real(E_all_sites(0))/L;
     }
 }
@@ -143,42 +141,49 @@ double class_measurement::compute_entanglement_entropy(){
 
 
 double class_measurement::compute_finite_energy(){
-    Eigen::Tensor<Scalar,3> L = env_storage->ENV_L.front().block;
-    Eigen::Tensor<Scalar,3> R = env_storage->ENV_R.back().block;
-    Eigen::Tensor<Scalar,3> temp = L;
+    Eigen::Tensor<Scalar,3> L = std::as_const(env_storage->ENV_L).front().block;
+    Eigen::TensorRef<Eigen::Tensor<Scalar,3>> temp;
 
-    auto mpsL  = std::begin(env_storage->MPS_L);
-    auto mpoL  = std::begin(env_storage->MPO_L);
-    auto endL  = std::end(env_storage->MPS_L);
+    auto mpsL  = std::as_const(env_storage->MPS_L).begin();
+    auto mpoL  = std::as_const(env_storage->MPO_L).begin();
+    auto endL  = std::as_const(env_storage->MPS_L).end();
+    int iter = 0;
     while(mpsL != endL){
-        auto &LB_left = std::get<0>(*mpsL);
-        auto &GA      = std::get<1>(*mpsL);
-        temp = L.contract(asDiagonal(LB_left),       idx({0},{0}))
-                .contract(asDiagonal(LB_left),       idx({0},{0}))
-                .contract(mpoL->MPO,     idx({0},{0}))
-                .contract(GA,            idx({0,3},{1,0}))
-                .contract(GA.conjugate(),idx({0,2},{1,0}))
+        const Eigen::Tensor<Scalar,1> &LB_left = std::get<0>(*mpsL);
+        const Eigen::Tensor<Scalar,3> &GA      = std::get<1>(*mpsL);
+        assert(LB_left.dimension(0) == L.dimension(0));
+        assert(LB_left.dimension(0) == GA.dimension(1));
+
+        temp = L.contract(asDiagonal(LB_left), idx({0},{0}))
+                .contract(asDiagonal(LB_left), idx({0},{0}))
+                .contract(mpoL->MPO,           idx({0},{0}))
+                .contract(GA,                  idx({0,3},{1,0}))
+                .contract(GA.conjugate(),      idx({0,2},{1,0}))
                 .shuffle(array3{1,2,0});
         L = temp;
         mpsL++;
         mpoL++;
+        iter++;
     }
 
 
     //Contract the center point
-    auto &LA = env_storage->LA;
+    auto &LA = std::as_const(env_storage->LA);
     temp = L.contract(asDiagonal(LA) , idx({0},{0}))
             .contract(asDiagonal(LA) , idx({0},{0}))
             .shuffle(array3{1,2,0});
     L = temp;
 
     //Contract the right half of the chain
-    auto mpsR  = std::begin(env_storage->MPS_R);
-    auto mpoR  = std::begin(env_storage->MPO_R);
-    auto endR  = std::end  (env_storage->MPS_R);
+    Eigen::Tensor<Scalar,3> R = std::as_const(env_storage->ENV_R).back().block;
+    auto mpsR  = std::as_const(env_storage->MPS_R).begin();
+    auto mpoR  = std::as_const(env_storage->MPO_R).begin();
+    auto endR  = std::as_const(env_storage->MPS_R).end();
     while(mpsR != endR){
-        auto &GB      = std::get<0>(*mpsR);
-        auto &LB      = std::get<1>(*mpsR);
+        const Eigen::Tensor<Scalar,3> &GB      = std::get<0>(*mpsR);
+        const Eigen::Tensor<Scalar,1> &LB      = std::get<1>(*mpsR);
+        assert(GB.dimension(1) == L.dimension(0));
+        assert(LB.dimension(0) == GB.dimension(2));
         temp = L.contract(GB,            idx({0},{1}))
                 .contract(GB.conjugate(),idx({0},{1}))
                 .contract(mpoR->MPO,     idx({0,1,3},{0,2,3}))
@@ -190,9 +195,9 @@ double class_measurement::compute_finite_energy(){
         mpoR++;
     }
 
-
+    assert(L.dimensions() == R.dimensions());
     Eigen::Tensor<Scalar,0> E_all_sites = L.contract(R, idx({0,1,2},{0,1,2}));
-    std::cout << "E all sites: " << E_all_sites(0) << "  per site (" << env_storage->current_length << ") : " << std::real(E_all_sites(0))/env_storage->current_length << std::endl;
+    std::cout << setprecision(16) << "E all sites: " << E_all_sites(0) << "  per site (" << env_storage->current_length << ") : " << std::real(E_all_sites(0))/env_storage->current_length << std::endl;
     energy_chain = std::real(E_all_sites(0));
     return std::real(E_all_sites(0));
 }
@@ -200,65 +205,60 @@ double class_measurement::compute_finite_energy(){
 
 double class_measurement::compute_finite_norm(){
 
-    auto mpsL  = std::begin(env_storage->MPS_L);
-    auto endL  = std::end(env_storage->MPS_L);
-
-    Eigen::Tensor<Scalar,1> &L = std::get<0>(*mpsL);
-    Eigen::Tensor<Scalar,3> &G = std::get<1>(*mpsL);
-
-
-    Eigen::Tensor<Scalar,2> chain = asDiagonal(L)
-            .contract(asDiagonal(L), idx({0},{1}))
-            .contract(G            , idx({1},{1}))
-            .contract(G.conjugate(), idx({0,1},{1,0}));
-
+    auto mpsL  = std::as_const(env_storage->MPS_L).begin();
+    auto endL  = std::as_const(env_storage->MPS_L).end();
+    const Eigen::Tensor<Scalar,1>  & LB_left = std::get<0>(*mpsL);
+    const Eigen::Tensor<Scalar,3>  & GA      = std::get<1>(*mpsL);
+    Eigen::Tensor<Scalar,2> chain =
+             asDiagonal(LB_left)
+            .contract(asDiagonal(LB_left), idx({0},{1}))
+            .contract(GA                 , idx({1},{1}))
+            .contract(GA.conjugate()     , idx({0,1},{1,0}));
+    Eigen::TensorRef<Eigen::Tensor<Scalar,2>> temp;
     mpsL++;
     while(mpsL != endL){
-        Eigen::Tensor<Scalar,1> &L = std::get<0>(*mpsL);
-        Eigen::Tensor<Scalar,3> &G = std::get<1>(*mpsL);
-
-
-        Eigen::Tensor<Scalar,2> temp = chain
-                .contract(asDiagonal(L), idx({0},{0}))
-                .contract(asDiagonal(L), idx({0},{0}))
-                .contract(G            , idx({0},{1}))
-                .contract(G.conjugate(), idx({0,1},{1,0}));
-
+        const Eigen::Tensor<Scalar,1>  & LB_left = std::get<0>(*mpsL);
+        const Eigen::Tensor<Scalar,3>  & GA      = std::get<1>(*mpsL);
+        assert(LB_left.dimension(0) == chain.dimension(0));
+        assert(LB_left.dimension(0) == GA.dimension(1));
+        temp = chain
+                .contract(asDiagonal(LB_left), idx({0},{0}))
+                .contract(asDiagonal(LB_left), idx({0},{0}))
+                .contract(GA                 , idx({0},{1}))
+                .contract(GA.conjugate()     , idx({0,1},{1,0}));
         chain = temp;
         mpsL++;
     }
-    std::cout << "Chain: \n" << chain << std::endl;
 
-    //Contract the center point
-//    auto &LA = env_storage->LA;
-//    temp = L.contract(asDiagonal(LA) , idx({0},{0}))
-//            .contract(asDiagonal(LA) , idx({0},{0}))
-//            .shuffle(array3{1,2,0});
-//    L = temp;
-//
-//    //Contract the right half of the chain
-//    auto mpsR  = std::begin(env_storage->MPS_R);
-//    auto mpoR  = std::begin(env_storage->MPO_R);
-//    auto endR  = std::end  (env_storage->MPS_R);
-//    while(mpsR != endR){
-//        auto &GB      = std::get<0>(*mpsR);
-//        auto &LB      = std::get<1>(*mpsR);
-//        temp = L.contract(GB,            idx({0},{1}))
-//                .contract(GB.conjugate(),idx({0},{1}))
-//                .contract(mpoR->MPO,     idx({0,1,3},{0,2,3}))
-//                .contract(asDiagonal(LB),idx({0},{0}))
-//                .contract(asDiagonal(LB),idx({0},{0}))
-//                .shuffle(array3{1,2,0});
-//        L = temp;
-//        mpsR++;
-//        mpoR++;
-//    }
-//
-//
-//    Eigen::Tensor<Scalar,0> E_all_sites = L.contract(R, idx({0,1,2},{0,1,2}));
-//    std::cout << "E all sites: " << E_all_sites(0) << "  per site (" << env_storage->current_length << ") : " << std::real(E_all_sites(0))/env_storage->current_length << std::endl;
-//    energy_chain = std::real(E_all_sites(0));
-    return 1;
+//    Contract the center point
+    auto &LA = env_storage->LA;
+    temp = chain
+            .contract(asDiagonal(LA), idx({0},{0}))
+            .contract(asDiagonal(LA), idx({0},{0}));
+    chain = temp;
+
+    //Contract the right half of the chain
+    auto mpsR  = std::as_const(env_storage->MPS_R).begin();
+    auto endR  = std::as_const(env_storage->MPS_R).end();
+
+    while(mpsR != endR){
+        const Eigen::Tensor<Scalar,3> &GB  = std::get<0>(*mpsR);
+        const Eigen::Tensor<Scalar,1> &LB  = std::get<1>(*mpsR);
+        assert(GB.dimension(1) == chain.dimension(0));
+        assert(LB.dimension(0) == GB.dimension(2));
+
+        temp = chain
+                .contract(GB              , idx({0},{1}))
+                .contract(GB.conjugate()  , idx({0,1},{1,0}))
+                .contract(asDiagonal(LB)  , idx({0},{0}))
+                .contract(asDiagonal(LB)  , idx({0},{0}));
+        chain = temp;
+        mpsR++;
+    }
+    Scalar norm = Textra::Tensor2_to_Matrix(chain).trace();
+    std::cout << setprecision(16) << "Norm: " << norm << std::endl;
+    assert(std::abs(norm - 1.0) < 1e-10 );
+    return std::abs(norm);
 }
 
 

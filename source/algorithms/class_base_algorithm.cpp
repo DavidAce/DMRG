@@ -25,15 +25,13 @@ using Scalar = class_base_algorithm::Scalar;
 
 class_base_algorithm::class_base_algorithm(std::shared_ptr<class_hdf5_file> hdf5_,
                                            std::string sim_name_,
-                                           std::string table_name_,
                                            SimulationType sim_type_)
         :hdf5           (std::move(hdf5_)),
          sim_name       (std::move(sim_name_)),
-         table_name     (std::move(table_name_)),
          sim_type       (sim_type_) {
     initialize_constants();
     set_profiling_labels();
-    table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, sim_name, table_name);
+    table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, sim_name,sim_name);
     superblock   = std::make_shared<class_superblock>();
     if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG){
         env_storage  = std::make_shared<class_finite_chain_storage>(max_length, superblock, hdf5);
@@ -234,8 +232,6 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
     long d  = superblock->d;
     std::srand((unsigned int) 1);
 
-
-
     if(initial_state == "upup"){
         std::cout << "Initializing Up-Up-state  |up,up>" << std::endl;
         superblock->MPS->GA.resize(array3{d,1,1});
@@ -344,7 +340,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         superblock->MPS->GB(0, 0, 0) = r2.imag();
         superblock->MPS->theta = superblock->MPS->get_theta();
 
-    }else if (initial_state == "random_chi"){
+    }else if (initial_state == "random_chi" and sim_type == SimulationType::iDMRG){
         // Random state
         std::cout << "Initializing random state with bond dimension chi = " << chi_max << std::endl;
         chi_temp = chi_max;
@@ -365,7 +361,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         std::cerr << "  GHZ" << std::endl;
         std::cerr << "  W" << std::endl;
         std::cerr << "  rps" << std::endl;
-        std::cerr << "  random_chi" << std::endl;
+        std::cerr << "  random_chi (only for iDMRG!)" << std::endl;
         exit(1);
     }
 
@@ -382,6 +378,14 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
     superblock->Rblock2->set_edge_dims(superblock->MPS, superblock->HB->MPO);
 
     superblock->environment_size = superblock->Lblock->size + superblock->Rblock->size;
+
+    assert(superblock->Lblock->block.dimension(0) == superblock->MPS->LB_left.dimension(0));
+    assert(superblock->Rblock->block.dimension(0) == superblock->MPS->LB.dimension(0));
+    assert(superblock->MPS->GA.dimension(2) == superblock->MPS->LA.dimension(0));
+    assert(superblock->MPS->GA.dimension(1) == superblock->MPS->LB_left.dimension(0));
+    assert(superblock->MPS->GB.dimension(1) == superblock->MPS->LA.dimension(0));
+    assert(superblock->MPS->GB.dimension(2) == superblock->MPS->LB.dimension(0));
+
 
     if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
         position = env_storage_insert();
@@ -446,7 +450,7 @@ void class_base_algorithm::print_status_update() {
     compute_observables();
     t_prt.tic();
     std::cout << setprecision(16) << fixed << left;
-    ccout(1) << left  << table_name << " ";
+    ccout(1) << left  << sim_name << " ";
     ccout(1) << left  << "Step: "                       << setw(10) << iteration;
     ccout(1) << left  << "E: "                          << setw(21) << setprecision(16)    << fixed   << measurement->get_energy1();
     ccout(1) << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << measurement->get_entanglement_entropy();
@@ -479,7 +483,7 @@ void class_base_algorithm::print_status_full(){
     compute_observables();
     t_prt.tic();
     std::cout << std::endl;
-    std::cout << " -- Final results -- " << sim_name << "/" << table_name << std::endl;
+    std::cout << " -- Final results -- " << sim_name << std::endl;
     ccout(0)  << setw(20) << "Energy               = " << setprecision(16) << fixed      << measurement->get_energy1()                << std::endl;
     ccout(0)  << setw(20) << "Entanglement Entropy = " << setprecision(16) << fixed      << measurement->get_entanglement_entropy()   << std::endl;
     ccout(0)  << setw(20) << "χmax                 = " << setprecision(4)  << fixed      << chi_max                                   << std::endl;

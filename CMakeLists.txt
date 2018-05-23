@@ -21,6 +21,14 @@ include(cmake_modules/directory.cmake)
 
 
 ##################################################################
+### Add a debugging type message, only active in Debug-mode   ###
+##################################################################
+include(cmake_modules/debug_msg.cmake)
+
+
+
+
+##################################################################
 ### Get operating system properties into a variable            ###
 ##################################################################
 set(GET_OS_INFO_CMD lsb_release -a)
@@ -191,10 +199,12 @@ enable_testing()
 
 include(tests/arpack++_simple_test.cmake)
 include(tests/arpack++_mps_test.cmake)
+
 add_custom_target(all_tests ALL
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
         DEPENDS blas lapack EIGEN3 arpack arpack++ hdf5::hdf5 GSL
+        DEPENDS ${PROJECT_NAME}
         )
 
 
@@ -208,7 +218,7 @@ add_custom_command(
 )
 
 
-add_dependencies(${PROJECT_NAME} all_tests)
+#add_dependencies(${PROJECT_NAME} all_tests)
 
 # To print all variables, use the code below:
 #

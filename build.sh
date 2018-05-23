@@ -3,13 +3,15 @@ PROGNAME=$0
 
 usage() {
   cat << EOF >&2
-Usage: $PROGNAME [-h ] [-t <target>] [-m <mode>] [-c]  [-l] [-j <num_threads>]
+
+Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t <target>]
+
 -c               : Clear CMake files before build (delete ./build)
 -h               : Help. Shows this text.
 -j <num_threads> : Number of threads used by CMake
--l               : Clear downloaded libraries (delete ./libs)
--m <mode>        : Release   | Debug
--t <target>      : DMRG++    | all   | any test target
+-l               : Clear downloaded libraries before build (i.e. delete ./libs)
+-m <mode>        : Release   | Debug | (default = Release)
+-t <target>      : DMRG++    | all   | any test target | (default = all)
 EOF
   exit 1
 }
@@ -57,7 +59,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Checking if gcc-7 compiler is available"
     if brew ls gcc@7 | grep -q 'g++-7'; then
         echo " gcc-7 was found!"
-        if [[ "${CC}" != "gcc-7" ]]; then
+        if [[ "${CC}" != *"gcc-7"* ]]; then
             echo "Please export before running: "
             echo "  export CC=gcc-7"
             echo "  export CXX=g++-7"

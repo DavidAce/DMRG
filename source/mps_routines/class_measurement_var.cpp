@@ -248,16 +248,19 @@ double class_measurement::compute_infinite_variance_H(){
 
 
 double class_measurement::compute_finite_variance(){
-    Eigen::Tensor<Scalar,4> L = env_storage->ENV2_L.front().block;
-    Eigen::Tensor<Scalar,4> R = env_storage->ENV2_R.back().block;
-    Eigen::Tensor<Scalar,4> temp = L;
+    Eigen::Tensor<Scalar,4> L = std::as_const(env_storage->ENV2_L).front().block;
+    Eigen::Tensor<Scalar,4> R = std::as_const(env_storage->ENV2_R).back().block;
+    Eigen::Tensor<Scalar,4> temp;
 
-    auto mpsL  = std::begin(env_storage->MPS_L);
-    auto mpoL  = std::begin(env_storage->MPO_L);
-    auto endL  = std::end(env_storage->MPS_L);
+    auto mpsL  = std::as_const(env_storage->MPS_L).begin();
+    auto mpoL  = std::as_const(env_storage->MPO_L).begin();
+    auto endL  = std::as_const(env_storage->MPS_L).end  ();
     while(mpsL != endL){
-        auto &LB_left = std::get<0>(*mpsL);
-        auto &GA      = std::get<1>(*mpsL);
+        const Eigen::Tensor<Scalar,1> &LB_left = std::get<0>(*mpsL);
+        const Eigen::Tensor<Scalar,3> &GA      = std::get<1>(*mpsL);
+        assert(LB_left.dimension(0) == L.dimension(0));
+        assert(LB_left.dimension(0) == GA.dimension(1));
+
         temp = L.contract(asDiagonal(LB_left), idx({0},{0}))
                 .contract(asDiagonal(LB_left), idx({0},{0}))
                 .contract(mpoL->MPO,           idx({0},{0}))
@@ -272,19 +275,21 @@ double class_measurement::compute_finite_variance(){
 
 
     //Contract the center point
-    auto &LA = env_storage->LA;
+    auto &LA = std::as_const(env_storage->LA);
     temp = L.contract(asDiagonal(LA) , idx({0},{0}))
             .contract(asDiagonal(LA) , idx({0},{0}))
             .shuffle(array4{2,3,0,1});
     L = temp;
 
     //Contract the right half of the chain
-    auto mpsR  = std::begin(env_storage->MPS_R);
-    auto mpoR  = std::begin(env_storage->MPO_R);
-    auto endR  = std::end  (env_storage->MPS_R);
+    auto mpsR  = std::as_const(env_storage->MPS_R).begin();
+    auto mpoR  = std::as_const(env_storage->MPO_R).begin();
+    auto endR  = std::as_const(env_storage->MPS_R).end  ();
     while(mpsR != endR){
-        auto &GB      = std::get<0>(*mpsR);
-        auto &LB      = std::get<1>(*mpsR);
+        const Eigen::Tensor<Scalar,3> &GB      = std::get<0>(*mpsR);
+        const Eigen::Tensor<Scalar,1> &LB      = std::get<1>(*mpsR);
+        assert(GB.dimension(1) == L.dimension(0));
+        assert(LB.dimension(0) == GB.dimension(2));
         temp = L.contract(GB,            idx({0},{1}))
                 .contract(mpoR->MPO,     idx({1,3},{0,2}))
                 .contract(mpoR->MPO,     idx({1,4},{0,2}))
@@ -297,9 +302,8 @@ double class_measurement::compute_finite_variance(){
         mpoR++;
     }
 
-
     Eigen::Tensor<Scalar,0> H2_all_sites = L.contract(R, idx({0,1,2,3},{0,1,2,3}));
     double Var = (std::real(H2_all_sites(0)) - energy_chain*energy_chain) / env_storage->current_length ;
-    std::cout << "H2 all sites: " << H2_all_sites(0) << " Variance: " << Var << std::endl;
+    std::cout << setprecision(16) << "H2 all sites: " << H2_all_sites(0) << " Variance: " << Var <<  " log10: " << std::log10(Var) << std::endl;
     return Var;
 }

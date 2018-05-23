@@ -1,0 +1,10 @@
+-v;arpack;arpack++;blas;lapack
+
+
+        /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-release/gitversion;/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-release/directory;;;/opt/intel/mkl/include;/opt/intel/mkl/include;/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs/arpack++/include
+
+
+        -v;;;;;-g;-Wall;-march=native;-mavx;-mfma;-Wno-implicit-fallthrough;-Wno-deprecated-declarations;-Wno-ignored-attributes;-Wno-int-in-bool-context;-Wno-maybe-uninitialized;-Wno-enum-compare;;-DNDEBUG;-O3;-m64;-I/opt/intel/mkl/include;-m64;-I/opt/intel/mkl/include
+
+
+        

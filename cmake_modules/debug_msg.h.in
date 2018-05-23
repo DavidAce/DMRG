@@ -1,0 +1,8 @@
+
+//This header defines a DEBUG_MSG macro that prints a string
+//only if built in debug-mode.
+
+#ifndef DEBUG_MSG_H
+#define DEBUG_MSG_H
+#define DEBUG_MSG(str) do {@COUT_STRING@} while( false )
+#endif

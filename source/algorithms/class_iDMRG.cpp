@@ -13,14 +13,14 @@ using namespace std;
 using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
-    : class_base_algorithm(std::move(hdf5_),"iDMRG","iDMRG", SimulationType::iDMRG) {
+    : class_base_algorithm(std::move(hdf5_),"iDMRG", SimulationType::iDMRG) {
 }
 
 
 
 void class_iDMRG::run() {
     if (!settings::idmrg::on) { return; }
-    ccout(0) << "\nStarting " << table_name << " simulation" << std::endl;
+    ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
         t_tot.tic();
         while(iteration < max_steps){
             single_DMRG_step(chi_temp);
