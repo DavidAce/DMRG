@@ -16,14 +16,14 @@ using namespace Textra;
 using namespace std::complex_literals;
 
 class_iTEBD::class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_)
-        : class_base_algorithm(std::move(hdf5_),"iTEBD","iTEBD", SimulationType::iTEBD) {
+        : class_base_algorithm(std::move(hdf5_),"iTEBD", SimulationType::iTEBD) {
     delta_t      = delta_t0;
 }
 
 
 void class_iTEBD::run() {
     if (!settings::itebd::on) { return; }
-    ccout(0) << "\nStarting " << table_name << " simulation" << std::endl;
+    ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
     t_tot.tic();
     delta_t = delta_t0;
     superblock->H->update_evolution_step_size(-delta_t0, suzuki_order);

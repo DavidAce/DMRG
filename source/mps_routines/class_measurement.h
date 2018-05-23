@@ -27,8 +27,8 @@ class class_measurement {
 public:
     using Scalar = std::complex<double>;
 private:
-    std::shared_ptr<class_superblock> superblock;
-    std::shared_ptr<class_finite_chain_storage> env_storage;
+    std::shared_ptr<const class_superblock>           superblock;
+    std::shared_ptr<const class_finite_chain_storage> env_storage;
     class_custom_cout ccout;
     Scalar moment_generating_function(std::shared_ptr<class_mps> MPS_original,
                                                        std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);

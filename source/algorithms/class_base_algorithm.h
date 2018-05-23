@@ -29,7 +29,7 @@ public:
     class_base_algorithm() = default;
     class_base_algorithm(std::shared_ptr<class_hdf5_file> hdf5_,
                          std::string sim_name_,
-                         std::string table_name_,
+//                         std::string table_name_,
                          SimulationType sim_type_);
     void set_profiling_labels ();
 
@@ -38,7 +38,7 @@ public:
     std::shared_ptr<class_hdf5_table_buffer> table_buffer;
 
     std::string sim_name;
-    std::string table_name;
+//    std::string table_name;
     SimulationType sim_type;
 
     //MPS

@@ -17,23 +17,26 @@ using namespace std;
 using namespace Textra;
 
 class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
-        : class_base_algorithm(std::move(hdf5_),"fDMRG", "fDMRG", SimulationType::fDMRG) {
+        : class_base_algorithm(std::move(hdf5_),"fDMRG", SimulationType::fDMRG) {
 }
 
 
 
 void class_fDMRG::run() {
     if (!settings::fdmrg::on) { return; }
-    ccout(0) << "\nStarting " << table_name << " simulation" << std::endl;
+    ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
     t_tot.tic();
 //    chi_temp = chi_max;
     initialize_chain();
-    while(sweeps < max_sweeps) {
+    while(true) {
         single_DMRG_step(chi_temp);
         env_storage_overwrite_MPS();         //Needs to occurr after update_MPS...
         store_table_entry();
         print_status_update();
-//        iteration++;
+
+        // It's important not to perform the last step.
+        // That last state would not get optimized
+        if(sweeps >= max_sweeps) {break;}
         position = enlarge_environment(direction);
         position = env_storage_move();
         update_chi();
@@ -41,7 +44,6 @@ void class_fDMRG::run() {
     t_tot.toc();
     print_status_full();
     print_profiling();
-    env_storage->print_storage();
     measurement->compute_finite_norm();
     measurement->compute_finite_energy();
     measurement->compute_finite_variance();

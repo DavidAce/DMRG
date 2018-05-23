@@ -1,11 +1,11 @@
 /*! \file */
 
+
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <sim_parameters/nmspc_model.h>
 #include <algorithms/class_algorithm_launcher.h>
 #include <gitversion.h>
 #include <IO/class_file_reader.h>
-
 
 /*!
     \brief  Main function. Sets simulation parameters and excecutes the desired algorithms.
@@ -30,7 +30,6 @@ int main(int argc, char* argv[]) {
         if (arg_string.find(".cfg") != std::string::npos) {inputfile  = arg_string;}
         if (arg_string.find(".h5")  != std::string::npos) {outputfile = arg_string;outputfile_given=true;}
     }
-
     class_file_reader indata(inputfile);
     settings::load_from_file(indata);
 
