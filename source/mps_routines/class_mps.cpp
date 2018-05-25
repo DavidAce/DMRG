@@ -157,14 +157,14 @@ void class_mps::compute_mps_components(){
 ///*!
 // * Returns a left normalized two-site MPS
 //     @verbatim
-//        1--[ GA ]--[ LA ]-- [ GB ] -- [ LB ]--3
+//        1--[ GA ]--[ C ]-- [ GB ] -- [ LB ]--3
 //             |                 |
 //             0                 2
 //     @endverbatim
 // */
 //{
 //    return GA
-//            .contract(asDiagonal(LA), idx({2},{0}))
+//            .contract(asDiagonal(C), idx({2},{0}))
 //            .contract(GB,             idx({2},{1}))
 //            .contract(asDiagonal(LB), idx({3},{0}))
 //            /norm;
@@ -269,7 +269,7 @@ Tensor<Scalar,4> class_mps::get_theta_odd(Scalar norm) const
 ///*!
 // * Returns a two-site MPS with A and B swapped
 //     @verbatim
-//        1--[ GB ]--[ LB ]-- [ GA ] -- [ LA ]--3
+//        1--[ GB ]--[ LB ]-- [ GA ] -- [ C ]--3
 //             |                 |
 //             0                 2
 //     @endverbatim
@@ -277,7 +277,7 @@ Tensor<Scalar,4> class_mps::get_theta_odd(Scalar norm) const
 //{
 //    return  GB.contract(asDiagonal(LB), idx({2},{0}))
 //            .contract(GA,               idx({2},{1}))
-//            .contract(asDiagonal(LA),   idx({3},{0}));
+//            .contract(asDiagonal(C),   idx({3},{0}));
 ////            .shuffle(array4{1,0,2,3});
 //}
 
@@ -360,12 +360,12 @@ Tensor<Scalar,4> class_mps::get_transfer_matrix_AB(int p) const {
 //
 //Tensor<T,4> class_mps::get_regularization_fixpointA() const {
 //    Eigen::array<Eigen::IndexPair<long>,0> pair = {};
-//    return asDiagonalSquared(LB).contract(asDiagonalSquared(LA),pair);
+//    return asDiagonalSquared(LB).contract(asDiagonalSquared(C),pair);
 //}
 //
 //Tensor<T,4> class_mps::get_regularization_fixpointB() const {
 //    Eigen::array<Eigen::IndexPair<long>,0> pair = {};
-//    return asDiagonalSquared(LA).contract(asDiagonalSquared(LB),pair);
+//    return asDiagonalSquared(C).contract(asDiagonalSquared(LB),pair);
 //}
 //
 //
@@ -421,7 +421,7 @@ Tensor<Scalar,4> class_mps::get_transfer_matrix_AB(int p) const {
 //
 //Textra::Tensor<T,4> class_mps::get_transfer_matrix_regularized_inverseA()const{
 //    long sizeL = LB.size();
-//    long sizeR = LA.size();
+//    long sizeR = C.size();
 //    MatrixType<T> one_minus_regularized_transfer_matrix =
 //            MatrixType<T>::Identity(sizeL*sizeL, sizeR*sizeR)
 //          - Tensor_to_Matrix(get_transfer_matrix_LBGA_regularized(), sizeL*sizeL,sizeR*sizeR );
@@ -432,7 +432,7 @@ Tensor<Scalar,4> class_mps::get_transfer_matrix_AB(int p) const {
 //
 //
 //Textra::Tensor<T,4> class_mps::get_transfer_matrix_regularized_inverseB()const{
-//    long sizeL = LA.size();
+//    long sizeL = C.size();
 //    long sizeR = LB.size();
 //    MatrixType<T> one_minus_regularized_transfer_matrix =
 //            MatrixType<T>::Identity(sizeL*sizeL, sizeR*sizeR)
@@ -456,8 +456,8 @@ Tensor<Scalar,4> class_mps::get_transfer_matrix_AB(int p) const {
 //};
 //
 //Textra::Tensor<T,4> class_mps::get_transfer_matrix_regularized_inverseBA()const{
-//    long sizeL = LA.size();
-//    long sizeR = LA.size();
+//    long sizeL = C.size();
+//    long sizeR = C.size();
 //    MatrixType<T> one_minus_regularized_transfer_matrix =
 //            MatrixType<T>::Identity(sizeL*sizeL, sizeR*sizeR)
 //          - Tensor_to_Matrix(get_transfer_matrix_BA_regularized(), sizeL*sizeL,sizeR*sizeR );

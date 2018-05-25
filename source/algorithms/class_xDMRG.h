@@ -6,12 +6,13 @@
 #define DMRG_CLASS_EXITED_DMRG_H
 
 #include "class_base_algorithm.h"
+class class_table_dmrg;
 
 /*!
  * \brief Class that runs the excited-state DMRG algorithm.
  */
 
-class class_finite_chain_storage;
+class class_finite_chain_sweeper;
 class class_xDMRG : public class_base_algorithm {
 private:
 
@@ -19,12 +20,20 @@ public:
     //Inherit the constructor of class_base_algorithm
     using class_base_algorithm::class_base_algorithm;
     explicit class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
-    void run() override;
+    std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_xdmrg;
+    int    max_length   ;
+    int    max_sweeps   ;
+    double r_strength = 0 ;  //Randomness strength for the random field.
+
+    void run()                                          override;
+    void initialize_constants()                         override;
+    void update_chi()                                   override;
+    void print_profiling()                              override;
+    void print_profiling_sim(class_tic_toc &t_parent)   override;
+    void store_table_entry_to_file()                    override;
     void single_xDMRG_step(long chi_max);
+    void initialize_random_chain();
     auto find_greatest_overlap(Eigen::Tensor<Scalar,4> &theta);
-    int  initialize_random_chain();
-    void print_profiling()     override;
-    void print_profiling_sim(class_tic_toc &t_parent) override;
 
 };
 

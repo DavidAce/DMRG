@@ -22,9 +22,9 @@ namespace settings {
     extern void load_from_file(class_file_reader &indata);
     //Parameters for the model Hamiltonian
     namespace model {
-        extern double       J             ;                      /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
-        extern double       g             ;                      /*!< Transverse field strength */
-        extern std::string  initial_state ;                      /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
+        extern double       J             ;                 /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
+        extern double       g             ;                 /*!< Transverse field strength */
+        extern std::string  initial_state ;                 /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
     }
 
     //Parmaters that control eigensolver and SVD precision
@@ -52,8 +52,8 @@ namespace settings {
         extern int  max_sweeps   ;                          /*!< Number sweeps along the 1D quantum chain. */
         extern long chi_max      ;                          /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         extern bool chi_grow   ;                            /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
-        extern int  print_freq   ;                          /*!< Print frequency for console output. (0 = off). */
-        extern int  store_freq ;                            /*!< Store frequency,for output file buffer. (0 = off). */
+        extern int  print_freq   ;                          /*!< Print frequency for console output. In units of sweeps. (0 = off). */
+        extern int  store_freq ;                            /*!< Store frequency,for output file buffer. In units of sweeps. (0 = off). */
 
     }
 
@@ -66,8 +66,8 @@ namespace settings {
         extern bool    chi_grow     ;                       /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         extern int     seed         ;                       /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
         extern double  r_strength   ;                       /*!< Randomness strength for the random field distribution */
-        extern int     print_freq   ;                       /*!< Print frequency for console output. (0 = off). */
-        extern int     store_freq   ;                       /*!< Store frequency,for output file buffer. (0 = off). */
+        extern int     print_freq   ;                       /*!< Print frequency for console output. In units of sweeps. (0 = off). */
+        extern int     store_freq   ;                       /*!< Store frequency,for output file buffer. In units of sweeps. (0 = off). */
 
     }
 

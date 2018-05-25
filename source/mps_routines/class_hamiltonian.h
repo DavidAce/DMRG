@@ -14,16 +14,17 @@ private:
     double J = 1.0;
     double g = 1.0;
     double e = 0.0;
+    double r = 0.0;
     Eigen::array<long, 4> extent4 = {1, 1, 2, 2};     //Extent of pauli matrices in a rank-4 tensor.
     Eigen::array<long, 2> extent2 = {2, 2};           //Extent of pauli matrices in a rank-2 tensor.
 
     public:
     class_hamiltonian(){
-        set_parameters(J, g, e);
+        set_parameters(J, g, e, r);
     };
 
-    class_hamiltonian(double coupling_J, double field_g, double energy_e){
-        set_parameters(coupling_J, field_g, energy_e);
+    class_hamiltonian(double coupling_J, double field_g, double energy_e, double field_r = 0.0){
+        set_parameters(coupling_J, field_g, energy_e, field_r);
     };
 
 
@@ -32,14 +33,18 @@ private:
     Eigen::Tensor<Scalar,4> MPO_reduced(double energy_e_temporary);
 
     void build_mpo();
-    void set_parameters(double coupling_J, double field_g, double energy_e);
+    void set_parameters(double coupling_J, double field_g, double energy_e, double field_r = 0.0);
     void update_site_coupling(double coupling_J);
+    void update_site_field(double field_r);
     void update_site_energy(double energy_e);
-    void update_site_field(double field_g);
+    void update_site_random_field(double field_r);
+
+    void set_random_field(double randomness_strength);
 
     double get_site_coupling() const;
-    double get_site_energy() const;
     double get_site_field() const;
+    double get_site_energy() const;
+    double get_site_random_field() const;
 
 
 };

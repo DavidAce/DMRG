@@ -3,8 +3,8 @@
 //
 
 #include <iomanip>
+#include <IO/class_hdf5_table_buffer2.h>
 #include <sim_parameters/nmspc_sim_settings.h>
-#include <IO/class_hdf5_table_buffer.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
 #include <general/nmspc_math.h>
@@ -14,6 +14,11 @@ using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     : class_base_algorithm(std::move(hdf5_),"iDMRG", SimulationType::iDMRG) {
+    initialize_constants();
+    table_idmrg = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
+    measurement  = std::make_shared<class_measurement>(superblock, sim_type);
+    initialize_state(settings::model::initial_state);
+
 }
 
 
@@ -22,14 +27,15 @@ void class_iDMRG::run() {
     if (!settings::idmrg::on) { return; }
     ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
         t_tot.tic();
-        while(iteration < max_steps){
+        while(iteration < max_steps and not simulation_has_converged){
             single_DMRG_step(chi_temp);
             print_status_update();
-            store_table_entry();
-            position = enlarge_environment();
-            iteration++;
+            store_table_entry_to_file();
+            store_profiling_to_file();
+            enlarge_environment();
             update_chi();
             swap();
+            iteration++;
         }
         t_tot.toc();
         print_status_full();
@@ -37,6 +43,62 @@ void class_iDMRG::run() {
         superblock->t_eig.print_time();
 
 }
+
+
+
+void class_iDMRG::initialize_constants(){
+    using namespace settings;
+    max_steps    = idmrg::max_steps;
+    chi_max      = idmrg::chi_max   ;
+    chi_grow     = idmrg::chi_grow  ;
+    print_freq   = idmrg::print_freq;
+    store_freq   = idmrg::store_freq;
+
+}
+
+void class_iDMRG::update_chi(){
+    t_chi.tic();
+    if(entropy_has_converged()) {
+        simulation_has_converged = chi_temp == chi_max;
+        chi_temp = chi_grow ? std::min(chi_max, chi_temp + 4) : chi_max;
+    }
+    if(not chi_grow){
+        chi_temp = chi_max;
+    }
+    t_chi.toc();
+}
+
+
+void class_iDMRG::store_table_entry_to_file(){
+    if (Math::mod(iteration, store_freq) != 0) {return;}
+    compute_observables();
+    t_sto.tic();
+    table_idmrg->append_record(
+                             iteration,
+                             measurement->get_chain_length(),
+                             iteration,
+                             measurement->get_chi(),
+                             chi_max,
+                             measurement->get_energy1(),
+                             measurement->get_energy2(),
+                             measurement->get_energy3(),
+                             measurement->get_energy4(),
+                             measurement->get_energy5(),
+                             measurement->get_energy6(),
+                             measurement->get_variance1(),
+                             measurement->get_variance2(),
+                             measurement->get_variance3(),
+                             measurement->get_variance4(),
+                             measurement->get_variance5(),
+                             measurement->get_variance6(),
+                             measurement->get_entanglement_entropy(),
+                             measurement->get_truncation_error(),
+                             t_tot.get_age());
+
+    t_sto.toc();
+}
+
+
 
 void class_iDMRG::print_profiling(){
     if (settings::profiling::on) {

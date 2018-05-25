@@ -16,7 +16,7 @@ using namespace std::complex_literals;
 
 class class_superblock;
 class class_mps;
-class class_finite_chain_storage;
+class class_finite_chain_sweeper;
 /*!
  * \class class_measurement
  * \brief A class for measuring observables
@@ -28,7 +28,7 @@ public:
     using Scalar = std::complex<double>;
 private:
     std::shared_ptr<const class_superblock>           superblock;
-    std::shared_ptr<const class_finite_chain_storage> env_storage;
+    std::shared_ptr<const class_finite_chain_sweeper> env_storage;
     class_custom_cout ccout;
     Scalar moment_generating_function(std::shared_ptr<class_mps> MPS_original,
                                                        std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
@@ -53,8 +53,8 @@ private:
     double compute_energy_MPO();
     double compute_energy_H();
     double compute_entanglement_entropy();
-    double compute_infinite_variance_MPO();
-    double compute_infinite_variance_H();
+    double compute_energy_variance_MPO();
+    double compute_energy_variance_H();
     double compute_parity();
 
 
@@ -62,6 +62,8 @@ private:
 
     std::pair<double,double> compute_infinite_moments_G(Scalar a, std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
 
+    double energy_all_sites;
+    double variance_all_sites;
 
     double energy1   = 0; double energy2   = 0; double energy3   = 0; double energy4   = 0; double energy5   = 0; double energy6   = 0;
     double variance1 = 0; double variance2 = 0; double variance3 = 0; double variance4 = 0; double variance5 = 0; double variance6 = 0;
@@ -80,12 +82,13 @@ private:
     bool is_measured = false;
 
     explicit class_measurement(std::shared_ptr<class_superblock> superblock_, SimulationType sim_);
-    explicit class_measurement(std::shared_ptr<class_superblock> superblock_, std::shared_ptr<class_finite_chain_storage> env_storage_, SimulationType sim_);
+    explicit class_measurement(std::shared_ptr<class_superblock> superblock_, std::shared_ptr<class_finite_chain_sweeper> env_storage_, SimulationType sim_);
     void   compute_all_observables_from_superblock();
     void   compute_all_observables_from_finite_chain();
     double compute_finite_norm();
     double compute_finite_energy();
-    double compute_finite_variance();
+    double compute_energy_variance_finite_chain();
+    void compute_finite_mps_state();
     double get_energy1();               /*! Computes the current energy.*/
     double get_energy2();               /*! Computes the current energy.*/
     double get_energy3();               /*! Computes the current energy.*/

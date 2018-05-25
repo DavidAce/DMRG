@@ -4,13 +4,13 @@
 
 
 #include <iomanip>
+#include <IO/class_hdf5_table_buffer2.h>
 #include <sim_parameters/nmspc_sim_settings.h>
-#include <IO/class_hdf5_table_buffer.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_mps.h>
 #include <mps_routines/class_mpo.h>
-#include <mps_routines/class_finite_chain_storage.h>
+#include <mps_routines/class_finite_chain_sweeper.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <Eigen/Eigenvalues>
@@ -19,11 +19,20 @@
 #include <Eigen/Sparse>
 #include <general/nmspc_tensor_extra.h>
 #include "class_xDMRG.h"
+
 using namespace std;
 using namespace Textra;
 
 class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_base_algorithm(std::move(hdf5_), "xDMRG",SimulationType::xDMRG) {
+    initialize_constants();
+    table_xdmrg = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
+    env_storage = std::make_shared<class_finite_chain_sweeper>(max_length, superblock, hdf5 );
+    measurement  = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
+    superblock->HA->set_random_field(r_strength);
+    superblock->HB->set_random_field(r_strength);
+    initialize_state(settings::model::initial_state);
+
 }
 
 
@@ -37,23 +46,26 @@ void class_xDMRG::run() {
     while(true) {
         single_xDMRG_step(chi_temp);
         env_storage_overwrite_MPS();         //Needs to occurr after update_MPS...
-        store_table_entry();
+        store_table_entry_to_file();
+        store_profiling_to_file();
         print_status_update();
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if(sweeps >= max_sweeps) {break;}
-        position = enlarge_environment(direction);
-        position = env_storage_move();
+        if(iteration >= max_sweeps) {break;}
+        enlarge_environment(env_storage->get_direction());
+        env_storage_move();
         update_chi();
+        iteration = env_storage->get_sweeps();
     }
     t_tot.toc();
     print_status_full();
     print_profiling();
     env_storage->print_storage();
+    env_storage->print_hamiltonians();
     measurement->compute_finite_norm();
     measurement->compute_finite_energy();
-    measurement->compute_finite_variance();
+    measurement->compute_energy_variance_finite_chain();
 
 }
 
@@ -98,8 +110,7 @@ void class_xDMRG::single_xDMRG_step(long chi_max) {
 
 
 
-int class_xDMRG::initialize_random_chain() {
-//    rn::seed(7);
+void class_xDMRG::initialize_random_chain() {
     rn::seed((unsigned long)seed);
     while (true) {
         long d    = superblock->MPS->GA.dimension(0);
@@ -108,22 +119,73 @@ int class_xDMRG::initialize_random_chain() {
         superblock->MPS->theta = Textra::Matrix_to_Tensor(Eigen::MatrixXd::Random(d*chiB,d*chiA).cast<Scalar>(),d,chiB,d,chiA);
         superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chiA, settings::precision::SVDThreshold);
 
-
-        double gA = rn::uniform_double(-r_strength, r_strength);
-        double gB = rn::uniform_double(-r_strength, r_strength);
-        superblock->HA = std::make_shared<class_hamiltonian>(class_hamiltonian(settings::model::J, gA, 0));
-        superblock->HB = std::make_shared<class_hamiltonian>(class_hamiltonian(settings::model::J, gB, 0));
-
+        superblock->HA->set_random_field(r_strength);
+        superblock->HB->set_random_field(r_strength);
         print_status_update();
-        position = env_storage_insert();
+        env_storage_insert();
         if (superblock->environment_size + 2ul < (unsigned long) max_length) {
-            position = enlarge_environment();
+            enlarge_environment();
             swap();
         } else {
             break;
         }
     }
-    return position;
+}
+
+
+
+void class_xDMRG::store_table_entry_to_file(){
+    if (Math::mod(iteration, store_freq) != 0) {return;}
+    compute_observables();
+    t_sto.tic();
+    table_xdmrg->append_record(
+            iteration,
+            measurement->get_chain_length(),
+            env_storage->get_position(),
+            measurement->get_chi(),
+            chi_max,
+            measurement->get_energy1(),
+            measurement->get_energy2(),
+            measurement->get_energy3(),
+            measurement->get_energy4(),
+            measurement->get_energy5(),
+            measurement->get_energy6(),
+            measurement->get_variance1(),
+            measurement->get_variance2(),
+            measurement->get_variance3(),
+            measurement->get_variance4(),
+            measurement->get_variance5(),
+            measurement->get_variance6(),
+            measurement->get_entanglement_entropy(),
+            measurement->get_truncation_error(),
+            t_tot.get_age());
+
+    t_sto.toc();
+}
+
+
+void class_xDMRG::initialize_constants(){
+    using namespace settings;
+    max_length   = xdmrg::max_length;
+    max_sweeps   = xdmrg::max_sweeps;
+    chi_max      = xdmrg::chi_max   ;
+    chi_grow     = xdmrg::chi_grow  ;
+    print_freq   = xdmrg::print_freq;
+    store_freq   = xdmrg::store_freq;
+    seed         = xdmrg::seed      ;
+    r_strength   = xdmrg::r_strength;
+}
+
+void class_xDMRG::update_chi(){
+    t_chi.tic();
+    if(entropy_has_converged()) {
+        simulation_has_converged = chi_temp == chi_max;
+        chi_temp = chi_grow ? std::min(chi_max, chi_temp + 4) : chi_max;
+    }
+    if(not chi_grow){
+        chi_temp = chi_max;
+    }
+    t_chi.toc();
 }
 
 

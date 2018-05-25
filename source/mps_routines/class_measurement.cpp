@@ -13,7 +13,7 @@
 #include <mps_routines/class_hamiltonian.h>
 #include <mps_routines/class_mps.h>
 #include <mps_routines/class_mpo.h>
-#include <mps_routines/class_finite_chain_storage.h>
+#include <mps_routines/class_finite_chain_sweeper.h>
 
 using namespace std;
 using namespace Textra;
@@ -35,7 +35,7 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
 }
 
 class_measurement::class_measurement(std::shared_ptr<class_superblock> superblock_,
-                                     std::shared_ptr<class_finite_chain_storage> env_storage_,
+                                     std::shared_ptr<class_finite_chain_sweeper> env_storage_,
                                      SimulationType sim_)
         :class_measurement(superblock_,sim_)
 
@@ -54,8 +54,8 @@ void class_measurement::compute_all_observables_from_superblock(){
         superblock->MPS->compute_mps_components();
         energy1                       = compute_energy_MPO();
         energy2                       = compute_energy_H();
-        variance1                     = compute_infinite_variance_MPO();
-        variance2                     = compute_infinite_variance_H();
+        variance1                     = compute_energy_variance_MPO();
+        variance2                     = compute_energy_variance_H();
         std::tie(energy3, variance3)  = compute_infinite_moments_G(a, mom_vecA);
         std::tie(energy4, variance4)  = compute_infinite_moments_G(b, mom_vecB);
         std::tie(energy5, variance5)  = compute_infinite_moments_G(c, mom_vecC);
@@ -83,7 +83,6 @@ double class_measurement::compute_energy_MPO(){
                         .contract(superblock->MPS->theta.conjugate(),         idx({0,2,4},{1,0,2}))
                         .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
         t_ene_mpo.toc();
-        double L = superblock->Lblock->size + superblock->Rblock->size + 2;
         return std::real(E_two_sites(0) / 2.0 );
 
     }else{
@@ -96,7 +95,8 @@ double class_measurement::compute_energy_MPO(){
                         .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
         double L = superblock->Lblock->size + superblock->Rblock->size + 2;
         t_ene_mpo.toc();
-        return std::real(E_all_sites(0))/L;
+        energy_all_sites = std::real(E_all_sites(0));
+        return std::real(energy_all_sites)/L;
     }
 }
 
@@ -141,12 +141,12 @@ double class_measurement::compute_entanglement_entropy(){
 
 
 double class_measurement::compute_finite_energy(){
-    Eigen::Tensor<Scalar,3> L = std::as_const(env_storage->ENV_L).front().block;
+    Eigen::Tensor<Scalar,3> L = env_storage->get_ENV_L().front().block;
     Eigen::TensorRef<Eigen::Tensor<Scalar,3>> temp;
 
-    auto mpsL  = std::as_const(env_storage->MPS_L).begin();
-    auto mpoL  = std::as_const(env_storage->MPO_L).begin();
-    auto endL  = std::as_const(env_storage->MPS_L).end();
+    auto mpsL  = env_storage->get_MPS_L().begin();
+    auto mpoL  = env_storage->get_MPO_L().begin();
+    auto endL  = env_storage->get_MPS_L().end();
     int iter = 0;
     while(mpsL != endL){
         const Eigen::Tensor<Scalar,1> &LB_left = std::get<0>(*mpsL);
@@ -168,17 +168,17 @@ double class_measurement::compute_finite_energy(){
 
 
     //Contract the center point
-    auto &LA = std::as_const(env_storage->LA);
-    temp = L.contract(asDiagonal(LA) , idx({0},{0}))
-            .contract(asDiagonal(LA) , idx({0},{0}))
+    auto &MPS_C = env_storage->get_MPS_C();
+    temp = L.contract(asDiagonal(MPS_C) , idx({0},{0}))
+            .contract(asDiagonal(MPS_C) , idx({0},{0}))
             .shuffle(array3{1,2,0});
     L = temp;
 
     //Contract the right half of the chain
-    Eigen::Tensor<Scalar,3> R = std::as_const(env_storage->ENV_R).back().block;
-    auto mpsR  = std::as_const(env_storage->MPS_R).begin();
-    auto mpoR  = std::as_const(env_storage->MPO_R).begin();
-    auto endR  = std::as_const(env_storage->MPS_R).end();
+    Eigen::Tensor<Scalar,3> R = env_storage->get_ENV_R().back().block;
+    auto mpsR  = env_storage->get_MPS_R().begin();
+    auto mpoR  = env_storage->get_MPO_R().begin();
+    auto endR  = env_storage->get_MPS_R().end();
     while(mpsR != endR){
         const Eigen::Tensor<Scalar,3> &GB      = std::get<0>(*mpsR);
         const Eigen::Tensor<Scalar,1> &LB      = std::get<1>(*mpsR);
@@ -197,16 +197,16 @@ double class_measurement::compute_finite_energy(){
 
     assert(L.dimensions() == R.dimensions());
     Eigen::Tensor<Scalar,0> E_all_sites = L.contract(R, idx({0,1,2},{0,1,2}));
-    std::cout << setprecision(16) << "E all sites: " << E_all_sites(0) << "  per site (" << env_storage->current_length << ") : " << std::real(E_all_sites(0))/env_storage->current_length << std::endl;
     energy_chain = std::real(E_all_sites(0));
+    std::cout << setprecision(16) << "E all sites: " << energy_chain << " | per site: " << energy_chain / env_storage->get_length() << std::endl;
     return std::real(E_all_sites(0));
 }
 
 
 double class_measurement::compute_finite_norm(){
 
-    auto mpsL  = std::as_const(env_storage->MPS_L).begin();
-    auto endL  = std::as_const(env_storage->MPS_L).end();
+    auto mpsL  = env_storage->get_MPS_L().begin();
+    auto endL  = env_storage->get_MPS_L().end();
     const Eigen::Tensor<Scalar,1>  & LB_left = std::get<0>(*mpsL);
     const Eigen::Tensor<Scalar,3>  & GA      = std::get<1>(*mpsL);
     Eigen::Tensor<Scalar,2> chain =
@@ -231,15 +231,15 @@ double class_measurement::compute_finite_norm(){
     }
 
 //    Contract the center point
-    auto &LA = env_storage->LA;
+    auto &MPS_C = env_storage->get_MPS_C();
     temp = chain
-            .contract(asDiagonal(LA), idx({0},{0}))
-            .contract(asDiagonal(LA), idx({0},{0}));
+            .contract(asDiagonal(MPS_C), idx({0},{0}))
+            .contract(asDiagonal(MPS_C), idx({0},{0}));
     chain = temp;
 
     //Contract the right half of the chain
-    auto mpsR  = std::as_const(env_storage->MPS_R).begin();
-    auto endR  = std::as_const(env_storage->MPS_R).end();
+    auto mpsR  = env_storage->get_MPS_R().begin();
+    auto endR  = env_storage->get_MPS_R().end();
 
     while(mpsR != endR){
         const Eigen::Tensor<Scalar,3> &GB  = std::get<0>(*mpsR);
@@ -262,7 +262,53 @@ double class_measurement::compute_finite_norm(){
 }
 
 
+void class_measurement::compute_finite_mps_state(){
 
+    auto mpsL  = env_storage->get_MPS_L().begin();
+    auto endL  = env_storage->get_MPS_L().end();
+    Eigen::Tensor<Scalar,2> chain(1,1);
+    chain.setConstant(1.0);
+    Eigen::TensorRef<Eigen::Tensor<Scalar,2>> temp;
+
+    while(mpsL != endL){
+        const Eigen::Tensor<Scalar,1>  & LB_left = std::get<0>(*mpsL);
+        const Eigen::Tensor<Scalar,3>  & GA      = std::get<1>(*mpsL);
+        assert(LB_left.dimension(0) == GA.dimension(1));
+
+        temp = chain
+                .contract(asDiagonal(LB_left), idx({1},{0}))
+                .contract(GA                 , idx({1},{1}))
+                .reshape(array2{GA.dimension(0) * chain.dimension(0), GA.dimension(2)});
+        chain = temp;
+        mpsL++;
+    }
+
+//    Contract the center point
+    auto &MPS_C = env_storage->get_MPS_C();
+    temp = chain.contract(asDiagonal(MPS_C), idx({1},{0}));
+    chain = temp;
+
+    //Contract the right half of the chain
+    auto mpsR  = env_storage->get_MPS_R().begin();
+    auto endR  = env_storage->get_MPS_R().end();
+
+    while(mpsR != endR){
+        const Eigen::Tensor<Scalar,3> &GB  = std::get<0>(*mpsR);
+        const Eigen::Tensor<Scalar,1> &LB  = std::get<1>(*mpsR);
+        assert(LB.dimension(0) == GB.dimension(2));
+        temp = chain
+                .contract(GB              , idx({1},{1}))
+                .contract(asDiagonal(LB)  , idx({2},{0}))
+                .reshape(array2{GB.dimension(0) * chain.dimension(0), GB.dimension(2)});
+        chain = temp;
+        mpsR++;
+    }
+    Scalar norm = Textra::Tensor2_to_Matrix(chain).norm();
+    std::cout << "The state: \n" << chain << std::endl;
+    std::cout << setprecision(16) << "Norm of state: " << norm << std::endl;
+    assert(std::abs(norm - 1.0) < 1e-10 );
+//    return std::abs(norm);
+}
 
 
 double class_measurement::get_energy1(){return energy1;};

@@ -5,17 +5,18 @@
 #include <complex>
 #include "class_base_algorithm.h"
 #include <IO/class_hdf5_file.h>
-#include <IO/class_hdf5_table_buffer.h>
+#include <IO/class_hdf5_table_buffer2.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_hamiltonian.h>
-#include <mps_routines/class_finite_chain_storage.h>
+#include <mps_routines/class_finite_chain_sweeper.h>
 #include <mps_routines/class_mpo.h>
 #include <mps_routines/class_mps.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <general/class_svd_wrapper.h>
+#include <algorithms/table_types.h>
 
 namespace s = settings;
 using namespace std;
@@ -29,18 +30,12 @@ class_base_algorithm::class_base_algorithm(std::shared_ptr<class_hdf5_file> hdf5
         :hdf5           (std::move(hdf5_)),
          sim_name       (std::move(sim_name_)),
          sim_type       (sim_type_) {
-    initialize_constants();
     set_profiling_labels();
-    table_buffer = std::make_shared<class_hdf5_table_buffer>(hdf5, sim_name,sim_name);
+    table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(hdf5, sim_name, "profiling");
     superblock   = std::make_shared<class_superblock>();
-    if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG){
-        env_storage  = std::make_shared<class_finite_chain_storage>(max_length, superblock, hdf5);
-        measurement  = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
-    }else{
-        measurement  = std::make_shared<class_measurement>(superblock, sim_type);
-    }
 
-    initialize_state(settings::model::initial_state);
+    //Default constructed objects
+    env_storage  = std::make_shared<class_finite_chain_sweeper>();
 };
 
 
@@ -65,8 +60,6 @@ void class_base_algorithm::single_DMRG_step(long chi_max){
         superblock->HB->update_site_energy(superblock->E_one_site);
     }
     t_sim.toc();
-
-
 }
 
 
@@ -94,35 +87,10 @@ void class_base_algorithm::single_TEBD_step(long chi_max){
     t_sim.toc();
 }
 
-void class_base_algorithm::update_chi(){
-    t_chi.tic();
-    if(entropy_has_converged()) {
-        switch(sim_type){
-            case SimulationType::iDMRG:
-            case SimulationType::fDMRG:
-            case SimulationType::xDMRG:
-                simulation_has_converged = chi_temp == chi_max;
-                break;
-            case SimulationType::iTEBD:
-                simulation_has_converged = chi_temp == chi_max and delta_t <= delta_tmin;
-                if (chi_temp == chi_max and delta_t > delta_tmin) {
-                    delta_t = std::max(delta_tmin, delta_t * 0.5);
-                    superblock->H->update_evolution_step_size(-delta_t, suzuki_order);
-                }
-                break;
-        }
-        chi_temp = chi_grow ? std::min(chi_max, chi_temp + 4) : chi_max;
-    }
-    if(not chi_grow){
-        chi_temp = chi_max;
-    }
-    t_chi.toc();
-
-}
 
 
 bool class_base_algorithm::entropy_has_converged() {
-    //Based on the the slope of entanglement entropy
+    //Based on the the slope of entanglement entanglement_entropy
     int last_measurement = X_vec.empty() ? 0 : X_vec.back();
     if (iteration - last_measurement < 100){return false;}
     S_vec.push_back_limited(measurement->get_entanglement_entropy());
@@ -151,78 +119,25 @@ bool class_base_algorithm::entropy_has_converged() {
     }
 }
 
-
-
-void class_base_algorithm::store_table_entry(){
-    if (Math::mod(iteration, store_freq) != 0) {return;}
-    compute_observables();
-    t_sto.tic();
-    table_buffer->emplace_back(measurement->get_chi(),
-                               chi_max,
-                               measurement->get_energy1(),
-                               measurement->get_energy2(),
-                               measurement->get_energy3(),
-                               measurement->get_energy4(),
-                               measurement->get_energy5(),
-                               measurement->get_energy6(),
-                               measurement->get_entanglement_entropy(),
-                               measurement->get_variance1(),
-                               measurement->get_variance2(),
-                               measurement->get_variance3(),
-                               measurement->get_variance4(),
-                               measurement->get_variance5(),
-                               measurement->get_variance6(),
-                               measurement->get_truncation_error(),
-                               measurement->get_parity(),
-                               iteration,
-                               measurement->get_chain_length(),
-                               sweeps,
-                               position,
-                               delta_t,
-                               t_tot.get_age(),
-                               phys_time);
-    t_sto.toc();
-}
-
-void class_base_algorithm::initialize_constants(){
-    using namespace settings;
-    switch(sim_type){
-        case SimulationType::iDMRG:
-            max_steps    = idmrg::max_steps;
-            chi_max      = idmrg::chi_max   ;
-            chi_grow     = idmrg::chi_grow  ;
-            print_freq   = idmrg::print_freq;
-            store_freq   = idmrg::store_freq;
-            break;
-        case SimulationType::fDMRG:
-            max_length   = fdmrg::max_length;
-            max_sweeps   = fdmrg::max_sweeps;
-            chi_max      = fdmrg::chi_max;
-            chi_grow     = fdmrg::chi_grow;
-            print_freq   = fdmrg::print_freq;
-            store_freq   = fdmrg::store_freq;
-            break;
-        case SimulationType::xDMRG:
-            max_length   = xdmrg::max_length;
-            max_sweeps   = xdmrg::max_sweeps;
-            chi_max      = xdmrg::chi_max   ;
-            chi_grow     = xdmrg::chi_grow  ;
-            print_freq   = xdmrg::print_freq;
-            store_freq   = xdmrg::store_freq;
-            seed         = xdmrg::seed      ;
-            r_strength   = xdmrg::r_strength;
-            break;
-        case SimulationType::iTEBD:
-            max_steps    = itebd::max_steps   ;
-            delta_t0     = itebd::delta_t0    ;
-            delta_tmin   = itebd::delta_tmin  ;
-            suzuki_order = itebd::suzuki_order;
-            chi_max      = itebd::chi_max     ;
-            chi_grow     = itebd::chi_grow    ;
-            print_freq   = itebd::print_freq  ;
-            store_freq   = itebd::store_freq  ;
-            break;
-    }
+void class_base_algorithm::store_profiling_to_file() {
+//    if (Math::mod(iteration, store_freq) != 0) {return;}
+//    t_sto.tic();
+    table_profiling->append_record(
+            iteration,
+            t_tot.get_last_time_interval(),
+            t_opt.get_last_time_interval(),
+            t_sim.get_last_time_interval(),
+            t_svd.get_last_time_interval(),
+            t_env.get_last_time_interval(),
+            t_evo.get_last_time_interval(),
+            t_udt.get_last_time_interval(),
+            t_sto.get_last_time_interval(),
+            t_ste.get_last_time_interval(),
+            t_prt.get_last_time_interval(),
+            t_obs.get_last_time_interval(),
+            t_mps.get_last_time_interval(),
+            t_chi.get_last_time_interval()
+    );
 }
 
 
@@ -340,7 +255,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         superblock->MPS->GB(0, 0, 0) = r2.imag();
         superblock->MPS->theta = superblock->MPS->get_theta();
 
-    }else if (initial_state == "random_chi" and sim_type == SimulationType::iDMRG){
+    }else if (initial_state == "random_chi" ){
         // Random state
         std::cout << "Initializing random state with bond dimension chi = " << chi_max << std::endl;
         chi_temp = chi_max;
@@ -388,10 +303,9 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
 
 
     if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
-        position = env_storage_insert();
+        env_storage_insert();
     }
-
-    position = enlarge_environment();
+    enlarge_environment();
     swap();
 }
 
@@ -404,28 +318,26 @@ void class_base_algorithm::compute_observables(){
 }
 
 
-int class_base_algorithm::enlarge_environment(){
+void class_base_algorithm::enlarge_environment(){
     t_env.tic();
     superblock->enlarge_environment();
     t_env.toc();
-    return superblock->Lblock->size;
 }
-int class_base_algorithm::enlarge_environment(int direction){
+
+void class_base_algorithm::enlarge_environment(int direction){
     t_env.tic();
     superblock->enlarge_environment(direction);
     t_env.toc();
-    return superblock->Lblock->size;
 }
 
 void class_base_algorithm::swap(){
     superblock->swap_AB();
 }
 
-int class_base_algorithm::env_storage_insert() {
+void class_base_algorithm::env_storage_insert() {
     t_ste.tic();
-    int position = env_storage->insert();
+    env_storage->insert();
     t_ste.toc();
-    return position;
 }
 
 void class_base_algorithm::env_storage_overwrite_MPS(){
@@ -434,17 +346,16 @@ void class_base_algorithm::env_storage_overwrite_MPS(){
     t_ste.toc();
 }
 
-int class_base_algorithm::env_storage_move(){
+void class_base_algorithm::env_storage_move(){
     t_ste.tic();
-    int position = env_storage->move(direction, sweeps);
+    env_storage->move();
     t_ste.toc();
-    return position;
 }
 
 
 void class_base_algorithm::print_status_update() {
     if (Math::mod(iteration, print_freq) != 0) {return;}
-    if ((unsigned long)position != superblock->environment_size/2ul){return;}
+    if (not env_storage->position_is_the_middle()) {return;}
     if (print_freq == 0) {return;}
 
     compute_observables();
@@ -464,9 +375,9 @@ void class_base_algorithm::print_status_update() {
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(1) << left  << "Pos: "                    << setw(6)  << position;
-            ccout(1) << left  << "Dir: "                    << setw(3)  << direction;
-            ccout(1) << left  << "Sweep: "                  << setw(4)  << sweeps;
+            ccout(1) << left  << "Pos: "                    << setw(6)  << env_storage->get_position();
+            ccout(1) << left  << "Dir: "                    << setw(3)  << env_storage->get_direction();
+            ccout(1) << left  << "Sweep: "                  << setw(4)  << env_storage->get_sweeps();
             break;
         case SimulationType::iTEBD:
             ccout(1) << left  << "δt: "               << setw(13) << setprecision(12)    << fixed   << superblock->H->step_size;
@@ -497,7 +408,7 @@ void class_base_algorithm::print_status_full(){
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-    ccout(0)  << setw(20) << "Sweep                = " << setprecision(1)  << fixed      << sweeps << std::endl;
+    ccout(0)  << setw(20) << "Sweep                = " << setprecision(1)  << fixed      << env_storage->get_sweeps() << std::endl;
             break;
         case SimulationType::iTEBD:
     ccout(0)  << setw(20) << "δt:                  = " << setprecision(16) << fixed      << superblock->H->step_size << std::endl;

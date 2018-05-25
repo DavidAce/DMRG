@@ -31,6 +31,9 @@ std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
 
 
 
+
+
+
 /*!
  *  \namespace Math
  *  \brief Small convenience-type math functions like modulo and numerical integration using GSL.
@@ -49,7 +52,9 @@ namespace Math {
     */
     template<typename T1, typename T2>
     inline auto mod(const T1 x, const T2 y) {
-        return x >= 0 ? x % y : x % y + y;
+//        return x >= 0 ? x % y : x % y + y;
+        return (x % y + y) % y;
+
     }
 
     /*! \fn std::vector<T2> LinSpaced(T1 num, T2 min, T2 max )

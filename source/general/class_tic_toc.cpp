@@ -103,6 +103,10 @@ double class_tic_toc::get_age() {
     return duration_cast<duration<double>> (high_resolution_clock::now() - start_timepoint).count();
 }
 
+double class_tic_toc::get_last_time_interval() {
+    return duration_cast<duration<double>> (delta_time).count();
+}
+
 void class_tic_toc::reset() {
     if (profiling) {
         measured_time = measured_time.zero();

@@ -7,21 +7,19 @@
 
 #include <memory>
 #include <map>
+#include <vector>
+#include <complex>
 #include <list>
 #include <IO/class_custom_cout.h>
 #include <general/class_tic_toc.h>
 #include <sim_parameters/nmspc_sim_settings.h>
-#include <vector>
-#include <unsupported/Eigen/CXX11/Tensor>
 
 class class_superblock;
-class class_finite_chain_storage;
-class class_hdf5_file;
-class class_hdf5_table_buffer;
+class class_finite_chain_sweeper;
 class class_measurement;
-
-
-
+class class_hdf5_file;
+class class_table_profiling;
+template <typename table_type> class class_hdf5_table;
 
 class class_base_algorithm {
 public:
@@ -29,89 +27,68 @@ public:
     class_base_algorithm() = default;
     class_base_algorithm(std::shared_ptr<class_hdf5_file> hdf5_,
                          std::string sim_name_,
-//                         std::string table_name_,
                          SimulationType sim_type_);
     void set_profiling_labels ();
 
     //Storage
     std::shared_ptr<class_hdf5_file>         hdf5;
-    std::shared_ptr<class_hdf5_table_buffer> table_buffer;
+    std::unique_ptr<class_hdf5_table<class_table_profiling>>  table_profiling;
 
     std::string sim_name;
-//    std::string table_name;
     SimulationType sim_type;
 
     //MPS
     std::shared_ptr<class_superblock>            superblock;
     std::shared_ptr<class_measurement>           measurement;
-    std::shared_ptr<class_finite_chain_storage>  env_storage;
+    std::shared_ptr<class_finite_chain_sweeper>  env_storage;
 
     //Console
     class_custom_cout ccout;
     //Settings.
 
-    // Static variables
+    // Common variables
+    int    iteration = 0; //In idmrg and itebd: steps, in fdmrg and xdmrg: sweeps.
     long   chi_max      ;
-    long   chi_min      ;
-    long   chi_num      ;
     bool   chi_grow     ;
-    int   max_length   ;
-    int    max_sweeps   ;
     int    print_freq   ;
     int    store_freq   ;
-    int    max_steps    ;
-    double delta_t0     ;
-    double delta_tmin   ;
-    int    suzuki_order ;
-
-    // Variables for excited state DMRG
-    int    seed         ;
-    double r_strength   ;  //Randomness strength for the random field.
-
-
-    // Variables that monitor the simulation
-    int    sweeps    = 0;
-    int    iteration = 0;
-    int    position  = 0;
-    int    direction = 1;
-    double phys_time = 0;
-    double delta_t   = 0; //Make sure this one gets initialized to delta_t0!
-    long   chi_temp  = 2;
+    int    seed       = 1;
+    long   chi_temp   = 2;
     bool   simulation_has_converged = false;
 
 
 
 
     //Virtual Functions
-    virtual void run() = 0;
-    virtual void print_profiling()   = 0;
-    virtual void print_profiling_sim(class_tic_toc &t_parent) = 0;
+    virtual void run()                                          = 0;
+    virtual void initialize_constants()                         = 0;
+    virtual void update_chi()                                   = 0;
+    virtual void print_profiling()                              = 0;
+    virtual void print_profiling_sim(class_tic_toc &t_parent)   = 0;
+    virtual void store_table_entry_to_file()                    = 0;
 
     //Common functions
-    void store_table_entry();
     void print_status_update();
     void print_status_full();
     void single_DMRG_step(long chi_max);
     void single_TEBD_step(long chi_max);
-
-    void update_chi();
     bool entropy_has_converged();
-    void initialize_constants();
     void initialize_state(std::string initial_state);
 
     void compute_observables();
-    int  enlarge_environment();
-    int  enlarge_environment(int direction);
+    void enlarge_environment();
+    void enlarge_environment(int direction);
     void swap();
 
     //Functions for finite_chains
-    int  env_storage_insert();
-//    int  env_storage_insert_edges();
+    void env_storage_insert();
     void env_storage_overwrite_MPS();
-    int  env_storage_move();
+    void env_storage_move();
 
 
     // Profiling
+    void store_profiling_to_file();
+
     class_tic_toc t_tot;
     class_tic_toc t_opt;
     class_tic_toc t_sim;
@@ -140,6 +117,15 @@ private:
     class_limited_vector<int>    X_vec;
 
 };
+
+
+
+
+
+
+
+
+
 
 
 #endif //DMRG_CLASS_DMRG_BASE_H
