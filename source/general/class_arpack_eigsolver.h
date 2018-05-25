@@ -12,7 +12,7 @@
 
 namespace arpackpp{
     enum class Form{SYMMETRIC, GENERAL};  // Real Symmetric, Real General or Complex General
-    enum class Ritz {LA,SA,LM,SM,LR,SR,LI,SI,BE}; //choice of eigenvalue. LA is largest algebraic, and so on.
+    enum class Ritz {LA,SA,LM,SM,LR,SR,LI,SI,BE}; //choice of eigenvalue. C is largest algebraic, and so on.
     enum class Side {L,R};           //Left or right eigenvectors
 }
 

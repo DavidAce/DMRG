@@ -35,6 +35,7 @@ public:
     void toc();
     void print_time();
     double get_age();
+    double get_last_time_interval();
 //    void print_time(high_resolution_clock::duration total_runtime);
     void print_time_w_percent();
     void print_time_w_percent(class_tic_toc &parent);

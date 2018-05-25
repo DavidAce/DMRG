@@ -16,7 +16,7 @@
 template<typename Scalar, Form form>
 class_arpack_eigsolver<Scalar,form>::class_arpack_eigsolver() {
     RitzToString = {
-            {arpackpp::Ritz::LA, "LA"},
+            {arpackpp::Ritz::LA, "C"},
             {arpackpp::Ritz::SA, "SA"},
             {arpackpp::Ritz::LM, "LM"},
             {arpackpp::Ritz::SM, "SM"},

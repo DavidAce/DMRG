@@ -12,7 +12,7 @@
 #include <general/nmspc_tensor_extra.h>
 #include <general/class_svd_wrapper.h>
 #include <general/class_arpack_eigsolver.h>
-#include <mps_routines/class_finite_chain_storage.h>
+#include <mps_routines/class_finite_chain_sweeper.h>
 
 using namespace std;
 using namespace Textra;
@@ -80,7 +80,7 @@ std::pair<double,double> class_measurement::compute_infinite_moments_G(Scalar a,
 }
 
 
-double class_measurement::compute_infinite_variance_MPO(){
+double class_measurement::compute_energy_variance_MPO(){
     t_var_mpo.tic();
     if (sim == SimulationType::iDMRG) {
         Tensor<Scalar, 0> H2_minus_E2_two_sites =
@@ -98,21 +98,22 @@ double class_measurement::compute_infinite_variance_MPO(){
     }else{
         Tensor<Scalar, 0> H2_all_sites =
                 superblock->Lblock2->block
-                        .contract(superblock->MPS->theta,             idx({0}  ,{1}))
-                        .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
-                        .contract(superblock->HB->MPO,                idx({4,2},{0,2}))
-                        .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
-                        .contract(superblock->HB->MPO,                idx({4,3},{0,2}))
-                        .contract(superblock->MPS->theta.conjugate(), idx({0,3,5},{1,0,2}))
-                        .contract(superblock->Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
+                .contract(superblock->MPS->theta,             idx({0}  ,{1}))
+                .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
+                .contract(superblock->HB->MPO,                idx({4,2},{0,2}))
+                .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
+                .contract(superblock->HB->MPO,                idx({4,3},{0,2}))
+                .contract(superblock->MPS->theta.conjugate(), idx({0,3,5},{1,0,2}))
+                .contract(superblock->Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
 
-        double L = superblock->Lblock2->size + superblock->Rblock2->size + 2;
+        double L = superblock->Lblock2->size + superblock->Rblock2->size + 2.0;
+        variance_all_sites = std::abs(H2_all_sites(0) - energy_all_sites*energy_all_sites);
         t_var_mpo.toc();
-        return std::real(H2_all_sites(0) - energy1*energy1*L*L ) / L;
+        return variance_all_sites / L;
     }
 }
 
-double class_measurement::compute_infinite_variance_H(){
+double class_measurement::compute_energy_variance_H(){
     t_var_ham.tic();
     const Tensor<Scalar,4> & theta_evn                  = superblock->MPS->theta_evn_normalized;
     const Tensor<Scalar,4> & theta_odd                  = superblock->MPS->theta_odd_normalized;
@@ -247,14 +248,14 @@ double class_measurement::compute_infinite_variance_H(){
 
 
 
-double class_measurement::compute_finite_variance(){
-    Eigen::Tensor<Scalar,4> L = std::as_const(env_storage->ENV2_L).front().block;
-    Eigen::Tensor<Scalar,4> R = std::as_const(env_storage->ENV2_R).back().block;
+double class_measurement::compute_energy_variance_finite_chain(){
+    Eigen::Tensor<Scalar,4> L = env_storage->get_ENV2_L().front().block;
+    Eigen::Tensor<Scalar,4> R = env_storage->get_ENV2_R().back().block;
     Eigen::Tensor<Scalar,4> temp;
 
-    auto mpsL  = std::as_const(env_storage->MPS_L).begin();
-    auto mpoL  = std::as_const(env_storage->MPO_L).begin();
-    auto endL  = std::as_const(env_storage->MPS_L).end  ();
+    auto mpsL  = env_storage->get_MPS_L().begin();
+    auto mpoL  = env_storage->get_MPO_L().begin();
+    auto endL  = env_storage->get_MPS_L().end  ();
     while(mpsL != endL){
         const Eigen::Tensor<Scalar,1> &LB_left = std::get<0>(*mpsL);
         const Eigen::Tensor<Scalar,3> &GA      = std::get<1>(*mpsL);
@@ -275,16 +276,16 @@ double class_measurement::compute_finite_variance(){
 
 
     //Contract the center point
-    auto &LA = std::as_const(env_storage->LA);
-    temp = L.contract(asDiagonal(LA) , idx({0},{0}))
-            .contract(asDiagonal(LA) , idx({0},{0}))
+    auto &MPS_C = env_storage->get_MPS_C();
+    temp = L.contract(asDiagonal(MPS_C) , idx({0},{0}))
+            .contract(asDiagonal(MPS_C) , idx({0},{0}))
             .shuffle(array4{2,3,0,1});
     L = temp;
 
     //Contract the right half of the chain
-    auto mpsR  = std::as_const(env_storage->MPS_R).begin();
-    auto mpoR  = std::as_const(env_storage->MPO_R).begin();
-    auto endR  = std::as_const(env_storage->MPS_R).end  ();
+    auto mpsR  = env_storage->get_MPS_R().begin();
+    auto mpoR  = env_storage->get_MPO_R().begin();
+    auto endR  = env_storage->get_MPS_R().end  ();
     while(mpsR != endR){
         const Eigen::Tensor<Scalar,3> &GB      = std::get<0>(*mpsR);
         const Eigen::Tensor<Scalar,1> &LB      = std::get<1>(*mpsR);
@@ -303,7 +304,7 @@ double class_measurement::compute_finite_variance(){
     }
 
     Eigen::Tensor<Scalar,0> H2_all_sites = L.contract(R, idx({0,1,2,3},{0,1,2,3}));
-    double Var = (std::real(H2_all_sites(0)) - energy_chain*energy_chain) / env_storage->current_length ;
+    double Var = std::abs(std::real(H2_all_sites(0)) - energy_chain*energy_chain) / env_storage->get_length() ;
     std::cout << setprecision(16) << "H2 all sites: " << H2_all_sites(0) << " Variance: " << Var <<  " log10: " << std::log10(Var) << std::endl;
     return Var;
 }
