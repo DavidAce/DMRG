@@ -107,6 +107,7 @@ public:
     bool position_is_the_left_edge();
     bool position_is_the_right_edge();
 
+    void write_chain_to_file();
 
 };
 

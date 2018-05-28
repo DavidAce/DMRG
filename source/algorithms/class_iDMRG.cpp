@@ -33,7 +33,7 @@ void class_iDMRG::run() {
             store_table_entry_to_file();
             store_profiling_to_file();
             enlarge_environment();
-            update_chi();
+            check_convergence_overall();
             swap();
             iteration++;
         }
@@ -43,8 +43,6 @@ void class_iDMRG::run() {
         superblock->t_eig.print_time();
 
 }
-
-
 
 void class_iDMRG::initialize_constants(){
     using namespace settings;
@@ -56,19 +54,6 @@ void class_iDMRG::initialize_constants(){
 
 }
 
-void class_iDMRG::update_chi(){
-    t_chi.tic();
-    if(entropy_has_converged()) {
-        simulation_has_converged = chi_temp == chi_max;
-        chi_temp = chi_grow ? std::min(chi_max, chi_temp + 4) : chi_max;
-    }
-    if(not chi_grow){
-        chi_temp = chi_max;
-    }
-    t_chi.toc();
-}
-
-
 void class_iDMRG::store_table_entry_to_file(){
     if (Math::mod(iteration, store_freq) != 0) {return;}
     compute_observables();
@@ -79,18 +64,12 @@ void class_iDMRG::store_table_entry_to_file(){
                              iteration,
                              measurement->get_chi(),
                              chi_max,
-                             measurement->get_energy1(),
-                             measurement->get_energy2(),
-                             measurement->get_energy3(),
-                             measurement->get_energy4(),
-                             measurement->get_energy5(),
-                             measurement->get_energy6(),
-                             measurement->get_variance1(),
-                             measurement->get_variance2(),
-                             measurement->get_variance3(),
-                             measurement->get_variance4(),
-                             measurement->get_variance5(),
-                             measurement->get_variance6(),
+                             measurement->get_energy_mpo(),
+                             measurement->get_energy_ham(),
+                             measurement->get_energy_mom(),
+                             measurement->get_variance_mpo(),
+                             measurement->get_variance_ham(),
+                             measurement->get_variance_mom(),
                              measurement->get_entanglement_entropy(),
                              measurement->get_truncation_error(),
                              t_tot.get_age());

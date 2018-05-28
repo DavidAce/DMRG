@@ -20,10 +20,8 @@ private:
         int     position;
         int     chi;
         int     chi_max;
-        double  energy1; double  energy2; double  energy3;
-        double  energy4; double  energy5; double  energy6;
-        double  variance1; double  variance2; double  variance3;
-        double  variance4; double  variance5; double  variance6;
+        double  energy_mpo; double  energy_ham; double  energy_mom;
+        double  variance_mpo; double  variance_ham; double  variance_mom;
         double  entanglement_entropy;
         double  truncation_error;
         double  wall_time;
@@ -34,10 +32,8 @@ private:
         int position_,
         int chi_,
         int chi_max_,
-        double energy1_, double energy2_, double energy3_,
-        double energy4_, double energy5_, double energy6_,
-        double variance1_, double variance2_, double variance3_,
-        double variance4_, double variance5_, double variance6_,
+        double energy_mpo_, double energy_ham_, double energy_mom_,
+        double variance_mpo_, double variance_ham_, double variance_mom_,
         double entropy_,
         double truncation_error_,
         double wall_time_) :
@@ -46,27 +42,23 @@ private:
         position(position_),
         chi(chi_),
         chi_max(chi_max_),
-        energy1(energy1_), energy2(energy2_), energy3(energy3_),
-        energy4(energy4_), energy5(energy5_), energy6(energy6_),
-        variance1(variance1_), variance2(variance2_), variance3(variance3_),
-        variance4(variance4_), variance5(variance5_), variance6(variance6_),
+        energy_mpo(energy_mpo_), energy_ham(energy_ham_), energy_mom(energy_mom_),
+        variance_mpo(variance_mpo_), variance_ham(variance_ham_), variance_mom(variance_mom_),
         entanglement_entropy(entropy_),
         truncation_error(truncation_error_),
         wall_time(wall_time_)
         {}
     };
     struct meta_struct {
-        constexpr static hsize_t NFIELDS = 20;
+        constexpr static hsize_t NFIELDS = 14;
         size_t dst_size = sizeof(data);
         std::array<size_t, NFIELDS> dst_offsets = {HOFFSET(data, iteration),
                                                    HOFFSET(data, chain_length),
                                                    HOFFSET(data, position),
                                                    HOFFSET(data, chi),
                                                    HOFFSET(data, chi_max),
-                                                   HOFFSET(data, energy1), HOFFSET(data, energy2), HOFFSET(data, energy3),
-                                                   HOFFSET(data, energy4), HOFFSET(data, energy5), HOFFSET(data, energy6),
-                                                   HOFFSET(data, variance1), HOFFSET(data, variance2), HOFFSET(data, variance3),
-                                                   HOFFSET(data, variance4), HOFFSET(data, variance5), HOFFSET(data, variance6),
+                                                   HOFFSET(data, energy_mpo), HOFFSET(data, energy_ham), HOFFSET(data, energy_mom),
+                                                   HOFFSET(data, variance_mpo), HOFFSET(data, variance_ham), HOFFSET(data, variance_mom),
                                                    HOFFSET(data, entanglement_entropy),
                                                    HOFFSET(data, truncation_error),
                                                    HOFFSET(data, wall_time)
@@ -77,10 +69,8 @@ private:
                 sizeof(data::position),
                 sizeof(data::chi),
                 sizeof(data::chi_max),
-                sizeof(data::energy1), sizeof(data::energy2), sizeof(data::energy3),
-                sizeof(data::energy4), sizeof(data::energy5), sizeof(data::energy6),
-                sizeof(data::variance1), sizeof(data::variance2), sizeof(data::variance3),
-                sizeof(data::variance4), sizeof(data::variance5), sizeof(data::variance6),
+                sizeof(data::energy_mpo), sizeof(data::energy_ham), sizeof(data::energy_mom),
+                sizeof(data::variance_mpo), sizeof(data::variance_ham), sizeof(data::variance_mom),
                 sizeof(data::entanglement_entropy), sizeof(data::truncation_error), sizeof(data::wall_time)
         };
         std::array<const char *, NFIELDS> field_names = {"sweep",
@@ -88,10 +78,8 @@ private:
                 "iteration",
                 "chi;",
                 "chi_max",
-                "energy1","energy2","energy3",
-                "energy4","energy5","energy6",
-                "variance1","variance2","variance3",
-                "variance4","variance5","variance6",
+                "energy_mpo","energy_ham","energy_mom",
+                "variance_mpo","variance_ham","variance_mom",
                 "entanglement_entropy",
                 "truncation_error",
                 "wall_time"
@@ -102,8 +90,6 @@ private:
                                                   H5T_NATIVE_INT,
                                                   H5T_NATIVE_INT,
                                                   H5T_NATIVE_INT,
-                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
-                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE};
@@ -126,10 +112,8 @@ private:
         int     chi;
         int     chi_max;
         double  time_step;
-        double  energy1; double  energy2; double  energy3;
-        double  energy4; double  energy5; double  energy6;
-        double  variance1; double  variance2; double  variance3;
-        double  variance4; double  variance5; double  variance6;
+        double  energy_mpo; double  energy_ham; double  energy_mom;
+        double  variance_mpo; double  variance_ham; double  variance_mom;
         double  entanglement_entropy;
         double  truncation_error;
         double  phys_time;
@@ -140,10 +124,8 @@ private:
                 int chi_,
                 int chi_max_,
                 double time_step_,
-                double energy1_, double energy2_, double energy3_,
-                double energy4_, double energy5_, double energy6_,
-                double variance1_, double variance2_, double variance3_,
-                double variance4_, double variance5_, double variance6_,
+                double energy_mpo_, double energy_ham_, double energy_mom_,
+                double variance_mpo_, double variance_ham_, double variance_mom_,
                 double entropy_,
                 double truncation_error_,
                 double phys_time_,
@@ -152,10 +134,8 @@ private:
                 chi(chi_),
                 chi_max(chi_max_),
                 time_step(time_step_),
-                energy1(energy1_), energy2(energy2_), energy3(energy3_),
-                energy4(energy4_), energy5(energy5_), energy6(energy6_),
-                variance1(variance1_), variance2(variance2_), variance3(variance3_),
-                variance4(variance4_), variance5(variance5_), variance6(variance6_),
+                energy_mpo(energy_mpo_), energy_ham(energy_ham_), energy_mom(energy_mom_),
+                variance_mpo(variance_mpo_), variance_ham(variance_ham_), variance_mom(variance_mom_),
                 entanglement_entropy(entropy_),
                 truncation_error(truncation_error_),
                 phys_time(phys_time_),
@@ -163,16 +143,14 @@ private:
         {}
     };
     struct meta_struct {
-        constexpr static hsize_t NFIELDS = 20;
+        constexpr static hsize_t NFIELDS = 14;
         size_t dst_size = sizeof(data);
         std::array<size_t, NFIELDS> dst_offsets = {HOFFSET(data, iteration),
                                                    HOFFSET(data, chi),
                                                    HOFFSET(data, chi_max),
                                                    HOFFSET(data, time_step),
-                                                   HOFFSET(data, energy1), HOFFSET(data, energy2), HOFFSET(data, energy3),
-                                                   HOFFSET(data, energy4), HOFFSET(data, energy5), HOFFSET(data, energy6),
-                                                   HOFFSET(data, variance1), HOFFSET(data, variance2), HOFFSET(data, variance3),
-                                                   HOFFSET(data, variance4), HOFFSET(data, variance5), HOFFSET(data, variance6),
+                                                   HOFFSET(data, energy_mpo), HOFFSET(data, energy_ham), HOFFSET(data, energy_mom),
+                                                   HOFFSET(data, variance_mpo), HOFFSET(data, variance_ham), HOFFSET(data, variance_mom),
                                                    HOFFSET(data, entanglement_entropy),
                                                    HOFFSET(data, truncation_error),
                                                    HOFFSET(data, phys_time),
@@ -183,10 +161,8 @@ private:
                 sizeof(data::chi),
                 sizeof(data::chi_max),
                 sizeof(data::time_step),
-                sizeof(data::energy1), sizeof(data::energy2), sizeof(data::energy3),
-                sizeof(data::energy4), sizeof(data::energy5), sizeof(data::energy6),
-                sizeof(data::variance1), sizeof(data::variance2), sizeof(data::variance3),
-                sizeof(data::variance4), sizeof(data::variance5), sizeof(data::variance6),
+                sizeof(data::energy_mpo), sizeof(data::energy_ham), sizeof(data::energy_mom),
+                sizeof(data::variance_mpo), sizeof(data::variance_ham), sizeof(data::variance_mom),
                 sizeof(data::entanglement_entropy),
                 sizeof(data::truncation_error),
                 sizeof(data::phys_time),
@@ -196,10 +172,8 @@ private:
                                                          "chi",
                                                          "chi_max",
                                                          "time_step",
-                                                         "energy1","energy2","energy3",
-                                                         "energy4","energy5","energy6",
-                                                         "variance1","variance2","variance3",
-                                                         "variance4","variance5","variance6",
+                                                         "energy_mpo","energy_ham","energy_mom",
+                                                         "variance_mpo","variance_ham","variance_mom",
                                                          "entanglement_entropy",
                                                          "truncation_error",
                                                          "phys_time",
@@ -210,8 +184,6 @@ private:
                                                   H5T_NATIVE_INT,
                                                   H5T_NATIVE_INT,
                                                   H5T_NATIVE_DOUBLE,
-                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
-                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,

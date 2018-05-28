@@ -31,15 +31,14 @@ void class_iTEBD::run() {
     t_tot.tic();
     delta_t = delta_t0;
     superblock->H->update_evolution_step_size(-delta_t0, suzuki_order);
-    while(iteration < max_steps and not simulation_has_converged ) {
+    while(iteration < max_steps and not simulation_has_converged) {
         single_TEBD_step(chi_temp);
         iteration++;
         phys_time += superblock->H->step_size;
-//        enlarge_environment();
         store_table_entry_to_file();
         store_profiling_to_file();
         print_status_update();
-        update_chi();
+        check_convergence_overall();
     }
     t_tot.toc();
     print_status_full();
@@ -60,23 +59,27 @@ void class_iTEBD::initialize_constants(){
 
 
 
-void class_iTEBD::update_chi(){
+void class_iTEBD::check_convergence_time_step(){
     t_chi.tic();
-    if(entropy_has_converged()) {
-        simulation_has_converged = chi_temp == chi_max and delta_t <= delta_tmin;
-        if (chi_temp == chi_max and delta_t > delta_tmin) {
-            delta_t = std::max(delta_tmin, delta_t * 0.5);
-            superblock->H->update_evolution_step_size(-delta_t, suzuki_order);
-        }
-        chi_temp = chi_grow ? std::min(chi_max, chi_temp + 4) : chi_max;
-    }
-    if(not chi_grow){
-        chi_temp = chi_max;
+    if(delta_t <= delta_tmin){
+        time_step_has_converged = true;
+    }else if (bond_dimension_has_converged and entanglement_has_converged) {
+        delta_t = std::max(delta_tmin, delta_t * 0.5);
+        superblock->H->update_evolution_step_size(-delta_t, suzuki_order);
+        clear_convergence_checks();
     }
     t_chi.toc();
-
 }
 
+void class_iTEBD::check_convergence_overall(){
+    check_convergence_entanglement();
+    check_convergence_variance_mpo();
+    check_convergence_bond_dimension();
+    check_convergence_time_step();
+    if(entanglement_has_converged and bond_dimension_has_converged and time_step_has_converged){
+        simulation_has_converged = true;
+    }
+}
 
 
 void class_iTEBD::store_table_entry_to_file(){
@@ -88,18 +91,12 @@ void class_iTEBD::store_table_entry_to_file(){
             measurement->get_chi(),
             chi_max,
             delta_t,
-            measurement->get_energy1(),
-            measurement->get_energy2(),
-            measurement->get_energy3(),
-            measurement->get_energy4(),
-            measurement->get_energy5(),
-            measurement->get_energy6(),
-            measurement->get_variance1(),
-            measurement->get_variance2(),
-            measurement->get_variance3(),
-            measurement->get_variance4(),
-            measurement->get_variance5(),
-            measurement->get_variance6(),
+            measurement->get_energy_mpo(),
+            measurement->get_energy_ham(),
+            measurement->get_energy_mom(),
+            measurement->get_variance_mpo(),
+            measurement->get_variance_ham(),
+            measurement->get_variance_mom(),
             measurement->get_entanglement_entropy(),
             measurement->get_truncation_error(),
             phys_time,

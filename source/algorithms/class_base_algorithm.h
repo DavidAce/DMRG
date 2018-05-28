@@ -55,14 +55,15 @@ public:
     int    seed       = 1;
     long   chi_temp   = 2;
     bool   simulation_has_converged = false;
-
+    bool   bond_dimension_has_converged = false;
+    bool   entanglement_has_converged = false;
+    bool   variance_mpo_has_converged = false;
 
 
 
     //Virtual Functions
     virtual void run()                                          = 0;
     virtual void initialize_constants()                         = 0;
-    virtual void update_chi()                                   = 0;
     virtual void print_profiling()                              = 0;
     virtual void print_profiling_sim(class_tic_toc &t_parent)   = 0;
     virtual void store_table_entry_to_file()                    = 0;
@@ -72,7 +73,13 @@ public:
     void print_status_full();
     void single_DMRG_step(long chi_max);
     void single_TEBD_step(long chi_max);
-    bool entropy_has_converged();
+
+    virtual void check_convergence_overall();
+    void check_convergence_variance_mpo();
+    void check_convergence_entanglement();
+    void check_convergence_bond_dimension();
+    void clear_convergence_checks();
+
     void initialize_state(std::string initial_state);
 
     void compute_observables();
@@ -103,18 +110,30 @@ public:
     class_tic_toc t_mps;
     class_tic_toc t_chi;
 private:
-    template<typename T>
-    class class_limited_vector : public std::vector<T>{
-    public:
-        void push_back_limited(T val){
-            if (this->size() > 10){
-                this->erase(this->begin());
-            }
-            this->push_back(val);
-        }
-    };
-    class_limited_vector<double> S_vec;
-    class_limited_vector<int>    X_vec;
+//    template<typename T>
+//    class class_limited_vector : public std::vector<T>{
+//    public:
+//        void push_back_limited(T val){
+//            if (this->size() > 10){
+//                this->erase(this->begin());
+//            }
+//            this->push_back(val);
+//        }
+//    };
+//    class_limited_vector<double> V_vec;
+//    class_limited_vector<double> S_vec;
+//    class_limited_vector<int>    X_vec;
+
+    std::list<double> V_vec;
+    std::list<int>    X1_vec;
+    double V_slope;
+
+
+
+    std::list<double> S_vec;
+    std::list<int>    X2_vec;
+    double S_slope;
+
 
 };
 

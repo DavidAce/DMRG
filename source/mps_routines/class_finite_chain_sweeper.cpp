@@ -312,7 +312,7 @@ int class_finite_chain_sweeper::get_sweeps()    const {return sweeps;}
 int class_finite_chain_sweeper::get_length()    const {return (int)(MPS_L.size() + MPS_R.size());}
 int class_finite_chain_sweeper::get_position()  const {return max_length_is_set ? (int)(MPS_L.size() - 1) : 0 ;}
 bool class_finite_chain_sweeper::position_is_the_middle() {
-    return max_length_is_set ? get_position() + 1 == max_length / 2 : true ;
+    return max_length_is_set ? get_position() + 1 == max_length / 2 and direction == 1: true ;
 }
 bool class_finite_chain_sweeper::position_is_the_left_edge(){
     return get_position() == 0;

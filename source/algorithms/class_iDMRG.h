@@ -22,7 +22,6 @@ public:
     int    max_steps  ;
     void run()                                          override;
     void initialize_constants()                         override;
-    void update_chi()                                   override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
     void store_table_entry_to_file()                    override;
