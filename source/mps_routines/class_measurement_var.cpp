@@ -63,12 +63,11 @@ Scalar class_measurement::moment_generating_function(std::shared_ptr<class_mps> 
 }
 
 
-std::pair<double,double> class_measurement::compute_infinite_moments_G(Scalar a, std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
+void class_measurement::compute_energy_and_variance_mom(Scalar a,std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
     t_var_gen.tic();
     using T = Scalar;
     //The following only works if superblock->MPS has been normalized! I.e, you have to have run MPS->compute_mps_components() prior.
     T lambdaG  = moment_generating_function(superblock->MPS, Op_vec);
-//    LT lambdaG2 = (LT) moment_generating_function_2(superblock->MPS, Op_vec);
     T l        = superblock->H->mps_sites;
     T G        = pow(lambdaG,1.0/l);
     T logG     = log(lambdaG) * 1.0/l;
@@ -76,44 +75,36 @@ std::pair<double,double> class_measurement::compute_infinite_moments_G(Scalar a,
     T O        = (logG - logGc)/(2.0*a);
     T VarO     = 2.0*log(abs(G))/ (a*a);
     t_var_gen.toc();
-    return std::make_pair(real(O), real(VarO));
+    energy_mom = real(O);
+    variance_mom = real(VarO);
 }
 
 
-double class_measurement::compute_energy_variance_MPO(){
+void class_measurement::compute_energy_variance_mpo(){
     t_var_mpo.tic();
-    if (sim == SimulationType::iDMRG) {
-        Tensor<Scalar, 0> H2_minus_E2_two_sites =
-                superblock->Lblock2->block
-                .contract(superblock->MPS->theta,             idx({0}  ,{1}))
-                .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
-                .contract(superblock->HB->MPO,                idx({4,2},{0,2}))
-                .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
-                .contract(superblock->HB->MPO,                idx({4,3},{0,2}))
-                .contract(superblock->MPS->theta.conjugate(), idx({0,3,5},{1,0,2}))
-                .contract(superblock->Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
-        double L =  superblock->Lblock2->size + superblock->Rblock2->size + 2;
-        t_var_mpo.toc();
-        return std::real( H2_minus_E2_two_sites(0)/ 2.0 /  L );
-    }else{
-        Tensor<Scalar, 0> H2_all_sites =
-                superblock->Lblock2->block
-                .contract(superblock->MPS->theta,             idx({0}  ,{1}))
-                .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
-                .contract(superblock->HB->MPO,                idx({4,2},{0,2}))
-                .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
-                .contract(superblock->HB->MPO,                idx({4,3},{0,2}))
-                .contract(superblock->MPS->theta.conjugate(), idx({0,3,5},{1,0,2}))
-                .contract(superblock->Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
+    double L = superblock->Lblock2->size + superblock->Rblock2->size + 2.0;
+    Tensor<Scalar, 0> H2 =
+            superblock->Lblock2->block
+                    .contract(superblock->MPS->theta,             idx({0}  ,{1}))
+                    .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
+                    .contract(superblock->HB->MPO,                idx({4,2},{0,2}))
+                    .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
+                    .contract(superblock->HB->MPO,                idx({4,3},{0,2}))
+                    .contract(superblock->MPS->theta.conjugate(), idx({0,3,5},{1,0,2}))
+                    .contract(superblock->Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
 
-        double L = superblock->Lblock2->size + superblock->Rblock2->size + 2.0;
-        variance_all_sites = std::abs(H2_all_sites(0) - energy_all_sites*energy_all_sites);
+    if (sim_type == SimulationType::iDMRG) {
         t_var_mpo.toc();
-        return variance_all_sites / L;
+        variance_mpo_all_sites = std::real(H2(0))/2.0;
+        variance_mpo           = std::real(H2(0))/2.0/L;
+    }else{
+        variance_mpo_all_sites = std::abs(H2(0) - energy_mpo_all_sites*energy_mpo_all_sites);
+        variance_mpo           = variance_mpo_all_sites/L;
     }
+    t_var_mpo.toc();
 }
 
-double class_measurement::compute_energy_variance_H(){
+void class_measurement::compute_energy_variance_ham(){
     t_var_ham.tic();
     const Tensor<Scalar,4> & theta_evn                  = superblock->MPS->theta_evn_normalized;
     const Tensor<Scalar,4> & theta_odd                  = superblock->MPS->theta_odd_normalized;
@@ -241,14 +232,13 @@ double class_measurement::compute_energy_variance_H(){
     Scalar e2lrpbaba      = E2LRP_BABA(0);
     Scalar e2lrpbaab      = E2LRP_BAAB(0);
 
-    Scalar VarE  = 0.5*(e2ab + e2ba) + 0.5*(e2aba_1  + e2bab_1  + e2aba_2  + e2bab_2 )  + e2lrpabab + e2lrpabba + e2lrpbaba  + e2lrpbaab ;
+    variance_ham = std::real(0.5*(e2ab + e2ba) + 0.5*(e2aba_1  + e2bab_1  + e2aba_2  + e2bab_2 )  + e2lrpabab + e2lrpabba + e2lrpbaba  + e2lrpbaab) ;
     t_var_ham.toc();
-    return real(VarE) ;
 }
 
 
 
-double class_measurement::compute_energy_variance_finite_chain(){
+void class_measurement::compute_finite_chain_energy_variance(){
     Eigen::Tensor<Scalar,4> L = env_storage->get_ENV2_L().front().block;
     Eigen::Tensor<Scalar,4> R = env_storage->get_ENV2_R().back().block;
     Eigen::Tensor<Scalar,4> temp;
@@ -304,7 +294,5 @@ double class_measurement::compute_energy_variance_finite_chain(){
     }
 
     Eigen::Tensor<Scalar,0> H2_all_sites = L.contract(R, idx({0,1,2,3},{0,1,2,3}));
-    double Var = std::abs(std::real(H2_all_sites(0)) - energy_chain*energy_chain) / env_storage->get_length() ;
-    std::cout << setprecision(16) << "H2 all sites: " << H2_all_sites(0) << " Variance: " << Var <<  " log10: " << std::log10(Var) << std::endl;
-    return Var;
+    variance_chain = std::abs(std::real(H2_all_sites(0)) - energy_chain*energy_chain) / env_storage->get_length() ;
 }

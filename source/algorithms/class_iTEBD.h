@@ -23,9 +23,12 @@ public:
     double delta_t0     ;
     double delta_tmin   ;
     int    suzuki_order ;
+    bool   time_step_has_converged;
+
     void run()                                          override;
     void initialize_constants()                         override;
-    void update_chi()                                   override;
+    void check_convergence_time_step();
+    void check_convergence_overall()                    override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
     void store_table_entry_to_file()                    override;

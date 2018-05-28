@@ -93,17 +93,6 @@ void class_mps::compute_mps_components(){
     MatrixType<Scalar> eigvec_R_odd_map = Eigen::Map<const MatrixType<Scalar>>(eigvec_R_odd.data(), eigvec_R_odd.size(),1);
     MatrixType<Scalar> eigvec_L_odd_map = Eigen::Map<const MatrixType<Scalar>>(eigvec_L_odd.data(), eigvec_L_odd.size(),1);
 
-
-    //    auto eigvec_R_evn_   = Eigen::Map<const MatrixType<Scalar>>(solver.get_eigvecs().data(), solver.ref_eigvecs().size(),1);
-//    Scalar eigval_R_evn_ = solver.ref_eigvals()[0];
-//
-//    solver.eig(theta_evn_transfer_mat.data(), Ritz::LM,sizeLB*sizeLB, 1,16, true);
-//    auto eigvec_R_evn_   = Eigen::Map<const MatrixType<Scalar>>(solver.get_eigvecs().data(), solver.ref_eigvecs().size(),1);
-//    Scalar eigval_R_evn_ = solver.ref_eigvals()[0];
-
-
-
-
     Scalar normalization_evn = sqrt((eigvec_L_evn_map.transpose() * eigvec_R_evn_map).sum());
     Scalar normalization_odd = sqrt((eigvec_L_odd_map.transpose() * eigvec_R_odd_map).sum());
 
@@ -117,8 +106,7 @@ void class_mps::compute_mps_components(){
     theta_sw             = get_theta_swapped();
     theta_evn_normalized = get_theta_evn(sqrt(eigval_R_evn[0]));
     theta_odd_normalized = get_theta_odd(sqrt(eigval_R_odd[0]));
-//    theta_evn_normalized            = get_theta_evn();
-//    theta_odd_normalized            = get_theta_odd();
+
     LBGA                 = asDiagonal(LB).contract(GA, idx({1},{1})).shuffle(array3{1,0,2});// / (T) sqrt(eigval_R_LBGA(0));
     LAGB                 = asDiagonal(LA).contract(GB, idx({1},{1})).shuffle(array3{1,0,2});// / (T) sqrt(eigval_R_LAGB(0));
 

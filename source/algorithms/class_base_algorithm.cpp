@@ -53,12 +53,13 @@ void class_base_algorithm::single_DMRG_step(long chi_max){
     t_svd.tic();
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, s::precision::SVDThreshold);
     t_svd.toc();
-    measurement->is_measured = false;
     //Reduce the hamiltonians if you are doing infinite systems:
     if(sim_type == SimulationType::iDMRG){
         superblock->HA->update_site_energy(superblock->E_one_site);
         superblock->HB->update_site_energy(superblock->E_one_site);
     }
+    superblock->set_current_dimensions();
+    measurement->set_not_measured();
     t_sim.toc();
 }
 
@@ -83,41 +84,136 @@ void class_base_algorithm::single_TEBD_step(long chi_max){
         if (&U != &superblock->H->U.back()) {
             superblock->swap_AB();        }
     }
-    measurement->is_measured = false;
+    superblock->set_current_dimensions();
+    measurement->set_not_measured();
     t_sim.toc();
 }
 
+void class_base_algorithm::check_convergence_overall(){
+    check_convergence_entanglement();
+    check_convergence_variance_mpo();
+    check_convergence_bond_dimension();
+
+    if(entanglement_has_converged and variance_mpo_has_converged and bond_dimension_has_converged){
+        simulation_has_converged = true;
+    }
+}
+
+void class_base_algorithm::check_convergence_variance_mpo(){
+    //Based on the the slope of the variance
+    // We want to check every time we can because the variance is expensive to compute.
+    if (not measurement->has_been_measured()){return;}
+
+    unsigned long max_data_points = 100;
+    unsigned long min_data_points = 5;
+
+    // It's time to check. Insert current numbers and remove old ones
+    V_vec.push_back(measurement->get_variance_mpo());
+    X2_vec.push_back(iteration);
+    if (V_vec.size() < min_data_points){return;}
+    if (V_vec.size() > max_data_points){
+        V_vec.pop_front();
+        X2_vec.pop_front();
+    }
+
+    double n = V_vec.size();
+    double avgX = accumulate(X2_vec.begin(), X2_vec.end(), 0.0) / n;
+    double avgY = accumulate(V_vec.begin(), V_vec.end(), 0.0) / n;
+
+    double numerator = 0.0;
+    double denominator = 0.0;
+
+    auto x_it = X2_vec.begin();
+    auto v_it = V_vec.begin();
+    auto v_end = V_vec.end();
+    while(v_it != v_end){
+        numerator   += (*x_it - avgX) * (*v_it - avgY);
+        denominator += (*x_it - avgX) * (*x_it - avgX);
+        v_it++;
+        x_it++;
+    }
+
+    V_slope = numerator / denominator;
+    if (std::abs(V_slope) < 10*settings::precision::eigThreshold) {
+        variance_mpo_has_converged = true;
+    }
 
 
-bool class_base_algorithm::entropy_has_converged() {
+}
+
+void class_base_algorithm::check_convergence_entanglement() {
     //Based on the the slope of entanglement entanglement_entropy
-    int last_measurement = X_vec.empty() ? 0 : X_vec.back();
-    if (iteration - last_measurement < 100){return false;}
-    S_vec.push_back_limited(measurement->get_entanglement_entropy());
-    X_vec.push_back_limited(iteration);
-    if (S_vec.size() < 5){return false;}
-    double n = S_vec.size();
 
-    double avgX = accumulate(X_vec.begin(), X_vec.end(), 0.0) / n;
+    // We want to check once every "rate" steps
+    int rate = 10;
+    unsigned long max_data_points = 100;
+    unsigned long min_data_points = 5;
+    // Get the iteration number when you last measured.
+    int last_measurement = X1_vec.empty() ? 0 : X1_vec.back();
+    // If the measurement happened less than rate iterations ago, return.
+    if (iteration - last_measurement < rate){return;}
+
+    // It's time to measure. Insert current numbers and remove old ones
+    S_vec.push_back(measurement->get_entanglement_entropy());
+    X1_vec.push_back(iteration);
+    if (S_vec.size() < min_data_points){return;}
+    if (S_vec.size() > max_data_points){
+        S_vec.pop_front();
+        X1_vec.pop_front();
+    }
+
+    double n = S_vec.size();
+    double avgX = accumulate(X1_vec.begin(), X1_vec.end(), 0.0) / n;
     double avgY = accumulate(S_vec.begin(), S_vec.end(), 0.0) / n;
 
     double numerator = 0.0;
     double denominator = 0.0;
 
-    for(int i=0; i<n; ++i){
-        numerator   += (X_vec[i] - avgX) * (S_vec[i] - avgY);
-        denominator += (X_vec[i] - avgX) * (X_vec[i] - avgX);
+    auto x_it = X1_vec.begin();
+    auto s_it = S_vec.begin();
+    auto s_end = S_vec.end();
+    while(s_it != s_end){
+        numerator   += (*x_it - avgX) * (*s_it - avgY);
+        denominator += (*x_it - avgX) * (*x_it - avgX);
+        s_it++;
+        x_it++;
     }
 
-    double slope = numerator / denominator;
-    if (std::abs(slope) < 1e-8){
-        S_vec.clear();
-        X_vec.clear();
-        return true;
-    }else{
-        return false;
+    S_slope = numerator / denominator;
+    if (std::abs(S_slope) < settings::precision::SVDThreshold) {
+        entanglement_has_converged = true;
     }
 }
+
+void class_base_algorithm::check_convergence_bond_dimension(){
+    t_chi.tic();
+    if(not env_storage->position_is_the_middle()){return;}
+    if(not chi_grow or bond_dimension_has_converged or chi_temp == chi_max ){
+        chi_temp = chi_max;
+        bond_dimension_has_converged = true;
+    }else{
+        if(variance_mpo_has_converged or entanglement_has_converged){
+            chi_temp = std::min(chi_max, chi_temp + 4);
+            clear_convergence_checks();
+        }
+        if(chi_temp == chi_max){
+            bond_dimension_has_converged = true;
+        }
+    }
+    t_chi.toc();
+}
+
+void class_base_algorithm::clear_convergence_checks(){
+    S_vec.clear();
+    V_vec.clear();
+    X1_vec.clear();
+    X2_vec.clear();
+    simulation_has_converged        = false;
+    bond_dimension_has_converged    = false;
+    entanglement_has_converged      = false;
+    variance_mpo_has_converged      = false;
+}
+
 
 void class_base_algorithm::store_profiling_to_file() {
 //    if (Math::mod(iteration, store_freq) != 0) {return;}
@@ -304,11 +400,16 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
 
     if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
         env_storage_insert();
+    }else{
     }
+
     enlarge_environment();
+
+    if (sim_type == SimulationType::iDMRG){
+        iteration = (int)superblock->Lblock->size;
+    }
     swap();
 }
-
 
 
 void class_base_algorithm::compute_observables(){
@@ -363,13 +464,44 @@ void class_base_algorithm::print_status_update() {
     std::cout << setprecision(16) << fixed << left;
     ccout(1) << left  << sim_name << " ";
     ccout(1) << left  << "Step: "                       << setw(10) << iteration;
-    ccout(1) << left  << "E: "                          << setw(21) << setprecision(16)    << fixed   << measurement->get_energy1();
+    ccout(1) << left  << "E: ";
+    switch(sim_type) {
+        case SimulationType::iDMRG:
+            ccout(1) << setw(21) << setprecision(16)    << fixed   << measurement->get_energy_mpo();
+            ccout(1) << setw(21) << setprecision(16)    << fixed   << measurement->get_energy_ham();
+            ccout(1) << setw(21) << setprecision(16)    << fixed   << measurement->get_energy_mom();
+            break;
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            ccout(1) << setw(21) << setprecision(16)    << fixed   << measurement->get_energy_mpo();
+            break;
+        case SimulationType::iTEBD:
+            ccout(1) << setw(21) << setprecision(16)    << fixed   << measurement->get_energy_ham();
+            ccout(1) << setw(21) << setprecision(16)    << fixed   << measurement->get_energy_mom();
+            break;
+    }
+
+    ccout(1) << left  << "log₁₀ σ²(E): ";
+    switch(sim_type) {
+        case SimulationType::iDMRG:
+            ccout(1) << setw(12) << setprecision(4)    << fixed   << std::log10(measurement->get_variance_mpo());
+            ccout(1) << setw(12) << setprecision(4)    << fixed   << std::log10(measurement->get_variance_ham());
+            ccout(1) << setw(12) << setprecision(4)    << fixed   << std::log10(measurement->get_variance_mom());
+            break;
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            ccout(1) << setw(12) << setprecision(4)    << fixed   << std::log10(measurement->get_variance_mpo());
+            break;
+        case SimulationType::iTEBD:
+            ccout(1) << setw(12) << setprecision(4)    << fixed   << std::log10(measurement->get_variance_ham());
+            ccout(1) << setw(12) << setprecision(4)    << fixed   << std::log10(measurement->get_variance_mom());
+            break;
+    }
+
+
     ccout(1) << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << measurement->get_entanglement_entropy();
     ccout(1) << left  << "χmax: "                       << setw(4)  << setprecision(3)     << fixed   << chi_max;
     ccout(1) << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << measurement->get_chi();
-    ccout(1) << left  << "log₁₀ σ²(E): "                << setw(12) << setprecision(4)     << fixed   << log10(measurement->get_variance1());
-    ccout(1) << left  << " "                            << setw(12) << setprecision(4)     << fixed   << log10(measurement->get_variance2());
-    ccout(1) << left  << " "                            << setw(12) << setprecision(4)     << fixed   << log10(measurement->get_variance4());
     ccout(1) << left  << "log₁₀ truncation: "           << setw(12) << setprecision(4)     << fixed   << log10(measurement->get_truncation_error());
     ccout(1) << left  << "Chain length: "               << setw(12) << setprecision(1)     << fixed   << measurement->get_chain_length();
     switch(sim_type){
@@ -381,11 +513,24 @@ void class_base_algorithm::print_status_update() {
             break;
         case SimulationType::iTEBD:
             ccout(1) << left  << "δt: "               << setw(13) << setprecision(12)    << fixed   << superblock->H->step_size;
-            ccout(1) << left  << " conv: " << simulation_has_converged;
             break;
         default:
             break;
     }
+    ccout(1) << left  << " - Convergence ";
+    ccout(1) << left  << " S-"  << std::boolalpha << entanglement_has_converged;
+    ccout(1) << left  << " χ-"  << std::boolalpha << bond_dimension_has_converged;
+    switch(sim_type){
+        case SimulationType::iDMRG:
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            ccout(1) << left  << " σ²- "  << std::boolalpha << variance_mpo_has_converged;
+            break;
+        case SimulationType::iTEBD:
+            break;
+    }
+
+
     ccout(1) << std::endl;
     t_prt.toc();
 }
@@ -395,13 +540,39 @@ void class_base_algorithm::print_status_full(){
     t_prt.tic();
     std::cout << std::endl;
     std::cout << " -- Final results -- " << sim_name << std::endl;
-    ccout(0)  << setw(20) << "Energy               = " << setprecision(16) << fixed      << measurement->get_energy1()                << std::endl;
+    switch(sim_type){
+        case SimulationType::iDMRG:
+            ccout(0)  << setw(20) << "Energy MPO               = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
+            ccout(0)  << setw(20) << "Energy HAM               = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
+            ccout(0)  << setw(20) << "Energy MOM               = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
+            break;
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            ccout(0)  << setw(20) << "Energy MPO               = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
+            break;
+        case SimulationType::iTEBD:
+            ccout(0)  << setw(20) << "Energy HAM               = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
+            ccout(0)  << setw(20) << "Energy MOM               = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
+            break;
+    }
+    switch(sim_type){
+        case SimulationType::iDMRG:
+            ccout(0)  << setw(20) << "log₁₀ σ²(E) MPO:     = " << setprecision(6) << fixed      << log10(measurement->get_variance_mpo())  << std::endl;
+            ccout(0)  << setw(20) << "log₁₀ σ²(E) HAM:     = " << setprecision(6) << fixed      << log10(measurement->get_variance_ham())  << std::endl;
+            ccout(0)  << setw(20) << "log₁₀ σ²(E) MOM:     = " << setprecision(6) << fixed      << log10(measurement->get_variance_mom())  << std::endl;
+            break;
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            ccout(0)  << setw(20) << "log₁₀ σ²(E) MPO:     = " << setprecision(6) << fixed      << log10(measurement->get_variance_mpo())  << std::endl;
+            break;
+        case SimulationType::iTEBD:
+            ccout(0)  << setw(20) << "log₁₀ σ²(E) HAM:     = " << setprecision(6) << fixed      << log10(measurement->get_variance_ham())  << std::endl;
+            ccout(0)  << setw(20) << "log₁₀ σ²(E) MOM:     = " << setprecision(6) << fixed      << log10(measurement->get_variance_mom())  << std::endl;
+            break;
+    }
     ccout(0)  << setw(20) << "Entanglement Entropy = " << setprecision(16) << fixed      << measurement->get_entanglement_entropy()   << std::endl;
     ccout(0)  << setw(20) << "χmax                 = " << setprecision(4)  << fixed      << chi_max                                   << std::endl;
     ccout(0)  << setw(20) << "χ                    = " << setprecision(4)  << fixed      << measurement->get_chi()                    << std::endl;
-    ccout(0)  << setw(20) << "log₁₀ σ²(E) MPO:     = " << setprecision(16) << fixed      << log10(measurement->get_variance1())       << std::endl;
-    ccout(0)  << setw(20) << "log₁₀ σ²(E) HAM:     = " << setprecision(16) << fixed      << log10(measurement->get_variance2())       << std::endl;
-    ccout(0)  << setw(20) << "log₁₀ σ²(E) GEN:     = " << setprecision(16) << fixed      << log10(measurement->get_variance4())       << std::endl;
     ccout(0)  << setw(20) << "log₁₀ truncation:    = " << setprecision(4)  << fixed      << log10(measurement->get_truncation_error())<< std::endl;
     ccout(0)  << setw(20) << "Chain length         = " << setprecision(1)  << fixed      << measurement->get_chain_length()           << std::endl;
 
@@ -412,12 +583,23 @@ void class_base_algorithm::print_status_full(){
             break;
         case SimulationType::iTEBD:
     ccout(0)  << setw(20) << "δt:                  = " << setprecision(16) << fixed      << superblock->H->step_size << std::endl;
-    ccout(0)  << setw(20) << "conv:                = " << setprecision(1)  << fixed      << simulation_has_converged << std::endl;
             break;
         default:
             break;
     }
 
+    ccout(0)  << setw(20) << "Simulation converged : " << std::boolalpha << simulation_has_converged << std::endl;
+    ccout(0)  << setw(20) << "S slope              = " << setprecision(16) << fixed      << S_slope  << " " << std::boolalpha << entanglement_has_converged << std::endl;
+    switch(sim_type){
+        case SimulationType::iDMRG:
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            ccout(0)  << setw(20) << "σ² slope             = " << setprecision(16) << fixed      << V_slope  << " " << std::boolalpha << variance_mpo_has_converged << std::endl;
+            break;
+        case SimulationType::iTEBD:
+            break;
+    }
+    ccout(0)  << setw(20) << "χ                    = " << setprecision(1)  << fixed      << chi_temp << " " << std::boolalpha << bond_dimension_has_converged << std::endl;
     std::cout << std::endl;
     t_prt.toc();
 }

@@ -22,14 +22,10 @@ using namespace Textra;
 
 
 class_measurement::class_measurement(std::shared_ptr<class_superblock> superblock_, SimulationType sim_)
-        :superblock(std::move(superblock_)), sim(sim_)
+        :superblock(std::move(superblock_)), sim_type(sim_)
 {
 
-    mom_vec0 = superblock->H->compute_G(a0,4);
     mom_vecA = superblock->H->compute_G(a,4);
-    mom_vecB = superblock->H->compute_G(b,4);
-    mom_vecC = superblock->H->compute_G(c,4);
-    mom_vecD = superblock->H->compute_G(d,4);
     set_profiling_labels();
 
 }
@@ -45,63 +41,78 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
 
 
 void class_measurement::compute_all_observables_from_superblock(){
-    if(!is_measured) {
-//        superblock->set_current_dimensions();
-        if (superblock->chiL != superblock->chiR) { return;}
-        if (superblock->MPS->LA.size() != superblock->MPS->LB.size()) { return ;}
-        if (superblock->chi <= 2) { return; }
+    if (is_measured){return;}
+    if (superblock->chiL != superblock->chiR) { return;}
+    if (superblock->MPS->LA.size() != superblock->MPS->LB.size()) { return ;}
+    if (superblock->chi <= 2) { return; }
 
-        superblock->MPS->compute_mps_components();
-        energy1                       = compute_energy_MPO();
-        energy2                       = compute_energy_H();
-        variance1                     = compute_energy_variance_MPO();
-        variance2                     = compute_energy_variance_H();
-        std::tie(energy3, variance3)  = compute_infinite_moments_G(a, mom_vecA);
-        std::tie(energy4, variance4)  = compute_infinite_moments_G(b, mom_vecB);
-        std::tie(energy5, variance5)  = compute_infinite_moments_G(c, mom_vecC);
-        std::tie(energy6, variance6)  = compute_infinite_moments_G(d, mom_vecD);
-        entanglement_entropy          = compute_entanglement_entropy();
-        truncation_error              = superblock->MPS->truncation_error;
-//        parity                        = compute_parity();
-        is_measured = true;
+    switch(sim_type){
+        case SimulationType::iDMRG:
+            superblock->MPS->compute_mps_components();
+            compute_energy_mpo();
+            compute_energy_variance_mpo();
+            compute_energy_ham();
+            compute_energy_variance_ham();
+            compute_energy_and_variance_mom(a, mom_vecA);
+            break;
+        case SimulationType::xDMRG:
+        case SimulationType::fDMRG:
+            superblock->MPS->theta = superblock->MPS->get_theta();
+            compute_energy_mpo();
+            compute_energy_variance_mpo();
+        case SimulationType::iTEBD:
+            superblock->MPS->compute_mps_components();
+            compute_energy_ham();
+            compute_energy_variance_ham();
+            compute_energy_and_variance_mom(a, mom_vecA);
+            break;
     }
+
+    compute_entanglement_entropy();
+    truncation_error = superblock->MPS->truncation_error;
+//      compute_parity();
+    is_measured = true;
+
+}
+
+
+void class_measurement::compute_all_observables_from_finite_chain(){
+    compute_finite_chain_energy();
+    compute_finite_chain_energy_variance();
+    compute_finite_chain_mps_state();
+    compute_finite_chain_norm();
 }
 
 
 
 
-
-double class_measurement::compute_energy_MPO(){
+void class_measurement::compute_energy_mpo(){
     t_ene_mpo.tic();
-
-    if(sim == SimulationType::iDMRG ){
-        Tensor<Scalar, 0>  E_two_sites =
-                superblock->Lblock->block
-                        .contract(superblock->MPS->theta,                     idx({0},{1}))
-                        .contract(superblock->HA->MPO,                        idx({1,2},{0,2}))
-                        .contract(superblock->HB->MPO,                        idx({3,1},{0,2}))
-                        .contract(superblock->MPS->theta.conjugate(),         idx({0,2,4},{1,0,2}))
-                        .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
-        t_ene_mpo.toc();
-        return std::real(E_two_sites(0) / 2.0 );
+    double         L = superblock->Lblock->size + superblock->Rblock->size + 2;
+    Tensor<Scalar, 0>  E =
+            superblock->Lblock->block
+                    .contract(superblock->MPS->theta,                     idx({0},{1}))
+                    .contract(superblock->HA->MPO,                        idx({1,2},{0,2}))
+                    .contract(superblock->HB->MPO,                        idx({3,1},{0,2}))
+                    .contract(superblock->MPS->theta.conjugate(),         idx({0,2,4},{1,0,2}))
+                    .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
+    assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
+    if(sim_type == SimulationType::iDMRG ){
+        //iDMRG uses reduced mpo in the environments!
+        energy_mpo_all_sites = std::real(E(0))/2.0*L;
+        energy_mpo           = std::real(E(0))/2.0;
 
     }else{
-        Tensor<Scalar, 0>  E_all_sites =
-                superblock->Lblock->block
-                        .contract(superblock->MPS->theta,                     idx({0},{1}))
-                        .contract(superblock->HA->MPO,                        idx({1,2},{0,2}))
-                        .contract(superblock->HB->MPO,                        idx({3,1},{0,2}))
-                        .contract(superblock->MPS->theta.conjugate(),         idx({0,2,4},{1,0,2}))
-                        .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
-        double L = superblock->Lblock->size + superblock->Rblock->size + 2;
-        t_ene_mpo.toc();
-        energy_all_sites = std::real(E_all_sites(0));
-        return std::real(energy_all_sites)/L;
+        energy_mpo_all_sites = std::real(E(0));
+        energy_mpo           = std::real(energy_mpo_all_sites)/L;
     }
+
+    t_ene_mpo.toc();
+
 }
 
 
-double class_measurement::compute_energy_H(){
+void class_measurement::compute_energy_ham(){
     t_ene_ham.tic();
     E_evn = superblock->MPS->theta_evn_normalized
                 .contract(Matrix_to_Tensor(superblock->H->h[0],2,2,2,2),     idx({0, 2}, {0, 1}))
@@ -114,18 +125,19 @@ double class_measurement::compute_energy_H(){
                     .contract(superblock->MPS->l_odd,                           idx({0,2}, {0,1}))
                     .contract(superblock->MPS->r_odd,                           idx({0,1},{0,1}));
     assert(abs(imag(E_evn(0)+ E_odd(0))) < 1e-10 and "Energy has an imaginary part!!!" );
+
     t_ene_ham.toc();
-    return 0.5*std::real(E_evn(0) + E_odd(0)) ;
+    energy_ham = 0.5*std::real(E_evn(0) + E_odd(0));
 }
 
 
 
-double class_measurement::compute_entanglement_entropy(){
+void class_measurement::compute_entanglement_entropy(){
     t_entropy.tic();
     Tensor<Scalar,0> SA  = -superblock->MPS->LA.square()
             .contract(superblock->MPS->LA.square().log().eval(), idx({0},{0}));
+    entanglement_entropy =  std::real(SA(0));
     t_entropy.toc();
-    return std::real(SA(0));
 }
 
 //
@@ -140,7 +152,7 @@ double class_measurement::compute_entanglement_entropy(){
 //}
 
 
-double class_measurement::compute_finite_energy(){
+void class_measurement::compute_finite_chain_energy(){
     Eigen::Tensor<Scalar,3> L = env_storage->get_ENV_L().front().block;
     Eigen::TensorRef<Eigen::Tensor<Scalar,3>> temp;
 
@@ -199,11 +211,10 @@ double class_measurement::compute_finite_energy(){
     Eigen::Tensor<Scalar,0> E_all_sites = L.contract(R, idx({0,1,2},{0,1,2}));
     energy_chain = std::real(E_all_sites(0));
     std::cout << setprecision(16) << "E all sites: " << energy_chain << " | per site: " << energy_chain / env_storage->get_length() << std::endl;
-    return std::real(E_all_sites(0));
 }
 
 
-double class_measurement::compute_finite_norm(){
+void class_measurement::compute_finite_chain_norm(){
 
     auto mpsL  = env_storage->get_MPS_L().begin();
     auto endL  = env_storage->get_MPS_L().end();
@@ -255,14 +266,13 @@ double class_measurement::compute_finite_norm(){
         chain = temp;
         mpsR++;
     }
-    Scalar norm = Textra::Tensor2_to_Matrix(chain).trace();
-    std::cout << setprecision(16) << "Norm: " << norm << std::endl;
-    assert(std::abs(norm - 1.0) < 1e-10 );
-    return std::abs(norm);
+    norm_chain = std::abs(Textra::Tensor2_to_Matrix(chain).trace());
+    std::cout << setprecision(16) << "Norm: " << norm_chain << std::endl;
+    assert(std::abs(norm_chain - 1.0) < 1e-10 );
 }
 
 
-void class_measurement::compute_finite_mps_state(){
+void class_measurement::compute_finite_chain_mps_state(){
 
     auto mpsL  = env_storage->get_MPS_L().begin();
     auto endL  = env_storage->get_MPS_L().end();
@@ -303,27 +313,19 @@ void class_measurement::compute_finite_mps_state(){
         chain = temp;
         mpsR++;
     }
-    Scalar norm = Textra::Tensor2_to_Matrix(chain).norm();
-    std::cout << "The state: \n" << chain << std::endl;
-    std::cout << setprecision(16) << "Norm of state: " << norm << std::endl;
-    assert(std::abs(norm - 1.0) < 1e-10 );
-//    return std::abs(norm);
+    mps_chain = chain.reshape(array1{chain.dimension(0)});
+    norm_chain = Textra::Tensor2_to_Matrix(chain).norm();
+    assert(std::abs(norm_chain - 1.0) < 1e-10 );
 }
 
 
-double class_measurement::get_energy1(){return energy1;};
-double class_measurement::get_energy2(){return energy2;};
-double class_measurement::get_energy3(){return energy3;};
-double class_measurement::get_energy4(){return energy4;};
-double class_measurement::get_energy5(){return energy5;};
-double class_measurement::get_energy6(){return energy6;};
+double class_measurement::get_energy_mpo(){return energy_mpo;};
+double class_measurement::get_energy_ham(){return energy_ham;};
+double class_measurement::get_energy_mom(){return energy_mom;};
 
-double class_measurement::get_variance1(){return variance1;};
-double class_measurement::get_variance2(){return variance2;};
-double class_measurement::get_variance3(){return variance3;};
-double class_measurement::get_variance4(){return variance4;};
-double class_measurement::get_variance5(){return variance5;};
-double class_measurement::get_variance6(){return variance6;};
+double class_measurement::get_variance_mpo(){return variance_mpo;};
+double class_measurement::get_variance_ham(){return variance_ham;};
+double class_measurement::get_variance_mom(){return variance_mom;};
 
 double class_measurement::get_entanglement_entropy(){
     return entanglement_entropy;
