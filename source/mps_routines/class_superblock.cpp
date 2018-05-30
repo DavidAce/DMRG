@@ -17,6 +17,7 @@
 //#include <arpackpp/arscomp.h>
 #include <general/class_arpack_eigsolver.h>
 
+#define profile_optimization 0
 
 using namespace std;
 using namespace Textra;
@@ -33,7 +34,7 @@ class_superblock::class_superblock():
         Rblock2(std::make_shared<class_environment_var>("R")),
         SVD(std::make_shared<class_SVD<Scalar>>())
 {
-    t_eig.set_properties(true, 5," Time: ");
+    t_eig.set_properties(profile_optimization, 10,"Time optimizing ");
     MPS->initialize(H->local_dimension);
     HA->set_parameters(settings::model::J, settings::model::g, 0.0);
     HB->set_parameters(settings::model::J, settings::model::g, 0.0);
@@ -56,11 +57,11 @@ Textra::Tensor<Scalar,4> class_superblock::optimize_MPS(Textra::Tensor<Scalar, 4
     int nev = 1;
     using namespace settings::precision;
     class_arpack_eigsolver<Scalar, Form::GENERAL> solver(Lblock->block.data(), Rblock->block.data(), HA->MPO.data(), HB->MPO.data(), shape_theta4, shape_mpo4, Ritz::SR, nev, eigMaxNcv,eigThreshold,eigMaxIter, true ,theta.data());
-    t_eig.toc();
 
     TensorMap<const Tensor<const Scalar,2>> eigvecs (solver.ref_eigvecs().data(), shape_theta4[0]*shape_theta4[1], shape_theta4[2]*shape_theta4[3]);
     TensorMap<const Tensor<const Scalar,1>> eigvals (solver.ref_eigvals().data(), nev);
-
+    t_eig.toc();
+    t_eig.print_delta();
 
     E_one_site = std::real(eigvals(0))/2.0;
 //    double L = Lblock->size + Rblock->size;

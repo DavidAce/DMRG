@@ -38,7 +38,7 @@ namespace settings {
     //Parameters controlling iDMRG
     namespace idmrg {
         extern bool on         ;                            /*!< Turns iDMRG simulation on/off. */
-        extern int  max_steps ;                             /*!< Final length of 1D quantum chain. */
+        extern int  max_steps  ;                             /*!< Final length of 1D quantum chain. */
         extern long chi_max    ;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         extern bool chi_grow   ;                            /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         extern int  print_freq ;                            /*!< Print frequency for console output. (0 = off). */

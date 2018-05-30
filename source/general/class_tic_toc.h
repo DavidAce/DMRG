@@ -10,7 +10,6 @@
 #include <iostream>
 
 
-
 class class_tic_toc {
 private:
     std::chrono::high_resolution_clock::time_point tic_timepoint;
@@ -21,11 +20,11 @@ private:
     int padding              = 5;
 
 public:
-    class_tic_toc(bool on_off, int prec, std::string output_text);                 //Constructor
-    class_tic_toc(){};
+    class_tic_toc(bool on_off,int prec, std::string output_text);                 //Constructor
+    class_tic_toc()= default;
     std::chrono::high_resolution_clock::duration delta_time;
     std::chrono::high_resolution_clock::duration measured_time;
-    void set_properties(bool on_off, int prec, std::string output_text);
+    void set_properties(bool on_off,int prec, std::string output_text);
     void set_label(std::string output_text);
     std::string  get_name();
     double get_measured_time();

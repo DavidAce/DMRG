@@ -27,7 +27,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_base_algorithm(std::move(hdf5_), "xDMRG",SimulationType::xDMRG) {
     initialize_constants();
     table_xdmrg = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
-    env_storage = std::make_shared<class_finite_chain_sweeper>(max_length, superblock, hdf5 );
+    env_storage = std::make_shared<class_finite_chain_sweeper>(max_length, superblock, hdf5,sim_type,sim_name);
     measurement  = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
     superblock->HA->set_random_field(r_strength);
     superblock->HB->set_random_field(r_strength);
@@ -63,7 +63,7 @@ void class_xDMRG::run() {
     env_storage->print_storage();
     env_storage->print_hamiltonians();
     measurement->compute_all_observables_from_finite_chain();
-
+    env_storage->write_chain_to_file();
 }
 
 auto class_xDMRG::find_greatest_overlap(Eigen::Tensor<Scalar,4> &theta){
@@ -145,17 +145,30 @@ void class_xDMRG::store_table_entry_to_file(){
             measurement->get_chi(),
             chi_max,
             measurement->get_energy_mpo(),
-            measurement->get_energy_ham(),
-            measurement->get_energy_mom(),
+            std::numeric_limits<double>::quiet_NaN(),
+            std::numeric_limits<double>::quiet_NaN(),
             measurement->get_variance_mpo(),
-            measurement->get_variance_ham(),
-            measurement->get_variance_mom(),
+            std::numeric_limits<double>::quiet_NaN(),
+            std::numeric_limits<double>::quiet_NaN(),
             measurement->get_entanglement_entropy(),
             measurement->get_truncation_error(),
             t_tot.get_age());
     t_sto.toc();
 }
 
+void class_xDMRG::check_convergence_overall(){
+    t_con.tic();
+    check_convergence_entanglement();
+    check_convergence_variance_mpo();
+    check_convergence_bond_dimension();
+    if(entanglement_has_converged and
+       variance_mpo_has_converged and
+       bond_dimension_has_converged)
+    {
+        simulation_has_converged = true;
+    }
+    t_con.toc();
+}
 
 void class_xDMRG::initialize_constants(){
     using namespace settings;
@@ -192,6 +205,6 @@ void class_xDMRG::print_profiling_sim(class_tic_toc &t_parent){
         t_svd.print_time_w_percent(t_parent);
         t_env.print_time_w_percent(t_parent);
         t_mps.print_time_w_percent(t_parent);
-        t_chi.print_time_w_percent(t_parent);
+        t_con.print_time_w_percent(t_parent);
     }
 }

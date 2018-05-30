@@ -99,6 +99,6 @@ void class_iDMRG::print_profiling_sim(class_tic_toc &t_parent){
         t_svd.print_time_w_percent(t_parent);
         t_env.print_time_w_percent(t_parent);
         t_mps.print_time_w_percent(t_parent);
-        t_chi.print_time_w_percent(t_parent);
+        t_con.print_time_w_percent(t_parent);
     }
 }

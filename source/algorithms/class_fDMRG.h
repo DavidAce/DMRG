@@ -25,6 +25,7 @@ public:
     int    max_sweeps   ;
 
     void run()                                          override;
+    void check_convergence_overall()                    override;
     void initialize_constants()                         override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;

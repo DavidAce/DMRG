@@ -22,6 +22,15 @@ class class_table_profiling;
 template <typename table_type> class class_hdf5_table;
 
 class class_base_algorithm {
+private:
+    void check_convergence_using_slope(std::list<double> &Y_vec,
+                                       std::list<int> &X_vec,
+                                       double new_data,
+                                       int    rate,
+                                       double tolerance,
+                                       double &slope,
+                                       bool &has_converged);
+
 public:
     using Scalar = std::complex<double>;
     class_base_algorithm() = default;
@@ -53,11 +62,13 @@ public:
     int    print_freq   ;
     int    store_freq   ;
     int    seed       = 1;
-    long   chi_temp   = 2;
+    long   chi_temp   = 4;
     bool   simulation_has_converged = false;
     bool   bond_dimension_has_converged = false;
     bool   entanglement_has_converged = false;
     bool   variance_mpo_has_converged = false;
+    bool   variance_ham_has_converged = false;
+    bool   variance_mom_has_converged = false;
 
 
 
@@ -76,6 +87,8 @@ public:
 
     virtual void check_convergence_overall();
     void check_convergence_variance_mpo();
+    void check_convergence_variance_ham();
+    void check_convergence_variance_mom();
     void check_convergence_entanglement();
     void check_convergence_bond_dimension();
     void clear_convergence_checks();
@@ -108,7 +121,7 @@ public:
     class_tic_toc t_prt;
     class_tic_toc t_obs;
     class_tic_toc t_mps;
-    class_tic_toc t_chi;
+    class_tic_toc t_con;
 private:
 //    template<typename T>
 //    class class_limited_vector : public std::vector<T>{
@@ -120,15 +133,21 @@ private:
 //            this->push_back(val);
 //        }
 //    };
-//    class_limited_vector<double> V_vec;
+//    class_limited_vector<double> V_mpo_vec;
 //    class_limited_vector<double> S_vec;
 //    class_limited_vector<int>    X_vec;
 
-    std::list<double> V_vec;
-    std::list<int>    X1_vec;
-    double V_slope;
+    std::list<double> V_mpo_vec;
+    std::list<int>    X_mpo_vec;
+    double V_mpo_slope;
 
+    std::list<double> V_ham_vec;
+    std::list<int>    X_ham_vec;
+    double V_ham_slope;
 
+    std::list<double> V_mom_vec;
+    std::list<int>    X_mom_vec;
+    double V_mom_slope;
 
     std::list<double> S_vec;
     std::list<int>    X2_vec;

@@ -4,8 +4,10 @@
 
 #ifndef DMRG_CLASS_ARPACKPP_CUSTOM_MULTIPLICATION_H
 #define DMRG_CLASS_ARPACKPP_CUSTOM_MULTIPLICATION_H
-
+#include <general/class_tic_toc.h>
 #include "class_arpack_eigsolver.h"
+
+#define profile_multiplication 0
 
 template <typename T, Form form = Form::GENERAL>
 class DenseMatrixProduct {
@@ -59,7 +61,13 @@ public:
             shape_theta1({shape_theta4[0] * shape_theta4[1] * shape_theta4[2] * shape_theta4[3]}),
             shape_mpo4(shape_mpo4_)
     {
+        t_mul.set_properties(profile_multiplication, 10,"Time multiplying");
+
     }
+
+
+    //Profiling
+    class_tic_toc t_mul;
 };
 
 

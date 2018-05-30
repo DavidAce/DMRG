@@ -33,12 +33,12 @@ void class_iTEBD::run() {
     superblock->H->update_evolution_step_size(-delta_t0, suzuki_order);
     while(iteration < max_steps and not simulation_has_converged) {
         single_TEBD_step(chi_temp);
-        iteration++;
         phys_time += superblock->H->step_size;
         store_table_entry_to_file();
         store_profiling_to_file();
         print_status_update();
         check_convergence_overall();
+        iteration++;
     }
     t_tot.toc();
     print_status_full();
@@ -60,7 +60,6 @@ void class_iTEBD::initialize_constants(){
 
 
 void class_iTEBD::check_convergence_time_step(){
-    t_chi.tic();
     if(delta_t <= delta_tmin){
         time_step_has_converged = true;
     }else if (bond_dimension_has_converged and entanglement_has_converged) {
@@ -68,17 +67,24 @@ void class_iTEBD::check_convergence_time_step(){
         superblock->H->update_evolution_step_size(-delta_t, suzuki_order);
         clear_convergence_checks();
     }
-    t_chi.toc();
 }
 
 void class_iTEBD::check_convergence_overall(){
+    t_con.tic();
     check_convergence_entanglement();
-    check_convergence_variance_mpo();
+    check_convergence_variance_ham();
+    check_convergence_variance_mom();
     check_convergence_bond_dimension();
     check_convergence_time_step();
-    if(entanglement_has_converged and bond_dimension_has_converged and time_step_has_converged){
+    if(entanglement_has_converged and
+       variance_ham_has_converged and
+       variance_mom_has_converged and
+       bond_dimension_has_converged and
+       time_step_has_converged)
+    {
         simulation_has_converged = true;
     }
+    t_con.toc();
 }
 
 
@@ -91,10 +97,10 @@ void class_iTEBD::store_table_entry_to_file(){
             measurement->get_chi(),
             chi_max,
             delta_t,
-            measurement->get_energy_mpo(),
+            std::numeric_limits<double>::quiet_NaN(),
             measurement->get_energy_ham(),
             measurement->get_energy_mom(),
-            measurement->get_variance_mpo(),
+            std::numeric_limits<double>::quiet_NaN(),
             measurement->get_variance_ham(),
             measurement->get_variance_mom(),
             measurement->get_entanglement_entropy(),
@@ -124,7 +130,7 @@ void class_iTEBD::print_profiling_sim(class_tic_toc &t_parent){
         t_evo.print_time_w_percent(t_parent);
         t_svd.print_time_w_percent(t_parent);
         t_env.print_time_w_percent(t_parent);
-        t_chi.print_time_w_percent(t_parent);
+        t_con.print_time_w_percent(t_parent);
         t_udt.print_time_w_percent(t_parent);
     }
 }

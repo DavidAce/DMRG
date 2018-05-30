@@ -328,6 +328,7 @@ double class_measurement::get_variance_ham(){return variance_ham;};
 double class_measurement::get_variance_mom(){return variance_mom;};
 
 double class_measurement::get_entanglement_entropy(){
+    compute_entanglement_entropy();
     return entanglement_entropy;
 }
 

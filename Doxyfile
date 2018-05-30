@@ -175,7 +175,7 @@ STRIP_FROM_INC_PATH    =
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter (but
 # less readable) file names. This can be useful is your file systems doesn't
-# support long names like on DOS, Mac, or CD-ROM.
+# support long names like on_off DOS, Mac, or CD-ROM.
 # The default value is: NO.
 
 SHORT_NAMES            = NO
@@ -274,7 +274,7 @@ OPTIMIZE_FOR_FORTRAN   = NO
 
 OPTIMIZE_OUTPUT_VHDL   = NO
 
-# Doxygen selects the parser to use depending on the extension of the files it
+# Doxygen selects the parser to use depending on_off the extension of the files it
 # parses. With this tag you can assign which parser to use for a given
 # extension. Doxygen has a built-in mapping, but you can override or extend it
 # using this tag. The format is ext=language, where ext is a file extension, and
@@ -380,7 +380,7 @@ SUBGROUPING            = YES
 
 # When the INLINE_GROUPED_CLASSES tag is set to YES, classes, structs and unions
 # are shown inside the group in which they are included (e.g. using \ingroup)
-# instead of on a separate page (for HTML and Man pages) or section (for LaTeX
+# instead of on_off a separate page (for HTML and Man pages) or section (for LaTeX
 # and RTF).
 #
 # Note that this feature does not work in combination with
@@ -393,7 +393,7 @@ INLINE_GROUPED_CLASSES = NO
 # with only public data fields or simple typedef fields will be shown inline in
 # the documentation of the scope in which they are defined (i.e. file,
 # namespace, or group documentation), provided this scope is documented. If set
-# to NO, structs, classes, and unions are shown on a separate page (for HTML and
+# to NO, structs, classes, and unions are shown on_off a separate page (for HTML and
 # Man pages) or section (for LaTeX and RTF).
 # The default value is: NO.
 
@@ -719,18 +719,18 @@ CITE_BIB_FILES         =
 # Configuration options related to warning and progress messages
 #---------------------------------------------------------------------------
 
-# The QUIET tag can be used to turn on/off the messages that are generated to
+# The QUIET tag can be used to turn on_off/off the messages that are generated to
 # standard output by doxygen. If QUIET is set to YES this implies that the
 # messages are off.
 # The default value is: NO.
 
 QUIET                  = NO
 
-# The WARNINGS tag can be used to turn on/off the warning messages that are
+# The WARNINGS tag can be used to turn on_off/off the warning messages that are
 # generated to standard error (stderr) by doxygen. If WARNINGS is set to YES
-# this implies that the warnings are on.
+# this implies that the warnings are on_off.
 #
-# Tip: Turn warnings on while writing the documentation.
+# Tip: Turn warnings on_off while writing the documentation.
 # The default value is: YES.
 
 WARNINGS               = YES
@@ -948,10 +948,10 @@ IMAGE_PATH             =
 
 INPUT_FILTER           = 
 
-# The FILTER_PATTERNS tag can be used to specify filters on a per file pattern
+# The FILTER_PATTERNS tag can be used to specify filters on_off a per file pattern
 # basis. Doxygen will compare the file name with each pattern and apply the
 # filter if there is a match. The filters are a list of the form: pattern=filter
-# (like *.cpp=my_cpp_filter). See INPUT_FILTER for further information on how
+# (like *.cpp=my_cpp_filter). See INPUT_FILTER for further information on_off how
 # filters are used. If the FILTER_PATTERNS tag is empty or if none of the
 # patterns match the file name, INPUT_FILTER is applied.
 #
@@ -977,8 +977,8 @@ FILTER_SOURCE_FILES    = NO
 FILTER_SOURCE_PATTERNS = 
 
 # If the USE_MDFILE_AS_MAINPAGE tag refers to the name of a markdown file that
-# is part of the input, its contents will be placed on the main page
-# (index.html). This can be useful if you have a project on for instance GitHub
+# is part of the input, its contents will be placed on_off the main page
+# (index.html). This can be useful if you have a project on_off for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
 USE_MDFILE_AS_MAINPAGE = 
@@ -1074,7 +1074,7 @@ VERBATIM_HEADERS       = YES
 # cost of reduced performance. This can be particularly helpful with template
 # rich C++ code for which doxygen's built-in parser lacks the necessary type
 # information.
-# Note: The availability of this option depends on whether or not doxygen was
+# Note: The availability of this option depends on_off whether or not doxygen was
 # generated with the -Duse-libclang=ON option for CMake.
 # The default value is: NO.
 
@@ -1147,13 +1147,13 @@ HTML_FILE_EXTENSION    = .html
 # standard header.
 #
 # To get valid HTML the header file that includes any scripts and style sheets
-# that doxygen needs, which is dependent on the configuration options used (e.g.
+# that doxygen needs, which is dependent on_off the configuration options used (e.g.
 # the setting GENERATE_TREEVIEW). It is highly recommended to start with a
 # default header using
 # doxygen -w html new_header.html new_footer.html new_stylesheet.css
 # YourConfigFile
 # and then modify the file new_header.html. See also section "Doxygen usage"
-# for information on how to generate the default header that doxygen normally
+# for information on_off how to generate the default header that doxygen normally
 # uses.
 # Note: The header is subject to change so you typically have to regenerate the
 # default header when upgrading to a newer version of doxygen. For a description
@@ -1164,9 +1164,9 @@ HTML_HEADER            =
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
-# footer. See HTML_HEADER for more information on how to generate a default
+# footer. See HTML_HEADER for more information on_off how to generate a default
 # footer and what special commands can be used inside the footer. See also
-# section "Doxygen usage" for information on how to generate the default footer
+# section "Doxygen usage" for information on_off how to generate the default footer
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
@@ -1175,7 +1175,7 @@ HTML_FOOTER            =
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
 # the HTML output. If left blank doxygen will generate a default style sheet.
-# See also section "Doxygen usage" for information on how to generate the style
+# See also section "Doxygen usage" for information on_off how to generate the style
 # sheet that doxygen normally uses.
 # Note: It is recommended to use HTML_EXTRA_STYLESHEET instead of this tag, as
 # it is more robust and this tag (HTML_STYLESHEET) will in the future become
@@ -1209,7 +1209,7 @@ HTML_EXTRA_FILES       =
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to
-# this color. Hue is specified as an angle on a colorwheel, see
+# this color. Hue is specified as an angle on_off a colorwheel, see
 # http://en.wikipedia.org/wiki/Hue for more information. For instance the value
 # 0 represents red, 60 is yellow, 120 is green, 180 is cyan, 240 is blue, 300
 # purple, and 360 is red again.
@@ -1256,7 +1256,7 @@ HTML_DYNAMIC_SECTIONS  = NO
 
 # With HTML_INDEX_NUM_ENTRIES one can control the preferred number of entries
 # shown in the various tree structured indices initially; the user can expand
-# and collapse entries dynamically later on. Doxygen will expand the tree to
+# and collapse entries dynamically later on_off. Doxygen will expand the tree to
 # such a level that at most the specified number of entries are visible (unless
 # a fully collapsed tree already exceeds this amount). So setting the number of
 # entries 1 will produce a full collapsed tree by default. 0 is a special value
@@ -1314,13 +1314,13 @@ DOCSET_PUBLISHER_NAME  = Publisher
 # If the GENERATE_HTMLHELP tag is set to YES then doxygen generates three
 # additional HTML index files: index.hhp, index.hhc, and index.hhk. The
 # index.hhp is a project file that can be read by Microsoft's HTML Help Workshop
-# (see: http://www.microsoft.com/en-us/download/details.aspx?id=21138) on
+# (see: http://www.microsoft.com/en-us/download/details.aspx?id=21138) on_off
 # Windows.
 #
 # The HTML Help Workshop contains a compiler that can convert all HTML output
 # generated by doxygen into a single compiled HTML file (.chm). Compiled HTML
 # files are now used as the Windows 98 help format, and will replace the old
-# Windows help format (.hlp) on all Windows platforms in the future. Compressed
+# Windows help format (.hlp) on_off all Windows platforms in the future. Compressed
 # HTML files also contain an index, a table_entries of contents, and you can search for
 # words in the documentation. The HTML workshop also contains a viewer for
 # compressed HTML files.
@@ -1338,7 +1338,7 @@ CHM_FILE               =
 
 # The HHC_LOCATION tag can be used to specify the location (absolute path
 # including file name) of the HTML help compiler (hhc.exe). If non-empty,
-# doxygen will try to run the HTML help compiler on the generated index.hhp.
+# doxygen will try to run the HTML help compiler on_off the generated index.hhp.
 # The file has to be specified with full path.
 # This tag requires that the tag GENERATE_HTMLHELP is set to YES.
 
@@ -1429,7 +1429,7 @@ QHP_CUST_FILTER_ATTRS  =
 QHP_SECT_FILTER_ATTRS  = 
 
 # The QHG_LOCATION tag can be used to specify the location of Qt's
-# qhelpgenerator. If non-empty doxygen will try to run qhelpgenerator on the
+# qhelpgenerator. If non-empty doxygen will try to run qhelpgenerator on_off the
 # generated .qhp file.
 # This tag requires that the tag GENERATE_QHP is set to YES.
 
@@ -1457,7 +1457,7 @@ ECLIPSE_DOC_ID         = org.doxygen.Project
 
 # If you want full control over the layout of the generated HTML pages it might
 # be necessary to disable the index and replace it with your own. The
-# DISABLE_INDEX tag can be used to turn on/off the condensed index (tabs) at top
+# DISABLE_INDEX tag can be used to turn on_off/off the condensed index (tabs) at top
 # of each HTML page. A value of NO enables the index and the value YES disables
 # it. Since the tabs in the index contain the same information as the navigation
 # tree, you can set this option to YES if you also set GENERATE_TREEVIEW to YES.
@@ -1484,7 +1484,7 @@ DISABLE_INDEX          = NO
 GENERATE_TREEVIEW      = YES
 
 # The ENUM_VALUES_PER_LINE tag can be used to set the number of enum values that
-# doxygen will group on one line in the generated HTML documentation.
+# doxygen will group on_off one line in the generated HTML documentation.
 #
 # Note that a value of 0 will completely suppress the enum values from appearing
 # in the overview section.
@@ -1518,7 +1518,7 @@ FORMULA_FONTSIZE       = 13
 
 # Use the FORMULA_TRANPARENT tag to determine whether or not the images
 # generated for formulas are transparent PNGs. Transparent PNGs are not
-# supported properly for IE 6.0, but are supported on all modern browsers.
+# supported properly for IE 6.0, but are supported on_off all modern browsers.
 #
 # Note that when changing this option you need to delete any form_*.png files in
 # the HTML output directory before the changes have effect.
@@ -1569,7 +1569,7 @@ MATHJAX_RELPATH        = https://cdn.mathjax.org/mathjax/latest/MathJax.js?confi
 MATHJAX_EXTENSIONS     = 
 
 # The MATHJAX_CODEFILE tag can be used to specify a file with javascript pieces
-# of code that will be used on startup of the MathJax code. See the MathJax site
+# of code that will be used on_off startup of the MathJax code. See the MathJax site
 # (see: http://docs.mathjax.org/en/latest/output.html) for more details. For an
 # example see the documentation.
 # This tag requires that the tag USE_MATHJAX is set to YES.
@@ -1578,13 +1578,13 @@ MATHJAX_CODEFILE       =
 
 # When the SEARCHENGINE tag is enabled doxygen will generate a search box for
 # the HTML output. The underlying search engine uses javascript and DHTML and
-# should work on any modern browser. Note that when using HTML help
+# should work on_off any modern browser. Note that when using HTML help
 # (GENERATE_HTMLHELP), Qt help (GENERATE_QHP), or docsets (GENERATE_DOCSET)
 # there is already a search function so this one should typically be disabled.
 # For large projects the javascript based search engine can be slow, then
 # enabling SERVER_BASED_SEARCH may provide a better solution. It is possible to
 # search using the keyboard; to jump to the search box use <access key> + S
-# (what the <access key> is depends on the OS and browser, but it is typically
+# (what the <access key> is depends on_off the OS and browser, but it is typically
 # <CTRL>, <ALT>/<option>, or both). Inside the search box use the <cursor down
 # key> to jump into the search results window, the results can be navigated
 # using the <cursor keys>. Press <Enter> to select an item or <escape> to cancel
@@ -1599,7 +1599,7 @@ SEARCHENGINE           = YES
 
 # When the SERVER_BASED_SEARCH tag is enabled the search engine will be
 # implemented using a web server instead of a web client using Javascript. There
-# are two flavors of web server based searching depending on the EXTERNAL_SEARCH
+# are two flavors of web server based searching depending on_off the EXTERNAL_SEARCH
 # setting. When disabled, doxygen will generate a PHP script for searching and
 # an index file used by the script. When EXTERNAL_SEARCH is enabled the indexing
 # and searching needs to be provided by external tools. See the section
@@ -1616,7 +1616,7 @@ SERVER_BASED_SEARCH    = NO
 # search results.
 #
 # Doxygen ships with an example indexer (doxyindexer) and search engine
-# (doxysearch.cgi) which are based on the open source search engine library
+# (doxysearch.cgi) which are based on_off the open source search engine library
 # Xapian (see: http://xapian.org/).
 #
 # See the section "External Indexing and Searching" for details.
@@ -1629,7 +1629,7 @@ EXTERNAL_SEARCH        = NO
 # which will return the search results when EXTERNAL_SEARCH is enabled.
 #
 # Doxygen ships with an example indexer (doxyindexer) and search engine
-# (doxysearch.cgi) which are based on the open source search engine library
+# (doxysearch.cgi) which are based on_off the open source search engine library
 # Xapian (see: http://xapian.org/). See the section "External Indexing and
 # Searching" for details.
 # This tag requires that the tag SEARCHENGINE is set to YES.
@@ -1729,7 +1729,7 @@ EXTRA_PACKAGES         =
 # The LATEX_HEADER tag can be used to specify a personal LaTeX header for the
 # generated LaTeX document. The header should contain everything until the first
 # chapter. If it is left blank doxygen will generate a standard header. See
-# section "Doxygen usage" for information on how to let doxygen write the
+# section "Doxygen usage" for information on_off how to let doxygen write the
 # default header to a separate file.
 #
 # Note: Only use a user-defined header if you know what you are doing! The
@@ -1745,7 +1745,7 @@ LATEX_HEADER           =
 # The LATEX_FOOTER tag can be used to specify a personal LaTeX footer for the
 # generated LaTeX document. The footer should contain everything after the last
 # chapter. If it is left blank doxygen will generate a standard footer. See
-# LATEX_HEADER for more information on how to generate a default footer and what
+# LATEX_HEADER for more information on_off how to generate a default footer and what
 # special commands can be used inside the footer.
 #
 # Note: Only use a user-defined footer if you know what you are doing!
@@ -1808,7 +1808,7 @@ LATEX_HIDE_INDICES     = NO
 # If the LATEX_SOURCE_CODE tag is set to YES then doxygen will include source
 # code with syntax highlighting in the LaTeX output.
 #
-# Note that which sources are shown also depends on other settings such as
+# Note that which sources are shown also depends on_off other settings such as
 # SOURCE_BROWSER.
 # The default value is: NO.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
@@ -1874,7 +1874,7 @@ RTF_HYPERLINKS         = NO
 # file, i.e. a series of assignments. You only have to provide replacements,
 # missing definitions are set to their default value.
 #
-# See also section "Doxygen usage" for information on how to generate the
+# See also section "Doxygen usage" for information on_off how to generate the
 # default style sheet that doxygen normally uses.
 # This tag requires that the tag GENERATE_RTF is set to YES.
 
@@ -1890,7 +1890,7 @@ RTF_EXTENSIONS_FILE    =
 # If the RTF_SOURCE_CODE tag is set to YES then doxygen will include source code
 # with syntax highlighting in the RTF output.
 #
-# Note that which sources are shown also depends on other settings such as
+# Note that which sources are shown also depends on_off other settings such as
 # SOURCE_BROWSER.
 # The default value is: NO.
 # This tag requires that the tag GENERATE_RTF is set to YES.
@@ -2029,7 +2029,7 @@ PERLMOD_LATEX          = NO
 
 # If the PERLMOD_PRETTY tag is set to YES, the Perl module output will be nicely
 # formatted so it can be parsed by a human reader. This is useful if you want to
-# understand what is going on. On the other hand, if this tag is set to NO, the
+# understand what is going on_off. On the other hand, if this tag is set to NO, the
 # size of the Perl module output will be much smaller and Perl will parse it
 # just the same.
 # The default value is: YES.
@@ -2114,7 +2114,7 @@ PREDEFINED             =
 EXPAND_AS_DEFINED      = 
 
 # If the SKIP_FUNCTION_MACROS tag is set to YES then doxygen's preprocessor will
-# remove all references to function-like macros that are alone on a line, have
+# remove all references to function-like macros that are alone on_off a line, have
 # an all uppercase name, and do not end with a semicolon. Such function macros
 # are typically used for boiler-plate code, and will confuse the parser if not
 # removed.
@@ -2143,7 +2143,7 @@ SKIP_FUNCTION_MACROS   = YES
 TAGFILES               = 
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create a
-# tag file that is based on the input files it reads. See section "Linking to
+# tag file that is based on_off the input files it reads. See section "Linking to
 # external documentation" for more information about the usage of tag files.
 
 GENERATE_TAGFILE       = 
@@ -2220,7 +2220,7 @@ HIDE_UNDOC_RELATIONS   = YES
 HAVE_DOT               = NO
 
 # The DOT_NUM_THREADS specifies the number of dot invocations doxygen is allowed
-# to run in parallel. When set to 0 doxygen will base this on the number of
+# to run in parallel. When set to 0 doxygen will base this on_off the number of
 # processors available in the system. You can set it explicitly to a value
 # larger than 0 to get control over the balance between CPU load and processing
 # speed.
@@ -2356,7 +2356,7 @@ CALLER_GRAPH           = NO
 GRAPHICAL_HIERARCHY    = YES
 
 # If the DIRECTORY_GRAPH tag is set to YES then doxygen will show the
-# dependencies a directory has on other directories in a graphical way. The
+# dependencies a directory has on_off other directories in a graphical way. The
 # dependency relations are determined by the #include relations between the
 # files in the directories.
 # The default value is: YES.
@@ -2461,11 +2461,11 @@ DOT_GRAPH_MAX_NODES    = 50
 MAX_DOT_GRAPH_DEPTH    = 0
 
 # Set the DOT_TRANSPARENT tag to YES to generate images with a transparent
-# background. This is disabled by default, because dot on Windows does not seem
+# background. This is disabled by default, because dot on_off Windows does not seem
 # to support this out of the box.
 #
-# Warning: Depending on the platform used, enabling this option may lead to
-# badly anti-aliased labels on the edges of a graph (i.e. they become hard to
+# Warning: Depending on_off the platform used, enabling this option may lead to
+# badly anti-aliased labels on_off the edges of a graph (i.e. they become hard to
 # read).
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
@@ -2473,7 +2473,7 @@ MAX_DOT_GRAPH_DEPTH    = 0
 DOT_TRANSPARENT        = NO
 
 # Set the DOT_MULTI_TARGETS tag to YES to allow dot to generate multiple output
-# files in one run (i.e. multiple -o and -T options on the command line). This
+# files in one run (i.e. multiple -o and -T options on_off the command line). This
 # makes dot run faster, but since only newer versions of dot (>1.8.10) support
 # this, this feature is disabled by default.
 # The default value is: NO.

@@ -26,6 +26,7 @@ public:
     double r_strength = 0 ;  //Randomness strength for the random field.
 
     void run()                                          override;
+    void check_convergence_overall()                    override;
     void initialize_constants()                         override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
