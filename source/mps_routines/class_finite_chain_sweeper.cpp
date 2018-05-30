@@ -224,18 +224,6 @@ int class_finite_chain_sweeper::move(){
     return get_sweeps();
 }
 
-//void class_finite_chain_sweeper::write_list_to_file(const std::list &obj, std::string dataset_name,
-//                                                    unsigned long start_counter) {
-//    unsigned long counter = start_counter;
-//    for(auto &it : obj){
-//        std::string dataset_name_w_count = dataset_name + "_" + to_string(counter);
-//        hdf5->write_dataset(*it, dataset_name_w_count);
-//        counter++;
-//    }
-//}
-
-
-
 
 void class_finite_chain_sweeper::write_chain_to_file() {
     unsigned long counter = 0;

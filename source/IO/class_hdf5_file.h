@@ -143,6 +143,8 @@ private:
     constexpr hid_t get_DataType() const {
         if constexpr (std::is_same<DataType, int>::value)                 {return  H5Tcopy(H5T_NATIVE_INT);}
         if constexpr (std::is_same<DataType, long>::value)                {return  H5Tcopy(H5T_NATIVE_LONG);}
+        if constexpr (std::is_same<DataType, unsigned int>::value)        {return  H5Tcopy(H5T_NATIVE_UINT);}
+        if constexpr (std::is_same<DataType, unsigned long>::value)       {return  H5Tcopy(H5T_NATIVE_ULONG);}
         if constexpr (std::is_same<DataType, double>::value)              {return  H5Tcopy(H5T_NATIVE_DOUBLE);}
         if constexpr (std::is_same<DataType, float>::value)               {return  H5Tcopy(H5T_NATIVE_FLOAT);}
         if constexpr (std::is_same<DataType, std::complex<double>>::value){return  H5Tcopy(H5T_COMPLEX_DOUBLE);}
