@@ -2,6 +2,7 @@
 // Created by david on 2018-05-24.
 //
 #include <iostream>
+#include <iterator>
 #include <hdf5.h>
 #include <hdf5_hl.h>
 #include <IO/class_hdf5_file.h>

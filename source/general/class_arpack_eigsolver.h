@@ -9,6 +9,7 @@
 #include <complex>
 #include <vector>
 #include <iostream>
+#include "class_tic_toc.h"
 
 namespace arpackpp{
     enum class Form{SYMMETRIC, GENERAL};  // Real Symmetric, Real General or Complex General
@@ -67,6 +68,12 @@ private:
             eigvals.insert(eigvals.begin(), solution.RawEigenvalues(), solution.RawEigenvalues() + cols);
         }
     }
+
+    class_tic_toc t_sol;
+    class_tic_toc t_get;
+    class_tic_toc t_sub;
+    class_tic_toc t_all;
+
 public:
 
 

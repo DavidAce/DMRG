@@ -12,6 +12,8 @@
 #include <general/class_arpack_custom_products.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 
+#define profile_eigsolver 0
+
 
 template<typename Scalar, Form form>
 class_arpack_eigsolver<Scalar,form>::class_arpack_eigsolver() {
@@ -26,7 +28,13 @@ class_arpack_eigsolver<Scalar,form>::class_arpack_eigsolver() {
             {arpackpp::Ritz::SI, "SI"},
             {arpackpp::Ritz::BE, "BE"}
     };
+    t_sol.set_properties(profile_eigsolver, 10,"Time iterating  ");
+    t_get.set_properties(profile_eigsolver, 10,"Time getting sol");
+    t_sub.set_properties(profile_eigsolver, 10,"Time subtracting");
+    t_all.set_properties(profile_eigsolver, 10,"Time doing all  ");
+
 }
+
 template<typename Scalar, Form form>
 class_arpack_eigsolver<Scalar, form>::class_arpack_eigsolver(const Scalar *matrix_data,
                                                              const Ritz ritz,
@@ -274,6 +282,7 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
         const bool bool_dephase,
         Scalar *resid)
 {
+    t_all.tic();
     eigvals.clear();
     eigvecs.clear();
     eigvecs_found = false;
@@ -292,8 +301,10 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
         ARCompStdEig<double, DenseHamiltonianProduct<Scalar>> eigsolver(dim, nev, &hamiltonianProduct,
                                                                         &DenseHamiltonianProduct<Scalar>::MultMv, ritz_char,
                                                                         ncv_internal, threshold, MaxIter, resid);
-
+        t_sol.tic();
         eigsolver.FindEigenvectors();
+        t_sol.toc();
+        t_get.tic();
         eigvals_found = eigsolver.EigenvaluesFound();
         eigvecs_found = eigsolver.EigenvectorsFound();
         n         = eigsolver.GetN();
@@ -304,14 +315,13 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
         counter   = hamiltonianProduct.counter;
         eigvals   = std::vector<Scalar>(eigsolver.RawEigenvalues() , eigsolver.RawEigenvalues()  + cols);
         eigvecs   = std::vector<Scalar>(eigsolver.RawEigenvector(0), eigsolver.RawEigenvectors() + rows*cols);
-
+        t_get.toc();
     }
 
     if constexpr(std::is_same_v<Scalar, double>) {
         ARNonSymStdEig <double, DenseHamiltonianProduct<Scalar>> eigsolver(dim, nev, &hamiltonianProduct,
                                                                            &DenseHamiltonianProduct<Scalar>::MultMv, ritz_char,
                                                                            ncv_internal, eigThreshold, eigMaxIter, resid);
-
         eigsolver.FindEigenvectors();
         eigvals_found = eigsolver.EigenvaluesFound();
         eigvecs_found = eigsolver.EigenvectorsFound();
@@ -323,12 +333,20 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
         counter   = hamiltonianProduct.counter;
         eigvals   = std::vector<Scalar>(eigsolver.RawEigenvalues() , eigsolver.RawEigenvalues()  + cols);
         eigvecs   = std::vector<Scalar>(eigsolver.RawEigenvector(0), eigsolver.RawEigenvectors() + rows*cols);
-
     }
 
     if (bool_dephase){
+        t_sub.tic();
         subtract_phase();
+        t_sub.toc();
     }
+    t_all.toc();
+    hamiltonianProduct.t_mul.print_time();
+    t_sol.print_time();
+    t_get.print_time();
+    t_sub.print_time();
+    t_all.print_time();
+
 }
 
 

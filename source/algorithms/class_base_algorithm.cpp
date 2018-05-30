@@ -90,103 +90,124 @@ void class_base_algorithm::single_TEBD_step(long chi_max){
 }
 
 void class_base_algorithm::check_convergence_overall(){
+    t_con.tic();
     check_convergence_entanglement();
     check_convergence_variance_mpo();
+    check_convergence_variance_ham();
+    check_convergence_variance_mom();
     check_convergence_bond_dimension();
-
-    if(entanglement_has_converged and variance_mpo_has_converged and bond_dimension_has_converged){
+    if(entanglement_has_converged and
+       variance_mpo_has_converged and
+       variance_ham_has_converged and
+       variance_mom_has_converged and
+       bond_dimension_has_converged)
+    {
         simulation_has_converged = true;
+    }
+    t_con.toc();
+}
+
+void class_base_algorithm::check_convergence_using_slope(
+                                   std::list<double> &Y_vec,
+                                   std::list<int> &X_vec,
+                                   double new_data,
+                                   int    rate,
+                                   double tolerance,
+                                   double &slope,
+                                   bool &has_converged){
+    //Check convergence based on slope.
+    if (not measurement->has_been_measured()){return;}
+    // We want to check once every "rate" steps
+    unsigned long max_data_points = 10;
+    unsigned long min_data_points = 4;
+    // Get the iteration number when you last measured.
+    int last_measurement = X_vec.empty() ? 0 : X_vec.back();
+    // If the measurement happened less than rate iterations ago, return.
+    if (iteration - last_measurement < rate){return;}
+
+    // It's time to check. Insert current numbers and remove old ones
+    Y_vec.push_back(new_data);
+    X_vec.push_back(iteration);
+    if (Y_vec.size() < min_data_points){return;}
+    if (Y_vec.size() > max_data_points){
+        Y_vec.pop_front();
+        X_vec.pop_front();
+    }
+
+    double n = Y_vec.size();
+    double avgX = accumulate(X_vec.begin(), X_vec.end(), 0.0) / n;
+    double avgY = accumulate(Y_vec.begin(), Y_vec.end(), 0.0) / n;
+
+    double numerator = 0.0;
+    double denominator = 0.0;
+
+    auto x_it = X_vec.begin();
+    auto y_it = Y_vec.begin();
+    auto v_end = Y_vec.end();
+    while(y_it != v_end){
+        numerator   += (*x_it - avgX) * (*y_it - avgY);
+        denominator += (*x_it - avgX) * (*x_it - avgX);
+        y_it++;
+        x_it++;
+    }
+
+    slope = numerator / denominator;
+    if (std::abs(slope) < tolerance) {
+        has_converged = true;
     }
 }
 
 void class_base_algorithm::check_convergence_variance_mpo(){
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
-    if (not measurement->has_been_measured()){return;}
+    check_convergence_using_slope(V_mpo_vec,
+                                  X_mpo_vec,
+                                  measurement->get_variance_mpo(),
+                                  1,
+                                  settings::precision::eigThreshold,
+                                  V_mpo_slope,
+                                  variance_mpo_has_converged);
+}
 
-    unsigned long max_data_points = 100;
-    unsigned long min_data_points = 5;
+void class_base_algorithm::check_convergence_variance_ham(){
+    //Based on the the slope of the variance
+    // We want to check every time we can because the variance is expensive to compute.
+    check_convergence_using_slope(V_ham_vec,
+                                  X_ham_vec,
+                                  measurement->get_variance_ham(),
+                                  1,
+                                  settings::precision::eigThreshold,
+                                  V_ham_slope,
+                                  variance_ham_has_converged);
 
-    // It's time to check. Insert current numbers and remove old ones
-    V_vec.push_back(measurement->get_variance_mpo());
-    X2_vec.push_back(iteration);
-    if (V_vec.size() < min_data_points){return;}
-    if (V_vec.size() > max_data_points){
-        V_vec.pop_front();
-        X2_vec.pop_front();
-    }
+}
 
-    double n = V_vec.size();
-    double avgX = accumulate(X2_vec.begin(), X2_vec.end(), 0.0) / n;
-    double avgY = accumulate(V_vec.begin(), V_vec.end(), 0.0) / n;
-
-    double numerator = 0.0;
-    double denominator = 0.0;
-
-    auto x_it = X2_vec.begin();
-    auto v_it = V_vec.begin();
-    auto v_end = V_vec.end();
-    while(v_it != v_end){
-        numerator   += (*x_it - avgX) * (*v_it - avgY);
-        denominator += (*x_it - avgX) * (*x_it - avgX);
-        v_it++;
-        x_it++;
-    }
-
-    V_slope = numerator / denominator;
-    if (std::abs(V_slope) < 10*settings::precision::eigThreshold) {
-        variance_mpo_has_converged = true;
-    }
-
+void class_base_algorithm::check_convergence_variance_mom(){
+    //Based on the the slope of the variance
+    // We want to check every time we can because the variance is expensive to compute.
+    check_convergence_using_slope(V_mom_vec,
+                                  X_mom_vec,
+                                  measurement->get_variance_mom(),
+                                  1,
+                                  settings::precision::eigThreshold,
+                                  V_mom_slope,
+                                  variance_mom_has_converged);
 
 }
 
 void class_base_algorithm::check_convergence_entanglement() {
     //Based on the the slope of entanglement entanglement_entropy
-
-    // We want to check once every "rate" steps
-    int rate = 10;
-    unsigned long max_data_points = 100;
-    unsigned long min_data_points = 5;
-    // Get the iteration number when you last measured.
-    int last_measurement = X1_vec.empty() ? 0 : X1_vec.back();
-    // If the measurement happened less than rate iterations ago, return.
-    if (iteration - last_measurement < rate){return;}
-
-    // It's time to measure. Insert current numbers and remove old ones
-    S_vec.push_back(measurement->get_entanglement_entropy());
-    X1_vec.push_back(iteration);
-    if (S_vec.size() < min_data_points){return;}
-    if (S_vec.size() > max_data_points){
-        S_vec.pop_front();
-        X1_vec.pop_front();
-    }
-
-    double n = S_vec.size();
-    double avgX = accumulate(X1_vec.begin(), X1_vec.end(), 0.0) / n;
-    double avgY = accumulate(S_vec.begin(), S_vec.end(), 0.0) / n;
-
-    double numerator = 0.0;
-    double denominator = 0.0;
-
-    auto x_it = X1_vec.begin();
-    auto s_it = S_vec.begin();
-    auto s_end = S_vec.end();
-    while(s_it != s_end){
-        numerator   += (*x_it - avgX) * (*s_it - avgY);
-        denominator += (*x_it - avgX) * (*x_it - avgX);
-        s_it++;
-        x_it++;
-    }
-
-    S_slope = numerator / denominator;
-    if (std::abs(S_slope) < settings::precision::SVDThreshold) {
-        entanglement_has_converged = true;
-    }
+    // This one is cheap to compute but doesnt need to be done every step.
+    check_convergence_using_slope(S_vec,
+                                  X2_vec,
+                                  measurement->get_entanglement_entropy(),
+                                  1,
+                                  settings::precision::SVDThreshold,
+                                  S_slope,
+                                  entanglement_has_converged);
 }
 
 void class_base_algorithm::check_convergence_bond_dimension(){
-    t_chi.tic();
     if(not env_storage->position_is_the_middle()){return;}
     if(not chi_grow or bond_dimension_has_converged or chi_temp == chi_max ){
         chi_temp = chi_max;
@@ -200,13 +221,12 @@ void class_base_algorithm::check_convergence_bond_dimension(){
             bond_dimension_has_converged = true;
         }
     }
-    t_chi.toc();
 }
 
 void class_base_algorithm::clear_convergence_checks(){
     S_vec.clear();
-    V_vec.clear();
-    X1_vec.clear();
+    V_mpo_vec.clear();
+    X_mpo_vec.clear();
     X2_vec.clear();
     simulation_has_converged        = false;
     bond_dimension_has_converged    = false;
@@ -232,7 +252,7 @@ void class_base_algorithm::store_profiling_to_file() {
             t_prt.get_last_time_interval(),
             t_obs.get_last_time_interval(),
             t_mps.get_last_time_interval(),
-            t_chi.get_last_time_interval()
+            t_con.get_last_time_interval()
     );
 }
 
@@ -540,19 +560,20 @@ void class_base_algorithm::print_status_full(){
     t_prt.tic();
     std::cout << std::endl;
     std::cout << " -- Final results -- " << sim_name << std::endl;
+    ccout(0)  << setw(20) << "Iterations               = " << setprecision(16) << fixed      << iteration     << std::endl;
     switch(sim_type){
         case SimulationType::iDMRG:
-            ccout(0)  << setw(20) << "Energy MPO               = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
-            ccout(0)  << setw(20) << "Energy HAM               = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
-            ccout(0)  << setw(20) << "Energy MOM               = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
+            ccout(0)  << setw(20) << "Energy MPO           = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
+            ccout(0)  << setw(20) << "Energy HAM           = " << setprecision(16) << fixed      << measurement->get_energy_ham()     << std::endl;
+            ccout(0)  << setw(20) << "Energy MOM           = " << setprecision(16) << fixed      << measurement->get_energy_mom()     << std::endl;
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(0)  << setw(20) << "Energy MPO               = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
+            ccout(0)  << setw(20) << "Energy MPO           = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
             break;
         case SimulationType::iTEBD:
-            ccout(0)  << setw(20) << "Energy HAM               = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
-            ccout(0)  << setw(20) << "Energy MOM               = " << setprecision(16) << fixed      << measurement->get_energy_mpo()     << std::endl;
+            ccout(0)  << setw(20) << "Energy HAM           = " << setprecision(16) << fixed      << measurement->get_energy_ham()     << std::endl;
+            ccout(0)  << setw(20) << "Energy MOM           = " << setprecision(16) << fixed      << measurement->get_energy_mom()     << std::endl;
             break;
     }
     switch(sim_type){
@@ -574,12 +595,12 @@ void class_base_algorithm::print_status_full(){
     ccout(0)  << setw(20) << "χmax                 = " << setprecision(4)  << fixed      << chi_max                                   << std::endl;
     ccout(0)  << setw(20) << "χ                    = " << setprecision(4)  << fixed      << measurement->get_chi()                    << std::endl;
     ccout(0)  << setw(20) << "log₁₀ truncation:    = " << setprecision(4)  << fixed      << log10(measurement->get_truncation_error())<< std::endl;
-    ccout(0)  << setw(20) << "Chain length         = " << setprecision(1)  << fixed      << measurement->get_chain_length()           << std::endl;
 
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-    ccout(0)  << setw(20) << "Sweep                = " << setprecision(1)  << fixed      << env_storage->get_sweeps() << std::endl;
+            ccout(0)  << setw(20) << "Chain length         = " << setprecision(1)  << fixed      << measurement->get_chain_length()           << std::endl;
+            ccout(0)  << setw(20) << "Sweep                = " << setprecision(1)  << fixed      << env_storage->get_sweeps() << std::endl;
             break;
         case SimulationType::iTEBD:
     ccout(0)  << setw(20) << "δt:                  = " << setprecision(16) << fixed      << superblock->H->step_size << std::endl;
@@ -592,11 +613,17 @@ void class_base_algorithm::print_status_full(){
     ccout(0)  << setw(20) << "S slope              = " << setprecision(16) << fixed      << S_slope  << " " << std::boolalpha << entanglement_has_converged << std::endl;
     switch(sim_type){
         case SimulationType::iDMRG:
+            ccout(0)  << setw(20) << "σ² MPO slope         = " << setprecision(16) << fixed      << V_mpo_slope  << " " << std::boolalpha << variance_mpo_has_converged << std::endl;
+            ccout(0)  << setw(20) << "σ² HAM slope         = " << setprecision(16) << fixed      << V_ham_slope  << " " << std::boolalpha << variance_ham_has_converged << std::endl;
+            ccout(0)  << setw(20) << "σ² MOM slope         = " << setprecision(16) << fixed      << V_mom_slope  << " " << std::boolalpha << variance_mom_has_converged << std::endl;
+            break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(0)  << setw(20) << "σ² slope             = " << setprecision(16) << fixed      << V_slope  << " " << std::boolalpha << variance_mpo_has_converged << std::endl;
+            ccout(0)  << setw(20) << "σ² MPO slope         = " << setprecision(16) << fixed      << V_mpo_slope  << " " << std::boolalpha << variance_mpo_has_converged << std::endl;
             break;
         case SimulationType::iTEBD:
+            ccout(0)  << setw(20) << "σ² HAM slope         = " << setprecision(16) << fixed      << V_ham_slope  << " " << std::boolalpha << variance_ham_has_converged << std::endl;
+            ccout(0)  << setw(20) << "σ² MOM slope         = " << setprecision(16) << fixed      << V_mom_slope  << " " << std::boolalpha << variance_mom_has_converged << std::endl;
             break;
     }
     ccout(0)  << setw(20) << "χ                    = " << setprecision(1)  << fixed      << chi_temp << " " << std::boolalpha << bond_dimension_has_converged << std::endl;
@@ -617,5 +644,5 @@ void class_base_algorithm::set_profiling_labels() {
     t_svd.set_properties(on, precision,"↳ SVD Truncation         ");
     t_udt.set_properties(on, precision,"↳ Update Timestep        ");
     t_env.set_properties(on, precision,"↳ Update Environments    ");
-    t_chi.set_properties(on, precision,"↳ Update Chi             ");
+    t_con.set_properties(on, precision,"↳ Check Convergence      ");
 }

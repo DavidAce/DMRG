@@ -7,7 +7,6 @@
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_mps.h>
 #include <mps_routines/class_mpo.h>
-#include <IO/class_hdf5_file.h>
 
 using namespace std;
 using namespace Textra;
@@ -16,11 +15,17 @@ using Scalar = class_finite_chain_sweeper::Scalar;
 class_finite_chain_sweeper::class_finite_chain_sweeper(
         int max_length_,
         std::shared_ptr<class_superblock> superblock_,
-        std::shared_ptr<class_hdf5_file>  hdf5_)
+        std::shared_ptr<class_hdf5_file>  hdf5_,
+        SimulationType sim_type_,
+        std::string    sim_name_
+        )
 {
     set_max_length(max_length_);
     set_superblock(std::move(superblock_));
     set_hdf5_file(std::move(hdf5_));
+    sim_type = sim_type_;
+    sim_name = sim_name_;
+
 };
 
 
@@ -217,6 +222,45 @@ int class_finite_chain_sweeper::move(){
         sweeps++;
     }
     return get_sweeps();
+}
+
+//void class_finite_chain_sweeper::write_list_to_file(const std::list &obj, std::string dataset_name,
+//                                                    unsigned long start_counter) {
+//    unsigned long counter = start_counter;
+//    for(auto &it : obj){
+//        std::string dataset_name_w_count = dataset_name + "_" + to_string(counter);
+//        hdf5->write_dataset(*it, dataset_name_w_count);
+//        counter++;
+//    }
+//}
+
+
+
+
+void class_finite_chain_sweeper::write_chain_to_file() {
+    unsigned long counter = 0;
+
+    write_list_to_file<1>(get_MPS_L(),sim_name + "/chain/MPS/G", counter);
+    write_list_to_file<0>(get_MPS_R(),sim_name + "/chain/MPS/G", counter);
+
+    counter = 0;
+    write_list_to_file<0>(get_MPS_L(),sim_name + "/chain/MPS/L", counter);
+    hdf5->write_dataset(get_MPS_C(),  sim_name + "/chain/MPS/L_" + "_" + to_string(counter++));
+    write_list_to_file<1>(get_MPS_R(),sim_name + "/chain/MPS/L", counter);
+
+    counter = 0;
+    write_list_to_file(get_MPO_L(),sim_name + "/chain/MPO/H", counter);
+    write_list_to_file(get_MPO_R(),sim_name + "/chain/MPO/H", counter);
+
+    counter = 0;
+    write_list_to_file(get_ENV_L(),sim_name + "/chain/ENV/L", counter);
+    counter = 0;
+    write_list_to_file(get_ENV_R(),sim_name + "/chain/ENV/R", counter);
+
+    counter = 0;
+    write_list_to_file(get_ENV2_L(),sim_name + "/chain/ENV2/L", counter);
+    counter = 0;
+    write_list_to_file(get_ENV2_R(),sim_name + "/chain/ENV2/R", counter);
 }
 
 

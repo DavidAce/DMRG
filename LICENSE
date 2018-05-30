@@ -94,7 +94,7 @@ non-exclusive license:
 (a) under intellectual property rights (other than patent or trademark)
     Licensable by such Contributor to use, reproduce, make available,
     modify, display, perform, distribute, and otherwise exploit its
-    Contributions, either on an unmodified basis, with Modifications, or
+    Contributions, either on_off an unmodified basis, with Modifications, or
     as part of a Larger Work; and
 
 (b) under Patent Claims of such Contributor to make, use, sell, offer
@@ -104,10 +104,10 @@ non-exclusive license:
 2.2. Effective Date
 
 The licenses granted in Section 2.1 with respect to any Contribution
-become effective for each Contribution on the date the Contributor first
+become effective for each Contribution on_off the date the Contributor first
 distributes such Contribution.
 
-2.3. Limitations on Grant Scope
+2.3. Limitations on_off Grant Scope
 
 The licenses granted in this Section 2 are the only rights granted under
 this License. No additional rights or licenses will be implied from the
@@ -207,7 +207,7 @@ the extent required to remedy known factual inaccuracies.
 
 You may choose to offer, and to charge a fee for, warranty, support,
 indemnity or liability obligations to one or more recipients of Covered
-Software. However, You may do so only on Your own behalf, and not on
+Software. However, You may do so only on_off Your own behalf, and not on_off
 behalf of any Contributor. You must make it absolutely clear that any
 such warranty, support, indemnity, or liability obligation is offered by
 You alone, and You hereby agree to indemnify every Contributor for any
@@ -236,11 +236,11 @@ recipient of ordinary skill to be able to understand it.
 if You fail to comply with any of its terms. However, if You become
 compliant, then the rights granted under this License from a particular
 Contributor are reinstated (a) provisionally, unless and until such
-Contributor explicitly and finally terminates Your grants, and (b) on an
+Contributor explicitly and finally terminates Your grants, and (b) on_off an
 ongoing basis, if such Contributor fails to notify You of the
 non-compliance by some reasonable means prior to 60 days after You have
 come back into compliance. Moreover, Your grants from a particular
-Contributor are reinstated on an ongoing basis if such Contributor
+Contributor are reinstated on_off an ongoing basis if such Contributor
 notifies You of the non-compliance by some reasonable means, this is the
 first time You have received notice of non-compliance with this License
 from such Contributor, and You become compliant prior to 30 days after
@@ -263,7 +263,7 @@ prior to termination shall survive termination.
 *  6. Disclaimer of Warranty                                           *
 *  -------------------------                                           *
 *                                                                      *
-*  Covered Software is provided under this License on an "as is"       *
+*  Covered Software is provided under this License on_off an "as is"       *
 *  basis, without warranty of any kind, either expressed, implied, or  *
 *  statutory, including, without limitation, warranties that the       *
 *  Covered Software is free of defects, merchantable, fit for a        *

@@ -76,7 +76,7 @@ private:
         std::array<const char *, NFIELDS> field_names = {"sweep",
                 "chain_length",
                 "iteration",
-                "chi;",
+                "chi",
                 "chi_max",
                 "energy_mpo","energy_ham","energy_mom",
                 "variance_mpo","variance_ham","variance_mom",
@@ -168,7 +168,7 @@ private:
                 sizeof(data::phys_time),
                 sizeof(data::wall_time)
         };
-        std::array<const char *, NFIELDS> field_names = {"sweep",
+        std::array<const char *, NFIELDS> field_names = {"iteration",
                                                          "chi",
                                                          "chi_max",
                                                          "time_step",
@@ -314,7 +314,7 @@ private:
                                                                "t_svd", "t_env", "t_evo",
                                                                "t_udt", "t_sto", "t_ste",
                                                                "t_prt", "t_obs", "t_mps",
-                                                               "t_chi"
+                                                               "t_con"
         };
 
         std::array       <hid_t,NFIELDS>        field_types = {H5T_NATIVE_INT,
