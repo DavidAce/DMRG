@@ -87,11 +87,11 @@ private:
                     hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_energy(), "energy");
                     counter++;
                 }
-                else if constexpr(std::is_same<std::decay_t<decltype(it)>, class_environment>::value){
-                    hdf5->write_dataset(it.block, dataset_name + "_" + std::to_string(counter++));
-                }
-                else if constexpr(std::is_same<std::decay_t<decltype(it)>, class_environment_var>::value){
-                    hdf5->write_dataset(it.block, dataset_name + "_" + std::to_string(counter++));
+                else if constexpr(std::is_same<std::decay_t<decltype(it)>, class_environment>::value or
+                                  std::is_same<std::decay_t<decltype(it)>, class_environment_var>::value  ){
+                    hdf5->write_dataset(it.block, dataset_name + "_" + std::to_string(counter));
+                    hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.size, "sites");
+                    counter++;
                 }else{
                     hdf5->write_dataset(it, dataset_name + "_" + std::to_string(counter++));
                 }
