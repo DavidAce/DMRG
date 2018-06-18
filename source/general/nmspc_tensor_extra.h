@@ -17,25 +17,27 @@
  *  \namespace Textra
  *  This namespace makes shorthand typedef's to Eigen's unsupported Tensor module, and provides handy functions
  *  to interface between `Eigen::Tensor` and `Eigen::Matrix` objects.
- *  The contents of this namespace are quite self-explanatory.
+ *  The contents of this namespace is co clear it is self-documenting ;)
  */
 
 
 namespace Textra {
-    using namespace Eigen;
     using cdouble       = std::complex<double>;
 
     template<typename Scalar> using MatrixType    = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     template<typename Scalar> using VectorType    = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    template<long rank>       using array               = Eigen::array<long, rank>;
+    template<long rank>       using array         = Eigen::array<long, rank>;
+
+    //Shorthand for the list of index pairs.
     template <typename Scalar, long length>
     using idxlistpair = Eigen::array<Eigen::IndexPair<Scalar>,length>;
+
 
 
     template<typename T, std::size_t N>
     constexpr idxlistpair<long,N> idx (const T (&list1)[N], const T (&list2)[N]){
         //Use numpy-style indexing for contraction. Each list contains a list of indices to be contracted for the respective
-        //tensors. This function zips them together into pairs as used in Eigen::Tensor module.
+        //tensors. This function zips them together into pairs as used in Eigen::Tensor module. This does not sort the indices in decreasing order.
         static_assert(std::is_integral_v<T>);
         Eigen::array<Eigen::IndexPair<long>,N> pairlistOut;
         for(unsigned long i = 0; i < N; i++){
@@ -43,6 +45,11 @@ namespace Textra {
         }
         return pairlistOut;
     }
+
+
+
+
+
     template<typename T>
     struct idx_dim_pair{
         T idxA;
@@ -52,8 +59,8 @@ namespace Textra {
 
     template<std::size_t NB, std::size_t N>
     constexpr idxlistpair<long,N> sortIdx (const Eigen::array<long,NB> &dimensions, const long (&idx_ctrct_A)[N],const long (&idx_ctrct_B)[N]){
-        static_assert(std::is_integral_v<long>);
-        static_assert(std::is_integral_v<long>);
+        //When doing contractions, some indices may be larger than others. For performance, you want to
+        // contract the largest indices first. This will return a sorted index list in decreasing order.
         Eigen::array<idx_dim_pair<long>,N> idx_dim_pair_list;
         for (unsigned long i = 0; i < N; i++ ){
             idx_dim_pair_list[i] = {idx_ctrct_A[i], idx_ctrct_B[i], dimensions[idx_ctrct_B[i]]};
@@ -81,28 +88,28 @@ namespace Textra {
 
 //
 //    //***************************************//
-//    //Different views fo rank 1 and 2 tensors//
+//    //Different views for rank 1 and 2 tensors//
 //    //***************************************//
 //
     template <typename Scalar>
-    constexpr auto asDiagonal(const Tensor<Scalar,1> &tensor) {
+    constexpr auto asDiagonal(const Eigen::Tensor<Scalar,1> &tensor) {
         return tensor.inflate(array1{tensor.size()+1}).reshape(array2{tensor.size(),tensor.size()});
     }
 
     template <typename Scalar>
-    constexpr auto asDiagonalSquared(const Tensor<Scalar,1> &tensor) {
+    constexpr auto asDiagonalSquared(const Eigen::Tensor<Scalar,1> &tensor) {
         return tensor.square().inflate(array1{tensor.size()+1}).reshape(array2{tensor.size(), tensor.size()});
     }
 
     template <typename Scalar>
-    constexpr auto asDiagonalInversed(const Tensor<Scalar,1> &tensor) {
+    constexpr auto asDiagonalInversed(const Eigen::Tensor<Scalar,1> &tensor) {
         return tensor.inverse().inflate(array1{tensor.size()+1}).reshape(array2{tensor.size(),tensor.size()});
     }
 
     template<typename Scalar>
-    constexpr auto asNormalized(const Tensor<Scalar,1> &tensor) {
+    constexpr auto asNormalized(const Eigen::Tensor<Scalar,1> &tensor) {
         Eigen::Map<const VectorType<Scalar>> map (tensor.data(),tensor.size());
-        return Eigen::TensorMap<Tensor<const Scalar,1>>(map.normalized().eval().data(), array1{map.size()});
+        return Eigen::TensorMap<Eigen::Tensor<const Scalar,1>>(map.normalized().eval().data(), array1{map.size()});
     }
 
 
@@ -115,24 +122,32 @@ namespace Textra {
     //Detects if Derived is a plain object, like "MatrixXd" or similar.
     //std::decay removes pointer or ref qualifiers if present
     template<typename Derived>
-    using is_plainObject_v  = std::is_base_of<Eigen::PlainObjectBase<std::decay_t<Derived> >, std::decay_t<Derived> > ;
+    using is_plainObject  = std::is_base_of<Eigen::PlainObjectBase<std::decay_t<Derived> >, std::decay_t<Derived> > ;
 
     template<typename Derived,auto rank>
-    constexpr Tensor<typename Derived::Scalar, rank> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const array<rank> &dims){
-        if constexpr (is_plainObject_v<Derived>::value) {
+    constexpr Eigen::Tensor<typename Derived::Scalar, rank> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const array<rank> &dims){
+        if constexpr (is_plainObject<Derived>::value) {
             //Return map from raw input.
-            return TensorMap<const Tensor<const typename Derived::Scalar, rank>>(matrix.derived().eval().data(), dims);
+            return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().eval().data(), dims);
         }
         else{
             //Create a temporary
             MatrixType<typename Derived::Scalar> matref = matrix;
-            return TensorMap<Tensor<typename Derived::Scalar, rank>>(matref.data(), dims);
+            return Eigen::TensorMap<Eigen::Tensor<typename Derived::Scalar, rank>>(matref.data(), dims);
         }
     }
 
+    //Helpful overload
     template<typename Derived, typename... Dims>
-    constexpr Tensor<typename Derived::Scalar, sizeof... (Dims)> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, Dims... dims) {
+    constexpr Eigen::Tensor<typename Derived::Scalar, sizeof... (Dims)> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, Dims... dims) {
         return Matrix_to_Tensor(matrix, array<sizeof...(Dims)>{dims...});
+    }
+    //Helpful overload
+    template<typename Derived, auto rank>
+    constexpr Eigen::Tensor<typename Derived::Scalar, rank> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const Eigen::DSizes<long,rank> &dims) {
+        array<rank> dim_array;
+        std::copy(std::begin(dims), std::end(dims), std::begin(dim_array));
+        return Matrix_to_Tensor(matrix, dim_array);
     }
 
 
@@ -153,19 +168,20 @@ namespace Textra {
 //    //Tensor to matrix conversions//
 //    //****************************//
 //
-//
+
+
     template <typename Scalar>
-    constexpr MatrixType<Scalar> Tensor2_to_Matrix(const Tensor<Scalar,2> &tensor) {
+    constexpr MatrixType<Scalar> Tensor2_to_Matrix(const Eigen::Tensor<Scalar,2> &tensor) {
         return Eigen::Map<const MatrixType<Scalar>>(tensor.data(), tensor.dimension(0), tensor.dimension(1));
     }
 
     template <typename Scalar>
-    constexpr MatrixType<Scalar> Tensor1_to_Vector(const Tensor<Scalar,1> &tensor) {
+    constexpr MatrixType<Scalar> Tensor1_to_Vector(const Eigen::Tensor<Scalar,1> &tensor) {
         return Eigen::Map<const VectorType<Scalar>>(tensor.data(), tensor.size());
     }
 
     template<typename Scalar,auto rank, typename sizeType>
-    constexpr MatrixType<Scalar> Tensor_to_Matrix(const Tensor<Scalar,rank> &tensor,const sizeType rows,const sizeType cols){
+    constexpr MatrixType<Scalar> Tensor_to_Matrix(const Eigen::Tensor<Scalar,rank> &tensor,const sizeType rows,const sizeType cols){
         return Eigen::Map<const MatrixType<Scalar>> (tensor.data(), rows,cols);
     }
 

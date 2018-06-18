@@ -1,7 +1,7 @@
 
 
 enable_language(Fortran)
-include(cmake_modules/FindGFortran.cmake)
+include(cmake-modules/FindGFortran.cmake)
 
 find_package(GSL)
 if(GSL_FOUND)

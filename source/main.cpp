@@ -7,12 +7,36 @@
 #include <gitversion.h>
 #include <IO/class_file_reader.h>
 
+#ifdef OpenBLAS_AVAILABLE
+#include <cblas.h>
+#endif
+
+#ifdef MKL_AVAILABLE
+#define MKL_Complex8 std::complex<float>
+#define MKL_Complex16 std::complex<double>
+#include <mkl_service.h>
+#include <mkl.h>
+#endif
+
+
 /*!
     \brief  Main function. Sets simulation parameters and excecutes the desired algorithms.
     \return an integer 0 upon exit success
 */
 
 int main(int argc, char* argv[]) {
+    int num_threads = 1;
+    #ifdef OpenBLAS_AVAILABLE
+        openblas_set_num_threads(num_threads);
+        std::cout << "Using OpenBLAS with " << num_threads << " thread(s)" << std::endl;
+    #endif
+
+    #ifdef MKL_AVAILABLE
+        mkl_set_num_threads(num_threads);
+        std::cout << "Using Intel MKL with " << num_threads << " thread(s)" << std::endl;
+    #endif
+
+
     // Print current Git status
     std::cout << "Git Branch: " + GIT::BRANCH +
             " | Commit hash: "  + GIT::COMMIT_HASH +

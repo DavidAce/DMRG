@@ -3,7 +3,7 @@ project(DMRG++)
 
 
 set(CMAKE_VERBOSE_MAKEFILE OFF)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 
 ################################################################
 ### Get git version number                                   ###
@@ -11,19 +11,19 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
 ### Include it using #include <gitversion.h>                 ###
 ### Gives a namespace GIT:: with several git version numbers.###
 ################################################################
-include(cmake_modules/gitversion.cmake)
+include(cmake-modules/gitversion.cmake)
 
 
 ##################################################################
 ### Define variables for directory paths accessible at runtime ###
 ##################################################################
-include(cmake_modules/directory.cmake)
+include(cmake-modules/directory.cmake)
 
 
 ##################################################################
 ### Add a debugging type message, only active in Debug-mode   ###
 ##################################################################
-include(cmake_modules/debug_msg.cmake)
+include(cmake-modules/debug_msg.cmake)
 
 
 
@@ -57,7 +57,7 @@ set(RELEASE_OPTIONS     -DNDEBUG -O3)
 if(${CMAKE_HOST_APPLE})
     list(APPEND COMMON_OPTIONS -mmacosx-version-min=10.13)
 else()
-    list(APPEND COMMON_OPTIONS -mavx -mfma)
+    list(APPEND COMMON_OPTIONS -mavx ) #-mfma makes things slower?
 endif()
 
 ################################
@@ -126,13 +126,14 @@ set_target_properties(${PROJECT_NAME}
 ###########################################
 
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
-#include(cmake_modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
-include(cmake_modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
-include(cmake_modules/Fetch_Eigen3.cmake)                   # Eigen library
-include(cmake_modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
-include(cmake_modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
-include(cmake_modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
-include(cmake_modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
+include(cmake-modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
+include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
+include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
+include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
+include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
+include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
+#include(cmake-modules/Fetch_Armadillo.cmake)                # Armadillo library
 
 
 

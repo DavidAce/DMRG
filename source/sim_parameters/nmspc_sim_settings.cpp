@@ -17,6 +17,7 @@ namespace settings{
     //Parameters for the model Hamiltonian
     double model::J                      = -1  ;                          /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
     double model::g                      =  1  ;                          /*!< Transverse field strength */
+    int    model::d                      = 2   ;                          /*!< Local dimension */
     std::string model::initial_state     = "rps";                         /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi)} "cat" or "random". Default "rps". Note that "random_chi" works poorly for finite algorithms */
 
     int    precision::eigMaxIter         = 1000   ;
@@ -100,6 +101,7 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters for the model Hamiltonian
     model::J                       = indata.find_parameter<double> ("model::J", model::J);
     model::g                       = indata.find_parameter<double> ("model::g", model::g);
+    model::d                       = indata.find_parameter<int>    ("model::d", model::d);
     model::initial_state           = indata.find_parameter<string> ("model::initial_state", model::initial_state);
     //Parmaters that control eigensolver and SVD precision
     precision::eigMaxIter         = indata.find_parameter<int>    ("precision::eigMaxIter"  , precision::eigMaxIter);

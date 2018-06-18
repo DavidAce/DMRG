@@ -19,9 +19,10 @@ using namespace Textra;
 class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_base_algorithm(std::move(hdf5_),"fDMRG", SimulationType::fDMRG) {
     initialize_constants();
-    table_fdmrg = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
-    env_storage = std::make_shared<class_finite_chain_sweeper>(max_length, superblock, hdf5,sim_type,sim_name );
-    measurement  = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
+    table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
+    table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name,sim_name + "_chain");
+    env_storage       = std::make_shared<class_finite_chain_sweeper>(max_length, superblock, hdf5,sim_type,sim_name );
+    measurement       = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
     initialize_state(settings::model::initial_state);
 }
 
@@ -34,8 +35,9 @@ void class_fDMRG::run() {
     initialize_chain();
     while(true) {
         single_DMRG_step(chi_temp);
-        env_storage_overwrite_MPS();         //Needs to occurr after update_MPS...
+        env_storage_overwrite_local_ALL();         //Needs to occurr after update_MPS...
         store_table_entry_to_file();
+        store_chain_entry_to_file();
         store_profiling_to_file();
         print_status_update();
 
@@ -57,7 +59,7 @@ void class_fDMRG::run() {
 void class_fDMRG::initialize_chain() {
     while(true){
         single_DMRG_step(chi_max);
-        print_status_update();
+//        print_status_update();
         env_storage_insert();
         if (superblock->environment_size + 2ul < (unsigned long) max_length) {
             enlarge_environment();
@@ -118,7 +120,22 @@ void class_fDMRG::store_table_entry_to_file(){
     t_sto.toc();
 }
 
-
+void class_fDMRG::store_chain_entry_to_file(){
+    if (Math::mod(iteration, store_freq) != 0) {return;}
+    if (store_freq == 0){return;}
+    if (not (env_storage->get_direction() == 1 or env_storage->position_is_the_right_edge())){return;}
+    t_sto.tic();
+    table_fdmrg_chain->append_record(
+            iteration,
+            measurement->get_chain_length(),
+            env_storage->get_position(),
+            measurement->get_chi(),
+            superblock->E_optimal / measurement->get_chain_length() * 2.0,
+            measurement->get_entanglement_entropy(),
+            measurement->get_truncation_error()
+        );
+    t_sto.toc();
+}
 
 
 void class_fDMRG::print_profiling(){

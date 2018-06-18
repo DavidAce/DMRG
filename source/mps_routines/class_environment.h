@@ -30,14 +30,14 @@
  * where \f$W\f$ is the rank-4 tensor Hamiltonian MPO.
  */
 
-class class_mps;
+class class_mps_2site;
 
 class class_environment{
 public:
     using Scalar = std::complex<double>;
     std::string side;
     unsigned long size;                                       /*!< Number of particles that have been contracted into this left environment. */
-    Textra::Tensor<Scalar,3> block;                 /*!< The environment block. */
+    Eigen::Tensor<Scalar,3> block;                 /*!< The environment block. */
     explicit class_environment(std::string side_):side(std::move(side_)){
         size = 0;
         block.resize(1, 1, 3);
@@ -55,8 +55,8 @@ public:
         }
     };
 
-    void enlarge(const std::shared_ptr<class_mps> &MPS, const Textra::Tensor<Scalar,4> &M);
-    void set_edge_dims(const std::shared_ptr<class_mps> &MPS, const Textra::Tensor<Scalar, 4> &M);
+    void enlarge(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M);
+    void set_edge_dims(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M);
 };
 
 
@@ -67,7 +67,7 @@ public:
     unsigned long size;                                       /*!< Number of particles that have been contracted into this left environment. */
     std::string side;
 
-    Textra::Tensor<Scalar,4> block;                         /*!< The environment block. */
+    Eigen::Tensor<Scalar,4> block;                         /*!< The environment block. */
     explicit class_environment_var(std::string side_):side(std::move(side_)){
         size = 0;
         block.resize(1, 1, 3, 3) ;
@@ -84,8 +84,8 @@ public:
             exit(1);
         }
     };
-    void enlarge(const std::shared_ptr<class_mps> &MPS, const Textra::Tensor<Scalar,4> &M);
-    void set_edge_dims(const std::shared_ptr<class_mps> &MPS, const Textra::Tensor<Scalar, 4> &M);
+    void enlarge(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M);
+    void set_edge_dims(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M);
 };
 
 #endif //DMRG_CLASS_ENVIRONMENT_H

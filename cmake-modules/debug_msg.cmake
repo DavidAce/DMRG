@@ -4,7 +4,7 @@ if(${CMAKE_BUILD_TYPE} MATCHES Debug)
 endif()
 
 configure_file(
-        ${CMAKE_SOURCE_DIR}/cmake_modules/debug_msg.h.in
+        ${CMAKE_SOURCE_DIR}/cmake-modules/debug_msg.h.in
         ${CMAKE_BINARY_DIR}/debug_msg/debug_msg.h
 )
 

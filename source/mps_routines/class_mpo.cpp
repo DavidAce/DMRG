@@ -64,7 +64,7 @@ Tensor<Scalar,4> class_mpo::compute_H_MPO_custom_field(double g, double e)
 
 
 
-std::vector<Textra::Tensor<Scalar,4>> class_mpo::compute_G(Scalar a, int susuki_trotter_order)
+std::vector<Eigen::Tensor<Scalar,4>> class_mpo::compute_G(Scalar a, int susuki_trotter_order)
 /*! Returns the moment generating function, or characteristic function (if a is imaginary) for the Hamiltonian as a rank 4 tensor.
 *   G := exp(iaM) or exp(aM), where a is a small parameter and M is an MPO.
 *   Note that G(-a) = G(a)* if  exp(iaM) !
@@ -123,7 +123,7 @@ std::vector<Textra::MatrixType<Scalar>> class_mpo::Suzuki_Trotter_4th_order(Scal
 }
 
 
-std::vector<Textra::Tensor<Scalar,4>> class_mpo::get_2site_evolution_gates(const Scalar t,int susuki_trotter_order)
+std::vector<Eigen::Tensor<Scalar,4>> class_mpo::get_2site_evolution_gates(const Scalar t,int susuki_trotter_order)
 /*! Returns a set of 2-site unitary gates, using Suzuki Trotter decomposition to order 1, 2 or 3.
  * These gates need to be applied to the MPS one at a time with a swap in between.
  */
@@ -135,7 +135,7 @@ std::vector<Textra::Tensor<Scalar,4>> class_mpo::get_2site_evolution_gates(const
         case 4:  matrix_vec = Suzuki_Trotter_4th_order(t);break;
         default: matrix_vec = Suzuki_Trotter_2nd_order(t);break;
     }
-    std::vector<Textra::Tensor<Scalar ,4>> tensor_vec;
+    std::vector<Eigen::Tensor<Scalar ,4>> tensor_vec;
     for(auto &m : matrix_vec){
         tensor_vec.emplace_back(Textra::Matrix_to_Tensor(m, 2,2,2,2));
     }

@@ -4,19 +4,38 @@
 # Adding a -DEIGEN_USE_MKL_ALL here may conflict with arpack++
 
 set(MKL_USE_STATIC_LIBS ON)
-set(MKL_MULTI_THREADED OFF)
+set(MKL_MULTI_THREADED ON)
 set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF)
 find_package(MKL)
 if (MKL_FOUND)
 
     # Remove the libmkl_intel_lp64 library, which is only used when compiling with Intel Fortran.
+    # Not doing this makes arpack-ng segfault.
     list(REMOVE_ITEM MKL_LIBRARIES ${MKL_INTEL_LP64_LIBRARY})
     list(INSERT MKL_LIBRARIES 0 ${MKL_GF_LP64_LIBRARY})
     list(REMOVE_DUPLICATES MKL_LIBRARIES)
 
     add_definitions(-DMKL_AVAILABLE)
     set(MKL_FLAGS -m64 -I${MKL_ROOT}/include)
-    set(MKL_LFLAGS -L${MKL_ROOT}/lib/intel64 -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl)
+
+    if (MKL_USE_SINGLE_DYNAMIC_LIBRARY)
+        set(MKL_LFLAGS -L${MKL_ROOT}/lib/intel64  -Wl,--no-as-needed -lmkl_rt -lpthread -lm -ldl)
+    else()
+        set(MKL_LFLAGS -L${MKL_ROOT}/lib/intel64 -lmkl_gf_lp64 -lmkl_intel_thread -lmkl_sequential -lmkl_core -lpthread -lm -ldl)
+    endif()
+
+
+
+    #    add_definitions(-DMKL_AVAILABLE)
+#    set(MKL_FLAGS -m64 -I${MKL_ROOT}/include)
+#    set(MKL_LFLAGS -L${MKL_ROOT}/lib/intel64 -lmkl_core -lpthread -lm -ldl)
+#    if(MKL_MULTI_THREADED)
+#        list(APPEND MKL_LFLAGS -lmkl_intel_thread)
+#    else()
+#        list(APPEND MKL_LFLAGS -lmkl_sequential)
+#    endif()
+
+
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE IMPORTED)
@@ -25,9 +44,9 @@ if (MKL_FOUND)
             INTERFACE_INCLUDE_DIRECTORY "${MKL_INCLUDE_DIR}"
             INTERFACE_COMPILE_OPTIONS "${MKL_FLAGS}"
             )
-    target_link_libraries(${PROJECT_NAME} PUBLIC mkl ${MKL_LIBRARIES} ${MKL_LFLAGS})
-    target_compile_options(${PROJECT_NAME} PUBLIC ${MKL_FLAGS})
-    target_include_directories(${PROJECT_NAME} PUBLIC ${MKL_INCLUDE_DIR})
+    target_link_libraries(${PROJECT_NAME} PRIVATE mkl ${MKL_LIBRARIES} ${MKL_LFLAGS})
+    target_compile_options(${PROJECT_NAME} PRIVATE ${MKL_FLAGS})
+    target_include_directories(${PROJECT_NAME} PRIVATE ${MKL_INCLUDE_DIR})
 
 
     # BLAS and LAPACK are included in the MKL.

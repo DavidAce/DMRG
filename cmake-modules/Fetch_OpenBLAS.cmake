@@ -30,20 +30,21 @@ endif()
 
 if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
     message(STATUS "OpenBLAS will be installed into ${INSTALL_DIRECTORY}/OpenBLAS on first build.")
-
+    set(OpenBLAS_MULTITHREADED 1)
+    set(OpenBLAS_USE_OPENMP 0) # Openmp doesnt work on clang it seems
     include(ExternalProject)
     ExternalProject_Add(library_OpenBLAS
             GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
-            GIT_TAG             v0.2.20
+            GIT_TAG             v0.3.0
             PREFIX              "${INSTALL_DIRECTORY}/OpenBLAS"
             UPDATE_COMMAND ""
             TEST_COMMAND ""
             CONFIGURE_COMMAND ""
             BUILD_IN_SOURCE 1
-            BUILD_COMMAND $(MAKE) USE_THREAD=0 USE_OPENMP=0 NO_LAPACKE=1 NO_CBLAS=1 BINARY64=1 QUIET_MAKE=1
+            BUILD_COMMAND $(MAKE) USE_THREAD=${OpenBLAS_MULTITHREADED} USE_OPENMP=${OpenBLAS_USE_OPENMP} OPENBLAS_NUM_THREADS=4 NUM_THREADS=4 BINARY64=1 QUIET_MAKE=1
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             )
-
+    #NO_LAPACKE=${OpenBLAS_USE_OTHER} NO_CBLAS=${OpenBLAS_USE_OTHER} BINARY64=1 QUIET_MAKE=0
     ExternalProject_Get_Property(library_OpenBLAS INSTALL_DIR)
     add_library(blas UNKNOWN IMPORTED)
     add_library(lapack UNKNOWN IMPORTED)
@@ -54,7 +55,6 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
     set(LAPACK_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
 
 endif()
-
 set_target_properties(blas PROPERTIES
         IMPORTED_LOCATION               "${BLAS_LIBRARIES}"
         INTERFACE_LINK_LIBRARIES        "${BLAS_LIBRARIES}"
@@ -75,4 +75,10 @@ set_target_properties(lapack PROPERTIES
 
 target_link_libraries(${PROJECT_NAME} PRIVATE blas)
 target_link_libraries(${PROJECT_NAME} PRIVATE lapack)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${GFORTRAN_LIB})
 target_include_directories(${PROJECT_NAME} PRIVATE ${BLAS_INCLUDE_DIRS})
+add_definitions(-DOpenBLAS_AVAILABLE)
+
+if(OpenBLAS_MULTITHREADED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE -lpthread)
+endif()

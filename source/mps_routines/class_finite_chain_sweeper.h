@@ -9,6 +9,7 @@
 #include <general/nmspc_tensor_extra.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_hamiltonian.h>
+#include <mps_routines/class_mps_2site.h>
 #include <sim_parameters/nmspc_model.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <IO/class_hdf5_file.h>
@@ -49,9 +50,9 @@ public:
 
 
 private:
-    std::list<std::tuple<Textra::Tensor<Scalar,1>,Textra::Tensor<Scalar,3>>>  MPS_L;  /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
-    std::list<std::tuple<Textra::Tensor<Scalar,3>,Textra::Tensor<Scalar,1>>>  MPS_R;  /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
-    Textra::Tensor<Scalar,1> MPS_C;  //Current center bond matrix;
+    std::list<class_vidal_mps>  MPS_L;  /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
+    std::list<class_vidal_mps>  MPS_R;  /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
+    Eigen::Tensor<Scalar,1>    MPS_C;  //Current center bond matrix;
     std::list<class_environment> ENV_L;
     std::list<class_environment> ENV_R;
     std::list<class_environment_var> ENV2_L;
@@ -70,33 +71,31 @@ private:
     bool superblock_is_set = false;
     bool hdf5_file_is_set  = false;
 
-    int direction = 1;
+    int direction = -1;
     int sweeps    = 0;
     unsigned long max_length = 0;                                                 /*!< The maximum length of the chain */
     unsigned long current_length = 0;
 
-    template<int tup=-1, typename T>
+    template<typename T>
     void write_list_to_file(const std::list<T> &obj, std::string dataset_name, unsigned long &counter){
         for(auto &it: obj) {
-            if constexpr(tup == -1) {
-                if constexpr(std::is_same<std::decay_t<decltype(it)>, class_hamiltonian>::value){
-                    hdf5->write_dataset(it.MPO, dataset_name + "_" + std::to_string(counter));
-                    hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_coupling(), "coupling");
-                    hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_field(), "field");
-                    hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_random_field(), "random_field");
-                    hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_energy(), "energy");
-                    counter++;
-                }
-                else if constexpr(std::is_same<std::decay_t<decltype(it)>, class_environment>::value or
-                                  std::is_same<std::decay_t<decltype(it)>, class_environment_var>::value  ){
-                    hdf5->write_dataset(it.block, dataset_name + "_" + std::to_string(counter));
-                    hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.size, "sites");
-                    counter++;
-                }else{
-                    hdf5->write_dataset(it, dataset_name + "_" + std::to_string(counter++));
-                }
-            } else {
-                hdf5->write_dataset(std::get<tup>(it), dataset_name + "_" + std::to_string(counter++));
+            if constexpr(std::is_same<std::decay_t<decltype(it)>, class_hamiltonian>::value){
+                hdf5->write_dataset(it.MPO, dataset_name + "_" + std::to_string(counter));
+                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_coupling(), "coupling");
+                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_field(), "field");
+                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_random_field(), "random_field");
+                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_energy(), "energy");
+                counter++;
+            }
+            else if constexpr(std::is_same<std::decay_t<decltype(it)>, class_environment>::value or
+                              std::is_same<std::decay_t<decltype(it)>, class_environment_var>::value  ){
+                hdf5->write_dataset(it.block, dataset_name + "_" + std::to_string(counter));
+                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.size, "sites");
+                counter++;
+            }else if constexpr( std::is_same<std::decay_t<decltype(it)>, class_vidal_mps>::value  ){
+                hdf5->write_dataset(it.get_L(), dataset_name + "L_" + std::to_string(counter));
+                hdf5->write_dataset(it.get_G(), dataset_name + "G_" + std::to_string(counter));
+                counter++;
             }
         }
     }
@@ -118,7 +117,9 @@ public:
     void update_current_length();
     int  insert();                                                               /*!< Store current MPS and environments indexed by their respective positions on the chain. */
     int  load();                                                                 /*!< Load MPS and environments according to current position. */
-    void overwrite_MPS();                                                        /*!< Update the MPS stored at current position.*/
+    void overwrite_local_MPS();                                                        /*!< Update the MPS stored at current position.*/
+    void overwrite_local_MPO();                                                        /*!< Update the MPO stored at current position.*/
+    void overwrite_local_ENV();                                                        /*!< Update the ENV stored at current position.*/
     int  move();                                                                 /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
     void write_chain_to_file();
 
@@ -132,9 +133,11 @@ public:
     const auto & get_ENV2_L()const {return std::as_const(ENV2_L);}
     const auto & get_ENV2_R()const {return std::as_const(ENV2_R);}
 
+
     void print_storage();                                                        /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
     void print_storage_compact();                                                /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
     void print_hamiltonians();
+    int reset_sweeps();
     int get_direction() const;
     int get_position() const;
     int get_length() const;

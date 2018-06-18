@@ -18,27 +18,31 @@ private:
     Eigen::BDCSVD<MatrixType> SVD;
 public:
 
+    class_SVD(){
+        setThreshold(SVDThreshold);
+    }
+
     double get_truncation_error();
     void setThreshold(double newThreshold);
-    Textra::Tensor<Scalar, 2> pseudo_inverse(const Textra::Tensor<Scalar,2> &tensor);
+    Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar,2> &tensor);
 
-    std::tuple<Textra::Tensor<Scalar, 2> ,Textra::Tensor<Scalar, 1>, Textra::Tensor<Scalar, 2> >
-    decompose(const Textra::Tensor<Scalar,2> &tensor);
+    std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
+    decompose(const Eigen::Tensor<Scalar,2> &tensor);
 
-    std::tuple<Textra::Tensor<Scalar, 2> ,Textra::Tensor<Scalar, 1>, Textra::Tensor<Scalar, 2> >
-    decompose(const Textra::Tensor<Scalar,2> &tensor, const long chi_max);
+    std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
+    decompose(const Eigen::Tensor<Scalar,2> &tensor, const long chi_max);
 
-    std::tuple<Textra::Tensor<Scalar, 3> ,Textra::Tensor<Scalar, 1>, Textra::Tensor<Scalar, 3> >
-    schmidt  (const Textra::Tensor<Scalar,2> &tensor, long d, long chiL, long chi_max, long chiR);
+    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
+    schmidt  (const Eigen::Tensor<Scalar,2> &tensor, long d, long chiL, long chi_max, long chiR);
 
-    std::tuple<Textra::Tensor<Scalar, 3> ,Textra::Tensor<Scalar, 1>, Textra::Tensor<Scalar, 3> >
-    schmidt  (const Textra::Tensor<Scalar,2> &tensor, long d, long chiL, long chiR);
+    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
+    schmidt  (const Eigen::Tensor<Scalar,2> &tensor);
 
-    std::tuple <Textra::Tensor<Scalar, 3> ,Textra::Tensor<Scalar, 1>, Textra::Tensor<Scalar, 3> >
-    schmidt  (const Textra::Tensor<Scalar,4> &tensor, long d, long chiL, long chi_max,  long chiR);
+    std::tuple <Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
+    schmidt  (const Eigen::Tensor<Scalar,4> &tensor, long chi_max);
 
-    std::tuple<Textra::Tensor<Scalar, 3> ,Textra::Tensor<Scalar, 1>, Textra::Tensor<Scalar, 3> >
-    schmidt  (const Textra::Tensor<Scalar,4> &tensor, long d, long chiL, long chiR);
+    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
+    schmidt  (const Eigen::Tensor<Scalar,4> &tensor);
 };
 
 #endif //DMRG_CLASS_SVD_H

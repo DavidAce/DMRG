@@ -5,7 +5,6 @@
 #include "class_finite_chain_sweeper.h"
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
-#include <mps_routines/class_mps.h>
 #include <mps_routines/class_mpo.h>
 
 using namespace std;
@@ -84,9 +83,12 @@ int class_finite_chain_sweeper::insert(){
     assert(ENV2_R.size()       == superblock->Rblock2->size);
 
 
-    MPS_L.emplace_back (std::make_tuple(superblock->MPS->LB_left, superblock->MPS->GA));
-    MPS_R.emplace_front(std::make_tuple(superblock->MPS->GB     , superblock->MPS->LB));
-    MPS_C = superblock->MPS->LA;
+    MPS_L.emplace_back(*superblock->MPS->MPS_A);
+    MPS_R.emplace_front(*superblock->MPS->MPS_B);
+//
+//    MPS_L.emplace_back (std::make_tuple(superblock->MPS->LB_left, superblock->MPS->GA));
+//    MPS_R.emplace_front(std::make_tuple(superblock->MPS->GB     , superblock->MPS->LB));
+    MPS_C = superblock->MPS->LC;
 
     ENV_L.emplace_back(*superblock->Lblock);
     ENV_R.emplace_front(*superblock->Rblock);
@@ -114,7 +116,9 @@ int class_finite_chain_sweeper::load(){
     return (int)MPS_L.size();
 }
 
-void class_finite_chain_sweeper::overwrite_MPS() {
+
+
+void class_finite_chain_sweeper::overwrite_local_MPS() {
 //    std::cout << "Overwriting positions: "  << MPS_L.size() << " and " <<  MPS_R.size()  << std::endl;
     assert(!MPS_L.empty() and !MPS_R.empty());
     assert(ENV_L.size() + ENV_R.size() <= max_length);
@@ -124,19 +128,30 @@ void class_finite_chain_sweeper::overwrite_MPS() {
     assert(ENV2_L.back().size  == superblock->Lblock2->size);
     assert(ENV2_R.front().size == superblock->Rblock2->size);
 
-    MPS_L.back()    = std::make_tuple(superblock->MPS->LB_left, superblock->MPS->GA);
+    MPS_L.back()    = *superblock->MPS->MPS_A;
+    MPS_C           = superblock->MPS->LC;
+    MPS_R.front()   = *superblock->MPS->MPS_B;
+
+//    MPS_L.back()    = std::make_tuple(superblock->MPS->LB_left, superblock->MPS->GA);
+//    MPS_C           = superblock->MPS->LA;
+//    MPS_R.front()   = std::make_tuple(superblock->MPS->GB     , superblock->MPS->LB);
+
+}
+
+
+void class_finite_chain_sweeper::overwrite_local_MPO(){
     MPO_L.back()    = *superblock->HA;
+    MPO_R.front()   = *superblock->HB;
+}
+
+void class_finite_chain_sweeper::overwrite_local_ENV(){
     ENV_L.back()    = *superblock->Lblock;
     ENV2_L.back()   = *superblock->Lblock2;
 
-    MPS_C           = superblock->MPS->LA;
-
-    MPS_R.front()   = std::make_tuple(superblock->MPS->GB     , superblock->MPS->LB);
-    MPO_R.front()   = *superblock->HB;
     ENV_R.front()   = *superblock->Rblock;
     ENV2_R.front()  = *superblock->Rblock2;
-//    print_storage();
 }
+
 
 int class_finite_chain_sweeper::move(){
     //Take current MPS and generate an Lblock one larger and store it in list for later loading
@@ -148,7 +163,6 @@ int class_finite_chain_sweeper::move(){
     assert(ENV_L.size() + ENV_R.size() == max_length);
     assert(ENV_L.back().size + ENV_R.front().size == max_length - 2);
     assert(ENV_L.back().size + ENV_R.front().size == superblock->environment_size);
-
     if (direction == 1){
         //Note that Lblock must just have grown!!
 //        assert(MPS_R.size() > 1);
@@ -156,7 +170,8 @@ int class_finite_chain_sweeper::move(){
         assert(ENV2_L.back().size  + 1  == superblock->Lblock2->size);
         assert(ENV_R.front().size       == superblock->Rblock->size);
         assert(ENV2_R.front().size      == superblock->Rblock2->size);
-        MPS_L.emplace_back(std::make_tuple(superblock->MPS->LB_left, superblock->MPS->GA));
+        MPS_L.emplace_back(*superblock->MPS->MPS_A);
+//        MPS_L.emplace_back(std::make_tuple(superblock->MPS->LB_left, superblock->MPS->GA));
         MPO_L.emplace_back (*superblock->HA);
         ENV_L.emplace_back (*superblock->Lblock);
         ENV2_L.emplace_back (*superblock->Lblock2);
@@ -167,12 +182,14 @@ int class_finite_chain_sweeper::move(){
         ENV_R.pop_front();
         ENV2_R.pop_front();
 
-        superblock->MPS->LB_left    = superblock->MPS->LA;
-        superblock->MPS->GA         = superblock->MPS->GB;
-        superblock->MPS->LA         = superblock->MPS->LB;
-        superblock->MPS->GB         = std::get<0>(MPS_R.front());
-        superblock->MPS->LB         = std::get<1>(MPS_R.front());
-        MPS_C                       = superblock->MPS->LA;
+
+        superblock->MPS->MPS_A->set_L(superblock->MPS->LC);
+        superblock->MPS->MPS_A->set_G(superblock->MPS->MPS_B->get_G());
+        superblock->MPS->LC = superblock->MPS->MPS_B->get_L();
+        superblock->MPS->MPS_B->set_G(MPS_R.front().get_G());
+        superblock->MPS->MPS_B->set_L(MPS_R.front().get_L());
+        MPS_C  = superblock->MPS->LC;
+
         *superblock->HA = *superblock->HB;
         *superblock->HB = MPO_R.front();
 
@@ -186,7 +203,7 @@ int class_finite_chain_sweeper::move(){
         assert(ENV2_R.front().size + 1  == superblock->Rblock2->size);
         assert(ENV_L.back().size        == superblock->Lblock->size);
         assert(ENV2_L.back().size       == superblock->Lblock2->size);
-        MPS_R.emplace_front (std::make_tuple(superblock->MPS->GB, superblock->MPS->LB));
+        MPS_R.emplace_front (*superblock->MPS->MPS_B);
         MPO_R.emplace_front (*superblock->HB);
         ENV_R.emplace_front (*superblock->Rblock);
         ENV2_R.emplace_front (*superblock->Rblock2);
@@ -197,22 +214,23 @@ int class_finite_chain_sweeper::move(){
         ENV_L.pop_back();
         ENV2_L.pop_back();
 
-        superblock->MPS->LB         = superblock->MPS->LA;
-        superblock->MPS->GB         = superblock->MPS->GA;
-        superblock->MPS->LA         = superblock->MPS->LB_left;
-        superblock->MPS->GA         = std::get<1>(MPS_L.back());
-        superblock->MPS->LB_left    = std::get<0>(MPS_L.back());
-        MPS_C                       = superblock->MPS->LA;
+
+        superblock->MPS->MPS_B->set_L(superblock->MPS->LC);
+        superblock->MPS->MPS_B->set_G(superblock->MPS->MPS_A->get_G());
+        superblock->MPS->LC = superblock->MPS->MPS_A->get_L();
+        superblock->MPS->MPS_A->set_G(MPS_L.back().get_G());
+        superblock->MPS->MPS_A->set_L(MPS_L.back().get_L());
+        MPS_C                       = superblock->MPS->LC;
         *superblock->HB = *superblock->HA;
         *superblock->HA = MPO_L.back();
 
         *superblock->Lblock  = ENV_L.back();
         *superblock->Lblock2 = ENV2_L.back();
     }
-    assert(superblock->MPS->GA.dimension(1) == superblock->MPS->LB_left.dimension(0));
-    assert(superblock->MPS->GA.dimension(2) == superblock->MPS->LA.dimension(0));
-    assert(superblock->MPS->GB.dimension(1) == superblock->MPS->LA.dimension(0));
-    assert(superblock->MPS->GB.dimension(2) == superblock->MPS->LB.dimension(0));
+    assert(superblock->MPS->MPS_A->get_G().dimension(2) == superblock->MPS->MPS_B->get_G().dimension(1));
+//    assert(superblock->MPS->GA.dimension(2) == superblock->MPS->LA.dimension(0));
+//    assert(superblock->MPS->GB.dimension(1) == superblock->MPS->LA.dimension(0));
+//    assert(superblock->MPS->GB.dimension(2) == superblock->MPS->LB.dimension(0));
 
 //    Check edge
     if (position_is_the_left_edge() or position_is_the_right_edge()) {
@@ -228,13 +246,9 @@ int class_finite_chain_sweeper::move(){
 void class_finite_chain_sweeper::write_chain_to_file() {
     unsigned long counter = 0;
 
-    write_list_to_file<1>(get_MPS_L(),sim_name + "/chain/MPS/G", counter);
-    write_list_to_file<0>(get_MPS_R(),sim_name + "/chain/MPS/G", counter);
-
-    counter = 0;
-    write_list_to_file<0>(get_MPS_L(),sim_name + "/chain/MPS/L", counter);
+    write_list_to_file(get_MPS_L(),sim_name + "/chain/MPS/", counter);
     hdf5->write_dataset(get_MPS_C(),  sim_name + "/chain/MPS/L_" + "_" + to_string(counter++));
-    write_list_to_file<1>(get_MPS_R(),sim_name + "/chain/MPS/L", counter);
+    write_list_to_file(get_MPS_R(),sim_name + "/chain/MPS/", counter);
 
     counter = 0;
     write_list_to_file(get_MPO_L(),sim_name + "/chain/MPO/H", counter);
@@ -262,8 +276,8 @@ void class_finite_chain_sweeper::print_storage(){
     if(!ENV_L.empty()){std::cout << "ENV_L[" <<setw(3) << ENV_L.size()-1 << "]: " << ENV_L.back().block.dimensions() << " Particles: " << ENV_L.back().size << "  <--- Also current environment L" << std::endl;}
 
     for(auto &it : MPS_L){
-        std::cout << "L[" << setw(3) << i  <<  "]: " << std::get<0>(it).dimensions()  << " "
-                  << "G[" << setw(3) << i  <<  "]: " << std::get<1>(it).dimensions()  << " ";
+        std::cout << "L[" << setw(3) << i  <<  "]: " << it.get_L().dimensions()  << " "
+                  << "G[" << setw(3) << i  <<  "]: " << it.get_G().dimensions()  << " ";
         if(&it == &MPS_L.back()){
             std::cout << " <--- Position A";
         }
@@ -272,8 +286,8 @@ void class_finite_chain_sweeper::print_storage(){
     }
     std::cout << "L[" << setw(3) << '*'  <<  "]: " << MPS_C.dimensions() << "                    <--- Center" << std::endl;
     for(auto &it : MPS_R){
-        std::cout << "G[" << setw(3) << i  <<  "]: " << std::get<0>(it).dimensions()  << " "
-                  << "L[" << setw(3) << i  <<  "]: " << std::get<1>(it).dimensions()  << " ";
+        std::cout << "G[" << setw(3) << i  <<  "]: " << it.get_G().dimensions()  << " "
+                  << "L[" << setw(3) << i  <<  "]: " << it.get_L().dimensions()  << " ";
         if(&it == &MPS_R.front()){
             std::cout << " <--- Position B" ;
         }
@@ -293,9 +307,9 @@ void class_finite_chain_sweeper::print_storage_compact(){
               << " | Particles in environment: " << ENV_L.back().size + ENV_R.front().size
               << std::endl;
     if(!ENV_L.empty()){std::cout << "ENV_L[" <<setw(3) << ENV_L.size()-1 << "]: " << ENV_L.back().block.dimensions() << " Particles: " << ENV_L.back().size << "  <--- Also current environment L" << std::endl;}
-    if(!MPS_L.empty()){std::cout << "MPS_L[" <<setw(3) << MPS_L.size()-1 << "]: " << std::get<1>(MPS_L.back()).dimensions() <<  "   <--- Also current iteration A" << std::endl;}
+    if(!MPS_L.empty()){std::cout << "MPS_L[" <<setw(3) << MPS_L.size()-1 << "]: " << MPS_L.back().get_G().dimensions() <<  "   <--- Also current iteration A" << std::endl;}
     std::cout << "L[" << setw(3) << '*'  <<  "]: " << MPS_C.dimensions() << "                    <--- Center" << std::endl;
-    if(!MPS_R.empty()){std::cout << "MPS_R[" <<setw(3) << MPS_R.size()-1 << "]: " << std::get<0>(MPS_R.front()).dimensions() << "   <--- Also current iteration B" << std::endl;}
+    if(!MPS_R.empty()){std::cout << "MPS_R[" <<setw(3) << MPS_R.size()-1 << "]: " << MPS_R.front().get_G().dimensions() << "   <--- Also current iteration B" << std::endl;}
     if(!ENV_R.empty()){std::cout << "ENV_R[" <<setw(3) << ENV_R.size()-1 << "]: " << ENV_R.front().block.dimensions() << " Particles: " << ENV_R.front().size << " <--- Also current environment R"  << std::endl;}
  }
 
@@ -338,7 +352,7 @@ void class_finite_chain_sweeper::print_hamiltonians() {
     std::cout << std::endl;
 }
 
-
+int class_finite_chain_sweeper::reset_sweeps()  {sweeps = 0; return sweeps;}
 int class_finite_chain_sweeper::get_direction() const {return direction;}
 int class_finite_chain_sweeper::get_sweeps()    const {return sweeps;}
 int class_finite_chain_sweeper::get_length()    const {return (int)(MPS_L.size() + MPS_R.size());}
