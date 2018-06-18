@@ -18,8 +18,8 @@ private:
         int     iteration;
         int     chain_length;
         int     position;
-        int     chi;
-        int     chi_max;
+        long    chi;
+        long    chi_max;
         double  energy_mpo; double  energy_ham; double  energy_mom;
         double  variance_mpo; double  variance_ham; double  variance_mom;
         double  entanglement_entropy;
@@ -30,8 +30,8 @@ private:
         int iteration_,
         int chain_length_,
         int position_,
-        int chi_,
-        int chi_max_,
+        long chi_,
+        long chi_max_,
         double energy_mpo_, double energy_ham_, double energy_mom_,
         double variance_mpo_, double variance_ham_, double variance_mom_,
         double entropy_,
@@ -73,9 +73,10 @@ private:
                 sizeof(data::variance_mpo), sizeof(data::variance_ham), sizeof(data::variance_mom),
                 sizeof(data::entanglement_entropy), sizeof(data::truncation_error), sizeof(data::wall_time)
         };
-        std::array<const char *, NFIELDS> field_names = {"sweep",
-                "chain_length",
+        std::array<const char *, NFIELDS> field_names = {
                 "iteration",
+                "chain_length",
+                "position",
                 "chi",
                 "chi_max",
                 "energy_mpo","energy_ham","energy_mom",
@@ -88,8 +89,8 @@ private:
         std::array<hid_t, NFIELDS> field_types = {H5T_NATIVE_INT,
                                                   H5T_NATIVE_INT,
                                                   H5T_NATIVE_INT,
-                                                  H5T_NATIVE_INT,
-                                                  H5T_NATIVE_INT,
+                                                  H5T_NATIVE_LONG,
+                                                  H5T_NATIVE_LONG,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE};
@@ -109,8 +110,8 @@ class class_table_tebd{
 private:
     struct data {
         int     iteration;
-        int     chi;
-        int     chi_max;
+        long    chi;
+        long    chi_max;
         double  time_step;
         double  energy_mpo; double  energy_ham; double  energy_mom;
         double  variance_mpo; double  variance_ham; double  variance_mom;
@@ -120,9 +121,9 @@ private:
         double  wall_time;
 
         data(
-                int iteration_,
-                int chi_,
-                int chi_max_,
+                int    iteration_,
+                long   chi_,
+                long   chi_max_,
                 double time_step_,
                 double energy_mpo_, double energy_ham_, double energy_mom_,
                 double variance_mpo_, double variance_ham_, double variance_mom_,
@@ -181,8 +182,8 @@ private:
         };
 
         std::array<hid_t, NFIELDS> field_types = {H5T_NATIVE_INT,
-                                                  H5T_NATIVE_INT,
-                                                  H5T_NATIVE_INT,
+                                                  H5T_NATIVE_LONG,
+                                                  H5T_NATIVE_LONG,
                                                   H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
@@ -203,49 +204,67 @@ public:
 class class_table_finite_chain{
 private:
     struct data {
-        int     sweeps;
+        int     iteration;
         int     chain_length;
         int     position;
+        long    chi;
         double  energy;
-        double  variance;
+        double  entanglement_entropy;
+        double  truncation_error;
 
-        data(   int sweeps_,
+        data(   int iteration_,
                 int chain_length_,
                 int position_,
+                long chi_,
                 double energy_,
-                double variance_):
-                sweeps(sweeps_),
+                double entanglement_entropy_,
+                double truncation_error_):
+                iteration(iteration_),
                 chain_length(chain_length_),
                 position(position_),
+                chi(chi_),
                 energy(energy_),
-                variance(variance_)
+                entanglement_entropy(entanglement_entropy_),
+                truncation_error(truncation_error_)
         {}
     };
     struct meta_struct {
-        constexpr static hsize_t NFIELDS = 5;
+        constexpr static hsize_t NFIELDS = 7;
         size_t dst_size = sizeof(data);
-        std::array<size_t, NFIELDS> dst_offsets = {HOFFSET(data, sweeps),
+        std::array<size_t, NFIELDS> dst_offsets = {HOFFSET(data, iteration),
                                                    HOFFSET(data, chain_length),
                                                    HOFFSET(data, position),
+                                                   HOFFSET(data, chi),
                                                    HOFFSET(data, energy),
-                                                   HOFFSET(data, variance)};
+                                                   HOFFSET(data, entanglement_entropy),
+                                                   HOFFSET(data, truncation_error)
+                                                    };
         std::array<size_t, NFIELDS> dst_sizes = {
-                sizeof(data::sweeps),
+                sizeof(data::iteration),
                 sizeof(data::chain_length),
                 sizeof(data::position),
+                sizeof(data::chi),
                 sizeof(data::energy),
-                sizeof(data::variance)
+                sizeof(data::entanglement_entropy),
+                sizeof(data::truncation_error)
         };
-        std::array<const char *, NFIELDS> field_names = {"sweeps",
+        std::array<const char *, NFIELDS> field_names = {"iteration",
                                                          "chain_length",
-                                                         "iteration",
+                                                         "position",
+                                                         "chi",
                                                          "energy",
-                                                         "variance"
+                                                         "entanglement_entropy",
+                                                         "truncation_error"
         };
 
         std::array<hid_t, NFIELDS> field_types = {H5T_NATIVE_INT,
                                                   H5T_NATIVE_INT,
-                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE};
+                                                  H5T_NATIVE_INT,
+                                                  H5T_NATIVE_LONG,
+                                                  H5T_NATIVE_DOUBLE,
+                                                  H5T_NATIVE_DOUBLE,
+                                                  H5T_NATIVE_DOUBLE
+                                                };
         hsize_t chunk_size = 100;
         void *fill_data = nullptr;
         int compress = 0;

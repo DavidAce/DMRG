@@ -15,15 +15,22 @@ class class_table_dmrg;
 class class_finite_chain_sweeper;
 class class_xDMRG : public class_base_algorithm {
 private:
-
 public:
     //Inherit the constructor of class_base_algorithm
     using class_base_algorithm::class_base_algorithm;
     explicit class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_xdmrg;
+    std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_xdmrg_chain;
+
     int    max_length   ;
     int    max_sweeps   ;
     double r_strength = 0 ;  //Randomness strength for the random field.
+
+    //Energy ranges
+    double energy_min = 0;
+    double energy_max = 0;
+    double energy_mid = 0;
+    double energy_at_site = 0;
 
     void run()                                          override;
     void check_convergence_overall()                    override;
@@ -31,9 +38,13 @@ public:
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
     void store_table_entry_to_file()                    override;
+    void store_chain_entry_to_file();
     void single_xDMRG_step(long chi_max);
-    void initialize_random_chain();
-    auto find_greatest_overlap(Eigen::Tensor<Scalar,4> &theta);
+    void initialize_chain();
+    void reset_chain_mps_to_random_product_state();
+    void set_random_fields_in_chain_mpo();
+    void find_energy_range();
+    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap(Eigen::Tensor<Scalar, 4> &theta);
 
 };
 

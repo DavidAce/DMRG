@@ -1,4 +1,4 @@
-cmake-*/
+cmake-build*/
 .idea/
 output/
 build/

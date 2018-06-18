@@ -20,6 +20,7 @@ public:
     using class_base_algorithm::class_base_algorithm;
     explicit class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_fdmrg;
+    std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_fdmrg_chain;
 
     int    max_length   ;
     int    max_sweeps   ;
@@ -30,6 +31,7 @@ public:
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
     void store_table_entry_to_file()                    override;
+    void store_chain_entry_to_file();
     void initialize_chain();
 
 };

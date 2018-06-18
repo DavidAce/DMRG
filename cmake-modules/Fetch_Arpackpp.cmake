@@ -13,7 +13,7 @@ find_path(ARPACKPP_INCLUDE_DIR
         )
 
 enable_language(Fortran)
-include(cmake_modules/FindGFortran.cmake)
+include(cmake-modules/FindGFortran.cmake)
 
 message(STATUS "Note that old versions of Arpack++ (e.g. the default in Ubuntu Trusty 14.04 LTS) may fail to compile, requiring '-fpermissive'.")
 if (ARPACKPP_LIBRARIES AND NOT "${OS_PROPERTIES}" MATCHES "trusty" )

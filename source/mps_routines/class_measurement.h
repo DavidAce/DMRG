@@ -15,7 +15,7 @@
 using namespace std::complex_literals;
 
 class class_superblock;
-class class_mps;
+class class_mps_2site;
 class class_finite_chain_sweeper;
 /*!
  * \class class_measurement
@@ -32,7 +32,7 @@ private:
 
     std::shared_ptr<const class_finite_chain_sweeper> env_storage;
     class_custom_cout ccout;
-    Scalar moment_generating_function(std::shared_ptr<class_mps> MPS_original,
+    Scalar moment_generating_function(const std::unique_ptr<class_mps_2site> &MPS_original,
                                                        std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
 
 //    class_parity_mpo parity_mpo;
@@ -69,7 +69,6 @@ private:
     double variance_chain = 0;
 
     double entanglement_entropy = 0;
-    double truncation_error = 0;
     double parity = 0;
     Eigen::Tensor<Scalar,0> E_evn, E_odd;
     bool is_measured = false;

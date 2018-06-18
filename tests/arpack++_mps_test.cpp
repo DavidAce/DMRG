@@ -11,9 +11,9 @@ int main()
 {
     using Scalar = std::complex<double>;
     int nev = 1;
-    int ncv = 16;
-    int maxiter = 1000;
-    double threshold = 1e-12;
+    int eigMaxNcv = 16;
+    int eigMaxIter = 1000;
+    double eigThreshold = 1e-12;
     std::array<long,4> shape_theta4 = {2,1,2,1};
     std::array<long,4> shape_mpo4   = {3,3,2,2};
     std::vector<Scalar> L = {0.924445, 0.381316, 1.0};
@@ -24,21 +24,23 @@ int main()
     std::vector<Scalar> theta = {-0.191154, 0.964728,
                                  -0.0351791,0.177544};
 
-    class_arpack_eigsolver<Scalar, Form::GENERAL> solver(L.data(),
-                                                         R.data(),
-                                                         M.data(),
-                                                         M.data(),
-                                                         shape_theta4,
-                                                         shape_mpo4,
-                                                         Ritz::SR,
-                                                         nev,
-                                                         ncv,
-                                                         threshold,
-                                                         maxiter,
-                                                         true ,
-                                                         theta.data());
+    class_arpack_eigsolver<Scalar, Form::GENERAL> solver(eigThreshold,eigMaxIter,eigMaxNcv, true, false);
+//    solver.optimize_mps(Lblock->block.data(), Rblock->block.data(), HA->MPO.data(), HB->MPO.data(), shape_theta4, shape_mpo4, nev, eigMaxNcv, ritz , false ,theta.data());
+
+    solver.optimize_mps(L.data(),
+                        R.data(),
+                        M.data(),
+                        M.data(),
+                        shape_theta4,
+                        shape_mpo4,
+                        nev,
+                        eigMaxNcv,
+                        Ritz::SR,
+                        false,
+                        theta.data());
     using namespace Textra;
     using namespace Eigen;
+
     Eigen::TensorMap<const Eigen::Tensor<const Scalar,2>> eigvecs (solver.ref_eigvecs().data(), shape_theta4[0]*shape_theta4[1], shape_theta4[2]*shape_theta4[3]);
     Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>> eigvals (solver.ref_eigvals().data(), nev);
 

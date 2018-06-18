@@ -1,7 +1,7 @@
 
 
 enable_language(Fortran)
-include(cmake_modules/FindGFortran.cmake)
+include(cmake-modules/FindGFortran.cmake)
 
 message(STATUS "SEARCHING FOR ARPACK IN SYSTEM...")
 find_library(ARPACK_LIBRARIES
@@ -17,11 +17,6 @@ if(ARPACK_LIBRARIES)
             IMPORTED_LOCATION "${ARPACK_LIBRARIES}"
             INTERFACE_LINK_LIBRARIES "${GFORTRAN_LIB}"
             )
-#    add_library(arpack INTERFACE)
-#    set_target_properties(arpack
-#            PROPERTIES
-#            INTERFACE_LINK_LIBRARIES "${ARPACK_LIBRARIES};${GFORTRAN_LIB}"
-#            )
     target_link_libraries(${PROJECT_NAME} PUBLIC arpack)
     return()
 else()
@@ -41,7 +36,7 @@ else()
     include(ExternalProject)
     ExternalProject_Add(library_ARPACK
             GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
-            GIT_TAG             master # Latest version has problems with fortran linking. so stick with this version instead.
+            GIT_TAG             master
 #            GIT_TAG             3.5.0 # Latest version has problems with fortran linking. so stick with this version instead.
             PREFIX              "${INSTALL_DIRECTORY}/arpack-ng"
             UPDATE_COMMAND ""
@@ -73,11 +68,7 @@ else()
             PROPERTIES
             INTERFACE_LINK_LIBRARIES "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX};${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
             INTERFACE_INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
-#    add_library(arpack INTERFACE)
-#    set_target_properties(arpack
-#            PROPERTIES
-#            INTERFACE_LINK_LIBRARIES "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX};${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
-#            INTERFACE_INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
+
     add_dependencies(arpack library_ARPACK)
 
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack)

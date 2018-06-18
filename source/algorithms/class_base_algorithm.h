@@ -12,8 +12,8 @@
 #include <list>
 #include <IO/class_custom_cout.h>
 #include <general/class_tic_toc.h>
+#include <general/nmspc_eigsolver_props.h>
 #include <sim_parameters/nmspc_sim_settings.h>
-
 class class_superblock;
 class class_finite_chain_sweeper;
 class class_measurement;
@@ -56,7 +56,7 @@ public:
     //Settings.
 
     // Common variables
-    int    iteration = 0; //In idmrg and itebd: steps, in fdmrg and xdmrg: sweeps.
+    int    iteration = 0; //In idmrg and itebd: steps, in fdmrg and xdmrg: iteration.
     long   chi_max      ;
     bool   chi_grow     ;
     int    print_freq   ;
@@ -82,7 +82,7 @@ public:
     //Common functions
     void print_status_update();
     void print_status_full();
-    void single_DMRG_step(long chi_max);
+    void single_DMRG_step(long chi_max, Ritz ritz = Ritz::SR);
     void single_TEBD_step(long chi_max);
 
     virtual void check_convergence_overall();
@@ -102,7 +102,10 @@ public:
 
     //Functions for finite_chains
     void env_storage_insert();
-    void env_storage_overwrite_MPS();
+    void env_storage_overwrite_local_MPS();
+    void env_storage_overwrite_local_MPO();
+    void env_storage_overwrite_local_ENV();
+    void env_storage_overwrite_local_ALL();
     void env_storage_move();
 
 
