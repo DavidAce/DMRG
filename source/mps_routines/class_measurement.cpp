@@ -11,7 +11,7 @@
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_hamiltonian.h>
-#include <mps_routines/class_mps.h>
+#include <mps_routines/class_mps_2site.h>
 #include <mps_routines/class_mpo.h>
 #include <mps_routines/class_finite_chain_sweeper.h>
 
@@ -42,9 +42,9 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
 
 void class_measurement::compute_all_observables_from_superblock(){
     if (is_measured){return;}
-    if (superblock->chiL != superblock->chiR) { return;}
-    if (superblock->MPS->LA.size() != superblock->MPS->LB.size()) { return ;}
-    if (superblock->chi <= 2) { return; }
+    if (superblock->MPS->chiA() != superblock->MPS->chiB()) { return;}
+    if (superblock->MPS->chiA() != superblock->MPS->chiC()) { return ;}
+    if (superblock->MPS->chiC() <= 2) { return; }
 
     switch(sim_type){
         case SimulationType::iDMRG:
@@ -60,6 +60,7 @@ void class_measurement::compute_all_observables_from_superblock(){
             superblock->MPS->theta = superblock->MPS->get_theta();
             compute_energy_mpo();
             compute_energy_variance_mpo();
+            break;
         case SimulationType::iTEBD:
             superblock->MPS->compute_mps_components();
             compute_energy_ham();
@@ -69,8 +70,7 @@ void class_measurement::compute_all_observables_from_superblock(){
     }
 
     compute_entanglement_entropy();
-    truncation_error = superblock->MPS->truncation_error;
-//      compute_parity();
+//    compute_parity();
     is_measured = true;
 
 }
@@ -79,7 +79,7 @@ void class_measurement::compute_all_observables_from_superblock(){
 void class_measurement::compute_all_observables_from_finite_chain(){
     compute_finite_chain_energy();
     compute_finite_chain_energy_variance();
-    compute_finite_chain_mps_state();
+//    compute_finite_chain_mps_state(); // Runs out of memory for L > 20 or so, because the wave vector is doubled in size for each additional site.
     compute_finite_chain_norm();
 }
 
@@ -89,7 +89,7 @@ void class_measurement::compute_all_observables_from_finite_chain(){
 void class_measurement::compute_energy_mpo(){
     t_ene_mpo.tic();
     double         L = superblock->Lblock->size + superblock->Rblock->size + 2;
-    Tensor<Scalar, 0>  E =
+    Eigen::Tensor<Scalar, 0>  E =
             superblock->Lblock->block
                     .contract(superblock->MPS->theta,                     idx({0},{1}))
                     .contract(superblock->HA->MPO,                        idx({1,2},{0,2}))
@@ -134,8 +134,8 @@ void class_measurement::compute_energy_ham(){
 
 void class_measurement::compute_entanglement_entropy(){
     t_entropy.tic();
-    Tensor<Scalar,0> SA  = -superblock->MPS->LA.square()
-            .contract(superblock->MPS->LA.square().log().eval(), idx({0},{0}));
+    Eigen::Tensor<Scalar,0> SA  = -superblock->MPS->LC.square()
+            .contract(superblock->MPS->LC.square().log().eval(), idx({0},{0}));
     entanglement_entropy =  std::real(SA(0));
     t_entropy.toc();
 }
@@ -161,13 +161,13 @@ void class_measurement::compute_finite_chain_energy(){
     auto endL  = env_storage->get_MPS_L().end();
     int iter = 0;
     while(mpsL != endL){
-        const Eigen::Tensor<Scalar,1> &LB_left = std::get<0>(*mpsL);
-        const Eigen::Tensor<Scalar,3> &GA      = std::get<1>(*mpsL);
-        assert(LB_left.dimension(0) == L.dimension(0));
-        assert(LB_left.dimension(0) == GA.dimension(1));
+        const Eigen::Tensor<Scalar,1> &LA = mpsL->get_L(); // std::get<0>(*mpsL);
+        const Eigen::Tensor<Scalar,3> &GA = mpsL->get_G(); // std::get<1>(*mpsL);
+        assert(LA.dimension(0) == L.dimension(0));
+        assert(LA.dimension(0) == GA.dimension(1));
 
-        temp = L.contract(asDiagonal(LB_left), idx({0},{0}))
-                .contract(asDiagonal(LB_left), idx({0},{0}))
+        temp = L.contract(asDiagonal(LA), idx({0},{0}))
+                .contract(asDiagonal(LA), idx({0},{0}))
                 .contract(mpoL->MPO,           idx({0},{0}))
                 .contract(GA,                  idx({0,3},{1,0}))
                 .contract(GA.conjugate(),      idx({0,2},{1,0}))
@@ -192,8 +192,8 @@ void class_measurement::compute_finite_chain_energy(){
     auto mpoR  = env_storage->get_MPO_R().begin();
     auto endR  = env_storage->get_MPS_R().end();
     while(mpsR != endR){
-        const Eigen::Tensor<Scalar,3> &GB      = std::get<0>(*mpsR);
-        const Eigen::Tensor<Scalar,1> &LB      = std::get<1>(*mpsR);
+        const Eigen::Tensor<Scalar,3> &GB = mpsR->get_G(); // std::get<0>(*mpsR);
+        const Eigen::Tensor<Scalar,1> &LB = mpsR->get_L(); // std::get<1>(*mpsR);
         assert(GB.dimension(1) == L.dimension(0));
         assert(LB.dimension(0) == GB.dimension(2));
         temp = L.contract(GB,            idx({0},{1}))
@@ -218,25 +218,25 @@ void class_measurement::compute_finite_chain_norm(){
 
     auto mpsL  = env_storage->get_MPS_L().begin();
     auto endL  = env_storage->get_MPS_L().end();
-    const Eigen::Tensor<Scalar,1>  & LB_left = std::get<0>(*mpsL);
-    const Eigen::Tensor<Scalar,3>  & GA      = std::get<1>(*mpsL);
+    const Eigen::Tensor<Scalar,1>  & LA_ = mpsL->get_L(); // std::get<0>(*mpsL);
+    const Eigen::Tensor<Scalar,3>  & GA_ = mpsL->get_G(); // std::get<1>(*mpsL);
     Eigen::Tensor<Scalar,2> chain =
-             asDiagonal(LB_left)
-            .contract(asDiagonal(LB_left), idx({0},{1}))
-            .contract(GA                 , idx({1},{1}))
-            .contract(GA.conjugate()     , idx({0,1},{1,0}));
+             asDiagonal(LA_)
+            .contract(asDiagonal(LA_), idx({0},{1}))
+            .contract(GA_                 , idx({1},{1}))
+            .contract(GA_.conjugate()     , idx({0,1},{1,0}));
     Eigen::TensorRef<Eigen::Tensor<Scalar,2>> temp;
     mpsL++;
     while(mpsL != endL){
-        const Eigen::Tensor<Scalar,1>  & LB_left = std::get<0>(*mpsL);
-        const Eigen::Tensor<Scalar,3>  & GA      = std::get<1>(*mpsL);
-        assert(LB_left.dimension(0) == chain.dimension(0));
-        assert(LB_left.dimension(0) == GA.dimension(1));
+        const Eigen::Tensor<Scalar,1>  & LA = mpsL->get_L() ; // std::get<0>(*mpsL);
+        const Eigen::Tensor<Scalar,3>  & GA = mpsL->get_G() ; // std::get<1>(*mpsL);
+        assert(LA.dimension(0) == chain.dimension(0));
+        assert(LA.dimension(0) == GA.dimension(1));
         temp = chain
-                .contract(asDiagonal(LB_left), idx({0},{0}))
-                .contract(asDiagonal(LB_left), idx({0},{0}))
-                .contract(GA                 , idx({0},{1}))
-                .contract(GA.conjugate()     , idx({0,1},{1,0}));
+                .contract(asDiagonal(LA), idx({0},{0}))
+                .contract(asDiagonal(LA), idx({0},{0}))
+                .contract(GA            , idx({0},{1}))
+                .contract(GA.conjugate(), idx({0,1},{1,0}));
         chain = temp;
         mpsL++;
     }
@@ -253,8 +253,8 @@ void class_measurement::compute_finite_chain_norm(){
     auto endR  = env_storage->get_MPS_R().end();
 
     while(mpsR != endR){
-        const Eigen::Tensor<Scalar,3> &GB  = std::get<0>(*mpsR);
-        const Eigen::Tensor<Scalar,1> &LB  = std::get<1>(*mpsR);
+        const Eigen::Tensor<Scalar,3> &GB  = mpsR->get_G(); //std::get<0>(*mpsR);
+        const Eigen::Tensor<Scalar,1> &LB  = mpsR->get_L(); //std::get<1>(*mpsR);
         assert(GB.dimension(1) == chain.dimension(0));
         assert(LB.dimension(0) == GB.dimension(2));
 
@@ -281,13 +281,13 @@ void class_measurement::compute_finite_chain_mps_state(){
     Eigen::TensorRef<Eigen::Tensor<Scalar,2>> temp;
 
     while(mpsL != endL){
-        const Eigen::Tensor<Scalar,1>  & LB_left = std::get<0>(*mpsL);
-        const Eigen::Tensor<Scalar,3>  & GA      = std::get<1>(*mpsL);
-        assert(LB_left.dimension(0) == GA.dimension(1));
+        const Eigen::Tensor<Scalar,1>  & LA = mpsL->get_L(); //std::get<0>(*mpsL);
+        const Eigen::Tensor<Scalar,3>  & GA = mpsL->get_G(); //std::get<1>(*mpsL);
+        assert(LA.dimension(0) == GA.dimension(1));
 
         temp = chain
-                .contract(asDiagonal(LB_left), idx({1},{0}))
-                .contract(GA                 , idx({1},{1}))
+                .contract(asDiagonal(LA), idx({1},{0}))
+                .contract(GA            , idx({1},{1}))
                 .reshape(array2{GA.dimension(0) * chain.dimension(0), GA.dimension(2)});
         chain = temp;
         mpsL++;
@@ -303,8 +303,8 @@ void class_measurement::compute_finite_chain_mps_state(){
     auto endR  = env_storage->get_MPS_R().end();
 
     while(mpsR != endR){
-        const Eigen::Tensor<Scalar,3> &GB  = std::get<0>(*mpsR);
-        const Eigen::Tensor<Scalar,1> &LB  = std::get<1>(*mpsR);
+        const Eigen::Tensor<Scalar,3> &GB  = mpsR->get_G(); // std::get<0>(*mpsR);
+        const Eigen::Tensor<Scalar,1> &LB  = mpsR->get_L(); // std::get<1>(*mpsR);
         assert(LB.dimension(0) == GB.dimension(2));
         temp = chain
                 .contract(GB              , idx({1},{1}))
@@ -333,7 +333,7 @@ double class_measurement::get_entanglement_entropy(){
 }
 
 double class_measurement::get_truncation_error(){
-    return truncation_error;
+    return superblock->MPS->truncation_error;
 }
 
 double class_measurement::get_parity(){
@@ -342,7 +342,7 @@ double class_measurement::get_parity(){
 
 
 long class_measurement::get_chi(){
-    return superblock->chi;
+    return superblock->MPS->chiC();
 }
 
 long class_measurement::get_chain_length(){

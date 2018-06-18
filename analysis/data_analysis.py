@@ -39,11 +39,13 @@ sns.set_palette(sns.color_palette("husl", 8))
 # sns.set_palette(sns.color_palette("husl", 5))
 ####################################################################################
 
-filename = '../output/output-528.h5'
+filename = '../output/output-576.h5'
 
 if(not os.path.exists(filename)):
     print("File does not exist.")
     exit(1)
+
+
 
 store               = pd.HDFStore(filename)
 iDMRG_exists        = "iDMRG" in store
@@ -86,6 +88,8 @@ if iDMRG_exists:
 if fDMRG_exists:
     group = "fDMRG/fDMRG"
     keys = [s for s in store.keys() if "/"+group in s]
+    exit(0)
+
     fig, ax = plt.subplots(2, 2, sharex=False)
     plt.suptitle(group)
     ax[0, 0].axhline(y=-1.2732395447351625, xmin=0, xmax=1, c="blue", linewidth=0.5, zorder=0,label='$\chi = \infty$')

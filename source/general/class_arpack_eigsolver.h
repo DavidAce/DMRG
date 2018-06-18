@@ -2,22 +2,19 @@
 // Created by david on 2018-05-06.
 //
 
-#ifndef CLASS_ARPACKPP_WRAPPER2_H
-#define CLASS_ARPACKPP_WRAPPER2_H
+#ifndef CLASS_ARPACK_EIGSOLVER_H
+#define CLASS_ARPACK_EIGSOLVER_H
 
 #include <map>
 #include <complex>
 #include <vector>
 #include <iostream>
-#include "class_tic_toc.h"
+#include <memory>
+#include <general/class_tic_toc.h>
+#include "nmspc_eigsolver_props.h"
 
-namespace arpackpp{
-    enum class Form{SYMMETRIC, GENERAL};  // Real Symmetric, Real General or Complex General
-    enum class Ritz {LA,SA,LM,SM,LR,SR,LI,SI,BE}; //choice of eigenvalue. C is largest algebraic, and so on.
-    enum class Side {L,R};           //Left or right eigenvectors
-}
 
-using namespace arpackpp;
+class class_superblock;
 
 template<typename Scalar, Form form = Form::GENERAL>
 class class_arpack_eigsolver {
@@ -36,10 +33,13 @@ private:
     int     counter         = 0;
     bool    eigvecs_found   = false;
     bool    eigvals_found   = false;
+    bool    compute_eigvecs = false;
+    bool    remove_phase    = false;
+    Scalar  *residual = nullptr;
     std::vector<Scalar> eigvecs;
     std::vector<Scalar> eigvals;
 
-    using  MapType = std::map<arpackpp::Ritz, std::string>;
+    using  MapType = std::map<eigsolver_properties::Ritz, std::string>;
     MapType RitzToString;
     char ritz_char[2];
 
@@ -79,65 +79,28 @@ public:
 
 
     class_arpack_eigsolver();
-    class_arpack_eigsolver(const Scalar *matrix_data,
-                           const Ritz ritz,
-                           const Side side,
-                           const int n,
-                           const int nev,
-                           const int ncv,
-                           const double threshold,
-                           const int MaxIter,
-                           const bool getvecs=false,
-                           const bool dephase=false,
-                           Scalar *residp = NULL);
-    class_arpack_eigsolver(const Scalar *matrix_data,
-                           const Ritz ritz,
-                           const Side side,
-                           const int n,
-                           const int nev,
-                           const int ncv,
-                           const bool getvecs=false,
-                           const bool dephase=false,
-                           Scalar *residp = NULL);
 
 
-    class_arpack_eigsolver(const Scalar *Lblock,                            /*!< The left block tensor.  */
-                           const Scalar *Rblock,                            /*!< The right block tensor.  */
-                           const Scalar *HA,                                /*!< The left Hamiltonian MPO's  */
-                           const Scalar *HB,                                /*!< The right Hamiltonian MPO's */
-                           const std::array<long,4> shape_theta4,           /*!< An array containing the shapes of theta  */
-                           const std::array<long,4> shape_mpo4 ,            /*!< An array containing the shapes of the MPO  */
-                           const Ritz ritz,
-                           const int nev,
-                           const int ncv,
-                           const bool bool_dephase=true,
-                           Scalar *resid = nullptr);
-
-    class_arpack_eigsolver(const Scalar *Lblock,        /*!< The left block tensor.  */
-                           const Scalar *Rblock,        /*!< The right block tensor.  */
-                           const Scalar *HA,            /*!< The left Hamiltonian MPO's  */
-                           const Scalar *HB,            /*!< The right Hamiltonian MPO's */
-                           const std::array<long,4> shape_theta4,         /*!< An array containing the shapes of theta  */
-                           const std::array<long,4> shape_mpo4 ,           /*!< An array containing the shapes of the MPO  */
-                           const Ritz ritz,
-                           const int nev,
-                           const int ncv,
-                           const double threshold,
-                           const int MaxIter,
-                           const bool bool_dephase=true,
-                           Scalar *resid = nullptr);
-
-
+    class_arpack_eigsolver(
+            const double eigThreshold_,
+            const int eigMaxIter_,
+            const int eigMaxNcv_,
+            const bool get_eigvecs_=false,
+            const bool remove_phase_=false);
 
 
     const std::vector<Scalar> & ref_eigvecs() const;
     const std::vector<Scalar> & ref_eigvals() const;
+    auto ref_eig_vecs_vals() const{
+        return std::make_pair(ref_eigvecs(), ref_eigvals());
+    }
 
     const std::vector<Scalar> get_eigvecs() const;
     const std::vector<Scalar> get_eigvals() const;
+    auto get_eig_vecs_vals() const{
+        return std::make_pair(get_eigvecs(), get_eigvals());
+    }
 
-
-//
 
     void subtract_phase();
 
@@ -157,57 +120,34 @@ public:
         return Iter;
     }
 
+
     void eig(const Scalar *matrix_data,
-             const Ritz ritz,
-             const Side side,
              const int n,
              const int nev,
              const int ncv,
-             const double threshold,
-             const int  MaxIter,
-             const bool bool_find_eigvecs=false,
-             const bool bool_dephase=false,
-             Scalar *residp = nullptr
+             const Ritz ritz = Ritz::SR,
+             const Side side = Side::R,
+             const bool compute_eigvecs_=false,
+             const bool remove_phase_=false,
+             Scalar *residual_ = nullptr
     );
 
-    const std::pair<const std::vector<Scalar>&,const std::vector<Scalar>&>
-    eig_ref_vec_val(const Scalar *matrix_data,
-                    const Ritz ritz,
-                    const Side side,
-                    const int n,
-                    const int nev,
-                    const int ncv,
-                    const bool bool_dephase = false,
-                    Scalar *residp = nullptr
-    );
 
-    const std::pair<const std::vector<Scalar>,const std::vector<Scalar>>
-    eig_get_vec_val(const Scalar *matrix_data,
-                    const Ritz ritz,
-                    const Side side,
-                    const int n,
-                    const int nev,
-                    const int ncv,
-                    const bool bool_dephase = false,
-                    Scalar *residp = nullptr
-    );
 
     void optimize_mps(
-            const Scalar *Lblock_,        /*!< The left block tensor.  */
-            const Scalar *Rblock_,        /*!< The right block tensor.  */
-            const Scalar *HA_,            /*!< The left Hamiltonian MPO's  */
-            const Scalar *HB_,            /*!< The right Hamiltonian MPO's */
-            const std::array<long,4> shape_theta4_,         /*!< An array containing the shapes of theta  */
-            const std::array<long,4> shape_mpo4_ ,           /*!< An array containing the shapes of the MPO  */
-            const Ritz ritz,
+            const Scalar *Lblock_,                   /*!< The left block tensor.  */
+            const Scalar *Rblock_,                   /*!< The right block tensor.  */
+            const Scalar *HA_,                       /*!< The left Hamiltonian MPO's  */
+            const Scalar *HB_,                       /*!< The right Hamiltonian MPO's */
+            const std::array<long,4> shape_theta4_,  /*!< An array containing the shapes of theta  */
+            const std::array<long,4> shape_mpo4_ ,   /*!< An array containing the shapes of the MPO  */
             const int nev,
             const int ncv,
-            const double threshold,
-            const int MaxIter,
-            const bool bool_dephase = true,
-            Scalar *residp = nullptr);
+            const Ritz ritz = Ritz::SR,
+            const bool remove_phase_ = true,
+            Scalar *residual_ = nullptr);
 
 };
 
 
-#endif //DMRG_CLASS_ARPACKPP_WRAPPER2_H
+#endif //CLASS_ARPACK_EIGSOLVER_H

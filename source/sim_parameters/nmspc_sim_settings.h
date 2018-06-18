@@ -24,6 +24,7 @@ namespace settings {
     namespace model {
         extern double       J             ;                 /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
         extern double       g             ;                 /*!< Transverse field strength */
+        extern int          d             ;                 /*!< Local dimension */
         extern std::string  initial_state ;                 /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
     }
 

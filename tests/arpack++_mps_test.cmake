@@ -1,6 +1,6 @@
 enable_language(Fortran)
 
-add_executable(arpack++_mps_test_target tests/arpack++_mps_test.cpp source/general/class_arpack_eigsolver.cpp source/general/class_arpack_custom_products.cpp)
+add_executable(arpack++_mps_test_target tests/arpack++_mps_test.cpp source/general/class_arpack_eigsolver.cpp source/general/class_arpack_custom_products.cpp source/general/class_tic_toc.cpp)
 set_target_properties(arpack++_mps_test_target PROPERTIES OUTPUT_NAME  arpack++_mps_test)
 target_link_libraries(arpack++_mps_test_target PRIVATE arpack arpack++ blas lapack EIGEN3 -lstdc++fs -flto)
 

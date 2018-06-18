@@ -42,6 +42,34 @@ namespace rn{
         return std::polar(1.0,rand_real(rng));
     }
 
+    template<typename T>
+    inline std::vector<T> uniform_unit_n_sphere(int n){
+        std::vector<T> arr;
+        std::normal_distribution<double> distribution(0.0,1.0);
+        double norm = 0.0;
+        for (int i = 0; i < n; i++){
+            if constexpr(std::is_same<T,std::complex<double>>::value){
+                double re = distribution(rng);
+                double im = distribution(rng);
+                std::complex<double> cplx = 1.0*re + 1.0i*im;
+                arr.push_back(cplx);
+                norm += re*re + im*im;
+            }else{
+                arr.push_back(distribution(rng));
+                norm += std::abs(arr[i]*arr[i]);
+
+            }
+        }
+
+        norm = std::sqrt(norm);
+        for (int i = 0; i < n; i++){
+            arr[i] /= norm;
+        }
+        return arr;
+
+    }
+
+
     extern Eigen::ArrayXd random_with_replacement(const Eigen::ArrayXd & indata);
     extern Eigen::ArrayXd random_with_replacement(const Eigen::ArrayXd & indata, const int num_choose);
 
