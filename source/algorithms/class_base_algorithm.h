@@ -86,10 +86,10 @@ public:
     void single_TEBD_step(long chi_max);
 
     virtual void check_convergence_overall();
-    void check_convergence_variance_mpo();
-    void check_convergence_variance_ham();
-    void check_convergence_variance_mom();
-    void check_convergence_entanglement();
+    void check_convergence_variance_mpo(double threshold = -1.0);
+    void check_convergence_variance_ham(double threshold = -1.0);
+    void check_convergence_variance_mom(double threshold = -1.0);
+    void check_convergence_entanglement(double threshold = -1.0);
     void check_convergence_bond_dimension();
     void clear_convergence_checks();
 

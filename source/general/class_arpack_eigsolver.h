@@ -68,6 +68,8 @@ private:
             eigvals.insert(eigvals.begin(), solution.RawEigenvalues(), solution.RawEigenvalues() + cols);
         }
     }
+    void shift_invert_eigvals(Scalar sigma);
+    void subtract_phase();
 
     class_tic_toc t_sol;
     class_tic_toc t_get;
@@ -102,7 +104,6 @@ public:
     }
 
 
-    void subtract_phase();
 
     void setThreshold(double newThreshold) {
         eigThreshold = newThreshold;
@@ -132,6 +133,18 @@ public:
              Scalar *residual_ = nullptr
     );
 
+
+    void eig_shift_invert(
+             Scalar *matrix_data,
+             const int n,
+             const int nev,
+             const int ncv,
+             const Scalar shift,
+             const Ritz ritz,
+             const bool compute_eigvecs_= false,
+             const bool remove_phase_= false,
+             Scalar *residual_ = nullptr
+    );
 
 
     void optimize_mps(

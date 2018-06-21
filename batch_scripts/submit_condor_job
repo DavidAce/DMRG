@@ -5,4 +5,4 @@ arguments  = $(inputfiles)
 log        = logs/DMRG++_$(ID).log
 output     = logs/DMRG++_$(ID).out
 error      = logs/DMRG++_$(ID).error
-queue inputfiles matching files ../input/test_*.cfg
+queue inputfiles matching files ../input/fes_*.cfg
