@@ -44,25 +44,18 @@ void class_base_algorithm::single_DMRG_step(long chi_max, Ritz ritz){
  * \fn void single_DMRG_step(class_superblock &superblock)
  */
     t_sim.tic();
-
-//    superblock->set_current_dimensions();
     t_opt.tic();
-//    std::cout << "GA: " << superblock->MPS->MPS_A->get_G().dimensions() << std::endl;
     superblock->MPS->theta = superblock->MPS->get_theta();
-//    std::cout << "GA: " << superblock->MPS->MPS_A->get_G().dimensions() << std::endl;
     superblock->MPS->theta = superblock->optimize_MPS(superblock->MPS->theta, ritz);
-//    std::cout << "GA: " << superblock->MPS->MPS_A->get_G().dimensions() << std::endl;
     t_opt.toc();
     t_svd.tic();
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, s::precision::SVDThreshold);
-//    std::cout << "GA: " << superblock->MPS->MPS_A->get_G().dimensions() << std::endl;
     t_svd.toc();
     //Reduce the hamiltonians if you are doing infinite systems:
     if(sim_type == SimulationType::iDMRG){
         superblock->HA->update_site_energy(superblock->E_optimal);
         superblock->HB->update_site_energy(superblock->E_optimal);
     }
-//    superblock->set_current_dimensions();
     measurement->set_not_measured();
     t_sim.toc();
 }
@@ -77,7 +70,6 @@ void class_base_algorithm::single_TEBD_step(long chi_max){
     t_sim.tic();
     for (auto &U: superblock->H->U){
         t_evo.tic();
-//        superblock->set_current_dimensions();
         superblock->MPS->theta = superblock->evolve_MPS(superblock->MPS->get_theta() ,U);
         t_evo.toc();
 
@@ -88,7 +80,6 @@ void class_base_algorithm::single_TEBD_step(long chi_max){
         if (&U != &superblock->H->U.back()) {
             superblock->swap_AB();        }
     }
-//    superblock->set_current_dimensions();
     measurement->set_not_measured();
     t_sim.toc();
 }
@@ -96,12 +87,12 @@ void class_base_algorithm::single_TEBD_step(long chi_max){
 void class_base_algorithm::check_convergence_overall(){
     t_con.tic();
     check_convergence_entanglement();
-    check_convergence_variance_mpo();
+//    check_convergence_variance_mpo();
     check_convergence_variance_ham();
     check_convergence_variance_mom();
     check_convergence_bond_dimension();
     if(entanglement_has_converged and
-       variance_mpo_has_converged and
+//       variance_mpo_has_converged and
        variance_ham_has_converged and
        variance_mom_has_converged and
        bond_dimension_has_converged)
@@ -120,7 +111,6 @@ void class_base_algorithm::check_convergence_using_slope(
                                    double &slope,
                                    bool &has_converged){
     //Check convergence based on slope.
-    if (not measurement->has_been_measured()){return;}
     // We want to check once every "rate" steps
     unsigned long max_data_points = 10;
     unsigned long min_data_points = 4;
@@ -161,59 +151,61 @@ void class_base_algorithm::check_convergence_using_slope(
     }
 }
 
-void class_base_algorithm::check_convergence_variance_mpo(){
+void class_base_algorithm::check_convergence_variance_mpo(double threshold){
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
+    threshold = threshold == -1 ? settings::precision::eigThreshold : threshold;
     check_convergence_using_slope(V_mpo_vec,
                                   X_mpo_vec,
                                   measurement->get_variance_mpo(),
                                   1,
-                                  settings::precision::eigThreshold,
+                                  threshold,
                                   V_mpo_slope,
                                   variance_mpo_has_converged);
 }
 
-void class_base_algorithm::check_convergence_variance_ham(){
+void class_base_algorithm::check_convergence_variance_ham(double threshold){
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
+    threshold = threshold == -1 ? settings::precision::eigThreshold : threshold;
     check_convergence_using_slope(V_ham_vec,
                                   X_ham_vec,
                                   measurement->get_variance_ham(),
                                   1,
-                                  settings::precision::eigThreshold,
+                                  threshold,
                                   V_ham_slope,
                                   variance_ham_has_converged);
 
 }
 
-void class_base_algorithm::check_convergence_variance_mom(){
+void class_base_algorithm::check_convergence_variance_mom(double threshold){
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
+    threshold = threshold == -1 ? settings::precision::eigThreshold : threshold;
     check_convergence_using_slope(V_mom_vec,
                                   X_mom_vec,
                                   measurement->get_variance_mom(),
                                   1,
-                                  settings::precision::eigThreshold,
+                                  threshold,
                                   V_mom_slope,
                                   variance_mom_has_converged);
 
 }
 
-void class_base_algorithm::check_convergence_entanglement() {
+void class_base_algorithm::check_convergence_entanglement(double threshold) {
     //Based on the the slope of entanglement entanglement_entropy
     // This one is cheap to compute.
-    if(not env_storage->position_is_the_middle()){return;}
+    threshold = threshold == -1 ? settings::precision::SVDThreshold : threshold;
     check_convergence_using_slope(S_vec,
                                   X2_vec,
                                   measurement->get_entanglement_entropy(),
                                   1,
-                                  settings::precision::SVDThreshold,
+                                  threshold,
                                   S_slope,
                                   entanglement_has_converged);
 }
 
 void class_base_algorithm::check_convergence_bond_dimension(){
-    if(not env_storage->position_is_the_middle()){return;}
     if(not chi_grow or bond_dimension_has_converged or chi_temp == chi_max ){
         chi_temp = chi_max;
         bond_dimension_has_converged = true;
