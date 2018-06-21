@@ -1,0 +1,127 @@
+Using Intel MKL with 1 thread(s)
+Git Branch: study_finite_entanglement_scaling | Commit hash: d1054e6f | Revision: 278
+Input argument [0] : condor_exec.exe
+Input argument [1] : ../input/fes_3.cfg
+Found input file: "/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/input/fes_3.cfg"
+Loading line:     model::J                        = 1                         /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
+Loading line:     model::g                        = 1                         /*!< Transverse field strength */
+Loading line:     model::d                        = 2                         /*!< Local dimension
+Loading line:     model::initial_state            = rps                       /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
+Loading line:     precision::eigMaxIter           = 1000                      /*!< Maximum number of steps for eigenvalue solver. */
+Loading line:     precision::eigThreshold         = 1e-10                     /*!< Minimum threshold for halting eigenvalue solver. */
+Loading line:     precision::eigMaxNcv            = 16                        /*!< Parameter controlling the column space? of the Lanczos solver. 16 is close to optimum when chi = 16. Coincidence? */
+Loading line:     precision::eigThreshold         = 1e-10                     /*!< Minimum threshold for halting eigenvalue solver. */
+Loading line:     idmrg::on                       = true                      /*!< Turns iDMRG simulation on/off. */
+Loading line:     idmrg::max_steps                = 500000                    /*!< Number of steps for the simulation. */
+Loading line:     idmrg::chi_max                  = 20                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+Loading line:     idmrg::chi_grow                 = false                     /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
+Loading line:     idmrg::print_freq               = 500                       /*!< Print frequency for console output. (0 = off).*/
+Loading line:     idmrg::store_freq               = 500                       /*!< Store frequency,for output file buffer. (0 = off). */
+Loading line:     fdmrg::on                       = false                     /*!< Turns fDMRG simulation on/off. */
+Loading line:     xdmrg::on                       = false                     /*!< Turns xDMRG simulation on/off. */
+Loading line:     itebd::on                       = false                     /*!< Turns iTEBD simulation on/off. */
+Loading line:     hdf5::save_to_file              = true                      /*!< (Not implemented yet) If true, saves the simulation data to an HDF5 file instead of just outputting to console */
+Loading line:     hdf5::create_dir_if_not_found   = true                      /*!< If true, an output directory will be created in the project root folder if it isn't found */
+Loading line:     hdf5::overwrite_file_if_found   = false                     /*!< If true, an hdf5-file with the provided filename will be overwritten if found in output_folder */
+Loading line:     hdf5::output_filename           = fes_3.h5                  /*!< Name of the output HDF5 file. Without quotes! */
+Loading line:     hdf5::output_folder             = output                    /*!< Path of the output HDF5 file */
+Loading line:     hdf5::full_storage              = false                     /*!< (Not implemented yet) If true, saves more simulation data to file (such as explicit form of MPS). Set to false to reduce output file size. */
+Loading line:     profiling::on                   = true                      /*!< If true, turns on profiling and timings will be shown on console. */
+Loading line:     profiling::precision            = 5                         /*!< Sets precision (number of decimals) of time output. */
+Loading line:     console::verbosity              = 1                         /*!< (PARTIALLY IMPLEMENTED) Level of verbosity desired [0-2]. Level 0 prints almost nothing, level 2 prints everything */
+Loading line:     console::timestamp              = false                     /*!< (NOT IMPLEMENTED) Whether to put a timestamp on console outputs */
+output_folder     = "output"
+output_filename   = "fes_3.h5"
+Directory already exists: "/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/output"
+Creating new file: "/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/output/fes_3.h5"
+Initializing random product state
+
+Starting iDMRG simulation
+iDMRG Step: 500       E: -1.2732423389229328  -1.2732390479229523  -1.2732390481127989  log₁₀ σ²(E): -2.3266     -6.1724     -6.1722     S: 0.6997132142112829   χmax: 20  χ: 20  log₁₀ truncation: -8.2823     Chain length: 1002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 1000      E: -1.2732399784969894  -1.2732391974648489  -1.2732391976834969  log₁₀ σ²(E): -2.6272     -6.1515     -6.1482     S: 0.7476010919702630   χmax: 20  χ: 20  log₁₀ truncation: -7.9294     Chain length: 2002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 1500      E: -1.2732394992903211  -1.2732392285744862  -1.2732392287912606  log₁₀ σ²(E): -2.8031     -6.1424     -6.1435     S: 0.7667678552578975   χmax: 20  χ: 20  log₁₀ truncation: -7.8153     Chain length: 3002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 2000      E: -1.2732393286704713  -1.2732392387812352  -1.2732392389863305  log₁₀ σ²(E): -2.9279     -6.1371     -6.1373     S: 0.7753678363075556   χmax: 20  χ: 20  log₁₀ truncation: -7.7684     Chain length: 4002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 2500      E: -1.2732392551642144  -1.2732392429596815  -1.2732392431585604  log₁₀ σ²(E): -3.0247     -6.1343     -6.1346     S: 0.7794082438007338   χmax: 20  χ: 20  log₁₀ truncation: -7.7470     Chain length: 5002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 3000      E: -1.2732392209195598  -1.2732392450270296  -1.2732392452327714  log₁₀ σ²(E): -3.1039     -6.1330     -6.1336     S: 0.7812943720038106   χmax: 20  χ: 20  log₁₀ truncation: -7.7369     Chain length: 6002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 3500      E: -1.2732392045504926  -1.2732392464865554  -1.2732392466904554  log₁₀ σ²(E): -3.1708     -6.1328     -6.1330     S: 0.7820263974930071   χmax: 20  χ: 20  log₁₀ truncation: -7.7322     Chain length: 7002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 4000      E: -1.2732391970477084  -1.2732392483663728  -1.2732392485684894  log₁₀ σ²(E): -3.2287     -6.1337     -6.1345     S: 0.7818999393377885   χmax: 20  χ: 20  log₁₀ truncation: -7.7304     Chain length: 8002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 4500      E: -1.2732391947262824  -1.2732392521055602  -1.2732392523065477  log₁₀ σ²(E): -3.2798     -6.1365     -6.1346     S: 0.7806358177964011   χmax: 20  χ: 20  log₁₀ truncation: -7.7308     Chain length: 9002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 5000      E: -1.2732391969954509  -1.2732392605365348  -1.2732392607384493  log₁₀ σ²(E): -3.3255     -6.1438     -6.1441     S: 0.7770977390739421   χmax: 20  χ: 20  log₁₀ truncation: -7.7343     Chain length: 10002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 5500      E: -1.2732392062232676  -1.2732392790337714  -1.2732392792376259  log₁₀ σ²(E): -3.3669     -6.1614     -6.1612     S: 0.7684982436868754   χmax: 20  χ: 20  log₁₀ truncation: -7.7439     Chain length: 11002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 6000      E: -1.2732392286932965  -1.2732393147273680  -1.2732393149272396  log₁₀ σ²(E): -3.4046     -6.2010     -6.2010     S: 0.7492302435423199   χmax: 20  χ: 20  log₁₀ truncation: -7.7673     Chain length: 12002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 6500      E: -1.2732392735608320  -1.2732393681623906  -1.2732393683577121  log₁₀ σ²(E): -3.4393     -6.2806     -6.2802     S: 0.7115629511822280   χmax: 20  χ: 20  log₁₀ truncation: -7.8193     Chain length: 13002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 7000      E: -1.2732393409338052  -1.2732394221927352  -1.2732394223759944  log₁₀ σ²(E): -3.4715     -6.4087     -6.4134     S: 0.6543424344843444   χmax: 20  χ: 20  log₁₀ truncation: -7.9176     Chain length: 14002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 7500      E: -1.2732394058668719  -1.2732394565949305  -1.2732394567848426  log₁₀ σ²(E): -3.5015     -6.5557     -6.5564     S: 0.5942656005007626   χmax: 20  χ: 20  log₁₀ truncation: -8.0562     Chain length: 15002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 8000      E: -1.2732394438798718  -1.2732394715837945  -1.2732394717772457  log₁₀ σ²(E): -3.5295     -6.6758     -6.6748     S: 0.5509284170266407   χmax: 20  χ: 20  log₁₀ truncation: -8.1917     Chain length: 16002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 8500      E: -1.2732394591640703  -1.2732394767739919  -1.2732394769614679  log₁₀ σ²(E): -3.5558     -6.7538     -6.7538     S: 0.5266757162208475   χmax: 20  χ: 20  log₁₀ truncation: -8.2877     Chain length: 17002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 9000      E: -1.2732394643105909  -1.2732394783574541  -1.2732394785440473  log₁₀ σ²(E): -3.5806     -6.7968     -6.7974     S: 0.5146924977664951   χmax: 20  χ: 20  log₁₀ truncation: -8.3422     Chain length: 18002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 9500      E: -1.2732394660242434  -1.2732394788315538  -1.2732394790166330  log₁₀ σ²(E): -3.6041     -6.8182     -6.8148     S: 0.5090819001408506   χmax: 20  χ: 20  log₁₀ truncation: -8.3695     Chain length: 19002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 10000     E: -1.2732394666406592  -1.2732394789848502  -1.2732394791715493  log₁₀ σ²(E): -3.6263     -6.8283     -6.8281     S: 0.5065159651484407   χmax: 20  χ: 20  log₁₀ truncation: -8.3824     Chain length: 20002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 10500     E: -1.2732394668830320  -1.2732394790404264  -1.2732394792334367  log₁₀ σ²(E): -3.6475     -6.8329     -6.8215     S: 0.5053547080071301   χmax: 20  χ: 20  log₁₀ truncation: -8.3883     Chain length: 21002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 11000     E: -1.2732394669845515  -1.2732394790624586  -1.2732394792233681  log₁₀ σ²(E): -3.6677     -6.8350     -6.8246     S: 0.5048316352370544   χmax: 20  χ: 20  log₁₀ truncation: -8.3910     Chain length: 22002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 11500     E: -1.2732394670286122  -1.2732394790718125  -1.2732394792582249  log₁₀ σ²(E): -3.6870     -6.8359     -6.8366     S: 0.5045965245036399   χmax: 20  χ: 20  log₁₀ truncation: -8.3922     Chain length: 23002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 12000     E: -1.2732394670480778  -1.2732394790761183  -1.2732394792670820  log₁₀ σ²(E): -3.7055     -6.8364     -6.8481     S: 0.5044909469764438   χmax: 20  χ: 20  log₁₀ truncation: -8.3927     Chain length: 24002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 12500     E: -1.2732394670567613  -1.2732394790775869  -1.2732394792607586  log₁₀ σ²(E): -3.7232     -6.8366     -6.8323     S: 0.5044435571932532   χmax: 20  χ: 20  log₁₀ truncation: -8.3930     Chain length: 25002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 13000     E: -1.2732394670606368  -1.2732394790784958  -1.2732394792659636  log₁₀ σ²(E): -3.7402     -6.8366     -6.8371     S: 0.5044222916253096   χmax: 20  χ: 20  log₁₀ truncation: -8.3931     Chain length: 26002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 13500     E: -1.2732394670623739  -1.2732394790788544  -1.2732394792642778  log₁₀ σ²(E): -3.7566     -6.8367     -6.8371     S: 0.5044127487474530   χmax: 20  χ: 20  log₁₀ truncation: -8.3931     Chain length: 27002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 14000     E: -1.2732394670631548  -1.2732394790790069  -1.2732394792657631  log₁₀ σ²(E): -3.7724     -6.8367     -6.8372     S: 0.5044084666648867   χmax: 20  χ: 20  log₁₀ truncation: -8.3931     Chain length: 28002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 14500     E: -1.2732394670635010  -1.2732394790790862  -1.2732394792536172  log₁₀ σ²(E): -3.7876     -6.8367     -6.8296     S: 0.5044065452426376   χmax: 20  χ: 20  log₁₀ truncation: -8.3931     Chain length: 29002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 15000     E: -1.2732394670636535  -1.2732394790791239  -1.2732394792637929  log₁₀ σ²(E): -3.8023     -6.8367     -6.8390     S: 0.5044056830799744   χmax: 20  χ: 20  log₁₀ truncation: -8.3932     Chain length: 30002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 15500     E: -1.2732394670637277  -1.2732394790792148  -1.2732394792728430  log₁₀ σ²(E): -3.8166     -6.8367     -6.8376     S: 0.5044052962265597   χmax: 20  χ: 20  log₁₀ truncation: -8.3932     Chain length: 31002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 16000     E: -1.2732394670637588  -1.2732394790792485  -1.2732394792653703  log₁₀ σ²(E): -3.8304     -6.8367     -6.8475     S: 0.5044051226422889   χmax: 20  χ: 20  log₁₀ truncation: -8.3932     Chain length: 32002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 16500     E: -1.2732394670637717  -1.2732394790791752  -1.2732394792682988  log₁₀ σ²(E): -3.8437     -6.8367     -6.8383     S: 0.5044050447519736   χmax: 20  χ: 20  log₁₀ truncation: -8.3932     Chain length: 33002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 17000     E: -1.2732394670637810  -1.2732394790791290  -1.2732394792612840  log₁₀ σ²(E): -3.8567     -6.8367     -6.8338     S: 0.5044050098005299   χmax: 20  χ: 20  log₁₀ truncation: -8.3932     Chain length: 34002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 17500     E: -1.2732394670637788  -1.2732394790791495  -1.2732394792689063  log₁₀ σ²(E): -3.8693     -6.8367     -6.8530     S: 0.5044049941172259   χmax: 20  χ: 20  log₁₀ truncation: -8.3932     Chain length: 35002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 18000     E: -1.2732394670637788  -1.2732394790791346  -1.2732394792656796  log₁₀ σ²(E): -3.8815     -6.8367     -6.8353     S: 0.5044049870815119   χmax: 20  χ: 20  log₁₀ truncation: -8.3932     Chain length: 36002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 18500     E: -1.2732394670637872  -1.2732394790791588  -1.2732394792610784  log₁₀ σ²(E): -3.8934     -6.8367     -6.8376     S: 0.5044049839211625   χmax: 20  χ: 20  log₁₀ truncation: -8.3932     Chain length: 37002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 19000     E: -1.2732394670637850  -1.2732394790792565  -1.2732394792640453  log₁₀ σ²(E): -3.9049     -6.8367     -6.8410     S: 0.5044049824984028   χmax: 20  χ: 20  log₁₀ truncation: -8.3932     Chain length: 38002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 19500     E: -1.2732394670637850  -1.2732394790790820  -1.2732394792657846  log₁₀ σ²(E): -3.9162     -6.8367     -6.8340     S: 0.5044049818609216   χmax: 20  χ: 20  log₁₀ truncation: -8.3932     Chain length: 39002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 20000     E: -1.2732394670637821  -1.2732394790791122  -1.2732394792655464  log₁₀ σ²(E): -3.9272     -6.8367     -6.8373     S: 0.5044049815744071   χmax: 20  χ: 20  log₁₀ truncation: -8.3932     Chain length: 40002        - Convergence  S-false χ-true σ²- false
+
+ -- Final results -- iDMRG
+Iterations               = 20001
+Energy MPO           = -1.2732394670637821
+Energy HAM           = -1.2732394790791122
+Energy MOM           = -1.2732394792655464
+log₁₀ σ²(E) MPO:     = -3.927208
+log₁₀ σ²(E) HAM:     = -6.836717
+log₁₀ σ²(E) MOM:     = -6.837292
+Entanglement Entropy = 0.5044049815747748
+χmax                 = 20
+χ                    = 20
+log₁₀ truncation:    = -8.3932
+Simulation converged : true
+S slope              = -0.0000000000510701 true
+σ² MPO slope         = 0.0000000000000000 false
+σ² HAM slope         = -0.0000000000000001 true
+σ² MOM slope         = 0.0000000000003616 true
+χ                    = 20 true
+
++Total Time              : 622.07758  s | 100.00000 %
+↳ Store to file          : 0.00014    s |   0.00002 % 
+↳ Printing to console    : 0.00813    s |   0.00131 % 
+↳ Computing observables  : 37.92697   s |   6.09682 % 
+↳+Simulation             : 562.71175  s |  90.45684 % 
+
+ Simulation breakdown:
++Total                   562.71175    s
+↳ Optimize MPS           : 548.04692  s |  97.39390 % 
+↳ SVD Truncation         : 14.65969   s |   2.60519 % 
+↳ Update Environments    : 21.09708   s |   3.74918 % 
+↳ Check Convergence      : 0.14265    s |   0.02535 % 
+
+Computing observables breakdown:
++Total                   37.92697    s
+↳ Energy (MPO)           : 0.01014    s |   0.02672 % 
+↳ Energy (Ham)           : 0.09428    s |   0.24859 % 
+↳ Energy (Gen)           : 0.00000    s |   0.00000 % 
+↳ Variance (MPO)         : 0.10495    s |   0.27673 % 
+↳ Variance (Ham)         : 14.18220   s |  37.39345 % 
+↳ Variance (Gen)         : 20.89776   s |  55.10000 % 
+↳ Ent. Entropy           : 0.12542    s |   0.33069 % 
+↳ Temp1                  : 20.79589   s |  54.83141 % 
+↳ Temp2                  : 0.00000    s |   0.00000 % 
+↳ Temp3                  : 0.00000    s |   0.00000 % 
+↳ Temp4                  : 0.00000    s |   0.00000 % 
+All algorithms finished.
+Data written to file: "/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/output/fes_3.h5"
