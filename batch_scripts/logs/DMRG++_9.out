@@ -1,0 +1,221 @@
+Using Intel MKL with 1 thread(s)
+Git Branch: study_finite_entanglement_scaling | Commit hash: d1054e6f | Revision: 278
+Input argument [0] : condor_exec.exe
+Input argument [1] : ../input/fes_8.cfg
+Found input file: "/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/input/fes_8.cfg"
+Loading line:     model::J                        = 1                         /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
+Loading line:     model::g                        = 1                         /*!< Transverse field strength */
+Loading line:     model::d                        = 2                         /*!< Local dimension
+Loading line:     model::initial_state            = rps                       /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
+Loading line:     precision::eigMaxIter           = 1000                      /*!< Maximum number of steps for eigenvalue solver. */
+Loading line:     precision::eigThreshold         = 1e-10                     /*!< Minimum threshold for halting eigenvalue solver. */
+Loading line:     precision::eigMaxNcv            = 16                        /*!< Parameter controlling the column space? of the Lanczos solver. 16 is close to optimum when chi = 16. Coincidence? */
+Loading line:     precision::eigThreshold         = 1e-10                     /*!< Minimum threshold for halting eigenvalue solver. */
+Loading line:     idmrg::on                       = true                      /*!< Turns iDMRG simulation on/off. */
+Loading line:     idmrg::max_steps                = 500000                    /*!< Number of steps for the simulation. */
+Loading line:     idmrg::chi_max                  = 40                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+Loading line:     idmrg::chi_grow                 = false                     /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
+Loading line:     idmrg::print_freq               = 500                       /*!< Print frequency for console output. (0 = off).*/
+Loading line:     idmrg::store_freq               = 500                       /*!< Store frequency,for output file buffer. (0 = off). */
+Loading line:     fdmrg::on                       = false                     /*!< Turns fDMRG simulation on/off. */
+Loading line:     xdmrg::on                       = false                     /*!< Turns xDMRG simulation on/off. */
+Loading line:     itebd::on                       = false                     /*!< Turns iTEBD simulation on/off. */
+Loading line:     hdf5::save_to_file              = true                      /*!< (Not implemented yet) If true, saves the simulation data to an HDF5 file instead of just outputting to console */
+Loading line:     hdf5::create_dir_if_not_found   = true                      /*!< If true, an output directory will be created in the project root folder if it isn't found */
+Loading line:     hdf5::overwrite_file_if_found   = false                     /*!< If true, an hdf5-file with the provided filename will be overwritten if found in output_folder */
+Loading line:     hdf5::output_filename           = fes_8.h5                  /*!< Name of the output HDF5 file. Without quotes! */
+Loading line:     hdf5::output_folder             = output                    /*!< Path of the output HDF5 file */
+Loading line:     hdf5::full_storage              = false                     /*!< (Not implemented yet) If true, saves more simulation data to file (such as explicit form of MPS). Set to false to reduce output file size. */
+Loading line:     profiling::on                   = true                      /*!< If true, turns on profiling and timings will be shown on console. */
+Loading line:     profiling::precision            = 5                         /*!< Sets precision (number of decimals) of time output. */
+Loading line:     console::verbosity              = 1                         /*!< (PARTIALLY IMPLEMENTED) Level of verbosity desired [0-2]. Level 0 prints almost nothing, level 2 prints everything */
+Loading line:     console::timestamp              = false                     /*!< (NOT IMPLEMENTED) Whether to put a timestamp on console outputs */
+output_folder     = "output"
+output_filename   = "fes_8.h5"
+Directory already exists: "/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/output"
+Creating new file: "/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/output/fes_8.h5"
+Initializing random product state
+
+Starting iDMRG simulation
+iDMRG Step: 500       E: -1.2732425139698846  -1.2732393867772600  -1.2732393869322871  log₁₀ σ²(E): -2.3266     -7.4803     -7.2795     S: 0.7011702710113128   χmax: 40  χ: 40  log₁₀ truncation: -10.6172    Chain length: 1002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 1000      E: -1.2732402851605888  -1.2732394804927798  -1.2732394806844094  log₁₀ σ²(E): -2.6272     -7.4415     -7.4608     S: 0.7589243511922725   χmax: 40  χ: 40  log₁₀ truncation: -9.9298     Chain length: 2002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 1500      E: -1.2732398668531348  -1.2732395028262480  -1.2732395030205468  log₁₀ σ²(E): -2.8031     -7.4225     -7.2686     S: 0.7921810680300799   χmax: 40  χ: 40  log₁₀ truncation: -9.6229     Chain length: 3002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 2000      E: -1.2732397182756054  -1.2732395119480899  -1.2732395121264313  log₁₀ σ²(E): -2.9280     -7.4101     -7.3835     S: 0.8149703121124866   χmax: 40  χ: 40  log₁₀ truncation: -9.4446     Chain length: 4002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 2500      E: -1.2732396490616009  -1.2732395189299681  -1.2732395191195178  log₁₀ σ²(E): -3.0249     -7.5765     -7.5154     S: 0.8320730732425545   χmax: 40  χ: 40  log₁₀ truncation: -9.3956     Chain length: 5002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 3000      E: -1.2732396108515514  -1.2732395216537959  -1.2732395218132915  log₁₀ σ²(E): -3.1040     -7.5395     -7.5194     S: 0.8455885616227393   χmax: 40  χ: 40  log₁₀ truncation: -9.3133     Chain length: 6002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 3500      E: -1.2732395874640268  -1.2732395232894480  -1.2732395234878833  log₁₀ σ²(E): -3.1709     -7.5113     -7.4759     S: 0.8562493337542929   χmax: 40  χ: 40  log₁₀ truncation: -9.2530     Chain length: 7002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 4000      E: -1.2732395720446879  -1.2732395243414190  -1.2732395245273611  log₁₀ σ²(E): -3.2289     -7.4897     -7.4640     S: 0.8648295195734296   χmax: 40  χ: 40  log₁₀ truncation: -9.2073     Chain length: 8002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 4500      E: -1.2732395613155680  -1.2732395250495117  -1.2732395252247803  log₁₀ σ²(E): -3.2801     -7.4726     -7.4821     S: 0.8718318943515080   χmax: 40  χ: 40  log₁₀ truncation: -9.1717     Chain length: 9002         - Convergence  S-false χ-true σ²- false
+iDMRG Step: 5000      E: -1.2732395535425911  -1.2732395255428295  -1.2732395257222311  log₁₀ σ²(E): -3.3258     -7.4590     -7.4224     S: 0.8776049694054893   χmax: 40  χ: 40  log₁₀ truncation: -9.1435     Chain length: 10002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 5500      E: -1.2732395477346521  -1.2732395258963742  -1.2732395260597875  log₁₀ σ²(E): -3.3672     -7.4480     -7.4206     S: 0.8824018808438659   χmax: 40  χ: 40  log₁₀ truncation: -9.1209     Chain length: 11002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 6000      E: -1.2732395432893993  -1.2732395261567269  -1.2732395263345158  log₁₀ σ²(E): -3.4050     -7.4391     -7.4322     S: 0.8864127498025259   χmax: 40  χ: 40  log₁₀ truncation: -9.1025     Chain length: 12002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 6500      E: -1.2732395398218146  -1.2732395263524734  -1.2732395265342287  log₁₀ σ²(E): -3.4397     -7.4320     -7.4242     S: 0.8897836016273452   χmax: 40  χ: 40  log₁₀ truncation: -9.0875     Chain length: 13002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 7000      E: -1.2732395370748055  -1.2732395265024321  -1.2732395266750227  log₁₀ σ²(E): -3.4719     -7.4263     -7.4744     S: 0.8926280476828161   χmax: 40  χ: 40  log₁₀ truncation: -9.0751     Chain length: 14002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 7500      E: -1.2732395348706154  -1.2732395266188687  -1.2732395267839991  log₁₀ σ²(E): -3.5019     -7.4215     -7.4928     S: 0.8950354333110843   χmax: 40  χ: 40  log₁₀ truncation: -9.0648     Chain length: 15002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 8000      E: -1.2732395330832493  -1.2732395267104630  -1.2732395268879566  log₁₀ σ²(E): -3.5299     -7.4176     -7.4147     S: 0.8970771800345908   χmax: 40  χ: 40  log₁₀ truncation: -9.0561     Chain length: 16002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 8500      E: -1.2732395316212524  -1.2732395267833343  -1.2732395269651451  log₁₀ σ²(E): -3.5562     -7.4143     -7.3615     S: 0.8988113508546803   χmax: 40  χ: 40  log₁₀ truncation: -9.0489     Chain length: 17002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 9000      E: -1.2732395304167838  -1.2732395268421328  -1.2732395270277848  log₁₀ σ²(E): -3.5810     -7.4116     -7.4090     S: 0.9002856301103640   χmax: 40  χ: 40  log₁₀ truncation: -9.0428     Chain length: 18002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 9500      E: -1.2732395294184735  -1.2732395268902954  -1.2732395270790184  log₁₀ σ²(E): -3.6045     -7.4093     -7.3752     S: 0.9015393664574418   χmax: 40  χ: 40  log₁₀ truncation: -9.0376     Chain length: 19002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 10000     E: -1.2732395285868499  -1.2732395269299013  -1.2732395271152415  log₁₀ σ²(E): -3.6268     -7.4074     -7.4053     S: 0.9026050913904975   χmax: 40  χ: 40  log₁₀ truncation: -9.0332     Chain length: 20002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 10500     E: -1.2732395278910824  -1.2732395269631627  -1.2732395271527017  log₁₀ σ²(E): -3.6480     -7.4057     -7.4330     S: 0.9035097042109943   χmax: 40  χ: 40  log₁₀ truncation: -9.0295     Chain length: 21002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 11000     E: -1.2732395273068402  -1.2732395269914671  -1.2732395271806520  log₁₀ σ²(E): -3.6682     -7.4043     -7.3877     S: 0.9042753963666051   χmax: 40  χ: 40  log₁₀ truncation: -9.0264     Chain length: 22002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 11500     E: -1.2732395268146603  -1.2732395270159906  -1.2732395271912418  log₁₀ σ²(E): -3.6875     -7.4030     -7.4042     S: 0.9049203729207363   χmax: 40  χ: 40  log₁₀ truncation: -9.0237     Chain length: 23002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 12000     E: -1.2732395263989129  -1.2732395270376706  -1.2732395272109602  log₁₀ σ²(E): -3.7059     -7.4019     -7.4467     S: 0.9054593803237398   χmax: 40  χ: 40  log₁₀ truncation: -9.0214     Chain length: 24002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 12500     E: -1.2732395260468843  -1.2732395270574490  -1.2732395272375390  log₁₀ σ²(E): -3.7237     -7.4009     -7.3914     S: 0.9059041118106426   χmax: 40  χ: 40  log₁₀ truncation: -9.0194     Chain length: 25002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 13000     E: -1.2732395257481339  -1.2732395270760788  -1.2732395272733563  log₁₀ σ²(E): -3.7407     -7.4000     -7.4032     S: 0.9062634490782461   χmax: 40  χ: 40  log₁₀ truncation: -9.0177     Chain length: 26002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 13500     E: -1.2732395254941573  -1.2732395270944945  -1.2732395272754440  log₁₀ σ²(E): -3.7571     -7.3991     -7.3624     S: 0.9065436041843992   χmax: 40  χ: 40  log₁₀ truncation: -9.0162     Chain length: 27002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 14000     E: -1.2732395252779702  -1.2732395271137786  -1.2732395272949000  log₁₀ σ²(E): -3.7729     -7.3982     -7.3857     S: 0.9067481314306984   χmax: 40  χ: 40  log₁₀ truncation: -9.0149     Chain length: 28002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 14500     E: -1.2732395250940389  -1.2732395271351360  -1.2732395273187673  log₁₀ σ²(E): -3.7881     -7.3972     -7.4078     S: 0.9068778771845518   χmax: 40  χ: 40  log₁₀ truncation: -9.0137     Chain length: 29002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 15000     E: -1.2732395249383208  -1.2732395271601371  -1.2732395273401866  log₁₀ σ²(E): -3.8028     -7.3963     -7.4125     S: 0.9069309833382424   χmax: 40  χ: 40  log₁₀ truncation: -9.0127     Chain length: 30002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 15500     E: -1.2732395248085966  -1.2732395271915742  -1.2732395273727082  log₁₀ σ²(E): -3.8171     -7.3956     -7.3949     S: 0.9069032003092381   χmax: 40  χ: 40  log₁₀ truncation: -9.0119     Chain length: 31002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 16000     E: -1.2732395247040798  -1.2732395272320469  -1.2732395274172701  log₁₀ σ²(E): -3.8309     -7.3950     -7.4134     S: 0.9067886035109370   χmax: 40  χ: 40  log₁₀ truncation: -9.0112     Chain length: 32002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 16500     E: -1.2732395246242119  -1.2732395272842396  -1.2732395274736714  log₁₀ σ²(E): -3.8442     -7.3949     -7.3838     S: 0.9065798492808564   χmax: 40  χ: 40  log₁₀ truncation: -9.0108     Chain length: 33002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 17000     E: -1.2732395245677721  -1.2732395273499357  -1.2732395275274440  log₁₀ σ²(E): -3.8572     -7.3952     -7.4034     S: 0.9062668066132814   χmax: 40  χ: 40  log₁₀ truncation: -9.0106     Chain length: 34002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 17500     E: -1.2732395245332242  -1.2732395274300501  -1.2732395276210351  log₁₀ σ²(E): -3.8698     -7.3959     -7.4186     S: 0.9058345397889658   χmax: 40  χ: 40  log₁₀ truncation: -9.0107     Chain length: 35002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 18000     E: -1.2732395245196679  -1.2732395275282413  -1.2732395277129782  log₁₀ σ²(E): -3.8820     -7.3971     -7.4004     S: 0.9052620964908775   χmax: 40  χ: 40  log₁₀ truncation: -9.0110     Chain length: 36002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 18500     E: -1.2732395245269190  -1.2732395276469217  -1.2732395278281721  log₁₀ σ²(E): -3.8939     -7.3986     -7.4382     S: 0.9045220263443815   χmax: 40  χ: 40  log₁₀ truncation: -9.0116     Chain length: 37002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 19000     E: -1.2732395245555590  -1.2732395277874800  -1.2732395279840867  log₁₀ σ²(E): -3.9055     -7.4005     -7.3633     S: 0.9035799549520402   χmax: 40  χ: 40  log₁₀ truncation: -9.0124     Chain length: 38002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 19500     E: -1.2732395246068933  -1.2732395279565323  -1.2732395281409739  log₁₀ σ²(E): -3.9168     -7.4028     -7.4403     S: 0.9023939289749409   χmax: 40  χ: 40  log₁₀ truncation: -9.0136     Chain length: 39002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 20000     E: -1.2732395246827961  -1.2732395281576914  -1.2732395283384137  log₁₀ σ²(E): -3.9277     -7.4057     -7.4224     S: 0.9009138658400753   χmax: 40  χ: 40  log₁₀ truncation: -9.0151     Chain length: 40002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 20500     E: -1.2732395247859218  -1.2732395283918465  -1.2732395285976699  log₁₀ σ²(E): -3.9385     -7.4092     -7.3881     S: 0.8990807468970263   χmax: 40  χ: 40  log₁₀ truncation: -9.0170     Chain length: 41002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 21000     E: -1.2732395249194943  -1.2732395286698606  -1.2732395288536551  log₁₀ σ²(E): -3.9489     -7.4133     -7.4133     S: 0.8968261431012151   χmax: 40  χ: 40  log₁₀ truncation: -9.0194     Chain length: 42002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 21500     E: -1.2732395250874129  -1.2732395289884204  -1.2732395291739904  log₁₀ σ²(E): -3.9592     -7.4182     -7.4417     S: 0.8940720830547475   χmax: 40  χ: 40  log₁₀ truncation: -9.0224     Chain length: 43002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 22000     E: -1.2732395252941746  -1.2732395293590164  -1.2732395295440428  log₁₀ σ²(E): -3.9691     -7.4240     -7.4757     S: 0.8907313950543321   χmax: 40  χ: 40  log₁₀ truncation: -9.0260     Chain length: 44002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 22500     E: -1.2732395255447777  -1.2732395297747496  -1.2732395299607495  log₁₀ σ²(E): -3.9789     -7.4308     -7.4044     S: 0.8867092131289281   χmax: 40  χ: 40  log₁₀ truncation: -9.0305     Chain length: 45002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 23000     E: -1.2732395258445903  -1.2732395302477055  -1.2732395304316393  log₁₀ σ²(E): -3.9884     -7.4388     -7.4463     S: 0.8819054296714930   χmax: 40  χ: 40  log₁₀ truncation: -9.0359     Chain length: 46002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 23500     E: -1.2732395261990241  -1.2732395307659830  -1.2732395309558131  log₁₀ σ²(E): -3.9978     -7.4480     -7.4030     S: 0.8762191268034880   χmax: 40  χ: 40  log₁₀ truncation: -9.0423     Chain length: 47002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 24000     E: -1.2732395266132523  -1.2732395313315847  -1.2732395315170291  log₁₀ σ²(E): -4.0069     -7.4587     -7.4800     S: 0.8695546990892452   χmax: 40  χ: 40  log₁₀ truncation: -9.0501     Chain length: 48002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 24500     E: -1.2732395270916510  -1.2732395319404484  -1.2732395321269059  log₁₀ σ²(E): -4.0159     -7.4710     -7.4530     S: 0.8618302443137996   χmax: 40  χ: 40  log₁₀ truncation: -9.0593     Chain length: 49002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 25000     E: -1.2732395276370518  -1.2732395325805499  -1.2732395327556632  log₁₀ σ²(E): -4.0246     -7.4850     -7.4251     S: 0.8529877890366311   χmax: 40  χ: 40  log₁₀ truncation: -9.0701     Chain length: 50002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 25500     E: -1.2732395282500322  -1.2732395332434696  -1.2732395334138782  log₁₀ σ²(E): -4.0332     -7.5008     -7.4930     S: 0.8430047227426505   χmax: 40  χ: 40  log₁₀ truncation: -9.0827     Chain length: 51002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 26000     E: -1.2732395289280716  -1.2732395339124210  -1.2732395340932126  log₁₀ σ²(E): -4.0417     -7.5184     -7.5257     S: 0.8319051512205509   χmax: 40  χ: 40  log₁₀ truncation: -9.0973     Chain length: 52002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 26500     E: -1.2732395296647037  -1.2732395345786620  -1.2732395347885610  log₁₀ σ²(E): -4.0499     -7.5379     -7.6089     S: 0.8197687910031572   χmax: 40  χ: 40  log₁₀ truncation: -9.1139     Chain length: 53002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 27000     E: -1.2732395304493758  -1.2732395352275732  -1.2732395354137067  log₁₀ σ²(E): -4.0581     -7.5593     -7.5496     S: 0.8067355798576689   χmax: 40  χ: 40  log₁₀ truncation: -9.1326     Chain length: 54002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 27500     E: -1.2732395312677107  -1.2732395358465536  -1.2732395360281286  log₁₀ σ²(E): -4.0660     -7.5824     -7.6268     S: 0.7930031086720148   χmax: 40  χ: 40  log₁₀ truncation: -9.1531     Chain length: 55002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 28000     E: -1.2732395321029664  -1.2732395364274560  -1.2732395366174125  log₁₀ σ²(E): -4.0738     -7.6069     -7.6364     S: 0.7788161283384996   χmax: 40  χ: 40  log₁₀ truncation: -9.1754     Chain length: 56002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 28500     E: -1.2732395329371273  -1.2732395369639131  -1.2732395371489533  log₁₀ σ²(E): -4.0815     -7.6327     -7.6780     S: 0.7644489083041063   χmax: 40  χ: 40  log₁₀ truncation: -9.1993     Chain length: 57002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 29000     E: -1.2732395337519802  -1.2732395374539465  -1.2732395376341163  log₁₀ σ²(E): -4.0891     -7.6596     -7.6791     S: 0.7501845096503114   χmax: 40  χ: 40  log₁₀ truncation: -9.2247     Chain length: 58002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 29500     E: -1.2732395345298677  -1.2732395378924914  -1.2732395380870900  log₁₀ σ²(E): -4.0965     -7.6871     -7.7227     S: 0.7362943309557658   χmax: 40  χ: 40  log₁₀ truncation: -9.2514     Chain length: 59002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 30000     E: -1.2732395352549846  -1.2732395382775388  -1.2732395384663406  log₁₀ σ²(E): -4.1038     -7.7146     -7.7705     S: 0.7230190013881016   χmax: 40  χ: 40  log₁₀ truncation: -9.2790     Chain length: 60002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 30500     E: -1.2732395359149722  -1.2732395386106119  -1.2732395387994837  log₁₀ σ²(E): -4.1110     -7.7418     -7.7109     S: 0.7105525916488004   χmax: 40  χ: 40  log₁₀ truncation: -9.3071     Chain length: 61002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 31000     E: -1.2732395365018048  -1.2732395388940523  -1.2732395390780367  log₁₀ σ²(E): -4.1180     -7.7682     -7.7948     S: 0.6990334950179459   χmax: 40  χ: 40  log₁₀ truncation: -9.3351     Chain length: 62002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 31500     E: -1.2732395370122207  -1.2732395391302034  -1.2732395393181619  log₁₀ σ²(E): -4.1250     -7.7933     -7.7948     S: 0.6885433990977529   χmax: 40  χ: 40  log₁₀ truncation: -9.3625     Chain length: 63002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 32000     E: -1.2732395374471408  -1.2732395393250777  -1.2732395395064056  log₁₀ σ²(E): -4.1318     -7.8170     -7.7855     S: 0.6791122111521692   χmax: 40  χ: 40  log₁₀ truncation: -9.3888     Chain length: 64002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 32500     E: -1.2732395378108574  -1.2732395394839822  -1.2732395396680096  log₁₀ σ²(E): -4.1386     -7.8390     -7.7059     S: 0.6707272835653967   χmax: 40  χ: 40  log₁₀ truncation: -9.4136     Chain length: 65002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 33000     E: -1.2732395381099133  -1.2732395396109402  -1.2732395397936167  log₁₀ σ²(E): -4.1452     -7.8591     -7.7876     S: 0.6633440802675270   χmax: 40  χ: 40  log₁₀ truncation: -9.4367     Chain length: 66002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 33500     E: -1.2732395383508230  -1.2732395397113458  -1.2732395398898997  log₁₀ σ²(E): -4.1517     -7.8770     -7.7829     S: 0.6568950391232228   χmax: 40  χ: 40  log₁₀ truncation: -9.4576     Chain length: 67002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 34000     E: -1.2732395385671293  -1.2732395399163168  -1.2732395401021837  log₁₀ σ²(E): -4.1582     -7.8879     -7.7684     S: 0.6507428019830750   χmax: 40  χ: 40  log₁₀ truncation: -9.4625     Chain length: 68002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 34500     E: -1.2732395387703412  -1.2732395399889993  -1.2732395401728271  log₁₀ σ²(E): -4.1645     -7.9067     -7.8562     S: 0.6452034073710947   χmax: 40  χ: 40  log₁₀ truncation: -9.4850     Chain length: 69002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 35000     E: -1.2732395389228985  -1.2732395400418377  -1.2732395402251957  log₁₀ σ²(E): -4.1707     -7.9223     -7.8559     S: 0.6405313572120562   χmax: 40  χ: 40  log₁₀ truncation: -9.5038     Chain length: 70002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 35500     E: -1.2732395390383118  -1.2732395400802954  -1.2732395402529397  log₁₀ σ²(E): -4.1769     -7.9355     -7.8504     S: 0.6366049680894488   χmax: 40  χ: 40  log₁₀ truncation: -9.5199     Chain length: 71002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 36000     E: -1.2732395391255384  -1.2732395401086274  -1.2732395403075838  log₁₀ σ²(E): -4.1830     -7.9468     -7.9567     S: 0.6333170726672800   χmax: 40  χ: 40  log₁₀ truncation: -9.5335     Chain length: 72002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 36500     E: -1.2732395391914180  -1.2732395401290912  -1.2732395403115633  log₁₀ σ²(E): -4.1890     -7.9562     -7.9815     S: 0.6305727599197840   χmax: 40  χ: 40  log₁₀ truncation: -9.5452     Chain length: 73002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 37000     E: -1.2732395392412492  -1.2732395401439494  -1.2732395403254515  log₁₀ σ²(E): -4.1949     -7.9642     -8.0169     S: 0.6282885525070249   χmax: 40  χ: 40  log₁₀ truncation: -9.5550     Chain length: 74002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 37500     E: -1.2732395392790319  -1.2732395401546603  -1.2732395403493171  log₁₀ σ²(E): -4.2007     -7.9709     -8.1533     S: 0.6263917952748022   χmax: 40  χ: 40  log₁₀ truncation: -9.5632     Chain length: 75002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 38000     E: -1.2732395393077667  -1.2732395401626215  -1.2732395403413257  log₁₀ σ²(E): -4.2065     -7.9766     -7.9756     S: 0.6248198742956446   χmax: 40  χ: 40  log₁₀ truncation: -9.5701     Chain length: 76002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 38500     E: -1.2732395393297460  -1.2732395401683387  -1.2732395403530530  log₁₀ σ²(E): -4.2121     -7.9813     -7.9208     S: 0.6235192943040229   χmax: 40  χ: 40  log₁₀ truncation: -9.5759     Chain length: 77002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 39000     E: -1.2732395393466414  -1.2732395401726868  -1.2732395403481103  log₁₀ σ²(E): -4.2177     -7.9852     -8.1175     S: 0.6224446794505879   χmax: 40  χ: 40  log₁₀ truncation: -9.5807     Chain length: 78002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 39500     E: -1.2732395393597122  -1.2732395401757413  -1.2732395403622878  log₁₀ σ²(E): -4.2233     -7.9884     -7.9525     S: 0.6215577678222904   χmax: 40  χ: 40  log₁₀ truncation: -9.5847     Chain length: 79002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 40000     E: -1.2732395393698626  -1.2732395401780492  -1.2732395403611558  log₁₀ σ²(E): -4.2287     -7.9911     -8.0733     S: 0.6208264530986639   χmax: 40  χ: 40  log₁₀ truncation: -9.5881     Chain length: 80002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 40500     E: -1.2732395393778198  -1.2732395401797185  -1.2732395403674759  log₁₀ σ²(E): -4.2341     -7.9933     -8.3088     S: 0.6202238999707369   χmax: 40  χ: 40  log₁₀ truncation: -9.5908     Chain length: 81002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 41000     E: -1.2732395393840819  -1.2732395401810512  -1.2732395403623333  log₁₀ σ²(E): -4.2395     -7.9951     -7.9807     S: 0.6197277512135720   χmax: 40  χ: 40  log₁₀ truncation: -9.5931     Chain length: 82002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 41500     E: -1.2732395393890388  -1.2732395401821355  -1.2732395403646022  log₁₀ σ²(E): -4.2447     -7.9967     -7.9705     S: 0.6193194297074863   χmax: 40  χ: 40  log₁₀ truncation: -9.5950     Chain length: 83002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 42000     E: -1.2732395393929772  -1.2732395401828591  -1.2732395403605619  log₁₀ σ²(E): -4.2499     -7.9979     -8.0506     S: 0.6189835325363128   χmax: 40  χ: 40  log₁₀ truncation: -9.5965     Chain length: 84002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 42500     E: -1.2732395393961280  -1.2732395401834027  -1.2732395403647547  log₁₀ σ²(E): -4.2551     -7.9989     -8.0939     S: 0.6187073112990076   χmax: 40  χ: 40  log₁₀ truncation: -9.5978     Chain length: 85002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 43000     E: -1.2732395393986542  -1.2732395401839316  -1.2732395403560206  log₁₀ σ²(E): -4.2601     -7.9998     -8.1511     S: 0.6184802298489518   χmax: 40  χ: 40  log₁₀ truncation: -9.5988     Chain length: 86002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 43500     E: -1.2732395394006857  -1.2732395401841212  -1.2732395403617158  log₁₀ σ²(E): -4.2652     -8.0005     -7.9734     S: 0.6182935908322853   χmax: 40  χ: 40  log₁₀ truncation: -9.5997     Chain length: 87002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 44000     E: -1.2732395394023328  -1.2732395401845213  -1.2732395403649301  log₁₀ σ²(E): -4.2701     -8.0011     -7.9931     S: 0.6181402216907608   χmax: 40  χ: 40  log₁₀ truncation: -9.6004     Chain length: 88002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 44500     E: -1.2732395394036666  -1.2732395401847403  -1.2732395403632260  log₁₀ σ²(E): -4.2750     -8.0015     -8.0559     S: 0.6180142121834193   χmax: 40  χ: 40  log₁₀ truncation: -9.6010     Chain length: 89002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 45000     E: -1.2732395394047371  -1.2732395401849670  -1.2732395403830976  log₁₀ σ²(E): -4.2799     -8.0019     -7.8195     S: 0.6179106953654975   χmax: 40  χ: 40  log₁₀ truncation: -9.6015     Chain length: 90002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 45500     E: -1.2732395394056168  -1.2732395401850352  -1.2732395403767964  log₁₀ σ²(E): -4.2847     -8.0022     -7.7707     S: 0.6178256655549750   χmax: 40  χ: 40  log₁₀ truncation: -9.6019     Chain length: 91002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 46000     E: -1.2732395394063314  -1.2732395401851675  -1.2732395403776720  log₁₀ σ²(E): -4.2894     -8.0025     -8.0023     S: 0.6177558274328862   χmax: 40  χ: 40  log₁₀ truncation: -9.6022     Chain length: 92002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 46500     E: -1.2732395394069200  -1.2732395401852821  -1.2732395403690158  log₁₀ σ²(E): -4.2941     -8.0027     -7.9662     S: 0.6176984710629733   χmax: 40  χ: 40  log₁₀ truncation: -9.6025     Chain length: 93002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 47000     E: -1.2732395394073981  -1.2732395401853629  -1.2732395403693690  log₁₀ σ²(E): -4.2988     -8.0029     -7.9770     S: 0.6176513685118121   χmax: 40  χ: 40  log₁₀ truncation: -9.6027     Chain length: 94002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 47500     E: -1.2732395394077929  -1.2732395401853807  -1.2732395403747514  log₁₀ σ²(E): -4.3034     -8.0030     -7.8818     S: 0.6176126885675554   χmax: 40  χ: 40  log₁₀ truncation: -9.6029     Chain length: 95002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 48000     E: -1.2732395394080971  -1.2732395401854775  -1.2732395403740899  log₁₀ σ²(E): -4.3079     -8.0032     -8.2413     S: 0.6175809264388474   χmax: 40  χ: 40  log₁₀ truncation: -9.6030     Chain length: 96002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 48500     E: -1.2732395394083629  -1.2732395401854832  -1.2732395403684009  log₁₀ σ²(E): -4.3124     -8.0032     -7.9299     S: 0.6175548457219542   χmax: 40  χ: 40  log₁₀ truncation: -9.6031     Chain length: 97002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 49000     E: -1.2732395394085758  -1.2732395401854761  -1.2732395403717223  log₁₀ σ²(E): -4.3169     -8.0033     -7.9815     S: 0.6175334308009579   χmax: 40  χ: 40  log₁₀ truncation: -9.6032     Chain length: 98002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 49500     E: -1.2732395394087506  -1.2732395401854939  -1.2732395403538812  log₁₀ σ²(E): -4.3213     -8.0034     -8.0502     S: 0.6175158473472121   χmax: 40  χ: 40  log₁₀ truncation: -9.6033     Chain length: 99002        - Convergence  S-false χ-true σ²- false
+iDMRG Step: 50000     E: -1.2732395394088993  -1.2732395401855834  -1.2732395403707757  log₁₀ σ²(E): -4.3256     -8.0034     -8.0038     S: 0.6175014101298496   χmax: 40  χ: 40  log₁₀ truncation: -9.6034     Chain length: 100002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 50500     E: -1.2732395394090146  -1.2732395401855903  -1.2732395403788361  log₁₀ σ²(E): -4.3299     -8.0035     -8.0701     S: 0.6174895563388864   χmax: 40  χ: 40  log₁₀ truncation: -9.6034     Chain length: 101002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 51000     E: -1.2732395394091109  -1.2732395401855705  -1.2732395403780090  log₁₀ σ²(E): -4.3342     -8.0035     -7.9349     S: 0.6174798238061404   χmax: 40  χ: 40  log₁₀ truncation: -9.6035     Chain length: 102002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 51500     E: -1.2732395394091836  -1.2732395401856249  -1.2732395403728243  log₁₀ σ²(E): -4.3385     -8.0036     -7.8537     S: 0.6174718330154577   χmax: 40  χ: 40  log₁₀ truncation: -9.6035     Chain length: 103002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 52000     E: -1.2732395394092508  -1.2732395401856271  -1.2732395403760079  log₁₀ σ²(E): -4.3427     -8.0036     -7.9946     S: 0.6174652723189669   χmax: 40  χ: 40  log₁₀ truncation: -9.6036     Chain length: 104002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 52500     E: -1.2732395394092961  -1.2732395401856316  -1.2732395403692582  log₁₀ σ²(E): -4.3468     -8.0036     -7.9844     S: 0.6174598858522611   χmax: 40  χ: 40  log₁₀ truncation: -9.6036     Chain length: 105002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 53000     E: -1.2732395394093474  -1.2732395401856347  -1.2732395403849246  log₁₀ σ²(E): -4.3509     -8.0036     -8.1180     S: 0.6174554634707382   χmax: 40  χ: 40  log₁₀ truncation: -9.6036     Chain length: 106002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 53500     E: -1.2732395394093838  -1.2732395401856493  -1.2732395403691628  log₁₀ σ²(E): -4.3550     -8.0036     -8.0299     S: 0.6174518325943898   χmax: 40  χ: 40  log₁₀ truncation: -9.6036     Chain length: 107002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 54000     E: -1.2732395394094183  -1.2732395401858294  -1.2732395403816119  log₁₀ σ²(E): -4.3590     -8.0036     -7.9560     S: 0.6174488516209800   χmax: 40  χ: 40  log₁₀ truncation: -9.6036     Chain length: 108002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 54500     E: -1.2732395394094493  -1.2732395401855794  -1.2732395403749859  log₁₀ σ²(E): -4.3630     -8.0037     -7.9286     S: 0.6174464041913945   χmax: 40  χ: 40  log₁₀ truncation: -9.6036     Chain length: 109002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 55000     E: -1.2732395394094620  -1.2732395401856329  -1.2732395403783374  log₁₀ σ²(E): -4.3670     -8.0037     -8.0262     S: 0.6174443948098562   χmax: 40  χ: 40  log₁₀ truncation: -9.6036     Chain length: 110002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 55500     E: -1.2732395394094720  -1.2732395401856778  -1.2732395403684182  log₁₀ σ²(E): -4.3709     -8.0037     -8.1468     S: 0.6174427450945627   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 111002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 56000     E: -1.2732395394094806  -1.2732395401857060  -1.2732395403744667  log₁₀ σ²(E): -4.3748     -8.0037     -8.0229     S: 0.6174413907070998   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 112002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 56500     E: -1.2732395394094882  -1.2732395401856467  -1.2732395403693366  log₁₀ σ²(E): -4.3787     -8.0037     -8.1639     S: 0.6174402787918204   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 113002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 57000     E: -1.2732395394095011  -1.2732395401857366  -1.2732395403695251  log₁₀ σ²(E): -4.3825     -8.0037     -7.9893     S: 0.6174393658843430   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 114002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 57500     E: -1.2732395394095153  -1.2732395401857415  -1.2732395403690324  log₁₀ σ²(E): -4.3863     -8.0037     -8.0656     S: 0.6174386163502930   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 115002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 58000     E: -1.2732395394095162  -1.2732395401857071  -1.2732395403682979  log₁₀ σ²(E): -4.3901     -8.0037     -8.0652     S: 0.6174380009669037   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 116002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 58500     E: -1.2732395394095259  -1.2732395401856684  -1.2732395403707406  log₁₀ σ²(E): -4.3938     -8.0037     -8.0550     S: 0.6174374957309338   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 117002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 59000     E: -1.2732395394095364  -1.2732395401856584  -1.2732395403593484  log₁₀ σ²(E): -4.3975     -8.0037     -8.2158     S: 0.6174370809573984   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 118002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 59500     E: -1.2732395394095322  -1.2732395401856269  -1.2732395403709948  log₁₀ σ²(E): -4.4012     -8.0037     -7.9691     S: 0.6174367404300120   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 119002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 60000     E: -1.2732395394095426  -1.2732395401856766  -1.2732395403578767  log₁₀ σ²(E): -4.4048     -8.0037     -8.0812     S: 0.6174364608689059   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 120002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 60500     E: -1.2732395394095335  -1.2732395401855443  -1.2732395403611239  log₁₀ σ²(E): -4.4084     -8.0037     -7.8617     S: 0.6174362313846871   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 121002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 61000     E: -1.2732395394095348  -1.2732395401856818  -1.2732395403773342  log₁₀ σ²(E): -4.4120     -8.0037     -7.8807     S: 0.6174360429710408   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 122002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 61500     E: -1.2732395394095422  -1.2732395401856944  -1.2732395403773717  log₁₀ σ²(E): -4.4155     -8.0037     -8.0209     S: 0.6174358882539224   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 123002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 62000     E: -1.2732395394095399  -1.2732395401857817  -1.2732395403564432  log₁₀ σ²(E): -4.4190     -8.0037     -8.0450     S: 0.6174357612322879   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 124002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 62500     E: -1.2732395394095395  -1.2732395401857142  -1.2732395403709016  log₁₀ σ²(E): -4.4225     -8.0037     -8.0463     S: 0.6174356569831605   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 125002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 63000     E: -1.2732395394095437  -1.2732395401857288  -1.2732395403688128  log₁₀ σ²(E): -4.4260     -8.0037     -8.1345     S: 0.6174355713776619   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 126002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 63500     E: -1.2732395394095415  -1.2732395401856760  -1.2732395403819565  log₁₀ σ²(E): -4.4294     -8.0037     -8.0129     S: 0.6174355010561043   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 127002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 64000     E: -1.2732395394095446  -1.2732395401856991  -1.2732395403650334  log₁₀ σ²(E): -4.4328     -8.0037     -8.0019     S: 0.6174354432897463   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 128002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 64500     E: -1.2732395394095535  -1.2732395401856162  -1.2732395403599632  log₁₀ σ²(E): -4.4362     -8.0037     -7.8877     S: 0.6174353958736153   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 129002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 65000     E: -1.2732395394095393  -1.2732395401857366  -1.2732395403726950  log₁₀ σ²(E): -4.4396     -8.0037     -8.0003     S: 0.6174353569961053   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 130002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 65500     E: -1.2732395394095384  -1.2732395401856613  -1.2732395403750465  log₁₀ σ²(E): -4.4429     -8.0037     -7.9595     S: 0.6174353250953806   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 131002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 66000     E: -1.2732395394095524  -1.2732395401856451  -1.2732395403787049  log₁₀ σ²(E): -4.4462     -8.0037     -7.8662     S: 0.6174352989020153   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 132002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 66500     E: -1.2732395394095479  -1.2732395401856957  -1.2732395403637620  log₁₀ σ²(E): -4.4495     -8.0037     -7.9316     S: 0.6174352774339361   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 133002       - Convergence  S-false χ-true σ²- false
+iDMRG Step: 67000     E: -1.2732395394095450  -1.2732395401856549  -1.2732395403683621  log₁₀ σ²(E): -4.4527     -8.0037     -8.0793     S: 0.6174352598195257   χmax: 40  χ: 40  log₁₀ truncation: -9.6037     Chain length: 134002       - Convergence  S-false χ-true σ²- false
+
+ -- Final results -- iDMRG
+Iterations               = 67001
+Energy MPO           = -1.2732395394095450
+Energy HAM           = -1.2732395401856549
+Energy MOM           = -1.2732395403683621
+log₁₀ σ²(E) MPO:     = -4.452714
+log₁₀ σ²(E) HAM:     = -8.003697
+log₁₀ σ²(E) MOM:     = -8.079297
+Entanglement Entropy = 0.6174352598513742
+χmax                 = 40
+χ                    = 40
+log₁₀ truncation:    = -9.6037
+Simulation converged : true
+S slope              = -0.0000000000852886 true
+σ² MPO slope         = 0.0000000000000000 false
+σ² HAM slope         = -0.0000000000000000 true
+σ² MOM slope         = 0.0000000000005367 true
+χ                    = 40 true
+
++Total Time              : 15810.63779 s | 100.00000 %
+↳ Store to file          : 0.00135    s |   0.00001 % 
+↳ Printing to console    : 0.04027    s |   0.00025 % 
+↳ Computing observables  : 5740.35529 s |  36.30692 % 
+↳+Simulation             : 9687.30513 s |  61.27081 % 
+
+ Simulation breakdown:
++Total                   9687.30513    s
+↳ Optimize MPS           : 9473.25852 s |  97.79044 % 
+↳ SVD Truncation         : 214.01638  s |   2.20925 % 
+↳ Update Environments    : 380.41260  s |   3.92692 % 
+↳ Check Convergence      : 0.81087    s |   0.00837 % 
+
+Computing observables breakdown:
++Total                   5740.35529    s
+↳ Energy (MPO)           : 0.16814    s |   0.00293 % 
+↳ Energy (Ham)           : 10.54892   s |   0.18377 % 
+↳ Energy (Gen)           : 0.00000    s |   0.00000 % 
+↳ Variance (MPO)         : 1.76697    s |   0.03078 % 
+↳ Variance (Ham)         : 3167.89066 s |  55.18632 % 
+↳ Variance (Gen)         : 2108.42160 s |  36.72981 % 
+↳ Ent. Entropy           : 0.71353    s |   0.01243 % 
+↳ Temp1                  : 2103.24566 s |  36.63964 % 
+↳ Temp2                  : 0.00000    s |   0.00000 % 
+↳ Temp3                  : 0.00000    s |   0.00000 % 
+↳ Temp4                  : 0.00000    s |   0.00000 % 
+All algorithms finished.
+Data written to file: "/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/output/fes_8.h5"
