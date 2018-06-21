@@ -25,7 +25,6 @@ public:
 };
 
 
-
 template<class T>
 class DenseHamiltonianProduct {
 

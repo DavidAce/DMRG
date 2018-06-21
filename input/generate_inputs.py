@@ -6,15 +6,17 @@ import numpy as np
 # Use '@' as a wildcard to be replaced by the the copy number.
 
 template_filename = 'input_template.cfg'
-output_basename   = 'test_'
-num_copies = 5
+input_basename   = 'fes_'
+num_copies = 25
 
 
 find_replace = {
-    "idmrg::max_steps"      : '3000',
-    "hdf5::output_filename": "testoutput_@.h5",
-    "model::seed": '@'
-    }
+    "idmrg::on"                 : 'true',
+    "idmrg::max_steps"          : '500000',
+    "idmrg::chi_max"            : '@',
+    "precision::eigThreshold"   : '1e-10',
+    "hdf5::output_filename"     : "fes_@.h5"
+}
 
 
 
@@ -22,7 +24,7 @@ find_replace = {
 #
 #   line.split()[pos] -> val
 #
-# and wildcards "@" that may be presen in "val":
+# and wildcards "@" that may be present in "val":
 #
 #   @ -> num
 #
@@ -36,9 +38,12 @@ def replace_value(line,pos,val,num=0):
 
 for i in range(num_copies):
     with open(template_filename, 'r') as input:
-        with open(output_basename + str(i) + '.cfg', 'w') as new_input:
+        with open(input_basename + str(i) + '.cfg', 'w') as new_input:
             for line in input:
                 for var,val in find_replace.items():
                     if var in line.split():
-                        line = replace_value(line, 2, val, i)
+                        if(var == "idmrg::chi_max"):
+                            line = replace_value(line, 2, val, 4*i+8)
+                        else:
+                            line = replace_value(line, 2, val, i)
                 new_input.write(line)

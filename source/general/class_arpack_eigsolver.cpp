@@ -9,8 +9,9 @@
 #include <arpack++/ardscomp.h>
 #include <arpack++/ardgcomp.h>
 #include <arpack++/ardssym.h>
+#include <arpack++/arseig.h>
 #include <general/class_arpack_custom_products.h>
-#include <sim_parameters/nmspc_sim_settings.h>
+//#include <sim_parameters/nmspc_sim_settings.h>
 
 #define profile_eigsolver 0
 
@@ -95,6 +96,12 @@ const std::vector<Scalar>  class_arpack_eigsolver<Scalar,form>::get_eigvals() co
 }
 
 
+template<typename Scalar,Form form>
+void class_arpack_eigsolver<Scalar,form>::shift_invert_eigvals(Scalar sigma) {
+    std::transform(eigvals.begin(), eigvals.end(), eigvals.begin(),
+                   [sigma](Scalar num) -> Scalar
+                   { return 1.0/(num - sigma); });
+}
 
 template<typename Scalar, Form form>
 void class_arpack_eigsolver<Scalar,form>::subtract_phase() {
@@ -107,7 +114,7 @@ void class_arpack_eigsolver<Scalar,form>::subtract_phase() {
             Scalar exp_inv_phase = std::exp(inv_phase);
             std::transform(begin, end, begin,
                            [exp_inv_phase](std::complex<double> num) -> std::complex<double>
-                           { return (num * exp_inv_phase).real(); });
+                           { return (num * exp_inv_phase); });
         }
     }
 }
@@ -132,14 +139,20 @@ void class_arpack_eigsolver<Scalar,form>::eig(const Scalar *matrix_data,
     eigvals_found = false;
     eigvals.clear();
     eigvecs.clear();
+    int nev_internal = std::min(n/2,nev);
+    int ncv_internal = std::max(ncv, 2+nev);
+    ncv_internal = std::min(ncv_internal, n);
+    assert(ncv_internal >= nev + 2 and ncv_internal <= n);
+    assert(nev_internal >= 1 and nev_internal <= n);
+
     // Stupidly enough, the only difference between the github and "apt" versions of arpack++, is that the apt version only accepts char*
     RitzToString.at(ritz).copy(ritz_char, 2);
     if constexpr(std::is_same_v<Scalar, double> and form == Form::GENERAL) {
-        int nev_temp = nev == 1 ? 2 : nev;
+        int nev_temp = nev_internal == 1 ? 2 : nev_internal;
         DenseMatrixProduct<Scalar, form> matrix(n, matrix_data, side);
         ARNonSymStdEig<Scalar, DenseMatrixProduct<Scalar, form>> eig(n, nev_temp, &matrix,
                                                                      &DenseMatrixProduct<Scalar, form>::MultMv,
-                                                                     ritz_char, ncv, eigThreshold,
+                                                                     ritz_char, ncv_internal, eigThreshold,
                                                                      eigMaxIter, residual);
         counter = matrix.counter;
         find_solution(eig, nev, compute_eigvecs);
@@ -147,9 +160,9 @@ void class_arpack_eigsolver<Scalar,form>::eig(const Scalar *matrix_data,
 
     if constexpr(std::is_same_v<Scalar, double> and form == Form::SYMMETRIC) {
         DenseMatrixProduct<Scalar, form> matrix(n, matrix_data, side);
-        ARSymStdEig<Scalar, DenseMatrixProduct<Scalar, form>> eig(n, nev, &matrix,
+        ARSymStdEig<Scalar, DenseMatrixProduct<Scalar, form>> eig(n, nev_internal, &matrix,
                                                                   &DenseMatrixProduct<Scalar, form>::MultMv,
-                                                                  ritz_char, ncv, eigThreshold, eigMaxIter,
+                                                                  ritz_char, ncv_internal, eigThreshold, eigMaxIter,
                                                                   residual);
         counter = matrix.counter;
         find_solution(eig, nev, compute_eigvecs);
@@ -157,13 +170,71 @@ void class_arpack_eigsolver<Scalar,form>::eig(const Scalar *matrix_data,
 
     if constexpr(std::is_same_v<Scalar, std::complex<double>>) {
         DenseMatrixProduct<Scalar, form> matrix(n, matrix_data, side);
-        ARCompStdEig<double, DenseMatrixProduct<Scalar, form>> eig(n, nev, &matrix,
+        ARCompStdEig<double, DenseMatrixProduct<Scalar, form>> eig(n, nev_internal, &matrix,
                                                                    &DenseMatrixProduct<Scalar, form>::MultMv,
-                                                                   ritz_char, ncv, eigThreshold, eigMaxIter,
+                                                                   ritz_char, ncv_internal, eigThreshold, eigMaxIter,
                                                                    residual);
         counter = matrix.counter;
+        find_solution(eig, nev_internal, compute_eigvecs);
+    }
+    if (remove_phase) {
+        subtract_phase();
+    }
+}
+
+
+template<typename Scalar,Form form>
+void class_arpack_eigsolver<Scalar,form>::eig_shift_invert(
+                                              Scalar *matrix_data,
+                                              const int n,
+                                              const int nev,
+                                              const int ncv,
+                                              const Scalar shift,
+                                              const Ritz ritz,
+                                              const bool compute_eigvecs_,
+                                              const bool remove_phase_,
+                                              Scalar *residual_
+) {
+    compute_eigvecs = compute_eigvecs_;
+    remove_phase    = remove_phase_;
+    residual        = residual_;
+    Scalar sigma = shift;
+    eigvecs_found = false;
+    eigvals_found = false;
+    eigvals.clear();
+    eigvecs.clear();
+
+    int nev_internal = std::min(n/2,nev);
+    int ncv_internal = std::max(ncv, 2+nev);
+    ncv_internal = std::min(ncv_internal, n);
+    assert(ncv_internal >= nev + 2 and ncv_internal <= n);
+    assert(nev_internal >= 1 and nev_internal <= n);
+
+    // Stupidly enough, the only difference between the github and "apt" versions of arpack++, is that the apt version only accepts char*
+    RitzToString.at(ritz).copy(ritz_char, 2);
+    if constexpr(std::is_same_v<Scalar, double> and form == Form::GENERAL) {
+        int nev_temp = nev_internal == 1 ? 2 : nev_internal;
+        ARdsNonSymMatrix<Scalar,Scalar> matrix(n, matrix_data);
+        ARluNonSymStdEig<Scalar> eig(nev_temp, matrix, sigma,ritz_char, ncv_internal, eigThreshold, eigMaxIter, residual,true);
+//        counter = matrix.counter;
         find_solution(eig, nev, compute_eigvecs);
     }
+
+    if constexpr(std::is_same_v<Scalar, double> and form == Form::SYMMETRIC) {
+        ARdsSymMatrix<Scalar> matrix(n, matrix_data);
+        ARluSymStdEig<Scalar> eig(nev_internal, matrix,sigma, ritz_char, ncv_internal, eigThreshold, eigMaxIter, residual,true);
+//        counter = matrix.counter;
+        find_solution(eig, nev, compute_eigvecs);
+    }
+
+    if constexpr(std::is_same_v<Scalar, std::complex<double>>) {
+        ARdsNonSymMatrix<std::complex<double>,double> matrix(n, matrix_data);
+        ARluCompStdEig<double> eig(nev_internal, matrix, sigma,ritz_char, ncv_internal, eigThreshold, eigMaxIter, residual,true);
+
+        find_solution(eig, nev_internal, compute_eigvecs);
+//        counter = matrix.counter;
+    }
+
     if (remove_phase) {
         subtract_phase();
     }

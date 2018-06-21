@@ -14,6 +14,7 @@
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_eigsolver_props.h>
+#include <general/class_elemental_eigsolver.h>
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
@@ -44,12 +45,9 @@ void class_xDMRG::run() {
     ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
     t_tot.tic();
     initialize_chain();
-//    env_storage->print_hamiltonians();
     set_random_fields_in_chain_mpo();
-//    env_storage->print_hamiltonians();
-
     find_energy_range();
-
+//    pick_middle_of_energy_spectrum();
     while(true) {
         single_xDMRG_step(chi_temp);
         env_storage_overwrite_local_ALL();
@@ -69,8 +67,6 @@ void class_xDMRG::run() {
     t_tot.toc();
     print_status_full();
     print_profiling();
-//    env_storage->print_storage();
-//    env_storage->print_hamiltonians();
     measurement->compute_all_observables_from_finite_chain();
     env_storage->write_chain_to_file();
 }
@@ -107,31 +103,43 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     assert(H_local.dimension(1) == shape);
 
     //Sparcity seems to be about 5-15%. Better to do dense.
-    Eigen::Map<Textra::MatrixType<Scalar>> H_dense (H_local.data(),shape,shape);
-    if(not H_dense.isApprox(H_dense.adjoint(), 1e-10)){
-        std::cerr << "Not hermitian!" << std::endl;
-    }
-//    std::cout << std::setprecision(4) << H_dense << std::endl << std::endl;
-    //    Eigen::SparseMatrix<Scalar> H_sparse = Eigen::Map<Textra::MatrixType<Scalar>>(H_local.data(),shape,shape).sparseView();
-//    if(not H_sparse.isApprox(H_sparse.adjoint(), 1e-10)){
+//    Eigen::Map<Textra::MatrixType<Scalar>> H_dense (H_local.data(),shape,shape);
+//    if(not H_dense.isApprox(H_dense.adjoint(), 1e-10)){
 //        std::cerr << "Not hermitian!" << std::endl;
 //    }
+////    std::cout << std::setprecision(4) << H_dense << std::endl << std::endl;
+//    //    Eigen::SparseMatrix<Scalar> H_sparse = Eigen::Map<Textra::MatrixType<Scalar>>(H_local.data(),shape,shape).sparseView();
+////    if(not H_sparse.isApprox(H_sparse.adjoint(), 1e-10)){
+////        std::cerr << "Not hermitian!" << std::endl;
+////    }
+//
+//    Eigen::SelfAdjointEigenSolver<Textra::MatrixType<Scalar>> es(H_dense, Eigen::ComputeEigenvectors);
+////    Eigen::SelfAdjointEigenSolver<Eigen::SparseMatrix<Scalar>> es(H_sparse);
+//
+//    if(es.info() == Eigen::NoConvergence){
+//        std::cerr << "Eigenvalue solver did not converge." << std::endl;
+//    }
+//    Textra::VectorType<Scalar> overlaps = theta_vector.conjugate().transpose() * es.eigenvectors();
+//
+//    int best_state;
+//    overlaps.cwiseAbs().maxCoeff(&best_state);
+//    Textra::MatrixType<Scalar> state = es.eigenvectors().col(best_state);
+////    std::cout << std::setprecision(4)  << "overlap : " << overlaps.cwiseAbs()(best_state) << " sum: " << overlaps.cwiseAbs2().sum() << std::endl;
+////    std::cout << std::setprecision(4) << es.eigenvectors() << std::endl << std::endl;
+//    energy_at_site = es.eigenvalues()(best_state);
 
-    Eigen::SelfAdjointEigenSolver<Textra::MatrixType<Scalar>> es(H_dense, Eigen::ComputeEigenvectors);
-//    Eigen::SelfAdjointEigenSolver<Eigen::SparseMatrix<Scalar>> es(H_sparse);
 
-    if(es.info() == Eigen::NoConvergence){
-        std::cerr << "Eigenvalue solver did not converge." << std::endl;
-    }
+    class_elemental_eigsolver solver;
+    Textra::VectorType<double> eigvals(shape);
+    Textra::MatrixType<Scalar> eigvecs(shape,shape);
+    solver.eig(shape, H_local.data(),eigvals.data(),eigvecs.data());
     Eigen::Map<Textra::VectorType<Scalar>> theta_vector (theta.data(),shape);
-    Textra::VectorType<Scalar> overlaps = theta_vector.conjugate().transpose() * es.eigenvectors();
-
+    Textra::VectorType<Scalar> overlaps = theta_vector.conjugate().transpose() * eigvecs;
     int best_state;
     overlaps.cwiseAbs().maxCoeff(&best_state);
-    Textra::MatrixType<Scalar> state = es.eigenvectors().col(best_state);
-//    std::cout << std::setprecision(4)  << "overlap : " << overlaps.cwiseAbs()(best_state) << " sum: " << overlaps.cwiseAbs2().sum() << std::endl;
-//    std::cout << std::setprecision(4) << es.eigenvectors() << std::endl << std::endl;
-    energy_at_site = es.eigenvalues()(best_state);
+    Textra::MatrixType<Scalar> state = eigvecs.col(best_state);
+    energy_at_site = eigvals(best_state);
+
     return Textra::Matrix_to_Tensor(state, theta.dimensions());
 }
 
@@ -285,8 +293,9 @@ void class_xDMRG::store_chain_entry_to_file(){
 }
 
 void class_xDMRG::check_convergence_overall(){
+    if(not env_storage->position_is_the_middle()){return;}
     t_con.tic();
-    check_convergence_entanglement();
+    check_convergence_entanglement(1e-6);
     check_convergence_variance_mpo();
     check_convergence_bond_dimension();
     if(entanglement_has_converged and

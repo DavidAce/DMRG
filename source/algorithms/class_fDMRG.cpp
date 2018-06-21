@@ -71,6 +71,7 @@ void class_fDMRG::initialize_chain() {
 }
 
 void class_fDMRG::check_convergence_overall(){
+    if(not env_storage->position_is_the_middle()){return;}
     t_con.tic();
     check_convergence_entanglement();
     check_convergence_variance_mpo();
