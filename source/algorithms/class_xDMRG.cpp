@@ -20,6 +20,7 @@
 #include <Eigen/Sparse>
 #include <Eigen/Eigenvalues>
 #include <general/nmspc_tensor_extra.h>
+#include <general/class_arpack_eigsolver.h>
 #include "class_xDMRG.h"
 
 using namespace std;
@@ -47,9 +48,8 @@ void class_xDMRG::run() {
     initialize_chain();
     set_random_fields_in_chain_mpo();
     find_energy_range();
-//    pick_middle_of_energy_spectrum();
     while(true) {
-        single_xDMRG_step(chi_temp);
+        single_xDMRG_step(chi_temp,energy_mid);
         env_storage_overwrite_local_ALL();
         store_table_entry_to_file();
         store_chain_entry_to_file();
@@ -71,16 +71,21 @@ void class_xDMRG::run() {
     env_storage->write_chain_to_file();
 }
 
-void class_xDMRG::single_xDMRG_step(long chi_max) {
+void class_xDMRG::single_xDMRG_step(long chi_max, double energy_target) {
 /*!
  * \fn void single_DMRG_step(class_superblock &superblock)
  */
     t_sim.tic();
     t_opt.tic();
     superblock->MPS->theta = superblock->MPS->get_theta();
-    superblock->MPS->theta = find_state_with_greatest_overlap(superblock->MPS->theta);
+    if (iteration <= 5){
+        chi_max = std::min(chi_max,12l);
+        superblock->MPS->theta = find_state_with_greatest_overlap_full_diag(superblock->MPS->theta, energy_target);
+    }else{
+        superblock->MPS->theta = find_state_with_greatest_overlap_part_diag(superblock->MPS->theta, energy_target);
+    }
+
     t_opt.toc();
-//    t_opt.print_delta();
     t_svd.tic();
     superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, settings::precision::SVDThreshold);
     t_svd.toc();
@@ -89,9 +94,10 @@ void class_xDMRG::single_xDMRG_step(long chi_max) {
 }
 
 
-Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overlap(Eigen::Tensor<Scalar, 4> &theta){
+Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overlap_full_diag(Eigen::Tensor<Scalar, 4> &theta, double energy_target){
 //    Eigen::Tensor<Scalar,1> theta = superblock->MPS->get_theta().reshape(superblock->shape1);
     long shape = theta.size();
+    double L   = env_storage->get_length();
     Eigen::Tensor<Scalar,2> H_local  =
             superblock->Lblock->block
             .contract(superblock->HA->MPO      , Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
@@ -103,31 +109,6 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     assert(H_local.dimension(1) == shape);
 
     //Sparcity seems to be about 5-15%. Better to do dense.
-//    Eigen::Map<Textra::MatrixType<Scalar>> H_dense (H_local.data(),shape,shape);
-//    if(not H_dense.isApprox(H_dense.adjoint(), 1e-10)){
-//        std::cerr << "Not hermitian!" << std::endl;
-//    }
-////    std::cout << std::setprecision(4) << H_dense << std::endl << std::endl;
-//    //    Eigen::SparseMatrix<Scalar> H_sparse = Eigen::Map<Textra::MatrixType<Scalar>>(H_local.data(),shape,shape).sparseView();
-////    if(not H_sparse.isApprox(H_sparse.adjoint(), 1e-10)){
-////        std::cerr << "Not hermitian!" << std::endl;
-////    }
-//
-//    Eigen::SelfAdjointEigenSolver<Textra::MatrixType<Scalar>> es(H_dense, Eigen::ComputeEigenvectors);
-////    Eigen::SelfAdjointEigenSolver<Eigen::SparseMatrix<Scalar>> es(H_sparse);
-//
-//    if(es.info() == Eigen::NoConvergence){
-//        std::cerr << "Eigenvalue solver did not converge." << std::endl;
-//    }
-//    Textra::VectorType<Scalar> overlaps = theta_vector.conjugate().transpose() * es.eigenvectors();
-//
-//    int best_state;
-//    overlaps.cwiseAbs().maxCoeff(&best_state);
-//    Textra::MatrixType<Scalar> state = es.eigenvectors().col(best_state);
-////    std::cout << std::setprecision(4)  << "overlap : " << overlaps.cwiseAbs()(best_state) << " sum: " << overlaps.cwiseAbs2().sum() << std::endl;
-////    std::cout << std::setprecision(4) << es.eigenvectors() << std::endl << std::endl;
-//    energy_at_site = es.eigenvalues()(best_state);
-
 
     class_elemental_eigsolver solver;
     Textra::VectorType<double> eigvals(shape);
@@ -135,14 +116,65 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     solver.eig(shape, H_local.data(),eigvals.data(),eigvecs.data());
     Eigen::Map<Textra::VectorType<Scalar>> theta_vector (theta.data(),shape);
     Textra::VectorType<Scalar> overlaps = theta_vector.conjugate().transpose() * eigvecs;
-    int best_state;
-    overlaps.cwiseAbs().maxCoeff(&best_state);
-    Textra::MatrixType<Scalar> state = eigvecs.col(best_state);
-    energy_at_site = eigvals(best_state);
+    long best_state;
+    if (overlaps.isApproxToConstant(0.0, 1e-3) or std::abs(energy_at_site - energy_target) > 1e-1){
+        best_state = std::lower_bound(eigvals.data(), eigvals.data() + eigvals.size(), energy_target*L) - eigvals.data();
+        best_state = std::min(best_state, overlaps.size()-1);
+        best_state = std::max(best_state,0l);
+//        std::cout << setprecision(10) << "diff: " << std::abs(energy_at_site - energy_target);
+//        std::cout << "  best state: " << best_state << "   energy_target = " << energy_target*L << "energy chosen = " << eigvals(best_state)<<  std::endl;
+//        std::cout << " eigvals \n " << eigvals << std::endl;
 
+    }else{
+        overlaps.cwiseAbs().maxCoeff(&best_state);
+    }
+    Textra::MatrixType<Scalar> state = eigvecs.col(best_state);
+    energy_at_site = eigvals(best_state)/L;
     return Textra::Matrix_to_Tensor(state, theta.dimensions());
 }
 
+
+
+bool complex_less(const std::complex<double>& lhs, const std::complex<double> &rhs){
+    return std::real(lhs) < std::real(rhs);
+}
+
+
+
+Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overlap_part_diag(Eigen::Tensor<Scalar,4> &theta, double energy_target) {
+    long shape = theta.size();
+    double L    = env_storage->get_length();
+    Eigen::Tensor<Scalar,2> H_local  =
+            superblock->Lblock->block
+                    .contract(superblock->HA->MPO      , Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
+                    .contract(superblock->HB->MPO      , Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
+                    .contract(superblock->Rblock->block, Textra::idx({4},{2}))
+                    .shuffle(Textra::array8{3,1,5,7,2,0,4,6})
+                    .reshape(Textra::array2{shape, shape});
+    assert(H_local.dimension(0) == shape);
+    assert(H_local.dimension(1) == shape);
+
+
+    int nev = std::min((int)(shape/4), 20);
+    int ncv = std::min((int)(shape/2), nev*4);
+    class_arpack_eigsolver<std::complex<double>> arpack_solver;
+    arpack_solver.eig_shift_invert(H_local.data(), shape, nev,ncv,energy_target, Ritz::LM, true,true);
+    Eigen::Map<const Eigen::VectorXcd> eigvals(arpack_solver.ref_eigvals().data(),arpack_solver.GetNevFound());
+    Eigen::Map<const Eigen::MatrixXcd> eigvecs(arpack_solver.ref_eigvecs().data(),arpack_solver.Rows(),arpack_solver.Cols());
+    Eigen::Map<Textra::VectorType<Scalar>> theta_vector (theta.data(),shape);
+    Textra::VectorType<Scalar> overlaps = theta_vector.conjugate().transpose() * eigvecs;
+    long best_state;
+    if (overlaps.isApproxToConstant(0.0, 1e-3)){
+        best_state = std::lower_bound(eigvals.data(), eigvals.data() + eigvals.size(), energy_target*L, complex_less) - eigvals.data();
+        best_state = std::min(best_state, overlaps.size()-1);
+        best_state = std::max(best_state,0l);
+    }else{
+        overlaps.cwiseAbs().maxCoeff(&best_state);
+    }
+    Textra::MatrixType<Scalar> state = eigvecs.col(best_state);
+    energy_at_site = eigvals(best_state).real()/L;
+    return Textra::Matrix_to_Tensor(state, theta.dimensions());
+}
 
 
 
@@ -247,9 +279,12 @@ void class_xDMRG::find_energy_range() {
 
     iteration = env_storage->reset_sweeps();
     energy_mid = 0.5*(energy_max+energy_min);
+    energy_at_site = superblock->E_optimal / env_storage->get_length();
+    std::cout << "Energy_at_site: " << energy_at_site << std::endl;
     std::cout << "Energy medium  = " << energy_mid << std::endl;
     reset_chain_mps_to_random_product_state();
 }
+
 
 void class_xDMRG::store_table_entry_to_file(){
     if (Math::mod(iteration, store_freq) != 0) {return;}

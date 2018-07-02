@@ -121,6 +121,17 @@ public:
         return Iter;
     }
 
+    int GetNevFound(){
+        return nev_found;
+    }
+
+    int Rows(){
+        return rows;
+    }
+
+    int Cols(){
+        return cols;
+    }
 
     void eig(const Scalar *matrix_data,
              const int n,
