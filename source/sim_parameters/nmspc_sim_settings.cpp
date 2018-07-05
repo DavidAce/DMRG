@@ -14,11 +14,21 @@ using namespace std;
 */
 
 namespace settings{
-    //Parameters for the model Hamiltonian
-    double model::J                      = -1  ;                          /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
-    double model::g                      =  1  ;                          /*!< Transverse field strength */
-    int    model::d                      = 2   ;                          /*!< Local dimension */
+    //Common parameters for the model Hamiltonian
+    std::string model::model_type        = "tf_ising";                    /*!< The default choice of model type from the enum */
     std::string model::initial_state     = "rps";                         /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi)} "cat" or "random". Default "rps". Note that "random_chi" works poorly for finite algorithms */
+    double model::w                      = 0;                             /*!< Randomness strength */
+    int    model::d                      = 2   ;                          /*!< Local dimension */
+
+    //Parameters for the transverse-field Ising model
+    double model::tf_ising::J            = 1;                             /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
+    double model::tf_ising::g            = 1;                             /*!< Transverse field strength */
+
+    //Parameters for the transvese-field next-nearest neighbor Ising model
+    double model::tf_nn_ising::J1        = 1;                             /*!< Ferromagnetic coupling for nearest neighbors.*/
+    double model::tf_nn_ising::J2        = 1;                             /*!< Ferromagnetic coupling for next-nearest neighbors.*/
+    double model::tf_nn_ising::g         = 1;                             /*!< Transverse field strength */
+
 
     int    precision::eigMaxIter         = 1000   ;
     double precision::eigThreshold       = 1e-12  ;
@@ -99,10 +109,21 @@ namespace settings{
 
 void settings::load_from_file(class_file_reader &indata){
     //Parameters for the model Hamiltonian
-    model::J                       = indata.find_parameter<double> ("model::J", model::J);
-    model::g                       = indata.find_parameter<double> ("model::g", model::g);
-    model::d                       = indata.find_parameter<int>    ("model::d", model::d);
-    model::initial_state           = indata.find_parameter<string> ("model::initial_state", model::initial_state);
+    model::model_type              = indata.find_parameter<std::string>("model::model_type"   , model::model_type);
+    model::initial_state           = indata.find_parameter<std::string>("model::initial_state", model::initial_state);
+
+    model::d                       = indata.find_parameter<int>    ("model::d"              , model::d);
+    model::w                       = indata.find_parameter<double> ("model::w"              , model::w);
+
+
+    model::tf_ising::J             = indata.find_parameter<double> ("model::tf_ising::J"    , model::tf_ising::J);
+    model::tf_ising::g             = indata.find_parameter<double> ("model::tf_ising::g"    , model::tf_ising::g);
+
+    model::tf_nn_ising::J1         = indata.find_parameter<double> ("model::tf_nn_ising::J1", model::tf_nn_ising::J1);
+    model::tf_nn_ising::J2         = indata.find_parameter<double> ("model::tf_nn_ising::J2", model::tf_nn_ising::J2);
+    model::tf_nn_ising::g          = indata.find_parameter<double> ("model::tf_nn_ising::g" , model::tf_nn_ising::g);
+
+
     //Parmaters that control eigensolver and SVD precision
     precision::eigMaxIter         = indata.find_parameter<int>    ("precision::eigMaxIter"  , precision::eigMaxIter);
     precision::eigThreshold       = indata.find_parameter<double> ("precision::eigThreshold", precision::eigThreshold);

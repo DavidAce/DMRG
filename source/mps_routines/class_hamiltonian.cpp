@@ -7,7 +7,7 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_random_numbers.h>
 
-using namespace qm;
+using namespace qm::SpinOneHalf;
 using Scalar = std::complex<double>;
 
 void class_hamiltonian::build_mpo()
@@ -29,6 +29,8 @@ void class_hamiltonian::build_mpo()
     MPO.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J * sx);
     MPO.slice(Eigen::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
 }
+
+
 
 Eigen::Tensor<Scalar,4> class_hamiltonian::MPO_reduced() {
     if (e == 0){return MPO;}

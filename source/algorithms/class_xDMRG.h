@@ -46,7 +46,6 @@ public:
     void find_energy_range();
     Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag(Eigen::Tensor<Scalar, 4> &theta, double energy_target = 0);
     Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag(Eigen::Tensor<Scalar, 4> &theta, double energy_target = 0);
-
 };
 
 

@@ -14,6 +14,7 @@
 #include <general/class_tic_toc.h>
 #include <general/nmspc_eigsolver_props.h>
 #include <sim_parameters/nmspc_sim_settings.h>
+
 class class_superblock;
 class class_finite_chain_sweeper;
 class class_measurement;
@@ -22,14 +23,6 @@ class class_table_profiling;
 template <typename table_type> class class_hdf5_table;
 
 class class_base_algorithm {
-private:
-    void check_convergence_using_slope(std::list<double> &Y_vec,
-                                       std::list<int> &X_vec,
-                                       double new_data,
-                                       int    rate,
-                                       double tolerance,
-                                       double &slope,
-                                       bool &has_converged);
 
 public:
     using Scalar = std::complex<double>;
@@ -125,21 +118,15 @@ public:
     class_tic_toc t_obs;
     class_tic_toc t_mps;
     class_tic_toc t_con;
-private:
-//    template<typename T>
-//    class class_limited_vector : public std::vector<T>{
-//    public:
-//        void push_back_limited(T val){
-//            if (this->size() > 10){
-//                this->erase(this->begin());
-//            }
-//            this->push_back(val);
-//        }
-//    };
-//    class_limited_vector<double> V_mpo_vec;
-//    class_limited_vector<double> S_vec;
-//    class_limited_vector<int>    X_vec;
 
+private:
+    void check_convergence_using_slope(std::list<double> &Y_vec,
+                                       std::list<int> &X_vec,
+                                       double new_data,
+                                       int    rate,
+                                       double tolerance,
+                                       double &slope,
+                                       bool &has_converged);
     std::list<double> V_mpo_vec;
     std::list<int>    X_mpo_vec;
     double V_mpo_slope;

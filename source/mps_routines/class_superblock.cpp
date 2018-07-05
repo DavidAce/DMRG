@@ -4,7 +4,7 @@
 
 //#include <mps_routines/class_optimize_mps.h>
 #include <mps_routines/class_superblock.h>
-#include <mps_routines/class_hamiltonian.h>
+//#include <mps_routines/class_hamiltonian.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_mps_2site.h>
 #include <mps_routines/class_mpo.h>
@@ -12,7 +12,7 @@
 #include <general/class_svd_wrapper.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <general/class_arpack_eigsolver.h>
-
+#include <model/class_hamiltonian_factory.h>
 #define profile_optimization 0
 
 using namespace std;
@@ -22,8 +22,10 @@ using Scalar = class_superblock::Scalar;
 class_superblock::class_superblock():
         MPS(std::make_unique<class_mps_2site>()),
         H(std::make_unique<class_mpo>()),
-        HA(std::make_unique<class_hamiltonian>()),
-        HB(std::make_unique<class_hamiltonian>()),
+//        HA(std::make_unique<class_hamiltonian>()),
+//        HB(std::make_unique<class_hamiltonian>()),
+        HA (class_hamiltonian_factory::create_mpo(settings::model::model_type)),
+        HB (class_hamiltonian_factory::create_mpo(settings::model::model_type)),
         Lblock(std::make_unique<class_environment>("L")),
         Rblock(std::make_unique<class_environment>("R")),
         Lblock2(std::make_unique<class_environment_var>("L")),
@@ -31,13 +33,25 @@ class_superblock::class_superblock():
         SVD(std::make_unique<class_SVD<Scalar>>())
 {
     t_eig.set_properties(profile_optimization, 10,"Time optimizing ");
+//    HA_ = create_mpo(settings::model::model_type);
+//    HB_ = create_mpo(settings::model::model_type);
     MPS->initialize();
-    HA->set_parameters(settings::model::J, settings::model::g, 0.0);
-    HB->set_parameters(settings::model::J, settings::model::g, 0.0);
+//    HA->set_parameters(settings::model::tf_ising::J_coupling, settings::model::tf_ising::g, 0.0);
+//    HB->set_parameters(settings::model::tf_ising::J_coupling, settings::model::tf_ising::g, 0.0);
 //    set_current_dimensions();
 
 }
 
+
+
+
+// We need to make a destructor manually for the enclosing class "class_superblock"
+// that encloses "class_hamiltonian_base". Otherwise unique_ptr will forcibly inline its
+// own default deleter.
+// This allows us to forward declare the abstract base class "class_hamiltonian_base"
+// Read mode: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
+// And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
+class_superblock::~class_superblock()=default;
 
 //============================================================================//
 // Find smallest eigenvalue using Arpack.
@@ -147,16 +161,16 @@ void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const
 
 void class_superblock::enlarge_environment(int direction){
     if (direction == 1){
-        Lblock->enlarge(MPS,  HA->MPO_reduced());
-        Lblock2->enlarge(MPS, HA->MPO_reduced());
+        Lblock->enlarge(MPS,  HA->MPO_reduced_view());
+        Lblock2->enlarge(MPS, HA->MPO_reduced_view());
     }else if (direction == -1){
-        Rblock->enlarge(MPS,  HB->MPO_reduced());
-        Rblock2->enlarge(MPS, HB->MPO_reduced());
+        Rblock->enlarge(MPS,  HB->MPO_reduced_view());
+        Rblock2->enlarge(MPS, HB->MPO_reduced_view());
     }else if(direction == 0){
-        Lblock->enlarge(MPS,  HA->MPO_reduced());
-        Rblock->enlarge(MPS,  HB->MPO_reduced());
-        Lblock2->enlarge(MPS, HA->MPO_reduced());
-        Rblock2->enlarge(MPS, HB->MPO_reduced());
+        Lblock->enlarge(MPS,  HA->MPO_reduced_view());
+        Rblock->enlarge(MPS,  HB->MPO_reduced_view());
+        Lblock2->enlarge(MPS, HA->MPO_reduced_view());
+        Rblock2->enlarge(MPS, HB->MPO_reduced_view());
         environment_size = Lblock->size + Rblock->size;
     }
 }

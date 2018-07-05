@@ -12,7 +12,7 @@
 
 using namespace std;
 using namespace Eigen;
-using namespace qm;
+using namespace qm::SpinOneHalf;
 namespace Model {
 
 
@@ -23,14 +23,14 @@ namespace Model {
 
 
     double get_exact_energy() {
-        using namespace settings::model;
+        using namespace settings::model::tf_ising;
         return (-1.0 / M_PI / 2.0) *
                Math::compute_integral([](double x) { return sqrt(1.0 + g * g - 2.0 * g * cos(x)); }, {-M_PI, M_PI});
     }
 
 
     MatrixXcd h(int sites, int position) {
-        using namespace settings::model;
+        using namespace settings::model::tf_ising;
         int i = Math::mod(position, sites);
         int j = Math::mod(position + 1, sites);
         if (spins_must_be_generated) {
@@ -63,7 +63,7 @@ namespace Model {
 
     MatrixXcd H_MPO(double e) {
         /*! Returns the MPO as a matrix. Notation following Schollwöck (2010) */
-        using namespace settings::model;
+        using namespace settings::model::tf_ising;
         MatrixXcd W(6, 6);
         W.setZero();
         W.block(0, 0, 2, 2) = I;
@@ -76,7 +76,7 @@ namespace Model {
 
     MatrixXcd H_MPO_random_field(double g, double e) {
         /*! Returns the MPO as a matrix. Notation following Schollwöck (2010) */
-        using namespace settings::model;
+        using namespace settings::model::tf_ising;
         MatrixXcd W(6, 6);
         W.setZero();
         W.block(0, 0, 2, 2) = I;

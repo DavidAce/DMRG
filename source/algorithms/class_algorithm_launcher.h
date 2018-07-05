@@ -19,17 +19,17 @@ public:
     class_algorithm_launcher();
 
     void run_algorithms(){
-        run_infinite_DMRG();
-        run_finite_DMRG();
-        run_excited_state_DMRG();
-        run_imaginary_TEBD();
-        std::cout << "All algorithms finished." << std::endl;
+        run_iDMRG();
+        run_fDMRG();
+        run_xDMRG();
+        run_iTEBD();
+        std::cout << "All simulations finished." << std::endl;
     };
 
-    void run_infinite_DMRG();
-    void run_finite_DMRG();
-    void run_excited_state_DMRG();
-    void run_imaginary_TEBD();
+    void run_iDMRG();
+    void run_fDMRG();
+    void run_xDMRG();
+    void run_iTEBD();
 };
 
 
