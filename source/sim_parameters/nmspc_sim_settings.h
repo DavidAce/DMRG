@@ -5,6 +5,7 @@
 #ifndef DMRG_N_SETTINGS_H
 #define DMRG_N_SETTINGS_H
 #include <string>
+#include <unordered_set>
 /*! \brief General settings like max iterations, time-step, precision, etc.*/
 
 /*!
@@ -16,16 +17,28 @@
 class class_file_reader;
 
 enum class SimulationType{iDMRG,fDMRG, xDMRG, iTEBD};
+enum class ModelType{tf_ising,tf_nn_ising};
 
 
 namespace settings {
     extern void load_from_file(class_file_reader &indata);
     //Parameters for the model Hamiltonian
     namespace model {
-        extern double       J             ;                 /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
-        extern double       g             ;                 /*!< Transverse field strength */
-        extern int          d             ;                 /*!< Local dimension */
-        extern std::string  initial_state ;                 /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
+        extern std::string  initial_state ;                   /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
+        extern std::string  model_type    ;                   /*!< Choice of model type from the enum above*/
+        extern double       w             ;                   /*!< Randomness strength */
+        extern int          d             ;                   /*!< Local dimension */
+
+        namespace tf_ising {
+            extern double       J             ;                 /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
+            extern double       g             ;                 /*!< Transverse field strength */
+        }
+
+        namespace tf_nn_ising {
+            extern double       J1            ;                 /*!< Ferromagnetic coupling for nearest neighbors.*/
+            extern double       J2            ;                 /*!< Ferromagnetic coupling for next-nearest neighbors.*/
+            extern double       g             ;                 /*!< Transverse field strength */
+        }
     }
 
     //Parmaters that control eigensolver and SVD precision

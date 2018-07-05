@@ -32,7 +32,7 @@ namespace rn{
     }
 
     inline double __attribute__((hot)) uniform_double(const double min, const double max){
-        std::uniform_real_distribution<>  rand_real(min,max);
+        std::uniform_real_distribution<>  rand_real(std::min(min,max),std::max(min,max));
         return rand_real(rng);
     }
 

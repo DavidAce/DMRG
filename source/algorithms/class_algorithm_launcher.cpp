@@ -28,7 +28,7 @@ class_algorithm_launcher::class_algorithm_launcher()
 };
 
 
-void class_algorithm_launcher::run_infinite_DMRG(){
+void class_algorithm_launcher::run_iDMRG(){
     if(settings::idmrg::on){
         class_iDMRG iDMRG(hdf5);
         iDMRG.run();
@@ -36,21 +36,21 @@ void class_algorithm_launcher::run_infinite_DMRG(){
 }
 
 
-void class_algorithm_launcher::run_finite_DMRG(){
+void class_algorithm_launcher::run_fDMRG(){
     if(settings::fdmrg::on){
         class_fDMRG fDMRG(hdf5);
         fDMRG.run();
     }
 }
 
-void class_algorithm_launcher::run_excited_state_DMRG(){
+void class_algorithm_launcher::run_xDMRG(){
     if(settings::xdmrg::on){
         class_xDMRG xDMRG(hdf5);
         xDMRG.run();
     }
 }
 
-void class_algorithm_launcher::run_imaginary_TEBD(){
+void class_algorithm_launcher::run_iTEBD(){
     if(settings::itebd::on){
         class_iTEBD iTEBD(hdf5);
         iTEBD.run();

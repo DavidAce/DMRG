@@ -9,10 +9,10 @@
 #include <memory>
 #include <general/class_tic_toc.h>
 #include <general/nmspc_eigsolver_props.h>
-
 class class_mps_2site;
 class class_mpo;
 class class_hamiltonian;
+class class_hamiltonian_base;
 class class_environment;
 class class_environment_var;
 template<typename Scalar> class class_SVD;
@@ -30,17 +30,23 @@ public:
 public:
 
     class_superblock();
+    ~class_superblock();
+
+
     std::unique_ptr<class_mps_2site>         MPS;        /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
     std::unique_ptr<class_mpo>               H;
-    std::unique_ptr<class_hamiltonian>       HA;
-    std::unique_ptr<class_hamiltonian>       HB;
+//    std::unique_ptr<class_hamiltonian>       HA;
+//    std::unique_ptr<class_hamiltonian>       HB;
+    std::unique_ptr<class_hamiltonian_base>  HA;
+    std::unique_ptr<class_hamiltonian_base>  HB;
     std::unique_ptr<class_environment>       Lblock;     /*!< Left  environment block. */
     std::unique_ptr<class_environment>       Rblock;     /*!< Right environment block. */
     std::unique_ptr<class_environment_var>   Lblock2;    /*!< Left  environment block used for variance calculation */
     std::unique_ptr<class_environment_var>   Rblock2;    /*!< Right environment block used for variance calculation */
     std::unique_ptr<class_SVD<Scalar>>       SVD;
-    //Bond dimensions and tensor shapes needed by the eigensolver and SVD.
-    double E_optimal;                                              /*!< Stores the energy obtained in the eigenvalue solver. This energy corresponds to non-truncated MPS, so it will differ a tiny bit from what you see in final resuls. */
+
+
+    double E_optimal;                                    /*!< Stores the energy obtained in the eigenvalue solver. This energy corresponds to non-truncated MPS, so it will differ a tiny bit from what you see in final resuls. */
 
     class_tic_toc t_eig;
 

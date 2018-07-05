@@ -94,8 +94,8 @@ int class_finite_chain_sweeper::insert(){
     ENV_R.emplace_front(*superblock->Rblock);
     ENV2_L.emplace_back(*superblock->Lblock2);
     ENV2_R.emplace_front(*superblock->Rblock2);
-    MPO_L.emplace_back      (*superblock->HA);
-    MPO_R.emplace_front     (*superblock->HB);
+    MPO_L.emplace_back      (superblock->HA->clone());
+    MPO_R.emplace_front     (superblock->HB->clone());
 
     update_current_length();
 
@@ -140,8 +140,8 @@ void class_finite_chain_sweeper::overwrite_local_MPS() {
 
 
 void class_finite_chain_sweeper::overwrite_local_MPO(){
-    MPO_L.back()    = *superblock->HA;
-    MPO_R.front()   = *superblock->HB;
+    MPO_L.back()    = superblock->HA->clone();
+    MPO_R.front()   = superblock->HB->clone();
 }
 
 void class_finite_chain_sweeper::overwrite_local_ENV(){
@@ -172,7 +172,7 @@ int class_finite_chain_sweeper::move(){
         assert(ENV2_R.front().size      == superblock->Rblock2->size);
         MPS_L.emplace_back(*superblock->MPS->MPS_A);
 //        MPS_L.emplace_back(std::make_tuple(superblock->MPS->LB_left, superblock->MPS->GA));
-        MPO_L.emplace_back (*superblock->HA);
+        MPO_L.emplace_back (superblock->HA->clone());
         ENV_L.emplace_back (*superblock->Lblock);
         ENV2_L.emplace_back (*superblock->Lblock2);
 
@@ -191,7 +191,7 @@ int class_finite_chain_sweeper::move(){
         MPS_C  = superblock->MPS->LC;
 
         *superblock->HA = *superblock->HB;
-        *superblock->HB = MPO_R.front();
+        *superblock->HB = *MPO_R.front();
 
         *superblock->Rblock  = ENV_R.front();
         *superblock->Rblock2 = ENV2_R.front();
@@ -204,7 +204,7 @@ int class_finite_chain_sweeper::move(){
         assert(ENV_L.back().size        == superblock->Lblock->size);
         assert(ENV2_L.back().size       == superblock->Lblock2->size);
         MPS_R.emplace_front (*superblock->MPS->MPS_B);
-        MPO_R.emplace_front (*superblock->HB);
+        MPO_R.emplace_front (superblock->HB->clone());
         ENV_R.emplace_front (*superblock->Rblock);
         ENV2_R.emplace_front (*superblock->Rblock2);
 
@@ -222,7 +222,7 @@ int class_finite_chain_sweeper::move(){
         superblock->MPS->MPS_A->set_L(MPS_L.back().get_L());
         MPS_C                       = superblock->MPS->LC;
         *superblock->HB = *superblock->HA;
-        *superblock->HA = MPO_L.back();
+        *superblock->HA = *MPO_L.back();
 
         *superblock->Lblock  = ENV_L.back();
         *superblock->Lblock2 = ENV2_L.back();
@@ -314,42 +314,13 @@ void class_finite_chain_sweeper::print_storage_compact(){
  }
 
 void class_finite_chain_sweeper::print_hamiltonians() {
-    int i = 0;
-    std::cout << setprecision(10);
-    std::cout << setw(16) << left << "MPO"
-              << setw(16) << left << "J"
-              << setw(16) << left << "g"
-              << setw(16) << left << "e"
-              << setw(16) << left << "r"
-              << std::endl;
+    MPO_L.begin()->get()->print_parameter_names();
     for(auto &it : MPO_L){
-        std::cout << setw(16) << left << i
-                  << setw(16) << left << it.get_site_coupling()
-                  << setw(16) << left << it.get_site_field()
-                  << setw(16) << left << it.get_site_energy()
-                  << setw(16) << left << it.get_site_random_field();
-
-//        std::cout << "MPO[" << setw(3) << i  << "]: e = " << setw(12) << it.get_site_energy();
-        if(&it == &MPO_L.back()){
-            std::cout << " <--- Also current HA";
-        }
-        std::cout << std::endl;
-        i++;
+        it.get()->print_parameter_values();
     }
     for(auto &it : MPO_R){
-        std::cout << setw(16) << left << i
-                  << setw(16) << left << it.get_site_coupling()
-                  << setw(16) << left << it.get_site_field()
-                  << setw(16) << left << it.get_site_energy()
-                  << setw(16) << left << it.get_site_random_field();
-//        std::cout << "e[" << setw(3) << i  << "] = " << setw(12) << it.get_site_energy();
-        if(&it == &MPO_R.front()){
-            std::cout << " <--- Also current HB";
-        }
-        std::cout << std::endl;
-        i++;
+        it.get()->print_parameter_values();
     }
-    std::cout << std::endl;
 }
 
 int class_finite_chain_sweeper::reset_sweeps()  {sweeps = 0; return sweeps;}
