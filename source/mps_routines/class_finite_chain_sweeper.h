@@ -8,12 +8,13 @@
 #include <complex>
 #include <general/nmspc_tensor_extra.h>
 #include <mps_routines/class_environment.h>
-#include <mps_routines/class_hamiltonian.h>
+//#include <mps_routines/class_hamiltonian.h>
 #include <mps_routines/class_mps_2site.h>
 #include <sim_parameters/nmspc_model.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <IO/class_hdf5_file.h>
 #include <iostream>
+#include <model/class_hamiltonian_base.h>
 
 class class_superblock;
 
@@ -57,8 +58,8 @@ private:
     std::list<class_environment> ENV_R;
     std::list<class_environment_var> ENV2_L;
     std::list<class_environment_var> ENV2_R;
-    std::list<class_hamiltonian> MPO_L;                                           /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
-    std::list<class_hamiltonian> MPO_R;                                           /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<std::unique_ptr<class_hamiltonian_base>> MPO_L;                                           /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<std::unique_ptr<class_hamiltonian_base>> MPO_R;                                           /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
 
 
 
@@ -79,12 +80,12 @@ private:
     template<typename T>
     void write_list_to_file(const std::list<T> &obj, std::string dataset_name, unsigned long &counter){
         for(auto &it: obj) {
-            if constexpr(std::is_same<std::decay_t<decltype(it)>, class_hamiltonian>::value){
+            if constexpr(std::is_base_of<class_hamiltonian_base,std::decay_t<decltype(it)>>::value){
                 hdf5->write_dataset(it.MPO, dataset_name + "_" + std::to_string(counter));
-                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_coupling(), "coupling");
-                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_field(), "field");
-                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_random_field(), "random_field");
-                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_energy(), "energy");
+//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_coupling(), "coupling");
+//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_field(), "field");
+//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_random_field(), "random_field");
+//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_energy(), "energy");
                 counter++;
             }
             else if constexpr(std::is_same<std::decay_t<decltype(it)>, class_environment>::value or

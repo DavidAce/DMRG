@@ -29,7 +29,7 @@ namespace Model {
 
     using Scalar = std::complex<double>; //Type for the groundstate wavefunction. Typically just double if the Hamiltonian is Real and Symmetric or Hermitian.
 
-//    inline double J = 1.0;
+//    inline double J_coupling = 1.0;
 //    inline double g = 1.0;
     inline long local_dimension = 2;
 

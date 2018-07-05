@@ -168,7 +168,7 @@ void class_measurement::compute_finite_chain_energy(){
 
         temp = L.contract(asDiagonal(LA), idx({0},{0}))
                 .contract(asDiagonal(LA), idx({0},{0}))
-                .contract(mpoL->MPO,           idx({0},{0}))
+                .contract(mpoL->get()->MPO,idx({0},{0}))
                 .contract(GA,                  idx({0,3},{1,0}))
                 .contract(GA.conjugate(),      idx({0,2},{1,0}))
                 .shuffle(array3{1,2,0});
@@ -198,7 +198,7 @@ void class_measurement::compute_finite_chain_energy(){
         assert(LB.dimension(0) == GB.dimension(2));
         temp = L.contract(GB,            idx({0},{1}))
                 .contract(GB.conjugate(),idx({0},{1}))
-                .contract(mpoR->MPO,     idx({0,1,3},{0,2,3}))
+                .contract(mpoR->get()->MPO,     idx({0,1,3},{0,2,3}))
                 .contract(asDiagonal(LB),idx({0},{0}))
                 .contract(asDiagonal(LB),idx({0},{0}))
                 .shuffle(array3{1,2,0});

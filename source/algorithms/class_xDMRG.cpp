@@ -33,8 +33,6 @@ class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     table_xdmrg_chain   = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name,sim_name + "_chain");
     env_storage         = std::make_shared<class_finite_chain_sweeper>(max_length, superblock, hdf5,sim_type,sim_name);
     measurement         = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
-    superblock->HA->set_random_field(r_strength);
-    superblock->HB->set_random_field(r_strength);
     initialize_state(settings::model::initial_state);
 }
 
@@ -221,8 +219,8 @@ void class_xDMRG::set_random_fields_in_chain_mpo() {
     assert(env_storage->get_length() == max_length);
     iteration = env_storage->reset_sweeps();
     while(true) {
-        superblock->HA->set_random_field(r_strength);
-        superblock->HB->set_random_field(r_strength);
+        superblock->HA->randomize_field();
+        superblock->HB->randomize_field();
         env_storage_overwrite_local_MPO();
 
         // It's important not to perform the last step.

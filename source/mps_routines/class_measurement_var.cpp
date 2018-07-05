@@ -259,8 +259,8 @@ void class_measurement::compute_finite_chain_energy_variance(){
 
         temp = L.contract(asDiagonal(LA), idx({0},{0}))
                 .contract(asDiagonal(LA), idx({0},{0}))
-                .contract(mpoL->MPO,           idx({0},{0}))
-                .contract(mpoL->MPO,           idx({0,5},{0,2}))
+                .contract(mpoL->get()->MPO,           idx({0},{0}))
+                .contract(mpoL->get()->MPO,           idx({0,5},{0,2}))
                 .contract(GA,                  idx({0,3},{1,0}))
                 .contract(GA.conjugate(),      idx({0,3},{1,0}))
                 .shuffle(array4{2,3,0,1});
@@ -287,8 +287,8 @@ void class_measurement::compute_finite_chain_energy_variance(){
         assert(GB.dimension(1) == L.dimension(0));
         assert(LB.dimension(0) == GB.dimension(2));
         temp = L.contract(GB,            idx({0},{1}))
-                .contract(mpoR->MPO,     idx({1,3},{0,2}))
-                .contract(mpoR->MPO,     idx({1,4},{0,2}))
+                .contract(mpoR->get()->MPO,     idx({1,3},{0,2}))
+                .contract(mpoR->get()->MPO,     idx({1,4},{0,2}))
                 .contract(GB.conjugate(),idx({0,4},{1,0}))
                 .contract(asDiagonal(LB),idx({0},{0}))
                 .contract(asDiagonal(LB),idx({2},{0}))

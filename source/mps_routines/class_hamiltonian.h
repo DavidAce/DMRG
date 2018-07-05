@@ -4,8 +4,9 @@
 
 #ifndef CLASS_HAMILTONIAN_H
 #define CLASS_HAMILTONIAN_H
-
+#include <memory>
 #include<unsupported/Eigen/CXX11/Tensor>
+#include <sim_parameters/nmspc_sim_settings.h>
 
 class class_hamiltonian {
     using Scalar = std::complex<double>;
