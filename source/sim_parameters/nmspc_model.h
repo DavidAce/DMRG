@@ -45,9 +45,9 @@ namespace Model {
     inline std::vector<Eigen::MatrixXcd> SZ;
     extern Eigen::MatrixXcd h(int sites, int position);
     extern Eigen::MatrixXcd H(int sites);
-    extern Eigen::MatrixXcd Hsq(int sites);
-    extern Eigen::MatrixXcd H_MPO(double e = 0.0);
-    extern Eigen::MatrixXcd H_MPO_random_field(double g, double e=0.0);
+//    extern Eigen::MatrixXcd Hsq(int sites);
+//    extern Eigen::MatrixXcd H_MPO(double e = 0.0);
+//    extern Eigen::MatrixXcd H_MPO_random_field(double g, double e=0.0);
 
 };
 

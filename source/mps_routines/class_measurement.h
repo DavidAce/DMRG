@@ -39,6 +39,8 @@ private:
     Scalar a  = (0.0 + 1.0i) *5e-3;
     std::vector<Eigen::Tensor<Scalar,4>> mom_vecA;
 
+    Eigen::MatrixXcd h_evn;
+    Eigen::MatrixXcd h_odd;
 
 
     void compute_energy_mpo();

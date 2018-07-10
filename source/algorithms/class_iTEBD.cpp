@@ -8,7 +8,10 @@
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_mpo.h>
+#include <mps_routines/class_mps_2site.h>
+#include <model/class_hamiltonian_base.h>
 #include <general/nmspc_math.h>
+#include <general/nmspc_quantum_mechanics.h>
 #include "class_iTEBD.h"
 using namespace std;
 using namespace Textra;
@@ -21,7 +24,11 @@ class_iTEBD::class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_)
     delta_t      = delta_t0;
     measurement  = std::make_shared<class_measurement>(superblock, sim_type);
     initialize_state(settings::model::initial_state);
-
+    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
+    auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
+    auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
+    h_evn = superblock->HA->single_site_hamiltonian(0,2,SX,SY, SZ);
+    h_odd = superblock->HB->single_site_hamiltonian(1,2,SX,SY, SZ);''
 }
 
 
@@ -30,10 +37,11 @@ void class_iTEBD::run() {
     ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
     t_tot.tic();
     delta_t = delta_t0;
-    superblock->H->update_evolution_step_size(-delta_t0, suzuki_order);
+    unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(delta_t, suzuki_order, h_evn, h_odd);
+//    superblock->H->update_evolution_step_size(-delta_t0, suzuki_order);
     while(iteration < max_steps and not simulation_has_converged) {
         single_TEBD_step(chi_max_temp);
-        phys_time += superblock->H->step_size;
+        phys_time += delta_t;
         store_table_entry_to_file();
         store_profiling_to_file();
         print_status_update();
@@ -44,6 +52,31 @@ void class_iTEBD::run() {
     print_status_full();
     print_profiling();
 }
+
+
+void class_iTEBD::single_TEBD_step(long chi_max){
+/*!
+ * \fn single_iTEBD_step(class_superblock &superblock)
+ * \brief infinite Time evolving block decimation.
+ * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
+ */
+    t_sim.tic();
+    for (auto &U: unitary_time_evolving_operators){
+        t_evo.tic();
+        superblock->MPS->theta = superblock->evolve_MPS(superblock->MPS->get_theta() ,U);
+        t_evo.toc();
+
+        t_svd.tic();
+        superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, settings::precision::SVDThreshold);
+        t_svd.toc();
+
+        if (&U != &unitary_time_evolving_operators.back()) {
+            superblock->swap_AB();        }
+    }
+    measurement->set_not_measured();
+    t_sim.toc();
+}
+
 
 void class_iTEBD::initialize_constants(){
     using namespace settings;
@@ -64,7 +97,8 @@ void class_iTEBD::check_convergence_time_step(){
         time_step_has_converged = true;
     }else if (bond_dimension_has_converged and entanglement_has_converged) {
         delta_t = std::max(delta_tmin, delta_t * 0.5);
-        superblock->H->update_evolution_step_size(-delta_t, suzuki_order);
+        unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(-delta_t, suzuki_order, h_evn, h_odd);
+//        superblock->H->update_evolution_step_size(-delta_t, suzuki_order);
         clear_convergence_checks();
     }
 }

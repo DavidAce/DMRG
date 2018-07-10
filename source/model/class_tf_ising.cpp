@@ -7,8 +7,9 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_random_numbers.h>
 #include <iomanip>
+#include <general/nmspc_math.h>
 
-using namespace qm::SpinOneHalf;
+using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
 
@@ -17,6 +18,10 @@ class_tf_ising::class_tf_ising(): class_hamiltonian_base(){
     extent2     = {spin_dim, spin_dim};
     r_rnd_field = rn::uniform_double(-w_rnd_strength,w_rnd_strength);
     build_mpo();
+    qm::spinOneHalf::SX = qm::gen_manybody_spin(sx, 2);
+    qm::spinOneHalf::SY = qm::gen_manybody_spin(sy, 2);
+    qm::spinOneHalf::SZ = qm::gen_manybody_spin(sz, 2);
+    qm::spinOneHalf::II = qm::gen_manybody_spin(I , 2);
 };
 
 
@@ -63,6 +68,20 @@ Eigen::Tensor<Scalar,4> class_tf_ising::MPO_reduced_view(double site_energy) con
     temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(g_mag_field+r_rnd_field) * sx - site_energy * I);
     return temp;
 }
+
+Eigen::MatrixXcd class_tf_ising::single_site_hamiltonian(
+        int position,
+        int sites,
+        std::vector<Eigen::MatrixXcd> &SX,
+        std::vector<Eigen::MatrixXcd> &SY,
+        std::vector<Eigen::MatrixXcd> &SZ)
+        const
+{
+    int i = Math::mod(position,     sites);
+    int j = Math::mod(position + 1, sites);
+    return -(J_coupling * SZ[i] * SZ[j] + g_mag_field * 0.5*(SX[i]+SX[j])) ;
+}
+
 
 std::unique_ptr<class_hamiltonian_base> class_tf_ising::clone() const {return std::make_unique<class_tf_ising>(*this);}
 void   class_tf_ising::set_reduced_energy(double site_energy)             {e_reduced = site_energy;}
