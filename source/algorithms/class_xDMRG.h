@@ -5,7 +5,7 @@
 #ifndef DMRG_CLASS_EXITED_DMRG_H
 #define DMRG_CLASS_EXITED_DMRG_H
 
-#include "class_base_algorithm.h"
+#include "class_algorithm_base.h"
 class class_table_dmrg;
 
 /*!
@@ -13,11 +13,11 @@ class class_table_dmrg;
  */
 
 class class_finite_chain_sweeper;
-class class_xDMRG : public class_base_algorithm {
+class class_xDMRG : public class_algorithm_base {
 private:
 public:
-    //Inherit the constructor of class_base_algorithm
-    using class_base_algorithm::class_base_algorithm;
+    //Inherit the constructor of class_algorithm_base
+    using class_algorithm_base::class_algorithm_base;
     explicit class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_xdmrg;
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_xdmrg_chain;

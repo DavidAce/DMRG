@@ -35,8 +35,6 @@ public:
 
     std::unique_ptr<class_mps_2site>         MPS;        /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
     std::unique_ptr<class_mpo>               H;
-//    std::unique_ptr<class_hamiltonian>       HA;
-//    std::unique_ptr<class_hamiltonian>       HB;
     std::unique_ptr<class_hamiltonian_base>  HA;
     std::unique_ptr<class_hamiltonian_base>  HB;
     std::unique_ptr<class_environment>       Lblock;     /*!< Left  environment block. */
@@ -47,10 +45,8 @@ public:
 
 
     double E_optimal;                                    /*!< Stores the energy obtained in the eigenvalue solver. This energy corresponds to non-truncated MPS, so it will differ a tiny bit from what you see in final resuls. */
-
-    class_tic_toc t_eig;
-
     unsigned long    environment_size = 0;
+    int              spin_dimension;
 
     Eigen::Tensor<Scalar, 4>
     optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, Ritz ritz = Ritz::SR
@@ -82,6 +78,11 @@ public:
 
 //    void set_current_dimensions()      ;                /*!< Update variables for dimensions */
     void swap_AB();                                     /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
+
+
+    //Profiling
+    class_tic_toc t_eig;
+
 };
 
 

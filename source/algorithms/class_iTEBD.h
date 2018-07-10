@@ -4,15 +4,15 @@
 
 #ifndef DMRG_CLASS_IMAGINARY_TEBD_H
 #define DMRG_CLASS_IMAGINARY_TEBD_H
-#include "class_base_algorithm.h"
+#include "class_algorithm_base.h"
 class class_table_tebd;
 
 /*!
  * \brief Class that runs the imaginary TEBD algorithm.
  */
-class class_iTEBD :public class_base_algorithm {
+class class_iTEBD :public class_algorithm_base {
 public:
-    using class_base_algorithm::class_base_algorithm;
+    using class_algorithm_base::class_algorithm_base;
     explicit class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_);
 
     std::unique_ptr<class_hdf5_table<class_table_tebd>> table_itebd;

@@ -17,7 +17,7 @@ using namespace std;
 using namespace Textra;
 
 class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
-        : class_base_algorithm(std::move(hdf5_),"fDMRG", SimulationType::fDMRG) {
+        : class_algorithm_base(std::move(hdf5_),"fDMRG", SimulationType::fDMRG) {
     initialize_constants();
     table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
     table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name,sim_name + "_chain");
@@ -34,7 +34,7 @@ void class_fDMRG::run() {
     t_tot.tic();
     initialize_chain();
     while(true) {
-        single_DMRG_step(chi_temp);
+        single_DMRG_step(chi_max_temp);
         env_storage_overwrite_local_ALL();         //Needs to occurr after update_MPS...
         store_table_entry_to_file();
         store_chain_entry_to_file();

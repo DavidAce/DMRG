@@ -15,7 +15,7 @@ using namespace Textra;
 using namespace std::complex_literals;
 
 class_iTEBD::class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_)
-        : class_base_algorithm(std::move(hdf5_),"iTEBD", SimulationType::iTEBD) {
+        : class_algorithm_base(std::move(hdf5_),"iTEBD", SimulationType::iTEBD) {
     initialize_constants();
     table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(hdf5, sim_name,sim_name);
     delta_t      = delta_t0;
@@ -32,7 +32,7 @@ void class_iTEBD::run() {
     delta_t = delta_t0;
     superblock->H->update_evolution_step_size(-delta_t0, suzuki_order);
     while(iteration < max_steps and not simulation_has_converged) {
-        single_TEBD_step(chi_temp);
+        single_TEBD_step(chi_max_temp);
         phys_time += superblock->H->step_size;
         store_table_entry_to_file();
         store_profiling_to_file();

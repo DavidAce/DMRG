@@ -67,7 +67,7 @@ public:
     using Scalar = std::complex<double>;
 private:
 
-    long local_dimension;                          /*!< Local (or physical) spin or qubit dimension, usually denoted \f$d\f$ elsewhere. */
+    long spin_dimension;                         /*!< Local (or physical) spin or qubit dimension, usually denoted \f$d\f$ elsewhere. */
     Eigen::Tensor<Scalar,3> tmp3;                 /*!< Temporary holder for swapping*/
     Eigen::Tensor<Scalar,1> tmp1;                 /*!< Temporary holder for swapping*/
 
@@ -79,12 +79,6 @@ private:
 public:
     bool swapped = false;                                  /*!< Tracks the swapped state of A and B positions. */
     double truncation_error = 1;
-
-//    Textra::Tensor<Scalar,3> GA;                  /*!< \f$\Gamma^A\f$*/
-//    Textra::Tensor<Scalar,3> GB;                  /*!< \f$\Gamma^B\f$*/
-//    Textra::Tensor<Scalar,1> LA;                  /*!< \f$\Lambda^A\f$*/
-//    Textra::Tensor<Scalar,1> LB;                  /*!< \f$\Lambda^B\f$*/
-//    Textra::Tensor<Scalar,1> LB_left;              /*!< \f$\Lambda^B_{n+1}\f$ or \f$\Lambda^B_{n-1}\f$ in iDMRG or fDMRG respectively.*/
 
     std::unique_ptr<class_vidal_mps> MPS_A;
     std::unique_ptr<class_vidal_mps> MPS_B;
@@ -135,8 +129,8 @@ public:
     class_mps_2site();
     class_mps_2site(const class_mps_2site &other);
 
-    void initialize();                              /*!< Initializes the MPS*/
-    void swap_AB();                                 /*!< Swaps the roles of A and B. Used in infinite DMRG.*/
+    void initialize(int spin_dim);                              /*!< Initializes the MPS*/
+    void swap_AB();                                             /*!< Swaps the roles of A and B. Used in infinite DMRG.*/
     void compute_mps_components();
 
 
@@ -153,80 +147,7 @@ public:
     Eigen::Tensor<Scalar,4> get_transfer_matrix_theta_evn(Scalar norm  = 1.0)const;
     Eigen::Tensor<Scalar,4> get_transfer_matrix_theta_odd(Scalar norm  = 1.0)const;
     Eigen::Tensor<Scalar,4> get_transfer_matrix_AB(int p)const;
-private:
-
-//    Textra::Tensor<T,4> get_regularization_fixpointA()const;
-//    Textra::Tensor<T,4> get_regularization_fixpointB()const;
-//    Textra::Tensor<T,4> get_transfer_matrix_LBGA_regularized()const;
-//    Textra::Tensor<T,4> get_transfer_matrix_GALA_regularized()const;
-//    Textra::Tensor<T,4> get_transfer_matrix_GBLB_regularized()const;
-//    Textra::Tensor<T,4> get_transfer_matrix_LAGB_regularized()const;
-//    Textra::Tensor<T,4> get_transfer_matrix_AB_regularized()const;
-//    Textra::Tensor<T,4> get_transfer_matrix_BA_regularized()const;
-//    Textra::Tensor<T,4> get_transfer_matrix_AB_regularized_term(int p)const;
-//    Textra::Tensor<T,4> get_transfer_matrix_regularized_inverseA()const;
-//    Textra::Tensor<T,4> get_transfer_matrix_regularized_inverseB()const;
-//    Textra::Tensor<T,4> get_transfer_matrix_regularized_inverseAB()const;
-//    Textra::Tensor<T,4> get_transfer_matrix_regularized_inverseBA()const;
-
 };
-//    Textra::Tensor<T,4> get_transfer_matrix_L()const;
-//    Textra::Tensor<T,4> get_transfer_matrix_R()const;
-//    Textra::Tensor<T,4> get_transfer_2_site_matrix_L()const;
-//    Textra::Tensor<T,4> get_transfer_2_site_matrix_R()const;
 
-
-//
-//
-//template<typename T>
-//Textra::Tensor<T,6> get_transfer_matrix_L(const Textra::Tensor<T,4> &MPO_1site)const{
-//    return  A().template cast<T>()
-//            .contract(MPO_1site, Textra::idx<1>({0},{2}))
-//            .contract(A().conjugate(), Textra::idx<1>({4},{0}))
-//            .shuffle(Textra::array6{0,4,2,1,5,3});
-//}
-//
-//template<typename T>
-//Textra::Tensor<T,6> get_transfer_matrix_R(const Textra::Tensor<T,4> &MPO_1site)const{
-//    return B()
-//            .contract(MPO_1site, Textra::idx<1>({0},{2}))
-//            .contract(B().conjugate(), Textra::idx<1>({4},{0}))
-//            .shuffle(Textra::array6{1,5,3,0,4,2});
-//};
-//
-//template<typename T>
-//Textra::Tensor<T,6> get_transfer_2_site_matrix_L(const Textra::Tensor<T,4> &MPO_1site)const{
-//    return get_thetaL()
-//            .contract(MPO_1site,            Textra::idx<1>({0}  ,{2}))
-//            .contract(MPO_1site,            Textra::idx<2>({4,0},{0,2}))
-//            .contract(get_thetaL().conjugate(), Textra::idx<2>({3,5},{0,1}))
-//            .shuffle(Textra::array6{0,4,2,1,5,3});
-////                .shuffle(array6{1,5,3,0,4,2});
-//};
-//template<typename T>
-//Textra::Tensor<T,6> get_transfer_2_site_matrix_R(const Textra::Tensor<T,4> &MPO_1site)const{
-//    return get_theta_evn()
-//            .contract(MPO_1site,            Textra::idx<1>({0}  ,{2}))
-//            .contract(MPO_1site,            Textra::idx<2>({4,0},{0,2}))
-//            .contract(get_theta_evn().conjugate(), Textra::idx<2>({3,5},{0,1}))
-//            .shuffle(Textra::array6{1,5,3,0,4,2});
-////                .shuffle(array6{0,4,2,1,5,3});
-//};
-//
-//template<typename T>
-//Textra::Tensor<T,6> get_transfer_2_site_matrix_L(const Textra::Tensor<T,6> &MPO_2site)const{
-//    return get_thetaL()
-//            .contract(MPO_2site,            Textra::idx<2>({0,1},{2,3}))
-//            .contract(get_thetaL().conjugate(), Textra::idx<2>({4,5},{0,1}))
-//            .shuffle(Textra::array6{0,4,2,1,5,3});
-//};
-//
-//template<typename T>
-//Textra::Tensor<T,6> get_transfer_2_site_matrix_R(const Textra::Tensor<T,6> &MPO_2site)const{
-//    return get_theta_evn()
-//            .contract(MPO_2site,            Textra::idx<2>({0,1},{2,3}))
-//            .contract(get_theta_evn().conjugate(), Textra::idx<2>({4,5},{0,1}))
-//            .shuffle(Textra::array6{1,5,3,0,4,2});
-//};
 
 #endif //DMRG_CLASS_MPS_H

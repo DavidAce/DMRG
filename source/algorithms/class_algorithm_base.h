@@ -22,12 +22,12 @@ class class_hdf5_file;
 class class_table_profiling;
 template <typename table_type> class class_hdf5_table;
 
-class class_base_algorithm {
+class class_algorithm_base {
 
 public:
     using Scalar = std::complex<double>;
-    class_base_algorithm() = default;
-    class_base_algorithm(std::shared_ptr<class_hdf5_file> hdf5_,
+    class_algorithm_base() = default;
+    class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
                          std::string sim_name_,
                          SimulationType sim_type_);
     void set_profiling_labels ();
@@ -55,7 +55,7 @@ public:
     int    print_freq   ;
     int    store_freq   ;
     int    seed       = 1;
-    long   chi_temp   = 4;
+    long   chi_max_temp   = 4;
     bool   simulation_has_converged = false;
     bool   bond_dimension_has_converged = false;
     bool   entanglement_has_converged = false;

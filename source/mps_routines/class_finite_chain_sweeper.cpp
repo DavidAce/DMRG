@@ -156,8 +156,8 @@ void class_finite_chain_sweeper::overwrite_local_ENV(){
 int class_finite_chain_sweeper::move(){
     //Take current MPS and generate an Lblock one larger and store it in list for later loading
 
-//    std::cout << "Starting move in direction: " << direction << " MPS_L size: " << MPS_L.size() << " current e " << superblock->HA->get_site_energy()<< std::endl;
-//    std::cout << "Starting move in direction: " << direction << " MPS_R size: " << MPS_R.size() << " current e " << superblock->HB->get_site_energy()<< std::endl;
+//    std::cout << "Starting move in direction: " << direction << " MPS_L size: " << MPS_L.size() << " current e " << superblock->HA->get_energy_reduced()<< std::endl;
+//    std::cout << "Starting move in direction: " << direction << " MPS_R size: " << MPS_R.size() << " current e " << superblock->HB->get_energy_reduced()<< std::endl;
     assert(!MPS_L.empty() and !MPS_R.empty());
     assert(MPS_L.size() + MPS_R.size() == max_length);
     assert(ENV_L.size() + ENV_R.size() == max_length);
