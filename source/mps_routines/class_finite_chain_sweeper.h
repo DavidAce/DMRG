@@ -84,8 +84,8 @@ private:
                 hdf5->write_dataset(it.MPO, dataset_name + "_" + std::to_string(counter));
 //                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_coupling(), "coupling");
 //                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_field(), "field");
-//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_random_field(), "random_field");
-//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_energy(), "energy");
+//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_random_field(), "random_field");
+//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_energy_reduced(), "energy");
                 counter++;
             }
             else if constexpr(std::is_same<std::decay_t<decltype(it)>, class_environment>::value or

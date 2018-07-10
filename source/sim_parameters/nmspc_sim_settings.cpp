@@ -17,17 +17,28 @@ namespace settings{
     //Common parameters for the model Hamiltonian
     std::string model::model_type        = "tf_ising";                    /*!< The default choice of model type from the enum */
     std::string model::initial_state     = "rps";                         /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi)} "cat" or "random". Default "rps". Note that "random_chi" works poorly for finite algorithms */
-    double model::w                      = 0;                             /*!< Randomness strength */
-    int    model::d                      = 2   ;                          /*!< Local dimension */
 
     //Parameters for the transverse-field Ising model
     double model::tf_ising::J            = 1;                             /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
     double model::tf_ising::g            = 1;                             /*!< Transverse field strength */
+    double model::tf_ising::w            = 0;                             /*!< Randomness strength for the random field */
+    int    model::tf_ising::d            = 2;                             /*!< Local spin dimension */
 
     //Parameters for the transvese-field next-nearest neighbor Ising model
     double model::tf_nn_ising::J1        = 1;                             /*!< Ferromagnetic coupling for nearest neighbors.*/
     double model::tf_nn_ising::J2        = 1;                             /*!< Ferromagnetic coupling for next-nearest neighbors.*/
     double model::tf_nn_ising::g         = 1;                             /*!< Transverse field strength */
+    double model::tf_nn_ising::w         = 0;                             /*!< Randomness strength for the random field */
+    int    model::tf_nn_ising::d         = 2;                             /*!< Local spin dimension */
+
+    //Parameters for the selfdual transvese-field random-field next-neighbor Ising model
+    double model::selfdual_tf_rf_ising::J_avg  = 0;                       /*!< Average ferromagnetic coupling strength.*/
+    double model::selfdual_tf_rf_ising::h_avg  = 0;                       /*!< Average transverse magnetic field strength */
+    double model::selfdual_tf_rf_ising::J_std  = 1;                       /*!< Standard deviation for the lognormal distribution, i.e. = std(log(J)) , for the ferromagnetic coupling */
+    double model::selfdual_tf_rf_ising::h_std  = 0;                       /*!< Standard deviation for the lognormal distribution, i.e. = std(log(h))   for the transverse magnetic field */
+    double model::selfdual_tf_rf_ising::lambda = 0;                       /*!< Lambda parameter */
+    int    model::selfdual_tf_rf_ising::d      = 2;                       /*!< Local spin dimension */
+
 
 
     int    precision::eigMaxIter         = 1000   ;
@@ -109,35 +120,43 @@ namespace settings{
 
 void settings::load_from_file(class_file_reader &indata){
     //Parameters for the model Hamiltonian
-    model::model_type              = indata.find_parameter<std::string>("model::model_type"   , model::model_type);
-    model::initial_state           = indata.find_parameter<std::string>("model::initial_state", model::initial_state);
-
-    model::d                       = indata.find_parameter<int>    ("model::d"              , model::d);
-    model::w                       = indata.find_parameter<double> ("model::w"              , model::w);
+    model::model_type                   = indata.find_parameter<std::string>("model::model_type"   , model::model_type);
+    model::initial_state                = indata.find_parameter<std::string>("model::initial_state", model::initial_state);
 
 
-    model::tf_ising::J             = indata.find_parameter<double> ("model::tf_ising::J"    , model::tf_ising::J);
-    model::tf_ising::g             = indata.find_parameter<double> ("model::tf_ising::g"    , model::tf_ising::g);
 
-    model::tf_nn_ising::J1         = indata.find_parameter<double> ("model::tf_nn_ising::J1", model::tf_nn_ising::J1);
-    model::tf_nn_ising::J2         = indata.find_parameter<double> ("model::tf_nn_ising::J2", model::tf_nn_ising::J2);
-    model::tf_nn_ising::g          = indata.find_parameter<double> ("model::tf_nn_ising::g" , model::tf_nn_ising::g);
+    model::tf_ising::J                  = indata.find_parameter<double> ("model::tf_ising::J"    , model::tf_ising::J);
+    model::tf_ising::g                  = indata.find_parameter<double> ("model::tf_ising::g"    , model::tf_ising::g);
+    model::tf_ising::w                  = indata.find_parameter<double> ("model::tf_ising::w"    , model::tf_ising::w);
+    model::tf_ising::d                  = indata.find_parameter<int>    ("model::tf_ising::d"    , model::tf_ising::d);
 
+    model::tf_nn_ising::J1              = indata.find_parameter<double> ("model::tf_nn_ising::J1", model::tf_nn_ising::J1);
+    model::tf_nn_ising::J2              = indata.find_parameter<double> ("model::tf_nn_ising::J2", model::tf_nn_ising::J2);
+    model::tf_nn_ising::g               = indata.find_parameter<double> ("model::tf_nn_ising::g" , model::tf_nn_ising::g);
+    model::tf_nn_ising::d               = indata.find_parameter<int>    ("model::tf_nn_ising::d" , model::tf_nn_ising::d);
+    model::tf_nn_ising::w               = indata.find_parameter<double> ("model::tf_nn_ising::w" , model::tf_nn_ising::w);
+
+    model::selfdual_tf_rf_ising::J_avg  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::J_avg" , model::selfdual_tf_rf_ising::J_avg);
+    model::selfdual_tf_rf_ising::h_avg  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::h_avg" , model::selfdual_tf_rf_ising::h_avg);
+    model::selfdual_tf_rf_ising::J_std  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::J_std" , model::selfdual_tf_rf_ising::J_std);
+    model::selfdual_tf_rf_ising::h_std  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::h_std" , model::selfdual_tf_rf_ising::h_std);
+    model::selfdual_tf_rf_ising::lambda = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::lambda", model::selfdual_tf_rf_ising::lambda);
+    model::selfdual_tf_rf_ising::d      = indata.find_parameter<int>    ("model::selfdual_tf_rf_ising::d"     , model::selfdual_tf_rf_ising::d);
 
     //Parmaters that control eigensolver and SVD precision
-    precision::eigMaxIter         = indata.find_parameter<int>    ("precision::eigMaxIter"  , precision::eigMaxIter);
-    precision::eigThreshold       = indata.find_parameter<double> ("precision::eigThreshold", precision::eigThreshold);
-    precision::eigMaxNcv          = indata.find_parameter<int>    ("precision::eigMaxNcv"   , precision::eigMaxNcv);
-    precision::SVDThreshold       = indata.find_parameter<double> ("precision::eigThreshold", precision::SVDThreshold);
+    precision::eigMaxIter               = indata.find_parameter<int>    ("precision::eigMaxIter"  , precision::eigMaxIter);
+    precision::eigThreshold             = indata.find_parameter<double> ("precision::eigThreshold", precision::eigThreshold);
+    precision::eigMaxNcv                = indata.find_parameter<int>    ("precision::eigMaxNcv"   , precision::eigMaxNcv);
+    precision::SVDThreshold             = indata.find_parameter<double> ("precision::eigThreshold", precision::SVDThreshold);
 
     //Parameters controlling infinite-DMRG
-    idmrg::on                     = indata.find_parameter<bool>   ("idmrg::on"         , idmrg::on);
+    idmrg::on                           = indata.find_parameter<bool>   ("idmrg::on"         , idmrg::on);
     if(idmrg::on){
-        idmrg::max_steps         = indata.find_parameter<int>     ("idmrg::max_steps ",  idmrg::max_steps);
-        idmrg::chi_max            = indata.find_parameter<long>   ("idmrg::chi_max"    , idmrg::chi_max);
-        idmrg::chi_grow           = indata.find_parameter<bool>   ("idmrg::chi_grow"   , idmrg::chi_grow);
-        idmrg::print_freq         = indata.find_parameter<int>    ("idmrg::print_freq ", idmrg::print_freq);
-        idmrg::store_freq         = indata.find_parameter<int>    ("idmrg::store_freq ", idmrg::store_freq);
+        idmrg::max_steps                = indata.find_parameter<int>    ("idmrg::max_steps"  , idmrg::max_steps);
+        idmrg::chi_max                  = indata.find_parameter<long>   ("idmrg::chi_max"    , idmrg::chi_max);
+        idmrg::chi_grow                 = indata.find_parameter<bool>   ("idmrg::chi_grow"   , idmrg::chi_grow);
+        idmrg::print_freq               = indata.find_parameter<int>    ("idmrg::print_freq" , idmrg::print_freq);
+        idmrg::store_freq               = indata.find_parameter<int>    ("idmrg::store_freq" , idmrg::store_freq);
     }
 
     //Parameters controlling Finite-DMRG

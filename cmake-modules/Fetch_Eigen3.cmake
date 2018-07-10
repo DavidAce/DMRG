@@ -31,9 +31,9 @@ else()
 endif()
 
 if(BLAS_LIBRARIES)
-    set(EIGEN3_COMPILER_FLAGS   -Wno-parentheses)
+    set(EIGEN3_COMPILER_FLAGS  ) # -Wno-parentheses
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-        list(APPEND EIGEN3_COMPILER_FLAGS -Wno-unused-but-set-variable)
+#        list(APPEND EIGEN3_COMPILER_FLAGS) # -Wno-unused-but-set-variable
     endif()
     if(MKL_FOUND)
         list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_MKL_ALL)
@@ -49,5 +49,6 @@ set_target_properties(EIGEN3 PROPERTIES
         INTERFACE_COMPILE_OPTIONS       "${EIGEN3_COMPILER_FLAGS}"
         )
 target_link_libraries(${PROJECT_NAME} PRIVATE EIGEN3)
-target_include_directories(${PROJECT_NAME} PRIVATE ${EIGEN3_INCLUDE_DIR})
+# Add SYSTEM flag to suppress warnings
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${EIGEN3_INCLUDE_DIR})
 target_compile_options(${PROJECT_NAME} PRIVATE ${EIGEN3_COMPILER_FLAGS})

@@ -39,7 +39,7 @@ namespace Model {
             SZ = qm::gen_manybody_spin(sz, sites);
             spins_must_be_generated = false;
         }
-        return (-J * SX[i] * SX[j] - 0.5 * g * (SZ[i] + SZ[j]));
+        return (-J * SZ[i] * SZ[j] - 0.5 * g * (SX[i] + SX[j]));
     }
 
     MatrixXcd H(int sites) {
@@ -67,9 +67,9 @@ namespace Model {
         MatrixXcd W(6, 6);
         W.setZero();
         W.block(0, 0, 2, 2) = I;
-        W.block(2, 0, 2, 2) = sx;
-        W.block(4, 0, 2, 2) = -g * sz - e * I; // Optionally subtract a constant. Default is k = 0.
-        W.block(4, 2, 2, 2) = -J * sx;
+        W.block(2, 0, 2, 2) = sz;
+        W.block(4, 0, 2, 2) = -g * sx - e * I; // Optionally subtract a constant. Default is k = 0.
+        W.block(4, 2, 2, 2) = -J * sz;
         W.block(4, 4, 2, 2) = I;
         return W;
     }
@@ -80,9 +80,9 @@ namespace Model {
         MatrixXcd W(6, 6);
         W.setZero();
         W.block(0, 0, 2, 2) = I;
-        W.block(2, 0, 2, 2) = sx;
+        W.block(2, 0, 2, 2) = sz;
         W.block(4, 0, 2, 2) = -g * sz - e*I; // Optionally subtract a constant. Default is k = 0.
-        W.block(4, 2, 2, 2) = -J * sx;
+        W.block(4, 2, 2, 2) = -J * sz;
         W.block(4, 4, 2, 2) = I;
         return W;
     }

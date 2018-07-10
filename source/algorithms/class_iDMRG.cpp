@@ -13,7 +13,7 @@ using namespace std;
 using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
-    : class_base_algorithm(std::move(hdf5_),"iDMRG", SimulationType::iDMRG) {
+    : class_algorithm_base(std::move(hdf5_),"iDMRG", SimulationType::iDMRG) {
     initialize_constants();
     table_idmrg = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
     measurement  = std::make_shared<class_measurement>(superblock, sim_type);
@@ -27,8 +27,8 @@ void class_iDMRG::run() {
     if (!settings::idmrg::on) { return; }
     ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
         t_tot.tic();
-        while(iteration < max_steps and not simulation_has_converged){
-            single_DMRG_step(chi_temp);
+        while(iteration < max_steps){// and not simulation_has_converged){
+            single_DMRG_step(chi_max_temp);
             print_status_update();
             store_table_entry_to_file();
             store_profiling_to_file();

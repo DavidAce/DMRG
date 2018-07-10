@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
     // Set a dummy communicator for libelemental, which works with mpi. This is used in xDMRG.
     // Note that this program is single threaded anyway.
     El::Environment env;
-    El::mpi::Comm comm = El::mpi::COMM_WORLD;
+    [[maybe_unused]] El::mpi::Comm comm = El::mpi::COMM_WORLD;
 
     // Print current Git status
     std::cout << "Git Branch: " + GIT::BRANCH +
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
     settings::hdf5::output_filename = outputfile_given ? outputfile : settings::hdf5::output_filename;
 
     //Initialize the algorithm class
-    //This class stores simulationdata automatically to a file specified in the input file
+    //This class stores simulation data automatically to a file specified in the input file
     class_algorithm_launcher launcher;
 
     //Run the algorithms

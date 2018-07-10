@@ -186,11 +186,11 @@ private:
 
 
     hid_t get_DataSpace_unlimited(int rank) const{
-        hsize_t dims[rank];
-        hsize_t max_dims[rank];
-        std::fill_n(dims, rank, 0);
-        std::fill_n(max_dims, rank, H5S_UNLIMITED);
-        return H5Screate_simple(rank, dims, max_dims);
+        std::vector<hsize_t> dims(rank);
+        std::vector<hsize_t> max_dims(rank);
+        std::fill_n(dims.begin(), rank, 0);
+        std::fill_n(max_dims.begin(), rank, H5S_UNLIMITED);
+        return H5Screate_simple(rank, dims.data(), max_dims.data());
     }
 
     template<typename DataType>
@@ -244,8 +244,8 @@ void class_hdf5_file::extend_dataset(const DataType &data, const std::string & d
         hid_t dataset   = H5Dopen(file, dataset_relative_name.c_str(), H5P_DEFAULT);
         hid_t filespace = H5Dget_space(dataset);
         int ndims = H5Sget_simple_extent_ndims(filespace);
-        hsize_t dims[ndims];
-        H5Sget_simple_extent_dims(filespace,dims,NULL);
+        std::vector<hsize_t> dims(ndims);
+        H5Sget_simple_extent_dims(filespace,dims.data(),NULL);
         H5Dclose(dataset);
         H5Sclose(filespace);
         if (dims[1] < (hsize_t) data.cols()){
@@ -344,8 +344,8 @@ void class_hdf5_file::read_dataset(DataType &data, const std::string &dataset_re
         hid_t dataspace = H5Dget_space(dataset);
         hid_t datatype = H5Dget_type(dataset);
         int ndims = H5Sget_simple_extent_ndims(dataspace);
-        hsize_t dims[ndims];
-        H5Sget_simple_extent_dims(dataspace, dims, NULL);
+        std::vector<hsize_t> dims(ndims);
+        H5Sget_simple_extent_dims(dataspace, dims.data(), NULL);
         if constexpr(tc::is_eigen_matrix_or_array<DataType>()) {
             data.resize(dims[0], dims[1]);
         }
