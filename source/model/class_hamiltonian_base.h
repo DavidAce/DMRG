@@ -24,9 +24,12 @@ public:
     virtual std::unique_ptr<class_hamiltonian_base> clone()                     const = 0;
     Eigen::Tensor<Scalar,4> MPO;
 
+
     virtual Eigen::Tensor<Scalar,4> MPO_reduced_view()                          const = 0;
     virtual Eigen::Tensor<Scalar,4> MPO_reduced_view(double single_site_energy) const = 0;
 
+    Eigen::MatrixXcd        MPO_matrix_view();    /*!< Matrix representation of full 2-site Hamiltonian */
+    virtual Eigen::MatrixXcd single_site_hamiltonian(int position, int sites, std::vector<Eigen::MatrixXcd> &SX, std::vector<Eigen::MatrixXcd> &SY, std::vector<Eigen::MatrixXcd> &SZ) const = 0;
     virtual void   build_mpo()                                     = 0;
     virtual void   randomize_hamiltonian()                         = 0;
     virtual void   print_parameter_names ()                  const = 0;

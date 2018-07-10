@@ -4,6 +4,7 @@
 
 
 
+#include <general/nmspc_math.h>
 #include "class_hamiltonian_factory.h"
 #include "class_tf_ising.h"
 #include "class_hamiltonian_base.h"
@@ -32,3 +33,4 @@ std::unique_ptr<class_hamiltonian_base> class_hamiltonian_factory::create_mpo(st
 std::unique_ptr<class_hamiltonian_base> class_hamiltonian_factory::clone(const std::unique_ptr<class_hamiltonian_base> &other){
     return other->clone();
 }
+

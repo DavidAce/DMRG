@@ -61,28 +61,7 @@ void class_algorithm_base::single_DMRG_step(long chi_max, Ritz ritz){
 }
 
 
-void class_algorithm_base::single_TEBD_step(long chi_max){
-/*!
- * \fn single_iTEBD_step(class_superblock &superblock)
- * \brief infinite Time evolving block decimation.
- * \param superblock A class containing MPS, environment and Hamiltonian MPO objects.
- */
-    t_sim.tic();
-    for (auto &U: superblock->H->U){
-        t_evo.tic();
-        superblock->MPS->theta = superblock->evolve_MPS(superblock->MPS->get_theta() ,U);
-        t_evo.toc();
 
-        t_svd.tic();
-        superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, s::precision::SVDThreshold);
-        t_svd.toc();
-
-        if (&U != &superblock->H->U.back()) {
-            superblock->swap_AB();        }
-    }
-    measurement->set_not_measured();
-    t_sim.toc();
-}
 
 void class_algorithm_base::check_convergence_overall(){
     t_con.tic();
@@ -539,7 +518,7 @@ void class_algorithm_base::print_status_update() {
             ccout(1) << left  << "Sweep: "                  << setw(4)  << env_storage->get_sweeps();
             break;
         case SimulationType::iTEBD:
-            ccout(1) << left  << "δt: "               << setw(13) << setprecision(12)    << fixed   << superblock->H->step_size;
+//            ccout(1) << left  << "δt: "               << setw(13) << setprecision(12)    << fixed   << delta_t;
             break;
         default:
             break;
@@ -610,7 +589,7 @@ void class_algorithm_base::print_status_full(){
             ccout(0)  << setw(20) << "Sweep                = " << setprecision(1)  << fixed      << env_storage->get_sweeps() << std::endl;
             break;
         case SimulationType::iTEBD:
-    ccout(0)  << setw(20) << "δt:                  = " << setprecision(16) << fixed      << superblock->H->step_size << std::endl;
+//    ccout(0)  << setw(20) << "δt:                  = " << setprecision(16) << fixed      << superblock->H->step_size << std::endl;
             break;
         default:
             break;
