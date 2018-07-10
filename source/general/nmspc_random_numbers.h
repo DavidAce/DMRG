@@ -42,8 +42,11 @@ namespace rn{
         return std::polar(1.0,rand_real(rng));
     }
 
+
+
     template<typename T>
     inline std::vector<T> uniform_unit_n_sphere(int n){
+        using namespace std::complex_literals;
         std::vector<T> arr;
         std::normal_distribution<double> distribution(0.0,1.0);
         double norm = 0.0;
@@ -68,6 +71,14 @@ namespace rn{
         return arr;
 
     }
+
+
+
+    inline double __attribute__((hot)) log_normal(const double mean, const double std){
+        std::lognormal_distribution<double>  distribution(mean, std);
+        return distribution(rng);
+    }
+
 
 
     extern Eigen::ArrayXd random_with_replacement(const Eigen::ArrayXd & indata);

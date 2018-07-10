@@ -70,5 +70,7 @@ set_target_properties(elemental PROPERTIES
 
 
 target_link_libraries(${PROJECT_NAME} PRIVATE elemental)
-target_include_directories(${PROJECT_NAME} PRIVATE ${ELEMENTAL_INCLUDE_DIRS})
+
+# Add SYSTEM flag to suppress warnings
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${ELEMENTAL_INCLUDE_DIRS})
 

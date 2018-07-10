@@ -48,7 +48,7 @@ message("===============================")
 ###################
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 set(COMMON_OPTIONS -g -Wall -march=native)
-set(DEBUG_OPTIONS       -Wextra -O0)
+set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
 
 ##########################

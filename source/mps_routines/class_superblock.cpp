@@ -4,7 +4,6 @@
 
 //#include <mps_routines/class_optimize_mps.h>
 #include <mps_routines/class_superblock.h>
-//#include <mps_routines/class_hamiltonian.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_mps_2site.h>
 #include <mps_routines/class_mpo.h>
@@ -22,8 +21,6 @@ using Scalar = class_superblock::Scalar;
 class_superblock::class_superblock():
         MPS(std::make_unique<class_mps_2site>()),
         H(std::make_unique<class_mpo>()),
-//        HA(std::make_unique<class_hamiltonian>()),
-//        HB(std::make_unique<class_hamiltonian>()),
         HA (class_hamiltonian_factory::create_mpo(settings::model::model_type)),
         HB (class_hamiltonian_factory::create_mpo(settings::model::model_type)),
         Lblock(std::make_unique<class_environment>("L")),
@@ -32,14 +29,10 @@ class_superblock::class_superblock():
         Rblock2(std::make_unique<class_environment_var>("R")),
         SVD(std::make_unique<class_SVD<Scalar>>())
 {
-    t_eig.set_properties(profile_optimization, 10,"Time optimizing ");
-//    HA_ = create_mpo(settings::model::model_type);
-//    HB_ = create_mpo(settings::model::model_type);
-    MPS->initialize();
-//    HA->set_parameters(settings::model::tf_ising::J_coupling, settings::model::tf_ising::g, 0.0);
-//    HB->set_parameters(settings::model::tf_ising::J_coupling, settings::model::tf_ising::g, 0.0);
-//    set_current_dimensions();
 
+    t_eig.set_properties(profile_optimization, 10,"Time optimizing ");
+    spin_dimension = HA->get_spin_dimension();
+    MPS->initialize(spin_dimension);
 }
 
 

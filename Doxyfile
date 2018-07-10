@@ -1150,7 +1150,7 @@ HTML_FILE_EXTENSION    = .html
 # that doxygen needs, which is dependent on_off the configuration options used (e.g.
 # the setting GENERATE_TREEVIEW). It is highly recommended to start with a
 # default header using
-# doxygen -w html new_header.html new_footer.html new_stylesheet.css
+# doxygen -lambda html new_header.html new_footer.html new_stylesheet.css
 # YourConfigFile
 # and then modify the file new_header.html. See also section "Doxygen usage"
 # for information on_off how to generate the default header that doxygen normally

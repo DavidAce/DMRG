@@ -69,7 +69,7 @@ void class_environment::set_edge_dims(const std::unique_ptr<class_mps_2site> &MP
         block.resize(array3{chiA,chiA, M.dimension(0)});
         block.setZero();
         for (long i = 0; i < chiA; i++){
-            block(i,i,2) = 1;
+            block(i,i,M.dimension(0)-1) = 1;
         }
     }
     if(side == "R"){
@@ -112,10 +112,6 @@ void class_environment_var::enlarge(const std::unique_ptr<class_mps_2site> &MPS,
          * [      ]--1 0--[LB]--1  1--[GA conj ]--2
          */
         size++;
-//        std::cout << "LB_left: " << MPS->LB_left.dimensions() << std::endl;
-//        std::cout << "GA     : " << MPS->GA.dimensions() << std::endl;
-//        std::cout << "M      : " << M.dimensions() << std::endl;
-
         block_enlarged =
                 block.contract(MPS->A(),                    idx({0},{1}))
                         .contract(M,                        idx({1,3},{0,2}))
@@ -123,17 +119,6 @@ void class_environment_var::enlarge(const std::unique_ptr<class_mps_2site> &MPS,
                         .contract(MPS->A().conjugate(),      idx({0,4},{1,0}))
                         .shuffle(array4{0,3,1,2});
         block = block_enlarged;
-//
-//        block_enlarged =
-//                block.contract(asDiagonal(MPS->LB_left),    idx({0},{0}))
-//                        .contract(MPS->GA,                  idx({3},{1}))
-//                        .contract(M,                        idx({1,3},{0,2}))
-//                        .contract(M,                        idx({1,4},{0,2}))
-//                        .contract(asDiagonal(MPS->LB_left), idx({0},{0}))
-//                        .contract(MPS->GA.conjugate(),      idx({4,3},{1,0}))
-//                        .shuffle(array4{0,3,1,2});
-//        block = block_enlarged;
-
     }
     if (side == "R"){
         /*! # Right environment contraction
@@ -166,15 +151,6 @@ void class_environment_var::enlarge(const std::unique_ptr<class_mps_2site> &MPS,
                         .contract(MPS->B().conjugate(), idx({0,4},{2,0}))
                         .shuffle(array4{0, 3, 1, 2});
         block = block_enlarged;
-//        block_enlarged =
-//                block.contract(asDiagonal(MPS->LB),    idx({0},{1}))
-//                        .contract(MPS->GB,             idx({3},{2}))
-//                        .contract(M,                   idx({1,3},{1,2}))
-//                        .contract(M,                   idx({1,4},{1,2}))
-//                        .contract(asDiagonal(MPS->LB), idx({0},{1}))
-//                        .contract(MPS->GB.conjugate(), idx({4,3},{2,0}))
-//                        .shuffle(array4{0, 3, 1, 2});
-//        block = block_enlarged;
     }
 }
 
@@ -186,7 +162,7 @@ void class_environment_var::set_edge_dims(const std::unique_ptr<class_mps_2site>
         block.resize(array4{chiA,chiA, M.dimension(0), M.dimension(0)});
         block.setZero();
         for (long i = 0; i < chiA; i++){
-            block(i,i,2,2) = 1;
+            block(i,i, M.dimension(0)-1, M.dimension(0)-1) = 1;
         }
 
     }

@@ -27,7 +27,7 @@ using namespace std;
 using namespace Textra;
 
 class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
-        : class_base_algorithm(std::move(hdf5_), "xDMRG",SimulationType::xDMRG) {
+        : class_algorithm_base(std::move(hdf5_), "xDMRG",SimulationType::xDMRG) {
     initialize_constants();
     table_xdmrg         = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
     table_xdmrg_chain   = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name,sim_name + "_chain");
@@ -47,7 +47,7 @@ void class_xDMRG::run() {
     set_random_fields_in_chain_mpo();
     find_energy_range();
     while(true) {
-        single_xDMRG_step(chi_temp,energy_mid);
+        single_xDMRG_step(chi_max_temp,energy_mid);
         env_storage_overwrite_local_ALL();
         store_table_entry_to_file();
         store_chain_entry_to_file();
@@ -198,7 +198,7 @@ void class_xDMRG::reset_chain_mps_to_random_product_state() {
         // Random product state
         long chiA = superblock->MPS->chiA();
         long chiB = superblock->MPS->chiB();
-        long d = settings::model::d;
+        long d    = superblock->HA->get_spin_dimension();
         superblock->MPS->theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
         //Get a properly normalized initial state.
         superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, 1, settings::precision::SVDThreshold);
@@ -219,8 +219,8 @@ void class_xDMRG::set_random_fields_in_chain_mpo() {
     assert(env_storage->get_length() == max_length);
     iteration = env_storage->reset_sweeps();
     while(true) {
-        superblock->HA->randomize_field();
-        superblock->HB->randomize_field();
+        superblock->HA->randomize_hamiltonian();
+        superblock->HB->randomize_hamiltonian();
         env_storage_overwrite_local_MPO();
 
         // It's important not to perform the last step.

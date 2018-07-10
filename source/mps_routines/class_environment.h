@@ -38,23 +38,7 @@ public:
     std::string side;
     unsigned long size;                                       /*!< Number of particles that have been contracted into this left environment. */
     Eigen::Tensor<Scalar,3> block;                 /*!< The environment block. */
-    explicit class_environment(std::string side_):side(std::move(side_)){
-        size = 0;
-        block.resize(1, 1, 3);
-        block.setZero();
-        if (side == "L"){
-            block(0, 0, 2) = 1;
-        }
-        else
-        if (side == "R"){
-            block(0, 0, 0) = 1;
-        }
-        else{
-            std::cerr << "Pass strings L or R to initialize environment" << std::endl;
-            exit(1);
-        }
-    };
-
+    explicit class_environment(std::string side_):side(std::move(side_)){size = 0;};
     void enlarge(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M);
     void set_edge_dims(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M);
 };
@@ -66,24 +50,8 @@ public:
     using Scalar = std::complex<double>;
     unsigned long size;                                       /*!< Number of particles that have been contracted into this left environment. */
     std::string side;
-
     Eigen::Tensor<Scalar,4> block;                         /*!< The environment block. */
-    explicit class_environment_var(std::string side_):side(std::move(side_)){
-        size = 0;
-        block.resize(1, 1, 3, 3) ;
-        block.setZero();
-        if (side == "L"){
-            block(0, 0, 2 ,2) = 1;
-        }
-        else
-        if (side == "R"){
-            block(0, 0, 0, 0) = 1;
-        }
-        else{
-            std::cerr << "Pass strings L or R to initialize environment" << std::endl;
-            exit(1);
-        }
-    };
+    explicit class_environment_var(std::string side_):side(std::move(side_)){size = 0;};
     void enlarge(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M);
     void set_edge_dims(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M);
 };

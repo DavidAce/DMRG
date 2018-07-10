@@ -3,7 +3,7 @@
 //
 
 #include <complex>
-#include "class_base_algorithm.h"
+#include "class_algorithm_base.h"
 #include <IO/class_hdf5_file.h>
 #include <IO/class_hdf5_table_buffer2.h>
 #include <mps_routines/class_superblock.h>
@@ -22,9 +22,9 @@ namespace s = settings;
 using namespace std;
 using namespace Textra;
 using namespace std::complex_literals;
-using Scalar = class_base_algorithm::Scalar;
+using Scalar = class_algorithm_base::Scalar;
 
-class_base_algorithm::class_base_algorithm(std::shared_ptr<class_hdf5_file> hdf5_,
+class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
                                            std::string sim_name_,
                                            SimulationType sim_type_)
         :hdf5           (std::move(hdf5_)),
@@ -39,7 +39,7 @@ class_base_algorithm::class_base_algorithm(std::shared_ptr<class_hdf5_file> hdf5
 };
 
 
-void class_base_algorithm::single_DMRG_step(long chi_max, Ritz ritz){
+void class_algorithm_base::single_DMRG_step(long chi_max, Ritz ritz){
 /*!
  * \fn void single_DMRG_step(class_superblock &superblock)
  */
@@ -53,15 +53,15 @@ void class_base_algorithm::single_DMRG_step(long chi_max, Ritz ritz){
     t_svd.toc();
     //Reduce the hamiltonians if you are doing infinite systems:
     if(sim_type == SimulationType::iDMRG){
-        superblock->HA->set_site_reduced_energy(superblock->E_optimal);
-        superblock->HB->set_site_reduced_energy(superblock->E_optimal);
+        superblock->HA->set_reduced_energy(superblock->E_optimal);
+        superblock->HB->set_reduced_energy(superblock->E_optimal);
     }
     measurement->set_not_measured();
     t_sim.toc();
 }
 
 
-void class_base_algorithm::single_TEBD_step(long chi_max){
+void class_algorithm_base::single_TEBD_step(long chi_max){
 /*!
  * \fn single_iTEBD_step(class_superblock &superblock)
  * \brief infinite Time evolving block decimation.
@@ -84,7 +84,7 @@ void class_base_algorithm::single_TEBD_step(long chi_max){
     t_sim.toc();
 }
 
-void class_base_algorithm::check_convergence_overall(){
+void class_algorithm_base::check_convergence_overall(){
     t_con.tic();
     check_convergence_entanglement();
 //    check_convergence_variance_mpo();
@@ -102,7 +102,7 @@ void class_base_algorithm::check_convergence_overall(){
     t_con.toc();
 }
 
-void class_base_algorithm::check_convergence_using_slope(
+void class_algorithm_base::check_convergence_using_slope(
                                    std::list<double> &Y_vec,
                                    std::list<int> &X_vec,
                                    double new_data,
@@ -151,7 +151,7 @@ void class_base_algorithm::check_convergence_using_slope(
     }
 }
 
-void class_base_algorithm::check_convergence_variance_mpo(double threshold){
+void class_algorithm_base::check_convergence_variance_mpo(double threshold){
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
     threshold = threshold == -1 ? settings::precision::eigThreshold : threshold;
@@ -164,7 +164,7 @@ void class_base_algorithm::check_convergence_variance_mpo(double threshold){
                                   variance_mpo_has_converged);
 }
 
-void class_base_algorithm::check_convergence_variance_ham(double threshold){
+void class_algorithm_base::check_convergence_variance_ham(double threshold){
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
     threshold = threshold == -1 ? settings::precision::eigThreshold : threshold;
@@ -178,7 +178,7 @@ void class_base_algorithm::check_convergence_variance_ham(double threshold){
 
 }
 
-void class_base_algorithm::check_convergence_variance_mom(double threshold){
+void class_algorithm_base::check_convergence_variance_mom(double threshold){
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
     threshold = threshold == -1 ? settings::precision::eigThreshold : threshold;
@@ -192,7 +192,7 @@ void class_base_algorithm::check_convergence_variance_mom(double threshold){
 
 }
 
-void class_base_algorithm::check_convergence_entanglement(double threshold) {
+void class_algorithm_base::check_convergence_entanglement(double threshold) {
     //Based on the the slope of entanglement entanglement_entropy
     // This one is cheap to compute.
     threshold = threshold == -1 ? settings::precision::SVDThreshold : threshold;
@@ -205,22 +205,22 @@ void class_base_algorithm::check_convergence_entanglement(double threshold) {
                                   entanglement_has_converged);
 }
 
-void class_base_algorithm::check_convergence_bond_dimension(){
-    if(not chi_grow or bond_dimension_has_converged or chi_temp == chi_max ){
-        chi_temp = chi_max;
+void class_algorithm_base::check_convergence_bond_dimension(){
+    if(not chi_grow or bond_dimension_has_converged or chi_max_temp == chi_max ){
+        chi_max_temp = chi_max;
         bond_dimension_has_converged = true;
     }else{
         if(variance_mpo_has_converged or entanglement_has_converged){
-            chi_temp = std::min(chi_max, chi_temp + 4);
+            chi_max_temp = std::min(chi_max, chi_max_temp + 4);
             clear_convergence_checks();
         }
-        if(chi_temp == chi_max){
+        if(chi_max_temp == chi_max){
             bond_dimension_has_converged = true;
         }
     }
 }
 
-void class_base_algorithm::clear_convergence_checks(){
+void class_algorithm_base::clear_convergence_checks(){
     S_vec.clear();
     V_mpo_vec.clear();
     X_mpo_vec.clear();
@@ -232,7 +232,7 @@ void class_base_algorithm::clear_convergence_checks(){
 }
 
 
-void class_base_algorithm::store_profiling_to_file() {
+void class_algorithm_base::store_profiling_to_file() {
 //    if (Math::mod(iteration, store_freq) != 0) {return;}
 //    t_sto.tic();
     table_profiling->append_record(
@@ -254,10 +254,10 @@ void class_base_algorithm::store_profiling_to_file() {
 }
 
 
-void class_base_algorithm::initialize_state(std::string initial_state ) {
+void class_algorithm_base::initialize_state(std::string initial_state ) {
     //Set the size and initial values for the MPS and environments
     //Choose between GHZ, W, Random, Product state (up, down, etc), None, etc...
-    long d  = settings::model::d;
+    long d    = superblock->HA->get_spin_dimension();
     long chiA = superblock->MPS->chiA();
     long chiB = superblock->MPS->chiB();
     std::srand((unsigned int) 1);
@@ -266,7 +266,8 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
     Eigen::Tensor<Scalar,1> LC;
     Eigen::Tensor<Scalar,3> GB;
     Eigen::Tensor<Scalar,1> LB;
-
+    GA.setZero();
+    GB.setZero();
 
     if(initial_state == "upup"){
         std::cout << "Initializing Up-Up-state  |up,up>" << std::endl;
@@ -279,9 +280,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         LB.setConstant(1.0);
         LC.setConstant(1.0);
         GA(0, 0, 0) = 1;
-        GA(1, 0, 0) = 0;
         GB(0, 0, 0) = 1;
-        GB(1, 0, 0) = 0;
         superblock->MPS->set_mps(LA,GA,LC,GB,LB);
         superblock->MPS->theta = superblock->MPS->get_theta();
         superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, 1, settings::precision::SVDThreshold);
@@ -295,10 +294,8 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         LA.setConstant(1.0);
         LB.setConstant(1.0);
         LC.setConstant(1.0);
-        GA(0, 0, 0) = 1;
-        GA(1, 0, 0) = 0;
-        GB(0, 0, 0) = 0;
-        GB(1, 0, 0) = 1;
+        GA(0  , 0, 0) = 1;
+        GB(d-1, 0, 0) = 1;
         superblock->MPS->set_mps(LA,GA,LC,GB,LB);
         superblock->MPS->theta = superblock->MPS->get_theta();
         superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, 1, settings::precision::SVDThreshold);
@@ -306,17 +303,13 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         std::cout << "Initializing GHZ-state" << std::endl;
         // GHZ state (|up,up> + |down, down > ) /sqrt(2)
         GA.resize(array3{d,1,2});
-        GA.setZero();
-        LA.resize(array1{1});
-        LA.setConstant(1.0);
         GB.resize(array3{d,2,1});
-        GB.setZero();
+        LA.resize(array1{1});
         LB.resize(array1{1});
-        LB.setConstant(1.0);
-
         LC.resize(array1{2});
+        LA.setConstant(1.0);
+        LB.setConstant(1.0);
         LC.setConstant(1.0/std::sqrt(2));
-
 
         // GA^0 = (1,0)
         // GA^1 = (0,1)
@@ -333,19 +326,16 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         superblock->MPS->set_mps(LA,GA,LC,GB,LB);
         superblock->MPS->theta = superblock->MPS->get_theta();
         superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, 2, settings::precision::SVDThreshold);
-    }else if(initial_state == "w"){
+    }else if(initial_state == "lambda"){
         std::cout << "Initializing W-state" << std::endl;
         // W state (|up,down> + |down, up > ) /sqrt(2)
         GA.resize(array3{d,1,2});
-        GA.setZero();
-        LA.resize(array1{1});
-        LA.setConstant(1.0);
         GB.resize(array3{d,2,1});
-        GB.setZero();
+        LA.resize(array1{1});
         LB.resize(array1{1});
-        LB.setConstant(1.0);
-
         LC.resize(array1{2});
+        LA.setConstant(1.0);
+        LB.setConstant(1.0);
         LC.setConstant(1.0/std::sqrt(2));
         // GA^0 = (1,0)
         // GA^1 = (0,1)
@@ -359,11 +349,9 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
         GB(0, 1, 0) = 1;
         GB(1, 0, 0) = 1;
         GB(1, 1, 0) = 0;
-
         superblock->MPS->set_mps(LA,GA,LC,GB,LB);
         superblock->MPS->theta = superblock->MPS->get_theta();
         superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, 2, settings::precision::SVDThreshold);
-
     }
 
     else if (initial_state == "rps"){
@@ -376,7 +364,7 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
     }else if (initial_state == "random_chi" ){
         // Random state
         std::cout << "Initializing random state with bond dimension chi = " << chi_max << std::endl;
-        chi_temp = chi_max;
+        chi_max_temp = chi_max;
         GA.resize(array3{d,chi_max,chi_max});
         GB.resize(array3{d,chi_max,chi_max});
         LA.resize(array1{chi_max});
@@ -430,54 +418,54 @@ void class_base_algorithm::initialize_state(std::string initial_state ) {
 }
 
 
-void class_base_algorithm::compute_observables(){
+void class_algorithm_base::compute_observables(){
     t_obs.tic();
     measurement->compute_all_observables_from_superblock();
     t_obs.toc();
 }
 
 
-void class_base_algorithm::enlarge_environment(){
+void class_algorithm_base::enlarge_environment(){
     t_env.tic();
     superblock->enlarge_environment();
     t_env.toc();
 }
 
-void class_base_algorithm::enlarge_environment(int direction){
+void class_algorithm_base::enlarge_environment(int direction){
     t_env.tic();
     superblock->enlarge_environment(direction);
     t_env.toc();
 }
 
-void class_base_algorithm::swap(){
+void class_algorithm_base::swap(){
     superblock->swap_AB();
 }
 
-void class_base_algorithm::env_storage_insert() {
+void class_algorithm_base::env_storage_insert() {
     t_ste.tic();
     env_storage->insert();
     t_ste.toc();
 }
 
-void class_base_algorithm::env_storage_overwrite_local_MPS(){
+void class_algorithm_base::env_storage_overwrite_local_MPS(){
     t_ste.tic();
     env_storage->overwrite_local_MPS();
     t_ste.toc();
 }
 
-void class_base_algorithm::env_storage_overwrite_local_MPO(){
+void class_algorithm_base::env_storage_overwrite_local_MPO(){
     t_ste.tic();
     env_storage->overwrite_local_MPO();
     t_ste.toc();
 }
 
-void class_base_algorithm::env_storage_overwrite_local_ENV(){
+void class_algorithm_base::env_storage_overwrite_local_ENV(){
     t_ste.tic();
     env_storage->overwrite_local_ENV();
     t_ste.toc();
 }
 
-void class_base_algorithm::env_storage_overwrite_local_ALL(){
+void class_algorithm_base::env_storage_overwrite_local_ALL(){
     t_ste.tic();
     env_storage->overwrite_local_MPS();
     env_storage->overwrite_local_MPO();
@@ -486,14 +474,14 @@ void class_base_algorithm::env_storage_overwrite_local_ALL(){
 }
 
 
-void class_base_algorithm::env_storage_move(){
+void class_algorithm_base::env_storage_move(){
     t_ste.tic();
     env_storage->move();
     t_ste.toc();
 }
 
 
-void class_base_algorithm::print_status_update() {
+void class_algorithm_base::print_status_update() {
     if (Math::mod(iteration, print_freq) != 0) {return;}
     if (not env_storage->position_is_the_middle()) {return;}
     if (print_freq == 0) {return;}
@@ -574,7 +562,7 @@ void class_base_algorithm::print_status_update() {
     t_prt.toc();
 }
 
-void class_base_algorithm::print_status_full(){
+void class_algorithm_base::print_status_full(){
     compute_observables();
     t_prt.tic();
     std::cout << std::endl;
@@ -645,12 +633,12 @@ void class_base_algorithm::print_status_full(){
             ccout(0)  << setw(20) << "σ² MOM slope         = " << setprecision(16) << fixed      << V_mom_slope  << " " << std::boolalpha << variance_mom_has_converged << std::endl;
             break;
     }
-    ccout(0)  << setw(20) << "χ                    = " << setprecision(1)  << fixed      << chi_temp << " " << std::boolalpha << bond_dimension_has_converged << std::endl;
+    ccout(0)  << setw(20) << "χ                    = " << setprecision(1)  << fixed      << chi_max_temp << " " << std::boolalpha << bond_dimension_has_converged << std::endl;
     std::cout << std::endl;
     t_prt.toc();
 }
 
-void class_base_algorithm::set_profiling_labels() {
+void class_algorithm_base::set_profiling_labels() {
     using namespace settings::profiling;
     t_tot.set_properties(on, precision,"+Total Time              ");
     t_sto.set_properties(on, precision,"↳ Store to file          ");

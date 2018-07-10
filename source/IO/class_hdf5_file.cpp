@@ -173,15 +173,16 @@ void class_hdf5_file::create_group_link(const std::string &group_relative_name) 
 
 void class_hdf5_file::select_hyperslab(const hid_t &filespace, const hid_t &memspace){
     const int ndims = H5Sget_simple_extent_ndims(filespace);
-    hsize_t mem_dims[ndims];
-    hsize_t file_dims[ndims];
-    H5Sget_simple_extent_dims(memspace , mem_dims, nullptr);
-    H5Sget_simple_extent_dims(filespace, file_dims, nullptr);
-    hsize_t start[ndims];
+    std::vector<hsize_t> mem_dims(ndims);
+    std::vector<hsize_t> file_dims(ndims);
+    std::vector<hsize_t> start(ndims);
+
+    H5Sget_simple_extent_dims(memspace , mem_dims.data(), nullptr);
+    H5Sget_simple_extent_dims(filespace, file_dims.data(), nullptr);
     for(int i = 0; i < ndims; i++){
         start[i] = file_dims[i] - mem_dims[i];
     }
-    H5Sselect_hyperslab(filespace, H5S_SELECT_SET, start, nullptr, mem_dims, nullptr);
+    H5Sselect_hyperslab(filespace, H5S_SELECT_SET, start.data(), nullptr, mem_dims.data(), nullptr);
 }
 
 void class_hdf5_file::set_extent_dataset(const DatasetProperties &props){
@@ -201,12 +202,12 @@ void class_hdf5_file::extend_dataset(const std::string & dataset_relative_name, 
         // Retrieve the current size of the dataspace (act as if you don't know it's size and want to append)
         hid_t filespace = H5Dget_space(dataset);
         const int ndims = H5Sget_simple_extent_ndims(filespace);
-        hsize_t old_dims[ndims];
-        hsize_t new_dims[ndims];
-        H5Sget_simple_extent_dims(filespace, old_dims, nullptr);
-        std::copy(old_dims, old_dims + ndims, new_dims);
+        std::vector<hsize_t> old_dims(ndims);
+        std::vector<hsize_t> new_dims(ndims);
+        H5Sget_simple_extent_dims(filespace, old_dims.data(), nullptr);
+        new_dims = old_dims;
         new_dims[dim] += extent;
-        H5Dset_extent(dataset, new_dims);
+        H5Dset_extent(dataset, new_dims.data());
         H5Dclose(dataset);
         H5Sclose(filespace);
     }

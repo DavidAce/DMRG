@@ -11,11 +11,7 @@
 using namespace qm;
 using Scalar = std::complex<double>;
 
-class_hamiltonian_base::class_hamiltonian_base() {
-    extent4 = {1, 1, spin_dim, spin_dim};
-    extent2 = {spin_dim, spin_dim};
-    random_field = rn::uniform_double(-randomness_strength,randomness_strength);
-};
+
 
 
 void class_hamiltonian_base::set_position(int new_pos) {
@@ -25,15 +21,4 @@ void class_hamiltonian_base::set_position(int new_pos) {
 int class_hamiltonian_base::get_position() const{
     return position;
 }
-
-
-void class_hamiltonian_base::set_site_reduced_energy(double single_site_energy) {
-    energy_reduced = single_site_energy;
-}
-
-
-double class_hamiltonian_base::get_site_energy()const {return energy_reduced;}
-double class_hamiltonian_base::get_site_random_field() const {return random_field;}
-double class_hamiltonian_base::get_site_randomness_strength() const {return randomness_strength;}
-
 

@@ -17,27 +17,39 @@
 class class_file_reader;
 
 enum class SimulationType{iDMRG,fDMRG, xDMRG, iTEBD};
-enum class ModelType{tf_ising,tf_nn_ising};
-
 
 namespace settings {
     extern void load_from_file(class_file_reader &indata);
     //Parameters for the model Hamiltonian
     namespace model {
         extern std::string  initial_state ;                   /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
-        extern std::string  model_type    ;                   /*!< Choice of model type from the enum above*/
-        extern double       w             ;                   /*!< Randomness strength */
-        extern int          d             ;                   /*!< Local dimension */
+        extern std::string  model_type    ;                   /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising} above*/
 
+        //Parameters for the transverse-field Ising model
         namespace tf_ising {
             extern double       J             ;                 /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
             extern double       g             ;                 /*!< Transverse field strength */
+            extern double       w             ;                 /*!< Randomness strength for the random field */
+            extern int          d             ;                 /*!< Local dimension */
         }
 
+        //Parameters for the transvese-field next-nearest neighbor Ising model
         namespace tf_nn_ising {
             extern double       J1            ;                 /*!< Ferromagnetic coupling for nearest neighbors.*/
             extern double       J2            ;                 /*!< Ferromagnetic coupling for next-nearest neighbors.*/
             extern double       g             ;                 /*!< Transverse field strength */
+            extern double       w             ;                 /*!< Randomness strength for the random field */
+            extern int          d             ;                 /*!< Local dimension */
+        }
+
+        //Parameters for the selfdual transvese-field random-field next-neighbor Ising model
+        namespace selfdual_tf_rf_ising {
+            extern double       J_avg         ;                 /*!< Average ferromagnetic coupling strength.*/
+            extern double       h_avg         ;                 /*!< Average transverse magnetic field strength */
+            extern double       J_std         ;                 /*!< Standard deviation for the lognormal distribution, i.e. = std(log(J)) , for the ferromagnetic coupling */
+            extern double       h_std         ;                 /*!< Standard deviation for the lognormal distribution, i.e. = std(log(h))   for the transverse magnetic field */
+            extern double       lambda        ;                 /*!< Lambda parameter */
+            extern int          d             ;                 /*!< Local dimension */
         }
     }
 

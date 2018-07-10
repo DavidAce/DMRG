@@ -23,18 +23,19 @@ class_mps_2site::class_mps_2site(){
 }
 
 class_mps_2site::class_mps_2site(const class_mps_2site &other)
-    : local_dimension(other.local_dimension), swapped(other.swapped), MPS_A(copy_unique(other.MPS_A)), MPS_B(copy_unique(other.MPS_B)),  LC(other.LC)
+    : spin_dimension(other.spin_dimension), swapped(other.swapped), MPS_A(copy_unique(other.MPS_A)), MPS_B(copy_unique(other.MPS_B)),  LC(other.LC)
 {
 }
 
 
-void class_mps_2site::initialize(){
-    local_dimension = settings::model::d;
+void class_mps_2site::initialize(int spin_dim){
+    spin_dimension = spin_dim;
+    Eigen::Tensor<Scalar,3> GA(spin_dimension,1,1);
+    Eigen::Tensor<Scalar,3> GB(spin_dimension,1,1);
     Eigen::Tensor<Scalar,1> LA(1);
-    Eigen::Tensor<Scalar,3> GA(local_dimension,1,1);
     Eigen::Tensor<Scalar,1> LC(1);
-    Eigen::Tensor<Scalar,3> GB(local_dimension,1,1);
     Eigen::Tensor<Scalar,1> LB(1);
+
     // Default is a product state, spins pointing up in z.
     GA.setZero();
     GB.setZero();
