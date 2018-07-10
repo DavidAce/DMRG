@@ -12,7 +12,7 @@
 
 using namespace std;
 using namespace Eigen;
-using namespace qm::SpinOneHalf;
+using namespace qm::spinOneHalf;
 namespace Model {
 
 
@@ -20,7 +20,6 @@ namespace Model {
      * and
      * Müller-hermes, B. V. A. Tensor-Network-Methods for Simulating Infinite 1-dimensional Quantum-Many-Body Systems. 1–68 (2010).
      */
-
 
     double get_exact_energy() {
         using namespace settings::model::tf_ising;
@@ -50,40 +49,40 @@ namespace Model {
         return hi;
     }
 
-    MatrixXcd Hsq(int sites) {
-        MatrixXcd hi = MatrixXcd::Zero((long) pow(2, sites), (long) pow(2, sites));
-//        hi = h(sites, 0) * h(sites, 0) +  h(sites, 1) * h(sites, 1) + h(sites, 0) * h(sites, 1) + h(sites, 1) * h(sites, 0);
-        for (int position1 = 0; position1 < sites; position1++) {
-            for(int position2 = 0; position2 < sites; position2++){
-                hi += h(sites, position1) * h(sites, position2);
-            }
-        }
-        return hi;
-    }
+//    MatrixXcd Hsq(int sites) {
+//        MatrixXcd hi = MatrixXcd::Zero((long) pow(2, sites), (long) pow(2, sites));
+////        hi = h(sites, 0) * h(sites, 0) +  h(sites, 1) * h(sites, 1) + h(sites, 0) * h(sites, 1) + h(sites, 1) * h(sites, 0);
+//        for (int position1 = 0; position1 < sites; position1++) {
+//            for(int position2 = 0; position2 < sites; position2++){
+//                hi += h(sites, position1) * h(sites, position2);
+//            }
+//        }
+//        return hi;
+//    }
 
-    MatrixXcd H_MPO(double e) {
-        /*! Returns the MPO as a matrix. Notation following Schollwöck (2010) */
-        using namespace settings::model::tf_ising;
-        MatrixXcd W(6, 6);
-        W.setZero();
-        W.block(0, 0, 2, 2) = I;
-        W.block(2, 0, 2, 2) = sz;
-        W.block(4, 0, 2, 2) = -g * sx - e * I; // Optionally subtract a constant. Default is k = 0.
-        W.block(4, 2, 2, 2) = -J * sz;
-        W.block(4, 4, 2, 2) = I;
-        return W;
-    }
-
-    MatrixXcd H_MPO_random_field(double g, double e) {
-        /*! Returns the MPO as a matrix. Notation following Schollwöck (2010) */
-        using namespace settings::model::tf_ising;
-        MatrixXcd W(6, 6);
-        W.setZero();
-        W.block(0, 0, 2, 2) = I;
-        W.block(2, 0, 2, 2) = sz;
-        W.block(4, 0, 2, 2) = -g * sz - e*I; // Optionally subtract a constant. Default is k = 0.
-        W.block(4, 2, 2, 2) = -J * sz;
-        W.block(4, 4, 2, 2) = I;
-        return W;
-    }
+//    MatrixXcd H_MPO(double e) {
+//        /*! Returns the MPO as a matrix. Notation following Schollwöck (2010) */
+//        using namespace settings::model::tf_ising;
+//        MatrixXcd W(6, 6);
+//        W.setZero();
+//        W.block(0, 0, 2, 2) = I;
+//        W.block(2, 0, 2, 2) = sz;
+//        W.block(4, 0, 2, 2) = -g * sx - e * I; // Optionally subtract a constant. Default is k = 0.
+//        W.block(4, 2, 2, 2) = -J * sz;
+//        W.block(4, 4, 2, 2) = I;
+//        return W;
+//    }
+//
+//    MatrixXcd H_MPO_random_field(double g, double e) {
+//        /*! Returns the MPO as a matrix. Notation following Schollwöck (2010) */
+//        using namespace settings::model::tf_ising;
+//        MatrixXcd W(6, 6);
+//        W.setZero();
+//        W.block(0, 0, 2, 2) = I;
+//        W.block(2, 0, 2, 2) = sz;
+//        W.block(4, 0, 2, 2) = -g * sz - e*I; // Optionally subtract a constant. Default is k = 0.
+//        W.block(4, 2, 2, 2) = -J * sz;
+//        W.block(4, 4, 2, 2) = I;
+//        return W;
+//    }
 }

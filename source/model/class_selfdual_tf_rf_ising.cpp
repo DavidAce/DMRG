@@ -7,8 +7,9 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_random_numbers.h>
 #include <iomanip>
+#include <general/nmspc_math.h>
 
-using namespace qm::SpinOneHalf;
+using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
 
@@ -72,6 +73,21 @@ Eigen::Tensor<Scalar,4> class_selfdual_tf_rf_ising::MPO_reduced_view(double site
     temp.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx - site_energy * I);
     return temp;
 }
+
+Eigen::MatrixXcd class_selfdual_tf_rf_ising::single_site_hamiltonian(
+        int position,
+        int sites,
+        std::vector<Eigen::MatrixXcd> &SX,
+        std::vector<Eigen::MatrixXcd> &SY,
+        std::vector<Eigen::MatrixXcd> &SZ)
+        const
+{
+    int i = Math::mod(position,     sites);
+    int j = Math::mod(position + 1, sites);
+    int k = Math::mod(position + 2, sites);
+    return - (J_rnd * SZ[i]*SZ[j] + h_rnd*0.5*(SX[i]+SX[j]) + lambda*(h_avg * SX[i]*SX[j] + J_avg*SZ[i]*SZ[k]));
+}
+
 
 std::unique_ptr<class_hamiltonian_base> class_selfdual_tf_rf_ising::clone() const {return std::make_unique<class_selfdual_tf_rf_ising>(*this);}
 void   class_selfdual_tf_rf_ising::set_reduced_energy(double site_energy)         {e_reduced = site_energy;}

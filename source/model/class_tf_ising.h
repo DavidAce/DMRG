@@ -23,19 +23,26 @@ private:
 public:
 
     class_tf_ising();
-    void build_mpo()                                                            override;
-    void randomize_hamiltonian()                                                override;
-    Eigen::Tensor<Scalar,4> MPO_reduced_view()                            const override;
-    Eigen::Tensor<Scalar,4> MPO_reduced_view(double site_energy)          const override;
-    std::unique_ptr<class_hamiltonian_base> clone()                       const override;
-    void   set_reduced_energy(double site_energy)                               override;
-    int    get_spin_dimension()                                           const override;
-//    double get_energy_reduced()                                           const override;
-//    double get_random_field()                                             const override;
-//    double get_randomness_strength()                                 const override;
-    void   print_parameter_names ()                                       const override;
-    void   print_parameter_values()                                       const override;
-    std::vector<double> get_all_parameters()                              const;
+    void build_mpo()                                                                  override;
+    void randomize_hamiltonian()                                                      override;
+    Eigen::Tensor<Scalar,4> MPO_reduced_view()                                  const override;
+    Eigen::Tensor<Scalar,4> MPO_reduced_view(double site_energy)                const override;
+    Eigen::MatrixXcd single_site_hamiltonian(
+            int position,
+            int sites,
+            std::vector<Eigen::MatrixXcd> &SX,
+            std::vector<Eigen::MatrixXcd> &SY,
+            std::vector<Eigen::MatrixXcd> &SZ)                                  const override;
+
+    std::unique_ptr<class_hamiltonian_base> clone()                             const override;
+    void   set_reduced_energy(double site_energy)                                     override;
+    int    get_spin_dimension()                                                 const override;
+//    double get_energy_reduced()                                                 const override;
+//    double get_random_field()                                                   const override;
+//    double get_randomness_strength()                                            const override;
+    void   print_parameter_names ()                                             const override;
+    void   print_parameter_values()                                             const override;
+    std::vector<double> get_all_parameters()                                    const;
 };
 
 #endif //CLASS_TF_ISING_H

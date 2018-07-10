@@ -7,7 +7,7 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_random_numbers.h>
 
-using namespace qm::SpinOneHalf;
+using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
 void class_hamiltonian::build_mpo()

@@ -20,7 +20,7 @@ using Scalar = class_superblock::Scalar;
 
 class_superblock::class_superblock():
         MPS(std::make_unique<class_mps_2site>()),
-        H(std::make_unique<class_mpo>()),
+//        H(std::make_unique<class_mpo>()),
         HA (class_hamiltonian_factory::create_mpo(settings::model::model_type)),
         HB (class_hamiltonian_factory::create_mpo(settings::model::model_type)),
         Lblock(std::make_unique<class_environment>("L")),

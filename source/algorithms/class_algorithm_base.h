@@ -76,7 +76,6 @@ public:
     void print_status_update();
     void print_status_full();
     void single_DMRG_step(long chi_max, Ritz ritz = Ritz::SR);
-    void single_TEBD_step(long chi_max);
 
     virtual void check_convergence_overall();
     void check_convergence_variance_mpo(double threshold = -1.0);

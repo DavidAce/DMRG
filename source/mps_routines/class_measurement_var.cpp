@@ -72,7 +72,7 @@ void class_measurement::compute_energy_and_variance_mom(Scalar a,std::vector<Eig
     using T = Scalar;
     //The following only works if superblock->MPS has been normalized! I.e, you have to have run MPS->compute_mps_components() prior.
     T lambdaG  = moment_generating_function(superblock->MPS, Op_vec);
-    T l        = superblock->H->mps_sites;
+    T l        = 2.0; //Number of sites in unit cell
     T G        = pow(lambdaG,1.0/l);
     T logG     = log(lambdaG) * 1.0/l;
     T logGc    = log(conj(lambdaG) ) * 1.0/l;
@@ -123,8 +123,8 @@ void class_measurement::compute_energy_variance_ham(){
     const Eigen::Tensor<Scalar,4> & transfer_matrix_LBGA       = superblock->MPS->transfer_matrix_LBGA;
     const Eigen::Tensor<Scalar,4> & transfer_matrix_LAGB       = superblock->MPS->transfer_matrix_LAGB;
 
-    Eigen::Tensor<Scalar,4> h0 =  Matrix_to_Tensor((superblock->H->h[0] - E_evn(0)*MatrixType<Scalar>::Identity(4,4)).eval(), 2,2,2,2);
-    Eigen::Tensor<Scalar,4> h1 =  Matrix_to_Tensor((superblock->H->h[1] - E_odd(0)*MatrixType<Scalar>::Identity(4,4)).eval(), 2,2,2,2);
+    Eigen::Tensor<Scalar,4> h0 =  Matrix_to_Tensor((h_evn - E_evn(0)*MatrixType<Scalar>::Identity(4,4)).eval(), 2,2,2,2);
+    Eigen::Tensor<Scalar,4> h1 =  Matrix_to_Tensor((h_odd - E_odd(0)*MatrixType<Scalar>::Identity(4,4)).eval(), 2,2,2,2);
 
     Eigen::Tensor<Scalar,0> E2AB =
             theta_evn

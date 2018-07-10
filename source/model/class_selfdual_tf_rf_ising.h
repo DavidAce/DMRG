@@ -31,6 +31,13 @@ public:
     void randomize_hamiltonian()                                                override;
     Eigen::Tensor<Scalar,4> MPO_reduced_view()                            const override;
     Eigen::Tensor<Scalar,4> MPO_reduced_view(double site_energy)          const override;
+    Eigen::MatrixXcd single_site_hamiltonian(
+            int position,
+            int sites,
+            std::vector<Eigen::MatrixXcd> &SX,
+            std::vector<Eigen::MatrixXcd> &SY,
+            std::vector<Eigen::MatrixXcd> &SZ)                                  const override;
+
     std::unique_ptr<class_hamiltonian_base> clone()                       const override;
     void   set_reduced_energy(double site_energy)                               override;
     int    get_spin_dimension()                                           const override;

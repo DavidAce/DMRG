@@ -14,6 +14,7 @@
 #include <mps_routines/class_mps_2site.h>
 #include <mps_routines/class_mpo.h>
 #include <mps_routines/class_finite_chain_sweeper.h>
+#include <general/nmspc_quantum_mechanics.h>
 
 using namespace std;
 using namespace Textra;
@@ -25,8 +26,13 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
         :superblock(std::move(superblock_)), sim_type(sim_)
 {
 
-    mom_vecA = superblock->H->compute_G(a,4);
     set_profiling_labels();
+    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
+    auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
+    auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
+    h_evn = superblock->HA->single_site_hamiltonian(0,2,SX,SY, SZ);
+    h_odd = superblock->HB->single_site_hamiltonian(1,2,SX,SY, SZ);
+    mom_vecA = qm::timeEvolution::compute_G(a,4, h_evn, h_odd);
 
 }
 
@@ -115,12 +121,12 @@ void class_measurement::compute_energy_mpo(){
 void class_measurement::compute_energy_ham(){
     t_ene_ham.tic();
     E_evn = superblock->MPS->theta_evn_normalized
-                .contract(Matrix_to_Tensor(superblock->H->h[0],2,2,2,2),     idx({0, 2}, {0, 1}))
+                .contract(Matrix_to_Tensor(h_evn,2,2,2,2),     idx({0, 2}, {0, 1}))
                 .contract(superblock->MPS->theta_evn_normalized.conjugate(), idx({2, 3}, {0, 2}))
                 .contract(superblock->MPS->l_evn,                            idx({0, 2}, {0, 1}))
                 .contract(superblock->MPS->r_evn,                            idx({0, 1}, {0, 1}));
     E_odd  = superblock->MPS-> theta_odd_normalized
-                    .contract(Matrix_to_Tensor(superblock->H->h[1],2,2,2,2),    idx({0, 2}, {0, 1}))
+                    .contract(Matrix_to_Tensor(h_odd,2,2,2,2),    idx({0, 2}, {0, 1}))
                     .contract(superblock->MPS->theta_odd_normalized.conjugate(),idx({2, 3}, {0,2}))
                     .contract(superblock->MPS->l_odd,                           idx({0,2}, {0,1}))
                     .contract(superblock->MPS->r_odd,                           idx({0,1},{0,1}));

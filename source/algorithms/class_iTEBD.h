@@ -16,6 +16,9 @@ public:
     explicit class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_);
 
     std::unique_ptr<class_hdf5_table<class_table_tebd>> table_itebd;
+    std::vector<Eigen::Tensor<Scalar,4>> unitary_time_evolving_operators;
+    Eigen::MatrixXcd h_evn;
+    Eigen::MatrixXcd h_odd;
 
     int    max_steps    ;
     double phys_time = 0;
@@ -26,6 +29,7 @@ public:
     bool   time_step_has_converged;
 
     void run()                                          override;
+    void single_TEBD_step(long chi_max);
     void initialize_constants()                         override;
     void check_convergence_time_step();
     void check_convergence_overall()                    override;
