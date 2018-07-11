@@ -10,12 +10,12 @@
 #include <general/nmspc_tensor_extra.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
-#include <mps_routines/class_hamiltonian.h>
+#include "../../cmake-modules/unused/class_hamiltonian.h"
 #include <mps_routines/class_mps_2site.h>
-#include <mps_routines/class_mpo.h>
+#include "../../cmake-modules/unused/class_mpo.h"
 #include <mps_routines/class_finite_chain_sweeper.h>
 #include <general/nmspc_quantum_mechanics.h>
-
+#include <mps_routines/class_mps_util.h>
 using namespace std;
 using namespace Textra;
 
@@ -23,9 +23,11 @@ using namespace Textra;
 
 
 class_measurement::class_measurement(std::shared_ptr<class_superblock> superblock_, SimulationType sim_)
-        :superblock(std::move(superblock_)), sim_type(sim_)
+        :superblock(std::move(superblock_)),
+        sim_type(sim_),
+        mps_util(std::make_shared<class_mps_util>())
 {
-
+//    mps_util = std::make_unique<class_mps_util>();
     set_profiling_labels();
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -40,10 +42,11 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
                                      std::shared_ptr<class_finite_chain_sweeper> env_storage_,
                                      SimulationType sim_)
         :class_measurement(superblock_,sim_)
-
 {
         env_storage = std::move(env_storage_);
 }
+
+
 
 
 void class_measurement::compute_all_observables_from_superblock(){
@@ -54,7 +57,7 @@ void class_measurement::compute_all_observables_from_superblock(){
 
     switch(sim_type){
         case SimulationType::iDMRG:
-            superblock->MPS->compute_mps_components();
+            mps_util->compute_mps_components(superblock->MPS);
             compute_energy_mpo();
             compute_energy_variance_mpo();
             compute_energy_ham();
@@ -63,12 +66,12 @@ void class_measurement::compute_all_observables_from_superblock(){
             break;
         case SimulationType::xDMRG:
         case SimulationType::fDMRG:
-            superblock->MPS->theta = superblock->MPS->get_theta();
+            mps_util->theta = mps_util->get_theta(superblock->MPS);
             compute_energy_mpo();
             compute_energy_variance_mpo();
             break;
         case SimulationType::iTEBD:
-            superblock->MPS->compute_mps_components();
+            mps_util->compute_mps_components(superblock->MPS);
             compute_energy_ham();
             compute_energy_variance_ham();
             compute_energy_and_variance_mom(a, mom_vecA);
@@ -97,10 +100,10 @@ void class_measurement::compute_energy_mpo(){
     double         L = superblock->Lblock->size + superblock->Rblock->size + 2;
     Eigen::Tensor<Scalar, 0>  E =
             superblock->Lblock->block
-                    .contract(superblock->MPS->theta,                     idx({0},{1}))
+                    .contract(mps_util->theta,                            idx({0},{1}))
                     .contract(superblock->HA->MPO,                        idx({1,2},{0,2}))
                     .contract(superblock->HB->MPO,                        idx({3,1},{0,2}))
-                    .contract(superblock->MPS->theta.conjugate(),         idx({0,2,4},{1,0,2}))
+                    .contract(mps_util->theta.conjugate(),                idx({0,2,4},{1,0,2}))
                     .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
     if(sim_type == SimulationType::iDMRG ){
@@ -120,16 +123,16 @@ void class_measurement::compute_energy_mpo(){
 
 void class_measurement::compute_energy_ham(){
     t_ene_ham.tic();
-    E_evn = superblock->MPS->theta_evn_normalized
+    E_evn = mps_util->theta_evn_normalized
                 .contract(Matrix_to_Tensor(h_evn,2,2,2,2),     idx({0, 2}, {0, 1}))
-                .contract(superblock->MPS->theta_evn_normalized.conjugate(), idx({2, 3}, {0, 2}))
-                .contract(superblock->MPS->l_evn,                            idx({0, 2}, {0, 1}))
-                .contract(superblock->MPS->r_evn,                            idx({0, 1}, {0, 1}));
-    E_odd  = superblock->MPS-> theta_odd_normalized
+                .contract(mps_util->theta_evn_normalized.conjugate(), idx({2, 3}, {0, 2}))
+                .contract(mps_util->l_evn,                            idx({0, 2}, {0, 1}))
+                .contract(mps_util->r_evn,                            idx({0, 1}, {0, 1}));
+    E_odd  = mps_util->theta_odd_normalized
                     .contract(Matrix_to_Tensor(h_odd,2,2,2,2),    idx({0, 2}, {0, 1}))
-                    .contract(superblock->MPS->theta_odd_normalized.conjugate(),idx({2, 3}, {0,2}))
-                    .contract(superblock->MPS->l_odd,                           idx({0,2}, {0,1}))
-                    .contract(superblock->MPS->r_odd,                           idx({0,1},{0,1}));
+                    .contract(mps_util->theta_odd_normalized.conjugate(),idx({2, 3}, {0,2}))
+                    .contract(mps_util->l_odd,                           idx({0,2}, {0,1}))
+                    .contract(mps_util->r_odd,                           idx({0,1},{0,1}));
     assert(abs(imag(E_evn(0)+ E_odd(0))) < 1e-10 and "Energy has an imaginary part!!!" );
 
     t_ene_ham.toc();

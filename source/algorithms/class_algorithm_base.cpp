@@ -9,9 +9,9 @@
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_measurement.h>
-#include <mps_routines/class_hamiltonian.h>
+#include "../../cmake-modules/unused/class_hamiltonian.h"
 #include <mps_routines/class_finite_chain_sweeper.h>
-#include <mps_routines/class_mpo.h>
+#include "../../cmake-modules/unused/class_mpo.h"
 #include <mps_routines/class_mps_2site.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
@@ -45,11 +45,12 @@ void class_algorithm_base::single_DMRG_step(long chi_max, Ritz ritz){
  */
     t_sim.tic();
     t_opt.tic();
-    superblock->MPS->theta = superblock->MPS->get_theta();
-    superblock->MPS->theta = superblock->optimize_MPS(superblock->MPS->theta, ritz);
+    Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
+//    superblock->MPS->theta = superblock->MPS->get_theta();
+    theta = superblock->optimize_MPS(theta, ritz);
     t_opt.toc();
     t_svd.tic();
-    superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, s::precision::SVDThreshold);
+    superblock->truncate_MPS(theta, chi_max, s::precision::SVDThreshold);
     t_svd.toc();
     //Reduce the hamiltonians if you are doing infinite systems:
     if(sim_type == SimulationType::iDMRG){
@@ -245,6 +246,8 @@ void class_algorithm_base::initialize_state(std::string initial_state ) {
     Eigen::Tensor<Scalar,1> LC;
     Eigen::Tensor<Scalar,3> GB;
     Eigen::Tensor<Scalar,1> LB;
+    Eigen::Tensor<Scalar,4> theta;
+
     GA.setZero();
     GB.setZero();
 
@@ -261,8 +264,8 @@ void class_algorithm_base::initialize_state(std::string initial_state ) {
         GA(0, 0, 0) = 1;
         GB(0, 0, 0) = 1;
         superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-        superblock->MPS->theta = superblock->MPS->get_theta();
-        superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, 1, settings::precision::SVDThreshold);
+        theta = superblock->MPS->get_theta();
+        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
     }else if(initial_state == "updown"){
         std::cout << "Initializing Up down -state  |up,down>" << std::endl;
         GA.resize(array3{d,1,1});
@@ -276,8 +279,8 @@ void class_algorithm_base::initialize_state(std::string initial_state ) {
         GA(0  , 0, 0) = 1;
         GB(d-1, 0, 0) = 1;
         superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-        superblock->MPS->theta = superblock->MPS->get_theta();
-        superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, 1, settings::precision::SVDThreshold);
+        theta = superblock->MPS->get_theta();
+        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
     }else if(initial_state == "ghz"){
         std::cout << "Initializing GHZ-state" << std::endl;
         // GHZ state (|up,up> + |down, down > ) /sqrt(2)
@@ -303,8 +306,8 @@ void class_algorithm_base::initialize_state(std::string initial_state ) {
         GB(1, 0, 0) = 0;
         GB(1, 1, 0) = 1;
         superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-        superblock->MPS->theta = superblock->MPS->get_theta();
-        superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, 2, settings::precision::SVDThreshold);
+        theta = superblock->MPS->get_theta();
+        superblock->truncate_MPS(theta, 2, settings::precision::SVDThreshold);
     }else if(initial_state == "lambda"){
         std::cout << "Initializing W-state" << std::endl;
         // W state (|up,down> + |down, up > ) /sqrt(2)
@@ -329,16 +332,16 @@ void class_algorithm_base::initialize_state(std::string initial_state ) {
         GB(1, 0, 0) = 1;
         GB(1, 1, 0) = 0;
         superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-        superblock->MPS->theta = superblock->MPS->get_theta();
-        superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, 2, settings::precision::SVDThreshold);
+        theta = superblock->MPS->get_theta();
+        superblock->truncate_MPS(theta, 2, settings::precision::SVDThreshold);
     }
 
     else if (initial_state == "rps"){
         // Random product state
         std::cout << "Initializing random product state" << std::endl;
         //Initialize as spinors
-        superblock->MPS->theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
-        superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, 1, settings::precision::SVDThreshold);
+        theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
+        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
 
     }else if (initial_state == "random_chi" ){
         // Random state
@@ -353,8 +356,8 @@ void class_algorithm_base::initialize_state(std::string initial_state ) {
         LB.setConstant(1.0/sqrt(chi_max));
         LC.setConstant(1.0/sqrt(chi_max));
         superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-        superblock->MPS->theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chi_max,d*chi_max),d,chi_max,d,chi_max);
-        superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, settings::precision::SVDThreshold);
+        theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chi_max,d*chi_max),d,chi_max,d,chi_max);
+        superblock->truncate_MPS(theta, chi_max, settings::precision::SVDThreshold);
 
     }else{
         std::cerr << "Invalid state given for initialization. Check 'model::initial_state' your input file. Please choose one of: " << std::endl;

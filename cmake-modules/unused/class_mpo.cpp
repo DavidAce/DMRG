@@ -7,7 +7,7 @@
 #include <unsupported/Eigen/MatrixFunctions>
 #include <sim_parameters/nmspc_model.h>
 #include <general/nmspc_tensor_extra.h>
-#include <mps_routines/class_mpo.h>
+#include "class_mpo.h"
 #include <mps_routines/class_hamiltonian.h>
 using namespace std;
 using namespace Textra;

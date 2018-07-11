@@ -9,7 +9,7 @@
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_mps_2site.h>
-#include <mps_routines/class_mpo.h>
+#include "../../cmake-modules/unused/class_mpo.h"
 #include <mps_routines/class_finite_chain_sweeper.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
@@ -75,17 +75,17 @@ void class_xDMRG::single_xDMRG_step(long chi_max, double energy_target) {
  */
     t_sim.tic();
     t_opt.tic();
-    superblock->MPS->theta = superblock->MPS->get_theta();
+    Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
     if (iteration <= 5){
         chi_max = std::min(chi_max,12l);
-        superblock->MPS->theta = find_state_with_greatest_overlap_full_diag(superblock->MPS->theta, energy_target);
+        theta = find_state_with_greatest_overlap_full_diag(theta, energy_target);
     }else{
-        superblock->MPS->theta = find_state_with_greatest_overlap_part_diag(superblock->MPS->theta, energy_target);
+        theta = find_state_with_greatest_overlap_part_diag(theta, energy_target);
     }
 
     t_opt.toc();
     t_svd.tic();
-    superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, settings::precision::SVDThreshold);
+    superblock->truncate_MPS(theta, chi_max, settings::precision::SVDThreshold);
     t_svd.toc();
     measurement->set_not_measured();
     t_sim.toc();
@@ -199,9 +199,9 @@ void class_xDMRG::reset_chain_mps_to_random_product_state() {
         long chiA = superblock->MPS->chiA();
         long chiB = superblock->MPS->chiB();
         long d    = superblock->HA->get_spin_dimension();
-        superblock->MPS->theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
+        Eigen::Tensor<Scalar,4> theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
         //Get a properly normalized initial state.
-        superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, 1, settings::precision::SVDThreshold);
+        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
         env_storage_overwrite_local_ALL();
 //        env_storage->print_storage();
         // It's important not to perform the last step.
