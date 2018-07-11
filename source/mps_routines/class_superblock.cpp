@@ -6,7 +6,6 @@
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_mps_2site.h>
-#include <mps_routines/class_mpo.h>
 #include <iomanip>
 #include <general/class_svd_wrapper.h>
 #include <sim_parameters/nmspc_sim_settings.h>
@@ -20,7 +19,6 @@ using Scalar = class_superblock::Scalar;
 
 class_superblock::class_superblock():
         MPS(std::make_unique<class_mps_2site>()),
-//        H(std::make_unique<class_mpo>()),
         HA (class_hamiltonian_factory::create_mpo(settings::model::model_type)),
         HB (class_hamiltonian_factory::create_mpo(settings::model::model_type)),
         Lblock(std::make_unique<class_environment>("L")),

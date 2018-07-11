@@ -78,7 +78,7 @@ Eigen::MatrixXcd class_selfdual_tf_rf_ising::single_site_hamiltonian(
         int position,
         int sites,
         std::vector<Eigen::MatrixXcd> &SX,
-        std::vector<Eigen::MatrixXcd> &SY,
+        std::vector<Eigen::MatrixXcd> &SY[[maybe_unused]],
         std::vector<Eigen::MatrixXcd> &SZ)
         const
 {

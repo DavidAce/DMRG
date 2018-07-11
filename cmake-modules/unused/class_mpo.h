@@ -22,9 +22,9 @@ class class_mpo{
 public:
     using Scalar = std::complex<double>;
     class_mpo();
-    static constexpr int        mps_sites = 2  ;   /*!< Two site MPS */
+//    static constexpr int        mps_sites = 2  ;   /*!< Two site MPS */
 //    long                        local_dimension;   /*!< Local "spin" dimension */
-    double                      step_size;
+//    double                      step_size;
 //    Textra::MatrixType<Scalar>  H_asMatrix;        /*!< Matrix representation of full 2-site Hamiltonian */
 //    Eigen::Tensor<Scalar,4>     H_asTensor;        /*!< Rank-4 representation 2-site Hamiltonian (non MPO). */
 //    Eigen::Tensor<Scalar,4>     H_asTensor_sq;     /*!< Rank-4 representation 2-site Hamiltonian squared (non MPO). */
