@@ -5,7 +5,7 @@
 #include "class_finite_chain_sweeper.h"
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
-#include <mps_routines/class_mpo.h>
+#include "../../cmake-modules/unused/class_mpo.h"
 
 using namespace std;
 using namespace Textra;

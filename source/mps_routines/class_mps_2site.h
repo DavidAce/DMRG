@@ -114,39 +114,15 @@ public:
     }
 
 
-    Eigen::Tensor<Scalar,4> theta,theta_evn_normalized, theta_odd_normalized;
-    Eigen::Tensor<Scalar,4> theta_sw ;
-    Eigen::Tensor<Scalar,3> LBGA, LAGB;
-    Eigen::Tensor<Scalar,2> l_evn, r_evn;
-    Eigen::Tensor<Scalar,2> l_odd, r_odd;
-
-    Eigen::Tensor<Scalar,4> transfer_matrix_LBGA;
-    Eigen::Tensor<Scalar,4> transfer_matrix_LAGB;
-    Eigen::Tensor<Scalar,4> transfer_matrix_evn;
-    Eigen::Tensor<Scalar,4> transfer_matrix_odd;
-
-
     class_mps_2site();
     class_mps_2site(const class_mps_2site &other);
 
-    void initialize(int spin_dim);                              /*!< Initializes the MPS*/
-    void swap_AB();                                             /*!< Swaps the roles of A and B. Used in infinite DMRG.*/
-    void compute_mps_components();
+
+    void initialize(int spin_dim);                                  /*!< Initializes the MPS*/
+    void swap_AB();                                                 /*!< Swaps the roles of A and B. Used in infinite DMRG.*/
+    Eigen::Tensor<Scalar,4> get_theta (Scalar norm = 1.0)  const;   /*!< Returns rank 4 tensor \f$\Theta\f$.*/
 
 
-    Eigen::Tensor<Scalar,4> get_theta(Scalar norm = 1.0) const;              /*!< Returns rank 4 tensor \f$\Theta\f$.*/
-    Eigen::Tensor<Scalar,4> get_theta_swapped(Scalar norm = 1.0) const;      /*!< Returns rank 4 tensor \f$\Theta\f$, with A and B swapped.*/
-    Eigen::Tensor<Scalar,4> get_theta_evn(Scalar norm = 1.0) const;          /*!< Returns rank 4 tensor \f$\Theta\f$.*/
-    Eigen::Tensor<Scalar,4> get_theta_odd(Scalar norm = 1.0) const;          /*!< Returns rank 4 tensor \f$\Theta\f$, with A and B swapped.*/
-
-    Eigen::Tensor<Scalar,4> get_transfer_matrix_zero() const;
-    Eigen::Tensor<Scalar,4> get_transfer_matrix_LBGA(Scalar norm = 1.0)const;
-    Eigen::Tensor<Scalar,4> get_transfer_matrix_GALC(Scalar norm = 1.0)const;
-    Eigen::Tensor<Scalar,4> get_transfer_matrix_GBLB(Scalar norm = 1.0)const;
-    Eigen::Tensor<Scalar,4> get_transfer_matrix_LCGB(Scalar norm = 1.0)const;
-    Eigen::Tensor<Scalar,4> get_transfer_matrix_theta_evn(Scalar norm  = 1.0)const;
-    Eigen::Tensor<Scalar,4> get_transfer_matrix_theta_odd(Scalar norm  = 1.0)const;
-    Eigen::Tensor<Scalar,4> get_transfer_matrix_AB(int p)const;
 };
 
 

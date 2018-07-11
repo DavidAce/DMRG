@@ -16,6 +16,7 @@ using namespace std::complex_literals;
 
 class class_superblock;
 class class_mps_2site;
+class class_mps_util;
 class class_finite_chain_sweeper;
 /*!
  * \class class_measurement
@@ -29,8 +30,9 @@ public:
 private:
     std::shared_ptr<const class_superblock>           superblock;
     SimulationType sim_type;
-
     std::shared_ptr<const class_finite_chain_sweeper> env_storage;
+    std::shared_ptr<class_mps_util> mps_util;
+
     class_custom_cout ccout;
     Scalar moment_generating_function(const std::unique_ptr<class_mps_2site> &MPS_original,
                                                        std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);

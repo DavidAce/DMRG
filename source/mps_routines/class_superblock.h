@@ -10,8 +10,6 @@
 #include <general/class_tic_toc.h>
 #include <general/nmspc_eigsolver_props.h>
 class class_mps_2site;
-class class_mpo;
-//class class_hamiltonian;
 class class_hamiltonian_base;
 class class_environment;
 class class_environment_var;
@@ -34,7 +32,6 @@ public:
 
 
     std::unique_ptr<class_mps_2site>         MPS;        /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
-//    std::unique_ptr<class_mpo>               H;
     std::unique_ptr<class_hamiltonian_base>  HA;
     std::unique_ptr<class_hamiltonian_base>  HB;
     std::unique_ptr<class_environment>       Lblock;     /*!< Left  environment block. */

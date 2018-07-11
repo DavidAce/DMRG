@@ -7,7 +7,7 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
-#include <mps_routines/class_mpo.h>
+#include "../../cmake-modules/unused/class_mpo.h"
 #include <mps_routines/class_mps_2site.h>
 #include <model/class_hamiltonian_base.h>
 #include <general/nmspc_math.h>
@@ -28,7 +28,7 @@ class_iTEBD::class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_)
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
     auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
     h_evn = superblock->HA->single_site_hamiltonian(0,2,SX,SY, SZ);
-    h_odd = superblock->HB->single_site_hamiltonian(1,2,SX,SY, SZ);''
+    h_odd = superblock->HB->single_site_hamiltonian(1,2,SX,SY, SZ);
 }
 
 
@@ -63,11 +63,11 @@ void class_iTEBD::single_TEBD_step(long chi_max){
     t_sim.tic();
     for (auto &U: unitary_time_evolving_operators){
         t_evo.tic();
-        superblock->MPS->theta = superblock->evolve_MPS(superblock->MPS->get_theta() ,U);
+        Eigen::Tensor<Scalar,4> theta = superblock->evolve_MPS(superblock->MPS->get_theta() ,U);
         t_evo.toc();
 
         t_svd.tic();
-        superblock->MPS->theta = superblock->truncate_MPS(superblock->MPS->theta, chi_max, settings::precision::SVDThreshold);
+        superblock->truncate_MPS(theta, chi_max, settings::precision::SVDThreshold);
         t_svd.toc();
 
         if (&U != &unitary_time_evolving_operators.back()) {
