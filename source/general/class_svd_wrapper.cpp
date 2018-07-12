@@ -3,6 +3,7 @@
 //
 
 #include "class_svd_wrapper.h"
+#include <Eigen/QR>
 //
 // Definitions
 //
@@ -22,17 +23,19 @@ template<typename Scalar>
 Eigen::Tensor<Scalar, 2>
 class_SVD<Scalar>::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor){
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-    setThreshold(1e-8);
-    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).squaredNorm();
-    long chi = SVD.rank();
-    Eigen::Tensor<Scalar, 2> U = Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chi), SVD.matrixU().rows(), chi);
-    Eigen::Tensor<Scalar, 1> S = Textra::Matrix_to_Tensor(SVD.singularValues().head(chi).template cast<Scalar>() , chi);
-    Eigen::Tensor<Scalar, 2> V = Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chi).conjugate() ,  SVD.matrixV().rows(), chi ).shuffle(Textra::array2{1,0});
-
-    return V.conjugate().shuffle(Textra::array2{1,0})
-            .contract(Textra::asDiagonalInversed(S),Textra::idx({1},{0}))
-            .contract(U.conjugate().shuffle(Textra::array2{1,0}), Textra::idx({1},{0}));
+    return Textra::Matrix_to_Tensor2(mat.completeOrthogonalDecomposition().pseudoInverse() );
+//    setThreshold(1e-8);
+//    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
+//    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).squaredNorm();
+//    long chi = SVD.rank();
+//    Eigen::Tensor<Scalar, 2> U = Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chi), SVD.matrixU().rows(), chi);
+//    Eigen::Tensor<Scalar, 1> S = Textra::Matrix_to_Tensor(SVD.singularValues().head(chi).template cast<Scalar>() , chi);
+//    Eigen::Tensor<Scalar, 2> V = Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chi).conjugate() ,  SVD.matrixV().rows(), chi ).shuffle(Textra::array2{1,0});
+//
+//
+//    return V.conjugate().shuffle(Textra::array2{1,0})
+//            .contract(Textra::asDiagonalInversed(S),Textra::idx({1},{0}))
+//            .contract(U.conjugate().shuffle(Textra::array2{1,0}), Textra::idx({1},{0}));
 }
 
 

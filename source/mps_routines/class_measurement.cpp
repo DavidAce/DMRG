@@ -57,7 +57,9 @@ void class_measurement::compute_all_observables_from_superblock(){
 
     switch(sim_type){
         case SimulationType::iDMRG:
+            t_temp2.tic();
             mps_util->compute_mps_components(superblock->MPS);
+            t_temp2.toc();
             compute_energy_mpo();
             compute_energy_variance_mpo();
             compute_energy_ham();
