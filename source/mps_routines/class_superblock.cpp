@@ -27,7 +27,8 @@ class_superblock::class_superblock():
         Rblock2(std::make_unique<class_environment_var>("R")),
         SVD(std::make_unique<class_SVD<Scalar>>())
 {
-
+    HA->set_position(0);
+    HB->set_position(1);
     t_eig.set_properties(profile_optimization, 10,"Time optimizing ");
     spin_dimension = HA->get_spin_dimension();
     MPS->initialize(spin_dimension);
@@ -65,7 +66,7 @@ Eigen::Tensor<Scalar,4> class_superblock::optimize_MPS(Eigen::Tensor<Scalar, 4> 
     t_eig.toc();
     t_eig.print_delta();
 
-    E_optimal = std::real(eigvals(0))/2.0;
+    E_optimal = std::real(eigvals(0));
 //    double L = Lblock->size + Rblock->size;
 //    std::cout <<setprecision(16) << "E_lanczos: " <<  std::real(eigvals(0))  << " L : " << L << " " << environment_size + 2 << std::endl;
     //    using namespace chrono;

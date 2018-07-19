@@ -80,12 +80,13 @@ private:
     template<typename T>
     void write_list_to_file(const std::list<T> &obj, std::string dataset_name, unsigned long &counter){
         for(auto &it: obj) {
-            if constexpr(std::is_base_of<class_hamiltonian_base,std::decay_t<decltype(it)>>::value){
-                hdf5->write_dataset(it.MPO, dataset_name + "_" + std::to_string(counter));
-//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_coupling(), "coupling");
-//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_site_field(), "field");
-//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_random_field(), "random_field");
-//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.get_energy_reduced(), "energy");
+            if constexpr(std::is_same<std::decay_t<decltype(it)>, std::unique_ptr<class_hamiltonian_base>>::value){
+                hdf5->write_dataset(it->MPO, dataset_name + "_" + std::to_string(counter));
+                auto values = it->get_parameter_values();
+                auto names  = it->get_parameter_names();
+                for (size_t i = 0; i < std::min(values.size(), names.size()); i++){
+                    hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), values[i], names[i]);
+                }
                 counter++;
             }
             else if constexpr(std::is_same<std::decay_t<decltype(it)>, class_environment>::value or

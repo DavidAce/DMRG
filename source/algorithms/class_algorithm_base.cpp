@@ -54,6 +54,7 @@ void class_algorithm_base::single_DMRG_step(long chi_max, Ritz ritz){
     t_svd.toc();
     //Reduce the hamiltonians if you are doing infinite systems:
     if(sim_type == SimulationType::iDMRG){
+        superblock->E_optimal /= 2.0;
         superblock->HA->set_reduced_energy(superblock->E_optimal);
         superblock->HB->set_reduced_energy(superblock->E_optimal);
     }
