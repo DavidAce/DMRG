@@ -49,25 +49,6 @@ void class_finite_chain_sweeper::update_current_length() {
     assert(current_length == superblock->environment_size + 2ul);
 }
 
-//int class_finite_chain_sweeper::insert_edges(){
-//    if(ENV_L.empty() and ENV_R.empty() and ENV2_L.empty() and ENV2_R.empty()) {
-//        //Create one
-//        ENV_L.emplace_back(*superblock->Lblock);
-//        ENV_R.emplace_front(*superblock->Rblock);
-//        ENV2_L.emplace_back(*superblock->Lblock2);
-//        ENV2_R.emplace_front(*superblock->Rblock2);
-//    }else{
-//        //Replace existing
-//        ENV_L.front()  = *superblock->Lblock;
-//        ENV_R.back()   = *superblock->Rblock;
-//        ENV2_L.front() = *superblock->Lblock2;
-//        ENV2_R.back()  = *superblock->Rblock2;
-//    }
-//    return 0;
-//};
-
-
-
 
 int class_finite_chain_sweeper::insert(){
 
@@ -85,9 +66,6 @@ int class_finite_chain_sweeper::insert(){
 
     MPS_L.emplace_back(*superblock->MPS->MPS_A);
     MPS_R.emplace_front(*superblock->MPS->MPS_B);
-//
-//    MPS_L.emplace_back (std::make_tuple(superblock->MPS->LB_left, superblock->MPS->GA));
-//    MPS_R.emplace_front(std::make_tuple(superblock->MPS->GB     , superblock->MPS->LB));
     MPS_C = superblock->MPS->LC;
 
     ENV_L.emplace_back(*superblock->Lblock);
@@ -96,12 +74,16 @@ int class_finite_chain_sweeper::insert(){
     ENV2_R.emplace_front(*superblock->Rblock2);
     MPO_L.emplace_back      (superblock->HA->clone());
     MPO_R.emplace_front     (superblock->HB->clone());
-
     update_current_length();
+    int pos = 0;
+    for (auto &MPO : MPO_L){
+        MPO->set_position(pos++);
+    }
+    for (auto &MPO : MPO_R){
+        MPO->set_position(pos++);
+    }
 
 //    std::cout << "Inserted -- New state reflects current superblock: " << std::endl;
-//    print_storage();
-//    print_hamiltonians();
     assert(ENV_L.back().size + ENV_R.front().size == superblock->environment_size);
     assert(ENV_L.back().size   == superblock->Lblock->size);
     assert(ENV_R.front().size  == superblock->Rblock->size);
@@ -155,9 +137,6 @@ void class_finite_chain_sweeper::overwrite_local_ENV(){
 
 int class_finite_chain_sweeper::move(){
     //Take current MPS and generate an Lblock one larger and store it in list for later loading
-
-//    std::cout << "Starting move in direction: " << direction << " MPS_L size: " << MPS_L.size() << " current e " << superblock->HA->get_energy_reduced()<< std::endl;
-//    std::cout << "Starting move in direction: " << direction << " MPS_R size: " << MPS_R.size() << " current e " << superblock->HB->get_energy_reduced()<< std::endl;
     assert(!MPS_L.empty() and !MPS_R.empty());
     assert(MPS_L.size() + MPS_R.size() == max_length);
     assert(ENV_L.size() + ENV_R.size() == max_length);
@@ -171,7 +150,6 @@ int class_finite_chain_sweeper::move(){
         assert(ENV_R.front().size       == superblock->Rblock->size);
         assert(ENV2_R.front().size      == superblock->Rblock2->size);
         MPS_L.emplace_back(*superblock->MPS->MPS_A);
-//        MPS_L.emplace_back(std::make_tuple(superblock->MPS->LB_left, superblock->MPS->GA));
         MPO_L.emplace_back (superblock->HA->clone());
         ENV_L.emplace_back (*superblock->Lblock);
         ENV2_L.emplace_back (*superblock->Lblock2);
@@ -206,7 +184,7 @@ int class_finite_chain_sweeper::move(){
         MPS_R.emplace_front (*superblock->MPS->MPS_B);
         MPO_R.emplace_front (superblock->HB->clone());
         ENV_R.emplace_front (*superblock->Rblock);
-        ENV2_R.emplace_front (*superblock->Rblock2);
+        ENV2_R.emplace_front(*superblock->Rblock2);
 
 
         MPS_L.pop_back();
@@ -228,11 +206,8 @@ int class_finite_chain_sweeper::move(){
         *superblock->Lblock2 = ENV2_L.back();
     }
     assert(superblock->MPS->MPS_A->get_G().dimension(2) == superblock->MPS->MPS_B->get_G().dimension(1));
-//    assert(superblock->MPS->GA.dimension(2) == superblock->MPS->LA.dimension(0));
-//    assert(superblock->MPS->GB.dimension(1) == superblock->MPS->LA.dimension(0));
-//    assert(superblock->MPS->GB.dimension(2) == superblock->MPS->LB.dimension(0));
 
-//    Check edge
+    //    Check edge
     if (position_is_the_left_edge() or position_is_the_right_edge()) {
         direction *= -1;
     }
@@ -316,10 +291,10 @@ void class_finite_chain_sweeper::print_storage_compact(){
 void class_finite_chain_sweeper::print_hamiltonians() {
     MPO_L.begin()->get()->print_parameter_names();
     for(auto &it : MPO_L){
-        it.get()->print_parameter_values();
+        it->print_parameter_values();
     }
     for(auto &it : MPO_R){
-        it.get()->print_parameter_values();
+        it->print_parameter_values();
     }
 }
 

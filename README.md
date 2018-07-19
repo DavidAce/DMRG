@@ -91,7 +91,7 @@ The compilation of DMRG++ requires several libraries. To meet the requirements, 
 The executable `build/Release/DMRG++` can be run without input parameters. By default it will try to find `input/input.cfg` the file
 where the simulation parameters are defined. You can modify these parameters, o create a new input file and pass its (full or relative) path as a command-line argument.
 
-The script `Data_analysis/data_analysis.py` can be used to analyze the simulation data, which is in hdf5 binary format. You can install
+The script `Data_analysis/data_analysis.py` can be used to analyze the simulation data_struct, which is in hdf5 binary format. You can install
 `h5py` from pip or conda to open such files.
 
 ## License

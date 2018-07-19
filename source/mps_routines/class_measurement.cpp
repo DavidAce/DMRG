@@ -51,28 +51,27 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
 
 void class_measurement::compute_all_observables_from_superblock(){
     if (is_measured){return;}
-    if (superblock->MPS->chiA() != superblock->MPS->chiB()) { return;}
-    if (superblock->MPS->chiA() != superblock->MPS->chiC()) { return ;}
-    if (superblock->MPS->chiC() <= 2) { return; }
-
+    if (superblock->MPS->chiC() < 2) { return; }
+    mps_util->theta = mps_util->get_theta(superblock->MPS);
     switch(sim_type){
         case SimulationType::iDMRG:
-            t_temp2.tic();
-            mps_util->compute_mps_components(superblock->MPS);
-            t_temp2.toc();
             compute_energy_mpo();
             compute_energy_variance_mpo();
+            if (superblock->MPS->chiA() != superblock->MPS->chiB()) { return;}
+            if (superblock->MPS->chiA() != superblock->MPS->chiC()) { return;}
+            mps_util->compute_mps_components(superblock->MPS);
             compute_energy_ham();
             compute_energy_variance_ham();
             compute_energy_and_variance_mom(a, mom_vecA);
             break;
         case SimulationType::xDMRG:
         case SimulationType::fDMRG:
-            mps_util->theta = mps_util->get_theta(superblock->MPS);
             compute_energy_mpo();
             compute_energy_variance_mpo();
             break;
         case SimulationType::iTEBD:
+            if (superblock->MPS->chiA() != superblock->MPS->chiB()) { return;}
+            if (superblock->MPS->chiA() != superblock->MPS->chiC()) { return;}
             mps_util->compute_mps_components(superblock->MPS);
             compute_energy_ham();
             compute_energy_variance_ham();
