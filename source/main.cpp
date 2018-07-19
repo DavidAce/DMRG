@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
     settings::hdf5::output_filename = outputfile_given ? outputfile : settings::hdf5::output_filename;
 
     //Initialize the algorithm class
-    //This class stores simulation data automatically to a file specified in the input file
+    //This class stores simulation data_struct automatically to a file specified in the input file
     class_algorithm_launcher launcher;
 
     //Run the algorithms

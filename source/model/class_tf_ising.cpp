@@ -118,7 +118,29 @@ void class_tf_ising::print_parameter_values() const {
 }
 
 
-std::vector<double> class_tf_ising::get_all_parameters() const {
-    return {(double)position,J_coupling,g_mag_field,r_rnd_field,w_rnd_strength,e_reduced,(double)spin_dim};
+std::vector<std::string> class_tf_ising::get_parameter_names() const {
+    return {"position",
+            "J_coupling",
+            "g_mag_field",
+            "r_rnd_field",
+            "w_rnd_strength",
+            "e_reduced",
+            "spin_dim"
+            };
 }
+
+
+
+std::vector<double> class_tf_ising::get_parameter_values() const {
+    return {(double)get_position(),
+            J_coupling,
+            g_mag_field,
+            r_rnd_field,
+            w_rnd_strength,
+            e_reduced,
+            (double)spin_dim
+            };
+}
+
+
 

@@ -32,12 +32,12 @@ namespace settings{
     int    model::tf_nn_ising::d         = 2;                             /*!< Local spin dimension */
 
     //Parameters for the selfdual transvese-field random-field next-neighbor Ising model
-    double model::selfdual_tf_rf_ising::J_avg  = 0;                       /*!< Average ferromagnetic coupling strength.*/
-    double model::selfdual_tf_rf_ising::h_avg  = 0;                       /*!< Average transverse magnetic field strength */
-    double model::selfdual_tf_rf_ising::J_std  = 1;                       /*!< Standard deviation for the lognormal distribution, i.e. = std(log(J)) , for the ferromagnetic coupling */
-    double model::selfdual_tf_rf_ising::h_std  = 0;                       /*!< Standard deviation for the lognormal distribution, i.e. = std(log(h))   for the transverse magnetic field */
-    double model::selfdual_tf_rf_ising::lambda = 0;                       /*!< Lambda parameter */
-    int    model::selfdual_tf_rf_ising::d      = 2;                       /*!< Local spin dimension */
+    double model::selfdual_tf_rf_ising::J_mu       = 0;                  /*!< Average ferromagnetic coupling strength.*/
+    double model::selfdual_tf_rf_ising::h_mu       = 0;                  /*!< Average transverse magnetic field strength */
+    double model::selfdual_tf_rf_ising::J_sigma    = 1;                  /*!< Standard deviation for the lognormal distribution, i.e. = std(log(J)) , for the ferromagnetic coupling */
+    double model::selfdual_tf_rf_ising::h_sigma    = 0;                  /*!< Standard deviation for the lognormal distribution, i.e. = std(log(h))   for the transverse magnetic field */
+    double model::selfdual_tf_rf_ising::lambda     = 0;                  /*!< Lambda parameter */
+    int    model::selfdual_tf_rf_ising::d          = 2;                  /*!< Local spin dimension */
 
 
 
@@ -71,7 +71,6 @@ namespace settings{
     long   xdmrg::chi_max                = 8;
     bool   xdmrg::chi_grow               = true;
     int    xdmrg::seed                   = 1;                       /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
-    double xdmrg::r_strength             = 1;                       /*!< Randomness strength for the random field distribution */
     int    xdmrg::print_freq             = 100;
     int    xdmrg::store_freq             = 100;
 
@@ -86,11 +85,11 @@ namespace settings{
     int    itebd::print_freq             = 5000;
     int    itebd::store_freq             = 100;
 
-    //Save data to hdf5
+    //Save data_struct to hdf5
     bool   hdf5::save_to_file             = true;
     bool   hdf5::create_dir_if_not_found  = true;
     bool   hdf5::overwrite_file_if_found  = false;
-    string hdf5::output_filename          = "data.h5";
+    string hdf5::output_filename          = "data_struct.h5";
     string hdf5::output_folder            = "output";
     bool   hdf5::full_storage             = true;
 
@@ -136,12 +135,12 @@ void settings::load_from_file(class_file_reader &indata){
     model::tf_nn_ising::d               = indata.find_parameter<int>    ("model::tf_nn_ising::d" , model::tf_nn_ising::d);
     model::tf_nn_ising::w               = indata.find_parameter<double> ("model::tf_nn_ising::w" , model::tf_nn_ising::w);
 
-    model::selfdual_tf_rf_ising::J_avg  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::J_avg" , model::selfdual_tf_rf_ising::J_avg);
-    model::selfdual_tf_rf_ising::h_avg  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::h_avg" , model::selfdual_tf_rf_ising::h_avg);
-    model::selfdual_tf_rf_ising::J_std  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::J_std" , model::selfdual_tf_rf_ising::J_std);
-    model::selfdual_tf_rf_ising::h_std  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::h_std" , model::selfdual_tf_rf_ising::h_std);
-    model::selfdual_tf_rf_ising::lambda = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::lambda", model::selfdual_tf_rf_ising::lambda);
-    model::selfdual_tf_rf_ising::d      = indata.find_parameter<int>    ("model::selfdual_tf_rf_ising::d"     , model::selfdual_tf_rf_ising::d);
+    model::selfdual_tf_rf_ising::J_mu     = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::J_mu"    , model::selfdual_tf_rf_ising::J_mu);
+    model::selfdual_tf_rf_ising::h_mu     = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::h_mu"    , model::selfdual_tf_rf_ising::h_mu);
+    model::selfdual_tf_rf_ising::J_sigma  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::J_sigma" , model::selfdual_tf_rf_ising::J_sigma);
+    model::selfdual_tf_rf_ising::h_sigma  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::h_sigma" , model::selfdual_tf_rf_ising::h_sigma);
+    model::selfdual_tf_rf_ising::lambda   = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::lambda"  , model::selfdual_tf_rf_ising::lambda);
+    model::selfdual_tf_rf_ising::d        = indata.find_parameter<int>    ("model::selfdual_tf_rf_ising::d"       , model::selfdual_tf_rf_ising::d);
 
     //Parmaters that control eigensolver and SVD precision
     precision::eigMaxIter               = indata.find_parameter<int>    ("precision::eigMaxIter"  , precision::eigMaxIter);
@@ -178,7 +177,6 @@ void settings::load_from_file(class_file_reader &indata){
         xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"    , 8);
         xdmrg::chi_grow           = indata.find_parameter<bool>   ("xdmrg::chi_grow"   , xdmrg::chi_grow);
         xdmrg::seed               = indata.find_parameter<int>    ("xdmrg::seed"       , xdmrg::seed);
-        xdmrg::r_strength         = indata.find_parameter<double> ("xdmrg::r_strength" , xdmrg::r_strength);
         xdmrg::print_freq         = indata.find_parameter<int>    ("xdmrg::print_freq ", xdmrg::print_freq);
         xdmrg::store_freq         = indata.find_parameter<int>    ("xdmrg::store_freq ", xdmrg::store_freq);
     }
@@ -197,7 +195,7 @@ void settings::load_from_file(class_file_reader &indata){
         itebd::store_freq         = indata.find_parameter<int>    ("itebd::store_freq"  , itebd::store_freq);
     }
 
-    //Save data to hdf5
+    //Save data_struct to hdf5
     hdf5::save_to_file             = indata.find_parameter<bool>   ("hdf5::save_to_file"            , hdf5::save_to_file           );
     hdf5::create_dir_if_not_found  = indata.find_parameter<bool>   ("hdf5::create_dir_if_not_found" , hdf5::create_dir_if_not_found);
     hdf5::overwrite_file_if_found  = indata.find_parameter<bool>   ("hdf5::overwrite_file_if_found" , hdf5::overwrite_file_if_found);

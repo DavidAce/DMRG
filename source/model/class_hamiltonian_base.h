@@ -36,6 +36,9 @@ public:
     virtual void   print_parameter_values()                  const = 0;
     virtual void   set_reduced_energy(double site_energy)          = 0;
     virtual int    get_spin_dimension()                      const = 0;
+    virtual std::vector<std::string> get_parameter_names()   const = 0;
+    virtual std::vector<double>      get_parameter_values()  const = 0;
+
 //    virtual double get_energy_reduced()                      const = 0;
 //    virtual double get_random_field()                        const = 0;
 //    virtual double get_randomness_strength()                 const = 0;

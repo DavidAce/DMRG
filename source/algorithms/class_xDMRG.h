@@ -6,6 +6,7 @@
 #define DMRG_CLASS_EXITED_DMRG_H
 
 #include "class_algorithm_base.h"
+class class_table_finite_chain;
 class class_table_dmrg;
 
 /*!
@@ -22,15 +23,16 @@ public:
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_xdmrg;
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_xdmrg_chain;
 
+    enum class xDMRG_Mode {FULL,PARTIAL};
+
     int    max_length   ;
     int    max_sweeps   ;
-    double r_strength = 0 ;  //Randomness strength for the random field.
 
     //Energy ranges
     double energy_min = 0;
     double energy_max = 0;
-    double energy_mid = 0;
-    double energy_at_site = 0;
+    double energy_target = 0;
+    double energy_now = 0;
 
     void run()                                          override;
     void check_convergence_overall()                    override;
@@ -39,7 +41,7 @@ public:
     void print_profiling_sim(class_tic_toc &t_parent)   override;
     void store_table_entry_to_file()                    override;
     void store_chain_entry_to_file();
-    void single_xDMRG_step(long chi_max, double energy_target = 0);
+    void single_xDMRG_step(xDMRG_Mode mode, long chi_max, double energy_target);
     void initialize_chain();
     void reset_chain_mps_to_random_product_state();
     void set_random_fields_in_chain_mpo();

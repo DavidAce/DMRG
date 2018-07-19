@@ -16,8 +16,8 @@ using Scalar = std::complex<double>;
 class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(): class_hamiltonian_base(){
     extent4     = {1, 1, spin_dim, spin_dim};
     extent2     = {spin_dim, spin_dim};
-    J_rnd       = rn::log_normal(J_avg,J_std);
-    h_rnd       = rn::log_normal(h_avg,h_std);
+    J_rnd       = rn::log_normal(J_log_mean,J_std);
+    h_rnd       = rn::log_normal(h_log_mean,h_std);
     build_mpo();
 };
 
@@ -32,7 +32,7 @@ void class_selfdual_tf_rf_ising::build_mpo()
  *  |     sz                0           0              0            0   |
  *  |     sx                0           0              0            0   |
  *  |     0                 I           0              0            0   |
- *  | -(h_rnd)*sx       -J_rnd*sz   -l*h_avg*sx     -l*J_avg*sz     I   |
+ *  | -(h_rnd)*sx       -J_rnd*sz   -l*h_mean*sx     -l*J_mean*sz     I   |
  *
  *        2
  *        |
@@ -50,14 +50,14 @@ void class_selfdual_tf_rf_ising::build_mpo()
     MPO.slice(Eigen::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
     MPO.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
     MPO.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
-    MPO.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*h_avg) * sx);
-    MPO.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*J_avg) * sz);
+    MPO.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*h_mean) * sx);
+    MPO.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*J_mean) * sz);
     MPO.slice(Eigen::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
 }
 
 void class_selfdual_tf_rf_ising::randomize_hamiltonian(){
-    J_rnd       = rn::log_normal(J_avg,J_std);
-    h_rnd       = rn::log_normal(h_avg,h_std);
+    J_rnd       = rn::log_normal(J_log_mean,J_std);
+    h_rnd       = rn::log_normal(h_log_mean,h_std);
     MPO.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
     MPO.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
 }
@@ -85,7 +85,7 @@ Eigen::MatrixXcd class_selfdual_tf_rf_ising::single_site_hamiltonian(
     int i = Math::mod(position,     sites);
     int j = Math::mod(position + 1, sites);
     int k = Math::mod(position + 2, sites);
-    return - (J_rnd * SZ[i]*SZ[j] + h_rnd*0.5*(SX[i]+SX[j]) + lambda*(h_avg * SX[i]*SX[j] + J_avg*SZ[i]*SZ[k]));
+    return - (J_rnd * SZ[i]*SZ[j] + h_rnd*0.5*(SX[i]+SX[j]) + lambda*(h_mean * SX[i]*SX[j] + J_mean*SZ[i]*SZ[k]));
 }
 
 
@@ -101,12 +101,12 @@ void class_selfdual_tf_rf_ising::print_parameter_names() const {
     std::cout
             << std::setprecision(10)
             << std::setw(16) << std::left << "MPO #"
-            << std::setw(16) << std::left << "J_avg"
-            << std::setw(16) << std::left << "h_avg"
-            << std::setw(16) << std::left << "J_std"
-            << std::setw(16) << std::left << "h_std"
             << std::setw(16) << std::left << "J_rnd"
             << std::setw(16) << std::left << "h_rnd"
+            << std::setw(16) << std::left << "J_mu"
+            << std::setw(16) << std::left << "h_mu"
+            << std::setw(16) << std::left << "J_sigma"
+            << std::setw(16) << std::left << "h_sigma"
             << std::setw(16) << std::left << "lambda"
             << std::setw(16) << std::left << "e_reduced"
             << std::setw(16) << std::left << "spin_dim"
@@ -119,8 +119,8 @@ void class_selfdual_tf_rf_ising::print_parameter_values() const {
             << std::setw(16) << std::left << get_position()
             << std::setw(16) << std::left << J_rnd
             << std::setw(16) << std::left << h_rnd
-            << std::setw(16) << std::left << J_avg
-            << std::setw(16) << std::left << h_avg
+            << std::setw(16) << std::left << J_log_mean
+            << std::setw(16) << std::left << h_log_mean
             << std::setw(16) << std::left << J_std
             << std::setw(16) << std::left << h_std
             << std::setw(16) << std::left << lambda
@@ -129,13 +129,28 @@ void class_selfdual_tf_rf_ising::print_parameter_values() const {
             << std::endl;
 }
 
+std::vector<std::string> class_selfdual_tf_rf_ising::get_parameter_names() const {
+    return {"position",
+            "J_rnd",
+            "h_rnd",
+            "J_mu",
+            "h_mu",
+            "J_sigma",
+            "h_sigma",
+            "lambda",
+            "e_reduced",
+            "spin_dim"
+    };
+}
 
-std::vector<double> class_selfdual_tf_rf_ising::get_all_parameters() const {
+
+
+std::vector<double> class_selfdual_tf_rf_ising::get_parameter_values() const {
     return {(double)get_position(),
             J_rnd,
             h_rnd,
-            J_avg,
-            h_avg,
+            J_log_mean,
+            h_log_mean,
             J_std,
             h_std,
             lambda,

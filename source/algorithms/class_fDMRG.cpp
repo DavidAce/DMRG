@@ -51,9 +51,9 @@ void class_fDMRG::run() {
     }
     t_tot.toc();
     print_status_full();
-    print_profiling();
     measurement->compute_all_observables_from_finite_chain();
     env_storage->write_chain_to_file();
+    print_profiling();
 }
 
 void class_fDMRG::initialize_chain() {
@@ -110,6 +110,9 @@ void class_fDMRG::store_table_entry_to_file(){
             measurement->get_chi(),
             chi_max,
             measurement->get_energy_mpo(),
+            std::numeric_limits<double>::quiet_NaN(),
+            std::numeric_limits<double>::quiet_NaN(),
+            std::numeric_limits<double>::quiet_NaN(),
             std::numeric_limits<double>::quiet_NaN(),
             std::numeric_limits<double>::quiet_NaN(),
             measurement->get_variance_mpo(),

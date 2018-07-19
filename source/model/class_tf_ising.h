@@ -37,12 +37,10 @@ public:
     std::unique_ptr<class_hamiltonian_base> clone()                             const override;
     void   set_reduced_energy(double site_energy)                                     override;
     int    get_spin_dimension()                                                 const override;
-//    double get_energy_reduced()                                                 const override;
-//    double get_random_field()                                                   const override;
-//    double get_randomness_strength()                                            const override;
     void   print_parameter_names ()                                             const override;
     void   print_parameter_values()                                             const override;
-    std::vector<double> get_all_parameters()                                    const;
+    std::vector<std::string> get_parameter_names()                              const override;
+    std::vector<double>      get_parameter_values()                             const override;
 };
 
 #endif //CLASS_TF_ISING_H

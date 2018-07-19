@@ -26,22 +26,21 @@ class_iDMRG::class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
 void class_iDMRG::run() {
     if (!settings::idmrg::on) { return; }
     ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
-        t_tot.tic();
-        while(iteration < max_steps){// and not simulation_has_converged){
-            single_DMRG_step(chi_max_temp);
-            print_status_update();
-            store_table_entry_to_file();
-            store_profiling_to_file();
-            enlarge_environment();
-            check_convergence_overall();
-            swap();
-            iteration++;
-        }
-        t_tot.toc();
-        print_status_full();
-        print_profiling();
-        superblock->t_eig.print_time();
-
+    t_tot.tic();
+    while(iteration < max_steps){// and not simulation_has_converged){
+        single_DMRG_step(chi_max_temp);
+        print_status_update();
+        store_table_entry_to_file();
+        store_profiling_to_file();
+        enlarge_environment();
+        check_convergence_overall();
+        swap();
+        iteration++;
+    }
+    t_tot.toc();
+    print_status_full();
+    print_profiling();
+    superblock->t_eig.print_time();
 }
 
 void class_iDMRG::initialize_constants(){
@@ -67,6 +66,9 @@ void class_iDMRG::store_table_entry_to_file(){
                              measurement->get_energy_mpo(),
                              measurement->get_energy_ham(),
                              measurement->get_energy_mom(),
+                             std::numeric_limits<double>::quiet_NaN(),
+                             std::numeric_limits<double>::quiet_NaN(),
+                             std::numeric_limits<double>::quiet_NaN(),
                              measurement->get_variance_mpo(),
                              measurement->get_variance_ham(),
                              measurement->get_variance_mom(),

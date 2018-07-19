@@ -44,10 +44,10 @@ namespace settings {
 
         //Parameters for the selfdual transvese-field random-field next-neighbor Ising model
         namespace selfdual_tf_rf_ising {
-            extern double       J_avg         ;                 /*!< Average ferromagnetic coupling strength.*/
-            extern double       h_avg         ;                 /*!< Average transverse magnetic field strength */
-            extern double       J_std         ;                 /*!< Standard deviation for the lognormal distribution, i.e. = std(log(J)) , for the ferromagnetic coupling */
-            extern double       h_std         ;                 /*!< Standard deviation for the lognormal distribution, i.e. = std(log(h))   for the transverse magnetic field */
+            extern double       J_mu          ;                 /*!< Average ferromagnetic coupling strength.*/
+            extern double       h_mu          ;                 /*!< Average transverse magnetic field strength */
+            extern double       J_sigma       ;                 /*!< Standard deviation for the lognormal distribution, i.e. = std(log(J)) , for the ferromagnetic coupling */
+            extern double       h_sigma       ;                 /*!< Standard deviation for the lognormal distribution, i.e. = std(log(h))   for the transverse magnetic field */
             extern double       lambda        ;                 /*!< Lambda parameter */
             extern int          d             ;                 /*!< Local dimension */
         }
@@ -91,7 +91,6 @@ namespace settings {
         extern long    chi_max      ;                       /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         extern bool    chi_grow     ;                       /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         extern int     seed         ;                       /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
-        extern double  r_strength   ;                       /*!< Randomness strength for the random field distribution */
         extern int     print_freq   ;                       /*!< Print frequency for console output. In units of sweeps. (0 = off). */
         extern int     store_freq   ;                       /*!< Store frequency,for output file buffer. In units of sweeps. (0 = off). */
 
@@ -111,7 +110,7 @@ namespace settings {
 
     }
 
-    //Save data to hdf5 (NOT FULLY IMPLEMENTED YET)
+    //Save data_struct to hdf5 (NOT FULLY IMPLEMENTED YET)
     namespace hdf5 {
         extern bool         save_to_file            ;        /*!< If true, saves the simulation data to an HDF5 file instead of just outputting to console */
         extern bool         create_dir_if_not_found ;        /*!< If true, an output directory will be created in the project root folder if it isn't found */
