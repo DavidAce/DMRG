@@ -36,7 +36,7 @@ else()
             )
 
     add_library(elemental           SHARED IMPORTED)
-    add_dependencies(elemental     library_ELEMENTAL)
+    add_dependencies(elemental      library_ELEMENTAL blas lapack)
 
 endif()
 set(INSTALL_DIR ${INSTALL_DIRECTORY}/elemental)
