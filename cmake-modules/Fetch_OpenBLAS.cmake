@@ -9,7 +9,7 @@ endif()
 # Otherwise, arpack-ng will complain later about undefined references.
 
 enable_language(Fortran)
-include(cmake_modules/FindGFortran.cmake)
+include(cmake-modules/FindGFortran.cmake)
 
 message(STATUS "SEARCHING FOR OpenBLAS IN SYSTEM...")
 set(BLA_VENDOR Open)
