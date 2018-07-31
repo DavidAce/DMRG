@@ -186,6 +186,21 @@ namespace Textra {
     }
 
 
+    //************************//
+    // change storage layout //
+    //************************//
+    template<typename Scalar,auto rank>
+    Eigen::Tensor<Scalar,rank, Eigen::RowMajor> to_RowMajor(const Eigen::Tensor<Scalar,rank, Eigen::ColMajor> tensor){
+        std::array<long,rank> neworder;
+        std::iota(std::begin(neworder), std::end(neworder), 0);
+        std::reverse(neworder.data(), neworder.data()+neworder.size());
+        return tensor.swap_layout().shuffle(neworder);
+    }
+
+
+
+
+
     //******************************************************//
     //std::cout overloads for dimension() and array objects //
     //******************************************************//

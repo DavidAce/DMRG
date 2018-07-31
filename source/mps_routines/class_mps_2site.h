@@ -51,8 +51,12 @@ public:
     void set_mps(const Eigen::Tensor<Scalar,3> &G_, const Eigen::Tensor<Scalar,1> &L_){G = G_; L = L_;}
     void set_L(const Eigen::Tensor<Scalar,1> &L_){L=L_;}
     void set_G(const Eigen::Tensor<Scalar,3> &G_){G=G_;}
-    const auto &get_G() const {return std::as_const(G);}
-    const auto &get_L() const {return std::as_const(L);}
+    auto &get_G() const {return std::as_const(G);}
+    auto &get_L() const {return std::as_const(L);}
+    auto ref_A() const  {return Textra::asDiagonal(L).contract(G, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});}
+    auto ref_B() const  {return G.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));}
+    Eigen::Tensor<Scalar,3> get_A()  const {return ref_A();}
+    Eigen::Tensor<Scalar,3> get_B()  const {return ref_B();}
     class_vidal_mps() = default;
 private:
     Eigen::Tensor<Scalar,3> G;                  /*!< \f$\Gamma \f$*/
@@ -84,24 +88,13 @@ public:
     std::unique_ptr<class_vidal_mps> MPS_B;
     Eigen::Tensor<Scalar,1> LC;
 
-    auto chiA () {return MPS_A->get_L().dimension(0);}
-    auto chiB () {return MPS_B->get_L().dimension(0);}
-    auto chiC () {return LC.dimension(0);}
+    auto chiA () const {return MPS_A->get_L().dimension(0);}
+    auto chiB () const {return MPS_B->get_L().dimension(0);}
+    auto chiC () const {return LC.dimension(0);}
 
-    auto A() const{
-        using namespace Textra;
-        return asDiagonal(MPS_A->get_L()).contract(MPS_A->get_G(), idx({1},{1})).shuffle(array3{1,0,2});
-    };
-
-    auto B() const{
-        using namespace Textra;
-        return MPS_B->get_G().contract(asDiagonal(MPS_B->get_L()), idx({2},{0}));
-    };
-
-    auto C() const{
-        using namespace Textra;
-        return asDiagonal(LC);
-    };
+    auto A()     const {return MPS_A->ref_A();}
+    auto B()     const {return MPS_B->ref_B();}
+    auto C()     const {return Textra::asDiagonal(LC);}
 
     void set_mps(const Eigen::Tensor<Scalar,1> &LA,
                  const Eigen::Tensor<Scalar,3> &GA,

@@ -51,7 +51,7 @@ void class_xDMRG::run() {
     find_energy_range();
     while(true) {
         if(iteration < full_iters){
-            single_xDMRG_step(xDMRG_Mode::FULL,chi_max_temp,energy_target);
+            single_xDMRG_step(xDMRG_Mode::FULL   ,chi_max_temp,energy_target);
         }else{
             single_xDMRG_step(xDMRG_Mode::PARTIAL, chi_max_temp ,energy_target);
         }
@@ -75,8 +75,8 @@ void class_xDMRG::run() {
     }
     t_tot.toc();
     print_status_full();
-    measurement->compute_all_observables_from_finite_chain();
     env_storage->write_chain_to_file();
+    measurement->compute_all_observables_from_finite_chain();
     print_profiling();
 
 }

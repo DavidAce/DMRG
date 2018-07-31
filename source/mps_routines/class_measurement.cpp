@@ -91,6 +91,7 @@ void class_measurement::compute_all_observables_from_finite_chain(){
     compute_finite_chain_energy_variance();
 //    compute_finite_chain_mps_state(); // Runs out of memory for L > 20 or so, because the wave vector is doubled in size for each additional site.
     compute_finite_chain_norm();
+    compute_finite_chain_norm2();
 }
 
 
@@ -281,6 +282,48 @@ void class_measurement::compute_finite_chain_norm(){
     assert(std::abs(norm_chain - 1.0) < 1e-10 );
 }
 
+void class_measurement::compute_finite_chain_norm2(){
+
+    auto mpsL  = env_storage->get_MPS_L().begin();
+    auto endL  = env_storage->get_MPS_L().end();
+    const Eigen::Tensor<Scalar,3>  & A = mpsL->ref_A(); // std::get<1>(*mpsL);
+    Eigen::Tensor<Scalar,2> chain = A.contract(A.conjugate(), idx({0,1},{0,1}));
+    Eigen::TensorRef<Eigen::Tensor<Scalar,2>> temp;
+    mpsL++;
+    while(mpsL != endL){
+        const Eigen::Tensor<Scalar,3>  & A = mpsL->ref_A() ; // std::get<1>(*mpsL);
+        assert(A.dimension(1) == chain.dimension(0));
+        temp = chain
+                .contract(A,             idx({0},{1}))
+                .contract(A.conjugate(), idx({0,1},{1,0}));
+        chain = temp;
+        mpsL++;
+    }
+
+//    Contract the center point
+    auto &MPS_C = env_storage->get_MPS_C();
+    temp = chain
+            .contract(asDiagonal(MPS_C), idx({0},{0}))
+            .contract(asDiagonal(MPS_C), idx({0},{0}));
+    chain = temp;
+    //Contract the right half of the chain
+    auto mpsR  = env_storage->get_MPS_R().begin();
+    auto endR  = env_storage->get_MPS_R().end();
+
+    while(mpsR != endR){
+        const Eigen::Tensor<Scalar,3> &B  = mpsR->ref_B(); //std::get<0>(*mpsR);
+        assert(B.dimension(1) == chain.dimension(0));
+        Eigen::Tensor<Scalar,3>  tempB = chain.contract(B, idx({0},{1}));
+        temp = chain
+                .contract(B               , idx({0},{1}))
+                .contract(B.conjugate()   , idx({0,1},{1,0}));
+        chain = temp;
+        mpsR++;
+    }
+    norm_chain = std::abs(Textra::Tensor2_to_Matrix(chain).trace());
+    std::cout << setprecision(16) << "Norm: " << norm_chain << std::endl;
+    assert(std::abs(norm_chain - 1.0) < 1e-10 );
+}
 
 void class_measurement::compute_finite_chain_mps_state(){
 

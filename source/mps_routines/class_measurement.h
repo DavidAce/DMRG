@@ -55,6 +55,7 @@ private:
     void compute_parity();
 
     void compute_finite_chain_norm();
+    void compute_finite_chain_norm2();
     void compute_finite_chain_energy();
     void compute_finite_chain_energy_variance();
     void compute_finite_chain_mps_state();
