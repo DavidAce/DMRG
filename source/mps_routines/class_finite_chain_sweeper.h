@@ -76,31 +76,31 @@ private:
     int sweeps    = 0;
     unsigned long max_length = 0;                                                 /*!< The maximum length of the chain */
     unsigned long current_length = 0;
-
-    template<typename T>
-    void write_list_to_file(const std::list<T> &obj, std::string dataset_name, unsigned long &counter){
-        for(auto &it: obj) {
-            if constexpr(std::is_same<std::decay_t<decltype(it)>, std::unique_ptr<class_hamiltonian_base>>::value){
-                hdf5->write_dataset(it->MPO, dataset_name + "_" + std::to_string(counter));
-                auto values = it->get_parameter_values();
-                auto names  = it->get_parameter_names();
-                for (size_t i = 0; i < std::min(values.size(), names.size()); i++){
-                    hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), values[i], names[i]);
-                }
-                counter++;
-            }
-            else if constexpr(std::is_same<std::decay_t<decltype(it)>, class_environment>::value or
-                              std::is_same<std::decay_t<decltype(it)>, class_environment_var>::value  ){
-                hdf5->write_dataset(it.block, dataset_name + "_" + std::to_string(counter));
-                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.size, "sites");
-                counter++;
-            }else if constexpr( std::is_same<std::decay_t<decltype(it)>, class_vidal_mps>::value  ){
-                hdf5->write_dataset(it.get_L(), dataset_name + "L_" + std::to_string(counter));
-                hdf5->write_dataset(it.get_G(), dataset_name + "G_" + std::to_string(counter));
-                counter++;
-            }
-        }
-    }
+//
+//    template<typename T>
+//    void write_list_to_file(const std::list<T> &obj, std::string dataset_name, unsigned long &counter){
+//        for(auto &it: obj) {
+//            if constexpr(std::is_same<std::decay_t<decltype(it)>, std::unique_ptr<class_hamiltonian_base>>::value){
+//                hdf5->write_dataset(it->MPO, dataset_name + "_" + std::to_string(counter));
+//                auto values = it->get_parameter_values();
+//                auto names  = it->get_parameter_names();
+//                for (size_t i = 0; i < std::min(values.size(), names.size()); i++){
+//                    hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), values[i], names[i]);
+//                }
+//                counter++;
+//            }
+//            else if constexpr(std::is_same<std::decay_t<decltype(it)>, class_environment>::value or
+//                              std::is_same<std::decay_t<decltype(it)>, class_environment_var>::value  ){
+//                hdf5->write_dataset(it.block, dataset_name + "_" + std::to_string(counter));
+//                hdf5->write_attribute_to_dataset(dataset_name + "_" + std::to_string(counter), it.size, "sites");
+//                counter++;
+//            }else if constexpr( std::is_same<std::decay_t<decltype(it)>, class_vidal_mps>::value  ){
+//                hdf5->write_dataset(it.get_L(), dataset_name + "L_" + std::to_string(counter));
+//                hdf5->write_dataset(it.get_G(), dataset_name + "G_" + std::to_string(counter));
+//                counter++;
+//            }
+//        }
+//    }
 
 public:
 

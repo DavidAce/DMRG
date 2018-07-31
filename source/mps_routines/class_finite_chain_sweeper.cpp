@@ -220,24 +220,62 @@ int class_finite_chain_sweeper::move(){
 
 void class_finite_chain_sweeper::write_chain_to_file() {
     unsigned long counter = 0;
+    // Write MPS in A-B notation for simplicity.
+    // Also write down all the Lambdas (singular value) , so that we can obtain the entanglement spectrum easily.'
+    // Remember to write tensors in row-major storage order because that's what hdf5 uses.
+    for (auto &mps : get_MPS_L()){
+        hdf5->write_dataset(Textra::to_RowMajor(mps.get_A()),sim_name + "/chain/MPS/A_" + std::to_string(counter));
+        hdf5->write_dataset(mps.get_L()                     ,sim_name + "/chain/MPS/L_" + std::to_string(counter++));
+    }
+    hdf5->write_dataset(get_MPS_C(), sim_name + "/chain/MPS/L_" + std::to_string(counter-1) + "_" + std::to_string(counter)  + "_C");
+    for (auto &mps : get_MPS_R()){
+        hdf5->write_dataset(Textra::to_RowMajor(mps.get_B()) ,sim_name + "/chain/MPS/B_" + std::to_string(counter));
+        hdf5->write_dataset(mps.get_L()                      ,sim_name + "/chain/MPS/L_" + std::to_string(counter++));
+    }
 
-    write_list_to_file(get_MPS_L(),sim_name + "/chain/MPS/", counter);
-    hdf5->write_dataset(get_MPS_C(),  sim_name + "/chain/MPS/L_" + "_" + to_string(counter++));
-    write_list_to_file(get_MPS_R(),sim_name + "/chain/MPS/", counter);
 
+    // Write all the MPO's
     counter = 0;
-    write_list_to_file(get_MPO_L(),sim_name + "/chain/MPO/H", counter);
-    write_list_to_file(get_MPO_R(),sim_name + "/chain/MPO/H", counter);
+    for(auto &mpo : get_MPO_L()){
+        hdf5->write_dataset(Textra::to_RowMajor(mpo->MPO), sim_name + "/chain/MPO/H_" + std::to_string(counter));
+        //Write MPO properties as attributes
+        auto values = mpo->get_parameter_values();
+        auto names  = mpo->get_parameter_names();
+        for (size_t i = 0; i < std::min(values.size(), names.size()); i++){
+            hdf5->write_attribute_to_dataset(sim_name + "/chain/MPO/H_" + std::to_string(counter), values[i], names[i]);
+        }
+        counter++;
+    }
+    for(auto &mpo : get_MPO_R()){
+        hdf5->write_dataset(Textra::to_RowMajor(mpo->MPO), sim_name + "/chain/MPO/H_" + std::to_string(counter));
+        //Write MPO properties as attributes
+        auto values = mpo->get_parameter_values();
+        auto names  = mpo->get_parameter_names();
+        for (size_t i = 0; i < std::min(values.size(), names.size()); i++){
+            hdf5->write_attribute_to_dataset(sim_name + "/chain/MPO/H_" + std::to_string(counter), values[i], names[i]);
+        }
+        counter++;
+    }
 
+    // Write all the environment blocks
     counter = 0;
-    write_list_to_file(get_ENV_L(),sim_name + "/chain/ENV/L", counter);
+    for (auto &env: get_ENV_L()){
+        hdf5->write_dataset(Textra::to_RowMajor(env.block), sim_name + "/chain/ENV/L_" + std::to_string(counter));
+        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/L_" + std::to_string(counter++), env.size, "sites");
+    }
+    for (auto &env: get_ENV_R()){
+        hdf5->write_dataset(Textra::to_RowMajor(env.block), sim_name + "/chain/ENV/R_" + std::to_string(counter));
+        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/R_" + std::to_string(counter++), env.size, "sites");
+    }
     counter = 0;
-    write_list_to_file(get_ENV_R(),sim_name + "/chain/ENV/R", counter);
-
-    counter = 0;
-    write_list_to_file(get_ENV2_L(),sim_name + "/chain/ENV2/L", counter);
-    counter = 0;
-    write_list_to_file(get_ENV2_R(),sim_name + "/chain/ENV2/R", counter);
+    for (auto &env2: get_ENV2_L()){
+        hdf5->write_dataset(Textra::to_RowMajor(env2.block), sim_name + "/chain/ENV2/L_" + std::to_string(counter));
+        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/L_" + std::to_string(counter++), env2.size, "sites");
+    }
+    for (auto &env2: get_ENV2_R()){
+        hdf5->write_dataset(Textra::to_RowMajor(env2.block), sim_name + "/chain/ENV2/R_" + std::to_string(counter));
+        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/R_" + std::to_string(counter++), env2.size, "sites");
+    }
 }
 
 
