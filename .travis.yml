@@ -19,7 +19,8 @@ matrix:
         - CC=gcc-7
         - CXX=g++-7
         - FC=gfortran-7
-        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+        - MPI=mpich
+        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7 && MPI=mpich"
       cache:
         apt: true
       addons:
@@ -43,8 +44,9 @@ matrix:
         - CC=clang-6.0
         - CLANG_VERSION=6.0
         - FC=gfortran-7
-        - MATRIX_EVAL="CXX=clang++-6.0 && CC=clang-6.0 && FC=gfortran-7"
-      cache:
+        - MPI=mpich
+        - MATRIX_EVAL="CXX=clang++-6.0 && CC=clang-6.0 && FC=gfortran-7 && MPI=mpich"
+    cache:
         apt: true
       addons:
         apt:
@@ -69,7 +71,8 @@ matrix:
         - CC=gcc-7
         - CXX=g++-7
         - FC=gfortran-7
-        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+        - MPI=mpich
+        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7 && MPI=mpich"        
       cache:
         apt: true
       addons:
@@ -101,7 +104,8 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+        - MPI=mpich
+        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7 && MPI=mpich"      
       before_install:
         - brew cask uninstall oclint
         - brew install gcc@7
@@ -109,6 +113,8 @@ matrix:
 
 before_install:
   - eval "${MATRIX_EVAL}"
+  - sh travis/install-mpi.sh $MPI
+
 
 script:
   - ./build.sh -m Debug -j2
