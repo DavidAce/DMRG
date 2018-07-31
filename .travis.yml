@@ -21,8 +21,6 @@ matrix:
         - FC=gfortran-7
         - MPI=mpich
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7 && MPI=mpich"
-      before_install:
-        - sh travis/install-mpi.sh $MPI
       cache:
         apt: true
       addons:
@@ -34,6 +32,8 @@ matrix:
             - gcc-7
             - g++-7
             - gfortran-7
+            - mpich 
+            - libmpich-dev
     - os: linux
       compiler: clang
       env:
@@ -46,8 +46,6 @@ matrix:
         - MATRIX_EVAL="CXX=clang++-6.0 && CC=clang-6.0 && FC=gfortran-7 && MPI=mpich"
       cache:
         apt: true
-      before_install: 
-        - sh travis/install-mpi.sh $MPI
       addons:
         apt:
           update: true
@@ -60,6 +58,8 @@ matrix:
             - clang-6.0
             - libstdc++-7-dev
             - gfortran-7
+            - mpich 
+            - libmpich-dev
     - os: linux
       compiler: gcc-7 (preinstalled libs)
       env:
@@ -72,8 +72,6 @@ matrix:
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7 && MPI=mpich"        
       cache:
         apt: true
-      before_install:
-        - sh travis/install-mpi.sh $MPI
       addons:
         apt:
           update: true
@@ -91,6 +89,8 @@ matrix:
             - libopenblas-dev
             - libarpack2-dev
             - libarpack++2-dev
+            - mpich 
+            - libmpich-dev
     - os: osx
       osx_image: xcode9.1 #Newer versions don't like experimental/filesystem or _stdio.h?
       compiler: gcc-7
