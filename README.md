@@ -11,7 +11,7 @@
 
   This algorithm constructs and minimizes trial wave functions, in the shape of [Matrix Product States](https://en.wikipedia.org/wiki/Matrix_product_state) (MPS), iteratively in order to find the ground state of one-dimensional quantum systems with high precision.
 
-  This implementation is inspired by the notation and steps in these articles:
+  This implementation mainly follows the notation and steps in these articles:
 
   > [Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study](https://arxiv.org/abs/1212.6255)<br>
   > by Kjäll, Zaletel, Mong, Bardarson, and Pollmann. Physical Review B 87 (23): 235106. <br>
@@ -28,8 +28,9 @@
   > [Infinite size density matrix renormalization group, revisited](http://arxiv.org/abs/0804.2509)<br>
   > by McCulloch <br>
 
-
-
+  > [Obtaining Highly Excited Eigenstates of Many-Body Localized Hamiltonians by the Density Matrix Renormalization Group Approach](https://doi.org/10.1103/PhysRevLett.116.247204)<br>
+  > by Khemani, V., Pollmann, F., & Sondhi, S. L. (2016).
+  > Physical Review Letters, 116(24), 1–5
 
 
 ---
@@ -55,7 +56,7 @@ is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.
 
 ### Minimum Requirements
 The following software is required to build the project:
- - C++ compiler with support for c++17 standard and libstdc++ standard library implementation  (version >= 7). Tested with two compilers:
+ - C++ compiler with support for C++17 standard and libstdc++ standard library implementation  (version >= 7). Tested with two compilers:
     - GNU GCC versions 7 and 8 (these bundle libstdc++)
     - Clang version >= 5.0. (you need to manually install libstdc++ version >= 7, that comes bundled with gcc, for instance from `ppa:ubuntu-toolchain-r/test`)
  - CMake version >= 3.9. If you compile CMake from source, remember to enable `curl` (`./bootstrap --system-curl`). 
