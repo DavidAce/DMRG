@@ -90,14 +90,14 @@ $(document).ready(function(){initNavTree('classclass__environment__storage.html'
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Storage class for environments during finite DMRG During the infinite-DMRG part of the algorithm, the current state for each chain-length is stored in a <code><a class="el" href="classclass__finite__chain__storage.html">class_finite_chain_storage</a></code> object, for later use in the finite-DMRG stage. </p>
+<div class="textblock"><p>Storage class for environments during finite DMRG During the infinite-DMRG part of the algorithm, the current state for each chain-length is stored in a <code>class_finite_chain_storage</code> object, for later use in the finite-DMRG stage. </p>
 <p>There are as many elements in storage as there are particles in the current environment, i.e. superblock-&gt;environment_size.</p>
 <p>The storage is always partitioned into two lists, corresponding to the two halves about the current position. The back and front of these lists correspond to the current state of the superblock's left and right parts, respectively, while "LA" is the central \( \Lambda^A \).</p>
 <p>Once full, the particle content of the chain should match the length given in the constant max_length. This can be checked with the following conditions: ENV_L.back().size + ENV_R.front().size == max_length - 2 ENV_L.back().size + ENV_R.front().size == superblock-&gt;environment_size ENV_L.back().size == superblock-&gt;Lblock-&gt;size ENV_R.back().size == superblock-&gt;Rblock-&gt;size </p>
 </div>
-<p><code>#include &lt;<a class="el" href="class__finite__chain__storage_8h_source.html">class_finite_chain_storage.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="class__finite__chain__sweeper_8h_source.html">class_finite_chain_sweeper.h</a>&gt;</code></p>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>source/mps_routines/<a class="el" href="class__finite__chain__storage_8h_source.html">class_finite_chain_storage.h</a></li>
+<li>source/mps_routines/<a class="el" href="class__finite__chain__sweeper_8h_source.html">class_finite_chain_sweeper.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

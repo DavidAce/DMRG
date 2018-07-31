@@ -86,37 +86,30 @@ $(document).ready(function(){initNavTree('namespacesettings_1_1model.html','');}
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">settings::model Namespace Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacesettings_1_1model_1_1selfdual__tf__rf__ising"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1selfdual__tf__rf__ising.html">selfdual_tf_rf_ising</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacesettings_1_1model_1_1tf__ising"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__ising.html">tf_ising</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacesettings_1_1model_1_1tf__nn__ising"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__nn__ising.html">tf_nn_ising</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a12ac3c257355366b46e00e1db97e9824"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model.html#a12ac3c257355366b46e00e1db97e9824">J</a> = -1</td></tr>
-<tr class="separator:a12ac3c257355366b46e00e1db97e9824"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0a8dec276b339c79be647ccdc0ab151"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model.html#ab0a8dec276b339c79be647ccdc0ab151">g</a> = 1</td></tr>
-<tr class="separator:ab0a8dec276b339c79be647ccdc0ab151"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b66491d88a6209fbaf61a55428f35db"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model.html#a3b66491d88a6209fbaf61a55428f35db">initial_state</a> = &quot;rps&quot;</td></tr>
 <tr class="separator:a3b66491d88a6209fbaf61a55428f35db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47bbe476211c0ae22d348e80df47193b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model.html#a47bbe476211c0ae22d348e80df47193b">model_type</a> = &quot;tf_ising&quot;</td></tr>
+<tr class="separator:a47bbe476211c0ae22d348e80df47193b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Variable Documentation</h2>
-<a id="ab0a8dec276b339c79be647ccdc0ab151"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab0a8dec276b339c79be647ccdc0ab151">&#9670;&nbsp;</a></span>g</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double settings::model::g = 1</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Transverse field strength </p>
-
-</div>
-</div>
 <a id="a3b66491d88a6209fbaf61a55428f35db"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3b66491d88a6209fbaf61a55428f35db">&#9670;&nbsp;</a></span>initial_state</h2>
 
@@ -128,23 +121,24 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi)} "cat" or "random". Default "rps".</p>
+<p>Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps".</p>
 <p>Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi)} "cat" or "random". Default "rps". Note that "random_chi" works poorly for finite algorithms </p>
 
 </div>
 </div>
-<a id="a12ac3c257355366b46e00e1db97e9824"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12ac3c257355366b46e00e1db97e9824">&#9670;&nbsp;</a></span>J</h2>
+<a id="a47bbe476211c0ae22d348e80df47193b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47bbe476211c0ae22d348e80df47193b">&#9670;&nbsp;</a></span>model_type</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double settings::model::J = -1</td>
+          <td class="memname">std::string settings::model::model_type = &quot;tf_ising&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Ferromagnetic coupling. J &lt; 0 Gives a ferromagnet. J &gt; 0 an antiferromagnet. </p>
+<p>Choice of model type: {<a class="el" href="namespacesettings_1_1model_1_1tf__ising.html">tf_ising</a>, <a class="el" href="namespacesettings_1_1model_1_1tf__nn__ising.html">tf_nn_ising</a>, <a class="el" href="namespacesettings_1_1model_1_1selfdual__tf__rf__ising.html">selfdual_tf_rf_ising</a>} above</p>
+<p>The default choice of model type from the enum </p>
 
 </div>
 </div>

@@ -14,12 +14,13 @@ var dir_4bad7fd7146fd728401435644d9f4ea6 =
     ] ],
     [ "class_hdf5_file.cpp", "class__hdf5__file_8cpp.html", null ],
     [ "class_hdf5_file.h", "class__hdf5__file_8h.html", [
-      [ "class_hdf5_file", "classclass__hdf5__file.html", "classclass__hdf5__file" ]
+      [ "class_hdf5_file", "classclass__hdf5__file.html", "classclass__hdf5__file" ],
+      [ "H5T_COMPLEX_STRUCT", "structclass__hdf5__file_1_1_h5_t___c_o_m_p_l_e_x___s_t_r_u_c_t.html", "structclass__hdf5__file_1_1_h5_t___c_o_m_p_l_e_x___s_t_r_u_c_t" ],
+      [ "DatasetProperties", "classclass__hdf5__file_1_1_dataset_properties.html", "classclass__hdf5__file_1_1_dataset_properties" ],
+      [ "AttributeProperties", "classclass__hdf5__file_1_1_attribute_properties.html", "classclass__hdf5__file_1_1_attribute_properties" ]
     ] ],
-    [ "class_hdf5_table_buffer.cpp", "class__hdf5__table__buffer_8cpp.html", null ],
-    [ "class_hdf5_table_buffer.h", "class__hdf5__table__buffer_8h.html", [
-      [ "table_entry", "structtable__entry.html", "structtable__entry" ],
-      [ "class_table_entry_meta", "classclass__table__entry__meta.html", "classclass__table__entry__meta" ],
-      [ "class_hdf5_table_buffer", "classclass__hdf5__table__buffer.html", "classclass__hdf5__table__buffer" ]
+    [ "class_hdf5_table_buffer2.cpp", "class__hdf5__table__buffer2_8cpp.html", "class__hdf5__table__buffer2_8cpp" ],
+    [ "class_hdf5_table_buffer2.h", "class__hdf5__table__buffer2_8h.html", [
+      [ "class_hdf5_table", "classclass__hdf5__table.html", "classclass__hdf5__table" ]
     ] ]
 ];

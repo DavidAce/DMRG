@@ -1,13 +1,13 @@
 var dir_1f1e02da0ed68619c8cd86756bb8077c =
 [
+    [ "class_algorithm_base.cpp", "class__algorithm__base_8cpp.html", "class__algorithm__base_8cpp" ],
+    [ "class_algorithm_base.h", "class__algorithm__base_8h.html", [
+      [ "class_hdf5_table", "classclass__hdf5__table.html", "classclass__hdf5__table" ],
+      [ "class_algorithm_base", "classclass__algorithm__base.html", "classclass__algorithm__base" ]
+    ] ],
     [ "class_algorithm_launcher.cpp", "class__algorithm__launcher_8cpp.html", null ],
     [ "class_algorithm_launcher.h", "class__algorithm__launcher_8h.html", [
       [ "class_algorithm_launcher", "classclass__algorithm__launcher.html", "classclass__algorithm__launcher" ]
-    ] ],
-    [ "class_base_algorithm.cpp", "class__base__algorithm_8cpp.html", "class__base__algorithm_8cpp" ],
-    [ "class_base_algorithm.h", "class__base__algorithm_8h.html", [
-      [ "class_base_algorithm", "classclass__base__algorithm.html", "classclass__base__algorithm" ],
-      [ "class_limited_vector", "classclass__base__algorithm_1_1class__limited__vector.html", "classclass__base__algorithm_1_1class__limited__vector" ]
     ] ],
     [ "class_fDMRG.cpp", "class__f_d_m_r_g_8cpp.html", null ],
     [ "class_fDMRG.h", "class__f_d_m_r_g_8h.html", [
@@ -24,5 +24,19 @@ var dir_1f1e02da0ed68619c8cd86756bb8077c =
     [ "class_xDMRG.cpp", "class__x_d_m_r_g_8cpp.html", null ],
     [ "class_xDMRG.h", "class__x_d_m_r_g_8h.html", [
       [ "class_xDMRG", "classclass__x_d_m_r_g.html", "classclass__x_d_m_r_g" ]
+    ] ],
+    [ "table_types.h", "table__types_8h.html", [
+      [ "class_table_dmrg", "classclass__table__dmrg.html", "classclass__table__dmrg" ],
+      [ "data_struct", "structclass__table__dmrg_1_1data__struct.html", "structclass__table__dmrg_1_1data__struct" ],
+      [ "meta_struct", "structclass__table__dmrg_1_1meta__struct.html", "structclass__table__dmrg_1_1meta__struct" ],
+      [ "class_table_tebd", "classclass__table__tebd.html", "classclass__table__tebd" ],
+      [ "data_struct", "structclass__table__tebd_1_1data__struct.html", "structclass__table__tebd_1_1data__struct" ],
+      [ "meta_struct", "structclass__table__tebd_1_1meta__struct.html", "structclass__table__tebd_1_1meta__struct" ],
+      [ "class_table_finite_chain", "classclass__table__finite__chain.html", "classclass__table__finite__chain" ],
+      [ "data_struct", "structclass__table__finite__chain_1_1data__struct.html", "structclass__table__finite__chain_1_1data__struct" ],
+      [ "meta_struct", "structclass__table__finite__chain_1_1meta__struct.html", "structclass__table__finite__chain_1_1meta__struct" ],
+      [ "class_table_profiling", "classclass__table__profiling.html", "classclass__table__profiling" ],
+      [ "data_struct", "structclass__table__profiling_1_1data__struct.html", "structclass__table__profiling_1_1data__struct" ],
+      [ "meta_struct", "structclass__table__profiling_1_1meta__struct.html", "structclass__table__profiling_1_1meta__struct" ]
     ] ]
 ];

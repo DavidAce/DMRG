@@ -1,7 +1,7 @@
 var NAVTREE =
 [
   [ "DMRG++", "index.html", [
-    [ "Description of DMRG++", "index.html#intro", null ],
+    [ "DMRG++", "index.html#intro", null ],
     [ "Installation", "index.html#installation", [
       [ "Quick start", "index.html#quickstart", null ],
       [ "Minimum Requirements", "index.html#minreqs", null ],
@@ -33,6 +33,7 @@ var NAVTREE =
         [ "Functions", "functions_func.html", "functions_func" ],
         [ "Variables", "functions_vars.html", "functions_vars" ],
         [ "Typedefs", "functions_type.html", null ],
+        [ "Enumerations", "functions_enum.html", null ],
         [ "Related Functions", "functions_rela.html", null ]
       ] ]
     ] ],
@@ -42,7 +43,8 @@ var NAVTREE =
         [ "All", "globals.html", null ],
         [ "Functions", "globals_func.html", null ],
         [ "Typedefs", "globals_type.html", null ],
-        [ "Enumerations", "globals_enum.html", null ]
+        [ "Enumerations", "globals_enum.html", null ],
+        [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
   ] ]
@@ -51,9 +53,11 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"classclass__base__algorithm.html#af294534532886fe01511ecce808b14b3",
-"classclass__measurement.html#a8eb5577b6ec603f5c43f1098fe768d9f",
-"functions_vars_x.html"
+"classclass__arpack__eigsolver.html#a8b41ae7cc321e4692d7234503b66a94f",
+"classclass__hdf5__table.html",
+"classclass__tf__ising.html#aadefa2a6540891e38dd2d449d2141056",
+"nmspc__model_8h.html#ae48ac20c10b6d43cd50628db424e5644",
+"structclass__table__profiling_1_1meta__struct.html#a92beb117b5041b8b2369ce961e004e62"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
