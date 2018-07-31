@@ -46,7 +46,7 @@ matrix:
         - FC=gfortran-7
         - MPI=mpich
         - MATRIX_EVAL="CXX=clang++-6.0 && CC=clang-6.0 && FC=gfortran-7 && MPI=mpich"
-    cache:
+      cache:
         apt: true
       addons:
         apt:
