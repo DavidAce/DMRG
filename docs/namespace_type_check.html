@@ -87,7 +87,8 @@ $(document).ready(function(){initNavTree('namespace_type_check.html','');});
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">TypeCheck Namespace Reference</div>  </div>
 </div><!--header-->
@@ -95,9 +96,21 @@ $(document).ready(function(){initNavTree('namespace_type_check.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__instance__of.html">is_instance_of</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__eigen__array.html">is_eigen_array</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__instance__of_3_01_template_00_01_template_3_01_args_8_8_8_01_4_01_4.html">is_instance_of&lt; Template, Template&lt; Args... &gt; &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__eigen__array_3_01_eigen_1_1_array_3_01_t_00_01rows_00_01cols_00_01_storage_order_01_4_01_4.html">is_eigen_array&lt; Eigen::Array&lt; T, rows, cols, StorageOrder &gt; &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__eigen__matrix.html">is_eigen_matrix</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__eigen__matrix_3_01_eigen_1_1_matrix_3_01_t_00_01rows_00_01cols_00_01_storage_order_01_4_01_4.html">is_eigen_matrix&lt; Eigen::Matrix&lt; T, rows, cols, StorageOrder &gt; &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__eigen__tensor.html">is_eigen_tensor</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__eigen__tensor_3_01_eigen_1_1_tensor_3_01_t_00_01_n_00_01_storage_order_01_4_01_4.html">is_eigen_tensor&lt; Eigen::Tensor&lt; T, N, StorageOrder &gt; &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__vector.html">is_vector</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__vector_3_01std_1_1vector_3_01_t_01_4_01_4.html">is_vector&lt; std::vector&lt; T &gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
@@ -108,18 +121,12 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a34eb17230046987029c1f1c7d574aa89"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a34eb17230046987029c1f1c7d574aa89"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#a34eb17230046987029c1f1c7d574aa89">Size_t</a> = decltype(std::declval&lt; T &gt;().template size())</td></tr>
 <tr class="separator:a34eb17230046987029c1f1c7d574aa89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69b99399a457c54efa8cb178ec239564"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a69b99399a457c54efa8cb178ec239564"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#a69b99399a457c54efa8cb178ec239564">Dims_t</a> = decltype(std::declval&lt; T &gt;().template dimensions())</td></tr>
-<tr class="separator:a69b99399a457c54efa8cb178ec239564"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b78114d2bfa9999d5ff53e71c183d90"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a5b78114d2bfa9999d5ff53e71c183d90"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#a5b78114d2bfa9999d5ff53e71c183d90">Rank_t</a> = decltype(std::declval&lt; T &gt;().template rank())</td></tr>
-<tr class="separator:a5b78114d2bfa9999d5ff53e71c183d90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ec959351d37f9331b7f795238abcc40"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a6ec959351d37f9331b7f795238abcc40"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#a6ec959351d37f9331b7f795238abcc40">Setz_t</a> = decltype(std::declval&lt; T &gt;().template setZero())</td></tr>
-<tr class="separator:a6ec959351d37f9331b7f795238abcc40"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad76016626d2530239e0bc2d09b2084c3"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ad76016626d2530239e0bc2d09b2084c3"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#ad76016626d2530239e0bc2d09b2084c3">Matr_t</a> = decltype(std::declval&lt; T &gt;().template matrix())</td></tr>
-<tr class="separator:ad76016626d2530239e0bc2d09b2084c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec5001264b5239932d5e7e3d153216c0"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:aec5001264b5239932d5e7e3d153216c0"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#aec5001264b5239932d5e7e3d153216c0">Cstr_t</a> = decltype(std::declval&lt; T &gt;().template c_str())</td></tr>
+<tr class="separator:aec5001264b5239932d5e7e3d153216c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8eb74c69cd7c1bf2c4c00e3df95a898"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ab8eb74c69cd7c1bf2c4c00e3df95a898"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#ab8eb74c69cd7c1bf2c4c00e3df95a898">Imag_t</a> = decltype(std::declval&lt; T &gt;().template imag())</td></tr>
+<tr class="separator:ab8eb74c69cd7c1bf2c4c00e3df95a898"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afba6d111f934a518472743c1c85aa450"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:afba6d111f934a518472743c1c85aa450"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#afba6d111f934a518472743c1c85aa450">Scal_t</a> = typename <a class="el" href="class__superblock_8cpp.html#a94376fd90cb2400e351e619d477d85a4">T::Scalar</a></td></tr>
 <tr class="separator:afba6d111f934a518472743c1c85aa450"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,29 +139,42 @@ Typedefs</h2></td></tr>
 <tr class="memitem:adf9e7896f673211b9a8e09aa6a2f7d50"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:adf9e7896f673211b9a8e09aa6a2f7d50"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#adf9e7896f673211b9a8e09aa6a2f7d50">has_member_size</a> = std::experimental::is_detected&lt; <a class="el" href="namespace_type_check.html#a34eb17230046987029c1f1c7d574aa89">Size_t</a>, T &gt;</td></tr>
 <tr class="separator:adf9e7896f673211b9a8e09aa6a2f7d50"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af12f6e7c0294a7ba57062bb101042fcd"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:af12f6e7c0294a7ba57062bb101042fcd"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#af12f6e7c0294a7ba57062bb101042fcd">has_member_dimensions</a> = std::experimental::is_detected&lt; <a class="el" href="namespace_type_check.html#a69b99399a457c54efa8cb178ec239564">Dims_t</a>, T &gt;</td></tr>
-<tr class="separator:af12f6e7c0294a7ba57062bb101042fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c01daf500c30c3a32e465c2903fa19a"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a9c01daf500c30c3a32e465c2903fa19a"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#a9c01daf500c30c3a32e465c2903fa19a">has_member_scalar</a> = std::experimental::is_detected&lt; <a class="el" href="namespace_type_check.html#afba6d111f934a518472743c1c85aa450">Scal_t</a>, T &gt;</td></tr>
 <tr class="separator:a9c01daf500c30c3a32e465c2903fa19a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11011470526cd2f482b0a2c34ee32a69"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a11011470526cd2f482b0a2c34ee32a69"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#a11011470526cd2f482b0a2c34ee32a69">has_member_value_type</a> = std::experimental::is_detected&lt; <a class="el" href="namespace_type_check.html#af7c6e5e9d9492ac1f52808cc0cf82847">Valt_t</a>, T &gt;</td></tr>
 <tr class="separator:a11011470526cd2f482b0a2c34ee32a69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2cb7633dcce444eb0ecdb1abeb199e2"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ae2cb7633dcce444eb0ecdb1abeb199e2"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#ae2cb7633dcce444eb0ecdb1abeb199e2">is_eigen</a> = std::experimental::is_detected&lt; <a class="el" href="namespace_type_check.html#a6ec959351d37f9331b7f795238abcc40">Setz_t</a>, T &gt;</td></tr>
-<tr class="separator:ae2cb7633dcce444eb0ecdb1abeb199e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48a6ef90e8a0c3a4ba0a65a6d2ba4dce"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a48a6ef90e8a0c3a4ba0a65a6d2ba4dce"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#a48a6ef90e8a0c3a4ba0a65a6d2ba4dce">is_matrix</a> = std::experimental::is_detected&lt; <a class="el" href="namespace_type_check.html#ad76016626d2530239e0bc2d09b2084c3">Matr_t</a>, T &gt;</td></tr>
-<tr class="separator:a48a6ef90e8a0c3a4ba0a65a6d2ba4dce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a516386ca02c155ab780634deca9c6c53"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a516386ca02c155ab780634deca9c6c53"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#a516386ca02c155ab780634deca9c6c53">is_tensor</a> = std::experimental::is_detected&lt; <a class="el" href="namespace_type_check.html#a5b78114d2bfa9999d5ff53e71c183d90">Rank_t</a>, T &gt;</td></tr>
-<tr class="separator:a516386ca02c155ab780634deca9c6c53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75531bee90fbf83ffa3c253c1ac9707f"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a75531bee90fbf83ffa3c253c1ac9707f"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#a75531bee90fbf83ffa3c253c1ac9707f">is_ofEigen</a> = <a class="el" href="struct_type_check_1_1is__instance__of.html">is_instance_of</a>&lt; Eigen::EigenBase, T &gt;</td></tr>
-<tr class="separator:a75531bee90fbf83ffa3c253c1ac9707f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab056ae61761e6fdaded77a48d75dbf95"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ab056ae61761e6fdaded77a48d75dbf95"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#ab056ae61761e6fdaded77a48d75dbf95">has_member_c_str</a> = std::experimental::is_detected&lt; <a class="el" href="namespace_type_check.html#aec5001264b5239932d5e7e3d153216c0">Cstr_t</a>, T &gt;</td></tr>
+<tr class="separator:ab056ae61761e6fdaded77a48d75dbf95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add291358dc6306095fdf5a45f3e750a9"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:add291358dc6306095fdf5a45f3e750a9"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#add291358dc6306095fdf5a45f3e750a9">has_member_imag</a> = std::experimental::is_detected&lt; <a class="el" href="namespace_type_check.html#ab8eb74c69cd7c1bf2c4c00e3df95a898">Imag_t</a>, T &gt;</td></tr>
+<tr class="separator:add291358dc6306095fdf5a45f3e750a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a9db1936a588f77f1f13e313da75f9529"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a9db1936a588f77f1f13e313da75f9529"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#a9db1936a588f77f1f13e313da75f9529">is_eigen_matrix_or_array</a> ()</td></tr>
+<tr class="separator:a9db1936a588f77f1f13e313da75f9529"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
+<a id="aec5001264b5239932d5e7e3d153216c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec5001264b5239932d5e7e3d153216c0">&#9670;&nbsp;</a></span>Cstr_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespace_type_check.html#aec5001264b5239932d5e7e3d153216c0">TypeCheck::Cstr_t</a> = typedef decltype(std::declval&lt;T&gt;().template c_str())</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a943d73d49d1b8ba15d1780105cb0a302"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a943d73d49d1b8ba15d1780105cb0a302">&#9670;&nbsp;</a></span>Data_t</h2>
 
@@ -171,8 +191,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a69b99399a457c54efa8cb178ec239564"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a69b99399a457c54efa8cb178ec239564">&#9670;&nbsp;</a></span>Dims_t</h2>
+<a id="ab056ae61761e6fdaded77a48d75dbf95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab056ae61761e6fdaded77a48d75dbf95">&#9670;&nbsp;</a></span>has_member_c_str</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -180,7 +200,7 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="namespace_type_check.html#a69b99399a457c54efa8cb178ec239564">TypeCheck::Dims_t</a> = typedef decltype(std::declval&lt;T&gt;().template dimensions())</td>
+          <td class="memname">using <a class="el" href="namespace_type_check.html#ab056ae61761e6fdaded77a48d75dbf95">TypeCheck::has_member_c_str</a> = typedef std::experimental::is_detected&lt;<a class="el" href="namespace_type_check.html#aec5001264b5239932d5e7e3d153216c0">Cstr_t</a> , T&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -203,8 +223,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="af12f6e7c0294a7ba57062bb101042fcd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af12f6e7c0294a7ba57062bb101042fcd">&#9670;&nbsp;</a></span>has_member_dimensions</h2>
+<a id="add291358dc6306095fdf5a45f3e750a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add291358dc6306095fdf5a45f3e750a9">&#9670;&nbsp;</a></span>has_member_imag</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -212,7 +232,7 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="namespace_type_check.html#af12f6e7c0294a7ba57062bb101042fcd">TypeCheck::has_member_dimensions</a> = typedef std::experimental::is_detected&lt;<a class="el" href="namespace_type_check.html#a69b99399a457c54efa8cb178ec239564">Dims_t</a> , T&gt;</td>
+          <td class="memname">using <a class="el" href="namespace_type_check.html#add291358dc6306095fdf5a45f3e750a9">TypeCheck::has_member_imag</a> = typedef std::experimental::is_detected&lt;<a class="el" href="namespace_type_check.html#ab8eb74c69cd7c1bf2c4c00e3df95a898">Imag_t</a> , T&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -267,8 +287,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="ae2cb7633dcce444eb0ecdb1abeb199e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2cb7633dcce444eb0ecdb1abeb199e2">&#9670;&nbsp;</a></span>is_eigen</h2>
+<a id="ab8eb74c69cd7c1bf2c4c00e3df95a898"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8eb74c69cd7c1bf2c4c00e3df95a898">&#9670;&nbsp;</a></span>Imag_t</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -276,87 +296,7 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="namespace_type_check.html#ae2cb7633dcce444eb0ecdb1abeb199e2">TypeCheck::is_eigen</a> = typedef std::experimental::is_detected&lt;<a class="el" href="namespace_type_check.html#a6ec959351d37f9331b7f795238abcc40">Setz_t</a> , T&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a48a6ef90e8a0c3a4ba0a65a6d2ba4dce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48a6ef90e8a0c3a4ba0a65a6d2ba4dce">&#9670;&nbsp;</a></span>is_matrix</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespace_type_check.html#a48a6ef90e8a0c3a4ba0a65a6d2ba4dce">TypeCheck::is_matrix</a> = typedef std::experimental::is_detected&lt;<a class="el" href="namespace_type_check.html#ad76016626d2530239e0bc2d09b2084c3">Matr_t</a> , T&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a75531bee90fbf83ffa3c253c1ac9707f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a75531bee90fbf83ffa3c253c1ac9707f">&#9670;&nbsp;</a></span>is_ofEigen</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespace_type_check.html#a75531bee90fbf83ffa3c253c1ac9707f">TypeCheck::is_ofEigen</a> = typedef <a class="el" href="struct_type_check_1_1is__instance__of.html">is_instance_of</a>&lt;Eigen::EigenBase,T&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a516386ca02c155ab780634deca9c6c53"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a516386ca02c155ab780634deca9c6c53">&#9670;&nbsp;</a></span>is_tensor</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespace_type_check.html#a516386ca02c155ab780634deca9c6c53">TypeCheck::is_tensor</a> = typedef std::experimental::is_detected&lt;<a class="el" href="namespace_type_check.html#a5b78114d2bfa9999d5ff53e71c183d90">Rank_t</a> , T&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ad76016626d2530239e0bc2d09b2084c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad76016626d2530239e0bc2d09b2084c3">&#9670;&nbsp;</a></span>Matr_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespace_type_check.html#ad76016626d2530239e0bc2d09b2084c3">TypeCheck::Matr_t</a> = typedef decltype(std::declval&lt;T&gt;().template matrix())</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a5b78114d2bfa9999d5ff53e71c183d90"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5b78114d2bfa9999d5ff53e71c183d90">&#9670;&nbsp;</a></span>Rank_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespace_type_check.html#a5b78114d2bfa9999d5ff53e71c183d90">TypeCheck::Rank_t</a> = typedef decltype(std::declval&lt;T&gt;().template rank())</td>
+          <td class="memname">using <a class="el" href="namespace_type_check.html#ab8eb74c69cd7c1bf2c4c00e3df95a898">TypeCheck::Imag_t</a> = typedef decltype(std::declval&lt;T&gt;().template imag())</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -373,22 +313,6 @@ template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="namespace_type_check.html#afba6d111f934a518472743c1c85aa450">TypeCheck::Scal_t</a> = typedef typename <a class="el" href="class__superblock_8cpp.html#a94376fd90cb2400e351e619d477d85a4">T::Scalar</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a6ec959351d37f9331b7f795238abcc40"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ec959351d37f9331b7f795238abcc40">&#9670;&nbsp;</a></span>Setz_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespace_type_check.html#a6ec959351d37f9331b7f795238abcc40">TypeCheck::Setz_t</a> = typedef decltype(std::declval&lt;T&gt;().template setZero())</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -421,6 +345,26 @@ template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="namespace_type_check.html#af7c6e5e9d9492ac1f52808cc0cf82847">TypeCheck::Valt_t</a> = typedef typename T::value_type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a9db1936a588f77f1f13e313da75f9529"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9db1936a588f77f1f13e313da75f9529">&#9670;&nbsp;</a></span>is_eigen_matrix_or_array()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr bool TypeCheck::is_eigen_matrix_or_array </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">

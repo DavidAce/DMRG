@@ -95,6 +95,7 @@ $(document).ready(function(){initNavTree('nmspc__sim__settings_8h.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;string&gt;</code><br />
+<code>#include &lt;unordered_set&gt;</code><br />
 </div>
 <p><a href="nmspc__sim__settings_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -104,6 +105,12 @@ Namespaces</h2></td></tr>
 <tr class="memdesc:namespacesettings"><td class="mdescLeft">&#160;</td><td class="mdescRight">General settings like max iterations, time-step, precision, etc. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespacesettings_1_1model"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model.html">settings::model</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacesettings_1_1model_1_1tf__ising"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__ising.html">settings::model::tf_ising</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacesettings_1_1model_1_1tf__nn__ising"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__nn__ising.html">settings::model::tf_nn_ising</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacesettings_1_1model_1_1selfdual__tf__rf__ising"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1selfdual__tf__rf__ising.html">settings::model::selfdual_tf_rf_ising</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespacesettings_1_1precision"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1precision.html">settings::precision</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -138,12 +145,40 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a12ac3c257355366b46e00e1db97e9824"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model.html#a12ac3c257355366b46e00e1db97e9824">settings::model::J</a> = -1</td></tr>
-<tr class="separator:a12ac3c257355366b46e00e1db97e9824"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0a8dec276b339c79be647ccdc0ab151"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model.html#ab0a8dec276b339c79be647ccdc0ab151">settings::model::g</a> = 1</td></tr>
-<tr class="separator:ab0a8dec276b339c79be647ccdc0ab151"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b66491d88a6209fbaf61a55428f35db"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model.html#a3b66491d88a6209fbaf61a55428f35db">settings::model::initial_state</a> = &quot;rps&quot;</td></tr>
 <tr class="separator:a3b66491d88a6209fbaf61a55428f35db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47bbe476211c0ae22d348e80df47193b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model.html#a47bbe476211c0ae22d348e80df47193b">settings::model::model_type</a> = &quot;tf_ising&quot;</td></tr>
+<tr class="separator:a47bbe476211c0ae22d348e80df47193b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2016f014ef7dd7d70acc301cafab62ca"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__ising.html#a2016f014ef7dd7d70acc301cafab62ca">settings::model::tf_ising::J</a> = 1</td></tr>
+<tr class="separator:a2016f014ef7dd7d70acc301cafab62ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7477c13d9b0d7dbace98d21314700688"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__ising.html#a7477c13d9b0d7dbace98d21314700688">settings::model::tf_ising::g</a> = 1</td></tr>
+<tr class="separator:a7477c13d9b0d7dbace98d21314700688"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a515c4000b86ee03c42022e29c304dba4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__ising.html#a515c4000b86ee03c42022e29c304dba4">settings::model::tf_ising::w</a> = 0</td></tr>
+<tr class="separator:a515c4000b86ee03c42022e29c304dba4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1e151701722985d60dd3a6c06e9ca60"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__ising.html#af1e151701722985d60dd3a6c06e9ca60">settings::model::tf_ising::d</a> = 2</td></tr>
+<tr class="separator:af1e151701722985d60dd3a6c06e9ca60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa22fade433acf84dacf4e4c05d2d82f8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__nn__ising.html#aa22fade433acf84dacf4e4c05d2d82f8">settings::model::tf_nn_ising::J1</a> = 1</td></tr>
+<tr class="separator:aa22fade433acf84dacf4e4c05d2d82f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a083720bd3a61091855d80ed54238afb1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__nn__ising.html#a083720bd3a61091855d80ed54238afb1">settings::model::tf_nn_ising::J2</a> = 1</td></tr>
+<tr class="separator:a083720bd3a61091855d80ed54238afb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f6c20945fd63bd938148c3dc0e2e7ee"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__nn__ising.html#a1f6c20945fd63bd938148c3dc0e2e7ee">settings::model::tf_nn_ising::g</a> = 1</td></tr>
+<tr class="separator:a1f6c20945fd63bd938148c3dc0e2e7ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e1c647aee60057b23aa93aed6e0771c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__nn__ising.html#a1e1c647aee60057b23aa93aed6e0771c">settings::model::tf_nn_ising::w</a> = 0</td></tr>
+<tr class="separator:a1e1c647aee60057b23aa93aed6e0771c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af806f2052acfc239d48b23a95c932480"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1tf__nn__ising.html#af806f2052acfc239d48b23a95c932480">settings::model::tf_nn_ising::d</a> = 2</td></tr>
+<tr class="separator:af806f2052acfc239d48b23a95c932480"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42bf60cc340ba118cb1407e5c8248067"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1selfdual__tf__rf__ising.html#a42bf60cc340ba118cb1407e5c8248067">settings::model::selfdual_tf_rf_ising::J_mu</a> = 0</td></tr>
+<tr class="separator:a42bf60cc340ba118cb1407e5c8248067"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff964460c8c47739926ea97df62bfad2"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1selfdual__tf__rf__ising.html#aff964460c8c47739926ea97df62bfad2">settings::model::selfdual_tf_rf_ising::h_mu</a> = 0</td></tr>
+<tr class="separator:aff964460c8c47739926ea97df62bfad2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a585356bf92b2413b1cb430de265b0e8e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1selfdual__tf__rf__ising.html#a585356bf92b2413b1cb430de265b0e8e">settings::model::selfdual_tf_rf_ising::J_sigma</a> = 1</td></tr>
+<tr class="separator:a585356bf92b2413b1cb430de265b0e8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fbb5db78fbde435ede8a26d946ad2c8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1selfdual__tf__rf__ising.html#a7fbb5db78fbde435ede8a26d946ad2c8">settings::model::selfdual_tf_rf_ising::h_sigma</a> = 0</td></tr>
+<tr class="separator:a7fbb5db78fbde435ede8a26d946ad2c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8e672e8d9eb0861b3c5419103906a9e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1selfdual__tf__rf__ising.html#af8e672e8d9eb0861b3c5419103906a9e">settings::model::selfdual_tf_rf_ising::lambda</a> = 0</td></tr>
+<tr class="separator:af8e672e8d9eb0861b3c5419103906a9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43690f27f4e1121a6a602077bcbf6edc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1model_1_1selfdual__tf__rf__ising.html#a43690f27f4e1121a6a602077bcbf6edc">settings::model::selfdual_tf_rf_ising::d</a> = 2</td></tr>
+<tr class="separator:a43690f27f4e1121a6a602077bcbf6edc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae601749b55181417f8963d0e511e15bc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1precision.html#ae601749b55181417f8963d0e511e15bc">settings::precision::eigMaxIter</a> = 1000</td></tr>
 <tr class="separator:ae601749b55181417f8963d0e511e15bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83177d10f491bd1482cdca3132e4dfde"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1precision.html#a83177d10f491bd1482cdca3132e4dfde">settings::precision::eigThreshold</a> = 1e-12</td></tr>
@@ -190,8 +225,6 @@ Variables</h2></td></tr>
 <tr class="separator:a3c996295abab807a1da990592432ed3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a550cc2492564dae783bbd8d2111d2bd0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1xdmrg.html#a550cc2492564dae783bbd8d2111d2bd0">settings::xdmrg::seed</a> = 1</td></tr>
 <tr class="separator:a550cc2492564dae783bbd8d2111d2bd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aacbfd5514149a0e19842320ebdb49927"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1xdmrg.html#aacbfd5514149a0e19842320ebdb49927">settings::xdmrg::r_strength</a> = 1</td></tr>
-<tr class="separator:aacbfd5514149a0e19842320ebdb49927"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f4d94fb090044216164022353cee81f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1xdmrg.html#a0f4d94fb090044216164022353cee81f">settings::xdmrg::print_freq</a> = 100</td></tr>
 <tr class="separator:a0f4d94fb090044216164022353cee81f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa947e223663c15a475a4650741718f52"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1xdmrg.html#aa947e223663c15a475a4650741718f52">settings::xdmrg::store_freq</a> = 100</td></tr>
@@ -220,7 +253,7 @@ Variables</h2></td></tr>
 <tr class="separator:abe3ca3342dd4b5ea5f07c26bcda1c979"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8430e1ce7c6f9767a98a503c16affc3d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1hdf5.html#a8430e1ce7c6f9767a98a503c16affc3d">settings::hdf5::overwrite_file_if_found</a> = false</td></tr>
 <tr class="separator:a8430e1ce7c6f9767a98a503c16affc3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab62dfa890c06ea5b0ea5dc3a42f263e4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1hdf5.html#ab62dfa890c06ea5b0ea5dc3a42f263e4">settings::hdf5::output_filename</a> = &quot;data.h5&quot;</td></tr>
+<tr class="memitem:ab62dfa890c06ea5b0ea5dc3a42f263e4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1hdf5.html#ab62dfa890c06ea5b0ea5dc3a42f263e4">settings::hdf5::output_filename</a> = &quot;data_struct.h5&quot;</td></tr>
 <tr class="separator:ab62dfa890c06ea5b0ea5dc3a42f263e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adfab1988ea36f168aefc56bd9118e61a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1hdf5.html#adfab1988ea36f168aefc56bd9118e61a">settings::hdf5::output_folder</a> = &quot;output&quot;</td></tr>
 <tr class="separator:adfab1988ea36f168aefc56bd9118e61a"><td class="memSeparator" colspan="2">&#160;</td></tr>

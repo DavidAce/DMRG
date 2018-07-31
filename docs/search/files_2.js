@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['nmspc_5feigsolver_5fprops_2eh',['nmspc_eigsolver_props.h',['../nmspc__eigsolver__props_8h.html',1,'']]],
   ['nmspc_5fmath_2eh',['nmspc_math.h',['../nmspc__math_8h.html',1,'']]],
   ['nmspc_5fmodel_2ecpp',['nmspc_model.cpp',['../nmspc__model_8cpp.html',1,'']]],
   ['nmspc_5fmodel_2eh',['nmspc_model.h',['../nmspc__model_8h.html',1,'']]],

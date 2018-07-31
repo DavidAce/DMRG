@@ -10,7 +10,7 @@
 
   \tableofcontents
 
-  \section intro Description of DMRG++
+  \section intro DMRG++
 
   [Density matrix renormalization group](https://en.wikipedia.org/wiki/Density_matrix_renormalization_group) (DMRG) is a variational numerical technique to study the low-energy physics of many-body quantum systems.
 
@@ -106,11 +106,20 @@ The script `Data_analysis/data_analysis.py` (in progress) shows how to analyze t
 
 \section notation Notation
 
-The *Vidal canonical form*, i.e. \f$\Gamma\Lambda\Gamma\Lambda\f$"..., is used throughout this code.
+The *Vidal canonical form*, i.e. ...\f$\Gamma\Lambda\Gamma\Lambda\f$..., is the underlying data structure for MPS throughout this code.
 In code we denote
 
- - \f$\Gamma \rightarrow\f$ `G`.
- - \f$\Lambda \rightarrow\f$ `L`.
+ - \f$\Gamma \rightarrow\f$ `G`
+ - \f$\Lambda \rightarrow\f$ `L`
+
+There are methods to obtain the MPS in *mixed canonical form* as well, i.e. \f$AAA...AACBB...BBB\f$,
+where \f$A\f$'s are left unitary, \f$B\f$'s are right-unitary and \f$C\f$ is a (diagonal) bond-matrix.
+The \f$A\f$'s and \f$B\f$'s are obtained from the Vidal canonical form by simple contraction:
+
+ - \f$A = \Lambda \Gamma\f$
+ - \f$B = \Gamma \Lambda\f$
+
+
 
  \subsection convention Tensor index order convention.
  The tensor index order used here follows the convention:
@@ -147,7 +156,7 @@ which in code reads
 \code{.cpp}
  using Scalar = std::complex<double>;
  long rank = 4
- Eigen::Tensor<Scalar,rank> theta(d,d,chia,chib);
+ Eigen::Tensor<Scalar,rank> theta(d,chia,d,chib);
 \endcode
 
 This index order doesn't follow the convention above because it simplifies the Schmidt-decomposition, where
