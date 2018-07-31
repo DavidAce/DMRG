@@ -12,5 +12,6 @@ var class_dense_hamiltonian_product =
     [ "shape_mpo4", "class_dense_hamiltonian_product.html#a7e62f923b12d238c75d763e0419a58f8", null ],
     [ "shape_theta1", "class_dense_hamiltonian_product.html#ad645de71743caa8e0044b36afc35a16c", null ],
     [ "shape_theta2", "class_dense_hamiltonian_product.html#a2d641ab6bb8fd4a5ff24d6f2eef67e91", null ],
-    [ "shape_theta4", "class_dense_hamiltonian_product.html#a7de17fb2cc98e2069ec9d48807d4e0f2", null ]
+    [ "shape_theta4", "class_dense_hamiltonian_product.html#a7de17fb2cc98e2069ec9d48807d4e0f2", null ],
+    [ "t_mul", "class_dense_hamiltonian_product.html#a4106b9522e4ae89748abec44c1be2607", null ]
 ];

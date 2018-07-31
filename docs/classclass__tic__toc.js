@@ -1,8 +1,9 @@
 var classclass__tic__toc =
 [
     [ "class_tic_toc", "classclass__tic__toc.html#a5ebe2ca2214ed4f8953f9e484dc475bb", null ],
-    [ "class_tic_toc", "classclass__tic__toc.html#ae3cbd6f54bc203a76f6d6d4c01077712", null ],
+    [ "class_tic_toc", "classclass__tic__toc.html#a79d394742c80ab84ede1710c235476d9", null ],
     [ "get_age", "classclass__tic__toc.html#abdb3f46902102c328384e6160d733124", null ],
+    [ "get_last_time_interval", "classclass__tic__toc.html#a4ed784d7ebfbe0ccbbc8118bd5e56fae", null ],
     [ "get_measured_time", "classclass__tic__toc.html#ac743e885a66900cd82645c5bb07d2f73", null ],
     [ "get_name", "classclass__tic__toc.html#a09483508eb9ad17a178bd777d4e8e8a0", null ],
     [ "print_delta", "classclass__tic__toc.html#a47731fce833ea5e35097f50ce0b84b21", null ],

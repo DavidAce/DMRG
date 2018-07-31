@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ritz',['Ritz',['../namespacearpackpp.html#a6b2726968794d55a35453f02623eb854',1,'arpackpp']]]
+  ['loc',['LOC',['../class__elemental__eigsolver_8h.html#a8613287991e02b68162dcc37689cf095',1,'class_elemental_eigsolver.h']]]
 ];

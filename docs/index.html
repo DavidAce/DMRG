@@ -90,7 +90,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#intro">Description of DMRG++</a></li>
+<ul><li class="level1"><a href="#intro">DMRG++</a></li>
 <li class="level1"><a href="#installation">Installation</a><ul><li class="level2"><a href="#quickstart">Quick start</a></li>
 <li class="level2"><a href="#minreqs">Minimum Requirements</a></li>
 <li class="level2"><a href="#optionalreqs">Optional Requirements</a></li>
@@ -107,7 +107,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 </div>
 <div class="textblock"><p>This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm. Link to the <a href="https://github.com/DavidAce/Notebooks/blob/master/DMRG%2B%2B/DMRG%2B%2B.pdf">working notes</a> on the theoretical aspects of this implementation.</p>
 <h1><a class="anchor" id="intro"></a>
-Description of DMRG++</h1>
+DMRG++</h1>
 <p><a href="https://en.wikipedia.org/wiki/Density_matrix_renormalization_group">Density matrix renormalization group</a> (DMRG) is a variational numerical technique to study the low-energy physics of many-body quantum systems.</p>
 <p>This algorithm constructs and minimizes trial wave functions, in the shape of <a href="https://en.wikipedia.org/wiki/Matrix_product_state">Matrix Product States</a> (MPS), iteratively in order to find the ground state of one-dimensional quantum systems with high precision.</p>
 <p>This implementation is inspired by the notation and steps in these articles:</p>
@@ -136,14 +136,20 @@ Description of DMRG++</h1>
  by McCulloch <br />
  </p>
 </blockquote>
+<blockquote class="doxtable">
+<p><a href="https://doi.org/10.1103/PhysRevLett.116.247204">Obtaining Highly Excited Eigenstates of Many-Body Localized Hamiltonians by the Density Matrix Renormalization Group Approach</a><br />
+ by Khemani, V., Pollmann, F., &amp; Sondhi, S. L. (2016). Physical Review Letters, 116(24), 1–5 </p>
+</blockquote>
 <hr/>
  <h1><a class="anchor" id="installation"></a>
 Installation</h1>
 <h2><a class="anchor" id="quickstart"></a>
 Quick start</h2>
-<p>Git clone or copy &amp; extract the project into a folder of your choosing. Make sure there are no spaces in your path!**. The project can be built with a single command from a unix terminal. Simply launch the script <code>.\build.sh</code> found in the root folder. If you are feeling lucky, try </p><div class="fragment"><div class="line">cmake -E make_directory build/Release</div><div class="line">cd build/Release</div><div class="line">cmake -Bbuild/Release --build build -config Release ../../</div><div class="line">make</div></div><!-- fragment --><p>The CMakeLists.txt script lets CMake check for dependencies and download them automatically if needed (see <em>Optional Requirements</em> below). If the dependencies are found, the project is built and an executable is generated.</p>
-<p>To run the executable, launch <code>.\run.sh</code>, containing To clean cmake-related files (except for libraries) run the build script with argument: <code>./build.sh clean</code>, or just remove the <code>build/</code> folder.</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#!/bin/sh</span></div><div class="line"><span class="preprocessor">./build/Release/DMRG++</span></div></div><!-- fragment --><p>Alternatively**, if you intend to develop or study the source code, some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This is perhaps an even simpler approach. Recommended: <a href="https://www.jetbrains.com/clion/download">CLion</a> or <a href="https://code.visualstudio.com/">Visual Studio Code</a> with the C++ and CMake Tools extensions.</p>
+<p>Git clone or copy &amp; extract the project into a folder of your choosing. Make sure there are no spaces in your path!**. The project can be built with a single command from a unix terminal. Simply launch the script <code>.\build.sh</code> found in the root folder to trigger a CMake build.</p>
+<p>The script takes optional arguments, run <code>.\build.sh -h</code> to learn more.</p>
+<p>The CMake build will check for dependencies and download them automatically if needed (see <em>Optional Requirements</em> below). If the dependencies are found, the project is built and an executable is generated.</p>
+<p>To run the executable, launch <code>.\run.sh</code>, or <code>.\run.sh -h</code> to learn more.</p>
+<p>Alternatively**, if you intend to develop or study the source code, some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This is perhaps an even simpler approach. Recommended: <a href="https://www.jetbrains.com/clion/download">CLion</a> or <a href="https://code.visualstudio.com/">Visual Studio Code</a> with the C++ and CMake Tools extensions.</p>
 <h2><a class="anchor" id="minreqs"></a>
 Minimum Requirements</h2>
 <p>The following software is required to build the project:</p><ul>
@@ -172,6 +178,7 @@ Optional Requirements</h2>
 <li><a href="http://eigen.tuxfamily.org"><b>Eigen</b></a> for tensor and matrix and linear algebra (tested with version &gt;= 3.3).</li>
 <li><a href="https://github.com/opencollab/arpack-ng"><b>Arpack</b></a> Eigenvalue solver based on fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.</li>
 <li><a href="https://github.com/m-reuter/arpackpp"><b>Arpackpp</b></a> c++ frontend for Arpack.</li>
+<li><a href="http://libelemental.org/"><b>Elemental</b></a> for full diagonalization of matrices.</li>
 <li><a href="https://support.hdfgroup.org/HDF5/"><b>HDF5</b></a> for hdf5 binary output file support (tested with version &gt;= 1.10).</li>
 <li><a href="https://www.gnu.org/software/gsl/"><b>GSL</b></a> for numerical integration (tested with version &gt;= 2.4). <hr/>
 </li>
@@ -179,13 +186,19 @@ Optional Requirements</h2>
 <h1><a class="anchor" id="usage"></a>
 Usage</h1>
 <p>The executable <code>build/Release/DMRG++</code> can be run without input parameters. By default it will try to find <code>input/input.cfg</code> the file where the simulation parameters are defined. You can modify these parameters, o create a new input file and pass its (full or relative) path as a command-line argument.</p>
-<p>The script <code>Data_analysis/data_analysis.py</code> can be used to analyze the simulation data, which is in hdf5 binary format. You can install <code>h5py</code> from pip or conda to open such files.</p>
+<p>The results from the simulation are saved under <code>output/</code> as hdf5-files. To view the data you can use any hdf5-viewer, such as HDFCompass.</p>
+<p>The script <code>Data_analysis/data_analysis.py</code> (in progress) shows how to analyze the simulation data stored in the hdf5 files. You need to install the python package <code>h5py</code> from pip or conda to read files in the hdf5 format.</p>
 <h1><a class="anchor" id="notation"></a>
 Notation</h1>
-<p>The <em>Vidal canonical form</em>, i.e. \(\Gamma\Lambda\Gamma\Lambda\)"..., is used throughout this code. In code we denote</p>
+<p>The <em>Vidal canonical form</em>, i.e. ... \(\Gamma\Lambda\Gamma\Lambda\)..., is the underlying data structure for MPS throughout this code. In code we denote</p>
 <ul>
-<li>\(\Gamma \rightarrow\) <code>G</code>.</li>
-<li>\(\Lambda \rightarrow\) <code>L</code>.</li>
+<li>\(\Gamma \rightarrow\) <code>G</code></li>
+<li>\(\Lambda \rightarrow\) <code>L</code></li>
+</ul>
+<p>There are methods to obtain the MPS in <em>mixed canonical form</em> as well, i.e. \(AAA...AACBB...BBB\), where \(A\)'s are left unitary, \(B\)'s are right-unitary and \(C\) is a (diagonal) bond-matrix. The \(A\)'s and \(B\)'s are obtained from the Vidal canonical form by simple contraction:</p>
+<ul>
+<li>\(A = \Lambda \Gamma\)</li>
+<li>\(B = \Gamma \Lambda\)</li>
 </ul>
 <h2><a class="anchor" id="convention"></a>
 Tensor index order convention.</h2>
@@ -199,11 +212,12 @@ Example:</h3>
 <p>In diagrammatic tensor notation this is: </p><pre class="fragment">                        [d]          0
             G     = [a]__|__[b] = 1__|__2
 </pre><p> where after the second equality the index order is shown. In code this corresponds to</p>
-<div class="fragment"><div class="line">Tensor3 G(d,a,b);</div></div><!-- fragment --><p>Similarly, we have for \(\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}\):</p>
-<pre class="fragment">                                [d] [d]                0   1
-            Theta     = [chia]___|___|___[chib] = 2 ___|___|___ 3
+<div class="fragment"><div class="line"><span class="keyword">using</span> <a class="code" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> = std::complex&lt;double&gt;;</div><div class="line"><span class="keywordtype">long</span> rank = 3</div><div class="line">Eigen::Tensor&lt;Scalar,rank&gt; G(<a class="code" href="namespacesettings_1_1model_1_1tf__ising.html#af1e151701722985d60dd3a6c06e9ca60">d</a>,a,b);</div></div><!-- fragment --><p>An exception to this rule is theta: We have \(\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}\):</p>
+<pre class="fragment">                                [d] [d]                0   2
+            Theta     = [chia]___|___|___[chib] = 1 ___|___|___ 3
 </pre><p>which in code reads</p>
-<div class="fragment"><div class="line">Tensor4 G(d,d,chia,chib);</div></div><!-- fragment --><h1><a class="anchor" id="details"></a>
+<div class="fragment"><div class="line"><span class="keyword">using</span> <a class="code" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> = std::complex&lt;double&gt;;</div><div class="line"><span class="keywordtype">long</span> rank = 4</div><div class="line">Eigen::Tensor&lt;Scalar,rank&gt; theta(<a class="code" href="namespacesettings_1_1model_1_1tf__ising.html#af1e151701722985d60dd3a6c06e9ca60">d</a>,chia,<a class="code" href="namespacesettings_1_1model_1_1tf__ising.html#af1e151701722985d60dd3a6c06e9ca60">d</a>,chib);</div></div><!-- fragment --><p>This index order doesn't follow the convention above because it simplifies the Schmidt-decomposition, where the indices are merged in pairs ([0,1],[2,3]) to form a matrix on which to perform a singular value decomposition (SVD).</p>
+<h1><a class="anchor" id="details"></a>
 Details</h1>
 <dl class="section author"><dt>Author</dt><dd>David Aceituno </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>02-2018 </dd></dl>

@@ -86,6 +86,7 @@ $(document).ready(function(){initNavTree('classclass__hdf5__file.html','');});
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
@@ -100,34 +101,41 @@ $(document).ready(function(){initNavTree('classclass__hdf5__file.html','');});
 </div>
 <p><code>#include &lt;<a class="el" href="class__hdf5__file_8h_source.html">class_hdf5_file.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file_1_1_attribute_properties.html">AttributeProperties</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file_1_1_dataset_properties.html">DatasetProperties</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structclass__hdf5__file_1_1_h5_t___c_o_m_p_l_e_x___s_t_r_u_c_t.html">H5T_COMPLEX_STRUCT</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1ce1ed600be43869880fc75198e4ed32"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a1ce1ed600be43869880fc75198e4ed32">class_hdf5_file</a> (const fs::path output_filename_, const fs::path output_dirname_, bool create_dir_=true, bool overwrite_=false, bool mpi_io_=false)</td></tr>
-<tr class="separator:a1ce1ed600be43869880fc75198e4ed32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85a21be57364715f399d4af11bfb454d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a85a21be57364715f399d4af11bfb454d">class_hdf5_file</a> (bool mpi_io_=false)</td></tr>
-<tr class="separator:a85a21be57364715f399d4af11bfb454d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cdb88a2cd9484946a38f2ab17575dfc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a6cdb88a2cd9484946a38f2ab17575dfc">class_hdf5_file</a> (const std::string output_filename_, const std::string output_dirname_, bool create_dir_=true, bool overwrite_=false)</td></tr>
+<tr class="separator:a6cdb88a2cd9484946a38f2ab17575dfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af16bdc7c02f6e929a5109a9246ca899b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#af16bdc7c02f6e929a5109a9246ca899b">~class_hdf5_file</a> ()</td></tr>
 <tr class="separator:af16bdc7c02f6e929a5109a9246ca899b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa63c25dbecd82d3a26bd8864c5480e9f"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
-<tr class="memitem:aa63c25dbecd82d3a26bd8864c5480e9f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#aa63c25dbecd82d3a26bd8864c5480e9f">extend_dataset</a> (const DataType &amp;data, const std::string &amp;dataset_relative_name)</td></tr>
-<tr class="separator:aa63c25dbecd82d3a26bd8864c5480e9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0983608b054f0cb7ecd6f30a5d7165f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a0983608b054f0cb7ecd6f30a5d7165f4">create_group_link</a> (const std::string &amp;group_relative_name)</td></tr>
-<tr class="separator:a0983608b054f0cb7ecd6f30a5d7165f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb716055cac393bad540f4c9a49fc8a0"><td class="memTemplParams" colspan="2">template&lt;typename AttrType &gt; </td></tr>
-<tr class="memitem:afb716055cac393bad540f4c9a49fc8a0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#afb716055cac393bad540f4c9a49fc8a0">create_group_link</a> (const std::string &amp;group_relative_name, const std::string &amp;attribute_name, const AttrType attr)</td></tr>
-<tr class="separator:afb716055cac393bad540f4c9a49fc8a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39abe773ac423910b6b3983d32739989"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
 <tr class="memitem:a39abe773ac423910b6b3983d32739989"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a39abe773ac423910b6b3983d32739989">write_dataset</a> (const DataType &amp;data, const std::string &amp;dataset_relative_name)</td></tr>
 <tr class="separator:a39abe773ac423910b6b3983d32739989"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a054cd1efcff405affd62c94f0ba9827c"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
 <tr class="memitem:a054cd1efcff405affd62c94f0ba9827c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a054cd1efcff405affd62c94f0ba9827c">read_dataset</a> (DataType &amp;data, const std::string &amp;dataset_relative_name)</td></tr>
 <tr class="separator:a054cd1efcff405affd62c94f0ba9827c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0983608b054f0cb7ecd6f30a5d7165f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a0983608b054f0cb7ecd6f30a5d7165f4">create_group_link</a> (const std::string &amp;group_relative_name)</td></tr>
+<tr class="separator:a0983608b054f0cb7ecd6f30a5d7165f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb9d30b3932d1d7ac54fe5a9bc815870"><td class="memTemplParams" colspan="2">template&lt;typename AttrType &gt; </td></tr>
+<tr class="memitem:adb9d30b3932d1d7ac54fe5a9bc815870"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#adb9d30b3932d1d7ac54fe5a9bc815870">write_attribute_to_file</a> (const AttrType &amp;attribute, const std::string attribute_name)</td></tr>
+<tr class="separator:adb9d30b3932d1d7ac54fe5a9bc815870"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab11e6cc1cfbe9c90ebce173d1a4388b0"><td class="memTemplParams" colspan="2">template&lt;typename AttrType &gt; </td></tr>
 <tr class="memitem:ab11e6cc1cfbe9c90ebce173d1a4388b0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#ab11e6cc1cfbe9c90ebce173d1a4388b0">write_attribute_to_dataset</a> (const std::string &amp;dataset_relative_name, const AttrType attribute, const std::string &amp;attribute_name)</td></tr>
 <tr class="separator:ab11e6cc1cfbe9c90ebce173d1a4388b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b5f7e37cabdff664cc52984da4afee8"><td class="memTemplParams" colspan="2">template&lt;typename AttrType &gt; </td></tr>
 <tr class="memitem:a2b5f7e37cabdff664cc52984da4afee8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a2b5f7e37cabdff664cc52984da4afee8">write_attribute_to_group</a> (const std::string &amp;group_relative_name, const AttrType attribute, const std::string &amp;attribute_name)</td></tr>
 <tr class="separator:a2b5f7e37cabdff664cc52984da4afee8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a802cc22885457cf33cda70475d589d38"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
+<tr class="memitem:a802cc22885457cf33cda70475d589d38"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structclass__hdf5__file_1_1_h5_t___c_o_m_p_l_e_x___s_t_r_u_c_t.html">H5T_COMPLEX_STRUCT</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a802cc22885457cf33cda70475d589d38">convert_complex_data</a> (const DataType &amp;data)</td></tr>
+<tr class="separator:a802cc22885457cf33cda70475d589d38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -140,36 +148,45 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:abc47df4aa80f2ca2d4b9b43a2b4b021e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b812763504d5a2634ed5995d4bd3698"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a5b812763504d5a2634ed5995d4bd3698">initialize</a> ()</td></tr>
 <tr class="separator:a5b812763504d5a2634ed5995d4bd3698"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6566ab06d91097c8de23a8aa934a2792"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a6566ab06d91097c8de23a8aa934a2792">initialize_mpi</a> ()</td></tr>
-<tr class="separator:a6566ab06d91097c8de23a8aa934a2792"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4379238138083e3c8db11cc875f9d65b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a4379238138083e3c8db11cc875f9d65b">extend_dataset</a> (const std::string &amp;dataset_relative_name, const int dim, const int extent)</td></tr>
 <tr class="separator:a4379238138083e3c8db11cc875f9d65b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5890ded75fdc142ce07462342280087c"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
-<tr class="memitem:a5890ded75fdc142ce07462342280087c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a5890ded75fdc142ce07462342280087c">create_dataset_link</a> (const std::string &amp;dataset_relative_name, hsize_t *chunk_dims)</td></tr>
-<tr class="separator:a5890ded75fdc142ce07462342280087c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0680dc51b0e4b23a0ef86d05adcd0b7d"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
-<tr class="memitem:a0680dc51b0e4b23a0ef86d05adcd0b7d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a0680dc51b0e4b23a0ef86d05adcd0b7d">create_dataset_link</a> (const DataType &amp;data, const std::string &amp;dataset_relative_name)</td></tr>
-<tr class="separator:a0680dc51b0e4b23a0ef86d05adcd0b7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36bc85032ec1cf5d188f8f7f69cc8c74"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a36bc85032ec1cf5d188f8f7f69cc8c74">select_hyperslab</a> (hid_t &amp;filespace, hid_t &amp;memspace)</td></tr>
-<tr class="separator:a36bc85032ec1cf5d188f8f7f69cc8c74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d73753284cf54ce27184ed94424b4a5"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
-<tr class="memitem:a3d73753284cf54ce27184ed94424b4a5"><td class="memTemplItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a3d73753284cf54ce27184ed94424b4a5">get_DataType</a> ()</td></tr>
-<tr class="separator:a3d73753284cf54ce27184ed94424b4a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00ba17d356ce838fa82f9d1a72bade88"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
-<tr class="memitem:a00ba17d356ce838fa82f9d1a72bade88"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a00ba17d356ce838fa82f9d1a72bade88">get_Size</a> (const DataType &amp;data)</td></tr>
-<tr class="separator:a00ba17d356ce838fa82f9d1a72bade88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa63c25dbecd82d3a26bd8864c5480e9f"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
+<tr class="memitem:aa63c25dbecd82d3a26bd8864c5480e9f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#aa63c25dbecd82d3a26bd8864c5480e9f">extend_dataset</a> (const DataType &amp;data, const std::string &amp;dataset_relative_name)</td></tr>
+<tr class="separator:aa63c25dbecd82d3a26bd8864c5480e9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c2fb81aa3b7084080a5df399f3a9e1c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a5c2fb81aa3b7084080a5df399f3a9e1c">set_extent_dataset</a> (const <a class="el" href="classclass__hdf5__file_1_1_dataset_properties.html">DatasetProperties</a> &amp;props)</td></tr>
+<tr class="separator:a5c2fb81aa3b7084080a5df399f3a9e1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa31a4cbb7299da48b3007ef64ac97302"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#aa31a4cbb7299da48b3007ef64ac97302">check_link_exists_recursively</a> (std::string path)</td></tr>
+<tr class="separator:aa31a4cbb7299da48b3007ef64ac97302"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48f6f16e6d1f41cddf36fad622786e8b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a48f6f16e6d1f41cddf36fad622786e8b">create_dataset_link</a> (const <a class="el" href="classclass__hdf5__file_1_1_dataset_properties.html">DatasetProperties</a> &amp;props)</td></tr>
+<tr class="separator:a48f6f16e6d1f41cddf36fad622786e8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e015501d4add4db4287575662ba1029"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a1e015501d4add4db4287575662ba1029">select_hyperslab</a> (const hid_t &amp;filespace, const hid_t &amp;memspace)</td></tr>
+<tr class="separator:a1e015501d4add4db4287575662ba1029"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ac9751be5e11bfe6487b8e4a7f58650"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
+<tr class="memitem:a9ac9751be5e11bfe6487b8e4a7f58650"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a9ac9751be5e11bfe6487b8e4a7f58650">write_dataset</a> (const DataType &amp;data, const <a class="el" href="classclass__hdf5__file_1_1_dataset_properties.html">DatasetProperties</a> &amp;props)</td></tr>
+<tr class="separator:a9ac9751be5e11bfe6487b8e4a7f58650"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acbc40c83a9c08afa7c81879160a76205"><td class="memTemplParams" colspan="2">template&lt;typename AttrType &gt; </td></tr>
+<tr class="memitem:acbc40c83a9c08afa7c81879160a76205"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#acbc40c83a9c08afa7c81879160a76205">write_attribute_to_dataset</a> (const AttrType &amp;attribute, const <a class="el" href="classclass__hdf5__file_1_1_attribute_properties.html">AttributeProperties</a> &amp;aprops)</td></tr>
+<tr class="separator:acbc40c83a9c08afa7c81879160a76205"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1bd0aad1863875518d300d3b00fe3f5"><td class="memTemplParams" colspan="2">template&lt;typename AttrType &gt; </td></tr>
+<tr class="memitem:ab1bd0aad1863875518d300d3b00fe3f5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#ab1bd0aad1863875518d300d3b00fe3f5">write_attribute_to_group</a> (const AttrType attribute, const <a class="el" href="classclass__hdf5__file_1_1_attribute_properties.html">AttributeProperties</a> &amp;aprops)</td></tr>
+<tr class="separator:ab1bd0aad1863875518d300d3b00fe3f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b202884f5944b00f2a6ea51c8d07642"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
+<tr class="memitem:a1b202884f5944b00f2a6ea51c8d07642"><td class="memTemplItemLeft" align="right" valign="top">constexpr hid_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a1b202884f5944b00f2a6ea51c8d07642">get_DataType</a> () const</td></tr>
+<tr class="separator:a1b202884f5944b00f2a6ea51c8d07642"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c01effd8b3940560e9bb069766ccb76"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
+<tr class="memitem:a7c01effd8b3940560e9bb069766ccb76"><td class="memTemplItemLeft" align="right" valign="top">hsize_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a7c01effd8b3940560e9bb069766ccb76">get_Size</a> (const DataType &amp;data) const</td></tr>
+<tr class="separator:a7c01effd8b3940560e9bb069766ccb76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d9c5b4c5b782741cc8d9f3899297ecf"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
 <tr class="memitem:a5d9c5b4c5b782741cc8d9f3899297ecf"><td class="memTemplItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a5d9c5b4c5b782741cc8d9f3899297ecf">get_Rank</a> () const</td></tr>
 <tr class="separator:a5d9c5b4c5b782741cc8d9f3899297ecf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75d29a663a7118383093e5257f4dda73"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
-<tr class="memitem:a75d29a663a7118383093e5257f4dda73"><td class="memTemplItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a75d29a663a7118383093e5257f4dda73">get_DataSpace_unlimited</a> () const</td></tr>
-<tr class="separator:a75d29a663a7118383093e5257f4dda73"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff11608520f9b7348cbfd26b9861a5d2"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
-<tr class="memitem:aff11608520f9b7348cbfd26b9861a5d2"><td class="memTemplItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#aff11608520f9b7348cbfd26b9861a5d2">get_MemSpace</a> (const DataType &amp;data)</td></tr>
-<tr class="separator:aff11608520f9b7348cbfd26b9861a5d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a408e9e521aa12bddaf442d83c8cef4e4"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
-<tr class="memitem:a408e9e521aa12bddaf442d83c8cef4e4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a408e9e521aa12bddaf442d83c8cef4e4">set_ChunkDims</a> (const DataType &amp;data, hsize_t *dims)</td></tr>
-<tr class="separator:a408e9e521aa12bddaf442d83c8cef4e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17d18ec219d5f9fba82093f5dbe80a98"><td class="memItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a17d18ec219d5f9fba82093f5dbe80a98">get_DataSpace_unlimited</a> (int rank) const</td></tr>
+<tr class="separator:a17d18ec219d5f9fba82093f5dbe80a98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1068eb3b8559b0ecdffc33a301d73ea"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
+<tr class="memitem:ab1068eb3b8559b0ecdffc33a301d73ea"><td class="memTemplItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#ab1068eb3b8559b0ecdffc33a301d73ea">get_MemSpace</a> (const DataType &amp;data) const</td></tr>
+<tr class="separator:ab1068eb3b8559b0ecdffc33a301d73ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81292a0f79bc51480661b7e497595a69"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
+<tr class="memitem:a81292a0f79bc51480661b7e497595a69"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; hsize_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a81292a0f79bc51480661b7e497595a69">get_Dimensions</a> (const DataType &amp;data) const</td></tr>
+<tr class="separator:a81292a0f79bc51480661b7e497595a69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -185,24 +202,18 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a85d0621b1189d5b7cff6e0da7874e48e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf4df5784dd63f2e40b7b8c009067c2d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#adf4df5784dd63f2e40b7b8c009067c2d">overwrite</a></td></tr>
 <tr class="separator:adf4df5784dd63f2e40b7b8c009067c2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abfe2532e59969891cda8f1ed28b9df3d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#abfe2532e59969891cda8f1ed28b9df3d">mpi_io</a> = false</td></tr>
-<tr class="separator:abfe2532e59969891cda8f1ed28b9df3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8617eceb2b0804c36a4b0c76fe3c9d03"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__custom__cout.html">class_custom_cout</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a8617eceb2b0804c36a4b0c76fe3c9d03">ccout</a></td></tr>
-<tr class="separator:a8617eceb2b0804c36a4b0c76fe3c9d03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af654bd65029816d5224c19baab22de37"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#af654bd65029816d5224c19baab22de37">mpi_size</a></td></tr>
-<tr class="separator:af654bd65029816d5224c19baab22de37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae952177e083b45f6f23f15b5fe13f297"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#ae952177e083b45f6f23f15b5fe13f297">mpi_rank</a></td></tr>
-<tr class="separator:ae952177e083b45f6f23f15b5fe13f297"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f06d166d3ce9b88c84732193003e82d"><td class="memItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a8f06d166d3ce9b88c84732193003e82d">plist_facc</a></td></tr>
 <tr class="separator:a8f06d166d3ce9b88c84732193003e82d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a644b3884acaff89e0f2f158b77302810"><td class="memItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a644b3884acaff89e0f2f158b77302810">plist_xfer</a></td></tr>
 <tr class="separator:a644b3884acaff89e0f2f158b77302810"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a418b6363ecb17459a651b1947028057f"><td class="memItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a418b6363ecb17459a651b1947028057f">plist_lncr</a></td></tr>
 <tr class="separator:a418b6363ecb17459a651b1947028057f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36f9d3a66150507a3fbb6b94d267d488"><td class="memItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a36f9d3a66150507a3fbb6b94d267d488">H5T_COMPLEX_DOUBLE</a></td></tr>
+<tr class="separator:a36f9d3a66150507a3fbb6b94d267d488"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a1ce1ed600be43869880fc75198e4ed32"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ce1ed600be43869880fc75198e4ed32">&#9670;&nbsp;</a></span>class_hdf5_file() <span class="overload">[1/2]</span></h2>
+<a id="a6cdb88a2cd9484946a38f2ab17575dfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cdb88a2cd9484946a38f2ab17575dfc">&#9670;&nbsp;</a></span>class_hdf5_file()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -213,13 +224,13 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">class_hdf5_file::class_hdf5_file </td>
           <td>(</td>
-          <td class="paramtype">const fs::path&#160;</td>
+          <td class="paramtype">const std::string&#160;</td>
           <td class="paramname"><em>output_filename_</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const fs::path&#160;</td>
+          <td class="paramtype">const std::string&#160;</td>
           <td class="paramname"><em>output_dirname_</em>, </td>
         </tr>
         <tr>
@@ -232,44 +243,12 @@ Private Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>overwrite_</em> = <code>false</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>mpi_io_</em> = <code>false</code>&#160;</td>
+          <td class="paramname"><em>overwrite_</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
           <td>)</td>
           <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a85a21be57364715f399d4af11bfb454d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a85a21be57364715f399d4af11bfb454d">&#9670;&nbsp;</a></span>class_hdf5_file() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">class_hdf5_file::class_hdf5_file </td>
-          <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>mpi_io_</em> = <code>false</code></td><td>)</td>
-          <td></td>
         </tr>
       </table>
   </td>
@@ -307,33 +286,21 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a5890ded75fdc142ce07462342280087c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5890ded75fdc142ce07462342280087c">&#9670;&nbsp;</a></span>create_dataset_link() <span class="overload">[1/2]</span></h2>
+<a id="aa31a4cbb7299da48b3007ef64ac97302"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa31a4cbb7299da48b3007ef64ac97302">&#9670;&nbsp;</a></span>check_link_exists_recursively()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<div class="memtemplate">
-template&lt;typename DataType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void class_hdf5_file::create_dataset_link </td>
+          <td class="memname">bool class_hdf5_file::check_link_exists_recursively </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>dataset_relative_name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">hsize_t *&#160;</td>
-          <td class="paramname"><em>chunk_dims</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -345,13 +312,31 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
-<a id="a0680dc51b0e4b23a0ef86d05adcd0b7d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0680dc51b0e4b23a0ef86d05adcd0b7d">&#9670;&nbsp;</a></span>create_dataset_link() <span class="overload">[2/2]</span></h2>
+<a id="a802cc22885457cf33cda70475d589d38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a802cc22885457cf33cda70475d589d38">&#9670;&nbsp;</a></span>convert_complex_data()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename DataType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="structclass__hdf5__file_1_1_h5_t___c_o_m_p_l_e_x___s_t_r_u_c_t.html">class_hdf5_file::H5T_COMPLEX_STRUCT</a> &gt; class_hdf5_file::convert_complex_data </td>
+          <td>(</td>
+          <td class="paramtype">const DataType &amp;&#160;</td>
+          <td class="paramname"><em>data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a48f6f16e6d1f41cddf36fad622786e8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48f6f16e6d1f41cddf36fad622786e8b">&#9670;&nbsp;</a></span>create_dataset_link()</h2>
+
+<div class="memitem">
+<div class="memproto">
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -359,19 +344,9 @@ template&lt;typename DataType &gt; </div>
         <tr>
           <td class="memname">void class_hdf5_file::create_dataset_link </td>
           <td>(</td>
-          <td class="paramtype">const DataType &amp;&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const <a class="el" href="classclass__hdf5__file_1_1_dataset_properties.html">DatasetProperties</a> &amp;&#160;</td>
+          <td class="paramname"><em>props</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>dataset_relative_name</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -384,7 +359,7 @@ template&lt;typename DataType &gt; </div>
 </div>
 </div>
 <a id="a0983608b054f0cb7ecd6f30a5d7165f4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0983608b054f0cb7ecd6f30a5d7165f4">&#9670;&nbsp;</a></span>create_group_link() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0983608b054f0cb7ecd6f30a5d7165f4">&#9670;&nbsp;</a></span>create_group_link()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -401,74 +376,8 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
-<a id="afb716055cac393bad540f4c9a49fc8a0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afb716055cac393bad540f4c9a49fc8a0">&#9670;&nbsp;</a></span>create_group_link() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename AttrType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_hdf5_file::create_group_link </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>group_relative_name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>attribute_name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const AttrType&#160;</td>
-          <td class="paramname"><em>attr</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa63c25dbecd82d3a26bd8864c5480e9f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa63c25dbecd82d3a26bd8864c5480e9f">&#9670;&nbsp;</a></span>extend_dataset() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename DataType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_hdf5_file::extend_dataset </td>
-          <td>(</td>
-          <td class="paramtype">const DataType &amp;&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>dataset_relative_name</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a4379238138083e3c8db11cc875f9d65b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4379238138083e3c8db11cc875f9d65b">&#9670;&nbsp;</a></span>extend_dataset() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4379238138083e3c8db11cc875f9d65b">&#9670;&nbsp;</a></span>extend_dataset() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -509,8 +418,8 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
-<a id="a75d29a663a7118383093e5257f4dda73"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a75d29a663a7118383093e5257f4dda73">&#9670;&nbsp;</a></span>get_DataSpace_unlimited()</h2>
+<a id="aa63c25dbecd82d3a26bd8864c5480e9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa63c25dbecd82d3a26bd8864c5480e9f">&#9670;&nbsp;</a></span>extend_dataset() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -521,7 +430,71 @@ template&lt;typename DataType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
+          <td class="memname">void class_hdf5_file::extend_dataset </td>
+          <td>(</td>
+          <td class="paramtype">const DataType &amp;&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>dataset_relative_name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a17d18ec219d5f9fba82093f5dbe80a98"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17d18ec219d5f9fba82093f5dbe80a98">&#9670;&nbsp;</a></span>get_DataSpace_unlimited()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
           <td class="memname">hid_t class_hdf5_file::get_DataSpace_unlimited </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>rank</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1b202884f5944b00f2a6ea51c8d07642"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b202884f5944b00f2a6ea51c8d07642">&#9670;&nbsp;</a></span>get_DataType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename DataType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr hid_t class_hdf5_file::get_DataType </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -536,8 +509,8 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
-<a id="a3d73753284cf54ce27184ed94424b4a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d73753284cf54ce27184ed94424b4a5">&#9670;&nbsp;</a></span>get_DataType()</h2>
+<a id="a81292a0f79bc51480661b7e497595a69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81292a0f79bc51480661b7e497595a69">&#9670;&nbsp;</a></span>get_Dimensions()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -548,10 +521,11 @@ template&lt;typename DataType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">hid_t class_hdf5_file::get_DataType </td>
+          <td class="memname">std::vector&lt;hsize_t&gt; class_hdf5_file::get_Dimensions </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td class="paramtype">const DataType &amp;&#160;</td>
+          <td class="paramname"><em>data</em></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -563,8 +537,8 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
-<a id="aff11608520f9b7348cbfd26b9861a5d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aff11608520f9b7348cbfd26b9861a5d2">&#9670;&nbsp;</a></span>get_MemSpace()</h2>
+<a id="ab1068eb3b8559b0ecdffc33a301d73ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1068eb3b8559b0ecdffc33a301d73ea">&#9670;&nbsp;</a></span>get_MemSpace()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -579,7 +553,7 @@ template&lt;typename DataType &gt; </div>
           <td>(</td>
           <td class="paramtype">const DataType &amp;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -618,8 +592,8 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
-<a id="a00ba17d356ce838fa82f9d1a72bade88"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00ba17d356ce838fa82f9d1a72bade88">&#9670;&nbsp;</a></span>get_Size()</h2>
+<a id="a7c01effd8b3940560e9bb069766ccb76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c01effd8b3940560e9bb069766ccb76">&#9670;&nbsp;</a></span>get_Size()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -630,11 +604,11 @@ template&lt;typename DataType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int class_hdf5_file::get_Size </td>
+          <td class="memname">hsize_t class_hdf5_file::get_Size </td>
           <td>(</td>
           <td class="paramtype">const DataType &amp;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -657,31 +631,6 @@ template&lt;typename DataType &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void class_hdf5_file::initialize </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a6566ab06d91097c8de23a8aa934a2792"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6566ab06d91097c8de23a8aa934a2792">&#9670;&nbsp;</a></span>initialize_mpi()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_hdf5_file::initialize_mpi </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -726,8 +675,8 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
-<a id="a36bc85032ec1cf5d188f8f7f69cc8c74"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36bc85032ec1cf5d188f8f7f69cc8c74">&#9670;&nbsp;</a></span>select_hyperslab()</h2>
+<a id="a1e015501d4add4db4287575662ba1029"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e015501d4add4db4287575662ba1029">&#9670;&nbsp;</a></span>select_hyperslab()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -738,13 +687,13 @@ template&lt;typename DataType &gt; </div>
         <tr>
           <td class="memname">void class_hdf5_file::select_hyperslab </td>
           <td>(</td>
-          <td class="paramtype">hid_t &amp;&#160;</td>
+          <td class="paramtype">const hid_t &amp;&#160;</td>
           <td class="paramname"><em>filespace</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">hid_t &amp;&#160;</td>
+          <td class="paramtype">const hid_t &amp;&#160;</td>
           <td class="paramname"><em>memspace</em>&#160;</td>
         </tr>
         <tr>
@@ -762,38 +711,26 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
-<a id="a408e9e521aa12bddaf442d83c8cef4e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a408e9e521aa12bddaf442d83c8cef4e4">&#9670;&nbsp;</a></span>set_ChunkDims()</h2>
+<a id="a5c2fb81aa3b7084080a5df399f3a9e1c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c2fb81aa3b7084080a5df399f3a9e1c">&#9670;&nbsp;</a></span>set_extent_dataset()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<div class="memtemplate">
-template&lt;typename DataType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void class_hdf5_file::set_ChunkDims </td>
+          <td class="memname">void class_hdf5_file::set_extent_dataset </td>
           <td>(</td>
-          <td class="paramtype">const DataType &amp;&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const <a class="el" href="classclass__hdf5__file_1_1_dataset_properties.html">DatasetProperties</a> &amp;&#160;</td>
+          <td class="paramname"><em>props</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">hsize_t *&#160;</td>
-          <td class="paramname"><em>dims</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -826,7 +763,7 @@ template&lt;typename DataType &gt; </div>
 </div>
 </div>
 <a id="ab11e6cc1cfbe9c90ebce173d1a4388b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab11e6cc1cfbe9c90ebce173d1a4388b0">&#9670;&nbsp;</a></span>write_attribute_to_dataset()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab11e6cc1cfbe9c90ebce173d1a4388b0">&#9670;&nbsp;</a></span>write_attribute_to_dataset() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -861,8 +798,76 @@ template&lt;typename AttrType &gt; </div>
 
 </div>
 </div>
+<a id="acbc40c83a9c08afa7c81879160a76205"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acbc40c83a9c08afa7c81879160a76205">&#9670;&nbsp;</a></span>write_attribute_to_dataset() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename AttrType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_hdf5_file::write_attribute_to_dataset </td>
+          <td>(</td>
+          <td class="paramtype">const AttrType &amp;&#160;</td>
+          <td class="paramname"><em>attribute</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classclass__hdf5__file_1_1_attribute_properties.html">AttributeProperties</a> &amp;&#160;</td>
+          <td class="paramname"><em>aprops</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="adb9d30b3932d1d7ac54fe5a9bc815870"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb9d30b3932d1d7ac54fe5a9bc815870">&#9670;&nbsp;</a></span>write_attribute_to_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename AttrType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_hdf5_file::write_attribute_to_file </td>
+          <td>(</td>
+          <td class="paramtype">const AttrType &amp;&#160;</td>
+          <td class="paramname"><em>attribute</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string&#160;</td>
+          <td class="paramname"><em>attribute_name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a2b5f7e37cabdff664cc52984da4afee8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b5f7e37cabdff664cc52984da4afee8">&#9670;&nbsp;</a></span>write_attribute_to_group()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b5f7e37cabdff664cc52984da4afee8">&#9670;&nbsp;</a></span>write_attribute_to_group() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -897,8 +902,46 @@ template&lt;typename AttrType &gt; </div>
 
 </div>
 </div>
+<a id="ab1bd0aad1863875518d300d3b00fe3f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1bd0aad1863875518d300d3b00fe3f5">&#9670;&nbsp;</a></span>write_attribute_to_group() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename AttrType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_hdf5_file::write_attribute_to_group </td>
+          <td>(</td>
+          <td class="paramtype">const AttrType&#160;</td>
+          <td class="paramname"><em>attribute</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classclass__hdf5__file_1_1_attribute_properties.html">AttributeProperties</a> &amp;&#160;</td>
+          <td class="paramname"><em>aprops</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a39abe773ac423910b6b3983d32739989"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a39abe773ac423910b6b3983d32739989">&#9670;&nbsp;</a></span>write_dataset()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a39abe773ac423910b6b3983d32739989">&#9670;&nbsp;</a></span>write_dataset() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -927,18 +970,33 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a8617eceb2b0804c36a4b0c76fe3c9d03"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8617eceb2b0804c36a4b0c76fe3c9d03">&#9670;&nbsp;</a></span>ccout</h2>
+<a id="a9ac9751be5e11bfe6487b8e4a7f58650"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ac9751be5e11bfe6487b8e4a7f58650">&#9670;&nbsp;</a></span>write_dataset() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename DataType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classclass__custom__cout.html">class_custom_cout</a> class_hdf5_file::ccout</td>
+          <td class="memname">void class_hdf5_file::write_dataset </td>
+          <td>(</td>
+          <td class="paramtype">const DataType &amp;&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classclass__hdf5__file_1_1_dataset_properties.html">DatasetProperties</a> &amp;&#160;</td>
+          <td class="paramname"><em>props</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -950,6 +1008,7 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
+<h2 class="groupheader">Member Data Documentation</h2>
 <a id="a85d0621b1189d5b7cff6e0da7874e48e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a85d0621b1189d5b7cff6e0da7874e48e">&#9670;&nbsp;</a></span>create_dir</h2>
 
@@ -986,8 +1045,8 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
-<a id="abfe2532e59969891cda8f1ed28b9df3d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abfe2532e59969891cda8f1ed28b9df3d">&#9670;&nbsp;</a></span>mpi_io</h2>
+<a id="a36f9d3a66150507a3fbb6b94d267d488"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36f9d3a66150507a3fbb6b94d267d488">&#9670;&nbsp;</a></span>H5T_COMPLEX_DOUBLE</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -996,51 +1055,7 @@ template&lt;typename DataType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool class_hdf5_file::mpi_io = false</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae952177e083b45f6f23f15b5fe13f297"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae952177e083b45f6f23f15b5fe13f297">&#9670;&nbsp;</a></span>mpi_rank</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int class_hdf5_file::mpi_rank</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="af654bd65029816d5224c19baab22de37"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af654bd65029816d5224c19baab22de37">&#9670;&nbsp;</a></span>mpi_size</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int class_hdf5_file::mpi_size</td>
+          <td class="memname">hid_t class_hdf5_file::H5T_COMPLEX_DOUBLE</td>
         </tr>
       </table>
   </td>

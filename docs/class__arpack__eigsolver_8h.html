@@ -86,9 +86,7 @@ $(document).ready(function(){initNavTree('class__arpack__eigsolver_8h.html','');
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#nested-classes">Classes</a>  </div>
   <div class="headertitle">
 <div class="title">class_arpack_eigsolver.h File Reference</div>  </div>
 </div><!--header-->
@@ -97,6 +95,9 @@ $(document).ready(function(){initNavTree('class__arpack__eigsolver_8h.html','');
 <code>#include &lt;complex&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
+<code>#include &lt;memory&gt;</code><br />
+<code>#include &lt;<a class="el" href="class__tic__toc_8h_source.html">general/class_tic_toc.h</a>&gt;</code><br />
+<code>#include &quot;<a class="el" href="nmspc__eigsolver__props_8h_source.html">nmspc_eigsolver_props.h</a>&quot;</code><br />
 </div>
 <p><a href="class__arpack__eigsolver_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -104,37 +105,6 @@ $(document).ready(function(){initNavTree('class__arpack__eigsolver_8h.html','');
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__arpack__eigsolver.html">class_arpack_eigsolver&lt; Scalar, form &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
-Namespaces</h2></td></tr>
-<tr class="memitem:namespacearpackpp"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacearpackpp.html">arpackpp</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
-Enumerations</h2></td></tr>
-<tr class="memitem:a16efa9b076a0b14b742634fa776721c7"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacearpackpp.html#a16efa9b076a0b14b742634fa776721c7">arpackpp::Form</a> { <a class="el" href="namespacearpackpp.html#a16efa9b076a0b14b742634fa776721c7a161b3d9016563aba9ac190fc02ada9bb">arpackpp::Form::SYMMETRIC</a>, 
-<a class="el" href="namespacearpackpp.html#a16efa9b076a0b14b742634fa776721c7ab61773b9b3968a9988d765d728985862">arpackpp::Form::GENERAL</a>
- }</td></tr>
-<tr class="separator:a16efa9b076a0b14b742634fa776721c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b2726968794d55a35453f02623eb854"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacearpackpp.html#a6b2726968794d55a35453f02623eb854">arpackpp::Ritz</a> { <br />
-&#160;&#160;<a class="el" href="namespacearpackpp.html#a6b2726968794d55a35453f02623eb854a6b40fe07a0e5a93eef07242975e83ec1">arpackpp::Ritz::LA</a>, 
-<a class="el" href="namespacearpackpp.html#a6b2726968794d55a35453f02623eb854a3dd6b9265ff18f31dc30df59304b0ca7">arpackpp::Ritz::SA</a>, 
-<a class="el" href="namespacearpackpp.html#a6b2726968794d55a35453f02623eb854adfd5b430bc4db2c2836d0227ad9ac0c4">arpackpp::Ritz::LM</a>, 
-<a class="el" href="namespacearpackpp.html#a6b2726968794d55a35453f02623eb854a4e0d4f6ce30646f5a3f3e2a7422c1c5a">arpackpp::Ritz::SM</a>, 
-<br />
-&#160;&#160;<a class="el" href="namespacearpackpp.html#a6b2726968794d55a35453f02623eb854a90a7c45eaffbd575ca6fb361e6d170a4">arpackpp::Ritz::LR</a>, 
-<a class="el" href="namespacearpackpp.html#a6b2726968794d55a35453f02623eb854a8cb2010d27e13509d364436256e972c0">arpackpp::Ritz::SR</a>, 
-<a class="el" href="namespacearpackpp.html#a6b2726968794d55a35453f02623eb854a14efbb26a99dc4820b9928957704cb8f">arpackpp::Ritz::LI</a>, 
-<a class="el" href="namespacearpackpp.html#a6b2726968794d55a35453f02623eb854ace774d9cab3ae0bdf522cd0839bed364">arpackpp::Ritz::SI</a>, 
-<br />
-&#160;&#160;<a class="el" href="namespacearpackpp.html#a6b2726968794d55a35453f02623eb854ad3dcf429c679f9af82eb9a3b31c4df44">arpackpp::Ritz::BE</a>
-<br />
- }</td></tr>
-<tr class="separator:a6b2726968794d55a35453f02623eb854"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a858c0b96d10b5072df86e1345f28bee9"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacearpackpp.html#a858c0b96d10b5072df86e1345f28bee9">arpackpp::Side</a> { <a class="el" href="namespacearpackpp.html#a858c0b96d10b5072df86e1345f28bee9ad20caec3b48a1eef164cb4ca81ba2587">arpackpp::Side::L</a>, 
-<a class="el" href="namespacearpackpp.html#a858c0b96d10b5072df86e1345f28bee9ae1e1d3d40573127e9ee0480caf1283d6">arpackpp::Side::R</a>
- }</td></tr>
-<tr class="separator:a858c0b96d10b5072df86e1345f28bee9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

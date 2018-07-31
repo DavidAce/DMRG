@@ -6,7 +6,7 @@
  ### Notes
  Go to the [working notes](https://github.com/DavidAce/Notebooks/blob/master/DMRG%2B%2B/DMRG%2B%2B.pdf) on the theoretical aspects of this implementation.
 
- # DMRG++ (in development)
+ # DMRG++ 
   [Density matrix renormalization group](https://en.wikipedia.org/wiki/Density_matrix_renormalization_group) (DMRG) is a variational numerical technique to study the low-energy physics of many-body quantum systems.
 
   This algorithm constructs and minimizes trial wave functions, in the shape of [Matrix Product States](https://en.wikipedia.org/wiki/Matrix_product_state) (MPS), iteratively in order to find the ground state of one-dimensional quantum systems with high precision.
@@ -81,7 +81,7 @@ The compilation of DMRG++ requires several libraries. To meet the requirements, 
  - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
  - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on Fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
  - [**Arpackpp**](https://github.com/m-reuter/eigsolver_properties) C++ frontend for Arpack.
- - [**Elemental**](http://libelemental.org/) for full diagonalization of matrices.
+ - [**Elemental**](http://libelemental.org/) for full diagonalization of matrices. **NOTE:** MPI is required to compile Elemental from source! However, DMRG++ itself doesn't need MPI to run.
  - [**HDF5**](https://support.hdfgroup.org/HDF5/) for hdf5 binary output file support (tested with version >= 1.10).
  - [**GSL**](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
 

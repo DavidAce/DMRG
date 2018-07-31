@@ -1,8 +1,26 @@
 var nmspc__quantum__mechanics_8h =
 [
-    [ "gen_manybody_spin", "nmspc__quantum__mechanics_8h.html#a02866994485ab030c187360ef197c478", null ],
-    [ "I", "nmspc__quantum__mechanics_8h.html#ac8a7860a0c9ccc95e756c03d6d73f893", null ],
-    [ "sx", "nmspc__quantum__mechanics_8h.html#acd902130176b311843bc03f4085f0048", null ],
-    [ "sy", "nmspc__quantum__mechanics_8h.html#ae72172b1cebf38972c3c4a2bd0fc4b6d", null ],
-    [ "sz", "nmspc__quantum__mechanics_8h.html#a306d84dd7172b92bbb5e4623f8892442", null ]
+    [ "Scalar", "nmspc__quantum__mechanics_8h.html#af36f8cffca9ee517d055c38bd1bea726", null ],
+    [ "compute_G", "nmspc__quantum__mechanics_8h.html#aca73d277f5246438612b33d3c3036b5d", null ],
+    [ "gen_manybody_spin", "nmspc__quantum__mechanics_8h.html#ac2302df91dec89a0728d52a2f50d88c3", null ],
+    [ "get_2site_evolution_gates", "nmspc__quantum__mechanics_8h.html#a3858155227e1d0292cbc1b53bb227e58", null ],
+    [ "Suzuki_Trotter_1st_order", "nmspc__quantum__mechanics_8h.html#afcc1a954e47a8b15622f47613fc9587d", null ],
+    [ "Suzuki_Trotter_2nd_order", "nmspc__quantum__mechanics_8h.html#a5b60be3b11fcbe3a470421043e65f303", null ],
+    [ "Suzuki_Trotter_4th_order", "nmspc__quantum__mechanics_8h.html#a38d718a5d7faeb4ca594bd329bf0ad6b", null ],
+    [ "I", "nmspc__quantum__mechanics_8h.html#a84496fa5e0dc06765bafc1630552531e", null ],
+    [ "I", "nmspc__quantum__mechanics_8h.html#a0b42e14e03bf16e1536e2527d3734521", null ],
+    [ "II", "nmspc__quantum__mechanics_8h.html#a3377d7496a9f34720ffc6d4041af85b7", null ],
+    [ "II", "nmspc__quantum__mechanics_8h.html#a526b15cbef6524e5d7f496992aa4124e", null ],
+    [ "sx", "nmspc__quantum__mechanics_8h.html#aa08808503c709f6c4c8ef7316ad9fc63", null ],
+    [ "SX", "nmspc__quantum__mechanics_8h.html#a967c77548674cd9b97a466a2a305186b", null ],
+    [ "sx", "nmspc__quantum__mechanics_8h.html#ae6fcd599b9efb429bf2270bed0ee02cc", null ],
+    [ "SX", "nmspc__quantum__mechanics_8h.html#a76e83986f3dd3f21f66745e74b0d1efb", null ],
+    [ "sy", "nmspc__quantum__mechanics_8h.html#a3442e889c2875e1f02c558c202e72d65", null ],
+    [ "SY", "nmspc__quantum__mechanics_8h.html#ae4f53e1826d0f75f7f671efd2da16982", null ],
+    [ "sy", "nmspc__quantum__mechanics_8h.html#ab58d28ec458fb27aa2d66134be8de382", null ],
+    [ "SY", "nmspc__quantum__mechanics_8h.html#a7c6642ecb1e387631b5f828a95abb948", null ],
+    [ "sz", "nmspc__quantum__mechanics_8h.html#a7a9925b3702c2b7519bda1069531255f", null ],
+    [ "SZ", "nmspc__quantum__mechanics_8h.html#a349297429020817abf1a974369a45979", null ],
+    [ "sz", "nmspc__quantum__mechanics_8h.html#a7e0d6120064b7656a056a2b4b5cc46f4", null ],
+    [ "SZ", "nmspc__quantum__mechanics_8h.html#a3c7ab9ab64201bb7e9913202acbf234e", null ]
 ];
