@@ -19,7 +19,8 @@
   This implementation is inspired by the notation and steps in these articles:
 
   > [Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study](https://arxiv.org/abs/1212.6255)<br>
-  > by Kjäll, Zaletel, Mong, Bardarson, and Pollmann. Physical Review B 87 (23): 235106. <br>
+  > by Kjäll, Zaletel, Mong, Bardarson, and Pollmann.
+  > Physical Review B 87 (23): 235106. <br>
 
   > [Efficient Numerical Simulations Using Matrix-Product States](http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf)<br>
   > by Frank Pollmann. <br>
@@ -33,6 +34,9 @@
   > [Infinite size density matrix renormalization group, revisited](http://arxiv.org/abs/0804.2509)<br>
   > by McCulloch <br>
 
+  > [Obtaining Highly Excited Eigenstates of Many-Body Localized Hamiltonians by the Density Matrix Renormalization Group Approach](https://doi.org/10.1103/PhysRevLett.116.247204)<br>
+  > by Khemani, V., Pollmann, F., & Sondhi, S. L. (2016).
+  > Physical Review Letters, 116(24), 1–5
 
 
 ---
@@ -82,6 +86,7 @@ The compilation of DMRG++ requires several libraries. To meet the requirements, 
  - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
  - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
  - [**Arpackpp**](https://github.com/m-reuter/arpackpp) c++ frontend for Arpack.
+ - [**Elemental**](http://libelemental.org/) for full diagonalization of matrices.
  - [**HDF5**](https://support.hdfgroup.org/HDF5/) for hdf5 binary output file support (tested with version >= 1.10).
  - [**GSL**](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
 
@@ -90,11 +95,14 @@ The compilation of DMRG++ requires several libraries. To meet the requirements, 
 
 
 \section usage Usage
+
 The executable `build/Release/DMRG++` can be run without input parameters. By default it will try to find `input/input.cfg` the file
 where the simulation parameters are defined. You can modify these parameters, o create a new input file and pass its (full or relative) path as a command-line argument.
 
-The script `Data_analysis/data_analysis.py` can be used to analyze the simulation data, which is in hdf5 binary format. You can install
-`h5py` from pip or conda to open such files.
+The results from the simulation are saved under `output/` as hdf5-files. To view the data you can use any hdf5-viewer, such as HDFCompass.
+
+The script `Data_analysis/data_analysis.py` (in progress) shows how to analyze the simulation data stored in the hdf5 files. You need to install the python package
+`h5py` from pip or conda to read files in the hdf5 format.
 
 \section notation Notation
 
@@ -122,21 +130,28 @@ In diagrammatic tensor notation this is:
 where after the second equality the index order is shown. In code this corresponds to
 
 \code{.cpp}
- Tensor3 G(d,a,b);
+ using Scalar = std::complex<double>;
+ long rank = 3
+ Eigen::Tensor<Scalar,rank> G(d,a,b);
 \endcode
 
-Similarly, we have for \f$\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}\f$:
+An exception to this rule is theta: We have \f$\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}\f$:
 
 @verbatim
-                 	           	[d] [d]                0   1
-            Theta     =	[chia]___|___|___[chib] = 2 ___|___|___ 3
+                 	           	[d] [d]                0   2
+            Theta     =	[chia]___|___|___[chib] = 1 ___|___|___ 3
 @endverbatim
 
 which in code reads
 
 \code{.cpp}
- Tensor4 G(d,d,chia,chib);
+ using Scalar = std::complex<double>;
+ long rank = 4
+ Eigen::Tensor<Scalar,rank> theta(d,d,chia,chib);
 \endcode
+
+This index order doesn't follow the convention above because it simplifies the Schmidt-decomposition, where
+the indices are merged in pairs ([0,1],[2,3]) to form a matrix on which to perform a singular value decomposition (SVD).
 
 
 
