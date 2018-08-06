@@ -9,18 +9,18 @@
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_mps_2site.h>
-#include "../../cmake-modules/unused/class_mpo.h"
 #include <mps_routines/class_finite_chain_sweeper.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_eigsolver_props.h>
-#include <general/class_elemental_eigsolver.h>
+//#include <general/class_eigsolver_elemental.h>
+#include <general/class_eigsolver_armadillo.h>
+#include <general/class_eigsolver_arpack.h>
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <Eigen/Eigenvalues>
 #include <general/nmspc_tensor_extra.h>
-#include <general/class_arpack_eigsolver.h>
 #include "class_xDMRG.h"
 
 using namespace std;
@@ -95,6 +95,7 @@ void class_xDMRG::single_xDMRG_step(xDMRG_Mode mode , long chi_max, double energ
             break;
         case xDMRG_Mode::PARTIAL:
             theta = find_state_with_greatest_overlap_part_diag(theta, energy_target);
+            break;
     }
     t_opt.toc();
     t_svd.tic();
@@ -111,20 +112,20 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     double L   = env_storage->get_length();
     Eigen::Tensor<Scalar,2> H_local  =
             superblock->Lblock->block
-            .contract(superblock->HA->MPO      , Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
-            .contract(superblock->HB->MPO      , Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
-            .contract(superblock->Rblock->block, Textra::idx({4},{2}))
-            .shuffle(Textra::array8{3,1,5,7,2,0,4,6})
-            .reshape(Textra::array2{shape, shape});
+                    .contract(superblock->HA->MPO      , Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
+                    .contract(superblock->HB->MPO      , Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
+                    .contract(superblock->Rblock->block, Textra::idx({4},{2}))
+                    .shuffle(Textra::array8{3,1,5,7,2,0,4,6})
+                    .reshape(Textra::array2{shape, shape});
     assert(H_local.dimension(0) == shape);
     assert(H_local.dimension(1) == shape);
 
     //Sparcity seems to be about 5-15%. Better to do dense.
 
-    class_elemental_eigsolver solver;
+    class_eigsolver_armadillo solver;
     Textra::VectorType<double> eigvals(shape);
     Textra::MatrixType<Scalar> eigvecs(shape,shape);
-    solver.eig(shape, H_local.data(),eigvals.data(),eigvecs.data());
+    solver.eig_sym(shape, H_local.data(), eigvals.data(), eigvecs.data());
     Eigen::Map<Textra::VectorType<Scalar>> theta_vector (theta.data(),shape);
     Textra::VectorType<double> overlaps = (theta_vector.conjugate().transpose() * eigvecs).cwiseAbs();
     long best_state;
@@ -173,7 +174,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
     int nev = std::min((int)(shape/4), 1);
     int ncv = std::min((int)(shape/2), nev*2);
-    class_arpack_eigsolver<std::complex<double>> arpack_solver;
+    class_eigsolver_arpack<std::complex<double>> arpack_solver;
 
     arpack_solver.eig_shift_invert(H_local.data(), shape, nev,ncv,energy_target*L, Ritz::LM, true,true);
 //    Eigen::Map<const Eigen::VectorXcd> eigvals(arpack_solver.ref_eigvals().data(),arpack_solver.GetNevFound());

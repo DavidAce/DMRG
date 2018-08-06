@@ -2,7 +2,7 @@
 // Created by david on 2018-05-08.
 //
 
-#include <general/class_arpack_custom_products.h>
+#include <general/class_eigsolver_arpack_custom_products.h>
 #include <general/nmspc_tensor_extra.h>
 #include <Eigen/Core>
 

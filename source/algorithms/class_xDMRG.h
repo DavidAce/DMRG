@@ -46,9 +46,10 @@ public:
     void reset_chain_mps_to_random_product_state();
     void set_random_fields_in_chain_mpo();
     void find_energy_range();
-    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag(Eigen::Tensor<Scalar, 4> &theta, double energy_target = 0);
-    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag(Eigen::Tensor<Scalar, 4> &theta, double energy_target = 0);
-};
+    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag (Eigen::Tensor<Scalar, 4> &theta, double energy_target = 0);
+//    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag(Eigen::Tensor<Scalar, 4> &theta, double energy_target = 0);
+    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag (Eigen::Tensor<Scalar, 4> &theta, double energy_target = 0);
+   };
 
 
 
