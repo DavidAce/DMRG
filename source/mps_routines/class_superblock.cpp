@@ -9,7 +9,7 @@
 #include <iomanip>
 #include <general/class_svd_wrapper.h>
 #include <sim_parameters/nmspc_sim_settings.h>
-#include <general/class_arpack_eigsolver.h>
+#include <general/class_eigsolver_arpack.h>
 #include <model/class_hamiltonian_factory.h>
 #define profile_optimization 0
 
@@ -58,7 +58,7 @@ Eigen::Tensor<Scalar,4> class_superblock::optimize_MPS(Eigen::Tensor<Scalar, 4> 
     t_eig.tic();
     int nev = 1;
     using namespace settings::precision;
-    class_arpack_eigsolver<Scalar, Form::GENERAL> solver(eigThreshold,eigMaxIter,eigMaxNcv, true, false);
+    class_eigsolver_arpack<Scalar, Form::GENERAL> solver(eigThreshold,eigMaxIter,eigMaxNcv, true, false);
     solver.optimize_mps(Lblock->block.data(), Rblock->block.data(), HA->MPO.data(), HB->MPO.data(), shape_theta4, shape_mpo4, nev, eigMaxNcv, ritz , false ,theta.data());
 
     Eigen::TensorMap<const Eigen::Tensor<const Scalar,2>> eigvecs (solver.ref_eigvecs().data(), shape_theta4[0]*shape_theta4[1], shape_theta4[2]*shape_theta4[3]);
