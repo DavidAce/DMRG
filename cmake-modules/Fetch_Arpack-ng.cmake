@@ -32,11 +32,10 @@ else()
     string (REPLACE ";" "$<SEMICOLON>" EXTRA_LDLAGS_GENERATOR       "${EXTRA_LDLAGS}")
     ####################################################################
 
-
     include(ExternalProject)
     ExternalProject_Add(library_ARPACK
             GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
-            GIT_TAG             master
+            GIT_TAG             master # You need to do shared library linking with blas and lapack for this to work, otherwise the examples will fail due to missing -lpthread
 #            GIT_TAG             3.5.0 # Latest version has problems with fortran linking. so stick with this version instead.
             PREFIX              "${INSTALL_DIRECTORY}/arpack-ng"
             UPDATE_COMMAND ""
@@ -54,8 +53,8 @@ else()
             -DEXAMPLES=ON
             -DCMAKE_BUILD_TYPE=Release
             -DMPI=OFF
-            -DBUILD_SHARED_LIBS=OFF
-            -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR}
+            -DBUILD_SHARED_LIBS=ON
+            -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR};
             -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES_GENERATOR}
             -DEXTRA_LDLAGS=${EXTRA_LDLAGS_GENERATOR}
             DEPENDS blas lapack
@@ -66,11 +65,10 @@ else()
     add_library(arpack INTERFACE)
     set_target_properties(arpack
             PROPERTIES
-            INTERFACE_LINK_LIBRARIES "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX};${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
+            INTERFACE_LINK_LIBRARIES "${INSTALL_DIR}/lib/libarpack${CMAKE_SHARED_LIBRARY_SUFFIX};${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
             INTERFACE_INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
-    add_dependencies(arpack library_ARPACK)
-
+    add_dependencies(arpack library_ARPACK blas lapack)
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
     #For convenience, define these variables

@@ -126,7 +126,7 @@ set_target_properties(${PROJECT_NAME}
 ###########################################
 
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
-include(cmake-modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+#include(cmake-modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
 include(cmake-modules/Fetch_Elemental.cmake)                # Elemental library
@@ -134,7 +134,7 @@ include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file f
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
-#include(cmake-modules/Fetch_Armadillo.cmake)                # Armadillo library
+include(cmake-modules/Fetch_Armadillo.cmake)                # Armadillo library
 
 
 
@@ -169,6 +169,7 @@ message("    INTEL MKL:   ${MKL_LIBRARIES}")
 message("    BLAS     :   ${BLAS_LIBRARIES}")
 message("    LAPACK   :   ${LAPACK_LIBRARIES}")
 message("    EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
+message("    ARMADILLO:   ${ARMADILLO_INCLUDE_DIRS}")
 message("    ELEMENTAL:   ${ELEMENTAL_LIBRARIES}")
 message("    HDF5     :   ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES}")
 message("    ARPACK   :   ${ARPACK_LIBRARIES}")
@@ -206,7 +207,7 @@ include(tests/arpack++_mps_test.cmake)
 add_custom_target(all_tests ALL
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
-        DEPENDS blas lapack EIGEN3 arpack arpack++ hdf5::hdf5 GSL
+        DEPENDS blas lapack EIGEN3 elemental arpack arpack++ hdf5::hdf5 GSL
         DEPENDS ${PROJECT_NAME}
         )
 

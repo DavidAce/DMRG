@@ -51,8 +51,10 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
     add_dependencies(blas         library_OpenBLAS)
     add_dependencies(lapack       library_OpenBLAS)
     set(BLAS_INCLUDE_DIRS ${INSTALL_DIR}/include)
-    set(BLAS_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(LAPACK_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(BLAS_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(LAPACK_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(BLAS_LIBRARIES_STATIC ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(LAPACK_LIBRARIES_STATIC ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
 
 endif()
 set_target_properties(blas PROPERTIES

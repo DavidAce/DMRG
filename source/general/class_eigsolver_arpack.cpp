@@ -2,7 +2,7 @@
 // Created by david on 2018-05-06.
 //
 
-#include "class_arpack_eigsolver.h"
+#include "class_eigsolver_arpack.h"
 #include <assert.h>
 #include <algorithm>
 #include <arpack++/ardsnsym.h>
@@ -10,14 +10,14 @@
 #include <arpack++/ardgcomp.h>
 #include <arpack++/ardssym.h>
 #include <arpack++/arseig.h>
-#include <general/class_arpack_custom_products.h>
+#include <general/class_eigsolver_arpack_custom_products.h>
 //#include <sim_parameters/nmspc_sim_settings.h>
 
 #define profile_eigsolver 0
 
 
 template<typename Scalar, Form form>
-class_arpack_eigsolver<Scalar,form>::class_arpack_eigsolver() {
+class_eigsolver_arpack<Scalar,form>::class_eigsolver_arpack() {
     RitzToString = {
             {eigsolver_properties::Ritz::LA, "C"},
             {eigsolver_properties::Ritz::SA, "SA"},
@@ -37,13 +37,13 @@ class_arpack_eigsolver<Scalar,form>::class_arpack_eigsolver() {
 }
 
 template<typename Scalar, Form form>
-class_arpack_eigsolver<Scalar,form>::class_arpack_eigsolver(
+class_eigsolver_arpack<Scalar,form>::class_eigsolver_arpack(
                        const double eigThreshold_,
                        const int eigMaxIter_,
                        const int eigMaxNcv_,
                        const bool compute_eigvecs_,
                        const bool remove_phase_)
-            : class_arpack_eigsolver()
+            : class_eigsolver_arpack()
 {
     setThreshold(eigThreshold_);
     setMaxIter(eigMaxIter_);
@@ -55,7 +55,7 @@ class_arpack_eigsolver<Scalar,form>::class_arpack_eigsolver(
 
 
 template<typename Scalar, Form form>
-const std::vector<Scalar> & class_arpack_eigsolver<Scalar,form>::ref_eigvecs() const{
+const std::vector<Scalar> & class_eigsolver_arpack<Scalar,form>::ref_eigvecs() const{
     if(eigvecs_found) {
         return eigvecs;
     }else{
@@ -65,7 +65,7 @@ const std::vector<Scalar> & class_arpack_eigsolver<Scalar,form>::ref_eigvecs() c
 }
 
 template<typename Scalar, Form form>
-const std::vector<Scalar> & class_arpack_eigsolver<Scalar,form>::ref_eigvals() const {
+const std::vector<Scalar> & class_eigsolver_arpack<Scalar,form>::ref_eigvals() const {
     if(eigvals_found) {
         return eigvals;
     }else{
@@ -76,7 +76,7 @@ const std::vector<Scalar> & class_arpack_eigsolver<Scalar,form>::ref_eigvals() c
 
 
 template<typename Scalar, Form form>
-const std::vector<Scalar>  class_arpack_eigsolver<Scalar,form>::get_eigvecs() const{
+const std::vector<Scalar>  class_eigsolver_arpack<Scalar,form>::get_eigvecs() const{
     if(eigvecs_found) {
         return eigvecs;
     }else{
@@ -86,7 +86,7 @@ const std::vector<Scalar>  class_arpack_eigsolver<Scalar,form>::get_eigvecs() co
 }
 
 template<typename Scalar, Form form>
-const std::vector<Scalar>  class_arpack_eigsolver<Scalar,form>::get_eigvals() const {
+const std::vector<Scalar>  class_eigsolver_arpack<Scalar,form>::get_eigvals() const {
     if(eigvals_found) {
         return eigvals;
     }else{
@@ -97,14 +97,14 @@ const std::vector<Scalar>  class_arpack_eigsolver<Scalar,form>::get_eigvals() co
 
 
 template<typename Scalar,Form form>
-void class_arpack_eigsolver<Scalar,form>::shift_invert_eigvals(Scalar sigma) {
+void class_eigsolver_arpack<Scalar,form>::shift_invert_eigvals(Scalar sigma) {
     std::transform(eigvals.begin(), eigvals.end(), eigvals.begin(),
                    [sigma](Scalar num) -> Scalar
                    { return 1.0/(num - sigma); });
 }
 
 template<typename Scalar, Form form>
-void class_arpack_eigsolver<Scalar,form>::subtract_phase() {
+void class_eigsolver_arpack<Scalar,form>::subtract_phase() {
     if constexpr (std::is_same<Scalar, std::complex<double>>::value) {
         using namespace std::complex_literals;
         for (int i = 0; i < nev_found; i++) {
@@ -121,7 +121,7 @@ void class_arpack_eigsolver<Scalar,form>::subtract_phase() {
 
 
 template<typename Scalar,Form form>
-void class_arpack_eigsolver<Scalar,form>::eig(const Scalar *matrix_data,
+void class_eigsolver_arpack<Scalar,form>::eig(const Scalar *matrix_data,
                                               const int n,
                                               const int nev,
                                               const int ncv,
@@ -184,7 +184,7 @@ void class_arpack_eigsolver<Scalar,form>::eig(const Scalar *matrix_data,
 
 
 template<typename Scalar,Form form>
-void class_arpack_eigsolver<Scalar,form>::eig_shift_invert(
+void class_eigsolver_arpack<Scalar,form>::eig_shift_invert(
                                               Scalar *matrix_data,
                                               const int n,
                                               const int nev,
@@ -244,7 +244,7 @@ void class_arpack_eigsolver<Scalar,form>::eig_shift_invert(
 
 
 template<typename Scalar, Form form>
-void class_arpack_eigsolver<Scalar,form>::optimize_mps(
+void class_eigsolver_arpack<Scalar,form>::optimize_mps(
         const Scalar *Lblock,        /*!< The left block tensor.  */
         const Scalar *Rblock,        /*!< The right block tensor.  */
         const Scalar *HA,            /*!< The left Hamiltonian MPO's  */
@@ -336,8 +336,8 @@ void class_arpack_eigsolver<Scalar,form>::optimize_mps(
 // Explicit instantiations
 
 
-template class class_arpack_eigsolver<std::complex<double>, Form::GENERAL> ;
-template class class_arpack_eigsolver<std::complex<double>, Form::SYMMETRIC> ;
+template class class_eigsolver_arpack<std::complex<double>, Form::GENERAL> ;
+template class class_eigsolver_arpack<std::complex<double>, Form::SYMMETRIC> ;
 
-template class class_arpack_eigsolver<double, Form::GENERAL> ;
-template class class_arpack_eigsolver<double, Form::SYMMETRIC> ;
+template class class_eigsolver_arpack<double, Form::GENERAL> ;
+template class class_eigsolver_arpack<double, Form::SYMMETRIC> ;

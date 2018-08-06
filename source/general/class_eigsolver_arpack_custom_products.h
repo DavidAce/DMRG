@@ -5,7 +5,7 @@
 #ifndef DMRG_CLASS_ARPACKPP_CUSTOM_MULTIPLICATION_H
 #define DMRG_CLASS_ARPACKPP_CUSTOM_MULTIPLICATION_H
 #include <general/class_tic_toc.h>
-#include "class_arpack_eigsolver.h"
+#include "class_eigsolver_arpack.h"
 
 #define profile_multiplication 0
 

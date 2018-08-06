@@ -3,7 +3,7 @@
 //
 
 #include <mps_routines/class_mps_2site.h>
-#include <general/class_arpack_eigsolver.h>
+#include <general/class_eigsolver_arpack.h>
 #include <general/nmspc_math.h>
 #include "class_mps_util.h"
 
@@ -19,7 +19,7 @@ void class_mps_util::compute_mps_components(const std::unique_ptr<class_mps_2sit
 
     Eigen::Tensor<Scalar,2> theta_evn_transfer_mat   = get_transfer_matrix_theta_evn(MPS).reshape(array2{chiB2,chiB2});
     Eigen::Tensor<Scalar,2> theta_odd_transfer_mat   = get_transfer_matrix_theta_odd(MPS).reshape(array2{chiC2,chiC2});
-    class_arpack_eigsolver<Scalar, Form::GENERAL> solver;
+    class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
 
     int ncvC = std::min(16, chiC2);
     int ncvB = std::min(16, chiB2);

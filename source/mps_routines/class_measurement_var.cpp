@@ -9,7 +9,7 @@
 #include <mps_routines/class_mps_2site.h>
 #include <general/nmspc_tensor_extra.h>
 #include <general/class_svd_wrapper.h>
-#include <general/class_arpack_eigsolver.h>
+#include <general/class_eigsolver_arpack.h>
 #include <mps_routines/class_finite_chain_sweeper.h>
 #include <mps_routines/class_mps_util.h>
 using namespace std;
@@ -50,7 +50,7 @@ Scalar class_measurement::moment_generating_function(const std::unique_ptr<class
     using namespace settings::precision;
 
     t_temp4.tic();
-    class_arpack_eigsolver<Scalar, Form::GENERAL> solver;
+    class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
     solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv, Ritz::LM, Side::R, false);
     auto new_theta_evn_normalized        = mps_util->get_theta_evn(MPS_evolved, sqrt(solver.ref_eigvals()[0]));
     t_temp4.toc();
