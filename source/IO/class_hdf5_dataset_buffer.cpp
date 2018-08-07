@@ -42,7 +42,7 @@ class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buff
         attribute_set(true)
 {
     this->reserve(max_elements);
-};
+}
 
 template<typename DataType, typename AttrType,typename IterType>
 class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(const std::string &group_name_,

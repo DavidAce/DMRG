@@ -372,13 +372,13 @@ void class_measurement::compute_finite_chain_mps_state(){
 }
 
 
-double class_measurement::get_energy_mpo(){return energy_mpo;};
-double class_measurement::get_energy_ham(){return energy_ham;};
-double class_measurement::get_energy_mom(){return energy_mom;};
+double class_measurement::get_energy_mpo(){return energy_mpo;}
+double class_measurement::get_energy_ham(){return energy_ham;}
+double class_measurement::get_energy_mom(){return energy_mom;}
 
-double class_measurement::get_variance_mpo(){return variance_mpo;};
-double class_measurement::get_variance_ham(){return variance_ham;};
-double class_measurement::get_variance_mom(){return variance_mom;};
+double class_measurement::get_variance_mpo(){return variance_mpo;}
+double class_measurement::get_variance_ham(){return variance_ham;}
+double class_measurement::get_variance_mom(){return variance_mom;}
 
 double class_measurement::get_entanglement_entropy(){
     compute_entanglement_entropy();
