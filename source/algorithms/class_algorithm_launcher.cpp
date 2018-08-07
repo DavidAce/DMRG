@@ -21,11 +21,11 @@ using namespace Textra;
 class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<class_hdf5_file> hdf5_):hdf5(std::move(hdf5_))
 {
 
-};
+}
 class_algorithm_launcher::class_algorithm_launcher()
 {
     hdf5 = std::make_shared<class_hdf5_file>(settings::hdf5::output_filename, settings::hdf5::output_folder,true, false);
-};
+}
 
 
 void class_algorithm_launcher::run_iDMRG(){

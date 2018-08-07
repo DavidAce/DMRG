@@ -82,7 +82,7 @@ namespace Math {
     template<typename Input, typename From, typename To>
     auto prod(const Input &in, const From from, const To to){
         return std::accumulate(in.data() + from, in.data()+to,1,std::multiplies<>());
-    };
+    }
 
 
     /*! \brief "pow", x^p for integers x and p using recursion */
