@@ -152,7 +152,7 @@ namespace qm{
         */
         {
             return get_2site_evolution_gates(a, susuki_trotter_order, h_evn,h_odd);
-        };
+        }
 
     }
 

@@ -16,7 +16,7 @@ else()
             CONFIGURE_COMMAND
                 cd <SOURCE_DIR> &&
                 pwd &&
-                ./configure --enable-silent-rules CFLAGS= --enable-shared=no --prefix=<INSTALL_DIR>
+                ./configure --enable-silent-rules CFLAGS= --enable-shared=yes --prefix=<INSTALL_DIR>
             BUILD_COMMAND
                 cd <SOURCE_DIR> &&
                 pwd &&
@@ -32,8 +32,8 @@ else()
 #    add_library(GSLcblas UNKNOWN IMPORTED)
     add_dependencies(GSL library_GSL)
 #    add_dependencies(GSLcblas library_GSL)
-    set(GSL_LIBRARY        ${INSTALL_DIR}/lib/libgsl${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(GSL_CBLAS_LIBRARY  ${INSTALL_DIR}/lib/libgslcblas${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(GSL_LIBRARY        ${INSTALL_DIR}/lib/libgsl${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(GSL_CBLAS_LIBRARY  ${INSTALL_DIR}/lib/libgslcblas${CMAKE_SHARED_LIBRARY_SUFFIX})
     set(GSL_LIBRARIES ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY})
     set(GSL_INCLUDE_DIRS ${INSTALL_DIR}/include)
 endif()

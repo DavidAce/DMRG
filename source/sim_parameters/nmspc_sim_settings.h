@@ -129,5 +129,5 @@ namespace settings {
         extern int  verbosity ;                      /*!< Level of verbosity desired [0-2]. Level 0 prints almost nothing, level 2 prints everything */
         extern bool timestamp ;                      /*!< Whether to put a timestamp on console outputs */
     }
-};
+}
 #endif //DMRG_N_SETTINGS_H

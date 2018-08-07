@@ -36,7 +36,7 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
 
     //Default constructed objects
     env_storage  = std::make_shared<class_finite_chain_sweeper>();
-};
+}
 
 
 void class_algorithm_base::single_DMRG_step(long chi_max, Ritz ritz){

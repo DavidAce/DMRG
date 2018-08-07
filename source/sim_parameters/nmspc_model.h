@@ -49,7 +49,7 @@ namespace Model {
 //    extern Eigen::MatrixXcd H_MPO(double e = 0.0);
 //    extern Eigen::MatrixXcd H_MPO_random_field(double g, double e=0.0);
 
-};
+}
 
 
 
