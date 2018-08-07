@@ -39,7 +39,7 @@ set_target_properties(armadillo PROPERTIES
         INCLUDE_DIRECTORIES "${ARMADILLO_INCLUDE_DIRS}")
 
 
-target_link_libraries(${PROJECT_NAME} PRIVATE armadillo -fopenmp)
+target_link_libraries(${PROJECT_NAME} PRIVATE armadillo)
 target_include_directories(${PROJECT_NAME} PRIVATE ${ARMADILLO_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${BLAS_LIBRARIES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE -DARMA_NO_DEBUG)
