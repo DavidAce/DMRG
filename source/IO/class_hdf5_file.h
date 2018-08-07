@@ -173,7 +173,6 @@ private:
     }
     template<typename DataType>
     constexpr int get_Rank() const {
-        std::cout << "Type is: " << tc::type_name<DataType>() << std::endl;
         if      constexpr (tc::is_eigen_tensor<DataType>::value){return (int) DataType::NumIndices;}
         else if constexpr (tc::is_eigen_matrix<DataType>::value){return 2; }
         else if constexpr (tc::is_eigen_array<DataType>::value){return 2; }
