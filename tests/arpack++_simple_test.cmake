@@ -27,4 +27,4 @@ target_compile_options (arpack++_simple_test_target PRIVATE "$<$<CONFIG:DEBUG>:$
 target_compile_options (arpack++_simple_test_target PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
 add_test(NAME arpack++_simple_test COMMAND arpack++_simple_test_target)
 
-add_dependencies(${PROJECT_NAME} arpack++_simple_test_target blas lapack arpack arpack++ elemental)
+add_dependencies(${PROJECT_NAME} arpack++_simple_test_target blas lapack arpack arpack++ armadillo)
