@@ -6,6 +6,7 @@
 #define DMRG_CLASS_EXITED_DMRG_H
 
 #include "class_algorithm_base.h"
+#include <unsupported/Eigen/CXX11/Tensor>
 class class_table_finite_chain;
 class class_table_dmrg;
 
@@ -47,7 +48,6 @@ public:
     void set_random_fields_in_chain_mpo();
     void find_energy_range();
     Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag (Eigen::Tensor<Scalar, 4> &theta, double energy_target = 0);
-//    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag(Eigen::Tensor<Scalar, 4> &theta, double energy_target = 0);
     Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag (Eigen::Tensor<Scalar, 4> &theta, double energy_target = 0);
    };
 
