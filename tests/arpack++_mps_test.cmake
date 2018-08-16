@@ -34,4 +34,4 @@ target_include_directories(arpack++_mps_test_target
         )
 
 add_test(NAME arpack++_mps_test COMMAND arpack++_mps_test_target)
-add_dependencies(${PROJECT_NAME} arpack++_mps_test_target blas lapack arpack arpack++ EIGEN3 armadillo)
+add_dependencies(arpack++_mps_test_target blas lapack arpack arpack++ EIGEN3)

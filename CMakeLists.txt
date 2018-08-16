@@ -126,7 +126,7 @@ set_target_properties(${PROJECT_NAME}
 ###########################################
 
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
-include(cmake-modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+#include(cmake-modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data_struct.
@@ -205,7 +205,7 @@ include(tests/arpack++_mps_test.cmake)
 add_custom_target(all_tests ALL
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
-        DEPENDS blas lapack EIGEN3 armadillo arpack arpack++ hdf5::hdf5 GSL
+        DEPENDS blas lapack EIGEN3 arpack arpack++
         DEPENDS ${PROJECT_NAME}
         )
 
@@ -216,7 +216,7 @@ add_custom_command(
         PRE_BUILD
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failures
-        DEPENDS ${PROJECT_NAME}
+        DEPENDS ${PROJECT_NAME} all_tests
 )
 
 
