@@ -25,6 +25,8 @@ if(BLAS_FOUND AND LAPACK_FOUND)
     add_library(lapack UNKNOWN IMPORTED)
     set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
     set(LAPACK_LIBRARIES   ${LAPACK_openblas_LIBRARY})
+    add_definitions(-DOpenBLAS_AVAILABLE)
+
 endif()
 #exit (1)
 
