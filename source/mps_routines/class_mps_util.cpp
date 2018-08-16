@@ -138,7 +138,7 @@ Eigen::Tensor<class_mps_util::Scalar,4> class_mps_util::get_theta_evn(const std:
             .contract(MPS->MPS_B->get_G(),  idx({2},{1}))
             //            .shuffle(array4{1,0,2,3})
             /norm;
-};
+}
 
 Eigen::Tensor<class_mps_util::Scalar,4> class_mps_util::get_theta_odd(const std::unique_ptr<class_mps_2site> &MPS, Scalar norm) const
 /*!
@@ -164,7 +164,7 @@ Eigen::Tensor<class_mps_util::Scalar,4> class_mps_util::get_transfer_matrix_zero
     Eigen::array<Eigen::IndexPair<long>,0> pair = {};
 
     return asDiagonal(I).contract(asDiagonal(I), pair ).shuffle(array4{0,2,1,3});
-};
+}
 
 
 
