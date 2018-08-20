@@ -5,7 +5,7 @@ include(cmake-modules/FindGFortran.cmake)
 
 message(STATUS "SEARCHING FOR ARPACK IN SYSTEM...")
 find_library(ARPACK_LIBRARIES
-        NAMES arpack libarpack.a libarpack2.a libarpack.so libarpack2.so
+        NAMES arpack libarpack.a libarpack2.a
         PATH_SUFFIXES lib lib32 lib64
         )
 
@@ -53,7 +53,7 @@ else()
             -DEXAMPLES=ON
             -DCMAKE_BUILD_TYPE=Release
             -DMPI=OFF
-            -DBUILD_SHARED_LIBS=ON
+            -DBUILD_SHARED_LIBS=OFF
             -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR};
             -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES_GENERATOR}
             -DEXTRA_LDLAGS=${EXTRA_LDLAGS_GENERATOR}
@@ -65,7 +65,7 @@ else()
     add_library(arpack INTERFACE)
     set_target_properties(arpack
             PROPERTIES
-            INTERFACE_LINK_LIBRARIES "${INSTALL_DIR}/lib/libarpack${CMAKE_SHARED_LIBRARY_SUFFIX};${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
+            INTERFACE_LINK_LIBRARIES "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX};${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
             INTERFACE_INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
     add_dependencies(arpack library_ARPACK blas lapack)

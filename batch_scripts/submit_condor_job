@@ -1,8 +1,15 @@
-ID         = $(Process) 
+ID         = $(Process)
+NAME       = test	
 universe   = vanilla
-executable = ../cmake-build-release/DMRG++
+executable = ../cmake-build-debug/DMRG++
 arguments  = $(inputfiles)
-log        = logs/DMRG++_$(ID).log
-output     = logs/DMRG++_$(ID).out
-error      = logs/DMRG++_$(ID).error
-queue inputfiles matching files ../input/mbl_sg_*.cfg
+should_transfer_files = yes
+when_to_transfer_output = on_exit_or_evict
+#requirements = (TARGET.Machine == "*@uburku")
+transfer_input_files = $(inputfiles)
+transfer_output_remaps = "output.h5 = ../output/output_$(ID).h5"
+
+log        = logs/$(NAME)_$(ID).log
+output     = logs/$(NAME)_$(ID).out
+error      = logs/$(NAME)_$(ID).error
+queue inputfiles matching files ../input/$(NAME)_*.cfg
