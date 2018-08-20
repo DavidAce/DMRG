@@ -38,7 +38,7 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
     include(ExternalProject)
     ExternalProject_Add(library_OpenBLAS
             GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
-            GIT_TAG             v0.3.0
+            GIT_TAG             v0.3.2
             PREFIX              "${INSTALL_DIRECTORY}/OpenBLAS"
             UPDATE_COMMAND ""
             TEST_COMMAND ""
