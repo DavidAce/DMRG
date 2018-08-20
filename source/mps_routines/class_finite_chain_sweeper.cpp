@@ -82,15 +82,15 @@ int class_finite_chain_sweeper::insert(){
     for (auto &MPO : MPO_R){
         MPO->set_position(pos++);
     }
-    std::cout << "New positions: \n" ;
-    for (auto &MPO : MPO_L){
-        std::cout << "Position L: " << MPO->get_position() << std::endl;
-    }
-    for (auto &MPO : MPO_R){
-        std::cout << "Position R: " << MPO->get_position() << std::endl;
-    }
-    std::cout << std::endl;
-
+//    std::cout << "New positions: \n" ;
+//    for (auto &MPO : MPO_L){
+//        std::cout << "Position L: " << MPO->get_position() << std::endl;
+//    }
+//    for (auto &MPO : MPO_R){
+//        std::cout << "Position R: " << MPO->get_position() << std::endl;
+//    }
+//    std::cout << std::endl;
+//
 //    std::cout << "Inserted -- New state reflects current superblock: " << std::endl;
     assert(ENV_L.back().size + ENV_R.front().size == superblock->environment_size);
     assert(ENV_L.back().size   == superblock->Lblock->size);

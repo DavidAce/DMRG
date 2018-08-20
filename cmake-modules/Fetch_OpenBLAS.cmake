@@ -14,6 +14,7 @@ include(cmake-modules/FindGFortran.cmake)
 message(STATUS "SEARCHING FOR OpenBLAS IN SYSTEM...")
 set(BLA_VENDOR Open)
 set(BLAS_VERBOSE OFF)
+set(BLA_STATIC ON)
 find_package(BLAS)
 set(BLA_VENDOR OpenBLAS)
 find_package(LAPACK)
@@ -21,8 +22,8 @@ if(BLAS_FOUND AND LAPACK_FOUND)
     message(STATUS "BLAS FOUND IN SYSTEM: ${BLAS_openblas_LIBRARY}")
     message(STATUS "LAPACK FOUND IN SYSTEM: ${LAPACK_openblas_LIBRARY}")
        #For convenience, define these variables
-    add_library(blas UNKNOWN IMPORTED)
-    add_library(lapack UNKNOWN IMPORTED)
+    add_library(blas STATIC IMPORTED)
+    add_library(lapack STATIC IMPORTED)
     set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
     set(LAPACK_LIBRARIES   ${LAPACK_openblas_LIBRARY})
     add_definitions(-DOpenBLAS_AVAILABLE)
@@ -43,7 +44,7 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
             TEST_COMMAND ""
             CONFIGURE_COMMAND ""
             BUILD_IN_SOURCE 1
-            BUILD_COMMAND $(MAKE) USE_THREAD=${OpenBLAS_MULTITHREADED} USE_OPENMP=${OpenBLAS_USE_OPENMP} OPENBLAS_NUM_THREADS=1 NUM_THREADS=1 BINARY64=1 QUIET_MAKE=1
+            BUILD_COMMAND $(MAKE) USE_THREAD=${OpenBLAS_MULTITHREADED} USE_OPENMP=${OpenBLAS_USE_OPENMP} OPENBLAS_NUM_THREADS=1 NUM_THREADS=1 BINARY64=1 QUIET_MAKE=1 TARGET=NEHALEM
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             )
     #NO_LAPACKE=${OpenBLAS_USE_OTHER} NO_CBLAS=${OpenBLAS_USE_OTHER} BINARY64=1 QUIET_MAKE=0
@@ -53,8 +54,8 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
     add_dependencies(blas         library_OpenBLAS)
     add_dependencies(lapack       library_OpenBLAS)
     set(BLAS_INCLUDE_DIRS ${INSTALL_DIR}/include)
-    set(BLAS_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(LAPACK_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(BLAS_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(LAPACK_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
     set(BLAS_LIBRARIES_STATIC ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
     set(LAPACK_LIBRARIES_STATIC ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
 

@@ -1,7 +1,7 @@
 //
 // Created by david on 2018-02-07.
 //
-#include <directory.h>
+//#include <directory.h>
 #include <gitversion.h>
 #include <IO/class_hdf5_file.h>
 
@@ -31,23 +31,14 @@ void class_hdf5_file::initialize(){
 }
 
 void class_hdf5_file::set_output_file_path() {
-    fs::path project_folder  = fs::canonical(directory::PROJECT_DIR);
-    if(output_folder.has_filename() and output_folder.has_extension()){output_folder.remove_filename();}
+//    if(output_folder.has_filename() and output_folder.has_extension()){output_folder.remove_filename();}
+    fs::path current_folder    = fs::current_path();
+    fs::path output_folder_abs = fs::system_complete(output_folder);
     std::cout << "output_folder     = " << output_folder << std::endl;
+    std::cout << "output_folder_abs = " << output_folder_abs << std::endl;
     std::cout << "output_filename   = " << output_filename << std::endl;
 
-    //Convert the output_folder to a full path. If relative, make it relative to project root folder!
-    fs::path output_folder_abs;
-    if (output_folder.is_relative()) {
-        output_folder_abs = fs::system_complete(project_folder / output_folder);
-    } else if (output_folder.is_absolute()) {
-        output_folder_abs = fs::system_complete(output_folder);
-    }else{
-        std::cerr << "Error: Provided path for hdf5 output folder is neither relative nor absolute: [output_folder]: " << output_folder << std::endl;
-        exit(1);
-    }
-
-    //Create directory if create_dir == true, always relative to project root folder
+      //Create directory if create_dir == true, always relative to executable
     if(create_dir) {
         if (fs::create_directories(output_folder_abs)){
             output_folder_abs = fs::canonical(output_folder_abs);
@@ -89,24 +80,24 @@ void class_hdf5_file::set_output_file_path() {
 
     //Now the output_folder_abs definitely does not exist in the given path
     //As a last resort, try finding the output folder somewhere inside the project root folder, excluding .git/ and libs/ and docs/
-    std::cout << "Searching recursively for folder " <<  output_folder_abs.stem() << " in project root directory..." << std::endl;
-    for(auto& p: fs::recursive_directory_iterator(project_folder)) {
-        if (p.path().has_filename() and p.path().has_extension()){continue;}
-        fs::path trimmed_path =  p.path().string().substr(p.path().string().find(project_folder) + project_folder.string().size());
-        if (trimmed_path.string().find(std::string(".git")) != std::string::npos){continue;}
-        if (trimmed_path.string().find(std::string("libs")) != std::string::npos){continue;}
-        if (trimmed_path.string().find(std::string("docs")) != std::string::npos){continue;}
-        if (trimmed_path.string().find(std::string("cmake")) != std::string::npos){continue;}
-        if (trimmed_path.string().find(std::string("build")) != std::string::npos){continue;}
-        if (trimmed_path.string().find(std::string("backup")) != std::string::npos){continue;}
-        if (trimmed_path.string().find(std::string("source")) != std::string::npos){continue;}
-        if (p.path().stem() == output_folder_abs.stem())  {
-            std::cout << "Found output folder: " << p.path() << std::endl;
-            output_folder_abs = p.path();
-            output_file_path = fs::system_complete(output_folder_abs / output_filename);
-            break;
-        }
-    }
+//    std::cout << "Searching recursively for folder " <<  output_folder_abs.stem() << " in project root directory..." << std::endl;
+//    for(auto& p: fs::recursive_directory_iterator(current_folder)) {
+//        if (p.path().has_filename() and p.path().has_extension()){continue;}
+//        fs::path trimmed_path =  p.path().string().substr(p.path().string().find(current_folder) + current_folder.string().size());
+//        if (trimmed_path.string().find(std::string(".git")) != std::string::npos){continue;}
+//        if (trimmed_path.string().find(std::string("libs")) != std::string::npos){continue;}
+//        if (trimmed_path.string().find(std::string("docs")) != std::string::npos){continue;}
+//        if (trimmed_path.string().find(std::string("cmake")) != std::string::npos){continue;}
+//        if (trimmed_path.string().find(std::string("build")) != std::string::npos){continue;}
+//        if (trimmed_path.string().find(std::string("backup")) != std::string::npos){continue;}
+//        if (trimmed_path.string().find(std::string("source")) != std::string::npos){continue;}
+//        if (p.path().stem() == output_folder_abs.stem())  {
+//            std::cout << "Found output folder: " << p.path() << std::endl;
+//            output_folder_abs = p.path();
+//            output_file_path = fs::system_complete(output_folder_abs / output_filename);
+//            break;
+//        }
+//    }
 
 
     if(fs::exists(output_file_path)) {

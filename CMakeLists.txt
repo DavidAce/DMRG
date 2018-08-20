@@ -17,7 +17,7 @@ include(cmake-modules/gitversion.cmake)
 ##################################################################
 ### Define variables for directory paths accessible at runtime ###
 ##################################################################
-include(cmake-modules/directory.cmake)
+#include(cmake-modules/directory.cmake)
 
 
 ##################################################################
@@ -47,7 +47,10 @@ message("===============================")
 ### Setup flags ###
 ###################
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
-set(COMMON_OPTIONS -g -Wall -march=native)
+#set(COMMON_OPTIONS -g -Wall -march=native)
+#set(COMMON_OPTIONS  -g -Wall -static -march=sandybridge -mtune=sandybridge)
+set(COMMON_OPTIONS -g -Wall -march=sandybridge -mtune=native)
+
 set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
 
@@ -57,7 +60,7 @@ set(RELEASE_OPTIONS     -DNDEBUG -O3)
 if(${CMAKE_HOST_APPLE})
     list(APPEND COMMON_OPTIONS -mmacosx-version-min=10.13)
 else()
-    list(APPEND COMMON_OPTIONS -mavx ) #-mfma makes things slower?
+#    list(APPEND COMMON_OPTIONS -mavx ) #-mfma makes things slower?
 endif()
 
 ################################
@@ -102,7 +105,6 @@ target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIO
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
 target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                                               ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
-
 
 ###############################
 ###  Require c++17 support  ###

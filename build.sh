@@ -23,6 +23,10 @@ clear_cmake=""
 clear_libs=""
 threads="2"
 
+export CC=gcc
+export CXX=g++
+export FC=gfortran
+
 while getopts chj:lm:t: o; do
     case $o in
         (c) clear_cmake="true";;
