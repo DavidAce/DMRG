@@ -7,7 +7,7 @@ import numpy as np
 
 template_filename = 'input_template.cfg'
 input_basename   = 'test_'
-num_copies = 16
+num_copies = 32
 
 
 find_replace = {
