@@ -1,13 +1,41 @@
 ID         = $(Process)
-NAME       = test	
+NAME       = test
 universe   = vanilla
-executable = ../build/Release/DMRG++
+executable = ../cmake-build-release/DMRG++
 arguments  = $(inputfiles)
-should_transfer_files = yes
-when_to_transfer_output = on_exit_or_evict
-transfer_input_files = $(inputfiles)
-transfer_output_files = output/
-transfer_output_remaps = "output.h5 = ../output/output_$(ID).h5"
+
+
+########################################################
+# List your requirements below. Uncomment to activate
+########################################################
+requirements = TARGET.Machine == "Dell-T7400"
+requirements = $(requirements) && TARGET.OpSysAndVer    == "Ubuntu18"
+requirements = $(requirements) && TARGET.OpSysName      == "Ubuntu"
+requirements = $(requirements) && TARGET.OpSysMajorVer  == "18"
+requirements = $(requirements) && TARGET.Arch           == "INTEL"
+requirements = $(requirements) && TARGET.OpSys          == "LINUX"
+
+
+
+#########################################################
+# Use lines below when there is no shared NFS filesystem
+#########################################################
+#should_transfer_files = yes
+#when_to_transfer_output = on_exit_or_evict
+#transfer_input_files = $(inputfiles)
+#transfer_output_files = output/
+#transfer_output_remaps = "output.h5 = ../output/output_$(ID).h5"
+
+
+###############################################################################################
+# getenv = True will copy the environment variables of the submit machines to the other nodes
+# environment = "myvar=someval" will set the environment variable at the node
+# Note that file locking is not working on NFS so you must disable it on HDF5.
+# Do that with
+#               environment = "HDF5_USE_FILE_LOCKING=FALSE"
+################################################################################################
+#environment = "HDF5_USE_FILE_LOCKING=FALSE"
+
 
 log        = logs/$(NAME)_$(ID).log
 output     = logs/$(NAME)_$(ID).out

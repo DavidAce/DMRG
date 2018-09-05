@@ -5,7 +5,7 @@ add_executable(arpack++_mps_test_target tests/arpack++_mps_test.cpp
                                         source/general/class_eigsolver_arpack_custom_products.cpp
                                         source/general/class_tic_toc.cpp)
 set_target_properties(arpack++_mps_test_target PROPERTIES OUTPUT_NAME  arpack++_mps_test)
-target_link_libraries(arpack++_mps_test_target PRIVATE arpack arpack++ blas lapack EIGEN3 -lstdc++fs -flto)
+target_link_libraries(arpack++_mps_test_target PRIVATE arpack++ arpack blas lapack gfortran EIGEN3  -lstdc++fs -flto)
 
 set_target_properties  (arpack++_mps_test_target PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(arpack++_mps_test_target PRIVATE cxx_std_17)
@@ -34,4 +34,4 @@ target_include_directories(arpack++_mps_test_target
         )
 
 add_test(NAME arpack++_mps_test COMMAND arpack++_mps_test_target)
-add_dependencies(arpack++_mps_test_target blas lapack arpack arpack++ EIGEN3)
+add_dependencies(arpack++_mps_test_target blas lapack arpack arpack++ gfortran EIGEN3)

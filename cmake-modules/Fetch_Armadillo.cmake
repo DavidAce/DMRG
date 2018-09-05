@@ -21,16 +21,22 @@ if(NOT ARMADILLO_LIBRARIES)
     include(ExternalProject)
     ExternalProject_Add(library_ARMADILLO
             GIT_REPOSITORY      https://gitlab.com/conradsnicta/armadillo-code.git
-            GIT_TAG             8.600.x
+            GIT_TAG             9.100.x
             PREFIX              "${INSTALL_DIRECTORY}/armadillo"
 #            UPDATE_DISCONNECTED 0
             UPDATE_COMMAND ""
             TEST_COMMAND ""
             CMAKE_ARGS
             -DBUILD_SHARED_LIBS=OFF
+            -DCMAKE_SYSTEM_LIBRARY_PATH=${INSTALL_DIRECTORY}/OpenBLAS/lib
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DARMA_USE_LAPACK=true
+            -DARMA_USE_BLAS=true
+            -DBLAS_LIBRARIES=${BLAS_LIBRARIES}
+            -DLAPACK_LIBRARY=${LAPACK_LIBRARIES}
+            -DLAPACK_NAMES=${LAPACK_LIBRARIES}
             -DDETECT_HDF5=OFF
-            DEPENDS arpack blas lapack
+            DEPENDS arpack blas lapack gfortran
             )
 
     ExternalProject_Get_Property(library_ARMADILLO INSTALL_DIR)
@@ -44,11 +50,10 @@ endif()
 
 set_target_properties(armadillo PROPERTIES
         IMPORTED_LOCATION        "${ARMADILLO_LIBRARIES}"
-        INTERFACE_LINK_LIBRARIES "${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
+        INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran"
         INCLUDE_DIRECTORIES      "${ARMADILLO_INCLUDE_DIRS}")
 
 
 target_link_libraries(      ${PROJECT_NAME} PRIVATE armadillo)
 target_include_directories( ${PROJECT_NAME} PRIVATE ${ARMADILLO_INCLUDE_DIRS})
-target_link_libraries(      ${PROJECT_NAME} PRIVATE ${BLAS_LIBRARIES})
 target_compile_definitions( ${PROJECT_NAME} PRIVATE -DARMA_NO_DEBUG)

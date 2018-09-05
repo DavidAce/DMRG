@@ -26,7 +26,7 @@ find_replace = {
     "xdmrg::print_freq"                     : '1     ',
     "xdmrg::store_freq"                     : '1     ',
     "hdf5::output_folder"                   : 'output',
-    "hdf5::output_filename"                 : 'output.h5'
+    "hdf5::output_filename"                 : 'output_@.h5'
 }
 
 
