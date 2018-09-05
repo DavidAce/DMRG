@@ -1,7 +1,5 @@
 
 
-enable_language(Fortran)
-include(cmake-modules/FindGFortran.cmake)
 
 message(STATUS "SEARCHING FOR ARPACK IN SYSTEM...")
 find_library(ARPACK_LIBRARIES
@@ -15,7 +13,7 @@ if(ARPACK_LIBRARIES)
     set_target_properties(arpack
             PROPERTIES
             IMPORTED_LOCATION "${ARPACK_LIBRARIES}"
-            INTERFACE_LINK_LIBRARIES "${GFORTRAN_LIB}"
+            #INTERFACE_LINK_LIBRARIES "${GFORTRAN_LIB};${QUADMATH_LIB}"
             )
     target_link_libraries(${PROJECT_NAME} PUBLIC arpack)
     return()
@@ -57,19 +55,20 @@ else()
             -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR};
             -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES_GENERATOR}
             -DEXTRA_LDLAGS=${EXTRA_LDLAGS_GENERATOR}
-            DEPENDS blas lapack
+            DEPENDS blas lapack gfortran
             )
 
     ExternalProject_Get_Property(library_ARPACK INSTALL_DIR)
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
-    add_library(arpack INTERFACE)
+    add_library(arpack STATIC IMPORTED)
     set_target_properties(arpack
             PROPERTIES
-            INTERFACE_LINK_LIBRARIES "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX};${GFORTRAN_LIB};${BLAS_LIBRARIES};${LAPACK_LIBRARIES}"
+            IMPORTED_LOCATION "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX}"
+            INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran"
             INTERFACE_INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
-    add_dependencies(arpack library_ARPACK blas lapack)
-    target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
+    add_dependencies(arpack library_ARPACK blas lapack gfortran )
+    target_link_libraries(${PROJECT_NAME} PRIVATE arpack )
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
     #For convenience, define these variables
     get_target_property(ARPACK_LIBRARIES arpack INTERFACE_LINK_LIBRARIES)
