@@ -1,7 +1,19 @@
 
 # Try finding Armadillo in system
 find_package(Armadillo)
-if(ARMADILLO_FOUND)
+
+if (NOT ARMADILLO_FOUND)
+# Try finding armadillo as module library
+find_library(ARMADILLO_LIBRARIES
+        NAMES armadillo
+        PATHS "$ENV{ARMADILLO_DIR}/lib"
+        )
+find_path(ARMADILLO_INCLUDE_DIRS
+        NAMES armadillo
+        PATHS "$ENV{ARMADILLO_DIR}/include"
+        )
+endif()
+if(ARMADILLO_FOUND OR ARMADILLO_LIBRARIES)
     message(STATUS "ARMADILLO found in system: ${ARMADILLO_LIBRARIES}")
     add_library(armadillo STATIC IMPORTED)
 #else()

@@ -10,16 +10,54 @@ endif()
 
 
 message(STATUS "SEARCHING FOR OpenBLAS IN SYSTEM...")
-set(BLA_VENDOR Open)
+set(BLA_VENDOR OpenBLAS)
 set(BLAS_VERBOSE OFF)
 set(BLA_STATIC ON)
 find_package(BLAS)
-set(BLA_VENDOR OpenBLAS)
 find_package(LAPACK)
-if(BLAS_FOUND AND LAPACK_FOUND)
+#set(BLA_VENDOR OpenBLAS)
+#find_package(LAPACK)
+
+if (NOT BLAS_openblas_LIBRARY OR NOT LAPACK_openblas_LIBRARY)
+    # Try finding armadillo as module library
+    find_library(BLAS_openblas_LIBRARY
+            NAMES libopenblas.a
+            PATHS "$ENV{BLAS_DIR}/lib"
+            NO_DEFAULT_PATH
+            )
+    find_path(BLAS_INCLUDE_DIRS
+            NAMES cblas.h
+            PATHS "$ENV{BLAS_DIR}/include"
+            NO_DEFAULT_PATH
+            )
+
+    find_library(LAPACK_openblas_LIBRARY
+            NAMES libopenblas.a
+            PATHS "$ENV{BLAS_DIR}/lib"
+            NO_DEFAULT_PATH
+            )
+    find_path(LAPACK_INCLUDE_DIRS
+            NAMES cblas.h
+            PATHS "$ENV{BLAS_DIR}/include"
+            NO_DEFAULT_PATH
+            )
+    if (BLAS_openblas_LIBRARY AND LAPACK_openblas_LIBRARY)
+        set(BLAS_FOUND 1)
+        set(LAPACK_FOUND 1)
+    endif()
+endif()
+
+
+
+
+
+if(BLAS_openblas_LIBRARY AND LAPACK_openblas_LIBRARY)
     message(STATUS "BLAS FOUND IN SYSTEM: ${BLAS_openblas_LIBRARY}")
+    message(STATUS "                      ${BLAS_INCLUDE_DIRS}")
     message(STATUS "LAPACK FOUND IN SYSTEM: ${LAPACK_openblas_LIBRARY}")
-       #For convenience, define these variables
+    message(STATUS "                        ${LAPACK_INCLUDE_DIRS}")
+
+    #For convenience, define these variables
     add_library(blas STATIC IMPORTED)
     add_library(lapack STATIC IMPORTED)
     set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
@@ -57,7 +95,8 @@ if(NOT BLAS_FOUND OR NOT LAPACK_FOUND)
     set(LAPACK_LIBRARIES ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
     set(BLAS_LIBRARIES_STATIC ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
     set(LAPACK_LIBRARIES_STATIC ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
-
+    set(BLAS_LIBRARIES_SHARED ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(LAPACK_LIBRARIES_SHARED ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif()
 set_target_properties(blas PROPERTIES
         IMPORTED_LOCATION               "${BLAS_LIBRARIES}"

@@ -7,15 +7,32 @@ find_library(ARPACK_LIBRARIES
         PATH_SUFFIXES lib lib32 lib64
         )
 
+if (NOT ARPACK_LIBRARIES)
+    # Try finding arpack as module library
+    find_library(ARPACK_LIBRARIES
+            NAMES arpack
+            PATHS "$ENV{ARPACK_DIR}/lib"
+            )
+    find_path(ARPACK_INCLUDE_DIRS
+            NAMES arpack
+            PATHS "$ENV{ARPACK_DIR}/include"
+            )
+endif()
+
+
+
 if(ARPACK_LIBRARIES)
     message(STATUS "ARPACK found in system:   ${ARPACK_LIBRARIES}")
     add_library(arpack UNKNOWN IMPORTED)
     set_target_properties(arpack
             PROPERTIES
             IMPORTED_LOCATION "${ARPACK_LIBRARIES}"
-            #INTERFACE_LINK_LIBRARIES "${GFORTRAN_LIB};${QUADMATH_LIB}"
+            INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran"
+            INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
             )
-    target_link_libraries(${PROJECT_NAME} PUBLIC arpack)
+    target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
+
     return()
 else()
     message(STATUS "Arpack-ng will be installed into ${INSTALL_DIRECTORY}/arpack-ng on first build.")
