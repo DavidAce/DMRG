@@ -6,7 +6,7 @@
 #include <algorithms/class_algorithm_launcher.h>
 #include <gitversion.h>
 #include <IO/class_file_reader.h>
-#include <El.hpp>
+//#include <El.hpp>
 
 #ifdef OpenBLAS_AVAILABLE
 #include <cblas.h>
@@ -26,7 +26,7 @@
 */
 
 int main(int argc, char* argv[]) {
-    int num_threads = 4;
+    int num_threads = 1;
     #ifdef OpenBLAS_AVAILABLE
         openblas_set_num_threads(num_threads);
         std::cout << "Using OpenBLAS with " << num_threads << " thread(s)" << std::endl;
@@ -36,11 +36,11 @@ int main(int argc, char* argv[]) {
         mkl_set_num_threads(num_threads);
         std::cout << "Using Intel MKL with " << num_threads << " thread(s)" << std::endl;
     #endif
-
-    // Set a dummy communicator for libelemental, which works with mpi. This is used in xDMRG.
-    // Note that this program is single threaded anyway.
-    El::Environment env;
-    [[maybe_unused]] El::mpi::Comm comm = El::mpi::COMM_WORLD;
+//
+//    // Set a dummy communicator for libelemental, which works with mpi. This is used in xDMRG.
+//    // Note that this program is single threaded anyway.
+//    El::Environment env;
+//    [[maybe_unused]] El::mpi::Comm comm = El::mpi::COMM_WORLD;
 
     // Print current Git status
     std::cout << "Git Branch: " + GIT::BRANCH +

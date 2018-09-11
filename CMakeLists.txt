@@ -17,13 +17,13 @@ include(cmake-modules/gitversion.cmake)
 ##################################################################
 ### Define variables for directory paths accessible at runtime ###
 ##################################################################
-include(cmake-modules/directory.cmake)
+#include(cmake-modules/directory.cmake)
 
 
 ##################################################################
 ### Add a debugging type message, only active in Debug-mode   ###
 ##################################################################
-include(cmake-modules/debug_msg.cmake)
+#include(cmake-modules/debug_msg.cmake)
 
 
 
@@ -47,7 +47,10 @@ message("===============================")
 ### Setup flags ###
 ###################
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
-set(COMMON_OPTIONS -g -Wall -march=native)
+#set(COMMON_OPTIONS -g -Wall -march=native)
+#set(COMMON_OPTIONS  -g -Wall -static -march=sandybridge -mtune=sandybridge)
+set(COMMON_OPTIONS -g -Wall -march=nehalem -mtune=native)
+
 set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
 
@@ -57,7 +60,7 @@ set(RELEASE_OPTIONS     -DNDEBUG -O3)
 if(${CMAKE_HOST_APPLE})
     list(APPEND COMMON_OPTIONS -mmacosx-version-min=10.13)
 else()
-    list(APPEND COMMON_OPTIONS -mavx ) #-mfma makes things slower?
+#    list(APPEND COMMON_OPTIONS -mavx ) #-mfma makes things slower?
 endif()
 
 ################################
@@ -100,9 +103,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC source)
 target_compile_options (${PROJECT_NAME} PRIVATE ${COMMON_OPTIONS})                                   ### Common options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
+target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                                             ### Static linkage
+#target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,-Bstatic -lz -lfoo -Wl,-Bdynamic -lbar -Wl,--as-needed)
 target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                                               ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
-
 
 ###############################
 ###  Require c++17 support  ###
@@ -126,15 +130,15 @@ set_target_properties(${PROJECT_NAME}
 ###########################################
 
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
-include(cmake-modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+#include(cmake-modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+include(cmake-modules/FindGFortran.cmake)
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
-include(cmake-modules/Fetch_Elemental.cmake)                # Elemental library
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data_struct.
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
-#include(cmake-modules/Fetch_Armadillo.cmake)                # Armadillo library
+include(cmake-modules/Fetch_Armadillo.cmake)                # Armadillo library
 
 
 
@@ -169,11 +173,13 @@ message("    INTEL MKL:   ${MKL_LIBRARIES}")
 message("    BLAS     :   ${BLAS_LIBRARIES}")
 message("    LAPACK   :   ${LAPACK_LIBRARIES}")
 message("    EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
-message("    ELEMENTAL:   ${ELEMENTAL_LIBRARIES}")
+message("    ARMADILLO:   ${ARMADILLO_INCLUDE_DIRS}")
 message("    HDF5     :   ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES}")
 message("    ARPACK   :   ${ARPACK_LIBRARIES}")
 message("    ARPACKPP :   ${ARPACKPP_INCLUDE_DIR}")
 message("    GSL      :   ${GSL_LIBRARIES} ${GSLCBLAS_LIBRARIES}")
+message("    GFORTRAN :   ${GFORTRAN_LIB}")
+message("    QUADMATH :   ${QUADMATH_LIB}")
 message("=============================================================================")
 message("")
 
@@ -206,7 +212,7 @@ include(tests/arpack++_mps_test.cmake)
 add_custom_target(all_tests ALL
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
-        DEPENDS blas lapack EIGEN3 arpack arpack++ hdf5::hdf5 GSL
+        DEPENDS blas lapack EIGEN3 arpack arpack++
         DEPENDS ${PROJECT_NAME}
         )
 
@@ -217,7 +223,7 @@ add_custom_command(
         PRE_BUILD
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failures
-        DEPENDS ${PROJECT_NAME}
+        DEPENDS ${PROJECT_NAME} all_tests
 )
 
 

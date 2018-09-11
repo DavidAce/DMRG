@@ -19,7 +19,7 @@ class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(): class_hamiltonian_base
     J_rnd       = rn::log_normal(J_log_mean,J_std);
     h_rnd       = rn::log_normal(h_log_mean,h_std);
     build_mpo();
-};
+}
 
 
 

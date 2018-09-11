@@ -171,17 +171,19 @@ private:
         std::cerr << "get_Size can't match the type provided: " << typeid(data).name() << '\n';
         exit(1);
     }
-
     template<typename DataType>
     constexpr int get_Rank() const {
-        if constexpr (tc::is_eigen_tensor<DataType>::value){return (int) DataType::NumIndices;}
-        if constexpr (tc::is_eigen_matrix<DataType>::value){return 2; }
-        if constexpr (tc::is_eigen_array<DataType>::value){return 2; }
-        if constexpr (std::is_arithmetic<DataType>::value){return 1; }
-        if constexpr(tc::is_vector<DataType>::value){return 1;}
-        if constexpr(std::is_same<std::string, DataType>::value){return 1;}
-        std::cerr << "get_Rank can't match the type provided: " << typeid(DataType).name() << '\n';
-        exit(1);
+        if      constexpr (tc::is_eigen_tensor<DataType>::value){return (int) DataType::NumIndices;}
+        else if constexpr (tc::is_eigen_matrix<DataType>::value){return 2; }
+        else if constexpr (tc::is_eigen_array<DataType>::value){return 2; }
+        else if constexpr (std::is_arithmetic<DataType>::value){return 1; }
+        else if constexpr(tc::is_vector<DataType>::value){return 1;}
+        else if constexpr(std::is_same<std::string, DataType>::value){return 1;}
+        else {
+            std::cerr << "get_Rank can't match the type provided: " << tc::type_name<DataType>() << '\n';
+            tc::print_type_and_exit_compile_time<DataType>();
+            exit(1);
+        }
     }
 
 
@@ -209,25 +211,29 @@ private:
             std::copy(data.dimensions().begin(), data.dimensions().end(), dims.begin());
             return dims;
         }
-        if constexpr (std::is_arithmetic<DataType>::value){
+        else if constexpr (std::is_arithmetic<DataType>::value){
             dims[0]={1};
             return dims;
         }
-        if constexpr (tc::is_eigen_matrix <DataType>::value) {
+        else if constexpr (tc::is_eigen_matrix <DataType>::value) {
             dims[0] = (hsize_t) data.rows();
             dims[1] = (hsize_t) data.cols();
             return dims;
         }
-        if constexpr(tc::is_vector<DataType>::value){
+        else if constexpr(tc::is_vector<DataType>::value){
             dims[0]={data.size()};
             return dims;
         }
-        if constexpr(std::is_same<std::string, DataType>::value){
+        else if constexpr(std::is_same<std::string, DataType>::value){
             dims[0]={data.size()};
             return dims;
         }
-        std::cerr << "get_Dimensions can't match the type provided: " << typeid(DataType).name() << '\n';
-        exit(1);
+        else{
+            tc::print_type_and_exit_compile_time<DataType>();
+            std::cerr << "get_Dimensions can't match the type provided: " << typeid(DataType).name() << '\n';
+            exit(1);
+        }
+
     }
 
 
