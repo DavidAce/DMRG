@@ -1,12 +1,7 @@
-
-
-enable_language(Fortran)
-include(cmake-modules/FindGFortran.cmake)
-
 find_package(GSL)
 if(GSL_FOUND)
     message(STATUS "GSL FOUND IN SYSTEM: ${GSL_LIBRARIES}")
-    add_library(GSL UNKNOWN IMPORTED)
+    add_library(GSL STATIC IMPORTED)
 else()
     message(STATUS "GSL will be installed into ${INSTALL_DIRECTORY}/gsl on first build.")
     include(ExternalProject)
@@ -28,7 +23,7 @@ else()
             )
 
     ExternalProject_Get_Property(library_GSL INSTALL_DIR)
-    add_library(GSL UNKNOWN IMPORTED)
+    add_library(GSL STATIC IMPORTED)
 #    add_library(GSLcblas UNKNOWN IMPORTED)
     add_dependencies(GSL library_GSL)
 #    add_dependencies(GSLcblas library_GSL)
@@ -40,7 +35,7 @@ endif()
 
 set_target_properties(GSL PROPERTIES
         IMPORTED_LOCATION             "${GSL_LIBRARY}"
-        INTERFACE_LINK_LIBRARIES      "${GSL_CBLAS_LIBRARY}"
+        INTERFACE_LINK_LIBRARIES      "${GSL_CBLAS_LIBRARY};gfortran"
         INCLUDE_DIRECTORIES           "${GSL_INCLUDE_DIRS}"
         )
 

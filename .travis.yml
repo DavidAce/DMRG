@@ -19,7 +19,9 @@ matrix:
         - CC=gcc-7
         - CXX=g++-7
         - FC=gfortran-7
+#        - MPI=mpich
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+#        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7 && MPI=mpich"
       cache:
         apt: true
       addons:
@@ -31,10 +33,8 @@ matrix:
             - gcc-7
             - g++-7
             - gfortran-7
-            - libopenmpi-dev
-            - openmpi-bin
-
-
+#            - mpich
+#            - libmpich-dev
     - os: linux
       compiler: clang
       env:
@@ -43,7 +43,9 @@ matrix:
         - CC=clang-6.0
         - CLANG_VERSION=6.0
         - FC=gfortran-7
+#        - MPI=mpich
         - MATRIX_EVAL="CXX=clang++-6.0 && CC=clang-6.0 && FC=gfortran-7"
+#        - MATRIX_EVAL="CXX=clang++-6.0 && CC=clang-6.0 && FC=gfortran-7 && MPI=mpich"
       cache:
         apt: true
       addons:
@@ -58,9 +60,8 @@ matrix:
             - clang-6.0
             - libstdc++-7-dev
             - gfortran-7
-            - libopenmpi-dev
-            - openmpi-bin
-
+#            - mpich
+#            - libmpich-dev
     - os: linux
       compiler: gcc-7 (preinstalled libs)
       env:
@@ -69,7 +70,9 @@ matrix:
         - CC=gcc-7
         - CXX=g++-7
         - FC=gfortran-7
+#        - MPI=mpich
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+#        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7 && MPI=mpich"
       cache:
         apt: true
       addons:
@@ -89,9 +92,8 @@ matrix:
             - libopenblas-dev
             - libarpack2-dev
             - libarpack++2-dev
-            - libopenmpi-dev
-            - openmpi-bin
-
+#            - mpich
+#            - libmpich-dev
     - os: osx
       osx_image: xcode9.1 #Newer versions don't like experimental/filesystem or _stdio.h?
       compiler: gcc-7
@@ -101,11 +103,13 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
+        - MPI=mpich
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+#        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7 && MPI=mpich"
       before_install:
         - brew cask uninstall oclint
         - brew install gcc@7
-        - brew install openmpi
+#        - brew install openmpi
 
 before_install:
   - eval "${MATRIX_EVAL}"

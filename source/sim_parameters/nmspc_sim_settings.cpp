@@ -92,6 +92,7 @@ namespace settings{
     string hdf5::output_filename          = "data_struct.h5";
     string hdf5::output_folder            = "output";
     bool   hdf5::full_storage             = true;
+    bool   hdf5::store_profiling          = true;
 
     //Profiling
     bool profiling::on                   = false;
@@ -202,6 +203,7 @@ void settings::load_from_file(class_file_reader &indata){
     hdf5::output_filename          = indata.find_parameter<string> ("hdf5::output_filename"         , hdf5::output_filename);
     hdf5::output_folder            = indata.find_parameter<string> ("hdf5::output_folder"           , hdf5::output_folder);
     hdf5::full_storage             = indata.find_parameter<bool>   ("hdf5::full_storage"            , hdf5::full_storage           );
+    hdf5::store_profiling          = indata.find_parameter<bool>   ("hdf5::store_profiling"         , hdf5::store_profiling        );
 
     //Profiling
     profiling::on                  = indata.find_parameter<bool>   ("profiling::on"        , profiling::on        );

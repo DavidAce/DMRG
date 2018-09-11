@@ -12,8 +12,6 @@ find_path(ARPACKPP_INCLUDE_DIR
         PATHS /usr/include/arpack++ /usr/include /usr/local/
         )
 
-enable_language(Fortran)
-include(cmake-modules/FindGFortran.cmake)
 
 message(STATUS "Note that old versions of Arpack++ (e.g. the default in Ubuntu Trusty 14.04 LTS) may fail to compile, requiring '-fpermissive'.")
 if (ARPACKPP_LIBRARIES AND NOT "${OS_PROPERTIES}" MATCHES "trusty" )
@@ -39,17 +37,17 @@ else()
             BUILD_COMMAND
             ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include && find <INSTALL_DIR>/include -maxdepth 1 -type l -delete &&
             ${CMAKE_COMMAND} -E create_symlink <SOURCE_DIR>/include <INSTALL_DIR>/include/arpack++
-            DEPENDS blas lapack arpack
+            DEPENDS blas lapack arpack gfortran
     )
 
     ExternalProject_Get_Property(library_ARPACK++ INSTALL_DIR)
     add_library(arpack++ INTERFACE)
     set(ARPACKPP_INCLUDE_DIR ${INSTALL_DIR}/include)
     set_target_properties(arpack++ PROPERTIES
-            INTERFACE_LINK_LIBRARIES "arpack;blas;lapack"
+            INTERFACE_LINK_LIBRARIES "arpack;blas;lapack;gfortran"
             INTERFACE_INCLUDE_DIRECTORIES ${ARPACKPP_INCLUDE_DIR}
             )
-    add_dependencies(arpack++ library_ARPACK++)
+    add_dependencies(arpack++ library_ARPACK++ blas lapack)
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACKPP_INCLUDE_DIR})
 endif()
