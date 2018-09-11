@@ -118,6 +118,7 @@ namespace settings {
         extern std::string  output_filename         ;        /*!< Name of the output HDF5 file */
         extern std::string  output_folder           ;        /*!< Path of the output HDF5 file */
         extern bool         full_storage            ;        /*!< If true, saves more simulation data to file (such as explicit form of MPS). Set to false to reduce output file size. */
+        extern bool         store_profiling         ;        /*!< Whether to store profiling information to file. */
     }
     //Profiling
     namespace profiling {
