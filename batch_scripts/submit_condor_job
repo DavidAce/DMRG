@@ -1,19 +1,20 @@
 ID         = $(Process)
-NAME       = test
+NAME       = mbl
 universe   = vanilla
-executable = ../cmake-build-release/DMRG++
+executable = ../build/Release/DMRG++
 arguments  = $(inputfiles)
 
 
 ########################################################
-# List your requirements below. Uncomment to activate
+# List your requirements below. Uncomment to activate.
+# Note that numeric requirements are not enclosed by "".
 ########################################################
-requirements = TARGET.Machine == "Dell-T7400"
-requirements = $(requirements) && TARGET.OpSysAndVer    == "Ubuntu18"
-requirements = $(requirements) && TARGET.OpSysName      == "Ubuntu"
-requirements = $(requirements) && TARGET.OpSysMajorVer  == "18"
-requirements = $(requirements) && TARGET.Arch           == "INTEL"
-requirements = $(requirements) && TARGET.OpSys          == "LINUX"
+#requirements = TARGET.Machine == "Dell-T7400"
+#requirements = $(requirements) && TARGET.OpSysAndVer    == "Ubuntu18"
+#requirements = $(requirements) && TARGET.OpSysName      == "Ubuntu"
+#requirements = $(requirements) && TARGET.OpSysMajorVer  == 18
+#requirements = $(requirements) && TARGET.Arch           == "X86_64"
+#requirements = $(requirements) && TARGET.OpSys          == "LINUX"
 
 
 
@@ -35,6 +36,8 @@ requirements = $(requirements) && TARGET.OpSys          == "LINUX"
 #               environment = "HDF5_USE_FILE_LOCKING=FALSE"
 ################################################################################################
 #environment = "HDF5_USE_FILE_LOCKING=FALSE"
+
+getenv = true
 
 
 log        = logs/$(NAME)_$(ID).log

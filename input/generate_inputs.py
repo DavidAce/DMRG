@@ -6,7 +6,7 @@ import numpy as np
 # Use '@' as a wildcard to be replaced by the the copy number.
 
 template_filename = 'input_template.cfg'
-input_basename   = 'test_'
+input_basename   = 'test'
 num_copies = 32
 
 
