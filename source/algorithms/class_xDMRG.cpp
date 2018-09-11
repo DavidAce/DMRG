@@ -348,7 +348,7 @@ void class_xDMRG::check_convergence_overall(){
     if(not env_storage->position_is_the_middle()){return;}
     t_con.tic();
     check_convergence_entanglement(1e-6);
-    check_convergence_variance_mpo();
+    check_convergence_variance_mpo(1e-6);
     check_convergence_bond_dimension();
     if(entanglement_has_converged and
        variance_mpo_has_converged and
