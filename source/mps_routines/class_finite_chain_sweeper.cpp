@@ -25,7 +25,7 @@ class_finite_chain_sweeper::class_finite_chain_sweeper(
     sim_type = sim_type_;
     sim_name = sim_name_;
 
-};
+}
 
 
 
@@ -82,7 +82,15 @@ int class_finite_chain_sweeper::insert(){
     for (auto &MPO : MPO_R){
         MPO->set_position(pos++);
     }
-
+//    std::cout << "New positions: \n" ;
+//    for (auto &MPO : MPO_L){
+//        std::cout << "Position L: " << MPO->get_position() << std::endl;
+//    }
+//    for (auto &MPO : MPO_R){
+//        std::cout << "Position R: " << MPO->get_position() << std::endl;
+//    }
+//    std::cout << std::endl;
+//
 //    std::cout << "Inserted -- New state reflects current superblock: " << std::endl;
     assert(ENV_L.back().size + ENV_R.front().size == superblock->environment_size);
     assert(ENV_L.back().size   == superblock->Lblock->size);
@@ -342,7 +350,7 @@ int class_finite_chain_sweeper::get_sweeps()    const {return sweeps;}
 int class_finite_chain_sweeper::get_length()    const {return (int)(MPS_L.size() + MPS_R.size());}
 int class_finite_chain_sweeper::get_position()  const {return max_length_is_set ? (int)(MPS_L.size() - 1) : 0 ;}
 bool class_finite_chain_sweeper::position_is_the_middle() {
-    return max_length_is_set ? get_position() + 1 == max_length / 2 and direction == 1: true ;
+    return max_length_is_set ? (unsigned) get_position() + 1 == max_length / 2 and direction == 1: true ;
 }
 bool class_finite_chain_sweeper::position_is_the_left_edge(){
     return get_position() == 0;

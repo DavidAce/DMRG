@@ -11,7 +11,7 @@ else()
     include(ExternalProject)
     ExternalProject_Add(library_EIGEN3
             GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
-            GIT_TAG 3.3.4
+            GIT_TAG 3.3.5
             GIT_PROGRESS 1
             PREFIX "${INSTALL_DIRECTORY}/eigen3"
             UPDATE_COMMAND ""

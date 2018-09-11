@@ -6,6 +6,7 @@
 #define DMRG_CLASS_EXITED_DMRG_H
 
 #include "class_algorithm_base.h"
+#include <unsupported/Eigen/CXX11/Tensor>
 class class_table_finite_chain;
 class class_table_dmrg;
 
@@ -41,14 +42,14 @@ public:
     void print_profiling_sim(class_tic_toc &t_parent)   override;
     void store_table_entry_to_file()                    override;
     void store_chain_entry_to_file();
-    void single_xDMRG_step(xDMRG_Mode mode, long chi_max, double energy_target);
+    void single_xDMRG_step(xDMRG_Mode mode, long chi_max);
     void initialize_chain();
     void reset_chain_mps_to_random_product_state();
     void set_random_fields_in_chain_mpo();
     void find_energy_range();
-    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag(Eigen::Tensor<Scalar, 4> &theta, double energy_target = 0);
-    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag(Eigen::Tensor<Scalar, 4> &theta, double energy_target = 0);
-};
+    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag (Eigen::Tensor<Scalar, 4> &theta);
+    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag (Eigen::Tensor<Scalar, 4> &theta);
+   };
 
 
 

@@ -1,5 +1,5 @@
 
-#include <general/class_arpack_eigsolver.h>
+#include <general/class_eigsolver_arpack.h>
 #include <general/nmspc_tensor_extra.h>
 #include <iomanip>
 using namespace std::complex_literals;
@@ -24,7 +24,7 @@ int main()
     std::vector<Scalar> theta = {-0.191154, 0.964728,
                                  -0.0351791,0.177544};
 
-    class_arpack_eigsolver<Scalar, Form::GENERAL> solver(eigThreshold,eigMaxIter,eigMaxNcv, true, false);
+    class_eigsolver_arpack<Scalar, Form::GENERAL> solver(eigThreshold,eigMaxIter,eigMaxNcv, true, false);
 //    solver.optimize_mps(Lblock->block.data(), Rblock->block.data(), HA->MPO.data(), HB->MPO.data(), shape_theta4, shape_mpo4, nev, eigMaxNcv, ritz , false ,theta.data());
 
     solver.optimize_mps(L.data(),

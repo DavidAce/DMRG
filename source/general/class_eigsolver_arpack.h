@@ -17,7 +17,7 @@
 class class_superblock;
 
 template<typename Scalar, Form form = Form::GENERAL>
-class class_arpack_eigsolver {
+class class_eigsolver_arpack {
 
 private:
 //    using T = std::complex<double>;
@@ -80,10 +80,10 @@ public:
 
 
 
-    class_arpack_eigsolver();
+    class_eigsolver_arpack();
 
 
-    class_arpack_eigsolver(
+    class_eigsolver_arpack(
             const double eigThreshold_,
             const int eigMaxIter_,
             const int eigMaxNcv_,

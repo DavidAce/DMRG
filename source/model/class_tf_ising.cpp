@@ -22,7 +22,7 @@ class_tf_ising::class_tf_ising(): class_hamiltonian_base(){
     qm::spinOneHalf::SY = qm::gen_manybody_spin(sy, 2);
     qm::spinOneHalf::SZ = qm::gen_manybody_spin(sz, 2);
     qm::spinOneHalf::II = qm::gen_manybody_spin(I , 2);
-};
+}
 
 
 

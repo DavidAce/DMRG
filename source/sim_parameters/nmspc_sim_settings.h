@@ -118,6 +118,7 @@ namespace settings {
         extern std::string  output_filename         ;        /*!< Name of the output HDF5 file */
         extern std::string  output_folder           ;        /*!< Path of the output HDF5 file */
         extern bool         full_storage            ;        /*!< If true, saves more simulation data to file (such as explicit form of MPS). Set to false to reduce output file size. */
+        extern bool         store_profiling         ;        /*!< Whether to store profiling information to file. */
     }
     //Profiling
     namespace profiling {
@@ -129,5 +130,5 @@ namespace settings {
         extern int  verbosity ;                      /*!< Level of verbosity desired [0-2]. Level 0 prints almost nothing, level 2 prints everything */
         extern bool timestamp ;                      /*!< Whether to put a timestamp on console outputs */
     }
-};
+}
 #endif //DMRG_N_SETTINGS_H

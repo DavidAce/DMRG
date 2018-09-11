@@ -15,6 +15,7 @@ else()
     string (REPLACE ";" "$<SEMICOLON>" BLAS_LIBRARIES_GENERATOR     "${BLAS_LIBRARIES}")
     string (REPLACE ";" "$<SEMICOLON>" LAPACK_LIBRARIES_GENERATOR   "${LAPACK_LIBRARIES}")
     string (REPLACE ";" "$<SEMICOLON>" EXTRA_LDLAGS_GENERATOR       "${EXTRA_LDLAGS}")
+#    set(BLA_VENDOR "OpenBLAS")
     ####################################################################
 
     include(ExternalProject)
@@ -32,11 +33,19 @@ else()
                 -DGFORTRAN_LIB=${GFORTRAN_LIB}
                 -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
                 -DCMAKE_BUILD_TYPE=Release
-#                -DMATH_LIBS=${BLAS_LIBRARIES_GENERATOR}
+                -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR}
+                -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES_GENERATOR}
+                -DBLAS_PATH=${BLAS_LIBRARIES_GENERATOR}
+                -DLAPACK_PATH=${LAPACK_LIBRARIES_GENERATOR}
+                -DMATH_LIBS=${BLAS_LIBRARIES_GENERATOR}
+                -DMATH_PATH=${BLAS_LIBRARIES_GENERATOR}
+                -DCMAKE_REQUIRED_LIBRARIES=${BLAS_LIBRARIES_GENERATOR}
+
+            DEPENDS blas lapack
             )
 
     add_library(elemental           SHARED IMPORTED)
-    add_dependencies(elemental     library_ELEMENTAL)
+    add_dependencies(elemental      library_ELEMENTAL blas lapack)
 
 endif()
 set(INSTALL_DIR ${INSTALL_DIRECTORY}/elemental)

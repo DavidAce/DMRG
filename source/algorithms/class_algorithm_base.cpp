@@ -36,7 +36,7 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
 
     //Default constructed objects
     env_storage  = std::make_shared<class_finite_chain_sweeper>();
-};
+}
 
 
 void class_algorithm_base::single_DMRG_step(long chi_max, Ritz ritz){
@@ -93,8 +93,8 @@ void class_algorithm_base::check_convergence_using_slope(
                                    bool &has_converged){
     //Check convergence based on slope.
     // We want to check once every "rate" steps
-    unsigned long max_data_points = 10;
-    unsigned long min_data_points = 4;
+    unsigned long min_data_points = 3;
+    unsigned long max_data_points = std::max(min_data_points+1, (unsigned long) (iteration*0.4));
     // Get the iteration number when you last measured.
     int last_measurement = X_vec.empty() ? 0 : X_vec.back();
     // If the measurement happened less than rate iterations ago, return.
@@ -108,6 +108,7 @@ void class_algorithm_base::check_convergence_using_slope(
         Y_vec.pop_front();
         X_vec.pop_front();
     }
+    std::cout << "y_vec size: " << Y_vec.size() << std::endl;
 
     double n = Y_vec.size();
     double avgX = accumulate(X_vec.begin(), X_vec.end(), 0.0) / n;
@@ -135,7 +136,7 @@ void class_algorithm_base::check_convergence_using_slope(
 void class_algorithm_base::check_convergence_variance_mpo(double threshold){
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
-    threshold = threshold == -1 ? settings::precision::eigThreshold : threshold;
+    threshold = threshold == -1.0 ? settings::precision::eigThreshold : threshold;
     check_convergence_using_slope(V_mpo_vec,
                                   X_mpo_vec,
                                   measurement->get_variance_mpo(),
@@ -148,7 +149,7 @@ void class_algorithm_base::check_convergence_variance_mpo(double threshold){
 void class_algorithm_base::check_convergence_variance_ham(double threshold){
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
-    threshold = threshold == -1 ? settings::precision::eigThreshold : threshold;
+    threshold = threshold == -1.0 ? settings::precision::eigThreshold : threshold;
     check_convergence_using_slope(V_ham_vec,
                                   X_ham_vec,
                                   measurement->get_variance_ham(),
@@ -162,7 +163,7 @@ void class_algorithm_base::check_convergence_variance_ham(double threshold){
 void class_algorithm_base::check_convergence_variance_mom(double threshold){
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
-    threshold = threshold == -1 ? settings::precision::eigThreshold : threshold;
+    threshold = threshold == -1.0 ? settings::precision::eigThreshold : threshold;
     check_convergence_using_slope(V_mom_vec,
                                   X_mom_vec,
                                   measurement->get_variance_mom(),
@@ -176,7 +177,7 @@ void class_algorithm_base::check_convergence_variance_mom(double threshold){
 void class_algorithm_base::check_convergence_entanglement(double threshold) {
     //Based on the the slope of entanglement entanglement_entropy
     // This one is cheap to compute.
-    threshold = threshold == -1 ? settings::precision::SVDThreshold : threshold;
+    threshold = threshold == -1.0 ? settings::precision::SVDThreshold : threshold;
     check_convergence_using_slope(S_vec,
                                   X2_vec,
                                   measurement->get_entanglement_entropy(),
@@ -216,6 +217,7 @@ void class_algorithm_base::clear_convergence_checks(){
 void class_algorithm_base::store_profiling_to_file() {
 //    if (Math::mod(iteration, store_freq) != 0) {return;}
 //    t_sto.tic();
+    if (settings::profiling::on and settings::hdf5::store_profiling)
     table_profiling->append_record(
             iteration,
             t_tot.get_last_time_interval(),
@@ -528,13 +530,13 @@ void class_algorithm_base::print_status_update() {
             break;
     }
     ccout(1) << left  << " - Convergence ";
-    ccout(1) << left  << " S-"  << std::boolalpha << entanglement_has_converged;
-    ccout(1) << left  << " χ-"  << std::boolalpha << bond_dimension_has_converged;
+    ccout(1) << left  << " S-"  << std::boolalpha << entanglement_has_converged << " (" << setw(16) << setprecision(16) << S_slope << ")" ;
+    ccout(1) << left  << " χ-"  << std::boolalpha << bond_dimension_has_converged ;
     switch(sim_type){
         case SimulationType::iDMRG:
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(1) << left  << " σ²- "  << std::boolalpha << variance_mpo_has_converged;
+            ccout(1) << left  << " σ²-"  << std::boolalpha << variance_mpo_has_converged << " (" << setw(16) << setprecision(16) << V_mpo_slope << ")" ;
             break;
         case SimulationType::iTEBD:
             break;
@@ -600,7 +602,8 @@ void class_algorithm_base::print_status_full(){
     }
 
     ccout(0)  << setw(20) << "Simulation converged : " << std::boolalpha << simulation_has_converged << std::endl;
-    ccout(0)  << setw(20) << "S slope              = " << setprecision(16) << fixed      << S_slope  << " " << std::boolalpha << entanglement_has_converged << std::endl;
+    ccout(0)  << setw(20) << "S slope              = " << setprecision(16) << fixed      << S_slope      << " " << std::boolalpha << entanglement_has_converged << std::endl;
+    ccout(0)  << setw(20) << "χ                    = " << setprecision(1)  << fixed      << chi_max_temp << " " << std::boolalpha << bond_dimension_has_converged << std::endl;
     switch(sim_type){
         case SimulationType::iDMRG:
             ccout(0)  << setw(20) << "σ² MPO slope         = " << setprecision(16) << fixed      << V_mpo_slope  << " " << std::boolalpha << variance_mpo_has_converged << std::endl;
@@ -616,7 +619,6 @@ void class_algorithm_base::print_status_full(){
             ccout(0)  << setw(20) << "σ² MOM slope         = " << setprecision(16) << fixed      << V_mom_slope  << " " << std::boolalpha << variance_mom_has_converged << std::endl;
             break;
     }
-    ccout(0)  << setw(20) << "χ                    = " << setprecision(1)  << fixed      << chi_max_temp << " " << std::boolalpha << bond_dimension_has_converged << std::endl;
     std::cout << std::endl;
     t_prt.toc();
 }
