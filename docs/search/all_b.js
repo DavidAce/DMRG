@@ -18,8 +18,6 @@ var searchData=
   ['lm',['LM',['../namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044adfd5b430bc4db2c2836d0227ad9ac0c4',1,'eigsolver_properties']]],
   ['load',['load',['../classclass__finite__chain__sweeper.html#abefd816c755ea801d1085100897c710e',1,'class_finite_chain_sweeper']]],
   ['load_5ffrom_5ffile',['load_from_file',['../namespacesettings.html#ae1b4e1c2644ce7203ef24caf6d79c63a',1,'settings']]],
-  ['loc',['LOC',['../class__elemental__eigsolver_8h.html#a8613287991e02b68162dcc37689cf095',1,'class_elemental_eigsolver.h']]],
   ['local_5fdimension',['local_dimension',['../namespace_model.html#a9373ce073c1c4c4c178ca26c04832825',1,'Model']]],
-  ['low',['LOW',['../class__elemental__eigsolver_8h.html#a8613287991e02b68162dcc37689cf095a41bc94cbd8eebea13ce0491b2ac11b88',1,'class_elemental_eigsolver.h']]],
   ['lr',['LR',['../namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044a90a7c45eaffbd575ca6fb361e6d170a4',1,'eigsolver_properties']]]
 ];

@@ -1,13 +1,15 @@
 var dir_9cdd153f0f1b41b116eb8c6c3efd2239 =
 [
-    [ "class_arpack_custom_products.cpp", "class__arpack__custom__products_8cpp.html", null ],
-    [ "class_arpack_custom_products.h", "class__arpack__custom__products_8h.html", "class__arpack__custom__products_8h" ],
-    [ "class_arpack_eigsolver.cpp", "class__arpack__eigsolver_8cpp.html", "class__arpack__eigsolver_8cpp" ],
-    [ "class_arpack_eigsolver.h", "class__arpack__eigsolver_8h.html", [
-      [ "class_arpack_eigsolver", "classclass__arpack__eigsolver.html", "classclass__arpack__eigsolver" ]
+    [ "class_eigsolver_armadillo.cpp", "class__eigsolver__armadillo_8cpp.html", null ],
+    [ "class_eigsolver_armadillo.h", "class__eigsolver__armadillo_8h.html", [
+      [ "class_eigsolver_armadillo", "classclass__eigsolver__armadillo.html", "classclass__eigsolver__armadillo" ]
     ] ],
-    [ "class_elemental_eigsolver.cpp", "class__elemental__eigsolver_8cpp.html", null ],
-    [ "class_elemental_eigsolver.h", "class__elemental__eigsolver_8h.html", "class__elemental__eigsolver_8h" ],
+    [ "class_eigsolver_arpack.cpp", "class__eigsolver__arpack_8cpp.html", "class__eigsolver__arpack_8cpp" ],
+    [ "class_eigsolver_arpack.h", "class__eigsolver__arpack_8h.html", [
+      [ "class_eigsolver_arpack", "classclass__eigsolver__arpack.html", "classclass__eigsolver__arpack" ]
+    ] ],
+    [ "class_eigsolver_arpack_custom_products.cpp", "class__eigsolver__arpack__custom__products_8cpp.html", null ],
+    [ "class_eigsolver_arpack_custom_products.h", "class__eigsolver__arpack__custom__products_8h.html", "class__eigsolver__arpack__custom__products_8h" ],
     [ "class_svd_wrapper.cpp", "class__svd__wrapper_8cpp.html", null ],
     [ "class_svd_wrapper.h", "class__svd__wrapper_8h.html", [
       [ "class_SVD", "classclass___s_v_d.html", "classclass___s_v_d" ]

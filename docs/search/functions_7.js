@@ -12,9 +12,9 @@ var searchData=
   ['get_5fdatatype',['get_DataType',['../classclass__hdf5__file.html#a1b202884f5944b00f2a6ea51c8d07642',1,'class_hdf5_file']]],
   ['get_5fdimensions',['get_Dimensions',['../classclass__hdf5__file.html#a81292a0f79bc51480661b7e497595a69',1,'class_hdf5_file']]],
   ['get_5fdirection',['get_direction',['../classclass__finite__chain__sweeper.html#a412e1a5bfa7895a671fbe8d098824e1e',1,'class_finite_chain_sweeper']]],
-  ['get_5feig_5fvecs_5fvals',['get_eig_vecs_vals',['../classclass__arpack__eigsolver.html#a901d48b8b8e6f345cd6193f5b0fd8a3d',1,'class_arpack_eigsolver']]],
-  ['get_5feigvals',['get_eigvals',['../classclass__arpack__eigsolver.html#a3a59ae323f11d284e7fa70e0529d7f0e',1,'class_arpack_eigsolver']]],
-  ['get_5feigvecs',['get_eigvecs',['../classclass__arpack__eigsolver.html#afa740c119169e077bcef5c948fab4ee6',1,'class_arpack_eigsolver']]],
+  ['get_5feig_5fvecs_5fvals',['get_eig_vecs_vals',['../classclass__eigsolver__arpack.html#a6de40f577f22ac1ae1d2f2944a2db597',1,'class_eigsolver_arpack']]],
+  ['get_5feigvals',['get_eigvals',['../classclass__eigsolver__arpack.html#a5814daf6fe1286ce8fa9820880dba328',1,'class_eigsolver_arpack']]],
+  ['get_5feigvecs',['get_eigvecs',['../classclass__eigsolver__arpack.html#a85007c9df8f78269048e58b18079fdbc',1,'class_eigsolver_arpack']]],
   ['get_5fenergy_5fham',['get_energy_ham',['../classclass__measurement.html#a9c31123bca3ee1cfbb20a0cefa64f829',1,'class_measurement']]],
   ['get_5fenergy_5fmom',['get_energy_mom',['../classclass__measurement.html#aa8d220d9396ecb356dd5c985a01d0e83',1,'class_measurement']]],
   ['get_5fenergy_5fmpo',['get_energy_mpo',['../classclass__measurement.html#a2fe1b0bbf4b32394054703469999468d',1,'class_measurement']]],
@@ -61,8 +61,8 @@ var searchData=
   ['get_5fvariance_5fham',['get_variance_ham',['../classclass__measurement.html#a1810e42f02c78917577a7f2c07fee0b1',1,'class_measurement']]],
   ['get_5fvariance_5fmom',['get_variance_mom',['../classclass__measurement.html#a6407108a5386d9858f102000abefb316',1,'class_measurement']]],
   ['get_5fvariance_5fmpo',['get_variance_mpo',['../classclass__measurement.html#adc4a09e0648d331606ea0a00d84b5b51',1,'class_measurement']]],
-  ['getiter',['GetIter',['../classclass__arpack__eigsolver.html#a48756d34ab30642c839db63394b895d8',1,'class_arpack_eigsolver']]],
-  ['getnevfound',['GetNevFound',['../classclass__arpack__eigsolver.html#ac87a8a1c13dcbe648d65a77882eb2155',1,'class_arpack_eigsolver']]],
+  ['getiter',['GetIter',['../classclass__eigsolver__arpack.html#ab56f560102b1cf8010caa1b7639eee5c',1,'class_eigsolver_arpack']]],
+  ['getnevfound',['GetNevFound',['../classclass__eigsolver__arpack.html#a6f53e375ad79edab271742fcff610927',1,'class_eigsolver_arpack']]],
   ['gsl_5fquad',['gsl_quad',['../class_math_1_1gsl__quad.html#a871c78ede6e08a3bfa9f546600f4e3cd',1,'Math::gsl_quad']]],
   ['gsl_5fwrapper',['gsl_wrapper',['../class_math_1_1gsl__quad.html#af8090dd1a263ea88b73d508e60870fda',1,'Math::gsl_quad']]]
 ];

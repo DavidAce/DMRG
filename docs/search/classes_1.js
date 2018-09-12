@@ -2,9 +2,9 @@ var searchData=
 [
   ['class_5falgorithm_5fbase',['class_algorithm_base',['../classclass__algorithm__base.html',1,'']]],
   ['class_5falgorithm_5flauncher',['class_algorithm_launcher',['../classclass__algorithm__launcher.html',1,'']]],
-  ['class_5farpack_5feigsolver',['class_arpack_eigsolver',['../classclass__arpack__eigsolver.html',1,'']]],
   ['class_5fcustom_5fcout',['class_custom_cout',['../classclass__custom__cout.html',1,'']]],
-  ['class_5felemental_5feigsolver',['class_elemental_eigsolver',['../classclass__elemental__eigsolver.html',1,'']]],
+  ['class_5feigsolver_5farmadillo',['class_eigsolver_armadillo',['../classclass__eigsolver__armadillo.html',1,'']]],
+  ['class_5feigsolver_5farpack',['class_eigsolver_arpack',['../classclass__eigsolver__arpack.html',1,'']]],
   ['class_5fenvironment',['class_environment',['../classclass__environment.html',1,'']]],
   ['class_5fenvironment_5fstorage',['class_environment_storage',['../classclass__environment__storage.html',1,'']]],
   ['class_5fenvironment_5fvar',['class_environment_var',['../classclass__environment__var.html',1,'']]],

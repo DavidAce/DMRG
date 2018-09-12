@@ -106,11 +106,17 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__eigen__tensor.html">is_eigen_tensor</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__eigen__tensor_3_01_eigen_1_1_tensor_3_01_t_00_01_n_00_01_storage_order_01_4_01_4.html">is_eigen_tensor&lt; Eigen::Tensor&lt; T, N, StorageOrder &gt; &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__eigen__tensor_3_01_eigen_1_1_tensor_3_01_scalar_00_01rank_00_01storage_00_01_index_type_01_4_01_4.html">is_eigen_tensor&lt; Eigen::Tensor&lt; Scalar, rank, storage, IndexType &gt; &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__specialization.html">is_specialization</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__specialization_3_01_ref_3_01_args_8_8_8_01_4_00_01_ref_01_4.html">is_specialization&lt; Ref&lt; Args... &gt;, Ref &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__vector.html">is_vector</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1is__vector_3_01std_1_1vector_3_01_t_01_4_01_4.html">is_vector&lt; std::vector&lt; T &gt; &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_type_check_1_1print__type__and__exit__compile__time.html">print_type_and_exit_compile_time</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
@@ -157,6 +163,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a9db1936a588f77f1f13e313da75f9529"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a9db1936a588f77f1f13e313da75f9529"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#a9db1936a588f77f1f13e313da75f9529">is_eigen_matrix_or_array</a> ()</td></tr>
 <tr class="separator:a9db1936a588f77f1f13e313da75f9529"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f1389c4b1ca35b5c941cfdc99169149"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a4f1389c4b1ca35b5c941cfdc99169149"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::string_view&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_type_check.html#a4f1389c4b1ca35b5c941cfdc99169149">type_name</a> ()</td></tr>
+<tr class="separator:a4f1389c4b1ca35b5c941cfdc99169149"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="aec5001264b5239932d5e7e3d153216c0"></a>
@@ -362,6 +371,25 @@ template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">constexpr bool TypeCheck::is_eigen_matrix_or_array </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4f1389c4b1ca35b5c941cfdc99169149"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f1389c4b1ca35b5c941cfdc99169149">&#9670;&nbsp;</a></span>type_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr std::string_view TypeCheck::type_name </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
