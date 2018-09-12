@@ -6,13 +6,13 @@ import numpy as np
 # Use '@' as a wildcard to be replaced by the the copy number.
 
 template_filename = 'input_template.cfg'
-input_basename   = 'mbl_sg_'
+input_basename   = 'mbl_pm_'
 num_copies = 5000
 
 
 find_replace = {
-    "model::selfdual_tf_rf_ising::J_log_mean"     : '2     ',
-    "model::selfdual_tf_rf_ising::h_log_mean"     : '0.01  ',
+    "model::selfdual_tf_rf_ising::J_log_mean"     : '1     ',
+    "model::selfdual_tf_rf_ising::h_log_mean"     : '-5  ',
     "model::selfdual_tf_rf_ising::J_sigma"        : '1     ',
     "model::selfdual_tf_rf_ising::h_sigma"        : '1     ',
     "model::selfdual_tf_rf_ising::lambda"         : '0.2   ',
