@@ -38,21 +38,21 @@ else()
             PATHS "/usr/lib/x86_64-linux-gnu"
             NO_DEFAULT_PATH
             )
-#    find_library(LAPACK_openblas_LIBRARY
-#            NAMES liblapacke.a
-#            PATHS "/usr/lib/x86_64-linux-gnu"
-#            NO_DEFAULT_PATH
-#            )
+    #    find_library(LAPACK_openblas_LIBRARY
+    #            NAMES liblapacke.a
+    #            PATHS "/usr/lib/x86_64-linux-gnu"
+    #            NO_DEFAULT_PATH
+    #            )
     find_path(BLAS_INCLUDE_DIRS
             NAMES cblas.h
             PATHS "/usr/include" "/usr/include/x86_64-linux-gnu"
             NO_DEFAULT_PATH
             )
-#    find_path(LAPACK_INCLUDE_DIRS
-#            NAMES lapacke.h
-#            PATHS "/usr/include" "/usr/include/x86_64-linux-gnu"
-#            NO_DEFAULT_PATH
-#            )
+    #    find_path(LAPACK_INCLUDE_DIRS
+    #            NAMES lapacke.h
+    #            PATHS "/usr/include" "/usr/include/x86_64-linux-gnu"
+    #            NO_DEFAULT_PATH
+    #            )
     if (BLAS_openblas_LIBRARY)
         set(OpenBLAS_MULTITHREADED 1 )
     endif()
@@ -61,12 +61,12 @@ endif()
 
 
 if(BLAS_openblas_LIBRARY)
-    message(STATUS "BLAS FOUND    : ${BLAS_openblas_LIBRARY}")
-    message(STATUS "BLAS INCLUDE  : ${BLAS_INCLUDE_DIRS}")
+    message(STATUS "BLAS FOUND IN SYSTEM: ${BLAS_openblas_LIBRARY}")
+    message(STATUS "                      ${BLAS_INCLUDE_DIRS}")
 
 
-#    message(STATUS "LAPACK FOUND IN SYSTEM: ${LAPACK_openblas_LIBRARY}")
-#    message(STATUS "                        ${LAPACK_INCLUDE_DIRS}")
+    #    message(STATUS "LAPACK FOUND IN SYSTEM: ${LAPACK_openblas_LIBRARY}")
+    #    message(STATUS "                        ${LAPACK_INCLUDE_DIRS}")
 
     #For convenience, define these variables
     add_library(blas STATIC IMPORTED)
@@ -78,18 +78,18 @@ if(BLAS_openblas_LIBRARY)
 
 else()
     message(STATUS "OpenBLAS will be installed into ${INSTALL_DIRECTORY}/OpenBLAS on first build.")
-    set(OpenBLAS_MULTITHREADED 0 )
+    set(OpenBLAS_MULTITHREADED 1 )
     set(OpenBLAS_USE_OPENMP 0) # Openmp doesnt work on clang it seems
     include(ExternalProject)
     ExternalProject_Add(library_OpenBLAS
             GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
-            GIT_TAG             v0.3.0
+            GIT_TAG             v0.3.3
             PREFIX              "${INSTALL_DIRECTORY}/OpenBLAS"
             UPDATE_COMMAND ""
             TEST_COMMAND ""
             CONFIGURE_COMMAND ""
             BUILD_IN_SOURCE 1
-            BUILD_COMMAND $(MAKE) USE_THREAD=${OpenBLAS_MULTITHREADED} USE_OPENMP=${OpenBLAS_USE_OPENMP} OPENBLAS_NUM_THREADS=1 NUM_THREADS=1 BINARY64=1 QUIET_MAKE=1 TARGET=NEHALEM
+            BUILD_COMMAND $(MAKE) USE_THREAD=${OpenBLAS_MULTITHREADED} USE_OPENMP=${OpenBLAS_USE_OPENMP} OPENBLAS_NUM_THREADS=8 NUM_THREADS=8 BINARY64=1 QUIET_MAKE=1 TARGET=CORE2
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             DEPENDS gfortran
             )
@@ -132,9 +132,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${BLAS_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${LAPACK_INCLUDE_DIRS})
 if(OpenBLAS_MULTITHREADED)
     target_link_libraries(${PROJECT_NAME} PRIVATE -lpthread)
-    list(APPEND BLAS_LIBRARIES        "-lpthread")
-    list(APPEND BLAS_LIBRARIES_STATIC "-lpthread")
-    list(APPEND BLAS_LIBRARIES_SHARED "-lpthread")
+    #    list(APPEND BLAS_LIBRARIES        "-lpthread")
+    #    list(APPEND BLAS_LIBRARIES_STATIC "-lpthread")
+    #    list(APPEND BLAS_LIBRARIES_SHARED "-lpthread")
     set(EXTRA_LDLAGS "-lpthread")
 endif()
 add_definitions(-DOpenBLAS_AVAILABLE)
