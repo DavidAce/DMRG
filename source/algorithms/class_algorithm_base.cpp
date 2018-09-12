@@ -93,7 +93,7 @@ void class_algorithm_base::check_convergence_using_slope(
                                    bool &has_converged){
     //Check convergence based on slope.
     // We want to check once every "rate" steps
-    unsigned long min_data_points = 3;
+    unsigned long min_data_points = 5;
     unsigned long max_data_points = std::max(min_data_points+1, (unsigned long) (iteration*0.4));
     // Get the iteration number when you last measured.
     int last_measurement = X_vec.empty() ? 0 : X_vec.back();

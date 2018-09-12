@@ -128,19 +128,19 @@ private:
                                        bool &has_converged);
     std::list<double> V_mpo_vec;
     std::list<int>    X_mpo_vec;
-    double V_mpo_slope;
+    double V_mpo_slope = 1;
 
     std::list<double> V_ham_vec;
     std::list<int>    X_ham_vec;
-    double V_ham_slope;
+    double V_ham_slope = 1;
 
     std::list<double> V_mom_vec;
     std::list<int>    X_mom_vec;
-    double V_mom_slope;
+    double V_mom_slope = 1;
 
     std::list<double> S_vec;
     std::list<int>    X2_vec;
-    double S_slope;
+    double S_slope = 1;
 
 
 };

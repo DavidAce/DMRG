@@ -32,8 +32,8 @@ namespace settings{
     int    model::tf_nn_ising::d         = 2;                             /*!< Local spin dimension */
 
     //Parameters for the selfdual transvese-field random-field next-neighbor Ising model
-    double model::selfdual_tf_rf_ising::J_mu       = 0;                  /*!< Average ferromagnetic coupling strength.*/
-    double model::selfdual_tf_rf_ising::h_mu       = 0;                  /*!< Average transverse magnetic field strength */
+    double model::selfdual_tf_rf_ising::J_log_mean = 0;                  /*!< Average ferromagnetic coupling strength.*/
+    double model::selfdual_tf_rf_ising::h_log_mean = 0;                  /*!< Average transverse magnetic field strength */
     double model::selfdual_tf_rf_ising::J_sigma    = 1;                  /*!< Standard deviation for the lognormal distribution, i.e. = std(log(J)) , for the ferromagnetic coupling */
     double model::selfdual_tf_rf_ising::h_sigma    = 0;                  /*!< Standard deviation for the lognormal distribution, i.e. = std(log(h))   for the transverse magnetic field */
     double model::selfdual_tf_rf_ising::lambda     = 0;                  /*!< Lambda parameter */
@@ -136,12 +136,12 @@ void settings::load_from_file(class_file_reader &indata){
     model::tf_nn_ising::d               = indata.find_parameter<int>    ("model::tf_nn_ising::d" , model::tf_nn_ising::d);
     model::tf_nn_ising::w               = indata.find_parameter<double> ("model::tf_nn_ising::w" , model::tf_nn_ising::w);
 
-    model::selfdual_tf_rf_ising::J_mu     = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::J_mu"    , model::selfdual_tf_rf_ising::J_mu);
-    model::selfdual_tf_rf_ising::h_mu     = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::h_mu"    , model::selfdual_tf_rf_ising::h_mu);
-    model::selfdual_tf_rf_ising::J_sigma  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::J_sigma" , model::selfdual_tf_rf_ising::J_sigma);
-    model::selfdual_tf_rf_ising::h_sigma  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::h_sigma" , model::selfdual_tf_rf_ising::h_sigma);
-    model::selfdual_tf_rf_ising::lambda   = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::lambda"  , model::selfdual_tf_rf_ising::lambda);
-    model::selfdual_tf_rf_ising::d        = indata.find_parameter<int>    ("model::selfdual_tf_rf_ising::d"       , model::selfdual_tf_rf_ising::d);
+    model::selfdual_tf_rf_ising::J_log_mean  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::J_log_mean"    , model::selfdual_tf_rf_ising::J_log_mean);
+    model::selfdual_tf_rf_ising::h_log_mean  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::h_log_mean"    , model::selfdual_tf_rf_ising::h_log_mean);
+    model::selfdual_tf_rf_ising::J_sigma     = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::J_sigma" , model::selfdual_tf_rf_ising::J_sigma);
+    model::selfdual_tf_rf_ising::h_sigma     = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::h_sigma" , model::selfdual_tf_rf_ising::h_sigma);
+    model::selfdual_tf_rf_ising::lambda      = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::lambda"  , model::selfdual_tf_rf_ising::lambda);
+    model::selfdual_tf_rf_ising::d           = indata.find_parameter<int>    ("model::selfdual_tf_rf_ising::d"       , model::selfdual_tf_rf_ising::d);
 
     //Parmaters that control eigensolver and SVD precision
     precision::eigMaxIter               = indata.find_parameter<int>    ("precision::eigMaxIter"  , precision::eigMaxIter);
