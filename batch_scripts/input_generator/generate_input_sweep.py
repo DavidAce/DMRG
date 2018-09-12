@@ -32,7 +32,6 @@ for J in J_log_mean:
             })
             num_total  = num_total + 1
         num_batch = num_batch + 1
-print(settings)
 
 generate_input_files(settings, input_filenames, template_filename,location)
 
