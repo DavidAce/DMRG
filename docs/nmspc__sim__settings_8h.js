@@ -62,6 +62,7 @@ var nmspc__sim__settings_8h =
     [ "store_freq", "nmspc__sim__settings_8h.html#afd27dd67424734dce3e200a58249dced", null ],
     [ "store_freq", "nmspc__sim__settings_8h.html#aa947e223663c15a475a4650741718f52", null ],
     [ "store_freq", "nmspc__sim__settings_8h.html#a3c66599f28990469f0fd69cc4d082b60", null ],
+    [ "store_profiling", "nmspc__sim__settings_8h.html#a3a924e552714e72960c05d985249e9f5", null ],
     [ "suzuki_order", "nmspc__sim__settings_8h.html#a9ab41edc8a8f73a40977b6969865c644", null ],
     [ "SVDThreshold", "nmspc__sim__settings_8h.html#a79627ee70c6488a43b5ad3ca27caa92e", null ],
     [ "timestamp", "nmspc__sim__settings_8h.html#a82c11e45aadd82f57643ef3624d2e7be", null ],

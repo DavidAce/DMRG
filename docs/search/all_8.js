@@ -31,6 +31,5 @@ var searchData=
   ['hdf5_5fset_5fdataset_5fname',['hdf5_set_dataset_name',['../classclass__hdf5__dataset__buffer.html#a8f6dafc1717d7c4eb37589e5a240d20c',1,'class_hdf5_dataset_buffer']]],
   ['hdf5_5fset_5fgroup_5fname',['hdf5_set_group_name',['../classclass__hdf5__dataset__buffer.html#ab6603975e266ff33fec2414baafdc6c3',1,'class_hdf5_dataset_buffer']]],
   ['hdf5_5fset_5fiteration',['hdf5_set_iteration',['../classclass__hdf5__dataset__buffer.html#a7f8b7c8f7545cd9c7dfa6dbc10c8f649',1,'class_hdf5_dataset_buffer']]],
-  ['hdf5_5fset_5fwidth',['hdf5_set_width',['../classclass__hdf5__dataset__buffer.html#a7850b0f2a4d369dd5fe17b0d40bd3f07',1,'class_hdf5_dataset_buffer']]],
-  ['high',['HIGH',['../class__elemental__eigsolver_8h.html#a8613287991e02b68162dcc37689cf095ab89de3b4b81c4facfac906edf29aec8c',1,'class_elemental_eigsolver.h']]]
+  ['hdf5_5fset_5fwidth',['hdf5_set_width',['../classclass__hdf5__dataset__buffer.html#a7850b0f2a4d369dd5fe17b0d40bd3f07',1,'class_hdf5_dataset_buffer']]]
 ];
