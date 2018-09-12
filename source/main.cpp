@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     int num_threads = 1;
     #ifdef OpenBLAS_AVAILABLE
         openblas_set_num_threads(num_threads);
-        std::cout << "Using OpenBLAS with " << num_threads << " thread(s)" << std::endl;
+        std::cout << "Using OpenBLAS with " << openblas_get_num_threads() << " thread(s)" << std::endl;
     #endif
 
     #ifdef MKL_AVAILABLE
