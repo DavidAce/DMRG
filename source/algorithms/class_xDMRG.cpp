@@ -346,6 +346,7 @@ void class_xDMRG::store_chain_entry_to_file(){
 
 void class_xDMRG::check_convergence_overall(){
     if(not env_storage->position_is_the_middle()){return;}
+    if(iteration < 5){return;}
     t_con.tic();
     check_convergence_entanglement(1e-6);
     check_convergence_variance_mpo(1e-6);
