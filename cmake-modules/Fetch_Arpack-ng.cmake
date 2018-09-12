@@ -29,7 +29,7 @@ if(ARPACK_LIBRARIES)
     set_target_properties(arpack
             PROPERTIES
             IMPORTED_LOCATION "${ARPACK_LIBRARIES}"
-            INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran"
+            INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran;-lpthread"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
             )
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
