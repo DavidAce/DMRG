@@ -133,6 +133,7 @@ set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
 #include(cmake-modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake-modules/FindGFortran.cmake)
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
+#include(cmake-modules/FindLAPACKE.cmake)
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data_struct.
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
@@ -172,6 +173,7 @@ message("=======================================================================
 message("    INTEL MKL:   ${MKL_LIBRARIES}")
 message("    BLAS     :   ${BLAS_LIBRARIES}")
 message("    LAPACK   :   ${LAPACK_LIBRARIES}")
+message("    LAPACKE  :   ${LAPACKE_LIBRARIES}")
 message("    EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
 message("    ARMADILLO:   ${ARMADILLO_INCLUDE_DIRS}")
 message("    HDF5     :   ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES}")

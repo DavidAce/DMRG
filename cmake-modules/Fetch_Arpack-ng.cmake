@@ -3,12 +3,14 @@
 
 message(STATUS "SEARCHING FOR ARPACK IN SYSTEM...")
 find_library(ARPACK_LIBRARIES
-        NAMES arpack libarpack.a libarpack2.a
-        PATH_SUFFIXES lib lib32 lib64
+        NAMES libarpack.a
+        PATHS /usr/lib/x86_64-linux-gnu/
         )
 
 if (NOT ARPACK_LIBRARIES)
     # Try finding arpack as module library
+    message(STATUS "SEARCHING FOR ARPACK IN LOADED MODULES")
+
     find_library(ARPACK_LIBRARIES
             NAMES arpack
             PATHS "$ENV{ARPACK_DIR}/lib"
@@ -32,6 +34,7 @@ if(ARPACK_LIBRARIES)
             )
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} PRIVATE -lpthread)
 
     return()
 else()
@@ -74,7 +77,6 @@ else()
             -DEXTRA_LDLAGS=${EXTRA_LDLAGS_GENERATOR}
             DEPENDS blas lapack gfortran
             )
-
     ExternalProject_Get_Property(library_ARPACK INSTALL_DIR)
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
     add_library(arpack STATIC IMPORTED)
@@ -82,6 +84,7 @@ else()
             PROPERTIES
             IMPORTED_LOCATION "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX}"
             INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran"
+            INTERFACE_LINK_FLAGS            "-lpthread"
             INTERFACE_INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
     add_dependencies(arpack library_ARPACK blas lapack gfortran )
