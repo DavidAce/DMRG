@@ -6,6 +6,6 @@ build/
 tmp/
 libs/
 doxygen_log.txt
-**/condor_logs/*
 test*.cfg
-batch_scripts/logs/*
+*.log
+*.err
