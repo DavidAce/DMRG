@@ -44,8 +44,8 @@ namespace settings {
 
         //Parameters for the selfdual transvese-field random-field next-neighbor Ising model
         namespace selfdual_tf_rf_ising {
-            extern double       J_mu          ;                 /*!< Average ferromagnetic coupling strength.*/
-            extern double       h_mu          ;                 /*!< Average transverse magnetic field strength */
+            extern double       J_log_mean    ;                 /*!< Average ferromagnetic coupling strength.*/
+            extern double       h_log_mean    ;                 /*!< Average transverse magnetic field strength */
             extern double       J_sigma       ;                 /*!< Standard deviation for the lognormal distribution, i.e. = std(log(J)) , for the ferromagnetic coupling */
             extern double       h_sigma       ;                 /*!< Standard deviation for the lognormal distribution, i.e. = std(log(h))   for the transverse magnetic field */
             extern double       lambda        ;                 /*!< Lambda parameter */
