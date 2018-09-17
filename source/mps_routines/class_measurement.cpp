@@ -376,9 +376,9 @@ double class_measurement::get_energy_mpo(){return energy_mpo;}
 double class_measurement::get_energy_ham(){return energy_ham;}
 double class_measurement::get_energy_mom(){return energy_mom;}
 
-double class_measurement::get_variance_mpo(){return variance_mpo;}
-double class_measurement::get_variance_ham(){return variance_ham;}
-double class_measurement::get_variance_mom(){return variance_mom;}
+double class_measurement::get_variance_mpo(){return std::abs(variance_mpo);}
+double class_measurement::get_variance_ham(){return std::abs(variance_ham);}
+double class_measurement::get_variance_mom(){return std::abs(variance_mom);}
 
 double class_measurement::get_entanglement_entropy(){
     compute_entanglement_entropy();
@@ -396,6 +396,7 @@ double class_measurement::get_parity(){
 
 long class_measurement::get_chi(){
     return superblock->MPS->chiC();
+//    return superblock->MPS->chiC();
 }
 
 long class_measurement::get_chain_length(){

@@ -13,7 +13,7 @@ location    = "../input/"
 
 copies     = 500    #Number of copies for each point on the sweep
 J_log_mean = {1}
-h_log_mean = range(-5,5,1)
+h_log_mean = np.arange(6,-5,-1)
 
 settings = []
 input_filenames = []
