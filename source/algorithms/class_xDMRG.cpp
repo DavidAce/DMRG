@@ -51,9 +51,9 @@ void class_xDMRG::run() {
     find_energy_range();
     while(true) {
         if(iteration < full_iters){
-            single_xDMRG_step(xDMRG_Mode::FULL   ,chi_max_temp);
+            single_xDMRG_step(xDMRG_Mode::FULL);
         }else{
-            single_xDMRG_step(xDMRG_Mode::PARTIAL, chi_max_temp);
+            single_xDMRG_step(xDMRG_Mode::PARTIAL);
         }
 
         env_storage_overwrite_local_ALL();
@@ -78,7 +78,7 @@ void class_xDMRG::run() {
 
 }
 
-void class_xDMRG::single_xDMRG_step(xDMRG_Mode mode , long chi_max) {
+void class_xDMRG::single_xDMRG_step(xDMRG_Mode mode) {
 /*!
  * \fn void single_DMRG_step(class_superblock &superblock)
  */
@@ -87,17 +87,20 @@ void class_xDMRG::single_xDMRG_step(xDMRG_Mode mode , long chi_max) {
     Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
     switch (mode){
         case xDMRG_Mode::FULL:
-            chi_max = std::min(chi_max,12l);
             theta = find_state_with_greatest_overlap_full_diag(theta);
+            t_opt.toc();
+            t_svd.tic();
+            superblock->truncate_MPS(theta, 12, settings::precision::SVDThreshold);
+            t_svd.toc();
             break;
         case xDMRG_Mode::PARTIAL:
             theta = find_state_with_greatest_overlap_part_diag(theta);
+            t_opt.toc();
+            t_svd.tic();
+            superblock->truncate_MPS(theta, chi_temp, settings::precision::SVDThreshold);
+            t_svd.toc();
             break;
     }
-    t_opt.toc();
-    t_svd.tic();
-    superblock->truncate_MPS(theta, chi_max, settings::precision::SVDThreshold);
-    t_svd.toc();
     measurement->set_not_measured();
     t_sim.toc();
 }
@@ -189,7 +192,6 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 //    if (env_storage->position_is_the_middle() and max_overlap > overlap_threshold and offset < 0.01 * (energy_max-energy_min)){energy_target = energy_now;}
     return Textra::Matrix_to_Tensor(theta_res, theta.dimensions());
 }
-
 
 
 void class_xDMRG::initialize_chain() {
@@ -346,14 +348,13 @@ void class_xDMRG::store_chain_entry_to_file(){
 
 void class_xDMRG::check_convergence_overall(){
     if(not env_storage->position_is_the_middle()){return;}
-    if(iteration < 5){return;}
+//    if(iteration < 5){return;}
     t_con.tic();
-    check_convergence_entanglement(1e-8);
-    check_convergence_variance_mpo(1e-8);
-    check_convergence_bond_dimension();
+    check_convergence_variance_mpo();
+    check_convergence_entanglement();
+    update_bond_dimension();
     if(entanglement_has_converged and
-       variance_mpo_has_converged and
-       bond_dimension_has_converged)
+       variance_mpo_has_converged )
     {
         simulation_has_converged = true;
     }

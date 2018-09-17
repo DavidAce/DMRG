@@ -55,13 +55,17 @@ public:
     int    print_freq   ;
     int    store_freq   ;
     int    seed       = 1;
-    long   chi_max_temp   = 4;
+    long   chi_temp   = 4;
     bool   simulation_has_converged = false;
-    bool   bond_dimension_has_converged = false;
+    bool   bond_dimension_has_reached_max = false;
     bool   entanglement_has_converged = false;
+    bool   entanglement_has_saturated = false;
     bool   variance_mpo_has_converged = false;
+    bool   variance_mpo_has_saturated = false;
     bool   variance_ham_has_converged = false;
+    bool   variance_ham_has_saturated = false;
     bool   variance_mom_has_converged = false;
+    bool   variance_mom_has_saturated = false;
 
 
 
@@ -78,12 +82,13 @@ public:
     void single_DMRG_step(long chi_max, Ritz ritz = Ritz::SR);
 
     virtual void check_convergence_overall();
-    void check_convergence_variance_mpo(double threshold = -1.0);
-    void check_convergence_variance_ham(double threshold = -1.0);
-    void check_convergence_variance_mom(double threshold = -1.0);
-    void check_convergence_entanglement(double threshold = -1.0);
-    void check_convergence_bond_dimension();
-    void clear_convergence_checks();
+    static constexpr double quietNaN = std::numeric_limits<double>::quiet_NaN();
+    void check_convergence_variance_mpo(double threshold = quietNaN, double slope_threshold = quietNaN);
+    void check_convergence_variance_ham(double threshold = quietNaN, double slope_threshold = quietNaN);
+    void check_convergence_variance_mom(double threshold = quietNaN, double slope_threshold = quietNaN);
+    void check_convergence_entanglement(double slope_threshold = quietNaN);
+    void update_bond_dimension();
+    void clear_saturation_status();
 
     void initialize_state(std::string initial_state);
 
@@ -119,13 +124,13 @@ public:
     class_tic_toc t_con;
 
 private:
-    void check_convergence_using_slope(std::list<double> &Y_vec,
-                                       std::list<int> &X_vec,
-                                       double new_data,
-                                       int    rate,
-                                       double tolerance,
-                                       double &slope,
-                                       bool &has_converged);
+    void check_saturation_using_slope(std::list<double> &Y_vec,
+                                      std::list<int> &X_vec,
+                                      double new_data,
+                                      int rate,
+                                      double tolerance,
+                                      double &slope,
+                                      bool &has_saturated);
     std::list<double> V_mpo_vec;
     std::list<int>    X_mpo_vec;
     double V_mpo_slope = 1;
@@ -139,7 +144,7 @@ private:
     double V_mom_slope = 1;
 
     std::list<double> S_vec;
-    std::list<int>    X2_vec;
+    std::list<int>    XS_vec;
     double S_slope = 1;
 
 

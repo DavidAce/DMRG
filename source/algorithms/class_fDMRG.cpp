@@ -34,7 +34,7 @@ void class_fDMRG::run() {
     t_tot.tic();
     initialize_chain();
     while(true) {
-        single_DMRG_step(chi_max_temp);
+        single_DMRG_step(chi_temp);
         env_storage_overwrite_local_ALL();         //Needs to occurr after update_MPS...
         store_table_entry_to_file();
         store_chain_entry_to_file();
@@ -75,10 +75,10 @@ void class_fDMRG::check_convergence_overall(){
     t_con.tic();
     check_convergence_entanglement();
     check_convergence_variance_mpo();
-    check_convergence_bond_dimension();
+    update_bond_dimension();
     if(entanglement_has_converged and
        variance_mpo_has_converged and
-       bond_dimension_has_converged)
+       bond_dimension_has_reached_max)
     {
         simulation_has_converged = true;
     }

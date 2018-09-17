@@ -28,7 +28,7 @@ void class_iDMRG::run() {
     ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
     t_tot.tic();
     while(iteration < max_steps){// and not simulation_has_converged){
-        single_DMRG_step(chi_max_temp);
+        single_DMRG_step(chi_temp);
         print_status_update();
         store_table_entry_to_file();
         store_profiling_to_file();

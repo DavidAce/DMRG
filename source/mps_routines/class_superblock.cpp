@@ -124,9 +124,9 @@ Eigen::Tensor<Scalar, 4> class_superblock::evolve_MPS(const Eigen::Tensor<Scalar
 //============================================================================//
 // Do SVD decomposition, truncation and normalization of the MPS->
 //============================================================================//
-Eigen::Tensor<Scalar,4> class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta,long chi_max_, double SVDThreshold){
+Eigen::Tensor<Scalar,4> class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta,long chi_, double SVDThreshold){
     SVD->setThreshold(SVDThreshold);
-    auto[U, S, V] = SVD->schmidt(theta,chi_max_);
+    auto[U, S, V] = SVD->schmidt(theta,chi_);
     MPS->truncation_error = SVD->get_truncation_error();
     MPS->LC  = S;
     Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(MPS->MPS_A->get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
@@ -137,9 +137,9 @@ Eigen::Tensor<Scalar,4> class_superblock::truncate_MPS(const Eigen::Tensor<Scala
     return MPS->get_theta();
 }
 
-void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const std::shared_ptr<class_mps_2site> &MPS_out,long chi_max_, double SVDThreshold){
+void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const std::shared_ptr<class_mps_2site> &MPS_out,long chi_, double SVDThreshold){
     SVD->setThreshold(SVDThreshold);
-    auto[U, S, V] = SVD->schmidt(theta, chi_max_);
+    auto[U, S, V] = SVD->schmidt(theta, chi_);
     MPS_out->truncation_error = SVD->get_truncation_error();
     MPS_out->LC  = S;
     Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(MPS_out->MPS_A->get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
