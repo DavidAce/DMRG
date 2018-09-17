@@ -41,10 +41,15 @@ namespace settings{
 
 
 
-    int    precision::eigMaxIter         = 1000   ;
-    double precision::eigThreshold       = 1e-12  ;
-    int    precision::eigMaxNcv          = 16      ;
-    double precision::SVDThreshold       = 1e-12  ;
+    int    precision::eigMaxIter                   = 1000  ;
+    double precision::eigThreshold                 = 1e-12 ;
+    int    precision::eigMaxNcv                    = 16    ;
+    double precision::SVDThreshold                 = 1e-12 ;
+    double precision::VarConvergenceThreshold      = 1e-8  ;            /*!< Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value */
+    double precision::VarSaturationThreshold       = 1e-4  ;            /*!< Variance saturation  threshold. The variance has saturated when its (absolute) slope reaches below this value */
+    double precision::EntEntrSaturationThreshold   = 1e-4  ;            /*!< Entanglement Entropy saturation threshold. The entanglement entropy has saturated when its (absolute) slope reaches below this value*/
+
+
 
     //Parameters controlling infinite-DMRG
     bool   idmrg::on                     = true;
@@ -144,10 +149,13 @@ void settings::load_from_file(class_file_reader &indata){
     model::selfdual_tf_rf_ising::d           = indata.find_parameter<int>    ("model::selfdual_tf_rf_ising::d"       , model::selfdual_tf_rf_ising::d);
 
     //Parmaters that control eigensolver and SVD precision
-    precision::eigMaxIter               = indata.find_parameter<int>    ("precision::eigMaxIter"  , precision::eigMaxIter);
-    precision::eigThreshold             = indata.find_parameter<double> ("precision::eigThreshold", precision::eigThreshold);
-    precision::eigMaxNcv                = indata.find_parameter<int>    ("precision::eigMaxNcv"   , precision::eigMaxNcv);
-    precision::SVDThreshold             = indata.find_parameter<double> ("precision::eigThreshold", precision::SVDThreshold);
+    precision::eigMaxIter                  = indata.find_parameter<int>    ("precision::eigMaxIter"  , precision::eigMaxIter);
+    precision::eigThreshold                = indata.find_parameter<double> ("precision::eigThreshold", precision::eigThreshold);
+    precision::eigMaxNcv                   = indata.find_parameter<int>    ("precision::eigMaxNcv"   , precision::eigMaxNcv);
+    precision::SVDThreshold                = indata.find_parameter<double> ("precision::eigThreshold", precision::SVDThreshold);
+    precision::VarConvergenceThreshold     = indata.find_parameter<double> ("precision::VarConvergenceThreshold"   , precision::VarConvergenceThreshold);
+    precision::VarSaturationThreshold      = indata.find_parameter<double> ("precision::VarSaturationThreshold"    , precision::VarSaturationThreshold);
+    precision::EntEntrSaturationThreshold  = indata.find_parameter<double> ("precision::EntEntrSaturationThreshold", precision::EntEntrSaturationThreshold);
 
     //Parameters controlling infinite-DMRG
     idmrg::on                           = indata.find_parameter<bool>   ("idmrg::on"         , idmrg::on);

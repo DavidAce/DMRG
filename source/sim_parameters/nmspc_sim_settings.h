@@ -53,12 +53,15 @@ namespace settings {
         }
     }
 
-    //Parmaters that control eigensolver and SVD precision
+    //Parmaters that control MPS, eigensolver and SVD precision
     namespace precision {
         extern int      eigMaxIter   ;                      /*!< Maximum number of steps for eigenvalue solver. */
         extern double   eigThreshold ;                      /*!< Minimum threshold for halting eigenvalue solver. */
         extern int      eigMaxNcv  ;                        /*!< Parameter controlling the column space? of the Lanczos solver. */
         extern double   SVDThreshold ;                      /*!< Minimum threshold value for keeping singular values. */
+        extern double   VarConvergenceThreshold ;           /*!< Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value */
+        extern double   VarSaturationThreshold ;            /*!< Variance saturation  threshold. The variance has saturated when its (absolute) slope reaches below this value */
+        extern double   EntEntrSaturationThreshold;         /*!< Entanglement Entropy saturation threshold. The entanglement entropy has saturated when its (absolute) slope reaches below this value*/
     }
 
     //Parameters controlling iDMRG
