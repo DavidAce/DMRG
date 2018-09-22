@@ -21,6 +21,7 @@
 #include <Eigen/Sparse>
 #include <Eigen/Eigenvalues>
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_quantum_mechanics.h>
 #include "class_xDMRG.h"
 
 using namespace std;
@@ -47,12 +48,14 @@ void class_xDMRG::run() {
     set_random_fields_in_chain_mpo();
     std::cout << "Parameters on the finite chain: \n" <<std::endl;
     env_storage->print_hamiltonians();
-    int full_iters = 2;
+    int full_iters = 5;
     find_energy_range();
     while(true) {
         if(iteration < full_iters){
+            if(iteration == 0 and env_storage->position_is_the_middle()){std::cout << "--FULL DIAGONALIZATION MODE--" << std::endl;}
             single_xDMRG_step(xDMRG_Mode::FULL);
         }else{
+            if(iteration == full_iters and env_storage->position_is_the_middle()){std::cout << "--PARTIAL DIAGONALIZATION MODE--" << std::endl;}
             single_xDMRG_step(xDMRG_Mode::PARTIAL);
         }
 
@@ -64,10 +67,15 @@ void class_xDMRG::run() {
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if(iteration >= max_sweeps or simulation_has_converged) {break;}
+        if(env_storage->position_is_the_middle()) {
+            check_convergence_all();
+            if (iteration >= full_iters and (iteration >= max_sweeps or simulation_has_converged)) {
+                break;
+            }
+        }
+
         enlarge_environment(env_storage->get_direction());
         env_storage_move();
-        check_convergence_overall();
         iteration = env_storage->get_sweeps();
     }
     t_tot.toc();
@@ -90,7 +98,7 @@ void class_xDMRG::single_xDMRG_step(xDMRG_Mode mode) {
             theta = find_state_with_greatest_overlap_full_diag(theta);
             t_opt.toc();
             t_svd.tic();
-            superblock->truncate_MPS(theta, 12, settings::precision::SVDThreshold);
+            superblock->truncate_MPS(theta, std::min(12l,chi_temp), settings::precision::SVDThreshold);
             t_svd.toc();
             break;
         case xDMRG_Mode::PARTIAL:
@@ -110,6 +118,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 //    Eigen::Tensor<Scalar,1> theta = superblock->MPS->get_theta().reshape(superblock->shape1);
     long shape = theta.size();
     double L   = env_storage->get_length();
+    t_ham.tic();
     Eigen::Tensor<Scalar,2> H_local  =
             superblock->Lblock->block
                     .contract(superblock->HA->MPO      , Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
@@ -119,12 +128,14 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                     .reshape(Textra::array2{shape, shape});
     assert(H_local.dimension(0) == shape);
     assert(H_local.dimension(1) == shape);
-
+    t_ham.toc();
     //Sparcity seems to be about 5-15%. Better to do dense.
     class_eigsolver_armadillo solver;
     Eigen::VectorXd  eigvals(shape);
     Eigen::MatrixXcd eigvecs(shape,shape);
+    t_eig.tic();
     solver.eig_sym(shape, H_local.data(), eigvals.data(), eigvecs.data());
+    t_eig.toc();
     Eigen::Map<Textra::VectorType<Scalar>> theta_vector (theta.data(),shape);
     Textra::VectorType<double> overlaps = (theta_vector.conjugate().transpose() * eigvecs).cwiseAbs();
     long best_state;
@@ -147,6 +158,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overlap_part_diag(Eigen::Tensor<Scalar,4> &theta) {
     long shape = theta.size();
     double L    = env_storage->get_length();
+    t_ham.tic();
     Eigen::Tensor<Scalar,2> H_local  =
             superblock->Lblock->block
                     .contract(superblock->HA->MPO      , Textra::idx({2},{0}))//  idx<3>({1,2,3},{0,4,5}))
@@ -156,40 +168,60 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                     .reshape(Textra::array2{shape, shape});
     assert(H_local.dimension(0) == shape);
     assert(H_local.dimension(1) == shape);
+    t_ham.toc();
 
 
-    int nev = std::min((int)(shape/4), 1);
-    int ncv = std::min((int)(shape/2), nev*2);
-    class_eigsolver_arpack<std::complex<double>> arpack_solver;
+    class_eigsolver_arpack<std::complex<double>, Form::GENERAL> arpack_solver;
     Eigen::VectorXcd eigvals;
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd overlaps;
     Eigen::Map<Textra::VectorType<Scalar>> theta_vector (theta.data(),shape);
     Textra::VectorType <Scalar> theta_res = theta_vector;
+    int nev = std::min((int)(shape/4), 1);
+    int ncv = std::min((int)(shape/2), nev*2);
     long best_state_idx;
     double max_overlap;
     double offset;
-    double overlap_threshold = 0.6; //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
+    double overlap_threshold = 0.60; //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
     for (int iter = 0; iter  <  2; iter++){
+        t_eig.tic();
         arpack_solver.eig_shift_invert(H_local.data(), shape, nev,ncv,energy_now*L, Ritz::LM, true,true, theta_res.data());
+        t_eig.toc();
         eigvals         = Eigen::Map<const Eigen::VectorXcd> (arpack_solver.get_eigvals().data(),arpack_solver.GetNevFound());
         eigvecs         = Eigen::Map<const Eigen::MatrixXcd> (arpack_solver.get_eigvecs().data(),arpack_solver.Rows(),arpack_solver.Cols());
         overlaps        = (theta_vector.conjugate().transpose() * eigvecs).cwiseAbs();
         max_overlap     = overlaps.maxCoeff(&best_state_idx);
         offset          = energy_target - eigvals(best_state_idx).real()/L;
-        theta_res       = eigvecs.col(best_state_idx);
-//        std::cout << "Max overlap: " << std::setprecision(10) << max_overlap << "  nev: " << setw(3)<< nev << "  energy offset: " << offset << " (target = " << energy_target << ") position: " << env_storage->get_position() << std::endl;
+
+
+
         if(max_overlap >= overlap_threshold){break;}
+//        overlap_threshold  *= 0.8;
         nev = std::min((int)(shape/4), nev*4);
         ncv = std::min((int)(shape/2), nev*2);
     }
-    if( overlaps.maxCoeff() < 1e-2){
-        std::cerr << "Failed to find a great eigenstate! Choosing state closest in energy instead." << std::endl;
-        (eigvals.array() - energy_target*L).cwiseAbs().minCoeff(&best_state_idx);
+//    if( overlaps.maxCoeff() < 1e-2){
+//        std::cerr << "Failed to find a great eigenstate! Choosing state closest in energy instead." << std::endl;
+//        (eigvals.array() - energy_target*L).cwiseAbs().minCoeff(&best_state_idx);
+////        theta_res       = eigvecs.col(best_state_idx);
+//
+//    }
+    if(max_overlap <  overlap_threshold){
+        std::cerr << "WARNING: Partial diagonlization -- Overlap very small: " << std::setprecision(10) << max_overlap << "  nev: " << setw(3)<< nev << ") position: " << env_storage->get_position() << std::endl;
     }
-    energy_now = eigvals(best_state_idx).real()/L;
-    energy_target = energy_now;
-//    if (env_storage->position_is_the_middle() and max_overlap > overlap_threshold and offset < 0.01 * (energy_max-energy_min)){energy_target = energy_now;}
+
+    energy_now      = eigvals(best_state_idx).real()/L;
+    theta_res       = eigvecs.col(best_state_idx);
+
+    double energy_ubound = energy_target + 0.05*(energy_max-energy_min);
+    double energy_lbound = energy_target - 0.05*(energy_max-energy_min);
+    if(energy_now < energy_lbound or energy_now > energy_ubound){
+        std::cerr << "WARNING: Partial diagonlization -- Energy far from mid-spectrum: " << "Energy =  " << energy_now << " | target = " << energy_target << std::endl;
+    }
+
+
+//    energy_target = energy_now;
+//    if (env_storage->position_is_the_middle()){energy_target = energy_now;}
     return Textra::Matrix_to_Tensor(theta_res, theta.dimensions());
 }
 
@@ -207,17 +239,49 @@ void class_xDMRG::initialize_chain() {
 }
 
 
-void class_xDMRG::reset_chain_mps_to_random_product_state() {
+void class_xDMRG::reset_chain_mps_to_random_product_state(std::string parity) {
     std::cout << "Resetting to random product state" << std::endl;
     assert(env_storage->get_length() == max_length);
 
     iteration = env_storage->reset_sweeps();
+
+
+
     while(true) {
         // Random product state
-        long chiA = superblock->MPS->chiA();
-        long chiB = superblock->MPS->chiB();
+//        long chiA = superblock->MPS->chiA();
+//        long chiB = superblock->MPS->chiB();
+        long chiA = 1;
+        long chiB = 1;
         long d    = superblock->HA->get_spin_dimension();
-        Eigen::Tensor<Scalar,4> theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
+        Eigen::Tensor<Scalar,4> theta;
+        Eigen::MatrixXcd vecs1(2,2);
+        Eigen::MatrixXcd vecs2(2,2);
+
+        if (parity == "none"){
+            theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
+        }else{
+            if (parity == "sx"){
+                vecs1.col(0) = qm::spinOneHalf::sx_eigvecs[0];
+                vecs1.col(1) = qm::spinOneHalf::sx_eigvecs[1];
+            }else if (parity == "sz"){
+                vecs1.col(0) = qm::spinOneHalf::sz_eigvecs[0];
+                vecs1.col(1) = qm::spinOneHalf::sz_eigvecs[1];
+            }else if (parity == "sy"){
+                vecs1.col(0) = qm::spinOneHalf::sy_eigvecs[0];
+                vecs1.col(1) = qm::spinOneHalf::sy_eigvecs[1];
+            }else{
+                std::cerr << "Invalid parity name" << std::endl;
+                exit(1);
+            }
+
+            if(rn::uniform_double_1() < 0.5){
+                theta = Textra::Matrix_to_Tensor(vecs1,d,chiA,d,chiB);
+            }else{
+                theta = Textra::Matrix_to_Tensor(vecs2,d,chiA,d,chiB);
+            }
+
+        }
         //Get a properly normalized initial state.
         superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
         env_storage_overwrite_local_ALL();
@@ -298,9 +362,8 @@ void class_xDMRG::find_energy_range() {
     std::cout << "Energy maximum (per site) = " << energy_max << std::endl;
     std::cout << "Energy_at_site:             " << energy_now << std::endl;
     std::cout << "Energy target (per site)  = " << energy_target << std::endl;
-    reset_chain_mps_to_random_product_state();
+    reset_chain_mps_to_random_product_state("none");
 }
-
 
 void class_xDMRG::store_table_entry_to_file(){
     if (Math::mod(iteration, store_freq) != 0) {return;}
@@ -346,15 +409,14 @@ void class_xDMRG::store_chain_entry_to_file(){
     t_sto.toc();
 }
 
-void class_xDMRG::check_convergence_overall(){
+void class_xDMRG::check_convergence_all(){
     if(not env_storage->position_is_the_middle()){return;}
 //    if(iteration < 5){return;}
     t_con.tic();
     check_convergence_variance_mpo();
-    check_convergence_entanglement();
+//    check_convergence_entanglement();
     update_bond_dimension();
-    if(entanglement_has_converged and
-       variance_mpo_has_converged )
+    if(variance_mpo_has_converged )
     {
         simulation_has_converged = true;
     }
@@ -391,6 +453,8 @@ void class_xDMRG::print_profiling_sim(class_tic_toc &t_parent){
         std::cout << "\n Simulation breakdown:" << std::endl;
         std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
         t_opt.print_time_w_percent(t_parent);
+        t_eig.print_time_w_percent(t_parent);
+        t_ham.print_time_w_percent(t_parent);
         t_svd.print_time_w_percent(t_parent);
         t_env.print_time_w_percent(t_parent);
         t_mps.print_time_w_percent(t_parent);

@@ -81,7 +81,7 @@ public:
     void print_status_full();
     void single_DMRG_step(long chi_max, Ritz ritz = Ritz::SR);
 
-    virtual void check_convergence_overall();
+    virtual void check_convergence_all();
     static constexpr double quietNaN = std::numeric_limits<double>::quiet_NaN();
     void check_convergence_variance_mpo(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_variance_ham(double threshold = quietNaN, double slope_threshold = quietNaN);
@@ -111,6 +111,8 @@ public:
 
     class_tic_toc t_tot;
     class_tic_toc t_opt;
+    class_tic_toc t_eig;
+    class_tic_toc t_ham;
     class_tic_toc t_sim;
     class_tic_toc t_svd;
     class_tic_toc t_env;

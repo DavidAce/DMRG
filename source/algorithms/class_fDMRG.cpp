@@ -41,12 +41,17 @@ void class_fDMRG::run() {
         store_profiling_to_file();
         print_status_update();
 
+
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if(iteration >= max_sweeps or simulation_has_converged) {break;}
+        if(env_storage->position_is_the_middle()) {
+            check_convergence_all();
+            if (iteration >= max_sweeps or simulation_has_converged) {
+                break;
+            }
+        }
         enlarge_environment(env_storage->get_direction());
         env_storage_move();
-        check_convergence_overall();
         iteration = env_storage->get_sweeps();
     }
     t_tot.toc();
@@ -70,7 +75,7 @@ void class_fDMRG::initialize_chain() {
     }
 }
 
-void class_fDMRG::check_convergence_overall(){
+void class_fDMRG::check_convergence_all(){
     if(not env_storage->position_is_the_middle()){return;}
     t_con.tic();
     check_convergence_entanglement();

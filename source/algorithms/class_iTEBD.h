@@ -32,7 +32,7 @@ public:
     void single_TEBD_step(long chi_max);
     void initialize_constants()                         override;
     void check_convergence_time_step();
-    void check_convergence_overall()                    override;
+    void check_convergence_all()                    override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
     void store_table_entry_to_file()                    override;

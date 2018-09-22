@@ -1,6 +1,6 @@
 add_executable(arpack++_simple_test_target tests/arpack++_simple_test.cpp)
 set_target_properties(arpack++_simple_test_target PROPERTIES OUTPUT_NAME  arpack++_simple_test)
-target_link_libraries(arpack++_simple_test_target  PRIVATE  arpack++ arpack blas lapack gfortran)
+target_link_libraries(arpack++_simple_test_target  PRIVATE  arpack++ arpack blas lapack gfortran -lpthread)
 #target_link_libraries(arpack++_simple_test_target PRIVATE arpack++)
 #target_link_libraries(arpack++_simple_test_target PRIVATE arpack)
 #target_link_libraries(arpack++_simple_test_target PRIVATE blas)

@@ -2,6 +2,7 @@
 // Created by david on 2018-01-18.
 //
 
+#include <fstream>
 #include <complex>
 #include "class_algorithm_base.h"
 #include <IO/class_hdf5_file.h>
@@ -17,6 +18,7 @@
 #include <general/nmspc_random_numbers.h>
 #include <general/class_svd_wrapper.h>
 #include <algorithms/table_types.h>
+
 
 namespace s = settings;
 using namespace std;
@@ -65,7 +67,7 @@ void class_algorithm_base::single_DMRG_step(long chi_max, Ritz ritz){
 
 
 
-void class_algorithm_base::check_convergence_overall(){
+void class_algorithm_base::check_convergence_all(){
     t_con.tic();
     check_convergence_entanglement();
 //    check_convergence_variance_mpo();
@@ -103,15 +105,15 @@ void class_algorithm_base::check_saturation_using_slope(
     // It's time to check. Insert current numbers and remove old ones
     Y_vec.push_back(new_data);
     X_vec.push_back(iteration);
-    unsigned long min_data_points = 6;
+    unsigned long min_data_points = 2;
     if (Y_vec.size() < min_data_points){return;}
-    auto check_from =  (unsigned long)(X_vec.size()*0.50);
-    while (X_vec.size() - check_from < min_data_points){
+    auto check_from =  (unsigned long)(X_vec.size()*0.25);
+    while (X_vec.size() - check_from < min_data_points and check_from > 0){
         check_from -=1;
     }
 
 
-    double n = Y_vec.size() - check_from;
+    double n = X_vec.size() - check_from;
     double numerator = 0.0;
     double denominator = 0.0;
 
@@ -137,27 +139,49 @@ void class_algorithm_base::check_saturation_using_slope(
     double var = diffsq / n;
     double standard_deviation = std::sqrt(var);
     slope = std::abs(numerator / denominator);
+    bool reason1 = false;
+    bool reason2 = false;
+//    bool reason3 = false;
+    //Scale the tolerance so that it is relative to the size of the values in question.
+    double relative_tolerance = tolerance * avgY;
 
-    if (slope < tolerance ) {
+    if (slope < relative_tolerance ) {
         //If the average slope is very close to zero
         has_saturated = true;
-    }else if(slope < 0.01*avgY and standard_deviation > 0.25 * avgY ){
-        // If the average growth per iteration is about 1%, and the "noise" is large.
+        reason1 = true;
+    }
+
+    if(slope  <  10*relative_tolerance and standard_deviation > 0.25 * avgY and check_from > 0){
+        // If the slope is not too large but still larger than the tolerance.
+        // AND the "noise" is large.
         // This happens when chi is too small. Then we say that the quantity has saturated
         // because "it can't get better with given chi".
         has_saturated = true;
+        reason2 = true;
+
     }
-
-//    std::cout   << "slope                : " << numerator / denominator
-//                << " \ntolerance            : " << tolerance
-//                << " \nstandard_deviation   : " << standard_deviation
-//                << " \navgY                 : " << avgY
-//                << " \nhas_saturated        : " << has_saturated
-//                << " \nbecause"
-//                << " \nreason 1             :" << std::boolalpha << (slope < tolerance)
-//                << " \nreason 2             :" << std::boolalpha << (slope < 0.01*avgY and standard_deviation > 0.25 * avgY)
-//                << std::endl;
-
+//    if(slope < 0.01*avgY   and standard_deviation > 0.25 * avgY ){
+//        // If the average change per iteration is about 1%,
+//        // AND the "noise" is large.
+//        // This happens when chi is too small. Then we say that the quantity has saturated
+//        // because "it can't get better with given chi".
+//        has_saturated = true;
+//        reason3 = true;
+//    }
+    if (settings::console::verbosity >= 2 and has_saturated) {
+        std::cout << setprecision(16);
+        std::cout << "change per step      : " << slope                 << std::endl
+                  << "relative_tolerance   : " << relative_tolerance    << std::endl
+                  << "standard_deviation   : " << standard_deviation    << std::endl
+                  << "avgY                 : " << avgY                  << std::endl
+                  << "check from           : "<< check_from             << std::endl
+                  << "because"                                          << std::endl
+                  << "has_saturated        : " << has_saturated         << std::endl
+                  << "reason 1             : " << std::boolalpha << reason1 << std::endl
+                  << "reason 2             : " << std::boolalpha << reason2 << std::endl
+//                  << " \nreason 3             :" << std::boolalpha << reason3
+                  << std::endl;
+    }
 }
 
 void class_algorithm_base::check_convergence_variance_mpo(double threshold,double slope_threshold){
@@ -165,7 +189,6 @@ void class_algorithm_base::check_convergence_variance_mpo(double threshold,doubl
     // We want to check every time we can because the variance is expensive to compute.
     threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
-
     check_saturation_using_slope(V_mpo_vec,
                                  X_mpo_vec,
                                  measurement->get_variance_mpo(),
@@ -237,7 +260,7 @@ void class_algorithm_base::update_bond_dimension(){
        and variance_mpo_has_saturated
        and chi_temp < chi_max
        and measurement->get_chi() == chi_temp){
-        chi_temp = std::min(chi_max, chi_temp + 4);
+        chi_temp = std::min(chi_max, (long)(chi_temp * 2));
         std::cout << "New chi = " << chi_temp << std::endl;
         clear_saturation_status();
     }
@@ -256,15 +279,17 @@ void class_algorithm_base::clear_saturation_status(){
     X_ham_vec.clear();
     V_mom_vec.clear();
     X_mom_vec.clear();
-    simulation_has_converged        = false;
-    entanglement_has_converged      = false;
+
     entanglement_has_saturated      = false;
-    variance_mpo_has_converged      = false;
     variance_mpo_has_saturated      = false;
-    variance_ham_has_converged      = false;
     variance_ham_has_saturated      = false;
-    variance_mom_has_converged      = false;
     variance_mom_has_saturated      = false;
+//    simulation_has_converged        = false;
+//    entanglement_has_converged      = false;
+//    variance_mpo_has_converged      = false;
+//    variance_ham_has_converged      = false;
+//    variance_mom_has_converged      = false;
+
 }
 
 
@@ -520,6 +545,31 @@ void class_algorithm_base::env_storage_move(){
 }
 
 
+double process_memory_in_mb(std::string name){
+    ifstream filestream("/proc/self/status");
+    std::string line;
+    while (std::getline(filestream, line)){
+        std::istringstream is_line(line);
+        std::string key;
+        if (std::getline(is_line, key, ':')){
+            if (key == name){
+                std::string value_str;
+                if (std::getline(is_line, value_str)) {
+                    // Extract the number
+                    std::string::size_type sz;   // alias of size_t
+                    int value = std::stoi (value_str,&sz);
+                    // Now we have the value in kb
+                    return value/1000.0;
+//                    auto pos = value.find_first_not_of(" \t");
+//                    auto trimmed_value = value.substr(pos != std::string::npos ? pos : 0);
+//                    return trimmed_value;
+                }
+            }
+        }
+    }
+
+    return -1.0;
+}
 void class_algorithm_base::print_status_update() {
     if (Math::mod(iteration, print_freq) != 0) {return;}
     if (not env_storage->position_is_the_middle()) {return;}
@@ -568,14 +618,14 @@ void class_algorithm_base::print_status_update() {
     ccout(1) << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << measurement->get_entanglement_entropy();
     ccout(1) << left  << "χmax: "                       << setw(4)  << setprecision(3)     << fixed   << chi_max;
     ccout(1) << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << measurement->get_chi();
-    ccout(1) << left  << "log₁₀ truncation: "           << setw(12) << setprecision(4)     << fixed   << log10(measurement->get_truncation_error());
-    ccout(1) << left  << "Chain length: "               << setw(12) << setprecision(1)     << fixed   << measurement->get_chain_length();
+    ccout(1) << left  << "log₁₀ truncation: "           << setw(10) << setprecision(4)     << fixed   << log10(measurement->get_truncation_error());
+    ccout(1) << left  << "Chain length: "               << setw(6)  << setprecision(1)     << fixed   << measurement->get_chain_length();
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(1) << left  << "Pos: "                    << setw(6)  << env_storage->get_position();
-            ccout(1) << left  << "Dir: "                    << setw(3)  << env_storage->get_direction();
-            ccout(1) << left  << "Sweep: "                  << setw(4)  << env_storage->get_sweeps();
+            ccout(1) << left  << "@ site: "                    << setw(5)  << env_storage->get_position();
+            //ccout(1) << left  << "Dir: "                    << setw(3)  << env_storage->get_direction();
+            //ccout(1) << left  << "Sweep: "                  << setw(4)  << env_storage->get_sweeps();
             break;
         case SimulationType::iTEBD:
 //            ccout(1) << left  << "δt: "               << setw(13) << setprecision(12)    << fixed   << delta_t;
@@ -583,17 +633,25 @@ void class_algorithm_base::print_status_update() {
         default:
             break;
     }
-    ccout(1) << left  << " - Convergence ";
-    ccout(1) << left  << " S-"  << std::boolalpha << entanglement_has_converged;
+    ccout(1) << left  << " Convergence [";
+    ccout(1) << left  << " S-"  << std::boolalpha << setw(6) << entanglement_has_converged;
     switch(sim_type){
         case SimulationType::iDMRG:
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(1) << left  << " σ²-"  << std::boolalpha << variance_mpo_has_converged;
+            ccout(1) << left  << " σ²-"  << std::boolalpha << setw(6) << variance_mpo_has_converged;
             break;
         case SimulationType::iTEBD:
             break;
     }
+    ccout(1) << left  << "]";
+
+    ccout(1) << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << t_tot.get_age() ;
+
+    ccout(1) << left << " Memory [";
+    ccout(1) << left << "RAM: "   << process_memory_in_mb("VmRSS") << " MB ";
+    ccout(1) << left << "VM: " << process_memory_in_mb("VmSize")<< " MB";
+    ccout(1) << left << "]";
 
 
     ccout(1) << std::endl;
@@ -671,6 +729,10 @@ void class_algorithm_base::print_status_full(){
             ccout(0)  << setw(20) << "σ² MOM slope         = " << setprecision(16) << fixed      << V_mom_slope  << " " << std::boolalpha << variance_mom_has_converged << std::endl;
             break;
     }
+
+    ccout(0) << setw(20) << "Time                 = " << setw(10) << setprecision(2)    << fixed   << t_tot.get_age()  << std::endl;
+    ccout(0) << setw(20) << "Peak memory          = " << process_memory_in_mb("VmPeak") << " MB" << std::endl;
+
     std::cout << std::endl;
     t_prt.toc();
 }
@@ -685,7 +747,9 @@ void class_algorithm_base::set_profiling_labels() {
     t_obs.set_properties(on, precision,"↳ Computing observables  ");
     t_sim.set_properties(on, precision,"↳+Simulation             ");
     t_evo.set_properties(on, precision,"↳ Time Evolution         ");
-    t_opt.set_properties(on, precision,"↳ Optimize MPS           ");
+    t_opt.set_properties(on, precision,"↳+Optimize MPS           ");
+    t_eig.set_properties(on, precision," ↳ Eigenvalue solver     ");
+    t_ham.set_properties(on, precision," ↳ Build Hamiltonian     ");
     t_svd.set_properties(on, precision,"↳ SVD Truncation         ");
     t_udt.set_properties(on, precision,"↳ Update Timestep        ");
     t_env.set_properties(on, precision,"↳ Update Environments    ");

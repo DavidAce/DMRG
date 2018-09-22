@@ -84,12 +84,11 @@ else()
             PROPERTIES
             IMPORTED_LOCATION "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX}"
             INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran"
-            INTERFACE_LINK_FLAGS            "-lpthread"
-            INTERFACE_INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
+            INTERFACE_LINK_FLAGS            "-lpthread")
 
     add_dependencies(arpack library_ARPACK blas lapack gfortran )
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack )
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
     #For convenience, define these variables
-    get_target_property(ARPACK_LIBRARIES arpack INTERFACE_LINK_LIBRARIES)
+    get_target_property(ARPACK_LIBRARIES arpack IMPORTED_LOCATION)
 endif()

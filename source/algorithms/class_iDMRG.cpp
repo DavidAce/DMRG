@@ -33,7 +33,7 @@ void class_iDMRG::run() {
         store_table_entry_to_file();
         store_profiling_to_file();
         enlarge_environment();
-        check_convergence_overall();
+        check_convergence_all();
         swap();
         iteration++;
     }

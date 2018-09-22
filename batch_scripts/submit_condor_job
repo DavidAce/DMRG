@@ -5,6 +5,21 @@ executable = ../build/Release/DMRG++
 arguments  = $(inputfiles)
 
 
+
+
+########################################################
+# List your CPU, MEMORY and DISK requirements below.
+# Note that numeric requirements are not enclosed by "".
+# * cpus are the number of
+# * memory in units of MB
+# * disk in units of MB
+########################################################
+require_cpus   = 1
+require_memory = 1000
+require_disk   = 200
+
+
+
 ########################################################
 # List your requirements below. Uncomment to activate.
 # Note that numeric requirements are not enclosed by "".
