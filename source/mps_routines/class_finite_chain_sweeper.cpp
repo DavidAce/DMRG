@@ -75,6 +75,9 @@ int class_finite_chain_sweeper::insert(){
     MPO_L.emplace_back      (superblock->HA->clone());
     MPO_R.emplace_front     (superblock->HB->clone());
     update_current_length();
+    superblock->HA->set_position((int)MPO_L.size());
+    superblock->HB->set_position((int)MPO_L.size()+1);
+
     int pos = 0;
     for (auto &MPO : MPO_L){
         MPO->set_position(pos++);
@@ -284,6 +287,25 @@ void class_finite_chain_sweeper::write_chain_to_file() {
         hdf5->write_dataset(Textra::to_RowMajor(env2.block), sim_name + "/chain/ENV2/R_" + std::to_string(counter));
         hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/R_" + std::to_string(counter++), env2.size, "sites");
     }
+
+    // Write relevant quantities
+    std::vector<double> entanglement_entropies;
+    for (auto &mps : get_MPS_L()){
+        Eigen::Tensor<Scalar,0> SA  = -mps.get_L().square()
+                .contract(mps.get_L().square().log().eval(), idx({0},{0}));
+        entanglement_entropies.push_back(std::real(SA(0)));
+    }
+    Eigen::Tensor<Scalar,0> SA  = -get_MPS_C().square()
+            .contract(get_MPS_C().square().log().eval(), idx({0},{0}));
+    entanglement_entropies.push_back(std::real(SA(0)));
+    for (auto &mps : get_MPS_R()){
+        Eigen::Tensor<Scalar,0> SA  = -mps.get_L().square()
+                .contract(mps.get_L().square().log().eval(), idx({0},{0}));
+        entanglement_entropies.push_back(std::real(SA(0)));
+    }
+    hdf5->write_dataset(entanglement_entropies ,sim_name + "/chain/OTHER/ENT_ENTR");
+
+
 }
 
 
@@ -350,7 +372,7 @@ int class_finite_chain_sweeper::get_sweeps()    const {return sweeps;}
 int class_finite_chain_sweeper::get_length()    const {return (int)(MPS_L.size() + MPS_R.size());}
 int class_finite_chain_sweeper::get_position()  const {return max_length_is_set ? (int)(MPS_L.size() - 1) : 0 ;}
 bool class_finite_chain_sweeper::position_is_the_middle() {
-    return max_length_is_set ? (unsigned) get_position() + 1 == max_length / 2 and direction == 1: true ;
+    return max_length_is_set ? (unsigned) get_position() + 1 == (unsigned)(max_length / 2.0) and direction == 1: true ;
 }
 bool class_finite_chain_sweeper::position_is_the_left_edge(){
     return get_position() == 0;
