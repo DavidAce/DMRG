@@ -10,8 +10,8 @@ find_path(ARMADILLO_INCLUDE_DIRS
         )
 endif()
 if(ARMADILLO_INCLUDE_DIRS)
-    message(STATUS "ARMADILLO found in system: ${ARMADILLO_LIBRARIES}")
-    add_library(armadillo STATIC IMPORTED)
+    message(STATUS "ARMADILLO found in system: ${ARMADILLO_INCLUDE_DIRS}")
+    add_library(armadillo INTERFACE)
 endif()
 
 # Install from source if not found
