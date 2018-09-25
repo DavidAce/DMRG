@@ -4,8 +4,9 @@ PROGNAME=$0
 usage() {
   cat << EOF >&2
 
-Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t <target>]
+Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t <target>] [-a <march>]
 
+-a               : Choose microarchitecture for cxx and openblas. | core2 | nehalem | sandybridge | haswell | (default = haswell)
 -c               : Clear CMake files before build (delete ./build)
 -h               : Help. Shows this text.
 -j <num_threads> : Number of threads used by CMake
@@ -22,13 +23,14 @@ mode="Release"
 clear_cmake=""
 clear_libs=""
 threads="4"
-
+march="haswell"
 #export CC=gcc
 #export CXX=g++
 #export FC=gfortran
 
-while getopts chj:lm:t: o; do
+while getopts a:chj:lm:t: o; do
     case $o in
+	(a) march=$OPTARG;;
         (c) clear_cmake="true";;
         (h) usage ;;
         (j) threads=$OPTARG;;
@@ -77,11 +79,16 @@ fi
 
 
 echo "Starting Build"
+echo "Micro arch.     :   $march"
 echo "Target          :   $target"
 echo "Build threads   :   $threads"
 echo "Mode            :   $mode"
 
+
+module load openblas_${march}_v0.3.3
+
+
 cmake -E make_directory build/$mode
 cd build/$mode
-cmake -DCMAKE_BUILD_TYPE=$mode -G "CodeBlocks - Unix Makefiles" ../../
+cmake -DCMAKE_BUILD_TYPE=$mode -DMARCH=$march  -G "CodeBlocks - Unix Makefiles" ../../
 cmake --build . --target $target -- -j $threads

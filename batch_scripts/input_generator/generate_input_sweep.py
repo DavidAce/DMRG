@@ -11,11 +11,11 @@ basename    = 'mbl_'
 location    = "../input/"
 settings = []
 input_filenames = []
-realizations = np.arange(0,500,1)  # Number of copies for each point on the sweep
+realizations = np.arange(0,4,1)  # Number of copies for each point on the sweep
 J_log_mean = [1]
-h_log_mean = np.arange(4, -2.5, -0.5)
-lambdas = np.arange(0, 1.1, 0.1)
-num_total  = 0
+h_log_mean = np.flipud(np.arange(-3, 3.5, 0.5))
+lambdas = [0] #np.arange(0, 1.1, 0.1)
+num_total = 0
 
 for num_l in range(len(lambdas)):
     for num_j in range(len(J_log_mean)):

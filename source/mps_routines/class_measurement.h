@@ -82,6 +82,7 @@ private:
     explicit class_measurement(std::shared_ptr<class_superblock> superblock_, SimulationType sim_);
     explicit class_measurement(std::shared_ptr<class_superblock> superblock_, std::shared_ptr<class_finite_chain_sweeper> env_storage_, SimulationType sim_);
     void   compute_all_observables_from_superblock();
+    void   compute_all_observables_from_superblock(const Eigen::Tensor<Scalar,4> &theta);
     void   compute_all_observables_from_finite_chain();
 
     double get_energy_mpo();               /*! Computes the current energy.*/
