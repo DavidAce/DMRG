@@ -89,7 +89,7 @@ else()
             TEST_COMMAND ""
             CONFIGURE_COMMAND ""
             BUILD_IN_SOURCE 1
-            BUILD_COMMAND $(MAKE) USE_THREAD=${OpenBLAS_MULTITHREADED} USE_OPENMP=${OpenBLAS_USE_OPENMP} OPENBLAS_NUM_THREADS=8 NUM_THREADS=8 BINARY64=1 QUIET_MAKE=1 TARGET=CORE2
+            BUILD_COMMAND $(MAKE) USE_THREAD=${OpenBLAS_MULTITHREADED} USE_OPENMP=${OpenBLAS_USE_OPENMP} OPENBLAS_NUM_THREADS=8 NUM_THREADS=8 BINARY64=1 QUIET_MAKE=1 TARGET=${OPENBLAS_MARCH}
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             DEPENDS gfortran
             )
@@ -114,28 +114,30 @@ set_target_properties(blas PROPERTIES
         IMPORTED_LOCATION               "${BLAS_LIBRARIES}"
         INTERFACE_LINK_LIBRARIES        "${BLAS_LIBRARIES};gfortran"
         INTERFACE_INCLUDE_DIRECTORY     "${BLAS_INCLUDE_DIRS}"
-        INTERFACE_LINK_FLAGS            ""
-        INTERFACE_COMPILE_OPTIONS       ""
+        INTERFACE_LINK_FLAGS            "-lpthread"
         )
 
 set_target_properties(lapack PROPERTIES
         IMPORTED_LOCATION               "${LAPACK_LIBRARIES}"
         INTERFACE_LINK_LIBRARIES        "${LAPACK_LIBRARIES};gfortran"
         INTERFACE_INCLUDE_DIRECTORY     "${LAPACK_INCLUDE_DIRS}"
-        INTERFACE_LINK_FLAGS            ""
-        INTERFACE_COMPILE_OPTIONS       ""
+        INTERFACE_LINK_FLAGS            "-lpthread"
         )
 
 
-target_link_libraries(${PROJECT_NAME} PRIVATE blas lapack)
+target_link_libraries(${PROJECT_NAME} PRIVATE blas lapack )
 target_include_directories(${PROJECT_NAME} PRIVATE ${BLAS_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${LAPACK_INCLUDE_DIRS})
 if(OpenBLAS_MULTITHREADED)
     target_link_libraries(${PROJECT_NAME} PRIVATE -lpthread)
+#    target_link_libraries(${PROJECT_NAME} PRIVATE -lomp -lpthread )
+#    target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp=libomp)
     #    list(APPEND BLAS_LIBRARIES        "-lpthread")
     #    list(APPEND BLAS_LIBRARIES_STATIC "-lpthread")
     #    list(APPEND BLAS_LIBRARIES_SHARED "-lpthread")
-    set(EXTRA_LDLAGS "-lpthread")
+#    set(EXTRA_LDLAGS "-lpthread")
+    # Fortran linker arguments
+    set(FC_LDLAGS "-lpthread")
 endif()
 add_definitions(-DOpenBLAS_AVAILABLE)
 

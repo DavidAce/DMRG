@@ -60,7 +60,7 @@ fs::path class_file_reader::find_input_file(const fs::path &given_path) {
     }
     ccout(1) << "Searching recursively for file [" << given_path.filename() << "] in folder: " << recurse_from_path << std::endl;
     for(auto& p: fs::recursive_directory_iterator(recurse_from_path)) {
-//        std::cout << "Trying path: " << p.path() << std::endl;
+        std::cout << "Trying path: " << p.path() << std::endl;
         if (p.path().filename() == given_path.filename()  ) {
             if(check_if_input_file_exists(p)) {
                 return fs::canonical(p.path());

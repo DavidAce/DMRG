@@ -31,10 +31,11 @@ if(ARPACK_LIBRARIES)
             IMPORTED_LOCATION "${ARPACK_LIBRARIES}"
             INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran;-lpthread"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
+            INTERFACE_LINK_FLAGS            "-fopenmp=libomp"
             )
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} PRIVATE -lpthread)
+#    target_link_libraries(${PROJECT_NAME} PRIVATE -lpthread)
 
     return()
 else()
@@ -47,7 +48,7 @@ else()
     ####################################################################
     string (REPLACE ";" "$<SEMICOLON>" BLAS_LIBRARIES_GENERATOR     "${BLAS_LIBRARIES}")
     string (REPLACE ";" "$<SEMICOLON>" LAPACK_LIBRARIES_GENERATOR   "${LAPACK_LIBRARIES}")
-    string (REPLACE ";" "$<SEMICOLON>" EXTRA_LDLAGS_GENERATOR       "${EXTRA_LDLAGS}")
+    string (REPLACE ";" "$<SEMICOLON>" FC_LDLAGS_GENERATOR          "${FC_LDLAGS}")
     ####################################################################
 
     include(ExternalProject)
@@ -60,7 +61,7 @@ else()
 #            BUILD_IN_SOURCE 1
 #            CONFIGURE_COMMAND
 #                ./bootstrap &&
-#                ./configure --prefix=<INSTALL_DIR>
+#                ./configure --prefix=<INSTALL_DIR> --enable-silent-rules --with-blas=${BLAS_LIBRARIES_GENERATOR} --with-lapack=${LAPACK_LIBRARIES_GENERATOR}
 #            BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} && ${CMAKE_MAKE_PROGRAM} check
 #            INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install
 
@@ -74,7 +75,7 @@ else()
             -DBUILD_SHARED_LIBS=OFF
             -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR};
             -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES_GENERATOR}
-            -DEXTRA_LDLAGS=${EXTRA_LDLAGS_GENERATOR}
+            -DEXTRA_LDLAGS=${FC_LDLAGS_GENERATOR}
             DEPENDS blas lapack gfortran
             )
     ExternalProject_Get_Property(library_ARPACK INSTALL_DIR)
@@ -84,10 +85,12 @@ else()
             PROPERTIES
             IMPORTED_LOCATION "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX}"
             INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran"
-            INTERFACE_LINK_FLAGS            "-lpthread")
+            INTERFACE_LINK_FLAGS            "-lpthread"
+            )
+#            INTERFACE_LINK_FLAGS      )
 
     add_dependencies(arpack library_ARPACK blas lapack gfortran )
-    target_link_libraries(${PROJECT_NAME} PRIVATE arpack )
+    target_link_libraries(${PROJECT_NAME} PRIVATE arpack -lpthread)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
     #For convenience, define these variables
     get_target_property(ARPACK_LIBRARIES arpack IMPORTED_LOCATION)
