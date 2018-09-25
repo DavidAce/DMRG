@@ -90,6 +90,8 @@ Eigen::MatrixXcd class_selfdual_tf_rf_ising::single_site_hamiltonian(
 
 
 std::unique_ptr<class_hamiltonian_base> class_selfdual_tf_rf_ising::clone() const {return std::make_unique<class_selfdual_tf_rf_ising>(*this);}
+
+
 void   class_selfdual_tf_rf_ising::set_reduced_energy(double site_energy)         {e_reduced = site_energy;}
 int    class_selfdual_tf_rf_ising::get_spin_dimension()                        const {return spin_dim;}
 //double class_selfdual_tf_rf_ising::get_energy_reduced()                        const {return e_reduced;}

@@ -36,7 +36,7 @@ if(BLAS_LIBRARIES)
 #        list(APPEND EIGEN3_COMPILER_FLAGS) # -Wno-unused-but-set-variable
     endif()
     if(MKL_FOUND)
-        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_MKL_ALL)
+#        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_MKL_ALL)
         message(STATUS "Eigen3 will use MKL")
     else()
         list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_BLAS)
@@ -49,6 +49,6 @@ set_target_properties(EIGEN3 PROPERTIES
         INTERFACE_COMPILE_OPTIONS       "${EIGEN3_COMPILER_FLAGS}"
         )
 target_link_libraries(${PROJECT_NAME} PRIVATE EIGEN3)
-# Add SYSTEM flag to suppress warnings
+# Add SYSTEM fla1660g to suppress warnings
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${EIGEN3_INCLUDE_DIR})
 target_compile_options(${PROJECT_NAME} PRIVATE ${EIGEN3_COMPILER_FLAGS})

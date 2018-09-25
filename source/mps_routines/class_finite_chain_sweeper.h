@@ -53,7 +53,7 @@ public:
 private:
     std::list<class_vidal_mps>  MPS_L;  /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
     std::list<class_vidal_mps>  MPS_R;  /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
-    Eigen::Tensor<Scalar,1>    MPS_C;  //Current center bond matrix;
+    Eigen::Tensor<Scalar,1>     MPS_C;  //Current center bond matrix;
     std::list<class_environment> ENV_L;
     std::list<class_environment> ENV_R;
     std::list<class_environment_var> ENV2_L;
@@ -135,6 +135,15 @@ public:
     const auto & get_ENV2_L()const {return std::as_const(ENV2_L);}
     const auto & get_ENV2_R()const {return std::as_const(ENV2_R);}
 
+    auto & ref_MPS_L() {return MPS_L;}
+    auto & ref_MPS_R() {return MPS_R;}
+    auto & ref_MPS_C() {return MPS_C;}
+    auto & ref_MPO_L() {return MPO_L;}
+    auto & ref_MPO_R() {return MPO_R;}
+    auto & ref_ENV_L() {return ENV_L;}
+    auto & ref_ENV_R() {return ENV_R;}
+    auto & ref_ENV2_L(){return ENV2_L;}
+    auto & ref_ENV2_R(){return ENV2_R;}
 
     void print_storage();                                                        /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
     void print_storage_compact();                                                /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */

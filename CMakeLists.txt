@@ -47,10 +47,38 @@ message("===============================")
 ### Setup flags ###
 ###################
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+
+if(NOT MARCH)
+    set(MARCH "haswell")
+endif()
+
+if(MARCH_STR)
+    string(TOUPPER ${MARCH} OPENBLAS_MARCH)
+    string(TOLOWER ${MARCH} CXX_MARCH)
+endif()
+
+
+#find_package(OpenMP)
+#if (OPENMP_FOUND)
+#    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+#    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+#    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+#endif()
+
+#get_cmake_property(_variableNames VARIABLES)
+#foreach (_variableName ${_variableNames})
+#    if("${_variableName}" MATCHES "OMP" OR "${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP")
+#        message(STATUS "${_variableName}=${${_variableName}}")
+#    endif()
+#endforeach()
+
+
+
+
 #set(COMMON_OPTIONS -g -Wall -march=native)
 #set(COMMON_OPTIONS  -g -Wall -static -march=sandybridge -mtune=sandybridge)
 #set(COMMON_OPTIONS -g -Wall -march=nehalem -mtune=native)
-set(COMMON_OPTIONS -g -Wall -march=core2 -mtune=core2)
+set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=native)
 
 set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
@@ -97,7 +125,6 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC source)
 
 
-
 ###########################################
 ###  Apply RELEASE/DEBUG compile flags  ###
 ###########################################
@@ -108,6 +135,8 @@ target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                        
 #target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,-Bstatic -lz -lfoo -Wl,-Bdynamic -lbar -Wl,--as-needed)
 target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                                               ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
+target_link_libraries  (${PROJECT_NAME} PRIVATE -lpthread )
+
 
 ###############################
 ###  Require c++17 support  ###
@@ -141,8 +170,6 @@ include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenval
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
 include(cmake-modules/Fetch_Armadillo.cmake)                # Armadillo library
-
-
 
 
 ######################################

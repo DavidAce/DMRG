@@ -29,7 +29,7 @@ while getopts f:hm:t: o; do
   esac
 done
 shift "$((OPTIND - 1))"
-
+ulimit -c unlimited
 echo "Running command:  ./build/$mode/$target $file"
 
 ./build/$mode/$target $file

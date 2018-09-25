@@ -26,7 +26,7 @@
 */
 
 int main(int argc, char* argv[]) {
-    int num_threads = 2;
+    int num_threads = 4;
     #ifdef OpenBLAS_AVAILABLE
         openblas_set_num_threads(num_threads);
         std::cout << "Using OpenBLAS with " << openblas_get_num_threads() << " thread(s)" << std::endl;

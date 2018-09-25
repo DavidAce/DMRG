@@ -86,6 +86,43 @@ void class_measurement::compute_all_observables_from_superblock(){
 }
 
 
+void class_measurement::compute_all_observables_from_superblock(const Eigen::Tensor<Scalar,4> &theta){
+    if (is_measured){return;}
+    if (superblock->MPS->chiC() < 2) { return; }
+    mps_util->theta = theta;
+    switch(sim_type){
+        case SimulationType::iDMRG:
+            compute_energy_mpo();
+            compute_energy_variance_mpo();
+            if (superblock->MPS->chiA() != superblock->MPS->chiB()) { return;}
+            if (superblock->MPS->chiA() != superblock->MPS->chiC()) { return;}
+            mps_util->compute_mps_components(superblock->MPS);
+            compute_energy_ham();
+            compute_energy_variance_ham();
+            compute_energy_and_variance_mom(a, mom_vecA);
+            break;
+        case SimulationType::xDMRG:
+        case SimulationType::fDMRG:
+            compute_energy_mpo();
+            compute_energy_variance_mpo();
+            break;
+        case SimulationType::iTEBD:
+            if (superblock->MPS->chiA() != superblock->MPS->chiB()) { return;}
+            if (superblock->MPS->chiA() != superblock->MPS->chiC()) { return;}
+            mps_util->compute_mps_components(superblock->MPS);
+            compute_energy_ham();
+            compute_energy_variance_ham();
+            compute_energy_and_variance_mom(a, mom_vecA);
+            break;
+    }
+
+    compute_entanglement_entropy();
+//    compute_parity();
+    is_measured = true;
+
+}
+
+
 void class_measurement::compute_all_observables_from_finite_chain(){
     compute_finite_chain_energy();
     compute_finite_chain_energy_variance();
