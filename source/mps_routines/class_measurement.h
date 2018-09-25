@@ -60,7 +60,6 @@ private:
     void compute_finite_chain_energy_variance();
     void compute_finite_chain_mps_state();
 
-    Eigen::Tensor<Scalar,1> mps_chain;
 
 
     double energy_mpo_all_sites;
@@ -84,6 +83,7 @@ private:
     void   compute_all_observables_from_superblock();
     void   compute_all_observables_from_superblock(const Eigen::Tensor<Scalar,4> &theta);
     void   compute_all_observables_from_finite_chain();
+    Eigen::Tensor<Scalar,1> mps_chain;
 
     double get_energy_mpo();               /*! Computes the current energy.*/
     double get_energy_ham();               /*! Computes the current energy.*/

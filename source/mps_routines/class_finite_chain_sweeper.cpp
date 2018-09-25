@@ -353,6 +353,10 @@ void class_finite_chain_sweeper::write_chain_to_file() {
         hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/R_" + std::to_string(counter++), env2.size, "sites");
     }
 
+
+
+
+
     // Write relevant quantities
     std::vector<double> entanglement_entropies;
     for (auto &mps : get_MPS_L()){

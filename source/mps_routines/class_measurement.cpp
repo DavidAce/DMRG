@@ -126,7 +126,9 @@ void class_measurement::compute_all_observables_from_superblock(const Eigen::Ten
 void class_measurement::compute_all_observables_from_finite_chain(){
     compute_finite_chain_energy();
     compute_finite_chain_energy_variance();
-//    compute_finite_chain_mps_state(); // Runs out of memory for L > 20 or so, because the wave vector is doubled in size for each additional site.
+    if(get_chain_length() < 15){
+        compute_finite_chain_mps_state(); // Runs out of memory for L > 20 or so, because the wave vector is doubled in size for each additional site.
+    }
     compute_finite_chain_norm();
     compute_finite_chain_norm2();
 }
