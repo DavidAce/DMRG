@@ -112,7 +112,7 @@ void class_xDMRG::single_xDMRG_step(xDMRG_Mode mode) {
             t_opt.toc();
             t_svd.tic();
 
-            if (true) {
+            if (false) {
                 std::unique_ptr<class_mps_2site> MPS_backup = std::make_unique<class_mps_2site>(*superblock->MPS);
 //                superblock->truncate_MPS(theta, 256, settings::precision::SVDThreshold);
                 measurement->set_not_measured();
