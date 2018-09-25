@@ -181,7 +181,6 @@ void class_measurement::compute_energy_ham(){
 }
 
 
-
 void class_measurement::compute_entanglement_entropy(){
     t_entropy.tic();
     Eigen::Tensor<Scalar,0> SA  = -superblock->MPS->LC.square()

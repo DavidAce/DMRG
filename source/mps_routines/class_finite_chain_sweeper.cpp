@@ -70,7 +70,7 @@ int class_finite_chain_sweeper::insert(){
     assert(ENV2_R.size()       == superblock->Rblock2->size);
 
 
-    MPS_L.emplace_back(*superblock->MPS->MPS_A);
+    MPS_L.emplace_back (*superblock->MPS->MPS_A);
     MPS_R.emplace_front(*superblock->MPS->MPS_B);
     MPS_C = superblock->MPS->LC;
 
@@ -82,15 +82,28 @@ int class_finite_chain_sweeper::insert(){
     MPO_R.emplace_front     (superblock->HB->clone());
     update_current_length();
 
+
+
+
     int pos = 0;
-    for (auto &MPO : MPO_L){
-        MPO->set_position(pos++);
-    }
-    for (auto &MPO : MPO_R){
-        MPO->set_position(pos++);
-    }
-    superblock->HA->set_position((int)MPO_L.back()->get_position());
-    superblock->HB->set_position((int)MPO_R.front()->get_position());
+    for (auto &MPS: MPS_L){MPS.set_position(pos++);}
+    for (auto &MPS: MPS_R){MPS.set_position(pos++);}
+    pos = 0;
+    for (auto &ENV: ENV_L){ENV.set_position(pos++);}
+    for (auto &ENV: ENV_R){ENV.set_position(pos++);}
+    pos = 0;
+    for (auto &ENV2: ENV2_L){ENV2.set_position(pos++);}
+    for (auto &ENV2: ENV2_R){ENV2.set_position(pos++);}
+    pos = 0;
+    for (auto &MPO : MPO_L){MPO->set_position(pos++);}
+    for (auto &MPO : MPO_R){MPO->set_position(pos++);}
+
+    superblock->MPS->MPS_A->set_position(MPS_L.back().get_position());
+    superblock->MPS->MPS_B->set_position(MPS_R.front().get_position());
+    superblock->Lblock->set_position(ENV_L.back().get_position());
+    superblock->Rblock->set_position(ENV_R.front().get_position());
+    superblock->HA->set_position(MPO_L.back()->get_position());
+    superblock->HB->set_position(MPO_R.front()->get_position());
 
 
 //    std::cout << "New positions: \n" ;
@@ -113,9 +126,6 @@ int class_finite_chain_sweeper::insert(){
     assert(ENV_R.front().size  == superblock->Rblock->size);
     assert(ENV2_L.back().size  == superblock->Lblock2->size);
     assert(ENV2_R.front().size == superblock->Rblock2->size);
-    assert(superblock->HA->get_position() == MPO_L.back()->get_position());
-    assert(superblock->HB->get_position() == MPO_R.front()->get_position());
-
     return (int)MPS_L.size();
 }
 
@@ -130,20 +140,15 @@ int class_finite_chain_sweeper::load(){
 void class_finite_chain_sweeper::overwrite_local_MPS() {
 //    std::cout << "Overwriting positions: "  << MPS_L.size() << " and " <<  MPS_R.size()  << std::endl;
     assert(!MPS_L.empty() and !MPS_R.empty());
-    assert(ENV_L.size() + ENV_R.size() <= max_length);
     assert(MPS_L.size() + MPS_R.size() <= max_length);
-    assert(ENV_L.back().size   == superblock->Lblock->size);
-    assert(ENV_R.front().size  == superblock->Rblock->size);
-    assert(ENV2_L.back().size  == superblock->Lblock2->size);
-    assert(ENV2_R.front().size == superblock->Rblock2->size);
+    assert(MPS_L.back().get_position()   == superblock->MPS->MPS_A->get_position());
+    assert(MPS_R.front().get_position()  == superblock->MPS->MPS_B->get_position());
+
 
     MPS_L.back()    = *superblock->MPS->MPS_A;
     MPS_C           = superblock->MPS->LC;
     MPS_R.front()   = *superblock->MPS->MPS_B;
 
-//    MPS_L.back()    = std::make_tuple(superblock->MPS->LB_left, superblock->MPS->GA);
-//    MPS_C           = superblock->MPS->LA;
-//    MPS_R.front()   = std::make_tuple(superblock->MPS->GB     , superblock->MPS->LB);
 
 }
 
@@ -157,7 +162,6 @@ void class_finite_chain_sweeper::overwrite_local_MPO(){
     MPO_L.back()    = superblock->HA->clone();
     MPO_R.front()   = superblock->HB->clone();
     assert(MPO_L.size() + MPO_R.size() == max_length);
-
 }
 
 void class_finite_chain_sweeper::overwrite_local_ENV(){
@@ -182,8 +186,17 @@ int class_finite_chain_sweeper::move(){
     assert(ENV_L.size() + ENV_R.size() == max_length);
     assert(ENV_L.back().size + ENV_R.front().size == max_length - 2);
     assert(ENV_L.back().size + ENV_R.front().size == superblock->environment_size);
-    assert(superblock->HA->get_position() == MPO_L.back()->get_position());
-    assert(superblock->HB->get_position() == MPO_R.front()->get_position());
+
+    assert(MPS_L.back().get_position()   == superblock->MPS->MPS_A->get_position());
+    assert(MPS_R.front().get_position()  == superblock->MPS->MPS_B->get_position());
+
+    assert(ENV_L.back().get_position()   == superblock->Lblock->get_position());
+    assert(ENV_R.front().get_position()  == superblock->Rblock->get_position());
+    assert(ENV2_L.back().get_position()  == superblock->Lblock2->get_position());
+    assert(ENV2_R.front().get_position() == superblock->Rblock2->get_position());
+
+    assert(MPO_L.back()->get_position()  == superblock->HA->get_position() );
+    assert(MPO_R.front()->get_position() == superblock->HB->get_position() );
 
     if (direction == 1){
         //Note that Lblock must just have grown!!
@@ -206,14 +219,15 @@ int class_finite_chain_sweeper::move(){
 
         superblock->MPS->MPS_A->set_L(superblock->MPS->LC);
         superblock->MPS->MPS_A->set_G(superblock->MPS->MPS_B->get_G());
+        superblock->MPS->MPS_A->set_position(MPS_L.back().get_position());
         superblock->MPS->LC = superblock->MPS->MPS_B->get_L();
         superblock->MPS->MPS_B->set_G(MPS_R.front().get_G());
         superblock->MPS->MPS_B->set_L(MPS_R.front().get_L());
+        superblock->MPS->MPS_B->set_position(MPS_R.front().get_position());
         MPS_C  = superblock->MPS->LC;
 
         superblock->HA = MPO_L.back()->clone();
         superblock->HB = MPO_R.front()->clone();
-
 
         *superblock->Rblock  = ENV_R.front();
         *superblock->Rblock2 = ENV2_R.front();
@@ -226,46 +240,25 @@ int class_finite_chain_sweeper::move(){
         assert(ENV_L.back().size        == superblock->Lblock->size);
         assert(ENV2_L.back().size       == superblock->Lblock2->size);
 
-
         MPS_R.emplace_front (*superblock->MPS->MPS_A);
         MPO_R.emplace_front (superblock->HA->clone());
         ENV_R.emplace_front (*superblock->Rblock);
         ENV2_R.emplace_front(*superblock->Rblock2);
-
 
         MPS_L.pop_back();
         MPO_L.pop_back();
         ENV_L.pop_back();
         ENV2_L.pop_back();
 
-
         superblock->MPS->MPS_B->set_L(superblock->MPS->LC);
         superblock->MPS->MPS_B->set_G(superblock->MPS->MPS_A->get_G());
+        superblock->MPS->MPS_B->set_position(MPS_R.front().get_position());
         superblock->MPS->LC = superblock->MPS->MPS_A->get_L();
         superblock->MPS->MPS_A->set_G(MPS_L.back().get_G());
         superblock->MPS->MPS_A->set_L(MPS_L.back().get_L());
-        MPS_C                       = superblock->MPS->LC;
+        superblock->MPS->MPS_A->set_position(MPS_L.back().get_position());
 
-//        std::cout << "HA = \n"
-//                  << superblock->HA->get_parameter_values()[0] << ' '
-//                  << superblock->HA->get_parameter_values()[1] << ' '
-//                  << superblock->HA->get_parameter_values()[2] << ' '
-//                  << "\n"
-//                  << MPO_L.back()->get_parameter_values()[0]<< ' '
-//                  << MPO_L.back()->get_parameter_values()[1]<< ' '
-//                  << MPO_L.back()->get_parameter_values()[2]<< ' '
-//                  << std::endl;
-//
-//
-//        std::cout << "HB = \n"
-//                  << superblock->HB->get_parameter_values()[0] << ' '
-//                  << superblock->HB->get_parameter_values()[1] << ' '
-//                  << superblock->HB->get_parameter_values()[2] << ' '
-//                  << "\n"
-//                  << MPO_R.front()->get_parameter_values()[0] << ' '
-//                  << MPO_R.front()->get_parameter_values()[1] << ' '
-//                  << MPO_R.front()->get_parameter_values()[2] << ' '
-//                  << std::endl;
+        MPS_C                       = superblock->MPS->LC;
 
         superblock->HA = MPO_L.back()->clone();
         superblock->HB = MPO_R.front()->clone();
@@ -280,8 +273,16 @@ int class_finite_chain_sweeper::move(){
     assert(superblock->HA->get_position() + 1 == max_length - MPO_R.size());
     assert(superblock->HB->get_position() + 1 == MPO_L.size() + 1);
     assert(superblock->HB->get_position() + 1 == max_length - MPO_R.size() + 1);
-    assert(superblock->HA->get_position() == MPO_L.back()->get_position());
-    assert(superblock->HB->get_position() == MPO_R.front()->get_position());
+    assert(MPS_L.back().get_position()   == superblock->MPS->MPS_A->get_position());
+    assert(MPS_R.front().get_position()  == superblock->MPS->MPS_B->get_position());
+
+    assert(ENV_L.back().get_position()   == superblock->Lblock->get_position());
+    assert(ENV_R.front().get_position()  == superblock->Rblock->get_position());
+    assert(ENV2_L.back().get_position()  == superblock->Lblock2->get_position());
+    assert(ENV2_R.front().get_position() == superblock->Rblock2->get_position());
+
+    assert(MPO_L.back()->get_position()  == superblock->HA->get_position() );
+    assert(MPO_R.front()->get_position() == superblock->HB->get_position() );
 
     //    Check edge
     if (position_is_the_left_edge() or position_is_the_right_edge()) {
