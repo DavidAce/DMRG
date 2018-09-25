@@ -84,6 +84,9 @@ void class_xDMRG::run() {
     print_status_full();
     env_storage->write_chain_to_file();
     measurement->compute_all_observables_from_finite_chain();
+    // Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
+    hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction");
+
     print_profiling();
 
 }
