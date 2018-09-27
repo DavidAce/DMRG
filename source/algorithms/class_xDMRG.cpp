@@ -134,8 +134,8 @@ void class_xDMRG::single_xDMRG_step(xDMRG_Mode mode) {
 
             }
             superblock->truncate_MPS(theta, chi_temp, settings::precision::SVDThreshold);
-            measurement->set_not_measured();
-            measurement->compute_all_observables_from_superblock();
+//            measurement->set_not_measured();
+//            measurement->compute_all_observables_from_superblock();
             if (compare) {
                 std::cout << "      Variance after : " << setw(12) << std::setprecision(10)
                           << std::log10(measurement->get_variance_mpo()) << std::endl;
@@ -220,12 +220,17 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     assert(H_local.dimension(1) == shape);
     t_ham.toc();
 
+    long chiA = superblock->MPS->chiA();
+    long chiB = superblock->MPS->chiB();
+    long d    = superblock->HA->get_spin_dimension();
+    std::array<long,4> shape4_theta = {d,chiA,d,chiB};
+    std::array<long,4> shape4_mpo   = superblock->HA->MPO.dimensions();;
 
     class_eigsolver_arpack<std::complex<double>, Form::GENERAL> arpack_solver;
     Eigen::VectorXcd eigvals;
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd overlaps;
-    std::vector<std::pair<int,double>> results;
+    std::vector<std::tuple<int,double,double>> results;
     Eigen::Map<Textra::VectorType<Scalar>> theta_vector (theta.data(),shape);
     Textra::VectorType <Scalar> theta_res = theta_vector;
     int nev = std::min((int)(shape/4), 1);
@@ -234,8 +239,19 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     double max_overlap;
     double offset;
     double overlap_threshold = 1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
-    for (int iter = 0; iter  <  3; iter++){
+    for (int iter = 0; iter  <  5; iter++){
         t_eig.tic();
+//        arpack_solver.eig_shift_invert2(superblock->Lblock->block.data(),
+//                                        superblock->Rblock->block.data(),
+//                                        superblock->HA->MPO.data(),
+//                                        superblock->HB->MPO.data(),
+//                                        shape4_theta,
+//                                        shape4_mpo,
+//                                        nev, ncv,
+//                                        energy_now*L,
+//                                        Ritz::LM,
+//                                        true, true,
+//                                        theta.data());
         arpack_solver.eig_shift_invert(H_local.data(), shape, nev,ncv,energy_now*L, Ritz::LM, true,true, theta_res.data());
         t_eig.toc();
         eigvals         = Eigen::Map<const Eigen::VectorXcd> (arpack_solver.get_eigvals().data(),arpack_solver.GetNevFound());
@@ -243,7 +259,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         overlaps        = (theta_vector.conjugate().transpose() * eigvecs).cwiseAbs();
         max_overlap     = overlaps.maxCoeff(&best_state_idx);
         offset          = energy_target - eigvals(best_state_idx).real()/L;
-        results.emplace_back(std::make_pair(nev, max_overlap));
+        results.emplace_back(nev, max_overlap,t_tot.get_age());
 
         if(max_overlap >= overlap_threshold ){break;}
 //        overlap_threshold  *= 0.8;
@@ -263,7 +279,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         std::cerr << "WARNING:  Partial diagonlization -- Overlap very small: " << std::setprecision(10) << max_overlap << "      position: " << env_storage->get_position() << std::endl;
         std::cerr << "          Overlaps:"  << std::endl;
         for (auto &res : results){
-            std::cerr << "          nev: " << setw(10) << res.first << "   overlap: " << setprecision(14) << setw(18) << res.second << std::endl;
+            std::cerr << "          nev: " << setw(10) << std::get<0>(res) << "   overlap: " << setprecision(14) << setw(18) << std::get<1>(res) << "       Wall time: " << std::get<2>(res) << std::endl;
         }
         std::cerr << "          Running full diagonalization. Wall time: " << t_tot.get_age() << std::endl;
         class_eigsolver_armadillo solver;
@@ -276,11 +292,10 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         overlaps        = (theta_vector.conjugate().transpose() * eigvecs).cwiseAbs();
         max_overlap     = overlaps.maxCoeff(&best_state_idx);
         offset          = energy_target - eigvals(best_state_idx).real()/L;
-        results.emplace_back(std::make_pair(nev, max_overlap));
+        results.emplace_back(std::make_tuple(nev, max_overlap,t_tot.get_age()));
         std::cerr << "          Full diag complete.           Wall time: " << t_tot.get_age() << std::endl;
-
+        std::cerr << "          Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
     }
-    std::cerr << "          Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
 
     energy_now      = eigvals(best_state_idx).real()/L;
     theta_res       = eigvecs.col(best_state_idx);

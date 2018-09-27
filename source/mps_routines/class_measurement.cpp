@@ -370,6 +370,12 @@ void class_measurement::compute_finite_chain_mps_state(){
     Eigen::Tensor<Scalar,2> chain(1,1);
     chain.setConstant(1.0);
     Eigen::TensorRef<Eigen::Tensor<Scalar,2>> temp;
+    // The "chain" is a matrix whose 0 index keeps growing.
+    // For each site that passes, it grows by GA.dimension(0) = phys dim
+    // Say the chain is a 16x7 matrix (having contracted 4 particles, and the latest
+    // chi was 7). Then contracting the next site, with dimensions 2x7x9 will get you a
+    // 16x2x9 tensor. Now the reshaping convert it into a 32 x 9 matrix. Because
+    // Eigen is column major, the doubling 16->32 will stack the third index twice.
 
     while(mpsL != endL){
         const Eigen::Tensor<Scalar,1>  & LA = mpsL->get_L(); //std::get<0>(*mpsL);
