@@ -153,16 +153,32 @@ void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const
 
 void class_superblock::enlarge_environment(int direction){
     if (direction == 1){
+        assert(Lblock->get_position()  == HA->get_position());
+        assert(Lblock2->get_position() == HA->get_position());
         Lblock->enlarge(MPS,  HA->MPO_reduced_view());
         Lblock2->enlarge(MPS, HA->MPO_reduced_view());
+        Lblock->set_position (HB->get_position());
+        Lblock2->set_position(HB->get_position());
     }else if (direction == -1){
+        assert(Rblock->get_position()  == HB->get_position());
+        assert(Rblock2->get_position() == HB->get_position());
         Rblock->enlarge(MPS,  HB->MPO_reduced_view());
         Rblock2->enlarge(MPS, HB->MPO_reduced_view());
+        Rblock->set_position (HA->get_position());
+        Rblock2->set_position(HA->get_position());
     }else if(direction == 0){
+        assert(Lblock->get_position()  == HA->get_position());
+        assert(Lblock2->get_position() == HA->get_position());
+        assert(Rblock->get_position()  == HB->get_position());
+        assert(Rblock2->get_position() == HB->get_position());
         Lblock->enlarge(MPS,  HA->MPO_reduced_view());
         Rblock->enlarge(MPS,  HB->MPO_reduced_view());
         Lblock2->enlarge(MPS, HA->MPO_reduced_view());
         Rblock2->enlarge(MPS, HB->MPO_reduced_view());
+        Lblock->set_position (HB->get_position());
+        Rblock->set_position (HB->get_position()+1);
+        Lblock2->set_position(HB->get_position());
+        Rblock2->set_position(HB->get_position()+1);
         environment_size = Lblock->size + Rblock->size;
     }
 }

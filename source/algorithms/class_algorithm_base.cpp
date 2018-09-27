@@ -559,7 +559,7 @@ double process_memory_in_mb(std::string name){
                     std::string::size_type sz;   // alias of size_t
                     int value = std::stoi (value_str,&sz);
                     // Now we have the value in kb
-                    return value/1000.0;
+                    return value/1024.0;
 //                    auto pos = value.find_first_not_of(" \t");
 //                    auto trimmed_value = value.substr(pos != std::string::npos ? pos : 0);
 //                    return trimmed_value;
@@ -648,8 +648,8 @@ void class_algorithm_base::print_status_update() {
     ccout(1) << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << t_tot.get_age() ;
 
     ccout(1) << left << " Memory [";
-    ccout(1) << left << "RAM: "   << process_memory_in_mb("VmRSS") << " MB ";
-    ccout(1) << left << "VM: " << process_memory_in_mb("VmSize")<< " MB";
+    ccout(1) << left << "Now: "   << process_memory_in_mb("VmSize")<< " MB ";
+    ccout(1) << left << "Peak: "  << process_memory_in_mb("VmPeak")<< " MB";
     ccout(1) << left << "]";
 
 

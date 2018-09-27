@@ -102,6 +102,8 @@ int class_finite_chain_sweeper::insert(){
     superblock->MPS->MPS_B->set_position(MPS_R.front().get_position());
     superblock->Lblock->set_position(ENV_L.back().get_position());
     superblock->Rblock->set_position(ENV_R.front().get_position());
+    superblock->Lblock2->set_position(ENV2_L.back().get_position());
+    superblock->Rblock2->set_position(ENV2_R.front().get_position());
     superblock->HA->set_position(MPO_L.back()->get_position());
     superblock->HB->set_position(MPO_R.front()->get_position());
 
@@ -165,6 +167,12 @@ void class_finite_chain_sweeper::overwrite_local_MPO(){
 }
 
 void class_finite_chain_sweeper::overwrite_local_ENV(){
+    assert(superblock->Lblock->get_position() == ENV_L.back().get_position());
+    assert(superblock->Rblock->get_position() == ENV_R.front().get_position());
+
+    assert(superblock->Lblock2->get_position() == ENV2_L.back().get_position());
+    assert(superblock->Rblock2->get_position() == ENV2_R.front().get_position());
+
     ENV_L.back()    = *superblock->Lblock;
     ENV2_L.back()   = *superblock->Lblock2;
 
@@ -190,10 +198,6 @@ int class_finite_chain_sweeper::move(){
     assert(MPS_L.back().get_position()   == superblock->MPS->MPS_A->get_position());
     assert(MPS_R.front().get_position()  == superblock->MPS->MPS_B->get_position());
 
-    assert(ENV_L.back().get_position()   == superblock->Lblock->get_position());
-    assert(ENV_R.front().get_position()  == superblock->Rblock->get_position());
-    assert(ENV2_L.back().get_position()  == superblock->Lblock2->get_position());
-    assert(ENV2_R.front().get_position() == superblock->Rblock2->get_position());
 
     assert(MPO_L.back()->get_position()  == superblock->HA->get_position() );
     assert(MPO_R.front()->get_position() == superblock->HB->get_position() );
@@ -205,6 +209,12 @@ int class_finite_chain_sweeper::move(){
         assert(ENV2_L.back().size  + 1  == superblock->Lblock2->size);
         assert(ENV_R.front().size       == superblock->Rblock->size);
         assert(ENV2_R.front().size      == superblock->Rblock2->size);
+        assert(ENV_L.back().get_position()  + 1 == superblock->Lblock->get_position());
+        assert(ENV2_L.back().get_position() + 1 == superblock->Lblock2->get_position());
+        assert(ENV_R.front().get_position()     == superblock->Rblock->get_position());
+        assert(ENV2_R.front().get_position()    == superblock->Rblock2->get_position());
+
+
         MPS_L.emplace_back(*superblock->MPS->MPS_B);
         MPO_L.emplace_back (superblock->HB->clone());
         ENV_L.emplace_back (*superblock->Lblock);
@@ -239,7 +249,10 @@ int class_finite_chain_sweeper::move(){
         assert(ENV2_R.front().size + 1  == superblock->Rblock2->size);
         assert(ENV_L.back().size        == superblock->Lblock->size);
         assert(ENV2_L.back().size       == superblock->Lblock2->size);
-
+        assert(ENV_L.back().get_position()      == superblock->Lblock->get_position());
+        assert(ENV2_L.back().get_position()     == superblock->Lblock2->get_position());
+        assert(ENV_R.front().get_position()  -1 == superblock->Rblock->get_position());
+        assert(ENV2_R.front().get_position() -1 == superblock->Rblock2->get_position());
         MPS_R.emplace_front (*superblock->MPS->MPS_A);
         MPO_R.emplace_front (superblock->HA->clone());
         ENV_R.emplace_front (*superblock->Rblock);
@@ -336,25 +349,34 @@ void class_finite_chain_sweeper::write_chain_to_file() {
 
     // Write all the environment blocks
     counter = 0;
-    for (auto &env: get_ENV_L()){
-        hdf5->write_dataset(Textra::to_RowMajor(env.block), sim_name + "/chain/ENV/L_" + std::to_string(counter));
-        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/L_" + std::to_string(counter++), env.size, "sites");
-    }
-    for (auto &env: get_ENV_R()){
-        hdf5->write_dataset(Textra::to_RowMajor(env.block), sim_name + "/chain/ENV/R_" + std::to_string(counter));
-        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/R_" + std::to_string(counter++), env.size, "sites");
-    }
-    counter = 0;
-    for (auto &env2: get_ENV2_L()){
-        hdf5->write_dataset(Textra::to_RowMajor(env2.block), sim_name + "/chain/ENV2/L_" + std::to_string(counter));
-        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/L_" + std::to_string(counter++), env2.size, "sites");
-    }
-    for (auto &env2: get_ENV2_R()){
-        hdf5->write_dataset(Textra::to_RowMajor(env2.block), sim_name + "/chain/ENV2/R_" + std::to_string(counter));
-        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/R_" + std::to_string(counter++), env2.size, "sites");
-    }
+    hdf5->write_dataset(Textra::to_RowMajor(get_ENV_L().back().block), sim_name + "/chain/ENV/L_" + std::to_string(get_ENV_L().back().get_position()));
+    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/L_" + std::to_string(get_ENV_L().back().get_position()), get_ENV_L().back().size, "sites");
+    hdf5->write_dataset(Textra::to_RowMajor(get_ENV_R().front().block), sim_name + "/chain/ENV/R_" + std::to_string(get_ENV_R().front().get_position()));
+    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/R_" + std::to_string(get_ENV_R().front().get_position()), get_ENV_R().front().size, "sites");
 
+    hdf5->write_dataset(Textra::to_RowMajor(get_ENV2_L().back().block), sim_name + "/chain/ENV2/L_" + std::to_string(get_ENV2_L().back().get_position()));
+    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/L_" + std::to_string(get_ENV2_L().back().get_position()), get_ENV2_L().back().size, "sites");
+    hdf5->write_dataset(Textra::to_RowMajor(get_ENV2_R().front().block), sim_name + "/chain/ENV2/R_" + std::to_string(get_ENV2_R().front().get_position()));
+    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/R_" + std::to_string(get_ENV2_R().front().get_position()), get_ENV2_R().front().size, "sites");
 
+//
+//    for (auto &env: get_ENV_L()){
+//        hdf5->write_dataset(Textra::to_RowMajor(env.block), sim_name + "/chain/ENV/L_" + std::to_string(counter));
+//        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/L_" + std::to_string(counter++), env.size, "sites");
+//    }
+//    for (auto &env: get_ENV_R()){
+//        hdf5->write_dataset(Textra::to_RowMajor(env.block), sim_name + "/chain/ENV/R_" + std::to_string(counter));
+//        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/R_" + std::to_string(counter++), env.size, "sites");
+//    }
+//    counter = 0;
+//    for (auto &env2: get_ENV2_L()){
+//        hdf5->write_dataset(Textra::to_RowMajor(env2.block), sim_name + "/chain/ENV2/L_" + std::to_string(counter));
+//        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/L_" + std::to_string(counter++), env2.size, "sites");
+//    }
+//    for (auto &env2: get_ENV2_R()){
+//        hdf5->write_dataset(Textra::to_RowMajor(env2.block), sim_name + "/chain/ENV2/R_" + std::to_string(counter));
+//        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/R_" + std::to_string(counter++), env2.size, "sites");
+//    }
 
 
 
