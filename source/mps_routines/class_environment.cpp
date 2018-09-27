@@ -30,6 +30,7 @@ void class_environment::enlarge(const std::unique_ptr<class_mps_2site> &MPS, con
              * [      ]--1 0--[LB]--1  1--[GA conj ]--2
              */
             size++;
+//            position = MPS->MPS_A->get_position();
         block_enlarged =
                 block.contract(MPS->A(),                  idx({0},{1}))
                         .contract(M,                      idx({1,2},{0,2}))
@@ -54,6 +55,7 @@ void class_environment::enlarge(const std::unique_ptr<class_mps_2site> &MPS, con
             */
 
             size++;
+//        position = MPS->MPS_B->get_position();
         block_enlarged =
                 block.contract(MPS->B(),                idx({0},{2}))
                         .contract(M,                    idx({1,2},{1,2}))
@@ -71,6 +73,7 @@ void class_environment::set_edge_dims(const std::unique_ptr<class_mps_2site> &MP
         for (long i = 0; i < chiA; i++){
             block(i,i,M.dimension(0)-1) = 1;
         }
+        position = 0;
     }
     if(side == "R"){
         long chiB = MPS->chiB();
@@ -79,6 +82,7 @@ void class_environment::set_edge_dims(const std::unique_ptr<class_mps_2site> &MP
         for (long i = 0; i < chiB; i++){
             block(i,i,0) = 1;
         }
+        position = 1;
     }
 //    enlarge(MPS,M);
     size = 0;
@@ -112,6 +116,7 @@ void class_environment_var::enlarge(const std::unique_ptr<class_mps_2site> &MPS,
          * [      ]--1 0--[LB]--1  1--[GA conj ]--2
          */
         size++;
+//        position = MPS->MPS_A->get_position();
         block_enlarged =
                 block.contract(MPS->A(),                    idx({0},{1}))
                         .contract(M,                        idx({1,3},{0,2}))
@@ -144,6 +149,7 @@ void class_environment_var::enlarge(const std::unique_ptr<class_mps_2site> &MPS,
         */
 
         size++;
+//        position = MPS->MPS_B->get_position();
         block_enlarged =
                 block.contract(MPS->B(),                idx({0},{2}))
                         .contract(M,                    idx({1,3},{1,2}))
@@ -164,6 +170,7 @@ void class_environment_var::set_edge_dims(const std::unique_ptr<class_mps_2site>
         for (long i = 0; i < chiA; i++){
             block(i,i, M.dimension(0)-1, M.dimension(0)-1) = 1;
         }
+        position = 0;
 
     }
     if(side == "R"){
@@ -173,6 +180,7 @@ void class_environment_var::set_edge_dims(const std::unique_ptr<class_mps_2site>
         for (long i = 0; i < chiB; i++){
             block(i,i,0,0) = 1;
         }
+        position = 1;
     }
 //    enlarge(MPS,M);
     size = 0;

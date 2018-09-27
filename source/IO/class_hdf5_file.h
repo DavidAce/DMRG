@@ -51,6 +51,7 @@ private:
         hid_t                   datatype;
         hsize_t                 size;
         int                     ndims;
+        std::vector<hsize_t>    chunk_size;
         std::vector<hsize_t>    dims;
         std::string             dset_name;
 
@@ -325,7 +326,10 @@ void class_hdf5_file::write_dataset(const DataType &data, const std::string &dat
     props.dset_name  = dataset_relative_name;
     props.ndims      = get_Rank<DataType>();
     props.dims       = get_Dimensions<DataType>(data);
-
+    props.chunk_size = props.dims;
+//    for (auto &cz : props.chunk_size){
+//        cz *= 10;
+//    }
 
     if (H5Tequal(get_DataType<DataType>(), H5T_COMPLEX_DOUBLE) and not std::is_same<std::vector<H5T_COMPLEX_STRUCT>, DataType>::value) {
         //If complex, convert data_struct to complex struct H5T_COMPLEX_DOUBLE

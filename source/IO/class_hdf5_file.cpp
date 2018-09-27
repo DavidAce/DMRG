@@ -140,7 +140,7 @@ void class_hdf5_file::create_dataset_link(const DatasetProperties &props){
         hid_t dataspace = get_DataSpace_unlimited(props.ndims);
         hid_t dset_cpl  = H5Pcreate(H5P_DATASET_CREATE);
         H5Pset_layout(dset_cpl, H5D_CHUNKED);
-        H5Pset_chunk(dset_cpl, props.ndims, props.dims.data());
+        H5Pset_chunk(dset_cpl, props.ndims, props.chunk_size.data());
         hid_t dataset = H5Dcreate(file,
                                   props.dset_name.c_str(),
                                   props.datatype,
