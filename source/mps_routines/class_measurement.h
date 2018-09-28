@@ -54,13 +54,6 @@ private:
 
     void compute_parity();
 
-    void compute_finite_chain_norm();
-    void compute_finite_chain_norm2();
-    void compute_finite_chain_energy();
-    void compute_finite_chain_energy_variance();
-    void compute_finite_chain_mps_state();
-
-
 
     double energy_mpo_all_sites;
     double variance_mpo_all_sites;
@@ -99,6 +92,13 @@ private:
     double get_parity();
     long   get_chi();
     long   get_chain_length();
+
+    void compute_finite_chain_norm();
+    void compute_finite_chain_norm2();
+    void compute_finite_chain_energy();
+    void compute_finite_chain_energy_variance();
+    void compute_finite_chain_mps_state();
+
 
     void set_not_measured(){is_measured = false;}
     bool has_been_measured(){return is_measured;}

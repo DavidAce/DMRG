@@ -83,6 +83,7 @@ else()
             -DHDF5_ENABLE_PARALLEL=${HDF5_IS_PARALLEL}
             -DALLOW_UNSUPPORTED=ON
             -DBUILD_TESTING:BOOL=OFF
+            -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=ON
             -DHDF5_BUILD_TOOLS:BOOL=ON
             -DHDF5_BUILD_EXAMPLES:BOOL=OFF
             -DHDF5_BUILD_FORTRAN:BOOL=OFF
@@ -139,5 +140,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_hl)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_hl_cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE -lz)
 target_include_directories(${PROJECT_NAME} PRIVATE ${HDF5_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${HDF5_LINKER_FLAGS})

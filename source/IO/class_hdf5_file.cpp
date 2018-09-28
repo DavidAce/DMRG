@@ -10,6 +10,29 @@ class_hdf5_file::class_hdf5_file(const std::string output_filename_, const std::
     output_folder   = output_folder_;
     create_dir      = create_dir_;
     overwrite       = overwrite_;
+  /*
+  * Check if gzip compression is available and can be used for both
+  * compression and decompression.  Normally we do not perform error
+  * checking in these examples for the sake of clarity, but in this
+  * case we will make an exception because this filter is an
+  * optional part of the hdf5 library.
+  */
+//    herr_t          status;
+//    htri_t          avail;
+//    H5Z_filter_t    filter_type;
+//    unsigned int    flags, filter_info;
+//    avail = H5Zfilter_avail(H5Z_FILTER_DEFLATE);
+//    if (!avail) {
+//        std::cerr << "gzip filter not available.\n" << std::endl;
+//        exit(1);
+//    }
+//    status = H5Zget_filter_info (H5Z_FILTER_DEFLATE, &filter_info);
+//    if ( !(filter_info & H5Z_FILTER_CONFIG_ENCODE_ENABLED) ||
+//         !(filter_info & H5Z_FILTER_CONFIG_DECODE_ENABLED) ) {
+//        std::cerr <<  "gzip filter not available for encoding and decoding." << std::endl;
+//        exit(1);
+//    }
+
     initialize();
 
     H5T_COMPLEX_DOUBLE = H5Tcreate (H5T_COMPOUND, sizeof(H5T_COMPLEX_STRUCT));
@@ -141,6 +164,7 @@ void class_hdf5_file::create_dataset_link(const DatasetProperties &props){
         hid_t dset_cpl  = H5Pcreate(H5P_DATASET_CREATE);
         H5Pset_layout(dset_cpl, H5D_CHUNKED);
         H5Pset_chunk(dset_cpl, props.ndims, props.chunk_size.data());
+//        H5Pset_deflate (dset_cpl ,props.compression_level);
         hid_t dataset = H5Dcreate(file,
                                   props.dset_name.c_str(),
                                   props.datatype,

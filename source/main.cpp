@@ -12,6 +12,11 @@
 #include <cblas.h>
 #endif
 
+
+#ifdef OpenMP_AVAILABLE
+#include <omp.h>
+#endif
+
 #ifdef MKL_AVAILABLE
 #define MKL_Complex8 std::complex<float>
 #define MKL_Complex16 std::complex<double>
@@ -30,6 +35,12 @@ int main(int argc, char* argv[]) {
     #ifdef OpenBLAS_AVAILABLE
         openblas_set_num_threads(num_threads);
         std::cout << "Using OpenBLAS with " << openblas_get_num_threads() << " thread(s)" << std::endl;
+    #endif
+
+    #ifdef OpenMP_AVAILABLE
+        omp_set_num_threads(num_threads);
+        Eigen::setNbThreads(num_threads);
+        std::cout << "Using OpenMP with " << omp_get_num_threads() << " thread(s)" << std::endl;
     #endif
 
     #ifdef MKL_AVAILABLE
