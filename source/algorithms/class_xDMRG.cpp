@@ -207,7 +207,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     }else{
 //        std::cout << "Finding state with closest overlap: " << std::setprecision(10) << max_overlap << " offset: " << setw(12) << offset << " (target = " << energy_target << ")" << " position: " << env_storage->get_position()<< std::endl;
     }
-    std::cerr << "Armadillo Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
+//    std::cerr << "Armadillo Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
 
     Textra::MatrixType<Scalar> state = eigvecs.col(best_state);
     energy_now = eigvals(best_state)/L;
@@ -305,7 +305,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         std::cerr << "          Full diag complete.           Wall time: " << t_tot.get_age() << std::endl;
         std::cerr << "          Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
     }
-    std::cerr << "Arpack Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
+//    std::cerr << "Arpack Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
 
     energy_now      = eigvals(best_state_idx).real()/L;
     theta_res       = eigvecs.col(best_state_idx);
