@@ -54,10 +54,8 @@ request_disk   = 200
 
 getenv = true
 
-logsplit = split($(inputfiles),'/.')
-logbase  = logsplit[1]
 
-log        = logs/$(logbase).log
-output     = logs/$(logbase).out
-error      = logs/$(logbase).error
+log        = logs/$(NAME)_$(ID).log
+output     = logs/$(NAME)_$(ID).out
+error      = logs/$(NAME)_$(ID).error
 queue inputfiles matching files input/$(NAME)_*.cfg

@@ -54,6 +54,7 @@ private:
         std::vector<hsize_t>    chunk_size;
         std::vector<hsize_t>    dims;
         std::string             dset_name;
+        unsigned int            compression_level = 9;
 
         ~DatasetProperties(){
             H5Tclose(datatype);
