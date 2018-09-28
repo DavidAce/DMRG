@@ -26,7 +26,7 @@ class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(): class_hamiltonian_base
 void class_selfdual_tf_rf_ising::build_mpo()
 /*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
  *
- * H = - Σ J_{i} sz_{i} sz_{i+1} +  h_{i} sx_{i} + l*(h sx_i sx_{i+1} 0 J sz_{i} sz_{i+2}
+ * H = - Σ J_{i} sz_{i} sz_{i+1} +  h_{i} sx_{i} + l*(h sx_i sx_{i+1} + J sz_{i} sz_{i+2})
  *
  *  |     I                 0           0              0            0   |
  *  |     sz                0           0              0            0   |

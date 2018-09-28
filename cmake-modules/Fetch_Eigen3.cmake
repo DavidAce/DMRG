@@ -33,16 +33,21 @@ endif()
 if(BLAS_LIBRARIES)
     set(EIGEN3_COMPILER_FLAGS  ) # -Wno-parentheses
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-#        list(APPEND EIGEN3_COMPILER_FLAGS) # -Wno-unused-but-set-variable
+        list(APPEND EIGEN3_COMPILER_FLAGS) # -Wno-unused-but-set-variable
     endif()
     if(MKL_FOUND)
-#        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_MKL_ALL)
+        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_MKL_ALL)
         message(STATUS "Eigen3 will use MKL")
     else()
 #        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_BLAS)
         message(STATUS "Eigen3 will use BLAS")
     endif()
 endif()
+
+if (OpenMP_FOUND)
+    list(APPEND EIGEN_3_COMPILER_FLAGS ${OpenMP_CXX_FLAGS})
+endif()
+
 
 set_target_properties(EIGEN3 PROPERTIES
         INTERFACE_INCLUDE_DIRECTORY     "${EIGEN3_INCLUDE_DIR}"

@@ -50,15 +50,18 @@ void class_xDMRG::run() {
     env_storage->print_hamiltonians();
     int full_iters = 5;
     find_energy_range();
+//    hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction_initial");
 
     while(true) {
-        if(iteration < full_iters){
-            if(iteration == 0 and env_storage->position_is_the_middle()){std::cout << "--FULL DIAGONALIZATION MODE--" << std::endl;}
-            single_xDMRG_step(xDMRG_Mode::FULL);
-        }else{
-            if(iteration == full_iters and env_storage->position_is_the_middle()){std::cout << "--PARTIAL DIAGONALIZATION MODE--" << std::endl;}
-            single_xDMRG_step(xDMRG_Mode::PARTIAL);
-        }
+        single_xDMRG_step();
+//
+//        if(iteration < full_iters){
+//            if(iteration == 0 and env_storage->position_is_the_middle()){std::cout << "--FULL DIAGONALIZATION MODE--" << std::endl;}
+//            single_xDMRG_step(xDMRG_Mode::FULL);
+//        }else{
+//            if(iteration == full_iters and env_storage->position_is_the_middle()){std::cout << "--PARTIAL DIAGONALIZATION MODE--" << std::endl;}
+//            single_xDMRG_step(xDMRG_Mode::PARTIAL);
+//        }
 //        env_storage->print_hamiltonians();
 //        exit(1);
         env_storage_overwrite_local_ALL();
@@ -85,84 +88,89 @@ void class_xDMRG::run() {
     env_storage->write_chain_to_file();
     measurement->compute_all_observables_from_finite_chain();
     // Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
-    hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction");
+    if(measurement->get_chain_length() < 15){
+        hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction");
+    }
 
     print_profiling();
 
 }
 
-void class_xDMRG::single_xDMRG_step(xDMRG_Mode mode) {
+void class_xDMRG::single_xDMRG_step() {
 /*!
  * \fn void single_DMRG_step(class_superblock &superblock)
  */
     t_sim.tic();
     t_opt.tic();
-    bool compare = false;
+//    bool compare = false;
     Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
+    xDMRG_Mode mode = chi_temp <= 12 ? xDMRG_Mode::FULL : xDMRG_Mode::PARTIAL;
+
     switch (mode){
         case xDMRG_Mode::FULL:
             theta = find_state_with_greatest_overlap_full_diag(theta);
             t_opt.toc();
-            t_svd.tic();
-            superblock->truncate_MPS(theta, std::min(12l,chi_temp), settings::precision::SVDThreshold);
-            t_svd.toc();
             break;
         case xDMRG_Mode::PARTIAL:
             theta = find_state_with_greatest_overlap_part_diag(theta);
             t_opt.toc();
-            t_svd.tic();
-
-            if (false) {
-                std::unique_ptr<class_mps_2site> MPS_backup = std::make_unique<class_mps_2site>(*superblock->MPS);
-//                superblock->truncate_MPS(theta, 256, settings::precision::SVDThreshold);
-                measurement->set_not_measured();
-                measurement->compute_all_observables_from_superblock(theta);
-                compare = true;
-                std::cout << "Iteration: " << iteration << "    position: " << env_storage->get_position() << std::endl;
-                std::cout << "      Variance before: " << setw(12) << std::setprecision(10)
-                          << std::log10(measurement->get_variance_mpo()) << std::endl;
-                if (iteration == 5 and env_storage->get_position() == 7) {
-                    std::cout << "Singular values before : \n" << superblock->MPS->LC << std::endl;
-                }
-                superblock->MPS->set_mps(
-                        MPS_backup->MPS_A->get_L(),
-                        MPS_backup->MPS_A->get_G(),
-                        MPS_backup->LC,
-                        MPS_backup->MPS_B->get_G(),
-                        MPS_backup->MPS_B->get_L()
-                        );
-
-            }
-            superblock->truncate_MPS(theta, chi_temp, settings::precision::SVDThreshold);
-//            measurement->set_not_measured();
-//            measurement->compute_all_observables_from_superblock();
-            if (compare) {
-                std::cout << "      Variance after : " << setw(12) << std::setprecision(10)
-                          << std::log10(measurement->get_variance_mpo()) << std::endl;
-                if (iteration == 5 and env_storage->get_position() == 7) {
-                    std::cout << "Singular values after  : \n" << superblock->MPS->LC << std::endl;
-                }
-//                std::cout << "HA = \n"
-//                          << superblock->HA->get_parameter_values()[0] << ' '
-//                          << superblock->HA->get_parameter_values()[1] << ' '
-//                          << superblock->HA->get_parameter_values()[2] << ' '
-//                          << std::endl;
-//
-//
-//                std::cout << "HB = \n"
-//                          << superblock->HB->get_parameter_values()[0] << ' '
-//                          << superblock->HB->get_parameter_values()[1] << ' '
-//                          << superblock->HB->get_parameter_values()[2] << ' '
-//                          << std::endl;
-
-            }
-            t_svd.toc();
             break;
     }
+    t_svd.tic();
+    superblock->truncate_MPS(theta, chi_temp, settings::precision::SVDThreshold);
+    t_svd.toc();
+
     measurement->set_not_measured();
     t_sim.toc();
-}
 
+
+
+
+//            if (false) {
+//                std::unique_ptr<class_mps_2site> MPS_backup = std::make_unique<class_mps_2site>(*superblock->MPS);
+////                superblock->truncate_MPS(theta, 256, settings::precision::SVDThreshold);
+//                measurement->set_not_measured();
+//                measurement->compute_all_observables_from_superblock(theta);
+//                compare = true;
+//                std::cout << "Iteration: " << iteration << "    position: " << env_storage->get_position() << std::endl;
+//                std::cout << "      Variance before: " << setw(12) << std::setprecision(10)
+//                          << std::log10(measurement->get_variance_mpo()) << std::endl;
+//                if (iteration == 5 and env_storage->get_position() == 7) {
+//                    std::cout << "Singular values before : \n" << superblock->MPS->LC << std::endl;
+//                }
+//                superblock->MPS->set_mps(
+//                        MPS_backup->MPS_A->get_L(),
+//                        MPS_backup->MPS_A->get_G(),
+//                        MPS_backup->LC,
+//                        MPS_backup->MPS_B->get_G(),
+//                        MPS_backup->MPS_B->get_L()
+//                        );
+//
+//            }
+////            measurement->set_not_measured();
+////            measurement->compute_all_observables_from_superblock();
+//            if (compare) {
+//                std::cout << "      Variance after : " << setw(12) << std::setprecision(10)
+//                          << std::log10(measurement->get_variance_mpo()) << std::endl;
+//                if (iteration == 5 and env_storage->get_position() == 7) {
+//                    std::cout << "Singular values after  : \n" << superblock->MPS->LC << std::endl;
+//                }
+////                std::cout << "HA = \n"
+////                          << superblock->HA->get_parameter_values()[0] << ' '
+////                          << superblock->HA->get_parameter_values()[1] << ' '
+////                          << superblock->HA->get_parameter_values()[2] << ' '
+////                          << std::endl;
+////
+////
+////                std::cout << "HB = \n"
+////                          << superblock->HB->get_parameter_values()[0] << ' '
+////                          << superblock->HB->get_parameter_values()[1] << ' '
+////                          << superblock->HB->get_parameter_values()[2] << ' '
+////                          << std::endl;
+//
+//            }
+//
+}
 
 Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overlap_full_diag(Eigen::Tensor<Scalar, 4> &theta){
 //    Eigen::Tensor<Scalar,1> theta = superblock->MPS->get_theta().reshape(superblock->shape1);
@@ -191,19 +199,20 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     long best_state;
     double max_overlap = overlaps.cwiseAbs().maxCoeff(&best_state);
     double offset = energy_target - eigvals(best_state)/L;
-
-    if (std::abs(offset) > 0.01 * (energy_max - energy_min)){
+    if (false){
+//    if (std::abs(offset) > 0.01 * (energy_max - energy_min)){
         (eigvals.array() - energy_target*L).cwiseAbs().minCoeff(&best_state);
         max_overlap = overlaps(best_state);
-//        std::cout << "Finding state with closest energy:  " << std::setprecision(10) << max_overlap << " offset: " << setw(12) << offset << " (target = " << energy_target << ")" << " position: " << env_storage->get_position()<< std::endl;
+        std::cout << "Finding state with closest energy:  " << std::setprecision(10) << max_overlap << " offset: " << setw(12) << offset << " (target = " << energy_target << ")" << " position: " << env_storage->get_position()<< std::endl;
     }else{
 //        std::cout << "Finding state with closest overlap: " << std::setprecision(10) << max_overlap << " offset: " << setw(12) << offset << " (target = " << energy_target << ")" << " position: " << env_storage->get_position()<< std::endl;
     }
+    std::cerr << "Armadillo Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
+
     Textra::MatrixType<Scalar> state = eigvecs.col(best_state);
     energy_now = eigvals(best_state)/L;
     return Textra::Matrix_to_Tensor(state, theta.dimensions());
 }
-
 
 Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overlap_part_diag(Eigen::Tensor<Scalar,4> &theta) {
     long shape = theta.size();
@@ -223,8 +232,8 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     long chiA = superblock->MPS->chiA();
     long chiB = superblock->MPS->chiB();
     long d    = superblock->HA->get_spin_dimension();
-    std::array<long,4> shape4_theta = {d,chiA,d,chiB};
-    std::array<long,4> shape4_mpo   = superblock->HA->MPO.dimensions();;
+//    std::array<long,4> shape4_theta = {d,chiA,d,chiB};
+//    std::array<long,4> shape4_mpo   = superblock->HA->MPO.dimensions();;
 
     class_eigsolver_arpack<std::complex<double>, Form::GENERAL> arpack_solver;
     Eigen::VectorXcd eigvals;
@@ -296,6 +305,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         std::cerr << "          Full diag complete.           Wall time: " << t_tot.get_age() << std::endl;
         std::cerr << "          Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
     }
+    std::cerr << "Arpack Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
 
     energy_now      = eigvals(best_state_idx).real()/L;
     theta_res       = eigvecs.col(best_state_idx);
@@ -312,7 +322,6 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     return Textra::Matrix_to_Tensor(theta_res, theta.dimensions());
 }
 
-
 void class_xDMRG::initialize_chain() {
     while(true){
         env_storage_insert();
@@ -325,7 +334,6 @@ void class_xDMRG::initialize_chain() {
     }
 }
 
-
 void class_xDMRG::reset_chain_mps_to_random_product_state(std::string parity) {
     std::cout << "Resetting to random product state" << std::endl;
     assert(env_storage->get_length() == max_length);
@@ -336,14 +344,10 @@ void class_xDMRG::reset_chain_mps_to_random_product_state(std::string parity) {
         // Random product state
         long chiA = superblock->MPS->chiA();
         long chiB = superblock->MPS->chiB();
-//        long chiA = 1;
-//        long chiB = 1;
         long d    = superblock->HA->get_spin_dimension();
         Eigen::Tensor<Scalar,4> theta;
         Eigen::MatrixXcd vecs1(d*chiA,d*chiB);
         Eigen::MatrixXcd vecs2(d*chiA,d*chiB);
-//        MPO.slice(Eigen::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
-
         if (parity == "none"){
             theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
         }else{
@@ -366,19 +370,11 @@ void class_xDMRG::reset_chain_mps_to_random_product_state(std::string parity) {
             if(rn::uniform_double_1() < 0.5){
                 theta.slice(Eigen::array<long,4>{0,0,0,0},extent4).reshape(extent2) = Textra::Matrix_to_Tensor(vecs1);
 
-//                theta = Textra::Matrix_to_Tensor(vecs1,d,chiA,d,chiB);
             }else{
-//                theta = Textra::Matrix_to_Tensor(vecs2,d,chiA,d,chiB);
                 theta.slice(Eigen::array<long,4>{0,0,0,0},extent4).reshape(extent2) = Textra::Matrix_to_Tensor(vecs2);
-
             }
 
         }
-//        Eigen::Tensor<Scalar,1> L1 (1);
-//        L1.setConstant(1.0);
-//        superblock->MPS->MPS_A->set_L(L1);
-//        superblock->MPS->MPS_B->set_L(L1);
-//        superblock->MPS->LC = L1;
         //Get a properly normalized initial state.
         superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
         env_storage_overwrite_local_ALL();
@@ -392,6 +388,7 @@ void class_xDMRG::reset_chain_mps_to_random_product_state(std::string parity) {
 
     }
     iteration = env_storage->reset_sweeps();
+    measurement->set_not_measured();
 }
 
 void class_xDMRG::set_random_fields_in_chain_mpo() {
@@ -495,9 +492,17 @@ void class_xDMRG::find_energy_range() {
     std::cout << setprecision(10) ;
     std::cout << "Energy minimum (per site) = " << energy_min << std::endl;
     std::cout << "Energy maximum (per site) = " << energy_max << std::endl;
-    std::cout << "Energy_at_site:             " << energy_now << std::endl;
-    std::cout << "Energy target (per site)  = " << energy_target << std::endl;
-    reset_chain_mps_to_random_product_state("none");
+    std::cout << "Energy target  (per site) = " << energy_target << std::endl;
+    double energy_ubound = energy_target + 0.01*(energy_max-energy_min);
+    double energy_lbound = energy_target - 0.01*(energy_max-energy_min);
+    while(energy_now < energy_lbound or energy_now > energy_ubound){
+        reset_chain_mps_to_random_product_state("none");
+        compute_observables();
+        energy_now = measurement->get_energy_mpo();
+    }
+    std::cout << "Energy initial (per site) = " << energy_now <<  std::endl;
+
+
 }
 
 void class_xDMRG::store_table_entry_to_file(){

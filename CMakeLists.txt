@@ -58,12 +58,7 @@ if(MARCH_STR)
 endif()
 
 
-#find_package(OpenMP)
-#if (OPENMP_FOUND)
-#    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-#    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-#    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-#endif()
+
 
 #get_cmake_property(_variableNames VARIABLES)
 #foreach (_variableName ${_variableNames})
@@ -151,7 +146,22 @@ set_target_properties(${PROJECT_NAME}
         CXX_EXTENSIONS OFF)
 
 
-
+#################################
+###  Optional OpenMP support  ###
+#################################
+#find_package(OpenMP)
+#if (OPENMP_FOUND)
+#    target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp=libomp)
+#    target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
+#
+#
+#    get_cmake_property(_variableNames VARIABLES)
+#    foreach (_variableName ${_variableNames})
+#        if("${_variableName}" MATCHES "OMP" OR "${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP")
+#            message(STATUS "${_variableName}=${${_variableName}}")
+#        endif()
+#    endforeach()
+#endif()
 
 
 

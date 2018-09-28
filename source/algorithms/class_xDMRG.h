@@ -42,7 +42,7 @@ public:
     void print_profiling_sim(class_tic_toc &t_parent)   override;
     void store_table_entry_to_file()                    override;
     void store_chain_entry_to_file();
-    void single_xDMRG_step(xDMRG_Mode mode);
+    void single_xDMRG_step();
     void initialize_chain();
     void reset_chain_mps_to_random_product_state(std::string parity = "none");
     void set_random_fields_in_chain_mpo();

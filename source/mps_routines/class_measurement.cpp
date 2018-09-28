@@ -51,7 +51,6 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
 
 void class_measurement::compute_all_observables_from_superblock(){
     if (is_measured){return;}
-    if (superblock->MPS->chiC() < 2) { return; }
     mps_util->theta = mps_util->get_theta(superblock->MPS);
     switch(sim_type){
         case SimulationType::iDMRG:
@@ -62,6 +61,7 @@ void class_measurement::compute_all_observables_from_superblock(){
             mps_util->compute_mps_components(superblock->MPS);
             compute_energy_ham();
             compute_energy_variance_ham();
+            if (superblock->MPS->chiC() < 2) { break; }
             compute_energy_and_variance_mom(a, mom_vecA);
             break;
         case SimulationType::xDMRG:
@@ -75,6 +75,7 @@ void class_measurement::compute_all_observables_from_superblock(){
             mps_util->compute_mps_components(superblock->MPS);
             compute_energy_ham();
             compute_energy_variance_ham();
+            if (superblock->MPS->chiC() < 2) { break; }
             compute_energy_and_variance_mom(a, mom_vecA);
             break;
     }
@@ -88,7 +89,6 @@ void class_measurement::compute_all_observables_from_superblock(){
 
 void class_measurement::compute_all_observables_from_superblock(const Eigen::Tensor<Scalar,4> &theta){
     if (is_measured){return;}
-    if (superblock->MPS->chiC() < 2) { return; }
     mps_util->theta = theta;
     switch(sim_type){
         case SimulationType::iDMRG:
@@ -99,6 +99,7 @@ void class_measurement::compute_all_observables_from_superblock(const Eigen::Ten
             mps_util->compute_mps_components(superblock->MPS);
             compute_energy_ham();
             compute_energy_variance_ham();
+            if (superblock->MPS->chiC() < 2) { break; }
             compute_energy_and_variance_mom(a, mom_vecA);
             break;
         case SimulationType::xDMRG:
@@ -112,6 +113,7 @@ void class_measurement::compute_all_observables_from_superblock(const Eigen::Ten
             mps_util->compute_mps_components(superblock->MPS);
             compute_energy_ham();
             compute_energy_variance_ham();
+            if (superblock->MPS->chiC() < 2) { break; }
             compute_energy_and_variance_mom(a, mom_vecA);
             break;
     }
