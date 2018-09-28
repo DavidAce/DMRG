@@ -7,7 +7,7 @@ import numpy as np
 # Use '@' as a wildcard to be replaced by the the copy number.
 
 template_filename = 'input_template.cfg'
-basename    = 'mbl'
+basename    = 'mbl_'
 location    = "../input/"
 settings = []
 input_filenames = []
@@ -24,7 +24,7 @@ for num_L in range(len(lengths)):
             for num_h in range(len(h_log_mean)):
                 for num_r in range(len(realizations)):
                     # input_filenames.append(basename + 'l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '_' + str(num_r) + '.cfg')
-                    input_filenames.append('L_'+ str(lengths[num_L]) + '/' +  basename + '_l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '_' + str(num_r) + '.cfg')
+                    input_filenames.append('L_'+ str(lengths[num_L]) + '/' +  basename + str(num_r) + '_l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '_' + str(num_r) + '.cfg')
                     settings.append({
                         "model::selfdual_tf_rf_ising::J_log_mean"     : "{:.2f}".format(J_log_mean[num_j]),
                         "model::selfdual_tf_rf_ising::h_log_mean"     : "{:.2f}".format(h_log_mean[num_h]),
