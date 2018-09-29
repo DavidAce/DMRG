@@ -14,7 +14,7 @@ arguments  = $(inputfiles)
 # * memory in units of MB
 # * disk in units of MB
 ########################################################
-request_cpus   = 1
+request_cpus   = 2
 request_memory = 1000
 request_disk   = 200
 
@@ -58,4 +58,4 @@ getenv = true
 log        = logs/$(NAME)_$(ID).log
 output     = logs/$(NAME)_$(ID).out
 error      = logs/$(NAME)_$(ID).error
-queue inputfiles matching files input/$(NAME)_*.cfg
+queue inputfiles matching files input/L_24/$(NAME)_*.cfg
