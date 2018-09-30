@@ -23,7 +23,7 @@ mode="Release"
 clear_cmake=""
 clear_libs=""
 threads="4"
-march="haswell"
+march="core2"
 #export CC=gcc
 #export CXX=g++
 #export FC=gfortran
@@ -86,7 +86,10 @@ echo "Mode            :   $mode"
 
 
 module load openblas_${march}_v0.3.3
-
+module load arpack-ng_${march}_3.6.2
+module load armadillo-9.200.x
+module load arpack++
+module load hdf5_1.10.3
 
 cmake -E make_directory build/$mode
 cd build/$mode
