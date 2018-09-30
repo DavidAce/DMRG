@@ -96,6 +96,7 @@ namespace settings {
         extern int     seed         ;                       /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
         extern int     print_freq   ;                       /*!< Print frequency for console output. In units of sweeps. (0 = off). */
         extern int     store_freq   ;                       /*!< Store frequency,for output file buffer. In units of sweeps. (0 = off). */
+        extern bool    store_wavefn ;                       /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
 
     }
 

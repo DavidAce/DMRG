@@ -43,7 +43,7 @@ void class_iTEBD::run() {
         single_TEBD_step(chi_temp);
         phys_time += delta_t;
         store_table_entry_to_file();
-        store_profiling_to_file();
+        store_profiling_to_file_delta();
         print_status_update();
         check_convergence_all();
         iteration++;

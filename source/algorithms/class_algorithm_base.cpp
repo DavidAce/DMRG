@@ -293,10 +293,11 @@ void class_algorithm_base::clear_saturation_status(){
 }
 
 
-void class_algorithm_base::store_profiling_to_file() {
+void class_algorithm_base::store_profiling_to_file_delta(bool force) {
 //    if (Math::mod(iteration, store_freq) != 0) {return;}
 //    t_sto.tic();
-    if (settings::profiling::on and settings::hdf5::store_profiling)
+
+    if (force or (settings::profiling::on and settings::hdf5::store_profiling))
     table_profiling->append_record(
             iteration,
             t_tot.get_last_time_interval(),
@@ -314,6 +315,30 @@ void class_algorithm_base::store_profiling_to_file() {
             t_con.get_last_time_interval()
     );
 }
+
+void class_algorithm_base::store_profiling_to_file_total(bool force) {
+//    if (Math::mod(iteration, store_freq) != 0) {return;}
+//    t_sto.tic();
+
+    if (force or (settings::profiling::on and settings::hdf5::store_profiling))
+        table_profiling->append_record(
+                iteration,
+                t_tot.get_measured_time(),
+                t_opt.get_measured_time(),
+                t_sim.get_measured_time(),
+                t_svd.get_measured_time(),
+                t_env.get_measured_time(),
+                t_evo.get_measured_time(),
+                t_udt.get_measured_time(),
+                t_sto.get_measured_time(),
+                t_ste.get_measured_time(),
+                t_prt.get_measured_time(),
+                t_obs.get_measured_time(),
+                t_mps.get_measured_time(),
+                t_con.get_measured_time()
+        );
+}
+
 
 
 void class_algorithm_base::initialize_state(std::string initial_state ) {
