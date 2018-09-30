@@ -107,7 +107,8 @@ public:
 
 
     // Profiling
-    void store_profiling_to_file();
+    void store_profiling_to_file_delta(bool force = false);
+    void store_profiling_to_file_total(bool force = false);
 
     class_tic_toc t_tot;
     class_tic_toc t_opt;

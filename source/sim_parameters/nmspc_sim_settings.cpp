@@ -78,6 +78,7 @@ namespace settings{
     int    xdmrg::seed                   = 1;                       /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
     int    xdmrg::print_freq             = 100;
     int    xdmrg::store_freq             = 100;
+    bool   xdmrg::store_wavefn           = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
 
     //Parameters controlling imaginary TEBD (Zero temperature)
     bool   itebd::on                     = true;
@@ -181,13 +182,14 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters controlling excited state DMRG
     xdmrg::on                     = indata.find_parameter<bool>   ("xdmrg::on"         , xdmrg::on);
     if(xdmrg::on){
-        xdmrg::max_length         = indata.find_parameter<int>    ("xdmrg::max_length ", xdmrg::max_length);
-        xdmrg::max_sweeps         = indata.find_parameter<int>    ("xdmrg::max_sweeps ", xdmrg::max_sweeps);
-        xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"    , 8);
-        xdmrg::chi_grow           = indata.find_parameter<bool>   ("xdmrg::chi_grow"   , xdmrg::chi_grow);
-        xdmrg::seed               = indata.find_parameter<int>    ("xdmrg::seed"       , xdmrg::seed);
-        xdmrg::print_freq         = indata.find_parameter<int>    ("xdmrg::print_freq ", xdmrg::print_freq);
-        xdmrg::store_freq         = indata.find_parameter<int>    ("xdmrg::store_freq ", xdmrg::store_freq);
+        xdmrg::max_length         = indata.find_parameter<int>    ("xdmrg::max_length "    , xdmrg::max_length);
+        xdmrg::max_sweeps         = indata.find_parameter<int>    ("xdmrg::max_sweeps "    , xdmrg::max_sweeps);
+        xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"        , 8);
+        xdmrg::chi_grow           = indata.find_parameter<bool>   ("xdmrg::chi_grow"       , xdmrg::chi_grow);
+        xdmrg::seed               = indata.find_parameter<int>    ("xdmrg::seed"           , xdmrg::seed);
+        xdmrg::print_freq         = indata.find_parameter<int>    ("xdmrg::print_freq "    , xdmrg::print_freq);
+        xdmrg::store_freq         = indata.find_parameter<int>    ("xdmrg::store_freq "    , xdmrg::store_freq);
+        xdmrg::store_wavefn       = indata.find_parameter<bool>   ("xdmrg::store_wavefn"   , xdmrg::store_wavefn);
     }
 
 
