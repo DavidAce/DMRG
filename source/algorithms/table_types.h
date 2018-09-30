@@ -103,7 +103,7 @@ private:
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE};
         hsize_t chunk_size = 1;
         void *fill_data = nullptr;
-        int compress = 9;
+        int compress = 0;
     };
 public:
     class_table_dmrg() = default;
@@ -198,7 +198,7 @@ private:
                                                   H5T_NATIVE_DOUBLE};
         hsize_t chunk_size = 1;
         void *fill_data = nullptr;
-        int compress = 9;
+        int compress = 0;
     };
 public:
     class_table_tebd() = default;
@@ -274,7 +274,7 @@ private:
                                                 };
         hsize_t chunk_size = 1;
         void *fill_data = nullptr;
-        int compress = 9;
+        int compress = 0;
     };
 public:
     class_table_finite_chain() = default;
@@ -352,7 +352,7 @@ private:
 
         hsize_t          chunk_size                         = 1;
         void             *fill_data                         = nullptr;
-        int              compress                           = 9;
+        int              compress                           = 0;
     };
 public:
     class_table_profiling() = default;
