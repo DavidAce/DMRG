@@ -67,7 +67,7 @@ void class_xDMRG::run() {
         env_storage_overwrite_local_ALL();
         store_table_entry_to_file();
         store_chain_entry_to_file();
-        store_profiling_to_file();
+        store_profiling_to_file_total();
         print_status_update();
 
         // It's important not to perform the last step.
@@ -88,10 +88,10 @@ void class_xDMRG::run() {
     env_storage->write_chain_to_file();
     measurement->compute_all_observables_from_finite_chain();
     // Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
-    if(measurement->get_chain_length() < 15){
+    if(settings::xdmrg::store_wavefn){
         hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction");
     }
-
+    store_profiling_to_file_total(true);
     print_profiling();
 
 }
@@ -229,9 +229,9 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     assert(H_local.dimension(1) == shape);
     t_ham.toc();
 
-    long chiA = superblock->MPS->chiA();
-    long chiB = superblock->MPS->chiB();
-    long d    = superblock->HA->get_spin_dimension();
+//    long chiA = superblock->MPS->chiA();
+//    long chiB = superblock->MPS->chiB();
+//    long d    = superblock->HA->get_spin_dimension();
 //    std::array<long,4> shape4_theta = {d,chiA,d,chiB};
 //    std::array<long,4> shape4_mpo   = superblock->HA->MPO.dimensions();;
 

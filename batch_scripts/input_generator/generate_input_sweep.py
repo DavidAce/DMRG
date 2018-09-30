@@ -31,8 +31,8 @@ for num_L in range(len(lengths)):
                         "model::selfdual_tf_rf_ising::lambda"         : "{:.2f}".format(lambdas[num_l]),
                         "model::selfdual_tf_rf_ising::J_sigma"        : "0.5",
                         "model::selfdual_tf_rf_ising::h_sigma"        : "0.5",
-			"model::selfdual_tf_rf_ising::max_length"     : "24",
-			"model::selfdual_tf_rf_ising::chi_max"        : "32",
+			            "model::selfdual_tf_rf_ising::max_length"     : "24",
+			            "model::selfdual_tf_rf_ising::chi_max"        : "32",
                         "xdmrg::seed"                                 : str(num_total),
                         "hdf5::output_folder"                         : 'output/L_'+ str(lengths[num_L]) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h),
                         "hdf5::output_filename"                       : basename + str(num_r) + '.h5'

@@ -31,7 +31,7 @@ void class_iDMRG::run() {
         single_DMRG_step(chi_temp);
         print_status_update();
         store_table_entry_to_file();
-        store_profiling_to_file();
+        store_profiling_to_file_delta();
         enlarge_environment();
         check_convergence_all();
         swap();

@@ -38,7 +38,7 @@ void class_fDMRG::run() {
         env_storage_overwrite_local_ALL();         //Needs to occurr after update_MPS...
         store_table_entry_to_file();
         store_chain_entry_to_file();
-        store_profiling_to_file();
+        store_profiling_to_file_delta();
         print_status_update();
 
 
