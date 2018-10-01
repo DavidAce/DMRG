@@ -240,96 +240,96 @@ void class_eigsolver_arpack<Scalar,form>::eig_shift_invert(
     }
 }
 
-
-template<typename Scalar,Form form>
-void class_eigsolver_arpack<Scalar,form>::eig_shift_invert2(
-        const Scalar *Lblock,                   /*!< The left block tensor.  */
-        const Scalar *Rblock,                   /*!< The right block tensor.  */
-        const Scalar *HA,                       /*!< The left Hamiltonian MPO's  */
-        const Scalar *HB,                       /*!< The right Hamiltonian MPO's */
-        const std::array<long,4> shape_theta4,  /*!< An array containing the shapes of theta  */
-        const std::array<long,4> shape_mpo4 ,   /*!< An array containing the shapes of the MPO  */
-        const int nev,
-        const int ncv,
-        const Scalar shift,
-        const Ritz ritz,
-        const bool compute_eigvecs_,
-        const bool remove_phase_,
-        Scalar *residual_
-) {
-    compute_eigvecs = compute_eigvecs_;
-    remove_phase    = remove_phase_;
-    residual        = residual_;
-    Scalar sigma = shift;
-    eigvecs_found = false;
-    eigvals_found = false;
-    eigvals.clear();
-    eigvecs.clear();
-
-    DenseHamiltonianProduct<Scalar>  hamiltonianProduct(Lblock, Rblock,HA, HB, shape_theta4,shape_mpo4);
-    int dim  = hamiltonianProduct.cols();
-    int ncv_internal = std::max(ncv, 2+nev);
-    ncv_internal = std::min(ncv_internal, dim);
-    assert(ncv_internal >= nev + 2 and ncv_internal <= dim);
-
-    // Stupidly enough, the only difference between the github and "apt" versions of arpack++, is that the apt version only accepts char*
-    RitzToString.at(ritz).copy(ritz_char, 2);
-    if constexpr(std::is_same_v<Scalar, std::complex<double>> and form == Form::GENERAL) {
-        ARCompStdEig<double, DenseHamiltonianProduct<Scalar>> eig
-                                                            (dim,
-                                                             nev,
-                                                             &hamiltonianProduct,
-                                                             &DenseHamiltonianProduct<Scalar>::MultMv,
-                                                             sigma,
-                                                             ritz_char,
-                                                             ncv_internal,
-                                                             eigThreshold,
-                                                             eigMaxIter,
-                                                             residual,
-                                                             true);
-        t_sol.tic();
-        eig.FindEigenvectors();
-        t_sol.toc();
-        t_get.tic();
-        eigvals_found = eig.EigenvaluesFound();
-        eigvecs_found = eig.EigenvectorsFound();
-        n         = eig.GetN();
-        rows      = eig.GetN();
-        cols      = eig.GetNev();
-        nev_found = eig.GetNev();
-        iter      = eig.GetIter();
-        counter   = hamiltonianProduct.counter;
-        eigvals   = std::vector<Scalar>(eig.RawEigenvalues() , eig.RawEigenvalues()  + cols);
-        eigvecs   = std::vector<Scalar>(eig.RawEigenvector(0), eig.RawEigenvectors() + rows*cols);
-        t_get.toc();
-
 //
-//        int nev_temp = nev_internal == 1 ? 2 : nev_internal;
-//        ARdsNonSymMatrix<Scalar,Scalar> matrix(n, matrix_data);
-//        ARluNonSymStdEig<Scalar> eig(nev_temp, matrix, sigma,ritz_char, ncv_internal, eigThreshold, eigMaxIter, residual,true);
-////        counter = matrix.counter;
-//        find_solution(eig, nev, compute_eigvecs);
-    }
-
-//    if constexpr(std::is_same_v<Scalar, double> and form == Form::SYMMETRIC) {
-//        ARdsSymMatrix<Scalar> matrix(n, matrix_data);
-//        ARluSymStdEig<Scalar> eig(nev_internal, matrix,sigma, ritz_char, ncv_internal, eigThreshold, eigMaxIter, residual,true);
-////        counter = matrix.counter;
-//        find_solution(eig, nev, compute_eigvecs);
+//template<typename Scalar,Form form>
+//void class_eigsolver_arpack<Scalar,form>::eig_shift_invert2(
+//        const Scalar *Lblock,                   /*!< The left block tensor.  */
+//        const Scalar *Rblock,                   /*!< The right block tensor.  */
+//        const Scalar *HA,                       /*!< The left Hamiltonian MPO's  */
+//        const Scalar *HB,                       /*!< The right Hamiltonian MPO's */
+//        const std::array<long,4> shape_theta4,  /*!< An array containing the shapes of theta  */
+//        const std::array<long,4> shape_mpo4 ,   /*!< An array containing the shapes of the MPO  */
+//        const int nev,
+//        const int ncv,
+//        const Scalar shift,
+//        const Ritz ritz,
+//        const bool compute_eigvecs_,
+//        const bool remove_phase_,
+//        Scalar *residual_
+//) {
+//    compute_eigvecs = compute_eigvecs_;
+//    remove_phase    = remove_phase_;
+//    residual        = residual_;
+//    Scalar sigma = shift;
+//    eigvecs_found = false;
+//    eigvals_found = false;
+//    eigvals.clear();
+//    eigvecs.clear();
+//
+//    DenseHamiltonianProduct<Scalar>  hamiltonianProduct(Lblock, Rblock,HA, HB, shape_theta4,shape_mpo4);
+//    int dim  = hamiltonianProduct.cols();
+//    int ncv_internal = std::max(ncv, 2+nev);
+//    ncv_internal = std::min(ncv_internal, dim);
+//    assert(ncv_internal >= nev + 2 and ncv_internal <= dim);
+//
+//    // Stupidly enough, the only difference between the github and "apt" versions of arpack++, is that the apt version only accepts char*
+//    RitzToString.at(ritz).copy(ritz_char, 2);
+//    if constexpr(std::is_same_v<Scalar, std::complex<double>> and form == Form::GENERAL) {
+//        ARCompStdEig<double, DenseHamiltonianProduct<Scalar>> eig
+//                                                            (dim,
+//                                                             nev,
+//                                                             &hamiltonianProduct,
+//                                                             &DenseHamiltonianProduct<Scalar>::MultMv,
+//                                                             sigma,
+//                                                             ritz_char,
+//                                                             ncv_internal,
+//                                                             eigThreshold,
+//                                                             eigMaxIter,
+//                                                             residual,
+//                                                             true);
+//        t_sol.tic();
+//        eig.FindEigenvectors();
+//        t_sol.toc();
+//        t_get.tic();
+//        eigvals_found = eig.EigenvaluesFound();
+//        eigvecs_found = eig.EigenvectorsFound();
+//        n         = eig.GetN();
+//        rows      = eig.GetN();
+//        cols      = eig.GetNev();
+//        nev_found = eig.GetNev();
+//        iter      = eig.GetIter();
+//        counter   = hamiltonianProduct.counter;
+//        eigvals   = std::vector<Scalar>(eig.RawEigenvalues() , eig.RawEigenvalues()  + cols);
+//        eigvecs   = std::vector<Scalar>(eig.RawEigenvector(0), eig.RawEigenvectors() + rows*cols);
+//        t_get.toc();
+//
+////
+////        int nev_temp = nev_internal == 1 ? 2 : nev_internal;
+////        ARdsNonSymMatrix<Scalar,Scalar> matrix(n, matrix_data);
+////        ARluNonSymStdEig<Scalar> eig(nev_temp, matrix, sigma,ritz_char, ncv_internal, eigThreshold, eigMaxIter, residual,true);
+//////        counter = matrix.counter;
+////        find_solution(eig, nev, compute_eigvecs);
 //    }
 //
-//    if constexpr(std::is_same_v<Scalar, std::complex<double>>) {
-//        ARdsNonSymMatrix<std::complex<double>,double> matrix(n, matrix_data);
-//        ARluCompStdEig<double> eig(nev_internal, matrix, sigma,ritz_char, ncv_internal, eigThreshold, eigMaxIter, residual,true);
+////    if constexpr(std::is_same_v<Scalar, double> and form == Form::SYMMETRIC) {
+////        ARdsSymMatrix<Scalar> matrix(n, matrix_data);
+////        ARluSymStdEig<Scalar> eig(nev_internal, matrix,sigma, ritz_char, ncv_internal, eigThreshold, eigMaxIter, residual,true);
+//////        counter = matrix.counter;
+////        find_solution(eig, nev, compute_eigvecs);
+////    }
+////
+////    if constexpr(std::is_same_v<Scalar, std::complex<double>>) {
+////        ARdsNonSymMatrix<std::complex<double>,double> matrix(n, matrix_data);
+////        ARluCompStdEig<double> eig(nev_internal, matrix, sigma,ritz_char, ncv_internal, eigThreshold, eigMaxIter, residual,true);
+////
+////        find_solution(eig, nev_internal, compute_eigvecs);
+//////        counter = matrix.counter;
+////    }
 //
-//        find_solution(eig, nev_internal, compute_eigvecs);
-////        counter = matrix.counter;
+//    if (remove_phase) {
+//        subtract_phase();
 //    }
-
-    if (remove_phase) {
-        subtract_phase();
-    }
-}
+//}
 
 
 
