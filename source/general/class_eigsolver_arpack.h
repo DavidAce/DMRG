@@ -158,22 +158,22 @@ public:
     );
 
 
-
-    void eig_shift_invert2(
-            const Scalar *Lblock_,                   /*!< The left block tensor.  */
-            const Scalar *Rblock_,                   /*!< The right block tensor.  */
-            const Scalar *HA_,                       /*!< The left Hamiltonian MPO's  */
-            const Scalar *HB_,                       /*!< The right Hamiltonian MPO's */
-            const std::array<long,4> shape_theta4_,  /*!< An array containing the shapes of theta  */
-            const std::array<long,4> shape_mpo4_ ,   /*!< An array containing the shapes of the MPO  */
-            const int nev,
-            const int ncv,
-            const Scalar shift,
-            const Ritz ritz,
-            const bool compute_eigvecs_= false,
-            const bool remove_phase_= false,
-            Scalar *residual_ = nullptr
-    );
+//
+//    void eig_shift_invert2(
+//            const Scalar *Lblock_,                   /*!< The left block tensor.  */
+//            const Scalar *Rblock_,                   /*!< The right block tensor.  */
+//            const Scalar *HA_,                       /*!< The left Hamiltonian MPO's  */
+//            const Scalar *HB_,                       /*!< The right Hamiltonian MPO's */
+//            const std::array<long,4> shape_theta4_,  /*!< An array containing the shapes of theta  */
+//            const std::array<long,4> shape_mpo4_ ,   /*!< An array containing the shapes of the MPO  */
+//            const int nev,
+//            const int ncv,
+//            const Scalar shift,
+//            const Ritz ritz,
+//            const bool compute_eigvecs_= false,
+//            const bool remove_phase_= false,
+//            Scalar *residual_ = nullptr
+//    );
 
 
     void optimize_mps(
