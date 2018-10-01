@@ -153,7 +153,7 @@ void settings::load_from_file(class_file_reader &indata){
     precision::eigMaxIter                  = indata.find_parameter<int>    ("precision::eigMaxIter"  , precision::eigMaxIter);
     precision::eigThreshold                = indata.find_parameter<double> ("precision::eigThreshold", precision::eigThreshold);
     precision::eigMaxNcv                   = indata.find_parameter<int>    ("precision::eigMaxNcv"   , precision::eigMaxNcv);
-    precision::SVDThreshold                = indata.find_parameter<double> ("precision::eigThreshold", precision::SVDThreshold);
+    precision::SVDThreshold                = indata.find_parameter<double> ("precision::SVDThreshold", precision::SVDThreshold);
     precision::VarConvergenceThreshold     = indata.find_parameter<double> ("precision::VarConvergenceThreshold"   , precision::VarConvergenceThreshold);
     precision::VarSaturationThreshold      = indata.find_parameter<double> ("precision::VarSaturationThreshold"    , precision::VarSaturationThreshold);
     precision::EntEntrSaturationThreshold  = indata.find_parameter<double> ("precision::EntEntrSaturationThreshold", precision::EntEntrSaturationThreshold);
@@ -184,7 +184,7 @@ void settings::load_from_file(class_file_reader &indata){
     if(xdmrg::on){
         xdmrg::max_length         = indata.find_parameter<int>    ("xdmrg::max_length "    , xdmrg::max_length);
         xdmrg::max_sweeps         = indata.find_parameter<int>    ("xdmrg::max_sweeps "    , xdmrg::max_sweeps);
-        xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"        , 8);
+        xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"        , xdmrg::chi_max);
         xdmrg::chi_grow           = indata.find_parameter<bool>   ("xdmrg::chi_grow"       , xdmrg::chi_grow);
         xdmrg::seed               = indata.find_parameter<int>    ("xdmrg::seed"           , xdmrg::seed);
         xdmrg::print_freq         = indata.find_parameter<int>    ("xdmrg::print_freq "    , xdmrg::print_freq);
