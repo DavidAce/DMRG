@@ -248,7 +248,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     double max_overlap;
     double offset;
     double overlap_threshold = 1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
-    for (int iter = 0; iter  <  5; iter++){
+    for (int iter = 0; iter  <  4; iter++){
         t_eig.tic();
 //        arpack_solver.eig_shift_invert2(superblock->Lblock->block.data(),
 //                                        superblock->Rblock->block.data(),
