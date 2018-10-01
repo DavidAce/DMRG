@@ -285,7 +285,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 //
 //    }
     if(max_overlap <  overlap_threshold){
-        std::cerr << "WARNING:  Partial diagonlization -- Overlap very small: " << std::setprecision(10) << max_overlap << "      position: " << env_storage->get_position() << std::endl;
+        std::cerr << "WARNING: Partial diagonlization -- Overlap very small: " << std::setprecision(10) << max_overlap << "      position: " << env_storage->get_position() << std::endl;
         std::cerr << "          Overlaps:"  << std::endl;
         for (auto &res : results){
             std::cerr << "          nev: " << setw(10) << std::get<0>(res) << "   overlap: " << setprecision(14) << setw(18) << std::get<1>(res) << "       Wall time: " << std::get<2>(res) << std::endl;
@@ -310,8 +310,8 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     energy_now      = eigvals(best_state_idx).real()/L;
     theta_res       = eigvecs.col(best_state_idx);
 
-    double energy_ubound = energy_target + 0.05*(energy_max-energy_min);
-    double energy_lbound = energy_target - 0.05*(energy_max-energy_min);
+    double energy_ubound = energy_target + 0.1*(energy_max-energy_min);
+    double energy_lbound = energy_target - 0.1*(energy_max-energy_min);
     if(energy_now < energy_lbound or energy_now > energy_ubound){
         std::cerr << "WARNING: Partial diagonlization -- Energy far from mid-spectrum: " << "Energy =  " << energy_now << " | target = " << energy_target << std::endl;
     }
@@ -493,8 +493,8 @@ void class_xDMRG::find_energy_range() {
     std::cout << "Energy minimum (per site) = " << energy_min << std::endl;
     std::cout << "Energy maximum (per site) = " << energy_max << std::endl;
     std::cout << "Energy target  (per site) = " << energy_target << std::endl;
-    double energy_ubound = energy_target + 0.01*(energy_max-energy_min);
-    double energy_lbound = energy_target - 0.01*(energy_max-energy_min);
+    double energy_ubound = energy_target + 0.05*(energy_max-energy_min);
+    double energy_lbound = energy_target - 0.05*(energy_max-energy_min);
     while(energy_now < energy_lbound or energy_now > energy_ubound){
         reset_chain_mps_to_random_product_state("none");
         compute_observables();
