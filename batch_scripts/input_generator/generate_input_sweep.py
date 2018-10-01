@@ -11,12 +11,12 @@ basename    = 'mbl_'
 location    = "../input/"
 settings = []
 input_filenames = []
-realizations = np.arange(5,500,1)  # Number of copies for each point on the sweep
+realizations = np.arange(0,100,1)  # Number of copies for each point on the sweep
 lengths = [24] #np.arange(12,24,2)
 lambdas = np.arange(0, 0.2, 0.1)
 J_log_mean = [1]
 h_log_mean = np.flipud(np.arange(-3, 3.5, 0.5)+1)
-num_total = 131
+num_total = 0
 
 for num_L in lengths:
     for num_l in range(len(lambdas)):
@@ -29,8 +29,8 @@ for num_L in lengths:
                         "model::selfdual_tf_rf_ising::J_log_mean"     : "{:.2f}".format(J_log_mean[num_j]),
                         "model::selfdual_tf_rf_ising::h_log_mean"     : "{:.2f}".format(h_log_mean[num_h]),
                         "model::selfdual_tf_rf_ising::lambda"         : "{:.2f}".format(lambdas[num_l]),
-                        "model::selfdual_tf_rf_ising::J_sigma"        : "0.5",
-                        "model::selfdual_tf_rf_ising::h_sigma"        : "0.5",
+                        "model::selfdual_tf_rf_ising::J_sigma"        : "1.0",
+                        "model::selfdual_tf_rf_ising::h_sigma"        : "1.0",
 			            "xdmrg::max_length"                           : str(num_L),
 			            "xdmrg::chi_max"                              : "32",
                         "xdmrg::seed"                                 : str(num_total),

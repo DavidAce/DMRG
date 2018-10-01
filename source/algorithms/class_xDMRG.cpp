@@ -250,18 +250,8 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     double overlap_threshold = 1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
     for (int iter = 0; iter  <  4; iter++){
         t_eig.tic();
-//        arpack_solver.eig_shift_invert2(superblock->Lblock->block.data(),
-//                                        superblock->Rblock->block.data(),
-//                                        superblock->HA->MPO.data(),
-//                                        superblock->HB->MPO.data(),
-//                                        shape4_theta,
-//                                        shape4_mpo,
-//                                        nev, ncv,
-//                                        energy_now*L,
-//                                        Ritz::LM,
-//                                        true, true,
-//                                        theta.data());
-        arpack_solver.eig_shift_invert(H_local.data(), shape, nev,ncv,energy_now*L, Ritz::LM, true,true, theta_res.data());
+//        arpack_solver.eig_shift_invert(H_local.data(), shape, nev,ncv,energy_now*L, Ritz::LM, true,true, theta_res.data());
+        arpack_solver.eig_shift_invert(H_local.data(), shape, nev,ncv,energy_now*L, Ritz::LM, true, false, theta_res.data());
         t_eig.toc();
         eigvals         = Eigen::Map<const Eigen::VectorXcd> (arpack_solver.get_eigvals().data(),arpack_solver.GetNevFound());
         eigvecs         = Eigen::Map<const Eigen::MatrixXcd> (arpack_solver.get_eigvecs().data(),arpack_solver.Rows(),arpack_solver.Cols());
@@ -278,12 +268,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
 
     }
-//    if( overlaps.maxCoeff() < 1e-2){
-//        std::cerr << "Failed to find a great eigenstate! Choosing state closest in energy instead." << std::endl;
-//        (eigvals.array() - energy_target*L).cwiseAbs().minCoeff(&best_state_idx);
-////        theta_res       = eigvecs.col(best_state_idx);
-//
-//    }
+
     if(max_overlap <  overlap_threshold){
         std::cerr << "WARNING: Partial diagonlization -- Overlap very small: " << std::setprecision(10) << max_overlap << "      position: " << env_storage->get_position() << std::endl;
         std::cerr << "          Overlaps:"  << std::endl;

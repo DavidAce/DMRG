@@ -146,7 +146,7 @@ namespace Textra {
     template<typename Derived, auto rank>
     constexpr Eigen::Tensor<typename Derived::Scalar, rank> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const Eigen::DSizes<long,rank> &dims) {
         Eigen::array<long,rank> dim_array = dims;
-//        std::copy(std::begin(dims), std::end(dims), std::begin(dim_array));
+        std::copy(std::begin(dims), std::end(dims), std::begin(dim_array));
         return Matrix_to_Tensor(matrix, dim_array);
     }
 
