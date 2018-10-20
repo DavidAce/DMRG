@@ -89,6 +89,7 @@ module load armadillo-9.200.x
 module load arpack++
 module load hdf5_1.10.3
 module load gsl_2.4
+module load eigen3_3.3.5
 
 cmake -E make_directory build/$mode
 cd build/$mode
