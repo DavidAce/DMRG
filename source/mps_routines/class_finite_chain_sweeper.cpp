@@ -359,27 +359,6 @@ void class_finite_chain_sweeper::write_chain_to_file() {
     hdf5->write_dataset(Textra::to_RowMajor(get_ENV2_R().front().block), sim_name + "/chain/ENV2/R_" + std::to_string(get_ENV2_R().front().get_position()));
     hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/R_" + std::to_string(get_ENV2_R().front().get_position()), get_ENV2_R().front().size, "sites");
 
-//
-//    for (auto &env: get_ENV_L()){
-//        hdf5->write_dataset(Textra::to_RowMajor(env.block), sim_name + "/chain/ENV/L_" + std::to_string(counter));
-//        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/L_" + std::to_string(counter++), env.size, "sites");
-//    }
-//    for (auto &env: get_ENV_R()){
-//        hdf5->write_dataset(Textra::to_RowMajor(env.block), sim_name + "/chain/ENV/R_" + std::to_string(counter));
-//        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/R_" + std::to_string(counter++), env.size, "sites");
-//    }
-//    counter = 0;
-//    for (auto &env2: get_ENV2_L()){
-//        hdf5->write_dataset(Textra::to_RowMajor(env2.block), sim_name + "/chain/ENV2/L_" + std::to_string(counter));
-//        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/L_" + std::to_string(counter++), env2.size, "sites");
-//    }
-//    for (auto &env2: get_ENV2_R()){
-//        hdf5->write_dataset(Textra::to_RowMajor(env2.block), sim_name + "/chain/ENV2/R_" + std::to_string(counter));
-//        hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/R_" + std::to_string(counter++), env2.size, "sites");
-//    }
-
-
-
     // Write relevant quantities
     std::vector<double> entanglement_entropies;
     for (auto &mps : get_MPS_L()){
@@ -396,6 +375,36 @@ void class_finite_chain_sweeper::write_chain_to_file() {
         entanglement_entropies.push_back(std::real(SA(0)));
     }
     hdf5->write_dataset(entanglement_entropies ,sim_name + "/chain/OTHER/ENT_ENTR");
+
+
+    // Write down the Hamiltonian metadata as a table
+//    std::vector<std::vector<double>> hamiltonian_props;
+    Eigen::MatrixXd hamiltonian_props;
+    for(auto &mpo : get_MPO_L()){
+        auto props = mpo->get_parameter_values();
+        Eigen::ArrayXd  temp_row  = Eigen::Map<Eigen::ArrayXd> (props.data(),props.size());
+        hamiltonian_props.conservativeResize(hamiltonian_props.rows()+1, temp_row.size());
+        hamiltonian_props.bottomRows(1) = temp_row.transpose();
+    }
+    for(auto &mpo : get_MPO_R()){
+        auto props = mpo->get_parameter_values();
+        Eigen::ArrayXd  temp_row  = Eigen::Map<Eigen::ArrayXd> (props.data(),props.size());
+        hamiltonian_props.conservativeResize(hamiltonian_props.rows()+1, temp_row.size());
+        hamiltonian_props.bottomRows(1) = temp_row.transpose();
+    }
+//    Eigen::MatrixXd hamiltonian_props_transp = hamiltonian_props.;
+    hdf5->write_dataset(Textra::to_RowMajor(hamiltonian_props.transpose()) ,sim_name + "/Hamiltonian");
+//    hdf5->write_attribute_to_dataset(sim_name + "/Hamiltonian", get_MPO_L().front()->get_parameter_names(), "Columns" );
+
+    int col = 0;
+    for (auto &name : get_MPO_L().front()->get_parameter_names()){
+        std::string attr_value = name;
+        std::string attr_name  = "FIELD_" + to_string(col) + "_NAME";
+        hdf5->write_attribute_to_dataset(sim_name + "/Hamiltonian", attr_value, attr_name );
+        col++;
+    }
+
+
 
 
 }

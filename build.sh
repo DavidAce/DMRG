@@ -22,11 +22,8 @@ target="all"
 mode="Release"
 clear_cmake=""
 clear_libs=""
-threads="4"
-march="core2"
-#export CC=gcc
-#export CXX=g++
-#export FC=gfortran
+threads="8"
+march="sandybridge"
 
 while getopts a:chj:lm:t: o; do
     case $o in
@@ -84,12 +81,14 @@ echo "Target          :   $target"
 echo "Build threads   :   $threads"
 echo "Mode            :   $mode"
 
-
+#module load CLANG_6.x.x
+module load GNU_8.x.x
 module load openblas_${march}_v0.3.3
 module load arpack-ng_${march}_3.6.2
 module load armadillo-9.200.x
 module load arpack++
 module load hdf5_1.10.3
+module load gsl_2.4
 
 cmake -E make_directory build/$mode
 cd build/$mode

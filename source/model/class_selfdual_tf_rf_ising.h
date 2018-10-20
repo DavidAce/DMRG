@@ -10,6 +10,8 @@
 #include <iomanip>
 #include "class_hamiltonian_base.h"
 
+class class_hdf5_table;
+class class_selfdual_tf_rf_ising_table;
 
 class class_selfdual_tf_rf_ising : public class_hamiltonian_base {
     using Scalar = std::complex<double>;
@@ -25,6 +27,8 @@ private:
     double h_sigma             = settings::model::selfdual_tf_rf_ising::h_sigma;
     double lambda              = settings::model::selfdual_tf_rf_ising::lambda;
     double e_reduced           = 0;                            /*!< Energy offset for this mpo (to make "reduced" MPO views) */
+
+
 
 public:
 
@@ -42,7 +46,7 @@ public:
 
     std::unique_ptr<class_hamiltonian_base> clone()                       const override;
     void   set_reduced_energy(double site_energy)                               override;
-    int    get_spin_dimension()                                           const override;
+    size_t get_spin_dimension()                                           const override;
 //    double get_energy_reduced()                                           const override;
 //    double get_random_field()                                             const override;
 //    double get_randomness_strength()                                      const override;
@@ -50,6 +54,7 @@ public:
     void   print_parameter_values()                                       const override;
     std::vector<std::string> get_parameter_names()                        const override;
     std::vector<double>      get_parameter_values()                       const override;
+//    void   write_to_hdf5_table()                                                override;
 };
 
 #endif //DMRG_CLASS_SELFDUAL_TF_ISING_H

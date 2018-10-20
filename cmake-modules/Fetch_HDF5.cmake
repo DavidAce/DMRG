@@ -77,7 +77,7 @@ else()
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DBUILD_STATIC_LIBS:BOOL=ON
-            -DBUILD_SHARED_LIBS:BOOL=OFF
+            -DBUILD_SHARED_LIBS:BOOL=ON
             -DCMAKE_ANSI_CFLAGS:STRING=-fPIC
             -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF
             -DHDF5_ENABLE_PARALLEL=${HDF5_IS_PARALLEL}
@@ -102,10 +102,10 @@ else()
     add_dependencies(hdf5::hdf5_hl       library_HDF5)
     add_dependencies(hdf5::hdf5_cpp      library_HDF5)
     add_dependencies(hdf5::hdf5_hl_cpp   library_HDF5)
-    set(HDF5_C_LIBRARY        ${INSTALL_DIR}/lib/libhdf5${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(HDF5_C_HL_LIBRARY     ${INSTALL_DIR}/lib/libhdf5_hl${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(HDF5_CXX_LIBRARY      ${INSTALL_DIR}/lib/libhdf5_cpp${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(HDF5_CXX_HL_LIBRARY   ${INSTALL_DIR}/lib/libhdf5_hl_cpp${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(HDF5_C_LIBRARY        ${INSTALL_DIR}/lib/libhdf5${CUSTOM_SUFFIX})
+    set(HDF5_C_HL_LIBRARY     ${INSTALL_DIR}/lib/libhdf5_hl${CUSTOM_SUFFIX})
+    set(HDF5_CXX_LIBRARY      ${INSTALL_DIR}/lib/libhdf5_cpp${CUSTOM_SUFFIX})
+    set(HDF5_CXX_HL_LIBRARY   ${INSTALL_DIR}/lib/libhdf5_hl_cpp${CUSTOM_SUFFIX})
     set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -lpthread )
 #    set(HDF5_LINKER_FLAGS     -lpthread -ldl -lm)
     set(HDF5_INCLUDE_DIR      ${INSTALL_DIR}/include)
@@ -135,7 +135,6 @@ set_target_properties(hdf5::hdf5_hl_cpp PROPERTIES
         IMPORTED_LOCATION "${HDF5_CXX_HL_LIBRARY}"
         INTERFACE_LINK_LIBRARIES "hdf5::hdf5;hdf5::hdf5_hl;hdf5::hdf5_cpp"
         INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIR}")
-
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_hl)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_cpp)
