@@ -49,7 +49,7 @@ void class_hdf5_file::initialize(){
 
     file = H5Fcreate(output_file_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, H5P_DEFAULT);
     //Put git revision in file attribute
-    std::string gitversion = "Branch: " + GIT::BRANCH + " | Commit hash: " + GIT::COMMIT_HASH + " | Revision: " + GIT::REVISION;
+    std::string gitversion = "Git branch: " + GIT::BRANCH + " | Commit hash: " + GIT::COMMIT_HASH + " | Revision: " + GIT::REVISION;
     write_attribute_to_file(gitversion, "GIT REVISION");
 }
 
@@ -214,7 +214,7 @@ void class_hdf5_file::set_extent_dataset(const DatasetProperties &props){
 void class_hdf5_file::extend_dataset(const std::string & dataset_relative_name, const int dim, const int extent){
     if (H5Lexists(file, dataset_relative_name.c_str(), H5P_DEFAULT)) {
         hid_t dataset = H5Dopen(file, dataset_relative_name.c_str(), H5P_DEFAULT);
-        // Retrieve the current size of the dataspace (act as if you don't know it's size and want to append)
+        // Retrieve the current size of the memspace (act as if you don't know it's size and want to append)
         hid_t filespace = H5Dget_space(dataset);
         const int ndims = H5Sget_simple_extent_ndims(filespace);
         std::vector<hsize_t> old_dims(ndims);

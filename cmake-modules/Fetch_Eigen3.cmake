@@ -1,8 +1,20 @@
 
+find_package(Eigen3 3.3.4)
+
+if(NOT EIGEN3_FOUND)
+    # Try finding arpack as module library
+    message(STATUS "SEARCHING FOR EIGEN3 IN LOADED MODULES")
+    find_package(Eigen3 3.3.4 PATHS "$ENV{EIGEN3_CMAKE_DIR}")
+    if (NOT EIGEN3_FOUND)
+    find_path(EIGEN3_INCLUDE_DIR
+            NAMES Core
+            PATHS "$ENV{EIGEN3_INCLUDE_DIR}/Eigen"
+            )
+    endif()
+endif()
 
 
-find_package(Eigen3 3.3)
-if(EIGEN3_FOUND)
+if(EIGEN3_FOUND OR EIGEN3_INCLUDE_DIR)
     message(STATUS "EIGEN FOUND IN SYSTEM: ${EIGEN3_INCLUDE_DIR}")
     add_library(EIGEN3 INTERFACE)
 else()
@@ -39,14 +51,14 @@ if(BLAS_LIBRARIES)
         list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_MKL_ALL)
         message(STATUS "Eigen3 will use MKL")
     else()
-#        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_BLAS)
+        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_BLAS)
         message(STATUS "Eigen3 will use BLAS")
     endif()
 endif()
 
-if (OpenMP_FOUND)
-    list(APPEND EIGEN_3_COMPILER_FLAGS ${OpenMP_CXX_FLAGS})
-endif()
+#if (OpenMP_FOUND)
+#    list(APPEND EIGEN_3_COMPILER_FLAGS ${OpenMP_CXX_FLAGS})
+#endif()
 
 
 set_target_properties(EIGEN3 PROPERTIES

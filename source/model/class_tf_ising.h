@@ -36,7 +36,7 @@ public:
 
     std::unique_ptr<class_hamiltonian_base> clone()                             const override;
     void   set_reduced_energy(double site_energy)                                     override;
-    int    get_spin_dimension()                                                 const override;
+    size_t get_spin_dimension()                                                 const override;
     void   print_parameter_names ()                                             const override;
     void   print_parameter_values()                                             const override;
     std::vector<std::string> get_parameter_names()                              const override;

@@ -49,6 +49,7 @@ private:
     class DatasetProperties {
     public:
         hid_t                   datatype;
+        hid_t                   memspace;
         hsize_t                 size;
         int                     ndims;
         std::vector<hsize_t>    chunk_size;
@@ -58,12 +59,14 @@ private:
 
         ~DatasetProperties(){
             H5Tclose(datatype);
+            H5Sclose(memspace);
         }
     };
 
     class AttributeProperties {
     public:
         hid_t     datatype;
+        hid_t     memspace;
         hsize_t   size;
         int       ndims;
         std::vector<hsize_t> dims;
@@ -71,6 +74,7 @@ private:
         std::string link_name;
         ~AttributeProperties(){
             H5Tclose(datatype);
+            H5Sclose(memspace);
         }
     };
 
@@ -201,7 +205,11 @@ private:
     hid_t get_MemSpace(const DataType &data) const {
         auto rank = get_Rank<DataType>();
         auto dims = get_Dimensions<DataType>(data);
-        return H5Screate_simple(rank, dims.data(), nullptr);
+        if constexpr (std::is_same<std::string, DataType>::value){
+            return H5Screate (H5S_SCALAR);
+        }else{
+            return H5Screate_simple(rank, dims.data(), nullptr);
+        }
     }
 
 
@@ -308,13 +316,14 @@ void class_hdf5_file::write_dataset(const DataType &data, const DatasetPropertie
     set_extent_dataset(props);
     hid_t dataset   = H5Dopen(file,props.dset_name.c_str(), H5P_DEFAULT);
     hid_t filespace = H5Dget_space(dataset);
-    hid_t memspace  = H5Screate_simple(props.ndims, props.dims.data(), nullptr);
-    select_hyperslab(filespace,memspace);
+//    hid_t memspace  = H5Screate_simple(props.ndims, props.dims.data(), nullptr);
+
+    select_hyperslab(filespace,props.memspace);
     if constexpr(tc::has_member_data<DataType>::value){
-        retval = H5Dwrite(dataset, props.datatype, memspace, filespace, H5P_DEFAULT, data.data());
+        retval = H5Dwrite(dataset, props.datatype, props.memspace, filespace, H5P_DEFAULT, data.data());
     }
     if constexpr(std::is_arithmetic<DataType>::value){
-        retval = H5Dwrite(dataset, props.datatype, memspace, filespace, H5P_DEFAULT, &data);
+        retval = H5Dwrite(dataset, props.datatype, props.memspace, filespace, H5P_DEFAULT, &data);
     }
     H5Dclose(dataset);
 }
@@ -323,6 +332,7 @@ template <typename DataType>
 void class_hdf5_file::write_dataset(const DataType &data, const std::string &dataset_relative_name){
     DatasetProperties props;
     props.datatype   = get_DataType<DataType>();
+    props.memspace   = get_MemSpace(data);
     props.size       = get_Size<DataType>(data);
     props.dset_name  = dataset_relative_name;
     props.ndims      = get_Rank<DataType>();
@@ -351,12 +361,12 @@ void class_hdf5_file::write_dataset(const DataType &data, const std::string &dat
 template <typename DataType>
 void class_hdf5_file::read_dataset(DataType &data, const std::string &dataset_relative_name){
     if (H5Lexists(file, dataset_relative_name.c_str(), H5P_DEFAULT)) {
-        hid_t dataset = H5Dopen(file, dataset_relative_name.c_str(), H5P_DEFAULT);
-        hid_t dataspace = H5Dget_space(dataset);
-        hid_t datatype = H5Dget_type(dataset);
-        int ndims = H5Sget_simple_extent_ndims(dataspace);
+        hid_t dataset   = H5Dopen(file, dataset_relative_name.c_str(), H5P_DEFAULT);
+        hid_t memspace  = H5Dget_space(dataset);
+        hid_t datatype  = H5Dget_type(dataset);
+        int ndims = H5Sget_simple_extent_ndims(memspace);
         std::vector<hsize_t> dims(ndims);
-        H5Sget_simple_extent_dims(dataspace, dims.data(), NULL);
+        H5Sget_simple_extent_dims(memspace, dims.data(), NULL);
         if constexpr(tc::is_eigen_matrix_or_array<DataType>()) {
             data.resize(dims[0], dims[1]);
         }
@@ -366,7 +376,7 @@ void class_hdf5_file::read_dataset(DataType &data, const std::string &dataset_re
         }
         H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
         H5Dclose(dataset);
-        H5Sclose(dataspace);
+        H5Sclose(memspace);
         H5Tclose(datatype);
     }else{
         std::cerr << "Attempted to read dataset that doesn't exist." << std::endl;
@@ -378,21 +388,25 @@ void class_hdf5_file::read_dataset(DataType &data, const std::string &dataset_re
 template <typename AttrType>
 void class_hdf5_file::write_attribute_to_file(const AttrType &attribute, const std::string attribute_name){
     hid_t datatype          = get_DataType<AttrType>();
-    hid_t dataspace         = get_MemSpace(attribute);
+    hid_t memspace          = get_MemSpace(attribute);
     auto size               = get_Size(attribute);
-    hid_t attribute_id      = H5Acreate(file, attribute_name.c_str(), datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT );
-    if constexpr (tc::has_member_data<AttrType>::value){
-        retval                  = H5Awrite(attribute_id, datatype, attribute.data());
-    }
     if constexpr (tc::has_member_c_str<AttrType>::value){
         retval                  = H5Tset_size(datatype, size);
         retval                  = H5Tset_strpad(datatype,H5T_STR_NULLTERM);
+    }
+
+    hid_t attribute_id      = H5Acreate(file, attribute_name.c_str(), datatype, memspace, H5P_DEFAULT, H5P_DEFAULT );
+    if constexpr (tc::has_member_c_str<AttrType>::value){
         retval                  = H5Awrite(attribute_id, datatype, attribute.c_str());
+    }
+    else if constexpr (tc::has_member_data<AttrType>::value){
+        retval                  = H5Awrite(attribute_id, datatype, attribute.data());
     }
     else{
         retval                  = H5Awrite(attribute_id, datatype, &attribute);
     }
-    H5Sclose(dataspace);
+
+    H5Sclose(memspace);
     H5Tclose(datatype);
     H5Aclose(attribute_id);
 }
@@ -402,11 +416,19 @@ void class_hdf5_file::write_attribute_to_file(const AttrType &attribute, const s
 template <typename AttrType>
 void class_hdf5_file::write_attribute_to_dataset(const AttrType &attribute, const AttributeProperties &aprops){
     if (check_link_exists_recursively(aprops.link_name)) {
-        hid_t dataspace = get_MemSpace(attribute);
-        hid_t dataset   = H5Dopen(file, aprops.link_name.c_str(), H5P_DEFAULT);
-        hid_t attribute_id = H5Acreate(dataset, aprops.attr_name.c_str(), aprops.datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT);
-        retval = H5Awrite(attribute_id, aprops.datatype, &attribute);
-        H5Sclose(dataspace);
+        hid_t dataset      = H5Dopen(file, aprops.link_name.c_str(), H5P_DEFAULT);
+        hid_t attribute_id = H5Acreate(dataset, aprops.attr_name.c_str(), aprops.datatype, aprops.memspace, H5P_DEFAULT, H5P_DEFAULT);
+
+        if constexpr (tc::has_member_c_str<AttrType>::value){
+            retval                  = H5Awrite(attribute_id, aprops.datatype, attribute.c_str());
+        }
+        else if constexpr (tc::has_member_data<AttrType>::value){
+            retval                  = H5Awrite(attribute_id, aprops.datatype, attribute.data());
+        }
+        else{
+            retval                  = H5Awrite(attribute_id, aprops.datatype, &attribute);
+        }
+
         H5Dclose(dataset);
         H5Aclose(attribute_id);
     }else{
@@ -419,27 +441,27 @@ void class_hdf5_file::write_attribute_to_dataset(const std::string &dataset_rela
                                                  const std::string &attribute_name){
     AttributeProperties aprops;
     aprops.datatype  = get_DataType<AttrType>();
+    aprops.memspace  = get_MemSpace(attribute);
     aprops.size      = get_Size(attribute);
-    aprops.attr_name = attribute_name;
-    aprops.link_name = dataset_relative_name;
     aprops.ndims     = get_Rank<AttrType>();
     aprops.dims      = get_Dimensions(attribute);
-
+    aprops.attr_name = attribute_name;
+    aprops.link_name = dataset_relative_name;
+    if constexpr (tc::has_member_c_str<AttrType>::value){
+        retval                  = H5Tset_size(aprops.datatype, aprops.size);
+        retval                  = H5Tset_strpad(aprops.datatype,H5T_STR_NULLTERM);
+    }
     write_attribute_to_dataset(attribute,aprops);
-
-
 }
 
 template <typename AttrType>
 void class_hdf5_file::write_attribute_to_group(const AttrType attribute,
                                                const AttributeProperties &aprops){
     if (check_link_exists_recursively(aprops.link_name)) {
-        hid_t dataspace = get_MemSpace(attribute);
         hid_t group = H5Gopen(file, aprops.link_name.c_str(), H5P_DEFAULT);
-        hid_t attribute_id = H5Acreate(group, aprops.link_name.c_str(), aprops.datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT);
+        hid_t attribute_id = H5Acreate(group, aprops.link_name.c_str(), aprops.datatype, aprops.memspace, H5P_DEFAULT, H5P_DEFAULT);
         retval = H5Awrite(attribute_id, aprops.datatype, &attribute);
-        H5Sclose(dataspace);
-        H5Dclose(group);
+        H5Gclose(group);
         H5Aclose(attribute_id);
     }
 }
@@ -450,6 +472,7 @@ void class_hdf5_file::write_attribute_to_group(const std::string &group_relative
 
     AttributeProperties aprops;
     aprops.datatype  = get_DataType<AttrType>();
+    aprops.memspace = get_MemSpace(attribute);
     aprops.size      = get_Size(attribute);
     aprops.attr_name = attribute_name;
     aprops.link_name = group_relative_name;
