@@ -19,7 +19,6 @@ protected:
 public:
 
     class_hamiltonian_base() = default;
-
     virtual ~class_hamiltonian_base() = default;
     virtual std::unique_ptr<class_hamiltonian_base> clone()                     const = 0;
     Eigen::Tensor<Scalar,4> MPO;
@@ -35,17 +34,17 @@ public:
     virtual void   print_parameter_names ()                  const = 0;
     virtual void   print_parameter_values()                  const = 0;
     virtual void   set_reduced_energy(double site_energy)          = 0;
-    virtual int    get_spin_dimension()                      const = 0;
+    virtual size_t get_spin_dimension()                      const = 0;
     virtual std::vector<std::string> get_parameter_names()   const = 0;
     virtual std::vector<double>      get_parameter_values()  const = 0;
-
+//    virtual void   write_to_hdf5_table()                           = 0;
 //    virtual double get_energy_reduced()                      const = 0;
 //    virtual double get_random_field()                        const = 0;
 //    virtual double get_randomness_strength()                 const = 0;
 
     void set_position(int new_pos);
 
-    int    get_position()                 const;
+    size_t    get_position()                 const;
 
 };
 

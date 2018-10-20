@@ -150,6 +150,49 @@ void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const
 }
 
 
+Eigen::Tensor<Scalar,2> class_superblock::get_H_local_rank2 (){
+    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    return Lblock->block
+            .contract(HA->MPO      , Textra::idx({2},{0}))
+            .contract(HB->MPO      , Textra::idx({2},{0}))
+            .contract(Rblock->block, Textra::idx({4},{2}))
+            .shuffle(Textra::array8{3,1,5,7,2,0,4,6})
+            .reshape(Textra::array2{shape, shape});
+}
+
+Eigen::Tensor<Scalar,8> class_superblock::get_H_local_rank8 (){
+    return Lblock->block
+            .contract(HA->MPO      , Textra::idx({2},{0}))
+            .contract(HB->MPO      , Textra::idx({2},{0}))
+            .contract(Rblock->block, Textra::idx({4},{2}))
+            .shuffle(Textra::array8{3,1,5,7,2,0,4,6});
+}
+
+Eigen::Tensor<Scalar,2> class_superblock::get_H_local_sq_rank2 (){
+    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    return Lblock2->block
+            .contract(HA->MPO      , Textra::idx({2},{0}))
+            .contract(HA->MPO      , Textra::idx({2,5},{0,2}))
+            .contract(HB->MPO      , Textra::idx({2},{0}))
+            .contract(HB->MPO      , Textra::idx({3,7},{0,2}))
+            .contract(Rblock2->block, Textra::idx({4,6},{2,3}))
+            .shuffle(Textra::array8{3,1,5,7,2,0,4,6})
+            .reshape(Textra::array2{shape, shape});
+}
+
+Eigen::Tensor<Scalar,8> class_superblock::get_H_local_sq_rank8 (){
+    return Lblock2->block
+            .contract(HA->MPO      , Textra::idx({2},{0}))
+            .contract(HA->MPO      , Textra::idx({2,5},{0,2}))
+            .contract(HB->MPO      , Textra::idx({2},{0}))
+            .contract(HB->MPO      , Textra::idx({3,7},{0,2}))
+            .contract(Rblock2->block, Textra::idx({4,6},{2,3}))
+            .shuffle(Textra::array8{3,1,5,7,2,0,4,6});
+}
+
+
+
+
 
 void class_superblock::enlarge_environment(int direction){
     if (direction == 1){

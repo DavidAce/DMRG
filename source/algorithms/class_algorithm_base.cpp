@@ -70,12 +70,12 @@ void class_algorithm_base::single_DMRG_step(long chi_max, Ritz ritz){
 void class_algorithm_base::check_convergence_all(){
     t_con.tic();
     check_convergence_entanglement();
-//    check_convergence_variance_mpo();
+    check_convergence_variance_mpo();
     check_convergence_variance_ham();
     check_convergence_variance_mom();
     update_bond_dimension();
     if(entanglement_has_converged and
-//       variance_mpo_has_converged and
+       variance_mpo_has_converged and
        variance_ham_has_converged and
        variance_mom_has_converged and
        bond_dimension_has_reached_max)
@@ -196,8 +196,7 @@ void class_algorithm_base::check_convergence_variance_mpo(double threshold,doubl
                                  slope_threshold,
                                  V_mpo_slope,
                                  variance_mpo_has_saturated);
-    variance_mpo_has_converged = measurement->get_variance_mpo() < threshold
-                                 or (variance_mpo_has_saturated and bond_dimension_has_reached_max);
+    variance_mpo_has_converged = measurement->get_variance_mpo() < threshold;
 }
 
 void class_algorithm_base::check_convergence_variance_ham(double threshold,double slope_threshold){
@@ -213,8 +212,7 @@ void class_algorithm_base::check_convergence_variance_ham(double threshold,doubl
                                  slope_threshold,
                                  V_ham_slope,
                                  variance_ham_has_saturated);
-    variance_ham_has_converged = measurement->get_variance_ham() < threshold
-                                 or (variance_ham_has_saturated and bond_dimension_has_reached_max);
+    variance_ham_has_converged = measurement->get_variance_ham() < threshold;
 }
 
 void class_algorithm_base::check_convergence_variance_mom(double threshold,double slope_threshold){
@@ -230,10 +228,7 @@ void class_algorithm_base::check_convergence_variance_mom(double threshold,doubl
                                  slope_threshold,
                                  V_mom_slope,
                                  variance_mom_has_saturated);
-    variance_mom_has_converged = measurement->get_variance_mom() < threshold
-                                 or (variance_mom_has_saturated and bond_dimension_has_reached_max);
-
-
+    variance_mom_has_converged = measurement->get_variance_mom() < threshold;
 }
 
 void class_algorithm_base::check_convergence_entanglement(double slope_threshold) {
@@ -284,14 +279,9 @@ void class_algorithm_base::clear_saturation_status(){
     variance_mpo_has_saturated      = false;
     variance_ham_has_saturated      = false;
     variance_mom_has_saturated      = false;
-//    simulation_has_converged        = false;
-//    entanglement_has_converged      = false;
-//    variance_mpo_has_converged      = false;
-//    variance_ham_has_converged      = false;
-//    variance_mom_has_converged      = false;
+
 
 }
-
 
 void class_algorithm_base::store_profiling_to_file_delta(bool force) {
 //    if (Math::mod(iteration, store_freq) != 0) {return;}

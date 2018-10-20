@@ -8,11 +8,13 @@
 #include <iostream>
 #include <memory>
 #include "class_hamiltonian_base.h"
+#include "class_hamiltonian_h5tables.h"
 
 class class_hamiltonian_factory{
 public:
-    static std::unique_ptr<class_hamiltonian_base> create_mpo(std::string model_type_str);
-    static std::unique_ptr<class_hamiltonian_base> clone(const std::unique_ptr<class_hamiltonian_base> &other);
+    static std::unique_ptr<class_hamiltonian_base>         create_mpo(std::string model_type_str);
+//    static std::unique_ptr<class_hamiltonian_h5table_base> create_table(std::string model_type_str);
+    static std::unique_ptr<class_hamiltonian_base>         clone(const std::unique_ptr<class_hamiltonian_base> &other);
 };
 
 

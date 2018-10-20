@@ -53,8 +53,13 @@ if(NOT MARCH)
 endif()
 
 if(MARCH)
-    string(TOUPPER ${MARCH} OPENBLAS_MARCH)
-    string(TOLOWER ${MARCH} CXX_MARCH)
+    if (${MARCH} STREQUAL "zen")
+        string(TOUPPER ZEN OPENBLAS_MARCH)
+        string(TOLOWER znver1 CXX_MARCH)
+    else()
+        string(TOUPPER ${MARCH} OPENBLAS_MARCH)
+        string(TOLOWER ${MARCH} CXX_MARCH)
+    endif()
 endif()
 
 
@@ -75,7 +80,6 @@ endif()
 #set(COMMON_OPTIONS -g -Wall -march=nehalem -mtune=native)
 message("Using microarchitechture: ${CXX_MARCH}")
 set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=native)
-
 set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
 
@@ -119,6 +123,40 @@ file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC source)
+#Force cmake to find .a library suffixes
+set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                                             ### Static linkage
+target_link_libraries  (${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)                                             ### Static linkage
+
+#################################
+###  Optional OpenMP support  ###
+#################################
+#find_library(OpenMP_LIRBRARY NAMES libiomp5)
+#find_package(OpenMP)
+#if (OpenMP_FOUND)
+
+    #target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp=libiomp5)
+
+
+#    list(APPEND COMMON_OPTIONS  -fopenmp)
+#    target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp)
+#    target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
+#    target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenMP_lib})
+
+#    target_compile_options(${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
+#    target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIBRARIES})
+    #target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
+
+#    get_cmake_property(_variableNames VARIABLES)
+#    foreach (_variableName ${_variableNames})
+#        if("${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP")
+#            message(STATUS "${_variableName}=${${_variableName}}")
+#        endif()
+#    endforeach()
+
+#endif()
+
 
 
 ###########################################
@@ -127,11 +165,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC source)
 target_compile_options (${PROJECT_NAME} PRIVATE ${COMMON_OPTIONS})                                   ### Common options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
-target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                                             ### Static linkage
-#target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,-Bstatic -lz -lfoo -Wl,-Bdynamic -lbar -Wl,--as-needed)
 target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                                               ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lpthread )
+
+
 
 
 ###############################
@@ -147,22 +185,6 @@ set_target_properties(${PROJECT_NAME}
         CXX_EXTENSIONS OFF)
 
 
-#################################
-###  Optional OpenMP support  ###
-#################################
-#find_package(OpenMP)
-#if (OPENMP_FOUND)
-#    target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp=libomp)
-#    target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
-#
-#
-#    get_cmake_property(_variableNames VARIABLES)
-#    foreach (_variableName ${_variableNames})
-#        if("${_variableName}" MATCHES "OMP" OR "${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP")
-#            message(STATUS "${_variableName}=${${_variableName}}")
-#        endif()
-#    endforeach()
-#endif()
 
 
 
@@ -176,6 +198,8 @@ include(cmake-modules/FindGFortran.cmake)
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 #include(cmake-modules/FindLAPACKE.cmake)
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
+include(cmake-modules/Fetch_CppNumSolvers.cmake)            # Limited memory BFGS gradient descent library
+include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data_struct.
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng

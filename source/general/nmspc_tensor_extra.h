@@ -199,6 +199,11 @@ namespace Textra {
         return tensor.swap_layout().shuffle(neworder);
     }
 
+    template<typename Derived>
+    Eigen::Matrix<typename Derived::Scalar,Eigen::Dynamic,Eigen::Dynamic, Eigen::RowMajor> to_RowMajor(const Eigen::MatrixBase<Derived> &matrix){
+        Eigen::Matrix<typename Derived::Scalar,Eigen::Dynamic,Eigen::Dynamic, Eigen::RowMajor> matrowmajor = matrix;
+        return matrowmajor;
+    }
 
 
 

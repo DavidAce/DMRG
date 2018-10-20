@@ -1,5 +1,28 @@
 find_package(GSL)
-if(GSL_FOUND)
+if (NOT GSL_LIBRARY OR NOT GSL_CBLAS_LIBRARY OR NOT GSL_INCLUDE_DIRS)
+    # Try finding arpack as module library
+    message(STATUS "SEARCHING FOR ARPACK IN LOADED MODULES")
+
+    find_library(GSL_LIBRARY
+            NAMES libgsl.a
+            PATHS "$ENV{GSL_DIR}/lib"
+            )
+    find_library(GSL_CBLAS_LIBRARY
+            NAMES libgslcblas.a
+            PATHS "$ENV{GSL_DIR}/lib"
+            )
+    find_path(GSL_INCLUDE_DIRS
+            NAMES gsl_blas.h
+            PATHS "$ENV{GSL_DIR}/include/gsl"
+            )
+endif()
+
+
+
+
+
+if(GSL_LIBRARY AND GSL_CBLAS_LIBRARY AND GSL_INCLUDE_DIRS)
+    set(GSL_LIBRARIES ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY})
     message(STATUS "GSL FOUND IN SYSTEM: ${GSL_LIBRARIES}")
     add_library(GSL STATIC IMPORTED)
 else()

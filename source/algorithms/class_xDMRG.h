@@ -36,7 +36,7 @@ public:
     double energy_now = 0;
 
     void run()                                          override;
-    void check_convergence_all()                    override;
+    void check_convergence_all()                        override;
     void initialize_constants()                         override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
@@ -49,7 +49,12 @@ public:
     void find_energy_range();
     Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag (Eigen::Tensor<Scalar, 4> &theta);
     Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag (Eigen::Tensor<Scalar, 4> &theta);
-   };
+    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag2 (Eigen::Tensor<Scalar, 4> &theta);
+    Eigen::Tensor<Scalar,4> find_state_with_greatest_state_in_subspace (Eigen::Tensor<Scalar, 4> &theta);
+
+
+
+};
 
 
 

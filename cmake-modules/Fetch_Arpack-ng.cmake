@@ -58,20 +58,27 @@ else()
 #            GIT_TAG             3.5.0 # Latest version has problems with fortran linking. so stick with this version instead.
             PREFIX              "${INSTALL_DIRECTORY}/arpack-ng"
             UPDATE_COMMAND ""
-#            BUILD_IN_SOURCE 1
+            BUILD_IN_SOURCE 1
 #            CONFIGURE_COMMAND
-#                ./bootstrap &&
-#                ./configure --prefix=<INSTALL_DIR> --enable-silent-rules --with-blas=${BLAS_LIBRARIES_GENERATOR} --with-lapack=${LAPACK_LIBRARIES_GENERATOR}
+#                ./bootstrap && export INTERFACE64=1 &&
+#                ./configure INTERFACE64=1
+#                            --prefix=<INSTALL_DIR>
+#                            --enable-silent-rules
+#                            --with-blas=${BLAS_LIBRARIES_GENERATOR}
+#                            --with-lapack=${LAPACK_LIBRARIES_GENERATOR}
+#
 #            BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} && ${CMAKE_MAKE_PROGRAM} check
 #            INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install
 
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
-            -DCMAKE_C_FLAGS=-w
+            -DCMAKE_C_FLAGS=-w -m64 -fPIC
+            -DCMAKE_Fortran_FLAGS=-w -m64 -fPIC
             -DEXAMPLES=ON
             -DCMAKE_BUILD_TYPE=Release
             -DMPI=OFF
+            -DINTERFACE64=OFF
             -DBUILD_SHARED_LIBS=OFF
             -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR};
             -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES_GENERATOR}
@@ -90,7 +97,7 @@ else()
 #            INTERFACE_LINK_FLAGS      )
 
     add_dependencies(arpack library_ARPACK blas lapack gfortran )
-    target_link_libraries(${PROJECT_NAME} PRIVATE arpack -lpthread)
+    target_link_libraries(${PROJECT_NAME} PRIVATE arpack -lpthread -m64)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
     #For convenience, define these variables
     get_target_property(ARPACK_LIBRARIES arpack IMPORTED_LOCATION)

@@ -34,7 +34,7 @@ class class_mps_2site;
 
 class class_environment{
 private:
-    long position;
+    size_t position;
 public:
     using Scalar = std::complex<double>;
     std::string side;
@@ -51,7 +51,7 @@ public:
 
 class class_environment_var{
 private:
-    long position;
+    size_t position;
 public:
     using Scalar = std::complex<double>;
     unsigned long size;                                       /*!< Number of particles that have been contracted into this left environment. */

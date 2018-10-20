@@ -57,6 +57,7 @@ public:
     int    seed       = 1;
     long   chi_temp   = 4;
     bool   simulation_has_converged = false;
+    bool   simulation_has_to_stop   = false;
     bool   bond_dimension_has_reached_max = false;
     bool   entanglement_has_converged = false;
     bool   entanglement_has_saturated = false;

@@ -93,7 +93,7 @@ std::unique_ptr<class_hamiltonian_base> class_selfdual_tf_rf_ising::clone() cons
 
 
 void   class_selfdual_tf_rf_ising::set_reduced_energy(double site_energy)         {e_reduced = site_energy;}
-int    class_selfdual_tf_rf_ising::get_spin_dimension()                        const {return spin_dim;}
+size_t class_selfdual_tf_rf_ising::get_spin_dimension()                     const {return spin_dim;}
 //double class_selfdual_tf_rf_ising::get_energy_reduced()                        const {return e_reduced;}
 //double class_selfdual_tf_rf_ising::get_random_field()                          const {return h_rnd;}
 //double class_selfdual_tf_rf_ising::get_randomness_strength()                   const {return w_rnd_strength;}
@@ -161,3 +161,6 @@ std::vector<double> class_selfdual_tf_rf_ising::get_parameter_values() const {
             };
 }
 
+//void   class_selfdual_tf_rf_ising::write_to_hdf5_table(){
+//
+//}
