@@ -14,9 +14,9 @@ arguments  = $(inputfiles)
 # * memory in units of MB
 # * disk in units of MB
 ########################################################
-request_cpus   = 2
-request_memory = 1000
-request_disk   = 200
+request_cpus   = 1
+request_memory = 2000
+request_disk   = 400
 
 
 
