@@ -330,9 +330,8 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     double max_overlap, min_overlap, sq_sum_overlap;
     double subspace_quality;
     double offset;
-    double threshold = 1e1 * settings::precision::VarConvergenceThreshold;
-    double overlap_threshold          = 1 - threshold; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
-    double subspace_quality_threshold = threshold;
+    double overlap_threshold          = 1 - 1e-2; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
+    double subspace_quality_threshold = 1e-2;
     for (int iter = 0; iter  <  3; iter++){
         t_eig.tic();
         arpack_solver.eig_shift_invert(H_local.data(), shape, nev,ncv,energy_now*L, Ritz::LM, true, false, theta_res.data());
@@ -376,12 +375,6 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     }
 
 
-    theta_new       = eigvecs.col(best_state_idx);
-    energy_old      = energy_now;
-    energy_new      = eigvals(best_state_idx).real()/L;
-    overlap_new     = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
-    variance_old    = std::log10( ((theta_old.adjoint() * Textra::Tensor2_to_Matrix(H_local_sq) * theta_old).sum() - energy_old*energy_old * L * L )/L  ) ;
-    variance_new    = std::log10( ((eigvecs.col(best_state_idx).adjoint()  * Textra::Tensor2_to_Matrix(H_local_sq) * eigvecs.col(best_state_idx)).sum() - energy_new*energy_new*L*L)/L  ) ;
 
     std::cout << setprecision(16);
     assert (nev == eigvals.size());
@@ -389,7 +382,6 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     if(nev >= 2 and max_overlap < overlap_threshold){
         std::cout << "WARNING: Partial diagonlization -- overlap too small. Starting subspace optimization \n"
                      << std::setprecision(10)
-                     << "      variance    : "    << variance_new << std::endl
                      << "      max overlap : "    << max_overlap << std::endl
                      << "      position    : "    << env_storage->get_position() << std::endl
                      << "      chi         : "    << chi_temp << std::endl
@@ -446,12 +438,12 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                      eigvecs.data(),
                      eigvals.data()
                     );
-
+            double threshold = 1e-3;
             LBFGSpp::LBFGSParam<double> param;
-            param.max_iterations = 500;
+            param.max_iterations = 100;
             param.epsilon        = threshold;
             param.delta          = threshold;
-            param.past           = 1;
+            param.past           = 2;
 
             // Create solver and function object
             LBFGSpp::LBFGSSolver<double> solver_3(param);
@@ -496,6 +488,11 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         std::cout << std::endl;
 
 
+    }else {
+        theta_new       = eigvecs.col(best_state_idx);
+        energy_new      = eigvals(best_state_idx).real()/L;
+//        overlap_new     = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
+//        variance_new    = std::log10( ((eigvecs.col(best_state_idx).adjoint()  * Textra::Tensor2_to_Matrix(H_local_sq) * eigvecs.col(best_state_idx)).sum() - energy_new*energy_new*L*L)/L  ) ;
     }
     theta_res  = theta_new;
     energy_now = energy_new;

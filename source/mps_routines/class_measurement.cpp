@@ -10,9 +10,7 @@
 #include <general/nmspc_tensor_extra.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
-#include "../../cmake-modules/unused/class_hamiltonian.h"
 #include <mps_routines/class_mps_2site.h>
-#include "../../cmake-modules/unused/class_mpo.h"
 #include <mps_routines/class_finite_chain_sweeper.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <mps_routines/class_mps_util.h>
