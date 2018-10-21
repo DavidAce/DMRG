@@ -42,11 +42,3 @@ def generate_input_files(settings,input_filenames,template_filename, location='-
                             line = replace_value(line, 2, val, i)
                     file.write(line)
 
-# for i in range(num_copies):
-#     with open(template_filename, 'r') as input:
-#         with open(input_basename + str(i) + '.cfg', 'w') as new_input:
-#             for line in input:
-#                 for var,val in find_replace.items():
-#                     if var in line.split():
-#                         line = replace_value(line, 2, val, i)
-#                 new_input.write(line)

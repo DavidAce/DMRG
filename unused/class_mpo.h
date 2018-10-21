@@ -6,7 +6,7 @@
 #define DMRG_CLASS_HAMILTONIAN_H
 
 
-#include <general/nmspc_tensor_extra.h>
+#include "../source/general/nmspc_tensor_extra.h"
 
 using namespace std::complex_literals;
 

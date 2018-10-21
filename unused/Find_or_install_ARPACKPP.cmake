@@ -39,7 +39,7 @@ if(ARPACKPP_LIBRARIES AND ARPACKPP_INCLUDE_DIR)
     return()
 else()
     message(STATUS "DOWNLOADING ARPACKPP...")
-    set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
+    set(INSTALL_DIRECTORY ../libs)
     if(BLAS_LIBRARIES AND LAPACK_LIBRARIES AND ARPACK_LIBRARIES)
         execute_process(
                 COMMAND ${CMAKE_COMMAND} -E make_directory tmp/arpackpp

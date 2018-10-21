@@ -3,18 +3,18 @@ NAME       = mbl
 universe   = vanilla
 executable = ../build/Release/DMRG++
 arguments  = $(inputfiles)
-
-
-
+requirements = true
 
 ########################################################
 # List your CPU, MEMORY and DISK requirements below.
 # Note that numeric requirements are not enclosed by "".
-# * cpus are the number of
+# * cpus are the number of condor "slots"
 # * memory in units of MB
 # * disk in units of MB
+# Note that requiring two on single threaded jobs
+# essentially turns off hyperthreading.
 ########################################################
-request_cpus   = 1
+request_cpus   = 2
 request_memory = 2000
 request_disk   = 400
 
@@ -30,6 +30,30 @@ request_disk   = 400
 #requirements = $(requirements) && TARGET.OpSysMajorVer  == 18
 #requirements = $(requirements) && TARGET.Arch           == "X86_64"
 #requirements = $(requirements) && TARGET.OpSys          == "LINUX"
+
+
+
+
+########################################################
+# In this cluster you can chose any of the main
+# microarchitecture families by requiring
+# TARGET.CpuMarch_<ARCH> == true.
+# Read more about the CPU microarchitechtures here:
+# https://en.wikipedia.org/wiki/List_of_Intel_CPU_microarchitectures
+# Find your microarchitecture with the following command:
+#     gcc-8 -march=native -Q --help=target|grep march
+#
+# In order of old -> new:
+# CpuMarch_CORE2        includes core2 processors like Penryn
+# CpuMarch_NEHALEM      includes Westmere
+# CpuMarch_SANDYBRIDGE  includes Ivybridge
+# CpuMarch_HASWELL      includes Broadwell
+# CpuMarch_SKYLAKE      includes Kaby, Coffee, Cannon, Cascade and Cooper Lake
+########################################################
+
+requirements = $(requirements) && \
+                TARGET.CpuMarch_SANDYBRIDGE == true
+
 
 
 
