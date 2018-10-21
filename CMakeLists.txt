@@ -49,7 +49,7 @@ message("===============================")
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
 if(NOT MARCH)
-    set(MARCH "haswell")
+    set(MARCH "nehalem")
 endif()
 
 if(MARCH)

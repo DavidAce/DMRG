@@ -10,9 +10,7 @@
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_measurement.h>
-#include "../../cmake-modules/unused/class_hamiltonian.h"
 #include <mps_routines/class_finite_chain_sweeper.h>
-#include "../../cmake-modules/unused/class_mpo.h"
 #include <mps_routines/class_mps_2site.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
@@ -659,6 +657,18 @@ void class_algorithm_base::print_status_update() {
             break;
     }
     ccout(1) << left  << "]";
+    ccout(1) << left  << " Saturation [";
+    ccout(1) << left  << " S-"  << std::boolalpha << setw(6) << entanglement_has_saturated;
+    switch(sim_type){
+        case SimulationType::iDMRG:
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            ccout(1) << left  << " σ²-"  << std::boolalpha << setw(6) << variance_mpo_has_saturated;
+            break;
+        case SimulationType::iTEBD:
+            break;
+    }
+    ccout(1) << left  << "]";
 
     ccout(1) << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << t_tot.get_age() ;
 
@@ -727,7 +737,10 @@ void class_algorithm_base::print_status_full(){
     }
 
     ccout(0)  << setw(20) << "Simulation converged : " << std::boolalpha << simulation_has_converged << std::endl;
-    ccout(0)  << setw(20) << "S slope              = " << setprecision(16) << fixed      << S_slope      << " " << std::boolalpha << entanglement_has_converged << std::endl;
+    ccout(0)  << setw(20) << "S slope              = " << setprecision(16) << fixed      << S_slope
+                          << "Converged: " << std::boolalpha << entanglement_has_converged
+                          << "Saturated: " << std::boolalpha << entanglement_has_saturated
+                          << std::endl;
     switch(sim_type){
         case SimulationType::iDMRG:
             ccout(0)  << setw(20) << "σ² MPO slope         = " << setprecision(16) << fixed      << V_mpo_slope  << " " << std::boolalpha << variance_mpo_has_converged << std::endl;
@@ -736,7 +749,11 @@ void class_algorithm_base::print_status_full(){
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(0)  << setw(20) << "σ² MPO slope         = " << setprecision(16) << fixed      << V_mpo_slope  << " " << std::boolalpha << variance_mpo_has_converged << std::endl;
+//            ccout(0)  << setw(20) << "σ² MPO slope         = " << setprecision(16) << fixed      << V_mpo_slope  << " " << std::boolalpha << variance_mpo_has_converged << std::endl;
+            ccout(0)  << setw(20) << "σ² MPO slope         = " << setprecision(16) << fixed      << V_mpo_slope
+                      << "Converged: " << std::boolalpha << variance_mpo_has_converged
+                      << "Saturated: " << std::boolalpha << variance_mpo_has_saturated
+                      << std::endl;
             break;
         case SimulationType::iTEBD:
             ccout(0)  << setw(20) << "σ² HAM slope         = " << setprecision(16) << fixed      << V_ham_slope  << " " << std::boolalpha << variance_ham_has_converged << std::endl;

@@ -7,7 +7,6 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
-#include "../../cmake-modules/unused/class_mpo.h"
 #include <mps_routines/class_mps_2site.h>
 #include <model/class_hamiltonian_base.h>
 #include <general/nmspc_math.h>
