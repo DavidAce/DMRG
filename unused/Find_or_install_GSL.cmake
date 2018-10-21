@@ -32,7 +32,7 @@ if (GSL_FOUND)
 
 else()
     message(STATUS "DOWNLOADING GSL...")
-    set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
+    set(INSTALL_DIRECTORY ../libs)
 
     execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory tmp/gsl

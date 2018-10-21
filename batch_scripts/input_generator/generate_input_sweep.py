@@ -1,4 +1,4 @@
-from generate_inputs import *
+from src.generate_inputs import *
 import numpy as np
 
 
@@ -8,22 +8,23 @@ import numpy as np
 
 template_filename = 'input_template.cfg'
 basename    = 'mbl_'
-location    = "../input/"
+location    = "../input"
+
+realizations = np.arange(0,2,1)  # Number of copies for each point on the sweep
+lengths      = [24] #np.arange(12,24,2)
+lambdas      = np.arange(0, 0.2, 0.1)
+J_log_mean   = [1]
+# h_log_mean = np.flipud(np.arange(-3, 3.5, 0.5)+1)
+h_log_mean   = np.flipud(np.arange(-3, 3.5, 1)+1)
+num_total = 0
 settings = []
 input_filenames = []
-realizations = np.arange(0,100,1)  # Number of copies for each point on the sweep
-lengths = [24] #np.arange(12,24,2)
-lambdas = np.arange(0, 0.2, 0.1)
-J_log_mean = [1]
-h_log_mean = np.flipud(np.arange(-3, 3.5, 0.5)+1)
-num_total = 0
 
 for num_L in lengths:
     for num_l in range(len(lambdas)):
         for num_j in range(len(J_log_mean)):
             for num_h in range(len(h_log_mean)):
                 for num_r in realizations:
-                    # input_filenames.append(basename + 'l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '_' + str(num_r) + '.cfg')
                     input_filenames.append('L_'+ str(num_L) + '/' +  basename + str(num_total) + '_l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '_' + str(num_r) + '.cfg')
                     settings.append({
                         "model::selfdual_tf_rf_ising::J_log_mean"     : "{:.2f}".format(J_log_mean[num_j]),

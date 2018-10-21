@@ -36,7 +36,7 @@ if(EIGEN3_FOUND)
 else()
 
     message(STATUS "DOWNLOADING EIGEN3...")
-    set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
+    set(INSTALL_DIRECTORY ../libs)
 
 
     execute_process(

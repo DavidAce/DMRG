@@ -57,7 +57,7 @@ if(LAPACK_FOUND)
     target_link_libraries(${PROJECT_NAME} ${BLAS_LIBRARIES})
 else()
     message(STATUS "DOWNLOADING LAPACK...")
-    set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
+    set(INSTALL_DIRECTORY ../libs)
     include(cmake/FindGFortran.cmake)    ### For Fortran library
     unset(BLAS_LIBRARIES)
     unset(LAPACK_LIBRARIES)
