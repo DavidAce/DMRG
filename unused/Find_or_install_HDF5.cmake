@@ -77,7 +77,7 @@ set(HDF5_FOUND 0)
 set(HDF5_LIBRARIES "")
 if (NOT HDF5_FOUND OR "${HDF5_LIBRARIES}" MATCHES "anaconda")
     message(STATUS "DOWNLOADING HDF5...")
-    set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
+    set(INSTALL_DIRECTORY ../libs)
 
     execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory tmp/hdf5

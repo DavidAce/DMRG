@@ -42,7 +42,7 @@ if (NOT CMAKE_SCRIPT_MODE_FILE)
 	cmake_policy(POP)
 endif()
 
-set (COTIRE_CMAKE_MODULE_FILE "${CMAKE_CURRENT_LIST_FILE}")
+set (COTIRE_CMAKE_MODULE_FILE "cotire.cmake")
 set (COTIRE_CMAKE_MODULE_VERSION "1.7.10")
 
 # activate select policies
@@ -133,7 +133,7 @@ endfunction()
 function (cotire_get_source_file_extension _sourceFile _extVar)
 	# get_filename_component returns extension from first occurrence of . in file name
 	# this function computes the extension from last occurrence of . in file name
-	string (FIND "${_sourceFile}" "." _index REVERSE)
+	string (FIND "${_sourceFile}" "../cmake-modules" _index REVERSE)
 	if (_index GREATER -1)
 		math (EXPR _index "${_index} + 1")
 		string (SUBSTRING "${_sourceFile}" ${_index} -1 _sourceExt)
@@ -540,7 +540,7 @@ function (cotire_get_target_include_directories _config _language _target _inclu
 	# default include dirs
 	if (CMAKE_INCLUDE_CURRENT_DIR)
 		list (APPEND _includeDirs "${CMAKE_CURRENT_BINARY_DIR}")
-		list (APPEND _includeDirs "${CMAKE_CURRENT_SOURCE_DIR}")
+		list (APPEND _includeDirs "../cmake-modules")
 	endif()
 	set (_targetFlags "")
 	cotire_get_target_compile_flags("${_config}" "${_language}" "${_target}" _targetFlags)
@@ -569,7 +569,7 @@ function (cotire_get_target_include_directories _config _language _target _inclu
 		endif()
 	endif()
 	# target include directories
-	get_directory_property(_dirs DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" INCLUDE_DIRECTORIES)
+	get_directory_property(_dirs DIRECTORY "../cmake-modules" INCLUDE_DIRECTORIES)
 	if (_target)
 		get_target_property(_targetDirs ${_target} INCLUDE_DIRECTORIES)
 		if (_targetDirs)
@@ -685,7 +685,7 @@ function (cotire_get_target_compile_definitions _config _language _target _defin
 	string (TOUPPER "${_config}" _upperConfig)
 	set (_configDefinitions "")
 	# CMAKE_INTDIR for multi-configuration build systems
-	if (NOT "${CMAKE_CFG_INTDIR}" STREQUAL ".")
+	if (NOT "${CMAKE_CFG_INTDIR}" STREQUAL "../cmake-modules")
 		list (APPEND _configDefinitions "CMAKE_INTDIR=\"${_config}\"")
 	endif()
 	# target export define symbol
@@ -694,11 +694,11 @@ function (cotire_get_target_compile_definitions _config _language _target _defin
 		list (APPEND _configDefinitions "${_defineSymbol}")
 	endif()
 	# directory compile definitions
-	get_directory_property(_definitions DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" COMPILE_DEFINITIONS)
+	get_directory_property(_definitions DIRECTORY "../cmake-modules" COMPILE_DEFINITIONS)
 	if (_definitions)
 		list (APPEND _configDefinitions ${_definitions})
 	endif()
-	get_directory_property(_definitions DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" COMPILE_DEFINITIONS_${_upperConfig})
+	get_directory_property(_definitions DIRECTORY "../cmake-modules" COMPILE_DEFINITIONS_${_upperConfig})
 	if (_definitions)
 		list (APPEND _configDefinitions ${_definitions})
 	endif()
@@ -1256,7 +1256,7 @@ function (cotire_scan_includes _includesVar)
 	endif()
 	execute_process(
 		COMMAND ${_cmd}
-		WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+		WORKING_DIRECTORY "../cmake-modules"
 		RESULT_VARIABLE _result
 		OUTPUT_QUIET
 		ERROR_VARIABLE _output)
@@ -1879,7 +1879,7 @@ function (cotire_precompile_prefix_header _prefixFile _pchFile _hostFile)
 	endif()
 	execute_process(
 		COMMAND ${_cmd}
-		WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+		WORKING_DIRECTORY "../cmake-modules"
 		RESULT_VARIABLE _result)
 	if (_result)
 		message (FATAL_ERROR "cotire: error ${_result} precompiling ${_prefixFile}.")
@@ -2299,7 +2299,7 @@ function (cotire_setup_pch_file_compilation _language _target _targetScript _pre
 				COMMAND ${_cmds}
 				DEPENDS "${_prefixFile}" "${_realCompilerExe}"
 				IMPLICIT_DEPENDS ${_language} "${_prefixFile}"
-				WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+				WORKING_DIRECTORY "../cmake-modules"
 				COMMENT "Building ${_language} precompiled header ${_pchFileLogPath}"
 				VERBATIM)
 		endif()
@@ -2443,7 +2443,7 @@ function (cotire_setup_target_pch_usage _languages _target _wholeTarget)
 		add_custom_command(
 			TARGET "${_target}"
 			PRE_BUILD ${_cmds}
-			WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+			WORKING_DIRECTORY "../cmake-modules"
 			COMMENT "Updating target ${_target} prefix headers"
 			VERBATIM)
 		# make Xcode precompile the generated prefix header with ProcessPCH and ProcessPCH++
@@ -2515,7 +2515,7 @@ function (cotire_setup_unity_generation_commands _language _target _targetScript
 			COMMAND ${_unityCmd}
 			DEPENDS ${_unityCmdDepends}
 			COMMENT "Generating ${_language} unity source ${_unityFileLogPath}"
-			WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+			WORKING_DIRECTORY "../cmake-modules"
 			VERBATIM)
 		list (APPEND ${_cmdsVar} COMMAND ${_unityCmd})
 	endforeach()
@@ -2568,7 +2568,7 @@ function (cotire_setup_prefix_generation_command _language _target _targetScript
 		COMMAND ${_prefixCmd}
 		DEPENDS ${_unityFiles} ${_dependencySources} "${_realCompilerExe}"
 		COMMENT "${_comment}"
-		WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+		WORKING_DIRECTORY "../cmake-modules"
 		VERBATIM)
 	list (APPEND ${_cmdsVar} COMMAND ${_prefixCmd})
 	set (${_cmdsVar} ${${_cmdsVar}} PARENT_SCOPE)

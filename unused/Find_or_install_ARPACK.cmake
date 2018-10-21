@@ -49,7 +49,7 @@ elseif(LAPACK_LIBRARIES AND BLAS_LIBRARIES)
     message(STATUS "DOWNLOADING ARPACK...")
     message("Using BLAS_LIBRARIES  : ${BLAS_LIBRARIES}")
     message("Using LAPACK_LIBRARIES: ${LAPACK_LIBRARIES}")
-    set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
+    set(INSTALL_DIRECTORY ../libs)
     execute_process(COMMAND  export PATH="$PATH:/opt/intel/bin")
     execute_process(COMMAND  export LD_LIBRARY_PATH="$PATH:opt/intel/mkl/lib/intel64")
     execute_process(

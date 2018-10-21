@@ -21,7 +21,7 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/libs/spectra/FindSpectra.cmake")
 else()
 
     message(STATUS "DOWNLOADING SPECTRA...")
-    set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
+    set(INSTALL_DIRECTORY ../libs)
     execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory tmp/spectra
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/cmake/download_scripts)
