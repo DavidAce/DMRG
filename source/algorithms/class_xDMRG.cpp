@@ -438,7 +438,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                      eigvecs.data(),
                      eigvals.data()
                     );
-            double threshold = 1e-3;
+            double threshold = 1e-2;
             LBFGSpp::LBFGSParam<double> param;
             param.max_iterations = 100;
             param.epsilon        = threshold;
