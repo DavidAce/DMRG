@@ -33,15 +33,15 @@ double class_xDMRG_functor::operator()(const Eigen::Matrix<double,Eigen::Dynamic
     double vEv    = v.cwiseAbs2().cwiseProduct(eigvals).real().sum();
     double vv     = v.cwiseAbs2().sum();
     double var    = vH2v/vv - vEv*vEv/vv/vv;
-    double logvar = std::log(var);
+    double log10var = std::log10(var);
 //        double fx = logvar  + lambda * std::abs(vv-1.0);
-    double fx = logvar  + lambda * std::pow(vv-1.0,2);
+    double fx = log10var  + lambda * std::pow(vv-1.0,2);
     for (int k = 0; k < v.size(); k++){
         double vi2H2ik         = 2.0*v.dot(H2.col(k)).real();             // 2 * sum_i x_i H2_ik
         double vk4EkvEv        = 4.0*v(k)*eigvals(k).real() * vEv ;       // 4 * x_k * E_k * (sum_i x_i^2 E_i)
 //            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vEv*vEv*4.0*v(k)*vv)/(std::pow(vv,4)))/var
 //                      + lambda * 2.0 * v(k) * sgn(vv - 1);
-        grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vEv*vEv*4.0*v(k)*vv)/(std::pow(vv,4)))/var
+        grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vEv*vEv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
                   + lambda * 4.0 * v(k) * (vv - 1);
     }
     return fx;
