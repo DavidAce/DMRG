@@ -3,7 +3,7 @@
 
 message(STATUS "SEARCHING FOR ARPACK IN SYSTEM...")
 find_library(ARPACK_LIBRARIES
-        NAMES libarpack.a
+        NAMES libarpack${CUSTOM_SUFFIX}
         PATHS /usr/lib/x86_64-linux-gnu/
         )
 
@@ -31,7 +31,7 @@ if(ARPACK_LIBRARIES)
             IMPORTED_LOCATION "${ARPACK_LIBRARIES}"
             INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran;-lpthread"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
-            INTERFACE_LINK_FLAGS            "-fopenmp=libomp"
+            INTERFACE_LINK_FLAGS          "${OpenMP_CXX_FLAGS}"
             )
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
@@ -50,6 +50,11 @@ else()
     string (REPLACE ";" "$<SEMICOLON>" LAPACK_LIBRARIES_GENERATOR   "${LAPACK_LIBRARIES}")
     string (REPLACE ";" "$<SEMICOLON>" FC_LDLAGS_GENERATOR          "${FC_LDLAGS}")
     ####################################################################
+    if(${STATIC_BUILD})
+        set(ARPACK_SHARED OFF)
+    else()
+        set(ARPACK_SHARED ON)
+    endif()
 
     include(ExternalProject)
     ExternalProject_Add(library_ARPACK
@@ -79,7 +84,7 @@ else()
             -DCMAKE_BUILD_TYPE=Release
             -DMPI=OFF
             -DINTERFACE64=OFF
-            -DBUILD_SHARED_LIBS=OFF
+            -DBUILD_SHARED_LIBS=${ARPACK_SHARED}
             -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR};
             -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES_GENERATOR}
             -DEXTRA_LDLAGS=${FC_LDLAGS_GENERATOR}
@@ -90,7 +95,7 @@ else()
     add_library(arpack STATIC IMPORTED)
     set_target_properties(arpack
             PROPERTIES
-            IMPORTED_LOCATION "${INSTALL_DIR}/lib/libarpack${CMAKE_STATIC_LIBRARY_SUFFIX}"
+            IMPORTED_LOCATION "${INSTALL_DIR}/lib/libarpack${CUSTOM_SUFFIX}"
             INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran"
             INTERFACE_LINK_FLAGS            "-lpthread"
             )
