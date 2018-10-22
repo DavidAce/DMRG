@@ -38,6 +38,7 @@ while getopts a:chj:lm:t: o; do
         (*) usage ;;
   esac
 done
+if [ $OPTIND -eq 1 ]; then echo "No flags were passed"; usage ;exit 1; fi
 shift "$((OPTIND - 1))"
 
 
