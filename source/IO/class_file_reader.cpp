@@ -49,24 +49,24 @@ fs::path class_file_reader::find_input_file(const fs::path &given_path) {
 
 
     //Search recursively
-    std::vector<fs::path> matching_files;
-    fs::path recurse_from_path ;// fs::current_path() / given_path.has_parent_path();
-    if(given_path.is_relative() and given_path.has_parent_path()){
-            recurse_from_path = fs::system_complete(fs::current_path()/given_path.parent_path());
-    }else if(given_path.has_parent_path()) {
-        recurse_from_path = given_path.parent_path();
-    }else{
-        recurse_from_path = fs::current_path();
-    }
-    ccout(1) << "Searching recursively for file [" << given_path.filename() << "] in folder: " << recurse_from_path << std::endl;
-    for(auto& p: fs::recursive_directory_iterator(recurse_from_path)) {
-        std::cout << "Trying path: " << p.path() << std::endl;
-        if (p.path().filename() == given_path.filename()  ) {
-            if(check_if_input_file_exists(p)) {
-                return fs::canonical(p.path());
-            }
-        }
-    }
+//    std::vector<fs::path> matching_files;
+//    fs::path recurse_from_path ;// fs::current_path() / given_path.has_parent_path();
+//    if(given_path.is_relative() and given_path.has_parent_path()){
+//            recurse_from_path = fs::system_complete(fs::current_path()/given_path.parent_path());
+//    }else if(given_path.has_parent_path()) {
+//        recurse_from_path = given_path.parent_path();
+//    }else{
+//        recurse_from_path = fs::current_path();
+//    }
+//    ccout(1) << "Searching recursively for file [" << given_path.filename() << "] in folder: " << recurse_from_path << std::endl;
+//    for(auto& p: fs::recursive_directory_iterator(recurse_from_path)) {
+//        std::cout << "Trying path: " << p.path() << std::endl;
+//        if (p.path().filename() == given_path.filename()  ) {
+//            if(check_if_input_file_exists(p)) {
+//                return fs::canonical(p.path());
+//            }
+//        }
+//    }
 
 //    //Search recursively inside current_path/
 //    recurse_from_path = fs::current_path();

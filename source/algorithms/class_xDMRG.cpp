@@ -389,12 +389,14 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
     std::cout << setprecision(16);
     if(nev >= 2){
+        double sparcity = Textra::Tensor2_to_Matrix(H_local).real().nonZeros() / (double)H_local.size();
         std::cout << "WARNING: Partial diagonlization -- overlap too small. Starting subspace optimization \n"
                      << std::setprecision(10)
                      << "      max overlap : "    << max_overlap << std::endl
                      << "      position    : "    << env_storage->get_position() << std::endl
                      << "      chi         : "    << chi_temp << std::endl
                      << "      shape       : "    << shape    << " x " << shape << std::endl
+                     << "      sparcity    : "    << sparcity << std::endl
                      << std::endl<< std::flush;
 
 
