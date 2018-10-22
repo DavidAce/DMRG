@@ -4,11 +4,11 @@ if (NOT GSL_LIBRARY OR NOT GSL_CBLAS_LIBRARY OR NOT GSL_INCLUDE_DIRS)
     message(STATUS "SEARCHING FOR ARPACK IN LOADED MODULES")
 
     find_library(GSL_LIBRARY
-            NAMES libgsl.a
+            NAMES libgsl${CUSTOM_SUFFIX}
             PATHS "$ENV{GSL_DIR}/lib"
             )
     find_library(GSL_CBLAS_LIBRARY
-            NAMES libgslcblas.a
+            NAMES libgslcblas${CUSTOM_SUFFIX}
             PATHS "$ENV{GSL_DIR}/lib"
             )
     find_path(GSL_INCLUDE_DIRS
@@ -34,7 +34,7 @@ else()
             CONFIGURE_COMMAND
                 cd <SOURCE_DIR> &&
                 pwd &&
-                ./configure --enable-silent-rules CFLAGS= --enable-shared=no --prefix=<INSTALL_DIR>
+                ./configure --enable-silent-rules CFLAGS= --enable-shared=yes --prefix=<INSTALL_DIR>
             BUILD_COMMAND
                 cd <SOURCE_DIR> &&
                 pwd &&
@@ -46,12 +46,12 @@ else()
             )
 
     ExternalProject_Get_Property(library_GSL INSTALL_DIR)
-    add_library(GSL STATIC IMPORTED)
+    add_library(GSL UNKNOWN IMPORTED)
 #    add_library(GSLcblas UNKNOWN IMPORTED)
     add_dependencies(GSL library_GSL)
 #    add_dependencies(GSLcblas library_GSL)
-    set(GSL_LIBRARY        ${INSTALL_DIR}/lib/libgsl${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(GSL_CBLAS_LIBRARY  ${INSTALL_DIR}/lib/libgslcblas${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(GSL_LIBRARY        ${INSTALL_DIR}/lib/libgsl${CUSTOM_SUFFIX})
+    set(GSL_CBLAS_LIBRARY  ${INSTALL_DIR}/lib/libgslcblas${CUSTOM_SUFFIX})
     set(GSL_LIBRARIES ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY})
     set(GSL_INCLUDE_DIRS ${INSTALL_DIR}/include)
 endif()
