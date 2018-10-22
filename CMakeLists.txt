@@ -79,7 +79,7 @@ endif()
 #set(COMMON_OPTIONS  -g -Wall -static -march=sandybridge -mtune=sandybridge)
 #set(COMMON_OPTIONS -g -Wall -march=nehalem -mtune=native)
 message("Using microarchitechture: ${CXX_MARCH}")
-set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=native)
+set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
 set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
 
@@ -123,39 +123,44 @@ file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC source)
+
+
 #Force cmake to find .a library suffixes
+set(STATIC_BUILD ON)
 set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
 set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
 target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                                             ### Static linkage
-target_link_libraries  (${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)                                             ### Static linkage
-
-#################################
-###  Optional OpenMP support  ###
-#################################
-#find_library(OpenMP_LIRBRARY NAMES libiomp5)
-#find_package(OpenMP)
-#if (OpenMP_FOUND)
-
-    #target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp=libiomp5)
+#target_link_libraries  (${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)                                             ### Static linkage
 
 
-#    list(APPEND COMMON_OPTIONS  -fopenmp)
-#    target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp)
-#    target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
-#    target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenMP_lib})
 
-#    target_compile_options(${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
-#    target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIBRARIES})
-    #target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
 
+##############################################
+###  Optional OpenMP support               ###
+###  Note that Clang has some              ###
+###  trouble with static openmp            ###
+###  Also, libiomp5 might help for         ###
+###  shared linking.                       ###
+##############################################
+find_package(OpenMP)
+if (OpenMP_FOUND)
+#    target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp=libiomp5)
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
+        message(STATUS "OpenMP ON" )
+        target_compile_options    (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
+        target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIBRARIES})
+        target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
+    endif()
 #    get_cmake_property(_variableNames VARIABLES)
 #    foreach (_variableName ${_variableNames})
 #        if("${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP")
 #            message(STATUS "${_variableName}=${${_variableName}}")
 #        endif()
 #    endforeach()
+else()
+    message(STATUS "OpenMP FF" )
+endif()
 
-#endif()
 
 
 

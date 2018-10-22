@@ -15,7 +15,7 @@ requirements = true
 # essentially turns off hyperthreading.
 ########################################################
 request_cpus   = 2
-request_memory = 2000
+request_memory = 4000
 request_disk   = 400
 
 
@@ -24,8 +24,7 @@ request_disk   = 400
 # List your requirements below. Uncomment to activate.
 # Note that numeric requirements are not enclosed by "".
 ########################################################
-#requirements = TARGET.Machine == "Dell-T7400"
-#requirements = $(requirements) && TARGET.OpSysAndVer    == "Ubuntu18"
+requirements = $(requirements) && TARGET.OpSysAndVer    == "Ubuntu18"
 #requirements = $(requirements) && TARGET.OpSysName      == "Ubuntu"
 #requirements = $(requirements) && TARGET.OpSysMajorVer  == 18
 #requirements = $(requirements) && TARGET.Arch           == "X86_64"
@@ -52,7 +51,7 @@ request_disk   = 400
 ########################################################
 
 requirements = $(requirements) && \
-                TARGET.CpuMarch_SANDYBRIDGE == true
+                TARGET.CpuMarch_NEHALEM == true
 
 
 

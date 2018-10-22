@@ -12,14 +12,14 @@ endif()
 message(STATUS "SEARCHING FOR OpenBLAS IN SYSTEM...")
 set(BLA_VENDOR OpenBLAS)
 set(BLAS_VERBOSE OFF)
-set(BLA_STATIC ON)
+set(BLA_STATIC ${STATIC_BUILD})
 
 
 if (EXISTS "$ENV{BLAS_DIR}")
     # Try finding armadillo as module library
     message(STATUS "Attempting to find BLAS and LAPACK from environment modules.")
     find_library(BLAS_openblas_LIBRARY
-            NAMES libopenblas.a
+            NAMES libopenblas${CUSTOM_SUFFIX}
             PATHS "$ENV{BLAS_DIR}/lib"
             NO_DEFAULT_PATH
             )
@@ -34,7 +34,7 @@ if (EXISTS "$ENV{BLAS_DIR}")
     endif()
 else()
     find_library(BLAS_openblas_LIBRARY
-            NAMES libopenblas.a
+            NAMES libopenblas${CUSTOM_SUFFIX}
             PATHS "/usr/lib/x86_64-linux-gnu"
             NO_DEFAULT_PATH
             )
@@ -64,13 +64,9 @@ if(BLAS_openblas_LIBRARY)
     message(STATUS "BLAS FOUND IN SYSTEM: ${BLAS_openblas_LIBRARY}")
     message(STATUS "                      ${BLAS_INCLUDE_DIRS}")
 
-
-    #    message(STATUS "LAPACK FOUND IN SYSTEM: ${LAPACK_openblas_LIBRARY}")
-    #    message(STATUS "                        ${LAPACK_INCLUDE_DIRS}")
-
     #For convenience, define these variables
-    add_library(blas STATIC IMPORTED)
-    add_library(lapack STATIC IMPORTED)
+    add_library(blas   UNKNOWN IMPORTED)
+    add_library(lapack UNKNOWN IMPORTED)
     set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
     set(LAPACK_LIBRARIES   ${BLAS_openblas_LIBRARY})
     set(LAPACK_INCLUDE_DIRS ${BLAS_INCLUDE_DIRS})
@@ -93,22 +89,21 @@ else()
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             DEPENDS gfortran
             )
-#    BUILD_COMMAND $(MAKE) USE_THREAD=${OpenBLAS_MULTITHREADED} USE_OPENMP=${OpenBLAS_USE_OPENMP} GEMM_MULTITHREADING_THRESHOLD=50  INTERFACE64=1 OPENBLAS_NUM_THREADS=8 NUM_THREADS=8 BINARY64=1 QUIET_MAKE=1 TARGET=${OPENBLAS_MARCH}
 
 ExternalProject_Get_Property(library_OpenBLAS INSTALL_DIR)
-    add_library(blas UNKNOWN IMPORTED)
+    add_library(blas   UNKNOWN IMPORTED)
     add_library(lapack UNKNOWN IMPORTED)
     add_dependencies(blas         library_OpenBLAS)
     add_dependencies(lapack       library_OpenBLAS)
     set(BLAS_INCLUDE_DIRS ${INSTALL_DIR}/include)
     set(LAPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
 
-    set(BLAS_LIBRARIES           ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(LAPACK_LIBRARIES         ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(BLAS_LIBRARIES_STATIC    ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(LAPACK_LIBRARIES_STATIC  ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(BLAS_LIBRARIES_SHARED    ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(LAPACK_LIBRARIES_SHARED  ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(BLAS_LIBRARIES           ${INSTALL_DIR}/lib/libopenblas${CUSTOM_SUFFIX})
+    set(LAPACK_LIBRARIES         ${INSTALL_DIR}/lib/libopenblas${CUSTOM_SUFFIX})
+    set(BLAS_LIBRARIES_STATIC    ${INSTALL_DIR}/lib/libopenblas${CUSTOM_SUFFIX})
+    set(LAPACK_LIBRARIES_STATIC  ${INSTALL_DIR}/lib/libopenblas${CUSTOM_SUFFIX})
+    set(BLAS_LIBRARIES_SHARED    ${INSTALL_DIR}/lib/libopenblas${CUSTOM_SUFFIX})
+    set(LAPACK_LIBRARIES_SHARED  ${INSTALL_DIR}/lib/libopenblas${CUSTOM_SUFFIX})
     set(LAPACKE_FROM_OPENBLAS 1)
 
 endif()
