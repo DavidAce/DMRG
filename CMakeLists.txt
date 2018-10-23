@@ -158,7 +158,7 @@ if (OpenMP_FOUND)
 #        endif()
 #    endforeach()
 else()
-    message(STATUS "OpenMP FF" )
+    message(STATUS "OpenMP OFF" )
 endif()
 
 

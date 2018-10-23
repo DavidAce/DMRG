@@ -6,6 +6,7 @@
 #define TENSOR_EXTRA_H
 
 #include <Eigen/Core>
+#include <Eigen/Sparse>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <iterator>
 #include <iostream>
@@ -24,9 +25,11 @@
 namespace Textra {
     using cdouble       = std::complex<double>;
 
-    template<typename Scalar> using MatrixType    = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
-    template<typename Scalar> using VectorType    = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    template<long rank>       using array         = Eigen::array<long, rank>;
+
+    template<typename Scalar> using MatrixType          = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    template<typename Scalar> using VectorType          = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    template<typename Scalar> using SparseMatrixType    = Eigen::SparseMatrix<Scalar>;
+    template<long rank>       using array               = Eigen::array<long, rank>;
 
     //Shorthand for the list of index pairs.
     template <typename Scalar, long length>
@@ -114,6 +117,9 @@ namespace Textra {
 
 
 
+
+
+
 //    //****************************//
 //    //Matrix to tensor conversions//
 //    //****************************//
@@ -186,6 +192,15 @@ namespace Textra {
     constexpr MatrixType<Scalar> Tensor_to_Matrix(const Eigen::Tensor<Scalar,rank> &tensor,const sizeType rows,const sizeType cols){
         return Eigen::Map<const MatrixType<Scalar>> (tensor.data(), rows,cols);
     }
+
+    template <typename Scalar>
+    constexpr SparseMatrixType<Scalar> Tensor2_to_SparseMatrix(const Eigen::Tensor<Scalar,2> &tensor, double prune_threshold = 1e-15) {
+        return Eigen::Map<const MatrixType<Scalar>>(tensor.data(), tensor.dimension(0), tensor.dimension(1)).sparseView().prune(prune_threshold);
+    }
+
+
+
+
 
 
     //************************//
