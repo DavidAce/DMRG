@@ -150,6 +150,22 @@ void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const
 }
 
 
+
+Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_matrix (){
+    return Textra::Tensor2_to_Matrix(get_H_local_rank2());
+}
+Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_sq_matrix (){
+    return Textra::Tensor2_to_Matrix(get_H_local_sq_rank2());
+}
+
+Textra::SparseMatrixType<Scalar> class_superblock::get_H_local_sparse_matrix (){
+    return Textra::Tensor2_to_SparseMatrix(get_H_local_rank2());
+}
+Textra::SparseMatrixType<Scalar> class_superblock::get_H_local_sq_sparse_matrix (){
+    return Textra::Tensor2_to_SparseMatrix(get_H_local_sq_rank2());
+}
+
+
 Eigen::Tensor<Scalar,2> class_superblock::get_H_local_rank2 (){
     long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
     return Lblock->block
