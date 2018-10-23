@@ -73,6 +73,11 @@ public:
                                                          * \f[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \f]
                                                          * \f[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \f] */
 
+
+    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_H_local_matrix();
+    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_H_local_sq_matrix();
+    Textra::SparseMatrixType<Scalar>                    get_H_local_sparse_matrix();
+    Textra::SparseMatrixType<Scalar>                    get_H_local_sq_sparse_matrix();
     Eigen::Tensor<Scalar,2> get_H_local_rank2 ();
     Eigen::Tensor<Scalar,8> get_H_local_rank8 ();
     Eigen::Tensor<Scalar,2> get_H_local_sq_rank2 ();
