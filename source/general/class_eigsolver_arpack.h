@@ -16,7 +16,7 @@
 
 class class_superblock;
 
-template<typename Scalar, Form form = Form::GENERAL>
+template<typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL>
 class class_eigsolver_arpack {
 
 private:
@@ -137,8 +137,8 @@ public:
              const int n,
              const int nev,
              const int ncv,
-             const Ritz ritz = Ritz::SR,
-             const Side side = Side::R,
+             const eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR,
+             const eigsolver_properties::Side side = eigsolver_properties::Side::R,
              const bool compute_eigvecs_=false,
              const bool remove_phase_=false,
              Scalar *residual_ = nullptr
@@ -151,7 +151,7 @@ public:
              const int nev,
              const int ncv,
              const Scalar shift,
-             const Ritz ritz,
+             const eigsolver_properties::Ritz ritz,
              const bool compute_eigvecs_= false,
              const bool remove_phase_= false,
              Scalar *residual_ = nullptr
@@ -185,7 +185,7 @@ public:
             const std::array<long,4> shape_mpo4_ ,   /*!< An array containing the shapes of the MPO  */
             const int nev,
             const int ncv,
-            const Ritz ritz = Ritz::SR,
+            const eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR,
             const bool remove_phase_ = true,
             Scalar *residual_ = nullptr);
 

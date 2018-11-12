@@ -15,6 +15,7 @@
 
 #define profile_eigsolver 0
 
+using namespace eigsolver_properties;
 
 template<typename Scalar, Form form>
 class_eigsolver_arpack<Scalar,form>::class_eigsolver_arpack() {
@@ -296,7 +297,7 @@ void class_eigsolver_arpack<Scalar,form>::eig_shift_invert(
 //        n         = eig.GetN();
 //        rows      = eig.GetN();
 //        cols      = eig.GetNev();
-//        nev_found = eig.GetNev();
+//        nev = eig.GetNev();
 //        iter      = eig.GetIter();
 //        counter   = hamiltonianProduct.counter;
 //        eigvals   = std::vector<Scalar>(eig.RawEigenvalues() , eig.RawEigenvalues()  + cols);
