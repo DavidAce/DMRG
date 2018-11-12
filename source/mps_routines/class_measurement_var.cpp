@@ -16,7 +16,7 @@ using namespace std;
 using namespace Textra;
 using Scalar = class_measurement::Scalar;
 using namespace std::complex_literals;
-
+using namespace eigsolver_properties;
 
 Scalar class_measurement::moment_generating_function(const std::unique_ptr<class_mps_2site> &MPS_original,
                                                      std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
@@ -51,7 +51,7 @@ Scalar class_measurement::moment_generating_function(const std::unique_ptr<class
 
     t_temp4.tic();
     class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
-    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv, Ritz::LM, Side::R, false);
+    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
     auto new_theta_evn_normalized        = mps_util->get_theta_evn(MPS_evolved, sqrt(solver.ref_eigvals()[0]));
     t_temp4.toc();
     long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original->chiA();// theta_evn_normalized.dimension(1);

@@ -50,6 +50,7 @@ public:
     Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag (Eigen::Tensor<Scalar, 4> &theta);
     Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag (Eigen::Tensor<Scalar, 4> &theta);
     Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag2 (Eigen::Tensor<Scalar, 4> &theta);
+    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag3 (Eigen::Tensor<Scalar, 4> &theta);
     Eigen::Tensor<Scalar,4> find_state_with_greatest_state_in_subspace (Eigen::Tensor<Scalar, 4> &theta);
 
 

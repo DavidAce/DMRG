@@ -46,7 +46,7 @@ public:
     int              spin_dimension;
 
     Eigen::Tensor<Scalar, 4>
-    optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, Ritz ritz = Ritz::SR
+    optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR
     )    __attribute((hot));                            /*!< Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using [Spectra](https://github.com/yixuan/spectra). */
 
 

@@ -3,6 +3,7 @@
 #include <general/nmspc_tensor_extra.h>
 #include <iomanip>
 using namespace std::complex_literals;
+using namespace eigsolver_properties;
 // Find the optimal MPS representation given an effective Hamiltonian made of left, right environments and a Hamiltonian MPO
 // called  L,R and M respectively. Start from an initial guess theta.
 

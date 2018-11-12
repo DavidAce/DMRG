@@ -80,7 +80,7 @@ public:
     //Common functions
     void print_status_update();
     void print_status_full();
-    void single_DMRG_step(long chi_max, Ritz ritz = Ritz::SR);
+    void single_DMRG_step(long chi_max, eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR);
 
     virtual void check_convergence_all();
     static constexpr double quietNaN = std::numeric_limits<double>::quiet_NaN();

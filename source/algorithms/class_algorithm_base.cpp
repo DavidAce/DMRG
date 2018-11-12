@@ -22,6 +22,7 @@ namespace s = settings;
 using namespace std;
 using namespace Textra;
 using namespace std::complex_literals;
+using namespace eigsolver_properties;
 using Scalar = class_algorithm_base::Scalar;
 
 class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
