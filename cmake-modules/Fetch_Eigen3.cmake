@@ -4,7 +4,7 @@ find_package(Eigen3 3.3.4)
 if(NOT EIGEN3_FOUND)
     # Try finding arpack as module library
     message(STATUS "SEARCHING FOR EIGEN3 IN LOADED MODULES")
-    find_package(Eigen3 3.3.4 PATHS "$ENV{EIGEN3_CMAKE_DIR}")
+    find_package(Eigen3 3.3.4 PATHS "$ENV{EIGEN3_CMAKE_DIR}" NO_DEFAULT_PATH)
     if (NOT EIGEN3_FOUND)
     find_path(EIGEN3_INCLUDE_DIR
             NAMES Core
@@ -52,7 +52,8 @@ if(BLAS_LIBRARIES)
         message(STATUS "Eigen3 will use MKL")
     else()
         list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_BLAS)
-        message(STATUS "Eigen3 will use BLAS")
+        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_LAPACKE)
+        message(STATUS "Eigen3 will use BLAS and LAPACKE")
     endif()
 endif()
 
