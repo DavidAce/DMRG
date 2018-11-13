@@ -51,7 +51,10 @@ public:
             const eigutils::eigSetting::Side side_ = eigutils::eigSetting::Side::R
 
     ): A_matrix(Eigen::Map<const MatrixType>(A_,L_,L_)),
-       L(L_), form(form_), side(side_) {}
+       L(L_), form(form_), side(side_)
+    {
+        init_profiling();
+    }
 
     // Eigen type constructor. Pass any copy-assignable eigen type into an internal Eigen matrix.
     template<typename Derived>
@@ -60,7 +63,9 @@ public:
             const eigutils::eigSetting::Form form_ = eigutils::eigSetting::Form::SYMMETRIC,
             const eigutils::eigSetting::Side side_ = eigutils::eigSetting::Side::R)
             : A_matrix(matrix_), L(A_matrix.rows()), form(form_), side(side_)
-    {}
+    {
+        init_profiling();
+    }
 
     // Functions used in in Arpack++ solver
     int rows() const {return L;};
@@ -113,13 +118,26 @@ void DenseMatrixProduct<Scalar>::FactorOP()
  */
 {
     if(readyFactorOp){return;}
+    t_factorOp.tic();
     assert(readyShift and "Shift value sigma has not been set.");
     Scalar sigma;
+    MatrixType A_shift;
     if constexpr(std::is_same<Scalar,double>::value)
-    {sigma = sigmaR;}
+    {
+        sigma = sigmaR;
+        A_shift = (A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
+    }
     else
-    {sigma = std::complex<double>(sigmaR,sigmaI);}
-    lu.compute(A_matrix - sigma * MatrixType::Identity(L,L));
+    {
+        sigma = std::complex<double>(sigmaR,sigmaI);
+        A_shift = (A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
+    }
+
+//    if constexpr(std::is_same<Scalar,double>::value)
+//    {sigma = sigmaR;}
+//    else
+//    {sigma = std::complex<double>(sigmaR,sigmaI);}
+    lu.compute(A_shift);
     readyFactorOp = true;
     t_factorOp.toc();
     std::cout << "Time Factor Op [ms]: " << std::setprecision(3) << t_factorOp.get_last_time_interval() * 1000 << '\n';

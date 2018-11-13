@@ -115,8 +115,8 @@ void class_xDMRG::single_xDMRG_step() {
             t_opt.toc();
             break;
         case xDMRG_Mode::PARTIAL:
-            auto dummy = find_state_with_greatest_overlap_part_diag3(theta);
-            theta = find_state_with_greatest_overlap_part_diag2(theta);
+//            auto dummy = find_state_with_greatest_overlap_part_diag2(theta);
+            theta = find_state_with_greatest_overlap_part_diag3(theta);
             t_opt.toc();
             break;
     }
@@ -305,11 +305,11 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 std::vector<int> generate_size_list(const int shape){
     std::vector<int> size_list;
     int min_size = 1;
-    int max_size = std::max(1,shape/32);
+    int max_size = std::max(1,shape/16);
     int tmp_size = min_size;
     while (tmp_size <= max_size){
         size_list.push_back(tmp_size);
-        tmp_size *= 8;
+        tmp_size *= 4;
     }
     return size_list;
 }
@@ -347,10 +347,10 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     double subspace_quality;
     double offset;
     double overlap_threshold          = 1 - 1e-4; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
-    double subspace_quality_threshold = 1e-2;
+    double subspace_quality_threshold = 1e-4;
     for (auto &nev : generate_size_list(shape)){
         t_eig.tic();
-        arpack_solver.eig_shift_invert(H_local.data(), shape, nev,ncv,energy_now*L, eigsolver_properties::Ritz::LM, true, true, theta_res.data());
+        arpack_solver.eig_shift_invert(H_local.data(), shape, nev,ncv,energy_now*L, eigsolver_properties::Ritz::LM, true, true);
         t_eig.toc();
         eigvals         = Eigen::Map<const Eigen::VectorXcd> (arpack_solver.get_eigvals().data(),arpack_solver.GetNevFound());
         eigvecs         = Eigen::Map<const Eigen::MatrixXcd> (arpack_solver.get_eigvecs().data(),arpack_solver.Rows(),arpack_solver.Cols());
@@ -510,18 +510,59 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
 
     }else {
-        theta_new       = eigvecs.col(best_state_idx);
-        energy_new      = eigvals(best_state_idx).real()/L;
+//        theta_new       = eigvecs.col(best_state_idx);
+//        energy_new      = eigvals(best_state_idx).real()/L;
     }
-    theta_res  = theta_new;
-    energy_now = energy_new;
+//    theta_res  = theta_new;
+//    energy_now = energy_new;
 
     double energy_ubound = energy_target + 0.1*(energy_max-energy_min);
     double energy_lbound = energy_target - 0.1*(energy_max-energy_min);
     if(energy_now < energy_lbound or energy_now > energy_ubound){
         std::cout << "WARNING: Partial diagonlization -- Energy far from mid-spectrum: " << "Energy =  " << energy_now << " | target = " << energy_target << std::endl;
     }
-    return Textra::Matrix_to_Tensor(theta_res, theta.dimensions());
+    return theta; //Textra::Matrix_to_Tensor(theta_res, theta.dimensions());
+}
+
+
+template <typename Derived>
+std::vector<size_t> make_sorted_index(const Eigen::MatrixBase<Derived>& values) {
+    std::vector<size_t> index(values.derived().size());
+    std::iota(index.begin(), index.end(), 0);
+    std::sort(index.begin(), index.end(), [&values](size_t a, size_t b) { return std::real(values[a]) > std::real(values[b]); } );
+    return index;
+}
+
+void sort_and_filter_eigenstates(Eigen::VectorXcd &eigvals,
+                                 Eigen::MatrixXcd &eigvecs,
+                                 Eigen::VectorXd  &overlaps,
+                                 int &nev,
+                                 double overlap_cutoff = 1e-2)
+{
+    if (nev == 1){return;}
+    auto sorted_idx = make_sorted_index(overlaps);
+    int rows = eigvecs.rows();
+    int cols = eigvecs.cols();
+    Eigen::VectorXcd sorted_eigvals(cols);
+    Eigen::MatrixXcd sorted_eigvecs(rows,cols);
+    Eigen::VectorXd  sorted_overlaps(cols);
+
+    int i = 0;
+    for (auto s : sorted_idx){
+        if (overlaps(s) > overlap_cutoff) {
+            sorted_eigvals(i)       = eigvals(s);
+            sorted_eigvecs.col(i)   = eigvecs.col(s);
+            sorted_overlaps(i)      = overlaps(s);
+            i++;
+        }
+    }
+    nev      = i;
+    sorted_eigvals.conservativeResize(nev);
+    sorted_eigvecs.conservativeResize(Eigen::NoChange, nev);
+    sorted_overlaps.conservativeResize(nev);
+    eigvals  = sorted_eigvals;
+    eigvecs  = sorted_eigvecs;
+    overlaps = sorted_overlaps;
 }
 
 
@@ -532,17 +573,24 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     t_ham.tic();
     auto H_local    = superblock->get_H_local_rank2();
     auto H_local_sq = superblock->get_H_local_sq_rank2();
+//    auto H_local    = superblock->get_H_local_matrix();
     assert(H_local.dimension(0) == shape);
     assert(H_local.dimension(1) == shape);
     t_ham.toc();
 
     t_eig.tic();
     class_eigsolver arpack_solver2;
+    Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> H_mat_map (H_local.data(),shape,shape);
+//    bool is_real = H_mat_map.imag().isZero(1e-14);
+//    if (is_real){
+//
+//    }
+
     matrix_recast matrixRecast(H_local.data(),shape);
-//    matrixRecast.prune();
-    SparseMatrixProduct<double> matrix_sparse = matrixRecast.get_as_real_sparse();
-    matrix_sparse.set_shift(energy_now*chain_length);
-    matrix_sparse.FactorOP();
+    SparseMatrixProduct<double> hamiltonian_sparse = matrixRecast.get_as_real_sparse();
+//    SparseMatrixProduct<std::complex<double>> hamiltonian_sparse(H_local.data(),shape);
+    hamiltonian_sparse.set_shift(energy_now*chain_length);
+    hamiltonian_sparse.FactorOP();
     t_eig.toc();
     double t_eig_preptime = t_eig.get_last_time_interval();
 
@@ -565,18 +613,17 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     double max_overlap, min_overlap, sq_sum_overlap;
     double subspace_quality;
     double offset;
-    double overlap_threshold          = 1 - 1e-4; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
-    double subspace_quality_threshold = 1e-2;
-    for (auto &nev : generate_size_list(shape)){
+    double overlap_cutoff             = 1e-10;
+    double max_overlap_threshold      = 1 - 1e-4; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
+    double subspace_quality_threshold = 1e-4;
+    for (auto nev : generate_size_list(shape)){
         t_eig.tic();
-        arpack_solver2.eigs_sparse(matrix_sparse,nev,-1, energy_now*chain_length,eigutils::eigSetting::Form::SYMMETRIC,eigutils::eigSetting::Ritz::LM,eigutils::eigSetting::Side::R, true,true);
+        arpack_solver2.eigs_sparse(hamiltonian_sparse,nev,-1, energy_now*chain_length,eigutils::eigSetting::Form::SYMMETRIC,eigutils::eigSetting::Ritz::LM,eigutils::eigSetting::Side::R, true,true);
         t_eig.toc();
-        eigvals          = Eigen::Map<const Eigen::VectorXcd> (arpack_solver2.solution.eigvals.data(),arpack_solver2.solution.meta.cols);
-        eigvecs          = Eigen::Map<const Eigen::MatrixXcd> (arpack_solver2.solution.eigvecs.data(),arpack_solver2.solution.meta.rows,arpack_solver2.solution.meta.cols);
-//        std::cout << "XDMRG Eigvals: \n" << eigvals << std::endl;
-//        std::cout << "XDMRG Eigvecs: \n" << eigvecs << std::endl;
-//        std::cout << "XDMRG theta_old.adjoint(): \n" << theta_old.adjoint() << std::endl;
+        eigvals           = Eigen::Map<const Eigen::VectorXcd> (arpack_solver2.solution.eigvals.data(),arpack_solver2.solution.meta.cols);
+        eigvecs           = Eigen::Map<const Eigen::MatrixXcd> (arpack_solver2.solution.eigvecs.data(),arpack_solver2.solution.meta.rows,arpack_solver2.solution.meta.cols);
         overlaps         = (theta_old.adjoint() * eigvecs).cwiseAbs();
+        sort_and_filter_eigenstates(eigvals, eigvecs, overlaps, nev, overlap_cutoff);
         max_overlap      = overlaps.maxCoeff(&best_state_idx);
         min_overlap      = overlaps.minCoeff(&worst_state_idx);
         sq_sum_overlap   = overlaps.cwiseAbs2().sum();
@@ -585,27 +632,39 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         result_log.emplace_back(nev, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig.get_last_time_interval(),t_eig_preptime,t_tot.get_age());
         t_eig_preptime = 0;
 
-        if(max_overlap >= overlap_threshold ){break;}
+        if(max_overlap >= max_overlap_threshold ){break;}
         if(subspace_quality < subspace_quality_threshold){break;}
         ncv = std::min((int)(shape/2), nev*16);
     }
 //    std::cout <<"Target energy: " << energy_now*chain_length << "\n" << "Eigvals \n" << eigvals << std::endl;
 
-    if (subspace_quality >= subspace_quality_threshold and max_overlap < overlap_threshold){
+    if (subspace_quality >= subspace_quality_threshold and max_overlap < max_overlap_threshold){
         class_eigsolver_armadillo solver;
         Eigen::VectorXd eigvals_real(shape);
         eigvecs.resize(shape,shape);
+        int nev = shape;
         t_eig.tic();
-        solver.eig_sym(shape, H_local.data(), eigvals_real.data(), eigvecs.data(),true);
+        solver.eig_sym(nev, H_local.data(), eigvals_real.data(), eigvecs.data(),true);
         eigvals = eigvals_real;
         t_eig.toc();
         overlaps         = (theta_old.adjoint() * eigvecs).cwiseAbs();
+
+
+//        std::cout <<std::setprecision(10) << "eigvals unsorted \n" << eigvals << std::endl;
+//        std::cout << "overlaps unsorted \n" << overlaps << std::endl;
+
+        sort_and_filter_eigenstates(eigvals, eigvecs, overlaps, nev, overlap_cutoff);
+
+//        std::cout << "eigvals sorted \n" << eigvals << std::endl;
+//        std::cout << "overlaps sorted \n" << overlaps << std::endl;
+
+
         max_overlap      = overlaps.maxCoeff(&best_state_idx);
         min_overlap      = overlaps.minCoeff(&worst_state_idx);
         sq_sum_overlap   = overlaps.cwiseAbs2().sum();
         subspace_quality = 1.0 - sq_sum_overlap;
         offset           = energy_target - eigvals(best_state_idx).real()/chain_length;
-        result_log.emplace_back(shape, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig.get_last_time_interval(),t_eig_preptime, t_tot.get_age());
+        result_log.emplace_back(nev, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig.get_last_time_interval(),t_eig_preptime, t_tot.get_age());
 
 //        std::cout <<"All eigvals: \n" << eigvals << std::endl;
 
@@ -618,10 +677,10 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
     std::cout << setprecision(16);
     if(nev >= 2){
-        Eigen::MatrixXcd H_local_mat = Textra::Tensor2_to_Matrix(H_local);
-
-        double sparcity = (double) (H_local_mat.array().cwiseAbs() > 1e-12 )
-                .select(Eigen::MatrixXd::Ones(H_local_mat.rows(),H_local_mat.cols()),0).sum()
+//      Eigen::MatrixXcd H_local_mat = Textra::Tensor2_to_Matrix(H_local);
+        Eigen::Map<Eigen::MatrixXcd> H_local_map(H_local.data(),shape,shape);
+        double sparcity = (double) (H_local_map.array().cwiseAbs() > 1e-12 )
+                .select(Eigen::MatrixXd::Ones(shape,shape),0).sum()
                           / (double)H_local.size();
         std::cout << "WARNING: Partial diagonlization -- overlap too small. Starting subspace optimization \n"
                   << std::setprecision(10)
@@ -674,12 +733,11 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                     ((theta_0.adjoint() * Textra::Tensor2_to_Matrix(H_local_sq) * theta_0).sum() -
                      energy_0 * energy_0 * chain_length * chain_length) / chain_length);
             double overlap_0 = (theta_old.adjoint() * theta_0).cwiseAbs().sum();
-            t_lbfgs.toc();
-            opt_log.emplace_back("Start (best overlap)", energy_0, variance_0, overlap_0, iter_0, t_lbfgs.get_last_time_interval(), t_tot.get_age());
-        }
 
-
-        {
+//        }
+//
+//
+//        {
             using namespace LBFGSpp;
             class_xDMRG_functor functor
                     (shape,nev,
@@ -688,7 +746,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                      eigvecs.data(),
                      eigvals.data()
                     );
-            double threshold = 1e-3;
+            double threshold = 1e-6;
             LBFGSpp::LBFGSParam<double> param;
             param.max_iterations = 100;
             param.epsilon        = threshold;
@@ -697,6 +755,8 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
             // Create solver and function object
             LBFGSpp::LBFGSSolver<double> solver_3(param);
+            t_lbfgs.toc();
+            opt_log.emplace_back("Start (best overlap)", energy_0, variance_0, overlap_0, iter_0, t_lbfgs.get_last_time_interval(), t_tot.get_age());
             // x will be overwritten to be the best point found
             double fx;
             t_lbfgs.tic();
@@ -718,23 +778,23 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
 
         std::cout << std::setprecision(16)
-                  <<"       "<< setw(24) << left << "Algorithm"
-                  <<"       "<< setw(24) << left << "energy"
-                  <<"       "<< setw(44) << left << "variance"
-                  <<"       "<< setw(24) << left << "overlap"
-                  <<"       "<< setw(8)  << left << "iter"
-                  <<"       "<< setw(20) << left << "Elapsed time"
-                  <<"       "<< setw(20) << left << "Wall time"
+                  <<"    "<< setw(24) << left << "Algorithm"
+                  <<"    "<< setw(24) << left << "energy"
+                  <<"    "<< setw(44) << left << "variance"
+                  <<"    "<< setw(24) << left << "overlap"
+                  <<"    "<< setw(8)  << left << "iter"
+                  <<"    "<< setw(20) << left << "Elapsed time [ms]"
+                  <<"    "<< setw(20) << left << "Wall time"
                   << std::endl;
         for(auto &log : opt_log){
             std::cout << std::setprecision(16)
-                      << "      " <<setw(24) << left << std::get<0>(log)
-                      << "      " <<setw(24) << left << std::get<1>(log)
-                      << "      " <<setw(44) << left << std::get<2>(log)
-                      << "      " <<setw(24) << left << std::get<3>(log)
-                      << "      " <<setw(8)  << left << std::get<4>(log)
-                      << "      " <<setw(20) << left << std::get<5>(log)
-                      << "      " <<setw(20) << left << std::get<6>(log)
+                      << "    " <<setw(24) << left << std::get<0>(log)
+                      << "    " <<setw(24) << left << std::get<1>(log)
+                      << "    " <<setw(44) << left << std::get<2>(log)
+                      << "    " <<setw(24) << left << std::get<3>(log)
+                      << "    " <<setw(8)  << left << std::get<4>(log) << std::setprecision(3)
+                      << "    " <<setw(20) << left << std::get<5>(log)*1000
+                      << "    " <<setw(20) << left << std::get<6>(log)
                       << std::endl;
         }
         std::cout << std::endl;
@@ -744,16 +804,16 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         theta_new       = eigvecs.col(best_state_idx);
         energy_new      = eigvals(best_state_idx).real()/chain_length;
     }
-//    theta_res  = theta_new;
-//    energy_now = energy_new;
+    theta_res  = theta_new;
+    energy_now = energy_new;
 
     double energy_ubound = energy_target + 0.1*(energy_max-energy_min);
     double energy_lbound = energy_target - 0.1*(energy_max-energy_min);
     if(energy_now < energy_lbound or energy_now > energy_ubound){
         std::cout << "WARNING: Partial diagonlization -- Energy far from mid-spectrum: " << "Energy =  " << energy_now << " | target = " << energy_target << std::endl;
     }
-    return theta;
-//    return Textra::Matrix_to_Tensor(theta, theta.dimensions());
+//    return theta;
+    return Textra::Matrix_to_Tensor(theta_res, theta.dimensions());
 }
 
 

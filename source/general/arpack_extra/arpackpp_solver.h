@@ -44,11 +44,13 @@ public:
     MatrixType               &matrix;
     eigutils::eigConfig      &solverConf;
     eigutils::eigSolution    &solution;
-
+    Scalar                   *residual;
     arpackpp_solver(
             MatrixType              &matrix_,
             eigutils::eigConfig     &solverConf_,
-            eigutils::eigSolution   &solution_);
+            eigutils::eigSolution   &solution_,
+            Scalar                  *residual_
+            );
 };
 
 

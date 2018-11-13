@@ -189,11 +189,11 @@ void class_eigsolver::eigs (const Scalar *matrix,
     conf_init(L, nev, ncv, sigma,type,form,ritz,side,storage,compute_eigvecs_,remove_phase_);
     if constexpr(storage == Storage::DENSE){
         auto matrix_dense = DenseMatrixProduct<Scalar> (matrix,L);
-        arpackpp_solver<DenseMatrixProduct<Scalar>> solver(matrix_dense, solverConf, solution);
+        arpackpp_solver<DenseMatrixProduct<Scalar>> solver(matrix_dense, solverConf, solution,residual_);
         solver.eigs();
     }else{
         auto matrix_sparse = SparseMatrixProduct<Scalar> (matrix,L);
-        arpackpp_solver<SparseMatrixProduct<Scalar>> solver(matrix_sparse, solverConf, solution);
+        arpackpp_solver<SparseMatrixProduct<Scalar>> solver(matrix_sparse, solverConf, solution,residual_);
         solver.eigs();
     }
 }
@@ -219,7 +219,7 @@ void class_eigsolver::eigs_dense   (const Scalar *matrix,
     Storage storage = Storage::DENSE;
     conf_init(L, nev, ncv, sigma,type,form,ritz,side,storage,compute_eigvecs_,remove_phase_);
     auto matrix_dense = DenseMatrixProduct<Scalar> (matrix,L);
-    arpackpp_solver<DenseMatrixProduct<Scalar>> solver(matrix_dense, solverConf, solution);
+    arpackpp_solver<DenseMatrixProduct<Scalar>> solver(matrix_dense, solverConf, solution,residual_);
     solver.eigs();
 }
 
@@ -242,7 +242,7 @@ void class_eigsolver::eigs_dense   (DenseMatrixProduct<Scalar> &matrix_dense,
     Type type = is_cplx ? Type::CPLX : Type::REAL;
     Storage storage = Storage::DENSE;
     conf_init(L, nev, ncv, sigma,type,form,ritz,side,storage,compute_eigvecs_,remove_phase_);
-    arpackpp_solver<DenseMatrixProduct<Scalar>> solver(matrix_dense, solverConf, solution);
+    arpackpp_solver<DenseMatrixProduct<Scalar>> solver(matrix_dense, solverConf, solution,residual_);
     solver.eigs();
 }
 
@@ -267,7 +267,7 @@ void class_eigsolver::eigs_sparse   (const Scalar *matrix,
     Storage storage = Storage::SPARSE;
     conf_init(L, nev, ncv, sigma,type,form,ritz,side,storage,compute_eigvecs_,remove_phase_);
     auto matrix_sparse = SparseMatrixProduct<Scalar> (matrix,L);
-    arpackpp_solver<SparseMatrixProduct<Scalar>> solver(matrix_sparse, solverConf, solution);
+    arpackpp_solver<SparseMatrixProduct<Scalar>> solver(matrix_sparse, solverConf, solution,residual_);
     solver.eigs();
 }
 
@@ -292,7 +292,7 @@ void class_eigsolver::eigs_sparse   (SparseMatrixProduct<Scalar> &matrix_sparse,
     Type type = is_cplx ? Type::CPLX : Type::REAL;
     Storage storage = Storage::SPARSE;
     conf_init(L, nev, ncv, sigma,type,form,ritz,side,storage,compute_eigvecs_,remove_phase_);
-    arpackpp_solver<SparseMatrixProduct<Scalar>> solver(matrix_sparse, solverConf, solution);
+    arpackpp_solver<SparseMatrixProduct<Scalar>> solver(matrix_sparse, solverConf, solution,residual_);
     solver.eigs();
 }
 
