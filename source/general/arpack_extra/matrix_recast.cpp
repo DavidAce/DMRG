@@ -74,7 +74,10 @@ DenseMatrixProduct<double> matrix_recast<Scalar>::get_as_real_dense() {
         else       {return DenseMatrixProduct<double>(matrix_ptr,L);}
     }else{
 //        assert(isReal and "ERROR: The given matrix has a nonzero imaginary part. Can't convert to real.");
-        if (isReal){std::cerr << "WARNING: The given matrix has a nonzero imaginary part, yet converting to real." << std::endl;}
+        if (not isReal){
+            double sum = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_ptr,L,L).imag().array().cwiseAbs().sum();
+            std::cerr << "WARNING: The given matrix has a nonzero imaginary part, yet converting to real. Imag sum: " << sum << std::endl;
+        }
         Eigen::MatrixXd matrix_recast;
         if (pruned){matrix_recast = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_pruned.data(),L,L).real();}
         else       {matrix_recast = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_ptr,L,L).real();}
@@ -103,7 +106,10 @@ SparseMatrixProduct<double> matrix_recast<Scalar>::get_as_real_sparse() {
         if(pruned){return SparseMatrixProduct<double>(matrix_pruned.data(),L);}
         else      {return SparseMatrixProduct<double>(matrix_ptr,L);}
     }else{
-        if (isReal){std::cerr << "WARNING: The given matrix has a nonzero imaginary part, yet converting to real." << std::endl;}
+        if (not isReal){
+            double sum = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_ptr,L,L).imag().array().cwiseAbs().sum();
+            std::cerr << "WARNING: The given matrix has a nonzero imaginary part, yet converting to real. Imag sum: " << sum << std::endl;
+        }
         Eigen::MatrixXd matrix_recast;
         if(pruned){matrix_recast = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_pruned.data(),L,L).real();}
         else      {matrix_recast = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_ptr,L,L).real();}

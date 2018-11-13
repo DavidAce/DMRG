@@ -82,6 +82,7 @@ public:
     // Various utility functions
     int counter = 0;
     void print()const;
+    const auto & get_matrix(){return A_matrix;}
     void set_shift(std::complex<double> sigma_)   {if(readyShift){return;} sigmaR=std::real(sigma_);sigmaI=std::imag(sigma_) ;readyShift = true;}
     void set_shift(double               sigma_)   {if(readyShift){return;} sigmaR=sigma_, sigmaI = 0.0;readyShift = true;}
     void set_shift(double sigmaR_, double sigmaI_){if(readyShift){return;} sigmaR=sigmaR_;sigmaI = sigmaI_ ;readyShift = true;}
@@ -124,19 +125,37 @@ void SparseMatrixProduct<Scalar>::FactorOP()
  */
 
 {   if(readyFactorOp){return;}
-    t_factorOp.tic();
     assert(readyShift and "Shift value sigma has not been set.");
     Scalar sigma;
+    t_factorOp.tic();
+    MatrixType A_shift;
     if constexpr(std::is_same<Scalar,double>::value)
-    {sigma = sigmaR;}
+    {
+        sigma = sigmaR;
+        A_shift = (A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
+    }
     else
-    {sigma = std::complex<double>(sigmaR,sigmaI);}
-    Eigen::SparseMatrix<Scalar> Id(L,L);
-    Id.setIdentity();
-    Id.makeCompressed();
-    MatrixType A_shift = (A_matrix - sigma * Id);
+    {
+        sigma = std::complex<double>(sigmaR,sigmaI);
+        A_shift = (A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
+    }
+
+//    Eigen::SparseMatrix<Scalar> Id(L,L);
+//    Id.setIdentity();
+//    Id.makeCompressed();
+//    MatrixType A_shift = (A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
     A_shift.makeCompressed();
+    t_factorOp.toc();
+    double t_factorOp_shift = t_factorOp.get_last_time_interval();
+    t_factorOp.tic();
+//    double sparcity_A_shift = (A_shift.toDense().array().cwiseAbs() > 1e-14 )
+//                       .select(Eigen::MatrixXd::Ones(L,L),0).sum() / A_shift.size();
     lu_dense.compute(A_shift);
+//    double sparcity_LU = (lu_dense.matrixLU().array().cwiseAbs() > 1e-14 )
+//                                      .select(Eigen::MatrixXd::Ones(L,L),0).sum() / lu_dense.matrixLU().size();
+//    std::cout << "sparcity_A_shift: " << sparcity_A_shift << std::endl;
+//    std::cout << "sparcity_LU     : " << sparcity_LU      << std::endl;
+//    std::cout << "LU              \n" << lu_dense.permutationP().inverse() * lu_dense.matrixLU()      << std::endl;
 //    lu_sparse.compute(A_shift);
 //    if (lu_sparse.info() == Eigen::ComputationInfo::Success){
 //        sparseLU = true;
@@ -150,9 +169,10 @@ void SparseMatrixProduct<Scalar>::FactorOP()
 //        lu_dense.compute(A_shift);
 //        sparseLU = false;
 //    }
-    readyFactorOp = true;
     t_factorOp.toc();
-    std::cout << "Time Factor Op [ms]: " << std::setprecision(3) << t_factorOp.get_last_time_interval() * 1000 << '\n';
+    readyFactorOp = true;
+    std::cout << "Time Factor Op [ms]: " << std::setprecision(3) << t_factorOp.get_last_time_interval() * 1000 << "  " << t_factorOp_shift * 1000 <<'\n';
+//    std::cout << "Time Factor sh [ms]: " << std::setprecision(3)  '\n';
 }
 
 template<typename Scalar>

@@ -20,12 +20,14 @@ template<typename MatrixType>
 arpackpp_solver<MatrixType>::arpackpp_solver(
         MatrixType               &matrix_,
         eigutils::eigConfig      &solverConf_,
-        eigutils::eigSolution    &solution_
+        eigutils::eigSolution    &solution_,
+        Scalar                   *residual_
         )
         :
         matrix(matrix_),
         solverConf(solverConf_),
-        solution  (solution_)
+        solution  (solution_),
+        residual  (residual_)
 {
 
     t_sol.set_properties(profile_arpack, 10,"Time iterating  ");
@@ -70,9 +72,10 @@ void arpackpp_solver<MatrixType>::eigs() {
         if(solverConf.form == Form::SYMMETRIC){this->eigs_sym();}else {this->eigs_nsym();}
     }
 
-    // The solution to  the eigenvalue equation Av = l*v is determined up to a constant phase factor.
-    // By checking the first element in the v, one can compute the phase and remove it from all elements
-    // of v.
+    // The solution to  the eigenvalue equation Av = l*v is determined up to a constant phase factor exp{ia}
+    // By checking the first element in v, one can compute the phase a and remove it from all elements
+    // of v by multiplication with exp{-ia
+    // }
     if (solverConf.remove_phase) {
         this->subtract_phase();
     }
@@ -94,7 +97,7 @@ void arpackpp_solver<MatrixType>::eigs_sym() {
                 ncv_internal,
                 solverConf.eigThreshold,
                 solverConf.eigMaxIter,
-                nullptr);
+                residual);
         switch (solverConf.shift) {
             case Shift::OFF :
                 break;
@@ -127,7 +130,7 @@ void arpackpp_solver<MatrixType>::eigs_nsym() {
                 ncv_internal,
                 solverConf.eigThreshold,
                 solverConf.eigMaxIter,
-                nullptr);
+                residual);
 
 
         switch (solverConf.shift) {
@@ -163,13 +166,13 @@ void arpackpp_solver<MatrixType>::eigs_comp() {
                 ncv_internal,
                 solverConf.eigThreshold,
                 solverConf.eigMaxIter,
-                nullptr);
+                residual);
 
         switch (solverConf.shift){
             case Shift::OFF :
                 break;
             case Shift::ON :
-                solver.SetShiftInvertMode(solverConf.sigma, &matrix, &MatrixType::MultAx);
+                solver.SetShiftInvertMode(solverConf.sigma, &matrix, &MatrixType::MultOPv);
                 break;
         }
 
@@ -226,7 +229,7 @@ void arpackpp_solver<MatrixType>::find_solution(Derived &solver, int nev) {
         solution.meta.nev           = std::min(nev, solver.GetNev());
         solution.meta.ncv_used      = solver.GetNcv();
         solution.meta.rows          = solver.GetN();
-        solution.meta.cols          = solution.meta.nev;
+        solution.meta.cols          = solution.meta.nev_converged;
         solution.meta.counter       = matrix.counter;
     }
 }
@@ -247,12 +250,12 @@ void arpackpp_solver<MatrixType>::copy_solution_symm(Derived &solver) {
 template <typename MatrixType>
 template <typename Derived>
 void arpackpp_solver<MatrixType>::copy_solution_nsym(Derived &solver) {
-    for (int j = 0; j < solution.meta.nev; j++) {
+    for (int j = 0; j < solution.meta.cols; j++) {
         solution.eigvals.emplace_back(std::complex<double>(solver.EigenvalueReal(j), solver.EigenvalueImag(j)));
     }
     if(solverConf.compute_eigvecs){
-        for (int j = 0; j < solution.meta.nev; j++){
-            for (int i = 0; i < solution.meta.n; i++){
+        for (int j = 0; j < solution.meta.cols; j++){
+            for (int i = 0; i < solution.meta.rows; i++){
                 solution.eigvecs.emplace_back(std::complex<double>(solver.EigenvectorReal(j,i), solver.EigenvectorImag(j,i)));
             }
         }
