@@ -10,6 +10,7 @@
 class class_eigsolver_armadillo {
 public:
     void eig_sym(int L, std::complex<double> *hermitian_matrix, double *eigvals, std::complex<double> *eigvecs, bool remove_phase = false);
+    void eig_sym(int L, double *symmetric_matrix, double *eigvals, double *eigvecs, bool remove_phase = false);
     void subtract_phase(std::complex<double>  *eigvecs, int L);
 };
 

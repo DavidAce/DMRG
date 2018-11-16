@@ -5,11 +5,12 @@
 #include <gitversion.h>
 #include <IO/class_hdf5_file.h>
 
-class_hdf5_file::class_hdf5_file(const std::string output_filename_, const std::string output_folder_, bool create_dir_, bool overwrite_){
+class_hdf5_file::class_hdf5_file(const std::string output_filename_, const std::string output_folder_, bool create_dir_, bool overwrite_, bool resume_){
     output_filename = output_filename_;
     output_folder   = output_folder_;
     create_dir      = create_dir_;
     overwrite       = overwrite_;
+    resume          = resume_;
   /*
   * Check if gzip compression is available and can be used for both
   * compression and decompression.  Normally we do not perform error
@@ -35,9 +36,6 @@ class_hdf5_file::class_hdf5_file(const std::string output_filename_, const std::
 
     initialize();
 
-    H5T_COMPLEX_DOUBLE = H5Tcreate (H5T_COMPOUND, sizeof(H5T_COMPLEX_STRUCT));
-    H5Tinsert (H5T_COMPLEX_DOUBLE, "real", HOFFSET(H5T_COMPLEX_STRUCT,real), H5T_NATIVE_DOUBLE);
-    H5Tinsert (H5T_COMPLEX_DOUBLE, "imag", HOFFSET(H5T_COMPLEX_STRUCT,imag), H5T_NATIVE_DOUBLE);
 }
 
 void class_hdf5_file::initialize(){
@@ -46,11 +44,34 @@ void class_hdf5_file::initialize(){
     plist_lncr = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
     plist_xfer = H5Pcreate(H5P_DATASET_XFER);
     H5Pset_create_intermediate_group(plist_lncr, 1);
+    bool create;
+    if (overwrite and not resume){
+        create = true;
+    }else if (not overwrite and resume){
+        if (file_is_valid){
+            create = false;
+        }else{
+            std::cerr << "ERROR: File is invalid. Exiting." << std::endl;
+            exit(1);
+        }
+    }
+    else{
+        // The path is now a renamed path for safety
+        create = true;
+    }
 
-    file = H5Fcreate(output_file_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, H5P_DEFAULT);
-    //Put git revision in file attribute
-    std::string gitversion = "Git branch: " + GIT::BRANCH + " | Commit hash: " + GIT::COMMIT_HASH + " | Revision: " + GIT::REVISION;
-    write_attribute_to_file(gitversion, "GIT REVISION");
+    if (create){
+        file = H5Fcreate(output_file_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, H5P_DEFAULT);
+        H5T_COMPLEX_DOUBLE = H5Tcreate (H5T_COMPOUND, sizeof(H5T_COMPLEX_STRUCT));
+        H5Tinsert (H5T_COMPLEX_DOUBLE, "real", HOFFSET(H5T_COMPLEX_STRUCT,real), H5T_NATIVE_DOUBLE);
+        H5Tinsert (H5T_COMPLEX_DOUBLE, "imag", HOFFSET(H5T_COMPLEX_STRUCT,imag), H5T_NATIVE_DOUBLE);
+        //Put git revision in file attribute
+        std::string gitversion = "Git branch: " + GIT::BRANCH + " | Commit hash: " + GIT::COMMIT_HASH + " | Revision: " + GIT::REVISION;
+        write_attribute_to_file(gitversion, "GIT REVISION");
+    }else{
+        file = H5Fopen(output_file_path.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+    }
+//    H5Fflush(file,H5F_SCOPE_GLOBAL);
 }
 
 void class_hdf5_file::set_output_file_path() {
@@ -81,11 +102,25 @@ void class_hdf5_file::set_output_file_path() {
         if(fs::exists(output_file_path)) {
             output_file_path = fs::canonical(output_file_path);
             std::cout << "File already exists: " << output_file_path << std::endl;
-            if (overwrite) {
+            if(H5Fis_hdf5(output_file_path.c_str()) > 0){
+                file_is_valid = true;
+            }else{
+                std::cerr <<  "WARNING: File is invalid!"<< std::endl;
+                file_is_valid = false;
+            }
+
+            if (overwrite and not resume) {
                 std::cout << "Overwrite mode is TRUE." << std::endl;
                 return;
+            }else if(not overwrite and resume and file_is_valid){
+                std::cout << "Resume mode is TRUE." << std::endl;
+                return;
             }
+
             else{
+                if(overwrite and resume) {
+                    std::cerr << "Warning: Can't both overwrite and resume. Renaming file for safety." << std::endl;
+                }
                 int i = 1;
                 while (fs::exists(output_file_path)){
                     output_file_path.replace_filename(output_filename.stem().string() + "-" + std::to_string(i++) + output_filename.extension().string() );
@@ -123,21 +158,30 @@ void class_hdf5_file::set_output_file_path() {
 //    }
 
 
+    // If you are here the given path to the file doesn't exist.
+    // The reason could be that
     if(fs::exists(output_file_path)) {
         output_file_path = fs::canonical(output_file_path);
         std::cout << "File exists already: " << output_file_path << std::endl;
-        if (overwrite) {
+        if (overwrite and not resume) {
             std::cout << "Overwrite mode is TRUE." << std::endl;
             return;
-        } else {
+        }else if(not overwrite and resume){
+            std::cout << "Resume mode is TRUE." << std::endl;
+            return;
+        }
+
+        else{
+            if(overwrite and resume) {
+                std::cerr << "Warning: Can't both overwrite and resume. Renaming file for safety." << std::endl;
+            }
             int i = 1;
             while (fs::exists(output_file_path)){
                 output_file_path.replace_filename(output_filename.stem().string() + "-" + std::to_string(i++) + output_filename.extension().string() );
             }
-            std::cout << "Renamed file: " << output_filename << "  -->  " << output_file_path.filename() << std::endl;
+            std::cout << "Renamed output file: " << output_filename << "  -->  " << output_file_path.filename() << std::endl;
             return;
         }
-
     }
 }
 
@@ -175,6 +219,7 @@ void class_hdf5_file::create_dataset_link(const DatasetProperties &props){
         H5Dclose(dataset);
         H5Sclose(dataspace);
         H5Pclose(dset_cpl);
+        H5Fflush(file,H5F_SCOPE_GLOBAL);
     }
 }
 
@@ -183,6 +228,8 @@ void class_hdf5_file::create_group_link(const std::string &group_relative_name) 
     if (not check_link_exists_recursively(group_relative_name)) {
         hid_t group = H5Gcreate(file, group_relative_name.c_str(), plist_lncr, H5P_DEFAULT, H5P_DEFAULT);
         H5Gclose(group);
+        H5Fflush(file,H5F_SCOPE_GLOBAL);
+
     }
 }
 
@@ -205,6 +252,7 @@ void class_hdf5_file::set_extent_dataset(const DatasetProperties &props){
         hid_t dataset = H5Dopen(file, props.dset_name.c_str(), H5P_DEFAULT);
         H5Dset_extent(dataset, props.dims.data());
         H5Dclose(dataset);
+        H5Fflush(file,H5F_SCOPE_LOCAL);
     }else{
         std::cerr << "Link does not exist, yet the extent is being set." << std::endl;
         exit(1);
@@ -225,6 +273,7 @@ void class_hdf5_file::extend_dataset(const std::string & dataset_relative_name, 
         H5Dset_extent(dataset, new_dims.data());
         H5Dclose(dataset);
         H5Sclose(filespace);
+        H5Fflush(file,H5F_SCOPE_LOCAL);
     }
 
 }

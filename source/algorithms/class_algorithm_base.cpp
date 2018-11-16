@@ -7,6 +7,7 @@
 #include "class_algorithm_base.h"
 #include <IO/class_hdf5_file.h>
 #include <IO/class_hdf5_table_buffer2.h>
+#include <IO/class_resume_from_hdf5.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_measurement.h>
@@ -37,6 +38,8 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
 
     //Default constructed objects
     env_storage  = std::make_shared<class_finite_chain_sweeper>();
+
+    class_resume_from_hdf5 test(hdf5,superblock,env_storage,sim_name,sim_type);
 }
 
 
