@@ -24,7 +24,12 @@ class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<class_hdf5_fi
 }
 class_algorithm_launcher::class_algorithm_launcher()
 {
-    hdf5 = std::make_shared<class_hdf5_file>(settings::hdf5::output_filename, settings::hdf5::output_folder,true, false);
+    hdf5 = std::make_shared<class_hdf5_file>(settings::hdf5::output_filename,
+            settings::hdf5::output_folder,
+            settings::hdf5::create_dir_if_not_found,
+            settings::hdf5::overwrite_file_if_found,
+            settings::hdf5::resume_from_file
+            );
 }
 
 
