@@ -30,10 +30,12 @@ public:
     using VectorType      = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
     using VectorTypeT     = Eigen::Matrix<Scalar,1,Eigen::Dynamic>;
 private:
-    MatrixType A_matrix;          // The actual matrix. Given matrices will be copied into this one.
-    const int L;                        // The linear matrix dimension
+    MatrixType A_matrix;                 // The actual matrix. Given matrices will be copied into this one.
+
+    const int L;                         // The linear matrix dimension
     eigutils::eigSetting::Form form;     // Chooses SYMMETRIC / NONSYMMETRIC mode
     eigutils::eigSetting::Side side;     // Chooses whether to find (R)ight or (L)eft eigenvectors
+//    bool copy_matrix;
 
     // Shift-invert mode stuff
 //    MatrixType A_shift;
@@ -54,19 +56,38 @@ public:
             const int L_,
             const eigutils::eigSetting::Form form_ = eigutils::eigSetting::Form::SYMMETRIC,
             const eigutils::eigSetting::Side side_ = eigutils::eigSetting::Side::R)
-            : A_matrix(Eigen::Map<const DenseMatrixType>(A_,L_,L_).sparseView()), L(L_), form(form_), side(side_)
+//            const bool copy_matrix_ = true)
+            : L(L_), form(form_), side(side_) // copy_matrix(copy_matrix_)
     {
-        A_matrix.makeCompressed();
+//        if (copy_matrix){
+            A_matrix = Eigen::Map<const DenseMatrixType>(A_,L_,L_).sparseView();
+            A_matrix.makeCompressed();
+//        }else {
+//
+//        }
         init_profiling();
     }
 
     // Eigen type constructor. Pass any copy-assignable eigen type into an internal Eigen matrix.
     template<typename Derived>
     explicit SparseMatrixProduct(
-            const Eigen::EigenBase<Derived> &matrix_,
+            const Eigen::DenseBase<Derived> &matrix_,
             const eigutils::eigSetting::Form form_ = eigutils::eigSetting::Form::SYMMETRIC,
             const eigutils::eigSetting::Side side_ = eigutils::eigSetting::Side::R)
             : A_matrix(matrix_.derived().sparseView()), L(A_matrix.rows()), form(form_), side(side_)
+    {
+        A_matrix.makeCompressed();
+        init_profiling();
+    }
+
+
+    // Eigen type constructor. Pass any copy-assignable eigen type into an internal Eigen matrix.
+    template<typename Derived>
+    explicit SparseMatrixProduct(
+            const Eigen::SparseMatrixBase<Derived> &matrix_,
+            const eigutils::eigSetting::Form form_ = eigutils::eigSetting::Form::SYMMETRIC,
+            const eigutils::eigSetting::Side side_ = eigutils::eigSetting::Side::R)
+            : A_matrix(matrix_), L(A_matrix.rows()), form(form_), side(side_)
     {
         A_matrix.makeCompressed();
         init_profiling();
@@ -128,7 +149,8 @@ void SparseMatrixProduct<Scalar>::FactorOP()
     assert(readyShift and "Shift value sigma has not been set.");
     Scalar sigma;
     t_factorOp.tic();
-    MatrixType A_shift;
+
+    DenseMatrixType A_shift;
     if constexpr(std::is_same<Scalar,double>::value)
     {
         sigma = sigmaR;
@@ -144,18 +166,19 @@ void SparseMatrixProduct<Scalar>::FactorOP()
 //    Id.setIdentity();
 //    Id.makeCompressed();
 //    MatrixType A_shift = (A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
-    A_shift.makeCompressed();
+//    A_shift.makeCompressed();
     t_factorOp.toc();
     double t_factorOp_shift = t_factorOp.get_last_time_interval();
     t_factorOp.tic();
 //    double sparcity_A_shift = (A_shift.toDense().array().cwiseAbs() > 1e-14 )
 //                       .select(Eigen::MatrixXd::Ones(L,L),0).sum() / A_shift.size();
-    lu_dense.compute(A_shift);
 //    double sparcity_LU = (lu_dense.matrixLU().array().cwiseAbs() > 1e-14 )
 //                                      .select(Eigen::MatrixXd::Ones(L,L),0).sum() / lu_dense.matrixLU().size();
 //    std::cout << "sparcity_A_shift: " << sparcity_A_shift << std::endl;
 //    std::cout << "sparcity_LU     : " << sparcity_LU      << std::endl;
 //    std::cout << "LU              \n" << lu_dense.permutationP().inverse() * lu_dense.matrixLU()      << std::endl;
+    lu_dense.compute(A_shift);
+
 //    lu_sparse.compute(A_shift);
 //    if (lu_sparse.info() == Eigen::ComputationInfo::Success){
 //        sparseLU = true;

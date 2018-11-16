@@ -23,7 +23,8 @@ class_xDMRG_functor::class_xDMRG_functor(
     auto eigvecs    = Eigen::Map<const cMatrixType_> (eigvecs_ptr   ,shape,nev);
     H               = eigvecs.adjoint() * H_local * eigvecs;
     H2              = eigvecs.adjoint() * H_local_sq * eigvecs;
-};
+}
+
 
 
 double class_xDMRG_functor::operator()(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, Eigen::Matrix<double,Eigen::Dynamic,1> &grad) const {

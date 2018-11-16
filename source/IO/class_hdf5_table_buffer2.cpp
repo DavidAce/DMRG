@@ -56,6 +56,7 @@ void class_hdf5_table<table_type>::initialize_table(){
                        table_entries->meta.dst_size, table_entries->meta.field_names.data(), table_entries->meta.dst_offsets.data(), table_entries->meta.field_types.data(),
                        table_entries->meta.chunk_size, table_entries->meta.fill_data, table_entries->meta.compress, table_entries->buffer.data());
         table_is_ready = true;
+        H5Fflush(hdf5_file->file,H5F_SCOPE_GLOBAL);
 
     }
 }
@@ -70,6 +71,7 @@ void class_hdf5_table<table_type>:: write_buffer_to_file() {
 
         table_entries->buffer.clear();
         recorded_elements += NRECORDS;
+        H5Fflush(hdf5_file->file,H5F_SCOPE_GLOBAL);
     }
     buffer_is_empty = true;
 }

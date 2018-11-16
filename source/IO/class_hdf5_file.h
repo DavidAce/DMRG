@@ -30,9 +30,11 @@ private:
     fs::path    output_file_path;
     bool        create_dir;
     bool        overwrite;
-
+    bool        resume;
+    bool        file_is_valid;
     void set_output_file_path();
-
+    enum class FileMode {CREATE,OPEN,RENAME};
+    FileMode filemode;
 
     //Mpi related constants
     hid_t plist_facc;
@@ -82,7 +84,7 @@ private:
 public:
     hid_t       file;
 
-    explicit class_hdf5_file(const std::string output_filename_, const std::string output_dirname_ , bool create_dir_ = true, bool overwrite_ = false);
+    explicit class_hdf5_file(const std::string output_filename_, const std::string output_dirname_ , bool create_dir_ = true, bool overwrite_ = false, bool resume_ = false);
 
     ~class_hdf5_file(){
         H5Pclose(plist_facc);
@@ -326,6 +328,7 @@ void class_hdf5_file::write_dataset(const DataType &data, const DatasetPropertie
         retval = H5Dwrite(dataset, props.datatype, props.memspace, filespace, H5P_DEFAULT, &data);
     }
     H5Dclose(dataset);
+    H5Fflush(file,H5F_SCOPE_GLOBAL);
 }
 
 template <typename DataType>
@@ -360,7 +363,7 @@ void class_hdf5_file::write_dataset(const DataType &data, const std::string &dat
 
 template <typename DataType>
 void class_hdf5_file::read_dataset(DataType &data, const std::string &dataset_relative_name){
-    if (H5Lexists(file, dataset_relative_name.c_str(), H5P_DEFAULT)) {
+    if (check_link_exists_recursively(dataset_relative_name)) {
         hid_t dataset   = H5Dopen(file, dataset_relative_name.c_str(), H5P_DEFAULT);
         hid_t memspace  = H5Dget_space(dataset);
         hid_t datatype  = H5Dget_type(dataset);
@@ -368,8 +371,15 @@ void class_hdf5_file::read_dataset(DataType &data, const std::string &dataset_re
         std::vector<hsize_t> dims(ndims);
         H5Sget_simple_extent_dims(memspace, dims.data(), NULL);
         if constexpr(tc::is_eigen_matrix_or_array<DataType>()) {
+
             data.resize(dims[0], dims[1]);
         }
+        if constexpr(tc::is_eigen_tensor<DataType>()){
+            Eigen::DSizes<long, DataType::NumDimensions> test;
+            std::copy(dims.begin(),dims.end(),test.begin());
+            data.resize(test);
+        }
+
         if constexpr(tc::is_vector<DataType>::value) {
             assert(ndims == 1 and "Vector cannot take 2D datasets");
             data.resize(dims[0]);
@@ -431,6 +441,7 @@ void class_hdf5_file::write_attribute_to_dataset(const AttrType &attribute, cons
 
         H5Dclose(dataset);
         H5Aclose(attribute_id);
+        H5Fflush(file,H5F_SCOPE_GLOBAL);
     }else{
         std::cerr << "Link '" << aprops.link_name << "' does not exist, yet attribute is being written." << std::endl;
         exit(1);
@@ -463,6 +474,7 @@ void class_hdf5_file::write_attribute_to_group(const AttrType attribute,
         retval = H5Awrite(attribute_id, aprops.datatype, &attribute);
         H5Gclose(group);
         H5Aclose(attribute_id);
+        H5Fflush(file,H5F_SCOPE_GLOBAL);
     }
 }
 template <typename AttrType>

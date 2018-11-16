@@ -119,6 +119,7 @@ namespace settings {
         extern bool         save_to_file            ;        /*!< If true, saves the simulation data to an HDF5 file instead of just outputting to console */
         extern bool         create_dir_if_not_found ;        /*!< If true, an output directory will be created in the project root folder if it isn't found */
         extern bool         overwrite_file_if_found ;        /*!< If true, an hdf5-file with the provided filename will be overwritten if found in output_folder */
+        extern bool         resume_from_file        ;        /*!< Attempt to resume if the file is found (and if "overwrite_file_if_found = false") */
         extern std::string  output_filename         ;        /*!< Name of the output HDF5 file */
         extern std::string  output_folder           ;        /*!< Path of the output HDF5 file */
         extern bool         full_storage            ;        /*!< If true, saves more simulation data to file (such as explicit form of MPS). Set to false to reduce output file size. */

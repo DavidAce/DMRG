@@ -49,7 +49,7 @@ message("===============================")
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
 if(NOT MARCH)
-    set(MARCH "nehalem")
+    set(MARCH "haswell")
 endif()
 
 if(MARCH)
@@ -62,26 +62,24 @@ if(MARCH)
     endif()
 endif()
 
-
-
-
-#get_cmake_property(_variableNames VARIABLES)
-#foreach (_variableName ${_variableNames})
-#    if("${_variableName}" MATCHES "OMP" OR "${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP")
-#        message(STATUS "${_variableName}=${${_variableName}}")
-#    endif()
-#endforeach()
-
-
-
-
-#set(COMMON_OPTIONS -g -Wall -march=native)
-#set(COMMON_OPTIONS  -g -Wall -static -march=sandybridge -mtune=sandybridge)
-#set(COMMON_OPTIONS -g -Wall -march=nehalem -mtune=native)
 message("Using microarchitechture: ${CXX_MARCH}")
 set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
 set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
+
+#################################
+### Microarch dependent flags ###
+#################################
+# Check supported options here http://man7.org/linux/man-pages/man1/gcc.1.html
+if (${MARCH} STREQUAL "sandybridge")
+    list(APPEND COMMON_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1  -mpopcnt  -maes -mpclmul -mavx -fstack-protector-strong -Wformat -Wformat-security)
+elseif(${MARCH} STREQUAL "haswell" OR ${MARCH} STREQUAL "skylake" OR ${MARCH} STREQUAL "zen" )
+    list(APPEND COMMON_OPTIONS -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -maes -mpclmul -mavx -mavx2 -mmovbe -mrdrnd -mf16c -mfsgsbase -mfma  -mbmi -mbmi2 -fstack-protector-strong -Wformat -Wformat-security)
+else()
+    # Set default to whatever nehalem can manage
+    list(APPEND COMMON_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -fstack-protector-strong -Wformat -Wformat-security)
+endif()
+
 
 ##########################
 ### OS-dependent flags ###
@@ -91,6 +89,7 @@ if(${CMAKE_HOST_APPLE})
 else()
 #    list(APPEND COMMON_OPTIONS -mavx ) #-mfma makes things slower?
 endif()
+
 
 ################################
 ### Compiler-dependent flags ###
@@ -124,8 +123,9 @@ file(GLOB_RECURSE HEADERS "source/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC source)
 
-
-#Force cmake to find .a library suffixes
+################################################
+###  Force cmake to find .a library suffixes ###
+################################################
 set(STATIC_BUILD ON)
 set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
 set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
@@ -191,12 +191,9 @@ set_target_properties(${PROJECT_NAME}
 
 
 
-
-
 ###########################################
 ###  Find or fetch all dependencies   ###
 ###########################################
-
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
 #include(cmake-modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake-modules/FindGFortran.cmake)
@@ -271,7 +268,7 @@ message("")
 
 
 ############################
-# TEST
+# UNIT TEST
 ############################
 
 enable_testing()

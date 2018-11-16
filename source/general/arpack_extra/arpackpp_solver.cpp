@@ -280,7 +280,11 @@ void arpackpp_solver<MatrixType>::subtract_phase() {
                 Scalar exp_inv_phase = std::exp(inv_phase);
                 std::transform(begin, end, begin,
                                [exp_inv_phase](std::complex<double> num) -> std::complex<double>
-                               { return (num * exp_inv_phase); });
+                               {
+                                   auto result =  num * exp_inv_phase;
+                                   if (std::abs(result.imag()) < 1e-15){result = result.real();}
+                                   return result;
+                               });
             }
         }else{
             std::cerr << "Eigenvalues haven't been computed yet. Can't subtract phase. Exiting " << std::endl;

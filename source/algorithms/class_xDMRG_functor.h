@@ -20,8 +20,8 @@ public:
 
     const size_t shape;
     const size_t nev;
-    const cScalar *H_local_ptr;
-    const cScalar *H_local_sq_ptr;
+    const cScalar *H_local_ptr = nullptr;
+    const cScalar *H_local_sq_ptr = nullptr;
     const cScalar *eigvecs_ptr;
     const cScalar *eigvals_ptr;
 
@@ -35,6 +35,26 @@ public:
             const cScalar *H_local_sq_ptr_,
             const cScalar *eigvecs_ptr_,
             const cScalar *eigvals_ptr_);
+
+    template <typename Derived>
+    class_xDMRG_functor(
+            const size_t shape_,
+            const size_t nev_,
+            const Eigen::EigenBase<Derived> &H_,
+            const Eigen::EigenBase<Derived> &H2_,
+            const cScalar *eigvecs_ptr_,
+            const cScalar *eigvals_ptr_)
+            :
+            shape(shape_),
+            nev(nev_),
+            H(H_),
+            H2(H2_),
+            eigvecs_ptr(eigvecs_ptr_),
+            eigvals_ptr(eigvals_ptr_)
+    {
+
+    }
+
 
     double operator()(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, Eigen::Matrix<double,Eigen::Dynamic,1> &grad) const;
 

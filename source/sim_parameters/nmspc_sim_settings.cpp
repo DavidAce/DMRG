@@ -97,6 +97,7 @@ namespace settings{
     bool   hdf5::overwrite_file_if_found  = false;
     string hdf5::output_filename          = "data_struct.h5";
     string hdf5::output_folder            = "output";
+    bool   hdf5::resume_from_file         = false;
     bool   hdf5::full_storage             = true;
     bool   hdf5::store_profiling          = true;
 
@@ -212,6 +213,7 @@ void settings::load_from_file(class_file_reader &indata){
     hdf5::overwrite_file_if_found  = indata.find_parameter<bool>   ("hdf5::overwrite_file_if_found" , hdf5::overwrite_file_if_found);
     hdf5::output_filename          = indata.find_parameter<string> ("hdf5::output_filename"         , hdf5::output_filename);
     hdf5::output_folder            = indata.find_parameter<string> ("hdf5::output_folder"           , hdf5::output_folder);
+    hdf5::resume_from_file         = indata.find_parameter<bool>   ("hdf5::resume_from_file"        , hdf5::resume_from_file       );
     hdf5::full_storage             = indata.find_parameter<bool>   ("hdf5::full_storage"            , hdf5::full_storage           );
     hdf5::store_profiling          = indata.find_parameter<bool>   ("hdf5::store_profiling"         , hdf5::store_profiling        );
 

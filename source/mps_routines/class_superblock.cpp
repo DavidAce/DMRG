@@ -158,11 +158,11 @@ Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_loc
     return Textra::Tensor2_to_Matrix(get_H_local_sq_rank2());
 }
 
-Textra::SparseMatrixType<Scalar> class_superblock::get_H_local_sparse_matrix (){
-    return Textra::Tensor2_to_SparseMatrix(get_H_local_rank2());
+Textra::SparseMatrixType<Scalar> class_superblock::get_H_local_sparse_matrix (double prune){
+    return Textra::Tensor2_to_SparseMatrix(get_H_local_rank2(),prune);
 }
-Textra::SparseMatrixType<Scalar> class_superblock::get_H_local_sq_sparse_matrix (){
-    return Textra::Tensor2_to_SparseMatrix(get_H_local_sq_rank2());
+Textra::SparseMatrixType<Scalar> class_superblock::get_H_local_sq_sparse_matrix (double prune){
+    return Textra::Tensor2_to_SparseMatrix(get_H_local_sq_rank2(),prune);
 }
 
 
