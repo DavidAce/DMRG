@@ -6,6 +6,7 @@
 #include "arpackpp_solver.h"
 #include "matrix_product_dense.h"
 #include "matrix_product_sparse.h"
+#include "matrix_product_stl.h"
 
 #include <arpack++/arssym.h>
 #include <arpack++/arsnsym.h>
@@ -72,10 +73,9 @@ void arpackpp_solver<MatrixType>::eigs() {
         if(solverConf.form == Form::SYMMETRIC){this->eigs_sym();}else {this->eigs_nsym();}
     }
 
-    // The solution to  the eigenvalue equation Av = l*v is determined up to a constant phase factor exp{ia}
-    // By checking the first element in v, one can compute the phase a and remove it from all elements
-    // of v by multiplication with exp{-ia
-    // }
+    // The solution to  the eigenvalue equation Av = l*v is determined up to a constant phase factor.
+    // By checking the first element in the v, one can compute the phase and remove it from all elements
+    // of v.
     if (solverConf.remove_phase) {
         this->subtract_phase();
     }
@@ -280,11 +280,7 @@ void arpackpp_solver<MatrixType>::subtract_phase() {
                 Scalar exp_inv_phase = std::exp(inv_phase);
                 std::transform(begin, end, begin,
                                [exp_inv_phase](std::complex<double> num) -> std::complex<double>
-                               {
-                                   auto result =  num * exp_inv_phase;
-                                   if (std::abs(result.imag()) < 1e-15){result = result.real();}
-                                   return result;
-                               });
+                               { return (num * exp_inv_phase); });
             }
         }else{
             std::cerr << "Eigenvalues haven't been computed yet. Can't subtract phase. Exiting " << std::endl;
@@ -300,4 +296,5 @@ template class arpackpp_solver<DenseMatrixProduct<double>>;
 template class arpackpp_solver<DenseMatrixProduct<std::complex<double>>>;
 template class arpackpp_solver<SparseMatrixProduct<double>>;
 template class arpackpp_solver<SparseMatrixProduct<std::complex<double>>>;
-
+template class arpackpp_solver<StlMatrixProduct<double>>;
+template class arpackpp_solver<StlMatrixProduct<std::complex<double>>>;

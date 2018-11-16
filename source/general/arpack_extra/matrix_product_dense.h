@@ -121,26 +121,20 @@ void DenseMatrixProduct<Scalar>::FactorOP()
     t_factorOp.tic();
     assert(readyShift and "Shift value sigma has not been set.");
     Scalar sigma;
-    MatrixType A_shift;
     if constexpr(std::is_same<Scalar,double>::value)
     {
         sigma = sigmaR;
-        A_shift = (A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
+        lu.compute(A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
     }
     else
     {
         sigma = std::complex<double>(sigmaR,sigmaI);
-        A_shift = (A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
+        lu.compute(A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
     }
 
-//    if constexpr(std::is_same<Scalar,double>::value)
-//    {sigma = sigmaR;}
-//    else
-//    {sigma = std::complex<double>(sigmaR,sigmaI);}
-    lu.compute(A_shift);
     readyFactorOp = true;
     t_factorOp.toc();
-    std::cout << "Time Factor Op [ms]: " << std::setprecision(3) << t_factorOp.get_last_time_interval() * 1000 << '\n';
+    std::cout << "Time Factor Op [ms]: " << std::fixed << std::setprecision(3) << t_factorOp.get_last_time_interval() * 1000 <<'\n';
 
 }
 
