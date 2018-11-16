@@ -589,7 +589,7 @@ double process_memory_in_mb(std::string name){
 }
 void class_algorithm_base::print_status_update() {
     if (Math::mod(iteration, print_freq) != 0) {return;}
-    if (not env_storage->position_is_the_middle()) {return;}
+//    if (not env_storage->position_is_the_middle()) {return;}
     if (print_freq == 0) {return;}
     compute_observables();
     t_prt.tic();

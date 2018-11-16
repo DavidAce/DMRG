@@ -16,7 +16,7 @@ namespace eigutils{
 
     namespace eigSetting{
         enum class Form{SYMMETRIC, NONSYMMETRIC};       // Real Symmetric, Real General or Complex General
-        enum class Storage {DENSE,SPARSE};              // Dense or sparse matrix
+        enum class Storage {DENSE,SPARSE,STL};          // Eigen Dense or sparse, or std::vector for container
         enum class Shift {ON,OFF};                      // Enable or disable shift invert
         enum class Ritz {LA,SA,LM,SM,LR,SR,LI,SI,BE};   // Choice of eigenvalue. LA is largest algebraic, and so on.
         enum class Side {L,R};                          // Left or right eigenvectors

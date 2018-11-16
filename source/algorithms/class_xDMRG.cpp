@@ -452,7 +452,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
             using namespace LBFGSpp;
             class_xDMRG_functor functor
                     (shape,nev,
-                     H_local.data(),
+//                     H_local.data(),
                      H_local_sq.data(),
                      eigvecs.data(),
                      eigvals.data()
@@ -573,8 +573,9 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     t_ham.tic();
 //    auto H_local    = superblock->get_H_local_rank2();
 //    auto H_local_sq = superblock->get_H_local_sq_rank2();
-    Eigen::SparseMatrix<double> H_local    = superblock->get_H_local_matrix().real().sparseView().pruned(0.1,1e-14);
-    H_local.makeCompressed();
+//    Eigen::SparseMatrix<double> H_local    = superblock->get_H_local_matrix().real().sparseView().pruned(0.1,1e-14);
+//    H_local.makeCompressed();
+    Eigen::MatrixXd H_local = superblock->get_H_local_matrix().real();
 
 
 //    H_local.makeCompressed();
@@ -594,7 +595,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 //    }
 
 //    matrix_recast matrixRecast(H_local.data(),shape);
-    SparseMatrixProduct<double> hamiltonian_sparse (H_local);
+    StlMatrixProduct<double> hamiltonian_sparse (H_local.data(),H_local.rows());
 //    SparseMatrixProduct<double> hamiltonian_sparse = matrixRecast.get_as_real_sparse();
 //    SparseMatrixProduct<std::complex<double>> hamiltonian_sparse(H_local.data(),shape);
     hamiltonian_sparse.set_shift(energy_now*chain_length);
@@ -615,8 +616,6 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     Scalar variance_new = 0;
     double overlap_new  = 0;
 
-//    int nev = std::min((int)(shape/4), 1);
-    int ncv = std::min((int)(shape/2), 4);
     long best_state_idx, worst_state_idx;
     double max_overlap, min_overlap, sq_sum_overlap;
     double subspace_quality;
@@ -626,7 +625,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     double subspace_quality_threshold = 1e-4;
     for (auto nev : generate_size_list(shape)){
         t_eig.tic();
-        arpack_solver2.eigs_sparse(hamiltonian_sparse,nev,-1, energy_now*chain_length,eigutils::eigSetting::Form::SYMMETRIC,eigutils::eigSetting::Ritz::LM,eigutils::eigSetting::Side::R, true,true);
+        arpack_solver2.eigs_stl(hamiltonian_sparse,nev,-1, energy_now*chain_length,eigutils::eigSetting::Form::SYMMETRIC,eigutils::eigSetting::Ritz::LM,eigutils::eigSetting::Side::R, true,true);
         t_eig.toc();
         eigvals           = Eigen::Map<const Eigen::VectorXcd> (arpack_solver2.solution.eigvals.data(),arpack_solver2.solution.meta.cols);
         eigvecs           = Eigen::Map<const Eigen::MatrixXcd> (arpack_solver2.solution.eigvecs.data(),arpack_solver2.solution.meta.rows,arpack_solver2.solution.meta.cols);
@@ -642,7 +641,6 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
         if(max_overlap >= max_overlap_threshold ){break;}
         if(subspace_quality < subspace_quality_threshold){break;}
-        ncv = std::min((int)(shape/2), nev*16);
     }
 //    std::cout <<"Target energy: " << energy_now*chain_length << "\n" << "Eigvals \n" << eigvals << std::endl;
 
@@ -650,11 +648,11 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         class_eigsolver_armadillo solver;
         Eigen::VectorXd eigvals_real(shape);
         Eigen::MatrixXd eigvecs_real(shape,shape);
-        Eigen::MatrixXd hamiltonian = hamiltonian_sparse.get_matrix().toDense();
+//        Eigen::MatrixXd hamiltonian = hamiltonian_sparse.get_matrix().toDense();
 //        eigvecs.resize(shape,shape);
         int nev = shape;
         t_eig.tic();
-        solver.eig_sym(nev, hamiltonian.data(), eigvals_real.data(), eigvecs_real.data(),true);
+        solver.eig_sym(nev, H_local.data(), eigvals_real.data(), eigvecs_real.data(),true);
         eigvals = eigvals_real;
         eigvecs = eigvecs_real;
         t_eig.toc();
@@ -691,15 +689,10 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 //      Eigen::MatrixXcd H_local_mat = Textra::Tensor2_to_Matrix(H_local);
 //        Eigen::Map<Eigen::MatrixXcd> H_local_map(H_local.data(),shape,shape);
 //        double sparcity = (double)H_local.nonZeros() / (double)H_local.size();
-        double sparcity =(double) (Eigen::Map<Eigen::VectorXd> (H_local.valuePtr(), H_local.nonZeros()).array() != 0).count()/H_local.size();
-//        double sparcity = (double) (H_local.array().cwiseAbs() > 1e-15 )
-//                .select(Eigen::MatrixXd::Ones(shape,shape),0).sum()
-//                          / (double)H_local.size();
-//        double sparcity    = (double)(H_local.array().cwiseAbs() > 1e-15).count()/(double)H_local.size();
+//        double sparcity =(double) (Eigen::Map<Eigen::VectorXd> (H_local.valuePtr(), H_local.nonZeros()).array() != 0).count()/H_local.size();
+
+        double sparcity    = (double)(H_local.array().cwiseAbs() > 1e-15).count()/(double)H_local.size();
 //        double sparcity_sq = (double)(H_local_sq.array().cwiseAbs() > 1e-15).count()/(double)H_local_sq.size();
-//        double sparcity_sq = (double) (H_local_sq.array().cwiseAbs() > 1e-15 )
-//                .select(Eigen::MatrixXd::Ones(shape,shape),0).sum()
-//                          / (double)H_local_sq.size();
 
 //        double sparcity    = (double) H_local.nonZeros() / (double)H_local.size();
 //        double sparcity_sq = (double) H_local_sq.nonZeros() / (double)H_local_sq.size();
@@ -749,12 +742,13 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         std::vector<std::tuple<std::string,double,Scalar,double,size_t,double,double>> opt_log;
         {
             t_lbfgs.tic();
-            Eigen::MatrixXd H_local_sq = superblock->get_H_local_sq_matrix().real();
+            Eigen::MatrixXcd H_local_sq = superblock->get_H_local_sq_matrix();
+            t_lbfgs.toc();
             Textra::VectorType<Scalar> theta_0 = eigvecs * xstart;
             size_t iter_0 = 0;
             double energy_0 = xstart.cwiseAbs2().cwiseProduct(eigvals.real()).sum() / chain_length;
             Scalar variance_0 = std::log10(
-                    ((theta_0.adjoint() * H_local_sq * theta_0).sum() -
+                    ((theta_0.adjoint() * H_local_sq.selfadjointView<Eigen::Upper>() * theta_0).sum() -
                      energy_0 * energy_0 * chain_length * chain_length) / chain_length);
             double overlap_0 = (theta_old.adjoint() * theta_0).cwiseAbs().sum();
 
@@ -763,14 +757,9 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 //
 //        {
             using namespace LBFGSpp;
-            Eigen::MatrixXcd H_sub  = eigvecs.adjoint().real() * H_local    * eigvecs.real();
-            Eigen::MatrixXcd H2_sub = eigvecs.adjoint().real() * H_local_sq * eigvecs.real();
-
-
             class_xDMRG_functor functor
                     (shape,nev,
-                     H_sub ,
-                     H2_sub,
+                     H_local_sq,
                      eigvecs.data(),
                      eigvals.data()
                     );
@@ -783,7 +772,6 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
             // Create solver and function object
             LBFGSpp::LBFGSSolver<double> solver_3(param);
-            t_lbfgs.toc();
 
             opt_log.emplace_back("Start (best overlap)", energy_0, variance_0, overlap_0, iter_0, t_lbfgs.get_last_time_interval(), t_tot.get_age());
             // x will be overwritten to be the best point found
@@ -795,7 +783,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
             theta_new    = eigvecs * xstart;
             energy_new   = xstart.cwiseAbs2().cwiseProduct(eigvals.real()).sum() / chain_length;
             variance_new = std::log10(
-                    ((theta_new.adjoint() * H_local_sq * theta_new).sum() -
+                    ((theta_new.adjoint() * H_local_sq.selfadjointView<Eigen::Upper>() * theta_new).sum() -
                      energy_new * energy_new * chain_length * chain_length) / chain_length);
             overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
             opt_log.emplace_back("LBFGS++", energy_new, variance_new, overlap_new, niter, t_lbfgs.get_last_time_interval(), t_tot.get_age());

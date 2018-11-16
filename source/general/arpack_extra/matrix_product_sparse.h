@@ -10,7 +10,6 @@
 #undef EIGEN_USE_BLAS
 #endif
 
-
 #include <general/nmspc_eigutils.h>
 #include <general/class_tic_toc.h>
 #include <iostream>
@@ -18,6 +17,7 @@
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 #include <Eigen/SparseLU>
+//#include <Eigen/SuperLUSupport>
 #define profile_matrix_product_sparse 1
 
 
@@ -30,15 +30,14 @@ public:
     using VectorType      = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
     using VectorTypeT     = Eigen::Matrix<Scalar,1,Eigen::Dynamic>;
 private:
-    MatrixType A_matrix;                 // The actual matrix. Given matrices will be copied into this one.
-
-    const int L;                         // The linear matrix dimension
+    MatrixType A_matrix;          // The actual matrix. Given matrices will be copied into this one.
+    const int L;                        // The linear matrix dimension
     eigutils::eigSetting::Form form;     // Chooses SYMMETRIC / NONSYMMETRIC mode
     eigutils::eigSetting::Side side;     // Chooses whether to find (R)ight or (L)eft eigenvectors
-//    bool copy_matrix;
 
     // Shift-invert mode stuff
 //    MatrixType A_shift;
+//    Eigen::SuperLU<MatrixType>           lu_dense;
     Eigen::SparseLU<MatrixType>          lu_sparse;              // Object for sparse LU decomposition used in shift-invert mode
     Eigen::PartialPivLU<DenseMatrixType> lu_dense;               // Object for dense LU decomposition used in shift-invert mode
 //    Eigen::SparseLU<Eigen::SparseMatrix<Scalar, Eigen::ColMajor, Eigen::Index>, Eigen::COLAMDOrdering<Eigen::Index> > lu_sparse;
@@ -56,38 +55,19 @@ public:
             const int L_,
             const eigutils::eigSetting::Form form_ = eigutils::eigSetting::Form::SYMMETRIC,
             const eigutils::eigSetting::Side side_ = eigutils::eigSetting::Side::R)
-//            const bool copy_matrix_ = true)
-            : L(L_), form(form_), side(side_) // copy_matrix(copy_matrix_)
-    {
-//        if (copy_matrix){
-            A_matrix = Eigen::Map<const DenseMatrixType>(A_,L_,L_).sparseView();
-            A_matrix.makeCompressed();
-//        }else {
-//
-//        }
-        init_profiling();
-    }
-
-    // Eigen type constructor. Pass any copy-assignable eigen type into an internal Eigen matrix.
-    template<typename Derived>
-    explicit SparseMatrixProduct(
-            const Eigen::DenseBase<Derived> &matrix_,
-            const eigutils::eigSetting::Form form_ = eigutils::eigSetting::Form::SYMMETRIC,
-            const eigutils::eigSetting::Side side_ = eigutils::eigSetting::Side::R)
-            : A_matrix(matrix_.derived().sparseView()), L(A_matrix.rows()), form(form_), side(side_)
+            : A_matrix(Eigen::Map<const DenseMatrixType>(A_,L_,L_).sparseView()), L(L_), form(form_), side(side_)
     {
         A_matrix.makeCompressed();
         init_profiling();
     }
 
-
     // Eigen type constructor. Pass any copy-assignable eigen type into an internal Eigen matrix.
     template<typename Derived>
     explicit SparseMatrixProduct(
-            const Eigen::SparseMatrixBase<Derived> &matrix_,
+            const Eigen::EigenBase<Derived> &matrix_,
             const eigutils::eigSetting::Form form_ = eigutils::eigSetting::Form::SYMMETRIC,
             const eigutils::eigSetting::Side side_ = eigutils::eigSetting::Side::R)
-            : A_matrix(matrix_), L(A_matrix.rows()), form(form_), side(side_)
+            : A_matrix(matrix_.derived().sparseView()), L(A_matrix.rows()), form(form_), side(side_)
     {
         A_matrix.makeCompressed();
         init_profiling();
@@ -103,7 +83,6 @@ public:
     // Various utility functions
     int counter = 0;
     void print()const;
-    const auto & get_matrix(){return A_matrix;}
     void set_shift(std::complex<double> sigma_)   {if(readyShift){return;} sigmaR=std::real(sigma_);sigmaI=std::imag(sigma_) ;readyShift = true;}
     void set_shift(double               sigma_)   {if(readyShift){return;} sigmaR=sigma_, sigmaI = 0.0;readyShift = true;}
     void set_shift(double sigmaR_, double sigmaI_){if(readyShift){return;} sigmaR=sigmaR_;sigmaI = sigmaI_ ;readyShift = true;}
@@ -149,53 +128,21 @@ void SparseMatrixProduct<Scalar>::FactorOP()
     assert(readyShift and "Shift value sigma has not been set.");
     Scalar sigma;
     t_factorOp.tic();
-
-    DenseMatrixType A_shift;
     if constexpr(std::is_same<Scalar,double>::value)
     {
         sigma = sigmaR;
-        A_shift = (A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
+        lu_dense.compute(A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
     }
     else
     {
         sigma = std::complex<double>(sigmaR,sigmaI);
-        A_shift = (A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
+        lu_dense.compute(A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
     }
 
-//    Eigen::SparseMatrix<Scalar> Id(L,L);
-//    Id.setIdentity();
-//    Id.makeCompressed();
-//    MatrixType A_shift = (A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
-//    A_shift.makeCompressed();
-    t_factorOp.toc();
-    double t_factorOp_shift = t_factorOp.get_last_time_interval();
-    t_factorOp.tic();
-//    double sparcity_A_shift = (A_shift.toDense().array().cwiseAbs() > 1e-14 )
-//                       .select(Eigen::MatrixXd::Ones(L,L),0).sum() / A_shift.size();
-//    double sparcity_LU = (lu_dense.matrixLU().array().cwiseAbs() > 1e-14 )
-//                                      .select(Eigen::MatrixXd::Ones(L,L),0).sum() / lu_dense.matrixLU().size();
-//    std::cout << "sparcity_A_shift: " << sparcity_A_shift << std::endl;
-//    std::cout << "sparcity_LU     : " << sparcity_LU      << std::endl;
-//    std::cout << "LU              \n" << lu_dense.permutationP().inverse() * lu_dense.matrixLU()      << std::endl;
-    lu_dense.compute(A_shift);
-
-//    lu_sparse.compute(A_shift);
-//    if (lu_sparse.info() == Eigen::ComputationInfo::Success){
-//        sparseLU = true;
-//    }else{
-//        switch(lu_sparse.info()){
-//            case Eigen::ComputationInfo::NoConvergence : {std::cerr << "NoConvergence: "    << lu_sparse.lastErrorMessage() << std::endl;}
-//            case Eigen::ComputationInfo::InvalidInput  : {std::cerr << "InvalidInput: "     << lu_sparse.lastErrorMessage() << std::endl;}
-//            case Eigen::ComputationInfo::NumericalIssue: {std::cerr << "NumericalIssue: "   << lu_sparse.lastErrorMessage() << std::endl;}
-//            default :     {std::cout << "INFO: " << lu_sparse.info() << std::endl;}
-//        }
-//        lu_dense.compute(A_shift);
-//        sparseLU = false;
-//    }
+    sparseLU = false;
     t_factorOp.toc();
     readyFactorOp = true;
-    std::cout << "Time Factor Op [ms]: " << std::setprecision(3) << t_factorOp.get_last_time_interval() * 1000 << "  " << t_factorOp_shift * 1000 <<'\n';
-//    std::cout << "Time Factor sh [ms]: " << std::setprecision(3)  '\n';
+    std::cout << "Time Factor Op [ms]: " << std::fixed << std::setprecision(3) << t_factorOp.get_last_time_interval() * 1000 <<'\n';
 }
 
 template<typename Scalar>
