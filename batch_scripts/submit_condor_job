@@ -14,8 +14,8 @@ requirements = true
 # Note that requiring two on single threaded jobs
 # essentially turns off hyperthreading.
 ########################################################
-request_cpus   = 2
-request_memory = 12000
+request_cpus   = 4
+request_memory = 8000
 request_disk   = 500
 
 
@@ -50,13 +50,13 @@ request_disk   = 500
 # CpuMarch_SKYLAKE      includes Kaby, Coffee, Cannon, Cascade and Cooper Lake
 ########################################################
 
-#requirements = $(requirements) && \
-#                TARGET.CpuMarch_NEHALEM == true
-#
-
 requirements = $(requirements) && \
-                TARGET.has_avx == true
+                TARGET.CpuMarch_SANDYBRIDGE == true
 
+
+#requirements = $(requirements) && \
+#                TARGET.has_avx == true
+#
 
 
 #########################################################
