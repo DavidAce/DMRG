@@ -15,7 +15,7 @@ requirements = true
 # essentially turns off hyperthreading.
 ########################################################
 request_cpus   = 2
-request_memory = 20000
+request_memory = 12000
 request_disk   = 500
 
 
@@ -24,7 +24,7 @@ request_disk   = 500
 # List your requirements below. Uncomment to activate.
 # Note that numeric requirements are not enclosed by "".
 ########################################################
-requirements = $(requirements) && TARGET.OpSysAndVer    == "Ubuntu18"
+#requirements = $(requirements) && TARGET.OpSysAndVer    == "Ubuntu18"
 #requirements = $(requirements) && TARGET.OpSysName      == "Ubuntu"
 #requirements = $(requirements) && TARGET.OpSysMajorVer  == 18
 #requirements = $(requirements) && TARGET.Arch           == "X86_64"
@@ -50,9 +50,12 @@ requirements = $(requirements) && TARGET.OpSysAndVer    == "Ubuntu18"
 # CpuMarch_SKYLAKE      includes Kaby, Coffee, Cannon, Cascade and Cooper Lake
 ########################################################
 
-requirements = $(requirements) && \
-                TARGET.CpuMarch_NEHALEM == true
+#requirements = $(requirements) && \
+#                TARGET.CpuMarch_NEHALEM == true
+#
 
+requirements = $(requirements) && \
+                TARGET.has_avx == true
 
 
 

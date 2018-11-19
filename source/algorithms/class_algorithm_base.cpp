@@ -38,8 +38,9 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
 
     //Default constructed objects
     env_storage  = std::make_shared<class_finite_chain_sweeper>();
-
     class_resume_from_hdf5 test(hdf5,superblock,env_storage,sim_name,sim_type);
+    hdf5->write_dataset(settings::input::input_file, sim_name + "/input_file");
+    hdf5->write_dataset(settings::input::input_filename, sim_name + "/input_filename");
 }
 
 
@@ -286,7 +287,7 @@ void class_algorithm_base::clear_saturation_status(){
 }
 
 void class_algorithm_base::store_profiling_to_file_delta(bool force) {
-//    if (Math::mod(iteration, store_freq) != 0) {return;}
+    if (Math::mod(iteration, store_freq) != 0) {return;}
 //    t_sto.tic();
 
     if (force or (settings::profiling::on and settings::hdf5::store_profiling))
@@ -309,7 +310,7 @@ void class_algorithm_base::store_profiling_to_file_delta(bool force) {
 }
 
 void class_algorithm_base::store_profiling_to_file_total(bool force) {
-//    if (Math::mod(iteration, store_freq) != 0) {return;}
+    if (Math::mod(iteration, store_freq) != 0) {return;}
 //    t_sto.tic();
 
     if (force or (settings::profiling::on and settings::hdf5::store_profiling))

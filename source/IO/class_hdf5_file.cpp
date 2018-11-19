@@ -202,6 +202,39 @@ bool class_hdf5_file::check_link_exists_recursively(std::string path){
     return exists;
 }
 
+
+bool class_hdf5_file::check_if_attribute_exists(const std::string &link_name, const std::string &attribute_name){
+    hid_t dataset      = H5Dopen(file, link_name.c_str(), H5P_DEFAULT);
+    bool exists = false;
+    unsigned int num_attrs = H5Aget_num_attrs(dataset);
+//    hid_t attr_id = H5Aopen_name(dataset, attribute_name.c_str());
+//    if (attr_id < 0 ){
+//        std::cerr << "Warning! Does not exists! \n";
+//        exists = false;
+//    }else{
+//        H5Aclose(attr_id);
+//        exists = true;
+//    }
+
+
+    for (unsigned int i = 0; i < num_attrs; i ++){
+        hid_t attr_id = H5Aopen_idx(dataset, i);
+        hsize_t buf_size = 0;
+        std::vector<char> buf;
+//        char *buf;
+        buf_size = H5Aget_name (attr_id, buf_size, nullptr);
+        buf.resize(buf_size+1);
+        buf_size = H5Aget_name (attr_id, buf_size+1, buf.data());
+        std::string attr_name (buf.data());
+        H5Aclose(attr_id);
+        if (attribute_name == attr_name){exists  = true ; break;}
+    }
+
+    H5Dclose(dataset);
+    return exists;
+}
+
+
 void class_hdf5_file::create_dataset_link(const DatasetProperties &props){
     if (not check_link_exists_recursively(props.dset_name)){
         hid_t dataspace = get_DataSpace_unlimited(props.ndims);
@@ -219,7 +252,6 @@ void class_hdf5_file::create_dataset_link(const DatasetProperties &props){
         H5Dclose(dataset);
         H5Sclose(dataspace);
         H5Pclose(dset_cpl);
-        H5Fflush(file,H5F_SCOPE_GLOBAL);
     }
 }
 
@@ -228,7 +260,6 @@ void class_hdf5_file::create_group_link(const std::string &group_relative_name) 
     if (not check_link_exists_recursively(group_relative_name)) {
         hid_t group = H5Gcreate(file, group_relative_name.c_str(), plist_lncr, H5P_DEFAULT, H5P_DEFAULT);
         H5Gclose(group);
-        H5Fflush(file,H5F_SCOPE_GLOBAL);
 
     }
 }
@@ -238,7 +269,6 @@ void class_hdf5_file::select_hyperslab(const hid_t &filespace, const hid_t &mems
     std::vector<hsize_t> mem_dims(ndims);
     std::vector<hsize_t> file_dims(ndims);
     std::vector<hsize_t> start(ndims);
-
     H5Sget_simple_extent_dims(memspace , mem_dims.data(), nullptr);
     H5Sget_simple_extent_dims(filespace, file_dims.data(), nullptr);
     for(int i = 0; i < ndims; i++){
@@ -252,7 +282,6 @@ void class_hdf5_file::set_extent_dataset(const DatasetProperties &props){
         hid_t dataset = H5Dopen(file, props.dset_name.c_str(), H5P_DEFAULT);
         H5Dset_extent(dataset, props.dims.data());
         H5Dclose(dataset);
-        H5Fflush(file,H5F_SCOPE_LOCAL);
     }else{
         std::cerr << "Link does not exist, yet the extent is being set." << std::endl;
         exit(1);
