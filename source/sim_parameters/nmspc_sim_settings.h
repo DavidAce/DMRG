@@ -6,6 +6,7 @@
 #define DMRG_N_SETTINGS_H
 #include <string>
 #include <unordered_set>
+#include <vector>
 /*! \brief General settings like max iterations, time-step, precision, etc.*/
 
 /*!
@@ -20,6 +21,11 @@ enum class SimulationType{iDMRG,fDMRG, xDMRG, iTEBD};
 
 namespace settings {
     extern void load_from_file(class_file_reader &indata);
+
+    namespace input{
+        extern std::string input_filename;
+        extern std::string input_file;
+    }
     //Parameters for the model Hamiltonian
     namespace model {
         extern std::string  initial_state ;                   /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */

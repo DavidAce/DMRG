@@ -14,6 +14,8 @@ using namespace std;
 */
 
 namespace settings{
+    std::string input::input_file;
+    std::string input::input_filename;
     //Common parameters for the model Hamiltonian
     std::string model::model_type        = "tf_ising";                    /*!< The default choice of model type from the enum */
     std::string model::initial_state     = "rps";                         /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi)} "cat" or "random". Default "rps". Note that "random_chi" works poorly for finite algorithms */
@@ -126,6 +128,8 @@ namespace settings{
 
 
 void settings::load_from_file(class_file_reader &indata){
+    input::input_filename   = indata.get_input_filename();
+    input::input_file       = indata.get_input_file();
     //Parameters for the model Hamiltonian
     model::model_type                   = indata.find_parameter<std::string>("model::model_type"   , model::model_type);
     model::initial_state                = indata.find_parameter<std::string>("model::initial_state", model::initial_state);

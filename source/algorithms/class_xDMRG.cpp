@@ -58,14 +58,13 @@ void class_xDMRG::run() {
     env_storage->print_hamiltonians();
     int full_iters = 5;
     find_energy_range();
-//    hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction_initial");
-
     while(true) {
         single_xDMRG_step();
         env_storage_overwrite_local_ALL();
         store_table_entry_to_file();
         store_chain_entry_to_file();
         store_profiling_to_file_total();
+        store_mps_to_file();
         print_status_update();
 
         // It's important not to perform the last step.
@@ -1061,6 +1060,18 @@ void class_xDMRG::store_chain_entry_to_file(){
     );
     t_sto.toc();
 }
+
+void class_xDMRG::store_mps_to_file(bool force){
+    if(not force){
+        if (Math::mod(iteration, store_freq) != 0) {return;}
+        if (not env_storage->position_is_the_middle()) {return;}
+        if (store_freq == 0){return;}
+    }
+    t_sto.tic();
+    env_storage->write_chain_to_file();
+    t_sto.toc();
+}
+
 
 void class_xDMRG::check_convergence_all(){
     if(not env_storage->position_is_the_middle()){return;}
