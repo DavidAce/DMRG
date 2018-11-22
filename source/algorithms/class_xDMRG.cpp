@@ -50,7 +50,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
 void class_xDMRG::run() {
     if (!settings::xdmrg::on) { return; }
     rn::seed((unsigned long)seed);
-    ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
+    ccout(2) << "\nStarting " << sim_name << " simulation" << std::endl;
     t_tot.tic();
     initialize_chain();
     set_random_fields_in_chain_mpo();
@@ -128,7 +128,7 @@ void class_xDMRG::single_xDMRG_step() {
             t_opt.toc();
             break;
     }
-    std::cout << "Truncating theta \n";
+    ccout(2) << "Truncating theta \n";
 
     t_svd.tic();
     superblock->truncate_MPS(theta, chi_temp, settings::precision::SVDThreshold);
@@ -702,7 +702,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
 
 //        std::cerr << "          Full diag complete.           Wall time: " << t_tot.get_age() << std::endl;
-        std::cout << "Finished Armadillo\n";
+        ccout(2) << "Finished Armadillo\n";
 
     }
 
