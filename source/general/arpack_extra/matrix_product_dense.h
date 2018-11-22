@@ -118,6 +118,8 @@ void DenseMatrixProduct<Scalar>::FactorOP()
  */
 {
     if(readyFactorOp){return;}
+    std::cout << "Starting LU \n";
+
     t_factorOp.tic();
     assert(readyShift and "Shift value sigma has not been set.");
     Scalar sigma;
@@ -134,7 +136,8 @@ void DenseMatrixProduct<Scalar>::FactorOP()
 
     readyFactorOp = true;
     t_factorOp.toc();
-    std::cout << "Time Factor Op [ms]: " << std::fixed << std::setprecision(3) << t_factorOp.get_last_time_interval() * 1000 <<'\n';
+    std::cout << "Finished LU \n";
+    std::cout << "Time LU Op [ms]: " << std::fixed << std::setprecision(3) << t_factorOp.get_last_time_interval() * 1000 <<'\n';
 
 }
 

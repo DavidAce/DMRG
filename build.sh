@@ -11,7 +11,7 @@ Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t 
 -h               : Help. Shows this text.
 -j <num_threads> : Number of threads used by CMake
 -l               : Clear downloaded libraries before build (i.e. delete ./libs)
--m <mode>        : Release   | Debug | (default = Release)
+-m <mode>        : Release   | Debug | Profile |  (default = Release)
 -t <target>      : DMRG++    | all   | any test target | (default = all)
 EOF
   exit 1
