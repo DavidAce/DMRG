@@ -53,6 +53,7 @@ public:
         init_profiling();
     }
 
+    ~StlMatrixProduct();
 
 
     // Functions used in in Arpack++ solver

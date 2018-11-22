@@ -152,11 +152,49 @@ void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const
 
 
 Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_matrix (){
-    return Textra::Tensor2_to_Matrix(get_H_local_rank2());
+    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    Eigen::Tensor<Scalar,8> temp =  Lblock->block
+            .contract(HA->MPO      , Textra::idx({2},{0}))
+            .contract(HB->MPO      , Textra::idx({2},{0}))
+            .contract(Rblock->block, Textra::idx({4},{2}))
+            .shuffle(Textra::array8{3,1,5,7,2,0,4,6});
+    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(temp.data(),shape,shape);
 }
+
+Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_matrix_real (){
+    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    Eigen::Tensor<Scalar,8> temp =  Lblock->block
+            .contract(HA->MPO      , Textra::idx({2},{0}))
+            .contract(HB->MPO      , Textra::idx({2},{0}))
+            .contract(Rblock->block, Textra::idx({4},{2}))
+            .shuffle(Textra::array8{3,1,5,7,2,0,4,6});
+    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(temp.data(),shape,shape).real();
+}
+
 Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_sq_matrix (){
-    return Textra::Tensor2_to_Matrix(get_H_local_sq_rank2());
+    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    Eigen::Tensor<Scalar,8> temp =  Lblock2->block
+            .contract(HA->MPO      , Textra::idx({2},{0}))
+            .contract(HA->MPO      , Textra::idx({2,5},{0,2}))
+            .contract(HB->MPO      , Textra::idx({2},{0}))
+            .contract(HB->MPO      , Textra::idx({3,7},{0,2}))
+            .contract(Rblock2->block, Textra::idx({4,6},{2,3}))
+            .shuffle(Textra::array8{3,1,5,7,2,0,4,6});
+    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(temp.data(),shape,shape);
 }
+
+Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_sq_matrix_real (){
+    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    Eigen::Tensor<Scalar,8> temp =  Lblock2->block
+            .contract(HA->MPO      , Textra::idx({2},{0}))
+            .contract(HA->MPO      , Textra::idx({2,5},{0,2}))
+            .contract(HB->MPO      , Textra::idx({2},{0}))
+            .contract(HB->MPO      , Textra::idx({3,7},{0,2}))
+            .contract(Rblock2->block, Textra::idx({4,6},{2,3}))
+            .shuffle(Textra::array8{3,1,5,7,2,0,4,6});
+    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(temp.data(),shape,shape).real();
+}
+
 
 Textra::SparseMatrixType<Scalar> class_superblock::get_H_local_sparse_matrix (double prune){
     return Textra::Tensor2_to_SparseMatrix(get_H_local_rank2(),prune);
