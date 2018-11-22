@@ -75,7 +75,9 @@ public:
 
 
     Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_H_local_matrix();
+    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> get_H_local_matrix_real();
     Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_H_local_sq_matrix();
+    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> get_H_local_sq_matrix_real();
     Textra::SparseMatrixType<Scalar>                    get_H_local_sparse_matrix(double prune = 1e-15);
     Textra::SparseMatrixType<Scalar>                    get_H_local_sq_sparse_matrix(double prune = 1e-15);
     Eigen::Tensor<Scalar,2> get_H_local_rank2 ();

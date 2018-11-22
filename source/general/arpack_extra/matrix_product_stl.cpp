@@ -6,7 +6,7 @@
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 #include <Eigen/LU>
-
+#include <memory>
 #include "matrix_product_stl.h"
 
 // Function definitions
@@ -19,8 +19,17 @@ using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
 template <typename Scalar>
 using VectorTypeT = Eigen::Matrix<Scalar,1,Eigen::Dynamic>;
 
-Eigen::PartialPivLU<Eigen::Matrix<std::complex<double>,Eigen::Dynamic,Eigen::Dynamic>> lu_cplx;
-Eigen::PartialPivLU<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>>               lu_real;
+static Eigen::PartialPivLU<MatrixType<double>>               lu_real;
+static Eigen::PartialPivLU<MatrixType<std::complex<double>>> lu_cplx;
+
+
+template<typename Scalar>
+StlMatrixProduct<Scalar>::~StlMatrixProduct(){
+    lu_real = Eigen::PartialPivLU<MatrixType<double>>              ();
+    lu_cplx = Eigen::PartialPivLU<MatrixType<std::complex<double>>>();
+//    A_stl.clear();
+}
+
 
 
 template<typename Scalar>
@@ -38,6 +47,7 @@ void StlMatrixProduct<Scalar>::FactorOP()
  */
 {
     if(readyFactorOp){return;}
+//    lu_real_ptr = std::make_shared<LU_REAL>( LU_REAL() );
     Eigen::Map<const MatrixType<Scalar>> A_matrix (A_ptr,L,L);
     t_factorOp.tic();
     assert(readyShift and "Shift value sigma has not been set.");

@@ -66,6 +66,7 @@ message("Using microarchitechture: ${CXX_MARCH}")
 set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
 set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
+set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g)
 
 #################################
 ### Microarch dependent flags ###
@@ -109,6 +110,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release")
     message(STATUS "RELEASE CXX flags: ${RELEASE_OPTIONS}")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "DEBUG CXX flags: ${DEBUG_OPTIONS}")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Profile")
+    message(STATUS "PROFILE CXX flags: ${PROFILE_OPTIONS}")
 endif()
 
 
@@ -170,6 +173,7 @@ endif()
 target_compile_options (${PROJECT_NAME} PRIVATE ${COMMON_OPTIONS})                                   ### Common options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
+target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_OPTIONS}>")           ### Profiling build options
 target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                                               ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lpthread )
