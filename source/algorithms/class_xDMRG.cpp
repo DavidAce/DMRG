@@ -59,17 +59,17 @@ void class_xDMRG::run() {
     int full_iters = 5;
     find_energy_range();
     while(true) {
-        std::cout << "Starting single xDMRG step\n";
+        ccout(2) << "Starting single xDMRG step\n";
         single_xDMRG_step();
-        std::cout << "Starting overwrite local env\n";
+        ccout(2) << "Starting overwrite local env\n";
         env_storage_overwrite_local_ALL();
-        std::cout << "Storing table_entry_to_file\n";
+        ccout(2) << "Storing table_entry_to_file\n";
         store_table_entry_to_file();
-        std::cout << "Storing chain_entry_to_file\n";
+        ccout(2) << "Storing chain_entry_to_file\n";
         store_chain_entry_to_file();
-        std::cout << "Storing profiling_to_file\n";
+        ccout(2) << "Storing profiling_to_file\n";
         store_profiling_to_file_total();
-        std::cout << "Storing storing mps to file\n";
+        ccout(2) << "Storing storing mps to file\n";
         store_mps_to_file();
         print_status_update();
 
@@ -85,12 +85,12 @@ void class_xDMRG::run() {
                 break;
             }
         }
-        std::cout << "Enlarging environment\n";
+        ccout(2) << "Enlarging environment\n";
         enlarge_environment(env_storage->get_direction());
-        std::cout << "Moving environment\n";
+        ccout(2) << "Moving environment\n";
         env_storage_move();
         iteration = env_storage->get_sweeps();
-        std::cout << "Finished single xDMRG step\n";
+        ccout(2) << "Finished single xDMRG step\n";
     }
     t_tot.toc();
     print_status_full();
@@ -112,7 +112,7 @@ void class_xDMRG::single_xDMRG_step() {
     t_sim.tic();
     t_opt.tic();
 //    bool compare = false;
-    std::cout << "Constructing theta \n";
+    ccout(2) << "Constructing theta \n";
     Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
 //    xDMRG_Mode mode = chi_temp <= 12 ? xDMRG_Mode::FULL : xDMRG_Mode::PARTIAL;
     xDMRG_Mode mode = xDMRG_Mode::PARTIAL;
@@ -585,10 +585,10 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 //    auto H_local_sq = superblock->get_H_local_sq_rank2();
 //    Eigen::SparseMatrix<double> H_local    = superblock->get_H_local_matrix().real().sparseView().pruned(0.1,1e-14);
 //    H_local.makeCompressed();
-    std::cout << "Starting construction of H_local \n";
+    ccout(2) << "Starting construction of H_local \n";
     Eigen::MatrixXd H_local(shape,shape);
     H_local.noalias() = superblock->get_H_local_matrix_real();
-    std::cout << "Finished construction H_local \n";
+    ccout(2) << "Finished construction H_local \n";
 
 
 //    H_local.makeCompressed();
@@ -608,12 +608,12 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 //    }
 
 //    matrix_recast matrixRecast(H_local.data(),shape);
-    std::cout << "Instantiating StlMatrixProduct \n";
+    ccout(2) << "Instantiating StlMatrixProduct \n";
 
     StlMatrixProduct<double> hamiltonian_sparse (H_local.data(),H_local.rows());
 //    SparseMatrixProduct<double> hamiltonian_sparse = matrixRecast.get_as_real_sparse();
 //    SparseMatrixProduct<std::complex<double>> hamiltonian_sparse(H_local.data(),shape);
-    std::cout << "Starting LU factorization \n";
+    ccout(2) << "Starting LU factorization \n";
     hamiltonian_sparse.set_shift(energy_now*chain_length);
     hamiltonian_sparse.FactorOP();
     t_eig.toc();
@@ -639,9 +639,9 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     double overlap_cutoff             = 1e-10;
     double max_overlap_threshold      = 1 - 1e-4; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
     double subspace_quality_threshold = 1e-4;
-    std::cout << "Starting Arpack \n";
+    ccout(2) << "Starting Arpack \n";
     for (auto nev : generate_size_list(shape)){
-        std::cout << "Instantiating arpack solver \n";
+        ccout(2) << "Instantiating arpack solver \n";
         class_eigsolver arpack_solver2;
         t_eig.tic();
         arpack_solver2.eigs_stl(hamiltonian_sparse,nev,-1, energy_now*chain_length,eigutils::eigSetting::Form::SYMMETRIC,eigutils::eigSetting::Ritz::LM,eigutils::eigSetting::Side::R, true,true);
@@ -661,12 +661,12 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         if(max_overlap >= max_overlap_threshold ){break;}
         if(subspace_quality < subspace_quality_threshold){break;}
     }
-    std::cout << "Finished Arpack \n";
+    ccout(2) << "Finished Arpack \n";
 
 //    std::cout <<"Target energy: " << energy_now*chain_length << "\n" << "Eigvals \n" << eigvals << std::endl;
 
     if (subspace_quality >= subspace_quality_threshold and max_overlap < max_overlap_threshold){
-        std::cout << "Starting Armadillo \n";
+        ccout(2) << "Starting Armadillo \n";
 
         class_eigsolver_armadillo solver;
         Eigen::VectorXd eigvals_real(shape);
@@ -768,11 +768,11 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         class_tic_toc t_lbfgs(true,5,"lbfgs");
         std::vector<std::tuple<std::string,double,Scalar,double,size_t,double,double>> opt_log;
         {
-            std::cout << "Starting LBFGS \n";
+            ccout(2) << "Starting LBFGS \n";
             t_lbfgs.tic();
-            std::cout << "Starting construction of H_local_sq \n";
+            ccout(2) << "Starting construction of H_local_sq \n";
             Eigen::MatrixXcd H_local_sq = superblock->get_H_local_sq_matrix();
-            std::cout << "Starting construction of H_local_sq \n";
+            ccout(2) << "Starting construction of H_local_sq \n";
             t_lbfgs.toc();
             Textra::VectorType<Scalar> theta_0 = eigvecs * xstart;
             size_t iter_0 = 0;
