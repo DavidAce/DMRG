@@ -30,8 +30,8 @@ public:
     void initialize_constants()                         override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
-    void store_table_entry_to_file()                    override;
-    void store_chain_entry_to_file();
+    void store_table_entry_to_file(bool force = false)  override;
+    void store_chain_entry_to_file(bool force = false);
     void initialize_chain();
 
 };
