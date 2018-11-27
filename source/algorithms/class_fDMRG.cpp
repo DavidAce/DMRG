@@ -102,10 +102,13 @@ void class_fDMRG::initialize_constants(){
 }
 
 
-void class_fDMRG::store_table_entry_to_file(){
-    if (Math::mod(iteration, store_freq) != 0) {return;}
-    if (not env_storage->position_is_the_middle()) {return;}
-    if (store_freq == 0){return;}
+void class_fDMRG::store_table_entry_to_file(bool force){
+    if (not force){
+        if (Math::mod(iteration, store_freq) != 0) {return;}
+        if (not env_storage->position_is_the_middle()) {return;}
+        if (store_freq == 0){return;}
+    }
+
     compute_observables();
     t_sto.tic();
     table_fdmrg->append_record(
@@ -129,11 +132,13 @@ void class_fDMRG::store_table_entry_to_file(){
     t_sto.toc();
 }
 
-void class_fDMRG::store_chain_entry_to_file(){
-    if (Math::mod(iteration, store_freq) != 0) {return;}
-    if (store_freq == 0){return;}
-    if (not (env_storage->get_direction() == 1 or env_storage->position_is_the_right_edge())){return;}
-    t_sto.tic();
+void class_fDMRG::store_chain_entry_to_file(bool force){
+    if (not force){
+        if (Math::mod(iteration, store_freq) != 0) {return;}
+        if (store_freq == 0){return;}
+        if (not (env_storage->get_direction() == 1 or env_storage->position_is_the_right_edge())){return;}
+    }
+   t_sto.tic();
     table_fdmrg_chain->append_record(
             iteration,
             measurement->get_chain_length(),

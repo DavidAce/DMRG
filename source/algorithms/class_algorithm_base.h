@@ -76,7 +76,7 @@ public:
     virtual void initialize_constants()                         = 0;
     virtual void print_profiling()                              = 0;
     virtual void print_profiling_sim(class_tic_toc &t_parent)   = 0;
-    virtual void store_table_entry_to_file()                    = 0;
+    virtual void store_table_entry_to_file(bool force = false)  = 0;
 
     //Common functions
     void print_status_update();

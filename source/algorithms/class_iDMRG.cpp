@@ -53,8 +53,10 @@ void class_iDMRG::initialize_constants(){
 
 }
 
-void class_iDMRG::store_table_entry_to_file(){
-    if (Math::mod(iteration, store_freq) != 0) {return;}
+void class_iDMRG::store_table_entry_to_file(bool force){
+    if (not force){
+        if (Math::mod(iteration, store_freq) != 0) {return;}
+    }
     compute_observables();
     t_sto.tic();
     table_idmrg->append_record(
