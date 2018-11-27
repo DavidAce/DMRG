@@ -110,6 +110,34 @@ void class_measurement::compute_energy_variance_mpo(){
     t_var_mpo.toc();
 }
 
+
+template<typename T>
+double class_measurement::compute_energy_variance_mpo(T * theta_ptr, Eigen::DSizes<long,4> dsizes, double energy_all_sites){
+    Eigen::Tensor<std::complex<double>,4> theta = Eigen::TensorMap<Eigen::Tensor<T,4>> (theta_ptr, dsizes).template cast<std::complex<double>>();
+    t_var_mpo.tic();
+    double L = superblock->Lblock2->size + superblock->Rblock2->size + 2.0;
+    Eigen::Tensor<Scalar, 0> H2 =
+            superblock->Lblock2->block
+                    .contract(theta,                              idx({0}  ,{1}))
+                    .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
+                    .contract(superblock->HB->MPO,                idx({4,2},{0,2}))
+                    .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
+                    .contract(superblock->HB->MPO,                idx({4,3},{0,2}))
+                    .contract(theta.conjugate(),                  idx({0,3,5},{1,0,2}))
+                    .contract(superblock->Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
+    if (sim_type == SimulationType::iDMRG) {
+        t_var_mpo.toc();
+        return std::real(H2(0))/2.0/L;
+    }else{
+        t_var_mpo.toc();
+        return std::abs(H2(0) - energy_all_sites*energy_all_sites)/L;
+    }
+}
+
+template double class_measurement::compute_energy_variance_mpo(double *,Eigen::DSizes<long,4>,double);
+template double class_measurement::compute_energy_variance_mpo(std::complex<double> *, Eigen::DSizes<long,4>, double);
+
+
 void class_measurement::compute_energy_variance_ham(){
     t_var_ham.tic();
     const Eigen::Tensor<Scalar,4> & theta_evn                  = mps_util->theta_evn_normalized;

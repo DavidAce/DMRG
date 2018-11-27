@@ -49,7 +49,8 @@ public:
     //Settings.
 
     // Common variables
-    int    iteration = 0; //In idmrg and itebd: steps, in fdmrg and xdmrg: iteration.
+    int    iteration = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
+    int    step      = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
     long   chi_max      ;
     bool   chi_grow     ;
     int    print_freq   ;
@@ -131,6 +132,7 @@ private:
     void check_saturation_using_slope(std::list<double> &Y_vec,
                                       std::list<int> &X_vec,
                                       double new_data,
+                                      int iter,
                                       int rate,
                                       double tolerance,
                                       double &slope,

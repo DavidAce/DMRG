@@ -2,35 +2,103 @@
 // Created by david on 2018-10-29.
 //
 
-#ifndef EIGBENCH_CLASS_EIGSOLVER_ARPACK_2_H
-#define EIGBENCH_CLASS_EIGSOLVER_ARPACK_2_H
-
+#ifndef CLASS_EIGSOLVER_H
+#define CLASS_EIGSOLVER_H
 #include "arpack_extra/matrix_product_dense.h"
 #include "arpack_extra/matrix_product_sparse.h"
 #include "arpack_extra/matrix_product_stl.h"
 #include "arpack_extra/arpackpp_solver.h"
 #include "general/nmspc_eigutils.h"
 #include "arpack_extra/matrix_recast.h"
+#include <fstream>
+
+
 
 
 class class_eigsolver {
+
 public:
 
-    eigutils::eigConfig solverConf;
+    eigutils::eigConfig     solverConf;
     eigutils::eigSolution   solution;
+    int eig_dsyevd(const double* matrix, int L);
+    int eig_dsyevd(double *matrix2eigvecs, double *eigvals, int L);
 
-    void conf_init(const int L,
+    int eig_zheevd(const std::complex<double>* matrix, int L);
+    int eig_zheevd(std::complex<double>* matrix2eigvecs, double *eigvals, int L);
+
+    int eig_dgeev (const double* matrix, int L);
+    int eig_dgeev (const double* matrix, std::complex<double>* eigvecsR, std::complex<double>* eigvecsL, std::complex<double> *eigvals, int L);
+    int eig_zgeev (const std::complex<double>* matrix, int L);
+    int eig_zgeev (const std::complex<double>* matrix, std::complex<double>* eigvecsR, std::complex<double>* eigvecsL, std::complex<double> *eigvals, int L);
+
+
+
+    template <typename Scalar>
+    void subtract_phase(std::vector<Scalar> &eigvecs,int L, int nev)
+    // The solution to  the eigenvalue equation Av = l*v is determined up to a constant phase factor, i.e., if v
+    // is a solution, so is v*exp(i*theta). By computing the complex angle of the first element in v, one can then
+    // remove it from all other elements of v.
+    {
+        if constexpr (std::is_same<Scalar, std::complex<double>>::value) {
+            if (nev > 0){
+                using namespace std::complex_literals;
+                for (int i = 0; i < nev; i++) {
+                    Scalar inv_phase = -1.0i * std::arg(eigvecs[i * L]);
+                    auto begin = eigvecs.begin() + i * L;
+                    auto end = begin + L;
+                    Scalar exp_inv_phase = std::exp(inv_phase);
+                    std::transform(begin, end, begin,
+                                   [exp_inv_phase](std::complex<double> num) -> std::complex<double>
+                                   { return (num * exp_inv_phase); });
+                }
+            }else{
+                std::cerr << "Eigenvalues haven't been computed yet. Can't subtract phase. Exiting " << std::endl;
+                exit(1);
+            }
+        }
+    }
+
+   void eigs_init(const int L,
                    const int nev,
                    const int ncv,
-                   const std::complex<double> sigma            = std::numeric_limits<std::complex<double>>::quiet_NaN(),
-                   const eigutils::eigSetting::Type type        = eigutils::eigSetting::Type::REAL,
-                   const eigutils::eigSetting::Form form        = eigutils::eigSetting::Form::SYMMETRIC,
-                   const eigutils::eigSetting::Ritz ritz        = eigutils::eigSetting::Ritz::LM,
-                   const eigutils::eigSetting::Side side        = eigutils::eigSetting::Side::R,
-                   const eigutils::eigSetting::Storage storage  = eigutils::eigSetting::Storage::DENSE,
-                   const bool compute_eigvecs_           = false,
-                   const bool remove_phase_              = false
+                   const std::complex<double> sigma = std::numeric_limits<std::complex<double>>::quiet_NaN(),
+                   const eigutils::eigSetting::Type type = eigutils::eigSetting::Type::REAL,
+                   const eigutils::eigSetting::Form form = eigutils::eigSetting::Form::SYMMETRIC,
+                   const eigutils::eigSetting::Ritz ritz = eigutils::eigSetting::Ritz::LM,
+                   const eigutils::eigSetting::Side side = eigutils::eigSetting::Side::R,
+                   const eigutils::eigSetting::Storage storage = eigutils::eigSetting::Storage::DENSE,
+                   const bool compute_eigvecs_ = true,
+                   const bool remove_phase_ = false
     );
+
+    void eig_init(const int L,
+                  const eigutils::eigSetting::Type type        = eigutils::eigSetting::Type::REAL,
+                  const eigutils::eigSetting::Form form        = eigutils::eigSetting::Form::SYMMETRIC,
+                  const eigutils::eigSetting::Side side        = eigutils::eigSetting::Side::R,
+                  const bool compute_eigvecs_                  = true,
+                  const bool remove_phase_                     = false
+    );
+
+
+    template<eigutils::eigSetting::Type    type = eigutils::eigSetting::Type::REAL,
+             eigutils::eigSetting::Form    form = eigutils::eigSetting::Form::SYMMETRIC,
+             eigutils::eigSetting::Side    side = eigutils::eigSetting::Side::R,
+             typename Derived>
+    void eig(const Eigen::EigenBase<Derived> &matrix,
+             const bool compute_eigvecs_           = true,
+             const bool remove_phase_              = false);
+
+    template<eigutils::eigSetting::Type    type = eigutils::eigSetting::Type::REAL,
+             eigutils::eigSetting::Form    form = eigutils::eigSetting::Form::SYMMETRIC,
+             eigutils::eigSetting::Side    side = eigutils::eigSetting::Side::R,
+            typename Scalar>
+    void eig(const Scalar * matrix,
+             const int L,
+             const bool compute_eigvecs_           = true,
+             const bool remove_phase_              = false
+             );
+
 
 
     template<typename Scalar>
@@ -149,6 +217,66 @@ public:
 
 
 
+template<eigutils::eigSetting::Type    type,
+         eigutils::eigSetting::Form    form,
+         eigutils::eigSetting::Side    side,
+         typename Derived>
+void class_eigsolver::eig(const Eigen::EigenBase<Derived> &matrix,
+                          const bool compute_eigvecs_,
+                          const bool remove_phase_   )
+{
+    eig<type,form>(matrix.derived().data(),matrix.rows(), compute_eigvecs_,remove_phase_);
+}
+
+
+
+
+
+template<eigutils::eigSetting::Type    type,
+         eigutils::eigSetting::Form    form,
+         eigutils::eigSetting::Side    side,
+         typename Scalar>
+void class_eigsolver::eig(const Scalar * matrix,
+                          const int L,
+                          const bool compute_eigvecs_,
+                          const bool remove_phase_   )
+{
+    using namespace eigutils::eigSetting;
+    eig_init(L,type,form,side,compute_eigvecs_,remove_phase_);
+    int info = 0;
+
+    if constexpr(form == Form::SYMMETRIC) {
+        if constexpr(type == Type::REAL) {
+            static_assert(std::is_same<Scalar, double>::value);
+            info = eig_dsyevd(matrix,L);
+        } else if constexpr (type == Type::CPLX) {
+            static_assert(std::is_same<Scalar, std::complex<double>>::value);
+            info = eig_zheevd(matrix,L);
+        }
+    }
+
+    else
+    if constexpr( form == Form::NONSYMMETRIC) {
+        if constexpr(type == Type::REAL) {
+            static_assert(std::is_same<Scalar, double>::value);
+            info = eig_dgeev(matrix, L);
+        } else if constexpr (type == Type::CPLX) {
+            static_assert(std::is_same<Scalar, std::complex<double>>::value);
+            info = eig_zgeev(matrix, L);
+        }
+    }
+    if (info == 0 and solverConf.remove_phase){
+     // The solution to  the eigenvalue equation Av = l*v is determined up to a constant phase factor, i.e., if v
+     // is a solution, so is v*exp(i*theta). By computing the complex angle of the first element in v, one can then
+     // remove it from all other elements of v.
+        subtract_phase(solution.get_eigvecs<type,form,side>(),L, solution.meta.nev);
+    }
+
+}
+
+
+
+
 template<typename Scalar>
 void class_eigsolver::eigs_auto   (const Scalar *matrix_data,
                                    const int L,
@@ -169,7 +297,7 @@ void class_eigsolver::eigs_auto   (const Scalar *matrix_data,
     Type type        = is_real      ? Type::REAL      : Type ::CPLX;
     Storage storage  = is_sparse    ? Storage::SPARSE : Storage::DENSE;
 
-    conf_init(L, nev, -1, sigma,type, form,ritz,side,storage,compute_eigvecs_,remove_phase_);
+    eigs_init(L, nev, -1, sigma, type, form, ritz, side, storage, compute_eigvecs_, remove_phase_);
 
     if(is_real) {
         if(is_sparse) {
@@ -214,7 +342,7 @@ void class_eigsolver::eigs (const Scalar *matrix,
     using namespace eigutils::eigSetting;
     bool is_cplx = std::is_same<std::complex<double>,Scalar>::value;
     Type type = is_cplx ? Type::CPLX : Type::REAL;
-    conf_init(L, nev, ncv, sigma,type,form,ritz,side,storage,compute_eigvecs_,remove_phase_);
+    eigs_init(L, nev, ncv, sigma, type, form, ritz, side, storage, compute_eigvecs_, remove_phase_);
     if constexpr(storage == Storage::DENSE){
         auto matrix_dense = DenseMatrixProduct<Scalar> (matrix,L);
         arpackpp_solver<DenseMatrixProduct<Scalar>> solver(matrix_dense, solverConf, solution,residual_);
@@ -228,6 +356,7 @@ void class_eigsolver::eigs (const Scalar *matrix,
         arpackpp_solver<StlMatrixProduct<Scalar>> solver(matrix_stl, solverConf, solution,residual_);
         solver.eigs();
     }
+
 }
 
 
@@ -249,7 +378,7 @@ void class_eigsolver::eigs_dense   (const Scalar *matrix,
     bool is_cplx = std::is_same<std::complex<double>,Scalar>::value;
     Type type = is_cplx ? Type::CPLX : Type::REAL;
     Storage storage = Storage::DENSE;
-    conf_init(L, nev, ncv, sigma,type,form,ritz,side,storage,compute_eigvecs_,remove_phase_);
+    eigs_init(L, nev, ncv, sigma, type, form, ritz, side, storage, compute_eigvecs_, remove_phase_);
     auto matrix_dense = DenseMatrixProduct<Scalar> (matrix,L);
     arpackpp_solver<DenseMatrixProduct<Scalar>> solver(matrix_dense, solverConf, solution,residual_);
     solver.eigs();
@@ -273,7 +402,7 @@ void class_eigsolver::eigs_dense   (DenseMatrixProduct<Scalar> &matrix_dense,
     bool is_cplx = std::is_same<std::complex<double>,Scalar>::value;
     Type type = is_cplx ? Type::CPLX : Type::REAL;
     Storage storage = Storage::DENSE;
-    conf_init(L, nev, ncv, sigma,type,form,ritz,side,storage,compute_eigvecs_,remove_phase_);
+    eigs_init(L, nev, ncv, sigma, type, form, ritz, side, storage, compute_eigvecs_, remove_phase_);
     arpackpp_solver<DenseMatrixProduct<Scalar>> solver(matrix_dense, solverConf, solution,residual_);
     solver.eigs();
 }
@@ -297,7 +426,7 @@ void class_eigsolver::eigs_sparse   (const Scalar *matrix,
     bool is_cplx = std::is_same<std::complex<double>,Scalar>::value;
     Type type = is_cplx ? Type::CPLX : Type::REAL;
     Storage storage = Storage::SPARSE;
-    conf_init(L, nev, ncv, sigma,type,form,ritz,side,storage,compute_eigvecs_,remove_phase_);
+    eigs_init(L, nev, ncv, sigma, type, form, ritz, side, storage, compute_eigvecs_, remove_phase_);
     auto matrix_sparse = SparseMatrixProduct<Scalar> (matrix,L);
     arpackpp_solver<SparseMatrixProduct<Scalar>> solver(matrix_sparse, solverConf, solution,residual_);
     solver.eigs();
@@ -323,7 +452,7 @@ void class_eigsolver::eigs_sparse   (SparseMatrixProduct<Scalar> &matrix_sparse,
     bool is_cplx = std::is_same<std::complex<double>,Scalar>::value;
     Type type = is_cplx ? Type::CPLX : Type::REAL;
     Storage storage = Storage::SPARSE;
-    conf_init(L, nev, ncv, sigma,type,form,ritz,side,storage,compute_eigvecs_,remove_phase_);
+    eigs_init(L, nev, ncv, sigma, type, form, ritz, side, storage, compute_eigvecs_, remove_phase_);
     arpackpp_solver<SparseMatrixProduct<Scalar>> solver(matrix_sparse, solverConf, solution,residual_);
     solver.eigs();
 }
@@ -347,7 +476,7 @@ void class_eigsolver::eigs_stl   (const Scalar *matrix,
     bool is_cplx = std::is_same<std::complex<double>,Scalar>::value;
     Type type = is_cplx ? Type::CPLX : Type::REAL;
     Storage storage = Storage::STL;
-    conf_init(L, nev, ncv, sigma,type,form,ritz,side,storage,compute_eigvecs_,remove_phase_);
+    eigs_init(L, nev, ncv, sigma, type, form, ritz, side, storage, compute_eigvecs_, remove_phase_);
     auto matrix_stl = SparseMatrixProduct<Scalar> (matrix,L);
     arpackpp_solver<StlMatrixProduct<Scalar>> solver(matrix_stl, solverConf, solution,residual_);
     solver.eigs();
@@ -373,7 +502,7 @@ void class_eigsolver::eigs_stl       (StlMatrixProduct<Scalar> &matrix_stl,
     bool is_cplx = std::is_same<std::complex<double>,Scalar>::value;
     Type type = is_cplx ? Type::CPLX : Type::REAL;
     Storage storage = Storage::STL;
-    conf_init(L, nev, ncv, sigma,type,form,ritz,side,storage,compute_eigvecs_,remove_phase_);
+    eigs_init(L, nev, ncv, sigma, type, form, ritz, side, storage, compute_eigvecs_, remove_phase_);
     arpackpp_solver<StlMatrixProduct<Scalar>> solver(matrix_stl, solverConf, solution,residual_);
     solver.eigs();
 }
