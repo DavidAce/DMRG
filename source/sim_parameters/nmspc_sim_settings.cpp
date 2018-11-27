@@ -50,7 +50,7 @@ namespace settings{
     double precision::VarConvergenceThreshold      = 1e-8  ;            /*!< Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value */
     double precision::VarSaturationThreshold       = 1e-4  ;            /*!< Variance saturation  threshold. The variance has saturated when its (absolute) slope reaches below this value */
     double precision::EntEntrSaturationThreshold   = 1e-4  ;            /*!< Entanglement Entropy saturation threshold. The entanglement entropy has saturated when its (absolute) slope reaches below this value*/
-
+    int    precision::MaxSizeFullDiag              = 2048  ;            /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
 
 
     //Parameters controlling infinite-DMRG
@@ -162,6 +162,7 @@ void settings::load_from_file(class_file_reader &indata){
     precision::VarConvergenceThreshold     = indata.find_parameter<double> ("precision::VarConvergenceThreshold"   , precision::VarConvergenceThreshold);
     precision::VarSaturationThreshold      = indata.find_parameter<double> ("precision::VarSaturationThreshold"    , precision::VarSaturationThreshold);
     precision::EntEntrSaturationThreshold  = indata.find_parameter<double> ("precision::EntEntrSaturationThreshold", precision::EntEntrSaturationThreshold);
+    precision::MaxSizeFullDiag             = indata.find_parameter<int>    ("precision::MaxSizeFullDiag"           , precision::MaxSizeFullDiag);
 
     //Parameters controlling infinite-DMRG
     idmrg::on                           = indata.find_parameter<bool>   ("idmrg::on"         , idmrg::on);

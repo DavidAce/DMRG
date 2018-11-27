@@ -15,8 +15,29 @@ requirements = true
 # essentially turns off hyperthreading.
 ########################################################
 request_cpus   = 4
-request_memory = 8000
+request_memory = 2000
 request_disk   = 500
+
+#################################################################################
+# The below lines added to the submit file will allow the jobs to
+# self-police MemoryUsage, and will adjust the memory request in response
+# (though "request_memory" would need to be replaced in the submit file, not
+# added).
+# These lines essentially say:
+# Set the "request_memory" ("RequestMemory" in the job classad) to be a
+# function of MemoryUsage, and artificially set the MemoryUsage to an initial
+# value (800 MB * 2/3).
+# Put the job on hold if the (real) MemoryUsage goes 50% above the current
+# RequestMemory value.
+# Release the held job (if held for the memory reason, and held for at least
+# 3 minutes), so that it will be matched to run again on a compute "slot"
+# with more memory (according to the new RequestMemory value).
+##################################################################################
++MemoryUsage     = ( 3000 ) * 2 / 3
+request_memory   = ( MemoryUsage ) * 3 / 2
+periodic_hold    = ( MemoryUsage >= ( ( RequestMemory ) * 3 / 2 ) )
+periodic_release = (JobStatus == 5) && ((CurrentTime - EnteredCurrentStatus) > 180) && (HoldReasonCode != 34)
+
 
 
 

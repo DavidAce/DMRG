@@ -44,7 +44,7 @@ private:
     Eigen::MatrixXcd h_evn;
     Eigen::MatrixXcd h_odd;
 
-
+    void compute_parity();
     void compute_energy_mpo();
     void compute_energy_ham();
     void compute_entanglement_entropy();
@@ -52,7 +52,6 @@ private:
     void compute_energy_variance_ham();
     void compute_energy_and_variance_mom(Scalar a, std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
 
-    void compute_parity();
 
 
     double energy_mpo_all_sites;
@@ -76,17 +75,22 @@ private:
     void   compute_all_observables_from_superblock();
     void   compute_all_observables_from_superblock(const Eigen::Tensor<Scalar,4> &theta);
     void   compute_all_observables_from_finite_chain();
+    template<typename T>
+    double compute_energy_variance_mpo(T * theta_ptr, Eigen::DSizes<long,4> dsizes, double energy_all_sites);
+
+
     Eigen::Tensor<Scalar,1> mps_chain;
 
     double get_energy_mpo();               /*! Computes the current energy.*/
     double get_energy_ham();               /*! Computes the current energy.*/
     double get_energy_mom();               /*! Computes the current energy.*/
     double get_energy_mpo_all_sites();
-
+    void   set_variance(double new_variance);
     double get_variance_mpo();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
     double get_variance_ham();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
     double get_variance_mom();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
-//  double get_variance_mpo_all_sites();
+
+    //  double get_variance_mpo_all_sites();
     double get_entanglement_entropy();
     double get_truncation_error();
     double get_parity();

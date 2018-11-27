@@ -7,66 +7,121 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <iostream>
+#include <iomanip>
 #include <complex>
 
+template<typename Scalar>
 class class_xDMRG_functor {
+private:
+    double variance;
+    double energy  ;
 public:
     template <typename T>
     int sgn(const T val) const {
         return (T(0) < val) - (val < T(0));
     }
-    using cScalar = std::complex<double>;
-    using  Scalar = double;
-    using cMatrixType_ = Eigen::Matrix<cScalar,Eigen::Dynamic, Eigen::Dynamic>;
-    using  MatrixType_ = Eigen::Matrix< Scalar,Eigen::Dynamic, Eigen::Dynamic>;
-    using cVectorType_ = Eigen::Matrix<cScalar,Eigen::Dynamic, 1>;
 
+    using MatrixType_ = Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic>;
+    using VectorType_ = Eigen::Matrix<Scalar,Eigen::Dynamic, 1>;
+    int   counter = 0;
     const size_t shape;
     const size_t nev;
-//    const cScalar *H_local_ptr = nullptr;
-//    const cScalar *H_local_sq_ptr = nullptr;
-    const cScalar *eigvecs_ptr;
-    const cScalar *eigvals_ptr;
 
-//    cMatrixType_ H;
-    MatrixType_ H2;
+    const Scalar *eigvecs_ptr;
+    const double *eigvals_ptr;
 
+    Eigen::MatrixXd H2;
+    double get_variance(){return variance;}
+    double get_energy  (){return energy  ;}
+
+    template<typename HType>
     class_xDMRG_functor(
             const size_t shape_,
             const size_t nev_,
-//            const cScalar *H_local_ptr_,
-            const cScalar *H_local_sq_ptr_,
-            const cScalar *eigvecs_ptr_,
-            const cScalar *eigvals_ptr_);
+            const HType  *H_local_sq_ptr_,
+            const Scalar *eigvecs_ptr_,
+            const double *eigvals_ptr_)
+            :
+            shape(shape_),
+            nev(nev_),
+            eigvecs_ptr(eigvecs_ptr_),
+            eigvals_ptr(eigvals_ptr_)
+    {
+        auto H_local_sq = Eigen::Map<const Eigen::Matrix<HType,Eigen::Dynamic,Eigen::Dynamic>> (H_local_sq_ptr_,shape,shape);
+        auto eigvecs    = Eigen::Map<const MatrixType_> (eigvecs_ptr   ,shape,nev);
+        if constexpr(std::is_same<Scalar,HType>::value){
+            H2 = (eigvecs.adjoint() * H_local_sq.derived().template selfadjointView<Eigen::Upper>() * eigvecs).real();
+        }else{
+            H2 = (eigvecs.adjoint() * H_local_sq.derived() * eigvecs).real();
+        }
+
+    }
+
+
 
     template <typename Derived>
     class_xDMRG_functor(
             const size_t shape_,
             const size_t nev_,
-//            const Eigen::EigenBase<Derived> &H_,
             const Eigen::EigenBase<Derived> &H_local_sq,
-            const cScalar *eigvecs_ptr_,
-            const cScalar *eigvals_ptr_)
+            const Scalar *eigvecs_ptr_,
+            const double *eigvals_ptr_)
             :
             shape(shape_),
             nev(nev_),
-//            H(H_),
-//            H2(H2_),
             eigvecs_ptr(eigvecs_ptr_),
             eigvals_ptr(eigvals_ptr_)
     {
-        auto eigvecs    = Eigen::Map<const cMatrixType_> (eigvecs_ptr   ,shape,nev);
-        H2 = (eigvecs.adjoint() * H_local_sq.derived().template selfadjointView<Eigen::Upper>() * eigvecs).real();
-
-//        bool H2isHermitian;
-//        H2isHermitian = H2.isApprox(H2.adjoint(), 1e-14);
-//        std::cout << "H2 is hermitian: " << std::boolalpha << H2isHermitian << std::endl;
-
-
+        auto eigvecs    = Eigen::Map<const MatrixType_> (eigvecs_ptr   ,shape,nev);
+        if constexpr(std::is_same<Scalar,typename Derived::Scalar>::value){
+            H2 = (eigvecs.adjoint() * H_local_sq.derived().template selfadjointView<Eigen::Upper>() * eigvecs).real();
+        }else{
+            H2 = (eigvecs.adjoint() * H_local_sq.derived() * eigvecs).real();
+        }
     }
 
 
-    double operator()(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, Eigen::Matrix<double,Eigen::Dynamic,1> &grad) const;
+//    double operator()(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, Eigen::Matrix<double,Eigen::Dynamic,1> &grad) const;
+    double operator()(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, Eigen::Matrix<double,Eigen::Dynamic,1> &grad) {
+        auto eigvals  = Eigen::Map<const VectorType_> (eigvals_ptr,nev);
+        double lambda = 1.0;
+        double vH2v   = (v.adjoint() * H2.selfadjointView<Eigen::Upper>() * v).real().sum();
+        double vEv    = v.cwiseAbs2().cwiseProduct(eigvals).real().sum();
+        double vv     = v.cwiseAbs2().sum();
+        double var    = vH2v/vv - vEv*vEv/vv/vv;
+        variance      = var;
+        energy        = vEv/vv;
+        double log10var = std::log10(var);
+
+        if(std::isnan(var)){
+            std::cout << "eigvals: \n" << eigvals << std::endl;
+            std::cout << "v: \n" << v << std::endl;
+            std::cout << "H2: \n" << H2 << std::endl;
+            std::cout << "vH2v            : " << vH2v << std::endl;
+            std::cout << "vEv             : " << vEv  << std::endl;
+            std::cout << "vv              : " << vv   << std::endl;
+            std::cout << "vH2v/vv         : " << vH2v/vv    << std::endl;
+            std::cout << "vEv*vEv/vv/vv   : " << vEv*vEv/vv/vv    << std::endl;
+            std::cout << "var             : " << var  << std::endl << std::endl;
+            exit(1);
+        }
+
+        double fx = log10var  + lambda * std::pow(vv-1.0,2);
+        for (int k = 0; k < v.size(); k++){
+            double vi2H2ik         = 2.0*v.dot(H2.col(k));             // 2 * sum_i x_i H2_ik
+            double vk4EkvEv        = 4.0*v(k)*eigvals(k) * vEv ;       // 4 * x_k * E_k * (sum_i x_i^2 E_i)
+            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vEv*vEv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
+                      + lambda * 4.0 * v(k) * (vv - 1);
+        }
+//
+//        std::cout << "i: " << counter
+//                    <<  std::setprecision(14) << "    var: " << std::setw(16) << log10var
+//                    <<  std::setprecision(14) << "    fx : " << std::setw(16) << fx << std::endl;
+
+        counter++;
+        return fx;
+    }
+
 
 };
 

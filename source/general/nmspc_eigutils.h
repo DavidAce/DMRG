@@ -37,7 +37,7 @@ namespace eigutils{
         eigSetting::Side           side        = eigSetting::Side::R;
         eigSetting::Ritz           ritz        = eigSetting::Ritz::LM;
         eigSetting::Type           type        = eigSetting::Type::REAL;
-        bool    compute_eigvecs                = false;
+        bool    compute_eigvecs                = true;
         bool    remove_phase                   = false;
         double  eigThreshold                   = 1e-12;
         int     eigMaxIter                     = 2000;
@@ -102,8 +102,56 @@ namespace eigutils{
     class eigSolution{
     public:
         using Scalar = std::complex<double>;
-        std::vector<Scalar> eigvecs;
-        std::vector<Scalar> eigvals;
+        // For symmetric problems
+        std::vector<double> eigvecs_real;
+        std::vector<Scalar> eigvecs_cplx;
+        std::vector<double> eigvals_real;
+
+        // For nonsymmetric problems
+        std::vector<double> eigvecsR_real;
+        std::vector<double> eigvecsL_real;
+        std::vector<Scalar> eigvecsR_cplx;
+        std::vector<Scalar> eigvecsL_cplx;
+        std::vector<Scalar> eigvals_cplx;
+
+
+        template<eigutils::eigSetting::Type   type,
+                 eigutils::eigSetting::Form   form,
+                 eigutils::eigSetting::Side   side = eigutils::eigSetting::Side::R >
+        auto & get_eigvecs(){
+            using namespace eigutils::eigSetting;
+            if constexpr(form == Form::SYMMETRIC){
+                if constexpr(type == Type::REAL)                    {return eigvecs_real;}
+                if constexpr(type == Type::CPLX)                    {return eigvecs_cplx;}
+            }else if constexpr(form == Form::NONSYMMETRIC and side == Side::R){
+                if constexpr(type == Type::REAL and side == Side::R){return eigvecsR_cplx;}
+                if constexpr(type == Type::CPLX and side == Side::R){return eigvecsR_cplx;}
+            }else if constexpr(form == Form::NONSYMMETRIC and side == Side::L){
+                if constexpr(type == Type::REAL and side == Side::L){return eigvecsL_cplx;}
+                if constexpr(type == Type::CPLX and side == Side::L){return eigvecsL_cplx;}
+            }
+        }
+
+        template<typename Scalar,
+                eigutils::eigSetting::Form   form,
+                eigutils::eigSetting::Side   side = eigutils::eigSetting::Side::R >
+        auto & get_eigvecs(){
+            using namespace eigutils::eigSetting;
+            if constexpr (std::is_same<double, Scalar>::value){
+                return get_eigvecs<Type::REAL,form,side>();
+            }else if constexpr (std::is_same<std::complex<double>, Scalar>::value){
+                return get_eigvecs<Type::CPLX,form,side>();
+            }
+        }
+
+
+        template<eigutils::eigSetting::Form form>
+        auto & get_eigvals(){
+            using namespace eigutils::eigSetting;
+            if constexpr(form == Form::SYMMETRIC)   {return eigvals_real;}
+            if constexpr(form == Form::NONSYMMETRIC){return eigvals_cplx;}
+        }
+
 
         struct Meta{
             int     rows            = 0;
@@ -114,12 +162,20 @@ namespace eigutils{
             int     n               = 0; // Linear dimension of the input matrix to diagonalize, aka rows.
             int     counter         = 0;
             int     ncv_used        = 0;
-            bool    eigvecs_found   = false;
-            bool    eigvals_found   = false;
+            bool    eigvals_found   = false; // For all problems
+            bool    eigvecs_found   = false; // For symmetric problems
+            bool    eigvecsR_found  = false; // For nonsymmetric problems
+            bool    eigvecsL_found  = false; // For nonsymmetric problems
         } meta;
         void reset(){
-            eigvecs.clear();
-            eigvals.clear();
+            eigvals_real.clear();
+            eigvals_cplx.clear();
+            eigvecs_real.clear();
+            eigvecs_cplx.clear();
+            eigvecsR_real.clear();
+            eigvecsL_real.clear();
+            eigvecsR_cplx.clear();
+            eigvecsL_cplx.clear();
             meta = Meta();
         }
     };
