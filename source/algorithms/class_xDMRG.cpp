@@ -625,7 +625,7 @@ void class_xDMRG::store_chain_entry_to_file(bool force){
     if (not force) {
         if (Math::mod(iteration, store_freq) != 0) { return; }
         if (store_freq == 0) { return; }
-        if (not(env_storage->get_direction() == 1 or env_storage->position_is_the_right_edge())) { return; }
+        if (not(env_storage->get_direction() == 1 or env_storage->position_is_the_middle())) { return; }
     }
     t_sto.tic();
     table_xdmrg_chain->append_record(
@@ -663,7 +663,11 @@ void class_xDMRG::check_convergence_all(){
         simulation_has_converged = true;
     }
 
-    if (variance_mpo_has_saturated and bond_dimension_has_reached_max){
+    if (variance_mpo_has_saturated
+        and bond_dimension_has_reached_max
+        and env_storage->position_is_the_middle()
+        )
+    {
         simulation_has_to_stop = true;
     }
 
