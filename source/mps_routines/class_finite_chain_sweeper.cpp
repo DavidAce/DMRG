@@ -316,7 +316,7 @@ void class_finite_chain_sweeper::write_chain_to_file() {
         hdf5->write_dataset(Textra::to_RowMajor(mps.get_A()),sim_name + "/chain/MPS/A_" + std::to_string(counter));
         hdf5->write_dataset(mps.get_L()                     ,sim_name + "/chain/MPS/L_" + std::to_string(counter++));
     }
-    hdf5->write_dataset(get_MPS_C(), sim_name + "/chain/MPS/L_" + std::to_string(counter-1) + "_" + std::to_string(counter)  + "_C");
+    hdf5->write_dataset(get_MPS_C(), sim_name + "/chain/MPS/L_C");
     for (auto &mps : get_MPS_R()){
         hdf5->write_dataset(Textra::to_RowMajor(mps.get_B()) ,sim_name + "/chain/MPS/B_" + std::to_string(counter));
         hdf5->write_dataset(mps.get_L()                      ,sim_name + "/chain/MPS/L_" + std::to_string(counter++));
@@ -348,15 +348,15 @@ void class_finite_chain_sweeper::write_chain_to_file() {
 
     // Write all the environment blocks
     counter = 0;
-    hdf5->write_dataset(Textra::to_RowMajor(get_ENV_L().back().block), sim_name + "/chain/ENV/L_" + std::to_string(get_ENV_L().back().get_position()));
-    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/L_" + std::to_string(get_ENV_L().back().get_position()), get_ENV_L().back().size, "sites");
-    hdf5->write_dataset(Textra::to_RowMajor(get_ENV_R().front().block), sim_name + "/chain/ENV/R_" + std::to_string(get_ENV_R().front().get_position()));
-    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/R_" + std::to_string(get_ENV_R().front().get_position()), get_ENV_R().front().size, "sites");
+    hdf5->write_dataset(Textra::to_RowMajor(get_ENV_L().back().block), sim_name + "/chain/ENV/L");
+    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/L", get_ENV_L().back().size, "sites");
+    hdf5->write_dataset(Textra::to_RowMajor(get_ENV_R().front().block), sim_name + "/chain/ENV/R");
+    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/R", get_ENV_R().front().size, "sites");
 
-    hdf5->write_dataset(Textra::to_RowMajor(get_ENV2_L().back().block), sim_name + "/chain/ENV2/L_" + std::to_string(get_ENV2_L().back().get_position()));
-    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/L_" + std::to_string(get_ENV2_L().back().get_position()), get_ENV2_L().back().size, "sites");
-    hdf5->write_dataset(Textra::to_RowMajor(get_ENV2_R().front().block), sim_name + "/chain/ENV2/R_" + std::to_string(get_ENV2_R().front().get_position()));
-    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/R_" + std::to_string(get_ENV2_R().front().get_position()), get_ENV2_R().front().size, "sites");
+    hdf5->write_dataset(Textra::to_RowMajor(get_ENV2_L().back().block), sim_name + "/chain/ENV2/L");
+    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/L", get_ENV2_L().back().size, "sites");
+    hdf5->write_dataset(Textra::to_RowMajor(get_ENV2_R().front().block), sim_name + "/chain/ENV2/R");
+    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/R", get_ENV2_R().front().size, "sites");
 
     // Write relevant quantities
     std::vector<double> entanglement_entropies;

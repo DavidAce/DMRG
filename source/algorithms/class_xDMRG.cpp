@@ -99,8 +99,14 @@ void class_xDMRG::run() {
     }
     t_tot.toc();
     print_status_full();
-    env_storage->write_chain_to_file();
     measurement->compute_all_observables_from_finite_chain();
+
+    ccout(3) << "STATUS: Storing table_entry_to_file\n";
+    store_table_entry_to_file(true);
+    ccout(3) << "STATUS: Storing chain_entry_to_file\n";
+    store_chain_entry_to_file(true);
+    ccout(3) << "STATUS: Storing storing mps to file\n";
+    store_mps_to_file(true);
     // Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
         hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction");
@@ -586,10 +592,12 @@ void class_xDMRG::find_energy_range() {
 
 }
 
-void class_xDMRG::store_table_entry_to_file(){
-    if (Math::mod(iteration, store_freq) != 0) {return;}
-    if (not env_storage->position_is_the_middle()) {return;}
-    if (store_freq == 0){return;}
+void class_xDMRG::store_table_entry_to_file(bool force){
+    if(not force) {
+        if (Math::mod(iteration, store_freq) != 0) { return; }
+        if (not env_storage->position_is_the_middle()) { return; }
+        if (store_freq == 0) { return; }
+    }
     compute_observables();
     t_sto.tic();
     table_xdmrg->append_record(
@@ -613,10 +621,12 @@ void class_xDMRG::store_table_entry_to_file(){
     t_sto.toc();
 }
 
-void class_xDMRG::store_chain_entry_to_file(){
-    if (Math::mod(iteration, store_freq) != 0) {return;}
-    if (store_freq == 0){return;}
-    if (not (env_storage->get_direction() == 1 or env_storage->position_is_the_right_edge())){return;}
+void class_xDMRG::store_chain_entry_to_file(bool force){
+    if (not force) {
+        if (Math::mod(iteration, store_freq) != 0) { return; }
+        if (store_freq == 0) { return; }
+        if (not(env_storage->get_direction() == 1 or env_storage->position_is_the_right_edge())) { return; }
+    }
     t_sto.tic();
     table_xdmrg_chain->append_record(
             iteration,

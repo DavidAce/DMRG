@@ -41,9 +41,9 @@ public:
     void initialize_constants()                         override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
-    void store_table_entry_to_file()                    override;
-    void store_chain_entry_to_file();
-    void store_mps_to_file(bool force = false);
+    void store_table_entry_to_file(bool force = false)                    override;
+    void store_chain_entry_to_file(bool force = false);
+    void store_mps_to_file        (bool force = false);
     void single_xDMRG_step();
     void initialize_chain();
     void reset_chain_mps_to_random_product_state(std::string parity = "none");
