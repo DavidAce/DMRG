@@ -151,15 +151,16 @@ if (OpenMP_FOUND)
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
         message(STATUS "OpenMP ON" )
         target_compile_options    (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
-        target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIBRARIES})
+        #        target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIBRARIES})
+                target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIB_NAMES})
         target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
     endif()
-#    get_cmake_property(_variableNames VARIABLES)
-#    foreach (_variableName ${_variableNames})
-#        if("${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP")
-#            message(STATUS "${_variableName}=${${_variableName}}")
-#        endif()
-#    endforeach()
+    get_cmake_property(_variableNames VARIABLES)
+    foreach (_variableName ${_variableNames})
+        if("${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP")
+            message(STATUS "${_variableName}=${${_variableName}}")
+        endif()
+    endforeach()
 else()
     message(STATUS "OpenMP OFF" )
 endif()
@@ -210,7 +211,7 @@ include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file f
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
-include(cmake-modules/Fetch_Armadillo.cmake)                # Armadillo library
+#include(cmake-modules/Fetch_Armadillo.cmake)                # Armadillo library
 
 
 ######################################
@@ -244,7 +245,7 @@ message("    BLAS     :   ${BLAS_LIBRARIES}")
 message("    LAPACK   :   ${LAPACK_LIBRARIES}")
 message("    LAPACKE  :   ${LAPACKE_LIBRARIES}")
 message("    EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
-message("    ARMADILLO:   ${ARMADILLO_INCLUDE_DIRS}")
+#message("    ARMADILLO:   ${ARMADILLO_INCLUDE_DIRS}")
 message("    HDF5     :   ${HDF5_LIBRARIES};${HDF5_CXX_LIBRARIES};${HDF5_HL_LIBRARIES};${HDF5_CXX_HL_LIBRARIES}")
 message("    ARPACK   :   ${ARPACK_LIBRARIES}")
 message("    ARPACKPP :   ${ARPACKPP_INCLUDE_DIR}")

@@ -421,6 +421,12 @@ double class_measurement::get_energy_mpo(){return energy_mpo;}
 double class_measurement::get_energy_ham(){return energy_ham;}
 double class_measurement::get_energy_mom(){return energy_mom;}
 
+void   class_measurement::set_variance(double new_variance){
+    variance_mpo = new_variance;
+    variance_ham = new_variance;
+    variance_mom = new_variance;
+}
+
 double class_measurement::get_variance_mpo(){return std::abs(variance_mpo);}
 double class_measurement::get_variance_ham(){return std::abs(variance_ham);}
 double class_measurement::get_variance_mom(){return std::abs(variance_mom);}

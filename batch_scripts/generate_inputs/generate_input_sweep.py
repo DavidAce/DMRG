@@ -33,7 +33,7 @@ for num_L in lengths:
                         "model::selfdual_tf_rf_ising::J_sigma"        : "1.0",
                         "model::selfdual_tf_rf_ising::h_sigma"        : "1.0",
 			            "xdmrg::max_length"                           : str(num_L),
-			            "xdmrg::chi_max"                              : "64",
+			            "xdmrg::chi_max"                              : "32",
                         "xdmrg::seed"                                 : str(num_total),
                         "hdf5::output_folder"                         : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h),
                         "hdf5::output_filename"                       : basename + str(num_r) + '.h5'

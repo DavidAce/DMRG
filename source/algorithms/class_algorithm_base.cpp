@@ -18,6 +18,17 @@
 #include <general/class_svd_wrapper.h>
 #include <algorithms/table_types.h>
 
+/*! \brief Prints the content of a vector nicely */
+template<typename T>
+std::ostream &operator<<(std::ostream &out, const std::list<T> &v) {
+    if (!v.empty()) {
+        out << "[ ";
+        std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
+        out << "]";
+    }
+    return out;
+}
+
 
 namespace s = settings;
 using namespace std;
@@ -32,6 +43,7 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
         :hdf5           (std::move(hdf5_)),
          sim_name       (std::move(sim_name_)),
          sim_type       (sim_type_) {
+    ccout.set_verbosity(settings::console::verbosity);
     set_profiling_labels();
     table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(hdf5, sim_name, "profiling");
     superblock   = std::make_shared<class_superblock>();
@@ -92,6 +104,7 @@ void class_algorithm_base::check_saturation_using_slope(
         std::list<double> &Y_vec,
         std::list<int> &X_vec,
         double new_data,
+        int iter,
         int rate,
         double tolerance,
         double &slope,
@@ -103,16 +116,16 @@ void class_algorithm_base::check_saturation_using_slope(
     // Get the iteration number when you last measured.
     // If the measurement happened less than rate iterations ago, return.
     int last_measurement = X_vec.empty() ? 0 : X_vec.back();
-    if (iteration - last_measurement < rate){return;}
+    if (iter - last_measurement < rate){return;}
 
     // It's time to check. Insert current numbers and remove old ones
     Y_vec.push_back(new_data);
-    X_vec.push_back(iteration);
+    X_vec.push_back(iter);
     unsigned long min_data_points = 2;
     if (Y_vec.size() < min_data_points){return;}
-    auto check_from =  (unsigned long)(X_vec.size()*0.25);
+    auto check_from =  (unsigned long)(X_vec.size()*0.5); //Check the last half of the measurements in Y_vec.
     while (X_vec.size() - check_from < min_data_points and check_from > 0){
-        check_from -=1;
+        check_from -=1; //Decrease check from if out of bounds.
     }
 
 
@@ -152,17 +165,22 @@ void class_algorithm_base::check_saturation_using_slope(
         //If the average slope is very close to zero
         has_saturated = true;
         reason1 = true;
+    }else{
+        has_saturated = false;
     }
 
-    if(slope  <  10*relative_tolerance and standard_deviation > 0.25 * avgY and check_from > 0){
-        // If the slope is not too large but still larger than the tolerance.
-        // AND the "noise" is large.
-        // This happens when chi is too small. Then we say that the quantity has saturated
-        // because "it can't get better with given chi".
-        has_saturated = true;
-        reason2 = true;
+//    if(slope  <  10*relative_tolerance and standard_deviation > 0.25 * avgY and check_from > 0){
+//        // If the slope is not too large but still larger than the tolerance.
+//        // AND the "noise" is large.
+//        // This happens when chi is too small. Then we say that the quantity has saturated
+//        // because "it can't get better with given chi".
+//        has_saturated = true;
+//        reason2 = true;
+//
+//    }else{
+//        has_saturated = false;
+//    }
 
-    }
 //    if(slope < 0.01*avgY   and standard_deviation > 0.25 * avgY ){
 //        // If the average change per iteration is about 1%,
 //        // AND the "noise" is large.
@@ -171,20 +189,19 @@ void class_algorithm_base::check_saturation_using_slope(
 //        has_saturated = true;
 //        reason3 = true;
 //    }
-    if (settings::console::verbosity >= 2 and has_saturated) {
-        std::cout << setprecision(16);
-        std::cout << "change per step      : " << slope                 << std::endl
-                  << "relative_tolerance   : " << relative_tolerance    << std::endl
-                  << "standard_deviation   : " << standard_deviation    << std::endl
-                  << "avgY                 : " << avgY                  << std::endl
-                  << "check from           : "<< check_from             << std::endl
-                  << "because"                                          << std::endl
-                  << "has_saturated        : " << has_saturated         << std::endl
-                  << "reason 1             : " << std::boolalpha << reason1 << std::endl
-                  << "reason 2             : " << std::boolalpha << reason2 << std::endl
-//                  << " \nreason 3             :" << std::boolalpha << reason3
-                  << std::endl;
-    }
+
+    ccout(3)  << setprecision(16);
+    ccout(3)  << "change per step      : " << slope                 << '\n'
+              << "relative_tolerance   : " << relative_tolerance    << '\n'
+              << "standard_deviation   : " << standard_deviation    << '\n'
+              << "avgY                 : " << avgY                  << Y_vec << '\n'
+              << "check from           : " << check_from            << " (" << X_vec.size() << ")\n"
+              << "because"                                          << '\n'
+              << "has_saturated        : " << has_saturated         << '\n'
+              << "reason 1             : " << std::boolalpha << reason1 << '\n'
+              << "reason 2             : " << std::boolalpha << reason2 << '\n'
+              << '\n';
+
 }
 
 void class_algorithm_base::check_convergence_variance_mpo(double threshold,double slope_threshold){
@@ -195,6 +212,7 @@ void class_algorithm_base::check_convergence_variance_mpo(double threshold,doubl
     check_saturation_using_slope(V_mpo_vec,
                                  X_mpo_vec,
                                  measurement->get_variance_mpo(),
+                                 step,
                                  1,
                                  slope_threshold,
                                  V_mpo_slope,
@@ -211,6 +229,7 @@ void class_algorithm_base::check_convergence_variance_ham(double threshold,doubl
     check_saturation_using_slope(V_ham_vec,
                                  X_ham_vec,
                                  measurement->get_variance_ham(),
+                                 step,
                                  1,
                                  slope_threshold,
                                  V_ham_slope,
@@ -227,6 +246,7 @@ void class_algorithm_base::check_convergence_variance_mom(double threshold,doubl
     check_saturation_using_slope(V_mom_vec,
                                  X_mom_vec,
                                  measurement->get_variance_mom(),
+                                 step,
                                  1,
                                  slope_threshold,
                                  V_mom_slope,
@@ -242,6 +262,7 @@ void class_algorithm_base::check_convergence_entanglement(double slope_threshold
     check_saturation_using_slope(S_vec,
                                  XS_vec,
                                  measurement->get_entanglement_entropy(),
+                                 step,
                                  1,
                                  slope_threshold,
                                  S_slope,
@@ -259,7 +280,7 @@ void class_algorithm_base::update_bond_dimension(){
        and chi_temp < chi_max
        and measurement->get_chi() == chi_temp){
         chi_temp = std::min(chi_max, (long)(chi_temp * 2));
-        std::cout << "New chi = " << chi_temp << std::endl;
+        ccout(1) << "New chi = " << chi_temp << '\n';
         clear_saturation_status();
     }
     if(chi_temp == chi_max){
@@ -596,7 +617,7 @@ void class_algorithm_base::print_status_update() {
     t_prt.tic();
     std::cout << setprecision(16) << fixed << left;
     ccout(1) << left  << sim_name << " ";
-    ccout(1) << left  << "Step: "                       << setw(10) << iteration;
+    ccout(1) << left  << "Iter: "                       << setw(10) << iteration;
     ccout(1) << left  << "E: ";
     switch(sim_type) {
         case SimulationType::iDMRG:
@@ -651,26 +672,32 @@ void class_algorithm_base::print_status_update() {
             break;
     }
     ccout(1) << left  << " Convergence [";
-    ccout(1) << left  << " S-"  << std::boolalpha << setw(6) << entanglement_has_converged;
     switch(sim_type){
         case SimulationType::iDMRG:
+            ccout(1) << left  << " S-"   << std::boolalpha << setw(6) << entanglement_has_converged;
+            ccout(1) << left  << " σ²-"  << std::boolalpha << setw(6) << variance_mpo_has_converged;
+            break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
             ccout(1) << left  << " σ²-"  << std::boolalpha << setw(6) << variance_mpo_has_converged;
             break;
         case SimulationType::iTEBD:
+            ccout(1) << left  << " S-"  << std::boolalpha << setw(6) << entanglement_has_converged;
             break;
     }
     ccout(1) << left  << "]";
     ccout(1) << left  << " Saturation [";
-    ccout(1) << left  << " S-"  << std::boolalpha << setw(6) << entanglement_has_saturated;
     switch(sim_type){
         case SimulationType::iDMRG:
+            ccout(1) << left  << " S-"   << std::boolalpha << setw(6) << entanglement_has_saturated;
+            ccout(1) << left  << " σ²-"  << std::boolalpha << setw(6) << variance_mpo_has_saturated;
+            break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
             ccout(1) << left  << " σ²-"  << std::boolalpha << setw(6) << variance_mpo_has_saturated;
             break;
         case SimulationType::iTEBD:
+            ccout(1) << left  << " S-"   << std::boolalpha << setw(6) << entanglement_has_saturated;
             break;
     }
     ccout(1) << left  << "]";
@@ -743,8 +770,8 @@ void class_algorithm_base::print_status_full(){
 
     ccout(0)  << setw(20) << "Simulation converged : " << std::boolalpha << simulation_has_converged << std::endl;
     ccout(0)  << setw(20) << "S slope              = " << setprecision(16) << fixed      << S_slope
-                          << "Converged: " << std::boolalpha << entanglement_has_converged
-                          << "Saturated: " << std::boolalpha << entanglement_has_saturated
+                          << "  Converged: " << std::boolalpha << entanglement_has_converged
+                          << "  Saturated: " << std::boolalpha << entanglement_has_saturated
                           << std::endl;
     switch(sim_type){
         case SimulationType::iDMRG:
@@ -756,8 +783,8 @@ void class_algorithm_base::print_status_full(){
         case SimulationType::xDMRG:
 //            ccout(0)  << setw(20) << "σ² MPO slope         = " << setprecision(16) << fixed      << V_mpo_slope  << " " << std::boolalpha << variance_mpo_has_converged << std::endl;
             ccout(0)  << setw(20) << "σ² MPO slope         = " << setprecision(16) << fixed      << V_mpo_slope
-                      << "Converged: " << std::boolalpha << variance_mpo_has_converged
-                      << "Saturated: " << std::boolalpha << variance_mpo_has_saturated
+                      << "  Converged: " << std::boolalpha << variance_mpo_has_converged
+                      << "  Saturated: " << std::boolalpha << variance_mpo_has_saturated
                       << std::endl;
             break;
         case SimulationType::iTEBD:

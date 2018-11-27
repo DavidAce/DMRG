@@ -14,7 +14,7 @@
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_eigsolver_props.h>
 //#include <general/class_eigsolver_elemental.h>
-#include <general/class_eigsolver_armadillo.h>
+//#include <general/class_eigsolver_armadillo.h>
 #include <general/class_eigsolver_arpack.h>
 #include <general/class_eigsolver.h>
 #include <Eigen/Core>
@@ -56,41 +56,46 @@ void class_xDMRG::run() {
     set_random_fields_in_chain_mpo();
     std::cout << "Parameters on the finite chain: \n" <<std::endl;
     env_storage->print_hamiltonians();
-    int full_iters = 5;
     find_energy_range();
     while(true) {
-        ccout(2) << "Starting single xDMRG step\n";
+        ccout(3) << "STATUS: Starting single xDMRG step\n";
         single_xDMRG_step();
-        ccout(2) << "Starting overwrite local env\n";
+        ccout(3) << "STATUS: Starting overwrite local env\n";
         env_storage_overwrite_local_ALL();
-        ccout(2) << "Storing table_entry_to_file\n";
+        ccout(3) << "STATUS: Storing table_entry_to_file\n";
         store_table_entry_to_file();
-        ccout(2) << "Storing chain_entry_to_file\n";
+        ccout(3) << "STATUS: Storing chain_entry_to_file\n";
         store_chain_entry_to_file();
-        ccout(2) << "Storing profiling_to_file\n";
+        ccout(3) << "STATUS: Storing profiling_to_file\n";
         store_profiling_to_file_total();
-        ccout(2) << "Storing storing mps to file\n";
+        ccout(3) << "STATUS: Storing storing mps to file\n";
         store_mps_to_file();
+        check_convergence_all();
         print_status_update();
 
         // It's important not to perform the last step.
         // That last state would not get optimized
         if(env_storage->position_is_the_middle()) {
-            check_convergence_all();
-            if (iteration >= full_iters
-            and (iteration >= max_sweeps
-                 or simulation_has_converged
-                 or simulation_has_to_stop))
-            {
-                break;
+            if(iteration >= full_iters){
+                update_bond_dimension();
             }
         }
-        ccout(2) << "Enlarging environment\n";
+        if (iteration >= full_iters
+            and (iteration >= max_sweeps
+            or simulation_has_converged
+            or simulation_has_to_stop))
+        {
+            break;
+        }
+
+
+        ccout(3) << "STATUS: Enlarging environment\n";
         enlarge_environment(env_storage->get_direction());
-        ccout(2) << "Moving environment\n";
+        ccout(3) << "STATUS: Moving environment\n";
         env_storage_move();
         iteration = env_storage->get_sweeps();
-        ccout(2) << "Finished single xDMRG step\n";
+        step++;
+        ccout(3) << "STATUS: Finished single xDMRG step\n";
     }
     t_tot.toc();
     print_status_full();
@@ -111,24 +116,12 @@ void class_xDMRG::single_xDMRG_step() {
  */
     t_sim.tic();
     t_opt.tic();
-//    bool compare = false;
-    ccout(2) << "Constructing theta \n";
+    ccout(3) << "STATUS: Constructing theta \n";
     Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
-//    xDMRG_Mode mode = chi_temp <= 12 ? xDMRG_Mode::FULL : xDMRG_Mode::PARTIAL;
-    xDMRG_Mode mode = xDMRG_Mode::PARTIAL;
-
-    switch (mode){
-        case xDMRG_Mode::FULL:
-            theta = find_state_with_greatest_overlap_full_diag(theta);
-            t_opt.toc();
-            break;
-        case xDMRG_Mode::PARTIAL:
-//            auto dummy = find_state_with_greatest_overlap_part_diag2(theta);
-            theta = find_state_with_greatest_overlap_part_diag3(theta);
-            t_opt.toc();
-            break;
-    }
-    ccout(2) << "Truncating theta \n";
+    xDMRG_Mode mode = chi_temp <= 16 ? xDMRG_Mode::FULL : xDMRG_Mode::PARTIAL;
+    theta = find_state_with_greatest_overlap_part_diag3(theta,mode);
+    t_opt.toc();
+    ccout(3) << "STATUS: Truncating theta \n";
 
     t_svd.tic();
     superblock->truncate_MPS(theta, chi_temp, settings::precision::SVDThreshold);
@@ -137,182 +130,46 @@ void class_xDMRG::single_xDMRG_step() {
     measurement->set_not_measured();
     t_sim.toc();
 
-
-
-
-//            if (false) {
-//                std::unique_ptr<class_mps_2site> MPS_backup = std::make_unique<class_mps_2site>(*superblock->MPS);
-////                superblock->truncate_MPS(theta, 256, settings::precision::SVDThreshold);
-//                measurement->set_not_measured();
-//                measurement->compute_all_observables_from_superblock(theta);
-//                compare = true;
-//                std::cout << "Iteration: " << iteration << "    position: " << env_storage->get_position() << std::endl;
-//                std::cout << "      Variance before: " << setw(12) << std::setprecision(10)
-//                          << std::log10(measurement->get_variance_mpo()) << std::endl;
-//                if (iteration == 5 and env_storage->get_position() == 7) {
-//                    std::cout << "Singular values before : \n" << superblock->MPS->LC << std::endl;
-//                }
-//                superblock->MPS->set_mps(
-//                        MPS_backup->MPS_A->get_L(),
-//                        MPS_backup->MPS_A->get_G(),
-//                        MPS_backup->LC,
-//                        MPS_backup->MPS_B->get_G(),
-//                        MPS_backup->MPS_B->get_L()
-//                        );
-//
-//            }
-////            measurement->set_not_measured();
-////            measurement->compute_all_observables_from_superblock();
-//            if (compare) {
-//                std::cout << "      Variance after : " << setw(12) << std::setprecision(10)
-//                          << std::log10(measurement->get_variance_mpo()) << std::endl;
-//                if (iteration == 5 and env_storage->get_position() == 7) {
-//                    std::cout << "Singular values after  : \n" << superblock->MPS->LC << std::endl;
-//                }
-////                std::cout << "HA = \n"
-////                          << superblock->HA->get_parameter_values()[0] << ' '
-////                          << superblock->HA->get_parameter_values()[1] << ' '
-////                          << superblock->HA->get_parameter_values()[2] << ' '
-////                          << std::endl;
-////
-////
-////                std::cout << "HB = \n"
-////                          << superblock->HB->get_parameter_values()[0] << ' '
-////                          << superblock->HB->get_parameter_values()[1] << ' '
-////                          << superblock->HB->get_parameter_values()[2] << ' '
-////                          << std::endl;
-//
-//            }
-//
 }
 
-Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overlap_full_diag(Eigen::Tensor<Scalar, 4> &theta){
-//    Eigen::Tensor<Scalar,1> theta = superblock->MPS->get_theta().reshape(superblock->shape1);
-    long shape = theta.size();
-    double L   = env_storage->get_length();
-    t_ham.tic();
-    auto H_local = superblock->get_H_local_rank2();
-    assert(H_local.dimension(0) == shape);
-    assert(H_local.dimension(1) == shape);
-    t_ham.toc();
-    t_ham.toc();
-    //Sparcity seems to be about 5-15%. Better to do dense.
-    class_eigsolver_armadillo solver;
-    Eigen::VectorXd  eigvals(shape);
-    Eigen::MatrixXcd eigvecs(shape,shape);
-    t_eig.tic();
-    solver.eig_sym(shape, H_local.data(), eigvals.data(), eigvecs.data(),true);
-    t_eig.toc();
-    Eigen::Map<Textra::VectorType<Scalar>> theta_vector (theta.data(),shape);
-    Textra::VectorType<double> overlaps = (theta_vector.conjugate().transpose() * eigvecs).cwiseAbs();
-    long best_state;
-    double max_overlap = overlaps.cwiseAbs().maxCoeff(&best_state);
-    double offset = energy_target - eigvals(best_state)/L;
-    if (false){
-//    if (std::abs(offset) > 0.01 * (energy_max - energy_min)){
-        (eigvals.array() - energy_target*L).cwiseAbs().minCoeff(&best_state);
-        max_overlap = overlaps(best_state);
-        std::cout << "Finding state with closest energy:  " << std::setprecision(10) << max_overlap << " offset: " << setw(12) << offset << " (target = " << energy_target << ")" << " position: " << env_storage->get_position()<< std::endl;
-    }else{
-//        std::cout << "Finding state with closest overlap: " << std::setprecision(10) << max_overlap << " offset: " << setw(12) << offset << " (target = " << energy_target << ")" << " position: " << env_storage->get_position()<< std::endl;
-    }
-//    std::cerr << "Armadillo Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
-
-    Textra::MatrixType<Scalar> state = eigvecs.col(best_state);
-    energy_now = eigvals(best_state)/L;
-    return Textra::Matrix_to_Tensor(state, theta.dimensions());
-}
-
-Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overlap_part_diag(Eigen::Tensor<Scalar,4> &theta) {
-    long shape = theta.size();
-    double L    = env_storage->get_length();
-    t_ham.tic();
-    auto H_local = superblock->get_H_local_rank2();
-    assert(H_local.dimension(0) == shape);
-    assert(H_local.dimension(1) == shape);
-    t_ham.toc();
-
-//    long chiA = superblock->MPS->chiA();
-//    long chiB = superblock->MPS->chiB();
-//    long d    = superblock->HA->get_spin_dimension();
-//    std::array<long,4> shape4_theta = {d,chiA,d,chiB};
-//    std::array<long,4> shape4_mpo   = superblock->HA->MPO.dimensions();;
-
-    class_eigsolver_arpack<std::complex<double>, eigsolver_properties::Form::GENERAL> arpack_solver;
-    Eigen::VectorXcd eigvals;
-    Eigen::MatrixXcd eigvecs;
-    Eigen::VectorXd overlaps;
-    std::vector<std::tuple<int,double,double>> results;
-    Eigen::Map<Textra::VectorType<Scalar>> theta_vector (theta.data(),shape);
-    Textra::VectorType <Scalar> theta_res = theta_vector;
-    int nev = std::min((int)(shape/4), 1);
-    int ncv = std::min((int)(shape/2), nev*2);
-    long best_state_idx;
-    double max_overlap;
-    double offset;
-    double overlap_threshold = 1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
-    for (int iter = 0; iter  <  4; iter++){
-        t_eig.tic();
-//        arpack_solver.eig_shift_invert(H_local_ptr.data(), shape, nev,ncv,energy_now*L, Ritz::LM, true,true, theta_res.data());
-
-        //"SHOULD THE RITZ BE 'BE'? here? why LM??"
-        arpack_solver.eig_shift_invert(H_local.data(), shape, nev,ncv,energy_now*L, eigsolver_properties::Ritz::LM, true, false, theta_res.data());
-        t_eig.toc();
-        eigvals         = Eigen::Map<const Eigen::VectorXcd> (arpack_solver.get_eigvals().data(),arpack_solver.GetNevFound());
-        eigvecs         = Eigen::Map<const Eigen::MatrixXcd> (arpack_solver.get_eigvecs().data(),arpack_solver.Rows(),arpack_solver.Cols());
-        overlaps        = (theta_vector.conjugate().transpose() * eigvecs).cwiseAbs();
-        max_overlap     = overlaps.maxCoeff(&best_state_idx);
-        offset          = energy_target - eigvals(best_state_idx).real()/L;
-        results.emplace_back(nev, max_overlap,t_tot.get_age());
-
-        if(max_overlap >= overlap_threshold ){break;}
-//        overlap_threshold  *= 0.8;
-        nev = std::min((int)(shape/4), nev*4);
-        ncv = std::min((int)(shape/2), nev*2);
-        if(nev >= shape/4 ){break;}
+//Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overlap_full_diag(Eigen::Tensor<Scalar, 4> &theta){
+//    long shape = theta.size();
+//    double L   = env_storage->get_length();
+//    t_ham.tic();
+//    auto H_local = superblock->get_H_local_rank2();
+//    assert(H_local.dimension(0) == shape);
+//    assert(H_local.dimension(1) == shape);
+//    t_ham.toc();
+//    t_ham.toc();
+//    //Sparcity seems to be about 5-15%. Better to do dense.
+//    class_eigsolver_armadillo solver;
+//    Eigen::VectorXd  eigvals(shape);
+//    Eigen::MatrixXcd eigvecs(shape,shape);
+//    t_eig.tic();
+//    solver.eig_sym(shape, H_local.data(), eigvals.data(), eigvecs.data(),true);
+//    t_eig.toc();
+//    Eigen::Map<Textra::VectorType<Scalar>> theta_vector (theta.data(),shape);
+//    Textra::VectorType<double> overlaps = (theta_vector.conjugate().transpose() * eigvecs).cwiseAbs();
+//    long best_state;
+//    double max_overlap = overlaps.cwiseAbs().maxCoeff(&best_state);
+//    double offset = energy_target - eigvals(best_state)/L;
+//    if (false){
+////    if (std::abs(offset) > 0.01 * (energy_max - energy_min)){
+//        (eigvals.array() - energy_target*L).cwiseAbs().minCoeff(&best_state);
+//        max_overlap = overlaps(best_state);
+//        std::cout << "Finding state with closest energy:  " << std::setprecision(10) << max_overlap << " offset: " << setw(12) << offset << " (target = " << energy_target << ")" << " position: " << env_storage->get_position()<< std::endl;
+//    }else{
+////        std::cout << "Finding state with closest overlap: " << std::setprecision(10) << max_overlap << " offset: " << setw(12) << offset << " (target = " << energy_target << ")" << " position: " << env_storage->get_position()<< std::endl;
+//    }
+////    std::cerr << "Armadillo Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
+//
+//    Textra::MatrixType<Scalar> state = eigvecs.col(best_state);
+//    energy_now = eigvals(best_state)/L;
+//    return Textra::Matrix_to_Tensor(state, theta.dimensions());
+//}
 
 
-    }
-
-    if(max_overlap <  overlap_threshold){
-        std::cerr << "WARNING: Partial diagonlization -- Overlap very small: " << std::setprecision(10) << max_overlap << "      position: " << env_storage->get_position() << std::endl;
-        std::cerr << "          Overlaps:"  << std::endl;
-        for (auto &res : results){
-            std::cerr << "          nev: " << setw(10) << std::get<0>(res) << "   overlap: " << setprecision(14) << setw(18) << std::get<1>(res) << "       Wall time: " << std::get<2>(res) << std::endl;
-        }
-        std::cerr << "          Running full diagonalization. Wall time: " << t_tot.get_age() << std::endl;
-        class_eigsolver_armadillo solver;
-        Eigen::VectorXd eigvals_real(shape);
-        eigvecs.resize(shape,shape);
-        t_eig.tic();
-        solver.eig_sym(shape, H_local.data(), eigvals_real.data(), eigvecs.data());
-        eigvals = eigvals_real;
-        t_eig.toc();
-        overlaps        = (theta_vector.conjugate().transpose() * eigvecs).cwiseAbs();
-        max_overlap     = overlaps.maxCoeff(&best_state_idx);
-        offset          = energy_target - eigvals(best_state_idx).real()/L;
-        results.emplace_back(std::make_tuple(nev, max_overlap,t_tot.get_age()));
-        std::cerr << "          Full diag complete.           Wall time: " << t_tot.get_age() << std::endl;
-        std::cerr << "          Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
-    }
-//    std::cerr << "Arpack Found overlap: " << setprecision(14) << setw(18) << max_overlap << std::endl;
-
-    energy_now      = eigvals(best_state_idx).real()/L;
-    theta_res       = eigvecs.col(best_state_idx);
-
-    double energy_ubound = energy_target + 0.1*(energy_max-energy_min);
-    double energy_lbound = energy_target - 0.1*(energy_max-energy_min);
-    if(energy_now < energy_lbound or energy_now > energy_ubound){
-        std::cerr << "WARNING: Partial diagonlization -- Energy far from mid-spectrum: " << "Energy =  " << energy_now << " | target = " << energy_target << std::endl;
-    }
-
-
-//    energy_target = energy_now;
-//    if (env_storage->position_is_the_middle()){energy_target = energy_now;}
-    return Textra::Matrix_to_Tensor(theta_res, theta.dimensions());
-}
-
-std::vector<int> generate_size_list(const int shape){
+std::vector<int> class_xDMRG::generate_size_list(const int shape){
     std::vector<int> size_list;
     int min_size = 1;
     int max_size = std::max(1,shape/16);
@@ -321,233 +178,21 @@ std::vector<int> generate_size_list(const int shape){
         size_list.push_back(tmp_size);
         tmp_size *= 4;
     }
+
+    if (shape <= settings::precision::MaxSizeFullDiag){ // Only do this for small enough matrices
+        size_list.push_back(-1); // "-1" means doing a full diagonalization with lapack instead of arpack.
+    }
     return size_list;
 }
 
 
-Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overlap_part_diag2(Eigen::Tensor<Scalar,4> &theta) {
-    double start_time = t_tot.get_age();
-    long shape = theta.size();
-    double L    = env_storage->get_length();
-    t_ham.tic();
-    auto H_local    = superblock->get_H_local_rank2();
-    auto H_local_sq = superblock->get_H_local_sq_rank2();
-    assert(H_local.dimension(0) == shape);
-    assert(H_local.dimension(1) == shape);
-    t_ham.toc();
-
-    class_eigsolver_arpack<std::complex<double>, eigsolver_properties::Form::GENERAL> arpack_solver;
-    Eigen::VectorXcd eigvals;
-    Eigen::MatrixXcd eigvecs;
-    Eigen::VectorXd overlaps;
-    std::vector<std::tuple<int,double,double,double,double,double,double>> result_log;
-    Eigen::Map<Textra::VectorType<Scalar>> theta_old (theta.data(),shape);
-    Textra::VectorType <Scalar> theta_new;
-    Textra::VectorType <Scalar> theta_opt;
-    Textra::VectorType <Scalar> theta_eigen;
-    Textra::VectorType <Scalar> theta_res;
-    double energy_new   = 0;
-    Scalar variance_new = 0;
-    double overlap_new  = 0;
-
-//    int nev = std::min((int)(shape/4), 1);
-    int ncv = std::min((int)(shape/2), 4);
-    long best_state_idx, worst_state_idx;
-    double max_overlap, min_overlap, sq_sum_overlap;
-    double subspace_quality;
-    double offset;
-    double overlap_threshold          = 1 - 1e-4; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
-    double subspace_quality_threshold = 1e-4;
-    for (auto &nev : generate_size_list(shape)){
-        t_eig.tic();
-        arpack_solver.eig_shift_invert(H_local.data(), shape, nev,ncv,energy_now*L, eigsolver_properties::Ritz::LM, true, true);
-        t_eig.toc();
-        eigvals         = Eigen::Map<const Eigen::VectorXcd> (arpack_solver.get_eigvals().data(),arpack_solver.GetNevFound());
-        eigvecs         = Eigen::Map<const Eigen::MatrixXcd> (arpack_solver.get_eigvecs().data(),arpack_solver.Rows(),arpack_solver.Cols());
-        overlaps         = (theta_old.adjoint() * eigvecs).cwiseAbs();
-        max_overlap      = overlaps.maxCoeff(&best_state_idx);
-        min_overlap      = overlaps.minCoeff(&worst_state_idx);
-        sq_sum_overlap   = overlaps.cwiseAbs2().sum();
-        subspace_quality = 1.0 - sq_sum_overlap;
-        offset           = energy_target - eigvals(best_state_idx).real()/L;
-        result_log.emplace_back(nev, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig.get_last_time_interval(),t_tot.get_age());
-
-        if(max_overlap >= overlap_threshold ){break;}
-        if(subspace_quality < subspace_quality_threshold){break;}
-        ncv = std::min((int)(shape/2), nev*16);
-    }
 
 
-    if (subspace_quality >= subspace_quality_threshold and max_overlap < overlap_threshold){
-        class_eigsolver_armadillo solver;
-        Eigen::VectorXd eigvals_real(shape);
-        eigvecs.resize(shape,shape);
-        t_eig.tic();
-        solver.eig_sym(shape, H_local.data(), eigvals_real.data(), eigvecs.data(),true);
-        eigvals = eigvals_real;
-        t_eig.toc();
-        overlaps         = (theta_old.adjoint() * eigvecs).cwiseAbs();
-        max_overlap      = overlaps.maxCoeff(&best_state_idx);
-        min_overlap      = overlaps.minCoeff(&worst_state_idx);
-        sq_sum_overlap   = overlaps.cwiseAbs2().sum();
-        subspace_quality = 1.0 - sq_sum_overlap;
-        offset           = energy_target - eigvals(best_state_idx).real()/L;
-        result_log.emplace_back(shape, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig.get_last_time_interval(), t_tot.get_age());
-//        std::cerr << "          Full diag complete.           Wall time: " << t_tot.get_age() << std::endl;
-    }
-
-    int nev = eigvals.size();
-
-
-    std::cout << setprecision(16);
-    if(nev >= 2){
-        Eigen::MatrixXcd H_local_mat = Textra::Tensor2_to_Matrix(H_local);
-
-        double sparcity = (double) (H_local_mat.array().cwiseAbs() > 1e-12 )
-                .select(Eigen::MatrixXd::Ones(H_local_mat.rows(),H_local_mat.cols()),0).sum()
-                / (double)H_local.size();
-        std::cout << "WARNING: Partial diagonlization -- overlap too small. Starting subspace optimization \n"
-                  << std::setprecision(10)
-                  << "      max overlap : "    << max_overlap << std::endl
-                  << "      position    : "    << env_storage->get_position() << std::endl
-                  << "      chi         : "    << chi_temp << std::endl
-                  << "      shape       : "    << shape    << " x " << shape << std::endl
-                  << "      sparcity    : "    << sparcity << std::endl
-                  << "      start time  : "    << start_time << std::endl
-                  << "      current time: "    << t_tot.get_age() << std::endl
-                  << std::endl<< std::flush;
-
-        std::cout << setw(12) << right << "n eigvecs"
-                  << setw(24) << right << "max overlap"
-                  << setw(24) << right << "min overlap"
-                  << setw(32) << right << "eps = Σ_i |<state_i|old>|^2"
-                  << setw(32) << right << "quality = log10(1 - eps)"
-                  << setw(18) << right << "Eig Time[ms]"
-                  << setw(18) << right << "Wall Time[s]"
-                  << '\n';
-        for(auto &log : result_log){
-            std::cout << std::setprecision(16)
-                      << setw(12) << right << std::get<0>(log)
-                      << setw(24) << right << std::get<1>(log)
-                      << setw(24) << right << std::get<2>(log)
-                      << setw(32) << right << std::get<3>(log)
-                      << setw(32) << right << std::get<4>(log) << std::setprecision(3)
-                      << setw(18) << right << std::get<5>(log)*1000
-                      << setw(18) << right << std::get<6>(log)
-                      << '\n';
-        }
-        std::cout << std::endl << std::flush;
-
-        //Should really use xstart as the projection towards the previous theta, not best overlapping!
-        Eigen::VectorXd xstart = (theta_old.adjoint() * eigvecs).cwiseAbs2().normalized();
-
-
-        class_tic_toc t_lbfgs(true,5,"lbfgs");
-        std::vector<std::tuple<std::string,double,Scalar,double,size_t,double,double>> opt_log;
-        {
-            t_lbfgs.tic();
-            Textra::VectorType<Scalar> theta_0 = eigvecs * xstart;
-            size_t iter_0 = 0;
-            double energy_0 = xstart.cwiseAbs2().cwiseProduct(eigvals.real()).sum() / L;
-            Scalar variance_0 = std::log10(
-                    ((theta_0.adjoint() * Textra::Tensor2_to_Matrix(H_local_sq) * theta_0).sum() -
-                     energy_0 * energy_0 * L * L) / L);
-            double overlap_0 = (theta_old.adjoint() * theta_0).cwiseAbs().sum();
-            t_lbfgs.toc();
-            opt_log.emplace_back("Start (best overlap)", energy_0, variance_0, overlap_0, iter_0, t_lbfgs.get_last_time_interval(), t_tot.get_age());
-        }
-
-
-        {
-            using namespace LBFGSpp;
-            class_xDMRG_functor functor
-                    (shape,nev,
-//                     H_local.data(),
-                     H_local_sq.data(),
-                     eigvecs.data(),
-                     eigvals.data()
-                    );
-            double threshold = 1e-3;
-            LBFGSpp::LBFGSParam<double> param;
-            param.max_iterations = 100;
-            param.epsilon        = threshold;
-            param.delta          = threshold;
-            param.past           = 1;
-
-            // Create solver and function object
-            LBFGSpp::LBFGSSolver<double> solver_3(param);
-            // x will be overwritten to be the best point found
-            double fx;
-            t_lbfgs.tic();
-            int niter = solver_3.minimize(functor, xstart, fx);
-            t_lbfgs.toc();
-            xstart.normalize();
-            theta_new    = eigvecs * xstart;
-            energy_new   = xstart.cwiseAbs2().cwiseProduct(eigvals.real()).sum() / L;
-            variance_new = std::log10(
-                    ((theta_new.adjoint() * Textra::Tensor2_to_Matrix(H_local_sq) * theta_new).sum() -
-                     energy_new * energy_new * L * L) / L);
-            overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
-            opt_log.emplace_back("LBFGS++", energy_new, variance_new, overlap_new, niter, t_lbfgs.get_last_time_interval(), t_tot.get_age());
-        }
-
-
-
-
-
-
-        std::cout << std::setprecision(16)
-                  <<"       "<< setw(24) << left << "Algorithm"
-                  <<"       "<< setw(24) << left << "energy"
-                  <<"       "<< setw(44) << left << "variance"
-                  <<"       "<< setw(24) << left << "overlap"
-                  <<"       "<< setw(8)  << left << "iter"
-                  <<"       "<< setw(20) << left << "Elapsed time"
-                  <<"       "<< setw(20) << left << "Wall time"
-                  << std::endl;
-        for(auto &log : opt_log){
-            std::cout << std::setprecision(16)
-                      << "      " <<setw(24) << left << std::get<0>(log)
-                      << "      " <<setw(24) << left << std::get<1>(log)
-                      << "      " <<setw(44) << left << std::get<2>(log)
-                      << "      " <<setw(24) << left << std::get<3>(log)
-                      << "      " <<setw(8)  << left << std::get<4>(log)
-                      << "      " <<setw(20) << left << std::get<5>(log)
-                      << "      " <<setw(20) << left << std::get<6>(log)
-                      << std::endl;
-        }
-        std::cout << std::endl;
-
-
-    }else {
-//        theta_new       = eigvecs.col(best_state_idx);
-//        energy_new      = eigvals(best_state_idx).real()/L;
-    }
-//    theta_res  = theta_new;
-//    energy_now = energy_new;
-
-    double energy_ubound = energy_target + 0.1*(energy_max-energy_min);
-    double energy_lbound = energy_target - 0.1*(energy_max-energy_min);
-    if(energy_now < energy_lbound or energy_now > energy_ubound){
-        std::cout << "WARNING: Partial diagonlization -- Energy far from mid-spectrum: " << "Energy =  " << energy_now << " | target = " << energy_target << std::endl;
-    }
-    return theta; //Textra::Matrix_to_Tensor(theta_res, theta.dimensions());
-}
-
-
-template <typename Derived>
-std::vector<size_t> make_sorted_index(const Eigen::MatrixBase<Derived>& values) {
-    std::vector<size_t> index(values.derived().size());
-    std::iota(index.begin(), index.end(), 0);
-    std::sort(index.begin(), index.end(), [&values](size_t a, size_t b) { return std::real(values[a]) > std::real(values[b]); } );
-    return index;
-}
-
-void sort_and_filter_eigenstates(Eigen::VectorXcd &eigvals,
+void class_xDMRG::sort_and_filter_eigenstates(Eigen::VectorXcd &eigvals,
                                  Eigen::MatrixXcd &eigvecs,
                                  Eigen::VectorXd  &overlaps,
                                  int &nev,
-                                 double overlap_cutoff = 1e-2)
+                                 double overlap_cutoff)
 {
     if (nev == 1){return;}
     auto sorted_idx = make_sorted_index(overlaps);
@@ -576,51 +221,19 @@ void sort_and_filter_eigenstates(Eigen::VectorXcd &eigvals,
 }
 
 
-Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overlap_part_diag3(Eigen::Tensor<Scalar,4> &theta) {
-    double start_time = t_tot.get_age();
+Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overlap_part_diag3(Eigen::Tensor<Scalar,4> &theta, xDMRG_Mode mode) {
+//    double start_time = t_tot.get_age();
     long shape = theta.size();
     double chain_length    = env_storage->get_length();
     t_ham.tic();
-//    auto H_local    = superblock->get_H_local_rank2();
-//    auto H_local_sq = superblock->get_H_local_sq_rank2();
-//    Eigen::SparseMatrix<double> H_local    = superblock->get_H_local_matrix().real().sparseView().pruned(0.1,1e-14);
-//    H_local.makeCompressed();
-    ccout(2) << "Starting construction of H_local \n";
-    Eigen::MatrixXd H_local(shape,shape);
-    H_local.noalias() = superblock->get_H_local_matrix_real();
-    ccout(2) << "Finished construction H_local \n";
-
-
-//    H_local.makeCompressed();
-//    H_local_sq.makeCompressed();
-//    auto H_local    = superblock->get_H_local_matrix();
-//    assert(H_local.dimension(0) == shape);
-//    assert(H_local.dimension(1) == shape);
+    ccout(3) << "STATUS: Starting construction of H_local \n";
+    Eigen::MatrixXd H_local = superblock->get_H_local_matrix_real();
+    ccout(3) << "STATUS: Finished construction H_local \n";
     t_ham.toc();
-
     t_eig.tic();
-
-//    Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> H_mat_map (H_local.data(),shape,shape);
-//    Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> Hsq_mat_map (H_local.data(),shape,shape);
-//    bool is_real = H_mat_map.imag().isZero(1e-14);
-//    if (is_real){
-//
-//    }
-
-//    matrix_recast matrixRecast(H_local.data(),shape);
-    ccout(2) << "Instantiating StlMatrixProduct \n";
-
+    ccout(3) << "STATUS: Instantiating StlMatrixProduct \n";
     StlMatrixProduct<double> hamiltonian_sparse (H_local.data(),H_local.rows());
-//    SparseMatrixProduct<double> hamiltonian_sparse = matrixRecast.get_as_real_sparse();
-//    SparseMatrixProduct<std::complex<double>> hamiltonian_sparse(H_local.data(),shape);
-    ccout(2) << "Starting LU factorization \n";
-    hamiltonian_sparse.set_shift(energy_now*chain_length);
-    hamiltonian_sparse.FactorOP();
     t_eig.toc();
-    double t_eig_preptime = t_eig.get_last_time_interval();
-
-    Eigen::VectorXcd eigvals;
-    Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd overlaps;
     std::vector<std::tuple<int,double,double,double,double,double,double,double>> result_log;
     Eigen::Map<Textra::VectorType<Scalar>> theta_old (theta.data(),shape);
@@ -631,136 +244,92 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     double energy_new   = 0;
     Scalar variance_new = 0;
     double overlap_new  = 0;
+    double t_lu         = 0;
 
     long best_state_idx, worst_state_idx;
     double max_overlap, min_overlap, sq_sum_overlap;
     double subspace_quality;
     double offset;
-    double overlap_cutoff             = 1e-10;
-    double max_overlap_threshold      = 1 - 1e-4; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
-    double subspace_quality_threshold = 1e-4;
-    ccout(2) << "Starting Arpack \n";
+
+    double prec                       = 1e-10;//settings::precision::VarConvergenceThreshold;
+//    double overlap_cutoff             = prec;
+    double max_overlap_threshold      = 1 - prec; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
+//    double max_overlap_threshold      = 1 - 1e-10; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
+    double subspace_quality_threshold = prec;
+//    double subspace_quality_threshold = 1e-10;
+    double sparcity    = (double)(H_local.array().cwiseAbs() > 1e-15).count()/(double)H_local.size();
+    ccout(2) << "Starting eigensolver \n"
+             << std::setprecision(10)
+             << "      position    : "    << env_storage->get_position() << '\n'
+             << "      chi         : "    << chi_temp << '\n'
+             << "      shape       : "    << shape    << " x " << shape << '\n'
+             << "      sparcity    : "    << sparcity << '\n'
+             << "      Wall time   : "    << t_tot.get_age() << '\n' << '\n' << std::flush;
+
+    using namespace eigutils::eigSetting;
+    class_eigsolver solver;
+    std::string reason = "none";
     for (auto nev : generate_size_list(shape)){
-        ccout(2) << "Instantiating arpack solver \n";
-        class_eigsolver arpack_solver2;
         t_eig.tic();
-        arpack_solver2.eigs_stl(hamiltonian_sparse,nev,-1, energy_now*chain_length,eigutils::eigSetting::Form::SYMMETRIC,eigutils::eigSetting::Ritz::LM,eigutils::eigSetting::Side::R, true,true);
+        double start_time =  t_tot.get_age();
+        if (nev > 0 and mode == xDMRG_Mode::PARTIAL){
+            hamiltonian_sparse.set_shift(energy_now*chain_length);
+            hamiltonian_sparse.FactorOP();
+            t_lu = hamiltonian_sparse.t_factorOp.get_last_time_interval();
+            hamiltonian_sparse.t_factorOp.reset();
+            solver.eigs_stl(hamiltonian_sparse,nev,-1, energy_now*chain_length,Form::SYMMETRIC,Ritz::LM,Side::R, true,false);
+        }else{
+            nev = shape;
+            solver.eig<Type::REAL, Form::SYMMETRIC>(H_local,true,true);
+        }
         t_eig.toc();
-        eigvals           = Eigen::Map<const Eigen::VectorXcd> (arpack_solver2.solution.eigvals.data(),arpack_solver2.solution.meta.cols);
-        eigvecs           = Eigen::Map<const Eigen::MatrixXcd> (arpack_solver2.solution.eigvecs.data(),arpack_solver2.solution.meta.rows,arpack_solver2.solution.meta.cols);
+        auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solver.solution.meta.cols);
+        auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
         overlaps         = (theta_old.adjoint() * eigvecs).cwiseAbs();
-        sort_and_filter_eigenstates(eigvals, eigvecs, overlaps, nev, overlap_cutoff);
+//        sort_and_filter_eigenstates(eigvals, eigvecs, overlaps, nev, overlap_cutoff);
         max_overlap      = overlaps.maxCoeff(&best_state_idx);
         min_overlap      = overlaps.minCoeff(&worst_state_idx);
         sq_sum_overlap   = overlaps.cwiseAbs2().sum();
         subspace_quality = 1.0 - sq_sum_overlap;
-        offset           = energy_target - eigvals(best_state_idx).real()/chain_length;
-        result_log.emplace_back(nev, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig.get_last_time_interval(),t_eig_preptime,t_tot.get_age());
-        t_eig_preptime = 0;
+        offset           = energy_target - eigvals(best_state_idx)/chain_length;
+        result_log.emplace_back(nev, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig.get_last_time_interval(),t_lu,start_time);
 
-        if(max_overlap >= max_overlap_threshold ){break;}
-        if(subspace_quality < subspace_quality_threshold){break;}
+        if(max_overlap >= max_overlap_threshold ){reason = "overlap"; break;}
+        if(subspace_quality < subspace_quality_threshold){reason = "subspace quality"; break;}
     }
-    ccout(2) << "Finished Arpack \n";
+    H_local.resize(0,0);
+    ccout(2) << "Finished eigensolver -- condition: " << reason << '\n';
 
-//    std::cout <<"Target energy: " << energy_now*chain_length << "\n" << "Eigvals \n" << eigvals << std::endl;
+    auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data(),solver.solution.meta.cols);
+    auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
+    int nev = solver.solution.meta.cols;
 
-    if (subspace_quality >= subspace_quality_threshold and max_overlap < max_overlap_threshold){
-        ccout(2) << "Starting Armadillo \n";
-
-        class_eigsolver_armadillo solver;
-        Eigen::VectorXd eigvals_real(shape);
-        Eigen::MatrixXd eigvecs_real(shape,shape);
-//        Eigen::MatrixXd hamiltonian = hamiltonian_sparse.get_matrix().toDense();
-//        eigvecs.resize(shape,shape);
-        int nev = shape;
-        t_eig.tic();
-        solver.eig_sym(nev, H_local.data(), eigvals_real.data(), eigvecs_real.data(),true);
-        eigvals = eigvals_real;
-        eigvecs = eigvecs_real;
-        t_eig.toc();
-        overlaps         = (theta_old.adjoint() * eigvecs).cwiseAbs();
-
-
-//        std::cout <<std::setprecision(10) << "eigvals unsorted \n" << eigvals << std::endl;
-//        std::cout << "overlaps unsorted \n" << overlaps << std::endl;
-
-        sort_and_filter_eigenstates(eigvals, eigvecs, overlaps, nev, overlap_cutoff);
-
-//        std::cout << "eigvals sorted \n" << eigvals << std::endl;
-//        std::cout << "overlaps sorted \n" << overlaps << std::endl;
-
-
-        max_overlap      = overlaps.maxCoeff(&best_state_idx);
-        min_overlap      = overlaps.minCoeff(&worst_state_idx);
-        sq_sum_overlap   = overlaps.cwiseAbs2().sum();
-        subspace_quality = 1.0 - sq_sum_overlap;
-        offset           = energy_target - eigvals(best_state_idx).real()/chain_length;
-        result_log.emplace_back(nev, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig.get_last_time_interval(),t_eig_preptime, t_tot.get_age());
-
-//        std::cout <<"All eigvals: \n" << eigvals << std::endl;
-
-
-//        std::cerr << "          Full diag complete.           Wall time: " << t_tot.get_age() << std::endl;
-        ccout(2) << "Finished Armadillo\n";
-
+    ccout(2)  << setw(12) << right << "n eigvecs"
+              << setw(24) << right << "max overlap"
+              << setw(24) << right << "min overlap"
+              << setw(34) << right << "eps = Σ_i |<state_i|old>|^2"
+              << setw(32) << right << "quality = log10(1 - eps)"
+              << setw(18) << right << "Eig Time[ms]"
+              << setw(18) << right << "LU  Time[ms]"
+              << setw(18) << right << "Wall Time [s]"
+              << '\n';
+    for(auto &log : result_log){
+        ccout(2)  << std::setprecision(16)
+                  << setw(12) << right << std::get<0>(log)
+                  << setw(24) << right << std::get<1>(log)
+                  << setw(24) << right << std::get<2>(log)
+                  << setw(34) << right << std::get<3>(log)
+                  << setw(32) << right << std::get<4>(log) << std::setprecision(3)
+                  << setw(18) << right << std::get<5>(log)*1000
+                  << setw(18) << right << std::get<6>(log)*1000
+                  << setw(18) << right << std::get<7>(log)
+                  << '\n';
     }
-
-    int nev = eigvals.size();
-
+    ccout(2) << '\n' << std::flush;
 
     std::cout << setprecision(16);
-    if(nev >= 2){
-
-//      Eigen::MatrixXcd H_local_mat = Textra::Tensor2_to_Matrix(H_local);
-//        Eigen::Map<Eigen::MatrixXcd> H_local_map(H_local.data(),shape,shape);
-//        double sparcity = (double)H_local.nonZeros() / (double)H_local.size();
-//        double sparcity =(double) (Eigen::Map<Eigen::VectorXd> (H_local.valuePtr(), H_local.nonZeros()).array() != 0).count()/H_local.size();
-
-        double sparcity    = (double)(H_local.array().cwiseAbs() > 1e-15).count()/(double)H_local.size();
-        H_local.resize(0,0);
-//        double sparcity_sq = (double)(H_local_sq.array().cwiseAbs() > 1e-15).count()/(double)H_local_sq.size();
-
-//        double sparcity    = (double) H_local.nonZeros() / (double)H_local.size();
-//        double sparcity_sq = (double) H_local_sq.nonZeros() / (double)H_local_sq.size();
-//        std::cout << "H: \n" << H_local << std::endl;
-        std::cout << "WARNING: Partial diagonlization -- overlap too small. Starting subspace optimization \n"
-                  << std::setprecision(10)
-                  << "      max overlap : "    << max_overlap << std::endl
-                  << "      position    : "    << env_storage->get_position() << std::endl
-                  << "      chi         : "    << chi_temp << std::endl
-                  << "      shape       : "    << shape    << " x " << shape << std::endl
-                  << "      sparcity    : "    << sparcity << std::endl
-//                  << "      sparcity_sq : "    << sparcity_sq << std::endl
-                  << "      start time  : "    << start_time << std::endl
-                  << "      current time: "    << t_tot.get_age() << std::endl
-                  << std::endl<< std::flush;
-
-        std::cout << setw(12) << right << "n eigvecs"
-                  << setw(24) << right << "max overlap"
-                  << setw(24) << right << "min overlap"
-                  << setw(32) << right << "eps = Σ_i |<state_i|old>|^2"
-                  << setw(32) << right << "quality = log10(1 - eps)"
-                  << setw(18) << right << "Eig Time[ms]"
-                  << setw(18) << right << "Prep time[ms]"
-                  << setw(18) << right << "Wall Time"
-                  << '\n';
-        for(auto &log : result_log){
-            std::cout << std::setprecision(16)
-                      << setw(12) << right << std::get<0>(log)
-                      << setw(24) << right << std::get<1>(log)
-                      << setw(24) << right << std::get<2>(log)
-                      << setw(32) << right << std::get<3>(log)
-                      << setw(32) << right << std::get<4>(log) << std::setprecision(3)
-                      << setw(18) << right << std::get<5>(log)*1000
-                      << setw(18) << right << std::get<6>(log)*1000
-                      << setw(18) << right << std::get<7>(log)
-                      << '\n';
-        }
-        std::cout << std::endl << std::flush;
-
-
-
+    if(nev >= 2 and max_overlap < max_overlap_threshold and iteration >= full_iters){
+        double start_time = t_tot.get_age();
         //Should really use xstart as the projection towards the previous theta, not best overlapping!
         Eigen::VectorXd xstart = (theta_old.adjoint() * eigvecs).cwiseAbs2().normalized();
 
@@ -768,74 +337,73 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         class_tic_toc t_lbfgs(true,5,"lbfgs");
         std::vector<std::tuple<std::string,double,Scalar,double,size_t,double,double>> opt_log;
         {
-            ccout(2) << "Starting LBFGS \n";
+            ccout(3) << "STATUS: Starting LBFGS \n";
             t_lbfgs.tic();
-            ccout(2) << "Starting construction of H_local_sq \n";
+            ccout(3) << "STATUS: Starting construction of H_local_sq \n";
             Eigen::MatrixXcd H_local_sq = superblock->get_H_local_sq_matrix();
-            ccout(2) << "Starting construction of H_local_sq \n";
+            ccout(3) << "STATUS: Finished construction of H_local_sq \n";
             t_lbfgs.toc();
             Textra::VectorType<Scalar> theta_0 = eigvecs * xstart;
             size_t iter_0 = 0;
             double energy_0 = xstart.cwiseAbs2().cwiseProduct(eigvals.real()).sum() / chain_length;
+//            Scalar variance_0 = std::log10(measurement->compute_energy_variance_mpo(theta_0.data(),theta.dimensions(),energy_0));
             Scalar variance_0 = std::log10(
                     ((theta_0.adjoint() * H_local_sq.selfadjointView<Eigen::Upper>() * theta_0).sum() -
                      energy_0 * energy_0 * chain_length * chain_length) / chain_length);
             double overlap_0 = (theta_old.adjoint() * theta_0).cwiseAbs().sum();
 
-//        }
-//
-//
-//        {
+            opt_log.emplace_back("Start (best overlap)", energy_0, variance_0, overlap_0, iter_0, t_lbfgs.get_last_time_interval(), start_time);
+            start_time = t_tot.get_age();
             using namespace LBFGSpp;
             class_xDMRG_functor functor
                     (shape,nev,
                      H_local_sq,
-                     eigvecs.data(),
-                     eigvals.data()
+                     solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),
+                     solver.solution.get_eigvals<Form::SYMMETRIC>().data()
                     );
-            double threshold = 1e-4;
+            double threshold = prec;
             LBFGSpp::LBFGSParam<double> param;
-            param.max_iterations = 200;
+            param.max_iterations = 2000;
             param.epsilon        = threshold;
             param.delta          = threshold;
+//            param.ftol           = prec;
             param.past           = 1;
 
             // Create solver and function object
             LBFGSpp::LBFGSSolver<double> solver_3(param);
 
-            opt_log.emplace_back("Start (best overlap)", energy_0, variance_0, overlap_0, iter_0, t_lbfgs.get_last_time_interval(), t_tot.get_age());
+
             // x will be overwritten to be the best point found
             double fx;
             t_lbfgs.tic();
+            ccout(3) << "STATUS: Running LBFGS\n";
             int niter = solver_3.minimize(functor, xstart, fx);
             t_lbfgs.toc();
             xstart.normalize();
             theta_new    = eigvecs * xstart;
-            energy_new   = xstart.cwiseAbs2().cwiseProduct(eigvals.real()).sum() / chain_length;
-            variance_new = std::log10(
-                    ((theta_new.adjoint() * H_local_sq.selfadjointView<Eigen::Upper>() * theta_new).sum() -
-                     energy_new * energy_new * chain_length * chain_length) / chain_length);
+            energy_new   = functor.get_energy() / chain_length;
+            variance_new = functor.get_variance()/chain_length;
             overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
-            opt_log.emplace_back("LBFGS++", energy_new, variance_new, overlap_new, niter, t_lbfgs.get_last_time_interval(), t_tot.get_age());
+            opt_log.emplace_back("LBFGS++", energy_new, std::log10(variance_new), overlap_new, niter, t_lbfgs.get_last_time_interval(), start_time);
+            ccout(3) << "STATUS: Finished LBFGS \n";
         }
-        std::cout << "Finished LBFGS \n";
 
 
 
 
 
 
-        std::cout << std::setprecision(16)
+        ccout(2)  << std::setprecision(16)
                   <<"    "<< setw(24) << left << "Algorithm"
                   <<"    "<< setw(24) << left << "energy"
                   <<"    "<< setw(44) << left << "variance"
                   <<"    "<< setw(24) << left << "overlap"
                   <<"    "<< setw(8)  << left << "iter"
                   <<"    "<< setw(20) << left << "Elapsed time [ms]"
-                  <<"    "<< setw(20) << left << "Wall time"
-                  << std::endl;
+                  <<"    "<< setw(20) << left << "Wall time [s]"
+                  << '\n';
         for(auto &log : opt_log){
-            std::cout << std::setprecision(16)
+            ccout(2) << std::setprecision(16)
                       << "    " <<setw(24) << left << std::get<0>(log)
                       << "    " <<setw(24) << left << std::get<1>(log)
                       << "    " <<setw(44) << left << std::get<2>(log)
@@ -843,17 +411,19 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                       << "    " <<setw(8)  << left << std::get<4>(log) << std::setprecision(3)
                       << "    " <<setw(20) << left << std::get<5>(log)*1000
                       << "    " <<setw(20) << left << std::get<6>(log)
-                      << std::endl;
+                      << '\n';
         }
-        std::cout << std::endl;
+        ccout(2) << '\n';
 
 
     }else {
         theta_new       = eigvecs.col(best_state_idx);
-        energy_new      = eigvals(best_state_idx).real()/chain_length;
+        energy_new      = eigvals(best_state_idx)/chain_length;
+        variance_new    = measurement->compute_energy_variance_mpo(theta_new.data(),theta.dimensions(),eigvals(best_state_idx));
     }
     theta_res  = theta_new;
     energy_now = energy_new;
+    measurement->set_variance(std::abs(variance_new));
 
     double energy_ubound = energy_target + 0.1*(energy_max-energy_min);
     double energy_lbound = energy_target - 0.1*(energy_max-energy_min);
@@ -877,6 +447,10 @@ void class_xDMRG::initialize_chain() {
         }
     }
 }
+
+
+
+
 
 void class_xDMRG::reset_chain_mps_to_random_product_state(std::string parity) {
     std::cout << "Resetting to random product state" << std::endl;
@@ -947,42 +521,7 @@ void class_xDMRG::set_random_fields_in_chain_mpo() {
 
     superblock->HA = env_storage->get_MPO_L().back()->clone();
     superblock->HB = env_storage->get_MPO_R().front()->clone();
-//    std::cout << "HA initial = \n"
-//              << superblock->HA->get_parameter_values()[0] << ' '
-//              << superblock->HA->get_parameter_values()[1] << ' '
-//              << superblock->HA->get_parameter_values()[2] << ' '
-//            << "\n"
-//            << env_storage->get_MPO_L().back()->get_parameter_values()[0]<< ' '
-//            << env_storage->get_MPO_L().back()->get_parameter_values()[1]<< ' '
-//            << env_storage->get_MPO_L().back()->get_parameter_values()[2]<< ' '
-//            << std::endl;
-//
-//
-//    std::cout << "HB initial = \n"
-//              << superblock->HB->get_parameter_values()[0] << ' '
-//              << superblock->HB->get_parameter_values()[1] << ' '
-//              << superblock->HB->get_parameter_values()[2] << ' '
-//            << "\n"
-//            << env_storage->get_MPO_R().front()->get_parameter_values()[0] << ' '
-//            << env_storage->get_MPO_R().front()->get_parameter_values()[1] << ' '
-//            << env_storage->get_MPO_R().front()->get_parameter_values()[2] << ' '
-//            << std::endl;
-
     iteration = env_storage->reset_sweeps();
-
-//
-//
-//    while(true) {
-//        superblock->HA->randomize_hamiltonian();
-//        superblock->HB->randomize_hamiltonian();
-//        env_storage_overwrite_local_MPO();
-//        // It's important not to perform the last step.
-//        if(iteration > 1) {break;}
-//        enlarge_environment(env_storage->get_direction());
-//        env_storage_move();
-//        iteration = env_storage->get_sweeps();
-//    }
-//    iteration = env_storage->reset_sweeps();
 }
 
 void class_xDMRG::find_energy_range() {
@@ -994,8 +533,6 @@ void class_xDMRG::find_energy_range() {
 
 
     // Find energy minimum
-
-
     while(true) {
         single_DMRG_step(chi_during_f_range, eigsolver_properties::Ritz::SR);
         env_storage_overwrite_local_ALL();         //Needs to occurr after update_MPS...
@@ -1106,13 +643,12 @@ void class_xDMRG::store_mps_to_file(bool force){
 
 
 void class_xDMRG::check_convergence_all(){
-    if(not env_storage->position_is_the_middle()){return;}
+//    if(not env_storage->position_is_the_middle()){return;}
 //    if(iteration < 5){return;}
     t_con.tic();
     check_convergence_variance_mpo();
 //    check_convergence_entanglement();
-    update_bond_dimension();
-    if(variance_mpo_has_converged)
+    if(variance_mpo_has_converged and variance_mpo_has_saturated)
     {
         simulation_has_converged = true;
     }
