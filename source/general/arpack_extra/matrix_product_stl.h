@@ -23,7 +23,7 @@ public:
 private:
 
     std::vector<Scalar> A_stl;           // The actual matrix. Given matrices will be copied into this one.
-    const Scalar *A_ptr;                 // A pointer to the matrix, to allow optional copying of the matrix.
+    const Scalar *A_ptr;                 // A pointer to the matrix, to allow optional copying of the matrix. Note that PartialPivLU stores LU in A.
     const int L;                         // The linear matrix dimension
     eigutils::eigSetting::Form form;     // Chooses SYMMETRIC / NONSYMMETRIC mode
     eigutils::eigSetting::Side side;     // Chooses whether to find (R)ight or (L)eft eigenvectors
