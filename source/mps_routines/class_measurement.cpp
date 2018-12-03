@@ -162,6 +162,26 @@ void class_measurement::compute_energy_mpo(){
 
 }
 
+template<typename T>
+double class_measurement::compute_energy_mpo(const T * theta_ptr, Eigen::DSizes<long,4> dsizes) {
+    Eigen::Tensor<std::complex<double>, 4> theta = Eigen::TensorMap<const Eigen::Tensor<const T, 4>>(theta_ptr, dsizes).template cast<std::complex<double>>();
+//    t_ene_mpo.tic();
+    Eigen::Tensor<Scalar, 0>  E =
+                     superblock->Lblock->block
+                    .contract(theta,                                      idx({0},{1}))
+                    .contract(superblock->HA->MPO,                        idx({1,2},{0,2}))
+                    .contract(superblock->HB->MPO,                        idx({3,1},{0,2}))
+                    .contract(theta.conjugate(),                          idx({0,2,4},{1,0,2}))
+                    .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
+//    t_ene_mpo.toc();
+    return std::real(E(0));
+}
+
+template double class_measurement::compute_energy_mpo(const double *,Eigen::DSizes<long,4>);
+template double class_measurement::compute_energy_mpo(const std::complex<double> *, Eigen::DSizes<long,4>);
+
+
+
 
 void class_measurement::compute_energy_ham(){
     t_ene_ham.tic();

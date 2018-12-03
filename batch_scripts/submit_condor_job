@@ -33,10 +33,10 @@ request_disk   = 500
 # 3 minutes), so that it will be matched to run again on a compute "slot"
 # with more memory (according to the new RequestMemory value).
 ##################################################################################
-+MemoryUsage     = ( 3000 ) * 2 / 3
-request_memory   = ( MemoryUsage ) * 3 / 2
-periodic_hold    = ( MemoryUsage >= ( ( RequestMemory ) * 3 / 2 ) )
-periodic_release = (JobStatus == 5) && ((CurrentTime - EnteredCurrentStatus) > 180) && (HoldReasonCode != 34)
+# +MemoryUsage     = ( 3000 ) * 2 / 3
+# request_memory   = ( MemoryUsage ) * 3 / 2
+# periodic_hold    = ( MemoryUsage >= ( ( RequestMemory ) * 3 / 2 ) )
+# periodic_release = (JobStatus == 5) && ((CurrentTime - EnteredCurrentStatus) > 180) && (HoldReasonCode != 34)
 
 
 

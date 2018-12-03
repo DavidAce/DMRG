@@ -75,8 +75,12 @@ private:
     void   compute_all_observables_from_superblock();
     void   compute_all_observables_from_superblock(const Eigen::Tensor<Scalar,4> &theta);
     void   compute_all_observables_from_finite_chain();
+
     template<typename T>
-    double compute_energy_variance_mpo(T * theta_ptr, Eigen::DSizes<long,4> dsizes, double energy_all_sites);
+    double compute_energy_mpo(const T * theta_ptr, Eigen::DSizes<long,4> dsizes);
+
+    template<typename T>
+    double compute_energy_variance_mpo(const T * theta_ptr, Eigen::DSizes<long,4> dsizes, double energy_all_sites);
 
 
     Eigen::Tensor<Scalar,1> mps_chain;

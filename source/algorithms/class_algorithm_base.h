@@ -62,10 +62,13 @@ public:
     bool   bond_dimension_has_reached_max = false;
     bool   entanglement_has_converged = false;
     bool   entanglement_has_saturated = false;
+    int    variance_mpo_saturated_for = 0;
     bool   variance_mpo_has_converged = false;
     bool   variance_mpo_has_saturated = false;
+    int    variance_ham_saturated_for = 0;
     bool   variance_ham_has_converged = false;
     bool   variance_ham_has_saturated = false;
+    int    variance_mom_saturated_for = 0;
     bool   variance_mom_has_converged = false;
     bool   variance_mom_has_saturated = false;
 
@@ -89,7 +92,7 @@ public:
     void check_convergence_variance_ham(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_variance_mom(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_entanglement(double slope_threshold = quietNaN);
-    void update_bond_dimension();
+    void update_bond_dimension(int min_saturation_length = 1);
     void clear_saturation_status();
 
     void initialize_state(std::string initial_state);
@@ -129,7 +132,8 @@ public:
     class_tic_toc t_con;
 
 private:
-    void check_saturation_using_slope(std::list<double> &Y_vec,
+    void check_saturation_using_slope(std::list<bool> &B_vec,
+                                      std::list<double> &Y_vec,
                                       std::list<int> &X_vec,
                                       double new_data,
                                       int iter,
@@ -137,18 +141,23 @@ private:
                                       double tolerance,
                                       double &slope,
                                       bool &has_saturated);
-    std::list<double> V_mpo_vec;
-    std::list<int>    X_mpo_vec;
+
+    std::list<bool>   B_mpo_vec; //History of saturation true/false
+    std::list<double> V_mpo_vec; //History of variances
+    std::list<int>    X_mpo_vec; //History of step numbers
     double V_mpo_slope = 1;
 
+    std::list<bool>   B_ham_vec; //History of saturation true/false
     std::list<double> V_ham_vec;
     std::list<int>    X_ham_vec;
     double V_ham_slope = 1;
 
+    std::list<bool>   B_mom_vec; //History of saturation true/false
     std::list<double> V_mom_vec;
     std::list<int>    X_mom_vec;
     double V_mom_slope = 1;
 
+    std::list<bool>   BS_vec; //History of saturation true/false
     std::list<double> S_vec;
     std::list<int>    XS_vec;
     double S_slope = 1;
