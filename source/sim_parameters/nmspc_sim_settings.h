@@ -68,7 +68,7 @@ namespace settings {
         extern double   VarConvergenceThreshold ;           /*!< Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value */
         extern double   VarSaturationThreshold ;            /*!< Variance saturation  threshold. The variance has saturated when its (absolute) slope reaches below this value */
         extern double   EntEntrSaturationThreshold;         /*!< Entanglement Entropy saturation threshold. The entanglement entropy has saturated when its (absolute) slope reaches below this value*/
-        extern int      MaxSizeFullDiag;                    /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
+        extern int      MaxSizeFullDiag;                    /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. Use 0 to allow any value */
     }
 
     //Parameters controlling iDMRG

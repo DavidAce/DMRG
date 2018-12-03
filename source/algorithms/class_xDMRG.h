@@ -25,10 +25,12 @@ public:
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_xdmrg;
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_xdmrg_chain;
 
-    enum class xDMRG_Mode {FULL,PARTIAL};
-    int    full_iters   = 5;
-    int    max_length   ;
+    enum class xDMRG_Mode {KEEP_BEST_OVERLAP,FULL_EIG_OPT,PARTIAL_EIG_OPT, DIRECT_OPT};
+    int    min_saturation_length;
+    int    max_saturation_length;
+    int    min_sweeps   = 5;
     int    max_sweeps   ;
+    int    max_length   ;
 
     //Energy ranges
     double energy_min = 0;
@@ -41,7 +43,7 @@ public:
     void initialize_constants()                         override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
-    void store_table_entry_to_file(bool force = false)                    override;
+    void store_table_entry_to_file(bool force = false)  override;
     void store_chain_entry_to_file(bool force = false);
     void store_mps_to_file        (bool force = false);
     void single_xDMRG_step();
@@ -66,10 +68,13 @@ public:
                                      Eigen::VectorXd  &overlaps,
                                      int &nev,
                                      double overlap_cutoff = 1e-2);
-    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag (Eigen::Tensor<Scalar, 4> &theta);
-    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag3 (Eigen::Tensor<Scalar, 4> &theta, xDMRG_Mode mode = xDMRG_Mode::PARTIAL);
-    Eigen::Tensor<Scalar,4> find_state_with_greatest_state_in_subspace (Eigen::Tensor<Scalar, 4> &theta);
 
+    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag (Eigen::Tensor<Scalar, 4> &theta);
+    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag3 (Eigen::Tensor<Scalar, 4> &theta, xDMRG_Mode mode = xDMRG_Mode::PARTIAL_EIG_OPT);
+    Eigen::Tensor<Scalar,4> find_state_with_greatest_state_in_subspace (Eigen::Tensor<Scalar, 4> &theta);
+    Eigen::Matrix<Scalar,Eigen::Dynamic,1> subspace_optimization(double &energy_new,double &variance_new,int nev,const double * eigvecs_ptr, const double *eigvals_ptr, const Eigen::Tensor<Scalar,4> &theta);
+    Eigen::Matrix<Scalar,Eigen::Dynamic,1> direct_optimization(double &energy_new, double &variance_new,
+                                                               const Eigen::Tensor<Scalar, 4> &theta);
 
 
 };

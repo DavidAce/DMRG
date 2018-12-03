@@ -106,12 +106,16 @@ public:
             exit(1);
         }
 
-        double fx = log10var  + lambda * std::pow(vv-1.0,2);
+//        double fx = log10var  + lambda * std::pow(vv-1.0,2);
+        double fx = log10var  +  lambda * std::abs(vv-1.0);
+        #pragma omp parallel for
         for (int k = 0; k < v.size(); k++){
             double vi2H2ik         = 2.0*v.dot(H2.col(k));             // 2 * sum_i x_i H2_ik
             double vk4EkvEv        = 4.0*v(k)*eigvals(k) * vEv ;       // 4 * x_k * E_k * (sum_i x_i^2 E_i)
+//            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vEv*vEv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
+//                      + lambda * 4.0 * v(k) * (vv - 1);
             grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vEv*vEv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
-                      + lambda * 4.0 * v(k) * (vv - 1);
+                    + lambda * 2.0 * v(k) * sgn(vv - 1);
         }
 //
 //        std::cout << "i: " << counter

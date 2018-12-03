@@ -145,25 +145,25 @@ target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                        
 ###  Also, libiomp5 might help for         ###
 ###  shared linking.                       ###
 ##############################################
-#find_package(OpenMP)
-#if (OpenMP_FOUND)
-##    target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp=libiomp5)
-#    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-#        message(STATUS "OpenMP ON" )
-#        target_compile_options    (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
-#        #        target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIBRARIES})
-#                target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIB_NAMES})
-#        target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
-#    endif()
+find_package(OpenMP)
+if (OpenMP_FOUND)
+#    target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp=libiomp5)
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
+        message(STATUS "OpenMP ON" )
+        target_compile_options    (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
+        # target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIBRARIES})
+        target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIB_NAMES})
+        target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
+    endif()
 #    get_cmake_property(_variableNames VARIABLES)
 #    foreach (_variableName ${_variableNames})
 #        if("${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP")
 #            message(STATUS "${_variableName}=${${_variableName}}")
 #        endif()
 #    endforeach()
-#else()
-#    message(STATUS "OpenMP OFF" )
-#endif()
+else()
+    message(STATUS "OpenMP OFF" )
+endif()
 
 
 
@@ -205,7 +205,7 @@ include(cmake-modules/FindGFortran.cmake)
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 #include(cmake-modules/FindLAPACKE.cmake)
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
-include(cmake-modules/Fetch_CppNumSolvers.cmake)            # Limited memory BFGS gradient descent library
+#include(cmake-modules/Fetch_CppNumSolvers.cmake)            # Limited memory BFGS gradient descent library
 include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data_struct.
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
