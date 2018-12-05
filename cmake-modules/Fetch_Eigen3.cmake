@@ -50,16 +50,12 @@ if(BLAS_LIBRARIES)
     if(MKL_FOUND)
         list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_MKL_ALL)
         message(STATUS "Eigen3 will use MKL")
-    else()
-        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_BLAS)
-        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_LAPACKE)
+    elseif (BLAS_FOUND)
+#        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_BLAS)
+#        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_LAPACKE)
         message(STATUS "Eigen3 will use BLAS and LAPACKE")
     endif()
 endif()
-
-#if (OpenMP_FOUND)
-#    list(APPEND EIGEN_3_COMPILER_FLAGS ${OpenMP_CXX_FLAGS})
-#endif()
 
 
 set_target_properties(EIGEN3 PROPERTIES
