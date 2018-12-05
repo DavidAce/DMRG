@@ -7,8 +7,8 @@ target_link_libraries(arpack++_simple_test_target  PRIVATE  arpack++ arpack blas
 #target_link_libraries(arpack++_simple_test_target PRIVATE lapack)
 #target_link_libraries(arpack++_simple_test_target PRIVATE ${QUADMATH_LIB})
 #target_link_libraries(arpack++_simple_test_target PRIVATE ${GFORTRAN_LIB})
-target_link_libraries(arpack++_simple_test_target PRIVATE -lpthread)
-#target_link_libraries(arpack++_simple_test_target PRIVATE -lomp)
+#target_link_libraries(arpack++_simple_test_target PRIVATE -lpthread)
+#target_link_libraries(arpack++_simple_test_target PRIVATE -fopenmp)
 target_link_libraries(arpack++_simple_test_target PRIVATE -lstdc++fs)
 target_link_libraries(arpack++_simple_test_target PRIVATE -flto)
 target_compile_options(arpack++_simple_test_target
@@ -17,6 +17,14 @@ target_compile_options(arpack++_simple_test_target
         $<TARGET_PROPERTY:arpack++,INTERFACE_COMPILE_OPTIONS>
         $<TARGET_PROPERTY:blas,INTERFACE_COMPILE_OPTIONS>
         $<TARGET_PROPERTY:lapack,INTERFACE_COMPILE_OPTIONS>
+        )
+
+target_link_libraries(arpack++_simple_test_target
+        PRIVATE
+        $<TARGET_PROPERTY:arpack,INTERFACE_LINK_LIBRARIES>
+        $<TARGET_PROPERTY:arpack++,INTERFACE_LINK_LIBRARIES>
+        $<TARGET_PROPERTY:blas,INTERFACE_LINK_LIBRARIES>
+        $<TARGET_PROPERTY:lapack,INTERFACE_LINK_LIBRARIES>
         )
 
 target_include_directories(arpack++_simple_test_target

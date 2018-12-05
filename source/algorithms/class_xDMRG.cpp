@@ -380,7 +380,8 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
     Eigen::VectorXd xstart = (theta_old.adjoint() * eigvecs).normalized().real();
 
     class_tic_toc t_lbfgs(true,5,"lbfgs");
-    std::vector<std::tuple<std::string,double,Scalar,double,size_t,double,double>> opt_log;
+    std::vector<std::tuple<std::string,double,Scalar,double,size_t,size_t,double,double>> opt_log;
+
     {
         ccout(3) << "STATUS: Starting LBFGS \n";
         t_lbfgs.tic();
@@ -397,7 +398,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
                  energy_0 * energy_0 * chain_length * chain_length) / chain_length);
         double overlap_0 = (theta_old.adjoint() * theta_0).cwiseAbs().sum();
 
-        opt_log.emplace_back("Start (best overlap)", energy_0, variance_0, overlap_0, iter_0, t_lbfgs.get_last_time_interval(), start_time);
+        opt_log.emplace_back("Start (best overlap)", energy_0, variance_0, overlap_0, iter_0,0, t_lbfgs.get_last_time_interval(), start_time);
         start_time = t_tot.get_age();
         using namespace LBFGSpp;
         class_xDMRG_functor functor
@@ -424,13 +425,15 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
         t_lbfgs.tic();
         ccout(3) << "STATUS: Running LBFGS\n";
         int niter = solver_3.minimize(functor, xstart, fx);
+        size_t counter = functor.get_count();
         t_lbfgs.toc();
         xstart.normalize();
         theta_new    = eigvecs * xstart;
         energy_new   = functor.get_energy() / chain_length;
         variance_new = functor.get_variance()/chain_length;
         overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
-        opt_log.emplace_back("LBFGS++", energy_new, std::log10(variance_new), overlap_new, niter, t_lbfgs.get_last_time_interval(), start_time);
+        opt_log.emplace_back("LBFGS++", energy_new, std::log10(variance_new), overlap_new, niter,counter, t_lbfgs.get_last_time_interval(), t_tot.get_age());
+
         ccout(3) << "STATUS: Finished LBFGS \n";
     }
 
@@ -440,7 +443,9 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
               <<"    "<< setw(44) << left << "variance"
               <<"    "<< setw(24) << left << "overlap"
               <<"    "<< setw(8)  << left << "iter"
+              <<"    "<< setw(8)  << left << "counter"
               <<"    "<< setw(20) << left << "Elapsed time [ms]"
+              <<"    "<< setw(20) << left << "Time per count [ms]"
               <<"    "<< setw(20) << left << "Wall time [s]"
               << '\n';
     for(auto &log : opt_log){
@@ -450,8 +455,10 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
                  << "    " <<setw(44) << left << std::get<2>(log)
                  << "    " <<setw(24) << left << std::get<3>(log)
                  << "    " <<setw(8)  << left << std::get<4>(log) << std::setprecision(3)
-                 << "    " <<setw(20) << left << std::get<5>(log)*1000
-                 << "    " <<setw(20) << left << std::get<6>(log)
+                 << "    " <<setw(8)  << left << std::get<5>(log) << std::setprecision(3)
+                 << "    " <<setw(20) << left << std::get<6>(log)*1000
+                 << "    " <<setw(20) << left << std::get<6>(log)*1000 / (double)std::get<5>(log)
+                 << "    " <<setw(20) << left << std::get<7>(log)
                  << '\n';
     }
     ccout(2) << '\n';
@@ -527,7 +534,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
         variance_new = functor.get_variance()/chain_length;
         double overlap_new = (theta_old.adjoint() * xstart).cwiseAbs().sum();
         opt_log.emplace_back("LBFGS++", energy_new, std::log10(variance_new), overlap_new, niter,counter, t_lbfgs.get_last_time_interval(), t_tot.get_age());
-
+        std::cout << "Time in function: " << std::setprecision(3) << functor.t_lbfgs.get_measured_time()*1000 << std::endl;
         ccout(3) << "STATUS: Finished LBFGS \n";
     }
 
@@ -539,6 +546,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
               <<"    "<< setw(8)  << left << "iter"
               <<"    "<< setw(8)  << left << "counter"
               <<"    "<< setw(20) << left << "Elapsed time [ms]"
+              <<"    "<< setw(20) << left << "Time per count [ms]"
               <<"    "<< setw(20) << left << "Wall time [s]"
               << '\n';
     for(auto &log : opt_log){
@@ -550,10 +558,12 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
                  << "    " <<setw(8)  << left << std::get<4>(log) << std::setprecision(3)
                  << "    " <<setw(8)  << left << std::get<5>(log) << std::setprecision(3)
                  << "    " <<setw(20) << left << std::get<6>(log)*1000
+                 << "    " <<setw(20) << left << std::get<6>(log)*1000 / (double)std::get<5>(log)
                  << "    " <<setw(20) << left << std::get<7>(log)
                  << '\n';
     }
     ccout(2) << '\n';
+
     return xstart;
 }
 
