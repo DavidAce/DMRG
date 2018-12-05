@@ -6,8 +6,8 @@ add_executable(arpack++_mps_test_target tests/arpack++_mps_test.cpp
                                         source/general/class_tic_toc.cpp)
 set_target_properties(arpack++_mps_test_target PROPERTIES OUTPUT_NAME  arpack++_mps_test)
 target_link_libraries(arpack++_mps_test_target PRIVATE arpack++ arpack blas lapack gfortran EIGEN3)
-target_link_libraries(arpack++_mps_test_target PRIVATE -lpthread)
-#target_link_libraries(arpack++_mps_test_target PRIVATE -liomp5)
+#target_link_libraries(arpack++_mps_test_target PRIVATE -lpthread)
+#target_link_libraries(arpack++_mps_test_target PRIVATE -fopenmp)
 target_link_libraries(arpack++_mps_test_target PRIVATE -lstdc++fs)
 target_link_libraries(arpack++_mps_test_target PRIVATE -flto)
 
@@ -27,6 +27,16 @@ target_compile_options(arpack++_mps_test_target
         $<TARGET_PROPERTY:lapack,INTERFACE_COMPILE_OPTIONS>
         $<TARGET_PROPERTY:EIGEN3,INTERFACE_COMPILE_OPTIONS>
         )
+
+target_link_libraries(arpack++_mps_test_target
+        PRIVATE
+        $<TARGET_PROPERTY:arpack,INTERFACE_LINK_LIBRARIES>
+        $<TARGET_PROPERTY:arpack++,INTERFACE_LINK_LIBRARIES>
+        $<TARGET_PROPERTY:blas,INTERFACE_LINK_LIBRARIES>
+        $<TARGET_PROPERTY:lapack,INTERFACE_LINK_LIBRARIES>
+        $<TARGET_PROPERTY:EIGEN3,INTERFACE_LINK_LIBRARIES>
+        )
+
 target_include_directories(arpack++_mps_test_target
         PRIVATE
         source

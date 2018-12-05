@@ -33,6 +33,7 @@ public:
     Eigen::MatrixXd H2;
     double get_variance(){return variance;}
     double get_energy  (){return energy  ;}
+    size_t get_count   (){return counter;}
 
     template<typename HType>
     class_xDMRG_functor(
@@ -84,44 +85,53 @@ public:
 //    double operator()(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, Eigen::Matrix<double,Eigen::Dynamic,1> &grad) const;
     double operator()(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, Eigen::Matrix<double,Eigen::Dynamic,1> &grad) {
         auto eigvals  = Eigen::Map<const VectorType_> (eigvals_ptr,nev);
-        double lambda = 1.0;
-        double vH2v   = (v.adjoint() * H2.selfadjointView<Eigen::Upper>() * v).real().sum();
-        double vEv    = v.cwiseAbs2().cwiseProduct(eigvals).real().sum();
-        double vv     = v.cwiseAbs2().sum();
-        double var    = vH2v/vv - vEv*vEv/vv/vv;
-        variance      = var;
-        energy        = vEv/vv;
-        double log10var = std::log10(var);
-
-        if(std::isnan(var)){
-            std::cout << "eigvals: \n" << eigvals << std::endl;
-            std::cout << "v: \n" << v << std::endl;
-            std::cout << "H2: \n" << H2 << std::endl;
-            std::cout << "vH2v            : " << vH2v << std::endl;
-            std::cout << "vEv             : " << vEv  << std::endl;
-            std::cout << "vv              : " << vv   << std::endl;
-            std::cout << "vH2v/vv         : " << vH2v/vv    << std::endl;
-            std::cout << "vEv*vEv/vv/vv   : " << vEv*vEv/vv/vv    << std::endl;
-            std::cout << "var             : " << var  << std::endl << std::endl;
-            exit(1);
-        }
-
-//        double fx = log10var  + lambda * std::pow(vv-1.0,2);
-        double fx = log10var  +  lambda * std::abs(vv-1.0);
-        #pragma omp parallel for
-        for (int k = 0; k < v.size(); k++){
-            double vi2H2ik         = 2.0*v.dot(H2.col(k));             // 2 * sum_i x_i H2_ik
-            double vk4EkvEv        = 4.0*v(k)*eigvals(k) * vEv ;       // 4 * x_k * E_k * (sum_i x_i^2 E_i)
+        double vH2v,vEv,vv;
+        double lambda,var,log10var, fx;
+        #pragma omp parallel
+        {
+            #pragma omp sections
+            {
+                #pragma omp section
+                { vH2v = (v.adjoint() * H2.selfadjointView<Eigen::Upper>() * v).real().sum(); }
+                #pragma omp section
+                { vEv = v.cwiseAbs2().cwiseProduct(eigvals).real().sum(); }
+                #pragma omp section
+                { vv = v.cwiseAbs2().sum(); }
+            }
+            #pragma omp barrier
+            #pragma omp single
+            {
+                lambda = 1.0;
+                var = vH2v / vv - vEv * vEv / vv / vv;
+                variance = var;
+                energy = vEv / vv;
+                log10var = std::log10(var);
+//                double fx = log10var  + lambda * std::pow(vv-1.0,2);
+                fx = log10var  +  lambda * std::abs(vv-1.0);
+                if (std::isnan(var)) {
+                    std::cout << "eigvals: \n" << eigvals << std::endl;
+                    std::cout << "v: \n" << v << std::endl;
+                    std::cout << "H2: \n" << H2 << std::endl;
+                    std::cout << "vH2v            : " << vH2v << std::endl;
+                    std::cout << "vEv             : " << vEv << std::endl;
+                    std::cout << "vv              : " << vv << std::endl;
+                    std::cout << "vH2v/vv         : " << vH2v / vv << std::endl;
+                    std::cout << "vEv*vEv/vv/vv   : " << vEv * vEv / vv / vv << std::endl;
+                    std::cout << "var             : " << var << std::endl << std::endl;
+                    exit(1);
+                }
+            }
+            #pragma omp barrier
+            #pragma omp for schedule(static,1)
+            for (int k = 0; k < v.size(); k++){
+                double vi2H2ik         = 2.0*v.dot(H2.col(k));             // 2 * sum_i x_i H2_ik
+                double vk4EkvEv        = 4.0*v(k)*eigvals(k) * vEv ;       // 4 * x_k * E_k * (sum_i x_i^2 E_i)
 //            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vEv*vEv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
 //                      + lambda * 4.0 * v(k) * (vv - 1);
-            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vEv*vEv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
-                    + lambda * 2.0 * v(k) * sgn(vv - 1);
+                grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vEv*vEv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
+                          + lambda * 2.0 * v(k) * sgn(vv - 1);
+            }
         }
-//
-//        std::cout << "i: " << counter
-//                    <<  std::setprecision(14) << "    var: " << std::setw(16) << log10var
-//                    <<  std::setprecision(14) << "    fx : " << std::setw(16) << fx << std::endl;
-
         counter++;
         return fx;
     }

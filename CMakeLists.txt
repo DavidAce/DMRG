@@ -133,7 +133,7 @@ set(STATIC_BUILD ON)
 set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
 set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
 target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                                             ### Static linkage
-#target_link_libraries  (${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)                                             ### Static linkage
+#target_link_libraries  (${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)                   ### Static linkage
 
 
 
