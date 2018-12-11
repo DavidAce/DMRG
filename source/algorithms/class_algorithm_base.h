@@ -86,7 +86,7 @@ public:
     void print_status_full();
     void single_DMRG_step(long chi_max, eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR);
 
-    virtual void check_convergence_all();
+    virtual void check_convergence();
     static constexpr double quietNaN = std::numeric_limits<double>::quiet_NaN();
     void check_convergence_variance_mpo(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_variance_ham(double threshold = quietNaN, double slope_threshold = quietNaN);
@@ -94,7 +94,7 @@ public:
     void check_convergence_entanglement(double slope_threshold = quietNaN);
     void update_bond_dimension(int min_saturation_length = 1);
     void clear_saturation_status();
-
+    void set_file_OK();
     void initialize_state(std::string initial_state);
 
     void compute_observables();
