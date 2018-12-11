@@ -53,10 +53,13 @@ private:
     SimulationType sim_type;
     std::string    sim_name;
 
-    bool max_length_is_set = false;
-    bool superblock_is_set = false;
-    bool hdf5_file_is_set  = false;
+    bool max_length_is_set         = false;
+    bool superblock_is_set         = false;
+    bool hdf5_file_is_set          = false;
 
+    bool full_mps_has_been_written           = false;
+    bool full_mpo_has_been_written           = false;
+    bool hamiltonian_params_has_been_written = false;
     int direction = -1;
     int sweeps    = 0;
     unsigned long max_length = 0;                                                 /*!< The maximum length of the chain */
@@ -112,17 +115,21 @@ public:
     int get_length() const;
     int get_sweeps() const;
     bool position_is_the_middle();
+    bool position_is_the_middle_any_direction();
     bool position_is_the_left_edge();
     bool position_is_the_right_edge();
 
 
     // Functions relating to HDF5 file storage
     void write_all_to_hdf5();
-    void write_mps_to_hdf5();
-    void write_mpo_to_hdf5();
-    void write_env_to_hdf5();
-    void write_env2_to_hdf5();
-    void write_hamiltonian_to_hdf5();
+    void write_bond_matrices_to_hdf5();
+    void write_2site_mps_to_hdf5();
+    void write_2site_mpo_to_hdf5();
+    void write_2site_env_to_hdf5();
+    void write_2site_env2_to_hdf5();
+    void write_full_mps_to_hdf5();
+    void write_full_mpo_to_hdf5();
+    void write_hamiltonian_params_to_hdf5();
     void write_entanglement_to_hdf5();
     void set_hdf5_file (std::shared_ptr<class_hdf5_file>  hdf5_);                /*!< Sets the pointer to an hdf5-file for storage */
 

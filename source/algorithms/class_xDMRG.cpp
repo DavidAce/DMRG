@@ -55,56 +55,40 @@ void class_xDMRG::run() {
     env_storage->print_hamiltonians();
     find_energy_range();
     while(true) {
-        ccout(3) << "STATUS: Starting single xDMRG step\n";     single_xDMRG_step();
-        ccout(3) << "STATUS: Starting overwrite local env\n";   env_storage_overwrite_local_ALL();
-        ccout(3) << "STATUS: Storing table_entry to file\n";    store_table_entry_to_file();
-        ccout(3) << "STATUS: Storing chain_entry to file\n";    store_chain_entry_to_file();
-        ccout(3) << "STATUS: Storing profiling to file\n";      store_profiling_to_file_total();
-        ccout(3) << "STATUS: Storing storing mps to file\n";    store_mps_to_file();
+        single_xDMRG_step();
+        env_storage_overwrite_local_ALL();
+        store_table_entry_to_file();
+        store_chain_entry_to_file();
+        store_profiling_to_file_total();
+        store_state_to_file();
 
-        check_convergence_all();
+        check_convergence();
         print_status_update();
-        update_bond_dimension( measurement->get_chain_length());
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-
-//        if(env_storage->position_is_the_middle()) {
-//            if(iteration >= min_sweeps){
-//                update_bond_dimension();
-//            }
-//        }
-        if (iteration >= min_sweeps
-            and (iteration >= max_sweeps
-            or simulation_has_converged
-            or simulation_has_to_stop))
+        if (iteration >= min_sweeps and env_storage->position_is_the_middle_any_direction() and
+           (iteration >= max_sweeps or simulation_has_converged or simulation_has_to_stop))
         {
             break;
         }
 
-
-        ccout(3) << "STATUS: Enlarging environment\n";      enlarge_environment(env_storage->get_direction());
-        ccout(3) << "STATUS: Moving environment\n";         env_storage_move();
-        ccout(3) << "STATUS: Finished single xDMRG step\n";
+        update_bond_dimension( measurement->get_chain_length());
+        enlarge_environment(env_storage->get_direction());
+        env_storage_move();
         iteration = env_storage->get_sweeps();
         step++;
+        ccout(3) << "STATUS: Finished single xDMRG step\n";
     }
     t_tot.toc();
     print_status_full();
     measurement->compute_all_observables_from_finite_chain();
-
-    ccout(3) << "STATUS: Storing table_entry_to_file\n";
-    store_table_entry_to_file(true);
-    ccout(3) << "STATUS: Storing chain_entry_to_file\n";
-    store_chain_entry_to_file(true);
-    ccout(3) << "STATUS: Storing storing mps to file\n";
-    store_mps_to_file(true);
-//     Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
+//  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
         hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction");
     }
-    store_profiling_to_file_total(true);
     print_profiling();
+    set_file_OK();
 }
 
 void class_xDMRG::single_xDMRG_step() {
@@ -113,7 +97,7 @@ void class_xDMRG::single_xDMRG_step() {
  */
     t_sim.tic();
     t_opt.tic();
-    ccout(3) << "STATUS: Constructing theta \n";
+    ccout(3) << "STATUS: Starting single xDMRG step\n";
     Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
     xDMRG_Mode mode = chi_temp < 8 and iteration < min_sweeps  ? xDMRG_Mode::KEEP_BEST_OVERLAP : xDMRG_Mode::FULL_EIG_OPT;
     mode = chi_temp >= 8 and chi_temp < 32 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
@@ -134,7 +118,7 @@ void class_xDMRG::single_xDMRG_step() {
 }
 
 
-void class_xDMRG::check_convergence_all(){
+void class_xDMRG::check_convergence(){
 //    if(not env_storage->position_is_the_middle()){return;}
 //    if(iteration < 5){return;}
     t_sim.tic();
@@ -142,8 +126,6 @@ void class_xDMRG::check_convergence_all(){
     check_convergence_variance_mpo();
     if (iteration < min_sweeps){variance_mpo_saturated_for = 0;}
     ccout(2) << "Variance has saturated for " << variance_mpo_saturated_for << " steps \n";
-
-//    check_convergence_entanglement();
     if(variance_mpo_has_converged)
     {
         ccout(1) << "Simulation has converged\n";
@@ -718,9 +700,10 @@ void class_xDMRG::find_energy_range() {
 void class_xDMRG::store_table_entry_to_file(bool force){
     if(not force) {
         if (Math::mod(iteration, store_freq) != 0) { return; }
-        if (not env_storage->position_is_the_middle()) { return; }
+        if (not env_storage->position_is_the_middle_any_direction()) { return; }
         if (store_freq == 0) { return; }
     }
+    ccout(3) << "STATUS: Storing table_entry to file\n";
     compute_observables();
     t_sto.tic();
     table_xdmrg->append_record(
@@ -748,8 +731,9 @@ void class_xDMRG::store_chain_entry_to_file(bool force){
     if (not force) {
         if (Math::mod(iteration, store_freq) != 0) { return; }
         if (store_freq == 0) { return; }
-        if (not(env_storage->get_direction() == 1 or env_storage->position_is_the_middle())) { return; }
+        if (not(env_storage->get_direction() == 1 or env_storage->position_is_the_middle_any_direction())) { return; }
     }
+    ccout(3) << "STATUS: Storing chain_entry to file\n";
     t_sto.tic();
     table_xdmrg_chain->append_record(
             iteration,
@@ -763,16 +747,23 @@ void class_xDMRG::store_chain_entry_to_file(bool force){
     t_sto.toc();
 }
 
-void class_xDMRG::store_mps_to_file(bool force){
+void class_xDMRG::store_state_to_file(bool force){
     if(not force){
         if (Math::mod(iteration, store_freq) != 0) {return;}
-        if (not env_storage->position_is_the_middle()) {return;}
+        if (not env_storage->position_is_the_middle_any_direction()) {return;}
         if (store_freq == 0){return;}
     }
+    ccout(3) << "STATUS: Storing storing mps to file\n";
     t_sto.tic();
     env_storage->write_all_to_hdf5();
+    if (settings::hdf5::resume_from_file){
+        env_storage->write_full_mps_to_hdf5();
+        env_storage->write_full_mpo_to_hdf5();
+    }
     t_sto.toc();
 }
+
+
 
 void class_xDMRG::initialize_constants(){
     using namespace settings;

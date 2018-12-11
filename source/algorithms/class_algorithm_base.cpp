@@ -82,7 +82,7 @@ void class_algorithm_base::single_DMRG_step(long chi_max, Ritz ritz){
 
 
 
-void class_algorithm_base::check_convergence_all(){
+void class_algorithm_base::check_convergence(){
     t_con.tic();
     check_convergence_entanglement();
     check_convergence_variance_mpo();
@@ -169,7 +169,7 @@ void class_algorithm_base::check_saturation_using_slope(
     ccout(3)  << "change per step      : " << slope                 << " | log₁₀ : " << std::log10(slope) << '\n'
               << "relative_slope       : " << relative_slope        << '\n'
               << "tolerance            : " << tolerance             << '\n'
-              << "avgY                 : " << avgY                  << Y_vec << '\n'
+              << "avgY                 : " << avgY                  << '\n'
               << "has saturated        : " << std::boolalpha << has_saturated << '\n'
               << "check from           : " << check_from            << " (" << X_vec.size() << ")\n"
               << '\n';
@@ -261,8 +261,8 @@ void class_algorithm_base::update_bond_dimension(int min_saturation_length){
     if(not variance_mpo_has_converged
        and variance_mpo_has_saturated
        and variance_mpo_saturated_for >= min_saturation_length
-       and chi_temp < chi_max
-       and measurement->get_chi() == chi_temp){
+       and chi_temp < chi_max){
+        ccout(3) << "STATUS: Updating bond dimensionn\n";
         chi_temp = std::min(chi_max, (long)(chi_temp * 2));
         ccout(1) << "New chi = " << chi_temp << '\n';
         clear_saturation_status();
@@ -295,6 +295,12 @@ void class_algorithm_base::clear_saturation_status(){
 
 }
 
+void class_algorithm_base::set_file_OK(){
+    int OK = 1;
+    hdf5->write_dataset(OK,sim_name + "/fileOK");
+}
+
+
 void class_algorithm_base::store_profiling_to_file_delta(bool force) {
     if (Math::mod(iteration, store_freq) != 0) {return;}
 //    t_sto.tic();
@@ -319,26 +325,26 @@ void class_algorithm_base::store_profiling_to_file_delta(bool force) {
 }
 
 void class_algorithm_base::store_profiling_to_file_total(bool force) {
-    if (Math::mod(iteration, store_freq) != 0) {return;}
-//    t_sto.tic();
+    if (not force and Math::mod(iteration, store_freq) != 0) {return;}
+    if (not settings::profiling::on or not settings::hdf5::store_profiling){return;}
+    ccout(3) << "STATUS: Storing profiling data to file\n";
+    table_profiling->append_record(
+            iteration,
+            t_tot.get_measured_time(),
+            t_opt.get_measured_time(),
+            t_sim.get_measured_time(),
+            t_svd.get_measured_time(),
+            t_env.get_measured_time(),
+            t_evo.get_measured_time(),
+            t_udt.get_measured_time(),
+            t_sto.get_measured_time(),
+            t_ste.get_measured_time(),
+            t_prt.get_measured_time(),
+            t_obs.get_measured_time(),
+            t_mps.get_measured_time(),
+            t_con.get_measured_time()
+    );
 
-    if (force or (settings::profiling::on and settings::hdf5::store_profiling))
-        table_profiling->append_record(
-                iteration,
-                t_tot.get_measured_time(),
-                t_opt.get_measured_time(),
-                t_sim.get_measured_time(),
-                t_svd.get_measured_time(),
-                t_env.get_measured_time(),
-                t_evo.get_measured_time(),
-                t_udt.get_measured_time(),
-                t_sto.get_measured_time(),
-                t_ste.get_measured_time(),
-                t_prt.get_measured_time(),
-                t_obs.get_measured_time(),
-                t_mps.get_measured_time(),
-                t_con.get_measured_time()
-        );
 }
 
 
@@ -525,6 +531,7 @@ void class_algorithm_base::enlarge_environment(){
 }
 
 void class_algorithm_base::enlarge_environment(int direction){
+    ccout(3) << "STATUS: Enlarging environment\n";
     t_sim.tic();
     t_env.tic();
     superblock->enlarge_environment(direction);
@@ -561,6 +568,7 @@ void class_algorithm_base::env_storage_overwrite_local_ENV(){
 }
 
 void class_algorithm_base::env_storage_overwrite_local_ALL(){
+    ccout(3) << "STATUS: Starting overwrite of local env\n";
     t_ste.tic();
     env_storage->overwrite_local_MPS();
     env_storage->overwrite_local_MPO();
@@ -570,6 +578,7 @@ void class_algorithm_base::env_storage_overwrite_local_ALL(){
 
 
 void class_algorithm_base::env_storage_move(){
+    ccout(3) << "STATUS: Moving environment\n";
     t_ste.tic();
     env_storage->move();
     t_ste.toc();

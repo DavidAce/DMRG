@@ -44,7 +44,7 @@ void class_iTEBD::run() {
         store_table_entry_to_file();
         store_profiling_to_file_delta();
         print_status_update();
-        check_convergence_all();
+        check_convergence();
         iteration++;
     }
     t_tot.toc();
@@ -102,7 +102,7 @@ void class_iTEBD::check_convergence_time_step(){
     }
 }
 
-void class_iTEBD::check_convergence_all(){
+void class_iTEBD::check_convergence(){
     t_con.tic();
     check_convergence_entanglement();
     check_convergence_variance_ham();
