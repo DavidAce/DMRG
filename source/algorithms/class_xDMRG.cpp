@@ -9,7 +9,7 @@
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_mps_2site.h>
-#include <mps_routines/class_finite_chain_sweeper.h>
+#include <mps_routines/class_finite_chain.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_eigsolver_props.h>
@@ -35,11 +35,11 @@ class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     initialize_constants();
     table_xdmrg         = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
     table_xdmrg_chain   = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name,sim_name + "_chain");
-    env_storage         = std::make_shared<class_finite_chain_sweeper>(max_length, superblock, hdf5,sim_type,sim_name);
+    env_storage         = std::make_shared<class_finite_chain>(max_length, superblock, hdf5,sim_type,sim_name);
     measurement         = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
     initialize_state(settings::model::initial_state);
-    min_saturation_length = 2 * (int) measurement->get_chain_length();
-    max_saturation_length = 4 * (int) measurement->get_chain_length();
+    min_saturation_length = 1 * (int) max_length;
+    max_saturation_length = 1 * (int)(1.5 * max_length);
 }
 
 
@@ -99,13 +99,12 @@ void class_xDMRG::run() {
     store_chain_entry_to_file(true);
     ccout(3) << "STATUS: Storing storing mps to file\n";
     store_mps_to_file(true);
-    // Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
+//     Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
         hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction");
     }
     store_profiling_to_file_total(true);
     print_profiling();
-
 }
 
 void class_xDMRG::single_xDMRG_step() {
@@ -141,8 +140,7 @@ void class_xDMRG::check_convergence_all(){
     t_sim.tic();
     t_con.tic();
     check_convergence_variance_mpo();
-
-
+    if (iteration < min_sweeps){variance_mpo_saturated_for = 0;}
     ccout(2) << "Variance has saturated for " << variance_mpo_saturated_for << " steps \n";
 
 //    check_convergence_entanglement();
@@ -380,7 +378,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
     Eigen::VectorXd xstart = (theta_old.adjoint() * eigvecs).normalized().real();
 
     class_tic_toc t_lbfgs(true,5,"lbfgs");
-    std::vector<std::tuple<std::string,double,Scalar,double,size_t,size_t,double,double>> opt_log;
+    std::vector<std::tuple<std::string,size_t,double,Scalar,double,size_t,size_t,double,double>> opt_log;
 
     {
         ccout(3) << "STATUS: Starting LBFGS \n";
@@ -398,7 +396,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
                  energy_0 * energy_0 * chain_length * chain_length) / chain_length);
         double overlap_0 = (theta_old.adjoint() * theta_0).cwiseAbs().sum();
 
-        opt_log.emplace_back("Start (best overlap)", energy_0, variance_0, overlap_0, iter_0,0, t_lbfgs.get_last_time_interval(), start_time);
+        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0, variance_0, overlap_0, iter_0,0, t_lbfgs.get_last_time_interval(), start_time);
         start_time = t_tot.get_age();
         using namespace LBFGSpp;
         class_xDMRG_functor functor
@@ -432,13 +430,14 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
         energy_new   = functor.get_energy() / chain_length;
         variance_new = functor.get_variance()/chain_length;
         overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
-        opt_log.emplace_back("LBFGS++", energy_new, std::log10(variance_new), overlap_new, niter,counter, t_lbfgs.get_last_time_interval(), t_tot.get_age());
+        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_lbfgs.get_last_time_interval(), t_tot.get_age());
 
         ccout(3) << "STATUS: Finished LBFGS \n";
     }
 
     ccout(2)  << std::setprecision(16)
               <<"    "<< setw(24) << left << "Algorithm"
+              <<"    "<< setw(8)  << left << "size"
               <<"    "<< setw(24) << left << "energy"
               <<"    "<< setw(44) << left << "variance"
               <<"    "<< setw(24) << left << "overlap"
@@ -451,14 +450,15 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
     for(auto &log : opt_log){
         ccout(2) << std::setprecision(16)
                  << "    " <<setw(24) << left << std::get<0>(log)
-                 << "    " <<setw(24) << left << std::get<1>(log)
-                 << "    " <<setw(44) << left << std::get<2>(log)
-                 << "    " <<setw(24) << left << std::get<3>(log)
-                 << "    " <<setw(8)  << left << std::get<4>(log) << std::setprecision(3)
+                 << "    " <<setw(8)  << left << std::get<1>(log)
+                 << "    " <<setw(24) << left << std::get<2>(log)
+                 << "    " <<setw(44) << left << std::get<3>(log)
+                 << "    " <<setw(24) << left << std::get<4>(log)
                  << "    " <<setw(8)  << left << std::get<5>(log) << std::setprecision(3)
-                 << "    " <<setw(20) << left << std::get<6>(log)*1000
-                 << "    " <<setw(20) << left << std::get<6>(log)*1000 / (double)std::get<5>(log)
-                 << "    " <<setw(20) << left << std::get<7>(log)
+                 << "    " <<setw(8)  << left << std::get<6>(log) << std::setprecision(3)
+                 << "    " <<setw(20) << left << std::get<7>(log)*1000
+                 << "    " <<setw(20) << left << std::get<7>(log)*1000 / (double)std::get<6>(log)
+                 << "    " <<setw(20) << left << std::get<8>(log)
                  << '\n';
     }
     ccout(2) << '\n';
@@ -481,7 +481,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
     // Between xstart and theta_old should be
     Eigen::VectorXd xstart = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).real();
 
-    std::vector<std::tuple<std::string,double,Scalar,double,size_t,size_t,double,double>> opt_log;
+    std::vector<std::tuple<std::string,size_t,double,Scalar,double,size_t,size_t,double,double>> opt_log;
     {
         ccout(3) << "STATUS: Starting Direct LBFGS \n";
 //        ccout(3) << "STATUS: Starting construction of H_local_sq \n";
@@ -497,7 +497,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
 //                 energy_0 * energy_0 * chain_length * chain_length) / chain_length);
 //        double overlap_0 = (theta_old.adjoint() * theta_0).cwiseAbs().sum();
         t_lbfgs.toc();
-        opt_log.emplace_back("Start (best overlap)", energy_0/chain_length, variance_0, 1.0, iter_0 ,0,t_lbfgs.get_last_time_interval(), t_tot.get_age());
+        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, variance_0, 1.0, iter_0 ,0,t_lbfgs.get_last_time_interval(), t_tot.get_age());
         t_lbfgs.tic();
         using namespace LBFGSpp;
         class_xDMRG_full_functor functor(
@@ -533,13 +533,14 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
         energy_new   = functor.get_energy() / chain_length;
         variance_new = functor.get_variance()/chain_length;
         double overlap_new = (theta_old.adjoint() * xstart).cwiseAbs().sum();
-        opt_log.emplace_back("LBFGS++", energy_new, std::log10(variance_new), overlap_new, niter,counter, t_lbfgs.get_last_time_interval(), t_tot.get_age());
+        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_lbfgs.get_last_time_interval(), t_tot.get_age());
         std::cout << "Time in function: " << std::setprecision(3) << functor.t_lbfgs.get_measured_time()*1000 << std::endl;
         ccout(3) << "STATUS: Finished LBFGS \n";
     }
 
     ccout(2)  << std::setprecision(16)
               <<"    "<< setw(24) << left << "Algorithm"
+              <<"    "<< setw(8)  << left << "size"
               <<"    "<< setw(24) << left << "energy"
               <<"    "<< setw(44) << left << "variance"
               <<"    "<< setw(24) << left << "overlap"
@@ -552,14 +553,15 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
     for(auto &log : opt_log){
         ccout(2) << std::setprecision(16)
                  << "    " <<setw(24) << left << std::get<0>(log)
-                 << "    " <<setw(24) << left << std::get<1>(log)
-                 << "    " <<setw(44) << left << std::get<2>(log)
-                 << "    " <<setw(24) << left << std::get<3>(log)
-                 << "    " <<setw(8)  << left << std::get<4>(log) << std::setprecision(3)
+                 << "    " <<setw(8)  << left << std::get<1>(log)
+                 << "    " <<setw(24) << left << std::get<2>(log)
+                 << "    " <<setw(44) << left << std::get<3>(log)
+                 << "    " <<setw(24) << left << std::get<4>(log)
                  << "    " <<setw(8)  << left << std::get<5>(log) << std::setprecision(3)
-                 << "    " <<setw(20) << left << std::get<6>(log)*1000
-                 << "    " <<setw(20) << left << std::get<6>(log)*1000 / (double)std::get<5>(log)
-                 << "    " <<setw(20) << left << std::get<7>(log)
+                 << "    " <<setw(8)  << left << std::get<6>(log) << std::setprecision(3)
+                 << "    " <<setw(20) << left << std::get<7>(log)*1000
+                 << "    " <<setw(20) << left << std::get<7>(log)*1000 / (double)std::get<6>(log)
+                 << "    " <<setw(20) << left << std::get<8>(log)
                  << '\n';
     }
     ccout(2) << '\n';
@@ -768,7 +770,7 @@ void class_xDMRG::store_mps_to_file(bool force){
         if (store_freq == 0){return;}
     }
     t_sto.tic();
-    env_storage->write_chain_to_file();
+    env_storage->write_all_to_hdf5();
     t_sto.toc();
 }
 

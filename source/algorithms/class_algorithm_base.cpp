@@ -11,7 +11,7 @@
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_measurement.h>
-#include <mps_routines/class_finite_chain_sweeper.h>
+#include <mps_routines/class_finite_chain.h>
 #include <mps_routines/class_mps_2site.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
@@ -49,7 +49,7 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
     superblock   = std::make_shared<class_superblock>();
 
     //Default constructed objects
-    env_storage  = std::make_shared<class_finite_chain_sweeper>();
+    env_storage  = std::make_shared<class_finite_chain>();
     class_resume_from_hdf5 test(hdf5,superblock,env_storage,sim_name,sim_type);
     hdf5->write_dataset(settings::input::input_file, sim_name + "/input_file");
     hdf5->write_dataset(settings::input::input_filename, sim_name + "/input_filename");

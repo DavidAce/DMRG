@@ -17,7 +17,7 @@ using namespace std::complex_literals;
 class class_superblock;
 class class_mps_2site;
 class class_mps_util;
-class class_finite_chain_sweeper;
+class class_finite_chain;
 /*!
  * \class class_measurement
  * \brief A class for measuring observables
@@ -30,7 +30,7 @@ public:
 private:
     std::shared_ptr<const class_superblock>           superblock;
     SimulationType sim_type;
-    std::shared_ptr<const class_finite_chain_sweeper> env_storage;
+    std::shared_ptr<const class_finite_chain> env_storage;
     std::shared_ptr<class_mps_util> mps_util;
 
     class_custom_cout ccout;
@@ -71,7 +71,7 @@ private:
 
     public:
     explicit class_measurement(std::shared_ptr<class_superblock> superblock_, SimulationType sim_);
-    explicit class_measurement(std::shared_ptr<class_superblock> superblock_, std::shared_ptr<class_finite_chain_sweeper> env_storage_, SimulationType sim_);
+    explicit class_measurement(std::shared_ptr<class_superblock> superblock_, std::shared_ptr<class_finite_chain> env_storage_, SimulationType sim_);
     void   compute_all_observables_from_superblock();
     void   compute_all_observables_from_superblock(const Eigen::Tensor<Scalar,4> &theta);
     void   compute_all_observables_from_finite_chain();

@@ -6,14 +6,14 @@
 #include "class_resume_from_hdf5.h"
 #include <IO/class_hdf5_file.h>
 #include <mps_routines/class_superblock.h>
-#include <mps_routines/class_finite_chain_sweeper.h>
+#include <mps_routines/class_finite_chain.h>
 #include <memory>
 
 
 class_resume_from_hdf5::class_resume_from_hdf5(
         std::shared_ptr<class_hdf5_file>                hdf5_,
         std::shared_ptr<class_superblock>               superblock_,
-        std::shared_ptr<class_finite_chain_sweeper>     env_storage_,
+        std::shared_ptr<class_finite_chain>     env_storage_,
         std::string sim_name_,
         SimulationType sim_type_
         )

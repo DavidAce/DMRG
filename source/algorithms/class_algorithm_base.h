@@ -16,7 +16,7 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 
 class class_superblock;
-class class_finite_chain_sweeper;
+class class_finite_chain;
 class class_measurement;
 class class_hdf5_file;
 class class_table_profiling;
@@ -42,7 +42,7 @@ public:
     //MPS
     std::shared_ptr<class_superblock>            superblock;
     std::shared_ptr<class_measurement>           measurement;
-    std::shared_ptr<class_finite_chain_sweeper>  env_storage;
+    std::shared_ptr<class_finite_chain>  env_storage;
 
     //Console
     class_custom_cout ccout;

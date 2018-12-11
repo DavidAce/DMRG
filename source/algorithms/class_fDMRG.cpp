@@ -8,7 +8,7 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
-#include <mps_routines/class_finite_chain_sweeper.h>
+#include <mps_routines/class_finite_chain.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include "class_fDMRG.h"
@@ -21,7 +21,7 @@ class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     initialize_constants();
     table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
     table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name,sim_name + "_chain");
-    env_storage       = std::make_shared<class_finite_chain_sweeper>(max_length, superblock, hdf5,sim_type,sim_name );
+    env_storage       = std::make_shared<class_finite_chain>(max_length, superblock, hdf5,sim_type,sim_name );
     measurement       = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
     initialize_state(settings::model::initial_state);
 }
@@ -57,7 +57,7 @@ void class_fDMRG::run() {
     t_tot.toc();
     print_status_full();
     measurement->compute_all_observables_from_finite_chain();
-    env_storage->write_chain_to_file();
+    env_storage->write_all_to_hdf5();
     print_profiling();
 }
 

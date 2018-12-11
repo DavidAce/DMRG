@@ -13,7 +13,7 @@ class class_table_dmrg;
  * \brief Class that runs the finite DMRG algorithm.
  */
 
-class class_finite_chain_sweeper;
+class class_finite_chain;
 class class_fDMRG : public class_algorithm_base {
 public:
     //Inherit the constructor of class_algorithm_base

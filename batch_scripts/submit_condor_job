@@ -15,8 +15,8 @@ requirements = true
 # essentially turns off hyperthreading.
 ########################################################
 request_cpus   = 2
-request_memory = 2000
 request_disk   = 500
+# request_memory = 2000
 
 #################################################################################
 # The below lines added to the submit file will allow the jobs to
