@@ -21,7 +21,7 @@ default_src="."
 default_tgt="tmp"
 default_usr="david"
 
-while getopts a:d:hs:u: o; do
+while getopts a:d:hp:s:u: o; do
       case $o in
         (a) default_adr=$OPTARG;;
         (h) usage ;;
@@ -38,4 +38,4 @@ done
 #if [ $OPTIND -eq 1 ]; then echo "No flags were passed"; usage ;exit 1; fi
 
 
-rsync -r $default_src ${default_usr}@${default_adr}:${default_pfx}/${default_tgt}
+rsync -r --progress $default_src ${default_usr}@${default_adr}:${default_pfx}/${default_tgt}

@@ -10,7 +10,7 @@
 #include <general/nmspc_tensor_extra.h>
 #include <general/class_svd_wrapper.h>
 #include <general/class_eigsolver_arpack.h>
-#include <mps_routines/class_finite_chain_sweeper.h>
+#include <mps_routines/class_finite_chain.h>
 #include <mps_routines/class_mps_util.h>
 using namespace std;
 using namespace Textra;

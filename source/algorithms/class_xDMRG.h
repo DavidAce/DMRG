@@ -14,7 +14,7 @@ class class_table_dmrg;
  * \brief Class that runs the excited-state DMRG algorithm.
  */
 
-class class_finite_chain_sweeper;
+class class_finite_chain;
 class class_xDMRG : public class_algorithm_base {
 private:
 

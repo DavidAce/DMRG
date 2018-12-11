@@ -41,6 +41,9 @@ public:
     Eigen::Tensor<double,3> Rblock;
     Eigen::Tensor<double,4> Lblock2;
     Eigen::Tensor<double,4> Rblock2;
+
+    Eigen::Tensor<double,6> HAHB;
+    Eigen::Tensor<double,8> HAHB2;
     Eigen::DSizes<long,4>   dsizes;
     class_tic_toc t_lbfgs;
     class_xDMRG_full_functor(
@@ -69,6 +72,8 @@ public:
         Lblock2 = Lblock2_.real();
         Rblock2 = Rblock2_.real();
         dsizes  = dsizes_;
+        HAHB    = HA_MPO.contract(HB_MPO, Textra::idx({1},{0}));
+        HAHB2   = HAHB.contract(HAHB, Textra::idx({2,5},{1,4}));
     }
 
 
@@ -80,12 +85,9 @@ public:
 
         auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), dsizes);
         Eigen::Tensor<double, 0> H2 =
-                        Lblock2
+                Lblock2
                         .contract(theta,                Textra::idx({0}  ,{1}))
-                        .contract(HA_MPO,               Textra::idx({1,3},{0,2}))
-                        .contract(HB_MPO,               Textra::idx({4,2},{0,2}))
-                        .contract(HA_MPO,               Textra::idx({1,3},{0,2}))
-                        .contract(HB_MPO,               Textra::idx({4,3},{0,2}))
+                        .contract(HAHB2,                Textra::idx({2,1,3,4},{4,0,1,3}))
                         .contract(theta.conjugate(),    Textra::idx({0,3,5},{1,0,2}))
                         .contract(Rblock2,              Textra::idx({0,3,1,2},{0,1,2,3})).real();
 //        t_lbfgs.toc();
@@ -99,8 +101,7 @@ public:
         Eigen::Tensor<double, 0>  E =
                          Lblock
                         .contract(theta,                Textra::idx({0},{1}))
-                        .contract(HA_MPO,               Textra::idx({1,2},{0,2}))
-                        .contract(HB_MPO,               Textra::idx({3,1},{0,2}))
+                        .contract(HAHB,                Textra::idx({1,2,3},{0,1,4}))
                         .contract(theta.conjugate(),    Textra::idx({0,2,4},{1,0,2}))
                         .contract(Rblock,               Textra::idx({0,2,1},{0,1,2}));
 
@@ -113,12 +114,9 @@ public:
 //        t_lbfgs.tic();
         auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), dsizes);
         Eigen::Tensor<double, 4> vH2 =
-                        Lblock2
+                Lblock2
                         .contract(theta,                 Textra::idx({0}  ,{1}))
-                        .contract(HA_MPO,                Textra::idx({1,3},{0,2}))
-                        .contract(HB_MPO,                Textra::idx({4,2},{0,2}))
-                        .contract(HA_MPO,                Textra::idx({1,3},{0,2}))
-                        .contract(HB_MPO,                Textra::idx({4,3},{0,2}))
+                        .contract(HAHB2,                Textra::idx({2,1,3,4},{4,0,1,3}))
                         .contract(Rblock2,               Textra::idx({1,2,4},{0,2,3}))
                         .shuffle(Textra::array4{1,0,2,3});
 //        t_lbfgs.toc();
@@ -130,8 +128,7 @@ public:
         auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), dsizes);
         Eigen::Tensor<double, 4> vH = Lblock
                 .contract(theta,                    Textra::idx({0},{1}))
-                .contract(HA_MPO ,                  Textra::idx({1,2},{0,2}))//  idx({1,2,3},{0,4,5}))
-                .contract(HB_MPO ,                  Textra::idx({3,1},{0,2}))//  idx({1,2,3},{0,4,5}))
+                .contract(HAHB,                    Textra::idx({1,2,3},{0,1,4}))
                 .contract(Rblock ,                  Textra::idx({1,3},{0,2}))
                 .shuffle(Textra::array4{1,0,2,3});
 //        t_lbfgs.toc();
@@ -139,7 +136,6 @@ public:
     }
 
 
-    //    double operator()(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, Eigen::Matrix<double,Eigen::Dynamic,1> &grad) const;
     double operator()(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, Eigen::Matrix<double,Eigen::Dynamic,1> &grad) {
         double vH2v,vHv,vv;
         double lambda,var,log10var, fx;

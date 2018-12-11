@@ -75,7 +75,12 @@ if(BLAS_openblas_LIBRARY)
 else()
     message(STATUS "OpenBLAS will be installed into ${INSTALL_DIRECTORY}/OpenBLAS on first build.")
     set(OpenBLAS_MULTITHREADED 1 )
-    set(OpenBLAS_USE_OPENMP 1) # Openmp doesnt work on clang it seems
+    if(OpenMP_FOUND)
+        set(OpenBLAS_USE_OPENMP 0) # Openmp doesnt work on clang it seems
+    else()
+        set(OpenBLAS_USE_OPENMP 0) # Openmp doesnt work on clang it seems
+    endif()
+
     include(ExternalProject)
     ExternalProject_Add(library_OpenBLAS
             GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
@@ -156,6 +161,9 @@ endif()
 if(OpenBLAS_USE_OPENMP AND OpenMP_FOUND)
     set_target_properties(blas   PROPERTIES INTERFACE_LINK_LIBRARIES "${OpenMP_CXX_FLAGS}")
     set_target_properties(lapack PROPERTIES INTERFACE_LINK_LIBRARIES "${OpenMP_CXX_FLAGS}")
+    list(APPEND BLAS_LIBRARIES        "${OpenMP_CXX_FLAGS}")
+    list(APPEND BLAS_LIBRARIES_STATIC "${OpenMP_CXX_FLAGS}")
+    list(APPEND BLAS_LIBRARIES_SHARED "${OpenMP_CXX_FLAGS}")
 endif()
 
 

@@ -11,7 +11,7 @@
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_mps_2site.h>
-#include <mps_routines/class_finite_chain_sweeper.h>
+#include <mps_routines/class_finite_chain.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <mps_routines/class_mps_util.h>
 using namespace std;
@@ -37,7 +37,7 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
 }
 
 class_measurement::class_measurement(std::shared_ptr<class_superblock> superblock_,
-                                     std::shared_ptr<class_finite_chain_sweeper> env_storage_,
+                                     std::shared_ptr<class_finite_chain> env_storage_,
                                      SimulationType sim_)
         :class_measurement(superblock_,sim_)
 {
