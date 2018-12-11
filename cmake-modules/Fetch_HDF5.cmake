@@ -3,6 +3,7 @@
 if (EXISTS "$ENV{HDF5_DIR}")
     # Try finding in system. While avoiding Python anaconda's version.
     # Usually there is an executable present in system, "h5c++"
+    cmake_policy(SET CMP0074 NEW)
     set(HDF5_ROOT "$ENV{HDF5_DIR}")
     set(HDF5_USE_STATIC_LIBRARIES ${STATIC_BUILD})
     set(HDF5_FIND_DEBUG OFF)
