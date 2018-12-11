@@ -31,7 +31,7 @@ if(ARPACK_LIBRARIES)
             IMPORTED_LOCATION "${ARPACK_LIBRARIES}"
             INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran;-lpthread"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
-            INTERFACE_LINK_FLAGS          "${OpenMP_CXX_FLAGS}"
+#            INTERFACE_LINK_FLAGS          "${OpenMP_CXX_FLAGS}"
             )
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
     target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
@@ -59,8 +59,8 @@ else()
     include(ExternalProject)
     ExternalProject_Add(library_ARPACK
             GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
-            GIT_TAG             master # You need to do shared library linking with blas and lapack for this to work, otherwise the examples will fail due to missing -lpthread
-#            GIT_TAG             3.5.0 # Latest version has problems with fortran linking. so stick with this version instead.
+            GIT_TAG             master
+#            GIT_TAG             3.6.3
             PREFIX              "${INSTALL_DIRECTORY}/arpack-ng"
             UPDATE_COMMAND ""
             BUILD_IN_SOURCE 1

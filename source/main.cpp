@@ -31,9 +31,11 @@
 */
 
 int main(int argc, char* argv[]) {
-    int num_threads = 2;
+    int openmp_num_threads = 2;
+    int openblas_num_threads = 1;
+//    int openmp_num_threads = 2;
     #ifdef OpenBLAS_AVAILABLE
-        openblas_set_num_threads(num_threads);
+        openblas_set_num_threads(openblas_num_threads);
     std::cout << "OpenBLAS compiled with mode " << openblas_get_parallel()
               << " for target " << openblas_get_corename()
               << " with config " << openblas_get_config()
@@ -42,16 +44,16 @@ int main(int argc, char* argv[]) {
 
     #ifdef OpenMP_AVAILABLE
         Eigen::initParallel();
-        omp_set_num_threads(num_threads);
+        omp_set_num_threads(openmp_num_threads);
         omp_set_dynamic(0);
-        Eigen::setNbThreads(num_threads);
+        Eigen::setNbThreads(openmp_num_threads);
         std::cout << "Using Eigen  with " << Eigen::nbThreads( )   << " thread(s)" << std::endl;
         std::cout << "Using OpenMP with " << omp_get_max_threads() << " thread(s)" << std::endl;
     #endif
 
     #ifdef MKL_AVAILABLE
-        mkl_set_num_threads(num_threads);
-        std::cout << "Using Intel MKL with " << num_threads << " thread(s)" << std::endl;
+        mkl_set_num_threads(openmp_num_threads);
+        std::cout << "Using Intel MKL with " << openmp_num_threads << " thread(s)" << std::endl;
     #endif
 
 
