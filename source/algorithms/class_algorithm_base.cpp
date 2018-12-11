@@ -697,8 +697,9 @@ void class_algorithm_base::print_status_update() {
     ccout(1) << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << t_tot.get_age() ;
 
     ccout(1) << left << " Memory [";
-    ccout(1) << left << "Now: "   << process_memory_in_mb("VmSize")<< " MB ";
-    ccout(1) << left << "Peak: "  << process_memory_in_mb("VmPeak")<< " MB";
+    ccout(1) << left << "Rss: "     << process_memory_in_mb("VmRSS")<< " MB ";
+    ccout(1) << left << "RssPeak: "  << process_memory_in_mb("VmHWM")<< " MB ";
+    ccout(1) << left << "VmPeak: "  << process_memory_in_mb("VmPeak")<< " MB";
     ccout(1) << left << "]";
 
 
