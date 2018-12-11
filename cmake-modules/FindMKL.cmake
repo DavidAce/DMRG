@@ -27,6 +27,7 @@
 #caffe_option(MKL_MULTI_THREADED  "Use multi-threading"   ON IF NOT MKL_USE_SINGLE_DYNAMIC_LIBRARY)
 
 # ---[ Root folders
+cmake_policy(SET CMP0074 NEW)
 set(INTEL_ROOT "/opt/intel" CACHE PATH "Folder contains intel libs")
 find_path(MKL_ROOT include/mkl.h PATHS $ENV{MKLROOT} ${INTEL_ROOT}/mkl
         DOC "Folder contains MKL")
