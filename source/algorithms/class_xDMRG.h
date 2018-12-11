@@ -39,13 +39,13 @@ public:
     double energy_now = 0;
 
     void run()                                          override;
-    void check_convergence_all()                        override;
+    void check_convergence()                        override;
     void initialize_constants()                         override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
     void store_table_entry_to_file(bool force = false)  override;
     void store_chain_entry_to_file(bool force = false);
-    void store_mps_to_file        (bool force = false);
+    void store_state_to_file(bool force = false);
     void single_xDMRG_step();
     void initialize_chain();
     void reset_chain_mps_to_random_product_state(std::string parity = "none");

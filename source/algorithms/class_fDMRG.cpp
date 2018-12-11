@@ -45,7 +45,7 @@ void class_fDMRG::run() {
         // It's important not to perform the last step.
         // That last state would not get optimized
         if(env_storage->position_is_the_middle()) {
-            check_convergence_all();
+            check_convergence();
             if (iteration >= max_sweeps or simulation_has_converged) {
                 break;
             }
@@ -75,7 +75,7 @@ void class_fDMRG::initialize_chain() {
     }
 }
 
-void class_fDMRG::check_convergence_all(){
+void class_fDMRG::check_convergence(){
     if(not env_storage->position_is_the_middle()){return;}
     t_con.tic();
     check_convergence_entanglement();

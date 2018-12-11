@@ -49,13 +49,7 @@ int class_finite_chain::insert(){
     if(!max_length_is_set){print_error_and_exit(10);}
     if(!superblock_is_set){print_error_and_exit(11);}
     if(!hdf5_file_is_set){print_error_and_exit(12);}
-//    if(MPO_L.size() > 0 and MPO_R.size() > 0) {
-//        std::cout << "Current state -- Insert (before): " << std::endl;
-//        std::cout << "HA: " << superblock->HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position()
-//                  << std::endl;
-//        std::cout << "HB: " << superblock->HB->get_position() << " MPO_R front: " << MPO_R.front()->get_position()
-//                  << std::endl;
-//    }
+
     assert(ENV_L.size() + ENV_L.size() <= max_length);
     assert(MPS_L.size() + MPS_R.size() <= max_length);
     assert(ENV_L.size()        == superblock->Lblock->size);
@@ -99,27 +93,15 @@ int class_finite_chain::insert(){
     superblock->HA->set_position(MPO_L.back()->get_position());
     superblock->HB->set_position(MPO_R.front()->get_position());
 
-
-//    std::cout << "New positions: \n" ;
-//    for (auto &MPO : MPO_L){
-//        std::cout << "Position L: " << MPO->get_position() << std::endl;
-//    }
-//    for (auto &MPO : MPO_R){
-//        std::cout << "Position R: " << MPO->get_position() << std::endl;
-//    }
-//    std::cout << std::endl;
-//
-//    std::cout << "Current state -- Insert (after): " << std::endl;
-//    std::cout << "HA: " << superblock->HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position() << std::endl;
-//    std::cout << "HB: " << superblock->HB->get_position() << " MPO_R front: " << MPO_R.front()->get_position() << std::endl;
-
-
-//    std::cout << "Inserted -- New state reflects current superblock: " << std::endl;
     assert(ENV_L.back().size + ENV_R.front().size == superblock->environment_size);
     assert(ENV_L.back().size   == superblock->Lblock->size);
     assert(ENV_R.front().size  == superblock->Rblock->size);
     assert(ENV2_L.back().size  == superblock->Lblock2->size);
     assert(ENV2_R.front().size == superblock->Rblock2->size);
+
+    full_mps_has_been_written = false;
+    full_mpo_has_been_written = false;
+
     return (int)MPS_L.size();
 }
 
@@ -142,8 +124,7 @@ void class_finite_chain::overwrite_local_MPS() {
     MPS_L.back()    = *superblock->MPS->MPS_A;
     MPS_C           = superblock->MPS->LC;
     MPS_R.front()   = *superblock->MPS->MPS_B;
-
-
+    full_mps_has_been_written = false;
 }
 
 
@@ -156,6 +137,7 @@ void class_finite_chain::overwrite_local_MPO(){
     MPO_L.back()    = superblock->HA->clone();
     MPO_R.front()   = superblock->HB->clone();
     assert(MPO_L.size() + MPO_R.size() == max_length);
+    full_mpo_has_been_written = false;
 }
 
 void class_finite_chain::overwrite_local_ENV(){
@@ -296,6 +278,7 @@ int class_finite_chain::move(){
     if (position_is_the_left_edge()){
         sweeps++;
     }
+    full_mps_has_been_written = false;
     return get_sweeps();
 }
 
@@ -365,6 +348,10 @@ int class_finite_chain::get_position()  const {return max_length_is_set ? (int)(
 bool class_finite_chain::position_is_the_middle() {
     return max_length_is_set ? (unsigned) get_position() + 1 == (unsigned)(max_length / 2.0) and direction == 1: true ;
 }
+bool class_finite_chain::position_is_the_middle_any_direction(){
+    return max_length_is_set ? (unsigned) get_position() + 1 == (unsigned)(max_length / 2.0) : true ;
+}
+
 bool class_finite_chain::position_is_the_left_edge(){
     return get_position() == 0;
 }
