@@ -623,12 +623,23 @@ void class_xDMRG::reset_chain_mps_to_random_product_state(std::string parity) {
 void class_xDMRG::set_random_fields_in_chain_mpo() {
     std::cout << "Setting random fields in chain" << std::endl;
     assert(env_storage->get_length() == max_length);
+    std::vector<std::vector<double>> all_params;
     for (auto &mpo : env_storage->ref_MPO_L()){
         mpo->randomize_hamiltonian();
+        all_params.push_back(mpo->get_parameter_values());
     }
     for (auto &mpo : env_storage->ref_MPO_R()){
         mpo->randomize_hamiltonian();
+        all_params.push_back(mpo->get_parameter_values());
     }
+
+    for (auto &mpo : env_storage->ref_MPO_L()){
+        mpo->set_non_local_parameters(all_params);
+    }
+    for (auto &mpo : env_storage->ref_MPO_R()){
+        mpo->set_non_local_parameters(all_params);
+    }
+
 
     superblock->HA = env_storage->get_MPO_L().back()->clone();
     superblock->HB = env_storage->get_MPO_R().front()->clone();
