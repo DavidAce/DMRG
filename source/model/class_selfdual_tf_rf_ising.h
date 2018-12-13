@@ -21,11 +21,12 @@ private:
     double h_rnd               = 0;
     double J_log_mean          = settings::model::selfdual_tf_rf_ising::J_log_mean;
     double h_log_mean          = settings::model::selfdual_tf_rf_ising::h_log_mean;
-    double J_mean              = std::exp(settings::model::selfdual_tf_rf_ising::J_log_mean);
-    double h_mean              = std::exp(settings::model::selfdual_tf_rf_ising::h_log_mean);
+    double J_avg               = 0; //std::exp(settings::model::selfdual_tf_rf_ising::J_log_mean);
+    double h_avg               = 0; //std::exp(settings::model::selfdual_tf_rf_ising::h_log_mean);
     double J_sigma             = settings::model::selfdual_tf_rf_ising::J_sigma;
     double h_sigma             = settings::model::selfdual_tf_rf_ising::h_sigma;
     double lambda              = settings::model::selfdual_tf_rf_ising::lambda;
+    double delta               = 0;
     double e_reduced           = 0;                            /*!< Energy offset for this mpo (to make "reduced" MPO views) */
 
 
@@ -33,6 +34,14 @@ private:
 public:
 
     class_selfdual_tf_rf_ising();
+
+    // Functions that extend the base (no override)
+    void set_realization_averages(double J_avg_,double h_avg_);
+    auto get_J_rnd(){return J_rnd;};
+    auto get_h_rnd(){return h_rnd;};
+
+
+    // Functions that override the base
     void build_mpo()                                                            override;
     void randomize_hamiltonian()                                                override;
     Eigen::Tensor<Scalar,4> MPO_reduced_view()                            const override;
@@ -42,11 +51,11 @@ public:
             int sites,
             std::vector<Eigen::MatrixXcd> &SX,
             std::vector<Eigen::MatrixXcd> &SY,
-            std::vector<Eigen::MatrixXcd> &SZ)                                  const override;
-
+            std::vector<Eigen::MatrixXcd> &SZ)                            const override;
     std::unique_ptr<class_hamiltonian_base> clone()                       const override;
     void   set_reduced_energy(double site_energy)                               override;
     size_t get_spin_dimension()                                           const override;
+
 //    double get_energy_reduced()                                           const override;
 //    double get_random_field()                                             const override;
 //    double get_randomness_strength()                                      const override;
@@ -54,7 +63,15 @@ public:
     void   print_parameter_values()                                       const override;
     std::vector<std::string> get_parameter_names()                        const override;
     std::vector<double>      get_parameter_values()                       const override;
+
+    void   set_non_local_parameters(std::vector<std::vector<double>> &chain_parameters) override;
+
+
 //    void   write_to_hdf5_table()                                                override;
+
+
+
+
 };
 
 #endif //DMRG_CLASS_SELFDUAL_TF_ISING_H

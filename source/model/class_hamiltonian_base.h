@@ -29,14 +29,15 @@ public:
 
     Eigen::MatrixXcd        MPO_matrix_view();    /*!< Matrix representation of full 2-site Hamiltonian */
     virtual Eigen::MatrixXcd single_site_hamiltonian(int position, int sites, std::vector<Eigen::MatrixXcd> &SX, std::vector<Eigen::MatrixXcd> &SY, std::vector<Eigen::MatrixXcd> &SZ) const = 0;
-    virtual void   build_mpo()                                     = 0;
-    virtual void   randomize_hamiltonian()                         = 0;
-    virtual void   print_parameter_names ()                  const = 0;
-    virtual void   print_parameter_values()                  const = 0;
-    virtual void   set_reduced_energy(double site_energy)          = 0;
-    virtual size_t get_spin_dimension()                      const = 0;
-    virtual std::vector<std::string> get_parameter_names()   const = 0;
-    virtual std::vector<double>      get_parameter_values()  const = 0;
+    virtual void   build_mpo()                                                            = 0;
+    virtual void   randomize_hamiltonian()                                                = 0;
+    virtual void   print_parameter_names ()                                         const = 0;
+    virtual void   print_parameter_values()                                         const = 0;
+    virtual void   set_reduced_energy(double site_energy)                                 = 0;
+    virtual size_t get_spin_dimension()                                             const = 0;
+    virtual std::vector<std::string> get_parameter_names()                          const = 0;
+    virtual std::vector<double>      get_parameter_values()                         const = 0;
+    virtual void   set_non_local_parameters(std::vector<std::vector<double>> &parameters) = 0;
 //    virtual void   write_to_hdf5_table()                           = 0;
 //    virtual double get_energy_reduced()                      const = 0;
 //    virtual double get_random_field()                        const = 0;
