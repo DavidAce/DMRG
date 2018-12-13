@@ -18,9 +18,15 @@ class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(): class_hamiltonian_base
     extent2     = {spin_dim, spin_dim};
     J_rnd       = rn::log_normal(J_log_mean,J_sigma);
     h_rnd       = rn::log_normal(h_log_mean,h_sigma);
+    delta       = J_log_mean - h_log_mean;
     build_mpo();
 }
 
+void class_selfdual_tf_rf_ising::set_realization_averages(double J_avg_,double h_avg_){
+    J_avg=J_avg_;
+    h_avg=h_avg_;
+    build_mpo();
+}
 
 
 void class_selfdual_tf_rf_ising::build_mpo()
@@ -32,7 +38,7 @@ void class_selfdual_tf_rf_ising::build_mpo()
  *  |     sz                0           0              0            0   |
  *  |     sx                0           0              0            0   |
  *  |     0                 I           0              0            0   |
- *  | -(h_rnd)*sx       -J_rnd*sz   -l*h_mean*sx     -l*J_mean*sz     I   |
+ *  | -(h_rnd)*sx       -J_rnd*sz   -l*h_mean*sx     -l*J_mean*sz     I |
  *
  *        2
  *        |
@@ -50,8 +56,8 @@ void class_selfdual_tf_rf_ising::build_mpo()
     MPO.slice(Eigen::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
     MPO.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
     MPO.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
-    MPO.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*h_mean) * sx);
-    MPO.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*J_mean) * sz);
+    MPO.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*h_avg) * sx);
+    MPO.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*J_avg) * sz);
     MPO.slice(Eigen::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
 }
 
@@ -61,6 +67,7 @@ void class_selfdual_tf_rf_ising::randomize_hamiltonian(){
     MPO.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
     MPO.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
 }
+
 
 Eigen::Tensor<Scalar,4> class_selfdual_tf_rf_ising::MPO_reduced_view() const {
     if (e_reduced == 0){return MPO;}
@@ -85,7 +92,7 @@ Eigen::MatrixXcd class_selfdual_tf_rf_ising::single_site_hamiltonian(
     int i = Math::mod(position,     sites);
     int j = Math::mod(position + 1, sites);
     int k = Math::mod(position + 2, sites);
-    return - (J_rnd * SZ[i]*SZ[j] + h_rnd*0.5*(SX[i]+SX[j]) + lambda*(h_mean * SX[i]*SX[j] + J_mean*SZ[i]*SZ[k]));
+    return - (J_rnd * SZ[i]*SZ[j] + h_rnd*0.5*(SX[i]+SX[j]) + lambda*(h_avg * SX[i]*SX[j] + J_avg*SZ[i]*SZ[k]));
 }
 
 
@@ -107,9 +114,12 @@ void class_selfdual_tf_rf_ising::print_parameter_names() const {
             << std::setw(16) << std::left << "h_rnd"
             << std::setw(16) << std::left << "J_log_mean"
             << std::setw(16) << std::left << "h_log_mean"
+            << std::setw(16) << std::left << "J_avg"
+            << std::setw(16) << std::left << "h_avg"
             << std::setw(16) << std::left << "J_sigma"
             << std::setw(16) << std::left << "h_sigma"
             << std::setw(16) << std::left << "lambda"
+            << std::setw(16) << std::left << "delta"
             << std::setw(16) << std::left << "e_reduced"
             << std::setw(16) << std::left << "spin_dim"
             << std::endl;
@@ -123,9 +133,12 @@ void class_selfdual_tf_rf_ising::print_parameter_values() const {
             << std::setw(16) << std::left << h_rnd
             << std::setw(16) << std::left << J_log_mean
             << std::setw(16) << std::left << h_log_mean
+            << std::setw(16) << std::left << J_avg
+            << std::setw(16) << std::left << h_avg
             << std::setw(16) << std::left << J_sigma
             << std::setw(16) << std::left << h_sigma
             << std::setw(16) << std::left << lambda
+            << std::setw(16) << std::left << delta
             << std::setw(16) << std::left << e_reduced
             << std::setw(16) << std::left << spin_dim
             << std::endl;
@@ -137,9 +150,12 @@ std::vector<std::string> class_selfdual_tf_rf_ising::get_parameter_names() const
             "h_rnd",
             "J_log_mean",
             "h_log_mean",
+            "J_avg",
+            "h_avg",
             "J_sigma",
             "h_sigma",
             "lambda",
+            "delta",
             "e_reduced",
             "spin_dim"
     };
@@ -153,13 +169,32 @@ std::vector<double> class_selfdual_tf_rf_ising::get_parameter_values() const {
             h_rnd,
             J_log_mean,
             h_log_mean,
+            J_avg,
+            h_avg,
             J_sigma,
             h_sigma,
             lambda,
+            delta,
             e_reduced,
             (double)spin_dim
             };
 }
+
+
+void   class_selfdual_tf_rf_ising::set_non_local_parameters(std::vector<std::vector<double>> &chain_parameters){
+    // Calculate average J_rnd on the whole chain
+    std::vector<double> J_rnd_vec;
+    std::vector<double> h_rnd_vec;
+    for (auto &params : chain_parameters){
+        J_rnd_vec.push_back(params[1]);
+        h_rnd_vec.push_back(params[2]);
+    }
+    double J_rnd_avg = std::accumulate(J_rnd_vec.begin(),J_rnd_vec.end(),0.0)/J_rnd_vec.size();
+    double h_rnd_avg = std::accumulate(h_rnd_vec.begin(),h_rnd_vec.end(),0.0)/h_rnd_vec.size();
+    set_realization_averages(J_rnd_avg,h_rnd_avg);
+}
+
+
 
 //void   class_selfdual_tf_rf_ising::write_to_hdf5_table(){
 //

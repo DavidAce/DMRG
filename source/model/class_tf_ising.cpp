@@ -143,4 +143,6 @@ std::vector<double> class_tf_ising::get_parameter_values() const {
 }
 
 
+void class_tf_ising::set_non_local_parameters(std::vector<std::vector<double>> &chain_parameters){
 
+}
