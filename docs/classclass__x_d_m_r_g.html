@@ -101,8 +101,10 @@ $(document).ready(function(){initNavTree('classclass__x_d_m_r_g.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ac28e050524068677d4f8bcdb020a51ad"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51ad">xDMRG_Mode</a> { <a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51adaba7de5bc6888294e5884b024a4c894f1">xDMRG_Mode::FULL</a>, 
-<a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51adafba5cdfa4bcb408f641c743519a0fe19">xDMRG_Mode::PARTIAL</a>
+<tr class="memitem:ac28e050524068677d4f8bcdb020a51ad"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51ad">xDMRG_Mode</a> { <a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51adad7cf9a9be4b98927f7920956e9dfe691">xDMRG_Mode::KEEP_BEST_OVERLAP</a>, 
+<a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51ada1376833581bc88d94d323f3f34235079">xDMRG_Mode::FULL_EIG_OPT</a>, 
+<a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51ada87634fe86f77b4bb49d9f8d47e053827">xDMRG_Mode::PARTIAL_EIG_OPT</a>, 
+<a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51ada6240f51f5798068fae31c43cad4baaf3">xDMRG_Mode::DIRECT_OPT</a>
  }</td></tr>
 <tr class="separator:ac28e050524068677d4f8bcdb020a51ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_types_classclass__algorithm__base"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classclass__algorithm__base')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classclass__algorithm__base.html">class_algorithm_base</a></td></tr>
@@ -115,32 +117,47 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4168bf893a010aab72cfa9be1068ed5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b175219651821e6995f089168704258"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a4b175219651821e6995f089168704258">run</a> () override</td></tr>
 <tr class="separator:a4b175219651821e6995f089168704258"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a688573b541f3dcbc2736d7339b1eb1d2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a688573b541f3dcbc2736d7339b1eb1d2">check_convergence_overall</a> () override</td></tr>
-<tr class="separator:a688573b541f3dcbc2736d7339b1eb1d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4484d1998d01a0e6cd4b1a08ce8f62b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#af4484d1998d01a0e6cd4b1a08ce8f62b">check_convergence</a> () override</td></tr>
+<tr class="separator:af4484d1998d01a0e6cd4b1a08ce8f62b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84ed83905c340068ea794931c0491730"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a84ed83905c340068ea794931c0491730">initialize_constants</a> () override</td></tr>
 <tr class="separator:a84ed83905c340068ea794931c0491730"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf7ce55ecd62b5a7d7aa1e58fafb1393"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#abf7ce55ecd62b5a7d7aa1e58fafb1393">print_profiling</a> () override</td></tr>
 <tr class="separator:abf7ce55ecd62b5a7d7aa1e58fafb1393"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04448ef20d7d09b3b9b7fecdc8b8e1ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a04448ef20d7d09b3b9b7fecdc8b8e1ea">print_profiling_sim</a> (<a class="el" href="classclass__tic__toc.html">class_tic_toc</a> &amp;t_parent) override</td></tr>
 <tr class="separator:a04448ef20d7d09b3b9b7fecdc8b8e1ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa46ce068a200a40f7b20b02204200288"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#aa46ce068a200a40f7b20b02204200288">store_table_entry_to_file</a> () override</td></tr>
-<tr class="separator:aa46ce068a200a40f7b20b02204200288"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76996da885f32f0660838a78e9b268f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a76996da885f32f0660838a78e9b268f9">store_chain_entry_to_file</a> ()</td></tr>
-<tr class="separator:a76996da885f32f0660838a78e9b268f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11514c41a350fdc42ed0b75c7c8fe3ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a11514c41a350fdc42ed0b75c7c8fe3ab">single_xDMRG_step</a> (<a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51ad">xDMRG_Mode</a> mode, long <a class="el" href="classclass__algorithm__base.html#a831053ba93028a374854b6af348e25b1">chi_max</a>)</td></tr>
-<tr class="separator:a11514c41a350fdc42ed0b75c7c8fe3ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dc28964382e83e3fe2bf9a877999f8d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a2dc28964382e83e3fe2bf9a877999f8d">store_table_entry_to_file</a> (bool force=false) override</td></tr>
+<tr class="separator:a2dc28964382e83e3fe2bf9a877999f8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87b12aec512fc3a0603f26f12f30927e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a87b12aec512fc3a0603f26f12f30927e">store_chain_entry_to_file</a> (bool force=false)</td></tr>
+<tr class="separator:a87b12aec512fc3a0603f26f12f30927e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aede3d23695431a5247209b2f1d4637bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#aede3d23695431a5247209b2f1d4637bc">store_state_to_file</a> (bool force=false)</td></tr>
+<tr class="separator:aede3d23695431a5247209b2f1d4637bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a429b2c16cc08ffefcb967fc1a35772bd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a429b2c16cc08ffefcb967fc1a35772bd">single_xDMRG_step</a> ()</td></tr>
+<tr class="separator:a429b2c16cc08ffefcb967fc1a35772bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acecda07360b0d9912f669c44112794fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#acecda07360b0d9912f669c44112794fb">initialize_chain</a> ()</td></tr>
 <tr class="separator:acecda07360b0d9912f669c44112794fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a3e30e8e542a2011a4817c6635d3412"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a8a3e30e8e542a2011a4817c6635d3412">reset_chain_mps_to_random_product_state</a> ()</td></tr>
-<tr class="separator:a8a3e30e8e542a2011a4817c6635d3412"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad155a57a624c220c20c10195ddb0b2a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#ad155a57a624c220c20c10195ddb0b2a2">reset_chain_mps_to_random_product_state</a> (std::string parity=&quot;none&quot;)</td></tr>
+<tr class="separator:ad155a57a624c220c20c10195ddb0b2a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac51f5f07485cc57f34c1937fb957c29f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#ac51f5f07485cc57f34c1937fb957c29f">set_random_fields_in_chain_mpo</a> ()</td></tr>
 <tr class="separator:ac51f5f07485cc57f34c1937fb957c29f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e352e8d131ccfb4578577f294edaebc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a3e352e8d131ccfb4578577f294edaebc">find_energy_range</a> ()</td></tr>
 <tr class="separator:a3e352e8d131ccfb4578577f294edaebc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ed29af83a6ddfb57bc97ee90e55791f"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a5ed29af83a6ddfb57bc97ee90e55791f">find_state_with_greatest_overlap_full_diag</a> (Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt; &amp;theta)</td></tr>
-<tr class="separator:a5ed29af83a6ddfb57bc97ee90e55791f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63e95d93f8d36418efa2eea973166140"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a63e95d93f8d36418efa2eea973166140">find_state_with_greatest_overlap_part_diag</a> (Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt; &amp;theta)</td></tr>
-<tr class="separator:a63e95d93f8d36418efa2eea973166140"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22aed7a93bd32c49e540d82d0878064a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a22aed7a93bd32c49e540d82d0878064a">generate_size_list</a> (const int shape)</td></tr>
+<tr class="separator:a22aed7a93bd32c49e540d82d0878064a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50c311380b83d15193d1f6c556798728"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:a50c311380b83d15193d1f6c556798728"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a50c311380b83d15193d1f6c556798728">make_sorted_index</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;values)</td></tr>
+<tr class="separator:a50c311380b83d15193d1f6c556798728"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f966a65534ae1976ecac59ed791a521"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a1f966a65534ae1976ecac59ed791a521">sort_and_filter_eigenstates</a> (Eigen::VectorXcd &amp;eigvals, Eigen::MatrixXcd &amp;eigvecs, Eigen::VectorXd &amp;overlaps, int &amp;nev, double overlap_cutoff=1e-2)</td></tr>
+<tr class="separator:a1f966a65534ae1976ecac59ed791a521"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64cf18fc00a07e704b729906509ac08e"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a64cf18fc00a07e704b729906509ac08e">find_state_with_greatest_overlap_full_diag</a> (Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt; &amp;theta)</td></tr>
+<tr class="separator:a64cf18fc00a07e704b729906509ac08e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f4a52f91b27c423796a224f65c75d0e"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a0f4a52f91b27c423796a224f65c75d0e">find_state_with_greatest_overlap_part_diag3</a> (Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt; &amp;theta, <a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51ad">xDMRG_Mode</a> mode=<a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51ada87634fe86f77b4bb49d9f8d47e053827">xDMRG_Mode::PARTIAL_EIG_OPT</a>)</td></tr>
+<tr class="separator:a0f4a52f91b27c423796a224f65c75d0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4303facbae92f87414fe695dd9d5b9a"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#aa4303facbae92f87414fe695dd9d5b9a">find_state_with_greatest_state_in_subspace</a> (Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt; &amp;theta)</td></tr>
+<tr class="separator:aa4303facbae92f87414fe695dd9d5b9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd30969dcc237b2f3c5eb1026fb61739"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, Eigen::Dynamic, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#afd30969dcc237b2f3c5eb1026fb61739">subspace_optimization</a> (double &amp;energy_new, double &amp;variance_new, int nev, const double *eigvecs_ptr, const double *eigvals_ptr, const Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt; &amp;theta)</td></tr>
+<tr class="separator:afd30969dcc237b2f3c5eb1026fb61739"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cca116692a0c062c7693adff31df2f1"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, Eigen::Dynamic, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a0cca116692a0c062c7693adff31df2f1">direct_optimization</a> (double &amp;energy_new, double &amp;variance_new, const Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt; &amp;theta)</td></tr>
+<tr class="separator:a0cca116692a0c062c7693adff31df2f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classclass__algorithm__base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classclass__algorithm__base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classclass__algorithm__base.html">class_algorithm_base</a></td></tr>
 <tr class="memitem:a35e482872c1dec9372c74c40a82208d0 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a35e482872c1dec9372c74c40a82208d0">class_algorithm_base</a> ()=default</td></tr>
 <tr class="separator:a35e482872c1dec9372c74c40a82208d0 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -152,20 +169,22 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a3b2a7db71b752bf22253a9b6739718cb inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb64d6f7fccaa2a56431dc42306d3315 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aeb64d6f7fccaa2a56431dc42306d3315">print_status_full</a> ()</td></tr>
 <tr class="separator:aeb64d6f7fccaa2a56431dc42306d3315 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6fa6bf0bd7712517fbc32abe7aa1a1a inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#af6fa6bf0bd7712517fbc32abe7aa1a1a">single_DMRG_step</a> (long <a class="el" href="classclass__algorithm__base.html#a831053ba93028a374854b6af348e25b1">chi_max</a>, <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">Ritz</a> ritz=Ritz::SR)</td></tr>
-<tr class="separator:af6fa6bf0bd7712517fbc32abe7aa1a1a inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25d323142a2869bd0e9280a0ca52682d inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a25d323142a2869bd0e9280a0ca52682d">check_convergence_variance_mpo</a> (double threshold=-1.0)</td></tr>
-<tr class="separator:a25d323142a2869bd0e9280a0ca52682d inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af54346fd60889c71e72e04a7a6d21350 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#af54346fd60889c71e72e04a7a6d21350">check_convergence_variance_ham</a> (double threshold=-1.0)</td></tr>
-<tr class="separator:af54346fd60889c71e72e04a7a6d21350 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf60176dfbfcf5425df00073d4f676d8 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#adf60176dfbfcf5425df00073d4f676d8">check_convergence_variance_mom</a> (double threshold=-1.0)</td></tr>
-<tr class="separator:adf60176dfbfcf5425df00073d4f676d8 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a397a73dc0b2e0c9e9ac3bb467053693e inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a397a73dc0b2e0c9e9ac3bb467053693e">check_convergence_entanglement</a> (double threshold=-1.0)</td></tr>
-<tr class="separator:a397a73dc0b2e0c9e9ac3bb467053693e inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3439083d4b7937202af5b925d6c1ef51 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a3439083d4b7937202af5b925d6c1ef51">check_convergence_bond_dimension</a> ()</td></tr>
-<tr class="separator:a3439083d4b7937202af5b925d6c1ef51 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac48dec0e09647ca52ab14fc319cf8fbc inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ac48dec0e09647ca52ab14fc319cf8fbc">clear_convergence_checks</a> ()</td></tr>
-<tr class="separator:ac48dec0e09647ca52ab14fc319cf8fbc inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a838dd6f76afaec65e687e441b36795e9 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a838dd6f76afaec65e687e441b36795e9">single_DMRG_step</a> (long <a class="el" href="classclass__algorithm__base.html#a831053ba93028a374854b6af348e25b1">chi_max</a>, <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">eigsolver_properties::Ritz</a> ritz=<a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044a8cb2010d27e13509d364436256e972c0">eigsolver_properties::Ritz::SR</a>)</td></tr>
+<tr class="separator:a838dd6f76afaec65e687e441b36795e9 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c32bb266274ec98a545cafa4d13632b inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a4c32bb266274ec98a545cafa4d13632b">check_convergence_variance_mpo</a> (double threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>, double slope_threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>)</td></tr>
+<tr class="separator:a4c32bb266274ec98a545cafa4d13632b inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74eacc34cf8533e48ef6503baa89e5c8 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a74eacc34cf8533e48ef6503baa89e5c8">check_convergence_variance_ham</a> (double threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>, double slope_threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>)</td></tr>
+<tr class="separator:a74eacc34cf8533e48ef6503baa89e5c8 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2859b04088bb7da73e4af556f8a5f0c inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ae2859b04088bb7da73e4af556f8a5f0c">check_convergence_variance_mom</a> (double threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>, double slope_threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>)</td></tr>
+<tr class="separator:ae2859b04088bb7da73e4af556f8a5f0c inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9067f9aab2893401df4cac8112275919 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a9067f9aab2893401df4cac8112275919">check_convergence_entanglement</a> (double slope_threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>)</td></tr>
+<tr class="separator:a9067f9aab2893401df4cac8112275919 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8703eb90ad57df91ea4353d2cf6625f4 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a8703eb90ad57df91ea4353d2cf6625f4">update_bond_dimension</a> (int min_saturation_length=1)</td></tr>
+<tr class="separator:a8703eb90ad57df91ea4353d2cf6625f4 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad81696900bc53d4445ab296d534def5d inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ad81696900bc53d4445ab296d534def5d">clear_saturation_status</a> ()</td></tr>
+<tr class="separator:ad81696900bc53d4445ab296d534def5d inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ed85de573913643b5ca49af4e4d664a inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a8ed85de573913643b5ca49af4e4d664a">set_file_OK</a> ()</td></tr>
+<tr class="separator:a8ed85de573913643b5ca49af4e4d664a inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2502a513db5e6f2aafac287fca822531 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a2502a513db5e6f2aafac287fca822531">initialize_state</a> (std::string initial_state)</td></tr>
 <tr class="separator:a2502a513db5e6f2aafac287fca822531 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33f6ecc66ae2fdf90f356b56168cb1c0 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a33f6ecc66ae2fdf90f356b56168cb1c0">compute_observables</a> ()</td></tr>
@@ -188,8 +207,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a79d86bf5ce98beb9beda1079b6b81ea4 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a327e77ca5465fdaabb54e3f8ae74e824 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a327e77ca5465fdaabb54e3f8ae74e824">env_storage_move</a> ()</td></tr>
 <tr class="separator:a327e77ca5465fdaabb54e3f8ae74e824 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa407ba08ab3499256952790306138f2e inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aa407ba08ab3499256952790306138f2e">store_profiling_to_file</a> ()</td></tr>
-<tr class="separator:aa407ba08ab3499256952790306138f2e inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cb53fbcab2f5113e1f8898a12a34a62 inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a6cb53fbcab2f5113e1f8898a12a34a62">store_profiling_to_file_delta</a> (bool force=false)</td></tr>
+<tr class="separator:a6cb53fbcab2f5113e1f8898a12a34a62 inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fd78dc8c8a99f9917d16e11d546ad7b inherit pub_methods_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a9fd78dc8c8a99f9917d16e11d546ad7b">store_profiling_to_file_total</a> (bool force=false)</td></tr>
+<tr class="separator:a9fd78dc8c8a99f9917d16e11d546ad7b inherit pub_methods_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -197,10 +218,16 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a2a04ab1fea89575e0fc51ef405141818"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebf29cc3f75599908907c7d68b6772e0"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classclass__hdf5__table.html">class_hdf5_table</a>&lt; <a class="el" href="classclass__table__finite__chain.html">class_table_finite_chain</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#aebf29cc3f75599908907c7d68b6772e0">table_xdmrg_chain</a></td></tr>
 <tr class="separator:aebf29cc3f75599908907c7d68b6772e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aecc8c985d6dfbb86268af679d0beea89"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#aecc8c985d6dfbb86268af679d0beea89">max_length</a></td></tr>
-<tr class="separator:aecc8c985d6dfbb86268af679d0beea89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4804c61a183ce51054ca693ad69a0450"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a4804c61a183ce51054ca693ad69a0450">min_saturation_length</a></td></tr>
+<tr class="separator:a4804c61a183ce51054ca693ad69a0450"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e081f60a6ffee146efacf460975524c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a6e081f60a6ffee146efacf460975524c">max_saturation_length</a></td></tr>
+<tr class="separator:a6e081f60a6ffee146efacf460975524c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65b2b15e003049d54a26004bd3e6d5fc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a65b2b15e003049d54a26004bd3e6d5fc">min_sweeps</a> = 5</td></tr>
+<tr class="separator:a65b2b15e003049d54a26004bd3e6d5fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a840b6611f9305bbc944c2edfb5952066"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a840b6611f9305bbc944c2edfb5952066">max_sweeps</a></td></tr>
 <tr class="separator:a840b6611f9305bbc944c2edfb5952066"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecc8c985d6dfbb86268af679d0beea89"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#aecc8c985d6dfbb86268af679d0beea89">max_length</a></td></tr>
+<tr class="separator:aecc8c985d6dfbb86268af679d0beea89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e6b8870f35039f1b252a9c4ff91c45e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a0e6b8870f35039f1b252a9c4ff91c45e">energy_min</a> = 0</td></tr>
 <tr class="separator:a0e6b8870f35039f1b252a9c4ff91c45e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e452e78a3637504abd708382b282eb2"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__x_d_m_r_g.html#a9e452e78a3637504abd708382b282eb2">energy_max</a> = 0</td></tr>
@@ -222,12 +249,14 @@ Public Attributes</h2></td></tr>
 <tr class="separator:aae9477a03b720e2e3ebbb92f05253774 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afce57181b8c71747fe662a0db4bf8494 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classclass__measurement.html">class_measurement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#afce57181b8c71747fe662a0db4bf8494">measurement</a></td></tr>
 <tr class="separator:afce57181b8c71747fe662a0db4bf8494 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70c5cca4c5fc4d7f4e73bf287e238a0a inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classclass__finite__chain__sweeper.html">class_finite_chain_sweeper</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a70c5cca4c5fc4d7f4e73bf287e238a0a">env_storage</a></td></tr>
-<tr class="separator:a70c5cca4c5fc4d7f4e73bf287e238a0a inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6ec9d149485d3d3908978e018139e15 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classclass__finite__chain.html">class_finite_chain</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aa6ec9d149485d3d3908978e018139e15">env_storage</a></td></tr>
+<tr class="separator:aa6ec9d149485d3d3908978e018139e15 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa848d8c21aaa75620c7e8f9ac0ba369a inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__custom__cout.html">class_custom_cout</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aa848d8c21aaa75620c7e8f9ac0ba369a">ccout</a></td></tr>
 <tr class="separator:aa848d8c21aaa75620c7e8f9ac0ba369a inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58363d486f75a3ede1acd8e43945d0ad inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a58363d486f75a3ede1acd8e43945d0ad">iteration</a> = 0</td></tr>
 <tr class="separator:a58363d486f75a3ede1acd8e43945d0ad inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0e7b92bb5bb642c41ac88008bba7144 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ac0e7b92bb5bb642c41ac88008bba7144">step</a> = 0</td></tr>
+<tr class="separator:ac0e7b92bb5bb642c41ac88008bba7144 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a831053ba93028a374854b6af348e25b1 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a831053ba93028a374854b6af348e25b1">chi_max</a></td></tr>
 <tr class="separator:a831053ba93028a374854b6af348e25b1 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aef6e7a6737527b7f25f017ef5e434979 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aef6e7a6737527b7f25f017ef5e434979">chi_grow</a></td></tr>
@@ -238,24 +267,44 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ab68231ade1f92254eb5e144acd350d87 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e23a32441112bf703a8918e0d907236 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a8e23a32441112bf703a8918e0d907236">seed</a> = 1</td></tr>
 <tr class="separator:a8e23a32441112bf703a8918e0d907236 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74f4216847b79dcb951216addea43b7a inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a74f4216847b79dcb951216addea43b7a">chi_max_temp</a> = 4</td></tr>
-<tr class="separator:a74f4216847b79dcb951216addea43b7a inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5be3a2b97f146c5dc132d191bf7a9760 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a5be3a2b97f146c5dc132d191bf7a9760">chi_temp</a> = 4</td></tr>
+<tr class="separator:a5be3a2b97f146c5dc132d191bf7a9760 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03a87bef331c23b2b8a4aae4aad5780b inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a03a87bef331c23b2b8a4aae4aad5780b">simulation_has_converged</a> = false</td></tr>
 <tr class="separator:a03a87bef331c23b2b8a4aae4aad5780b inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab69cb5b2b91b46cc1ffab12b82bb80a8 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ab69cb5b2b91b46cc1ffab12b82bb80a8">bond_dimension_has_converged</a> = false</td></tr>
-<tr class="separator:ab69cb5b2b91b46cc1ffab12b82bb80a8 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a761a1b3e572f84c147bd88f74fc0c55a inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a761a1b3e572f84c147bd88f74fc0c55a">simulation_has_to_stop</a> = false</td></tr>
+<tr class="separator:a761a1b3e572f84c147bd88f74fc0c55a inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0f5fbca3eff6fd130be41866d72c5b5 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ae0f5fbca3eff6fd130be41866d72c5b5">bond_dimension_has_reached_max</a> = false</td></tr>
+<tr class="separator:ae0f5fbca3eff6fd130be41866d72c5b5 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8cd5d7663f288363b7f81f229058b88 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aa8cd5d7663f288363b7f81f229058b88">entanglement_has_converged</a> = false</td></tr>
 <tr class="separator:aa8cd5d7663f288363b7f81f229058b88 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae29d2ef00b3209cfee2433f8ab562aef inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ae29d2ef00b3209cfee2433f8ab562aef">entanglement_has_saturated</a> = false</td></tr>
+<tr class="separator:ae29d2ef00b3209cfee2433f8ab562aef inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39bac079dd587e1b5565faaab6f09efa inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a39bac079dd587e1b5565faaab6f09efa">variance_mpo_saturated_for</a> = 0</td></tr>
+<tr class="separator:a39bac079dd587e1b5565faaab6f09efa inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a377a24d923f0f10a87e9208a4896fcfc inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a377a24d923f0f10a87e9208a4896fcfc">variance_mpo_has_converged</a> = false</td></tr>
 <tr class="separator:a377a24d923f0f10a87e9208a4896fcfc inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ab7e8b7fc657a3bccaa37900eb7199a inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a8ab7e8b7fc657a3bccaa37900eb7199a">variance_mpo_has_saturated</a> = false</td></tr>
+<tr class="separator:a8ab7e8b7fc657a3bccaa37900eb7199a inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8fde46ecd510d6d80201bf51e1c7c15 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ac8fde46ecd510d6d80201bf51e1c7c15">variance_ham_saturated_for</a> = 0</td></tr>
+<tr class="separator:ac8fde46ecd510d6d80201bf51e1c7c15 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad900b530541aa2062aafe691ef893739 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ad900b530541aa2062aafe691ef893739">variance_ham_has_converged</a> = false</td></tr>
 <tr class="separator:ad900b530541aa2062aafe691ef893739 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0aecd8e34cec715c82e642fd0e253425 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a0aecd8e34cec715c82e642fd0e253425">variance_ham_has_saturated</a> = false</td></tr>
+<tr class="separator:a0aecd8e34cec715c82e642fd0e253425 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a950235b4b66a1946593c81ee5335c4a9 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a950235b4b66a1946593c81ee5335c4a9">variance_mom_saturated_for</a> = 0</td></tr>
+<tr class="separator:a950235b4b66a1946593c81ee5335c4a9 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1927bfca446f1b104767faaf631e4203 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a1927bfca446f1b104767faaf631e4203">variance_mom_has_converged</a> = false</td></tr>
 <tr class="separator:a1927bfca446f1b104767faaf631e4203 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97c83d126d30a7c7febe86f6f1198432 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a97c83d126d30a7c7febe86f6f1198432">variance_mom_has_saturated</a> = false</td></tr>
+<tr class="separator:a97c83d126d30a7c7febe86f6f1198432 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc0a9428cfd271631302e375bfad3e92 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#acc0a9428cfd271631302e375bfad3e92">t_tot</a></td></tr>
 <tr class="separator:acc0a9428cfd271631302e375bfad3e92 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4ed6cd4717570a44cf494dfdfe06e08 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ac4ed6cd4717570a44cf494dfdfe06e08">t_opt</a></td></tr>
 <tr class="separator:ac4ed6cd4717570a44cf494dfdfe06e08 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae378bea3c64eddbcebbb4308506dd0ba inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ae378bea3c64eddbcebbb4308506dd0ba">t_eig</a></td></tr>
+<tr class="separator:ae378bea3c64eddbcebbb4308506dd0ba inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef78221c210b89af46ce7e485554e229 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aef78221c210b89af46ce7e485554e229">t_ham</a></td></tr>
+<tr class="separator:aef78221c210b89af46ce7e485554e229 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4665ca1f14f3b97154c961502c483c7 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ac4665ca1f14f3b97154c961502c483c7">t_sim</a></td></tr>
 <tr class="separator:ac4665ca1f14f3b97154c961502c483c7 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a62686101ba541b485f091dff78cfc871 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a62686101ba541b485f091dff78cfc871">t_svd</a></td></tr>
@@ -278,6 +327,12 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a30db55b403a9abca8a8b063079009174 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41e28970ec5e7a0cf2a1700b217f5152 inherit pub_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a41e28970ec5e7a0cf2a1700b217f5152">t_con</a></td></tr>
 <tr class="separator:a41e28970ec5e7a0cf2a1700b217f5152 inherit pub_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_static_attribs_classclass__algorithm__base"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_classclass__algorithm__base')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="classclass__algorithm__base.html">class_algorithm_base</a></td></tr>
+<tr class="memitem:aeec0f1d83000ef7ba92bbcdd74bdcabb inherit pub_static_attribs_classclass__algorithm__base"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a> = std::numeric_limits&lt;double&gt;::quiet_NaN()</td></tr>
+<tr class="separator:aeec0f1d83000ef7ba92bbcdd74bdcabb inherit pub_static_attribs_classclass__algorithm__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="ac28e050524068677d4f8bcdb020a51ad"></a>
@@ -300,8 +355,10 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ac28e050524068677d4f8bcdb020a51adaba7de5bc6888294e5884b024a4c894f1"></a>FULL&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="ac28e050524068677d4f8bcdb020a51adafba5cdfa4bcb408f641c743519a0fe19"></a>PARTIAL&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ac28e050524068677d4f8bcdb020a51adad7cf9a9be4b98927f7920956e9dfe691"></a>KEEP_BEST_OVERLAP&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ac28e050524068677d4f8bcdb020a51ada1376833581bc88d94d323f3f34235079"></a>FULL_EIG_OPT&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ac28e050524068677d4f8bcdb020a51ada87634fe86f77b4bb49d9f8d47e053827"></a>PARTIAL_EIG_OPT&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ac28e050524068677d4f8bcdb020a51ada6240f51f5798068fae31c43cad4baaf3"></a>DIRECT_OPT&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>
@@ -334,8 +391,8 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a688573b541f3dcbc2736d7339b1eb1d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a688573b541f3dcbc2736d7339b1eb1d2">&#9670;&nbsp;</a></span>check_convergence_overall()</h2>
+<a id="af4484d1998d01a0e6cd4b1a08ce8f62b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4484d1998d01a0e6cd4b1a08ce8f62b">&#9670;&nbsp;</a></span>check_convergence()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -344,7 +401,7 @@ Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void class_xDMRG::check_convergence_overall </td>
+          <td class="memname">void class_xDMRG::check_convergence </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -357,7 +414,41 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Reimplemented from <a class="el" href="classclass__algorithm__base.html#a9503dc8dc1f47466c179387dbe7c8660">class_algorithm_base</a>.</p>
+<p>Reimplemented from <a class="el" href="classclass__algorithm__base.html#a4d804eb43b65cc68da335594ab774a29">class_algorithm_base</a>.</p>
+
+</div>
+</div>
+<a id="a0cca116692a0c062c7693adff31df2f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0cca116692a0c062c7693adff31df2f1">&#9670;&nbsp;</a></span>direct_optimization()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Matrix&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">class_xDMRG::Scalar</a>, Eigen::Dynamic, 1 &gt; class_xDMRG::direct_optimization </td>
+          <td>(</td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>energy_new</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>variance_new</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>theta</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -378,14 +469,14 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a5ed29af83a6ddfb57bc97ee90e55791f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ed29af83a6ddfb57bc97ee90e55791f">&#9670;&nbsp;</a></span>find_state_with_greatest_overlap_full_diag()</h2>
+<a id="a64cf18fc00a07e704b729906509ac08e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64cf18fc00a07e704b729906509ac08e">&#9670;&nbsp;</a></span>find_state_with_greatest_overlap_full_diag()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">class_xDMRG::Scalar</a>, 4 &gt; class_xDMRG::find_state_with_greatest_overlap_full_diag </td>
+          <td class="memname">Eigen::Tensor&lt;<a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>,4&gt; class_xDMRG::find_state_with_greatest_overlap_full_diag </td>
           <td>(</td>
           <td class="paramtype">Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt; &amp;&#160;</td>
           <td class="paramname"><em>theta</em></td><td>)</td>
@@ -396,17 +487,63 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a63e95d93f8d36418efa2eea973166140"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a63e95d93f8d36418efa2eea973166140">&#9670;&nbsp;</a></span>find_state_with_greatest_overlap_part_diag()</h2>
+<a id="a0f4a52f91b27c423796a224f65c75d0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f4a52f91b27c423796a224f65c75d0e">&#9670;&nbsp;</a></span>find_state_with_greatest_overlap_part_diag3()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">class_xDMRG::Scalar</a>, 4 &gt; class_xDMRG::find_state_with_greatest_overlap_part_diag </td>
+          <td class="memname">Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">class_xDMRG::Scalar</a>, 4 &gt; class_xDMRG::find_state_with_greatest_overlap_part_diag3 </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>theta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51ad">xDMRG_Mode</a>&#160;</td>
+          <td class="paramname"><em>mode</em> = <code><a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51ada87634fe86f77b4bb49d9f8d47e053827">xDMRG_Mode::PARTIAL_EIG_OPT</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa4303facbae92f87414fe695dd9d5b9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4303facbae92f87414fe695dd9d5b9a">&#9670;&nbsp;</a></span>find_state_with_greatest_state_in_subspace()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Tensor&lt;<a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>,4&gt; class_xDMRG::find_state_with_greatest_state_in_subspace </td>
           <td>(</td>
           <td class="paramtype">Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt; &amp;&#160;</td>
           <td class="paramname"><em>theta</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a22aed7a93bd32c49e540d82d0878064a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22aed7a93bd32c49e540d82d0878064a">&#9670;&nbsp;</a></span>generate_size_list()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; int &gt; class_xDMRG::generate_size_list </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>shape</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -455,6 +592,34 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Implements <a class="el" href="classclass__algorithm__base.html#a5e623b95797c5049997c3d04072417f3">class_algorithm_base</a>.</p>
+
+</div>
+</div>
+<a id="a50c311380b83d15193d1f6c556798728"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50c311380b83d15193d1f6c556798728">&#9670;&nbsp;</a></span>make_sorted_index()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;size_t&gt; class_xDMRG::make_sorted_index </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;&#160;</td>
+          <td class="paramname"><em>values</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -513,8 +678,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a8a3e30e8e542a2011a4817c6635d3412"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a3e30e8e542a2011a4817c6635d3412">&#9670;&nbsp;</a></span>reset_chain_mps_to_random_product_state()</h2>
+<a id="ad155a57a624c220c20c10195ddb0b2a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad155a57a624c220c20c10195ddb0b2a2">&#9670;&nbsp;</a></span>reset_chain_mps_to_random_product_state()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -522,7 +687,8 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">void class_xDMRG::reset_chain_mps_to_random_product_state </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>parity</em> = <code>&quot;none&quot;</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -574,8 +740,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a11514c41a350fdc42ed0b75c7c8fe3ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a11514c41a350fdc42ed0b75c7c8fe3ab">&#9670;&nbsp;</a></span>single_xDMRG_step()</h2>
+<a id="a429b2c16cc08ffefcb967fc1a35772bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a429b2c16cc08ffefcb967fc1a35772bd">&#9670;&nbsp;</a></span>single_xDMRG_step()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -583,14 +749,49 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">void class_xDMRG::single_xDMRG_step </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51ad">xDMRG_Mode</a>&#160;</td>
-          <td class="paramname"><em>mode</em>, </td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1f966a65534ae1976ecac59ed791a521"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f966a65534ae1976ecac59ed791a521">&#9670;&nbsp;</a></span>sort_and_filter_eigenstates()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_xDMRG::sort_and_filter_eigenstates </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::VectorXcd &amp;&#160;</td>
+          <td class="paramname"><em>eigvals</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long&#160;</td>
-          <td class="paramname"><em>chi_max</em>&#160;</td>
+          <td class="paramtype">Eigen::MatrixXcd &amp;&#160;</td>
+          <td class="paramname"><em>eigvecs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Eigen::VectorXd &amp;&#160;</td>
+          <td class="paramname"><em>overlaps</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int &amp;&#160;</td>
+          <td class="paramname"><em>nev</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>overlap_cutoff</em> = <code>1e-2</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -602,8 +803,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a76996da885f32f0660838a78e9b268f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76996da885f32f0660838a78e9b268f9">&#9670;&nbsp;</a></span>store_chain_entry_to_file()</h2>
+<a id="a87b12aec512fc3a0603f26f12f30927e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87b12aec512fc3a0603f26f12f30927e">&#9670;&nbsp;</a></span>store_chain_entry_to_file()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -611,7 +812,8 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">void class_xDMRG::store_chain_entry_to_file </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>force</em> = <code>false</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -619,8 +821,26 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="aa46ce068a200a40f7b20b02204200288"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa46ce068a200a40f7b20b02204200288">&#9670;&nbsp;</a></span>store_table_entry_to_file()</h2>
+<a id="aede3d23695431a5247209b2f1d4637bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aede3d23695431a5247209b2f1d4637bc">&#9670;&nbsp;</a></span>store_state_to_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_xDMRG::store_state_to_file </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>force</em> = <code>false</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2dc28964382e83e3fe2bf9a877999f8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dc28964382e83e3fe2bf9a877999f8d">&#9670;&nbsp;</a></span>store_table_entry_to_file()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -631,7 +851,8 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">void class_xDMRG::store_table_entry_to_file </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>force</em> = <code>false</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -642,7 +863,59 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classclass__algorithm__base.html#a12c0bcfdf899312d11f398dfaf33032f">class_algorithm_base</a>.</p>
+<p>Implements <a class="el" href="classclass__algorithm__base.html#a5a5d2fae0082e49f4c388890eac17ae6">class_algorithm_base</a>.</p>
+
+</div>
+</div>
+<a id="afd30969dcc237b2f3c5eb1026fb61739"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd30969dcc237b2f3c5eb1026fb61739">&#9670;&nbsp;</a></span>subspace_optimization()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Matrix&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">class_xDMRG::Scalar</a>, Eigen::Dynamic, 1 &gt; class_xDMRG::subspace_optimization </td>
+          <td>(</td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>energy_new</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>variance_new</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nev</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double *&#160;</td>
+          <td class="paramname"><em>eigvecs_ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double *&#160;</td>
+          <td class="paramname"><em>eigvals_ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="classclass__algorithm__base.html#ac2a5042c5337ef3b8c6d29a115e25843">Scalar</a>, 4 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>theta</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -717,6 +990,20 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a6e081f60a6ffee146efacf460975524c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e081f60a6ffee146efacf460975524c">&#9670;&nbsp;</a></span>max_saturation_length</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int class_xDMRG::max_saturation_length</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a840b6611f9305bbc944c2edfb5952066"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a840b6611f9305bbc944c2edfb5952066">&#9670;&nbsp;</a></span>max_sweeps</h2>
 
@@ -725,6 +1012,34 @@ Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">int class_xDMRG::max_sweeps</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4804c61a183ce51054ca693ad69a0450"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4804c61a183ce51054ca693ad69a0450">&#9670;&nbsp;</a></span>min_saturation_length</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int class_xDMRG::min_saturation_length</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a65b2b15e003049d54a26004bd3e6d5fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65b2b15e003049d54a26004bd3e6d5fc">&#9670;&nbsp;</a></span>min_sweeps</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int class_xDMRG::min_sweeps = 5</td>
         </tr>
       </table>
 </div><div class="memdoc">

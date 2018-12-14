@@ -3,8 +3,14 @@ var classclass__hdf5__file =
     [ "AttributeProperties", "classclass__hdf5__file_1_1_attribute_properties.html", "classclass__hdf5__file_1_1_attribute_properties" ],
     [ "DatasetProperties", "classclass__hdf5__file_1_1_dataset_properties.html", "classclass__hdf5__file_1_1_dataset_properties" ],
     [ "H5T_COMPLEX_STRUCT", "structclass__hdf5__file_1_1_h5_t___c_o_m_p_l_e_x___s_t_r_u_c_t.html", "structclass__hdf5__file_1_1_h5_t___c_o_m_p_l_e_x___s_t_r_u_c_t" ],
-    [ "class_hdf5_file", "classclass__hdf5__file.html#a6cdb88a2cd9484946a38f2ab17575dfc", null ],
+    [ "FileMode", "classclass__hdf5__file.html#a6766c056aea9a213c80dc80bb1f42f24", [
+      [ "CREATE", "classclass__hdf5__file.html#a6766c056aea9a213c80dc80bb1f42f24a294ce20cdefa29be3be0735cb62e715d", null ],
+      [ "OPEN", "classclass__hdf5__file.html#a6766c056aea9a213c80dc80bb1f42f24aa38bd5138bf35514df41a1795ebbf5c3", null ],
+      [ "RENAME", "classclass__hdf5__file.html#a6766c056aea9a213c80dc80bb1f42f24a507f09f72160920edb481656c350e76c", null ]
+    ] ],
+    [ "class_hdf5_file", "classclass__hdf5__file.html#a8c757af0eda838bba6aee74dc316d403", null ],
     [ "~class_hdf5_file", "classclass__hdf5__file.html#af16bdc7c02f6e929a5109a9246ca899b", null ],
+    [ "check_if_attribute_exists", "classclass__hdf5__file.html#a3a584a0f373a418d440a79ef5631c0d4", null ],
     [ "check_link_exists_recursively", "classclass__hdf5__file.html#aa31a4cbb7299da48b3007ef64ac97302", null ],
     [ "convert_complex_data", "classclass__hdf5__file.html#a802cc22885457cf33cda70475d589d38", null ],
     [ "create_dataset_link", "classclass__hdf5__file.html#a48f6f16e6d1f41cddf36fad622786e8b", null ],
@@ -31,6 +37,8 @@ var classclass__hdf5__file =
     [ "write_dataset", "classclass__hdf5__file.html#a9ac9751be5e11bfe6487b8e4a7f58650", null ],
     [ "create_dir", "classclass__hdf5__file.html#a85d0621b1189d5b7cff6e0da7874e48e", null ],
     [ "file", "classclass__hdf5__file.html#a3e6e3e89568f81ba394dfd40a0f3d7dc", null ],
+    [ "file_is_valid", "classclass__hdf5__file.html#ae7b5881e6eb9e7870b290a0e59ecc67b", null ],
+    [ "filemode", "classclass__hdf5__file.html#aa7ff017f9122af78cf1f390b912c0e21", null ],
     [ "H5T_COMPLEX_DOUBLE", "classclass__hdf5__file.html#a36f9d3a66150507a3fbb6b94d267d488", null ],
     [ "output_file_path", "classclass__hdf5__file.html#a9c5138b84ab82f7aa7964a52de6fb55d", null ],
     [ "output_filename", "classclass__hdf5__file.html#ac91370574d6a1a9e03fb07549cf0eab2", null ],
@@ -39,5 +47,6 @@ var classclass__hdf5__file =
     [ "plist_facc", "classclass__hdf5__file.html#a8f06d166d3ce9b88c84732193003e82d", null ],
     [ "plist_lncr", "classclass__hdf5__file.html#a418b6363ecb17459a651b1947028057f", null ],
     [ "plist_xfer", "classclass__hdf5__file.html#a644b3884acaff89e0f2f158b77302810", null ],
+    [ "resume", "classclass__hdf5__file.html#a30970d150d612977ab53f4313a6c257d", null ],
     [ "retval", "classclass__hdf5__file.html#a421e66653cfff76f9f574cf549352f1d", null ]
 ];

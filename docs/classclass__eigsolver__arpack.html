@@ -130,12 +130,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae7165d6217e2202bb455289dfca9ea02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad54b6efda7f3daf88899c23a1a3f86fa"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver__arpack.html#ad54b6efda7f3daf88899c23a1a3f86fa">Cols</a> ()</td></tr>
 <tr class="separator:ad54b6efda7f3daf88899c23a1a3f86fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1692a6625ea0d35d7f2baf3e09820e70"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver__arpack.html#a1692a6625ea0d35d7f2baf3e09820e70">eig</a> (const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *matrix_data, const int <a class="el" href="classclass__eigsolver__arpack.html#a9997a7db18f47bae462433a9d2f9067e">n</a>, const int nev, const int ncv, const <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">Ritz</a> ritz=Ritz::SR, const <a class="el" href="namespaceeigsolver__properties.html#a5c5fa84dc84c861c097f7d2323dc6979">Side</a> side=Side::R, const bool compute_eigvecs_=false, const bool remove_phase_=false, <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *residual_=nullptr)</td></tr>
-<tr class="separator:a1692a6625ea0d35d7f2baf3e09820e70"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4ee69c46152a4c7fa40b9114d3460db"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver__arpack.html#ad4ee69c46152a4c7fa40b9114d3460db">eig_shift_invert</a> (<a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *matrix_data, const int <a class="el" href="classclass__eigsolver__arpack.html#a9997a7db18f47bae462433a9d2f9067e">n</a>, const int nev, const int ncv, const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> shift, const <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">Ritz</a> ritz, const bool compute_eigvecs_=false, const bool remove_phase_=false, <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *residual_=nullptr)</td></tr>
-<tr class="separator:ad4ee69c46152a4c7fa40b9114d3460db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa71c431e5a4c0ff18fd8173ac50e391c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver__arpack.html#aa71c431e5a4c0ff18fd8173ac50e391c">optimize_mps</a> (const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *Lblock_, const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *Rblock_, const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *HA_, const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *HB_, const std::array&lt; long, 4 &gt; shape_theta4_, const std::array&lt; long, 4 &gt; shape_mpo4_, const int nev, const int ncv, const <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">Ritz</a> ritz=Ritz::SR, const bool remove_phase_=true, <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *residual_=nullptr)</td></tr>
-<tr class="separator:aa71c431e5a4c0ff18fd8173ac50e391c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a699c02bf96ad7780753dcf8e77eaf5db"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver__arpack.html#a699c02bf96ad7780753dcf8e77eaf5db">eig</a> (const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *matrix_data, const int <a class="el" href="classclass__eigsolver__arpack.html#a9997a7db18f47bae462433a9d2f9067e">n</a>, const int nev, const int ncv, const <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">eigsolver_properties::Ritz</a> ritz=<a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044a8cb2010d27e13509d364436256e972c0">eigsolver_properties::Ritz::SR</a>, const <a class="el" href="namespaceeigsolver__properties.html#a5c5fa84dc84c861c097f7d2323dc6979">eigsolver_properties::Side</a> side=<a class="el" href="namespaceeigsolver__properties.html#a5c5fa84dc84c861c097f7d2323dc6979ae1e1d3d40573127e9ee0480caf1283d6">eigsolver_properties::Side::R</a>, const bool compute_eigvecs_=false, const bool remove_phase_=false, <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *residual_=nullptr)</td></tr>
+<tr class="separator:a699c02bf96ad7780753dcf8e77eaf5db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62aeedc16fedcb018a0fbc1086b8c2ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver__arpack.html#a62aeedc16fedcb018a0fbc1086b8c2ea">eig_shift_invert</a> (<a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *matrix_data, const int <a class="el" href="classclass__eigsolver__arpack.html#a9997a7db18f47bae462433a9d2f9067e">n</a>, const int nev, const int ncv, const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> shift, const <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">eigsolver_properties::Ritz</a> ritz, const bool compute_eigvecs_=false, const bool remove_phase_=false, <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *residual_=nullptr)</td></tr>
+<tr class="separator:a62aeedc16fedcb018a0fbc1086b8c2ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad86e110ab853b946f52db1cfe69d5c2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver__arpack.html#ad86e110ab853b946f52db1cfe69d5c2e">optimize_mps</a> (const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *Lblock_, const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *Rblock_, const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *HA_, const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *HB_, const std::array&lt; long, 4 &gt; shape_theta4_, const std::array&lt; long, 4 &gt; shape_mpo4_, const int nev, const int ncv, const <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">eigsolver_properties::Ritz</a> ritz=<a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044a8cb2010d27e13509d364436256e972c0">eigsolver_properties::Ritz::SR</a>, const bool remove_phase_=true, <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *residual_=nullptr)</td></tr>
+<tr class="separator:ad86e110ab853b946f52db1cfe69d5c2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-types"></a>
 Private Types</h2></td></tr>
@@ -208,7 +208,7 @@ Private Attributes</h2></td></tr>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -301,7 +301,7 @@ template&lt;typename Scalar , Form form&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -322,8 +322,8 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 
 </div>
 </div>
-<a id="a1692a6625ea0d35d7f2baf3e09820e70"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1692a6625ea0d35d7f2baf3e09820e70">&#9670;&nbsp;</a></span>eig()</h2>
+<a id="a699c02bf96ad7780753dcf8e77eaf5db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a699c02bf96ad7780753dcf8e77eaf5db">&#9670;&nbsp;</a></span>eig()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -357,14 +357,14 @@ template&lt;typename Scalar , Form form&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">Ritz</a>&#160;</td>
-          <td class="paramname"><em>ritz</em> = <code>Ritz::SR</code>, </td>
+          <td class="paramtype">const <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">eigsolver_properties::Ritz</a>&#160;</td>
+          <td class="paramname"><em>ritz</em> = <code><a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044a8cb2010d27e13509d364436256e972c0">eigsolver_properties::Ritz::SR</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceeigsolver__properties.html#a5c5fa84dc84c861c097f7d2323dc6979">Side</a>&#160;</td>
-          <td class="paramname"><em>side</em> = <code>Side::R</code>, </td>
+          <td class="paramtype">const <a class="el" href="namespaceeigsolver__properties.html#a5c5fa84dc84c861c097f7d2323dc6979">eigsolver_properties::Side</a>&#160;</td>
+          <td class="paramname"><em>side</em> = <code><a class="el" href="namespaceeigsolver__properties.html#a5c5fa84dc84c861c097f7d2323dc6979ae1e1d3d40573127e9ee0480caf1283d6">eigsolver_properties::Side::R</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -394,8 +394,8 @@ template&lt;typename Scalar , Form form&gt; </div>
 
 </div>
 </div>
-<a id="ad4ee69c46152a4c7fa40b9114d3460db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4ee69c46152a4c7fa40b9114d3460db">&#9670;&nbsp;</a></span>eig_shift_invert()</h2>
+<a id="a62aeedc16fedcb018a0fbc1086b8c2ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62aeedc16fedcb018a0fbc1086b8c2ea">&#9670;&nbsp;</a></span>eig_shift_invert()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -435,7 +435,7 @@ template&lt;typename Scalar , Form form&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">Ritz</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">eigsolver_properties::Ritz</a>&#160;</td>
           <td class="paramname"><em>ritz</em>, </td>
         </tr>
         <tr>
@@ -472,7 +472,7 @@ template&lt;typename Scalar , Form form&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <div class="memtemplate">
 template&lt;typename Derived &gt; </div>
 <table class="mlabels">
@@ -518,7 +518,7 @@ template&lt;typename Derived &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -583,7 +583,7 @@ template&lt;typename Scalar , Form form&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -610,7 +610,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -631,8 +631,8 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 
 </div>
 </div>
-<a id="aa71c431e5a4c0ff18fd8173ac50e391c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa71c431e5a4c0ff18fd8173ac50e391c">&#9670;&nbsp;</a></span>optimize_mps()</h2>
+<a id="ad86e110ab853b946f52db1cfe69d5c2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad86e110ab853b946f52db1cfe69d5c2e">&#9670;&nbsp;</a></span>optimize_mps()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -690,8 +690,8 @@ template&lt;typename Scalar , Form form&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">Ritz</a>&#160;</td>
-          <td class="paramname"><em>ritz</em> = <code>Ritz::SR</code>, </td>
+          <td class="paramtype">const <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">eigsolver_properties::Ritz</a>&#160;</td>
+          <td class="paramname"><em>ritz</em> = <code><a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044a8cb2010d27e13509d364436256e972c0">eigsolver_properties::Ritz::SR</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -732,7 +732,7 @@ template&lt;typename Scalar , Form form&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -797,7 +797,7 @@ template&lt;typename Scalar , Form form&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -824,7 +824,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -852,7 +852,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -880,7 +880,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -964,7 +964,7 @@ template&lt;typename Scalar , Form form&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -988,7 +988,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1012,7 +1012,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1036,7 +1036,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1060,7 +1060,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1084,7 +1084,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1108,7 +1108,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1132,7 +1132,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1156,7 +1156,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1180,7 +1180,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1204,7 +1204,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1228,7 +1228,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1252,7 +1252,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1276,7 +1276,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1300,7 +1300,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1324,7 +1324,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1348,7 +1348,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1372,7 +1372,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1396,7 +1396,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1420,7 +1420,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1444,7 +1444,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1468,7 +1468,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1492,7 +1492,7 @@ template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar, Form form = Form::GENERAL&gt; </div>
+template&lt;typename Scalar, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

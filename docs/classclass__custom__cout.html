@@ -102,6 +102,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afe3ade35c8700c5a766b38151d4c7682"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9b0737ce7c93bc0d17d568196da3164"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__custom__cout.html#ac9b0737ce7c93bc0d17d568196da3164">class_custom_cout</a> (int verbosity_, std::ostream &amp;o=std::cout)</td></tr>
 <tr class="separator:ac9b0737ce7c93bc0d17d568196da3164"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad960df737593891f74023f5be8810b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__custom__cout.html#aad960df737593891f74023f5be8810b5">set_verbosity</a> (int new_verbosity)</td></tr>
+<tr class="separator:aad960df737593891f74023f5be8810b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88018822b8bbb1f62c764fdd379dc3e3"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a88018822b8bbb1f62c764fdd379dc3e3"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classclass__custom__cout.html">class_custom_cout</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__custom__cout.html#a88018822b8bbb1f62c764fdd379dc3e3">operator&lt;&lt;</a> (const T &amp;a)</td></tr>
 <tr class="separator:a88018822b8bbb1f62c764fdd379dc3e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -112,9 +114,9 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a41c693134f123db4ec21bc858f2b7522"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__custom__cout.html#a41c693134f123db4ec21bc858f2b7522">verbosity</a> = 2</td></tr>
+<tr class="memitem:a41c693134f123db4ec21bc858f2b7522"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__custom__cout.html#a41c693134f123db4ec21bc858f2b7522">verbosity</a> = 0</td></tr>
 <tr class="separator:a41c693134f123db4ec21bc858f2b7522"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac569003df823e772ffac9a2de47f2208"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__custom__cout.html#ac569003df823e772ffac9a2de47f2208">temp_verbosity</a> = 2</td></tr>
+<tr class="memitem:ac569003df823e772ffac9a2de47f2208"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__custom__cout.html#ac569003df823e772ffac9a2de47f2208">temp_verbosity</a> = 0</td></tr>
 <tr class="separator:ac569003df823e772ffac9a2de47f2208"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad27bfbb4e4b06f1f72d3c8ef42f8ee4a"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__custom__cout.html#ad27bfbb4e4b06f1f72d3c8ef42f8ee4a">os</a></td></tr>
 <tr class="separator:ad27bfbb4e4b06f1f72d3c8ef42f8ee4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -263,6 +265,32 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="aad960df737593891f74023f5be8810b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad960df737593891f74023f5be8810b5">&#9670;&nbsp;</a></span>set_verbosity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_custom_cout::set_verbosity </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>new_verbosity</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
 <a id="ad27bfbb4e4b06f1f72d3c8ef42f8ee4a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad27bfbb4e4b06f1f72d3c8ef42f8ee4a">&#9670;&nbsp;</a></span>os</h2>
@@ -285,7 +313,7 @@ template&lt;typename T &gt; </div>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int class_custom_cout::temp_verbosity = 2</td>
+          <td class="memname">int class_custom_cout::temp_verbosity = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -299,7 +327,7 @@ template&lt;typename T &gt; </div>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int class_custom_cout::verbosity = 2</td>
+          <td class="memname">int class_custom_cout::verbosity = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">

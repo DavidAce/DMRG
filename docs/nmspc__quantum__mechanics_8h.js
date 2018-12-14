@@ -15,12 +15,15 @@ var nmspc__quantum__mechanics_8h =
     [ "SX", "nmspc__quantum__mechanics_8h.html#a967c77548674cd9b97a466a2a305186b", null ],
     [ "sx", "nmspc__quantum__mechanics_8h.html#ae6fcd599b9efb429bf2270bed0ee02cc", null ],
     [ "SX", "nmspc__quantum__mechanics_8h.html#a76e83986f3dd3f21f66745e74b0d1efb", null ],
+    [ "sx_eigvecs", "nmspc__quantum__mechanics_8h.html#a80bb3c12ea504c5ed54338c278dec0c9", null ],
     [ "sy", "nmspc__quantum__mechanics_8h.html#a3442e889c2875e1f02c558c202e72d65", null ],
     [ "SY", "nmspc__quantum__mechanics_8h.html#ae4f53e1826d0f75f7f671efd2da16982", null ],
     [ "sy", "nmspc__quantum__mechanics_8h.html#ab58d28ec458fb27aa2d66134be8de382", null ],
     [ "SY", "nmspc__quantum__mechanics_8h.html#a7c6642ecb1e387631b5f828a95abb948", null ],
+    [ "sy_eigvecs", "nmspc__quantum__mechanics_8h.html#a4516edcb3ce8acd8318b1c61a99dffa9", null ],
     [ "sz", "nmspc__quantum__mechanics_8h.html#a7a9925b3702c2b7519bda1069531255f", null ],
     [ "SZ", "nmspc__quantum__mechanics_8h.html#a349297429020817abf1a974369a45979", null ],
     [ "sz", "nmspc__quantum__mechanics_8h.html#a7e0d6120064b7656a056a2b4b5cc46f4", null ],
-    [ "SZ", "nmspc__quantum__mechanics_8h.html#a3c7ab9ab64201bb7e9913202acbf234e", null ]
+    [ "SZ", "nmspc__quantum__mechanics_8h.html#a3c7ab9ab64201bb7e9913202acbf234e", null ],
+    [ "sz_eigvecs", "nmspc__quantum__mechanics_8h.html#a53a42c9486e8a3c11952b2c85f9a5434", null ]
 ];

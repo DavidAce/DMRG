@@ -95,10 +95,18 @@ $(document).ready(function(){initNavTree('class_dense_hamiltonian_product.html',
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="class__eigsolver__arpack__custom__products_8h_source.html">class_eigsolver_arpack_custom_products.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="matrix__product__hamiltonian_8h_source.html">matrix_product_hamiltonian.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a2dc0ddcd4021bfe23489b87b0673f7f0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a2dc0ddcd4021bfe23489b87b0673f7f0">rows</a> () const</td></tr>
+<tr class="separator:a2dc0ddcd4021bfe23489b87b0673f7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96f27231346b08f0dbf94f3b370597b8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a96f27231346b08f0dbf94f3b370597b8">cols</a> () const</td></tr>
+<tr class="separator:a96f27231346b08f0dbf94f3b370597b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cb003a0fa7f1af73511dadec0a6a8e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a7cb003a0fa7f1af73511dadec0a6a8e5">MultMv</a> (T *theta_in_, T *theta_out_)</td></tr>
+<tr class="separator:a7cb003a0fa7f1af73511dadec0a6a8e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b9b6883067cd1634abb53fc420ddf78"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a8b9b6883067cd1634abb53fc420ddf78">DenseHamiltonianProduct</a> (const T *Lblock_, const T *Rblock_, const T *HA_, const T *HB_, const std::array&lt; long, 4 &gt; shape_theta4_, const std::array&lt; long, 4 &gt; shape_mpo4_)</td></tr>
+<tr class="separator:a8b9b6883067cd1634abb53fc420ddf78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2dc0ddcd4021bfe23489b87b0673f7f0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a2dc0ddcd4021bfe23489b87b0673f7f0">rows</a> () const</td></tr>
 <tr class="separator:a2dc0ddcd4021bfe23489b87b0673f7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96f27231346b08f0dbf94f3b370597b8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a96f27231346b08f0dbf94f3b370597b8">cols</a> () const</td></tr>
@@ -117,26 +125,100 @@ Public Attributes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a50027bf56d56e89b29e9b613f653a89e"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a50027bf56d56e89b29e9b613f653a89e">Lblock</a></td></tr>
-<tr class="separator:a50027bf56d56e89b29e9b613f653a89e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad599206577f5736e9eac1dd61856200b"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#ad599206577f5736e9eac1dd61856200b">Rblock</a></td></tr>
-<tr class="separator:ad599206577f5736e9eac1dd61856200b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48bc81d6489919ee37b1b1b00cf62de4"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a48bc81d6489919ee37b1b1b00cf62de4">HA</a></td></tr>
-<tr class="separator:a48bc81d6489919ee37b1b1b00cf62de4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1605da826b6dc1afb616eae7fb1c442"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#aa1605da826b6dc1afb616eae7fb1c442">HB</a></td></tr>
-<tr class="separator:aa1605da826b6dc1afb616eae7fb1c442"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7de17fb2cc98e2069ec9d48807d4e0f2"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a7de17fb2cc98e2069ec9d48807d4e0f2">shape_theta4</a></td></tr>
-<tr class="separator:a7de17fb2cc98e2069ec9d48807d4e0f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d641ab6bb8fd4a5ff24d6f2eef67e91"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a2d641ab6bb8fd4a5ff24d6f2eef67e91">shape_theta2</a></td></tr>
-<tr class="separator:a2d641ab6bb8fd4a5ff24d6f2eef67e91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad645de71743caa8e0044b36afc35a16c"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#ad645de71743caa8e0044b36afc35a16c">shape_theta1</a></td></tr>
-<tr class="separator:ad645de71743caa8e0044b36afc35a16c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e62f923b12d238c75d763e0419a58f8"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a7e62f923b12d238c75d763e0419a58f8">shape_mpo4</a></td></tr>
-<tr class="separator:a7e62f923b12d238c75d763e0419a58f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a524bd5405868a3b86d538acacd9041"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a8a524bd5405868a3b86d538acacd9041">Lblock</a></td></tr>
+<tr class="separator:a8a524bd5405868a3b86d538acacd9041"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a12214b743c3e121e934401f681b8c8"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a3a12214b743c3e121e934401f681b8c8">Rblock</a></td></tr>
+<tr class="separator:a3a12214b743c3e121e934401f681b8c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6bef9205f9e2482c07658545595ad69"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#ad6bef9205f9e2482c07658545595ad69">HA</a></td></tr>
+<tr class="separator:ad6bef9205f9e2482c07658545595ad69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae71432c0f231e0c9b721a0af2b595093"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#ae71432c0f231e0c9b721a0af2b595093">HB</a></td></tr>
+<tr class="separator:ae71432c0f231e0c9b721a0af2b595093"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60d09b4fb3dfaa664c2ca054f5348e35"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a60d09b4fb3dfaa664c2ca054f5348e35">shape_theta4</a></td></tr>
+<tr class="separator:a60d09b4fb3dfaa664c2ca054f5348e35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a75ce252d826b94e4c6b765a7fcbecd"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a5a75ce252d826b94e4c6b765a7fcbecd">shape_theta2</a></td></tr>
+<tr class="separator:a5a75ce252d826b94e4c6b765a7fcbecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2691900323213c25edf22d838b7eabd5"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a2691900323213c25edf22d838b7eabd5">shape_theta1</a></td></tr>
+<tr class="separator:a2691900323213c25edf22d838b7eabd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39d2eae68884a3982bef3710cb85b401"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a39d2eae68884a3982bef3710cb85b401">shape_mpo4</a></td></tr>
+<tr class="separator:a39d2eae68884a3982bef3710cb85b401"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8b9b6883067cd1634abb53fc420ddf78"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b9b6883067cd1634abb53fc420ddf78">&#9670;&nbsp;</a></span>DenseHamiltonianProduct()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b9b6883067cd1634abb53fc420ddf78">&#9670;&nbsp;</a></span>DenseHamiltonianProduct() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::<a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a> </td>
+          <td>(</td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>Lblock_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>Rblock_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>HA_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>HB_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; long, 4 &gt;&#160;</td>
+          <td class="paramname"><em>shape_theta4_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; long, 4 &gt;&#160;</td>
+          <td class="paramname"><em>shape_mpo4_</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>&lt; Initializes the custom contraction. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Lblock_</td><td>The left block tensor. </td></tr>
+    <tr><td class="paramname">Rblock_</td><td>The right block tensor. </td></tr>
+    <tr><td class="paramname">HA_</td><td>The left Hamiltonian MPO's </td></tr>
+    <tr><td class="paramname">HB_</td><td>The right Hamiltonian MPO's </td></tr>
+    <tr><td class="paramname">shape_theta4_</td><td>An array containing the shapes of theta </td></tr>
+    <tr><td class="paramname">shape_mpo4_</td><td>An array containing the shapes of the MPO </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a8b9b6883067cd1634abb53fc420ddf78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b9b6883067cd1634abb53fc420ddf78">&#9670;&nbsp;</a></span>DenseHamiltonianProduct() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -211,7 +293,35 @@ template&lt;class T&gt; </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a96f27231346b08f0dbf94f3b370597b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96f27231346b08f0dbf94f3b370597b8">&#9670;&nbsp;</a></span>cols()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a96f27231346b08f0dbf94f3b370597b8">&#9670;&nbsp;</a></span>cols() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::cols </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>The "matrix" \( H \) a has rows = columns = \(d^2 \times \chi_L \times \chi_R \) </p>
+
+</div>
+</div>
+<a id="a96f27231346b08f0dbf94f3b370597b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96f27231346b08f0dbf94f3b370597b8">&#9670;&nbsp;</a></span>cols() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -239,7 +349,7 @@ template&lt;class T&gt; </div>
 </div>
 </div>
 <a id="a7cb003a0fa7f1af73511dadec0a6a8e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cb003a0fa7f1af73511dadec0a6a8e5">&#9670;&nbsp;</a></span>MultMv()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cb003a0fa7f1af73511dadec0a6a8e5">&#9670;&nbsp;</a></span>MultMv() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -269,8 +379,66 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
+<a id="a7cb003a0fa7f1af73511dadec0a6a8e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cb003a0fa7f1af73511dadec0a6a8e5">&#9670;&nbsp;</a></span>MultMv() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::MultMv </td>
+          <td>(</td>
+          <td class="paramtype">T *&#160;</td>
+          <td class="paramname"><em>theta_in_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T *&#160;</td>
+          <td class="paramname"><em>theta_out_</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The "matrix" \( H \) a has rows = columns = \(d^2 \times \chi_L \times \chi_R \) The function that contracts. </p>
+
+</div>
+</div>
 <a id="a2dc0ddcd4021bfe23489b87b0673f7f0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2dc0ddcd4021bfe23489b87b0673f7f0">&#9670;&nbsp;</a></span>rows()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dc0ddcd4021bfe23489b87b0673f7f0">&#9670;&nbsp;</a></span>rows() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::rows </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2dc0ddcd4021bfe23489b87b0673f7f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dc0ddcd4021bfe23489b87b0673f7f0">&#9670;&nbsp;</a></span>rows() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -313,8 +481,8 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a48bc81d6489919ee37b1b1b00cf62de4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48bc81d6489919ee37b1b1b00cf62de4">&#9670;&nbsp;</a></span>HA</h2>
+<a id="ad6bef9205f9e2482c07658545595ad69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6bef9205f9e2482c07658545595ad69">&#9670;&nbsp;</a></span>HA</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -325,7 +493,7 @@ template&lt;class T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const T* <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::HA</td>
+          <td class="memname">const T * <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::HA</td>
         </tr>
       </table>
   </td>
@@ -337,8 +505,8 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="aa1605da826b6dc1afb616eae7fb1c442"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1605da826b6dc1afb616eae7fb1c442">&#9670;&nbsp;</a></span>HB</h2>
+<a id="ae71432c0f231e0c9b721a0af2b595093"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae71432c0f231e0c9b721a0af2b595093">&#9670;&nbsp;</a></span>HB</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -349,7 +517,7 @@ template&lt;class T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const T* <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::HB</td>
+          <td class="memname">const T * <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::HB</td>
         </tr>
       </table>
   </td>
@@ -361,8 +529,8 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a50027bf56d56e89b29e9b613f653a89e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50027bf56d56e89b29e9b613f653a89e">&#9670;&nbsp;</a></span>Lblock</h2>
+<a id="a8a524bd5405868a3b86d538acacd9041"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a524bd5405868a3b86d538acacd9041">&#9670;&nbsp;</a></span>Lblock</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -373,7 +541,7 @@ template&lt;class T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const T* <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::Lblock</td>
+          <td class="memname">const T * <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::Lblock</td>
         </tr>
       </table>
   </td>
@@ -385,8 +553,8 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="ad599206577f5736e9eac1dd61856200b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad599206577f5736e9eac1dd61856200b">&#9670;&nbsp;</a></span>Rblock</h2>
+<a id="a3a12214b743c3e121e934401f681b8c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a12214b743c3e121e934401f681b8c8">&#9670;&nbsp;</a></span>Rblock</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -397,7 +565,7 @@ template&lt;class T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const T* <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::Rblock</td>
+          <td class="memname">const T * <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::Rblock</td>
         </tr>
       </table>
   </td>
@@ -409,8 +577,8 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a7e62f923b12d238c75d763e0419a58f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7e62f923b12d238c75d763e0419a58f8">&#9670;&nbsp;</a></span>shape_mpo4</h2>
+<a id="a39d2eae68884a3982bef3710cb85b401"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39d2eae68884a3982bef3710cb85b401">&#9670;&nbsp;</a></span>shape_mpo4</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -421,7 +589,7 @@ template&lt;class T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::array&lt;long,4&gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::shape_mpo4</td>
+          <td class="memname">std::array&lt; long, 4 &gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::shape_mpo4</td>
         </tr>
       </table>
   </td>
@@ -433,8 +601,8 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="ad645de71743caa8e0044b36afc35a16c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad645de71743caa8e0044b36afc35a16c">&#9670;&nbsp;</a></span>shape_theta1</h2>
+<a id="a2691900323213c25edf22d838b7eabd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2691900323213c25edf22d838b7eabd5">&#9670;&nbsp;</a></span>shape_theta1</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -445,7 +613,7 @@ template&lt;class T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::array&lt;long,1&gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::shape_theta1</td>
+          <td class="memname">std::array&lt; long, 1 &gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::shape_theta1</td>
         </tr>
       </table>
   </td>
@@ -457,8 +625,8 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a2d641ab6bb8fd4a5ff24d6f2eef67e91"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d641ab6bb8fd4a5ff24d6f2eef67e91">&#9670;&nbsp;</a></span>shape_theta2</h2>
+<a id="a5a75ce252d826b94e4c6b765a7fcbecd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a75ce252d826b94e4c6b765a7fcbecd">&#9670;&nbsp;</a></span>shape_theta2</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -469,7 +637,7 @@ template&lt;class T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::array&lt;long,2&gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::shape_theta2</td>
+          <td class="memname">std::array&lt; long, 2 &gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::shape_theta2</td>
         </tr>
       </table>
   </td>
@@ -481,8 +649,8 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a7de17fb2cc98e2069ec9d48807d4e0f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7de17fb2cc98e2069ec9d48807d4e0f2">&#9670;&nbsp;</a></span>shape_theta4</h2>
+<a id="a60d09b4fb3dfaa664c2ca054f5348e35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60d09b4fb3dfaa664c2ca054f5348e35">&#9670;&nbsp;</a></span>shape_theta4</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -493,7 +661,7 @@ template&lt;class T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::array&lt;long,4&gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::shape_theta4</td>
+          <td class="memname">std::array&lt; long, 4 &gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::shape_theta4</td>
         </tr>
       </table>
   </td>
@@ -522,7 +690,9 @@ template&lt;class T&gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
+<li>source/general/arpack_extra/<a class="el" href="matrix__product__hamiltonian_8h_source.html">matrix_product_hamiltonian.h</a></li>
 <li>source/general/<a class="el" href="class__eigsolver__arpack__custom__products_8h_source.html">class_eigsolver_arpack_custom_products.h</a></li>
+<li>source/general/arpack_extra/<a class="el" href="matrix__product__hamiltonian_8cpp.html">matrix_product_hamiltonian.cpp</a></li>
 <li>source/general/<a class="el" href="class__eigsolver__arpack__custom__products_8cpp.html">class_eigsolver_arpack_custom_products.cpp</a></li>
 </ul>
 </div><!-- contents -->

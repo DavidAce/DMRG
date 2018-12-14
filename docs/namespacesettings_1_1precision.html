@@ -102,6 +102,14 @@ Variables</h2></td></tr>
 <tr class="separator:ae553a6472855f919f0341841ae5cbd76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79627ee70c6488a43b5ad3ca27caa92e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1precision.html#a79627ee70c6488a43b5ad3ca27caa92e">SVDThreshold</a> = 1e-12</td></tr>
 <tr class="separator:a79627ee70c6488a43b5ad3ca27caa92e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8144c8c79b510717f340fff464e9a493"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1precision.html#a8144c8c79b510717f340fff464e9a493">VarConvergenceThreshold</a> = 1e-8</td></tr>
+<tr class="separator:a8144c8c79b510717f340fff464e9a493"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d9e7cad0354e0b3b98f9c7acb391d23"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1precision.html#a2d9e7cad0354e0b3b98f9c7acb391d23">VarSaturationThreshold</a> = 1e-4</td></tr>
+<tr class="separator:a2d9e7cad0354e0b3b98f9c7acb391d23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefd3107716333590498c58a6ae754f5d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1precision.html#aefd3107716333590498c58a6ae754f5d">EntEntrSaturationThreshold</a> = 1e-4</td></tr>
+<tr class="separator:aefd3107716333590498c58a6ae754f5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee758410009a37f915c56c7c12ccd859"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1precision.html#aee758410009a37f915c56c7c12ccd859">MaxSizeFullDiag</a> = 2048</td></tr>
+<tr class="separator:aee758410009a37f915c56c7c12ccd859"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="ae601749b55181417f8963d0e511e15bc"></a>
@@ -149,6 +157,37 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="aefd3107716333590498c58a6ae754f5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefd3107716333590498c58a6ae754f5d">&#9670;&nbsp;</a></span>EntEntrSaturationThreshold</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double settings::precision::EntEntrSaturationThreshold = 1e-4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Entanglement Entropy saturation threshold. The entanglement entropy has saturated when its (absolute) slope reaches below this value </p>
+
+</div>
+</div>
+<a id="aee758410009a37f915c56c7c12ccd859"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee758410009a37f915c56c7c12ccd859">&#9670;&nbsp;</a></span>MaxSizeFullDiag</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int settings::precision::MaxSizeFullDiag = 2048</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. Use 0 to allow any value</p>
+<p>Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. </p>
+
+</div>
+</div>
 <a id="a79627ee70c6488a43b5ad3ca27caa92e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a79627ee70c6488a43b5ad3ca27caa92e">&#9670;&nbsp;</a></span>SVDThreshold</h2>
 
@@ -161,6 +200,36 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Minimum threshold value for keeping singular values. </p>
+
+</div>
+</div>
+<a id="a8144c8c79b510717f340fff464e9a493"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8144c8c79b510717f340fff464e9a493">&#9670;&nbsp;</a></span>VarConvergenceThreshold</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double settings::precision::VarConvergenceThreshold = 1e-8</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value </p>
+
+</div>
+</div>
+<a id="a2d9e7cad0354e0b3b98f9c7acb391d23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d9e7cad0354e0b3b98f9c7acb391d23">&#9670;&nbsp;</a></span>VarSaturationThreshold</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double settings::precision::VarSaturationThreshold = 1e-4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Variance saturation threshold. The variance has saturated when its (absolute) slope reaches below this value </p>
 
 </div>
 </div>

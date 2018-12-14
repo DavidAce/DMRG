@@ -89,6 +89,7 @@ $(document).ready(function(){initNavTree('classclass__environment.html','');});
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classclass__environment-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">class_environment Class Reference</div>  </div>
@@ -110,15 +111,24 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a855398c199fb1ed20d5e7bfcd3eb1a2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a181fba1c3b0caecad70a9d0ea258888c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a181fba1c3b0caecad70a9d0ea258888c">set_edge_dims</a> (const std::unique_ptr&lt; <a class="el" href="classclass__mps__2site.html">class_mps_2site</a> &gt; &amp;MPS, const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 4 &gt; &amp;M)</td></tr>
 <tr class="separator:a181fba1c3b0caecad70a9d0ea258888c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abba0547eb83225ff086b59d302700c65"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#abba0547eb83225ff086b59d302700c65">set_position</a> (const long position_)</td></tr>
+<tr class="separator:abba0547eb83225ff086b59d302700c65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af18cb173989bac607604b909a333bfbb"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#af18cb173989bac607604b909a333bfbb">get_position</a> () const</td></tr>
+<tr class="separator:af18cb173989bac607604b909a333bfbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:aa04ac64fd8b1983b7dd1216befbfbece"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#aa04ac64fd8b1983b7dd1216befbfbece">side</a></td></tr>
 <tr class="separator:aa04ac64fd8b1983b7dd1216befbfbece"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad65a186e2a9e22a73c82ba98faa93752"><td class="memItemLeft" align="right" valign="top">unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#ad65a186e2a9e22a73c82ba98faa93752">size</a></td></tr>
+<tr class="memitem:ad65a186e2a9e22a73c82ba98faa93752"><td class="memItemLeft" align="right" valign="top">unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#ad65a186e2a9e22a73c82ba98faa93752">size</a> = 0</td></tr>
 <tr class="separator:ad65a186e2a9e22a73c82ba98faa93752"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b3e96fea0bbdd34c2e01e9427649fa4"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a1b3e96fea0bbdd34c2e01e9427649fa4">block</a></td></tr>
 <tr class="separator:a1b3e96fea0bbdd34c2e01e9427649fa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:a665815f4e830c9d3c0e7e938b3785965"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a665815f4e830c9d3c0e7e938b3785965">position</a></td></tr>
+<tr class="separator:a665815f4e830c9d3c0e7e938b3785965"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="ae0f57bc95b0ee042993844e83b0c053a"></a>
@@ -196,6 +206,31 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="af18cb173989bac607604b909a333bfbb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af18cb173989bac607604b909a333bfbb">&#9670;&nbsp;</a></span>get_position()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto class_environment::get_position </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a181fba1c3b0caecad70a9d0ea258888c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a181fba1c3b0caecad70a9d0ea258888c">&#9670;&nbsp;</a></span>set_edge_dims()</h2>
 
@@ -224,6 +259,32 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="abba0547eb83225ff086b59d302700c65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abba0547eb83225ff086b59d302700c65">&#9670;&nbsp;</a></span>set_position()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_environment::set_position </td>
+          <td>(</td>
+          <td class="paramtype">const long&#160;</td>
+          <td class="paramname"><em>position_</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
 <a id="a1b3e96fea0bbdd34c2e01e9427649fa4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1b3e96fea0bbdd34c2e01e9427649fa4">&#9670;&nbsp;</a></span>block</h2>
@@ -237,6 +298,28 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>The environment block. </p>
+
+</div>
+</div>
+<a id="a665815f4e830c9d3c0e7e938b3785965"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a665815f4e830c9d3c0e7e938b3785965">&#9670;&nbsp;</a></span>position</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t class_environment::position</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -261,7 +344,7 @@ Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned long class_environment::size</td>
+          <td class="memname">unsigned long class_environment::size = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">

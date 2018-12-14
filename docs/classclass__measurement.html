@@ -110,12 +110,20 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a79ee243a034a38491931bab090012cfe"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a79ee243a034a38491931bab090012cfe">class_measurement</a> (std::shared_ptr&lt; <a class="el" href="classclass__superblock.html">class_superblock</a> &gt; superblock_, <a class="el" href="nmspc__sim__settings_8h.html#ad69f3cf5fdb6ef307d85180c346e7921">SimulationType</a> sim_)</td></tr>
 <tr class="separator:a79ee243a034a38491931bab090012cfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a766a490a519077134f00d7385fc20d24"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a766a490a519077134f00d7385fc20d24">class_measurement</a> (std::shared_ptr&lt; <a class="el" href="classclass__superblock.html">class_superblock</a> &gt; superblock_, std::shared_ptr&lt; <a class="el" href="classclass__finite__chain__sweeper.html">class_finite_chain_sweeper</a> &gt; env_storage_, <a class="el" href="nmspc__sim__settings_8h.html#ad69f3cf5fdb6ef307d85180c346e7921">SimulationType</a> sim_)</td></tr>
-<tr class="separator:a766a490a519077134f00d7385fc20d24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91f89175759553f35307a9359d200db5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a91f89175759553f35307a9359d200db5">class_measurement</a> (std::shared_ptr&lt; <a class="el" href="classclass__superblock.html">class_superblock</a> &gt; superblock_, std::shared_ptr&lt; <a class="el" href="classclass__finite__chain.html">class_finite_chain</a> &gt; env_storage_, <a class="el" href="nmspc__sim__settings_8h.html#ad69f3cf5fdb6ef307d85180c346e7921">SimulationType</a> sim_)</td></tr>
+<tr class="separator:a91f89175759553f35307a9359d200db5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af89fe5fae18828109ee0a934aa57334f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#af89fe5fae18828109ee0a934aa57334f">compute_all_observables_from_superblock</a> ()</td></tr>
 <tr class="separator:af89fe5fae18828109ee0a934aa57334f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab07c35bbed4d034e0a90971e3671d7b6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#ab07c35bbed4d034e0a90971e3671d7b6">compute_all_observables_from_superblock</a> (const Eigen::Tensor&lt; <a class="el" href="classclass__measurement.html#a2699a9fd15f60e9d8535375d9edf5ecf">Scalar</a>, 4 &gt; &amp;theta)</td></tr>
+<tr class="separator:ab07c35bbed4d034e0a90971e3671d7b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accbde0bccb7bb842d46744047c66e44a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#accbde0bccb7bb842d46744047c66e44a">compute_all_observables_from_finite_chain</a> ()</td></tr>
 <tr class="separator:accbde0bccb7bb842d46744047c66e44a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb9bee14855ef1b9a952b0ebf228101d"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:acb9bee14855ef1b9a952b0ebf228101d"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#acb9bee14855ef1b9a952b0ebf228101d">compute_energy_mpo</a> (const T *theta_ptr, Eigen::DSizes&lt; long, 4 &gt; dsizes)</td></tr>
+<tr class="separator:acb9bee14855ef1b9a952b0ebf228101d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab352b4c7826e3ccb9a7e1f50cb7b856a"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ab352b4c7826e3ccb9a7e1f50cb7b856a"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#ab352b4c7826e3ccb9a7e1f50cb7b856a">compute_energy_variance_mpo</a> (const T *theta_ptr, Eigen::DSizes&lt; long, 4 &gt; dsizes, double energy_all_sites)</td></tr>
+<tr class="separator:ab352b4c7826e3ccb9a7e1f50cb7b856a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fe1b0bbf4b32394054703469999468d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a2fe1b0bbf4b32394054703469999468d">get_energy_mpo</a> ()</td></tr>
 <tr class="separator:a2fe1b0bbf4b32394054703469999468d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c31123bca3ee1cfbb20a0cefa64f829"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a9c31123bca3ee1cfbb20a0cefa64f829">get_energy_ham</a> ()</td></tr>
@@ -124,6 +132,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aa8d220d9396ecb356dd5c985a01d0e83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19f2bbdd143b1b68b99ce0610b2bb6c4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a19f2bbdd143b1b68b99ce0610b2bb6c4">get_energy_mpo_all_sites</a> ()</td></tr>
 <tr class="separator:a19f2bbdd143b1b68b99ce0610b2bb6c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2077a00bdb1de43d2920a9326284ac3e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a2077a00bdb1de43d2920a9326284ac3e">set_variance</a> (double new_variance)</td></tr>
+<tr class="separator:a2077a00bdb1de43d2920a9326284ac3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc4a09e0648d331606ea0a00d84b5b51"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#adc4a09e0648d331606ea0a00d84b5b51">get_variance_mpo</a> ()</td></tr>
 <tr class="separator:adc4a09e0648d331606ea0a00d84b5b51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1810e42f02c78917577a7f2c07fee0b1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a1810e42f02c78917577a7f2c07fee0b1">get_variance_ham</a> ()</td></tr>
@@ -140,6 +150,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a39cf00157961886c5383114832d7bc49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9b1c1f1de39cbb5d33781d62bb54e21"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#af9b1c1f1de39cbb5d33781d62bb54e21">get_chain_length</a> ()</td></tr>
 <tr class="separator:af9b1c1f1de39cbb5d33781d62bb54e21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24fdbca585495bef539ec49e54414ef2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a24fdbca585495bef539ec49e54414ef2">compute_finite_chain_norm</a> ()</td></tr>
+<tr class="separator:a24fdbca585495bef539ec49e54414ef2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c53d11bfcf945d1c28361168ae3a381"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a9c53d11bfcf945d1c28361168ae3a381">compute_finite_chain_norm2</a> ()</td></tr>
+<tr class="separator:a9c53d11bfcf945d1c28361168ae3a381"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e915ce22b84d60ca1207f2fb9bbf440"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a7e915ce22b84d60ca1207f2fb9bbf440">compute_finite_chain_energy</a> ()</td></tr>
+<tr class="separator:a7e915ce22b84d60ca1207f2fb9bbf440"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ba5d786c015e8871e78ece37278e809"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a6ba5d786c015e8871e78ece37278e809">compute_finite_chain_energy_variance</a> ()</td></tr>
+<tr class="separator:a6ba5d786c015e8871e78ece37278e809"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c3b3992b99cddaeddc6a4508b5698eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a3c3b3992b99cddaeddc6a4508b5698eb">compute_finite_chain_mps_state</a> ()</td></tr>
+<tr class="separator:a3c3b3992b99cddaeddc6a4508b5698eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af32d1f1e32a440fad2d89c817b683792"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#af32d1f1e32a440fad2d89c817b683792">set_not_measured</a> ()</td></tr>
 <tr class="separator:af32d1f1e32a440fad2d89c817b683792"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a637601247e60ba022c58f2f96af306bb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a637601247e60ba022c58f2f96af306bb">has_been_measured</a> ()</td></tr>
@@ -151,6 +171,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:aeb65873b4633b91d2f3bea908c60042f"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__measurement.html#a2699a9fd15f60e9d8535375d9edf5ecf">Scalar</a>, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#aeb65873b4633b91d2f3bea908c60042f">mps_chain</a></td></tr>
+<tr class="separator:aeb65873b4633b91d2f3bea908c60042f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2bdac05cf810228b9d58df44793b6335"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a2bdac05cf810228b9d58df44793b6335">t_ene_mpo</a></td></tr>
 <tr class="separator:a2bdac05cf810228b9d58df44793b6335"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc048d05b8d8a79a78aff18fee3fb820"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#abc048d05b8d8a79a78aff18fee3fb820">t_ene_ham</a></td></tr>
@@ -178,6 +200,8 @@ Public Attributes</h2></td></tr>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:ae9013fe52a9f66fff0f3df72aa193b81"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__measurement.html#a2699a9fd15f60e9d8535375d9edf5ecf">Scalar</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#ae9013fe52a9f66fff0f3df72aa193b81">moment_generating_function</a> (const std::unique_ptr&lt; <a class="el" href="classclass__mps__2site.html">class_mps_2site</a> &gt; &amp;MPS_original, std::vector&lt; Eigen::Tensor&lt; <a class="el" href="classclass__measurement.html#a2699a9fd15f60e9d8535375d9edf5ecf">Scalar</a>, 4 &gt;&gt; &amp;Op_vec)</td></tr>
 <tr class="separator:ae9013fe52a9f66fff0f3df72aa193b81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34c4c63130314c4d166258fd8e78f817"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a34c4c63130314c4d166258fd8e78f817">compute_parity</a> ()</td></tr>
+<tr class="separator:a34c4c63130314c4d166258fd8e78f817"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa756c432df87534e8009e076f2ceddac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#aa756c432df87534e8009e076f2ceddac">compute_energy_mpo</a> ()</td></tr>
 <tr class="separator:aa756c432df87534e8009e076f2ceddac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73f79646a3c77bcc2ff570ba9e93aa99"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a73f79646a3c77bcc2ff570ba9e93aa99">compute_energy_ham</a> ()</td></tr>
@@ -190,18 +214,6 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:aa9327fcb97198ab6c19a9037fef432f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6527f093c9a645b0a1a757e5070fc10d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a6527f093c9a645b0a1a757e5070fc10d">compute_energy_and_variance_mom</a> (<a class="el" href="classclass__measurement.html#a2699a9fd15f60e9d8535375d9edf5ecf">Scalar</a> <a class="el" href="classclass__measurement.html#a5c4019856df70beb5d541ba3028d1e97">a</a>, std::vector&lt; Eigen::Tensor&lt; <a class="el" href="classclass__measurement.html#a2699a9fd15f60e9d8535375d9edf5ecf">Scalar</a>, 4 &gt;&gt; &amp;Op_vec)</td></tr>
 <tr class="separator:a6527f093c9a645b0a1a757e5070fc10d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34c4c63130314c4d166258fd8e78f817"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a34c4c63130314c4d166258fd8e78f817">compute_parity</a> ()</td></tr>
-<tr class="separator:a34c4c63130314c4d166258fd8e78f817"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24fdbca585495bef539ec49e54414ef2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a24fdbca585495bef539ec49e54414ef2">compute_finite_chain_norm</a> ()</td></tr>
-<tr class="separator:a24fdbca585495bef539ec49e54414ef2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c53d11bfcf945d1c28361168ae3a381"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a9c53d11bfcf945d1c28361168ae3a381">compute_finite_chain_norm2</a> ()</td></tr>
-<tr class="separator:a9c53d11bfcf945d1c28361168ae3a381"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e915ce22b84d60ca1207f2fb9bbf440"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a7e915ce22b84d60ca1207f2fb9bbf440">compute_finite_chain_energy</a> ()</td></tr>
-<tr class="separator:a7e915ce22b84d60ca1207f2fb9bbf440"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ba5d786c015e8871e78ece37278e809"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a6ba5d786c015e8871e78ece37278e809">compute_finite_chain_energy_variance</a> ()</td></tr>
-<tr class="separator:a6ba5d786c015e8871e78ece37278e809"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c3b3992b99cddaeddc6a4508b5698eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a3c3b3992b99cddaeddc6a4508b5698eb">compute_finite_chain_mps_state</a> ()</td></tr>
-<tr class="separator:a3c3b3992b99cddaeddc6a4508b5698eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -209,8 +221,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a8cb6251e7f2dd86d3963713e40dbc128"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba409ebec81904f09221d7ea40b68e09"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nmspc__sim__settings_8h.html#ad69f3cf5fdb6ef307d85180c346e7921">SimulationType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#aba409ebec81904f09221d7ea40b68e09">sim_type</a></td></tr>
 <tr class="separator:aba409ebec81904f09221d7ea40b68e09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad931dca20f663ea65c361edbe85af7aa"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classclass__finite__chain__sweeper.html">class_finite_chain_sweeper</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#ad931dca20f663ea65c361edbe85af7aa">env_storage</a></td></tr>
-<tr class="separator:ad931dca20f663ea65c361edbe85af7aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad24929536ae76a008a902831f5473cbc"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classclass__finite__chain.html">class_finite_chain</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#ad24929536ae76a008a902831f5473cbc">env_storage</a></td></tr>
+<tr class="separator:ad24929536ae76a008a902831f5473cbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c0f8adf66f6b7589b3471e31f68176b"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classclass__mps__util.html">class_mps_util</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a1c0f8adf66f6b7589b3471e31f68176b">mps_util</a></td></tr>
 <tr class="separator:a1c0f8adf66f6b7589b3471e31f68176b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55863a6ce740a6271a168cd916a78404"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__custom__cout.html">class_custom_cout</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a55863a6ce740a6271a168cd916a78404">ccout</a></td></tr>
@@ -223,8 +235,6 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a4ae503cc052568e90b65fe74bf7d1006"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ba0933eb0c6c61ee25f005ca73c69bc"><td class="memItemLeft" align="right" valign="top">Eigen::MatrixXcd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a0ba0933eb0c6c61ee25f005ca73c69bc">h_odd</a></td></tr>
 <tr class="separator:a0ba0933eb0c6c61ee25f005ca73c69bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb65873b4633b91d2f3bea908c60042f"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__measurement.html#a2699a9fd15f60e9d8535375d9edf5ecf">Scalar</a>, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#aeb65873b4633b91d2f3bea908c60042f">mps_chain</a></td></tr>
-<tr class="separator:aeb65873b4633b91d2f3bea908c60042f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af900e935921a3982a738e274df4ad6bb"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#af900e935921a3982a738e274df4ad6bb">energy_mpo_all_sites</a></td></tr>
 <tr class="separator:af900e935921a3982a738e274df4ad6bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a572f80009473fd3e7343cb81951915ca"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__measurement.html#a572f80009473fd3e7343cb81951915ca">variance_mpo_all_sites</a></td></tr>
@@ -310,8 +320,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a766a490a519077134f00d7385fc20d24"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a766a490a519077134f00d7385fc20d24">&#9670;&nbsp;</a></span>class_measurement() <span class="overload">[2/2]</span></h2>
+<a id="a91f89175759553f35307a9359d200db5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91f89175759553f35307a9359d200db5">&#9670;&nbsp;</a></span>class_measurement() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -328,7 +338,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classclass__finite__chain__sweeper.html">class_finite_chain_sweeper</a> &gt;&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classclass__finite__chain.html">class_finite_chain</a> &gt;&#160;</td>
           <td class="paramname"><em>env_storage_</em>, </td>
         </tr>
         <tr>
@@ -371,7 +381,7 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <a id="af89fe5fae18828109ee0a934aa57334f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af89fe5fae18828109ee0a934aa57334f">&#9670;&nbsp;</a></span>compute_all_observables_from_superblock()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af89fe5fae18828109ee0a934aa57334f">&#9670;&nbsp;</a></span>compute_all_observables_from_superblock() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -380,6 +390,24 @@ Private Attributes</h2></td></tr>
           <td class="memname">void class_measurement::compute_all_observables_from_superblock </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab07c35bbed4d034e0a90971e3671d7b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab07c35bbed4d034e0a90971e3671d7b6">&#9670;&nbsp;</a></span>compute_all_observables_from_superblock() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_measurement::compute_all_observables_from_superblock </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="classclass__measurement.html#a2699a9fd15f60e9d8535375d9edf5ecf">Scalar</a>, 4 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>theta</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -449,7 +477,7 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <a id="aa756c432df87534e8009e076f2ceddac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa756c432df87534e8009e076f2ceddac">&#9670;&nbsp;</a></span>compute_energy_mpo()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa756c432df87534e8009e076f2ceddac">&#9670;&nbsp;</a></span>compute_energy_mpo() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -469,6 +497,36 @@ Private Attributes</h2></td></tr>
 <span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acb9bee14855ef1b9a952b0ebf228101d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb9bee14855ef1b9a952b0ebf228101d">&#9670;&nbsp;</a></span>compute_energy_mpo() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double class_measurement::compute_energy_mpo </td>
+          <td>(</td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>theta_ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Eigen::DSizes&lt; long, 4 &gt;&#160;</td>
+          <td class="paramname"><em>dsizes</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
 </div><div class="memdoc">
 
 </div>
@@ -499,7 +557,7 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <a id="ae8a4d9e85e52cf74eb715e67242a821c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae8a4d9e85e52cf74eb715e67242a821c">&#9670;&nbsp;</a></span>compute_energy_variance_mpo()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8a4d9e85e52cf74eb715e67242a821c">&#9670;&nbsp;</a></span>compute_energy_variance_mpo() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -519,6 +577,42 @@ Private Attributes</h2></td></tr>
 <span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab352b4c7826e3ccb9a7e1f50cb7b856a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab352b4c7826e3ccb9a7e1f50cb7b856a">&#9670;&nbsp;</a></span>compute_energy_variance_mpo() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double class_measurement::compute_energy_variance_mpo </td>
+          <td>(</td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>theta_ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Eigen::DSizes&lt; long, 4 &gt;&#160;</td>
+          <td class="paramname"><em>dsizes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>energy_all_sites</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
 </div><div class="memdoc">
 
 </div>
@@ -553,9 +647,6 @@ Private Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void class_measurement::compute_finite_chain_energy </td>
@@ -564,11 +655,6 @@ Private Attributes</h2></td></tr>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
@@ -578,9 +664,6 @@ Private Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void class_measurement::compute_finite_chain_energy_variance </td>
@@ -589,11 +672,6 @@ Private Attributes</h2></td></tr>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
@@ -603,9 +681,6 @@ Private Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void class_measurement::compute_finite_chain_mps_state </td>
@@ -614,11 +689,6 @@ Private Attributes</h2></td></tr>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
@@ -628,9 +698,6 @@ Private Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void class_measurement::compute_finite_chain_norm </td>
@@ -639,11 +706,6 @@ Private Attributes</h2></td></tr>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
@@ -653,9 +715,6 @@ Private Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void class_measurement::compute_finite_chain_norm2 </td>
@@ -664,11 +723,6 @@ Private Attributes</h2></td></tr>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
@@ -1029,6 +1083,24 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a2077a00bdb1de43d2920a9326284ac3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2077a00bdb1de43d2920a9326284ac3e">&#9670;&nbsp;</a></span>set_variance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_measurement::set_variance </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>new_variance</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
 <a id="a5c4019856df70beb5d541ba3028d1e97"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5c4019856df70beb5d541ba3028d1e97">&#9670;&nbsp;</a></span>a</h2>
@@ -1250,8 +1322,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ad931dca20f663ea65c361edbe85af7aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad931dca20f663ea65c361edbe85af7aa">&#9670;&nbsp;</a></span>env_storage</h2>
+<a id="ad24929536ae76a008a902831f5473cbc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad24929536ae76a008a902831f5473cbc">&#9670;&nbsp;</a></span>env_storage</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1260,7 +1332,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;const <a class="el" href="classclass__finite__chain__sweeper.html">class_finite_chain_sweeper</a>&gt; class_measurement::env_storage</td>
+          <td class="memname">std::shared_ptr&lt;const <a class="el" href="classclass__finite__chain.html">class_finite_chain</a>&gt; class_measurement::env_storage</td>
         </tr>
       </table>
   </td>
@@ -1365,19 +1437,11 @@ Private Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Eigen::Tensor&lt;<a class="el" href="classclass__measurement.html#a2699a9fd15f60e9d8535375d9edf5ecf">Scalar</a>,1&gt; class_measurement::mps_chain</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>

@@ -1,8 +1,9 @@
 var dir_9cdd153f0f1b41b116eb8c6c3efd2239 =
 [
-    [ "class_eigsolver_armadillo.cpp", "class__eigsolver__armadillo_8cpp.html", null ],
-    [ "class_eigsolver_armadillo.h", "class__eigsolver__armadillo_8h.html", [
-      [ "class_eigsolver_armadillo", "classclass__eigsolver__armadillo.html", "classclass__eigsolver__armadillo" ]
+    [ "arpack_extra", "dir_633391ec5bd3def814c83dcb5877cd83.html", "dir_633391ec5bd3def814c83dcb5877cd83" ],
+    [ "class_eigsolver.cpp", "class__eigsolver_8cpp.html", "class__eigsolver_8cpp" ],
+    [ "class_eigsolver.h", "class__eigsolver_8h.html", [
+      [ "class_eigsolver", "classclass__eigsolver.html", "classclass__eigsolver" ]
     ] ],
     [ "class_eigsolver_arpack.cpp", "class__eigsolver__arpack_8cpp.html", "class__eigsolver__arpack_8cpp" ],
     [ "class_eigsolver_arpack.h", "class__eigsolver__arpack_8h.html", [
@@ -19,6 +20,7 @@ var dir_9cdd153f0f1b41b116eb8c6c3efd2239 =
       [ "class_tic_toc", "classclass__tic__toc.html", "classclass__tic__toc" ]
     ] ],
     [ "nmspc_eigsolver_props.h", "nmspc__eigsolver__props_8h.html", "nmspc__eigsolver__props_8h" ],
+    [ "nmspc_eigutils.h", "nmspc__eigutils_8h.html", "nmspc__eigutils_8h" ],
     [ "nmspc_math.h", "nmspc__math_8h.html", "nmspc__math_8h" ],
     [ "nmspc_quantum_mechanics.h", "nmspc__quantum__mechanics_8h.html", "nmspc__quantum__mechanics_8h" ],
     [ "nmspc_random_numbers.cpp", "nmspc__random__numbers_8cpp.html", "nmspc__random__numbers_8cpp" ],

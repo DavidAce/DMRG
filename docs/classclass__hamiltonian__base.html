@@ -126,16 +126,18 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a61142abbd013868e5d96e4fc76d5b300"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46afac500c78b060f654aa0a927f6956"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#a46afac500c78b060f654aa0a927f6956">set_reduced_energy</a> (double site_energy)=0</td></tr>
 <tr class="separator:a46afac500c78b060f654aa0a927f6956"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac07010b940a8edc7a1c089b5ecb51026"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#ac07010b940a8edc7a1c089b5ecb51026">get_spin_dimension</a> () const =0</td></tr>
-<tr class="separator:ac07010b940a8edc7a1c089b5ecb51026"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bd7f3de3d980d13e6cd8bec3eb962d5"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#a3bd7f3de3d980d13e6cd8bec3eb962d5">get_spin_dimension</a> () const =0</td></tr>
+<tr class="separator:a3bd7f3de3d980d13e6cd8bec3eb962d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a244ce52e74ad42ef36553a9825481725"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#a244ce52e74ad42ef36553a9825481725">get_parameter_names</a> () const =0</td></tr>
 <tr class="separator:a244ce52e74ad42ef36553a9825481725"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e73f2fed6041631f1c47ce5cc6b933f"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#a6e73f2fed6041631f1c47ce5cc6b933f">get_parameter_values</a> () const =0</td></tr>
 <tr class="separator:a6e73f2fed6041631f1c47ce5cc6b933f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed1e9f130835b0be19a2fa55a0cffb72"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#aed1e9f130835b0be19a2fa55a0cffb72">set_non_local_parameters</a> (std::vector&lt; std::vector&lt; double &gt;&gt; &amp;parameters)=0</td></tr>
+<tr class="separator:aed1e9f130835b0be19a2fa55a0cffb72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a594a39c9c937ce3bde3985218503795b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#a594a39c9c937ce3bde3985218503795b">set_position</a> (int new_pos)</td></tr>
 <tr class="separator:a594a39c9c937ce3bde3985218503795b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb6249d0cf1612dba5f9dadc9365835a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#adb6249d0cf1612dba5f9dadc9365835a">get_position</a> () const</td></tr>
-<tr class="separator:adb6249d0cf1612dba5f9dadc9365835a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a4393e8187c949c1bb06f84745ffcfc"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#a5a4393e8187c949c1bb06f84745ffcfc">get_position</a> () const</td></tr>
+<tr class="separator:a5a4393e8187c949c1bb06f84745ffcfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -339,14 +341,14 @@ Private Types</h2></td></tr>
 
 </div>
 </div>
-<a id="adb6249d0cf1612dba5f9dadc9365835a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb6249d0cf1612dba5f9dadc9365835a">&#9670;&nbsp;</a></span>get_position()</h2>
+<a id="a5a4393e8187c949c1bb06f84745ffcfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a4393e8187c949c1bb06f84745ffcfc">&#9670;&nbsp;</a></span>get_position()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int class_hamiltonian_base::get_position </td>
+          <td class="memname">size_t class_hamiltonian_base::get_position </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -356,8 +358,8 @@ Private Types</h2></td></tr>
 
 </div>
 </div>
-<a id="ac07010b940a8edc7a1c089b5ecb51026"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac07010b940a8edc7a1c089b5ecb51026">&#9670;&nbsp;</a></span>get_spin_dimension()</h2>
+<a id="a3bd7f3de3d980d13e6cd8bec3eb962d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bd7f3de3d980d13e6cd8bec3eb962d5">&#9670;&nbsp;</a></span>get_spin_dimension()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -366,7 +368,7 @@ Private Types</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual int class_hamiltonian_base::get_spin_dimension </td>
+          <td class="memname">virtual size_t class_hamiltonian_base::get_spin_dimension </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -379,7 +381,7 @@ Private Types</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classclass__selfdual__tf__rf__ising.html#a4f152e4e2c98dff77e92a152f17a3588">class_selfdual_tf_rf_ising</a>, and <a class="el" href="classclass__tf__ising.html#af213832c6dac762f9a42f4c362325e99">class_tf_ising</a>.</p>
+<p>Implemented in <a class="el" href="classclass__selfdual__tf__rf__ising.html#a424375457f3be4647fb66f5985ae8adf">class_selfdual_tf_rf_ising</a>, and <a class="el" href="classclass__tf__ising.html#aac43f4b1d0a820dff54456bf0ab5462a">class_tf_ising</a>.</p>
 
 </div>
 </div>
@@ -534,6 +536,34 @@ Private Types</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Implemented in <a class="el" href="classclass__selfdual__tf__rf__ising.html#aa8e3fcac305f5e7c110f49dafbfc5b57">class_selfdual_tf_rf_ising</a>, and <a class="el" href="classclass__tf__ising.html#a8bc1158637b78a5a2fe28595b667888e">class_tf_ising</a>.</p>
+
+</div>
+</div>
+<a id="aed1e9f130835b0be19a2fa55a0cffb72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed1e9f130835b0be19a2fa55a0cffb72">&#9670;&nbsp;</a></span>set_non_local_parameters()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void class_hamiltonian_base::set_non_local_parameters </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; std::vector&lt; double &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>parameters</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classclass__selfdual__tf__rf__ising.html#a56eac0182dfea209c02a2ffbbcf4c012">class_selfdual_tf_rf_ising</a>, and <a class="el" href="classclass__tf__ising.html#ac8aee61bea4c73661aa083e9d702283b">class_tf_ising</a>.</p>
 
 </div>
 </div>

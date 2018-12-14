@@ -1,13 +1,19 @@
 var NAVTREE =
 [
   [ "DMRG++", "index.html", [
-    [ "DMRG++", "index.html#intro", null ],
+    [ "DMRG++", "index.html#intro", [
+      [ "Notes (in construction)", "index.html#notes", null ]
+    ] ],
     [ "Installation", "index.html#installation", [
       [ "Quick start", "index.html#quickstart", null ],
-      [ "Minimum Requirements", "index.html#minreqs", null ],
-      [ "Optional Requirements", "index.html#optionalreqs", null ]
+      [ "Requirements", "index.html#requirements", [
+        [ "Optional Requirements", "index.html#optional-requirements", null ]
+      ] ],
+      [ "Build", "index.html#build", null ],
+      [ "Execution", "index.html#execution", null ],
+      [ "Configuration file", "index.html#configuration-file", null ],
+      [ "Output file", "index.html#output-file", null ]
     ] ],
-    [ "Usage", "index.html#usage", null ],
     [ "Notation", "index.html#notation", [
       [ "Tensor index order convention.", "index.html#convention", [
         [ "Example:", "index.html#example", null ]
@@ -53,11 +59,13 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"classclass__eigsolver__arpack.html#a443f48d7c7c32a5d5f7b061d3c9fee80",
-"classclass__hdf5__table.html#a9bb21d237f05f224a3d2e8d6c4f53dfb",
-"classclass__tf__ising.html#afc97a928a969f5acb416ec035e4243ac",
-"nmspc__quantum__mechanics_8h.html#a3858155227e1d0292cbc1b53bb227e58",
-"structclass__table__tebd_1_1data__struct.html#a15c6704552efd7da7e23ce65a9ee92b9"
+"class_stl_matrix_product.html#a89163543d448d6852c458eaeda139fcd",
+"classclass__environment__var.html",
+"classclass__hdf5__table.html#ac33d1e1e4da4c4778f36413be81858b6",
+"classclass__table__profiling.html#ae3463ddd598d585aa099b783f441d595",
+"functions_h.html",
+"nmspc__sim__settings_8h.html#a1e1c647aee60057b23aa93aed6e0771c",
+"structclass__table__tebd_1_1data__struct.html#abe6dbd7529723132dcceb5f2f3b48e1b"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

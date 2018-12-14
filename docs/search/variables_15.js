@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['x2_5fvec',['X2_vec',['../classclass__algorithm__base.html#a4c50d7b030b2de6a18e2c5d4b4fa2fec',1,'class_algorithm_base']]],
-  ['x_5fham_5fvec',['X_ham_vec',['../classclass__algorithm__base.html#ae025f10af8ccf9ad755cf545f81e5ade',1,'class_algorithm_base']]],
-  ['x_5fmom_5fvec',['X_mom_vec',['../classclass__algorithm__base.html#a88b1d4cdf1a565281d686078e52bcb9f',1,'class_algorithm_base']]],
-  ['x_5fmpo_5fvec',['X_mpo_vec',['../classclass__algorithm__base.html#a9776081356af828aab41f1f169ad01ca',1,'class_algorithm_base']]]
+  ['w',['w',['../namespacesettings_1_1model_1_1tf__ising.html#a515c4000b86ee03c42022e29c304dba4',1,'settings::model::tf_ising::w()'],['../namespacesettings_1_1model_1_1tf__nn__ising.html#a1e1c647aee60057b23aa93aed6e0771c',1,'settings::model::tf_nn_ising::w()']]],
+  ['w_5frnd_5fstrength',['w_rnd_strength',['../classclass__tf__ising.html#ad99a70edc7656248cbc556b2d3e9ef13',1,'class_tf_ising']]],
+  ['wall_5ftime',['wall_time',['../structclass__table__dmrg_1_1data__struct.html#a2a99355c91610fecc07a2fca87dc9b40',1,'class_table_dmrg::data_struct::wall_time()'],['../structclass__table__tebd_1_1data__struct.html#a98aaef113f375d0cc1f4b21d7834de56',1,'class_table_tebd::data_struct::wall_time()']]],
+  ['workspace',['workspace',['../class_math_1_1gsl__quad.html#adc7cd3b9570407c50d73f852acc1247a',1,'Math::gsl_quad']]]
 ];

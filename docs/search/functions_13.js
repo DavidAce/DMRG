@@ -6,5 +6,6 @@ var searchData=
   ['_7eclass_5fhdf5_5ffile',['~class_hdf5_file',['../classclass__hdf5__file.html#af16bdc7c02f6e929a5109a9246ca899b',1,'class_hdf5_file']]],
   ['_7eclass_5fhdf5_5ftable',['~class_hdf5_table',['../classclass__hdf5__table.html#a07ce9bd6b3f1ebfc3b265def954410c1',1,'class_hdf5_table']]],
   ['_7eclass_5fsuperblock',['~class_superblock',['../classclass__superblock.html#acf715b76bb30d46afc7cf647a264a543',1,'class_superblock']]],
-  ['_7edatasetproperties',['~DatasetProperties',['../classclass__hdf5__file_1_1_dataset_properties.html#a5747c72a29af6c0d6f521ce2f090c675',1,'class_hdf5_file::DatasetProperties']]]
+  ['_7edatasetproperties',['~DatasetProperties',['../classclass__hdf5__file_1_1_dataset_properties.html#a5747c72a29af6c0d6f521ce2f090c675',1,'class_hdf5_file::DatasetProperties']]],
+  ['_7estlmatrixproduct',['~StlMatrixProduct',['../class_stl_matrix_product.html#a3d12eaf4c87fa24c74ed65e86b0b860e',1,'StlMatrixProduct']]]
 ];

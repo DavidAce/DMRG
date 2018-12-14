@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['gsl_5fquad',['gsl_quad',['../class_math_1_1gsl__quad.html',1,'Math']]]
+  ['eigconfig',['eigConfig',['../classeigutils_1_1eig_config.html',1,'eigutils']]],
+  ['eigsolution',['eigSolution',['../classeigutils_1_1eig_solution.html',1,'eigutils']]]
 ];
