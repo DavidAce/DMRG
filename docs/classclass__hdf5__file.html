@@ -89,6 +89,7 @@ $(document).ready(function(){initNavTree('classclass__hdf5__file.html','');});
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pri-types">Private Types</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classclass__hdf5__file-members.html">List of all members</a>  </div>
@@ -112,8 +113,8 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6cdb88a2cd9484946a38f2ab17575dfc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a6cdb88a2cd9484946a38f2ab17575dfc">class_hdf5_file</a> (const std::string output_filename_, const std::string output_dirname_, bool create_dir_=true, bool overwrite_=false)</td></tr>
-<tr class="separator:a6cdb88a2cd9484946a38f2ab17575dfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c757af0eda838bba6aee74dc316d403"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a8c757af0eda838bba6aee74dc316d403">class_hdf5_file</a> (const std::string output_filename_, const std::string output_dirname_, bool create_dir_=true, bool overwrite_=false, bool resume_=false)</td></tr>
+<tr class="separator:a8c757af0eda838bba6aee74dc316d403"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af16bdc7c02f6e929a5109a9246ca899b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#af16bdc7c02f6e929a5109a9246ca899b">~class_hdf5_file</a> ()</td></tr>
 <tr class="separator:af16bdc7c02f6e929a5109a9246ca899b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39abe773ac423910b6b3983d32739989"><td class="memTemplParams" colspan="2">template&lt;typename DataType &gt; </td></tr>
@@ -142,6 +143,14 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a3e6e3e89568f81ba394dfd40a0f3d7dc"><td class="memItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a3e6e3e89568f81ba394dfd40a0f3d7dc">file</a></td></tr>
 <tr class="separator:a3e6e3e89568f81ba394dfd40a0f3d7dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-types"></a>
+Private Types</h2></td></tr>
+<tr class="memitem:a6766c056aea9a213c80dc80bb1f42f24"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a6766c056aea9a213c80dc80bb1f42f24">FileMode</a> { <a class="el" href="classclass__hdf5__file.html#a6766c056aea9a213c80dc80bb1f42f24a294ce20cdefa29be3be0735cb62e715d">FileMode::CREATE</a>, 
+<a class="el" href="classclass__hdf5__file.html#a6766c056aea9a213c80dc80bb1f42f24aa38bd5138bf35514df41a1795ebbf5c3">FileMode::OPEN</a>, 
+<a class="el" href="classclass__hdf5__file.html#a6766c056aea9a213c80dc80bb1f42f24a507f09f72160920edb481656c350e76c">FileMode::RENAME</a>
+ }</td></tr>
+<tr class="separator:a6766c056aea9a213c80dc80bb1f42f24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:abc47df4aa80f2ca2d4b9b43a2b4b021e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#abc47df4aa80f2ca2d4b9b43a2b4b021e">set_output_file_path</a> ()</td></tr>
@@ -157,6 +166,8 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:a5c2fb81aa3b7084080a5df399f3a9e1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa31a4cbb7299da48b3007ef64ac97302"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#aa31a4cbb7299da48b3007ef64ac97302">check_link_exists_recursively</a> (std::string path)</td></tr>
 <tr class="separator:aa31a4cbb7299da48b3007ef64ac97302"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a584a0f373a418d440a79ef5631c0d4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a3a584a0f373a418d440a79ef5631c0d4">check_if_attribute_exists</a> (const std::string &amp;link_name, const std::string &amp;attribute_name)</td></tr>
+<tr class="separator:a3a584a0f373a418d440a79ef5631c0d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48f6f16e6d1f41cddf36fad622786e8b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a48f6f16e6d1f41cddf36fad622786e8b">create_dataset_link</a> (const <a class="el" href="classclass__hdf5__file_1_1_dataset_properties.html">DatasetProperties</a> &amp;props)</td></tr>
 <tr class="separator:a48f6f16e6d1f41cddf36fad622786e8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e015501d4add4db4287575662ba1029"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a1e015501d4add4db4287575662ba1029">select_hyperslab</a> (const hid_t &amp;filespace, const hid_t &amp;memspace)</td></tr>
@@ -202,6 +213,12 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a85d0621b1189d5b7cff6e0da7874e48e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf4df5784dd63f2e40b7b8c009067c2d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#adf4df5784dd63f2e40b7b8c009067c2d">overwrite</a></td></tr>
 <tr class="separator:adf4df5784dd63f2e40b7b8c009067c2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30970d150d612977ab53f4313a6c257d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a30970d150d612977ab53f4313a6c257d">resume</a></td></tr>
+<tr class="separator:a30970d150d612977ab53f4313a6c257d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7b5881e6eb9e7870b290a0e59ecc67b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#ae7b5881e6eb9e7870b290a0e59ecc67b">file_is_valid</a></td></tr>
+<tr class="separator:ae7b5881e6eb9e7870b290a0e59ecc67b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7ff017f9122af78cf1f390b912c0e21"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__hdf5__file.html#a6766c056aea9a213c80dc80bb1f42f24">FileMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#aa7ff017f9122af78cf1f390b912c0e21">filemode</a></td></tr>
+<tr class="separator:aa7ff017f9122af78cf1f390b912c0e21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f06d166d3ce9b88c84732193003e82d"><td class="memItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a8f06d166d3ce9b88c84732193003e82d">plist_facc</a></td></tr>
 <tr class="separator:a8f06d166d3ce9b88c84732193003e82d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a644b3884acaff89e0f2f158b77302810"><td class="memItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a644b3884acaff89e0f2f158b77302810">plist_xfer</a></td></tr>
@@ -211,9 +228,37 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a36f9d3a66150507a3fbb6b94d267d488"><td class="memItemLeft" align="right" valign="top">hid_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hdf5__file.html#a36f9d3a66150507a3fbb6b94d267d488">H5T_COMPLEX_DOUBLE</a></td></tr>
 <tr class="separator:a36f9d3a66150507a3fbb6b94d267d488"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="a6766c056aea9a213c80dc80bb1f42f24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6766c056aea9a213c80dc80bb1f42f24">&#9670;&nbsp;</a></span>FileMode</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classclass__hdf5__file.html#a6766c056aea9a213c80dc80bb1f42f24">class_hdf5_file::FileMode</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a6766c056aea9a213c80dc80bb1f42f24a294ce20cdefa29be3be0735cb62e715d"></a>CREATE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a6766c056aea9a213c80dc80bb1f42f24aa38bd5138bf35514df41a1795ebbf5c3"></a>OPEN&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a6766c056aea9a213c80dc80bb1f42f24a507f09f72160920edb481656c350e76c"></a>RENAME&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a6cdb88a2cd9484946a38f2ab17575dfc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6cdb88a2cd9484946a38f2ab17575dfc">&#9670;&nbsp;</a></span>class_hdf5_file()</h2>
+<a id="a8c757af0eda838bba6aee74dc316d403"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c757af0eda838bba6aee74dc316d403">&#9670;&nbsp;</a></span>class_hdf5_file()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -243,7 +288,13 @@ Private Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>overwrite_</em> = <code>false</code>&#160;</td>
+          <td class="paramname"><em>overwrite_</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>resume_</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -286,6 +337,42 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a3a584a0f373a418d440a79ef5631c0d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a584a0f373a418d440a79ef5631c0d4">&#9670;&nbsp;</a></span>check_if_attribute_exists()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool class_hdf5_file::check_if_attribute_exists </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>link_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>attribute_name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aa31a4cbb7299da48b3007ef64ac97302"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa31a4cbb7299da48b3007ef64ac97302">&#9670;&nbsp;</a></span>check_link_exists_recursively()</h2>
 
@@ -1045,6 +1132,50 @@ template&lt;typename DataType &gt; </div>
 
 </div>
 </div>
+<a id="ae7b5881e6eb9e7870b290a0e59ecc67b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7b5881e6eb9e7870b290a0e59ecc67b">&#9670;&nbsp;</a></span>file_is_valid</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool class_hdf5_file::file_is_valid</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa7ff017f9122af78cf1f390b912c0e21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7ff017f9122af78cf1f390b912c0e21">&#9670;&nbsp;</a></span>filemode</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classclass__hdf5__file.html#a6766c056aea9a213c80dc80bb1f42f24">FileMode</a> class_hdf5_file::filemode</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a36f9d3a66150507a3fbb6b94d267d488"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a36f9d3a66150507a3fbb6b94d267d488">&#9670;&nbsp;</a></span>H5T_COMPLEX_DOUBLE</h2>
 
@@ -1210,6 +1341,28 @@ template&lt;typename DataType &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">hid_t class_hdf5_file::plist_xfer</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a30970d150d612977ab53f4313a6c257d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30970d150d612977ab53f4313a6c257d">&#9670;&nbsp;</a></span>resume</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool class_hdf5_file::resume</td>
         </tr>
       </table>
   </td>

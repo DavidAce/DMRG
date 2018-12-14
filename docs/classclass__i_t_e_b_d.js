@@ -1,14 +1,14 @@
 var classclass__i_t_e_b_d =
 [
     [ "class_iTEBD", "classclass__i_t_e_b_d.html#a1a9622ad0b5b0d0408edc3a8e04cc20d", null ],
-    [ "check_convergence_overall", "classclass__i_t_e_b_d.html#aa76352f7083856b20d56d968230b87c2", null ],
+    [ "check_convergence", "classclass__i_t_e_b_d.html#a53169891d7c781d0753db717d61c85de", null ],
     [ "check_convergence_time_step", "classclass__i_t_e_b_d.html#ac720b8d492eb8a174c1a3c87ef1e9662", null ],
     [ "initialize_constants", "classclass__i_t_e_b_d.html#a6ac5e48122be54ac8d7ce03b9fc41270", null ],
     [ "print_profiling", "classclass__i_t_e_b_d.html#acaf7357feccf42012bf99a487e6c1bb1", null ],
     [ "print_profiling_sim", "classclass__i_t_e_b_d.html#a335b6eb592b69e510fa17f817e47a4c9", null ],
     [ "run", "classclass__i_t_e_b_d.html#a78f9f9eec5407f48cea56322b81a7bb7", null ],
     [ "single_TEBD_step", "classclass__i_t_e_b_d.html#aeef1fb8d197f1d82e767aff331b2e083", null ],
-    [ "store_table_entry_to_file", "classclass__i_t_e_b_d.html#a87bcb017d260d2e8fdf72043b7f80113", null ],
+    [ "store_table_entry_to_file", "classclass__i_t_e_b_d.html#ae15178569744310ee259df545919665c", null ],
     [ "delta_t", "classclass__i_t_e_b_d.html#af24ca2a7c04cd79ea8c6feb4ed80fc8e", null ],
     [ "delta_t0", "classclass__i_t_e_b_d.html#a35475bda5d9dcb07122b7769d550ae46", null ],
     [ "delta_tmin", "classclass__i_t_e_b_d.html#a8fd700efec8792baeeecf6c131729e42", null ],

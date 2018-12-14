@@ -118,6 +118,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aba675ee4c8d57679ebe089bf57921b5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36fdc20a7ede07ce1c48d38e3d36b077"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__vidal__mps.html#a36fdc20a7ede07ce1c48d38e3d36b077">ref_B</a> () const</td></tr>
 <tr class="separator:a36fdc20a7ede07ce1c48d38e3d36b077"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae84bf029daf1717fa57167ac1d34c66"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__vidal__mps.html#aae84bf029daf1717fa57167ac1d34c66">set_position</a> (const long position_)</td></tr>
+<tr class="separator:aae84bf029daf1717fa57167ac1d34c66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6bdcd336fc97612725e52555c91c2bd"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__vidal__mps.html#ad6bdcd336fc97612725e52555c91c2bd">get_position</a> () const</td></tr>
+<tr class="separator:ad6bdcd336fc97612725e52555c91c2bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9dca11cc4340beffe113328683eb089"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__vidal__mps.html#a94dc0ed773191e879527e76cefb840f3">Scalar</a>, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__vidal__mps.html#ad9dca11cc4340beffe113328683eb089">get_A</a> () const</td></tr>
 <tr class="separator:ad9dca11cc4340beffe113328683eb089"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab937efddc2189d89b2d7f396559b2ad0"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__vidal__mps.html#a94dc0ed773191e879527e76cefb840f3">Scalar</a>, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__vidal__mps.html#ab937efddc2189d89b2d7f396559b2ad0">get_B</a> () const</td></tr>
@@ -127,6 +131,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr class="memitem:a0c56403e04b9cb1ad449f9793ee7bb38"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__vidal__mps.html#a0c56403e04b9cb1ad449f9793ee7bb38">position</a> = 0</td></tr>
+<tr class="separator:a0c56403e04b9cb1ad449f9793ee7bb38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1f896a0c33271fc4668bf1549aa495b"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__vidal__mps.html#a94dc0ed773191e879527e76cefb840f3">Scalar</a>, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__vidal__mps.html#ad1f896a0c33271fc4668bf1549aa495b">G</a></td></tr>
 <tr class="separator:ad1f896a0c33271fc4668bf1549aa495b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42fddaea80ea61feb931fcf816c22b84"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__vidal__mps.html#a94dc0ed773191e879527e76cefb840f3">Scalar</a>, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__vidal__mps.html#a42fddaea80ea61feb931fcf816c22b84">L</a></td></tr>
@@ -260,6 +266,31 @@ Private Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">auto&amp; class_vidal_mps::get_L </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad6bdcd336fc97612725e52555c91c2bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6bdcd336fc97612725e52555c91c2bd">&#9670;&nbsp;</a></span>get_position()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto class_vidal_mps::get_position </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -412,6 +443,32 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="aae84bf029daf1717fa57167ac1d34c66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae84bf029daf1717fa57167ac1d34c66">&#9670;&nbsp;</a></span>set_position()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_vidal_mps::set_position </td>
+          <td>(</td>
+          <td class="paramtype">const long&#160;</td>
+          <td class="paramname"><em>position_</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
 <a id="ad1f896a0c33271fc4668bf1549aa495b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad1f896a0c33271fc4668bf1549aa495b">&#9670;&nbsp;</a></span>G</h2>
@@ -456,6 +513,28 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>\(\Lambda\) </p>
+
+</div>
+</div>
+<a id="a0c56403e04b9cb1ad449f9793ee7bb38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c56403e04b9cb1ad449f9793ee7bb38">&#9670;&nbsp;</a></span>position</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">long class_vidal_mps::position = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>

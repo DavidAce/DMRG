@@ -1,6 +1,7 @@
 var namespaces =
 [
     [ "eigsolver_properties", "namespaceeigsolver__properties.html", null ],
+    [ "eigutils", "namespaceeigutils.html", "namespaceeigutils" ],
     [ "Math", "namespace_math.html", null ],
     [ "Model", "namespace_model.html", null ],
     [ "qm", "namespaceqm.html", "namespaceqm" ],

@@ -25,6 +25,14 @@ var dir_1f1e02da0ed68619c8cd86756bb8077c =
     [ "class_xDMRG.h", "class__x_d_m_r_g_8h.html", [
       [ "class_xDMRG", "classclass__x_d_m_r_g.html", "classclass__x_d_m_r_g" ]
     ] ],
+    [ "class_xDMRG_full_functor.cpp", "class__x_d_m_r_g__full__functor_8cpp.html", null ],
+    [ "class_xDMRG_full_functor.h", "class__x_d_m_r_g__full__functor_8h.html", [
+      [ "class_xDMRG_full_functor", "classclass__x_d_m_r_g__full__functor.html", "classclass__x_d_m_r_g__full__functor" ]
+    ] ],
+    [ "class_xDMRG_functor.cpp", "class__x_d_m_r_g__functor_8cpp.html", null ],
+    [ "class_xDMRG_functor.h", "class__x_d_m_r_g__functor_8h.html", [
+      [ "class_xDMRG_functor", "classclass__x_d_m_r_g__functor.html", "classclass__x_d_m_r_g__functor" ]
+    ] ],
     [ "table_types.h", "table__types_8h.html", [
       [ "class_table_dmrg", "classclass__table__dmrg.html", "classclass__table__dmrg" ],
       [ "data_struct", "structclass__table__dmrg_1_1data__struct.html", "structclass__table__dmrg_1_1data__struct" ],

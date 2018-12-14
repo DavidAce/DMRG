@@ -90,13 +90,19 @@ $(document).ready(function(){initNavTree('index.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#intro">DMRG++</a></li>
-<li class="level1"><a href="#installation">Installation</a><ul><li class="level2"><a href="#quickstart">Quick start</a></li>
-<li class="level2"><a href="#minreqs">Minimum Requirements</a></li>
-<li class="level2"><a href="#optionalreqs">Optional Requirements</a></li>
+<ul><li class="level1"><a href="#intro">DMRG++</a><ul><li class="level2"><a href="#notes">Notes (in construction)</a></li>
 </ul>
 </li>
-<li class="level1"><a href="#usage">Usage</a></li>
+<li class="level1"><a href="#installation">Installation</a><ul><li class="level2"><a href="#quickstart">Quick start</a></li>
+<li class="level2"><a href="#requirements">Requirements</a><ul><li class="level3"><a href="#optional-requirements">Optional Requirements</a></li>
+</ul>
+</li>
+<li class="level2"><a href="#build">Build</a></li>
+<li class="level2"><a href="#execution">Execution</a></li>
+<li class="level2"><a href="#configuration-file">Configuration file</a></li>
+<li class="level2"><a href="#output-file">Output file</a></li>
+</ul>
+</li>
 <li class="level1"><a href="#notation">Notation</a><ul><li class="level2"><a href="#convention">Tensor index order convention.</a><ul><li class="level3"><a href="#example">Example:</a></li>
 </ul>
 </li>
@@ -105,53 +111,63 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li class="level1"><a href="#details">Details</a></li>
 </ul>
 </div>
-<div class="textblock"><p>This program finds the ground state of a 1D quantum Ising chain in a transverse field using the DMRG algorithm. Link to the <a href="https://github.com/DavidAce/Notebooks/blob/master/DMRG%2B%2B/DMRG%2B%2B.pdf">working notes</a> on the theoretical aspects of this implementation.</p>
+<div class="textblock"><p>This program finds the ground state of a 1D quantum system using the DMRG algorithm. <a href="https://github.com/DavidAce/Notebooks/blob/master/DMRG%2B%2B/DMRG%2B%2B.pdf">Working notes</a> on the theoretical aspects of this implementation.</p>
 <h1><a class="anchor" id="intro"></a>
 DMRG++</h1>
-<p><a href="https://en.wikipedia.org/wiki/Density_matrix_renormalization_group">Density matrix renormalization group</a> (DMRG) is a variational numerical technique to study the low-energy physics of many-body quantum systems.</p>
-<p>This algorithm constructs and minimizes trial wave functions, in the shape of <a href="https://en.wikipedia.org/wiki/Matrix_product_state">Matrix Product States</a> (MPS), iteratively in order to find the ground state of one-dimensional quantum systems with high precision.</p>
+<p><a href="https://en.wikipedia.org/wiki/Density_matrix_renormalization_group">Density matrix renormalization group</a> (DMRG) is a variational numerical technique used to study many-body quantum systems. It works by optimizing a trial wave function in the form of a <a href="https://en.wikipedia.org/wiki/Matrix_product_states">Matrix Product States</a> (MPS), to find either the groundstate or an eigenstate of a 1D quantum system with high precision. DMRG++ includes 4 different MPS-based algorithms for 1D systems:</p>
+<ul>
+<li><b>iDMRG:</b> <em>Infinite</em> DMRG. Finds the groundstate of infinite and translationally invariant systems.</li>
+<li><b>fDMRG:</b> <em>Finite</em> DMRG. Finds the groundstate of finite systems, not necessarily translationally invariant.</li>
+<li><b>xDMRG:</b> <em>Excited state</em> DMRG. Finds highly excited (mid-spectrum) eigenstates of finite systems.</li>
+<li><b>iTEBD:</b> <em>Imaginary Time Evolving Block Decimation</em>. Finds the ground state of infinite and translationally invariant systems using unitary operators that perform imaginary time evolution.</li>
+</ul>
+<p>The program is controlled through an input file, whose path (full or relative to the binary) is given as input argument in the command line. See the <a href="#installation">Installation</a> section below.</p>
+<p>Included here are two 1D models of spin chains, the <em>Quantum Ising model with transverse field</em> and the <em>Self-dual quantum Ising model with random couplings and random fields</em>. The choice of model is done in the input configuration file.</p>
 <p>This implementation is inspired by the notation and steps in these articles:</p>
 <blockquote class="doxtable">
 <p><a href="https://arxiv.org/abs/1212.6255">Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study</a><br />
- by Kjäll, Zaletel, Mong, Bardarson, and Pollmann. Physical Review B 87 (23): 235106. <br />
+ by Kjäll, Zaletel, Mong, Bardarson, and Pollmann, 2012 <br />
  </p>
 </blockquote>
 <blockquote class="doxtable">
 <p><a href="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Efficient Numerical Simulations Using Matrix-Product States</a><br />
- by Frank Pollmann. <br />
+ by F. Pollmann. <br />
  </p>
 </blockquote>
 <blockquote class="doxtable">
 <p><a href="https://arxiv.org/abs/1008.3477">The density-matrix renormalization group in the age of matrix product states</a><br />
- by Ulrich Schollwöck. <br />
+ by U. Schollwöck, 2008 <br />
  </p>
 </blockquote>
 <blockquote class="doxtable">
 <p><a href="https://doi.org/10.1103/PhysRevB.78.155117">The iTEBD algorithm beyond unitary evolution</a><br />
- by Orus &amp; Vidal. Arxiv, 070201 <br />
+ by Orus &amp; Vidal, 2008<br />
  </p>
 </blockquote>
 <blockquote class="doxtable">
 <p><a href="http://arxiv.org/abs/0804.2509">Infinite size density matrix renormalization group, revisited</a><br />
- by McCulloch <br />
+ by McCulloch, 2008 <br />
  </p>
 </blockquote>
 <blockquote class="doxtable">
 <p><a href="https://doi.org/10.1103/PhysRevLett.116.247204">Obtaining Highly Excited Eigenstates of Many-Body Localized Hamiltonians by the Density Matrix Renormalization Group Approach</a><br />
- by Khemani, V., Pollmann, F., &amp; Sondhi, S. L. (2016). Physical Review Letters, 116(24), 1–5 </p>
+ by V. Khemani, F. Pollmann &amp; S. L. Sondhi, 2016 </p>
 </blockquote>
+<h2><a class="anchor" id="notes"></a>
+Notes (in construction)</h2>
+<p>Go to the <a href="https://github.com/DavidAce/Notebooks/blob/master/DMRG%2B%2B/DMRG%2B%2B.pdf">working notes</a> to learn more about the theoretical aspects of this implementation.</p>
 <hr/>
  <h1><a class="anchor" id="installation"></a>
 Installation</h1>
 <h2><a class="anchor" id="quickstart"></a>
 Quick start</h2>
-<p>Git clone or copy &amp; extract the project into a folder of your choosing. Make sure there are no spaces in your path!**. The project can be built with a single command from a unix terminal. Simply launch the script <code>.\build.sh</code> found in the root folder to trigger a CMake build.</p>
-<p>The script takes optional arguments, run <code>.\build.sh -h</code> to learn more.</p>
-<p>The CMake build will check for dependencies and download them automatically if needed (see <em>Optional Requirements</em> below). If the dependencies are found, the project is built and an executable is generated.</p>
-<p>To run the executable, launch <code>.\run.sh</code>, or <code>.\run.sh -h</code> to learn more.</p>
-<p>Alternatively**, if you intend to develop or study the source code, some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This is perhaps an even simpler approach. Recommended: <a href="https://www.jetbrains.com/clion/download">CLion</a> or <a href="https://code.visualstudio.com/">Visual Studio Code</a> with the C++ and CMake Tools extensions.</p>
-<h2><a class="anchor" id="minreqs"></a>
-Minimum Requirements</h2>
+<ul>
+<li>Git clone and build with <code>./build.sh</code>.</li>
+<li>Run with <code>./run.sh</code> after setting your options in <code>./input/input.cfg</code>.</li>
+<li>Profit from <code>./output/output.h5</code>.</li>
+</ul>
+<h2><a class="anchor" id="requirements"></a>
+Requirements</h2>
 <p>The following software is required to build the project:</p><ul>
 <li>C++ compiler with support for c++17 standard and libstdc++ standard library implementation (version &gt;= 7). Tested with two compilers:<ul>
 <li>GNU GCC versions 7 and 8 (these bundle libstdc++)</li>
@@ -159,13 +175,12 @@ Minimum Requirements</h2>
 </ul>
 </li>
 <li>CMake version &gt;= 3.9. If you compile CMake from source, remember to enable <code>curl</code> (<code>./bootstrap --system-curl</code>).</li>
-<li><p class="startli">*(For library compilation only) Fortran compiler, tested with gfortran-7 and gfortran-8.*</p>
-<p class="startli">Ubuntu** 17 or higher will have the versions required in the default repositories. For older distributions, use the ppa <code>ubuntu-toolchain-r/test</code> to get newer versions.</p>
-<p class="startli">Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with <code>brew install gcc</code>. Clang from llvm 6.0 might work but you will have to link to GNU's <code>libstdc++.so</code> or <code>libstdc++.a</code> manually. The AppleClang compiler is not supported at all.</p>
-</li>
+<li><em>For library compilation only:</em> Fortran compiler, tested with gfortran-7 and gfortran-8.</li>
 </ul>
-<h2><a class="anchor" id="optionalreqs"></a>
-Optional Requirements</h2>
+<p>Ubuntu 17 or higher will have the versions required in the default repositories. For older distributions, use the ppa <code>ubuntu-toolchain-r/test</code> to get newer versions.</p>
+<p>Mac OSX users are advised to use GNU GCC version 7 or 8 from homebrew. Install with <code>brew install gcc</code>. Clang from llvm 6.0 might work but you will have to link to GNU's <code>libstdc++.so</code> or <code>libstdc++.a</code> manually. The AppleClang compiler is not supported at all.</p>
+<h3><a class="anchor" id="optional-requirements"></a>
+Optional Requirements</h3>
 <p>The compilation of DMRG++ requires several libraries. To meet the requirements, you have two options:</p>
 <ol type="1">
 <li><b>Automatic</b>: let cmake download and compile the libraries below from source into a local folder <code>libs/</code>. This is the default behavior if the library is not found on your system. Note that this does <em>NOT</em> make a system-wide install, so you can safely delete the <code>libs/</code> folder.</li>
@@ -174,20 +189,32 @@ Optional Requirements</h2>
 <p>The latter is recommended to avoid a lengthy compilation of these rather large libraries. If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from your package manager.</p>
 <h4>List of libraries</h4>
 <ul>
-<li><b>BLAS</b> and <b>LAPACK</b>. Required for Arpack. You can choose either <a href="https://software.intel.com/en-us/mkl">Intel MKL</a> or <a href="https://github.com/xianyi/OpenBLAS">OpenBLAS</a> (OpenBLAS requires Fortran to compile from source). If both MKL and OpenBLAS are found in the system, MKL is preferred.</li>
+<li><b>BLAS</b> and <b>LAPACK</b>. Required for Arpack. You can choose either <a href="https://software.intel.com/en-us/mkl">Intel MKL</a> or <a href="https://github.com/xianyi/OpenBLAS">OpenBLAS</a>. If not found, OpenBLAS is downloaded automatically. Note that OpenBLAS requires Fortran to compile from source. If both MKL and OpenBLAS are found in the system, MKL is preferred.</li>
 <li><a href="http://eigen.tuxfamily.org"><b>Eigen</b></a> for tensor and matrix and linear algebra (tested with version &gt;= 3.3).</li>
-<li><a href="https://github.com/opencollab/arpack-ng"><b>Arpack</b></a> Eigenvalue solver based on fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.</li>
-<li><a href="https://github.com/m-reuter/arpackpp"><b>Arpackpp</b></a> c++ frontend for Arpack.</li>
-<li><a href="http://libelemental.org/"><b>Elemental</b></a> for full diagonalization of matrices.</li>
+<li><a href="https://github.com/opencollab/arpack-ng"><b>Arpack</b></a> Eigenvalue solver based on Fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.</li>
+<li><a href="https://github.com/m-reuter/eigsolver_properties"><b>Arpackpp</b></a> C++ frontend for Arpack.</li>
 <li><a href="https://support.hdfgroup.org/HDF5/"><b>HDF5</b></a> for hdf5 binary output file support (tested with version &gt;= 1.10).</li>
-<li><a href="https://www.gnu.org/software/gsl/"><b>GSL</b></a> for numerical integration (tested with version &gt;= 2.4). <hr/>
-</li>
+<li><a href="https://www.gnu.org/software/gsl/"><b>GSL</b></a> for numerical integration (tested with version &gt;= 2.4).</li>
 </ul>
-<h1><a class="anchor" id="usage"></a>
-Usage</h1>
-<p>The executable <code>build/Release/DMRG++</code> can be run without input parameters. By default it will try to find <code>input/input.cfg</code> the file where the simulation parameters are defined. You can modify these parameters, o create a new input file and pass its (full or relative) path as a command-line argument.</p>
-<p>The results from the simulation are saved under <code>output/</code> as hdf5-files. To view the data you can use any hdf5-viewer, such as HDFCompass.</p>
-<p>The script <code>Data_analysis/data_analysis.py</code> (in progress) shows how to analyze the simulation data stored in the hdf5 files. You need to install the python package <code>h5py</code> from pip or conda to read files in the hdf5 format.</p>
+<h2><a class="anchor" id="build"></a>
+Build</h2>
+<p>Git clone or copy &amp; extract the project into a folder of your choosing. Make sure there are no spaces in your path!</p>
+<p>The project can be built with a single command from a unix terminal. Simply launch the script <code>.\build.sh</code> found in the root folder to trigger a CMake build.</p>
+<p>The script takes optional arguments, run <code>.\build.sh -h</code> to learn more.</p>
+<p>CMake will check for dependencies in the host system. If not found, it will download and install these automatically to a folder <code>libs</code> in the project root (see <em>Optional Requirements</em> below). If the dependencies are successfully found or installed, the project is built and an executable is generated in <code>./build/Release/DMRG++</code>.</p>
+<p>Alternatively, if you intend to develop or study the source code, some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This is perhaps an even simpler approach. Recommended: <a href="https://www.jetbrains.com/clion/download">CLion</a> or <a href="https://code.visualstudio.com/">Visual Studio Code</a> with the C++ and CMake Tools extensions.</p>
+<h2><a class="anchor" id="execution"></a>
+Execution</h2>
+<p>To run the executable, launch <code>.\run.sh</code>, or <code>.\run.sh -h</code> to learn more. If no configuration file is given as argument to <code>run.sh</code>, the executable will look for a configuration file located in <code>./input/input.cfg</code>.</p>
+<h2><a class="anchor" id="configuration-file"></a>
+Configuration file</h2>
+<p>The default configuration file in <code>./input/input.cfg</code> contains run-time instructions for DMRG++. Here you can choose the type of simulation, type of model, model parameters, system size, precision as well as settings for profiling, data storage and console verbosity. Read the comments in the file to learn more.</p>
+<h2><a class="anchor" id="output-file"></a>
+Output file</h2>
+<p>After execution the results are stored a binary file in HDF5 format. Its location is specified in the configuration file <code>./input/input.cfg</code>. By default this should be in <code>.output/output.h5</code>. This file will contain values like the final energies, entanglement entropies, entanglement spectrums and optionally the final state in MPS form.</p>
+<p>To view the data you can use any hdf5-viewer, such as HDFCompass.</p>
+<p>The script <code>analysis/data_analysis.py</code> (in progress) shows how to analyze the simulation data stored in the hdf5 files. You need to install the python package <code>h5py</code> from pip or conda to read files in the HDF5 format.</p>
+<hr/>
 <h1><a class="anchor" id="notation"></a>
 Notation</h1>
 <p>The <em>Vidal canonical form</em>, i.e. ... \(\Gamma\Lambda\Gamma\Lambda\)..., is the underlying data structure for MPS throughout this code. In code we denote</p>

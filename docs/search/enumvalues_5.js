@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['partial',['PARTIAL',['../classclass__x_d_m_r_g.html#ac28e050524068677d4f8bcdb020a51adafba5cdfa4bcb408f641c743519a0fe19',1,'class_xDMRG']]]
+  ['idmrg',['iDMRG',['../nmspc__sim__settings_8h.html#ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f',1,'nmspc_sim_settings.h']]],
+  ['itebd',['iTEBD',['../nmspc__sim__settings_8h.html#ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f',1,'nmspc_sim_settings.h']]]
 ];
