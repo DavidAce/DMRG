@@ -178,10 +178,18 @@ private:
 
     template<typename DataType>
     hsize_t get_Size(const DataType &data)const{
-        if constexpr (tc::has_member_size<DataType>::value){return data.size();}
-        if constexpr (std::is_arithmetic<DataType>::value) { return 1;}
-        std::cerr << "get_Size can't match the type provided: " << typeid(data).name() << '\n';
-        exit(1);
+        if constexpr (tc::has_member_size<DataType>::value)          {return data.size();} //Fails on clang?
+        else if constexpr (std::is_arithmetic<DataType>::value)      {return 1;}
+        else if constexpr (std::is_pod<DataType>::value)             {return 1;}
+        else if constexpr (std::is_same<std::string,DataType>::value){return data.size();}
+        else if constexpr (tc::is_eigen_tensor<DataType>::value)     {return data.size();}
+        else if constexpr (tc::is_eigen_matrix<DataType>::value)     {return data.size();}
+        else if constexpr (tc::is_eigen_array<DataType>::value)      {return data.size();}
+        else if constexpr (tc::is_vector<DataType>::value)           {return data.size();}
+        else{
+            std::cerr << "WARNING: get_Size can't match the type provided: " << typeid(data).name() << '\n';
+            return data.size();
+        }
     }
     template<typename DataType>
     constexpr int get_Rank() const {
