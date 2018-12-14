@@ -4,13 +4,13 @@
 
 # DMRG++
   [Density matrix renormalization group](https://en.wikipedia.org/wiki/Density_matrix_renormalization_group) (DMRG) is a variational numerical technique used to study many-body
-  quantum systems. It works by optimizing a trial wave functions in the form of [Matrix Product States](https://en.wikipedia.org/wiki/Matrix_product_states) (MPS), to find the
-  eigenstates of one-dimensional quantum systems with high precision. In this project, DMRG++ includes 4 different MPS-based algorithms for 1D systems:
+  quantum systems. It works by optimizing a trial wave function in the form of a [Matrix Product States](https://en.wikipedia.org/wiki/Matrix_product_states) (MPS), to find either the
+  groundstate or an eigenstate of a 1D quantum system with high precision. DMRG++ includes 4 different MPS-based algorithms for 1D systems:
 
-  - **iDMRG:** *Infinite* DMRG. Finds the groundstate of infinite and translationally invariant systems.
-  - **fDMRG:** *Finite* DMRG. Finds the groundstate of finite systems, not necessarily translationally invariant.
-  - **xDMRG:** *Excited state* DMRG. Finds highly excited (mid-spectrum) eigenstates of finite systems.
-  - **iTEBD:** *Imaginary Time Evolving Block Decimation*. Finds the ground state of infinite and translationally invariant systems using unitary operators that perform imaginary time evolution.
+  - ***i*DMRG:** *Infinite* DMRG. Finds the groundstate of infinite and translationally invariant systems.
+  - ***f*DMRG:** *Finite* DMRG. Finds the groundstate of finite systems, not necessarily translationally invariant.
+  - ***x*DMRG:** *Excited state* DMRG. Finds highly excited (mid-spectrum) eigenstates of finite systems.
+  - ***i*TEBD:** *Imaginary Time Evolving Block Decimation*. Finds the ground state of infinite and translationally invariant systems using unitary operators that perform imaginary time evolution.
 
 The program is controlled through an input file, whose path (full or relative to the binary) is given as input argument in the command line. See the [Installation](#installation) section below.
 
