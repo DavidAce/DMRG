@@ -1,6 +1,4 @@
 
-enable_language(Fortran)
-include(cmake-modules/FindGFortran.cmake)
 find_file(ELEMENTAL_FOUND PATHS ${INSTALL_DIRECTORY}/elemental/lib NAMES libEl.so NO_DEFAULT_PATH)
 if(ELEMENTAL_FOUND)
     add_library(elemental           SHARED IMPORTED)
@@ -44,16 +42,16 @@ else()
             DEPENDS blas lapack
             )
 
-    add_library(elemental           SHARED IMPORTED)
+    add_library(elemental           UNKNOWN IMPORTED)
     add_dependencies(elemental      library_ELEMENTAL blas lapack)
 
 endif()
 set(INSTALL_DIR ${INSTALL_DIRECTORY}/elemental)
-set(ELEMENTAL_LIBRARIES                 ${INSTALL_DIR}/lib/libEl${CMAKE_SHARED_LIBRARY_SUFFIX})
-set(ELEMENTAL_LINK_LIBRARIES            ${INSTALL_DIR}/lib/libElSuiteSparse${CMAKE_SHARED_LIBRARY_SUFFIX})
-list(APPEND ELEMENTAL_LINK_LIBRARIES    ${INSTALL_DIR}/lib/libmetis${CMAKE_SHARED_LIBRARY_SUFFIX})
+set(ELEMENTAL_LIBRARIES                 ${INSTALL_DIR}/lib/libEl${CUSTOM_SUFFIX})
+set(ELEMENTAL_LINK_LIBRARIES            ${INSTALL_DIR}/lib/libElSuiteSparse${CUSTOM_SUFFIX})
+list(APPEND ELEMENTAL_LINK_LIBRARIES    ${INSTALL_DIR}/lib/libmetis${CUSTOM_SUFFIX})
 #    list(APPEND ELEMENTAL_LINK_LIBRARIES    ${INSTALL_DIR}/lib/libparmetis${CMAKE_SHARED_LIBRARY_SUFFIX})
-list(APPEND ELEMENTAL_LINK_LIBRARIES    ${INSTALL_DIR}/lib/libpmrrr${CMAKE_SHARED_LIBRARY_SUFFIX})
+list(APPEND ELEMENTAL_LINK_LIBRARIES    ${INSTALL_DIR}/lib/libpmrrr${CUSTOM_SUFFIX})
 set(ELEMENTAL_INCLUDE_DIRS      ${INSTALL_DIR}/include)
 
 

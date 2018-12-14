@@ -85,7 +85,7 @@ Eigen::MatrixXcd class_tf_ising::single_site_hamiltonian(
 
 std::unique_ptr<class_hamiltonian_base> class_tf_ising::clone() const {return std::make_unique<class_tf_ising>(*this);}
 void   class_tf_ising::set_reduced_energy(double site_energy)             {e_reduced = site_energy;}
-int    class_tf_ising::get_spin_dimension()                         const {return spin_dim;}
+size_t class_tf_ising::get_spin_dimension()                         const {return spin_dim;}
 //double class_tf_ising::get_energy_reduced()                         const {return e_reduced;}
 //double class_tf_ising::get_random_field()                           const {return r_rnd_field;}
 //double class_tf_ising::get_randomness_strength()                    const {return w_rnd_strength;}
@@ -143,4 +143,6 @@ std::vector<double> class_tf_ising::get_parameter_values() const {
 }
 
 
+void class_tf_ising::set_non_local_parameters(std::vector<std::vector<double>> &chain_parameters){
 
+}

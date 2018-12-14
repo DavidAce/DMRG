@@ -12,6 +12,11 @@
 #include <cblas.h>
 #endif
 
+
+#ifdef OpenMP_AVAILABLE
+#include <omp.h>
+#endif
+
 #ifdef MKL_AVAILABLE
 #define MKL_Complex8 std::complex<float>
 #define MKL_Complex16 std::complex<double>
@@ -26,21 +31,31 @@
 */
 
 int main(int argc, char* argv[]) {
-    int num_threads = 1;
+    int openmp_num_threads = 2;
+    int openblas_num_threads = 1;
+//    int openmp_num_threads = 2;
     #ifdef OpenBLAS_AVAILABLE
-        openblas_set_num_threads(num_threads);
-        std::cout << "Using OpenBLAS with " << num_threads << " thread(s)" << std::endl;
+        openblas_set_num_threads(openblas_num_threads);
+    std::cout << "OpenBLAS compiled with mode " << openblas_get_parallel()
+              << " for target " << openblas_get_corename()
+              << " with config " << openblas_get_config()
+              << ". Running with " << openblas_get_num_threads() << " thread(s)" << std::endl;
+    #endif
+
+    #ifdef OpenMP_AVAILABLE
+        Eigen::initParallel();
+        omp_set_num_threads(openmp_num_threads);
+        omp_set_dynamic(0);
+        Eigen::setNbThreads(openmp_num_threads);
+        std::cout << "Using Eigen  with " << Eigen::nbThreads( )   << " thread(s)" << std::endl;
+        std::cout << "Using OpenMP with " << omp_get_max_threads() << " thread(s)" << std::endl;
     #endif
 
     #ifdef MKL_AVAILABLE
-        mkl_set_num_threads(num_threads);
-        std::cout << "Using Intel MKL with " << num_threads << " thread(s)" << std::endl;
+        mkl_set_num_threads(openmp_num_threads);
+        std::cout << "Using Intel MKL with " << openmp_num_threads << " thread(s)" << std::endl;
     #endif
-//
-//    // Set a dummy communicator for libelemental, which works with mpi. This is used in xDMRG.
-//    // Note that this program is single threaded anyway.
-//    El::Environment env;
-//    [[maybe_unused]] El::mpi::Comm comm = El::mpi::COMM_WORLD;
+
 
     // Print current Git status
     std::cout << "Git Branch: " + GIT::BRANCH +

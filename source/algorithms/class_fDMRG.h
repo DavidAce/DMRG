@@ -13,7 +13,7 @@ class class_table_dmrg;
  * \brief Class that runs the finite DMRG algorithm.
  */
 
-class class_finite_chain_sweeper;
+class class_finite_chain;
 class class_fDMRG : public class_algorithm_base {
 public:
     //Inherit the constructor of class_algorithm_base
@@ -26,12 +26,12 @@ public:
     int    max_sweeps   ;
 
     void run()                                          override;
-    void check_convergence_overall()                    override;
+    void check_convergence()                    override;
     void initialize_constants()                         override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
-    void store_table_entry_to_file()                    override;
-    void store_chain_entry_to_file();
+    void store_table_entry_to_file(bool force = false)  override;
+    void store_chain_entry_to_file(bool force = false);
     void initialize_chain();
 
 };

@@ -8,7 +8,7 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
-#include <mps_routines/class_finite_chain_sweeper.h>
+#include <mps_routines/class_finite_chain.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include "class_fDMRG.h"
@@ -21,7 +21,7 @@ class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     initialize_constants();
     table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
     table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name,sim_name + "_chain");
-    env_storage       = std::make_shared<class_finite_chain_sweeper>(max_length, superblock, hdf5,sim_type,sim_name );
+    env_storage       = std::make_shared<class_finite_chain>(max_length, superblock, hdf5,sim_type,sim_name );
     measurement       = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
     initialize_state(settings::model::initial_state);
 }
@@ -34,25 +34,30 @@ void class_fDMRG::run() {
     t_tot.tic();
     initialize_chain();
     while(true) {
-        single_DMRG_step(chi_max_temp);
+        single_DMRG_step(chi_temp);
         env_storage_overwrite_local_ALL();         //Needs to occurr after update_MPS...
         store_table_entry_to_file();
         store_chain_entry_to_file();
-        store_profiling_to_file();
+        store_profiling_to_file_delta();
         print_status_update();
+
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if(iteration >= max_sweeps or simulation_has_converged) {break;}
+        if(env_storage->position_is_the_middle()) {
+            check_convergence();
+            if (iteration >= max_sweeps or simulation_has_converged) {
+                break;
+            }
+        }
         enlarge_environment(env_storage->get_direction());
         env_storage_move();
-        check_convergence_overall();
         iteration = env_storage->get_sweeps();
     }
     t_tot.toc();
     print_status_full();
     measurement->compute_all_observables_from_finite_chain();
-    env_storage->write_chain_to_file();
+    env_storage->write_all_to_hdf5();
     print_profiling();
 }
 
@@ -70,15 +75,15 @@ void class_fDMRG::initialize_chain() {
     }
 }
 
-void class_fDMRG::check_convergence_overall(){
+void class_fDMRG::check_convergence(){
     if(not env_storage->position_is_the_middle()){return;}
     t_con.tic();
     check_convergence_entanglement();
     check_convergence_variance_mpo();
-    check_convergence_bond_dimension();
+    update_bond_dimension();
     if(entanglement_has_converged and
        variance_mpo_has_converged and
-       bond_dimension_has_converged)
+       bond_dimension_has_reached_max)
     {
         simulation_has_converged = true;
     }
@@ -97,10 +102,13 @@ void class_fDMRG::initialize_constants(){
 }
 
 
-void class_fDMRG::store_table_entry_to_file(){
-    if (Math::mod(iteration, store_freq) != 0) {return;}
-    if (not env_storage->position_is_the_middle()) {return;}
-    if (store_freq == 0){return;}
+void class_fDMRG::store_table_entry_to_file(bool force){
+    if (not force){
+        if (Math::mod(iteration, store_freq) != 0) {return;}
+        if (not env_storage->position_is_the_middle()) {return;}
+        if (store_freq == 0){return;}
+    }
+
     compute_observables();
     t_sto.tic();
     table_fdmrg->append_record(
@@ -124,11 +132,13 @@ void class_fDMRG::store_table_entry_to_file(){
     t_sto.toc();
 }
 
-void class_fDMRG::store_chain_entry_to_file(){
-    if (Math::mod(iteration, store_freq) != 0) {return;}
-    if (store_freq == 0){return;}
-    if (not (env_storage->get_direction() == 1 or env_storage->position_is_the_right_edge())){return;}
-    t_sto.tic();
+void class_fDMRG::store_chain_entry_to_file(bool force){
+    if (not force){
+        if (Math::mod(iteration, store_freq) != 0) {return;}
+        if (store_freq == 0){return;}
+        if (not (env_storage->get_direction() == 1 or env_storage->position_is_the_right_edge())){return;}
+    }
+   t_sto.tic();
     table_fdmrg_chain->append_record(
             iteration,
             measurement->get_chain_length(),

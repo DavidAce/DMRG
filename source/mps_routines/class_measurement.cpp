@@ -10,10 +10,8 @@
 #include <general/nmspc_tensor_extra.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
-#include "../../cmake-modules/unused/class_hamiltonian.h"
 #include <mps_routines/class_mps_2site.h>
-#include "../../cmake-modules/unused/class_mpo.h"
-#include <mps_routines/class_finite_chain_sweeper.h>
+#include <mps_routines/class_finite_chain.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <mps_routines/class_mps_util.h>
 using namespace std;
@@ -39,7 +37,7 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
 }
 
 class_measurement::class_measurement(std::shared_ptr<class_superblock> superblock_,
-                                     std::shared_ptr<class_finite_chain_sweeper> env_storage_,
+                                     std::shared_ptr<class_finite_chain> env_storage_,
                                      SimulationType sim_)
         :class_measurement(superblock_,sim_)
 {
@@ -51,7 +49,6 @@ class_measurement::class_measurement(std::shared_ptr<class_superblock> superbloc
 
 void class_measurement::compute_all_observables_from_superblock(){
     if (is_measured){return;}
-    if (superblock->MPS->chiC() < 2) { return; }
     mps_util->theta = mps_util->get_theta(superblock->MPS);
     switch(sim_type){
         case SimulationType::iDMRG:
@@ -62,6 +59,7 @@ void class_measurement::compute_all_observables_from_superblock(){
             mps_util->compute_mps_components(superblock->MPS);
             compute_energy_ham();
             compute_energy_variance_ham();
+            if (superblock->MPS->chiC() < 2) { break; }
             compute_energy_and_variance_mom(a, mom_vecA);
             break;
         case SimulationType::xDMRG:
@@ -75,6 +73,45 @@ void class_measurement::compute_all_observables_from_superblock(){
             mps_util->compute_mps_components(superblock->MPS);
             compute_energy_ham();
             compute_energy_variance_ham();
+            if (superblock->MPS->chiC() < 2) { break; }
+            compute_energy_and_variance_mom(a, mom_vecA);
+            break;
+    }
+
+    compute_entanglement_entropy();
+//    compute_parity();
+    is_measured = true;
+
+}
+
+
+void class_measurement::compute_all_observables_from_superblock(const Eigen::Tensor<Scalar,4> &theta){
+    if (is_measured){return;}
+    mps_util->theta = theta;
+    switch(sim_type){
+        case SimulationType::iDMRG:
+            compute_energy_mpo();
+            compute_energy_variance_mpo();
+            if (superblock->MPS->chiA() != superblock->MPS->chiB()) { return;}
+            if (superblock->MPS->chiA() != superblock->MPS->chiC()) { return;}
+            mps_util->compute_mps_components(superblock->MPS);
+            compute_energy_ham();
+            compute_energy_variance_ham();
+            if (superblock->MPS->chiC() < 2) { break; }
+            compute_energy_and_variance_mom(a, mom_vecA);
+            break;
+        case SimulationType::xDMRG:
+        case SimulationType::fDMRG:
+            compute_energy_mpo();
+            compute_energy_variance_mpo();
+            break;
+        case SimulationType::iTEBD:
+            if (superblock->MPS->chiA() != superblock->MPS->chiB()) { return;}
+            if (superblock->MPS->chiA() != superblock->MPS->chiC()) { return;}
+            mps_util->compute_mps_components(superblock->MPS);
+            compute_energy_ham();
+            compute_energy_variance_ham();
+            if (superblock->MPS->chiC() < 2) { break; }
             compute_energy_and_variance_mom(a, mom_vecA);
             break;
     }
@@ -89,7 +126,10 @@ void class_measurement::compute_all_observables_from_superblock(){
 void class_measurement::compute_all_observables_from_finite_chain(){
     compute_finite_chain_energy();
     compute_finite_chain_energy_variance();
-//    compute_finite_chain_mps_state(); // Runs out of memory for L > 20 or so, because the wave vector is doubled in size for each additional site.
+
+    if(sim_type == SimulationType::xDMRG and settings::xdmrg::store_wavefn){
+        compute_finite_chain_mps_state(); // Runs out of memory for L > 20 or so, because the wave vector is doubled in size for each additional site.
+    }
     compute_finite_chain_norm();
     compute_finite_chain_norm2();
 }
@@ -122,6 +162,26 @@ void class_measurement::compute_energy_mpo(){
 
 }
 
+template<typename T>
+double class_measurement::compute_energy_mpo(const T * theta_ptr, Eigen::DSizes<long,4> dsizes) {
+    Eigen::Tensor<std::complex<double>, 4> theta = Eigen::TensorMap<const Eigen::Tensor<const T, 4>>(theta_ptr, dsizes).template cast<std::complex<double>>();
+//    t_ene_mpo.tic();
+    Eigen::Tensor<Scalar, 0>  E =
+                     superblock->Lblock->block
+                    .contract(theta,                                      idx({0},{1}))
+                    .contract(superblock->HA->MPO,                        idx({1,2},{0,2}))
+                    .contract(superblock->HB->MPO,                        idx({3,1},{0,2}))
+                    .contract(theta.conjugate(),                          idx({0,2,4},{1,0,2}))
+                    .contract(superblock->Rblock->block,                  idx({0,2,1},{0,1,2}));
+//    t_ene_mpo.toc();
+    return std::real(E(0));
+}
+
+template double class_measurement::compute_energy_mpo(const double *,Eigen::DSizes<long,4>);
+template double class_measurement::compute_energy_mpo(const std::complex<double> *, Eigen::DSizes<long,4>);
+
+
+
 
 void class_measurement::compute_energy_ham(){
     t_ene_ham.tic();
@@ -140,7 +200,6 @@ void class_measurement::compute_energy_ham(){
     t_ene_ham.toc();
     energy_ham = 0.5*std::real(E_evn(0) + E_odd(0));
 }
-
 
 
 void class_measurement::compute_entanglement_entropy(){
@@ -332,6 +391,12 @@ void class_measurement::compute_finite_chain_mps_state(){
     Eigen::Tensor<Scalar,2> chain(1,1);
     chain.setConstant(1.0);
     Eigen::TensorRef<Eigen::Tensor<Scalar,2>> temp;
+    // The "chain" is a matrix whose 0 index keeps growing.
+    // For each site that passes, it grows by GA.dimension(0) = phys dim
+    // Say the chain is a 16x7 matrix (having contracted 4 particles, and the latest
+    // chi was 7). Then contracting the next site, with dimensions 2x7x9 will get you a
+    // 16x2x9 tensor. Now the reshaping convert it into a 32 x 9 matrix. Because
+    // Eigen is column major, the doubling 16->32 will stack the third index twice.
 
     while(mpsL != endL){
         const Eigen::Tensor<Scalar,1>  & LA = mpsL->get_L(); //std::get<0>(*mpsL);
@@ -376,9 +441,15 @@ double class_measurement::get_energy_mpo(){return energy_mpo;}
 double class_measurement::get_energy_ham(){return energy_ham;}
 double class_measurement::get_energy_mom(){return energy_mom;}
 
-double class_measurement::get_variance_mpo(){return variance_mpo;}
-double class_measurement::get_variance_ham(){return variance_ham;}
-double class_measurement::get_variance_mom(){return variance_mom;}
+void   class_measurement::set_variance(double new_variance){
+    variance_mpo = new_variance;
+    variance_ham = new_variance;
+    variance_mom = new_variance;
+}
+
+double class_measurement::get_variance_mpo(){return std::abs(variance_mpo);}
+double class_measurement::get_variance_ham(){return std::abs(variance_ham);}
+double class_measurement::get_variance_mom(){return std::abs(variance_mom);}
 
 double class_measurement::get_entanglement_entropy(){
     compute_entanglement_entropy();
@@ -396,6 +467,7 @@ double class_measurement::get_parity(){
 
 long class_measurement::get_chi(){
     return superblock->MPS->chiC();
+//    return superblock->MPS->chiC();
 }
 
 long class_measurement::get_chain_length(){

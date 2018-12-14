@@ -32,15 +32,15 @@ public:
             int sites,
             std::vector<Eigen::MatrixXcd> &SX,
             std::vector<Eigen::MatrixXcd> &SY,
-            std::vector<Eigen::MatrixXcd> &SZ)                                  const override;
-
-    std::unique_ptr<class_hamiltonian_base> clone()                             const override;
-    void   set_reduced_energy(double site_energy)                                     override;
-    int    get_spin_dimension()                                                 const override;
-    void   print_parameter_names ()                                             const override;
-    void   print_parameter_values()                                             const override;
-    std::vector<std::string> get_parameter_names()                              const override;
-    std::vector<double>      get_parameter_values()                             const override;
+            std::vector<Eigen::MatrixXcd> &SZ)                                    const override;
+    std::unique_ptr<class_hamiltonian_base> clone()                               const override;
+    void   set_reduced_energy(double site_energy)                                       override;
+    size_t get_spin_dimension()                                                   const override;
+    void   print_parameter_names ()                                               const override;
+    void   print_parameter_values()                                               const override;
+    std::vector<std::string> get_parameter_names()                                const override;
+    std::vector<double>      get_parameter_values()                               const override;
+    void   set_non_local_parameters(std::vector<std::vector<double>> &chain_parameters) override;
 };
 
 #endif //CLASS_TF_ISING_H

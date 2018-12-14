@@ -55,10 +55,13 @@ public:
     auto &get_L() const {return std::as_const(L);}
     auto ref_A() const  {return Textra::asDiagonal(L).contract(G, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});}
     auto ref_B() const  {return G.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));}
+    void set_position(const long position_){position = position_;}
+    auto get_position() const {return position;}
     Eigen::Tensor<Scalar,3> get_A()  const {return ref_A();}
     Eigen::Tensor<Scalar,3> get_B()  const {return ref_B();}
     class_vidal_mps() = default;
 private:
+    long position = 0;
     Eigen::Tensor<Scalar,3> G;                  /*!< \f$\Gamma \f$*/
     Eigen::Tensor<Scalar,1> L;                  /*!< \f$\Lambda\f$*/
 };

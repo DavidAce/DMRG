@@ -10,13 +10,15 @@
 class class_custom_cout
 {
 public:
-    int verbosity = 2;
-    int temp_verbosity = 2;
+    int verbosity = 0;
+    int temp_verbosity = 0;
     std::ostream &os;
 
-    explicit class_custom_cout(std::ostream &o = std::cout):verbosity(2),os(o){};
+    explicit class_custom_cout(std::ostream &o = std::cout):os(o){};
+    explicit class_custom_cout(int verbosity_, std::ostream &o = std::cout):verbosity(verbosity_),temp_verbosity(verbosity_),os(o){};
 
-    explicit class_custom_cout(int verbosity_, std::ostream &o = std::cout):verbosity(verbosity_),os(o){};
+    void set_verbosity(int new_verbosity){verbosity = new_verbosity; temp_verbosity = new_verbosity;}
+
 
     template <typename T>
     class_custom_cout &operator<<(const T &a) {

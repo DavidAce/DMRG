@@ -40,7 +40,7 @@ sns.set_palette(sns.color_palette("husl", 8))
 # sns.set_palette(sns.color_palette("husl", 5))
 ####################################################################################
 
-filename = '../output/output-835.h5'
+filename = '../cmake-build-release/output/output-56.h5'
 
 if(not os.path.exists(filename)):
     print("File does not exist.")
@@ -151,10 +151,10 @@ if(xDMRG_exists):
         plt_graph_range(table, "position", "truncation_error"    , table["iteration"] == i,  "Site", "$\epsilon$"          , ax[1, 2], scale='log')
     mpos = [mpo for mpo in h5file["xDMRG/chain/MPO"].keys()]
     mpos.sort(key=natural_keys)
-    randfield=[h5file["xDMRG/chain/MPO/"+mpo].attrs["random_field"][0] for mpo in mpos]
-    ax[0,3].plot(range(len(randfield)),randfield, marker=next(markerlist), alpha=.90, markersize=4)
-    ax.set_xlabel('Site')
-    ax.set_ylabel('MPO Random field')
+    # randfield=[h5file["xDMRG/chain/MPO/"+mpo].attrs["random_field"][0] for mpo in mpos]
+    # ax[0,3].plot(range(len(randfield)),randfield, marker=next(markerlist), alpha=.90, markersize=4)
+    # ax.set_xlabel('Site')
+    # ax.set_ylabel('MPO Random field')
 
 
 plt.tight_layout()

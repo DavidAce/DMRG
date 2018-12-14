@@ -43,6 +43,25 @@ public:
         }
     };
 
+
+    std::string get_input_file(){
+        if (file.is_open()) {
+            file.clear();
+            file.seekg(0, std::ios::beg);
+            std::string the_file ( (std::istreambuf_iterator<char>(file) ),
+                                   (std::istreambuf_iterator<char>()     ) );
+
+            return the_file;
+        }else{
+            return "";
+        }
+
+    }
+
+    std::string get_input_filename(){
+        return file_path.string();
+    }
+
     template <typename T>
     T find_parameter(std::string param_requested, T default_value){
         if (file.is_open()){

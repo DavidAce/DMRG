@@ -46,7 +46,7 @@ public:
     int              spin_dimension;
 
     Eigen::Tensor<Scalar, 4>
-    optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, Ritz ritz = Ritz::SR
+    optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR
     )    __attribute((hot));                            /*!< Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using [Spectra](https://github.com/yixuan/spectra). */
 
 
@@ -56,14 +56,14 @@ public:
     evolve_MPS(const Eigen::Tensor<Scalar, 4> &theta, const Eigen::Tensor<Scalar, 4> &U);
     Eigen::Tensor<Scalar,4> truncate_MPS(
             const Eigen::Tensor<Scalar, 4> &theta,        /*!< The 2-site MPS to truncate */
-            long chi,                                      /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+            long chi_,                                      /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
             double SVDThreshold                            /*!< Minimum threshold value for keeping singular values. */
     )             __attribute((hot));                      /*!< Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps \f$\chi\f$ (`chi`) singular values. */
 
     void truncate_MPS(
             const Eigen::Tensor<Scalar, 4> &theta,        /*!< The 2-site MPS to truncate */
             const std::shared_ptr<class_mps_2site> &MPS_out,
-            long chi,                                      /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+            long chi_,                                      /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
             double SVDThreshold                            /*!< Minimum threshold value for keeping singular values. */
     )             __attribute((hot));                      /*!< Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps \f$\chi\f$ (`chi`) singular values. */
 
@@ -72,6 +72,20 @@ public:
    void enlarge_environment(int direction = 0);          /*!< Contract the MPS of current position \f$n\f$ into the left and right environments \f$L\f$ and \f$R\f$, i.e. `Lblock` and `Rblock`.
                                                          * \f[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \f]
                                                          * \f[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \f] */
+
+
+    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_H_local_matrix();
+    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> get_H_local_matrix_real();
+    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_H_local_sq_matrix();
+    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> get_H_local_sq_matrix_real();
+    Textra::SparseMatrixType<Scalar>                    get_H_local_sparse_matrix(double prune = 1e-15);
+    Textra::SparseMatrixType<Scalar>                    get_H_local_sq_sparse_matrix(double prune = 1e-15);
+    Eigen::Tensor<Scalar,2> get_H_local_rank2 ();
+    Eigen::Tensor<Scalar,8> get_H_local_rank8 ();
+    Eigen::Tensor<Scalar,2> get_H_local_sq_rank2 ();
+    Eigen::Tensor<Scalar,8> get_H_local_sq_rank8 ();
+
+
 
 //    void set_current_dimensions()      ;                /*!< Update variables for dimensions */
     void swap_AB();                                     /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/

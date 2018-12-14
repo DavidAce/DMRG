@@ -101,7 +101,7 @@ private:
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE};
-        hsize_t chunk_size = 100;
+        hsize_t chunk_size = 1;
         void *fill_data = nullptr;
         int compress = 0;
     };
@@ -196,7 +196,7 @@ private:
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE};
-        hsize_t chunk_size = 100;
+        hsize_t chunk_size = 1;
         void *fill_data = nullptr;
         int compress = 0;
     };
@@ -272,7 +272,7 @@ private:
                                                   H5T_NATIVE_DOUBLE,
                                                   H5T_NATIVE_DOUBLE
                                                 };
-        hsize_t chunk_size = 100;
+        hsize_t chunk_size = 1;
         void *fill_data = nullptr;
         int compress = 0;
     };
@@ -350,7 +350,7 @@ private:
                                                                H5T_NATIVE_DOUBLE
         };
 
-        hsize_t          chunk_size                         = 100;
+        hsize_t          chunk_size                         = 1;
         void             *fill_data                         = nullptr;
         int              compress                           = 0;
     };

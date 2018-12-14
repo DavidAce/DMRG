@@ -6,7 +6,7 @@
 #include <general/nmspc_tensor_extra.h>
 #include <Eigen/Core>
 
-
+using namespace eigsolver_properties;
 template<typename T,Form form>
 void DenseMatrixProduct<T,form>::MultMv(T* x_in, T* x_out) {
     Eigen::Map<const Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>> A_mat(A,n,n);

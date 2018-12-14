@@ -18,7 +18,7 @@ void class_hamiltonian_base::set_position(int new_pos) {
     position = new_pos;
 }
 
-int class_hamiltonian_base::get_position() const{
+size_t class_hamiltonian_base::get_position() const{
     return position;
 }
 
