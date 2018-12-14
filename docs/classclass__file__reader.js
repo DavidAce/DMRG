@@ -7,6 +7,8 @@ var classclass__file__reader =
     [ "find_input_file", "classclass__file__reader.html#addfafc89e0bdc2da935e21d8a359e55e", null ],
     [ "find_parameter", "classclass__file__reader.html#aad5bf9f78a36517d962f66385681c6c8", null ],
     [ "find_parameter", "classclass__file__reader.html#a24f293b427746c46df8251670619c554", null ],
+    [ "get_input_file", "classclass__file__reader.html#ab11fa55fb812372a8cd21c61d2961ed9", null ],
+    [ "get_input_filename", "classclass__file__reader.html#acb3f8359ef935aa6d16ae6a580280673", null ],
     [ "has_only_digits", "classclass__file__reader.html#a2c6d6afe8ad456caad09fe1517d71cf3", null ],
     [ "is_parameterline", "classclass__file__reader.html#af7981ce6e1a59e94313dfde30cebac53", null ],
     [ "remove_spaces", "classclass__file__reader.html#a7fb71a05c6f52d71a1fbb2f240cea8ce", null ],

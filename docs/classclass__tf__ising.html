@@ -117,8 +117,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a27e2247bf1d4fc2ee94b91ae67308664"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9245b4cb0cc244c7ac2d0ced69d26543"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__tf__ising.html#a9245b4cb0cc244c7ac2d0ced69d26543">set_reduced_energy</a> (double site_energy) override</td></tr>
 <tr class="separator:a9245b4cb0cc244c7ac2d0ced69d26543"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af213832c6dac762f9a42f4c362325e99"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__tf__ising.html#af213832c6dac762f9a42f4c362325e99">get_spin_dimension</a> () const override</td></tr>
-<tr class="separator:af213832c6dac762f9a42f4c362325e99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac43f4b1d0a820dff54456bf0ab5462a"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__tf__ising.html#aac43f4b1d0a820dff54456bf0ab5462a">get_spin_dimension</a> () const override</td></tr>
+<tr class="separator:aac43f4b1d0a820dff54456bf0ab5462a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70f96b2035dde9965338d31da3d0ce54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__tf__ising.html#a70f96b2035dde9965338d31da3d0ce54">print_parameter_names</a> () const override</td></tr>
 <tr class="separator:a70f96b2035dde9965338d31da3d0ce54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47541969c35f18f44ae46bc476ba0807"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__tf__ising.html#a47541969c35f18f44ae46bc476ba0807">print_parameter_values</a> () const override</td></tr>
@@ -127,6 +127,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aadefa2a6540891e38dd2d449d2141056"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af71d009709fc2566715b5fa00138576d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__tf__ising.html#af71d009709fc2566715b5fa00138576d">get_parameter_values</a> () const override</td></tr>
 <tr class="separator:af71d009709fc2566715b5fa00138576d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8aee61bea4c73661aa083e9d702283b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__tf__ising.html#ac8aee61bea4c73661aa083e9d702283b">set_non_local_parameters</a> (std::vector&lt; std::vector&lt; double &gt;&gt; &amp;chain_parameters) override</td></tr>
+<tr class="separator:ac8aee61bea4c73661aa083e9d702283b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classclass__hamiltonian__base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classclass__hamiltonian__base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classclass__hamiltonian__base.html">class_hamiltonian_base</a></td></tr>
 <tr class="memitem:af5558c53965c94e04d5398c8394e62a5 inherit pub_methods_classclass__hamiltonian__base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#af5558c53965c94e04d5398c8394e62a5">class_hamiltonian_base</a> ()=default</td></tr>
 <tr class="separator:af5558c53965c94e04d5398c8394e62a5 inherit pub_methods_classclass__hamiltonian__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -136,8 +138,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0067c93b7294189b526578dd83505280 inherit pub_methods_classclass__hamiltonian__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a594a39c9c937ce3bde3985218503795b inherit pub_methods_classclass__hamiltonian__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#a594a39c9c937ce3bde3985218503795b">set_position</a> (int new_pos)</td></tr>
 <tr class="separator:a594a39c9c937ce3bde3985218503795b inherit pub_methods_classclass__hamiltonian__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb6249d0cf1612dba5f9dadc9365835a inherit pub_methods_classclass__hamiltonian__base"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#adb6249d0cf1612dba5f9dadc9365835a">get_position</a> () const</td></tr>
-<tr class="separator:adb6249d0cf1612dba5f9dadc9365835a inherit pub_methods_classclass__hamiltonian__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a4393e8187c949c1bb06f84745ffcfc inherit pub_methods_classclass__hamiltonian__base"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__hamiltonian__base.html#a5a4393e8187c949c1bb06f84745ffcfc">get_position</a> () const</td></tr>
+<tr class="separator:a5a4393e8187c949c1bb06f84745ffcfc inherit pub_methods_classclass__hamiltonian__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-types"></a>
 Private Types</h2></td></tr>
@@ -327,8 +329,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="af213832c6dac762f9a42f4c362325e99"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af213832c6dac762f9a42f4c362325e99">&#9670;&nbsp;</a></span>get_spin_dimension()</h2>
+<a id="aac43f4b1d0a820dff54456bf0ab5462a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac43f4b1d0a820dff54456bf0ab5462a">&#9670;&nbsp;</a></span>get_spin_dimension()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -337,7 +339,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int class_tf_ising::get_spin_dimension </td>
+          <td class="memname">size_t class_tf_ising::get_spin_dimension </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -350,7 +352,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classclass__hamiltonian__base.html#ac07010b940a8edc7a1c089b5ecb51026">class_hamiltonian_base</a>.</p>
+<p>Implements <a class="el" href="classclass__hamiltonian__base.html#a3bd7f3de3d980d13e6cd8bec3eb962d5">class_hamiltonian_base</a>.</p>
 
 </div>
 </div>
@@ -487,6 +489,34 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Implements <a class="el" href="classclass__hamiltonian__base.html#a27e8c9e6838b098cfcb267f7e333082c">class_hamiltonian_base</a>.</p>
+
+</div>
+</div>
+<a id="ac8aee61bea4c73661aa083e9d702283b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8aee61bea4c73661aa083e9d702283b">&#9670;&nbsp;</a></span>set_non_local_parameters()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_tf_ising::set_non_local_parameters </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; std::vector&lt; double &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>chain_parameters</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implements <a class="el" href="classclass__hamiltonian__base.html#aed1e9f130835b0be19a2fa55a0cffb72">class_hamiltonian_base</a>.</p>
 
 </div>
 </div>

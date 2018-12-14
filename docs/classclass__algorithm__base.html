@@ -89,6 +89,7 @@ $(document).ready(function(){initNavTree('classclass__algorithm__base.html','');
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classclass__algorithm__base-members.html">List of all members</a>  </div>
@@ -122,28 +123,30 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aeed6c86b2bb499b7b8977a9bca82e6ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4155242b70bbe53a9b7e887dfa5c37d9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a4155242b70bbe53a9b7e887dfa5c37d9">print_profiling_sim</a> (<a class="el" href="classclass__tic__toc.html">class_tic_toc</a> &amp;t_parent)=0</td></tr>
 <tr class="separator:a4155242b70bbe53a9b7e887dfa5c37d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12c0bcfdf899312d11f398dfaf33032f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a12c0bcfdf899312d11f398dfaf33032f">store_table_entry_to_file</a> ()=0</td></tr>
-<tr class="separator:a12c0bcfdf899312d11f398dfaf33032f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a5d2fae0082e49f4c388890eac17ae6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a5a5d2fae0082e49f4c388890eac17ae6">store_table_entry_to_file</a> (bool force=false)=0</td></tr>
+<tr class="separator:a5a5d2fae0082e49f4c388890eac17ae6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b2a7db71b752bf22253a9b6739718cb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a3b2a7db71b752bf22253a9b6739718cb">print_status_update</a> ()</td></tr>
 <tr class="separator:a3b2a7db71b752bf22253a9b6739718cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb64d6f7fccaa2a56431dc42306d3315"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aeb64d6f7fccaa2a56431dc42306d3315">print_status_full</a> ()</td></tr>
 <tr class="separator:aeb64d6f7fccaa2a56431dc42306d3315"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6fa6bf0bd7712517fbc32abe7aa1a1a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#af6fa6bf0bd7712517fbc32abe7aa1a1a">single_DMRG_step</a> (long <a class="el" href="classclass__algorithm__base.html#a831053ba93028a374854b6af348e25b1">chi_max</a>, <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">Ritz</a> ritz=Ritz::SR)</td></tr>
-<tr class="separator:af6fa6bf0bd7712517fbc32abe7aa1a1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9503dc8dc1f47466c179387dbe7c8660"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a9503dc8dc1f47466c179387dbe7c8660">check_convergence_overall</a> ()</td></tr>
-<tr class="separator:a9503dc8dc1f47466c179387dbe7c8660"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25d323142a2869bd0e9280a0ca52682d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a25d323142a2869bd0e9280a0ca52682d">check_convergence_variance_mpo</a> (double threshold=-1.0)</td></tr>
-<tr class="separator:a25d323142a2869bd0e9280a0ca52682d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af54346fd60889c71e72e04a7a6d21350"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#af54346fd60889c71e72e04a7a6d21350">check_convergence_variance_ham</a> (double threshold=-1.0)</td></tr>
-<tr class="separator:af54346fd60889c71e72e04a7a6d21350"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf60176dfbfcf5425df00073d4f676d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#adf60176dfbfcf5425df00073d4f676d8">check_convergence_variance_mom</a> (double threshold=-1.0)</td></tr>
-<tr class="separator:adf60176dfbfcf5425df00073d4f676d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a397a73dc0b2e0c9e9ac3bb467053693e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a397a73dc0b2e0c9e9ac3bb467053693e">check_convergence_entanglement</a> (double threshold=-1.0)</td></tr>
-<tr class="separator:a397a73dc0b2e0c9e9ac3bb467053693e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3439083d4b7937202af5b925d6c1ef51"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a3439083d4b7937202af5b925d6c1ef51">check_convergence_bond_dimension</a> ()</td></tr>
-<tr class="separator:a3439083d4b7937202af5b925d6c1ef51"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac48dec0e09647ca52ab14fc319cf8fbc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ac48dec0e09647ca52ab14fc319cf8fbc">clear_convergence_checks</a> ()</td></tr>
-<tr class="separator:ac48dec0e09647ca52ab14fc319cf8fbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a838dd6f76afaec65e687e441b36795e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a838dd6f76afaec65e687e441b36795e9">single_DMRG_step</a> (long <a class="el" href="classclass__algorithm__base.html#a831053ba93028a374854b6af348e25b1">chi_max</a>, <a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">eigsolver_properties::Ritz</a> ritz=<a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044a8cb2010d27e13509d364436256e972c0">eigsolver_properties::Ritz::SR</a>)</td></tr>
+<tr class="separator:a838dd6f76afaec65e687e441b36795e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d804eb43b65cc68da335594ab774a29"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a4d804eb43b65cc68da335594ab774a29">check_convergence</a> ()</td></tr>
+<tr class="separator:a4d804eb43b65cc68da335594ab774a29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c32bb266274ec98a545cafa4d13632b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a4c32bb266274ec98a545cafa4d13632b">check_convergence_variance_mpo</a> (double threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>, double slope_threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>)</td></tr>
+<tr class="separator:a4c32bb266274ec98a545cafa4d13632b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74eacc34cf8533e48ef6503baa89e5c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a74eacc34cf8533e48ef6503baa89e5c8">check_convergence_variance_ham</a> (double threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>, double slope_threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>)</td></tr>
+<tr class="separator:a74eacc34cf8533e48ef6503baa89e5c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2859b04088bb7da73e4af556f8a5f0c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ae2859b04088bb7da73e4af556f8a5f0c">check_convergence_variance_mom</a> (double threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>, double slope_threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>)</td></tr>
+<tr class="separator:ae2859b04088bb7da73e4af556f8a5f0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9067f9aab2893401df4cac8112275919"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a9067f9aab2893401df4cac8112275919">check_convergence_entanglement</a> (double slope_threshold=<a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a>)</td></tr>
+<tr class="separator:a9067f9aab2893401df4cac8112275919"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8703eb90ad57df91ea4353d2cf6625f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a8703eb90ad57df91ea4353d2cf6625f4">update_bond_dimension</a> (int min_saturation_length=1)</td></tr>
+<tr class="separator:a8703eb90ad57df91ea4353d2cf6625f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad81696900bc53d4445ab296d534def5d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ad81696900bc53d4445ab296d534def5d">clear_saturation_status</a> ()</td></tr>
+<tr class="separator:ad81696900bc53d4445ab296d534def5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ed85de573913643b5ca49af4e4d664a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a8ed85de573913643b5ca49af4e4d664a">set_file_OK</a> ()</td></tr>
+<tr class="separator:a8ed85de573913643b5ca49af4e4d664a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2502a513db5e6f2aafac287fca822531"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a2502a513db5e6f2aafac287fca822531">initialize_state</a> (std::string initial_state)</td></tr>
 <tr class="separator:a2502a513db5e6f2aafac287fca822531"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33f6ecc66ae2fdf90f356b56168cb1c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a33f6ecc66ae2fdf90f356b56168cb1c0">compute_observables</a> ()</td></tr>
@@ -166,8 +169,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a79d86bf5ce98beb9beda1079b6b81ea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a327e77ca5465fdaabb54e3f8ae74e824"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a327e77ca5465fdaabb54e3f8ae74e824">env_storage_move</a> ()</td></tr>
 <tr class="separator:a327e77ca5465fdaabb54e3f8ae74e824"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa407ba08ab3499256952790306138f2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aa407ba08ab3499256952790306138f2e">store_profiling_to_file</a> ()</td></tr>
-<tr class="separator:aa407ba08ab3499256952790306138f2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cb53fbcab2f5113e1f8898a12a34a62"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a6cb53fbcab2f5113e1f8898a12a34a62">store_profiling_to_file_delta</a> (bool force=false)</td></tr>
+<tr class="separator:a6cb53fbcab2f5113e1f8898a12a34a62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fd78dc8c8a99f9917d16e11d546ad7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a9fd78dc8c8a99f9917d16e11d546ad7b">store_profiling_to_file_total</a> (bool force=false)</td></tr>
+<tr class="separator:a9fd78dc8c8a99f9917d16e11d546ad7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -183,12 +188,14 @@ Public Attributes</h2></td></tr>
 <tr class="separator:aae9477a03b720e2e3ebbb92f05253774"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afce57181b8c71747fe662a0db4bf8494"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classclass__measurement.html">class_measurement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#afce57181b8c71747fe662a0db4bf8494">measurement</a></td></tr>
 <tr class="separator:afce57181b8c71747fe662a0db4bf8494"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70c5cca4c5fc4d7f4e73bf287e238a0a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classclass__finite__chain__sweeper.html">class_finite_chain_sweeper</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a70c5cca4c5fc4d7f4e73bf287e238a0a">env_storage</a></td></tr>
-<tr class="separator:a70c5cca4c5fc4d7f4e73bf287e238a0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6ec9d149485d3d3908978e018139e15"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classclass__finite__chain.html">class_finite_chain</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aa6ec9d149485d3d3908978e018139e15">env_storage</a></td></tr>
+<tr class="separator:aa6ec9d149485d3d3908978e018139e15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa848d8c21aaa75620c7e8f9ac0ba369a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__custom__cout.html">class_custom_cout</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aa848d8c21aaa75620c7e8f9ac0ba369a">ccout</a></td></tr>
 <tr class="separator:aa848d8c21aaa75620c7e8f9ac0ba369a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58363d486f75a3ede1acd8e43945d0ad"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a58363d486f75a3ede1acd8e43945d0ad">iteration</a> = 0</td></tr>
 <tr class="separator:a58363d486f75a3ede1acd8e43945d0ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0e7b92bb5bb642c41ac88008bba7144"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ac0e7b92bb5bb642c41ac88008bba7144">step</a> = 0</td></tr>
+<tr class="separator:ac0e7b92bb5bb642c41ac88008bba7144"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a831053ba93028a374854b6af348e25b1"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a831053ba93028a374854b6af348e25b1">chi_max</a></td></tr>
 <tr class="separator:a831053ba93028a374854b6af348e25b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aef6e7a6737527b7f25f017ef5e434979"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aef6e7a6737527b7f25f017ef5e434979">chi_grow</a></td></tr>
@@ -199,24 +206,44 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ab68231ade1f92254eb5e144acd350d87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e23a32441112bf703a8918e0d907236"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a8e23a32441112bf703a8918e0d907236">seed</a> = 1</td></tr>
 <tr class="separator:a8e23a32441112bf703a8918e0d907236"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74f4216847b79dcb951216addea43b7a"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a74f4216847b79dcb951216addea43b7a">chi_max_temp</a> = 4</td></tr>
-<tr class="separator:a74f4216847b79dcb951216addea43b7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5be3a2b97f146c5dc132d191bf7a9760"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a5be3a2b97f146c5dc132d191bf7a9760">chi_temp</a> = 4</td></tr>
+<tr class="separator:a5be3a2b97f146c5dc132d191bf7a9760"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03a87bef331c23b2b8a4aae4aad5780b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a03a87bef331c23b2b8a4aae4aad5780b">simulation_has_converged</a> = false</td></tr>
 <tr class="separator:a03a87bef331c23b2b8a4aae4aad5780b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab69cb5b2b91b46cc1ffab12b82bb80a8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ab69cb5b2b91b46cc1ffab12b82bb80a8">bond_dimension_has_converged</a> = false</td></tr>
-<tr class="separator:ab69cb5b2b91b46cc1ffab12b82bb80a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a761a1b3e572f84c147bd88f74fc0c55a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a761a1b3e572f84c147bd88f74fc0c55a">simulation_has_to_stop</a> = false</td></tr>
+<tr class="separator:a761a1b3e572f84c147bd88f74fc0c55a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0f5fbca3eff6fd130be41866d72c5b5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ae0f5fbca3eff6fd130be41866d72c5b5">bond_dimension_has_reached_max</a> = false</td></tr>
+<tr class="separator:ae0f5fbca3eff6fd130be41866d72c5b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8cd5d7663f288363b7f81f229058b88"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aa8cd5d7663f288363b7f81f229058b88">entanglement_has_converged</a> = false</td></tr>
 <tr class="separator:aa8cd5d7663f288363b7f81f229058b88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae29d2ef00b3209cfee2433f8ab562aef"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ae29d2ef00b3209cfee2433f8ab562aef">entanglement_has_saturated</a> = false</td></tr>
+<tr class="separator:ae29d2ef00b3209cfee2433f8ab562aef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39bac079dd587e1b5565faaab6f09efa"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a39bac079dd587e1b5565faaab6f09efa">variance_mpo_saturated_for</a> = 0</td></tr>
+<tr class="separator:a39bac079dd587e1b5565faaab6f09efa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a377a24d923f0f10a87e9208a4896fcfc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a377a24d923f0f10a87e9208a4896fcfc">variance_mpo_has_converged</a> = false</td></tr>
 <tr class="separator:a377a24d923f0f10a87e9208a4896fcfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ab7e8b7fc657a3bccaa37900eb7199a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a8ab7e8b7fc657a3bccaa37900eb7199a">variance_mpo_has_saturated</a> = false</td></tr>
+<tr class="separator:a8ab7e8b7fc657a3bccaa37900eb7199a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8fde46ecd510d6d80201bf51e1c7c15"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ac8fde46ecd510d6d80201bf51e1c7c15">variance_ham_saturated_for</a> = 0</td></tr>
+<tr class="separator:ac8fde46ecd510d6d80201bf51e1c7c15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad900b530541aa2062aafe691ef893739"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ad900b530541aa2062aafe691ef893739">variance_ham_has_converged</a> = false</td></tr>
 <tr class="separator:ad900b530541aa2062aafe691ef893739"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0aecd8e34cec715c82e642fd0e253425"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a0aecd8e34cec715c82e642fd0e253425">variance_ham_has_saturated</a> = false</td></tr>
+<tr class="separator:a0aecd8e34cec715c82e642fd0e253425"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a950235b4b66a1946593c81ee5335c4a9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a950235b4b66a1946593c81ee5335c4a9">variance_mom_saturated_for</a> = 0</td></tr>
+<tr class="separator:a950235b4b66a1946593c81ee5335c4a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1927bfca446f1b104767faaf631e4203"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a1927bfca446f1b104767faaf631e4203">variance_mom_has_converged</a> = false</td></tr>
 <tr class="separator:a1927bfca446f1b104767faaf631e4203"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97c83d126d30a7c7febe86f6f1198432"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a97c83d126d30a7c7febe86f6f1198432">variance_mom_has_saturated</a> = false</td></tr>
+<tr class="separator:a97c83d126d30a7c7febe86f6f1198432"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc0a9428cfd271631302e375bfad3e92"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#acc0a9428cfd271631302e375bfad3e92">t_tot</a></td></tr>
 <tr class="separator:acc0a9428cfd271631302e375bfad3e92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4ed6cd4717570a44cf494dfdfe06e08"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ac4ed6cd4717570a44cf494dfdfe06e08">t_opt</a></td></tr>
 <tr class="separator:ac4ed6cd4717570a44cf494dfdfe06e08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae378bea3c64eddbcebbb4308506dd0ba"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ae378bea3c64eddbcebbb4308506dd0ba">t_eig</a></td></tr>
+<tr class="separator:ae378bea3c64eddbcebbb4308506dd0ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef78221c210b89af46ce7e485554e229"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aef78221c210b89af46ce7e485554e229">t_ham</a></td></tr>
+<tr class="separator:aef78221c210b89af46ce7e485554e229"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4665ca1f14f3b97154c961502c483c7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ac4665ca1f14f3b97154c961502c483c7">t_sim</a></td></tr>
 <tr class="separator:ac4665ca1f14f3b97154c961502c483c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a62686101ba541b485f091dff78cfc871"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a62686101ba541b485f091dff78cfc871">t_svd</a></td></tr>
@@ -240,36 +267,49 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a41e28970ec5e7a0cf2a1700b217f5152"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a41e28970ec5e7a0cf2a1700b217f5152">t_con</a></td></tr>
 <tr class="separator:a41e28970ec5e7a0cf2a1700b217f5152"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:aeec0f1d83000ef7ba92bbcdd74bdcabb"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a> = std::numeric_limits&lt;double&gt;::quiet_NaN()</td></tr>
+<tr class="separator:aeec0f1d83000ef7ba92bbcdd74bdcabb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:ab7971640e93a98ff4d8955c1eafe2790"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ab7971640e93a98ff4d8955c1eafe2790">check_convergence_using_slope</a> (std::list&lt; double &gt; &amp;Y_vec, std::list&lt; int &gt; &amp;X_vec, double new_data, int rate, double tolerance, double &amp;slope, bool &amp;has_converged)</td></tr>
-<tr class="separator:ab7971640e93a98ff4d8955c1eafe2790"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5c5c92a752c0732448da12e0fb80c2f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#af5c5c92a752c0732448da12e0fb80c2f">check_saturation_using_slope</a> (std::list&lt; bool &gt; &amp;B_vec, std::list&lt; double &gt; &amp;Y_vec, std::list&lt; int &gt; &amp;X_vec, double new_data, int iter, int rate, double tolerance, double &amp;slope, bool &amp;has_saturated)</td></tr>
+<tr class="separator:af5c5c92a752c0732448da12e0fb80c2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr class="memitem:ae96dc777cace341af028725cc38b08af"><td class="memItemLeft" align="right" valign="top">std::list&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ae96dc777cace341af028725cc38b08af">B_mpo_vec</a></td></tr>
+<tr class="separator:ae96dc777cace341af028725cc38b08af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5173d973e613b33ffec492ad5ba74c7"><td class="memItemLeft" align="right" valign="top">std::list&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#af5173d973e613b33ffec492ad5ba74c7">V_mpo_vec</a></td></tr>
 <tr class="separator:af5173d973e613b33ffec492ad5ba74c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9776081356af828aab41f1f169ad01ca"><td class="memItemLeft" align="right" valign="top">std::list&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a9776081356af828aab41f1f169ad01ca">X_mpo_vec</a></td></tr>
 <tr class="separator:a9776081356af828aab41f1f169ad01ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7894cbe9db61949b494c624cb7b32b96"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a7894cbe9db61949b494c624cb7b32b96">V_mpo_slope</a></td></tr>
+<tr class="memitem:a7894cbe9db61949b494c624cb7b32b96"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a7894cbe9db61949b494c624cb7b32b96">V_mpo_slope</a> = 1</td></tr>
 <tr class="separator:a7894cbe9db61949b494c624cb7b32b96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab29851cbf0503ed59b2d40cc31b3d692"><td class="memItemLeft" align="right" valign="top">std::list&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ab29851cbf0503ed59b2d40cc31b3d692">B_ham_vec</a></td></tr>
+<tr class="separator:ab29851cbf0503ed59b2d40cc31b3d692"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad93fb22c176de5e93515d32277d84aff"><td class="memItemLeft" align="right" valign="top">std::list&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ad93fb22c176de5e93515d32277d84aff">V_ham_vec</a></td></tr>
 <tr class="separator:ad93fb22c176de5e93515d32277d84aff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae025f10af8ccf9ad755cf545f81e5ade"><td class="memItemLeft" align="right" valign="top">std::list&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ae025f10af8ccf9ad755cf545f81e5ade">X_ham_vec</a></td></tr>
 <tr class="separator:ae025f10af8ccf9ad755cf545f81e5ade"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9bb1579c8aedc906ee6c7c33370e4d17"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a9bb1579c8aedc906ee6c7c33370e4d17">V_ham_slope</a></td></tr>
+<tr class="memitem:a9bb1579c8aedc906ee6c7c33370e4d17"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a9bb1579c8aedc906ee6c7c33370e4d17">V_ham_slope</a> = 1</td></tr>
 <tr class="separator:a9bb1579c8aedc906ee6c7c33370e4d17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85cc4531775dc1f0792a804bcd0439c1"><td class="memItemLeft" align="right" valign="top">std::list&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a85cc4531775dc1f0792a804bcd0439c1">B_mom_vec</a></td></tr>
+<tr class="separator:a85cc4531775dc1f0792a804bcd0439c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5718f3c444018f2e08b2c9768dcdeee"><td class="memItemLeft" align="right" valign="top">std::list&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#ad5718f3c444018f2e08b2c9768dcdeee">V_mom_vec</a></td></tr>
 <tr class="separator:ad5718f3c444018f2e08b2c9768dcdeee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88b1d4cdf1a565281d686078e52bcb9f"><td class="memItemLeft" align="right" valign="top">std::list&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a88b1d4cdf1a565281d686078e52bcb9f">X_mom_vec</a></td></tr>
 <tr class="separator:a88b1d4cdf1a565281d686078e52bcb9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbbb20fba2ce46783f34d5cbf7f00771"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#abbbb20fba2ce46783f34d5cbf7f00771">V_mom_slope</a></td></tr>
+<tr class="memitem:abbbb20fba2ce46783f34d5cbf7f00771"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#abbbb20fba2ce46783f34d5cbf7f00771">V_mom_slope</a> = 1</td></tr>
 <tr class="separator:abbbb20fba2ce46783f34d5cbf7f00771"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d0e16027a65a458214ced7346cb01be"><td class="memItemLeft" align="right" valign="top">std::list&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a2d0e16027a65a458214ced7346cb01be">BS_vec</a></td></tr>
+<tr class="separator:a2d0e16027a65a458214ced7346cb01be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5baf91ad05f2354213ccab83f07fd0cb"><td class="memItemLeft" align="right" valign="top">std::list&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a5baf91ad05f2354213ccab83f07fd0cb">S_vec</a></td></tr>
 <tr class="separator:a5baf91ad05f2354213ccab83f07fd0cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c50d7b030b2de6a18e2c5d4b4fa2fec"><td class="memItemLeft" align="right" valign="top">std::list&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a4c50d7b030b2de6a18e2c5d4b4fa2fec">X2_vec</a></td></tr>
-<tr class="separator:a4c50d7b030b2de6a18e2c5d4b4fa2fec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62d673dcd580d424c3a427e4ba82d053"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a62d673dcd580d424c3a427e4ba82d053">S_slope</a></td></tr>
+<tr class="memitem:a85858eed5fb686eca9f534d4fa11f29c"><td class="memItemLeft" align="right" valign="top">std::list&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a85858eed5fb686eca9f534d4fa11f29c">XS_vec</a></td></tr>
+<tr class="separator:a85858eed5fb686eca9f534d4fa11f29c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62d673dcd580d424c3a427e4ba82d053"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__base.html#a62d673dcd580d424c3a427e4ba82d053">S_slope</a> = 1</td></tr>
 <tr class="separator:a62d673dcd580d424c3a427e4ba82d053"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
@@ -348,43 +388,8 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3439083d4b7937202af5b925d6c1ef51"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3439083d4b7937202af5b925d6c1ef51">&#9670;&nbsp;</a></span>check_convergence_bond_dimension()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_algorithm_base::check_convergence_bond_dimension </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a397a73dc0b2e0c9e9ac3bb467053693e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a397a73dc0b2e0c9e9ac3bb467053693e">&#9670;&nbsp;</a></span>check_convergence_entanglement()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_algorithm_base::check_convergence_entanglement </td>
-          <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>threshold</em> = <code>-1.0</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a9503dc8dc1f47466c179387dbe7c8660"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9503dc8dc1f47466c179387dbe7c8660">&#9670;&nbsp;</a></span>check_convergence_overall()</h2>
+<a id="a4d804eb43b65cc68da335594ab774a29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d804eb43b65cc68da335594ab774a29">&#9670;&nbsp;</a></span>check_convergence()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -393,7 +398,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void class_algorithm_base::check_convergence_overall </td>
+          <td class="memname">void class_algorithm_base::check_convergence </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -406,12 +411,114 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="classclass__x_d_m_r_g.html#a688573b541f3dcbc2736d7339b1eb1d2">class_xDMRG</a>, <a class="el" href="classclass__i_t_e_b_d.html#aa76352f7083856b20d56d968230b87c2">class_iTEBD</a>, and <a class="el" href="classclass__f_d_m_r_g.html#ad0d334dabbfe707158f469a7a19f4fa3">class_fDMRG</a>.</p>
+<p>Reimplemented in <a class="el" href="classclass__x_d_m_r_g.html#af4484d1998d01a0e6cd4b1a08ce8f62b">class_xDMRG</a>, <a class="el" href="classclass__i_t_e_b_d.html#a53169891d7c781d0753db717d61c85de">class_iTEBD</a>, and <a class="el" href="classclass__f_d_m_r_g.html#a03b605605f8b429ff44855ab4d3c0f29">class_fDMRG</a>.</p>
 
 </div>
 </div>
-<a id="ab7971640e93a98ff4d8955c1eafe2790"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab7971640e93a98ff4d8955c1eafe2790">&#9670;&nbsp;</a></span>check_convergence_using_slope()</h2>
+<a id="a9067f9aab2893401df4cac8112275919"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9067f9aab2893401df4cac8112275919">&#9670;&nbsp;</a></span>check_convergence_entanglement()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_algorithm_base::check_convergence_entanglement </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>slope_threshold</em> = <code><a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a></code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a74eacc34cf8533e48ef6503baa89e5c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74eacc34cf8533e48ef6503baa89e5c8">&#9670;&nbsp;</a></span>check_convergence_variance_ham()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_algorithm_base::check_convergence_variance_ham </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>threshold</em> = <code><a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>slope_threshold</em> = <code><a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae2859b04088bb7da73e4af556f8a5f0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2859b04088bb7da73e4af556f8a5f0c">&#9670;&nbsp;</a></span>check_convergence_variance_mom()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_algorithm_base::check_convergence_variance_mom </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>threshold</em> = <code><a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>slope_threshold</em> = <code><a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4c32bb266274ec98a545cafa4d13632b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c32bb266274ec98a545cafa4d13632b">&#9670;&nbsp;</a></span>check_convergence_variance_mpo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_algorithm_base::check_convergence_variance_mpo </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>threshold</em> = <code><a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>slope_threshold</em> = <code><a class="el" href="classclass__algorithm__base.html#aeec0f1d83000ef7ba92bbcdd74bdcabb">quietNaN</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af5c5c92a752c0732448da12e0fb80c2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5c5c92a752c0732448da12e0fb80c2f">&#9670;&nbsp;</a></span>check_saturation_using_slope()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -420,8 +527,14 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void class_algorithm_base::check_convergence_using_slope </td>
+          <td class="memname">void class_algorithm_base::check_saturation_using_slope </td>
           <td>(</td>
+          <td class="paramtype">std::list&lt; bool &gt; &amp;&#160;</td>
+          <td class="paramname"><em>B_vec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">std::list&lt; double &gt; &amp;&#160;</td>
           <td class="paramname"><em>Y_vec</em>, </td>
         </tr>
@@ -436,6 +549,12 @@ Private Attributes</h2></td></tr>
           <td></td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>new_data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>iter</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -459,7 +578,7 @@ Private Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool &amp;&#160;</td>
-          <td class="paramname"><em>has_converged</em>&#160;</td>
+          <td class="paramname"><em>has_saturated</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -476,68 +595,14 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="af54346fd60889c71e72e04a7a6d21350"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af54346fd60889c71e72e04a7a6d21350">&#9670;&nbsp;</a></span>check_convergence_variance_ham()</h2>
+<a id="ad81696900bc53d4445ab296d534def5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad81696900bc53d4445ab296d534def5d">&#9670;&nbsp;</a></span>clear_saturation_status()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void class_algorithm_base::check_convergence_variance_ham </td>
-          <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>threshold</em> = <code>-1.0</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="adf60176dfbfcf5425df00073d4f676d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf60176dfbfcf5425df00073d4f676d8">&#9670;&nbsp;</a></span>check_convergence_variance_mom()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_algorithm_base::check_convergence_variance_mom </td>
-          <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>threshold</em> = <code>-1.0</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a25d323142a2869bd0e9280a0ca52682d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a25d323142a2869bd0e9280a0ca52682d">&#9670;&nbsp;</a></span>check_convergence_variance_mpo()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_algorithm_base::check_convergence_variance_mpo </td>
-          <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>threshold</em> = <code>-1.0</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac48dec0e09647ca52ab14fc319cf8fbc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac48dec0e09647ca52ab14fc319cf8fbc">&#9670;&nbsp;</a></span>clear_convergence_checks()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void class_algorithm_base::clear_convergence_checks </td>
+          <td class="memname">void class_algorithm_base::clear_saturation_status </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -862,6 +927,23 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a8ed85de573913643b5ca49af4e4d664a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ed85de573913643b5ca49af4e4d664a">&#9670;&nbsp;</a></span>set_file_OK()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_algorithm_base::set_file_OK </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a539f089e4d2c8d121fbd0b9765529f72"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a539f089e4d2c8d121fbd0b9765529f72">&#9670;&nbsp;</a></span>set_profiling_labels()</h2>
 
@@ -879,8 +961,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="af6fa6bf0bd7712517fbc32abe7aa1a1a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af6fa6bf0bd7712517fbc32abe7aa1a1a">&#9670;&nbsp;</a></span>single_DMRG_step()</h2>
+<a id="a838dd6f76afaec65e687e441b36795e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a838dd6f76afaec65e687e441b36795e9">&#9670;&nbsp;</a></span>single_DMRG_step()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -894,8 +976,8 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">Ritz</a>&#160;</td>
-          <td class="paramname"><em>ritz</em> = <code>Ritz::SR</code>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044">eigsolver_properties::Ritz</a>&#160;</td>
+          <td class="paramname"><em>ritz</em> = <code><a class="el" href="namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044a8cb2010d27e13509d364436256e972c0">eigsolver_properties::Ritz::SR</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -907,16 +989,17 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="aa407ba08ab3499256952790306138f2e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa407ba08ab3499256952790306138f2e">&#9670;&nbsp;</a></span>store_profiling_to_file()</h2>
+<a id="a6cb53fbcab2f5113e1f8898a12a34a62"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cb53fbcab2f5113e1f8898a12a34a62">&#9670;&nbsp;</a></span>store_profiling_to_file_delta()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void class_algorithm_base::store_profiling_to_file </td>
+          <td class="memname">void class_algorithm_base::store_profiling_to_file_delta </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>force</em> = <code>false</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -924,8 +1007,26 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a12c0bcfdf899312d11f398dfaf33032f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12c0bcfdf899312d11f398dfaf33032f">&#9670;&nbsp;</a></span>store_table_entry_to_file()</h2>
+<a id="a9fd78dc8c8a99f9917d16e11d546ad7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9fd78dc8c8a99f9917d16e11d546ad7b">&#9670;&nbsp;</a></span>store_profiling_to_file_total()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_algorithm_base::store_profiling_to_file_total </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>force</em> = <code>false</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5a5d2fae0082e49f4c388890eac17ae6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a5d2fae0082e49f4c388890eac17ae6">&#9670;&nbsp;</a></span>store_table_entry_to_file()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -936,7 +1037,8 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">virtual void class_algorithm_base::store_table_entry_to_file </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>force</em> = <code>false</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -947,7 +1049,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classclass__x_d_m_r_g.html#aa46ce068a200a40f7b20b02204200288">class_xDMRG</a>, <a class="el" href="classclass__i_t_e_b_d.html#a87bcb017d260d2e8fdf72043b7f80113">class_iTEBD</a>, <a class="el" href="classclass__f_d_m_r_g.html#ae618fa905ff7fab507b1edd3606c6bd4">class_fDMRG</a>, and <a class="el" href="classclass__i_d_m_r_g.html#a985f09760c38a9cbae76ec78626a08c4">class_iDMRG</a>.</p>
+<p>Implemented in <a class="el" href="classclass__x_d_m_r_g.html#a2dc28964382e83e3fe2bf9a877999f8d">class_xDMRG</a>, <a class="el" href="classclass__i_t_e_b_d.html#ae15178569744310ee259df545919665c">class_iTEBD</a>, <a class="el" href="classclass__f_d_m_r_g.html#a0866520954cc2157a671f2407affc42b">class_fDMRG</a>, and <a class="el" href="classclass__i_d_m_r_g.html#a3e070a43e916d4d0e9baceff7231f67e">class_iDMRG</a>.</p>
 
 </div>
 </div>
@@ -968,17 +1070,123 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab69cb5b2b91b46cc1ffab12b82bb80a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab69cb5b2b91b46cc1ffab12b82bb80a8">&#9670;&nbsp;</a></span>bond_dimension_has_converged</h2>
+<a id="a8703eb90ad57df91ea4353d2cf6625f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8703eb90ad57df91ea4353d2cf6625f4">&#9670;&nbsp;</a></span>update_bond_dimension()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool class_algorithm_base::bond_dimension_has_converged = false</td>
+          <td class="memname">void class_algorithm_base::update_bond_dimension </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>min_saturation_length</em> = <code>1</code></td><td>)</td>
+          <td></td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="ab29851cbf0503ed59b2d40cc31b3d692"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab29851cbf0503ed59b2d40cc31b3d692">&#9670;&nbsp;</a></span>B_ham_vec</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::list&lt;bool&gt; class_algorithm_base::B_ham_vec</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a85cc4531775dc1f0792a804bcd0439c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85cc4531775dc1f0792a804bcd0439c1">&#9670;&nbsp;</a></span>B_mom_vec</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::list&lt;bool&gt; class_algorithm_base::B_mom_vec</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae96dc777cace341af028725cc38b08af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae96dc777cace341af028725cc38b08af">&#9670;&nbsp;</a></span>B_mpo_vec</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::list&lt;bool&gt; class_algorithm_base::B_mpo_vec</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae0f5fbca3eff6fd130be41866d72c5b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0f5fbca3eff6fd130be41866d72c5b5">&#9670;&nbsp;</a></span>bond_dimension_has_reached_max</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool class_algorithm_base::bond_dimension_has_reached_max = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2d0e16027a65a458214ced7346cb01be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d0e16027a65a458214ced7346cb01be">&#9670;&nbsp;</a></span>BS_vec</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::list&lt;bool&gt; class_algorithm_base::BS_vec</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
@@ -1025,14 +1233,14 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a74f4216847b79dcb951216addea43b7a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74f4216847b79dcb951216addea43b7a">&#9670;&nbsp;</a></span>chi_max_temp</h2>
+<a id="a5be3a2b97f146c5dc132d191bf7a9760"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5be3a2b97f146c5dc132d191bf7a9760">&#9670;&nbsp;</a></span>chi_temp</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long class_algorithm_base::chi_max_temp = 4</td>
+          <td class="memname">long class_algorithm_base::chi_temp = 4</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1053,14 +1261,28 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a70c5cca4c5fc4d7f4e73bf287e238a0a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a70c5cca4c5fc4d7f4e73bf287e238a0a">&#9670;&nbsp;</a></span>env_storage</h2>
+<a id="ae29d2ef00b3209cfee2433f8ab562aef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae29d2ef00b3209cfee2433f8ab562aef">&#9670;&nbsp;</a></span>entanglement_has_saturated</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classclass__finite__chain__sweeper.html">class_finite_chain_sweeper</a>&gt; class_algorithm_base::env_storage</td>
+          <td class="memname">bool class_algorithm_base::entanglement_has_saturated = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa6ec9d149485d3d3908978e018139e15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6ec9d149485d3d3908978e018139e15">&#9670;&nbsp;</a></span>env_storage</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classclass__finite__chain.html">class_finite_chain</a>&gt; class_algorithm_base::env_storage</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1123,6 +1345,28 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="aeec0f1d83000ef7ba92bbcdd74bdcabb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeec0f1d83000ef7ba92bbcdd74bdcabb">&#9670;&nbsp;</a></span>quietNaN</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr double class_algorithm_base::quietNaN = std::numeric_limits&lt;double&gt;::quiet_NaN()</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a62d673dcd580d424c3a427e4ba82d053"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a62d673dcd580d424c3a427e4ba82d053">&#9670;&nbsp;</a></span>S_slope</h2>
 
@@ -1133,7 +1377,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double class_algorithm_base::S_slope</td>
+          <td class="memname">double class_algorithm_base::S_slope = 1</td>
         </tr>
       </table>
   </td>
@@ -1223,6 +1467,34 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a761a1b3e572f84c147bd88f74fc0c55a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a761a1b3e572f84c147bd88f74fc0c55a">&#9670;&nbsp;</a></span>simulation_has_to_stop</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool class_algorithm_base::simulation_has_to_stop = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac0e7b92bb5bb642c41ac88008bba7144"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0e7b92bb5bb642c41ac88008bba7144">&#9670;&nbsp;</a></span>step</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int class_algorithm_base::step = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ab68231ade1f92254eb5e144acd350d87"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab68231ade1f92254eb5e144acd350d87">&#9670;&nbsp;</a></span>store_freq</h2>
 
@@ -1265,6 +1537,20 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="ae378bea3c64eddbcebbb4308506dd0ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae378bea3c64eddbcebbb4308506dd0ba">&#9670;&nbsp;</a></span>t_eig</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a> class_algorithm_base::t_eig</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="afc59105de307467cd6719e13bdba4fa0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afc59105de307467cd6719e13bdba4fa0">&#9670;&nbsp;</a></span>t_env</h2>
 
@@ -1287,6 +1573,20 @@ Private Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a> class_algorithm_base::t_evo</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aef78221c210b89af46ce7e485554e229"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef78221c210b89af46ce7e485554e229">&#9670;&nbsp;</a></span>t_ham</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a> class_algorithm_base::t_ham</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1457,7 +1757,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double class_algorithm_base::V_ham_slope</td>
+          <td class="memname">double class_algorithm_base::V_ham_slope = 1</td>
         </tr>
       </table>
   </td>
@@ -1501,7 +1801,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double class_algorithm_base::V_mom_slope</td>
+          <td class="memname">double class_algorithm_base::V_mom_slope = 1</td>
         </tr>
       </table>
   </td>
@@ -1545,7 +1845,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double class_algorithm_base::V_mpo_slope</td>
+          <td class="memname">double class_algorithm_base::V_mpo_slope = 1</td>
         </tr>
       </table>
   </td>
@@ -1593,6 +1893,34 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a0aecd8e34cec715c82e642fd0e253425"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0aecd8e34cec715c82e642fd0e253425">&#9670;&nbsp;</a></span>variance_ham_has_saturated</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool class_algorithm_base::variance_ham_has_saturated = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac8fde46ecd510d6d80201bf51e1c7c15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8fde46ecd510d6d80201bf51e1c7c15">&#9670;&nbsp;</a></span>variance_ham_saturated_for</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int class_algorithm_base::variance_ham_saturated_for = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a1927bfca446f1b104767faaf631e4203"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1927bfca446f1b104767faaf631e4203">&#9670;&nbsp;</a></span>variance_mom_has_converged</h2>
 
@@ -1601,6 +1929,34 @@ Private Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">bool class_algorithm_base::variance_mom_has_converged = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a97c83d126d30a7c7febe86f6f1198432"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97c83d126d30a7c7febe86f6f1198432">&#9670;&nbsp;</a></span>variance_mom_has_saturated</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool class_algorithm_base::variance_mom_has_saturated = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a950235b4b66a1946593c81ee5335c4a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a950235b4b66a1946593c81ee5335c4a9">&#9670;&nbsp;</a></span>variance_mom_saturated_for</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int class_algorithm_base::variance_mom_saturated_for = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1621,24 +1977,30 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a4c50d7b030b2de6a18e2c5d4b4fa2fec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c50d7b030b2de6a18e2c5d4b4fa2fec">&#9670;&nbsp;</a></span>X2_vec</h2>
+<a id="a8ab7e8b7fc657a3bccaa37900eb7199a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ab7e8b7fc657a3bccaa37900eb7199a">&#9670;&nbsp;</a></span>variance_mpo_has_saturated</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::list&lt;int&gt; class_algorithm_base::X2_vec</td>
+          <td class="memname">bool class_algorithm_base::variance_mpo_has_saturated = false</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a39bac079dd587e1b5565faaab6f09efa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39bac079dd587e1b5565faaab6f09efa">&#9670;&nbsp;</a></span>variance_mpo_saturated_for</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int class_algorithm_base::variance_mpo_saturated_for = 0</td>
+        </tr>
+      </table>
 </div><div class="memdoc">
 
 </div>
@@ -1698,6 +2060,28 @@ Private Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">std::list&lt;int&gt; class_algorithm_base::X_mpo_vec</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a85858eed5fb686eca9f534d4fa11f29c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85858eed5fb686eca9f534d4fa11f29c">&#9670;&nbsp;</a></span>XS_vec</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::list&lt;int&gt; class_algorithm_base::XS_vec</td>
         </tr>
       </table>
   </td>
