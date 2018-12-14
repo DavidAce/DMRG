@@ -96,7 +96,6 @@ matrix:
         - MPI=mpich
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
       before_install:
-        - brew cask uninstall oclint
         - brew install gcc@7
 
 before_install:
