@@ -70,8 +70,8 @@ matrix:
           - sourceline:  'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main'
             key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
-            - llvm-7.0-dev
-            - clang-7.0
+            - llvm-6.0-dev
+            - clang-6.0
             - libstdc++-8-dev
             - gfortran-8
     - os: linux
@@ -93,8 +93,8 @@ matrix:
             - sourceline:  'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-7 main'
               key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
-            - llvm-6.0-dev
-            - clang-6.0
+            - llvm-7.0-dev
+            - clang-7.0
             - libstdc++-8-dev
             - gfortran-8
     - os: linux
