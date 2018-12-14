@@ -28,12 +28,12 @@ void class_iDMRG::run() {
     ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
     t_tot.tic();
     while(iteration < max_steps){// and not simulation_has_converged){
-        single_DMRG_step(chi_max_temp);
+        single_DMRG_step(chi_temp);
         print_status_update();
         store_table_entry_to_file();
-        store_profiling_to_file();
+        store_profiling_to_file_delta();
         enlarge_environment();
-        check_convergence_overall();
+        check_convergence();
         swap();
         iteration++;
     }
@@ -53,8 +53,10 @@ void class_iDMRG::initialize_constants(){
 
 }
 
-void class_iDMRG::store_table_entry_to_file(){
-    if (Math::mod(iteration, store_freq) != 0) {return;}
+void class_iDMRG::store_table_entry_to_file(bool force){
+    if (not force){
+        if (Math::mod(iteration, store_freq) != 0) {return;}
+    }
     compute_observables();
     t_sto.tic();
     table_idmrg->append_record(

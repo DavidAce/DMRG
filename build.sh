@@ -4,13 +4,14 @@ PROGNAME=$0
 usage() {
   cat << EOF >&2
 
-Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t <target>]
+Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t <target>] [-a <march>]
 
+-a               : Choose microarchitecture for cxx and openblas. | core2 | nehalem | sandybridge | haswell | (default = haswell)
 -c               : Clear CMake files before build (delete ./build)
 -h               : Help. Shows this text.
 -j <num_threads> : Number of threads used by CMake
 -l               : Clear downloaded libraries before build (i.e. delete ./libs)
--m <mode>        : Release   | Debug | (default = Release)
+-m <mode>        : Release   | Debug | Profile |  (default = Release)
 -t <target>      : DMRG++    | all   | any test target | (default = all)
 EOF
   exit 1
@@ -21,14 +22,12 @@ target="all"
 mode="Release"
 clear_cmake=""
 clear_libs=""
-threads="4"
+threads="8"
+march="sandybridge"
 
-#export CC=gcc
-#export CXX=g++
-#export FC=gfortran
-
-while getopts chj:lm:t: o; do
+while getopts a:chj:lm:t: o; do
     case $o in
+	(a) march=$OPTARG;;
         (c) clear_cmake="true";;
         (h) usage ;;
         (j) threads=$OPTARG;;
@@ -39,6 +38,7 @@ while getopts chj:lm:t: o; do
         (*) usage ;;
   esac
 done
+if [ $OPTIND -eq 1 ]; then echo "No flags were passed"; usage ;exit 1; fi
 shift "$((OPTIND - 1))"
 
 
@@ -77,11 +77,22 @@ fi
 
 
 echo "Starting Build"
+echo "Micro arch.     :   $march"
 echo "Target          :   $target"
 echo "Build threads   :   $threads"
 echo "Mode            :   $mode"
 
+#module load CLANG_6.x.x
+module load GNU_8.x.x
+module load openblas_${march}_v0.3.3
+module load arpack-ng_${march}_3.6.2
+module load armadillo-9.200.x
+module load arpack++
+module load hdf5_1.10.3
+module load gsl_2.4
+module load eigen3_3.3.5
+
 cmake -E make_directory build/$mode
 cd build/$mode
-cmake -DCMAKE_BUILD_TYPE=$mode -G "CodeBlocks - Unix Makefiles" ../../
+cmake -DCMAKE_BUILD_TYPE=$mode -DMARCH=$march  -G "CodeBlocks - Unix Makefiles" ../../
 cmake --build . --target $target -- -j $threads

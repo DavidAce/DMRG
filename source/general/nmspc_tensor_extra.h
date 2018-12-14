@@ -6,6 +6,7 @@
 #define TENSOR_EXTRA_H
 
 #include <Eigen/Core>
+#include <Eigen/Sparse>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <iterator>
 #include <iostream>
@@ -24,9 +25,11 @@
 namespace Textra {
     using cdouble       = std::complex<double>;
 
-    template<typename Scalar> using MatrixType    = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
-    template<typename Scalar> using VectorType    = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    template<long rank>       using array         = Eigen::array<long, rank>;
+
+    template<typename Scalar> using MatrixType          = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    template<typename Scalar> using VectorType          = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    template<typename Scalar> using SparseMatrixType    = Eigen::SparseMatrix<Scalar>;
+    template<long rank>       using array               = Eigen::array<long, rank>;
 
     //Shorthand for the list of index pairs.
     template <typename Scalar, long length>
@@ -75,14 +78,14 @@ namespace Textra {
 
 
 
-    using array8        = array<8>;
-    using array7        = array<7>;
-    using array6        = array<6>;
-    using array5        = array<5>;
-    using array4        = array<4>;
-    using array3        = array<3>;
-    using array2        = array<2>;
-    using array1        = array<1>;
+    using array8        = Eigen::array<long,8>;
+    using array7        = Eigen::array<long,7>;
+    using array6        = Eigen::array<long,6>;
+    using array5        = Eigen::array<long,5>;
+    using array4        = Eigen::array<long,4>;
+    using array3        = Eigen::array<long,3>;
+    using array2        = Eigen::array<long,2>;
+    using array1        = Eigen::array<long,1>;
 
 
 
@@ -114,6 +117,9 @@ namespace Textra {
 
 
 
+
+
+
 //    //****************************//
 //    //Matrix to tensor conversions//
 //    //****************************//
@@ -125,7 +131,7 @@ namespace Textra {
     using is_plainObject  = std::is_base_of<Eigen::PlainObjectBase<std::decay_t<Derived> >, std::decay_t<Derived> > ;
 
     template<typename Derived,auto rank>
-    constexpr Eigen::Tensor<typename Derived::Scalar, rank> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const array<rank> &dims){
+    constexpr Eigen::Tensor<typename Derived::Scalar, rank> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const Eigen::array<long,rank> &dims){
         if constexpr (is_plainObject<Derived>::value) {
             //Return map from raw input.
             return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().eval().data(), dims);
@@ -139,16 +145,18 @@ namespace Textra {
 
     //Helpful overload
     template<typename Derived, typename... Dims>
-    constexpr Eigen::Tensor<typename Derived::Scalar, sizeof... (Dims)> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, Dims... dims) {
+    constexpr Eigen::Tensor<typename Derived::Scalar, sizeof... (Dims)> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const Dims... dims) {
         return Matrix_to_Tensor(matrix, array<sizeof...(Dims)>{dims...});
     }
     //Helpful overload
     template<typename Derived, auto rank>
     constexpr Eigen::Tensor<typename Derived::Scalar, rank> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const Eigen::DSizes<long,rank> &dims) {
-        array<rank> dim_array;
+        Eigen::array<long,rank> dim_array = dims;
         std::copy(std::begin(dims), std::end(dims), std::begin(dim_array));
         return Matrix_to_Tensor(matrix, dim_array);
     }
+
+
 
 
     template <typename Derived>
@@ -185,6 +193,15 @@ namespace Textra {
         return Eigen::Map<const MatrixType<Scalar>> (tensor.data(), rows,cols);
     }
 
+    template <typename Scalar>
+    constexpr SparseMatrixType<Scalar> Tensor2_to_SparseMatrix(const Eigen::Tensor<Scalar,2> &tensor, double prune_threshold = 1e-15) {
+        return Eigen::Map<const MatrixType<Scalar>>(tensor.data(), tensor.dimension(0), tensor.dimension(1)).sparseView().pruned(prune_threshold);
+    }
+
+
+
+
+
 
     //************************//
     // change storage layout //
@@ -197,6 +214,11 @@ namespace Textra {
         return tensor.swap_layout().shuffle(neworder);
     }
 
+    template<typename Derived>
+    Eigen::Matrix<typename Derived::Scalar,Eigen::Dynamic,Eigen::Dynamic, Eigen::RowMajor> to_RowMajor(const Eigen::MatrixBase<Derived> &matrix){
+        Eigen::Matrix<typename Derived::Scalar,Eigen::Dynamic,Eigen::Dynamic, Eigen::RowMajor> matrowmajor = matrix;
+        return matrowmajor;
+    }
 
 
 

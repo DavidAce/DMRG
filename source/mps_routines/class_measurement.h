@@ -17,7 +17,7 @@ using namespace std::complex_literals;
 class class_superblock;
 class class_mps_2site;
 class class_mps_util;
-class class_finite_chain_sweeper;
+class class_finite_chain;
 /*!
  * \class class_measurement
  * \brief A class for measuring observables
@@ -30,7 +30,7 @@ public:
 private:
     std::shared_ptr<const class_superblock>           superblock;
     SimulationType sim_type;
-    std::shared_ptr<const class_finite_chain_sweeper> env_storage;
+    std::shared_ptr<const class_finite_chain> env_storage;
     std::shared_ptr<class_mps_util> mps_util;
 
     class_custom_cout ccout;
@@ -44,7 +44,7 @@ private:
     Eigen::MatrixXcd h_evn;
     Eigen::MatrixXcd h_odd;
 
-
+    void compute_parity();
     void compute_energy_mpo();
     void compute_energy_ham();
     void compute_entanglement_entropy();
@@ -52,15 +52,6 @@ private:
     void compute_energy_variance_ham();
     void compute_energy_and_variance_mom(Scalar a, std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
 
-    void compute_parity();
-
-    void compute_finite_chain_norm();
-    void compute_finite_chain_norm2();
-    void compute_finite_chain_energy();
-    void compute_finite_chain_energy_variance();
-    void compute_finite_chain_mps_state();
-
-    Eigen::Tensor<Scalar,1> mps_chain;
 
 
     double energy_mpo_all_sites;
@@ -80,24 +71,42 @@ private:
 
     public:
     explicit class_measurement(std::shared_ptr<class_superblock> superblock_, SimulationType sim_);
-    explicit class_measurement(std::shared_ptr<class_superblock> superblock_, std::shared_ptr<class_finite_chain_sweeper> env_storage_, SimulationType sim_);
+    explicit class_measurement(std::shared_ptr<class_superblock> superblock_, std::shared_ptr<class_finite_chain> env_storage_, SimulationType sim_);
     void   compute_all_observables_from_superblock();
+    void   compute_all_observables_from_superblock(const Eigen::Tensor<Scalar,4> &theta);
     void   compute_all_observables_from_finite_chain();
+
+    template<typename T>
+    double compute_energy_mpo(const T * theta_ptr, Eigen::DSizes<long,4> dsizes);
+
+    template<typename T>
+    double compute_energy_variance_mpo(const T * theta_ptr, Eigen::DSizes<long,4> dsizes, double energy_all_sites);
+
+
+    Eigen::Tensor<Scalar,1> mps_chain;
 
     double get_energy_mpo();               /*! Computes the current energy.*/
     double get_energy_ham();               /*! Computes the current energy.*/
     double get_energy_mom();               /*! Computes the current energy.*/
     double get_energy_mpo_all_sites();
-
+    void   set_variance(double new_variance);
     double get_variance_mpo();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
     double get_variance_ham();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
     double get_variance_mom();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
-//  double get_variance_mpo_all_sites();
+
+    //  double get_variance_mpo_all_sites();
     double get_entanglement_entropy();
     double get_truncation_error();
     double get_parity();
     long   get_chi();
     long   get_chain_length();
+
+    void compute_finite_chain_norm();
+    void compute_finite_chain_norm2();
+    void compute_finite_chain_energy();
+    void compute_finite_chain_energy_variance();
+    void compute_finite_chain_mps_state();
+
 
     void set_not_measured(){is_measured = false;}
     bool has_been_measured(){return is_measured;}

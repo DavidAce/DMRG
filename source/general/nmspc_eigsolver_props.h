@@ -11,5 +11,5 @@ namespace eigsolver_properties{
     enum class Side {L,R};           //Left or right eigenvectors
 }
 
-using namespace eigsolver_properties;
+//using namespace eigsolver_properties;
 #endif //NMSPC_EIGSOLVER_PROPS_H

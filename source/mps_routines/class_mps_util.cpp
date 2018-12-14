@@ -19,17 +19,17 @@ void class_mps_util::compute_mps_components(const std::unique_ptr<class_mps_2sit
 
     Eigen::Tensor<Scalar,2> theta_evn_transfer_mat   = get_transfer_matrix_theta_evn(MPS).reshape(array2{chiB2,chiB2});
     Eigen::Tensor<Scalar,2> theta_odd_transfer_mat   = get_transfer_matrix_theta_odd(MPS).reshape(array2{chiC2,chiC2});
-    class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
+    class_eigsolver_arpack<Scalar, eigsolver_properties::Form::GENERAL> solver;
 
     int ncvC = std::min(16, chiC2);
     int ncvB = std::min(16, chiB2);
-    solver.eig(theta_evn_transfer_mat.data(), chiB2, 1, ncvB, Ritz::LM, Side::R, true, true);
+    solver.eig(theta_evn_transfer_mat.data(), chiB2, 1, ncvB, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, true, true);
     auto[eigvec_R_evn,eigval_R_evn]  = solver.get_eig_vecs_vals();
-    solver.eig(theta_evn_transfer_mat.data(), chiB2, 1, ncvB, Ritz::LM, Side::L, true, true);
+    solver.eig(theta_evn_transfer_mat.data(), chiB2, 1, ncvB, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::L, true, true);
     auto[eigvec_L_evn,eigval_L_evn]  = solver.get_eig_vecs_vals();
-    solver.eig(theta_odd_transfer_mat.data(), chiC2, 1, ncvC, Ritz::LM, Side::R, true, true);
+    solver.eig(theta_odd_transfer_mat.data(), chiC2, 1, ncvC, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, true, true);
     auto[eigvec_R_odd,eigval_R_odd]  = solver.get_eig_vecs_vals();
-    solver.eig(theta_odd_transfer_mat.data(), chiC2, 1, ncvC, Ritz::LM, Side::L, true, true);
+    solver.eig(theta_odd_transfer_mat.data(), chiC2, 1, ncvC, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::L, true, true);
     auto[eigvec_L_odd,eigval_L_odd]  = solver.get_eig_vecs_vals();
 
     MatrixType<Scalar> eigvec_R_evn_map = Eigen::Map<const MatrixType<Scalar>>(eigvec_R_evn.data(), eigvec_R_evn.size(),1);

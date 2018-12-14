@@ -9,14 +9,14 @@
 
 #define profile_multiplication 0
 
-template <typename T, Form form = Form::GENERAL>
+template <typename T, eigsolver_properties::Form form = eigsolver_properties::Form::GENERAL>
 class DenseMatrixProduct {
 private:
     const T *A; //A pointer to the matrix "A"
     const int n;    // The dimension of the problem.
-    const Side side;
+    const eigsolver_properties::Side side;
 public:
-    DenseMatrixProduct(const int n_, const T *A_, const Side side_):A(A_), n(n_), side(side_){}
+    DenseMatrixProduct(const int n_, const T *A_, const eigsolver_properties::Side side_):A(A_), n(n_), side(side_){}
 
     int counter = 0;
     int rows() const {return n;};

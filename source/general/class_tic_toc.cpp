@@ -108,6 +108,7 @@ double class_tic_toc::get_last_time_interval() {
 
 void class_tic_toc::reset() {
     if (profiling) {
+        delta_time    = delta_time.zero();
         measured_time = measured_time.zero();
         start_timepoint = high_resolution_clock::now();
     }

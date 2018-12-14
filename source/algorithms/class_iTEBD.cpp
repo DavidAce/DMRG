@@ -7,7 +7,6 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
-#include "../../cmake-modules/unused/class_mpo.h"
 #include <mps_routines/class_mps_2site.h>
 #include <model/class_hamiltonian_base.h>
 #include <general/nmspc_math.h>
@@ -40,12 +39,12 @@ void class_iTEBD::run() {
     unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(delta_t, suzuki_order, h_evn, h_odd);
 //    superblock->H->update_evolution_step_size(-delta_t0, suzuki_order);
     while(iteration < max_steps and not simulation_has_converged) {
-        single_TEBD_step(chi_max_temp);
+        single_TEBD_step(chi_temp);
         phys_time += delta_t;
         store_table_entry_to_file();
-        store_profiling_to_file();
+        store_profiling_to_file_delta();
         print_status_update();
-        check_convergence_overall();
+        check_convergence();
         iteration++;
     }
     t_tot.toc();
@@ -95,25 +94,25 @@ void class_iTEBD::initialize_constants(){
 void class_iTEBD::check_convergence_time_step(){
     if(delta_t <= delta_tmin){
         time_step_has_converged = true;
-    }else if (bond_dimension_has_converged and entanglement_has_converged) {
+    }else if (bond_dimension_has_reached_max and entanglement_has_converged) {
         delta_t = std::max(delta_tmin, delta_t * 0.5);
         unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(-delta_t, suzuki_order, h_evn, h_odd);
 //        superblock->H->update_evolution_step_size(-delta_t, suzuki_order);
-        clear_convergence_checks();
+        clear_saturation_status();
     }
 }
 
-void class_iTEBD::check_convergence_overall(){
+void class_iTEBD::check_convergence(){
     t_con.tic();
     check_convergence_entanglement();
     check_convergence_variance_ham();
     check_convergence_variance_mom();
-    check_convergence_bond_dimension();
+    update_bond_dimension();
     check_convergence_time_step();
     if(entanglement_has_converged and
        variance_ham_has_converged and
        variance_mom_has_converged and
-       bond_dimension_has_converged and
+       bond_dimension_has_reached_max and
        time_step_has_converged)
     {
         simulation_has_converged = true;
@@ -122,8 +121,10 @@ void class_iTEBD::check_convergence_overall(){
 }
 
 
-void class_iTEBD::store_table_entry_to_file(){
-    if (Math::mod(iteration, store_freq) != 0) {return;}
+void class_iTEBD::store_table_entry_to_file(bool force){
+    if (not force){
+        if (Math::mod(iteration, store_freq) != 0) {return;}
+    }
     compute_observables();
     t_sto.tic();
     table_itebd->append_record(

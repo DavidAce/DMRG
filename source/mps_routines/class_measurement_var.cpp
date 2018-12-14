@@ -10,13 +10,13 @@
 #include <general/nmspc_tensor_extra.h>
 #include <general/class_svd_wrapper.h>
 #include <general/class_eigsolver_arpack.h>
-#include <mps_routines/class_finite_chain_sweeper.h>
+#include <mps_routines/class_finite_chain.h>
 #include <mps_routines/class_mps_util.h>
 using namespace std;
 using namespace Textra;
 using Scalar = class_measurement::Scalar;
 using namespace std::complex_literals;
-
+using namespace eigsolver_properties;
 
 Scalar class_measurement::moment_generating_function(const std::unique_ptr<class_mps_2site> &MPS_original,
                                                      std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
@@ -51,7 +51,7 @@ Scalar class_measurement::moment_generating_function(const std::unique_ptr<class
 
     t_temp4.tic();
     class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
-    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv, Ritz::LM, Side::R, false);
+    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
     auto new_theta_evn_normalized        = mps_util->get_theta_evn(MPS_evolved, sqrt(solver.ref_eigvals()[0]));
     t_temp4.toc();
     long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original->chiA();// theta_evn_normalized.dimension(1);
@@ -109,6 +109,34 @@ void class_measurement::compute_energy_variance_mpo(){
     }
     t_var_mpo.toc();
 }
+
+
+template<typename T>
+double class_measurement::compute_energy_variance_mpo(const T * theta_ptr, Eigen::DSizes<long,4> dsizes, double energy_all_sites){
+    Eigen::Tensor<std::complex<double>,4> theta = Eigen::TensorMap<const Eigen::Tensor<const T,4>> (theta_ptr, dsizes).template cast<std::complex<double>>();
+//    t_var_mpo.tic();
+    double L = superblock->Lblock2->size + superblock->Rblock2->size + 2.0;
+    Eigen::Tensor<Scalar, 0> H2 =
+            superblock->Lblock2->block
+                    .contract(theta,                              idx({0}  ,{1}))
+                    .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
+                    .contract(superblock->HB->MPO,                idx({4,2},{0,2}))
+                    .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
+                    .contract(superblock->HB->MPO,                idx({4,3},{0,2}))
+                    .contract(theta.conjugate(),                  idx({0,3,5},{1,0,2}))
+                    .contract(superblock->Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
+    if (sim_type == SimulationType::iDMRG) {
+//        t_var_mpo.toc();
+        return std::real(H2(0))/2.0/L;
+    }else{
+//        t_var_mpo.toc();
+        return std::abs(H2(0) - energy_all_sites*energy_all_sites)/L;
+    }
+}
+
+template double class_measurement::compute_energy_variance_mpo(const double *,Eigen::DSizes<long,4>,double);
+template double class_measurement::compute_energy_variance_mpo(const std::complex<double> *, Eigen::DSizes<long,4>, double);
+
 
 void class_measurement::compute_energy_variance_ham(){
     t_var_ham.tic();
