@@ -40,6 +40,16 @@ namespace qm{
                                               0.0, -1.0).finished();
         inline Matrix2cd I  = (Matrix2cd() << 1.0, 0.0,
                                               0.0, 1.0).finished();
+
+        inline std::array<Vector2cd,2> sx_eigvecs {(Vector2cd() << 1.0, 1.0).finished()/std::sqrt(2) ,
+                                                   (Vector2cd() << 1.0,-1.0).finished()/std::sqrt(2) };
+
+        inline std::array<Vector2cd,2> sy_eigvecs {(Vector2cd() << 1.0, 1.0i).finished()/std::sqrt(2),
+                                                   (Vector2cd() << 1.0,-1.0i).finished()/std::sqrt(2)};
+
+        inline std::array<Vector2cd,2> sz_eigvecs {(Vector2cd() << 1.0, 0.0).finished()/std::sqrt(2),
+                                                   (Vector2cd() << 0.0, 1.0).finished()/std::sqrt(2)};
+
         inline std::vector<Eigen::MatrixXcd> SX;
         inline std::vector<Eigen::MatrixXcd> SY;
         inline std::vector<Eigen::MatrixXcd> SZ;

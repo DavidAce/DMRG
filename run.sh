@@ -25,11 +25,16 @@ while getopts f:hm:t: o; do
         (m) mode=$OPTARG;;
         (t) target=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
-        (*) usage
-  esac
+        (?) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
+        (*) usage ;;
+      esac
 done
-shift "$((OPTIND - 1))"
 
+if [ $OPTIND -eq 1 ]; then echo "No flags were passed"; usage ;exit 1; fi
+
+
+shift "$((OPTIND - 1))"
+ulimit -c unlimited
 echo "Running command:  ./build/$mode/$target $file"
 
 ./build/$mode/$target $file

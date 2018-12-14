@@ -51,14 +51,14 @@ class_superblock::~class_superblock()=default;
 
 
 
-Eigen::Tensor<Scalar,4> class_superblock::optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, Ritz ritz){
+Eigen::Tensor<Scalar,4> class_superblock::optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, eigsolver_properties::Ritz ritz){
     std::array<long,4> shape_theta4 = theta.dimensions();
     std::array<long,4> shape_mpo4   = HA->MPO.dimensions();
 
     t_eig.tic();
     int nev = 1;
     using namespace settings::precision;
-    class_eigsolver_arpack<Scalar, Form::GENERAL> solver(eigThreshold,eigMaxIter,eigMaxNcv, true, false);
+    class_eigsolver_arpack<Scalar, eigsolver_properties::Form::GENERAL> solver(eigThreshold,eigMaxIter,eigMaxNcv, true, false);
     solver.optimize_mps(Lblock->block.data(), Rblock->block.data(), HA->MPO.data(), HB->MPO.data(), shape_theta4, shape_mpo4, nev, eigMaxNcv, ritz , false ,theta.data());
 
     Eigen::TensorMap<const Eigen::Tensor<const Scalar,2>> eigvecs (solver.ref_eigvecs().data(), shape_theta4[0]*shape_theta4[1], shape_theta4[2]*shape_theta4[3]);
@@ -124,9 +124,9 @@ Eigen::Tensor<Scalar, 4> class_superblock::evolve_MPS(const Eigen::Tensor<Scalar
 //============================================================================//
 // Do SVD decomposition, truncation and normalization of the MPS->
 //============================================================================//
-Eigen::Tensor<Scalar,4> class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta,long chi_max_, double SVDThreshold){
+Eigen::Tensor<Scalar,4> class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta,long chi_, double SVDThreshold){
     SVD->setThreshold(SVDThreshold);
-    auto[U, S, V] = SVD->schmidt(theta,chi_max_);
+    auto[U, S, V] = SVD->schmidt(theta,chi_);
     MPS->truncation_error = SVD->get_truncation_error();
     MPS->LC  = S;
     Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(MPS->MPS_A->get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
@@ -137,9 +137,9 @@ Eigen::Tensor<Scalar,4> class_superblock::truncate_MPS(const Eigen::Tensor<Scala
     return MPS->get_theta();
 }
 
-void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const std::shared_ptr<class_mps_2site> &MPS_out,long chi_max_, double SVDThreshold){
+void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const std::shared_ptr<class_mps_2site> &MPS_out,long chi_, double SVDThreshold){
     SVD->setThreshold(SVDThreshold);
-    auto[U, S, V] = SVD->schmidt(theta, chi_max_);
+    auto[U, S, V] = SVD->schmidt(theta, chi_);
     MPS_out->truncation_error = SVD->get_truncation_error();
     MPS_out->LC  = S;
     Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(MPS_out->MPS_A->get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
@@ -151,18 +151,196 @@ void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const
 
 
 
+Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_matrix (){
+    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    Eigen::Tensor<Scalar,5>tempL   = Lblock->block.contract(HA->MPO,Textra::idx({2},{0})).shuffle(Textra::array5{4,1,3,0,2});
+    Eigen::Tensor<Scalar,5>tempR   = Rblock->block.contract(HB->MPO,Textra::idx({2},{1})).shuffle(Textra::array5{4,1,3,0,2});
+    Eigen::Tensor<Scalar,8>H_local = tempL.contract(tempR, Textra::idx({4},{4})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
+//    tempL.resize(0,0,0,0,0);
+//    tempR.resize(0,0,0,0,0);
+//    tempH = tempH.shuffle(Textra::array8{0,1,4,5,2,3,6,7}).eval();
+    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
+}
+
+
+Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_matrix_real (){
+    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    Eigen::Tensor<double,5>tempL   = Lblock->block.contract(HA->MPO,Textra::idx({2},{0})).real().shuffle(Textra::array5{4,1,3,0,2});
+    Eigen::Tensor<double,5>tempR   = Rblock->block.contract(HB->MPO,Textra::idx({2},{1})).real().shuffle(Textra::array5{4,1,3,0,2});
+    Eigen::Tensor<double,8>H_local = tempL.contract(tempR, Textra::idx({4},{4})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
+//    tempL.resize(0,0,0,0,0);
+//    tempR.resize(0,0,0,0,0);
+//    tempH = tempH.shuffle(Textra::array8{0,1,4,5,2,3,6,7}).eval();
+//    Eigen::Tensor<double,8> H_local = tempH.shuffle(Textra::array8{0,1,4,5,2,3,6,7}).eval();
+    return Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
+}
+
+
+Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_sq_matrix (){
+    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    Eigen::Tensor<Scalar,6>tempL = Lblock2->block.contract(HA->MPO,Textra::idx({2},{0}))
+                                                 .contract(HA->MPO,Textra::idx({2,5},{0,2}))
+                                                 .shuffle(Textra::array6{5,1,3,0,2,4});
+    Eigen::Tensor<Scalar,6>tempR = Rblock2->block.contract(HB->MPO,Textra::idx({2},{1}))
+                                                 .contract(HB->MPO,Textra::idx({2,5},{1,2}))
+                                                 .shuffle(Textra::array6{5,1,3,0,2,4});
+
+    Eigen::Tensor<Scalar,8> H_local = tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
+//    tempL.resize(0,0,0,0,0,0);
+//    tempR.resize(0,0,0,0,0,0);
+//    Eigen::Tensor<Scalar,8> H_local = tempH.shuffle(Textra::array8{0,1,4,5,2,3,6,7});
+//    tempH = tempH.shuffle(Textra::array8{0,1,4,5,2,3,6,7}).eval();
+//
+//
+//    Eigen::Tensor<Scalar,8> tempH =  Lblock2->block
+//            .contract(HA->MPO      , Textra::idx({2},{0}))
+//            .contract(HA->MPO      , Textra::idx({2,5},{0,2}))
+//            .contract(HB->MPO      , Textra::idx({2},{0}))
+//            .contract(HB->MPO      , Textra::idx({3,7},{0,2}))
+//            .contract(Rblock2->block, Textra::idx({4,6},{2,3}))
+//            .shuffle(Textra::array8{3,1,5,7,2,0,4,6});
+    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
+}
+
+Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_sq_matrix_real (){
+    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    Eigen::Tensor<double,6>tempL = Lblock2->block.contract(HA->MPO,Textra::idx({2},{0}))
+                                                 .contract(HA->MPO,Textra::idx({2,5},{0,2}))
+                                                 .real().shuffle(Textra::array6{5,1,3,0,2,4});
+    Eigen::Tensor<double,6>tempR = Rblock2->block.contract(HB->MPO,Textra::idx({2},{1}))
+                                                 .contract(HB->MPO,Textra::idx({2,5},{1,2}))
+                                                 .real().shuffle(Textra::array6{5,1,3,0,2,4});
+
+    Eigen::Tensor<double,8>H_local = tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
+//    tempL.resize(0,0,0,0,0,0);
+//    tempR.resize(0,0,0,0,0,0);
+//    tempH = tempH.shuffle(Textra::array8{0,1,4,5,2,3,6,7}).eval();
+    return Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
+}
+
+
+Textra::SparseMatrixType<Scalar> class_superblock::get_H_local_sparse_matrix (double prune){
+    return Textra::Tensor2_to_SparseMatrix(get_H_local_rank2(),prune);
+}
+Textra::SparseMatrixType<Scalar> class_superblock::get_H_local_sq_sparse_matrix (double prune){
+    return Textra::Tensor2_to_SparseMatrix(get_H_local_sq_rank2(),prune);
+}
+
+
+Eigen::Tensor<Scalar,2> class_superblock::get_H_local_rank2 (){
+    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    Eigen::Tensor<Scalar,6>tempL = Lblock2->block.contract(HA->MPO,Textra::idx({2},{0}))
+            .contract(HA->MPO,Textra::idx({2,5},{0,2}))
+            .shuffle(Textra::array6{5,1,3,0,2,4});
+    Eigen::Tensor<Scalar,6>tempR = Rblock2->block.contract(HB->MPO,Textra::idx({2},{1}))
+            .contract(HB->MPO,Textra::idx({2,5},{1,2}))
+            .shuffle(Textra::array6{5,1,3,0,2,4});
+
+    return tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7}).reshape(Textra::array2{shape, shape});
+
+//
+//    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+//    return Lblock->block
+//            .contract(HA->MPO      , Textra::idx({2},{0}))
+//            .contract(HB->MPO      , Textra::idx({2},{0}))
+//            .contract(Rblock->block, Textra::idx({4},{2}))
+//            .shuffle(Textra::array8{3,1,5,7,2,0,4,6})
+//            .reshape(Textra::array2{shape, shape});
+}
+
+Eigen::Tensor<Scalar,8> class_superblock::get_H_local_rank8 (){
+    Eigen::Tensor<Scalar,6>tempL = Lblock2->block.contract(HA->MPO,Textra::idx({2},{0}))
+            .contract(HA->MPO,Textra::idx({2,5},{0,2}))
+            .shuffle(Textra::array6{5,1,3,0,2,4});
+    Eigen::Tensor<Scalar,6>tempR = Rblock2->block.contract(HB->MPO,Textra::idx({2},{1}))
+            .contract(HB->MPO,Textra::idx({2,5},{1,2}))
+            .shuffle(Textra::array6{5,1,3,0,2,4});
+
+    return tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
+//
+//
+//    return Lblock->block
+//            .contract(HA->MPO      , Textra::idx({2},{0}))
+//            .contract(HB->MPO      , Textra::idx({2},{0}))
+//            .contract(Rblock->block, Textra::idx({4},{2}))
+//            .shuffle(Textra::array8{3,1,5,7,2,0,4,6});
+}
+
+Eigen::Tensor<Scalar,2> class_superblock::get_H_local_sq_rank2 (){
+
+    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    Eigen::Tensor<Scalar,6>tempL = Lblock2->block.contract(HA->MPO,Textra::idx({2},{0}))
+            .contract(HA->MPO,Textra::idx({2,5},{0,2}))
+            .shuffle(Textra::array6{5,1,3,0,2,4});
+    Eigen::Tensor<Scalar,6>tempR = Rblock2->block.contract(HB->MPO,Textra::idx({2},{1}))
+            .contract(HB->MPO,Textra::idx({2,5},{1,2}))
+            .shuffle(Textra::array6{5,1,3,0,2,4});
+
+    return tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7}).reshape(Textra::array2{shape, shape});
+
+//
+//    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+//    return Lblock2->block
+//            .contract(HA->MPO      , Textra::idx({2},{0}))
+//            .contract(HA->MPO      , Textra::idx({2,5},{0,2}))
+//            .contract(HB->MPO      , Textra::idx({2},{0}))
+//            .contract(HB->MPO      , Textra::idx({3,7},{0,2}))
+//            .contract(Rblock2->block, Textra::idx({4,6},{2,3}))
+//            .shuffle(Textra::array8{3,1,5,7,2,0,4,6})
+//            .reshape(Textra::array2{shape, shape});
+}
+
+Eigen::Tensor<Scalar,8> class_superblock::get_H_local_sq_rank8 (){
+    Eigen::Tensor<Scalar,6>tempL = Lblock2->block.contract(HA->MPO,Textra::idx({2},{0}))
+            .contract(HA->MPO,Textra::idx({2,5},{0,2}))
+            .shuffle(Textra::array6{5,1,3,0,2,4});
+    Eigen::Tensor<Scalar,6>tempR = Rblock2->block.contract(HB->MPO,Textra::idx({2},{1}))
+            .contract(HB->MPO,Textra::idx({2,5},{1,2}))
+            .shuffle(Textra::array6{5,1,3,0,2,4});
+
+    return tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
+//
+//    return Lblock2->block
+//            .contract(HA->MPO      , Textra::idx({2},{0}))
+//            .contract(HA->MPO      , Textra::idx({2,5},{0,2}))
+//            .contract(HB->MPO      , Textra::idx({2},{0}))
+//            .contract(HB->MPO      , Textra::idx({3,7},{0,2}))
+//            .contract(Rblock2->block, Textra::idx({4,6},{2,3}))
+//            .shuffle(Textra::array8{3,1,5,7,2,0,4,6});
+}
+
+
+
+
+
 void class_superblock::enlarge_environment(int direction){
     if (direction == 1){
+        assert(Lblock->get_position()  == HA->get_position());
+        assert(Lblock2->get_position() == HA->get_position());
         Lblock->enlarge(MPS,  HA->MPO_reduced_view());
         Lblock2->enlarge(MPS, HA->MPO_reduced_view());
+        Lblock->set_position (HB->get_position());
+        Lblock2->set_position(HB->get_position());
     }else if (direction == -1){
+        assert(Rblock->get_position()  == HB->get_position());
+        assert(Rblock2->get_position() == HB->get_position());
         Rblock->enlarge(MPS,  HB->MPO_reduced_view());
         Rblock2->enlarge(MPS, HB->MPO_reduced_view());
+        Rblock->set_position (HA->get_position());
+        Rblock2->set_position(HA->get_position());
     }else if(direction == 0){
+        assert(Lblock->get_position()  == HA->get_position());
+        assert(Lblock2->get_position() == HA->get_position());
+        assert(Rblock->get_position()  == HB->get_position());
+        assert(Rblock2->get_position() == HB->get_position());
         Lblock->enlarge(MPS,  HA->MPO_reduced_view());
         Rblock->enlarge(MPS,  HB->MPO_reduced_view());
         Lblock2->enlarge(MPS, HA->MPO_reduced_view());
         Rblock2->enlarge(MPS, HB->MPO_reduced_view());
+        Lblock->set_position (HB->get_position());
+        Rblock->set_position (HB->get_position()+1);
+        Lblock2->set_position(HB->get_position());
+        Rblock2->set_position(HB->get_position()+1);
         environment_size = Lblock->size + Rblock->size;
     }
 }

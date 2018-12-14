@@ -6,6 +6,7 @@
 #define DMRG_N_SETTINGS_H
 #include <string>
 #include <unordered_set>
+#include <vector>
 /*! \brief General settings like max iterations, time-step, precision, etc.*/
 
 /*!
@@ -20,6 +21,11 @@ enum class SimulationType{iDMRG,fDMRG, xDMRG, iTEBD};
 
 namespace settings {
     extern void load_from_file(class_file_reader &indata);
+
+    namespace input{
+        extern std::string input_filename;
+        extern std::string input_file;
+    }
     //Parameters for the model Hamiltonian
     namespace model {
         extern std::string  initial_state ;                   /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
@@ -44,8 +50,8 @@ namespace settings {
 
         //Parameters for the selfdual transvese-field random-field next-neighbor Ising model
         namespace selfdual_tf_rf_ising {
-            extern double       J_mu          ;                 /*!< Average ferromagnetic coupling strength.*/
-            extern double       h_mu          ;                 /*!< Average transverse magnetic field strength */
+            extern double       J_log_mean    ;                 /*!< Average ferromagnetic coupling strength.*/
+            extern double       h_log_mean    ;                 /*!< Average transverse magnetic field strength */
             extern double       J_sigma       ;                 /*!< Standard deviation for the lognormal distribution, i.e. = std(log(J)) , for the ferromagnetic coupling */
             extern double       h_sigma       ;                 /*!< Standard deviation for the lognormal distribution, i.e. = std(log(h))   for the transverse magnetic field */
             extern double       lambda        ;                 /*!< Lambda parameter */
@@ -53,12 +59,16 @@ namespace settings {
         }
     }
 
-    //Parmaters that control eigensolver and SVD precision
+    //Parmaters that control MPS, eigensolver and SVD precision
     namespace precision {
         extern int      eigMaxIter   ;                      /*!< Maximum number of steps for eigenvalue solver. */
         extern double   eigThreshold ;                      /*!< Minimum threshold for halting eigenvalue solver. */
         extern int      eigMaxNcv  ;                        /*!< Parameter controlling the column space? of the Lanczos solver. */
         extern double   SVDThreshold ;                      /*!< Minimum threshold value for keeping singular values. */
+        extern double   VarConvergenceThreshold ;           /*!< Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value */
+        extern double   VarSaturationThreshold ;            /*!< Variance saturation  threshold. The variance has saturated when its (absolute) slope reaches below this value */
+        extern double   EntEntrSaturationThreshold;         /*!< Entanglement Entropy saturation threshold. The entanglement entropy has saturated when its (absolute) slope reaches below this value*/
+        extern int      MaxSizeFullDiag;                    /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. Use 0 to allow any value */
     }
 
     //Parameters controlling iDMRG
@@ -93,6 +103,7 @@ namespace settings {
         extern int     seed         ;                       /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
         extern int     print_freq   ;                       /*!< Print frequency for console output. In units of sweeps. (0 = off). */
         extern int     store_freq   ;                       /*!< Store frequency,for output file buffer. In units of sweeps. (0 = off). */
+        extern bool    store_wavefn ;                       /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
 
     }
 
@@ -115,6 +126,7 @@ namespace settings {
         extern bool         save_to_file            ;        /*!< If true, saves the simulation data to an HDF5 file instead of just outputting to console */
         extern bool         create_dir_if_not_found ;        /*!< If true, an output directory will be created in the project root folder if it isn't found */
         extern bool         overwrite_file_if_found ;        /*!< If true, an hdf5-file with the provided filename will be overwritten if found in output_folder */
+        extern bool         resume_from_file        ;        /*!< Attempt to resume if the file is found (and if "overwrite_file_if_found = false") */
         extern std::string  output_filename         ;        /*!< Name of the output HDF5 file */
         extern std::string  output_folder           ;        /*!< Path of the output HDF5 file */
         extern bool         full_storage            ;        /*!< If true, saves more simulation data to file (such as explicit form of MPS). Set to false to reduce output file size. */

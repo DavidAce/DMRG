@@ -47,12 +47,40 @@ message("===============================")
 ### Setup flags ###
 ###################
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
-#set(COMMON_OPTIONS -g -Wall -march=native)
-#set(COMMON_OPTIONS  -g -Wall -static -march=sandybridge -mtune=sandybridge)
-set(COMMON_OPTIONS -g -Wall -march=nehalem -mtune=native)
 
+if(NOT MARCH)
+    set(MARCH "haswell")
+endif()
+
+if(MARCH)
+    if (${MARCH} STREQUAL "zen")
+        string(TOUPPER ZEN OPENBLAS_MARCH)
+        string(TOLOWER znver1 CXX_MARCH)
+    else()
+        string(TOUPPER ${MARCH} OPENBLAS_MARCH)
+        string(TOLOWER ${MARCH} CXX_MARCH)
+    endif()
+endif()
+
+message("Using microarchitechture: ${CXX_MARCH}")
+set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
 set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
+set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g)
+
+#################################
+### Microarch dependent flags ###
+#################################
+# Check supported options here http://man7.org/linux/man-pages/man1/gcc.1.html
+if (${MARCH} STREQUAL "sandybridge")
+    list(APPEND COMMON_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1  -mpopcnt  -maes -mpclmul -mavx -fstack-protector-strong -Wformat -Wformat-security)
+elseif(${MARCH} STREQUAL "haswell" OR ${MARCH} STREQUAL "skylake" OR ${MARCH} STREQUAL "zen" )
+    list(APPEND COMMON_OPTIONS -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -maes -mpclmul -mavx -mavx2 -mmovbe -mrdrnd -mf16c -mfsgsbase -mfma  -mbmi -mbmi2 -fstack-protector-strong -Wformat -Wformat-security)
+else()
+    # Set default to whatever nehalem can manage
+    list(APPEND COMMON_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -fstack-protector-strong -Wformat -Wformat-security)
+endif()
+
 
 ##########################
 ### OS-dependent flags ###
@@ -62,6 +90,7 @@ if(${CMAKE_HOST_APPLE})
 else()
 #    list(APPEND COMMON_OPTIONS -mavx ) #-mfma makes things slower?
 endif()
+
 
 ################################
 ### Compiler-dependent flags ###
@@ -81,6 +110,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release")
     message(STATUS "RELEASE CXX flags: ${RELEASE_OPTIONS}")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "DEBUG CXX flags: ${DEBUG_OPTIONS}")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Profile")
+    message(STATUS "PROFILE CXX flags: ${PROFILE_OPTIONS}")
 endif()
 
 
@@ -95,6 +126,46 @@ file(GLOB_RECURSE HEADERS "source/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC source)
 
+################################################
+###  Force cmake to find .a library suffixes ###
+################################################
+set(STATIC_BUILD ON)
+set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                                             ### Static linkage
+#target_link_libraries  (${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)                   ### Static linkage
+
+
+
+
+##############################################
+###  Optional OpenMP support               ###
+###  Note that Clang has some              ###
+###  trouble with static openmp            ###
+###  Also, libiomp5 might help for         ###
+###  shared linking.                       ###
+##############################################
+find_package(OpenMP)
+if (OpenMP_FOUND)
+#    target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp=libiomp5)
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
+        message(STATUS "OpenMP ON" )
+        target_compile_options    (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
+        # target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIBRARIES})
+        target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIB_NAMES})
+        target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
+    endif()
+#    get_cmake_property(_variableNames VARIABLES)
+#    foreach (_variableName ${_variableNames})
+#        if("${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP")
+#            message(STATUS "${_variableName}=${${_variableName}}")
+#        endif()
+#    endforeach()
+else()
+    message(STATUS "OpenMP OFF" )
+endif()
+
+
 
 
 ###########################################
@@ -103,10 +174,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC source)
 target_compile_options (${PROJECT_NAME} PRIVATE ${COMMON_OPTIONS})                                   ### Common options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
-target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                                             ### Static linkage
-#target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,-Bstatic -lz -lfoo -Wl,-Bdynamic -lbar -Wl,--as-needed)
+target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_OPTIONS}>")           ### Profiling build options
 target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                                               ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
+target_link_libraries  (${PROJECT_NAME} PRIVATE -lpthread )
+
+
+
 
 ###############################
 ###  Require c++17 support  ###
@@ -122,25 +196,22 @@ set_target_properties(${PROJECT_NAME}
 
 
 
-
-
-
 ###########################################
 ###  Find or fetch all dependencies   ###
 ###########################################
-
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
 #include(cmake-modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake-modules/FindGFortran.cmake)
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
+#include(cmake-modules/FindLAPACKE.cmake)
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
+#include(cmake-modules/Fetch_CppNumSolvers.cmake)            # Limited memory BFGS gradient descent library
+include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data_struct.
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
-include(cmake-modules/Fetch_Armadillo.cmake)                # Armadillo library
-
-
+#include(cmake-modules/Fetch_Armadillo.cmake)                # Armadillo library
 
 
 ######################################
@@ -172,9 +243,10 @@ message("=======================================================================
 message("    INTEL MKL:   ${MKL_LIBRARIES}")
 message("    BLAS     :   ${BLAS_LIBRARIES}")
 message("    LAPACK   :   ${LAPACK_LIBRARIES}")
+message("    LAPACKE  :   ${LAPACKE_LIBRARIES}")
 message("    EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
-message("    ARMADILLO:   ${ARMADILLO_INCLUDE_DIRS}")
-message("    HDF5     :   ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES} ${HDF5_CXX_HL_LIBRARIES}")
+#message("    ARMADILLO:   ${ARMADILLO_INCLUDE_DIRS}")
+message("    HDF5     :   ${HDF5_LIBRARIES};${HDF5_CXX_LIBRARIES};${HDF5_HL_LIBRARIES};${HDF5_CXX_HL_LIBRARIES}")
 message("    ARPACK   :   ${ARPACK_LIBRARIES}")
 message("    ARPACKPP :   ${ARPACKPP_INCLUDE_DIR}")
 message("    GSL      :   ${GSL_LIBRARIES} ${GSLCBLAS_LIBRARIES}")
@@ -201,7 +273,7 @@ message("")
 
 
 ############################
-# TEST
+# UNIT TEST
 ############################
 
 enable_testing()

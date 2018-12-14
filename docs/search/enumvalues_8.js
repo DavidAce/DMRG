@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['xdmrg',['xDMRG',['../nmspc__sim__settings_8h.html#ad69f3cf5fdb6ef307d85180c346e7921ab5612e395f07bd6a022360eb707e73ae',1,'nmspc_sim_settings.h']]]
+  ['r',['R',['../namespaceeigsolver__properties.html#a5c5fa84dc84c861c097f7d2323dc6979ae1e1d3d40573127e9ee0480caf1283d6',1,'eigsolver_properties']]]
 ];

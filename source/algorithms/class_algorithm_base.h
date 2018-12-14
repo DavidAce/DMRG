@@ -16,7 +16,7 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 
 class class_superblock;
-class class_finite_chain_sweeper;
+class class_finite_chain;
 class class_measurement;
 class class_hdf5_file;
 class class_table_profiling;
@@ -42,26 +42,35 @@ public:
     //MPS
     std::shared_ptr<class_superblock>            superblock;
     std::shared_ptr<class_measurement>           measurement;
-    std::shared_ptr<class_finite_chain_sweeper>  env_storage;
+    std::shared_ptr<class_finite_chain>  env_storage;
 
     //Console
     class_custom_cout ccout;
     //Settings.
 
     // Common variables
-    int    iteration = 0; //In idmrg and itebd: steps, in fdmrg and xdmrg: iteration.
+    int    iteration = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
+    int    step      = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
     long   chi_max      ;
     bool   chi_grow     ;
     int    print_freq   ;
     int    store_freq   ;
     int    seed       = 1;
-    long   chi_max_temp   = 4;
+    long   chi_temp   = 4;
     bool   simulation_has_converged = false;
-    bool   bond_dimension_has_converged = false;
+    bool   simulation_has_to_stop   = false;
+    bool   bond_dimension_has_reached_max = false;
     bool   entanglement_has_converged = false;
+    bool   entanglement_has_saturated = false;
+    int    variance_mpo_saturated_for = 0;
     bool   variance_mpo_has_converged = false;
+    bool   variance_mpo_has_saturated = false;
+    int    variance_ham_saturated_for = 0;
     bool   variance_ham_has_converged = false;
+    bool   variance_ham_has_saturated = false;
+    int    variance_mom_saturated_for = 0;
     bool   variance_mom_has_converged = false;
+    bool   variance_mom_has_saturated = false;
 
 
 
@@ -70,21 +79,22 @@ public:
     virtual void initialize_constants()                         = 0;
     virtual void print_profiling()                              = 0;
     virtual void print_profiling_sim(class_tic_toc &t_parent)   = 0;
-    virtual void store_table_entry_to_file()                    = 0;
+    virtual void store_table_entry_to_file(bool force = false)  = 0;
 
     //Common functions
     void print_status_update();
     void print_status_full();
-    void single_DMRG_step(long chi_max, Ritz ritz = Ritz::SR);
+    void single_DMRG_step(long chi_max, eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR);
 
-    virtual void check_convergence_overall();
-    void check_convergence_variance_mpo(double threshold = -1.0);
-    void check_convergence_variance_ham(double threshold = -1.0);
-    void check_convergence_variance_mom(double threshold = -1.0);
-    void check_convergence_entanglement(double threshold = -1.0);
-    void check_convergence_bond_dimension();
-    void clear_convergence_checks();
-
+    virtual void check_convergence();
+    static constexpr double quietNaN = std::numeric_limits<double>::quiet_NaN();
+    void check_convergence_variance_mpo(double threshold = quietNaN, double slope_threshold = quietNaN);
+    void check_convergence_variance_ham(double threshold = quietNaN, double slope_threshold = quietNaN);
+    void check_convergence_variance_mom(double threshold = quietNaN, double slope_threshold = quietNaN);
+    void check_convergence_entanglement(double slope_threshold = quietNaN);
+    void update_bond_dimension(int min_saturation_length = 1);
+    void clear_saturation_status();
+    void set_file_OK();
     void initialize_state(std::string initial_state);
 
     void compute_observables();
@@ -102,10 +112,13 @@ public:
 
 
     // Profiling
-    void store_profiling_to_file();
+    void store_profiling_to_file_delta(bool force = false);
+    void store_profiling_to_file_total(bool force = false);
 
     class_tic_toc t_tot;
     class_tic_toc t_opt;
+    class_tic_toc t_eig;
+    class_tic_toc t_ham;
     class_tic_toc t_sim;
     class_tic_toc t_svd;
     class_tic_toc t_env;
@@ -119,28 +132,35 @@ public:
     class_tic_toc t_con;
 
 private:
-    void check_convergence_using_slope(std::list<double> &Y_vec,
-                                       std::list<int> &X_vec,
-                                       double new_data,
-                                       int    rate,
-                                       double tolerance,
-                                       double &slope,
-                                       bool &has_converged);
-    std::list<double> V_mpo_vec;
-    std::list<int>    X_mpo_vec;
-    double V_mpo_slope;
+    void check_saturation_using_slope(std::list<bool> &B_vec,
+                                      std::list<double> &Y_vec,
+                                      std::list<int> &X_vec,
+                                      double new_data,
+                                      int iter,
+                                      int rate,
+                                      double tolerance,
+                                      double &slope,
+                                      bool &has_saturated);
 
+    std::list<bool>   B_mpo_vec; //History of saturation true/false
+    std::list<double> V_mpo_vec; //History of variances
+    std::list<int>    X_mpo_vec; //History of step numbers
+    double V_mpo_slope = 1;
+
+    std::list<bool>   B_ham_vec; //History of saturation true/false
     std::list<double> V_ham_vec;
     std::list<int>    X_ham_vec;
-    double V_ham_slope;
+    double V_ham_slope = 1;
 
+    std::list<bool>   B_mom_vec; //History of saturation true/false
     std::list<double> V_mom_vec;
     std::list<int>    X_mom_vec;
-    double V_mom_slope;
+    double V_mom_slope = 1;
 
+    std::list<bool>   BS_vec; //History of saturation true/false
     std::list<double> S_vec;
-    std::list<int>    X2_vec;
-    double S_slope;
+    std::list<int>    XS_vec;
+    double S_slope = 1;
 
 
 };
