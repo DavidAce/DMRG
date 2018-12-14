@@ -10,7 +10,7 @@
   - **iDMRG:** *Infinite* DMRG. Finds the groundstate of infinite and translationally invariant systems.
   - **fDMRG:** *Finite* DMRG. Finds the groundstate of finite systems, not necessarily translationally invariant.
   - **xDMRG:** *Excited state* DMRG. Finds highly excited (mid-spectrum) eigenstates of finite systems.
-  - **iTEBD:** *Imaginary Time Evolution Block Decimation*. Finds the ground state of infinite and translationally invariant systems using unitary operators that perform imaginary time evolution.
+  - **iTEBD:** *Imaginary Time Evolving Block Decimation*. Finds the ground state of infinite and translationally invariant systems using unitary operators that perform imaginary time evolution.
 
 The program is controlled through an input file, whose path (full or relative to the binary) is given as input argument in the command line. See the [Installation](#installation) section below.
 
