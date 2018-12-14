@@ -58,8 +58,8 @@ matrix:
         - CXX=clang++-6.0
         - CC=clang-6.0
         - CLANG_VERSION=6.0
-        - FC=gfortran-7
-        - MATRIX_EVAL="CXX=clang++-6.0 && CC=clang-6.0 && FC=gfortran-7"
+        - FC=gfortran-8
+        - MATRIX_EVAL="CXX=clang++-6.0 && CC=clang-6.0 && FC=gfortran-8"
       cache:
         apt: true
       addons:
@@ -78,11 +78,11 @@ matrix:
       compiler: clang-7
       env:
         - COMPILER_NAME=clang
-        - CXX=clang++-7.0
-        - CC=clang-7.0
-        - CLANG_VERSION=7.0
+        - CXX=clang++-7
+        - CC=clang-7
+        - CLANG_VERSION=7
         - FC=gfortran-8
-        - MATRIX_EVAL="CXX=clang++-7.0 && CC=clang-7.0 && FC=gfortran-8"
+        - MATRIX_EVAL="CXX=clang++-7 && CC=clang-7 && FC=gfortran-8"
       cache:
         apt: true
       addons:
@@ -93,8 +93,8 @@ matrix:
             - sourceline:  'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-7 main'
               key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
-            - llvm-7.0-dev
-            - clang-7.0
+            - llvm-7-dev
+            - clang-7
             - libstdc++-8-dev
             - gfortran-8
     - os: linux
