@@ -130,6 +130,7 @@ matrix:
         - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
       before_install:
         - brew install gcc@8
+        - brew link gcc
 
 
 before_install:

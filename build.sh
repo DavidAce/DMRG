@@ -69,6 +69,14 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
             echo "  export CXX=g++-7"
             echo "  export FC=gfortran-7"
         fi
+    elif brew ls gcc@8 | grep -q 'g++-8'; then
+        echo " gcc-8 was found!"
+        if [[ "${CC}" != *"gcc-8"* ]]; then
+            echo "Please export before running: "
+            echo "  export CC=gcc-8"
+            echo "  export CXX=g++-8"
+            echo "  export FC=gfortran-8"
+        fi
     else
         echo "Please install gcc (version 7 or higher) through brew."
         echo "Command:   brew install gcc@7"
