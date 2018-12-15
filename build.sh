@@ -64,6 +64,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     if brew ls gcc@7 | grep -q 'g++-7'; then
         echo " gcc-7 was found!"
         if [[ "${CC}" != *"gcc-7"* ]]; then
+            echo "Current CC is: ${CC}"
             echo "Please export before running: "
             echo "  export CC=gcc-7"
             echo "  export CXX=g++-7"
@@ -72,6 +73,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     elif brew ls gcc@8 | grep -q 'g++-8'; then
         echo " gcc-8 was found!"
         if [[ "${CC}" != *"gcc-8"* ]]; then
+            echo "Current CC is: ${CC}"
             echo "Please export before running: "
             echo "  export CC=gcc-8"
             echo "  export CXX=g++-8"
