@@ -73,7 +73,7 @@ The script `analysis/data_analysis.py` (in progress) shows how to analyze the si
 The following software is required to build the project:
  - C++ compiler with support for C++17, OpenMP and libstdc++ standard library implementation  (version >= 7). Tested with two compilers:
     - GNU GCC versions 7 and 8 (these bundle libstdc++)
-    - Clang version >= 5.0. (you need to manually install libstdc++ version >= 7, that comes bundled with gcc, for instance from `ppa:ubuntu-toolchain-r/test`)
+    - Clang version >= 7.0. (you need to manually install libstdc++ version >= 7, that comes bundled with gcc, for instance from `ppa:ubuntu-toolchain-r/test`)
  - CMake version >= 3.9. If you compile CMake from source, remember to enable `curl` (`./bootstrap --system-curl`). 
  - *(For library compilation only) Fortran compiler, tested with gfortran-7 and gfortran-8.*
  
