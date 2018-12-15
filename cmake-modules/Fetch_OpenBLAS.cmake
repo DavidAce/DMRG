@@ -54,6 +54,7 @@ else()
     #            NO_DEFAULT_PATH
     #            )
     if (BLAS_openblas_LIBRARY)
+        include(cmake-modules/FindLAPACKE.cmake)
         set(OpenBLAS_MULTITHREADED 1 )
     endif()
 endif()
