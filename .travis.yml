@@ -104,33 +104,34 @@ matrix:
             - libopenblas-dev
             - libarpack2-dev
             - libarpack++2-dev
-    - os: osx
-      osx_image: xcode10.1 #Newer versions don't like experimental/filesystem or _stdio.h?
-      compiler: gcc-7
-      env:
-        - COMPILER_NAME=gcc
-        - GCC_VERSION=7
-        - CXX=g++-7
-        - CC=gcc-7
-        - FC=gfortran-7
-        - MPI=mpich
-        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
-      before_install:
-        - brew install gcc@7
-    - os: osx
-      osx_image: xcode10.1 #Newer versions don't like experimental/filesystem or _stdio.h?
-      compiler: gcc-8
-      env:
-        - COMPILER_NAME=gcc
-        - GCC_VERSION=8
-        - CXX=g++-8
-        - CC=gcc-8
-        - FC=gfortran-8
-        - MPI=mpich
-        - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
-      before_install:
-        - brew install gcc@8
-        - brew link gcc
+#    - os: osx
+#      osx_image: xcode10.1 #Newer versions don't like experimental/filesystem or _stdio.h?
+#      compiler: gcc-7
+#      env:
+#        - COMPILER_NAME=gcc
+#        - GCC_VERSION=7
+#        - CXX=g++-7
+#        - CC=gcc-7
+#        - FC=gfortran-7
+#        - MPI=mpich
+#        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+#      before_install:
+#        - brew install gcc@7
+#        - brew link gcc
+#    - os: osx
+#      osx_image: xcode10.1 #Newer versions don't like experimental/filesystem or _stdio.h?
+#      compiler: gcc-8
+#      env:
+#        - COMPILER_NAME=gcc
+#        - GCC_VERSION=8
+#        - CXX=g++-8
+#        - CC=gcc-8
+#        - FC=gfortran-8
+#        - MPI=mpich
+#        - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
+#      before_install:
+#        - brew install gcc@8
+#        - brew link gcc
 
 
 before_install:
