@@ -25,18 +25,14 @@ endif()
 
 if(ARPACK_LIBRARIES)
     message(STATUS "ARPACK found in system:   ${ARPACK_LIBRARIES}")
-    add_library(arpack UNKNOWN IMPORTED)
+    add_library(arpack INTERFACE IMPORTED)
     set_target_properties(arpack
             PROPERTIES
-            IMPORTED_LOCATION "${ARPACK_LIBRARIES}"
-            INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran;-lpthread"
+            INTERFACE_LINK_LIBRARIES "${ARPACK_LIBRARIES};blas;lapack"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
-#            INTERFACE_LINK_FLAGS          "${OpenMP_CXX_FLAGS}"
+            INTERFACE_LINK_FLAGS "-lpthread"
             )
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
-    target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
-#    target_link_libraries(${PROJECT_NAME} PRIVATE -lpthread)
-
     return()
 else()
     message(STATUS "Arpack-ng will be installed into ${INSTALL_DIRECTORY}/arpack-ng on first build.")
@@ -59,8 +55,8 @@ else()
     include(ExternalProject)
     ExternalProject_Add(library_ARPACK
             GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
-            GIT_TAG             master
-#            GIT_TAG             3.6.3
+#            GIT_TAG             master
+            GIT_TAG             3.6.3
             PREFIX              "${INSTALL_DIRECTORY}/arpack-ng"
             UPDATE_COMMAND ""
             BUILD_IN_SOURCE 1
@@ -85,25 +81,23 @@ else()
             -DMPI=OFF
             -DINTERFACE64=OFF
             -DBUILD_SHARED_LIBS=${ARPACK_SHARED}
-            -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR};
+            -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR}
             -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES_GENERATOR}
             -DEXTRA_LDLAGS=${FC_LDLAGS_GENERATOR}
             DEPENDS blas lapack gfortran
             )
     ExternalProject_Get_Property(library_ARPACK INSTALL_DIR)
+
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
-    add_library(arpack STATIC IMPORTED)
+    set(ARPACK_LIBRARIES    ${INSTALL_DIR}/lib/libarpack${CUSTOM_SUFFIX})
+    add_library(arpack INTERFACE)
     set_target_properties(arpack
             PROPERTIES
-            IMPORTED_LOCATION "${INSTALL_DIR}/lib/libarpack${CUSTOM_SUFFIX}"
-            INTERFACE_LINK_LIBRARIES "blas;lapack;gfortran"
-            INTERFACE_LINK_FLAGS            "-lpthread"
+            INTERFACE_LINK_LIBRARIES      "${ARPACK_LIBRARIES};blas;lapack;gfortran"
+            INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
+            INTERFACE_LINK_FLAGS          "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
             )
-#            INTERFACE_LINK_FLAGS      )
 
-    add_dependencies(arpack library_ARPACK blas lapack gfortran )
-    target_link_libraries(${PROJECT_NAME} PRIVATE arpack -lpthread -m64)
-    target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACK_INCLUDE_DIRS})
-    #For convenience, define these variables
-    get_target_property(ARPACK_LIBRARIES arpack IMPORTED_LOCATION)
+    add_dependencies(arpack library_ARPACK blas lapack )
+    target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
 endif()

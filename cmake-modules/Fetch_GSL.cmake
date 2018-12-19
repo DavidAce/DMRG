@@ -19,12 +19,10 @@ endif()
 
 
 
-
-
 if(GSL_LIBRARY AND GSL_CBLAS_LIBRARY AND GSL_INCLUDE_DIRS)
     set(GSL_LIBRARIES ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY})
     message(STATUS "GSL FOUND IN SYSTEM: ${GSL_LIBRARIES}")
-    add_library(GSL STATIC IMPORTED)
+    add_library(GSL INTERFACE IMPORTED)
 else()
     message(STATUS "GSL will be installed into ${INSTALL_DIRECTORY}/gsl on first build.")
     include(ExternalProject)
@@ -46,10 +44,8 @@ else()
             )
 
     ExternalProject_Get_Property(library_GSL INSTALL_DIR)
-    add_library(GSL UNKNOWN IMPORTED)
-#    add_library(GSLcblas UNKNOWN IMPORTED)
+    add_library(GSL INTERFACE)
     add_dependencies(GSL library_GSL)
-#    add_dependencies(GSLcblas library_GSL)
     set(GSL_LIBRARY        ${INSTALL_DIR}/lib/libgsl${CUSTOM_SUFFIX})
     set(GSL_CBLAS_LIBRARY  ${INSTALL_DIR}/lib/libgslcblas${CUSTOM_SUFFIX})
     set(GSL_LIBRARIES ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY})
@@ -57,10 +53,8 @@ else()
 endif()
 
 set_target_properties(GSL PROPERTIES
-        IMPORTED_LOCATION             "${GSL_LIBRARY}"
-        INTERFACE_LINK_LIBRARIES      "${GSL_CBLAS_LIBRARY};gfortran"
-        INCLUDE_DIRECTORIES           "${GSL_INCLUDE_DIRS}"
+        INTERFACE_LINK_LIBRARIES      "${GSL_LIBRARY};${GSL_CBLAS_LIBRARY}"
+        INTERFACE_INCLUDE_DIRECTORIES "${GSL_INCLUDE_DIRS}"
         )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GSL)
-target_include_directories(${PROJECT_NAME} PRIVATE ${GSL_INCLUDE_DIRS})

@@ -55,8 +55,8 @@ else()
     add_library(arpack++ INTERFACE)
     set(ARPACKPP_INCLUDE_DIR ${INSTALL_DIR}/include)
     set_target_properties(arpack++ PROPERTIES
-            INTERFACE_LINK_LIBRARIES "arpack;blas;lapack;gfortran"
-            INTERFACE_INCLUDE_DIRECTORIES ${ARPACKPP_INCLUDE_DIR}
+            INTERFACE_LINK_LIBRARIES "arpack;blas;lapack"
+            INTERFACE_INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}"
             )
     add_dependencies(arpack++ library_ARPACK++ blas lapack)
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)

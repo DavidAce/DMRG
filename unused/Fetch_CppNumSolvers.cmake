@@ -22,7 +22,6 @@ set(CppNumSolvers_INCLUDE_DIR ${INSTALL_DIR}/include)
 add_dependencies(CppNumSolvers library_CppNumSolvers)
 
 set_target_properties(CppNumSolvers PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORY     "${CppNumSolvers_INCLUDE_DIR}"
+        INTERFACE_INCLUDE_DIRECTORIES   "${CppNumSolvers_INCLUDE_DIR}"
         )
 target_link_libraries(${PROJECT_NAME} PRIVATE CppNumSolvers)
-target_include_directories(${PROJECT_NAME} PRIVATE ${CppNumSolvers_INCLUDE_DIR})

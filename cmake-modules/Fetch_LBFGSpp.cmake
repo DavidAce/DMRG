@@ -22,7 +22,6 @@ set(LBFGSpp_INCLUDE_DIR ${INSTALL_DIR}/include)
 add_dependencies(LBFGSpp library_LBFGSpp)
 
 set_target_properties(LBFGSpp PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORY     "${LBFGSpp_INCLUDE_DIR}"
+        INTERFACE_INCLUDE_DIRECTORIES   "${LBFGSpp_INCLUDE_DIR}"
         )
 target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
-target_include_directories(${PROJECT_NAME} PRIVATE ${LBFGSpp_INCLUDE_DIR})
