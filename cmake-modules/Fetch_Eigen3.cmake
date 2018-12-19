@@ -3,7 +3,7 @@ find_package(Eigen3 3.3.4)
 
 if(NOT EIGEN3_FOUND)
     # Try finding arpack as module library
-    message(STATUS "SEARCHING FOR EIGEN3 IN LOADED MODULES")
+    message(STATUS "SEARCHING FOR eigen3 IN LOADED MODULES")
     find_package(Eigen3 3.3.4 PATHS "$ENV{EIGEN3_CMAKE_DIR}" NO_DEFAULT_PATH)
     if (NOT EIGEN3_FOUND)
     find_path(EIGEN3_INCLUDE_DIR
@@ -16,7 +16,7 @@ endif()
 
 if(EIGEN3_FOUND OR EIGEN3_INCLUDE_DIR)
     message(STATUS "EIGEN FOUND IN SYSTEM: ${EIGEN3_INCLUDE_DIR}")
-    add_library(EIGEN3 INTERFACE)
+    add_library(eigen3 INTERFACE)
 else()
     message(STATUS "Eigen3 will be installed into ${INSTALL_DIRECTORY}/eigen3 on first build.")
 
@@ -37,32 +37,30 @@ else()
 
 
     ExternalProject_Get_Property(library_EIGEN3 INSTALL_DIR)
-    add_library(EIGEN3 INTERFACE)
+    add_library(eigen3 INTERFACE)
     set(EIGEN3_INCLUDE_DIR ${INSTALL_DIR}/include/eigen3)
-    add_dependencies(EIGEN3 library_EIGEN3)
+    add_dependencies(eigen3 library_EIGEN3)
 endif()
 
 if(BLAS_LIBRARIES)
-    set(EIGEN3_COMPILER_FLAGS  ) # -Wno-parentheses
+    set(EIGEN3_COMPILER_FLAGS  -Wno-parentheses) # -Wno-parentheses
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
         list(APPEND EIGEN3_COMPILER_FLAGS -Wno-unused-but-set-variable)
     endif()
     if(MKL_FOUND)
         list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_MKL_ALL)
+        list(APPEND EIGEN3_INCLUDE_DIR ${MKL_INCLUDE_DIR})
         message(STATUS "Eigen3 will use MKL")
     elseif (BLAS_FOUND)
-#        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_BLAS)
-#        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_LAPACKE)
+        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_BLAS)
+        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_LAPACKE)
         message(STATUS "Eigen3 will use BLAS and LAPACKE")
     endif()
 endif()
 
 
-set_target_properties(EIGEN3 PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORY     "${EIGEN3_INCLUDE_DIR}"
+set_target_properties(eigen3 PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES   "${EIGEN3_INCLUDE_DIR}"
         INTERFACE_COMPILE_OPTIONS       "${EIGEN3_COMPILER_FLAGS}"
         )
-target_link_libraries(${PROJECT_NAME} PRIVATE EIGEN3)
-# Add SYSTEM flag to suppress warnings
-target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${EIGEN3_INCLUDE_DIR})
-target_compile_options(${PROJECT_NAME} PRIVATE ${EIGEN3_COMPILER_FLAGS})
+target_link_libraries(${PROJECT_NAME} PRIVATE eigen3)

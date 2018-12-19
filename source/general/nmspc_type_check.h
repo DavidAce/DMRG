@@ -9,10 +9,10 @@
 #include <unsupported/Eigen/CXX11/Tensor>
 
 namespace TypeCheck{
-    template <typename T> using Data_t          = decltype(std::declval<T>().template data());
-    template <typename T> using Size_t          = decltype(std::declval<T>().template size());
-    template <typename T> using Cstr_t          = decltype(std::declval<T>().template c_str());
-    template <typename T> using Imag_t          = decltype(std::declval<T>().template imag());
+    template <typename T> using Data_t          = decltype(std::declval<T>().data());
+    template <typename T> using Size_t          = decltype(std::declval<T>().size());
+    template <typename T> using Cstr_t          = decltype(std::declval<T>().c_str());
+    template <typename T> using Imag_t          = decltype(std::declval<T>().imag());
     template <typename T> using Scal_t          = typename T::Scalar;
     template <typename T> using Valt_t          = typename T::value_type;
 

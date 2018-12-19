@@ -2,8 +2,24 @@ cmake_minimum_required(VERSION 3.9)
 project(DMRG++)
 
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
+
+
+################################################################
+### Set options for compilationo                             ###
+################################################################
+option(USE_OpenMP    "Use OpenMP"                       OFF)
+option(USE_MKL       "Use Intel MKL libraries"          ON)
+option(STATIC_BUILD  "Static linking"                   ON)
+cmake_policy(SET CMP0074 NEW)
+cmake_policy(SET CMP0075 NEW)
+
+if(USE_MKL AND NOT DEFINED ENV{MKLROOT})
+    set(ENV{MKLROOT}  "/opt/intel/mkl")
+    message(STATUS "MKLROOT is not defined. Setting default: $ENV{MKLROOT}")
+endif()
+
 
 ################################################################
 ### Get git version number                                   ###
@@ -73,12 +89,12 @@ set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g)
 #################################
 # Check supported options here http://man7.org/linux/man-pages/man1/gcc.1.html
 if (${MARCH} STREQUAL "sandybridge")
-    list(APPEND COMMON_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1  -mpopcnt  -maes -mpclmul -mavx -fstack-protector-strong -Wformat -Wformat-security)
+    list(APPEND RELEASE_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1  -mpopcnt  -maes -mpclmul -mavx -fstack-protector-strong -Wformat -Wformat-security)
 elseif(${MARCH} STREQUAL "haswell" OR ${MARCH} STREQUAL "skylake" OR ${MARCH} STREQUAL "zen" )
-    list(APPEND COMMON_OPTIONS -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -maes -mpclmul -mavx -mavx2 -mmovbe -mrdrnd -mf16c -mfsgsbase -mfma  -mbmi -mbmi2 -fstack-protector-strong -Wformat -Wformat-security)
+    list(APPEND RELEASE_OPTIONS -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -maes -mpclmul -mavx -mavx2 -mmovbe -mrdrnd -mf16c -mfsgsbase -mfma  -mbmi -mbmi2 -fstack-protector-strong -Wformat -Wformat-security)
 else()
     # Set default to whatever nehalem can manage
-    list(APPEND COMMON_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -fstack-protector-strong -Wformat -Wformat-security)
+    list(APPEND RELEASE_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -fstack-protector-strong -Wformat -Wformat-security)
 endif()
 
 
@@ -129,12 +145,18 @@ target_include_directories(${PROJECT_NAME} PUBLIC source)
 ################################################
 ###  Force cmake to find .a library suffixes ###
 ################################################
-set(STATIC_BUILD ON)
-set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
-set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
-target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                                             ### Static linkage
-#target_link_libraries  (${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)                   ### Static linkage
+if(STATIC_BUILD)
+    set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                                             ### Static linkage
+else()
+    set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+endif()
 
+
+
+#endif()
 
 
 
@@ -142,29 +164,38 @@ target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                        
 ###  Optional OpenMP support               ###
 ###  Note that Clang has some              ###
 ###  trouble with static openmp            ###
-###  Also, libiomp5 might help for         ###
-###  shared linking.                       ###
+###  Also, installing libiomp5 might help  ###
+###  for shared linking.                   ###
 ##############################################
-find_package(OpenMP)
-if (OpenMP_FOUND)
-#    target_compile_options(${PROJECT_NAME} PRIVATE -fopenmp=libiomp5)
-    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-        message(STATUS "OpenMP ON" )
-        target_compile_options    (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
-        # target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIBRARIES})
-        target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_LIB_NAMES})
-        target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
+if(USE_OpenMP)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND STATIC_BUILD)
+        message(WARNING "Disabling OpenMP
+        Clang cannot use OpenMP when linking statically.
+        Please use GNU C++ instead to link statically, or turn off OpenMP
+        by passing \"-DUSE_OpenMP:BOOL=OFF\" to CMake to avoid this warning.")
+        message(STATUS "OpenMP OFF")
+        set(USE_OpenMP OFF)
+    else()
+        find_package(OpenMP)
+        if (OpenMP_FOUND)
+            message(STATUS "OpenMP ON" )
+            set(OpenMP_LIBRARIES  ${OpenMP_gomp_LIBRARY} ${OpenMP_omp_LIBRARY} ${OpenMP_iomp_LIBRARY})
+            target_compile_options    (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
+            target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_LIBRARIES})
+            target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
+        else()
+            message(WARNING "OpenMP OFF -- Could not be found." )
+        endif()
     endif()
-#    get_cmake_property(_variableNames VARIABLES)
-#    foreach (_variableName ${_variableNames})
-#        if("${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP")
-#            message(STATUS "${_variableName}=${${_variableName}}")
-#        endif()
-#    endforeach()
-else()
-    message(STATUS "OpenMP OFF" )
-endif()
 
+    get_cmake_property(_variableNames VARIABLES)
+    foreach (_variableName ${_variableNames})
+        if("${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP" OR "${_variableName}" MATCHES "omp")
+            message(STATUS "${_variableName}=${${_variableName}}")
+        endif()
+    endforeach()
+
+endif()
 
 
 
@@ -178,8 +209,9 @@ target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_O
 target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                                               ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lpthread )
-
-
+target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-allow-shlib-undefined )
+target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-as-needed )
+target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-undefined )
 
 
 ###############################
@@ -200,18 +232,15 @@ set_target_properties(${PROJECT_NAME}
 ###  Find or fetch all dependencies   ###
 ###########################################
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
-#include(cmake-modules/Find_dont_install_INTELMKL.cmake)     # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake-modules/FindGFortran.cmake)
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
-#include(cmake-modules/FindLAPACKE.cmake)
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
-#include(cmake-modules/Fetch_CppNumSolvers.cmake)            # Limited memory BFGS gradient descent library
 include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
-include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data_struct.
+include(cmake-modules/Fetch_HDF5_2.cmake)                     # HDF5 binary file format for output data_struct.
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
-#include(cmake-modules/Fetch_Armadillo.cmake)                # Armadillo library
 
 
 ######################################
@@ -245,8 +274,7 @@ message("    BLAS     :   ${BLAS_LIBRARIES}")
 message("    LAPACK   :   ${LAPACK_LIBRARIES}")
 message("    LAPACKE  :   ${LAPACKE_LIBRARIES}")
 message("    EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
-#message("    ARMADILLO:   ${ARMADILLO_INCLUDE_DIRS}")
-message("    HDF5     :   ${HDF5_LIBRARIES};${HDF5_CXX_LIBRARIES};${HDF5_HL_LIBRARIES};${HDF5_CXX_HL_LIBRARIES}")
+message("    HDF5     :   ${HDF5_LIBRARIES}")
 message("    ARPACK   :   ${ARPACK_LIBRARIES}")
 message("    ARPACKPP :   ${ARPACKPP_INCLUDE_DIR}")
 message("    GSL      :   ${GSL_LIBRARIES} ${GSLCBLAS_LIBRARIES}")
@@ -280,11 +308,13 @@ enable_testing()
 
 include(tests/arpack++_simple_test.cmake)
 include(tests/arpack++_mps_test.cmake)
+include(tests/hdf5_test.cmake)
 
 add_custom_target(all_tests ALL
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
-        DEPENDS blas lapack EIGEN3 arpack arpack++
+        DEPENDS hdf5_test_target
+        DEPENDS arpack++ hdf5 eigen3
         DEPENDS ${PROJECT_NAME}
         )
 

@@ -110,12 +110,12 @@ public:
     void write_attribute_to_file(const AttrType &attribute, const std::string attribute_name);
 
     template <typename AttrType>
-    void write_attribute_to_dataset(const std::string &dataset_relative_name, const AttrType attribute,
+    void write_attribute_to_dataset(const std::string &dataset_relative_name, const AttrType &attribute,
                                     const std::string &attribute_name);
 
 
     template <typename AttrType>
-    void write_attribute_to_group(const std::string &group_relative_name, const AttrType attribute,
+    void write_attribute_to_group(const std::string &group_relative_name, const AttrType &attribute,
                                   const std::string &attribute_name);
 
 
@@ -149,7 +149,7 @@ private:
     void write_attribute_to_dataset(const AttrType &attribute, const AttributeProperties &aprops);
 
     template <typename AttrType>
-    void write_attribute_to_group(const AttrType attribute, const AttributeProperties &aprops);
+    void write_attribute_to_group(const AttrType &attribute, const AttributeProperties &aprops);
 
     template<typename DataType>
     constexpr hid_t get_DataType() const {
@@ -162,6 +162,7 @@ private:
         if constexpr (std::is_same<DataType, std::complex<double>>::value){return  H5Tcopy(H5T_COMPLEX_DOUBLE);}
         if constexpr (std::is_same<DataType, H5T_COMPLEX_STRUCT>::value)  {return  H5Tcopy(H5T_COMPLEX_DOUBLE);}
         if constexpr (std::is_same<DataType, char>::value)                {return  H5Tcopy(H5T_C_S1);}
+        if constexpr (std::is_same<DataType, const char *>::value)        {return  H5Tcopy(H5T_C_S1);}
         if constexpr (std::is_same<DataType, std::string>::value)         {return  H5Tcopy(H5T_C_S1);}
         if constexpr (tc::is_eigen_tensor<DataType>::value)               {return  get_DataType<typename DataType::Scalar>();}
         if constexpr (tc::is_eigen_matrix<DataType>::value)               {return  get_DataType<typename DataType::Scalar>();}
@@ -169,7 +170,6 @@ private:
         if constexpr (tc::is_vector<DataType>::value)                     {return  get_DataType<typename DataType::value_type>();}
         if constexpr (tc::has_member_scalar <DataType>::value)            {return  get_DataType<typename DataType::Scalar>();}
         if constexpr (tc::has_member_value_type <DataType>::value)        {return  get_DataType<typename DataType::value_type>();}
-
         std::cerr << "get_DataType could not match the type provided" << std::endl;
         exit(1);
     }
@@ -199,6 +199,8 @@ private:
         else if constexpr (std::is_arithmetic<DataType>::value){return 1; }
         else if constexpr(tc::is_vector<DataType>::value){return 1;}
         else if constexpr(std::is_same<std::string, DataType>::value){return 1;}
+        else if constexpr(std::is_same<const char *,DataType>::value){return 1;}
+        else if constexpr(std::is_array<DataType>::value){return 1;}
         else {
             std::cerr << "get_Rank can't match the type provided: " << tc::type_name<DataType>() << '\n';
             tc::print_type_and_exit_compile_time<DataType>();
@@ -262,6 +264,20 @@ private:
             dims[0]= 1;
             return dims;
         }
+        else if constexpr(std::is_same<const char *, DataType>::value){
+            // Read more about this step here
+            //http://www.astro.sunysb.edu/mzingale/io_tutorial/HDF5_simple/hdf5_simple.c
+//            dims[0]={data.size()};
+            dims[0]= 1;
+            return dims;
+        }
+//        else if constexpr(std::is_array<DataType>::value){
+//            // Read more about this step here
+//            //http://www.astro.sunysb.edu/mzingale/io_tutorial/HDF5_simple/hdf5_simple.c
+////            dims[0]={data.size()};
+//            dims[0]= 1;
+//            return dims;
+//        }
         else{
             tc::print_type_and_exit_compile_time<DataType>();
             std::cerr << "get_Dimensions can't match the type provided: " << typeid(DataType).name() << '\n';
@@ -314,7 +330,7 @@ std::vector<class_hdf5_file::H5T_COMPLEX_STRUCT> class_hdf5_file::convert_comple
     if constexpr(tc::is_vector<DataType>::value) {
         if constexpr(std::is_same<typename DataType::value_type, std::complex<double>>::value) {
             std::vector<H5T_COMPLEX_STRUCT> new_data(data.size());
-            for (int i = 0; i < data.size(); i++) {
+            for (size_t i = 0; i < data.size(); i++) {
                 new_data[i].real = data[i].real();
                 new_data[i].imag = data[i].imag();
             }
@@ -397,13 +413,14 @@ void class_hdf5_file::read_dataset(DataType &data, const std::string &dataset_re
         hid_t dataset   = H5Dopen(file, dataset_relative_name.c_str(), H5P_DEFAULT);
         hid_t memspace  = H5Dget_space(dataset);
         hid_t datatype  = H5Dget_type(dataset);
-        int ndims = H5Sget_simple_extent_ndims(memspace);
+        int ndims       = H5Sget_simple_extent_ndims(memspace);
         std::vector<hsize_t> dims(ndims);
         H5Sget_simple_extent_dims(memspace, dims.data(), NULL);
         if constexpr(tc::is_eigen_matrix_or_array<DataType>()) {
 
             data.resize(dims[0], dims[1]);
         }
+
         if constexpr(tc::is_eigen_tensor<DataType>()){
             Eigen::DSizes<long, DataType::NumDimensions> test;
             std::copy(dims.begin(),dims.end(),test.begin());
@@ -414,6 +431,13 @@ void class_hdf5_file::read_dataset(DataType &data, const std::string &dataset_re
             assert(ndims == 1 and "Vector cannot take 2D datasets");
             data.resize(dims[0]);
         }
+        if constexpr(std::is_same<std::string,DataType>::value) {
+            assert(ndims == 1 and "std string needs to have 1 dimension");
+            hsize_t stringsize  = H5Dget_storage_size(dataset);
+            data.resize(stringsize);
+        }
+
+
         H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
         H5Dclose(dataset);
         H5Sclose(memspace);
@@ -484,7 +508,7 @@ void class_hdf5_file::write_attribute_to_dataset(const AttrType &attribute, cons
 
 
 template <typename AttrType>
-void class_hdf5_file::write_attribute_to_dataset(const std::string &dataset_relative_name, const AttrType attribute,
+void class_hdf5_file::write_attribute_to_dataset(const std::string &dataset_relative_name, const AttrType &attribute,
                                                  const std::string &attribute_name){
     AttributeProperties aprops;
     aprops.datatype  = get_DataType<AttrType>();
@@ -502,7 +526,7 @@ void class_hdf5_file::write_attribute_to_dataset(const std::string &dataset_rela
 }
 
 template <typename AttrType>
-void class_hdf5_file::write_attribute_to_group(const AttrType attribute,
+void class_hdf5_file::write_attribute_to_group(const AttrType &attribute,
                                                const AttributeProperties &aprops){
     if (check_link_exists_recursively(aprops.link_name)) {
         if (not check_if_attribute_exists(aprops.link_name, aprops.attr_name)){
@@ -518,7 +542,7 @@ void class_hdf5_file::write_attribute_to_group(const AttrType attribute,
 }
 template <typename AttrType>
 void class_hdf5_file::write_attribute_to_group(const std::string &group_relative_name,
-                                               const AttrType attribute,
+                                               const AttrType &attribute,
                                                const std::string &attribute_name){
 
     AttributeProperties aprops;

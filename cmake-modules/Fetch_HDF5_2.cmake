@@ -9,10 +9,10 @@ if (EXISTS "$ENV{HDF5_DIR}")
     set(HDF5_FIND_DEBUG OFF)
     find_package(HDF5 COMPONENTS C CXX HL)
     set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -lz -Wl,--whole-archive -lpthread -Wl,--no-whole-archive )
-#    if (HDF5_IS_PARALLEL)
-#        list(APPEND HDF5_LINKER_FLAGS $ENV{MPI_LIB}/libmpi${CMAKE_STATIC_LIBRARY_SUFFIX})
-#        list(APPEND HDF5_INCLUDE_DIR  $ENV{MPI_INCLUDE})
-#    endif()
+    #    if (HDF5_IS_PARALLEL)
+    #        list(APPEND HDF5_LINKER_FLAGS $ENV{MPI_LIB}/libmpi${CMAKE_STATIC_LIBRARY_SUFFIX})
+    #        list(APPEND HDF5_INCLUDE_DIR  $ENV{MPI_INCLUDE})
+    #    endif()
 else()
     # Try finding in system. While avoiding Python anaconda's version.
     # Usually there is an executable present in system, "h5c++"
@@ -20,7 +20,7 @@ else()
     find_file(HDF5_C_COMPILER_EXECUTABLE NAMES h5cc PATHS /usr/bin /usr/local/bin NO_DEFAULT_PATH)
     find_file(HDF5_CXX_COMPILER_EXECUTABLE NAMES h5c++ h5cc h5fc h5pfc PATHS /usr/bin /usr/local/bin NO_DEFAULT_PATH)
     find_file(HDF5_Fortran_COMPILER_EXECUTABLE NAMES h5fc h5pfc PATHS /usr/bin /usr/local/bin NO_DEFAULT_PATH)
-#    message("HDF5 C compiler wrapper             : ${HDF5_C_COMPILER_EXECUTABLE}")
+    #    message("HDF5 C compiler wrapper             : ${HDF5_C_COMPILER_EXECUTABLE}")
     message("HDF5 CXX compiler wrapper           : ${HDF5_CXX_COMPILER_EXECUTABLE}")
 
     set(HDF5_USE_STATIC_LIBRARIES ${STATIC_BUILD})
@@ -43,12 +43,12 @@ endif()
 if(HDF5_FOUND AND NOT HDF5_ANACONDA)
     # To print all variables, use the code below:
     #
-#    get_cmake_property(_variableNames VARIABLES)
-#    foreach (_variableName ${_variableNames})
-#        if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5" OR "${_variableName}" MATCHES "h5")
-#            message(STATUS "${_variableName}=${${_variableName}}")
-#        endif()
-#    endforeach()
+    #    get_cmake_property(_variableNames VARIABLES)
+    #    foreach (_variableName ${_variableNames})
+    #        if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5" OR "${_variableName}" MATCHES "h5")
+    #            message(STATUS "${_variableName}=${${_variableName}}")
+    #        endif()
+    #    endforeach()
 
     include(cmake-modules/Fetch_Szip.cmake)
     list(APPEND HDF5_LINKER_FLAGS ${SZIP_LIBRARY})
@@ -66,14 +66,8 @@ if(HDF5_FOUND AND NOT HDF5_ANACONDA)
 
 
     # Add convenience libraries
-    add_library(hdf5::hdf5           UNKNOWN IMPORTED)
-    add_library(hdf5::hdf5_hl        UNKNOWN IMPORTED)
-    add_library(hdf5::hdf5_cpp       UNKNOWN IMPORTED)
-    add_library(hdf5::hdf5_hl_cpp    UNKNOWN IMPORTED)
-    add_dependencies(hdf5::hdf5             SZIP)
-    add_dependencies(hdf5::hdf5_hl          SZIP)
-    add_dependencies(hdf5::hdf5_cpp         SZIP)
-    add_dependencies(hdf5::hdf5_hl_cpp      SZIP)
+    add_library(hdf5           INTERFACE IMPORTED)
+    add_dependencies(hdf5             SZIP)
 
 
 else()
@@ -105,54 +99,27 @@ else()
             )
 
     ExternalProject_Get_Property(library_HDF5 INSTALL_DIR)
-    add_library(hdf5::hdf5           UNKNOWN IMPORTED)
-    add_library(hdf5::hdf5_hl        UNKNOWN IMPORTED)
-    add_library(hdf5::hdf5_cpp       UNKNOWN IMPORTED)
-    add_library(hdf5::hdf5_hl_cpp    UNKNOWN IMPORTED)
+    add_library(hdf5 INTERFACE)
 
-    add_dependencies(hdf5::hdf5          library_HDF5)
-    add_dependencies(hdf5::hdf5_hl       library_HDF5)
-    add_dependencies(hdf5::hdf5_cpp      library_HDF5)
-    add_dependencies(hdf5::hdf5_hl_cpp   library_HDF5)
+    add_dependencies(hdf5          library_HDF5)
     set(HDF5_C_LIBRARY        ${INSTALL_DIR}/lib/libhdf5${CUSTOM_SUFFIX})
     set(HDF5_C_HL_LIBRARY     ${INSTALL_DIR}/lib/libhdf5_hl${CUSTOM_SUFFIX})
     set(HDF5_CXX_LIBRARY      ${INSTALL_DIR}/lib/libhdf5_cpp${CUSTOM_SUFFIX})
     set(HDF5_CXX_HL_LIBRARY   ${INSTALL_DIR}/lib/libhdf5_hl_cpp${CUSTOM_SUFFIX})
     set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -lz -Wl,--whole-archive -lpthread -Wl,--no-whole-archive )
-#    set(HDF5_LINKER_FLAGS     -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -ldl -lm)
     set(HDF5_INCLUDE_DIR      ${INSTALL_DIR}/include)
-#    if (HDF5_IS_PARALLEL)
-#        list(APPEND HDF5_LINKER_FLAGS ${MPI_LIBRARIES})
-#        list(APPEND HDF5_INCLUDE_DIR  ${MPI_INCLUDE_PATH})
-#    endif()
+    #    if (HDF5_IS_PARALLEL)
+    #        list(APPEND HDF5_LINKER_FLAGS ${MPI_LIBRARIES})
+    #        list(APPEND HDF5_INCLUDE_DIR  ${MPI_INCLUDE_PATH})
+    #    endif()
 endif()
 
+set(HDF5_LIBRARIES  ${HDF5_CXX_HL_LIBRARY} ${HDF5_CXX_LIBRARY} ${HDF5_C_HL_LIBRARY} ${HDF5_C_LIBRARY}  )
 
-set_target_properties(hdf5::hdf5 PROPERTIES
-        IMPORTED_LOCATION "${HDF5_C_LIBRARY}"
-        INTERFACE_LINK_LIBRARIES "${HDF5_LINKER_FLAGS}"
-        INTERFACE_INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIR}")
+set_target_properties(hdf5 PROPERTIES
+        INTERFACE_LINK_LIBRARIES        "${HDF5_LIBRARIES};${HDF5_LINKER_FLAGS}"
+        INTERFACE_INCLUDE_DIRECTORIES   "${HDF5_INCLUDE_DIR}"
+        INTERFACE_LINK_FLAGS            "${HDF5_LINKER_FLAGS}"
+        )
 
-set_target_properties(hdf5::hdf5_hl PROPERTIES
-        IMPORTED_LOCATION "${HDF5_C_HL_LIBRARY}"
-        INTERFACE_LINK_LIBRARIES "hdf5::hdf5;${HDF5_LINKER_FLAGS}"
-        INTERFACE_INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIR}")
-
-set_target_properties(hdf5::hdf5_cpp PROPERTIES
-        IMPORTED_LOCATION "${HDF5_CXX_LIBRARY}"
-        INTERFACE_LINK_LIBRARIES "hdf5::hdf5;hdf5::hdf5_hl;${HDF5_LINKER_FLAGS}"
-        INTERFACE_INCLUDE_DIRECTORIES "${HDF5_INCLUDE_DIR}")
-
-set_target_properties(hdf5::hdf5_hl_cpp PROPERTIES
-        IMPORTED_LOCATION              "${HDF5_CXX_HL_LIBRARY}"
-        INTERFACE_LINK_LIBRARIES       "hdf5::hdf5;hdf5::hdf5_hl;hdf5::hdf5_cpp;${HDF5_LINKER_FLAGS}"
-        INTERFACE_INCLUDE_DIRECTORIES  "${HDF5_INCLUDE_DIR}")
-
-
-target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5)
-target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_hl)
-target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE hdf5::hdf5_hl_cpp)
-
-#target_include_directories(${PROJECT_NAME} PRIVATE ${HDF5_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${HDF5_LINKER_FLAGS})
+target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)

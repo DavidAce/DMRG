@@ -4,7 +4,24 @@
 #ifndef HAVE_LAPACK_CONFIG_H
 #define HAVE_LAPACK_CONFIG_H
 #endif
+
+#include <complex>
+
+#ifdef MKL_AVAILABLE
+#define MKL_Complex8 std::complex<float>
+#define MKL_Complex16 std::complex<double>
+#define ComplexFloat  std::complex<float>
+#define ComplexDouble std::complex<double>
+#include <mkl_service.h>
+#include <mkl.h>
+#include <mkl_lapacke.h>
+#else
+#define ComplexFloat  __complex__ float
+#define ComplexDouble __complex__ double
 #include <lapacke.h>
+
+#endif
+
 #include "class_eigsolver.h"
 
 //using namespace eigSetting;
@@ -166,10 +183,10 @@ int class_eigsolver::eig_zheevd(std::complex<double>* matrix2eigvecs, double *ei
     std::vector<int   > iwork ( liwork );
     char jobz = solverConf.compute_eigvecs ? 'V' : 'N';
     info = LAPACKE_zheevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
-            reinterpret_cast< __complex__ double *>(matrix2eigvecs),
+            reinterpret_cast< ComplexDouble *>(matrix2eigvecs),
             L,
             eigvals,
-            reinterpret_cast< __complex__ double *>(work.data()),
+            reinterpret_cast< ComplexDouble *>(work.data()),
             lwork,
             rwork.data(),
             lrwork,
@@ -300,27 +317,27 @@ int class_eigsolver::eig_zgeev(const std::complex<double>* matrix, std::complex<
     std::vector<double> rwork  ( (unsigned long) lrwork);
 
     info = LAPACKE_zgeev_work(LAPACK_COL_MAJOR,'V','V',L,
-                              reinterpret_cast< __complex__ double *>(const_cast<Scalar *>(matrix)),
+                              reinterpret_cast< ComplexDouble *>(const_cast<Scalar *>(matrix)),
                               L,
-                              reinterpret_cast< __complex__ double *>(eigvals),
-                              reinterpret_cast< __complex__ double *>(eigvecsL),
+                              reinterpret_cast< ComplexDouble *>(eigvals),
+                              reinterpret_cast< ComplexDouble *>(eigvecsL),
                               L,
-                              reinterpret_cast< __complex__ double *>(eigvecsR),
+                              reinterpret_cast< ComplexDouble *>(eigvecsR),
                               L,
-                              reinterpret_cast< __complex__ double *>(&lwork_query),
+                              reinterpret_cast< ComplexDouble *>(&lwork_query),
                               -1,
                               rwork.data());
     int lwork = (int) std::real(2.0*lwork_query); //Make it twice as big for performance.
     std::vector<Scalar> work  ( (unsigned long)lwork );
     info = LAPACKE_zgeev_work(LAPACK_COL_MAJOR,'V','V',L,
-                              reinterpret_cast< __complex__ double *>(const_cast<Scalar *>(matrix)),
+                              reinterpret_cast< ComplexDouble *>(const_cast<Scalar *>(matrix)),
                               L,
-                              reinterpret_cast< __complex__ double *>(eigvals),
-                              reinterpret_cast< __complex__ double *>(eigvecsL),
+                              reinterpret_cast< ComplexDouble *>(eigvals),
+                              reinterpret_cast< ComplexDouble *>(eigvecsL),
                               L,
-                              reinterpret_cast< __complex__ double *>(eigvecsR),
+                              reinterpret_cast< ComplexDouble *>(eigvecsR),
                               L,
-                              reinterpret_cast< __complex__ double *>(work.data()),
+                              reinterpret_cast< ComplexDouble *>(work.data()),
                               lwork,
                               rwork.data());
 

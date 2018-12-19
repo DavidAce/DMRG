@@ -12,15 +12,14 @@ ExternalProject_Add(library_SZIP
         )
 
 ExternalProject_Get_Property(library_SZIP INSTALL_DIR)
-add_library(SZIP UNKNOWN IMPORTED)
+add_library(SZIP INTERFACE)
 add_dependencies(SZIP library_SZIP)
 set(SZIP_LIBRARY        ${INSTALL_DIR}/lib/libszip-static.a)
 set(SZIP_INCLUDE_DIRS   ${INSTALL_DIR}/include)
 
 set_target_properties(SZIP PROPERTIES
-        IMPORTED_LOCATION             "${SZIP_LIBRARY}"
-        INCLUDE_DIRECTORIES           "${SZIP_INCLUDE_DIRS}"
+        TARGET_LINK_LIBRARIES         "${SZIP_LIBRARY}"
+        TARGE_INCLUDE_DIRECTORIES     "${SZIP_INCLUDE_DIRS}"
         )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SZIP)
-target_include_directories(${PROJECT_NAME} PRIVATE ${SZIP_INCLUDE_DIRS})
