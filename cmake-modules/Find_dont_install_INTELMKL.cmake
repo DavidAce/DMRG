@@ -1,94 +1,98 @@
 
 
 # If you want to use Eigen and MKL you need to add #define EIGEN_USE_MKL_ALL before including <Eigen..>
-# Adding a -DEIGEN_USE_MKL_ALL here may conflict with arpack++
+# or define -DEIGEN_USE_MKL_ALL.
+# REMEMBER TO SET LD_LIBRARY_PATH=/opt/intel/mkl/lib/intel64 to use the shared libraries
+# You can set that either as an environment variable in clion or add it to
+# sudo nano /etc/ld.so.conf.d/intel_mkl.conf
+# that simply contains the path to MKL libraries: /opt/intel/mkl/lib/intel64. Finally, call
+# sudo ldconfig
+# Acutally, sometimes all you need to do is sudo ldconfig to update the linker, because intel mkl installation
+# automatically puts a file in /etc/ld.so.conf.d
 
-set(MKL_USE_STATIC_LIBS ON)
-set(MKL_MULTI_THREADED ON)
-set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF)
-find_package(MKL)
-if (MKL_FOUND)
-
-    # Remove the libmkl_intel_lp64 library, which is only used when compiling with Intel Fortran.
-    # Not doing this makes arpack-ng segfault.
-    list(REMOVE_ITEM MKL_LIBRARIES ${MKL_INTEL_LP64_LIBRARY})
-    list(INSERT MKL_LIBRARIES 0 ${MKL_GF_LP64_LIBRARY})
-    list(REMOVE_DUPLICATES MKL_LIBRARIES)
-
-    add_definitions(-DMKL_AVAILABLE)
-    set(MKL_FLAGS -m64 -I${MKL_ROOT}/include)
-
-    if (MKL_USE_SINGLE_DYNAMIC_LIBRARY)
-        set(MKL_LFLAGS -L${MKL_ROOT}/lib/intel64  -Wl,--no-as-needed -lmkl_rt -lpthread -lm -ldl)
-    else()
-        set(MKL_LFLAGS -L${MKL_ROOT}/lib/intel64 -lmkl_gf_lp64 -lmkl_intel_thread -lmkl_sequential -lmkl_core -lpthread -lm -ldl)
+if (USE_MKL)
+#    set(MKL_USE_STATIC_LIBS ON)
+    set(MKL_MULTI_THREADED ${USE_OpenMP})
+    set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF) # This doesn't work for some reason...
+    if (MKL_USE_SINGLE_DYNAMIC_LIBRARY AND STATIC_BUILD)
+        message(WARNING "Disabling single dynamic mkl library\nCan't use MKL_USE_SINGLE_DYNAMIC_LIBRARY and STATIC_BUILD simultaneously.")
     endif()
 
+    find_package(MKL)
+    if (NOT MKL_FOUND)
+        message(WARNING "\
+        Could not find Intel MKL library. Turn off this
+        warning by passing \"-DUSE_MKL:BOOL=OFF\" to CMake.")
+    endif()
+
+endif()
 
 
-    #    add_definitions(-DMKL_AVAILABLE)
-#    set(MKL_FLAGS -m64 -I${MKL_ROOT}/include)
-#    set(MKL_LFLAGS -L${MKL_ROOT}/lib/intel64 -lmkl_core -lpthread -lm -ldl)
-#    if(MKL_MULTI_THREADED)
-#        list(APPEND MKL_LFLAGS -lmkl_intel_thread)
-#    else()
-#        list(APPEND MKL_LFLAGS -lmkl_sequential)
-#    endif()
+
+if (MKL_FOUND)
+
+    #The order of these libraries is important when doing static linking!
+    #To find out the order, check the Intel link line advisor.
+    set(MKL_LIBRARIES  ${MKL_BLAS_LP_LIBRARY} ${MKL_LAPACK_LP_LIBRARY}  -Wl,--start-group  ${MKL_GF_LP_LIBRARY})
+    set(MKL_LFLAGS -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -lm -ldl)
+    if(MKL_MULTI_THREADED)
+        list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group)
+        if(STATIC_BUILD)
+            list(APPEND MKL_LIBRARIES ${OpenMP_LIBRARIES})
+        else()
+            list(APPEND MKL_LIBRARIES ${MKL_IOMP5_LIBRARY})
+        endif()
+    else()
+        list(APPEND MKL_LIBRARIES  ${MKL_SEQUENTIAL_LIBRARY}  ${MKL_CORE_LIBRARY}  -Wl,--end-group )
+    endif()
+    list(APPEND MKL_LIBRARIES ${MKL_LFLAGS})
 
 
+    add_definitions(-DMKL_AVAILABLE)
+    set(MKL_FLAGS -m64 -I${MKL_ROOT_DIR}/lib/intel64/lp64 )
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE IMPORTED)
     set_target_properties(mkl PROPERTIES
-            INTERFACE_LINK_LIBRARY "${MKL_LIBRARIES};${MKL_LFLAGS}"
-            INTERFACE_INCLUDE_DIRECTORY "${MKL_INCLUDE_DIR}"
-            INTERFACE_COMPILE_OPTIONS "${MKL_FLAGS}"
+            INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES}"
+            INTERFACE_LINK_DIRECTORIES      "${MKL_ROOT_DIR}/lib/intel64"
+            INTERFACE_INCLUDE_DIRECTORIES   "${MKL_INCLUDE_DIR}"
+            INTERFACE_COMPILE_OPTIONS       "${MKL_FLAGS}"
+            INTERFACE_LINK_OPTIONS          "${MKL_LFLAGS}"
             )
-    target_link_libraries(${PROJECT_NAME} PRIVATE mkl ${MKL_LIBRARIES} ${MKL_LFLAGS})
-    target_compile_options(${PROJECT_NAME} PRIVATE ${MKL_FLAGS})
-    target_include_directories(${PROJECT_NAME} PRIVATE ${MKL_INCLUDE_DIR})
 
+#    target_link_libraries (${PROJECT_NAME} PRIVATE mkl)
+#    target_compile_options(${PROJECT_NAME} PRIVATE ${MKL_FLAGS})
+#    target_include_directories(${PROJECT_NAME} PRIVATE ${MKL_INCLUDE_DIR})
+#
 
     # BLAS and LAPACK are included in the MKL.
-    set(BLAS_LIBRARIES ${MKL_LIBRARIES})
+    set(BLAS_LIBRARIES   ${MKL_LIBRARIES})
     set(LAPACK_LIBRARIES ${MKL_LIBRARIES})
-    set(EXTRA_LDLAGS ${MKL_LFLAGS}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
+    set(FC_LDLAGS ${MKL_LFLAGS}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
 
 
     # Make the rest of the build structure aware of blas and lapack included in MKL.
     add_library(blas INTERFACE IMPORTED)
     set_target_properties(blas PROPERTIES
-            INTERFACE_LINK_LIBRARIES        "${BLAS_LIBRARIES};${MKL_LFLAGS}"
-            INTERFACE_INCLUDE_DIRECTORY     "${MKL_INCLUDE_DIR}"
+            INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES}"
+            INTERFACE_LINK_DIRECTORIES      "${MKL_ROOT_DIR}/lib/intel64"
+            INTERFACE_INCLUDE_DIRECTORIES   "${MKL_INCLUDE_DIR}"
             INTERFACE_COMPILE_OPTIONS       "${MKL_FLAGS}"
+            INTERFACE_LINK_OPTIONS          "${MKL_LFLAGS}"
             )
 
     add_library(lapack INTERFACE IMPORTED)
     set_target_properties(lapack PROPERTIES
-            INTERFACE_LINK_LIBRARIES        "${LAPACK_LIBRARIES};${MKL_LFLAGS}"
-            INTERFACE_INCLUDE_DIRECTORY     "${MKL_INCLUDE_DIR}"
+            INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES}"
+            INTERFACE_LINK_DIRECTORIES      "${MKL_ROOT_DIR}/lib/intel64"
+            INTERFACE_INCLUDE_DIRECTORIES   "${MKL_INCLUDE_DIR}"
             INTERFACE_COMPILE_OPTIONS       "${MKL_FLAGS}"
+            INTERFACE_LINK_OPTIONS          "${MKL_LFLAGS}"
             )
 
 
-    #   Test features
-    include(CheckCXXSourceCompiles)
-    set(CMAKE_REQUIRED_INCLUDES ${MKL_INCLUDE_DIR})
-    set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES} ${MKL_LFLAGS})
-    set(CMAKE_REQUIRED_FLAGS ${MKL_FLAGS})
-    check_cxx_source_compiles("
-        #include <mkl.h>
-        int main() {
-            int nx = 10, incx = 1, incy = 1;
-            double x[10], y[10];
-            for(int i = 0; i < 10; i++) x[i] = double(i);
-            dcopy(&nx, x, &incx, y, &incy);
-            return 0;
-        }
-        " MKL_COMPILES)
-    if(NOT MKL_COMPILES)
-        message(FATAL_ERROR "Unable to compile a simple MKL program")
-    endif(NOT MKL_COMPILES)
+    include(FindLAPACKE)
 
     message("")
     message("======MKL SUMMARY ======")
@@ -97,14 +101,54 @@ if (MKL_FOUND)
     message("MKL_INCLUDE_DIR                           : ${MKL_INCLUDE_DIR}" )
     message("MKL_FLAGS                                 : ${MKL_FLAGS}" )
     message("MKL_LFLAGS                                : ${MKL_LFLAGS}" )
-    message("MKL_ROOT                                  : ${MKL_ROOT}" )
-    message("MKLROOT                                   : ${MKLROOT}" )
+    message("MKLROOT                                   : $ENV{MKLROOT}" )
     message("MKL_USE_SINGLE_DYNAMIC_LIBRARY            : ${MKL_USE_SINGLE_DYNAMIC_LIBRARY}" )
-    message("MKL_USE_STATIC_LIBS                       : ${MKL_USE_STATIC_LIBS}" )
     message("BLAS_LIBRARIES                            : ${BLAS_LIBRARIES}" )
     message("LAPACK_LIBRARIES                          : ${LAPACK_LIBRARIES}" )
+    message("LAPACKE                                   : ${LAPACKE_INCLUDE_DIRS}" )
     message("========================")
     message("")
+
+
+    #   Test features
+    include(CheckCXXSourceCompiles)
+    set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES} ${MKL_LFLAGS})
+    set(CMAKE_REQUIRED_INCLUDES  ${MKL_INCLUDE_DIR})
+    set(CMAKE_REQUIRED_FLAGS     ${MKL_FLAGS})
+    check_cxx_source_compiles("
+        #include <mkl.h>
+        int main() {
+            const MKL_INT nx = 10, incx = 1, incy = 1;
+            double x[10], y[10];
+            for(int i = 0; i < 10; i++) x[i] = double(i);
+            dcopy(&nx, x, &incx, y, &incy);
+            return 0;
+        }
+        " MKL_COMPILES)
+
+    if(NOT MKL_COMPILES)
+        message(FATAL_ERROR "Unable to compile a simple MKL program")
+    endif()
+
+    if(MKL_MULTI_THREADED)
+        check_cxx_source_compiles("
+            #include <omp.h>
+            #include <mkl.h>
+            int main() {
+                mkl_set_num_threads(2);
+                const MKL_INT nx = 10, incx = 1, incy = 1;
+                double x[10], y[10];
+                for(int i = 0; i < 10; i++) x[i] = double(i);
+                dcopy(&nx, x, &incx, y, &incy);
+                return 0;
+            }
+            " MKL_OMP_COMPILES)
+
+        if(NOT MKL_OMP_COMPILES)
+            message(FATAL_ERROR "Unable to compile a simple MKL program with OMP")
+        endif()
+    endif()
+
 endif()
 
 

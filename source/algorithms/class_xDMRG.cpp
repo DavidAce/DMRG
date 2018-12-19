@@ -482,7 +482,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
         opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, variance_0, 1.0, iter_0 ,0,t_lbfgs.get_last_time_interval(), t_tot.get_age());
         t_lbfgs.tic();
         using namespace LBFGSpp;
-        class_xDMRG_full_functor functor(
+        class_xDMRG_full_functor<Scalar> functor(
                 superblock->HA->MPO,
                 superblock->HB->MPO,
                 superblock->Lblock->block,
