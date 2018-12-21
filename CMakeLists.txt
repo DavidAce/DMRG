@@ -7,9 +7,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 
 
 ################################################################
-### Set options for compilationo                             ###
+### Set options for compilation                              ###
 ################################################################
-option(USE_OpenMP    "Use OpenMP"                       OFF)
+option(USE_OpenMP    "Use OpenMP"                       ON)
 option(USE_MKL       "Use Intel MKL libraries"          OFF)
 option(STATIC_BUILD  "Static linking"                   ON)
 cmake_policy(SET CMP0074 NEW)
@@ -182,7 +182,7 @@ if(USE_OpenMP)
             set(OpenMP_LIBRARIES  ${OpenMP_gomp_LIBRARY} ${OpenMP_omp_LIBRARY} ${OpenMP_iomp_LIBRARY})
             target_compile_options    (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
             target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_LIBRARIES})
-            target_compile_definitions(${PROJECT_NAME} PRIVATE -DOpenMP_AVAILABLE)
+            target_compile_definitions(${PROJECT_NAME} PRIVATE OpenMP_AVAILABLE)
         else()
             message(WARNING "OpenMP OFF -- Could not be found." )
         endif()

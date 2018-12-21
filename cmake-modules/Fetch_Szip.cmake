@@ -18,7 +18,7 @@ set(SZIP_LIBRARY        ${INSTALL_DIR}/lib/libszip-static.a)
 set(SZIP_INCLUDE_DIRS   ${INSTALL_DIR}/include)
 
 set_target_properties(SZIP PROPERTIES
-        TARGET_LINK_LIBRARIES         "${SZIP_LIBRARY}"
-        TARGE_INCLUDE_DIRECTORIES     "${SZIP_INCLUDE_DIRS}"
+        INTERFACE_LINK_LIBRARIES         "${SZIP_LIBRARY}"
+        INTERFACE_INCLUDE_DIRECTORIES    "${SZIP_INCLUDE_DIRS}"
         )
 

@@ -101,7 +101,7 @@ double class_xDMRG_full_functor<Scalar>::operator()(const Eigen::Matrix<double,E
     double vH2v,vHv,vv;
     double lambda,var,log10var, fx;
     Eigen::VectorXd vH, vH2;
-    #pragma omp parallel
+    #pragma omp parallel num_threads(1)
     {
         #pragma omp sections
         {

@@ -22,18 +22,26 @@ target="all"
 mode="Release"
 clear_cmake=""
 clear_libs=""
-threads="8"
+make_threads="8"
 march="sandybridge"
+omp="OFF"
+threads="8"
+mkl="OFF"
+static="ON"
 
 while getopts a:chj:lm:t: o; do
     case $o in
-	(a) march=$OPTARG;;
+	    (a) march=$OPTARG;;
         (c) clear_cmake="true";;
         (h) usage ;;
-        (j) threads=$OPTARG;;
+        (j) make_threads=$OPTARG;;
         (l) clear_libs="true";;
         (m) mode=$OPTARG;;
         (t) target=$OPTARG;;
+        (o) omp=$OPTARG;;
+        (n) threads=$OPTARG;;
+        (i) mkl=$OPTARG;;
+        (s) static=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
   esac
@@ -89,8 +97,15 @@ fi
 echo "Starting Build"
 echo "Micro arch.     :   $march"
 echo "Target          :   $target"
-echo "Build threads   :   $threads"
+echo "Build threads   :   $make_threads"
 echo "Mode            :   $mode"
+echo "OpenMP          :   $omp"
+echo "Threads         :   $threads"
+echo "Intel MKL       :   $mkl"
+echo "Static build    :   $static"
+
+
+export OMP_NUM_THREADS=$threads
 
 #module load CLANG_6.x.x
 module load GNU_8.x.x
@@ -104,5 +119,5 @@ module load eigen3_3.3.5
 
 cmake -E make_directory build/$mode
 cd build/$mode
-cmake -DCMAKE_BUILD_TYPE=$mode -DMARCH=$march  -G "CodeBlocks - Unix Makefiles" ../../
-cmake --build . --target $target -- -j $threads
+cmake -DCMAKE_BUILD_TYPE=$mode -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DSTATIC_BUILD=$static  -G "CodeBlocks - Unix Makefiles" ../../
+cmake --build . --target $target -- -j $make_threads
