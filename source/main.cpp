@@ -31,9 +31,7 @@
 */
 
 int main(int argc, char* argv[]) {
-    int openmp_num_threads = 2;
     int openblas_num_threads = 1;
-//    int openmp_num_threads = 2;
     #ifdef OpenBLAS_AVAILABLE
         openblas_set_num_threads(openblas_num_threads);
     std::cout << "OpenBLAS compiled with mode " << openblas_get_parallel()
@@ -44,17 +42,19 @@ int main(int argc, char* argv[]) {
 
     #ifdef OpenMP_AVAILABLE
         Eigen::initParallel();
-        omp_set_num_threads(openmp_num_threads);
-        omp_set_dynamic(0);
-        Eigen::setNbThreads(openmp_num_threads);
+//        omp_set_num_threads(OpenMP_NUM_THREADS);
+//        omp_set_dynamic(0);
+//        Eigen::setNbThreads(OpenMP_NUM_THREADS);
+//        Eigen::setNbThreads(0);
         std::cout << "Using Eigen  with " << Eigen::nbThreads( )   << " thread(s)" << std::endl;
         std::cout << "Using OpenMP with " << omp_get_max_threads() << " thread(s)" << std::endl;
+        #ifdef MKL_AVAILABLE
+//            mkl_set_num_threads(OpenMP_NUM_THREADS);
+            std::cout << "Using Intel MKL with " << mkl_get_max_threads() << " thread(s)" << std::endl;
+        #endif
     #endif
 
-    #ifdef MKL_AVAILABLE
-        mkl_set_num_threads(openmp_num_threads);
-        std::cout << "Using Intel MKL with " << openmp_num_threads << " thread(s)" << std::endl;
-    #endif
+
 
 
     // Print current Git status
