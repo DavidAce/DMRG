@@ -25,7 +25,7 @@ endif()
 
 if(ARPACK_LIBRARIES)
     message(STATUS "ARPACK found in system:   ${ARPACK_LIBRARIES}")
-    add_library(arpack INTERFACE IMPORTED)
+    add_library(arpack INTERFACE)
     set_target_properties(arpack
             PROPERTIES
             INTERFACE_LINK_LIBRARIES "${ARPACK_LIBRARIES};blas;lapack"
