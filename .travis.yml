@@ -104,6 +104,8 @@ matrix:
             - libopenblas-dev
             - libarpack2-dev
             - libarpack++2-dev
+            - liblapacke
+            - liblapacke-dev
 #    - os: osx
 #      osx_image: xcode10.1 #Newer versions don't like experimental/filesystem or _stdio.h?
 #      compiler: gcc-7
