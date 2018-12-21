@@ -30,9 +30,9 @@ if(ARPACK_LIBRARIES)
             PROPERTIES
             INTERFACE_LINK_LIBRARIES "${ARPACK_LIBRARIES};blas;lapack"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
-            INTERFACE_LINK_OPTIONS "${PTHREAD_LIBRARY}"
+#            INTERFACE_LINK_OPTIONS "${PTHREAD_LIBRARY}"
             )
-    target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
+#    target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
     return()
 else()
     message(STATUS "Arpack-ng will be installed into ${INSTALL_DIRECTORY}/arpack-ng on first build.")
