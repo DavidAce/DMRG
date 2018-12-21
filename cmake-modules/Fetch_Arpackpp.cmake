@@ -59,8 +59,8 @@ else()
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}"
             )
     add_dependencies(arpack++ library_ARPACK++ blas lapack)
-    target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
-    target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACKPP_INCLUDE_DIR})
+#    target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
+#    target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACKPP_INCLUDE_DIR})
 endif()
 
 

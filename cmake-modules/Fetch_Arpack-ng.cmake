@@ -30,7 +30,7 @@ if(ARPACK_LIBRARIES)
             PROPERTIES
             INTERFACE_LINK_LIBRARIES "${ARPACK_LIBRARIES};blas;lapack"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
-            INTERFACE_LINK_FLAGS "-lpthread"
+            INTERFACE_LINK_OPTIONS "${PTHREAD_LIBRARY}"
             )
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
     return()
@@ -95,9 +95,9 @@ else()
             PROPERTIES
             INTERFACE_LINK_LIBRARIES      "${ARPACK_LIBRARIES};blas;lapack;gfortran"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
-            INTERFACE_LINK_FLAGS          "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+#            INTERFACE_LINK_OPTIONS        "${PTHREAD_LIBRARY}"
             )
 
     add_dependencies(arpack library_ARPACK blas lapack )
-    target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
+    #target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
 endif()
