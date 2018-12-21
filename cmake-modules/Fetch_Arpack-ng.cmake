@@ -28,11 +28,12 @@ if(ARPACK_LIBRARIES)
     add_library(arpack INTERFACE)
     set_target_properties(arpack
             PROPERTIES
-            INTERFACE_LINK_LIBRARIES "${ARPACK_LIBRARIES};blas;lapack"
+            INTERFACE_LINK_LIBRARIES      "${ARPACK_LIBRARIES};blas;lapack;gfortran"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
-#            INTERFACE_LINK_OPTIONS "${PTHREAD_LIBRARY}"
+            #            INTERFACE_LINK_OPTIONS        "${PTHREAD_LIBRARY}"
             )
-#    target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
+
+    add_dependencies(arpack blas lapack gfortran)
     return()
 else()
     message(STATUS "Arpack-ng will be installed into ${INSTALL_DIRECTORY}/arpack-ng on first build.")
@@ -98,6 +99,6 @@ else()
 #            INTERFACE_LINK_OPTIONS        "${PTHREAD_LIBRARY}"
             )
 
-    add_dependencies(arpack library_ARPACK blas lapack )
+    add_dependencies(arpack library_ARPACK blas lapack gfortran)
     #target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
 endif()
