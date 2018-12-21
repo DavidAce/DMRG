@@ -56,8 +56,8 @@ if(BLAS_openblas_LIBRARY)
     message(STATUS "                      ${BLAS_INCLUDE_DIRS}")
 
     #For convenience, define these variables
-    add_library(blas   INTERFACE IMPORTED)
-    add_library(lapack INTERFACE IMPORTED)
+    add_library(blas   INTERFACE)
+    add_library(lapack INTERFACE)
     set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
     set(LAPACK_LIBRARIES   ${BLAS_openblas_LIBRARY})
     set(LAPACK_INCLUDE_DIRS ${BLAS_INCLUDE_DIRS})
