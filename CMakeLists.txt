@@ -187,13 +187,13 @@ if(USE_OpenMP)
             message(WARNING "OpenMP OFF -- Could not be found." )
         endif()
     endif()
-
-    get_cmake_property(_variableNames VARIABLES)
-    foreach (_variableName ${_variableNames})
-        if("${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP" OR "${_variableName}" MATCHES "omp")
-            message(STATUS "${_variableName}=${${_variableName}}")
-        endif()
-    endforeach()
+#
+#    get_cmake_property(_variableNames VARIABLES)
+#    foreach (_variableName ${_variableNames})
+#        if("${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP" OR "${_variableName}" MATCHES "omp")
+#            message(STATUS "${_variableName}=${${_variableName}}")
+#        endif()
+#    endforeach()
 
 endif()
 
