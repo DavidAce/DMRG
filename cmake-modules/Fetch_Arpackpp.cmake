@@ -30,7 +30,7 @@ if (ARPACKPP_LIBRARIES OR ARPACKPP_INCLUDE_DIR AND NOT "${OS_PROPERTIES}" MATCHE
     message(STATUS "Arpack++ include found in system: ${ARPACKPP_INCLUDE_DIR}")
     add_library(arpack++ INTERFACE)
     set_target_properties(arpack++ PROPERTIES
-            INTERFACE_LINK_LIBRARIES "blas;lapack;arpack;${ARPACKPP_LIBRARIES}"
+            INTERFACE_LINK_LIBRARIES "${ARPACKPP_LIBRARIES};arpack;blas;lapack"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}")
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 
