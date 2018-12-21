@@ -52,7 +52,7 @@ if (MKL_FOUND)
     set(MKL_FLAGS -m64 -I${MKL_ROOT_DIR}/lib/intel64/lp64 )
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
-    add_library(mkl INTERFACE IMPORTED)
+    add_library(mkl INTERFACE)
     set_target_properties(mkl PROPERTIES
             INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES}"
             INTERFACE_LINK_DIRECTORIES      "${MKL_ROOT_DIR}/lib/intel64"
@@ -69,7 +69,7 @@ if (MKL_FOUND)
 
 
     # Make the rest of the build structure aware of blas and lapack included in MKL.
-    add_library(blas INTERFACE IMPORTED)
+    add_library(blas INTERFACE)
     set_target_properties(blas PROPERTIES
             INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES}"
             INTERFACE_LINK_DIRECTORIES      "${MKL_ROOT_DIR}/lib/intel64"
@@ -78,7 +78,7 @@ if (MKL_FOUND)
             INTERFACE_LINK_OPTIONS          "${MKL_LFLAGS}"
             )
 
-    add_library(lapack INTERFACE IMPORTED)
+    add_library(lapack INTERFACE)
     set_target_properties(lapack PROPERTIES
             INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES}"
             INTERFACE_LINK_DIRECTORIES      "${MKL_ROOT_DIR}/lib/intel64"
