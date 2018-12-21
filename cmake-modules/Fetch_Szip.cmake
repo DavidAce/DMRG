@@ -22,4 +22,3 @@ set_target_properties(SZIP PROPERTIES
         TARGE_INCLUDE_DIRECTORIES     "${SZIP_INCLUDE_DIRS}"
         )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE SZIP)
