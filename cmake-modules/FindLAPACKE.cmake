@@ -84,11 +84,11 @@ if(LAPACKE_FOUND)
     message(STATUS "LAPACKE INCLUDE : ${LAPACKE_INCLUDE_DIRS}")
 
     #For convenience, define these variables
-    add_library(lapacke UNKNOWN IMPORTED)
+    add_library(lapacke INTERFACE)
     set(LAPACKE_LIBRARIES   ${LAPACKE_LIBRARY})
 
     set_target_properties(lapacke PROPERTIES
-            IMPORTED_LOCATION               ${LAPACKE_LIBRARIES}
+            INTERFACE_LINK_LIBRARY          ${LAPACKE_LIBRARIES}
             INTERFACE_INCLUDE_DIRECTORIES   ${LAPACKE_INCLUDE_DIRS}
             )
 

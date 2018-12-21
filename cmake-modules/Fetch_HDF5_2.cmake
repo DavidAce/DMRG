@@ -68,7 +68,7 @@ if(HDF5_FOUND AND NOT HDF5_ANACONDA)
 
 
     # Add convenience libraries
-    add_library(hdf5           INTERFACE IMPORTED)
+    add_library(hdf5           INTERFACE)
     add_dependencies(hdf5             SZIP)
 
 
