@@ -57,4 +57,4 @@ set_target_properties(GSL PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES "${GSL_INCLUDE_DIRS}"
         )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE GSL)
+#target_link_libraries(${PROJECT_NAME} PRIVATE GSL)

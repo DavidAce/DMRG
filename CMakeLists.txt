@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.10)
 project(DMRG++)
 
 
@@ -10,7 +10,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 ### Set options for compilationo                             ###
 ################################################################
 option(USE_OpenMP    "Use OpenMP"                       OFF)
-option(USE_MKL       "Use Intel MKL libraries"          ON)
+option(USE_MKL       "Use Intel MKL libraries"          OFF)
 option(STATIC_BUILD  "Static linking"                   ON)
 cmake_policy(SET CMP0074 NEW)
 cmake_policy(SET CMP0075 NEW)
@@ -170,8 +170,8 @@ endif()
 if(USE_OpenMP)
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND STATIC_BUILD)
         message(WARNING "Disabling OpenMP
-        Clang cannot use OpenMP when linking statically.
-        Please use GNU C++ instead to link statically, or turn off OpenMP
+        Clang cannot link \"libomp\" statically.
+        Please use GNU C++ instead to link \"libgomp.a\" statically, or turn off OpenMP
         by passing \"-DUSE_OpenMP:BOOL=OFF\" to CMake to avoid this warning.")
         message(STATUS "OpenMP OFF")
         set(USE_OpenMP OFF)
@@ -208,9 +208,9 @@ target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_O
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_OPTIONS}>")           ### Profiling build options
 target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                                               ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
-target_link_libraries  (${PROJECT_NAME} PRIVATE -lpthread )
+set(PTHREAD_LIBRARY  -Wl,--whole-archive -lpthread -Wl,--no-whole-archive)
+#target_link_libraries  (${PROJECT_NAME} PRIVATE ${PTHREAD_LIBRARY} )
 target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-allow-shlib-undefined )
-target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-as-needed )
 target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-undefined )
 
 
@@ -241,6 +241,12 @@ include(cmake-modules/Fetch_HDF5_2.cmake)                     # HDF5 binary file
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
+
+target_link_libraries(${PROJECT_NAME} PRIVATE eigen3)
+target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
+target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
+target_link_libraries(${PROJECT_NAME} PRIVATE GSL)
 
 
 ######################################

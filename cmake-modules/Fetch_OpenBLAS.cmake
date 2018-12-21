@@ -82,7 +82,7 @@ else()
             CONFIGURE_COMMAND ""
 
             BUILD_IN_SOURCE 1
-            BUILD_COMMAND $(MAKE) TARGET=${OPENBLAS_MARCH} USE_THREAD=${OpenBLAS_MULTITHREADED} USE_OPENMP=${OpenBLAS_USE_OPENMP} NO_AFFINITY=1 GEMM_MULTITHREAD_THRESHOLD=50 NUM_THREADS=64 BINARY64=64 QUIET_MAKE=1
+            BUILD_COMMAND $(MAKE) TARGET=${OPENBLAS_MARCH} USE_THREAD=${OpenBLAS_MULTITHREADED} USE_OPENMP=${OpenBLAS_USE_OPENMP} NO_AFFINITY=1 GEMM_MULTITHREAD_THRESHOLD=50 NUM_THREADS=64 BINARY64=64 QUIET_MAKE=1 FFLAGS=-Wno-maybe-uninitialized
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             DEPENDS gfortran
             )
@@ -104,31 +104,29 @@ ExternalProject_Get_Property(library_OpenBLAS INSTALL_DIR)
     set(LAPACKE_FROM_OPENBLAS 1)
 
 endif()
+
 set_target_properties(blas PROPERTIES
-        INTERFACE_LINK_LIBRARIES        "${BLAS_LIBRARIES}"
+        INTERFACE_LINK_LIBRARIES        "${BLAS_LIBRARIES};${PTHREAD_LIBRARY}"
         INTERFACE_INCLUDE_DIRECTORIES   "${BLAS_INCLUDE_DIRS}"
+#        INTERFACE_LINK_OPTIONS          "${PTHREAD_LIBRARY}"
         )
 
 set_target_properties(lapack PROPERTIES
-        INTERFACE_LINK_LIBRARIES        "${LAPACK_LIBRARIES}"
+        INTERFACE_LINK_LIBRARIES        "${LAPACK_LIBRARIES};${PTHREAD_LIBRARY}"
         INTERFACE_INCLUDE_DIRECTORIES   "${LAPACK_INCLUDE_DIRS}"
+#        INTERFACE_LINK_OPTIONS          "${PTHREAD_LIBRARY}"
         )
 
 
+set(FC_LDLAGS -fPIC ${PTHREAD_LIBRARY})
 
-if(OpenBLAS_MULTITHREADED)
-    set_target_properties(blas   PROPERTIES INTERFACE_LINK_FLAGS -Wl,--whole-archive -lpthread -Wl,--no-whole-archive)
-    set_target_properties(lapack PROPERTIES INTERFACE_LINK_FLAGS -Wl,--whole-archive -lpthread -Wl,--no-whole-archive)
-    set(FC_LDLAGS -Wl,--whole-archive -lpthread -Wl,--no-whole-archive)
-endif()
 if(OpenBLAS_USE_OPENMP AND OpenMP_FOUND)
-    set_target_properties(blas   PROPERTIES INTERFACE_LINK_FLAGS ${OpenMP_CXX_FLAGS})
-    set_target_properties(lapack PROPERTIES INTERFACE_LINK_FLAGS ${OpenMP_CXX_FLAGS})
-    list(APPEND BLAS_LIBRARIES        ${OpenMP_CXX_FLAGS})
-    list(APPEND BLAS_LIBRARIES_STATIC ${OpenMP_CXX_FLAGS})
-    list(APPEND BLAS_LIBRARIES_SHARED ${OpenMP_CXX_FLAGS})
+    set_target_properties(blas   PROPERTIES INTERFACE_LINK_OPTIONS "${OpenMP_CXX_FLAGS}")
+    set_target_properties(lapack PROPERTIES INTERFACE_LINK_OPTIONS "${OpenMP_CXX_FLAGS}")
+    list(APPEND BLAS_LIBRARIES        ${OpenMP_LIBRARIES})
+    list(APPEND BLAS_LIBRARIES_STATIC ${OpenMP_LIBRARIES})
+    list(APPEND BLAS_LIBRARIES_SHARED ${OpenMP_LIBRARIES})
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE blas lapack )
 add_definitions(-DOpenBLAS_AVAILABLE)
 

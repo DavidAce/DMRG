@@ -8,7 +8,7 @@ if (EXISTS "$ENV{HDF5_DIR}")
     set(HDF5_USE_STATIC_LIBRARIES ${STATIC_BUILD})
     set(HDF5_FIND_DEBUG OFF)
     find_package(HDF5 COMPONENTS C CXX HL)
-    set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -lz -Wl,--whole-archive -lpthread -Wl,--no-whole-archive )
+    set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -lz ${PTHREAD_LIBRARY} )
     #    if (HDF5_IS_PARALLEL)
     #        list(APPEND HDF5_LINKER_FLAGS $ENV{MPI_LIB}/libmpi${CMAKE_STATIC_LIBRARY_SUFFIX})
     #        list(APPEND HDF5_INCLUDE_DIR  $ENV{MPI_INCLUDE})
@@ -30,7 +30,7 @@ else()
     set(HDF5_C_HL_LIBRARY      ${HDF5_CXX_LIBRARY_hdf5_hl})
     set(HDF5_CXX_LIBRARY       ${HDF5_CXX_LIBRARY_hdf5_cpp})
     set(HDF5_CXX_HL_LIBRARY    ${HDF5_CXX_LIBRARY_hdf5_hl_cpp})
-    set(HDF5_LINKER_FLAGS       -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -lz -ldl -lm)
+    set(HDF5_LINKER_FLAGS       -Wl,-Bsymbolic-functions -Wl,-z,relro ${PTHREAD_LIBRARY} -lz -ldl -lm)
 
 
 endif()
@@ -51,7 +51,9 @@ if(HDF5_FOUND AND NOT HDF5_ANACONDA)
     #    endforeach()
 
     include(cmake-modules/Fetch_Szip.cmake)
-    list(APPEND HDF5_LINKER_FLAGS ${SZIP_LIBRARY})
+    target_link_libraries(${PROJECT_NAME} PRIVATE SZIP)
+
+#    list(APPEND HDF5_LINKER_FLAGS ${SZIP_LIBRARY})
 
 
     message(STATUS "HDF5 FOUND IN SYSTEM: ${HDF5_LIBRARIES}")
@@ -106,7 +108,7 @@ else()
     set(HDF5_C_HL_LIBRARY     ${INSTALL_DIR}/lib/libhdf5_hl${CUSTOM_SUFFIX})
     set(HDF5_CXX_LIBRARY      ${INSTALL_DIR}/lib/libhdf5_cpp${CUSTOM_SUFFIX})
     set(HDF5_CXX_HL_LIBRARY   ${INSTALL_DIR}/lib/libhdf5_hl_cpp${CUSTOM_SUFFIX})
-    set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -lz -Wl,--whole-archive -lpthread -Wl,--no-whole-archive )
+    set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -lz -Wl,--as-needed)
     set(HDF5_INCLUDE_DIR      ${INSTALL_DIR}/include)
     #    if (HDF5_IS_PARALLEL)
     #        list(APPEND HDF5_LINKER_FLAGS ${MPI_LIBRARIES})
@@ -117,9 +119,9 @@ endif()
 set(HDF5_LIBRARIES  ${HDF5_CXX_HL_LIBRARY} ${HDF5_CXX_LIBRARY} ${HDF5_C_HL_LIBRARY} ${HDF5_C_LIBRARY}  )
 
 set_target_properties(hdf5 PROPERTIES
-        INTERFACE_LINK_LIBRARIES        "${HDF5_LIBRARIES};${HDF5_LINKER_FLAGS}"
+        INTERFACE_LINK_LIBRARIES        "${HDF5_LIBRARIES};${HDF5_LINKER_FLAGS};${PTHREAD_LIBRARY}"
         INTERFACE_INCLUDE_DIRECTORIES   "${HDF5_INCLUDE_DIR}"
-        INTERFACE_LINK_FLAGS            "${HDF5_LINKER_FLAGS}"
+#        INTERFACE_LINK_OPTIONS          "${PTHREAD_LIBRARY}"
         )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
+#target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
