@@ -17,6 +17,7 @@ EOF
 target="DMRG++"
 mode="Release"
 file="input.cfg"
+threads="8"
 
 while getopts f:hm:t: o; do
       case $o in
@@ -24,6 +25,7 @@ while getopts f:hm:t: o; do
         (h) usage ;;
         (m) mode=$OPTARG;;
         (t) target=$OPTARG;;
+        (n) threads=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (?) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
         (*) usage ;;
@@ -31,6 +33,10 @@ while getopts f:hm:t: o; do
 done
 
 if [ $OPTIND -eq 1 ]; then echo "No flags were passed"; usage ;exit 1; fi
+
+
+echo "Threads         :   $threads"
+export OMP_NUM_THREADS=$threads
 
 
 shift "$((OPTIND - 1))"

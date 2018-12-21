@@ -25,7 +25,6 @@ clear_libs=""
 make_threads="8"
 march="sandybridge"
 omp="OFF"
-threads="8"
 mkl="OFF"
 static="ON"
 
@@ -39,7 +38,6 @@ while getopts a:chj:lm:t: o; do
         (m) mode=$OPTARG;;
         (t) target=$OPTARG;;
         (o) omp=$OPTARG;;
-        (n) threads=$OPTARG;;
         (i) mkl=$OPTARG;;
         (s) static=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
@@ -100,12 +98,10 @@ echo "Target          :   $target"
 echo "Build threads   :   $make_threads"
 echo "Mode            :   $mode"
 echo "OpenMP          :   $omp"
-echo "Threads         :   $threads"
 echo "Intel MKL       :   $mkl"
 echo "Static build    :   $static"
 
 
-export OMP_NUM_THREADS=$threads
 
 #module load CLANG_6.x.x
 module load GNU_8.x.x
