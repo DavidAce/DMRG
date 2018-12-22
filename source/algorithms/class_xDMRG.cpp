@@ -265,11 +265,11 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                 t_lu = hamiltonian_sparse.t_factorOp.get_last_time_interval();
                 hamiltonian_sparse.t_factorOp.reset();
                 solver.eigs_stl(hamiltonian_sparse,nev,-1, energy_now*chain_length,Form::SYMMETRIC,Ritz::LM,Side::R, true,false);
-            }else if (nev <= 0 and mode == xDMRG_Mode::KEEP_BEST_OVERLAP){
+            }else if (nev <= 0 and (  mode == xDMRG_Mode::KEEP_BEST_OVERLAP or mode == xDMRG_Mode::PARTIAL_EIG_OPT)){
                 nev = solver.solution.meta.cols;
-                reason = "Keeping best overlap";
+                reason = "Keeping best overlap or optimizing subspace.";
                 break;
-            }else{
+            }else if (nev <= 0 or mode == xDMRG_Mode::FULL_EIG_OPT){
                 nev = shape;
                 solver.eig<Type::REAL, Form::SYMMETRIC>(H_local,true,true);
             }
@@ -287,7 +287,6 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
             if(max_overlap >= max_overlap_threshold ){reason = "overlap"; break;}
             if(subspace_quality < subspace_quality_threshold){reason = "subspace quality"; break;}
-
         }
         H_local.resize(0,0);
         ccout(2) << "Finished eigensolver -- condition: " << reason << '\n';
