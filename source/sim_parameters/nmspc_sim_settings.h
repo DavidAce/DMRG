@@ -96,7 +96,7 @@ namespace settings {
     //Parameters controlling xDMRG
     namespace xdmrg {
         extern bool    on           ;                       /*!< Turns xDMRG simulation on/off. */
-        extern int     max_length   ;                       /*!< Number sweeps along the 1D quantum chain. */
+        extern int     num_sites    ;                       /*!< Number sweeps along the 1D quantum chain. */
         extern int     max_sweeps   ;                       /*!< Number sweeps along the 1D quantum chain. */
         extern long    chi_max      ;                       /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         extern bool    chi_grow     ;                       /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */

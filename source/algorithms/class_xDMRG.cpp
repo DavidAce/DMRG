@@ -35,11 +35,11 @@ class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     initialize_constants();
     table_xdmrg         = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
     table_xdmrg_chain   = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name,sim_name + "_chain");
-    env_storage         = std::make_shared<class_finite_chain>(max_length, superblock, hdf5,sim_type,sim_name);
+    env_storage         = std::make_shared<class_finite_chain>(num_sites, superblock, hdf5,sim_type,sim_name);
     measurement         = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
     initialize_state(settings::model::initial_state);
-    min_saturation_length = 1 * (int) max_length;
-    max_saturation_length = 1 * (int)(1.5 * max_length);
+    min_saturation_length = 1 * (int)(1.0 * num_sites);
+    max_saturation_length = 1 * (int)(2.5 * num_sites);
 }
 
 
@@ -73,7 +73,7 @@ void class_xDMRG::run() {
             break;
         }
 
-        update_bond_dimension( measurement->get_chain_length());
+        update_bond_dimension(min_saturation_length);
         enlarge_environment(env_storage->get_direction());
         env_storage_move();
         iteration = env_storage->get_sweeps();
@@ -99,9 +99,11 @@ void class_xDMRG::single_xDMRG_step() {
     t_opt.tic();
     ccout(3) << "STATUS: Starting single xDMRG step\n";
     Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
-    xDMRG_Mode mode = chi_temp < 8 and iteration < min_sweeps  ? xDMRG_Mode::KEEP_BEST_OVERLAP : xDMRG_Mode::FULL_EIG_OPT;
-    mode = chi_temp >= 8 and chi_temp < 32 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
-    mode = chi_temp >= 32 ? xDMRG_Mode::DIRECT_OPT : mode;
+    xDMRG_Mode mode = xDMRG_Mode::KEEP_BEST_OVERLAP;
+    mode = chi_temp <= 16 ? mode : xDMRG_Mode::PARTIAL_EIG_OPT;
+    mode = chi_temp <= 32 ? mode : xDMRG_Mode::DIRECT_OPT;
+//    mode = chi_temp >= 16 and chi_temp <= 64 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
+//    mode = chi_temp > 64 ? xDMRG_Mode::DIRECT_OPT : mode;
 //    mode = theta.size() >= 4096 ? xDMRG_Mode::DIRECT_OPT : mode;
 
     theta = find_state_with_greatest_overlap_part_diag3(theta,mode);
@@ -124,7 +126,7 @@ void class_xDMRG::check_convergence(){
     t_sim.tic();
     t_con.tic();
     check_convergence_variance_mpo();
-    if (iteration < min_sweeps){variance_mpo_saturated_for = 0;}
+//    if (iteration < min_sweeps){variance_mpo_saturated_for = 0;}
     ccout(2) << "Variance has saturated for " << variance_mpo_saturated_for << " steps \n";
     if(variance_mpo_has_converged)
     {
@@ -500,6 +502,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
         param.delta          = 1e-8; // Default is 0; //Trying this one instead of ftol.
         param.ftol           = 1e-5; //this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
         param.past           = 1; // Or perhaps it was this one that helped.
+        param.wolfe          = 1e-1;
 
         // Create solver and function object
         LBFGSpp::LBFGSSolver<double> solver_3(param);
@@ -554,7 +557,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
 void class_xDMRG::initialize_chain() {
     while(true){
         env_storage_insert();
-        if (superblock->environment_size + 2ul < (unsigned long) max_length) {
+        if (superblock->environment_size + 2ul < (unsigned long) num_sites) {
             enlarge_environment();
             swap();
         } else {
@@ -565,7 +568,7 @@ void class_xDMRG::initialize_chain() {
 
 void class_xDMRG::reset_chain_mps_to_random_product_state(std::string parity) {
     std::cout << "Resetting to random product state" << std::endl;
-    assert(env_storage->get_length() == max_length);
+    assert(env_storage->get_length() == num_sites);
 
     iteration = env_storage->reset_sweeps();
 
@@ -622,7 +625,7 @@ void class_xDMRG::reset_chain_mps_to_random_product_state(std::string parity) {
 
 void class_xDMRG::set_random_fields_in_chain_mpo() {
     std::cout << "Setting random fields in chain" << std::endl;
-    assert(env_storage->get_length() == max_length);
+    assert(env_storage->get_length() == num_sites);
     std::vector<std::vector<double>> all_params;
     for (auto &mpo : env_storage->ref_MPO_L()){
         mpo->randomize_hamiltonian();
@@ -648,7 +651,7 @@ void class_xDMRG::set_random_fields_in_chain_mpo() {
 
 void class_xDMRG::find_energy_range() {
     std::cout << "Finding energy range" << std::endl;
-    assert(env_storage->get_length() == max_length);
+    assert(env_storage->get_length() == num_sites);
     int max_sweeps_during_f_range = 5;
     int chi_during_f_range   = 4;
     iteration = env_storage->reset_sweeps();
@@ -774,11 +777,9 @@ void class_xDMRG::store_state_to_file(bool force){
     t_sto.toc();
 }
 
-
-
 void class_xDMRG::initialize_constants(){
     using namespace settings;
-    max_length   = xdmrg::max_length;
+    num_sites   = xdmrg::num_sites;
     max_sweeps   = xdmrg::max_sweeps;
     chi_max      = xdmrg::chi_max   ;
     chi_grow     = xdmrg::chi_grow  ;
