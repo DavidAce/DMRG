@@ -14,7 +14,7 @@ requirements = true
 # Note that requiring two on single threaded jobs
 # essentially turns off hyperthreading.
 ########################################################
-request_cpus   = 1
+request_cpus   = 2
 request_disk   = 500
 request_memory = 2000
 
