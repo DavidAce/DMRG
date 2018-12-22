@@ -17,6 +17,7 @@ requirements = true
 request_cpus   = 2
 request_disk   = 500
 request_memory = 2000
+environment    = "OMP_NUM_THREADS=2"
 
 #################################################################################
 # The below lines added to the submit file will allow the jobs to
@@ -103,7 +104,6 @@ requirements = $(requirements) && \
 #               environment = "HDF5_USE_FILE_LOCKING=FALSE"
 ################################################################################################
 #environment = "HDF5_USE_FILE_LOCKING=FALSE"
-
 getenv = true
 
 
