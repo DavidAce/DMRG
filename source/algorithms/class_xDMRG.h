@@ -30,7 +30,7 @@ public:
     int    max_saturation_length;
     int    min_sweeps   = 5;
     int    max_sweeps   ;
-    int    max_length   ;
+    int    num_sites    ;
 
     //Energy ranges
     double energy_min = 0;
