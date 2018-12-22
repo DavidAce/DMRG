@@ -73,7 +73,7 @@ namespace settings{
 
     //Parameters controlling excited state DMRG
     bool   xdmrg::on                     = true;
-    int    xdmrg::max_length             = 200;
+    int    xdmrg::num_sites             = 200;
     int    xdmrg::max_sweeps             = 4;
     long   xdmrg::chi_max                = 8;
     bool   xdmrg::chi_grow               = true;
@@ -177,7 +177,7 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters controlling Finite-DMRG
     fdmrg::on                     = indata.find_parameter<bool>   ("fdmrg::on"         , fdmrg::on);
     if(fdmrg::on){
-        fdmrg::max_length         = indata.find_parameter<int>    ("fdmrg::max_length ", fdmrg::max_length);
+        fdmrg::max_length         = indata.find_parameter<int>    ("fdmrg::num_sites ", fdmrg::max_length);
         fdmrg::max_sweeps         = indata.find_parameter<int>    ("fdmrg::max_sweeps ", fdmrg::max_sweeps);
         fdmrg::chi_max            = indata.find_parameter<int>    ("fdmrg::chi_max"    , 8);
         fdmrg::chi_grow           = indata.find_parameter<bool>   ("fdmrg::chi_grow"   , fdmrg::chi_grow);
@@ -188,7 +188,7 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters controlling excited state DMRG
     xdmrg::on                     = indata.find_parameter<bool>   ("xdmrg::on"         , xdmrg::on);
     if(xdmrg::on){
-        xdmrg::max_length         = indata.find_parameter<int>    ("xdmrg::max_length "    , xdmrg::max_length);
+        xdmrg::num_sites         = indata.find_parameter<int>    ("xdmrg::num_sites "    , xdmrg::num_sites);
         xdmrg::max_sweeps         = indata.find_parameter<int>    ("xdmrg::max_sweeps "    , xdmrg::max_sweeps);
         xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"        , xdmrg::chi_max);
         xdmrg::chi_grow           = indata.find_parameter<bool>   ("xdmrg::chi_grow"       , xdmrg::chi_grow);
