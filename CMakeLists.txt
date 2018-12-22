@@ -10,7 +10,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 ### Set options for compilation                              ###
 ################################################################
 option(USE_OpenMP    "Use OpenMP"                       OFF)
-option(USE_MKL       "Use Intel MKL libraries"          ON)
+option(USE_MKL       "Use Intel MKL libraries"          OFF)
 option(STATIC_BUILD  "Static linking"                   ON)
 cmake_policy(SET CMP0074 NEW)
 cmake_policy(SET CMP0075 NEW)
