@@ -8,11 +8,15 @@ Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t 
 
 -a               : Choose microarchitecture for cxx and openblas. | core2 | nehalem | sandybridge | haswell | (default = haswell)
 -c               : Clear CMake files before build (delete ./build)
+-g <compiler>    : Compiler        | GNU | Clang | (default = "")
 -h               : Help. Shows this text.
+-i <ON|OFF>      : Intel MKL use   | ON | OFF | (default = OFF)
 -j <num_threads> : Number of threads used by CMake
 -l               : Clear downloaded libraries before build (i.e. delete ./libs)
--m <mode>        : Release   | Debug | Profile |  (default = Release)
--t <target>      : DMRG++    | all   | any test target | (default = all)
+-m <mode>        : Release         | Debug | Profile |  (default = Release)
+-o <ON|OFF>      : OpenMP use      | ON | OFF | (default = OFF)
+-s <ON|OFF>      : Static linking  | ON | OFF | (default = ON)
+-t <target>      : DMRG++          | all | hdf5_test | arpack++_simple_test | arpack++_mps_test | (default = all)
 EOF
   exit 1
 }
@@ -27,11 +31,13 @@ march="sandybridge"
 omp="OFF"
 mkl="OFF"
 static="ON"
+compiler=""
 
-while getopts a:chj:lm:t: o; do
+while getopts a:cg:hi:j:lm:o:s:t: o; do
     case $o in
 	    (a) march=$OPTARG;;
         (c) clear_cmake="true";;
+        (g) compiler=$OPTARG;;
         (h) usage ;;
         (j) make_threads=$OPTARG;;
         (l) clear_libs="true";;
@@ -44,21 +50,38 @@ while getopts a:chj:lm:t: o; do
         (*) usage ;;
   esac
 done
-if [ $OPTIND -eq 1 ]; then echo "No flags were passed"; usage ;exit 1; fi
+
+if [ $OPTIND -eq 1 ] ; then
+    echo "No flags were passed"; usage ;exit 1;
+fi
 shift "$((OPTIND - 1))"
 
 
-if [ "$clear_cmake" = "true" ]
-then
+if [ "$clear_cmake" = true ] ; then
     echo "Clearing CMake files from build."
 	rm -rf ./build
 fi
 
-if [ "$clear_libs" = "true" ]
-then
+if [ "$clear_libs" = true ] ; then
     echo "Clearing downloaded libraries."
 	rm -rf ./libs
 fi
+
+
+if [ "$compiler" = "GNU" ] ; then
+    module load GNU_8.x.x
+elif [ "$compiler" = "Clang" ] ; then
+    module load CLANG_7
+fi
+
+
+if [ "$MKL" = "ON" ] ; then
+    module load intel-mkl-2019.1
+else
+    module load openblas_${march}_v0.3.3
+fi
+
+
 
 
 
@@ -104,10 +127,8 @@ echo "Static build    :   $static"
 
 
 #module load CLANG_6.x.x
-module load GNU_8.x.x
-module load openblas_${march}_v0.3.3
+
 module load arpack-ng_${march}_3.6.2
-module load armadillo-9.200.x
 module load arpack++
 module load hdf5_1.10.3
 module load gsl_2.4
