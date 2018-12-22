@@ -101,7 +101,7 @@ void class_xDMRG::single_xDMRG_step() {
     Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
     xDMRG_Mode mode = xDMRG_Mode::KEEP_BEST_OVERLAP;
     mode = chi_temp <= 16 ? mode : xDMRG_Mode::PARTIAL_EIG_OPT;
-    mode = chi_temp <= 32 ? mode : xDMRG_Mode::DIRECT_OPT;
+    mode = chi_temp <  32 ? mode : xDMRG_Mode::DIRECT_OPT;
 //    mode = chi_temp >= 16 and chi_temp <= 64 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
 //    mode = chi_temp > 64 ? xDMRG_Mode::DIRECT_OPT : mode;
 //    mode = theta.size() >= 4096 ? xDMRG_Mode::DIRECT_OPT : mode;
