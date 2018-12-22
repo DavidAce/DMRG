@@ -14,9 +14,9 @@ requirements = true
 # Note that requiring two on single threaded jobs
 # essentially turns off hyperthreading.
 ########################################################
-request_cpus   = 2
+request_cpus   = 1
 request_disk   = 500
-# request_memory = 2000
+request_memory = 2000
 
 #################################################################################
 # The below lines added to the submit file will allow the jobs to
@@ -80,6 +80,11 @@ requirements = $(requirements) && \
 #
 
 
+requirements = $(requirements) && \
+                TARGET.Machine == "turing"
+
+
+
 #########################################################
 # Use lines below when there is no shared NFS filesystem
 #########################################################
@@ -106,12 +111,12 @@ log        = logs/$(NAME)_$(ID).log
 output     = logs/$(NAME)_$(ID).out
 error      = logs/$(NAME)_$(ID).error
 
-queue inputfiles matching files input/L_*/$(NAME)_*.cfg
+# queue inputfiles matching files input/L_*/$(NAME)_*.cfg
 
 # queue inputfiles matching files input/L_12/$(NAME)_*.cfg
 # queue inputfiles matching files input/L_16/$(NAME)_*.cfg
 # queue inputfiles matching files input/L_20/$(NAME)_*.cfg
-# queue inputfiles matching files input/L_24/$(NAME)_*.cfg
+queue inputfiles matching files input/L_24/$(NAME)_*.cfg
 # queue inputfiles matching files input/L_28/$(NAME)_*.cfg
 # queue inputfiles matching files input/L_32/$(NAME)_*.cfg
 # queue inputfiles matching files input/L_36/$(NAME)_*.cfg
