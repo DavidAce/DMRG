@@ -16,7 +16,7 @@ Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t 
 -m <mode>        : Release         | Debug | Profile |  (default = Release)
 -o <ON|OFF>      : OpenMP use      | ON | OFF | (default = OFF)
 -s <ON|OFF>      : Static linking  | ON | OFF | (default = ON)
--t <target>      : DMRG++          | all | hdf5_test | arpack++_simple_test | arpack++_mps_test | (default = all)
+-t <target>      : DMRG++          | all | hdf5_test_target | arpack++_simple_test_target | arpack++_mps_test_target | (default = all)
 EOF
   exit 1
 }

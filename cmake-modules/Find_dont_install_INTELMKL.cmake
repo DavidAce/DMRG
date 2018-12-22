@@ -34,7 +34,7 @@ if (MKL_FOUND)
     #The order of these libraries is important when doing static linking!
     #To find out the order, check the Intel link line advisor.
     set(MKL_LIBRARIES  ${MKL_BLAS_LP_LIBRARY} ${MKL_LAPACK_LP_LIBRARY}  -Wl,--start-group  ${MKL_GF_LP_LIBRARY})
-    set(MKL_LFLAGS  -lm -ldl ${PTHREAD_LIBRARY})
+
     if(MKL_MULTI_THREADED)
         list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group)
         if(STATIC_BUILD)
@@ -54,37 +54,34 @@ if (MKL_FOUND)
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
     set_target_properties(mkl PROPERTIES
-            INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES}"
+            INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES};${PTHREAD_LIBRARY}"
             INTERFACE_LINK_DIRECTORIES      "${MKL_ROOT_DIR}/lib/intel64"
             INTERFACE_INCLUDE_DIRECTORIES   "${MKL_INCLUDE_DIR}"
             INTERFACE_COMPILE_OPTIONS       "${MKL_FLAGS}"
-            INTERFACE_LINK_OPTIONS          "${MKL_LFLAGS}"
             )
 
 
     # BLAS and LAPACK are included in the MKL.
     set(BLAS_LIBRARIES   ${MKL_LIBRARIES})
     set(LAPACK_LIBRARIES ${MKL_LIBRARIES})
-#    set(FC_LDLAGS ${MKL_LFLAGS}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
+    set(FC_LDLAGS -lm -ldl -fPIC ${PTHREAD_LIBRARY}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
 
 
     # Make the rest of the build structure aware of blas and lapack included in MKL.
     add_library(blas INTERFACE)
     set_target_properties(blas PROPERTIES
-            INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES}"
+            INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES};${PTHREAD_LIBRARY}"
             INTERFACE_LINK_DIRECTORIES      "${MKL_ROOT_DIR}/lib/intel64"
             INTERFACE_INCLUDE_DIRECTORIES   "${MKL_INCLUDE_DIR}"
             INTERFACE_COMPILE_OPTIONS       "${MKL_FLAGS}"
-            INTERFACE_LINK_OPTIONS          "${MKL_LFLAGS}"
             )
 
     add_library(lapack INTERFACE)
     set_target_properties(lapack PROPERTIES
-            INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES}"
+            INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES};${PTHREAD_LIBRARY}"
             INTERFACE_LINK_DIRECTORIES      "${MKL_ROOT_DIR}/lib/intel64"
             INTERFACE_INCLUDE_DIRECTORIES   "${MKL_INCLUDE_DIR}"
             INTERFACE_COMPILE_OPTIONS       "${MKL_FLAGS}"
-            INTERFACE_LINK_OPTIONS          "${MKL_LFLAGS}"
             )
 
 
@@ -92,11 +89,10 @@ if (MKL_FOUND)
 
     message("")
     message("======MKL SUMMARY ======")
-    message("MKL_LIBRARIES                             : ${MKL_LIBRARIES}" )
+    message("MKL_LIBRARIES                             : ${MKL_LIBRARIES};${PTHREAD_LIBRARY}" )
     message("MKL_RT_LIBRARY                            : ${MKL_RT_LIBRARY}" )
     message("MKL_INCLUDE_DIR                           : ${MKL_INCLUDE_DIR}" )
     message("MKL_FLAGS                                 : ${MKL_FLAGS}" )
-    message("MKL_LFLAGS                                : ${MKL_LFLAGS}" )
     message("MKLROOT                                   : $ENV{MKLROOT}" )
     message("MKL_USE_SINGLE_DYNAMIC_LIBRARY            : ${MKL_USE_SINGLE_DYNAMIC_LIBRARY}" )
     message("BLAS_LIBRARIES                            : ${BLAS_LIBRARIES}" )
@@ -108,7 +104,7 @@ if (MKL_FOUND)
 
     #   Test features
     include(CheckCXXSourceCompiles)
-    set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES} ${MKL_LFLAGS})
+    set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES} ${PTHREAD_LIBRARY})
     set(CMAKE_REQUIRED_INCLUDES  ${MKL_INCLUDE_DIR})
     set(CMAKE_REQUIRED_FLAGS     ${MKL_FLAGS})
     check_cxx_source_compiles("
