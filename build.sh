@@ -75,7 +75,7 @@ elif [ "$compiler" = "Clang" ] ; then
 fi
 
 
-if [ "$MKL" = "ON" ] ; then
+if [ "$mkl" = "ON" ] ; then
     module load intel-mkl-2019.1
 else
     module load openblas_${march}_v0.3.4
