@@ -16,7 +16,7 @@ requirements = true
 ########################################################
 request_cpus   = 2
 request_disk   = 500
-request_memory = 2000
+request_memory = 1000
 environment    = "OMP_NUM_THREADS=2"
 
 #################################################################################
@@ -81,8 +81,8 @@ requirements = $(requirements) && \
 #
 
 
-requirements = $(requirements) && \
-                TARGET.Machine == "turing"
+#requirements = $(requirements) && \
+#               TARGET.Machine == "turing"
 
 
 
@@ -113,11 +113,11 @@ error      = logs/$(NAME)_$(ID).error
 
 # queue inputfiles matching files input/L_*/$(NAME)_*.cfg
 
-# queue inputfiles matching files input/L_12/$(NAME)_*.cfg
-# queue inputfiles matching files input/L_16/$(NAME)_*.cfg
-# queue inputfiles matching files input/L_20/$(NAME)_*.cfg
+queue inputfiles matching files input/L_12/$(NAME)_*.cfg
+queue inputfiles matching files input/L_16/$(NAME)_*.cfg
+queue inputfiles matching files input/L_20/$(NAME)_*.cfg
 queue inputfiles matching files input/L_24/$(NAME)_*.cfg
-# queue inputfiles matching files input/L_28/$(NAME)_*.cfg
-# queue inputfiles matching files input/L_32/$(NAME)_*.cfg
-# queue inputfiles matching files input/L_36/$(NAME)_*.cfg
+queue inputfiles matching files input/L_28/$(NAME)_*.cfg
+queue inputfiles matching files input/L_32/$(NAME)_*.cfg
+queue inputfiles matching files input/L_36/$(NAME)_*.cfg
 

@@ -10,8 +10,8 @@ template_filename = 'input_template.cfg'
 basename    = 'mbl_'
 location    = "../input"
 
-realizations = np.arange(0,50,1)  # Number of copies for each point on the sweep
-lengths      = np.arange(12,40,4)
+realizations = np.arange(0,100,1)  # Number of copies for each point on the sweep
+sites        = np.arange(12,40,4)
 lambdas      = np.arange(0, 0.4, 0.1)
 J_log_mean   = [1]
 h_log_mean   = [1] # np.flipud(np.arange(-0.5, 1.0, 0.5)+1)
@@ -20,7 +20,7 @@ num_total = 0
 settings = []
 input_filenames = []
 
-for num_L in lengths:
+for num_L in sites:
     for num_l in range(len(lambdas)):
         for num_j in range(len(J_log_mean)):
             for num_h in range(len(h_log_mean)):
@@ -32,7 +32,7 @@ for num_L in lengths:
                         "model::selfdual_tf_rf_ising::lambda"         : "{:.2f}".format(lambdas[num_l]),
                         "model::selfdual_tf_rf_ising::J_sigma"        : "1.0",
                         "model::selfdual_tf_rf_ising::h_sigma"        : "1.0",
-			            "xdmrg::max_length"                           : str(num_L),
+			            "xdmrg::num_sites"                            : str(num_L),
 			            "xdmrg::chi_max"                              : "256",
                         "xdmrg::seed"                                 : str(num_total),
                         "hdf5::output_folder"                         : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h),
