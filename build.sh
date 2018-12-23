@@ -78,7 +78,7 @@ fi
 if [ "$MKL" = "ON" ] ; then
     module load intel-mkl-2019.1
 else
-    module load openblas_${march}_v0.3.3
+    module load openblas_${march}_v0.3.4
 fi
 
 
@@ -116,6 +116,7 @@ fi
 
 
 echo "Starting Build"
+echo "Compiler        :   $compiler"
 echo "Micro arch.     :   $march"
 echo "Target          :   $target"
 echo "Build threads   :   $make_threads"
