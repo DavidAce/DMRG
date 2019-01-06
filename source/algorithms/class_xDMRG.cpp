@@ -475,14 +475,14 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
 //        Textra::VectorType<Scalar> theta_0 = eigvecs * xstart;
         size_t iter_0 = 0;
         double energy_0   = measurement->compute_energy_mpo(theta.data(),theta.dimensions());
-        double variance_0 = std::log10(measurement->compute_energy_variance_mpo(theta.data(),theta.dimensions(),energy_0));
+        double variance_0 = std::log10(measurement->compute_energy_variance_mpo(theta.data(),theta.dimensions(),energy_0)/chain_length);
 
 //        Scalar variance_0 = std::log10(
 //                ((theta_0.adjoint() * H_local_sq.selfadjointView<Eigen::Upper>() * theta_0).sum() -
 //                 energy_0 * energy_0 * chain_length * chain_length) / chain_length);
 //        double overlap_0 = (theta_old.adjoint() * theta_0).cwiseAbs().sum();
         t_lbfgs.toc();
-        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, variance_0/chain_length, 1.0, iter_0 ,0,t_lbfgs.get_last_time_interval(), t_tot.get_age());
+        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, variance_0, 1.0, iter_0 ,0,t_lbfgs.get_last_time_interval(), t_tot.get_age());
         t_lbfgs.tic();
         using namespace LBFGSpp;
         class_xDMRG_full_functor<Scalar> functor(
