@@ -127,10 +127,10 @@ double class_measurement::compute_energy_variance_mpo(const T * theta_ptr, Eigen
                     .contract(superblock->Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
     if (sim_type == SimulationType::iDMRG) {
 //        t_var_mpo.toc();
-        return std::real(H2(0))/2.0/L;
+        return std::real(H2(0))/2.0;
     }else{
 //        t_var_mpo.toc();
-        return std::abs(H2(0) - energy_all_sites*energy_all_sites)/L;
+        return std::abs(H2(0) - energy_all_sites*energy_all_sites);
     }
 }
 
