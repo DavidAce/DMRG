@@ -125,10 +125,10 @@ double class_xDMRG_full_functor<Scalar>::operator()(const Eigen::Matrix<double,E
             variance    = var;
             energy      = vHv/vv;
             log10var    = std::log10(var);
-            log10norm   = std::log10(std::abs(vv));
-//             fx = log10var  + lambda * std::pow(vv-1.0,2);
+//            log10norm   = std::log10(std::abs(vv));
+             fx = log10var  + lambda * std::pow(vv-1.0,2);
 //            fx = log10var  +  lambda * std::abs(vv-1.0);
-            fx = log10var  +  lambda * log10norm;
+//            fx = log10var  +  lambda * log10norm;
             if(std::isnan(log10var)){
                 std::cout << "v: \n" << v << std::endl;
                 std::cout << "vH2v            : " << vH2v << std::endl;
@@ -145,12 +145,12 @@ double class_xDMRG_full_functor<Scalar>::operator()(const Eigen::Matrix<double,E
         for (int k = 0; k < v.size(); k++){
             double vi2H2ik         = 2.0*vH2(k);             // 2 * sum_i x_i H2_ik
             double vk4EkvEv        = 4.0*vH(k) * vHv ;       // 4 * x_k * E_k * (sum_i x_i^2 E_i)
-//            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vHv*vHv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
-//                      + lambda * 4.0 * v(k) * (vv - 1);
+            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vHv*vHv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
+                      + lambda * 4.0 * v(k) * (vv - 1);
 //            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vHv*vHv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
 //                      + lambda * 2.0 * v(k) * sgn(vv - 1);//
-            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vHv*vHv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
-                      + lambda * 2.0 * v(k) / vv / std::log(10);
+//            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vHv*vHv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
+//                      + lambda * 2.0 * v(k) / vv / std::log(10);
         }
     }
     counter++;

@@ -100,7 +100,7 @@ void class_xDMRG::single_xDMRG_step() {
     ccout(3) << "STATUS: Starting single xDMRG step\n";
     Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
     xDMRG_Mode mode = xDMRG_Mode::KEEP_BEST_OVERLAP;
-    mode = chi_temp >= 8  ? xDMRG_Mode::FULL_EIG_OPT    : mode;
+//    mode = chi_temp >= 8 ? xDMRG_Mode::FULL_EIG_OPT    : mode;
     mode = chi_temp >= 16 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
     mode = chi_temp >= 32 ? xDMRG_Mode::DIRECT_OPT      : mode;
 //    mode = mode == xDMRG_Mode::DIRECT_OPT and env_storage->position_is_the_middle() ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
@@ -482,7 +482,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
 //                 energy_0 * energy_0 * chain_length * chain_length) / chain_length);
 //        double overlap_0 = (theta_old.adjoint() * theta_0).cwiseAbs().sum();
         t_lbfgs.toc();
-        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, variance_0, 1.0, iter_0 ,0,t_lbfgs.get_last_time_interval(), t_tot.get_age());
+        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, variance_0/chain_length, 1.0, iter_0 ,0,t_lbfgs.get_last_time_interval(), t_tot.get_age());
         t_lbfgs.tic();
         using namespace LBFGSpp;
         class_xDMRG_full_functor<Scalar> functor(
@@ -499,11 +499,11 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
         param.max_iterations = 1000;
         param.max_linesearch = 200; // Default is 20. 5 is really bad, 80 seems better.
         param.m              = 6;
-        param.epsilon        = 1e-4; // Default is 1e-5.
-        param.delta          = 1e-4; // Default is 0. Trying this one instead of ftol.
-        param.ftol           = 1e-4; // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
-        param.past           = 1;    // Or perhaps it was this one that helped.
-        param.wolfe          = 1e-1;
+        param.epsilon        = 1e-5;  // Default is 1e-5.
+        param.delta          = 1e-10; // Default is 0. Trying this one instead of ftol.
+        param.ftol           = 1e-4;  // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
+        param.past           = 1;     // Or perhaps it was this one that helped.
+//        param.wolfe          = 1e-1;
 
         // Create solver and function object
         LBFGSpp::LBFGSSolver<double> solver_3(param);
