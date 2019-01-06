@@ -392,13 +392,14 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
                 );
         double threshold = 1e-10;
         LBFGSpp::LBFGSParam<double> param;
-        param.max_iterations = 2000;
-        param.m              = 16;
+        param.max_iterations = 1000;
         param.max_linesearch = 200; // Default is 20. 5 is really bad, 80 seems better.
-        param.epsilon        = 1e-6;//1e-5; // Default is 1e-5.
-        param.delta          = 1e-8; // Default is 0;
-        param.ftol           = 1e-5; //this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
-        param.past           = 1;   // Or perhaps it was this one that helped... nope
+        param.m              = 6;
+        param.epsilon        = 1e-5;  // Default is 1e-5.
+        param.delta          = 1e-10; // Default is 0. Trying this one instead of ftol.
+        param.ftol           = 1e-4;  // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
+        param.past           = 1;     // Or perhaps it was this one that helped.
+//        param.wolfe          = 1e-1;
 
 
         // Create solver and function object
