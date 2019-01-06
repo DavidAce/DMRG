@@ -39,7 +39,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     measurement         = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
     initialize_state(settings::model::initial_state);
     min_saturation_length = 1 * (int)(1.0 * num_sites);
-    max_saturation_length = 1 * (int)(2.5 * num_sites);
+    max_saturation_length = 1 * (int)(2.0 * num_sites);
 }
 
 
@@ -100,8 +100,10 @@ void class_xDMRG::single_xDMRG_step() {
     ccout(3) << "STATUS: Starting single xDMRG step\n";
     Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
     xDMRG_Mode mode = xDMRG_Mode::KEEP_BEST_OVERLAP;
-    mode = chi_temp <= 16 ? mode : xDMRG_Mode::PARTIAL_EIG_OPT;
-    mode = chi_temp <  32 ? mode : xDMRG_Mode::DIRECT_OPT;
+    mode = chi_temp >= 8  ? xDMRG_Mode::FULL_EIG_OPT    : mode;
+    mode = chi_temp >= 16 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
+    mode = chi_temp >= 32 ? xDMRG_Mode::DIRECT_OPT      : mode;
+//    mode = mode == xDMRG_Mode::DIRECT_OPT and env_storage->position_is_the_middle() ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
 //    mode = chi_temp >= 16 and chi_temp <= 64 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
 //    mode = chi_temp > 64 ? xDMRG_Mode::DIRECT_OPT : mode;
 //    mode = theta.size() >= 4096 ? xDMRG_Mode::DIRECT_OPT : mode;
@@ -494,13 +496,13 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
                 );
         double threshold = 1e-5;
         LBFGSpp::LBFGSParam<double> param;
-        param.max_iterations = 2000;
+        param.max_iterations = 1000;
         param.max_linesearch = 200; // Default is 20. 5 is really bad, 80 seems better.
-        param.m              = 16;
-        param.epsilon        = 1e-6; // Default is 1e-5.
-        param.delta          = 1e-8; // Default is 0; //Trying this one instead of ftol.
-        param.ftol           = 1e-5; //this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
-        param.past           = 1; // Or perhaps it was this one that helped.
+        param.m              = 6;
+        param.epsilon        = 1e-4; // Default is 1e-5.
+        param.delta          = 1e-4; // Default is 0. Trying this one instead of ftol.
+        param.ftol           = 1e-4; // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
+        param.past           = 1;    // Or perhaps it was this one that helped.
         param.wolfe          = 1e-1;
 
         // Create solver and function object
