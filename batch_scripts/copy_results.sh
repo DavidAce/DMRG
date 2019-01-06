@@ -9,7 +9,7 @@ Usage              : $PROGNAME [-f <input_file>] [-h] [-m <mode>] [-t <target>]
 -a <address>       : Target machine IP address (default = thinkstation.duckdns.org)
 -d                 : Performs a dry run.
 -h                 : Help. Shows this text.
--p <target prefix> : Prefix at destination (default = /home/david/Dropbox/PhD/Projects/mbl_transition)
+-p <target prefix> : Prefix at destination (default = /mnt/Barracuda/Projects/mbl_transition)
 -s <source dir>    : Source relative to current dir (default = .)
 -t <target dir>    : Target directory (default = tmp)
 -u <user>          : User at target machine (default = david)

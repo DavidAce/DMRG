@@ -165,13 +165,19 @@ Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_loc
 
 Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_matrix_real (){
     long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+//    std::cout << "STATUS: Computing tempL \n";
     Eigen::Tensor<double,5>tempL   = Lblock->block.contract(HA->MPO,Textra::idx({2},{0})).real().shuffle(Textra::array5{4,1,3,0,2});
+//    std::cout << "STATUS: tempL dims: " << tempL.dimensions() << std::endl;
+//    std::cout << "STATUS: Computing tempR \n";
     Eigen::Tensor<double,5>tempR   = Rblock->block.contract(HB->MPO,Textra::idx({2},{1})).real().shuffle(Textra::array5{4,1,3,0,2});
+//    std::cout << "STATUS: tempR dims: " << tempR.dimensions() << std::endl;
+//    std::cout << "STATUS: Computing H_local \n";
     Eigen::Tensor<double,8>H_local = tempL.contract(tempR, Textra::idx({4},{4})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
 //    tempL.resize(0,0,0,0,0);
 //    tempR.resize(0,0,0,0,0);
 //    tempH = tempH.shuffle(Textra::array8{0,1,4,5,2,3,6,7}).eval();
 //    Eigen::Tensor<double,8> H_local = tempH.shuffle(Textra::array8{0,1,4,5,2,3,6,7}).eval();
+//    std::cout << "STATUS: Returning get_H_local_matrix_real\n";
     return Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
 }
 
