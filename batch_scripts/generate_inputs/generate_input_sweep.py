@@ -10,9 +10,9 @@ template_filename = 'input_template.cfg'
 basename    = 'mbl_'
 location    = "../input"
 
-realizations = np.arange(0,500,1)  # Number of copies for each point on the sweep
-sites        = np.arange(12,44,8)
-lambdas      = np.arange(0, 0.4, 0.1)
+realizations = np.arange(0,2000,1)  # Number of copies for each point on the sweep
+sites        = np.arange(12,20,4)
+lambdas      = np.arange(0, 0.1, 0.1)
 J_log_mean   = [1]
 h_log_mean   = [1] # np.flipud(np.arange(-0.5, 1.0, 0.5)+1)
 # h_log_mean   = np.flipud(np.arange(-1, 1.5, 0.5)+1)
