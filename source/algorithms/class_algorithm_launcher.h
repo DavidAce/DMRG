@@ -18,14 +18,7 @@ public:
     class_algorithm_launcher(std::shared_ptr<class_hdf5_file> hdf5_);
     class_algorithm_launcher();
 
-    void run_algorithms(){
-        run_iDMRG();
-        run_fDMRG();
-        run_xDMRG();
-        run_iTEBD();
-        std::cout << "All simulations finished." << std::endl;
-    };
-
+    void run_algorithms();
     void run_iDMRG();
     void run_fDMRG();
     void run_xDMRG();

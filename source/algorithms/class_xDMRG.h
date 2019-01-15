@@ -10,6 +10,9 @@
 class class_table_finite_chain;
 class class_table_dmrg;
 
+
+
+
 /*!
  * \brief Class that runs the excited-state DMRG algorithm.
  */
@@ -30,7 +33,7 @@ public:
     int    max_saturation_length;
     int    min_sweeps   = 5;
     int    max_sweeps   ;
-    int    num_sites    ;
+//    int    num_sites    ;
 
     //Energy ranges
     double energy_min = 0;
@@ -45,11 +48,8 @@ public:
     void print_profiling_sim(class_tic_toc &t_parent)   override;
     void store_table_entry_to_file(bool force = false)  override;
     void store_chain_entry_to_file(bool force = false);
-    void store_state_to_file(bool force = false);
     void single_xDMRG_step();
     void initialize_chain();
-    void reset_chain_mps_to_random_product_state(std::string parity = "none");
-    void set_random_fields_in_chain_mpo();
     void find_energy_range();
 
     std::vector<int> generate_size_list(const int shape);

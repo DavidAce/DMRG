@@ -51,12 +51,13 @@ public:
     // Common variables
     int    iteration = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
     int    step      = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
+    int    num_sites    ;
     long   chi_max      ;
     bool   chi_grow     ;
     int    print_freq   ;
     int    store_freq   ;
     int    seed       = 1;
-    long   chi_temp   = 4;
+    long   chi_temp   = 32;
     bool   simulation_has_converged = false;
     bool   simulation_has_to_stop   = false;
     bool   bond_dimension_has_reached_max = false;
@@ -84,7 +85,8 @@ public:
     //Common functions
     void print_status_update();
     void print_status_full();
-    void single_DMRG_step(long chi_max, eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR);
+    void single_DMRG_step(eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR);
+    void store_state_to_file(bool force = false);
 
     virtual void check_convergence();
     static constexpr double quietNaN = std::numeric_limits<double>::quiet_NaN();
@@ -94,9 +96,10 @@ public:
     void check_convergence_entanglement(double slope_threshold = quietNaN);
     void update_bond_dimension(int min_saturation_length = 1);
     void clear_saturation_status();
-    void set_file_OK();
-    void initialize_state(std::string initial_state);
 
+    void initialize_state(std::string initial_state);
+    void reset_chain_mps_to_random_product_state(std::string parity = "none");
+    void set_random_fields_in_chain_mpo();
     void compute_observables();
     void enlarge_environment();
     void enlarge_environment(int direction);

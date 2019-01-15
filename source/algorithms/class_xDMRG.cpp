@@ -20,12 +20,32 @@
 #include <Eigen/Sparse>
 #include <Eigen/Eigenvalues>
 #include <general/nmspc_tensor_extra.h>
-#include <general/nmspc_quantum_mechanics.h>
 #include <LBFGS.h>
 #include <algorithms/class_xDMRG_functor.h>
 #include <algorithms/class_xDMRG_full_functor.h>
 
 #include "class_xDMRG.h"
+
+//Print xDMRG modes nicely
+std::ostream& operator<<(std::ostream& str, class_xDMRG::xDMRG_Mode const& mode) {
+    switch (mode){
+        case class_xDMRG::xDMRG_Mode::KEEP_BEST_OVERLAP :
+            str << "KEEP BEST OVERLAP";
+            break;
+        case class_xDMRG::xDMRG_Mode::FULL_EIG_OPT :
+            str << "FULL EIG OPT";
+            break;
+        case class_xDMRG::xDMRG_Mode::PARTIAL_EIG_OPT :
+            str << "PARTIAL EIG OPT";
+            break;
+        case class_xDMRG::xDMRG_Mode::DIRECT_OPT :
+            str << "DIRECT OPT";
+            break;
+    }
+    return str;
+}
+
+
 
 using namespace std;
 using namespace Textra;
@@ -47,7 +67,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
 void class_xDMRG::run() {
     if (!settings::xdmrg::on) { return; }
     rn::seed((unsigned long)seed);
-    ccout(2) << "\nStarting " << sim_name << " simulation" << std::endl;
+    ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
     t_tot.tic();
     initialize_chain();
     set_random_fields_in_chain_mpo();
@@ -64,7 +84,6 @@ void class_xDMRG::run() {
 
         check_convergence();
         print_status_update();
-
         // It's important not to perform the last step.
         // That last state would not get optimized
         if (iteration >= min_sweeps and env_storage->position_is_the_middle_any_direction() and
@@ -88,21 +107,22 @@ void class_xDMRG::run() {
         hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction");
     }
     print_profiling();
-    set_file_OK();
 }
 
-void class_xDMRG::single_xDMRG_step() {
+void class_xDMRG::single_xDMRG_step()
 /*!
- * \fn void single_DMRG_step(class_superblock &superblock)
+ * \fn void single_DMRG_step()
  */
+{
+
     t_sim.tic();
     t_opt.tic();
     ccout(3) << "STATUS: Starting single xDMRG step\n";
     Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
     xDMRG_Mode mode = xDMRG_Mode::KEEP_BEST_OVERLAP;
-//    mode = chi_temp >= 8 ? xDMRG_Mode::FULL_EIG_OPT    : mode;
-    mode = chi_temp >= 16 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
-    mode = chi_temp >= 32 ? xDMRG_Mode::DIRECT_OPT      : mode;
+//    mode = chi_temp >= 8  ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
+//    mode = chi_temp >= 32 ? xDMRG_Mode::FULL_EIG_OPT : mode;
+    mode = chi_temp >= 16 ? xDMRG_Mode::DIRECT_OPT      : mode;
 //    mode = mode == xDMRG_Mode::DIRECT_OPT and env_storage->position_is_the_middle() ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
 //    mode = chi_temp >= 16 and chi_temp <= 64 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
 //    mode = chi_temp > 64 ? xDMRG_Mode::DIRECT_OPT : mode;
@@ -132,17 +152,16 @@ void class_xDMRG::check_convergence(){
     ccout(2) << "Variance has saturated for " << variance_mpo_saturated_for << " steps \n";
     if(variance_mpo_has_converged)
     {
-        ccout(1) << "Simulation has converged\n";
+        ccout(2) << "Simulation has converged\n";
         simulation_has_converged = true;
     }
 
     else if (variance_mpo_has_saturated and
              bond_dimension_has_reached_max and
-             //        env_storage->position_is_the_middle()
              variance_mpo_saturated_for > max_saturation_length
             )
     {
-        ccout(1) << "Simulation has to stop\n";
+        ccout(2) << "Simulation has to stop\n";
         simulation_has_to_stop = true;
     }
 
@@ -156,7 +175,7 @@ std::vector<int> class_xDMRG::generate_size_list(const int shape){
     int min_size = 1;
     min_size =  shape > 1024 ? std::min(8,shape/16) : min_size;
     int max_size = std::max(1,shape/16);
-//    max_size = std::min(max_size,256);
+    max_size = std::min(max_size,256);
     int tmp_size = min_size;
     while (tmp_size <= max_size){
         size_list.push_back(tmp_size);
@@ -250,6 +269,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         double sparcity    = (double)(H_local.array().cwiseAbs() > 1e-15).count()/(double)H_local.size();
         ccout(2) << "Starting eigensolver \n"
                  << std::setprecision(10)
+                 << "      mode        : "    << mode << '\n'
                  << "      position    : "    << env_storage->get_position() << '\n'
                  << "      chi         : "    << chi_temp << '\n'
                  << "      shape       : "    << shape    << " x " << shape << '\n'
@@ -568,100 +588,17 @@ void class_xDMRG::initialize_chain() {
     }
 }
 
-void class_xDMRG::reset_chain_mps_to_random_product_state(std::string parity) {
-    std::cout << "Resetting to random product state" << std::endl;
-    assert(env_storage->get_length() == num_sites);
-
-    iteration = env_storage->reset_sweeps();
-
-    while(true) {
-        // Random product state
-        long chiA = superblock->MPS->chiA();
-        long chiB = superblock->MPS->chiB();
-        long d    = superblock->HA->get_spin_dimension();
-        Eigen::Tensor<Scalar,4> theta;
-        Eigen::MatrixXcd vecs1(d*chiA,d*chiB);
-        Eigen::MatrixXcd vecs2(d*chiA,d*chiB);
-        if (parity == "none"){
-            theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
-        }else{
-            if (parity == "sx"){
-                vecs1.col(0) = qm::spinOneHalf::sx_eigvecs[0];
-                vecs1.col(1) = qm::spinOneHalf::sx_eigvecs[1];
-            }else if (parity == "sz"){
-                vecs1.col(0) = qm::spinOneHalf::sz_eigvecs[0];
-                vecs1.col(1) = qm::spinOneHalf::sz_eigvecs[1];
-            }else if (parity == "sy"){
-                vecs1.col(0) = qm::spinOneHalf::sy_eigvecs[0];
-                vecs1.col(1) = qm::spinOneHalf::sy_eigvecs[1];
-            }else{
-                std::cerr << "Invalid parity name" << std::endl;
-                exit(1);
-            }
-            theta.resize(d,chiA,d,chiB);
-            Eigen::array<long, 4> extent4{2,1,2,1};
-            Eigen::array<long, 2> extent2{2,2};
-            if(rn::uniform_double_1() < 0.5){
-                theta.slice(Eigen::array<long,4>{0,0,0,0},extent4).reshape(extent2) = Textra::Matrix_to_Tensor(vecs1);
-
-            }else{
-                theta.slice(Eigen::array<long,4>{0,0,0,0},extent4).reshape(extent2) = Textra::Matrix_to_Tensor(vecs2);
-            }
-
-        }
-        //Get a properly normalized initial state.
-        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
-        env_storage_overwrite_local_ALL();
-//        env_storage->print_storage();
-        // It's important not to perform the last step.
-//        std::cout << "Position :" << env_storage->get_position() << std::endl;
-        if(iteration > 1) {break;}
-        enlarge_environment(env_storage->get_direction());
-        env_storage_move();
-        iteration = env_storage->get_sweeps();
-
-    }
-    iteration = env_storage->reset_sweeps();
-    measurement->set_not_measured();
-}
-
-void class_xDMRG::set_random_fields_in_chain_mpo() {
-    std::cout << "Setting random fields in chain" << std::endl;
-    assert(env_storage->get_length() == num_sites);
-    std::vector<std::vector<double>> all_params;
-    for (auto &mpo : env_storage->ref_MPO_L()){
-        mpo->randomize_hamiltonian();
-        all_params.push_back(mpo->get_parameter_values());
-    }
-    for (auto &mpo : env_storage->ref_MPO_R()){
-        mpo->randomize_hamiltonian();
-        all_params.push_back(mpo->get_parameter_values());
-    }
-
-    for (auto &mpo : env_storage->ref_MPO_L()){
-        mpo->set_non_local_parameters(all_params);
-    }
-    for (auto &mpo : env_storage->ref_MPO_R()){
-        mpo->set_non_local_parameters(all_params);
-    }
-
-
-    superblock->HA = env_storage->get_MPO_L().back()->clone();
-    superblock->HB = env_storage->get_MPO_R().front()->clone();
-    iteration = env_storage->reset_sweeps();
-}
 
 void class_xDMRG::find_energy_range() {
     std::cout << "Finding energy range" << std::endl;
     assert(env_storage->get_length() == num_sites);
     int max_sweeps_during_f_range = 5;
-    int chi_during_f_range   = 4;
     iteration = env_storage->reset_sweeps();
 
 
     // Find energy minimum
     while(true) {
-        single_DMRG_step(chi_during_f_range, eigsolver_properties::Ritz::SR);
+        single_DMRG_step(eigsolver_properties::Ritz::SR);
         env_storage_overwrite_local_ALL();         //Needs to occurr after update_MPS...
         print_status_update();
 
@@ -681,7 +618,7 @@ void class_xDMRG::find_energy_range() {
     reset_chain_mps_to_random_product_state();
     // Find energy maximum
     while(true) {
-        single_DMRG_step(chi_during_f_range, eigsolver_properties::Ritz::LR);
+        single_DMRG_step(eigsolver_properties::Ritz::LR);
         env_storage_overwrite_local_ALL();         //Needs to occurr after update_MPS...
         print_status_update();
         // It's important not to perform the last step.
@@ -763,22 +700,6 @@ void class_xDMRG::store_chain_entry_to_file(bool force){
     t_sto.toc();
 }
 
-void class_xDMRG::store_state_to_file(bool force){
-    if(not force){
-        if (Math::mod(iteration, store_freq) != 0) {return;}
-        if (not env_storage->position_is_the_middle_any_direction()) {return;}
-        if (store_freq == 0){return;}
-    }
-    ccout(3) << "STATUS: Storing storing mps to file\n";
-    t_sto.tic();
-    env_storage->write_all_to_hdf5();
-    if (settings::hdf5::resume_from_file){
-        env_storage->write_full_mps_to_hdf5();
-        env_storage->write_full_mpo_to_hdf5();
-    }
-    t_sto.toc();
-}
-
 void class_xDMRG::initialize_constants(){
     using namespace settings;
     num_sites   = xdmrg::num_sites;
@@ -787,7 +708,6 @@ void class_xDMRG::initialize_constants(){
     chi_grow     = xdmrg::chi_grow  ;
     print_freq   = xdmrg::print_freq;
     store_freq   = xdmrg::store_freq;
-    seed         = xdmrg::seed      ;
 }
 
 void class_xDMRG::print_profiling(){

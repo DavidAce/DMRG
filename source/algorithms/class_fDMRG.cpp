@@ -21,9 +21,11 @@ class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     initialize_constants();
     table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
     table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name,sim_name + "_chain");
-    env_storage       = std::make_shared<class_finite_chain>(max_length, superblock, hdf5,sim_type,sim_name );
+    env_storage       = std::make_shared<class_finite_chain>(num_sites, superblock, hdf5,sim_type,sim_name );
     measurement       = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
     initialize_state(settings::model::initial_state);
+    min_saturation_length = 1 * (int)(1.0 * num_sites);
+    max_saturation_length = 1 * (int)(2.0 * num_sites);
 }
 
 
@@ -33,40 +35,53 @@ void class_fDMRG::run() {
     ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
     t_tot.tic();
     initialize_chain();
+    set_random_fields_in_chain_mpo();
+    env_storage->print_hamiltonians();
+
+
     while(true) {
-        single_DMRG_step(chi_temp);
+        single_DMRG_step();
         env_storage_overwrite_local_ALL();         //Needs to occurr after update_MPS...
         store_table_entry_to_file();
         store_chain_entry_to_file();
         store_profiling_to_file_delta();
+        store_state_to_file();
+
+        check_convergence();
         print_status_update();
+
+
 
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if(env_storage->position_is_the_middle()) {
-            check_convergence();
-            if (iteration >= max_sweeps or simulation_has_converged) {
-                break;
-            }
+        if (iteration >= min_sweeps and env_storage->position_is_the_middle_any_direction() and
+            (iteration >= max_sweeps or simulation_has_converged or simulation_has_to_stop))
+        {
+            break;
         }
+
+        update_bond_dimension(min_saturation_length);
         enlarge_environment(env_storage->get_direction());
         env_storage_move();
         iteration = env_storage->get_sweeps();
+        step++;
+        ccout(3) << "STATUS: Finished single fDMRG step\n";
+
     }
     t_tot.toc();
     print_status_full();
     measurement->compute_all_observables_from_finite_chain();
-    env_storage->write_all_to_hdf5();
+    if(settings::xdmrg::store_wavefn){
+        hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction");
+    }
     print_profiling();
 }
 
 void class_fDMRG::initialize_chain() {
     while(true){
-        single_DMRG_step(chi_max);
-//        print_status_update();
         env_storage_insert();
-        if (superblock->environment_size + 2ul < (unsigned long) max_length) {
+        if (superblock->environment_size + 2ul < (unsigned long) num_sites) {
             enlarge_environment();
             swap();
         } else {
@@ -76,24 +91,33 @@ void class_fDMRG::initialize_chain() {
 }
 
 void class_fDMRG::check_convergence(){
-    if(not env_storage->position_is_the_middle()){return;}
+    t_sim.tic();
     t_con.tic();
-    check_convergence_entanglement();
     check_convergence_variance_mpo();
-    update_bond_dimension();
-    if(entanglement_has_converged and
-       variance_mpo_has_converged and
-       bond_dimension_has_reached_max)
+    ccout(2) << "Variance has saturated for " << variance_mpo_saturated_for << " steps \n";
+    if(variance_mpo_has_converged)
     {
+        ccout(2) << "Simulation has converged\n";
         simulation_has_converged = true;
     }
+
+    else if (variance_mpo_has_saturated and
+             bond_dimension_has_reached_max and
+             variance_mpo_saturated_for > max_saturation_length
+            )
+    {
+        ccout(2) << "Simulation has to stop\n";
+        simulation_has_to_stop = true;
+    }
     t_con.toc();
+    t_sim.toc();
+
 }
 
 
 void class_fDMRG::initialize_constants(){
     using namespace settings;
-    max_length   = fdmrg::max_length;
+    num_sites    = fdmrg::num_sites;
     max_sweeps   = fdmrg::max_sweeps;
     chi_max      = fdmrg::chi_max;
     chi_grow     = fdmrg::chi_grow;
