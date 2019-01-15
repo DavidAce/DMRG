@@ -15,6 +15,7 @@
 #include <mps_routines/class_mps_2site.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
+#include <general/nmspc_quantum_mechanics.h>
 #include <general/class_svd_wrapper.h>
 #include <algorithms/table_types.h>
 
@@ -53,10 +54,11 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
     class_resume_from_hdf5 test(hdf5,superblock,env_storage,sim_name,sim_type);
     hdf5->write_dataset(settings::input::input_file, sim_name + "/input_file");
     hdf5->write_dataset(settings::input::input_filename, sim_name + "/input_filename");
+    seed = settings::model::seed;
 }
 
 
-void class_algorithm_base::single_DMRG_step(long chi_max, Ritz ritz){
+void class_algorithm_base::single_DMRG_step(Ritz ritz){
 /*!
  * \fn void single_DMRG_step(class_superblock &superblock)
  */
@@ -67,7 +69,7 @@ void class_algorithm_base::single_DMRG_step(long chi_max, Ritz ritz){
     theta = superblock->optimize_MPS(theta, ritz);
     t_opt.toc();
     t_svd.tic();
-    superblock->truncate_MPS(theta, chi_max, s::precision::SVDThreshold);
+    superblock->truncate_MPS(theta, chi_temp, s::precision::SVDThreshold);
     t_svd.toc();
     //Reduce the hamiltonians if you are doing infinite systems:
     if(sim_type == SimulationType::iDMRG){
@@ -79,8 +81,21 @@ void class_algorithm_base::single_DMRG_step(long chi_max, Ritz ritz){
     t_sim.toc();
 }
 
-
-
+void class_algorithm_base::store_state_to_file(bool force){
+    if(not force){
+        if (Math::mod(iteration, store_freq) != 0) {return;}
+        if (not env_storage->position_is_the_middle_any_direction()) {return;}
+        if (store_freq == 0){return;}
+    }
+    ccout(3) << "STATUS: Storing storing mps to file\n";
+    t_sto.tic();
+    env_storage->write_all_to_hdf5();
+    if (settings::hdf5::resume_from_file){
+        env_storage->write_full_mps_to_hdf5();
+        env_storage->write_full_mpo_to_hdf5();
+    }
+    t_sto.toc();
+}
 
 void class_algorithm_base::check_convergence(){
     t_con.tic();
@@ -295,11 +310,6 @@ void class_algorithm_base::clear_saturation_status(){
 
 }
 
-void class_algorithm_base::set_file_OK(){
-    int OK = 1;
-    hdf5->write_dataset(OK,sim_name + "/fileOK");
-}
-
 
 void class_algorithm_base::store_profiling_to_file_delta(bool force) {
     if (Math::mod(iteration, store_freq) != 0) {return;}
@@ -347,15 +357,13 @@ void class_algorithm_base::store_profiling_to_file_total(bool force) {
 
 }
 
-
-
 void class_algorithm_base::initialize_state(std::string initial_state ) {
     //Set the size and initial values for the MPS and environments
     //Choose between GHZ, W, Random, Product state (up, down, etc), None, etc...
     long d    = superblock->HA->get_spin_dimension();
     long chiA = superblock->MPS->chiA();
     long chiB = superblock->MPS->chiB();
-    std::srand((unsigned int) 1);
+    std::srand((unsigned int) seed);
     Eigen::Tensor<Scalar,1> LA;
     Eigen::Tensor<Scalar,3> GA;
     Eigen::Tensor<Scalar,1> LC;
@@ -514,13 +522,95 @@ void class_algorithm_base::initialize_state(std::string initial_state ) {
     swap();
 }
 
+void class_algorithm_base::reset_chain_mps_to_random_product_state(std::string parity) {
+    ccout(0) << "Resetting to random product state" << std::endl;
+    assert(env_storage->get_length() == num_sites);
+
+    iteration = env_storage->reset_sweeps();
+
+    while(true) {
+        // Random product state
+        long chiA = superblock->MPS->chiA();
+        long chiB = superblock->MPS->chiB();
+        long d    = superblock->HA->get_spin_dimension();
+        Eigen::Tensor<Scalar,4> theta;
+        Eigen::MatrixXcd vecs1(d*chiA,d*chiB);
+        Eigen::MatrixXcd vecs2(d*chiA,d*chiB);
+        if (parity == "none"){
+            theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
+        }else{
+            if (parity == "sx"){
+                vecs1.col(0) = qm::spinOneHalf::sx_eigvecs[0];
+                vecs1.col(1) = qm::spinOneHalf::sx_eigvecs[1];
+            }else if (parity == "sz"){
+                vecs1.col(0) = qm::spinOneHalf::sz_eigvecs[0];
+                vecs1.col(1) = qm::spinOneHalf::sz_eigvecs[1];
+            }else if (parity == "sy"){
+                vecs1.col(0) = qm::spinOneHalf::sy_eigvecs[0];
+                vecs1.col(1) = qm::spinOneHalf::sy_eigvecs[1];
+            }else{
+                std::cerr << "Invalid parity name" << std::endl;
+                exit(1);
+            }
+            theta.resize(d,chiA,d,chiB);
+            Eigen::array<long, 4> extent4{2,1,2,1};
+            Eigen::array<long, 2> extent2{2,2};
+            if(rn::uniform_double_1() < 0.5){
+                theta.slice(Eigen::array<long,4>{0,0,0,0},extent4).reshape(extent2) = Textra::Matrix_to_Tensor(vecs1);
+
+            }else{
+                theta.slice(Eigen::array<long,4>{0,0,0,0},extent4).reshape(extent2) = Textra::Matrix_to_Tensor(vecs2);
+            }
+
+        }
+        //Get a properly normalized initial state.
+        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
+        env_storage_overwrite_local_ALL();
+//        env_storage->print_storage();
+        // It's important not to perform the last step.
+        if(iteration > 1) {break;}
+        enlarge_environment(env_storage->get_direction());
+        env_storage_move();
+        iteration = env_storage->get_sweeps();
+
+    }
+    iteration = env_storage->reset_sweeps();
+    measurement->set_not_measured();
+}
+
+void class_algorithm_base::set_random_fields_in_chain_mpo() {
+    std::cout << "Setting random fields in chain" << std::endl;
+    rn::seed((unsigned long)seed);
+
+    assert(env_storage->get_length() == num_sites);
+    std::vector<std::vector<double>> all_params;
+    for (auto &mpo : env_storage->ref_MPO_L()){
+        mpo->randomize_hamiltonian();
+        all_params.push_back(mpo->get_parameter_values());
+    }
+    for (auto &mpo : env_storage->ref_MPO_R()){
+        mpo->randomize_hamiltonian();
+        all_params.push_back(mpo->get_parameter_values());
+    }
+
+    for (auto &mpo : env_storage->ref_MPO_L()){
+        mpo->set_non_local_parameters(all_params);
+    }
+    for (auto &mpo : env_storage->ref_MPO_R()){
+        mpo->set_non_local_parameters(all_params);
+    }
+
+
+    superblock->HA = env_storage->get_MPO_L().back()->clone();
+    superblock->HB = env_storage->get_MPO_R().front()->clone();
+    iteration = env_storage->reset_sweeps();
+}
 
 void class_algorithm_base::compute_observables(){
     t_obs.tic();
     measurement->compute_all_observables_from_superblock();
     t_obs.toc();
 }
-
 
 void class_algorithm_base::enlarge_environment(){
     t_sim.tic();
@@ -610,6 +700,7 @@ double process_memory_in_mb(std::string name){
 
     return -1.0;
 }
+
 void class_algorithm_base::print_status_update() {
     if (Math::mod(iteration, print_freq) != 0) {return;}
 //    if (not env_storage->position_is_the_middle()) {return;}

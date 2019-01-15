@@ -3,6 +3,7 @@
 //
 
 #include "class_svd_wrapper.h"
+#include <iomanip>
 #include <Eigen/QR>
 //
 // Definitions
