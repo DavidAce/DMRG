@@ -30,6 +30,7 @@ namespace settings {
     namespace model {
         extern std::string  initial_state ;                   /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
         extern std::string  model_type    ;                   /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising} above*/
+        extern int          seed          ;                   /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
 
         //Parameters for the transverse-field Ising model
         namespace tf_ising {
@@ -84,7 +85,7 @@ namespace settings {
     //Parameters controlling fDMRG
     namespace fdmrg {
         extern bool on           ;                          /*!< Turns fDMRG simulation on/off. */
-        extern int  max_length   ;                          /*!< Number sweeps along the 1D quantum chain. */
+        extern int  num_sites   ;                          /*!< Number sweeps along the 1D quantum chain. */
         extern int  max_sweeps   ;                          /*!< Number sweeps along the 1D quantum chain. */
         extern long chi_max      ;                          /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         extern bool chi_grow   ;                            /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
@@ -100,7 +101,6 @@ namespace settings {
         extern int     max_sweeps   ;                       /*!< Number sweeps along the 1D quantum chain. */
         extern long    chi_max      ;                       /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         extern bool    chi_grow     ;                       /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
-        extern int     seed         ;                       /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
         extern int     print_freq   ;                       /*!< Print frequency for console output. In units of sweeps. (0 = off). */
         extern int     store_freq   ;                       /*!< Store frequency,for output file buffer. In units of sweeps. (0 = off). */
         extern bool    store_wavefn ;                       /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */

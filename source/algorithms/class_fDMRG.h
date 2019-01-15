@@ -21,8 +21,9 @@ public:
     explicit class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_fdmrg;
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_fdmrg_chain;
-
-    int    max_length   ;
+    int    min_saturation_length;
+    int    max_saturation_length;
+    int    min_sweeps   = 5;
     int    max_sweeps   ;
 
     void run()                                          override;

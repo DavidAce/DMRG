@@ -19,7 +19,7 @@ namespace settings{
     //Common parameters for the model Hamiltonian
     std::string model::model_type        = "tf_ising";                    /*!< The default choice of model type from the enum */
     std::string model::initial_state     = "rps";                         /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi)} "cat" or "random". Default "rps". Note that "random_chi" works poorly for finite algorithms */
-
+    int         model::seed              = 1;
     //Parameters for the transverse-field Ising model
     double model::tf_ising::J            = 1;                             /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
     double model::tf_ising::g            = 1;                             /*!< Transverse field strength */
@@ -63,7 +63,7 @@ namespace settings{
 
     //Parameters controlling Finite-DMRG
     bool   fdmrg::on                     = true;
-    int    fdmrg::max_length             = 200;
+    int    fdmrg::num_sites             = 200;
     int    fdmrg::max_sweeps             = 4;
     long   fdmrg::chi_max                = 8;
     bool   fdmrg::chi_grow               = true;
@@ -77,7 +77,6 @@ namespace settings{
     int    xdmrg::max_sweeps             = 4;
     long   xdmrg::chi_max                = 8;
     bool   xdmrg::chi_grow               = true;
-    int    xdmrg::seed                   = 1;                       /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
     int    xdmrg::print_freq             = 100;
     int    xdmrg::store_freq             = 100;
     bool   xdmrg::store_wavefn           = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
@@ -133,7 +132,7 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters for the model Hamiltonian
     model::model_type                   = indata.find_parameter<std::string>("model::model_type"   , model::model_type);
     model::initial_state                = indata.find_parameter<std::string>("model::initial_state", model::initial_state);
-
+    model::seed                         = indata.find_parameter<int>        ("model::seed"         , model::seed);
 
 
     model::tf_ising::J                  = indata.find_parameter<double> ("model::tf_ising::J"    , model::tf_ising::J);
@@ -177,7 +176,7 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters controlling Finite-DMRG
     fdmrg::on                     = indata.find_parameter<bool>   ("fdmrg::on"         , fdmrg::on);
     if(fdmrg::on){
-        fdmrg::max_length         = indata.find_parameter<int>    ("fdmrg::num_sites ", fdmrg::max_length);
+        fdmrg::num_sites          = indata.find_parameter<int>     ("fdmrg::num_sites ", fdmrg::num_sites);
         fdmrg::max_sweeps         = indata.find_parameter<int>    ("fdmrg::max_sweeps ", fdmrg::max_sweeps);
         fdmrg::chi_max            = indata.find_parameter<int>    ("fdmrg::chi_max"    , 8);
         fdmrg::chi_grow           = indata.find_parameter<bool>   ("fdmrg::chi_grow"   , fdmrg::chi_grow);
@@ -188,11 +187,10 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters controlling excited state DMRG
     xdmrg::on                     = indata.find_parameter<bool>   ("xdmrg::on"         , xdmrg::on);
     if(xdmrg::on){
-        xdmrg::num_sites         = indata.find_parameter<int>    ("xdmrg::num_sites "    , xdmrg::num_sites);
+        xdmrg::num_sites          = indata.find_parameter<int>    ("xdmrg::num_sites "     , xdmrg::num_sites);
         xdmrg::max_sweeps         = indata.find_parameter<int>    ("xdmrg::max_sweeps "    , xdmrg::max_sweeps);
         xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"        , xdmrg::chi_max);
         xdmrg::chi_grow           = indata.find_parameter<bool>   ("xdmrg::chi_grow"       , xdmrg::chi_grow);
-        xdmrg::seed               = indata.find_parameter<int>    ("xdmrg::seed"           , xdmrg::seed);
         xdmrg::print_freq         = indata.find_parameter<int>    ("xdmrg::print_freq "    , xdmrg::print_freq);
         xdmrg::store_freq         = indata.find_parameter<int>    ("xdmrg::store_freq "    , xdmrg::store_freq);
         xdmrg::store_wavefn       = indata.find_parameter<bool>   ("xdmrg::store_wavefn"   , xdmrg::store_wavefn);

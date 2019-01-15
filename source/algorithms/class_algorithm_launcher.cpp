@@ -33,6 +33,17 @@ class_algorithm_launcher::class_algorithm_launcher()
 }
 
 
+void class_algorithm_launcher::run_algorithms(){
+    run_iDMRG();
+    run_fDMRG();
+    run_xDMRG();
+    run_iTEBD();
+    std::cout << "All simulations finished." << std::endl;
+    int OK = 1;
+    hdf5->write_dataset(OK, "fileOK");
+};
+
+
 void class_algorithm_launcher::run_iDMRG(){
     if(settings::idmrg::on){
         class_iDMRG iDMRG(hdf5);
