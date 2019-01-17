@@ -31,7 +31,7 @@ public:
     enum class xDMRG_Mode {KEEP_BEST_OVERLAP,FULL_EIG_OPT,PARTIAL_EIG_OPT, DIRECT_OPT};
     int    min_saturation_length;
     int    max_saturation_length;
-    int    min_sweeps   = 5;
+    int    min_sweeps   = 2;
     int    max_sweeps   ;
 //    int    num_sites    ;
 

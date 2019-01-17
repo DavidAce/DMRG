@@ -91,8 +91,9 @@ void class_xDMRG::run() {
         {
             break;
         }
-
-        update_bond_dimension(min_saturation_length);
+//        if (iteration >= min_sweeps) {
+            update_bond_dimension(min_saturation_length);
+//        }
         enlarge_environment(env_storage->get_direction());
         env_storage_move();
         iteration = env_storage->get_sweeps();
@@ -102,6 +103,7 @@ void class_xDMRG::run() {
     t_tot.toc();
     print_status_full();
     measurement->compute_all_observables_from_finite_chain();
+    hdf5->write_dataset(measurement->get_parity(), sim_name + "/chain/parity");
 //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
         hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction");
@@ -119,10 +121,18 @@ void class_xDMRG::single_xDMRG_step()
     t_opt.tic();
     ccout(3) << "STATUS: Starting single xDMRG step\n";
     Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
+
     xDMRG_Mode mode = xDMRG_Mode::KEEP_BEST_OVERLAP;
+    mode = iteration >= min_sweeps  ? xDMRG_Mode::DIRECT_OPT : mode;
+
+
+//
+//    if (iteration > min_sweeps or theta.size() >= 4096){
+//        mode = xDMRG_Mode::DIRECT_OPT;
+//    }
 //    mode = chi_temp >= 8  ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
 //    mode = chi_temp >= 32 ? xDMRG_Mode::FULL_EIG_OPT : mode;
-    mode = chi_temp >= 16 ? xDMRG_Mode::DIRECT_OPT      : mode;
+//    mode = chi_current >= 32 ? xDMRG_Mode::DIRECT_OPT      : mode;
 //    mode = mode == xDMRG_Mode::DIRECT_OPT and env_storage->position_is_the_middle() ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
 //    mode = chi_temp >= 16 and chi_temp <= 64 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
 //    mode = chi_temp > 64 ? xDMRG_Mode::DIRECT_OPT : mode;
@@ -147,6 +157,7 @@ void class_xDMRG::check_convergence(){
 //    if(iteration < 5){return;}
     t_sim.tic();
     t_con.tic();
+    if (iteration <= min_sweeps){clear_saturation_status();}
     check_convergence_variance_mpo();
 //    if (iteration < min_sweeps){variance_mpo_saturated_for = 0;}
     ccout(2) << "Variance has saturated for " << variance_mpo_saturated_for << " steps \n";
@@ -171,21 +182,26 @@ void class_xDMRG::check_convergence(){
 }
 
 std::vector<int> class_xDMRG::generate_size_list(const int shape){
-    std::vector<int> size_list;
-    int min_size = 1;
-    min_size =  shape > 1024 ? std::min(8,shape/16) : min_size;
-    int max_size = std::max(1,shape/16);
-    max_size = std::min(max_size,256);
-    int tmp_size = min_size;
-    while (tmp_size <= max_size){
-        size_list.push_back(tmp_size);
-        tmp_size *= 4;
+    std::vector<int> nev_list;
+    if (shape <= 512){
+        nev_list.push_back(-1);
+        return nev_list;
+    }
+
+    int min_nev = 1;
+    min_nev =  shape > 1024 ? std::min(8,shape/16) : min_nev;
+    int max_nev = std::max(1,shape/16);
+    max_nev = std::min(max_nev,256);
+    int tmp_nev = min_nev;
+    while (tmp_nev <= max_nev){
+        nev_list.push_back(tmp_nev);
+        tmp_nev *= 4;
     }
 
     if (shape <= settings::precision::MaxSizeFullDiag or settings::precision::MaxSizeFullDiag <= 0){ // Only do this for small enough matrices
-        size_list.push_back(-1); // "-1" means doing a full diagonalization with lapack instead of arpack.
+        nev_list.push_back(-1); // "-1" means doing a full diagonalization with lapack instead of arpack.
     }
-    return size_list;
+    return nev_list;
 }
 
 void class_xDMRG::sort_and_filter_eigenstates(Eigen::VectorXcd &eigvals,
@@ -287,11 +303,12 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                 t_lu = hamiltonian_sparse.t_factorOp.get_last_time_interval();
                 hamiltonian_sparse.t_factorOp.reset();
                 solver.eigs_stl(hamiltonian_sparse,nev,-1, energy_now*chain_length,Form::SYMMETRIC,Ritz::LM,Side::R, true,false);
-            }else if (nev <= 0 and (  mode == xDMRG_Mode::KEEP_BEST_OVERLAP or mode == xDMRG_Mode::PARTIAL_EIG_OPT)){
-                nev = solver.solution.meta.cols;
-                reason = "Keeping best overlap or optimizing subspace.";
-                break;
-            }else if (nev <= 0 or mode == xDMRG_Mode::FULL_EIG_OPT){
+            }
+//            else if (nev <= 0 and (  mode == xDMRG_Mode::KEEP_BEST_OVERLAP or mode == xDMRG_Mode::PARTIAL_EIG_OPT)){
+//                nev = solver.solution.meta.cols;
+//                reason = "Keeping best overlap or optimizing subspace.";
+//                break;
+            else if (nev <= 0 or mode == xDMRG_Mode::FULL_EIG_OPT){
                 nev = shape;
                 solver.eig<Type::REAL, Form::SYMMETRIC>(H_local,true,true);
             }
@@ -299,16 +316,15 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
             auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solver.solution.meta.cols);
             auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
             overlaps         = (theta_old.adjoint() * eigvecs).cwiseAbs();
-    //        sort_and_filter_eigenstates(eigvals, eigvecs, overlaps, nev, overlap_cutoff);
             max_overlap      = overlaps.maxCoeff(&best_state_idx);
             min_overlap      = overlaps.minCoeff(&worst_state_idx);
             sq_sum_overlap   = overlaps.cwiseAbs2().sum();
             subspace_quality = 1.0 - sq_sum_overlap;
             offset           = energy_target - eigvals(best_state_idx)/chain_length;
             result_log.emplace_back(nev, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig.get_last_time_interval(),t_lu,start_time);
-
-            if(max_overlap >= max_overlap_threshold ){reason = "overlap"; break;}
-            if(subspace_quality < subspace_quality_threshold){reason = "subspace quality"; break;}
+            if(nev == shape)                                 {reason = "full diag"; break;}
+            if(max_overlap >= max_overlap_threshold )        {reason = "overlap is good"; break;}
+            if(subspace_quality < subspace_quality_threshold){reason = "subspace quality is good"; break;}
         }
         H_local.resize(0,0);
         ccout(2) << "Finished eigensolver -- condition: " << reason << '\n';
@@ -412,7 +428,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
                 );
         double threshold = 1e-10;
         LBFGSpp::LBFGSParam<double> param;
-        param.max_iterations = 1000;
+        param.max_iterations = 2000;
         param.max_linesearch = 200; // Default is 20. 5 is really bad, 80 seems better.
         param.m              = 6;
         param.epsilon        = 1e-5;  // Default is 1e-5.
@@ -517,7 +533,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
                 );
         double threshold = 1e-5;
         LBFGSpp::LBFGSParam<double> param;
-        param.max_iterations = 1000;
+        param.max_iterations = 2000;
         param.max_linesearch = 200; // Default is 20. 5 is really bad, 80 seems better.
         param.m              = 6;
         param.epsilon        = 1e-5;  // Default is 1e-5.

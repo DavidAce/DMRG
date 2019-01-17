@@ -57,7 +57,7 @@ public:
     int    print_freq   ;
     int    store_freq   ;
     int    seed       = 1;
-    long   chi_temp   = 32;
+    long   chi_temp   = 16;
     bool   simulation_has_converged = false;
     bool   simulation_has_to_stop   = false;
     bool   bond_dimension_has_reached_max = false;
