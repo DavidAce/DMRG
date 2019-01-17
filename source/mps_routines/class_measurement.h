@@ -44,7 +44,7 @@ private:
     Eigen::MatrixXcd h_evn;
     Eigen::MatrixXcd h_odd;
 
-    void compute_parity();
+    double compute_parity(const Eigen::Matrix2cd  paulimatrix);
     void compute_energy_mpo();
     void compute_energy_ham();
     void compute_entanglement_entropy();
@@ -65,7 +65,10 @@ private:
     double variance_chain = 0;
 
     double entanglement_entropy = 0;
-    double parity = 0;
+    double parity_x = 0;
+    double parity_y = 0;
+    double parity_z = 0;
+
     Eigen::Tensor<Scalar,0> E_evn, E_odd;
     bool is_measured = false;
 
@@ -97,7 +100,10 @@ private:
     //  double get_variance_mpo_all_sites();
     double get_entanglement_entropy();
     double get_truncation_error();
-    double get_parity();
+    std::vector<double> get_parity();
+    double get_parity_x();
+    double get_parity_y();
+    double get_parity_z();
     long   get_chi();
     long   get_chain_length();
 

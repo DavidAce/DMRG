@@ -12,6 +12,7 @@
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_mps_2site.h>
 #include <mps_routines/class_finite_chain.h>
+#include <mps_routines/class_mpo.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <mps_routines/class_mps_util.h>
 using namespace std;
@@ -79,7 +80,6 @@ void class_measurement::compute_all_observables_from_superblock(){
     }
 
     compute_entanglement_entropy();
-//    compute_parity();
     is_measured = true;
 
 }
@@ -117,7 +117,6 @@ void class_measurement::compute_all_observables_from_superblock(const Eigen::Ten
     }
 
     compute_entanglement_entropy();
-//    compute_parity();
     is_measured = true;
 
 }
@@ -132,6 +131,9 @@ void class_measurement::compute_all_observables_from_finite_chain(){
     }
     compute_finite_chain_norm();
     compute_finite_chain_norm2();
+    parity_x = compute_parity(qm::spinOneHalf::sx);
+    parity_y = compute_parity(qm::spinOneHalf::sy);
+    parity_z = compute_parity(qm::spinOneHalf::sz);
 }
 
 
@@ -211,15 +213,66 @@ void class_measurement::compute_entanglement_entropy(){
 }
 
 //
-//double class_measurement::compute_parity(){
-////    t_ene_mpo.tic();
-//    Tensor<T, 0>  E_two_site = superblock->MPS->theta
-//                    .contract(parity_mpo.MPO,     idx({0},{0}))
-//                    .contract(parity_mpo.MPO,     idx({1},{0}))
-//                    .contract(superblock->MPS->theta.conjugate(),         idx({0,1,2,3},{1,3,0,2}));
-////    t_ene_mpo.toc();
-//    return std::real(E_two_site(0) / 2.0 );
-//}
+double class_measurement::compute_parity(const Eigen::Matrix2cd  paulimatrix){
+
+    Eigen::Tensor<Scalar,3> L = env_storage->get_ENV_L().front().block;
+    Eigen::TensorRef<Eigen::Tensor<Scalar,3>> temp;
+
+    auto mpsL        = env_storage->get_MPS_L().begin();
+    auto endL        = env_storage->get_MPS_L().end();
+    auto mpo         = class_mpo::parity(paulimatrix);
+
+    int iter = 0;
+    while(mpsL != endL){
+        const Eigen::Tensor<Scalar,1> &LA = mpsL->get_L(); // std::get<0>(*mpsL);
+        const Eigen::Tensor<Scalar,3> &GA = mpsL->get_G(); // std::get<1>(*mpsL);
+        assert(LA.dimension(0) == L.dimension(0));
+        assert(LA.dimension(0) == GA.dimension(1));
+
+        temp = L.contract(asDiagonal(LA), idx({0},{0}))
+                .contract(asDiagonal(LA), idx({0},{0}))
+                .contract(mpo           ,idx({0},{0}))
+                .contract(GA,                  idx({0,3},{1,0}))
+                .contract(GA.conjugate(),      idx({0,2},{1,0}))
+                .shuffle(array3{1,2,0});
+        L = temp;
+        mpsL++;
+        iter++;
+    }
+
+
+    //Contract the center point
+    auto &MPS_C = env_storage->get_MPS_C();
+    temp = L.contract(asDiagonal(MPS_C) , idx({0},{0}))
+            .contract(asDiagonal(MPS_C) , idx({0},{0}))
+            .shuffle(array3{1,2,0});
+    L = temp;
+
+    //Contract the right half of the chain
+    Eigen::Tensor<Scalar,3> R = env_storage->get_ENV_R().back().block;
+    auto mpsR  = env_storage->get_MPS_R().begin();
+    auto endR  = env_storage->get_MPS_R().end();
+    while(mpsR != endR){
+        const Eigen::Tensor<Scalar,3> &GB = mpsR->get_G(); // std::get<0>(*mpsR);
+        const Eigen::Tensor<Scalar,1> &LB = mpsR->get_L(); // std::get<1>(*mpsR);
+        assert(GB.dimension(1) == L.dimension(0));
+        assert(LB.dimension(0) == GB.dimension(2));
+        temp = L.contract(GB,            idx({0},{1}))
+                .contract(GB.conjugate(),idx({0},{1}))
+                .contract(mpo           ,idx({0,1,3},{0,2,3}))
+                .contract(asDiagonal(LB),idx({0},{0}))
+                .contract(asDiagonal(LB),idx({0},{0}))
+                .shuffle(array3{1,2,0});
+        L = temp;
+        mpsR++;
+    }
+
+    assert(L.dimensions() == R.dimensions());
+    Eigen::Tensor<Scalar,0> parity_tmp = L.contract(R, idx({0,1,2},{0,1,2}));
+    double parity = std::real(parity_tmp(0));
+    std::cout << setprecision(16) << "Parity: " << parity << std::endl;
+    return parity;
+}
 
 
 void class_measurement::compute_finite_chain_energy(){
@@ -460,14 +513,15 @@ double class_measurement::get_truncation_error(){
     return superblock->MPS->truncation_error;
 }
 
-double class_measurement::get_parity(){
-    return parity;
+std::vector<double> class_measurement::get_parity(){
+    return {parity_x,parity_y,parity_z};
 }
-
+double class_measurement::get_parity_x(){return parity_x;}
+double class_measurement::get_parity_y(){return parity_y;}
+double class_measurement::get_parity_z(){return parity_z;}
 
 long class_measurement::get_chi(){
     return superblock->MPS->chiC();
-//    return superblock->MPS->chiC();
 }
 
 long class_measurement::get_chain_length(){
