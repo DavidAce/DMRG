@@ -114,11 +114,11 @@ error      = logs/$(NAME)_$(ID).error
 # queue inputfiles matching files input/L_*/$(NAME)_*.cfg
 
 queue inputfiles matching files input/L_12/$(NAME)_*.cfg
-#queue inputfiles matching files input/L_16/$(NAME)_*.cfg
+queue inputfiles matching files input/L_16/$(NAME)_*.cfg
 queue inputfiles matching files input/L_20/$(NAME)_*.cfg
-#queue inputfiles matching files input/L_24/$(NAME)_*.cfg
+queue inputfiles matching files input/L_24/$(NAME)_*.cfg
 queue inputfiles matching files input/L_28/$(NAME)_*.cfg
-#queue inputfiles matching files input/L_32/$(NAME)_*.cfg
+queue inputfiles matching files input/L_32/$(NAME)_*.cfg
 queue inputfiles matching files input/L_36/$(NAME)_*.cfg
 queue inputfiles matching files input/L_44/$(NAME)_*.cfg
 
