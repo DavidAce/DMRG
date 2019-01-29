@@ -50,8 +50,20 @@ class_SVD<Scalar>::decompose(const Eigen::Tensor<Scalar,2> &tensor) {
     long chi = SVD.rank();
     return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chi), SVD.matrixU().rows(), chi),
                            Textra::Matrix_to_Tensor(SVD.singularValues().head(chi).normalized().template cast<Scalar>() , chi),
-                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chi).conjugate() ,  chi, SVD.matrixV().rows() ).shuffle(Textra::array2{1,0})
+                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chi).conjugate(), SVD.matrixV().rows(), chi).shuffle(Textra::array2{1,0})
                             );
+}
+
+template<typename Scalar>
+std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
+class_SVD<Scalar>::decompose(const Eigen::Tensor<Scalar,3> &tensor,const long rows,const long cols) {
+    Eigen::Map<const MatrixType> mat (tensor.data(), rows, cols);
+    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    long chi = SVD.rank();
+    return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chi), SVD.matrixU().rows(), chi),
+                           Textra::Matrix_to_Tensor(SVD.singularValues().head(chi).normalized().template cast<Scalar>() , chi),
+                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chi).conjugate(), SVD.matrixV().rows(), chi).shuffle(Textra::array2{1,0})
+    );
 }
 
 
@@ -100,6 +112,24 @@ class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,2> &tensor) {
                            Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(),  dR, chiR, chiC ).shuffle(Textra::array3{ 0, 2, 1 })
                             );
 }
+
+
+template<typename Scalar>
+std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
+class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,3> &tensor, long rows,long cols) {
+    long d    = tensor.dimension(0);
+    long chiL = tensor.dimension(1);
+    long chiR = tensor.dimension(2);
+    Eigen::Map<const MatrixType> mat (tensor.data(), rows,cols);
+    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    long chiC            = SVD.rank();
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
+    return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), d, chiL, chiC),
+                           Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).normalized().template cast<Scalar>(),  chiC ),
+                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(),  d, chiR, chiC ).shuffle(Textra::array3{ 0, 2, 1 })
+    );
+}
+
 
 
 template<typename Scalar>
