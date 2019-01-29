@@ -8,10 +8,26 @@
 #include <general/nmspc_tensor_extra.h>
 
 class class_mpo{
+
 public:
     using Scalar = std::complex<double>;
-    static Eigen::Tensor<Scalar,4> parity(const Eigen::Matrix2cd & paulimatrix);
-    static Eigen::Tensor<Scalar,4> parity(const Eigen::Matrix3cd & paulimatrix);
+
+    static std::tuple<
+            Eigen::Tensor<class_mpo::Scalar,4>,
+            Eigen::Tensor<class_mpo::Scalar,3>,
+            Eigen::Tensor<class_mpo::Scalar,3>>
+    pauli_mpo(const Eigen::MatrixXcd paulimatrix);
+
+
+    static std::tuple<
+            Eigen::Tensor<class_mpo::Scalar,4>,
+            Eigen::Tensor<class_mpo::Scalar,3>,
+            Eigen::Tensor<class_mpo::Scalar,3>>
+    parity_selector_mpo(const Eigen::MatrixXcd paulimatrix, const int sector = 1);
+
+
+
+
 };
 
 

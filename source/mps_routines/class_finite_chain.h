@@ -10,13 +10,17 @@
 #include <mps_routines/class_environment.h>
 //#include <mps_routines/class_hamiltonian.h>
 #include <mps_routines/class_mps_2site.h>
+#include <mps_routines/class_finite_chain_storage.h>
+
 #include <sim_parameters/nmspc_model.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <IO/class_hdf5_file.h>
 #include <iostream>
 #include <model/class_hamiltonian_base.h>
-
 class class_superblock;
+
+
+
 
 
 /*!
@@ -36,15 +40,18 @@ public:
 
 
 private:
-    std::list<class_vidal_mps>  MPS_L;  /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
-    std::list<class_vidal_mps>  MPS_R;  /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
-    Eigen::Tensor<Scalar,1>     MPS_C;  //Current center bond matrix;
+
+    class_finite_chain_storage storage;
+
+    std::list<class_vidal_mps>  MPS_L;                                   /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
+    std::list<class_vidal_mps>  MPS_R;                                   /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
+    Eigen::Tensor<Scalar,1>     MPS_C;                                   //Current center bond matrix;
     std::list<class_environment> ENV_L;
     std::list<class_environment> ENV_R;
     std::list<class_environment_var> ENV2_L;
     std::list<class_environment_var> ENV2_R;
-    std::list<std::unique_ptr<class_hamiltonian_base>> MPO_L;                                           /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
-    std::list<std::unique_ptr<class_hamiltonian_base>> MPO_R;                                           /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<std::unique_ptr<class_hamiltonian_base>> MPO_L;            /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<std::unique_ptr<class_hamiltonian_base>> MPO_R;            /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
 
 
 
@@ -63,7 +70,7 @@ private:
     int direction = -1;
     int sweeps    = 0;
     unsigned long max_length = 0;                                                 /*!< The maximum length of the chain */
-    unsigned long current_length = 0;
+//    unsigned long current_length = 0;
 
 public:
 
@@ -118,6 +125,16 @@ public:
     bool position_is_the_middle_any_direction();
     bool position_is_the_left_edge();
     bool position_is_the_right_edge();
+
+
+    // Functions that operate on the whole chain
+    void apply_mpo(const Eigen::Tensor<Scalar,4> mpo, const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge);
+    void normalize_chain();
+    void refresh_environments();
+    void refresh_superblock();
+    void set_parity_projected_mps(const Eigen::MatrixXcd paulimatrix);
+    void set_parity_projected_mps2(const Eigen::MatrixXcd paulimatrix);
+    void set_parity_projected_mps3(const Eigen::MatrixXcd paulimatrix);
 
 
     // Functions relating to HDF5 file storage

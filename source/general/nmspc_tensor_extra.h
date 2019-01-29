@@ -35,6 +35,10 @@ namespace Textra {
     template <typename Scalar, long length>
     using idxlistpair = Eigen::array<Eigen::IndexPair<Scalar>,length>;
 
+    constexpr idxlistpair<long,0> idx(){
+        Eigen::array<Eigen::IndexPair<long>,0> empty_index_list = {};
+        return empty_index_list;
+    }
 
 
     template<typename T, std::size_t N>

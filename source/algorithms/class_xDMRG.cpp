@@ -12,6 +12,7 @@
 #include <mps_routines/class_finite_chain.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
+#include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_eigsolver_props.h>
 #include <general/class_eigsolver_arpack.h>
 #include <general/class_eigsolver.h>
@@ -101,6 +102,7 @@ void class_xDMRG::run() {
         ccout(3) << "STATUS: Finished single xDMRG step\n";
     }
     t_tot.toc();
+    env_storage->set_parity_projected_mps(qm::spinOneHalf::sx);
     print_status_full();
     measurement->compute_all_observables_from_finite_chain();
     hdf5->write_dataset(measurement->get_parity(), sim_name + "/chain/parity");
@@ -370,8 +372,9 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
     double energy_ubound = energy_target + 0.1*(energy_max-energy_min);
     double energy_lbound = energy_target - 0.1*(energy_max-energy_min);
+    double energy_dimless = (energy_target - energy_min) /(energy_max-energy_min);
     if(energy_now < energy_lbound or energy_now > energy_ubound){
-        std::cout << "WARNING: Partial diagonlization -- Energy far from mid-spectrum: " << "Energy =  " << energy_now << " | target = " << energy_target << std::endl;
+        std::cout << "WARNING: Energy far from mid-spectrum: " << "Energy =  " << energy_now << " | target = " << energy_target << " | Energy density = " << energy_dimless <<  std::endl;
     }
 //    return theta;
     return Textra::Matrix_to_Tensor(theta_res, theta.dimensions());
