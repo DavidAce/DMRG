@@ -45,6 +45,8 @@ private:
     Eigen::MatrixXcd h_odd;
 
     double compute_parity(const Eigen::Matrix2cd  paulimatrix);
+//    void compute_parity_projected_mps(const Eigen::Matrix2cd  paulimatrix);
+
     void compute_energy_mpo();
     void compute_energy_ham();
     void compute_entanglement_entropy();

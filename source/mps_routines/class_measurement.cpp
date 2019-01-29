@@ -8,6 +8,7 @@
 #include <complex>
 #include <mps_routines/class_measurement.h>
 #include <general/nmspc_tensor_extra.h>
+#include <general/class_svd_wrapper.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_mps_2site.h>
@@ -215,12 +216,11 @@ void class_measurement::compute_entanglement_entropy(){
 //
 double class_measurement::compute_parity(const Eigen::Matrix2cd  paulimatrix){
 
-    Eigen::Tensor<Scalar,3> L = env_storage->get_ENV_L().front().block;
     Eigen::TensorRef<Eigen::Tensor<Scalar,3>> temp;
 
     auto mpsL        = env_storage->get_MPS_L().begin();
     auto endL        = env_storage->get_MPS_L().end();
-    auto mpo         = class_mpo::parity(paulimatrix);
+    auto [mpo,L,R]   = class_mpo::pauli_mpo(paulimatrix);
 
     int iter = 0;
     while(mpsL != endL){
@@ -249,7 +249,6 @@ double class_measurement::compute_parity(const Eigen::Matrix2cd  paulimatrix){
     L = temp;
 
     //Contract the right half of the chain
-    Eigen::Tensor<Scalar,3> R = env_storage->get_ENV_R().back().block;
     auto mpsR  = env_storage->get_MPS_R().begin();
     auto endR  = env_storage->get_MPS_R().end();
     while(mpsR != endR){
@@ -270,61 +269,191 @@ double class_measurement::compute_parity(const Eigen::Matrix2cd  paulimatrix){
     assert(L.dimensions() == R.dimensions());
     Eigen::Tensor<Scalar,0> parity_tmp = L.contract(R, idx({0,1,2},{0,1,2}));
     double parity = std::real(parity_tmp(0));
-    std::cout << setprecision(16) << "Parity: " << parity << std::endl;
+    std::cout << setprecision(16) << "Parity: " << parity_tmp << std::endl;
     return parity;
 }
 
 
+//void class_measurement::compute_parity_projected_mps(const Eigen::Matrix2cd  paulimatrix){
+//
+//    long A_length           = env_storage->get_MPS_L().size();
+//    long B_length           = env_storage->get_MPS_R().size();
+//
+//    // Get handles for the current mps
+//    const auto &mpsL        = env_storage->get_MPS_L();
+//    const auto &mpsC        = env_storage->get_MPS_C();
+//    const auto &mpsR        = env_storage->get_MPS_R();
+//    const auto [mpo,L,R]   = class_mpo::pauli_mpo(paulimatrix);
+//
+//    // Make containers for the new updated mps
+//    std::vector<Eigen::Tensor<Scalar,3>> A_matrices(A_length);
+//    std::vector<Eigen::Tensor<Scalar,3>> B_matrices(B_length);
+//    Eigen::Tensor<Scalar,1> C_matrix;
+//
+//    // Start updating  A matrices
+//    int pos = 0;
+//    long mpoDimL = mpo.dimension(0);
+//    long mpoDimR = mpo.dimension(1);
+//    for (auto &mps : mpsL){
+//        assert(pos == mps.get_position() and "ERROR: Position and pos do not match");
+//        long d    = mps.get_spin_dim();
+//        long chiL = mps.get_chiL();
+//        long chiR = mps.get_chiR();
+//        A_matrices[pos++] =
+//                mps.ref_A()
+//                .contract(mpo, idx({0},{2}))
+//                .shuffle(array5{4,2,0,3,1})
+//                .reshape(array3{d, chiL*mpoDimL, chiR*mpoDimR});
+//    }
+//    // Increase the size of mpsC (the center bond) by doing an outer product
+//    // with an identity matrix that has the same dimension as the MPO, contracting over no indices,
+//    // mpsC       =  0 ------ 1
+//    // I_matrix   =  0 ------ 1
+//    // C_matrix   = 01 ====== 23
+//    long mpsCdim = mpsC.dimension(0);
+//    long mpodim = mpo.dimension(0);
+//    auto I_tensor = Textra::Matrix_to_Tensor2(Eigen::MatrixXcd::Identity(mpodim,mpodim));
+//    C_matrix = mpsC.contract(I_tensor, idx()).shuffle(array4{0,2,1,3}).reshape(array2{mpsCdim*mpodim, mpsCdim*mpodim});
+//
+//    // Start updating  B matrices
+//    pos = 0;
+//    for (auto &mps : mpsR){
+//        assert(pos == mps.get_position() and "ERROR: Position and pos do not match");
+//        long d    = mps.get_spin_dim();
+//        long chiL = mps.get_chiL();
+//        long chiR = mps.get_chiR();
+//        B_matrices[pos++] =
+//                mps.ref_B()
+//                        .contract(mpo, idx({0},{2}))
+//                        .shuffle(array5{4,2,0,3,1})
+//                        .reshape(array3{d, chiL*mpoDimL, chiR*mpoDimR});
+//    }
+//
+//    // Now we have updated versions of all matrices. We need to split them
+//    // up into Gamma Lambda form, and because the updated matrices do not yield
+//    // a normalized wave function, we need to do SVD from the edges of the chain
+//    std::list<class_vidal_mps> mpsL_new;
+//    std::list<class_vidal_mps> mpsR_new;
+//    Eigen::Tensor<Scalar,1>    mpsC_new;
+//
+//    class_SVD<Scalar> svd;
+////    svd.setThreshold(1e-8);
+//    Eigen::Tensor<Scalar,3> A_next;
+//    Eigen::Tensor<Scalar,3> B_next;
+//    Eigen::Tensor<Scalar,1> LambdaA_next(1);
+//    Eigen::Tensor<Scalar,1> LambdaB_next(1);
+//    LambdaA_next.setConstant(1);
+//    LambdaB_next.setConstant(1);
+//    for (size_t pos = 0; pos < A_matrices.size()-1; pos++){
+//        long d    = A_matrices[pos].dimension(0);
+//        long chiL = A_matrices[pos].dimension(1);
+//        long chiR = A_matrices[pos].dimension(2);
+//        long rows = d*chiL;
+//        long cols = chiR;
+//        auto [U,S,V] = svd.decompose(A_matrices[pos],rows,cols);
+//        A_next = Textra::asDiagonalInversed(LambdaA_next).contract(U.reshape(Textra::array3{chiL,d,chiR}), idx({1},{1})).shuffle(array3{1,0,2});
+//        mpsL_new.emplace_back(A_next,LambdaA_next);
+//
+//        A_next = Textra::asDiagonalInversed(S)
+//                .contract(V, idx({1},{0}))
+//                .contract(A_matrices[pos+1], idx({1},{1}))
+//                .shuffle(array3{1,0,2});
+//
+//        A_matrices[pos+1] = A_next;
+//        LambdaA_next = S;
+//    }
+//
+//    for (size_t pos = B_matrices.size(); pos > 0; pos--){
+//        long d    = B_matrices[pos].dimension(0);
+//        long chiL = B_matrices[pos].dimension(1);
+//        long chiR = B_matrices[pos].dimension(2);
+//        long rows = chiL;
+//        long cols = d*chiR;
+//        auto [U,S,V] = svd.decompose(B_matrices[pos],rows,cols);
+//        B_next = V.reshape(Textra::array3{chiL,d,chiR}).contract(Textra::asDiagonalInversed(LambdaB_next), idx({2},{0}));
+//        mpsL_new.emplace_front(B_next,LambdaB_next);
+//        B_next = B_matrices[pos-1]
+//                .contract(U, idx({2},{0}))
+//                .contract(Textra::asDiagonalInversed(S),idx({2},{0}));
+//        B_matrices[pos-1] = B_next;
+//        LambdaB_next = S;
+//    }
+//
+//    // We have now worked our way from the edges of the chain in to the middle,
+//    // so we have something of the form
+//    // L G L G A_{i} C B_{i+1} G L G L
+//    //
+//    // The middle chunk A C B needs a 2-site SVD, and then
+//    // G_i     = LambdaA_next^-1  U
+//    // C       = S
+//    // G_i+1   = V LambdaB_next^-1
+//
+//    Eigen::Tensor<Scalar,4> ACB = A_matrices.back()
+//            .contract(C_matrix, idx({2},{0}))
+//            .contract(B_matrices.front(), idx({2},{1}));
+//    auto [U,S,V] = svd.schmidt(ACB);
+//    mpsL_new.emplace_back (Textra::asDiagonalInversed(LambdaA_next).contract(U, idx({1},{1})).shuffle(array3{1,0,2}));
+//    mpsR_new.emplace_front(V.contract(Textra::asDiagonalInversed(LambdaB_next), idx({2},{0})));
+//    mpsC_new = S;
+//
+//    // Now update the original MPS in env_storage
+//    env_storage->replace_mps(mpsL_new, mpsC_new, mpsR_new);
+//
+//
+//
+//
+//
+////    assert(L.dimensions() == R.dimensions());
+////    Eigen::Tensor<Scalar,0> parity_tmp = L.contract(R, idx({0,1,2},{0,1,2}));
+////    double parity = std::real(parity_tmp(0));
+////    std::cout << setprecision(16) << "Parity: " << parity_tmp << std::endl;
+//}
+
+
+
+
 void class_measurement::compute_finite_chain_energy(){
     Eigen::Tensor<Scalar,3> L = env_storage->get_ENV_L().front().block;
-    Eigen::TensorRef<Eigen::Tensor<Scalar,3>> temp;
-
     auto mpsL  = env_storage->get_MPS_L().begin();
     auto mpoL  = env_storage->get_MPO_L().begin();
     auto endL  = env_storage->get_MPS_L().end();
-    int iter = 0;
     while(mpsL != endL){
-        const Eigen::Tensor<Scalar,1> &LA = mpsL->get_L(); // std::get<0>(*mpsL);
-        const Eigen::Tensor<Scalar,3> &GA = mpsL->get_G(); // std::get<1>(*mpsL);
-        assert(LA.dimension(0) == L.dimension(0));
-        assert(LA.dimension(0) == GA.dimension(1));
+        const Eigen::Tensor<Scalar,3> A = mpsL->get_A();
+        Eigen::Tensor<Scalar,3> temp =
+                L
+                .contract(A                   , idx({0},{1}))
+                .contract(mpoL->get()->MPO    , idx({1,2},{0,2}))
+                .contract(A.conjugate()       , idx({0,3},{1,0}))
+                .shuffle(array3{0,2,1});
 
-        temp = L.contract(asDiagonal(LA), idx({0},{0}))
-                .contract(asDiagonal(LA), idx({0},{0}))
-                .contract(mpoL->get()->MPO,idx({0},{0}))
-                .contract(GA,                  idx({0,3},{1,0}))
-                .contract(GA.conjugate(),      idx({0,2},{1,0}))
-                .shuffle(array3{1,2,0});
         L = temp;
         mpsL++;
         mpoL++;
-        iter++;
     }
 
-
-    //Contract the center point
-    auto &MPS_C = env_storage->get_MPS_C();
-    temp = L.contract(asDiagonal(MPS_C) , idx({0},{0}))
-            .contract(asDiagonal(MPS_C) , idx({0},{0}))
-            .shuffle(array3{1,2,0});
-    L = temp;
-
+    {
+        //Contract the center point
+        auto &MPS_C = env_storage->get_MPS_C();
+        Eigen::Tensor<Scalar,3> temp =
+                L
+                .contract(asDiagonal(MPS_C), idx({0}, {0}))
+                .contract(asDiagonal(MPS_C), idx({0}, {0}))
+                .shuffle(array3{1, 2, 0});
+        L = temp;
+    }
     //Contract the right half of the chain
     Eigen::Tensor<Scalar,3> R = env_storage->get_ENV_R().back().block;
     auto mpsR  = env_storage->get_MPS_R().begin();
     auto mpoR  = env_storage->get_MPO_R().begin();
     auto endR  = env_storage->get_MPS_R().end();
     while(mpsR != endR){
-        const Eigen::Tensor<Scalar,3> &GB = mpsR->get_G(); // std::get<0>(*mpsR);
-        const Eigen::Tensor<Scalar,1> &LB = mpsR->get_L(); // std::get<1>(*mpsR);
-        assert(GB.dimension(1) == L.dimension(0));
-        assert(LB.dimension(0) == GB.dimension(2));
-        temp = L.contract(GB,            idx({0},{1}))
-                .contract(GB.conjugate(),idx({0},{1}))
-                .contract(mpoR->get()->MPO,     idx({0,1,3},{0,2,3}))
-                .contract(asDiagonal(LB),idx({0},{0}))
-                .contract(asDiagonal(LB),idx({0},{0}))
-                .shuffle(array3{1,2,0});
+        const Eigen::Tensor<Scalar,3> B = mpsR->get_B();
+        Eigen::Tensor<Scalar,3> temp =
+                L
+                .contract(B                   , idx({0},{1}))
+                .contract(mpoR->get()->MPO    , idx({1,2},{0,2}))
+                .contract(B.conjugate()       , idx({0,3},{1,0}))
+                .shuffle(array3{0,2,1});
         L = temp;
         mpsR++;
         mpoR++;

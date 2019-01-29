@@ -10,6 +10,7 @@
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_finite_chain.h>
 #include <general/nmspc_math.h>
+#include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_random_numbers.h>
 #include "class_fDMRG.h"
 
@@ -69,9 +70,16 @@ void class_fDMRG::run() {
         ccout(3) << "STATUS: Finished single fDMRG step\n";
 
     }
+
     t_tot.toc();
-    print_status_full();
     measurement->compute_all_observables_from_finite_chain();
+    print_status_full();
+    measurement->set_not_measured();
+    env_storage->set_parity_projected_mps(qm::spinOneHalf::sx);
+    measurement->compute_all_observables_from_finite_chain();
+    measurement->set_not_measured();
+    print_status_full();
+    hdf5->write_dataset(measurement->get_parity(), sim_name + "/chain/parity");
     if(settings::xdmrg::store_wavefn){
         hdf5->write_dataset(Textra::to_RowMajor(measurement->mps_chain), sim_name + "/chain/wavefunction");
     }

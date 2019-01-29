@@ -23,7 +23,7 @@ public:
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_fdmrg_chain;
     int    min_saturation_length;
     int    max_saturation_length;
-    int    min_sweeps   = 5;
+    int    min_sweeps   = 2;
     int    max_sweeps   ;
 
     void run()                                          override;
