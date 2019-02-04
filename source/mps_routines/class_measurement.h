@@ -17,7 +17,7 @@ using namespace std::complex_literals;
 class class_superblock;
 class class_mps_2site;
 class class_mps_util;
-class class_finite_chain;
+class class_finite_chain_state;
 /*!
  * \class class_measurement
  * \brief A class for measuring observables
@@ -28,32 +28,30 @@ class class_measurement {
 public:
     using Scalar = std::complex<double>;
 private:
-    std::shared_ptr<const class_superblock>           superblock;
+//    std::shared_ptr<const class_superblock>           superblock;
     SimulationType sim_type;
-    std::shared_ptr<const class_finite_chain> env_storage;
-    std::shared_ptr<class_mps_util> mps_util;
+//    std::shared_ptr<const class_finite_chain_state> env_storage;
+//    std::shared_ptr<class_mps_util> mps_util;
 
     class_custom_cout ccout;
-    Scalar moment_generating_function(const std::unique_ptr<class_mps_2site> &MPS_original,
+    Scalar moment_generating_function(std::unique_ptr<class_mps_2site> &MPS_original,
                                                        std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
 
 //    class_parity_mpo parity_mpo;
     Scalar a  = (0.0 + 1.0i) *5e-3;
-    std::vector<Eigen::Tensor<Scalar,4>> mom_vecA;
+//    std::vector<Eigen::Tensor<Scalar,4>> mom_vecA;
+//    Eigen::MatrixXcd h_evn;
+//    Eigen::MatrixXcd h_odd;
 
-    Eigen::MatrixXcd h_evn;
-    Eigen::MatrixXcd h_odd;
-
-    double compute_parity(const Eigen::Matrix2cd  paulimatrix);
+    double compute_parity(const class_finite_chain_state & state,const Eigen::Matrix2cd  paulimatrix);
 //    void compute_parity_projected_mps(const Eigen::Matrix2cd  paulimatrix);
 
-    void compute_energy_mpo();
-    void compute_energy_ham();
-    void compute_entanglement_entropy();
-    void compute_energy_variance_mpo();
-    void compute_energy_variance_ham();
-    void compute_energy_and_variance_mom(Scalar a, std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec);
-
+    void compute_energy_mpo(const class_superblock & superblock);
+    void compute_energy_ham(const class_superblock & superblock);
+    void compute_entanglement_entropy(const class_superblock & superblock);
+    void compute_energy_variance_mpo(const class_superblock & superblock);
+    void compute_energy_variance_ham(const class_superblock & superblock);
+    void compute_energy_and_variance_mom(class_superblock & superblock, Scalar a);
 
 
     double energy_mpo_all_sites;
@@ -75,17 +73,15 @@ private:
     bool is_measured = false;
 
     public:
-    explicit class_measurement(std::shared_ptr<class_superblock> superblock_, SimulationType sim_);
-    explicit class_measurement(std::shared_ptr<class_superblock> superblock_, std::shared_ptr<class_finite_chain> env_storage_, SimulationType sim_);
-    void   compute_all_observables_from_superblock();
-    void   compute_all_observables_from_superblock(const Eigen::Tensor<Scalar,4> &theta);
-    void   compute_all_observables_from_finite_chain();
+    explicit class_measurement(SimulationType sim_);
+    void   compute_all_observables_from_superblock(class_superblock & superblock);
+    void   compute_all_observables_from_state     (class_finite_chain_state & state);
 
     template<typename T>
-    double compute_energy_mpo(const T * theta_ptr, Eigen::DSizes<long,4> dsizes);
+    double compute_energy_mpo(const class_superblock & superblock,const T * theta_ptr, Eigen::DSizes<long,4> dsizes);
 
     template<typename T>
-    double compute_energy_variance_mpo(const T * theta_ptr, Eigen::DSizes<long,4> dsizes, double energy_all_sites);
+    double compute_energy_variance_mpo(const class_superblock & superblock,const T * theta_ptr, Eigen::DSizes<long,4> dsizes, double energy_all_sites);
 
 
     Eigen::Tensor<Scalar,1> mps_chain;
@@ -100,24 +96,29 @@ private:
     double get_variance_mom();              /*! Computes the current variance. A low value tells you that you are close to an eigenstate of the Hamiltonian. */
 
     //  double get_variance_mpo_all_sites();
-    double get_entanglement_entropy();
-    double get_truncation_error();
+    double get_entanglement_entropy(const class_superblock & superblock);
+    double get_truncation_error(const class_superblock & superblock);
     std::vector<double> get_parity();
     double get_parity_x();
     double get_parity_y();
     double get_parity_z();
-    long   get_chi();
-    long   get_chain_length();
+    long   get_chi(const class_superblock & superblock);
+    long   get_chi(const class_finite_chain_state & state);
+    long   get_chain_length(const class_superblock & superblock);
+    long   get_chain_length(const class_finite_chain_state & state);
 
-    void compute_finite_chain_norm();
-    void compute_finite_chain_norm2();
-    void compute_finite_chain_energy();
-    void compute_finite_chain_energy_variance();
-    void compute_finite_chain_mps_state();
+    void compute_finite_chain_norm              (const class_finite_chain_state & state);
+    void compute_finite_chain_norm2             (const class_finite_chain_state & state);
+    void compute_finite_chain_energy            (const class_finite_chain_state & state);
+    void compute_finite_chain_energy_variance   (const class_finite_chain_state & state);
+    void compute_finite_chain_mps_wavefn        (const class_finite_chain_state & state);
 
 
     void set_not_measured(){is_measured = false;}
     bool has_been_measured(){return is_measured;}
+
+
+
     // Profiling
     class_tic_toc t_ene_mpo;
     class_tic_toc t_ene_ham;

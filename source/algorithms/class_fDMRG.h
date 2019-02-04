@@ -13,7 +13,7 @@ class class_table_dmrg;
  * \brief Class that runs the finite DMRG algorithm.
  */
 
-class class_finite_chain;
+class class_finite_chain_state;
 class class_fDMRG : public class_algorithm_base {
 public:
     //Inherit the constructor of class_algorithm_base
@@ -21,13 +21,13 @@ public:
     explicit class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_fdmrg;
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_fdmrg_chain;
-    int    min_saturation_length;
-    int    max_saturation_length;
-    int    min_sweeps   = 2;
-    int    max_sweeps   ;
+    size_t    min_saturation_length;
+    size_t    max_saturation_length;
+    size_t    min_sweeps   = 2;
+    size_t    max_sweeps   ;
 
     void run()                                          override;
-    void check_convergence()                    override;
+    void check_convergence()                            override;
     void initialize_constants()                         override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;

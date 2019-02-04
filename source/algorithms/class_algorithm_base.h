@@ -16,7 +16,7 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 
 class class_superblock;
-class class_finite_chain;
+class class_finite_chain_state;
 class class_measurement;
 class class_hdf5_file;
 class class_table_profiling;
@@ -42,34 +42,34 @@ public:
     //MPS
     std::shared_ptr<class_superblock>            superblock;
     std::shared_ptr<class_measurement>           measurement;
-    std::shared_ptr<class_finite_chain>  env_storage;
+    std::shared_ptr<class_finite_chain_state>    state;
 
     //Console
     class_custom_cout ccout;
     //Settings.
 
     // Common variables
-    int    iteration = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
-    int    step      = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
-    int    num_sites    ;
+    int    seed       = 1;
+    size_t iteration = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
+    size_t step      = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
+    size_t num_sites    ;
     long   chi_max      ;
     bool   chi_grow     ;
-    int    print_freq   ;
-    int    store_freq   ;
-    int    seed       = 1;
+    size_t print_freq   ;
+    size_t store_freq   ;
     long   chi_temp   = 16;
     bool   simulation_has_converged = false;
     bool   simulation_has_to_stop   = false;
     bool   bond_dimension_has_reached_max = false;
     bool   entanglement_has_converged = false;
     bool   entanglement_has_saturated = false;
-    int    variance_mpo_saturated_for = 0;
+    size_t variance_mpo_saturated_for = 0;
     bool   variance_mpo_has_converged = false;
     bool   variance_mpo_has_saturated = false;
-    int    variance_ham_saturated_for = 0;
+    size_t variance_ham_saturated_for = 0;
     bool   variance_ham_has_converged = false;
     bool   variance_ham_has_saturated = false;
-    int    variance_mom_saturated_for = 0;
+    size_t variance_mom_saturated_for = 0;
     bool   variance_mom_has_converged = false;
     bool   variance_mom_has_saturated = false;
 
@@ -94,7 +94,7 @@ public:
     void check_convergence_variance_ham(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_variance_mom(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_entanglement(double slope_threshold = quietNaN);
-    void update_bond_dimension(int min_saturation_length = 1);
+    void update_bond_dimension(size_t min_saturation_length = 1);
     void clear_saturation_status();
 
     void initialize_state(std::string initial_state);
@@ -106,12 +106,12 @@ public:
     void swap();
 
     //Functions for finite_chains
-    void env_storage_insert();
-    void env_storage_overwrite_local_MPS();
-    void env_storage_overwrite_local_MPO();
-    void env_storage_overwrite_local_ENV();
-    void env_storage_overwrite_local_ALL();
-    void env_storage_move();
+    void insert_superblock_to_chain();
+    void copy_superblock_mps_to_chain();
+    void copy_superblock_mpo_to_chain();
+    void copy_superblock_env_to_chain();
+    void copy_superblock_to_chain();
+    void move_center_point();
 
 
     // Profiling

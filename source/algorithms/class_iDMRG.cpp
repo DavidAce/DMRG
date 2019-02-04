@@ -7,6 +7,7 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
+#include <mps_routines/nmspc_mps_tools.h>
 #include <general/nmspc_math.h>
 #include "class_iDMRG.h"
 using namespace std;
@@ -16,7 +17,7 @@ class_iDMRG::class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     : class_algorithm_base(std::move(hdf5_),"iDMRG", SimulationType::iDMRG) {
     initialize_constants();
     table_idmrg = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
-    measurement  = std::make_shared<class_measurement>(superblock, sim_type);
+    measurement  = std::make_shared<class_measurement>(sim_type);
     initialize_state(settings::model::initial_state);
 
 }
@@ -32,8 +33,8 @@ void class_iDMRG::run() {
         print_status_update();
         store_table_entry_to_file();
         store_profiling_to_file_delta();
-        enlarge_environment();
         check_convergence();
+        enlarge_environment();
         swap();
         iteration++;
     }
@@ -58,12 +59,13 @@ void class_iDMRG::store_table_entry_to_file(bool force){
         if (Math::mod(iteration, store_freq) != 0) {return;}
     }
     compute_observables();
+    MPS_Tools::Common::Measure::do_all_measurements(*superblock);
     t_sto.tic();
     table_idmrg->append_record(
                              iteration,
-                             measurement->get_chain_length(),
+                             measurement->get_chain_length(*superblock),
                              iteration,
-                             measurement->get_chi(),
+                             measurement->get_chi(*superblock),
                              chi_max,
                              measurement->get_energy_mpo(),
                              measurement->get_energy_ham(),
@@ -74,8 +76,8 @@ void class_iDMRG::store_table_entry_to_file(bool force){
                              measurement->get_variance_mpo(),
                              measurement->get_variance_ham(),
                              measurement->get_variance_mom(),
-                             measurement->get_entanglement_entropy(),
-                             measurement->get_truncation_error(),
+                             measurement->get_entanglement_entropy(*superblock),
+                             measurement->get_truncation_error(*superblock),
                              t_tot.get_age());
 
     t_sto.toc();

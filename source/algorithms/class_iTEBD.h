@@ -20,12 +20,12 @@ public:
     Eigen::MatrixXcd h_evn;
     Eigen::MatrixXcd h_odd;
 
-    int    max_steps    ;
+    size_t    max_steps    ;
     double phys_time = 0;
     double delta_t   = 0; //Make sure this one gets initialized to delta_t0!
     double delta_t0     ;
     double delta_tmin   ;
-    int    suzuki_order ;
+    size_t suzuki_order ;
     bool   time_step_has_converged;
 
     void run()                                          override;

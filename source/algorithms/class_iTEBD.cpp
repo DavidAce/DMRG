@@ -21,7 +21,7 @@ class_iTEBD::class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_)
     initialize_constants();
     table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(hdf5, sim_name,sim_name);
     delta_t      = delta_t0;
-    measurement  = std::make_shared<class_measurement>(superblock, sim_type);
+    measurement  = std::make_shared<class_measurement>(sim_type);
     initialize_state(settings::model::initial_state);
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -129,7 +129,7 @@ void class_iTEBD::store_table_entry_to_file(bool force){
     t_sto.tic();
     table_itebd->append_record(
             iteration,
-            measurement->get_chi(),
+            measurement->get_chi(*superblock),
             chi_max,
             delta_t,
             std::numeric_limits<double>::quiet_NaN(),
@@ -138,8 +138,8 @@ void class_iTEBD::store_table_entry_to_file(bool force){
             std::numeric_limits<double>::quiet_NaN(),
             measurement->get_variance_ham(),
             measurement->get_variance_mom(),
-            measurement->get_entanglement_entropy(),
-            measurement->get_truncation_error(),
+            measurement->get_entanglement_entropy(*superblock),
+            measurement->get_truncation_error(*superblock),
             phys_time,
             t_tot.get_age());
 

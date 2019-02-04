@@ -4,11 +4,13 @@
 
 
 #include <iomanip>
+#include <IO/class_hdf5_file.h>
 #include <IO/class_hdf5_table_buffer2.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
-#include <mps_routines/class_finite_chain.h>
+#include <mps_routines/class_finite_chain_state.h>
+#include <mps_routines/nmspc_mps_tools.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_random_numbers.h>
@@ -22,8 +24,8 @@ class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     initialize_constants();
     table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
     table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name,sim_name + "_chain");
-    env_storage       = std::make_shared<class_finite_chain>(num_sites, superblock, hdf5,sim_type,sim_name );
-    measurement       = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
+    state             = std::make_shared<class_finite_chain_state>(num_sites);
+    measurement       = std::make_shared<class_measurement>(sim_type);
     initialize_state(settings::model::initial_state);
     min_saturation_length = 1 * (int)(1.0 * num_sites);
     max_saturation_length = 1 * (int)(2.0 * num_sites);
@@ -37,12 +39,12 @@ void class_fDMRG::run() {
     t_tot.tic();
     initialize_chain();
     set_random_fields_in_chain_mpo();
-    env_storage->print_hamiltonians();
+    MPS_Tools::Finite::Print::print_hamiltonians(*state);
 
 
     while(true) {
         single_DMRG_step();
-        env_storage_overwrite_local_ALL();         //Needs to occurr after update_MPS...
+        copy_superblock_to_chain();         //Needs to occurr after update_MPS...
         store_table_entry_to_file();
         store_chain_entry_to_file();
         store_profiling_to_file_delta();
@@ -56,27 +58,27 @@ void class_fDMRG::run() {
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if (iteration >= min_sweeps and env_storage->position_is_the_middle_any_direction() and
+        if (iteration >= min_sweeps and state->position_is_the_middle_any_direction() and
             (iteration >= max_sweeps or simulation_has_converged or simulation_has_to_stop))
         {
             break;
         }
 
         update_bond_dimension(min_saturation_length);
-        enlarge_environment(env_storage->get_direction());
-        env_storage_move();
-        iteration = env_storage->get_sweeps();
+        enlarge_environment(state->get_direction());
+        move_center_point();
+        iteration = state->get_sweeps();
         step++;
         ccout(3) << "STATUS: Finished single fDMRG step\n";
 
     }
 
     t_tot.toc();
-    measurement->compute_all_observables_from_finite_chain();
+    measurement->compute_all_observables_from_state(*state);
     print_status_full();
     measurement->set_not_measured();
-    env_storage->set_parity_projected_mps(qm::spinOneHalf::sx);
-    measurement->compute_all_observables_from_finite_chain();
+    MPS_Tools::Finite::Ops::set_parity_projected_mps(*state,qm::spinOneHalf::sx);
+    measurement->compute_all_observables_from_state(*state);
     measurement->set_not_measured();
     print_status_full();
     hdf5->write_dataset(measurement->get_parity(), sim_name + "/chain/parity");
@@ -88,7 +90,7 @@ void class_fDMRG::run() {
 
 void class_fDMRG::initialize_chain() {
     while(true){
-        env_storage_insert();
+        insert_superblock_to_chain();
         if (superblock->environment_size + 2ul < (unsigned long) num_sites) {
             enlarge_environment();
             swap();
@@ -137,7 +139,7 @@ void class_fDMRG::initialize_constants(){
 void class_fDMRG::store_table_entry_to_file(bool force){
     if (not force){
         if (Math::mod(iteration, store_freq) != 0) {return;}
-        if (not env_storage->position_is_the_middle()) {return;}
+        if (not state->position_is_the_middle()) {return;}
         if (store_freq == 0){return;}
     }
 
@@ -145,9 +147,9 @@ void class_fDMRG::store_table_entry_to_file(bool force){
     t_sto.tic();
     table_fdmrg->append_record(
             iteration,
-            measurement->get_chain_length(),
-            env_storage->get_position(),
-            measurement->get_chi(),
+            state->get_length(),
+            state->get_position(),
+            measurement->get_chi(*superblock),
             chi_max,
             measurement->get_energy_mpo(),
             std::numeric_limits<double>::quiet_NaN(),
@@ -158,8 +160,8 @@ void class_fDMRG::store_table_entry_to_file(bool force){
             measurement->get_variance_mpo(),
             std::numeric_limits<double>::quiet_NaN(),
             std::numeric_limits<double>::quiet_NaN(),
-            measurement->get_entanglement_entropy(),
-            measurement->get_truncation_error(),
+            measurement->get_entanglement_entropy(*superblock),
+            measurement->get_truncation_error(*superblock),
             t_tot.get_age());
     t_sto.toc();
 }
@@ -168,17 +170,17 @@ void class_fDMRG::store_chain_entry_to_file(bool force){
     if (not force){
         if (Math::mod(iteration, store_freq) != 0) {return;}
         if (store_freq == 0){return;}
-        if (not (env_storage->get_direction() == 1 or env_storage->position_is_the_right_edge())){return;}
+        if (not (state->get_direction() == 1 or state->position_is_the_right_edge())){return;}
     }
    t_sto.tic();
     table_fdmrg_chain->append_record(
             iteration,
-            measurement->get_chain_length(),
-            env_storage->get_position(),
-            measurement->get_chi(),
-            superblock->E_optimal / measurement->get_chain_length() * 2.0,
-            measurement->get_entanglement_entropy(),
-            measurement->get_truncation_error()
+            state->get_length(),
+            state->get_position(),
+            measurement->get_chi(*superblock),
+            superblock->E_optimal / state->get_length() * 2.0,
+            measurement->get_entanglement_entropy(*superblock),
+            measurement->get_truncation_error(*superblock)
         );
     t_sto.toc();
 }

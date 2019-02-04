@@ -41,9 +41,19 @@ class_superblock::class_superblock():
 // that encloses "class_hamiltonian_base". Otherwise unique_ptr will forcibly inline its
 // own default deleter.
 // This allows us to forward declare the abstract base class "class_hamiltonian_base"
-// Read mode: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
+// Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
 class_superblock::~class_superblock()=default;
+
+
+
+size_t class_superblock::get_length() const {
+    size_t length = Lblock->size + Rblock->size + 2;
+    assert(length == environment_size + 2 and "ERROR: System length mismatch!");
+    return length;
+
+}
+
 
 //============================================================================//
 // Find smallest eigenvalue using Arpack.
@@ -335,20 +345,49 @@ void class_superblock::enlarge_environment(int direction){
         Rblock->set_position (HA->get_position());
         Rblock2->set_position(HA->get_position());
     }else if(direction == 0){
-        assert(Lblock->get_position()  == HA->get_position());
-        assert(Lblock2->get_position() == HA->get_position());
-        assert(Rblock->get_position()  == HB->get_position());
-        assert(Rblock2->get_position() == HB->get_position());
+//        assert(Lblock->get_position()  == HA->get_position());
+//        assert(Lblock2->get_position() == HA->get_position());
+//        assert(Rblock->get_position()  == HB->get_position());
+//        assert(Rblock2->get_position() == HB->get_position());
         Lblock->enlarge(MPS,  HA->MPO_reduced_view());
         Rblock->enlarge(MPS,  HB->MPO_reduced_view());
         Lblock2->enlarge(MPS, HA->MPO_reduced_view());
         Rblock2->enlarge(MPS, HB->MPO_reduced_view());
+
         Lblock->set_position (HB->get_position());
         Rblock->set_position (HB->get_position()+1);
         Lblock2->set_position(HB->get_position());
         Rblock2->set_position(HB->get_position()+1);
         environment_size = Lblock->size + Rblock->size;
     }
+}
+
+
+void class_superblock::set_superblock(
+        const Eigen::Tensor<Scalar,4> & Lblock2_,
+        const Eigen::Tensor<Scalar,3> & Lblock_,
+        const Eigen::Tensor<Scalar,4> & MPO_A,
+        const Eigen::Tensor<Scalar,1> & LA,
+        const Eigen::Tensor<Scalar,3> & GA,
+        const Eigen::Tensor<Scalar,1> & LC,
+        const Eigen::Tensor<Scalar,3> & GB,
+        const Eigen::Tensor<Scalar,1> & LB,
+        const Eigen::Tensor<Scalar,4> & MPO_B,
+        const Eigen::Tensor<Scalar,3> & Rblock_,
+        const Eigen::Tensor<Scalar,4> & Rblock2_
+        )
+{
+    Lblock2->block  = Lblock2_;
+    Lblock->block   = Lblock_;
+    HA->MPO = MPO_A;
+    MPS->MPS_A->set_L(LA);
+    MPS->MPS_A->set_G(GA);
+    MPS->LC = LC;
+    MPS->MPS_B->set_G(GB);
+    MPS->MPS_B->set_L(LB);
+    HB->MPO = MPO_B;
+    Rblock ->block = Rblock_;
+    Rblock2->block = Rblock2_;
 }
 
 

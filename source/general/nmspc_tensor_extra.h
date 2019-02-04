@@ -227,38 +227,36 @@ namespace Textra {
 
 
 
-    //******************************************************//
-    //std::cout overloads for dimension() and array objects //
-    //******************************************************//
-
-
-
-    template <typename T, int L>
-    std::ostream& operator<< (std::ostream& out, const Eigen::DSizes<T,L>& v) {
-        if ( !v.empty() ) {
-            out << "[ ";
-            std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
-            out << "]";
-        }
-        return out;
-    }
-
-
-    template <typename T, int L>
-    std::ostream& operator<< (std::ostream& out, const Eigen::array<T,L>& v) {
-        if ( !v.empty() ) {
-            out << "[ ";
-            std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
-            out << "]";
-        }
-        return out;
-    }
-
-
-
 }
 
 
+
+//******************************************************//
+//std::cout overloads for dimension() and array objects //
+//******************************************************//
+
+
+
+template <typename T, int L>
+std::ostream& operator<< (std::ostream& out, const Eigen::DSizes<T,L>& v) {
+    if ( !v.empty() ) {
+        out << "[ ";
+        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
+        out << "]";
+    }
+    return out;
+}
+
+
+template <typename T, int L>
+std::ostream& operator<< (std::ostream& out, const Eigen::array<T,L>& v) {
+    if ( !v.empty() ) {
+        out << "[ ";
+        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
+        out << "]";
+    }
+    return out;
+}
 
 
 #endif //TENSOR_EXTRA_H

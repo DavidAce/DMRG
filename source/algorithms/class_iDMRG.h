@@ -19,7 +19,8 @@ public:
     explicit class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
 
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_idmrg;
-    int    max_steps  ;
+
+    size_t    max_steps  ;
     void run()                                          override;
     void initialize_constants()                         override;
     void print_profiling()                              override;

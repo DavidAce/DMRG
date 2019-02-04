@@ -38,11 +38,11 @@ private:
 public:
     using Scalar = std::complex<double>;
     std::string side;
-    unsigned long size = 0;                        /*!< Number of particles that have been contracted into this left environment. */
+    size_t size = 0;                               /*!< Number of particles that have been contracted into this left environment. */
     Eigen::Tensor<Scalar,3> block;                 /*!< The environment block. */
     explicit class_environment(std::string side_):side(std::move(side_)){size = 0;};
-    void enlarge(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M);
-    void set_edge_dims(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M);
+    void enlarge(std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M);
+    void set_edge_dims(std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M);
     void set_position(const long position_){position = position_;}
     auto get_position() const {return position;}
 };
@@ -54,12 +54,12 @@ private:
     size_t position;
 public:
     using Scalar = std::complex<double>;
-    unsigned long size;                                       /*!< Number of particles that have been contracted into this left environment. */
+    size_t size = 0;                                      /*!< Number of particles that have been contracted into this left environment. */
     std::string side;
     Eigen::Tensor<Scalar,4> block;                         /*!< The environment block. */
     explicit class_environment_var(std::string side_):side(std::move(side_)){size = 0;};
-    void enlarge(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M);
-    void set_edge_dims(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M);
+    void enlarge(std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M);
+    void set_edge_dims(std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M);
     void set_position(const long position_){position = position_;}
     auto get_position() const {return position;}
 };
