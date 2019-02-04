@@ -9,7 +9,7 @@
 using namespace std;
 using namespace Textra;
 using Scalar = class_environment::Scalar;
-void class_environment::enlarge(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M){
+void class_environment::enlarge(std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M){
     /*!< Contracts a site into the block. */
     Eigen::Tensor<Scalar,3> block_enlarged;
     if (side == "L"){
@@ -65,7 +65,7 @@ void class_environment::enlarge(const std::unique_ptr<class_mps_2site> &MPS, con
     }
 }
 
-void class_environment::set_edge_dims(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M) {
+void class_environment::set_edge_dims(std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M) {
     if (side == "L") {
         long chiA = MPS->chiA();
         block.resize(array3{chiA,chiA, M.dimension(0)});
@@ -89,7 +89,7 @@ void class_environment::set_edge_dims(const std::unique_ptr<class_mps_2site> &MP
 }
 
 
-void class_environment_var::enlarge(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M){
+void class_environment_var::enlarge(std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M){
     /*!< Contracts a site into the block. */
     Eigen::Tensor<Scalar,4> block_enlarged;
     if (side == "L"){
@@ -162,7 +162,7 @@ void class_environment_var::enlarge(const std::unique_ptr<class_mps_2site> &MPS,
 
 
 
-void class_environment_var::set_edge_dims(const std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M) {
+void class_environment_var::set_edge_dims(std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M) {
     if (side == "L") {
         long chiA = MPS->chiA();
         block.resize(array4{chiA,chiA, M.dimension(0), M.dimension(0)});

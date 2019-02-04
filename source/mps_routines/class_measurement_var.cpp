@@ -7,18 +7,19 @@
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_mps_2site.h>
+#include <mps_routines/nmspc_mps_tools.h>
 #include <general/nmspc_tensor_extra.h>
 #include <general/class_svd_wrapper.h>
 #include <general/class_eigsolver_arpack.h>
-#include <mps_routines/class_finite_chain.h>
-#include <mps_routines/class_mps_util.h>
+#include <general/nmspc_quantum_mechanics.h>
+#include <mps_routines/class_finite_chain_state.h>
 using namespace std;
 using namespace Textra;
 using Scalar = class_measurement::Scalar;
 using namespace std::complex_literals;
 using namespace eigsolver_properties;
 
-Scalar class_measurement::moment_generating_function(const std::unique_ptr<class_mps_2site> &MPS_original,
+Scalar class_measurement::moment_generating_function(std::unique_ptr<class_mps_2site> &MPS_original,
                                                      std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
     t_temp1.tic();
     std::unique_ptr<class_mps_2site> MPS_evolved = std::make_unique<class_mps_2site>(*MPS_original);
@@ -45,20 +46,20 @@ Scalar class_measurement::moment_generating_function(const std::unique_ptr<class
     long sizeLB = MPS_evolved->chiB() * MPS_evolved->chiB();
     //Normalize
     t_temp3.tic();
-    Eigen::Tensor<Scalar,2> transfer_matrix_theta_evn       = mps_util->get_transfer_matrix_theta_evn(MPS_evolved).reshape(array2{sizeLB,sizeLB});
+    Eigen::Tensor<Scalar,2> transfer_matrix_theta_evn       = MPS_Tools::Common::Views::get_transfer_matrix_theta_evn(*MPS_evolved).reshape(array2{sizeLB,sizeLB});
     t_temp3.toc();
     using namespace settings::precision;
 
     t_temp4.tic();
     class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
     solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
-    auto new_theta_evn_normalized        = mps_util->get_theta_evn(MPS_evolved, sqrt(solver.ref_eigvals()[0]));
+    auto new_theta_evn_normalized        = MPS_Tools::Common::Views::get_theta_evn(*MPS_evolved, sqrt(solver.ref_eigvals()[0]));
     t_temp4.toc();
     long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original->chiA();// theta_evn_normalized.dimension(1);
     long sizeR = new_theta_evn_normalized.dimension(3) * MPS_original->chiB();// theta_evn_normalized.dimension(3);
 
     Eigen::Tensor<Scalar,2> transfer_matrix_G =   new_theta_evn_normalized
-            .contract(mps_util->theta_evn_normalized.conjugate(), idx({0,2},{0,2}))
+            .contract(MPS_Tools::Common::Views::theta_evn_normalized.conjugate(), idx({0,2},{0,2}))
             .shuffle(array4{0,2,1,3})
             .reshape(array2{sizeL,sizeR});
     //Compute the characteristic function G(a).
@@ -69,11 +70,20 @@ Scalar class_measurement::moment_generating_function(const std::unique_ptr<class
 }
 
 
-void class_measurement::compute_energy_and_variance_mom(Scalar a,std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
+void class_measurement::compute_energy_and_variance_mom(class_superblock & superblock, Scalar a){
     t_var_gen.tic();
+
+    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
+    auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
+    auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
+    auto h_evn = superblock.HA->single_site_hamiltonian(0,2,SX,SY, SZ);
+    auto h_odd = superblock.HB->single_site_hamiltonian(1,2,SX,SY, SZ);
+    auto Op_vec = qm::timeEvolution::compute_G(a,4, h_evn, h_odd);
+
+
     using T = Scalar;
-    //The following only works if superblock->MPS has been normalized! I.e, you have to have run MPS->compute_mps_components() prior.
-    T lambdaG  = moment_generating_function(superblock->MPS, Op_vec);
+    //The following only works if superblock.MPS has been normalized! I.e, you have to have run MPS->compute_mps_components() prior.
+    T lambdaG  = moment_generating_function(superblock.MPS, Op_vec);
     T l        = 2.0; //Number of sites in unit cell
     T G        = pow(lambdaG,1.0/l);
     T logG     = log(lambdaG) * 1.0/l;
@@ -86,18 +96,19 @@ void class_measurement::compute_energy_and_variance_mom(Scalar a,std::vector<Eig
 }
 
 
-void class_measurement::compute_energy_variance_mpo(){
+void class_measurement::compute_energy_variance_mpo(const class_superblock & superblock){
     t_var_mpo.tic();
-    double L = superblock->Lblock2->size + superblock->Rblock2->size + 2.0;
+    double L = superblock.Lblock2->size + superblock.Rblock2->size + 2.0;
+    auto theta = MPS_Tools::Common::Views::get_theta(superblock);
     Eigen::Tensor<Scalar, 0> H2 =
-            superblock->Lblock2->block
-                    .contract(mps_util->theta,             idx({0}  ,{1}))
-                    .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
-                    .contract(superblock->HB->MPO,                idx({4,2},{0,2}))
-                    .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
-                    .contract(superblock->HB->MPO,                idx({4,3},{0,2}))
-                    .contract(mps_util->theta.conjugate(), idx({0,3,5},{1,0,2}))
-                    .contract(superblock->Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
+            superblock.Lblock2->block
+                    .contract(theta              ,                idx({0}  ,{1}))
+                    .contract(superblock.HA->MPO,                idx({1,3},{0,2}))
+                    .contract(superblock.HB->MPO,                idx({4,2},{0,2}))
+                    .contract(superblock.HA->MPO,                idx({1,3},{0,2}))
+                    .contract(superblock.HB->MPO,                idx({4,3},{0,2}))
+                    .contract(theta.conjugate()  ,                idx({0,3,5},{1,0,2}))
+                    .contract(superblock.Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
 
     if (sim_type == SimulationType::iDMRG) {
         t_var_mpo.toc();
@@ -112,19 +123,19 @@ void class_measurement::compute_energy_variance_mpo(){
 
 
 template<typename T>
-double class_measurement::compute_energy_variance_mpo(const T * theta_ptr, Eigen::DSizes<long,4> dsizes, double energy_all_sites){
+double class_measurement::compute_energy_variance_mpo(const class_superblock & superblock,const T * theta_ptr, Eigen::DSizes<long,4> dsizes, double energy_all_sites){
     Eigen::Tensor<std::complex<double>,4> theta = Eigen::TensorMap<const Eigen::Tensor<const T,4>> (theta_ptr, dsizes).template cast<std::complex<double>>();
 //    t_var_mpo.tic();
-    double L = superblock->Lblock2->size + superblock->Rblock2->size + 2.0;
+    double L = superblock.Lblock2->size + superblock.Rblock2->size + 2.0;
     Eigen::Tensor<Scalar, 0> H2 =
-            superblock->Lblock2->block
+            superblock.Lblock2->block
                     .contract(theta,                              idx({0}  ,{1}))
-                    .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
-                    .contract(superblock->HB->MPO,                idx({4,2},{0,2}))
-                    .contract(superblock->HA->MPO,                idx({1,3},{0,2}))
-                    .contract(superblock->HB->MPO,                idx({4,3},{0,2}))
+                    .contract(superblock.HA->MPO,                idx({1,3},{0,2}))
+                    .contract(superblock.HB->MPO,                idx({4,2},{0,2}))
+                    .contract(superblock.HA->MPO,                idx({1,3},{0,2}))
+                    .contract(superblock.HB->MPO,                idx({4,3},{0,2}))
                     .contract(theta.conjugate(),                  idx({0,3,5},{1,0,2}))
-                    .contract(superblock->Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
+                    .contract(superblock.Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
     if (sim_type == SimulationType::iDMRG) {
 //        t_var_mpo.toc();
         return std::real(H2(0))/2.0;
@@ -134,49 +145,58 @@ double class_measurement::compute_energy_variance_mpo(const T * theta_ptr, Eigen
     }
 }
 
-template double class_measurement::compute_energy_variance_mpo(const double *,Eigen::DSizes<long,4>,double);
-template double class_measurement::compute_energy_variance_mpo(const std::complex<double> *, Eigen::DSizes<long,4>, double);
+template double class_measurement::compute_energy_variance_mpo(const class_superblock & superblock, const double *,Eigen::DSizes<long,4>,double);
+template double class_measurement::compute_energy_variance_mpo(const class_superblock & superblock, const std::complex<double> *, Eigen::DSizes<long,4>, double);
 
 
-void class_measurement::compute_energy_variance_ham(){
+void class_measurement::compute_energy_variance_ham(const class_superblock & superblock){
     t_var_ham.tic();
-    const Eigen::Tensor<Scalar,4> & theta_evn                  = mps_util->theta_evn_normalized;
-    const Eigen::Tensor<Scalar,4> & theta_odd                  = mps_util->theta_odd_normalized;
-    const Eigen::Tensor<Scalar,3> & LBGA                       = mps_util->LBGA;
-    const Eigen::Tensor<Scalar,3> & LAGB                       = mps_util->LAGB;
-    const Eigen::Tensor<Scalar,2> & l_evn                      = mps_util->l_evn;
-    const Eigen::Tensor<Scalar,2> & r_evn                      = mps_util->r_evn;
-    const Eigen::Tensor<Scalar,2> & l_odd                      = mps_util->l_odd;
-    const Eigen::Tensor<Scalar,2> & r_odd                      = mps_util->r_odd;
-    const Eigen::Tensor<Scalar,4> & transfer_matrix_evn        = mps_util->transfer_matrix_evn;
-    const Eigen::Tensor<Scalar,4> & transfer_matrix_odd        = mps_util->transfer_matrix_odd;
-    const Eigen::Tensor<Scalar,4> & transfer_matrix_LBGA       = mps_util->transfer_matrix_LBGA;
-    const Eigen::Tensor<Scalar,4> & transfer_matrix_LAGB       = mps_util->transfer_matrix_LAGB;
+    using namespace MPS_Tools::Common::Views;
+//    const Eigen::Tensor<Scalar,4> & theta_evn                  = MPS_Tools::Common::Views->theta_evn_normalized;
+//    const Eigen::Tensor<Scalar,4> & theta_odd                  = MPS_Tools::Common::Views->theta_odd_normalized;
+//    const Eigen::Tensor<Scalar,3> & LBGA                       = MPS_Tools::Common::Views->LBGA;
+//    const Eigen::Tensor<Scalar,3> & LAGB                       = MPS_Tools::Common::Views->LAGB;
+//    const Eigen::Tensor<Scalar,2> & l_evn                      = MPS_Tools::Common::Views->l_evn;
+//    const Eigen::Tensor<Scalar,2> & r_evn                      = MPS_Tools::Common::Views->r_evn;
+//    const Eigen::Tensor<Scalar,2> & l_odd                      = MPS_Tools::Common::Views->l_odd;
+//    const Eigen::Tensor<Scalar,2> & r_odd                      = MPS_Tools::Common::Views->r_odd;
+//    const Eigen::Tensor<Scalar,4> & transfer_matrix_evn        = MPS_Tools::Common::Views->transfer_matrix_evn;
+//    const Eigen::Tensor<Scalar,4> & transfer_matrix_odd        = MPS_Tools::Common::Views->transfer_matrix_odd;
+//    const Eigen::Tensor<Scalar,4> & transfer_matrix_LBGA       = MPS_Tools::Common::Views->transfer_matrix_LBGA;
+//    const Eigen::Tensor<Scalar,4> & transfer_matrix_LAGB       = MPS_Tools::Common::Views->transfer_matrix_LAGB;
+
+    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
+    auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
+    auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
+    auto h_evn = superblock.HA->single_site_hamiltonian(0,2,SX,SY, SZ);
+    auto h_odd = superblock.HB->single_site_hamiltonian(1,2,SX,SY, SZ);
+
+
 
     Eigen::Tensor<Scalar,4> h0 =  Matrix_to_Tensor((h_evn - E_evn(0)*MatrixType<Scalar>::Identity(4,4)).eval(), 2,2,2,2);
     Eigen::Tensor<Scalar,4> h1 =  Matrix_to_Tensor((h_odd - E_odd(0)*MatrixType<Scalar>::Identity(4,4)).eval(), 2,2,2,2);
 
     Eigen::Tensor<Scalar,0> E2AB =
-            theta_evn
-                    .contract(h0,                     idx({0, 2}, {0, 1}))
-                    .contract(h0,                     idx({2, 3}, {0, 1}))
-                    .contract(theta_evn.conjugate(),  idx({2, 3}, {0, 2}))
-                    .contract(l_evn,                  idx({0, 2}, {0, 1}))
-                    .contract(r_evn,                  idx({0, 1}, {0, 1}));
+            theta_evn_normalized
+                    .contract(h0                                ,  idx({0, 2}, {0, 1}))
+                    .contract(h0                                ,  idx({2, 3}, {0, 1}))
+                    .contract(theta_evn_normalized.conjugate()  ,  idx({2, 3}, {0, 2}))
+                    .contract(l_evn                             ,  idx({0, 2}, {0, 1}))
+                    .contract(r_evn                             ,  idx({0, 1}, {0, 1}));
 
 
     Eigen::Tensor<Scalar, 0> E2BA =
-            theta_odd
-                    .contract(h1,                    idx({0, 2}, {0, 1}))
-                    .contract(h1,                    idx({2, 3}, {0, 1}))
-                    .contract(theta_odd.conjugate(), idx({2, 3}, {0, 2}))
-                    .contract(l_odd,                 idx({0, 2}, {0, 1}))
-                    .contract(r_odd,                 idx({0, 1}, {0, 1}));
+            theta_odd_normalized
+                    .contract(h1                              , idx({0, 2}, {0, 1}))
+                    .contract(h1                              , idx({2, 3}, {0, 1}))
+                    .contract(theta_odd_normalized.conjugate(), idx({2, 3}, {0, 2}))
+                    .contract(l_odd                           , idx({0, 2}, {0, 1}))
+                    .contract(r_odd                           , idx({0, 1}, {0, 1}));
 
 
 
-    Eigen::Tensor<Scalar,5> thetaABA = theta_evn.contract(LBGA, idx({3},{1}));
-    Eigen::Tensor<Scalar,5> thetaBAB = theta_odd.contract(LAGB, idx({3},{1}));
+    Eigen::Tensor<Scalar,5> thetaABA = theta_evn_normalized.contract(LBGA, idx({3},{1}));
+    Eigen::Tensor<Scalar,5> thetaBAB = theta_odd_normalized.contract(LAGB, idx({3},{1}));
 
     Eigen::Tensor<Scalar,0> E2ABA_1  =
             thetaABA
@@ -204,44 +224,44 @@ void class_measurement::compute_energy_variance_ham(){
 
     Eigen::Tensor<Scalar,0> E2BAB_2  =
             thetaBAB
-                    .contract(h0,                   idx({2,3},{0,1}))
-                    .contract(h1,                   idx({0,3},{0,1}))
+                    .contract(h0                  , idx({2,3},{0,1}))
+                    .contract(h1                  , idx({0,3},{0,1}))
                     .contract(thetaBAB.conjugate(), idx({3,4,2},{0,2,3}))
-                    .contract(l_odd,                idx({0,2},{0,1}))
-                    .contract(r_evn,                idx({0,1},{0,1})) ;
+                    .contract(l_odd               , idx({0,2},{0,1}))
+                    .contract(r_evn               , idx({0,1},{0,1})) ;
 
 
     Eigen::Tensor<Scalar,2> E2d_L_evn =
-            theta_evn
-                    .contract(h0,                    idx({0, 2}, {0, 1}))
-                    .contract(theta_evn.conjugate(), idx({2, 3}, {0, 2}))
-                    .contract(l_evn,                 idx({0, 2}, {0, 1}));
+            theta_evn_normalized
+                    .contract(h0                              , idx({0, 2}, {0, 1}))
+                    .contract(theta_evn_normalized.conjugate(), idx({2, 3}, {0, 2}))
+                    .contract(l_evn                           , idx({0, 2}, {0, 1}));
 
     Eigen::Tensor<Scalar,2> E2d_R_evn =
-            theta_evn
-                    .contract(h0,                    idx({0, 2}, {0, 1}))
-                    .contract(theta_evn.conjugate(), idx({2, 3}, {0, 2}))
-                    .contract(r_evn,                 idx({1, 3}, {0, 1}));
+            theta_evn_normalized
+                    .contract(h0                              , idx({0, 2}, {0, 1}))
+                    .contract(theta_evn_normalized.conjugate(), idx({2, 3}, {0, 2}))
+                    .contract(r_evn                           , idx({1, 3}, {0, 1}));
 
     Eigen::Tensor<Scalar,2> E2d_L_odd  =
-            theta_odd
-                    .contract(h1,                     idx({0, 2}, {0, 1}))
-                    .contract(theta_odd.conjugate(),  idx({2, 3}, {0, 2}))
-                    .contract(l_odd,                  idx({0, 2}, {0, 1}));
+            theta_odd_normalized
+                    .contract(h1                              ,  idx({0, 2}, {0, 1}))
+                    .contract(theta_odd_normalized.conjugate(),  idx({2, 3}, {0, 2}))
+                    .contract(l_odd                           ,  idx({0, 2}, {0, 1}));
 
 
     Eigen::Tensor<Scalar,2> E2d_R_odd =
-            theta_odd
-                    .contract(h1,                     idx({0, 2}, {0, 1}))
-                    .contract(theta_odd.conjugate(),  idx({2, 3}, {0, 2}))
-                    .contract(r_odd,                  idx({1, 3}, {0, 1}));
+            theta_odd_normalized
+                    .contract(h1                              ,  idx({0, 2}, {0, 1}))
+                    .contract(theta_odd_normalized.conjugate(),  idx({2, 3}, {0, 2}))
+                    .contract(r_odd                           ,  idx({1, 3}, {0, 1}));
 
     Eigen::array<Eigen::IndexPair<long>,0> pair = {};
     Eigen::Tensor<Scalar,4> fixpoint_evn = r_evn.contract(l_evn, pair);
     Eigen::Tensor<Scalar,4> fixpoint_odd = r_odd.contract(l_odd, pair);
 
-    long sizeLA = superblock->MPS->chiC();
-    long sizeLB = superblock->MPS->chiB();
+    long sizeLA = superblock.MPS->chiC();
+    long sizeLB = superblock.MPS->chiB();
     Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_evn = Matrix_to_Tensor2(MatrixType<Scalar>::Identity(sizeLB*sizeLB, sizeLA*sizeLA).eval()) - (transfer_matrix_evn-fixpoint_evn).reshape(array2{sizeLB*sizeLB, sizeLA*sizeLA});
     Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_odd = Matrix_to_Tensor2(MatrixType<Scalar>::Identity(sizeLA*sizeLA, sizeLB*sizeLB).eval()) - (transfer_matrix_odd-fixpoint_odd).reshape(array2{sizeLA*sizeLA, sizeLB*sizeLB});
     class_SVD<Scalar> SVD;
@@ -271,14 +291,14 @@ void class_measurement::compute_energy_variance_ham(){
 
 
 
-void class_measurement::compute_finite_chain_energy_variance(){
-    Eigen::Tensor<Scalar,4> L = env_storage->get_ENV2_L().front().block;
-    Eigen::Tensor<Scalar,4> R = env_storage->get_ENV2_R().back().block;
+void class_measurement::compute_finite_chain_energy_variance(const class_finite_chain_state & state){
+    Eigen::Tensor<Scalar,4> L = state.get_ENV2_L().front().block;
+    Eigen::Tensor<Scalar,4> R = state.get_ENV2_R().back().block;
     Eigen::Tensor<Scalar,4> temp;
 
-    auto mpsL  = env_storage->get_MPS_L().begin();
-    auto mpoL  = env_storage->get_MPO_L().begin();
-    auto endL  = env_storage->get_MPS_L().end  ();
+    auto mpsL  = state.get_MPS_L().begin();
+    auto mpoL  = state.get_MPO_L().begin();
+    auto endL  = state.get_MPS_L().end  ();
     while(mpsL != endL){
         const Eigen::Tensor<Scalar,1> &LA = mpsL->get_L(); //std::get<0>(*mpsL);
         const Eigen::Tensor<Scalar,3> &GA = mpsL->get_G(); //std::get<1>(*mpsL);
@@ -299,16 +319,16 @@ void class_measurement::compute_finite_chain_energy_variance(){
 
 
     //Contract the center point
-    auto &MPS_C = env_storage->get_MPS_C();
+    auto &MPS_C = state.get_MPS_C();
     temp = L.contract(asDiagonal(MPS_C) , idx({0},{0}))
             .contract(asDiagonal(MPS_C) , idx({0},{0}))
             .shuffle(array4{2,3,0,1});
     L = temp;
 
     //Contract the right half of the chain
-    auto mpsR  = env_storage->get_MPS_R().begin();
-    auto mpoR  = env_storage->get_MPO_R().begin();
-    auto endR  = env_storage->get_MPS_R().end  ();
+    auto mpsR  = state.get_MPS_R().begin();
+    auto mpoR  = state.get_MPO_R().begin();
+    auto endR  = state.get_MPS_R().end  ();
     while(mpsR != endR){
         const Eigen::Tensor<Scalar,3> &GB = mpsR->get_G(); // std::get<0>(*mpsR);
         const Eigen::Tensor<Scalar,1> &LB = mpsR->get_L(); // std::get<1>(*mpsR);
@@ -327,5 +347,5 @@ void class_measurement::compute_finite_chain_energy_variance(){
     }
 
     Eigen::Tensor<Scalar,0> H2_all_sites = L.contract(R, idx({0,1,2,3},{0,1,2,3}));
-    variance_chain = std::abs(std::real(H2_all_sites(0)) - energy_chain*energy_chain) / env_storage->get_length() ;
+    variance_chain = std::abs(std::real(H2_all_sites(0)) - energy_chain*energy_chain) / state.get_length() ;
 }

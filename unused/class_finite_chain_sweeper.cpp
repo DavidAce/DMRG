@@ -27,44 +27,46 @@ class_finite_chain_sweeper::class_finite_chain_sweeper(
 }
 
 
+//void class_finite_chain_sweeper::set_max_length(class_finite_chain_state &storage, int max_length_) {
+//
+//    max_length = max_length_;
+//    max_length_is_set = true;
+//}
+
+//void class_finite_chain_sweeper::set_superblock(std::shared_ptr<class_superblock> superblock_) {
+//    superblock = std::move(superblock_);
+//    superblock_is_set = true;
+//}
 
 
-void class_finite_chain_sweeper::set_max_length(int max_length_) {
-    max_length = max_length_;
-    max_length_is_set = true;
-}
-void class_finite_chain_sweeper::set_superblock(std::shared_ptr<class_superblock> superblock_) {
-    superblock = std::move(superblock_);
-    superblock_is_set = true;
-}
 
-void class_finite_chain_sweeper::set_hdf5_file(std::shared_ptr<class_hdf5_file> hdf5_){
-    hdf5 = std::move(hdf5_);
-    hdf5_file_is_set = true;
-}
-
-void class_finite_chain_sweeper::update_current_length() {
-    current_length = ENV_L.back().size + ENV_R.front().size + 2ul;
-    assert(current_length == superblock->environment_size + 2ul);
-}
+//void class_finite_chain_sweeper::update_current_length() {
+//    current_length = ENV_L.back().size + ENV_R.front().size + 2ul;
+//    assert(current_length == superblock->environment_size + 2ul);
+//}
 
 
-int class_finite_chain_sweeper::insert(){
+int class_finite_chain_sweeper::insert_superblock_to_chain(state_ptr state, superblock_ptr superblock){
 
-    if(!max_length_is_set){print_error_and_exit(10);}
-    if(!superblock_is_set){print_error_and_exit(11);}
-    if(!hdf5_file_is_set){print_error_and_exit(12);}
-//    if(MPO_L.size() > 0 and MPO_R.size() > 0) {
-//        std::cout << "Current state -- Insert (before): " << std::endl;
-//        std::cout << "HA: " << superblock->HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position()
-//                  << std::endl;
-//        std::cout << "HB: " << superblock->HB->get_position() << " MPO_R front: " << MPO_R.front()->get_position()
-//                  << std::endl;
-//    }
-    assert(ENV_L.size() + ENV_L.size() <= max_length);
-    assert(MPS_L.size() + MPS_R.size() <= max_length);
-    assert(ENV_L.size()        == superblock->Lblock->size);
-    assert(ENV_R.size()        == superblock->Rblock->size);
+//    if(!max_length_is_set){print_error_and_exit(10);}
+//    if(!superblock_is_set){print_error_and_exit(11);}
+//    if(!hdf5_file_is_set){print_error_and_exit(12);}
+//
+    auto & MPS_L  = state->ref_MPS_L ();
+    auto & MPS_R  = state->ref_MPS_R ();
+    auto & MPS_C  = state->ref_MPS_C ();
+    auto & MPO_L  = state->ref_MPO_L ();
+    auto & MPO_R  = state->ref_MPO_R ();
+    auto & ENV_L  = state->ref_ENV_L ();
+    auto & ENV_R  = state->ref_ENV_R ();
+    auto & ENV2_L = state->ref_ENV2_L();
+    auto & ENV2_R = state->ref_ENV2_R();
+
+
+    assert(ENV_L .size() + ENV_L.size() <= state->get_length());
+    assert(MPS_L .size() + MPS_R.size() <= state->get_length());
+    assert(ENV_L .size()       == superblock->Lblock->size);
+    assert(ENV_R .size()       == superblock->Rblock->size);
     assert(ENV2_L.size()       == superblock->Lblock2->size);
     assert(ENV2_R.size()       == superblock->Rblock2->size);
 
@@ -79,9 +81,6 @@ int class_finite_chain_sweeper::insert(){
     ENV2_R.emplace_front(*superblock->Rblock2);
     MPO_L.emplace_back      (superblock->HA->clone());
     MPO_R.emplace_front     (superblock->HB->clone());
-    update_current_length();
-
-
 
 
     int pos = 0;
@@ -106,40 +105,38 @@ int class_finite_chain_sweeper::insert(){
     superblock->HA->set_position(MPO_L.back()->get_position());
     superblock->HB->set_position(MPO_R.front()->get_position());
 
-
-//    std::cout << "New positions: \n" ;
-//    for (auto &MPO : MPO_L){
-//        std::cout << "Position L: " << MPO->get_position() << std::endl;
-//    }
-//    for (auto &MPO : MPO_R){
-//        std::cout << "Position R: " << MPO->get_position() << std::endl;
-//    }
-//    std::cout << std::endl;
-//
-//    std::cout << "Current state -- Insert (after): " << std::endl;
-//    std::cout << "HA: " << superblock->HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position() << std::endl;
-//    std::cout << "HB: " << superblock->HB->get_position() << " MPO_R front: " << MPO_R.front()->get_position() << std::endl;
-
-
-//    std::cout << "Inserted -- New state reflects current superblock: " << std::endl;
     assert(ENV_L.back().size + ENV_R.front().size == superblock->environment_size);
     assert(ENV_L.back().size   == superblock->Lblock->size);
     assert(ENV_R.front().size  == superblock->Rblock->size);
     assert(ENV2_L.back().size  == superblock->Lblock2->size);
     assert(ENV2_R.front().size == superblock->Rblock2->size);
+
+    state->all_mps_have_been_written_to_hdf5 = false;
+    state->all_mpo_have_been_written_to_hdf5 = false;
+    state->all_env_have_been_written_to_hdf5 = false;
     return (int)MPS_L.size();
 }
 
 
+//
+//int class_finite_chain_sweeper::load(){
+//    return (int)MPS_L.size();
+//}
+//
 
-int class_finite_chain_sweeper::load(){
-    return (int)MPS_L.size();
+
+
+void class_finite_chain_sweeper::copy_superblock_to_chain(state_ptr state, superblock_ptr superblock) {
+    copy_superblock_mps_to_chain(state, superblock);
+    copy_superblock_mpo_to_chain(state, superblock);
+    copy_superblock_env_to_chain(state, superblock);
 }
 
+void class_finite_chain_sweeper::copy_superblock_mps_to_chain(state_ptr state, superblock_ptr superblock) {
+    auto & MPS_L  = state->ref_MPS_L ();
+    auto & MPS_R  = state->ref_MPS_R ();
+    auto & MPS_C  = state->ref_MPS_C ();
 
-
-void class_finite_chain_sweeper::overwrite_local_MPS() {
-//    std::cout << "Overwriting positions: "  << MPS_L.size() << " and " <<  MPS_R.size()  << std::endl;
     assert(!MPS_L.empty() and !MPS_R.empty());
     assert(MPS_L.size() + MPS_R.size() <= max_length);
     assert(MPS_L.back().get_position()   == superblock->MPS->MPS_A->get_position());
@@ -149,26 +146,32 @@ void class_finite_chain_sweeper::overwrite_local_MPS() {
     MPS_L.back()    = *superblock->MPS->MPS_A;
     MPS_C           = superblock->MPS->LC;
     MPS_R.front()   = *superblock->MPS->MPS_B;
-
-
+    state->all_mps_have_been_written_to_hdf5 = false;
 }
 
 
-void class_finite_chain_sweeper::overwrite_local_MPO(){
+void class_finite_chain_sweeper::copy_superblock_mpo_to_chain(state_ptr state, superblock_ptr superblock){
 //    std::cout << "Current state -- Overwrite: " << std::endl;
 //    std::cout << "HA: " << superblock->HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position() << std::endl;
 //    std::cout << "HB: " << superblock->HB->get_position() << " MPO_R front: " << MPO_R.front()->get_position() << std::endl;
+    auto & MPO_L  = state->ref_MPO_L ();
+    auto & MPO_R  = state->ref_MPO_R ();
+
     assert(superblock->HA->get_position() == MPO_L.back()->get_position());
     assert(superblock->HB->get_position() == MPO_R.front()->get_position());
     MPO_L.back()    = superblock->HA->clone();
     MPO_R.front()   = superblock->HB->clone();
     assert(MPO_L.size() + MPO_R.size() == max_length);
+    state->all_mpo_have_been_written_to_hdf5 = false;
 }
 
-void class_finite_chain_sweeper::overwrite_local_ENV(){
+void class_finite_chain_sweeper::copy_superblock_env_to_chain(state_ptr state, superblock_ptr superblock){
+    auto & ENV_L  = state->ref_ENV_L ();
+    auto & ENV_R  = state->ref_ENV_R ();
+    auto & ENV2_L = state->ref_ENV2_L();
+    auto & ENV2_R = state->ref_ENV2_R();
     assert(superblock->Lblock->get_position() == ENV_L.back().get_position());
     assert(superblock->Rblock->get_position() == ENV_R.front().get_position());
-
     assert(superblock->Lblock2->get_position() == ENV2_L.back().get_position());
     assert(superblock->Rblock2->get_position() == ENV2_R.front().get_position());
 
@@ -178,16 +181,25 @@ void class_finite_chain_sweeper::overwrite_local_ENV(){
     ENV_R.front()   = *superblock->Rblock;
     ENV2_R.front()  = *superblock->Rblock2;
     assert(ENV_L.size() + ENV_R.size() == max_length);
+    state->all_env_have_been_written_to_hdf5 = false;
 }
 
 
-int class_finite_chain_sweeper::move(){
+int class_finite_chain_sweeper::move(state_ptr state, superblock_ptr superblock){
     //Take current MPS and generate an Lblock one larger and store it in list for later loading
 //    std::cout << "Current state -- Direction: " << direction << std::endl;
 //    std::cout << "HA: " << superblock->HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position() << std::endl;
 //    std::cout << "HB: " << superblock->HB->get_position() << " MPO_R front: " << MPO_R.front()->get_position() << std::endl;
 //
-
+    auto & MPS_L  = state->ref_MPS_L ();
+    auto & MPS_R  = state->ref_MPS_R ();
+    auto & MPS_C  = state->ref_MPS_C ();
+    auto & MPO_L  = state->ref_MPO_L ();
+    auto & MPO_R  = state->ref_MPO_R ();
+    auto & ENV_L  = state->ref_ENV_L ();
+    auto & ENV_R  = state->ref_ENV_R ();
+    auto & ENV2_L = state->ref_ENV2_L();
+    auto & ENV2_R = state->ref_ENV2_R();
     assert(!MPS_L.empty() and !MPS_R.empty());
     assert(MPS_L.size() + MPS_R.size() == max_length);
     assert(ENV_L.size() + ENV_R.size() == max_length);
@@ -303,112 +315,12 @@ int class_finite_chain_sweeper::move(){
     if (position_is_the_left_edge()){
         sweeps++;
     }
+    full_mps_has_been_written = false;
     return get_sweeps();
 }
 
 
-void class_finite_chain_sweeper::write_chain_to_file() {
-    unsigned long counter = 0;
-    // Write MPS in A-B notation for simplicity.
-    // Also write down all the Lambdas (singular value) , so that we can obtain the entanglement spectrum easily.'
-    // Remember to write tensors in row-major storage order because that's what hdf5 uses.
-    for (auto &mps : get_MPS_L()){
-        hdf5->write_dataset(Textra::to_RowMajor(mps.get_A()),sim_name + "/chain/MPS/A_" + std::to_string(counter));
-        hdf5->write_dataset(mps.get_L()                     ,sim_name + "/chain/MPS/L_" + std::to_string(counter++));
-    }
-    hdf5->write_dataset(get_MPS_C(), sim_name + "/chain/MPS/L_C");
-    for (auto &mps : get_MPS_R()){
-        hdf5->write_dataset(Textra::to_RowMajor(mps.get_B()) ,sim_name + "/chain/MPS/B_" + std::to_string(counter));
-        hdf5->write_dataset(mps.get_L()                      ,sim_name + "/chain/MPS/L_" + std::to_string(counter++));
-    }
-
-
-    // Write all the MPO's
-    counter = 0;
-    for(auto &mpo : get_MPO_L()){
-        hdf5->write_dataset(Textra::to_RowMajor(mpo->MPO), sim_name + "/chain/MPO/H_" + std::to_string(counter));
-        //Write MPO properties as attributes
-        auto values = mpo->get_parameter_values();
-        auto names  = mpo->get_parameter_names();
-        for (size_t i = 0; i < std::min(values.size(), names.size()); i++){
-            hdf5->write_attribute_to_dataset(sim_name + "/chain/MPO/H_" + std::to_string(counter), values[i], names[i]);
-        }
-        counter++;
-    }
-    for(auto &mpo : get_MPO_R()){
-        hdf5->write_dataset(Textra::to_RowMajor(mpo->MPO), sim_name + "/chain/MPO/H_" + std::to_string(counter));
-        //Write MPO properties as attributes
-        auto values = mpo->get_parameter_values();
-        auto names  = mpo->get_parameter_names();
-        for (size_t i = 0; i < std::min(values.size(), names.size()); i++){
-            hdf5->write_attribute_to_dataset(sim_name + "/chain/MPO/H_" + std::to_string(counter), values[i], names[i]);
-        }
-        counter++;
-    }
-
-    // Write all the environment blocks
-    counter = 0;
-    hdf5->write_dataset(Textra::to_RowMajor(get_ENV_L().back().block), sim_name + "/chain/ENV/L");
-    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/L", get_ENV_L().back().size, "sites");
-    hdf5->write_dataset(Textra::to_RowMajor(get_ENV_R().front().block), sim_name + "/chain/ENV/R");
-    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV/R", get_ENV_R().front().size, "sites");
-
-    hdf5->write_dataset(Textra::to_RowMajor(get_ENV2_L().back().block), sim_name + "/chain/ENV2/L");
-    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/L", get_ENV2_L().back().size, "sites");
-    hdf5->write_dataset(Textra::to_RowMajor(get_ENV2_R().front().block), sim_name + "/chain/ENV2/R");
-    hdf5->write_attribute_to_dataset(sim_name + "/chain/ENV2/R", get_ENV2_R().front().size, "sites");
-
-    // Write relevant quantities
-    std::vector<double> entanglement_entropies;
-    for (auto &mps : get_MPS_L()){
-        Eigen::Tensor<Scalar,0> SA  = -mps.get_L().square()
-                .contract(mps.get_L().square().log().eval(), idx({0},{0}));
-        entanglement_entropies.push_back(std::real(SA(0)));
-    }
-    Eigen::Tensor<Scalar,0> SA  = -get_MPS_C().square()
-            .contract(get_MPS_C().square().log().eval(), idx({0},{0}));
-    entanglement_entropies.push_back(std::real(SA(0)));
-    for (auto &mps : get_MPS_R()){
-        Eigen::Tensor<Scalar,0> SA  = -mps.get_L().square()
-                .contract(mps.get_L().square().log().eval(), idx({0},{0}));
-        entanglement_entropies.push_back(std::real(SA(0)));
-    }
-    hdf5->write_dataset(entanglement_entropies ,sim_name + "/chain/OTHER/ENT_ENTR");
-
-
-    // Write down the Hamiltonian metadata as a table
-//    std::vector<std::vector<double>> hamiltonian_props;
-    Eigen::MatrixXd hamiltonian_props;
-    for(auto &mpo : get_MPO_L()){
-        auto props = mpo->get_parameter_values();
-        Eigen::ArrayXd  temp_row  = Eigen::Map<Eigen::ArrayXd> (props.data(),props.size());
-        hamiltonian_props.conservativeResize(hamiltonian_props.rows()+1, temp_row.size());
-        hamiltonian_props.bottomRows(1) = temp_row.transpose();
-    }
-    for(auto &mpo : get_MPO_R()){
-        auto props = mpo->get_parameter_values();
-        Eigen::ArrayXd  temp_row  = Eigen::Map<Eigen::ArrayXd> (props.data(),props.size());
-        hamiltonian_props.conservativeResize(hamiltonian_props.rows()+1, temp_row.size());
-        hamiltonian_props.bottomRows(1) = temp_row.transpose();
-    }
-//    Eigen::MatrixXd hamiltonian_props_transp = hamiltonian_props.;
-    hdf5->write_dataset(Textra::to_RowMajor(hamiltonian_props.transpose()) ,sim_name + "/Hamiltonian");
-//    hdf5->write_attribute_to_dataset(sim_name + "/Hamiltonian", get_MPO_L().front()->get_parameter_names(), "Columns" );
-
-    int col = 0;
-    for (auto &name : get_MPO_L().front()->get_parameter_names()){
-        std::string attr_value = name;
-        std::string attr_name  = "FIELD_" + to_string(col) + "_NAME";
-        hdf5->write_attribute_to_dataset(sim_name + "/Hamiltonian", attr_value, attr_name );
-        col++;
-    }
-
-
-
-
-}
-
-void class_finite_chain_sweeper::print_storage(){
+void class_finite_chain_sweeper::print_state(state_ptr state){
     int i = 0;
     std::cout << setprecision(10);
     std::cout << "Current environment size: " << superblock->environment_size
@@ -440,7 +352,8 @@ void class_finite_chain_sweeper::print_storage(){
 
 }
 
-void class_finite_chain_sweeper::print_storage_compact(){
+
+void class_finite_chain_sweeper::print_state_compact(){
 
     std::cout << setprecision(10);
     std::cout << "Current environment size: " << superblock->environment_size
@@ -467,11 +380,14 @@ void class_finite_chain_sweeper::print_hamiltonians() {
 int class_finite_chain_sweeper::reset_sweeps()  {sweeps = 0; return sweeps;}
 int class_finite_chain_sweeper::get_direction() const {return direction;}
 int class_finite_chain_sweeper::get_sweeps()    const {return sweeps;}
-int class_finite_chain_sweeper::get_length()    const {return (int)(MPS_L.size() + MPS_R.size());}
 int class_finite_chain_sweeper::get_position()  const {return max_length_is_set ? (int)(MPS_L.size() - 1) : 0 ;}
 bool class_finite_chain_sweeper::position_is_the_middle() {
     return max_length_is_set ? (unsigned) get_position() + 1 == (unsigned)(max_length / 2.0) and direction == 1: true ;
 }
+bool class_finite_chain_sweeper::position_is_the_middle_any_direction(){
+    return max_length_is_set ? (unsigned) get_position() + 1 == (unsigned)(max_length / 2.0) : true ;
+}
+
 bool class_finite_chain_sweeper::position_is_the_left_edge(){
     return get_position() == 0;
 }

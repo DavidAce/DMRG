@@ -52,7 +52,7 @@ std::unique_ptr<class_hamiltonian_base> class_hamiltonian_factory::create_mpo(st
 //}
 
 
-std::unique_ptr<class_hamiltonian_base> class_hamiltonian_factory::clone(const std::unique_ptr<class_hamiltonian_base> &other){
+std::unique_ptr<class_hamiltonian_base> class_hamiltonian_factory::clone(std::unique_ptr<class_hamiltonian_base> other){
     return other->clone();
 }
 
