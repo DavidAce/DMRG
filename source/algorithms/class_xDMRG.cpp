@@ -4,12 +4,14 @@
 
 
 #include <iomanip>
+#include <IO/class_hdf5_file.h>
 #include <IO/class_hdf5_table_buffer2.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_mps_2site.h>
-#include <mps_routines/class_finite_chain.h>
+#include <mps_routines/class_finite_chain_state.h>
+#include <mps_routines/nmspc_mps_tools.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_quantum_mechanics.h>
@@ -56,8 +58,8 @@ class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     initialize_constants();
     table_xdmrg         = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
     table_xdmrg_chain   = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name,sim_name + "_chain");
-    env_storage         = std::make_shared<class_finite_chain>(num_sites, superblock, hdf5,sim_type,sim_name);
-    measurement         = std::make_shared<class_measurement>(superblock, env_storage, sim_type);
+    state         = std::make_shared<class_finite_chain_state>(num_sites);
+    measurement         = std::make_shared<class_measurement>(sim_type);
     initialize_state(settings::model::initial_state);
     min_saturation_length = 1 * (int)(1.0 * num_sites);
     max_saturation_length = 1 * (int)(2.0 * num_sites);
@@ -73,11 +75,11 @@ void class_xDMRG::run() {
     initialize_chain();
     set_random_fields_in_chain_mpo();
     std::cout << "Parameters on the finite chain: \n" <<std::endl;
-    env_storage->print_hamiltonians();
+    MPS_Tools::Finite::Print::print_hamiltonians(*state);
     find_energy_range();
     while(true) {
         single_xDMRG_step();
-        env_storage_overwrite_local_ALL();
+        MPS_Tools::Finite::Chain::copy_superblock_to_chain(*state,*superblock);
         store_table_entry_to_file();
         store_chain_entry_to_file();
         store_profiling_to_file_total();
@@ -87,7 +89,7 @@ void class_xDMRG::run() {
         print_status_update();
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if (iteration >= min_sweeps and env_storage->position_is_the_middle_any_direction() and
+        if (iteration >= min_sweeps and state->position_is_the_middle_any_direction() and
            (iteration >= max_sweeps or simulation_has_converged or simulation_has_to_stop))
         {
             break;
@@ -95,16 +97,16 @@ void class_xDMRG::run() {
 //        if (iteration >= min_sweeps) {
             update_bond_dimension(min_saturation_length);
 //        }
-        enlarge_environment(env_storage->get_direction());
-        env_storage_move();
-        iteration = env_storage->get_sweeps();
+        enlarge_environment(state->get_direction());
+        MPS_Tools::Finite::Chain::move_center_point(*state,*superblock);
+        iteration = state->get_sweeps();
         step++;
         ccout(3) << "STATUS: Finished single xDMRG step\n";
     }
     t_tot.toc();
-    env_storage->set_parity_projected_mps(qm::spinOneHalf::sx);
+    MPS_Tools::Finite::Ops::set_parity_projected_mps(*state,qm::spinOneHalf::sx);
     print_status_full();
-    measurement->compute_all_observables_from_finite_chain();
+    measurement->compute_all_observables_from_state(*state);
     hdf5->write_dataset(measurement->get_parity(), sim_name + "/chain/parity");
 //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
@@ -135,7 +137,7 @@ void class_xDMRG::single_xDMRG_step()
 //    mode = chi_temp >= 8  ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
 //    mode = chi_temp >= 32 ? xDMRG_Mode::FULL_EIG_OPT : mode;
 //    mode = chi_current >= 32 ? xDMRG_Mode::DIRECT_OPT      : mode;
-//    mode = mode == xDMRG_Mode::DIRECT_OPT and env_storage->position_is_the_middle() ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
+//    mode = mode == xDMRG_Mode::DIRECT_OPT and state->position_is_the_middle() ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
 //    mode = chi_temp >= 16 and chi_temp <= 64 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
 //    mode = chi_temp > 64 ? xDMRG_Mode::DIRECT_OPT : mode;
 //    mode = theta.size() >= 4096 ? xDMRG_Mode::DIRECT_OPT : mode;
@@ -155,7 +157,7 @@ void class_xDMRG::single_xDMRG_step()
 
 
 void class_xDMRG::check_convergence(){
-//    if(not env_storage->position_is_the_middle()){return;}
+//    if(not state->position_is_the_middle()){return;}
 //    if(iteration < 5){return;}
     t_sim.tic();
     t_con.tic();
@@ -246,7 +248,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
     double variance_new = 0;
     double overlap_new  = 0;
     long shape = theta.size();
-    double chain_length    = env_storage->get_length();
+    double chain_length    = state->get_length();
 
     if (mode == xDMRG_Mode::DIRECT_OPT){
         theta_res = direct_optimization(energy_new, variance_new, theta);
@@ -288,7 +290,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         ccout(2) << "Starting eigensolver \n"
                  << std::setprecision(10)
                  << "      mode        : "    << mode << '\n'
-                 << "      position    : "    << env_storage->get_position() << '\n'
+                 << "      position    : "    << state->get_position() << '\n'
                  << "      chi         : "    << chi_temp << '\n'
                  << "      shape       : "    << shape    << " x " << shape << '\n'
                  << "      sparcity    : "    << sparcity << '\n'
@@ -364,7 +366,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         }else {
             theta_res       = eigvecs.col(best_state_idx);
             energy_new      = eigvals(best_state_idx)/chain_length;
-            variance_new    = measurement->compute_energy_variance_mpo(theta_res.data(),theta.dimensions(),eigvals(best_state_idx));
+            variance_new    = measurement->compute_energy_variance_mpo(*superblock,theta_res.data(),theta.dimensions(),eigvals(best_state_idx));
         }
     }
     energy_now = energy_new;
@@ -383,7 +385,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimization(double &energy_new,double &variance_new,int nev, const double * eigvecs_ptr, const double *eigvals_ptr,const Eigen::Tensor<Scalar,4> &theta){
     using namespace eigutils::eigSetting;
     long shape = theta.size();
-    double chain_length    = env_storage->get_length();
+    double chain_length    = state->get_length();
     auto eigvals = Eigen::Map<const Eigen::VectorXd> (eigvals_ptr,nev);
     auto eigvecs = Eigen::Map<const Eigen::MatrixXd> (eigvecs_ptr,shape,nev);
     auto theta_old = Eigen::Map<const Textra::VectorType<Scalar>> (theta.data(),shape);
@@ -499,7 +501,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
     t_lbfgs.tic();
 
     long shape = theta.size();
-    double chain_length    = env_storage->get_length();
+    double chain_length    = state->get_length();
 
     //Should really use xstart as the projection towards the previous theta, not best overlapping!
     // Note that alpha_i = <theta_old | theta_new_i> is not supposed to be squared! The overlap
@@ -514,8 +516,8 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
 //        ccout(3) << "STATUS: Finished construction of H_local_sq \n";
 //        Textra::VectorType<Scalar> theta_0 = eigvecs * xstart;
         size_t iter_0 = 0;
-        double energy_0   = measurement->compute_energy_mpo(theta.data(),theta.dimensions());
-        double variance_0 = std::log10(measurement->compute_energy_variance_mpo(theta.data(),theta.dimensions(),energy_0)/chain_length);
+        double energy_0   = measurement->compute_energy_mpo(*superblock,theta.data(),theta.dimensions());
+        double variance_0 = std::log10(measurement->compute_energy_variance_mpo(*superblock,theta.data(),theta.dimensions(),energy_0)/chain_length);
 
 //        Scalar variance_0 = std::log10(
 //                ((theta_0.adjoint() * H_local_sq.selfadjointView<Eigen::Upper>() * theta_0).sum() -
@@ -597,7 +599,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
 
 void class_xDMRG::initialize_chain() {
     while(true){
-        env_storage_insert();
+        insert_superblock_to_chain();
         if (superblock->environment_size + 2ul < (unsigned long) num_sites) {
             enlarge_environment();
             swap();
@@ -610,49 +612,49 @@ void class_xDMRG::initialize_chain() {
 
 void class_xDMRG::find_energy_range() {
     std::cout << "Finding energy range" << std::endl;
-    assert(env_storage->get_length() == num_sites);
-    int max_sweeps_during_f_range = 5;
-    iteration = env_storage->reset_sweeps();
+    assert(state->get_length() == num_sites);
+    size_t max_sweeps_during_f_range = 5;
+    iteration = state->reset_sweeps();
 
 
     // Find energy minimum
     while(true) {
         single_DMRG_step(eigsolver_properties::Ritz::SR);
-        env_storage_overwrite_local_ALL();         //Needs to occurr after update_MPS...
+        copy_superblock_to_chain();         //Needs to occurr after update_MPS...
         print_status_update();
 
         // It's important not to perform the last step.
         // That last state would not get optimized
         if(iteration >= max_sweeps_during_f_range) {break;}
-        enlarge_environment(env_storage->get_direction());
-        env_storage_move();
-        iteration = env_storage->get_sweeps();
+        enlarge_environment(state->get_direction());
+        move_center_point();
+        iteration = state->get_sweeps();
     }
-//    env_storage->print_hamiltonians();
+//    state->print_hamiltonians();
 //    exit(1);
     compute_observables();
     energy_min = measurement->get_energy_mpo();
-    iteration = env_storage->reset_sweeps();
+    iteration = state->reset_sweeps();
 
     reset_chain_mps_to_random_product_state();
     // Find energy maximum
     while(true) {
         single_DMRG_step(eigsolver_properties::Ritz::LR);
-        env_storage_overwrite_local_ALL();         //Needs to occurr after update_MPS...
+        copy_superblock_to_chain();         //Needs to occurr after update_MPS...
         print_status_update();
         // It's important not to perform the last step.
         // That last state would not get optimized
         if(iteration >= max_sweeps_during_f_range) {break;}
-        enlarge_environment(env_storage->get_direction());
-        env_storage_move();
-        iteration = env_storage->get_sweeps();
+        enlarge_environment(state->get_direction());
+        move_center_point();
+        iteration = state->get_sweeps();
     }
     compute_observables();
     energy_max = measurement->get_energy_mpo();
 
-    iteration = env_storage->reset_sweeps();
+    iteration = state->reset_sweeps();
     energy_target = 0.5*(energy_max+energy_min);
-    energy_now = superblock->E_optimal / env_storage->get_length();
+    energy_now = superblock->E_optimal / state->get_length();
     std::cout << setprecision(10) ;
     std::cout << "Energy minimum (per site) = " << energy_min << std::endl;
     std::cout << "Energy maximum (per site) = " << energy_max << std::endl;
@@ -672,7 +674,7 @@ void class_xDMRG::find_energy_range() {
 void class_xDMRG::store_table_entry_to_file(bool force){
     if(not force) {
         if (Math::mod(iteration, store_freq) != 0) { return; }
-        if (not env_storage->position_is_the_middle_any_direction()) { return; }
+        if (not state->position_is_the_middle_any_direction()) { return; }
         if (store_freq == 0) { return; }
     }
     ccout(3) << "STATUS: Storing table_entry to file\n";
@@ -680,9 +682,9 @@ void class_xDMRG::store_table_entry_to_file(bool force){
     t_sto.tic();
     table_xdmrg->append_record(
             iteration,
-            measurement->get_chain_length(),
-            env_storage->get_position(),
-            measurement->get_chi(),
+            state->get_length(),
+            state->get_position(),
+            measurement->get_chi(*superblock),
             chi_max,
             measurement->get_energy_mpo(),
             std::numeric_limits<double>::quiet_NaN(),
@@ -693,8 +695,8 @@ void class_xDMRG::store_table_entry_to_file(bool force){
             measurement->get_variance_mpo(),
             std::numeric_limits<double>::quiet_NaN(),
             std::numeric_limits<double>::quiet_NaN(),
-            measurement->get_entanglement_entropy(),
-            measurement->get_truncation_error(),
+            measurement->get_entanglement_entropy(*superblock),
+            measurement->get_truncation_error(*superblock),
             t_tot.get_age());
     t_sto.toc();
 }
@@ -703,18 +705,18 @@ void class_xDMRG::store_chain_entry_to_file(bool force){
     if (not force) {
         if (Math::mod(iteration, store_freq) != 0) { return; }
         if (store_freq == 0) { return; }
-        if (not(env_storage->get_direction() == 1 or env_storage->position_is_the_middle_any_direction())) { return; }
+        if (not(state->get_direction() == 1 or state->position_is_the_middle_any_direction())) { return; }
     }
     ccout(3) << "STATUS: Storing chain_entry to file\n";
     t_sto.tic();
     table_xdmrg_chain->append_record(
             iteration,
-            measurement->get_chain_length(),
-            env_storage->get_position(),
-            measurement->get_chi(),
+            state->get_length(),
+            state->get_position(),
+            measurement->get_chi(*superblock),
             energy_now,
-            measurement->get_entanglement_entropy(),
-            measurement->get_truncation_error()
+            measurement->get_entanglement_entropy(*superblock),
+            measurement->get_truncation_error(*superblock)
     );
     t_sto.toc();
 }

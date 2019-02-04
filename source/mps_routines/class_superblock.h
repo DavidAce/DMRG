@@ -44,7 +44,7 @@ public:
     double E_optimal;                                    /*!< Stores the energy obtained in the eigenvalue solver. This energy corresponds to non-truncated MPS, so it will differ a tiny bit from what you see in final resuls. */
     unsigned long    environment_size = 0;
     int              spin_dimension;
-
+    size_t get_length() const;
     Eigen::Tensor<Scalar, 4>
     optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR
     )    __attribute((hot));                            /*!< Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using [Spectra](https://github.com/yixuan/spectra). */
@@ -85,6 +85,20 @@ public:
     Eigen::Tensor<Scalar,2> get_H_local_sq_rank2 ();
     Eigen::Tensor<Scalar,8> get_H_local_sq_rank8 ();
 
+    void set_superblock(
+            const Eigen::Tensor<Scalar,4> &Lblock2_,
+            const Eigen::Tensor<Scalar,3> &Lblock_,
+            const Eigen::Tensor<Scalar,4> &MPO_A,
+            const Eigen::Tensor<Scalar,1> &LA,
+            const Eigen::Tensor<Scalar,3> &GA,
+            const Eigen::Tensor<Scalar,1> &LC,
+            const Eigen::Tensor<Scalar,3> &GB,
+            const Eigen::Tensor<Scalar,1> &LB,
+            const Eigen::Tensor<Scalar,4> &MPO_B,
+            const Eigen::Tensor<Scalar,3> &Rblock_,
+            const Eigen::Tensor<Scalar,4> &Rblock2_
+            );
+
 
 
 //    void set_current_dimensions()      ;                /*!< Update variables for dimensions */
@@ -93,6 +107,23 @@ public:
 
     //Profiling
     class_tic_toc t_eig;
+
+    class_tic_toc t_ene_mpo;
+    class_tic_toc t_ene_ham;
+    class_tic_toc t_ene_gen;
+    class_tic_toc t_var_mpo;
+    class_tic_toc t_var_ham;
+    class_tic_toc t_var_gen;
+    class_tic_toc t_entropy;
+    class_tic_toc t_temp1;
+    class_tic_toc t_temp2;
+    class_tic_toc t_temp3;
+    class_tic_toc t_temp4;
+
+    void set_profiling_labels();
+    void print_profiling(class_tic_toc &t_parent);
+
+
 
 };
 

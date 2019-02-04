@@ -11,7 +11,8 @@
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_measurement.h>
-#include <mps_routines/class_finite_chain.h>
+#include <mps_routines/class_finite_chain_state.h>
+#include <mps_routines/nmspc_mps_tools.h>
 #include <mps_routines/class_mps_2site.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
@@ -50,8 +51,8 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
     superblock   = std::make_shared<class_superblock>();
 
     //Default constructed objects
-    env_storage  = std::make_shared<class_finite_chain>();
-    class_resume_from_hdf5 test(hdf5,superblock,env_storage,sim_name,sim_type);
+    state  = std::make_shared<class_finite_chain_state>();
+    class_resume_from_hdf5 test(hdf5,superblock,state,sim_name,sim_type);
     hdf5->write_dataset(settings::input::input_file, sim_name + "/input_file");
     hdf5->write_dataset(settings::input::input_filename, sim_name + "/input_filename");
     seed = settings::model::seed;
@@ -78,21 +79,22 @@ void class_algorithm_base::single_DMRG_step(Ritz ritz){
         superblock->HB->set_reduced_energy(superblock->E_optimal);
     }
     measurement->set_not_measured();
+    MPS_Tools::Common::Measure::set_not_measured();
     t_sim.toc();
 }
 
 void class_algorithm_base::store_state_to_file(bool force){
     if(not force){
         if (Math::mod(iteration, store_freq) != 0) {return;}
-        if (not env_storage->position_is_the_middle_any_direction()) {return;}
+        if (not state->position_is_the_middle_any_direction()) {return;}
         if (store_freq == 0){return;}
     }
     ccout(3) << "STATUS: Storing storing mps to file\n";
     t_sto.tic();
-    env_storage->write_all_to_hdf5();
+    MPS_Tools::Finite::Hdf5::write_all(*state,*hdf5,sim_name);
     if (settings::hdf5::resume_from_file){
-        env_storage->write_full_mps_to_hdf5();
-        env_storage->write_full_mpo_to_hdf5();
+        MPS_Tools::Finite::Hdf5::write_full_mps(*state,*hdf5,sim_name);
+        MPS_Tools::Finite::Hdf5::write_full_mpo(*state,*hdf5,sim_name);
     }
     t_sto.toc();
 }
@@ -259,7 +261,7 @@ void class_algorithm_base::check_convergence_entanglement(double slope_threshold
     check_saturation_using_slope(BS_vec,
                                  S_vec,
                                  XS_vec,
-                                 measurement->get_entanglement_entropy(),
+                                 measurement->get_entanglement_entropy(*superblock),
                                  step,
                                  1,
                                  slope_threshold,
@@ -268,7 +270,7 @@ void class_algorithm_base::check_convergence_entanglement(double slope_threshold
     entanglement_has_converged = entanglement_has_saturated;
 }
 
-void class_algorithm_base::update_bond_dimension(int min_saturation_length){
+void class_algorithm_base::update_bond_dimension(size_t min_saturation_length){
     if(not chi_grow or bond_dimension_has_reached_max or chi_temp == chi_max ){
         chi_temp = chi_max;
         bond_dimension_has_reached_max = true;
@@ -278,7 +280,7 @@ void class_algorithm_base::update_bond_dimension(int min_saturation_length){
        and variance_mpo_saturated_for >= min_saturation_length
        and chi_temp < chi_max){
         ccout(3) << "STATUS: Updating bond dimensionn\n";
-        chi_temp = std::min(chi_max, (long)(chi_temp * 2));
+        chi_temp = std::min(chi_max, chi_temp * 2);
         ccout(1) << "New chi = " << chi_temp << '\n';
         clear_saturation_status();
     }
@@ -510,7 +512,7 @@ void class_algorithm_base::initialize_state(std::string initial_state ) {
 
 
     if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
-        env_storage_insert();
+        MPS_Tools::Finite::Chain::insert_superblock_to_chain(*state,*superblock);
     }else{
     }
 
@@ -524,9 +526,9 @@ void class_algorithm_base::initialize_state(std::string initial_state ) {
 
 void class_algorithm_base::reset_chain_mps_to_random_product_state(std::string parity) {
     ccout(0) << "Resetting to random product state" << std::endl;
-    assert(env_storage->get_length() == num_sites);
+    assert(state->get_length() == num_sites);
 
-    iteration = env_storage->reset_sweeps();
+    iteration = state->reset_sweeps();
 
     while(true) {
         // Random product state
@@ -565,16 +567,16 @@ void class_algorithm_base::reset_chain_mps_to_random_product_state(std::string p
         }
         //Get a properly normalized initial state.
         superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
-        env_storage_overwrite_local_ALL();
-//        env_storage->print_storage();
+        MPS_Tools::Finite::Chain::copy_superblock_to_chain(*state,*superblock);
+//        state->print_storage();
         // It's important not to perform the last step.
         if(iteration > 1) {break;}
-        enlarge_environment(env_storage->get_direction());
-        env_storage_move();
-        iteration = env_storage->get_sweeps();
+        enlarge_environment(state->get_direction());
+        MPS_Tools::Finite::Chain::move_center_point(*state,*superblock);
+        iteration = state->get_sweeps();
 
     }
-    iteration = env_storage->reset_sweeps();
+    iteration = state->reset_sweeps();
     measurement->set_not_measured();
 }
 
@@ -582,33 +584,33 @@ void class_algorithm_base::set_random_fields_in_chain_mpo() {
     std::cout << "Setting random fields in chain" << std::endl;
     rn::seed((unsigned long)seed);
 
-    assert(env_storage->get_length() == num_sites);
+    assert(state->get_length() == num_sites);
     std::vector<std::vector<double>> all_params;
-    for (auto &mpo : env_storage->ref_MPO_L()){
+    for (auto &mpo : state->get_MPO_L()){
         mpo->randomize_hamiltonian();
         all_params.push_back(mpo->get_parameter_values());
     }
-    for (auto &mpo : env_storage->ref_MPO_R()){
+    for (auto &mpo : state->get_MPO_R()){
         mpo->randomize_hamiltonian();
         all_params.push_back(mpo->get_parameter_values());
     }
 
-    for (auto &mpo : env_storage->ref_MPO_L()){
+    for (auto &mpo : state->get_MPO_L()){
         mpo->set_non_local_parameters(all_params);
     }
-    for (auto &mpo : env_storage->ref_MPO_R()){
+    for (auto &mpo : state->get_MPO_R()){
         mpo->set_non_local_parameters(all_params);
     }
 
 
-    superblock->HA = env_storage->get_MPO_L().back()->clone();
-    superblock->HB = env_storage->get_MPO_R().front()->clone();
-    iteration = env_storage->reset_sweeps();
+    superblock->HA = state->get_MPO_L().back()->clone();
+    superblock->HB = state->get_MPO_R().front()->clone();
+    iteration = state->reset_sweeps();
 }
 
 void class_algorithm_base::compute_observables(){
     t_obs.tic();
-    measurement->compute_all_observables_from_superblock();
+    measurement->compute_all_observables_from_superblock(*superblock);
     t_obs.toc();
 }
 
@@ -633,44 +635,42 @@ void class_algorithm_base::swap(){
     superblock->swap_AB();
 }
 
-void class_algorithm_base::env_storage_insert() {
+void class_algorithm_base::insert_superblock_to_chain() {
     t_ste.tic();
-    env_storage->insert();
+    MPS_Tools::Finite::Chain::insert_superblock_to_chain(*state,*superblock);
     t_ste.toc();
 }
 
-void class_algorithm_base::env_storage_overwrite_local_MPS(){
+void class_algorithm_base::copy_superblock_mps_to_chain(){
     t_ste.tic();
-    env_storage->overwrite_local_MPS();
+    MPS_Tools::Finite::Chain::copy_superblock_mps_to_chain(*state,*superblock);
     t_ste.toc();
 }
 
-void class_algorithm_base::env_storage_overwrite_local_MPO(){
+void class_algorithm_base::copy_superblock_mpo_to_chain(){
     t_ste.tic();
-    env_storage->overwrite_local_MPO();
+    MPS_Tools::Finite::Chain::copy_superblock_mpo_to_chain(*state,*superblock);
     t_ste.toc();
 }
 
-void class_algorithm_base::env_storage_overwrite_local_ENV(){
+void class_algorithm_base::copy_superblock_env_to_chain(){
     t_ste.tic();
-    env_storage->overwrite_local_ENV();
+    MPS_Tools::Finite::Chain::copy_superblock_env_to_chain(*state,*superblock);
     t_ste.toc();
 }
 
-void class_algorithm_base::env_storage_overwrite_local_ALL(){
+void class_algorithm_base::copy_superblock_to_chain(){
     ccout(3) << "STATUS: Starting overwrite of local env\n";
     t_ste.tic();
-    env_storage->overwrite_local_MPS();
-    env_storage->overwrite_local_MPO();
-    env_storage->overwrite_local_ENV();
+    MPS_Tools::Finite::Chain::copy_superblock_to_chain(*state,*superblock);
     t_ste.toc();
 }
 
 
-void class_algorithm_base::env_storage_move(){
+void class_algorithm_base::move_center_point(){
     ccout(3) << "STATUS: Moving environment\n";
     t_ste.tic();
-    env_storage->move();
+    MPS_Tools::Finite::Chain::move_center_point(*state,*superblock);
     t_ste.toc();
 }
 
@@ -703,7 +703,7 @@ double process_memory_in_mb(std::string name){
 
 void class_algorithm_base::print_status_update() {
     if (Math::mod(iteration, print_freq) != 0) {return;}
-//    if (not env_storage->position_is_the_middle()) {return;}
+//    if (not state->position_is_the_middle()) {return;}
     if (print_freq == 0) {return;}
     compute_observables();
     t_prt.tic();
@@ -745,17 +745,17 @@ void class_algorithm_base::print_status_update() {
     }
 
 
-    ccout(1) << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << measurement->get_entanglement_entropy();
+    ccout(1) << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << measurement->get_entanglement_entropy(*superblock);
     ccout(1) << left  << "χmax: "                       << setw(4)  << setprecision(3)     << fixed   << chi_max;
-    ccout(1) << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << measurement->get_chi();
-    ccout(1) << left  << "log₁₀ truncation: "           << setw(10) << setprecision(4)     << fixed   << log10(measurement->get_truncation_error());
-    ccout(1) << left  << "Chain length: "               << setw(6)  << setprecision(1)     << fixed   << measurement->get_chain_length();
+    ccout(1) << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << measurement->get_chi(*superblock);
+    ccout(1) << left  << "log₁₀ truncation: "           << setw(10) << setprecision(4)     << fixed   << log10(measurement->get_truncation_error(*superblock));
+    ccout(1) << left  << "Chain length: "               << setw(6)  << setprecision(1)     << fixed   << measurement->get_chain_length(*superblock);
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(1) << left  << "@ site: "                    << setw(5)  << env_storage->get_position();
-            //ccout(1) << left  << "Dir: "                    << setw(3)  << env_storage->get_direction();
-            //ccout(1) << left  << "Sweep: "                  << setw(4)  << env_storage->get_sweeps();
+            ccout(1) << left  << "@ site: "                    << setw(5)  << state->get_position();
+            //ccout(1) << left  << "Dir: "                    << setw(3)  << state->get_direction();
+            //ccout(1) << left  << "Sweep: "                  << setw(4)  << state->get_sweeps();
             break;
         case SimulationType::iTEBD:
 //            ccout(1) << left  << "δt: "               << setw(13) << setprecision(12)    << fixed   << delta_t;
@@ -843,16 +843,16 @@ void class_algorithm_base::print_status_full(){
             ccout(0)  << setw(20) << "log₁₀ σ²(E) MOM:     = " << setprecision(6) << fixed      << log10(measurement->get_variance_mom())  << std::endl;
             break;
     }
-    ccout(0)  << setw(20) << "Entanglement Entropy = " << setprecision(16) << fixed      << measurement->get_entanglement_entropy()   << std::endl;
-    ccout(0)  << setw(20) << "χmax                 = " << setprecision(4)  << fixed      << chi_max                                   << std::endl;
-    ccout(0)  << setw(20) << "χ                    = " << setprecision(4)  << fixed      << measurement->get_chi()                    << std::endl;
-    ccout(0)  << setw(20) << "log₁₀ truncation:    = " << setprecision(4)  << fixed      << log10(measurement->get_truncation_error())<< std::endl;
+    ccout(0)  << setw(20) << "Entanglement Entropy = " << setprecision(16) << fixed      << measurement->get_entanglement_entropy(*superblock)   << std::endl;
+    ccout(0)  << setw(20) << "χmax                 = " << setprecision(4)  << fixed      << chi_max                                             << std::endl;
+    ccout(0)  << setw(20) << "χ                    = " << setprecision(4)  << fixed      << measurement->get_chi(*superblock)                    << std::endl;
+    ccout(0)  << setw(20) << "log₁₀ truncation:    = " << setprecision(4)  << fixed      << log10(measurement->get_truncation_error(*superblock))<< std::endl;
 
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(0)  << setw(20) << "Chain length         = " << setprecision(1)  << fixed      << measurement->get_chain_length()           << std::endl;
-            ccout(0)  << setw(20) << "Sweep                = " << setprecision(1)  << fixed      << env_storage->get_sweeps() << std::endl;
+            ccout(0)  << setw(20) << "Chain length         = " << setprecision(1)  << fixed      << measurement->get_chain_length(*superblock)   << std::endl;
+            ccout(0)  << setw(20) << "Sweep                = " << setprecision(1)  << fixed      << state->get_sweeps() << std::endl;
             break;
         case SimulationType::iTEBD:
 //    ccout(0)  << setw(20) << "δt:                  = " << setprecision(16) << fixed      << superblock->H->step_size << std::endl;
