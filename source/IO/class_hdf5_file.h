@@ -13,7 +13,7 @@
 #include <experimental/filesystem>
 #include <experimental/type_traits>
 #include <general/nmspc_type_check.h>
-
+#include <spdlog/spdlog.h>
 
 namespace fs = std::experimental::filesystem;
 namespace tc = TypeCheck;
@@ -27,20 +27,16 @@ private:
     herr_t      retval;
     fs::path    output_filename;
     fs::path    output_folder;
-    fs::path    output_file_path;
+    fs::path    output_file_full_path;
     bool        create_dir;
     bool        overwrite;
-    bool        resume;
-    bool        file_is_valid;
     void set_output_file_path();
-    enum class FileMode {CREATE,OPEN,RENAME};
-    FileMode filemode;
 
     //Mpi related constants
     hid_t plist_facc;
     hid_t plist_xfer;
     hid_t plist_lncr;
-
+    hid_t plist_lapl;
 
     struct H5T_COMPLEX_STRUCT {
         double real;   /*real part*/
@@ -82,18 +78,29 @@ private:
 
 
 public:
-    hid_t       file;
+//    hid_t       file;
+    hid_t open_file(){return H5Fopen(output_file_full_path.c_str(), H5F_ACC_RDWR, plist_facc);}
 
-    explicit class_hdf5_file(const std::string output_filename_, const std::string output_dirname_ , bool create_dir_ = true, bool overwrite_ = false, bool resume_ = false);
+    //    enum class AccessMode {READ,WRITE};
+//    AccessMode accessMode;
+    explicit class_hdf5_file(const std::string output_filename_, const std::string output_dirname_ ="", bool create_dir_ = true, bool overwrite_ = false, spdlog::level::level_enum lvl = spdlog::level::trace);
 
     ~class_hdf5_file(){
         H5Pclose(plist_facc);
         H5Pclose(plist_xfer);
         H5Pclose(plist_lncr);
         H5Tclose(H5T_COMPLEX_DOUBLE);
-        H5Fclose(file);
-        std::cout << "Data written to file: " << output_file_path << std::endl;
+        std::cout << "Data written to file: " << output_file_full_path << std::endl;
     }
+
+    std::string get_file_name(){return output_file_full_path.filename().string();}
+    std::string get_file_path(){return output_file_full_path.string();}
+    bool file_is_valid();
+    bool file_is_valid(fs::path  some_hdf5_filename);
+    fs::path get_new_filename(fs::path some_hdf5_filename);
+    bool file_existed_already = false;
+
+
 
     template <typename DataType>
     void write_dataset(const DataType &data, const std::string &dataset_relative_name);
@@ -119,26 +126,32 @@ public:
                                   const std::string &attribute_name);
 
 
-    template<typename DataType>
-    std::vector<H5T_COMPLEX_STRUCT> convert_complex_data(const DataType &data);
+    std::vector<std::string> print_contents_of_group(std::string group_name);
 
+
+    bool link_exists(std::string link){
+        hid_t file = open_file();
+        bool exists = check_link_exists_recursively(file,link);
+        H5Fclose(file);
+        return exists;
+    }
 
 private:
     void initialize();
 
-    void extend_dataset(const std::string & dataset_relative_name, const int dim, const int extent );
+    void extend_dataset(hid_t file,const std::string & dataset_relative_name, const int dim, const int extent );
 
     template<typename DataType>
     void extend_dataset(const DataType &data, const std::string & dataset_relative_name);
 
-    void set_extent_dataset(const DatasetProperties &props);
+    void set_extent_dataset(hid_t file, const DatasetProperties &props);
 
-    bool check_link_exists_recursively(std::string path);
+    bool check_link_exists_recursively(hid_t file, std::string path);
 
-    bool check_if_attribute_exists(const std::string &link_name,
+    bool check_if_attribute_exists(hid_t file, const std::string &link_name,
                                    const std::string &attribute_name);
 
-    void create_dataset_link(const DatasetProperties &props);
+    void create_dataset_link(hid_t file, const DatasetProperties &props);
 
     void select_hyperslab(const hid_t &filespace, const hid_t &memspace);
 
@@ -152,6 +165,10 @@ private:
     void write_attribute_to_group(const AttrType &attribute, const AttributeProperties &aprops);
 
     template<typename DataType>
+    std::vector<H5T_COMPLEX_STRUCT> convert_complex_data(const DataType &data);
+
+
+    template<typename DataType>
     constexpr hid_t get_DataType() const {
         if constexpr (std::is_same<DataType, int>::value)                 {return  H5Tcopy(H5T_NATIVE_INT);}
         if constexpr (std::is_same<DataType, long>::value)                {return  H5Tcopy(H5T_NATIVE_LONG);}
@@ -159,6 +176,7 @@ private:
         if constexpr (std::is_same<DataType, unsigned long>::value)       {return  H5Tcopy(H5T_NATIVE_ULONG);}
         if constexpr (std::is_same<DataType, double>::value)              {return  H5Tcopy(H5T_NATIVE_DOUBLE);}
         if constexpr (std::is_same<DataType, float>::value)               {return  H5Tcopy(H5T_NATIVE_FLOAT);}
+        if constexpr (std::is_same<DataType, bool>::value)                {return  H5Tcopy(H5T_NATIVE_HBOOL);}
         if constexpr (std::is_same<DataType, std::complex<double>>::value){return  H5Tcopy(H5T_COMPLEX_DOUBLE);}
         if constexpr (std::is_same<DataType, H5T_COMPLEX_STRUCT>::value)  {return  H5Tcopy(H5T_COMPLEX_DOUBLE);}
         if constexpr (std::is_same<DataType, char>::value)                {return  H5Tcopy(H5T_C_S1);}
@@ -170,8 +188,8 @@ private:
         if constexpr (tc::is_vector<DataType>::value)                     {return  get_DataType<typename DataType::value_type>();}
         if constexpr (tc::has_member_scalar <DataType>::value)            {return  get_DataType<typename DataType::Scalar>();}
         if constexpr (tc::has_member_value_type <DataType>::value)        {return  get_DataType<typename DataType::value_type>();}
-        std::cerr << "get_DataType could not match the type provided" << std::endl;
-        exit(1);
+        spdlog::critical("get_DataType could not match the type provided");
+        throw(std::logic_error("get_DataType could not match the type provided"));
     }
 
 
@@ -202,9 +220,8 @@ private:
         else if constexpr(std::is_same<const char *,DataType>::value){return 1;}
         else if constexpr(std::is_array<DataType>::value){return 1;}
         else {
-            std::cerr << "get_Rank can't match the type provided: " << tc::type_name<DataType>() << '\n';
+            spdlog::critical("get_Rank can't match the type provided: {}" << tc::type_name<DataType>());
             tc::print_type_and_exit_compile_time<DataType>();
-            exit(1);
         }
     }
 
@@ -280,8 +297,9 @@ private:
 //        }
         else{
             tc::print_type_and_exit_compile_time<DataType>();
-            std::cerr << "get_Dimensions can't match the type provided: " << typeid(DataType).name() << '\n';
-            exit(1);
+            std::string error = "get_Dimensions can't match the type provided: " + std::string(typeid(DataType).name());
+            spdlog::critical(error);
+            throw(std::logic_error(error));
         }
 
     }
@@ -296,6 +314,7 @@ private:
 template<typename DataType>
 void class_hdf5_file::extend_dataset(const DataType &data, const std::string & dataset_relative_name){
     if constexpr (tc::is_eigen_matrix_or_array<DataType>()){
+        hid_t file = open_file();
         extend_dataset(dataset_relative_name, 0, data.rows());
         hid_t dataset   = H5Dopen(file, dataset_relative_name.c_str(), H5P_DEFAULT);
         hid_t filespace = H5Dget_space(dataset);
@@ -307,6 +326,7 @@ void class_hdf5_file::extend_dataset(const DataType &data, const std::string & d
         if (dims[1] < (hsize_t) data.cols()){
             extend_dataset(dataset_relative_name, 1, data.cols());
         }
+        H5Fclose(file);
     }
     else{
         extend_dataset(dataset_relative_name, 0, get_Size(data));
@@ -352,8 +372,9 @@ std::vector<class_hdf5_file::H5T_COMPLEX_STRUCT> class_hdf5_file::convert_comple
 
 template <typename DataType>
 void class_hdf5_file::write_dataset(const DataType &data, const DatasetProperties &props){
-    create_dataset_link(props);
-    set_extent_dataset(props);
+    hid_t file = open_file();
+    create_dataset_link(file,props);
+    set_extent_dataset(file,props);
     hid_t dataset   = H5Dopen(file,props.dset_name.c_str(), H5P_DEFAULT);
     hid_t filespace = H5Dget_space(dataset);
     select_hyperslab(filespace,props.memspace);
@@ -373,6 +394,7 @@ void class_hdf5_file::write_dataset(const DataType &data, const DatasetPropertie
     }
     H5Dclose(dataset);
     H5Fflush(file,H5F_SCOPE_GLOBAL);
+    H5Fclose(file);
 }
 
 template <typename DataType>
@@ -409,7 +431,8 @@ void class_hdf5_file::write_dataset(const DataType &data, const std::string &dat
 
 template <typename DataType>
 void class_hdf5_file::read_dataset(DataType &data, const std::string &dataset_relative_name){
-    if (check_link_exists_recursively(dataset_relative_name)) {
+    hid_t file = open_file();
+    if (check_link_exists_recursively(file,dataset_relative_name)) {
         hid_t dataset   = H5Dopen(file, dataset_relative_name.c_str(), H5P_DEFAULT);
         hid_t memspace  = H5Dget_space(dataset);
         hid_t datatype  = H5Dget_type(dataset);
@@ -419,32 +442,39 @@ void class_hdf5_file::read_dataset(DataType &data, const std::string &dataset_re
         if constexpr(tc::is_eigen_matrix_or_array<DataType>()) {
 
             data.resize(dims[0], dims[1]);
+            H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
         }
-
-        if constexpr(tc::is_eigen_tensor<DataType>()){
+        else if constexpr(tc::is_eigen_tensor<DataType>()){
             Eigen::DSizes<long, DataType::NumDimensions> test;
             std::copy(dims.begin(),dims.end(),test.begin());
             data.resize(test);
+            H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
         }
 
-        if constexpr(tc::is_vector<DataType>::value) {
+        else if constexpr(tc::is_vector<DataType>::value) {
             assert(ndims == 1 and "Vector cannot take 2D datasets");
             data.resize(dims[0]);
+            H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
         }
-        if constexpr(std::is_same<std::string,DataType>::value) {
+        else if constexpr(std::is_same<std::string,DataType>::value) {
             assert(ndims == 1 and "std string needs to have 1 dimension");
             hsize_t stringsize  = H5Dget_storage_size(dataset);
             data.resize(stringsize);
+            H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
         }
-
-
-        H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
+        else if constexpr(std::is_arithmetic<DataType>::value){
+            H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, &data);
+        }else{
+            std::cerr << "Attempted to read dataset of unknown type: " << dataset_relative_name << "[" << typeid(data).name() << "]" << std::endl;
+            exit(1);
+        }
         H5Dclose(dataset);
         H5Sclose(memspace);
         H5Tclose(datatype);
     }else{
-        std::cerr << "Attempted to read dataset that doesn't exist." << std::endl;
+        std::cerr << "Attempted to read dataset that doesn't exist: " << dataset_relative_name << std::endl;
     }
+    H5Fclose(file);
 }
 
 
@@ -453,6 +483,7 @@ void class_hdf5_file::read_dataset(DataType &data, const std::string &dataset_re
 
 template <typename AttrType>
 void class_hdf5_file::write_attribute_to_file(const AttrType &attribute, const std::string attribute_name){
+    hid_t file = open_file();
     hid_t datatype          = get_DataType<AttrType>();
     hid_t memspace          = get_MemSpace(attribute);
     auto size               = get_Size(attribute);
@@ -475,14 +506,16 @@ void class_hdf5_file::write_attribute_to_file(const AttrType &attribute, const s
     H5Sclose(memspace);
     H5Tclose(datatype);
     H5Aclose(attribute_id);
+    H5Fclose(file);
 }
 
 
 
 template <typename AttrType>
 void class_hdf5_file::write_attribute_to_dataset(const AttrType &attribute, const AttributeProperties &aprops){
-    if (check_link_exists_recursively(aprops.link_name) ) {
-        if (not check_if_attribute_exists(aprops.link_name,aprops.attr_name)) {
+    hid_t file = open_file();
+    if (check_link_exists_recursively(file,aprops.link_name) ) {
+        if (not check_if_attribute_exists(file,aprops.link_name,aprops.attr_name)) {
             hid_t dataset = H5Dopen(file, aprops.link_name.c_str(), H5P_DEFAULT);
             hid_t attribute_id = H5Acreate(dataset, aprops.attr_name.c_str(), aprops.datatype, aprops.memspace,
                                            H5P_DEFAULT, H5P_DEFAULT);
@@ -501,9 +534,12 @@ void class_hdf5_file::write_attribute_to_dataset(const AttrType &attribute, cons
         }
     }
     else{
-        std::cerr << "Link '" << aprops.link_name << "' does not exist, yet attribute is being written." << std::endl;
-        exit(1);
+        std::string error = "Link " + aprops.link_name + " does not exist, yet attribute is being written.";
+        H5Fclose(file);
+        spdlog::critical(error);
+        throw(std::logic_error(error));
     }
+    H5Fclose(file);
 }
 
 
@@ -528,8 +564,9 @@ void class_hdf5_file::write_attribute_to_dataset(const std::string &dataset_rela
 template <typename AttrType>
 void class_hdf5_file::write_attribute_to_group(const AttrType &attribute,
                                                const AttributeProperties &aprops){
-    if (check_link_exists_recursively(aprops.link_name)) {
-        if (not check_if_attribute_exists(aprops.link_name, aprops.attr_name)){
+    hid_t file = open_file();
+    if (check_link_exists_recursively(file,aprops.link_name)) {
+        if (not check_if_attribute_exists(file,aprops.link_name, aprops.attr_name)){
             hid_t group = H5Gopen(file, aprops.link_name.c_str(), H5P_DEFAULT);
             hid_t attribute_id = H5Acreate(group, aprops.link_name.c_str(), aprops.datatype, aprops.memspace, H5P_DEFAULT, H5P_DEFAULT);
             retval = H5Awrite(attribute_id, aprops.datatype, &attribute);
@@ -537,8 +574,8 @@ void class_hdf5_file::write_attribute_to_group(const AttrType &attribute,
             H5Aclose(attribute_id);
             H5Fflush(file,H5F_SCOPE_GLOBAL);
         }
-
     }
+    H5Fclose(file);
 }
 template <typename AttrType>
 void class_hdf5_file::write_attribute_to_group(const std::string &group_relative_name,
@@ -547,7 +584,7 @@ void class_hdf5_file::write_attribute_to_group(const std::string &group_relative
 
     AttributeProperties aprops;
     aprops.datatype  = get_DataType<AttrType>();
-    aprops.memspace = get_MemSpace(attribute);
+    aprops.memspace  = get_MemSpace(attribute);
     aprops.size      = get_Size(attribute);
     aprops.attr_name = attribute_name;
     aprops.link_name = group_relative_name;

@@ -41,8 +41,8 @@ public:
     size_t size = 0;                               /*!< Number of particles that have been contracted into this left environment. */
     Eigen::Tensor<Scalar,3> block;                 /*!< The environment block. */
     explicit class_environment(std::string side_):side(std::move(side_)){size = 0;};
-    void enlarge(std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M);
-    void set_edge_dims(std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M);
+    void enlarge(class_mps_2site & MPS, const Eigen::Tensor<Scalar,4> &M);
+    void set_edge_dims(class_mps_2site &MPS, const Eigen::Tensor<Scalar, 4> &M);
     void set_position(const long position_){position = position_;}
     auto get_position() const {return position;}
 };
@@ -58,8 +58,8 @@ public:
     std::string side;
     Eigen::Tensor<Scalar,4> block;                         /*!< The environment block. */
     explicit class_environment_var(std::string side_):side(std::move(side_)){size = 0;};
-    void enlarge(std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar,4> &M);
-    void set_edge_dims(std::unique_ptr<class_mps_2site> &MPS, const Eigen::Tensor<Scalar, 4> &M);
+    void enlarge(class_mps_2site & MPS, const Eigen::Tensor<Scalar,4> &M);
+    void set_edge_dims(class_mps_2site & MPS, const Eigen::Tensor<Scalar, 4> &M);
     void set_position(const long position_){position = position_;}
     auto get_position() const {return position;}
 };

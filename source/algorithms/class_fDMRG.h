@@ -10,7 +10,7 @@
 class class_table_dmrg;
 
 /*!
- * \brief Class that runs the finite DMRG algorithm.
+// * \brief Class that runs the finite DMRG algorithm.
  */
 
 class class_finite_chain_state;
@@ -21,19 +21,31 @@ public:
     explicit class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_fdmrg;
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_fdmrg_chain;
-    size_t    min_saturation_length;
-    size_t    max_saturation_length;
-    size_t    min_sweeps   = 2;
-    size_t    max_sweeps   ;
+
+    int min_saturation_length          = 0;
+    int max_saturation_length          = 0;
 
     void run()                                          override;
+    void run_simulation()                               override;
+    void run_preprocessing()                            override;
+    void run_postprocessing()                           override;
+
+
     void check_convergence()                            override;
-    void initialize_constants()                         override;
+//    void initialize_constants()                         override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
-    void store_table_entry_to_file(bool force = false)  override;
+    void store_state_to_file(bool force = false)        override;
+    void store_progress_to_file(bool force = false)     override;
     void store_chain_entry_to_file(bool force = false);
     void initialize_chain();
+
+    long   chi_max()                                    override;
+    int    num_sites()                                  override;
+    int    store_freq()                                 override;
+    int    print_freq()                                 override;
+    bool   chi_grow()                                   override;
+
 
 };
 

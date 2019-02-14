@@ -19,6 +19,7 @@ void MPS_Tools::Finite::Chain::copy_superblock_to_chain(class_finite_chain_state
     MPS_Tools::Finite::Chain::copy_superblock_mps_to_chain(state, superblock);
     MPS_Tools::Finite::Chain::copy_superblock_mpo_to_chain(state, superblock);
     MPS_Tools::Finite::Chain::copy_superblock_env_to_chain(state, superblock);
+    state.set_measured_false();
 }
 
 void MPS_Tools::Finite::Chain::copy_superblock_mps_to_chain(class_finite_chain_state &  state, const class_superblock & superblock) {
@@ -35,7 +36,8 @@ void MPS_Tools::Finite::Chain::copy_superblock_mps_to_chain(class_finite_chain_s
     MPS_L.back()    = *superblock.MPS->MPS_A;
     MPS_C           = superblock.MPS->LC;
     MPS_R.front()   = *superblock.MPS->MPS_B;
-    state.all_mps_have_been_written_to_hdf5 = false;
+    state.set_measured_false();
+    state.mps_have_been_written_to_hdf5 = false;
 }
 
 
@@ -51,7 +53,8 @@ void MPS_Tools::Finite::Chain::copy_superblock_mpo_to_chain(class_finite_chain_s
     MPO_L.back()    = superblock.HA->clone();
     MPO_R.front()   = superblock.HB->clone();
     assert(MPO_L.size() + MPO_R.size() == state.get_length());
-    state.all_mpo_have_been_written_to_hdf5 = false;
+    state.set_measured_false();
+    state.mpo_have_been_written_to_hdf5 = false;
 }
 
 void MPS_Tools::Finite::Chain::copy_superblock_env_to_chain(class_finite_chain_state &  state, const class_superblock & superblock){
@@ -70,7 +73,8 @@ void MPS_Tools::Finite::Chain::copy_superblock_env_to_chain(class_finite_chain_s
     ENV_R.front()   = *superblock.Rblock;
     ENV2_R.front()  = *superblock.Rblock2;
     assert(ENV_L.size() + ENV_R.size() == state.get_length());
-    state.all_env_have_been_written_to_hdf5 = false;
+    state.set_measured_false();
+    state.env_have_been_written_to_hdf5 = false;
 }
 
 
@@ -134,9 +138,8 @@ int MPS_Tools::Finite::Chain::insert_superblock_to_chain(class_finite_chain_stat
     assert(ENV2_L.back().size  == superblock.Lblock2->size);
     assert(ENV2_R.front().size == superblock.Rblock2->size);
 
-    state.all_mps_have_been_written_to_hdf5 = false;
-    state.all_mpo_have_been_written_to_hdf5 = false;
-    state.all_env_have_been_written_to_hdf5 = false;
+    state.set_measured_false();
+    state.set_written_false();
     return (int)MPS_L.size();
 }
 
@@ -273,9 +276,9 @@ int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  stat
     if (state.position_is_the_left_edge()){
         state.increment_sweeps();
     }
-    state.all_mps_have_been_written_to_hdf5 = false;
-    state.all_mpo_have_been_written_to_hdf5 = false;
-    state.all_env_have_been_written_to_hdf5 = false;
+
+    state.set_measured_false();
+    state.set_written_false();
     return state.get_sweeps();
 }
 
