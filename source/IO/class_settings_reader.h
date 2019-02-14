@@ -16,11 +16,12 @@
 #include <experimental/filesystem>
 #include <algorithm>
 #include <IO/class_custom_cout.h>
+#include <spdlog/spdlog.h>
 
-namespace fs = std::experimental::filesystem::v1;
+namespace fs = std::experimental::filesystem;
 
 
-class class_file_reader {
+class class_settings_reader {
 private:
     fs::path    file_path;
     std::ifstream    file;
@@ -30,18 +31,11 @@ private:
     bool has_only_digits(const std::string s);
     bool is_parameterline(const std::string s);
     std::string::size_type find_comment_character(const std::string s);
-    class_custom_cout ccout;
 public:
-    class_file_reader() = default;
-    explicit class_file_reader(const fs::path &file_path_): file_path(file_path_) {
-        try {
-            file.open(find_input_file(file_path).c_str());
-        }
-        catch(std::exception &ex){
-            std::cerr << "Exiting: " << ex.what() << std::endl;
-            exit(1);
-        }
-    };
+    bool found_file = false;
+    class_settings_reader() = default;
+    explicit class_settings_reader(const fs::path &file_path_, spdlog::level::level_enum lvl = spdlog::level::trace);
+
 
 
     std::string get_input_file(){
@@ -67,7 +61,7 @@ public:
         if (file.is_open()){
             return find_parameter<T>(param_requested);
         }else{
-            ccout(1) << "Missing input file: Using default value." << std::endl;
+            spdlog::warn("Missing input file: Using default value: {}", default_value);
             return default_value;
         }
     }
@@ -97,16 +91,16 @@ public:
                 std::transform(param_key.begin(), param_key.end(), param_key.begin(), ::tolower);
                 std::transform(param_requested.begin(), param_requested.end(), param_requested.begin(), ::tolower);
                 if (param_requested == param_key && !param_key.empty()) {
-                    ccout(2) << "Loading line:     " << line << std::endl;
+                    spdlog::debug("Loading line: {}",line);
                     if constexpr (std::is_same<T,int>::value){
                         if (has_only_digits(param_val)) {
                             try {
                                 T parsed_val = std::stoi(param_val);
                                 return parsed_val;
                             }
-                            catch (...) {std::cerr << "Error reading parameter from file: Unknown error." <<std::endl; }
+                            catch (...) {spdlog::error("Error reading parameter from file: Unknown error."); }
                         }else{
-                            std::cerr << "Error reading parameter from file. Wrong format: [" << param_val << "]. Expected an integer."<< std::endl;
+                            spdlog::error("Error reading parameter from file. Wrong format: [{}]. Expected an integer", param_val);
                         }
                     }
                     if constexpr (std::is_same<T,long>::value){
@@ -115,9 +109,11 @@ public:
                                 T parsed_val = std::stol(param_val);
                                 return parsed_val;
                             }
-                            catch (...) {std::cerr << "Error reading parameter from file: Unknown error." << std::endl; }
+                            catch (...) {spdlog::error("Error reading parameter from file: Unknown error."); }
+
                         }else{
-                            std::cerr << "Error reading parameter from file. Wrong format: [" << param_val << "]. Expected a long integer."<< std::endl;
+                            spdlog::error("Error reading parameter from file. Wrong format: [{}]. Expected a long integer", param_val);
+
                         }
                     }
 
@@ -126,7 +122,7 @@ public:
                             return std::stod(param_val);
                         }
                         catch (...) {
-                            std::cerr << "Error reading parameter from file: Unknown error: [" << param_val << "]. Expected a double." << std::endl;
+                            spdlog::error("Error reading parameter from file. Wrong format: [{}]. Expected double", param_val);
                         }
                     }
                     if constexpr (std::is_same<T,bool>::value) {
@@ -137,21 +133,21 @@ public:
                     if constexpr (std::is_same<T,std::string>::value){
                         return param_val;
                     }
-
-                    std::cerr << "\nCritical error when reading parameter from file. Possible type mismatch." << std::endl;
-                    std::cerr << "Requested : [" << param_requested << "]" << " with type: [" << typeid(T).name() << "]"<< std::endl;
-                    std::cerr << "Found key : [" << param_key << "]" << std::endl;
-                    std::cerr << "Found val : [" << param_val << "]" << std::endl;
-                    std::cerr << "Exiting..." << std::endl << std::flush;
+                    spdlog::critical("Critical error when reading parameter from file. Possible type mismatch.");
+                    spdlog::critical("Requested : [{}] with type [{}]", param_requested ,typeid(T).name());
+                    spdlog::critical("Found key : [{}]", param_key);
+                    spdlog::critical("Found val : [{}]", param_val);
+                    spdlog::critical("Exiting...");
                     exit(1);
                 }
             }
-            std::cerr << "Input file does not contain a parameter matching your query: ["  << param_requested << "]" << std::endl;
-            std::cerr << "Exiting..." << std::endl  << std::flush;
+
+            spdlog::critical("Input file does not contain a parameter matching your query: [{}]", param_requested);
+            spdlog::critical("Exiting...");
             exit(1);
         }
         else {
-            std::cerr << "Error: Input file has not been found yet and no default value was given. Exiting..." << std::endl;
+            spdlog::critical("Error: Input file has not been found yet and no default value was given. Exiting...");
             exit(1);
         }
     }

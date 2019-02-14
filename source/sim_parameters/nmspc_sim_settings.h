@@ -15,12 +15,14 @@
  *  the different algorithms.
  */
 
-class class_file_reader;
+class class_settings_reader;
+class class_hdf5_file;
 
 enum class SimulationType{iDMRG,fDMRG, xDMRG, iTEBD};
 
 namespace settings {
-    extern void load_from_file(class_file_reader &indata);
+    extern void load_from_file(class_settings_reader &indata);
+    extern void load_from_hdf5(class_hdf5_file &hdf5);
 
     namespace input{
         extern std::string input_filename;
@@ -86,7 +88,8 @@ namespace settings {
     namespace fdmrg {
         extern bool on           ;                          /*!< Turns fDMRG simulation on/off. */
         extern int  num_sites   ;                          /*!< Number sweeps along the 1D quantum chain. */
-        extern int  max_sweeps   ;                          /*!< Number sweeps along the 1D quantum chain. */
+        extern int  max_sweeps   ;                          /*!< Max number sweeps along the 1D quantum chain. */
+        extern int  min_sweeps   ;                          /*!< Min number sweeps along the 1D quantum chain. */
         extern long chi_max      ;                          /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         extern bool chi_grow   ;                            /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         extern int  print_freq   ;                          /*!< Print frequency for console output. In units of sweeps. (0 = off). */
@@ -99,11 +102,14 @@ namespace settings {
         extern bool    on           ;                       /*!< Turns xDMRG simulation on/off. */
         extern int     num_sites    ;                       /*!< Number sweeps along the 1D quantum chain. */
         extern int     max_sweeps   ;                       /*!< Number sweeps along the 1D quantum chain. */
+        extern int     min_sweeps   ;                          /*!< Min number sweeps along the 1D quantum chain. */
         extern long    chi_max      ;                       /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         extern bool    chi_grow     ;                       /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         extern int     print_freq   ;                       /*!< Print frequency for console output. In units of sweeps. (0 = off). */
         extern int     store_freq   ;                       /*!< Store frequency,for output file buffer. In units of sweeps. (0 = off). */
         extern bool    store_wavefn ;                       /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+        extern double  energy_density;                      /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
+        extern double  energy_window;                       /*!< Accept states inside of energy_target +- energy_window. */
 
     }
 
@@ -127,9 +133,9 @@ namespace settings {
         extern bool         create_dir_if_not_found ;        /*!< If true, an output directory will be created in the project root folder if it isn't found */
         extern bool         overwrite_file_if_found ;        /*!< If true, an hdf5-file with the provided filename will be overwritten if found in output_folder */
         extern bool         resume_from_file        ;        /*!< Attempt to resume if the file is found (and if "overwrite_file_if_found = false") */
-        extern std::string  output_filename         ;        /*!< Name of the output HDF5 file */
-        extern std::string  output_folder           ;        /*!< Path of the output HDF5 file */
-        extern bool         full_storage            ;        /*!< If true, saves more simulation data to file (such as explicit form of MPS). Set to false to reduce output file size. */
+        extern std::string  output_filename         ;        /*!< Name of the output HDF5 file. Without quotes!  */
+        extern std::string  output_folder           ;        /*!< Name of the output HDF5 folder, relative to the executable */
+        extern bool         full_storage            ;        /*!< If true, saves the full MPS to file. Set to false to reduce output file size. */
         extern bool         store_profiling         ;        /*!< Whether to store profiling information to file. */
     }
     //Profiling

@@ -114,7 +114,6 @@ void class_hdf5_dataset_buffer<DataType, AttrType, IterType>::write_buffer_to_fi
         this->clear();
     }
     data_has_been_written_to_file = true;
-    H5Fflush(hdf5_out->file,H5F_SCOPE_GLOBAL);
 }
 
 

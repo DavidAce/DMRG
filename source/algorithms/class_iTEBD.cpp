@@ -5,12 +5,13 @@
 #include <iomanip>
 #include <IO/class_hdf5_table_buffer2.h>
 #include <sim_parameters/nmspc_sim_settings.h>
-#include <mps_routines/class_measurement.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_mps_2site.h>
+#include <mps_routines/nmspc_mps_tools.h>
 #include <model/class_hamiltonian_base.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_quantum_mechanics.h>
+#include <spdlog/spdlog.h>
 #include "class_iTEBD.h"
 using namespace std;
 using namespace Textra;
@@ -18,10 +19,9 @@ using namespace std::complex_literals;
 
 class_iTEBD::class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_algorithm_base(std::move(hdf5_),"iTEBD", SimulationType::iTEBD) {
-    initialize_constants();
+//    initialize_constants();
     table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(hdf5, sim_name,sim_name);
-    delta_t      = delta_t0;
-    measurement  = std::make_shared<class_measurement>(sim_type);
+    sim_state.delta_t      = settings::itebd::delta_t0;
     initialize_state(settings::model::initial_state);
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -35,17 +35,17 @@ void class_iTEBD::run() {
     if (!settings::itebd::on) { return; }
     ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
     t_tot.tic();
-    delta_t = delta_t0;
-    unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(delta_t, suzuki_order, h_evn, h_odd);
-//    superblock->H->update_evolution_step_size(-delta_t0, suzuki_order);
-    while(iteration < max_steps and not simulation_has_converged) {
-        single_TEBD_step(chi_temp);
-        phys_time += delta_t;
-        store_table_entry_to_file();
+    sim_state.delta_t = settings::itebd::delta_t0;
+    unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(sim_state.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
+//    superblock->H->update_evolution_step_size(-settings::itebd::delta_t0, settings::itebd::suzuki_order);
+    while(sim_state.iteration < settings::itebd::max_steps and not sim_state.simulation_has_converged) {
+        single_TEBD_step(sim_state.chi_temp);
+        sim_state.phys_time += sim_state.delta_t;
+        store_progress_to_file();
         store_profiling_to_file_delta();
         print_status_update();
         check_convergence();
-        iteration++;
+        sim_state.iteration++;
     }
     t_tot.toc();
     print_status_full();
@@ -53,7 +53,11 @@ void class_iTEBD::run() {
 }
 
 
-void class_iTEBD::single_TEBD_step(long chi_max){
+void class_iTEBD::run_simulation()    {}
+void class_iTEBD::run_preprocessing() {}
+void class_iTEBD::run_postprocessing(){}
+
+void class_iTEBD::single_TEBD_step(long chi){
 /*!
  * \fn single_iTEBD_step(class_superblock &superblock)
  * \brief infinite Time evolving block decimation.
@@ -66,38 +70,47 @@ void class_iTEBD::single_TEBD_step(long chi_max){
         t_evo.toc();
 
         t_svd.tic();
-        superblock->truncate_MPS(theta, chi_max, settings::precision::SVDThreshold);
+        superblock->truncate_MPS(theta, chi, settings::precision::SVDThreshold);
         t_svd.toc();
 
         if (&U != &unitary_time_evolving_operators.back()) {
             superblock->swap_AB();        }
     }
-    measurement->set_not_measured();
+    superblock->set_not_measured();
     t_sim.toc();
 }
 
 
-void class_iTEBD::initialize_constants(){
-    using namespace settings;
-    max_steps    = itebd::max_steps   ;
-    delta_t0     = itebd::delta_t0    ;
-    delta_tmin   = itebd::delta_tmin  ;
-    suzuki_order = itebd::suzuki_order;
-    chi_max      = itebd::chi_max     ;
-    chi_grow     = itebd::chi_grow    ;
-    print_freq   = itebd::print_freq  ;
-    store_freq   = itebd::store_freq  ;
+//void class_iTEBD::initialize_constants(){
+//    using namespace settings;
+//    max_steps    = itebd::max_steps   ;
+//    settings::itebd::delta_t0     = itebd::settings::itebd::delta_t0    ;
+//    settings::itebd::delta_tmin   = itebd::settings::itebd::delta_tmin  ;
+//    settings::itebd::suzuki_order = itebd::settings::itebd::suzuki_order;
+//    settings::itebd::chi_max      = itebd::settings::itebd::chi_max     ;
+//    chi_grow     = itebd::chi_grow    ;
+//    print_freq   = itebd::print_freq  ;
+//    settings::itebd::store_freq   = itebd::settings::itebd::store_freq  ;
+//}
+
+void class_iTEBD::store_state_to_file(bool force){
+    if(not force){
+        if (Math::mod(sim_state.iteration, settings::itebd::store_freq) != 0) {return;}
+        if (settings::itebd::store_freq == 0){return;}
+    }
+    spdlog::trace("Storing storing mps to file");
+    t_sto.tic();
+    MPS_Tools::Infinite::Hdf5::write_superblock_state(*superblock,*hdf5,sim_name);
+    t_sto.toc();
 }
 
-
-
 void class_iTEBD::check_convergence_time_step(){
-    if(delta_t <= delta_tmin){
-        time_step_has_converged = true;
-    }else if (bond_dimension_has_reached_max and entanglement_has_converged) {
-        delta_t = std::max(delta_tmin, delta_t * 0.5);
-        unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(-delta_t, suzuki_order, h_evn, h_odd);
-//        superblock->H->update_evolution_step_size(-delta_t, suzuki_order);
+    if(sim_state.delta_t <= settings::itebd::delta_tmin){
+        sim_state.time_step_has_converged = true;
+    }else if (sim_state.bond_dimension_has_reached_max and sim_state.entanglement_has_converged) {
+        sim_state.delta_t = std::max(settings::itebd::delta_tmin, sim_state.delta_t * 0.5);
+        unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(-sim_state.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
+//        superblock->H->update_evolution_step_size(-sim_state.delta_t, settings::itebd::suzuki_order);
         clear_saturation_status();
     }
 }
@@ -109,42 +122,49 @@ void class_iTEBD::check_convergence(){
     check_convergence_variance_mom();
     update_bond_dimension();
     check_convergence_time_step();
-    if(entanglement_has_converged and
-       variance_ham_has_converged and
-       variance_mom_has_converged and
-       bond_dimension_has_reached_max and
-       time_step_has_converged)
+    if(sim_state.entanglement_has_converged and
+       sim_state.variance_ham_has_converged and
+       sim_state.variance_mom_has_converged and
+       sim_state.bond_dimension_has_reached_max and
+       sim_state.time_step_has_converged)
     {
-        simulation_has_converged = true;
+        sim_state.simulation_has_converged = true;
     }
     t_con.toc();
 }
 
 
-void class_iTEBD::store_table_entry_to_file(bool force){
+void class_iTEBD::store_progress_to_file(bool force){
     if (not force){
-        if (Math::mod(iteration, store_freq) != 0) {return;}
+        if (Math::mod(sim_state.iteration, settings::itebd::store_freq) != 0) {return;}
     }
-    compute_observables();
+    superblock->do_all_measurements();
     t_sto.tic();
     table_itebd->append_record(
-            iteration,
-            measurement->get_chi(*superblock),
-            chi_max,
-            delta_t,
-            std::numeric_limits<double>::quiet_NaN(),
-            measurement->get_energy_ham(),
-            measurement->get_energy_mom(),
-            std::numeric_limits<double>::quiet_NaN(),
-            measurement->get_variance_ham(),
-            measurement->get_variance_mom(),
-            measurement->get_entanglement_entropy(*superblock),
-            measurement->get_truncation_error(*superblock),
-            phys_time,
+            sim_state.iteration,
+            superblock->measurements.bond_dimension,
+            settings::itebd::chi_max,
+            sim_state.delta_t,
+            superblock->measurements.energy_per_site_mpo,
+            superblock->measurements.energy_per_site_ham,
+            superblock->measurements.energy_per_site_mom,
+            superblock->measurements.energy_variance_per_site_mpo,
+            superblock->measurements.energy_variance_per_site_ham,
+            superblock->measurements.energy_variance_per_site_mom,
+            superblock->measurements.current_entanglement_entropy,
+            superblock->measurements.truncation_error,
+            sim_state.phys_time,
             t_tot.get_age());
 
     t_sto.toc();
 }
+
+long   class_iTEBD::chi_max()   {return settings::itebd::chi_max;}
+int    class_iTEBD::num_sites() {return 2;}
+int    class_iTEBD::store_freq(){return settings::itebd::store_freq;}
+int    class_iTEBD::print_freq(){return settings::itebd::print_freq;}
+bool   class_iTEBD::chi_grow()  {return settings::itebd::chi_grow;}
+
 
 void class_iTEBD::print_profiling(){
     if (settings::profiling::on) {
@@ -154,7 +174,7 @@ void class_iTEBD::print_profiling(){
         t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
         print_profiling_sim(t_sim);
-        measurement->print_profiling(t_obs);
+        superblock->print_profiling(t_obs);
     }
 }
 

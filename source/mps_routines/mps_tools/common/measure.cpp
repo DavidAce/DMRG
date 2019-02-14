@@ -12,65 +12,63 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/class_svd_wrapper.h>
 #include <general/class_eigsolver_arpack.h>
-
+#include <iomanip>
+#include <spdlog/spdlog.h>
 using Scalar = std::complex<double>;
 using namespace eigsolver_properties;
 using namespace Textra;
 
 
-namespace MPS_Tools::Common::Measure::Results {
-    size_t length                           = 0;
-    size_t bond_dimension                   = 0;
-    double norm                             = 0;
-    double truncation_error                 = 0;
+//namespace MPS_Tools::Common::Measure::Results {
+//    int length                           = 0;
+//    int bond_dimension                   = 0;
+//    double norm                             = 0;
+//    double truncation_error                 = 0;
+//
+//    double energy_mpo                       = 0;
+//    double energy_per_site_mpo              = 0;
+//    double energy_per_site_ham              = 0;
+//    double energy_per_site_mom              = 0;
+//    double energy_variance_mpo              = 0;
+//    double energy_variance_per_site_mpo     = 0;
+//    double energy_variance_per_site_ham     = 0;
+//    double energy_variance_per_site_mom     = 0;
+//    double current_entanglement_entropy     = 0;
+//    bool   superblock_measured              = false;
+//}
 
-    double energy_mpo                       = 0;
-    double energy_per_site_mpo              = 0;
-    double energy_variance_mpo              = 0;
-    double energy_variance_per_site_mpo     = 0;
 
-    double energy_ham                       = 0;
-    double energy_variance_ham              = 0;
+//
+//
+//void MPS_Tools::Common::Measure::do_all_measurements(class_superblock & superblock)
+//{
+//    using namespace MPS_Tools::Common::Measure;
+//    if (superblock.has_been_measured){return;}
+//
+//    superblock.measurements.length                         = length(superblock);
+//    superblock.measurements.bond_dimension                 = bond_dimension(superblock);
+//    superblock.measurements.norm                           = norm(superblock);
+//    superblock.measurements.truncation_error               = truncation_error(superblock);
+//    superblock.measurements.energy_mpo                     = energy_mpo(superblock);  //This number is needed for variance calculation!
+//    superblock.measurements.energy_per_site_mpo            = energy_per_site_mpo(superblock);
+//    superblock.measurements.energy_per_site_ham            = energy_per_site_ham(superblock);
+//    superblock.measurements.energy_variance_mpo            = energy_variance_mpo(superblock, Results::energy_mpo);
+//    superblock.measurements.energy_variance_per_site_mpo   = energy_variance_per_site_mpo(superblock, Results::energy_mpo);
+//    superblock.measurements.energy_variance_per_site_ham   = energy_variance_per_site_ham(superblock);
+//    superblock.measurements.energy_variance_per_site_mom   = energy_variance_per_site_mom(superblock);
+//
+//    //    Results::energy_per_site_mom             = energy_per_site_mom(superblock);
+//
+//    superblock.measurements.current_entanglement_entropy  = current_entanglement_entropy(superblock);
+//    superblock.measurements.superblock_measured = true;
+//}
 
-    double energy_mom                       = 0;
-    double energy_variance_mom              = 0;
 
-    double midchain_entanglement_entropy    = 0;
-    bool   superblock_measured              = false;
+
+
+void MPS_Tools::Common::Measure::set_not_measured(class_superblock & superblock){
+    superblock.set_not_measured();
 }
-
-
-
-
-void MPS_Tools::Common::Measure::do_all_measurements(const class_superblock & superblock)
-{
-    using namespace MPS_Tools::Common::Measure;
-    if (Results::superblock_measured){return;}
-
-    Results::length                         = length(superblock);
-    Results::norm                           = norm(superblock);
-
-    Results::energy_mpo                     = energy_mpo(superblock);  //This number is needed for variance calculation!
-    Results::energy_per_site_mpo            = Results::energy_mpo/Results::length;
-    Results::energy_variance_mpo            = energy_variance_mpo(superblock, Results::energy_mpo);
-    Results::energy_variance_per_site_mpo   = Results::energy_variance_mpo / Results::length;
-
-    Results::energy_ham                     = energy_ham(superblock);  //This number is needed for variance calculation!
-    Results::energy_variance_ham            = energy_variance_ham(superblock);
-
-//    Results::energy_mom                     = energy_mom(superblock);  //This number is needed for variance calculation!
-    Results::energy_variance_mom            = energy_variance_mom(superblock, Results::energy_mom); // This function computes the energy also
-
-    Results::midchain_entanglement_entropy  = midchain_entanglement_entropy(superblock);
-    Results::superblock_measured = true;
-}
-
-void MPS_Tools::Common::Measure::set_not_measured(){
-    MPS_Tools::Common::Measure::Results::superblock_measured = false;
-    MPS_Tools::Finite::Measure::Results::state_measured = false;
-}
-
-
 
 Scalar moment_generating_function(const class_mps_2site &MPS_original,
                                   std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
@@ -123,12 +121,13 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
 }
 
 
-size_t MPS_Tools::Common::Measure::length(const class_superblock & superblock){
+int MPS_Tools::Common::Measure::length(class_superblock & superblock){
     return superblock.get_length();
 }
 
 
-double MPS_Tools::Common::Measure::norm(const class_superblock & superblock){
+double MPS_Tools::Common::Measure::norm(class_superblock & superblock){
+    if (superblock.has_been_measured){return superblock.measurements.norm;}
     auto theta = MPS_Tools::Common::Views::get_theta(superblock);
     Eigen::Tensor<Scalar, 0> norm =
             theta.contract(theta.conjugate(), idx({1, 3, 0, 2}, {1, 3, 0, 2}));
@@ -136,25 +135,33 @@ double MPS_Tools::Common::Measure::norm(const class_superblock & superblock){
 }
 
 
-size_t MPS_Tools::Common::Measure::bond_dimension(const class_superblock & superblock){
-    return (size_t) superblock.MPS->LC.dimension(0);
+int MPS_Tools::Common::Measure::bond_dimension(class_superblock & superblock){
+    return (int) superblock.MPS->LC.dimension(0);
+}
+
+double MPS_Tools::Common::Measure::truncation_error(class_superblock & superblock){
+    std::cout << "truncation error                  "<< std::setprecision(16) << superblock.MPS->truncation_error << std::endl;
+    return (int) superblock.MPS->truncation_error;
 }
 
 
-double MPS_Tools::Common::Measure::midchain_entanglement_entropy(const class_superblock & superblock){
-//    t_entropy.tic();
+
+double MPS_Tools::Common::Measure::current_entanglement_entropy(class_superblock & superblock){
+    spdlog::trace("Measuring entanglement entropy from superblock");
+    superblock.t_entropy.tic();
+    if (superblock.has_been_measured){return superblock.measurements.current_entanglement_entropy;}
     auto & LC = superblock.MPS->LC;
 
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
+    superblock.t_entropy.toc();
     return std::real(SA(0));
-//    t_entropy.toc();
 }
 
-double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superblock){
-//    superblock.t_ene_mpo.tic();
 
-    auto theta = MPS_Tools::Common::Views::get_theta(superblock);
+double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superblock, const Eigen::Tensor<Scalar,4> &theta){
+    spdlog::trace("Measuring energy mpo from superblock");
+
     Eigen::Tensor<Scalar, 0>  E =
             superblock.Lblock->block
                     .contract(theta,                                     idx({0},{1}))
@@ -163,14 +170,36 @@ double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superbloc
                     .contract(theta.conjugate(),                         idx({0,2,4},{1,0,2}))
                     .contract(superblock.Rblock->block,                  idx({0,2,1},{0,1,2}));
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
-
     return std::real(E(0)) ;
-    //    superblock.t_ene_mpo.toc();
-
 }
 
 
-double MPS_Tools::Common::Measure::energy_ham(const class_superblock & superblock){
+double MPS_Tools::Common::Measure::energy_mpo(class_superblock & superblock){
+
+    if (superblock.has_been_measured){return superblock.measurements.energy_mpo;}
+    if (superblock.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
+    superblock.t_ene_mpo.tic();
+    auto theta = MPS_Tools::Common::Views::get_theta(superblock);
+    double result = MPS_Tools::Common::Measure::energy_mpo(superblock,theta);
+    superblock.t_ene_mpo.toc();
+    return result ;
+}
+
+
+double MPS_Tools::Common::Measure::energy_per_site_mpo(class_superblock & superblock){
+    auto L     = MPS_Tools::Common::Measure::length(superblock);
+    return MPS_Tools::Common::Measure::energy_mpo(superblock) / L;
+}
+
+
+double MPS_Tools::Common::Measure::energy_per_site_ham(class_superblock & superblock){
+    if (superblock.has_been_measured
+    or superblock.sim_type != SimulationType::iTEBD
+    or superblock.sim_type != SimulationType::iDMRG
+    or superblock.measurements.bond_dimension <= 2 ){
+        return superblock.measurements.energy_per_site_ham;
+    }
+    superblock.t_ene_ham.tic();
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
     auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
@@ -193,14 +222,22 @@ double MPS_Tools::Common::Measure::energy_ham(const class_superblock & superbloc
             .contract(l_odd,                           idx({0, 2}, {0, 1}))
             .contract(r_odd,                           idx({0, 1}, {0, 1}));
     assert(abs(imag(E_evn(0)+ E_odd(0))) < 1e-10 and "Energy has an imaginary part!!!" );
-//    t_ene_ham.toc();
+    superblock.t_ene_ham.toc();
     return 0.5*std::real(E_evn(0) + E_odd(0));
 
 }
 
 
-double MPS_Tools::Common::Measure::energy_mom(const class_superblock & superblock){
-//    t_var_gen.tic();
+double MPS_Tools::Common::Measure::energy_per_site_mom(class_superblock & superblock){
+    if (superblock.has_been_measured
+     or superblock.sim_type != SimulationType::iTEBD
+     or superblock.sim_type != SimulationType::iDMRG
+     or superblock.measurements.bond_dimension <= 2)
+    {
+        return superblock.measurements.energy_per_site_mom;
+    }
+
+    superblock.t_ene_mom.tic();
     Scalar a  = (0.0 + 1.0i) *5e-3;
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -213,21 +250,23 @@ double MPS_Tools::Common::Measure::energy_mom(const class_superblock & superbloc
     //The following only works if superblock.MPS has been normalized! I.e, you have to have run MPS->compute_mps_components() prior.
     Scalar lambdaG  = moment_generating_function(*superblock.MPS, Op_vec);
     Scalar l        = 2.0; //Number of sites in unit cell
-//    Scalar G        = pow(lambdaG,1.0/l);
+    Scalar G        = pow(lambdaG,1.0/l);
     Scalar logG     = log(lambdaG) * 1.0/l;
     Scalar logGc    = log(conj(lambdaG) ) * 1.0/l;
     Scalar O        = (logG - logGc)/(2.0*a);
-//    Scalar VarO     = 2.0*log(abs(G))/ (a*a);
+    Scalar VarO     = 2.0*log(abs(G))/ (a*a);
+    superblock.measurements.energy_per_site_mom           = std::real(O);
+    superblock.measurements.energy_variance_per_site_mom  = std::real(VarO);
+    superblock.t_ene_mom.toc();
     return std::real(O);
-//    variance_mom    = real(VarO);
-//    t_var_gen.toc();
-
 }
 
 
-double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock &superblock) {
-    double energy = MPS_Tools::Common::Measure::energy_mpo(superblock);
-    auto theta = MPS_Tools::Common::Views::get_theta(superblock);
+double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock & superblock,const Eigen::Tensor<std::complex<double>,4> &theta , double &energy_mpo) {
+    if (superblock.has_been_measured){return superblock.measurements.energy_variance_mpo;}
+    if (superblock.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
+    spdlog::trace("Measuring energy variance mpo from superblock");
+
     Eigen::Tensor<Scalar, 0> H2 =
             superblock.Lblock2->block
                     .contract(theta              ,               idx({0}  ,{1}))
@@ -237,31 +276,66 @@ double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock &s
                     .contract(superblock.HB->MPO,                idx({4,3},{0,2}))
                     .contract(theta.conjugate()  ,               idx({0,3,5},{1,0,2}))
                     .contract(superblock.Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
-
-    return std::abs(H2(0) - energy*energy);
-
-}
-
-
-double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock &superblock, double & energy_mpo) {
-    auto theta = MPS_Tools::Common::Views::get_theta(superblock);
-    Eigen::Tensor<Scalar, 0> H2 =
-            superblock.Lblock2->block
-                    .contract(theta              ,               idx({0}  ,{1}))
-                    .contract(superblock.HA->MPO,                idx({1,3},{0,2}))
-                    .contract(superblock.HB->MPO,                idx({4,2},{0,2}))
-                    .contract(superblock.HA->MPO,                idx({1,3},{0,2}))
-                    .contract(superblock.HB->MPO,                idx({4,3},{0,2}))
-                    .contract(theta.conjugate()  ,               idx({0,3,5},{1,0,2}))
-                    .contract(superblock.Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
-
     return std::abs(H2(0) - energy_mpo*energy_mpo);
+}
+
+
+
+double MPS_Tools::Common::Measure::energy_variance_mpo(class_superblock & superblock, double &energy_mpo) {
+    if (superblock.has_been_measured){return superblock.measurements.energy_variance_mpo;}
+    if (superblock.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
+    superblock.t_var_mpo.tic();
+    auto theta = MPS_Tools::Common::Views::get_theta(superblock);
+    double result = MPS_Tools::Common::Measure::energy_variance_mpo(superblock,theta,energy_mpo);
+    superblock.t_var_mpo.toc();
+    return result;
+}
+
+double MPS_Tools::Common::Measure::energy_variance_mpo(class_superblock & superblock) {
+    if (superblock.has_been_measured){return superblock.measurements.energy_variance_mpo;}
+    if (superblock.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
+    superblock.t_var_mpo.tic();
+    auto theta      = MPS_Tools::Common::Views::get_theta(superblock);
+    superblock.t_var_mpo.toc();
+    auto energy_mpo = MPS_Tools::Common::Measure::energy_mpo(superblock,theta);
+    superblock.t_var_mpo.tic();
+    double result = MPS_Tools::Common::Measure::energy_variance_mpo(superblock,theta,energy_mpo);
+    superblock.t_var_mpo.toc();
+    return result;
+}
+
+
+double MPS_Tools::Common::Measure::energy_variance_per_site_mpo(class_superblock & superblock) {
+    if (superblock.has_been_measured){return superblock.measurements.energy_variance_per_site_mpo;}
+    auto L = MPS_Tools::Common::Measure::length(superblock);
+    return MPS_Tools::Common::Measure::energy_variance_mpo(superblock)/L;
+}
+
+
+double MPS_Tools::Common::Measure::energy_variance_per_site_mpo(class_superblock & superblock, double & energy_mpo){
+    if (superblock.has_been_measured){return superblock.measurements.energy_variance_per_site_mpo;}
+    auto L = MPS_Tools::Common::Measure::length(superblock);
+    return MPS_Tools::Common::Measure::energy_variance_mpo(superblock,energy_mpo)/L;
 
 }
 
 
-double MPS_Tools::Common::Measure::energy_variance_ham(const class_superblock &superblock) {
-//    t_var_ham.tic();
+double MPS_Tools::Common::Measure::energy_variance_per_site_ham(class_superblock & superblock) {
+    if (superblock.has_been_measured
+       or superblock.measurements.bond_dimension <= 2
+       or superblock.MPS->chiA() != superblock.MPS->chiB()
+       or superblock.MPS->chiA() != superblock.MPS->chiC()
+       or superblock.sim_type != SimulationType::iTEBD
+       or superblock.sim_type != SimulationType::iDMRG
+        )
+    {
+        return superblock.measurements.energy_variance_per_site_ham;
+    }
+
+
+    spdlog::trace("Measuring energy variance ham from superblock");
+
+    superblock.t_var_ham.tic();
     using namespace MPS_Tools::Common::Views;
 
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -395,62 +469,17 @@ double MPS_Tools::Common::Measure::energy_variance_ham(const class_superblock &s
     Scalar e2lrpabba      = E2LRP_ABBA(0);
     Scalar e2lrpbaba      = E2LRP_BABA(0);
     Scalar e2lrpbaab      = E2LRP_BAAB(0);
+    superblock.t_var_ham.toc();
 
     return std::real(0.5*(e2ab + e2ba) + 0.5*(e2aba_1  + e2bab_1  + e2aba_2  + e2bab_2 )  + e2lrpabab + e2lrpabba + e2lrpbaba  + e2lrpbaab) ;
-//    t_var_ham.toc();
 }
 
 
-double MPS_Tools::Common::Measure::energy_variance_mom(const class_superblock &superblock){
-//    t_var_gen.tic();
-    Scalar a  = (0.0 + 1.0i) *5e-3;
-    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
-    auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
-    auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
-    auto h_evn = superblock.HA->single_site_hamiltonian(0,2,SX,SY, SZ);
-    auto h_odd = superblock.HB->single_site_hamiltonian(1,2,SX,SY, SZ);
-    auto Op_vec = qm::timeEvolution::compute_G(a,4, h_evn, h_odd);
-
-
-    //The following only works if superblock.MPS has been normalized! I.e, you have to have run MPS->compute_mps_components() prior.
-    Scalar lambdaG  = moment_generating_function(*superblock.MPS, Op_vec);
-    Scalar l        = 2.0; //Number of sites in unit cell
-    Scalar G        = pow(lambdaG,1.0/l);
-    Scalar logG     = log(lambdaG) * 1.0/l;
-    Scalar logGc    = log(conj(lambdaG) ) * 1.0/l;
-    Scalar O        = (logG - logGc)/(2.0*a);
-    Scalar VarO     = 2.0*log(abs(G))/ (a*a);
-//    return std::real(O);
-    Results::energy_mom =  std::real(O);
-
-    return  real(VarO);
-//    t_var_gen.toc();
-
-}
-
-
-double MPS_Tools::Common::Measure::energy_variance_mom(const class_superblock &superblock, double & energy_mom){
-//    t_var_gen.tic();
-    Scalar a  = (0.0 + 1.0i) *5e-3;
-    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
-    auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
-    auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
-    auto h_evn = superblock.HA->single_site_hamiltonian(0,2,SX,SY, SZ);
-    auto h_odd = superblock.HB->single_site_hamiltonian(1,2,SX,SY, SZ);
-    auto Op_vec = qm::timeEvolution::compute_G(a,4, h_evn, h_odd);
-
-
-    //The following only works if superblock.MPS has been normalized! I.e, you have to have run MPS->compute_mps_components() prior.
-    Scalar lambdaG  = moment_generating_function(*superblock.MPS, Op_vec);
-    Scalar l        = 2.0; //Number of sites in unit cell
-    Scalar G        = pow(lambdaG,1.0/l);
-    Scalar logG     = log(lambdaG) * 1.0/l;
-    Scalar logGc    = log(conj(lambdaG) ) * 1.0/l;
-    Scalar O        = (logG - logGc)/(2.0*a);
-    Scalar VarO     = 2.0*log(abs(G))/ (a*a);
-    energy_mom      =  std::real(O);
-    return  real(VarO);
-//    t_var_gen.toc();
-
+double MPS_Tools::Common::Measure::energy_variance_per_site_mom(class_superblock & superblock){
+    if(superblock.sim_type != SimulationType::iTEBD or superblock.sim_type != SimulationType::iDMRG) {
+        return superblock.measurements.energy_variance_per_site_mom;
+    }
+    [[maybe_unused]] auto dummy = energy_per_site_mom(superblock);
+    return superblock.measurements.energy_variance_per_site_mom;
 }
 

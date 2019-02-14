@@ -4,36 +4,56 @@
 
 
 #include "class_finite_chain_state.h"
-
-void class_finite_chain_state::set_max_length(size_t max_length_) {
-    max_sites = max_length_;
-//    MPS_L.resize(max_sites);
-//    MPS_R.resize(max_sites);
-//    ENV_L.resize(max_sites);
-//    ENV_R.resize(max_sites);
-//    ENV2_L.resize(max_sites,);
-//    ENV2_R.resize(max_sites);
-//    MPO_L.resize(max_sites);
-//    MPO_R.resize(max_sites);
-    max_length_is_set = true;
+#include <mps_routines/nmspc_mps_tools.h>
+#include <general/nmspc_quantum_mechanics.h>
+class_finite_chain_state::class_finite_chain_state(int max_sites_)
+        :max_sites(max_sites_)
+{
+    max_sites_is_set = true;
 
 }
 
-size_t class_finite_chain_state::get_length()    const {return MPS_L.size() + MPS_R.size();}
-size_t class_finite_chain_state::get_position()  const {return max_length_is_set ? MPS_L.size() - 1 : 0 ;}
 
-size_t class_finite_chain_state::get_sweeps()    const {return num_sweeps;}
-size_t class_finite_chain_state::reset_sweeps()  {num_sweeps = 0; return num_sweeps;}
+void class_finite_chain_state::clear(){
+    *this = class_finite_chain_state();
+}
+
+
+void class_finite_chain_state::do_all_measurements(){
+    using namespace MPS_Tools::Finite;
+    if (has_been_measured()){return;}
+    measurements.length                         = Measure::length(*this);
+    measurements.bond_dimensions                = Measure::bond_dimensions(*this);
+    measurements.norm                           = Measure::norm(*this);
+    measurements.energy_mpo                     = Measure::energy_mpo(*this);  //This number is needed for variance calculation!
+    measurements.energy_per_site_mpo            = Measure::energy_per_site_mpo(*this);
+    measurements.energy_variance_mpo            = Measure::energy_variance_mpo(*this);
+    measurements.energy_variance_per_site_mpo   = Measure::energy_variance_per_site_mpo(*this);
+    measurements.entanglement_entropies         = Measure::entanglement_entropies(*this);
+    measurements.spin_components                = Measure::parities(*this);
+    set_measured_true();
+}
+
+void class_finite_chain_state::set_max_sites(int max_sites_) {
+    max_sites = max_sites_;
+    max_sites_is_set = true;
+}
+
+int class_finite_chain_state::get_length()    const {return MPS_L.size() + MPS_R.size();}
+int class_finite_chain_state::get_position()  const {return max_sites_is_set ? MPS_L.size() - 1 : 0 ;}
+
+int class_finite_chain_state::get_sweeps()    const {return num_sweeps;}
+int class_finite_chain_state::reset_sweeps()  {num_sweeps = 0; return num_sweeps;}
 
 int  class_finite_chain_state::get_direction() const {return direction;}
 void class_finite_chain_state::flip_direction() {direction *= -1;}
 
 
 bool class_finite_chain_state::position_is_the_middle() const {
-    return max_length_is_set ? (unsigned) get_position() + 1 == (unsigned)(max_sites / 2.0) and direction == 1: true ;
+    return max_sites_is_set ? (unsigned) get_position() + 1 == (unsigned)(max_sites / 2.0) and direction == 1: true ;
 }
 bool class_finite_chain_state::position_is_the_middle_any_direction() const {
-    return max_length_is_set ? (unsigned) get_position() + 1 == (unsigned)(max_sites / 2.0) : true ;
+    return max_sites_is_set ? (unsigned) get_position() + 1 == (unsigned)(max_sites / 2.0) : true ;
 }
 
 bool class_finite_chain_state::position_is_the_left_edge() const {
@@ -44,14 +64,56 @@ bool class_finite_chain_state::position_is_the_right_edge() const {
     return get_position() == max_sites - 2;
 }
 
+bool class_finite_chain_state::has_been_measured(){
+    return
+    energy_has_been_measured   and
+    variance_has_been_measured and
+    entropy_has_been_measured  and
+    norm_has_been_measured     and
+    parity_has_been_measured   and
+    everything_has_been_measured
+    ;
+}
 
 void class_finite_chain_state::set_measured_true(){
-   energy_has_been_measured   = true;
-   variance_has_been_measured = true;
-   entropy_has_been_measured  = true;
+    energy_has_been_measured     = true;
+    variance_has_been_measured   = true;
+    entropy_has_been_measured    = true;
+    norm_has_been_measured       = true;
+    parity_has_been_measured     = true;
+    everything_has_been_measured = true;
 }
 void class_finite_chain_state::set_measured_false(){
-    energy_has_been_measured   = false;
-    variance_has_been_measured = false;
-    entropy_has_been_measured  = false;
+    energy_has_been_measured     = false;
+    variance_has_been_measured   = false;
+    entropy_has_been_measured    = false;
+    norm_has_been_measured       = false;
+    parity_has_been_measured     = false;
+    everything_has_been_measured = false;
+}
+
+bool class_finite_chain_state::has_been_written(){
+    return
+            mps_have_been_written_to_hdf5          and
+            mpo_have_been_written_to_hdf5          and
+            env_have_been_written_to_hdf5          and
+            env_have_been_written_to_hdf5          and
+            model_params_have_been_written_to_hdf5;
+}
+
+
+
+void class_finite_chain_state::set_written_true() {
+    mps_have_been_written_to_hdf5          = true;
+    mpo_have_been_written_to_hdf5          = true;
+    env_have_been_written_to_hdf5          = true;
+    env_have_been_written_to_hdf5          = true;
+    model_params_have_been_written_to_hdf5 = true;
+}
+
+void class_finite_chain_state::set_written_false() {
+    mps_have_been_written_to_hdf5          = false;
+    mpo_have_been_written_to_hdf5          = false;
+    env_have_been_written_to_hdf5          = false;
+    model_params_have_been_written_to_hdf5 = false;
 }

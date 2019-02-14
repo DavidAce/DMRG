@@ -11,7 +11,6 @@
 #include <iomanip>
 #include <complex>
 
-#include <mps_routines/class_measurement.h>
 #include <mps_routines/nmspc_mps_tools.h>
 #include <general/nmspc_tensor_extra.h>
 #include <general/class_svd_wrapper.h>
@@ -21,6 +20,10 @@
 #include <mps_routines/class_finite_chain_state.h>
 #include <mps_routines/class_mpo.h>
 #include <general/nmspc_quantum_mechanics.h>
+#include <spdlog/spdlog.h>
+
+
+
 using namespace std;
 using namespace Textra;
 using Scalar = std::complex<double>;
@@ -28,8 +31,8 @@ using Scalar = std::complex<double>;
 
 
 namespace MPS_Tools::Finite::Measure::Results {
-    size_t length;
-    size_t bond_dimension                       = 0;
+    int length;
+    int bond_dimension                       = 0;
     double norm                                 = 0;
     double truncation_error                     = 0;
     double energy_mpo                           = 0;
@@ -41,43 +44,46 @@ namespace MPS_Tools::Finite::Measure::Results {
     double parity_sy                            = 0;
     double parity_sz                            = 0;
     Eigen::Tensor<Scalar,1> mps_wavefn          = Eigen::Tensor<Scalar,1>();
-    bool state_measured                         = false;
+//    bool state_measured                         = false;
 }
 
 
 
 
 
+//
+//void MPS_Tools::Finite::Measure::do_all_measurements(class_finite_chain_state & state){
+//    using namespace MPS_Tools::Finite::Measure;
+//    if (state.has_been_measured()){return;}
+//
+//    Results::length                         = length(state);
+//    Results::bond_dimension                 = bond_dimension(state);
+//    Results::norm                           = norm(state);
+//    Results::energy_mpo                     = energy_mpo(state);  //This number is needed for variance calculation!
+//    Results::energy_per_site_mpo            = Results::energy_mpo/Results::length;
+//    Results::energy_variance_mpo            = energy_variance_mpo(state, Results::energy_mpo);
+//    Results::midchain_entanglement_entropy  = midchain_entanglement_entropy(state);
+//    Results::entanglement_entropy           = entanglement_entropy(state);
+//    Results::spin_component_sx                      = spin_component(state,qm::spinOneHalf::sx);
+//    Results::spin_component_sy                      = spin_component(state,qm::spinOneHalf::sy);
+//    Results::spin_component_sz                      = spin_component(state,qm::spinOneHalf::sz);
+//
+//    if (Results::length <= 14){
+//        Results::mps_wavefn = mps_wavefn(state);
+//    }
+//
+//    state.set_measured_true();
+//}
 
-void MPS_Tools::Finite::Measure::do_all_measurements(const class_finite_chain_state & state){
-    using namespace MPS_Tools::Finite::Measure;
-    if (Results::state_measured){return;}
 
-    Results::length                         = length(state);
-    Results::bond_dimension                 = bond_dimension(state);
-    Results::norm                           = norm(state);
-    Results::energy_mpo                     = energy_mpo(state);  //This number is needed for variance calculation!
-    Results::energy_per_site_mpo            = Results::energy_mpo/Results::length;
-    Results::energy_variance_mpo            = energy_variance_mpo(state, Results::energy_mpo);
-    Results::midchain_entanglement_entropy  = midchain_entanglement_entropy(state);
-    Results::entanglement_entropy           = entanglement_entropy(state);
-    Results::parity_sx                      = parity(state,qm::spinOneHalf::sx);
-    Results::parity_sy                      = parity(state,qm::spinOneHalf::sy);
-    Results::parity_sz                      = parity(state,qm::spinOneHalf::sz);
-
-    if (Results::length <= 14){
-        Results::mps_wavefn = mps_wavefn(state);
-    }
-
-    Results::state_measured = true;
-}
-
-
-size_t MPS_Tools::Finite::Measure::length(const class_finite_chain_state & state){
+int MPS_Tools::Finite::Measure::length(const class_finite_chain_state & state){
+//    ccout(3) << "STATUS: Measuring length\n";
     return state.get_length();
 }
 
 double MPS_Tools::Finite::Measure::norm(const class_finite_chain_state & state){
+//    ccout(3) << "STATUS: Measuring norm\n";
+    if (state.norm_has_been_measured){return state.measurements.norm;}
     auto mpsL  = state.get_MPS_L().begin();
     auto endL  = state.get_MPS_L().end();
     const Eigen::Tensor<Scalar,3>  & A = mpsL->ref_A(); // std::get<1>(*mpsL);
@@ -121,12 +127,23 @@ double MPS_Tools::Finite::Measure::norm(const class_finite_chain_state & state){
 }
 
 
-size_t MPS_Tools::Finite::Measure::bond_dimension(const class_finite_chain_state & state){
-    return state.get_MPS_C().dimension(0);
+std::vector<int> MPS_Tools::Finite::Measure::bond_dimensions(const class_finite_chain_state & state){
+//    ccout(3) << "STATUS: Measuring bond dimension\n";
+    std::vector<int> bond_dimensions;
+    for (auto &mps : state.get_MPS_L()){
+        bond_dimensions.emplace_back(mps.get_L().dimension(0));
+    }
+    bond_dimensions.emplace_back(state.get_MPS_C().dimension(0));
+    for (auto &mps : state.get_MPS_R()){
+        bond_dimensions.emplace_back(mps.get_L().dimension(0));
+    }
+    return bond_dimensions;
 }
 
 
-double MPS_Tools::Finite::Measure::energy_mpo(const class_finite_chain_state & state){
+double MPS_Tools::Finite::Measure::energy_mpo(class_finite_chain_state & state){
+//    ccout(3) << "STATUS: Measuring energy_mpo\n";
+    if (state.energy_has_been_measured){ return state.measurements.energy_mpo;}
     auto theta = MPS_Tools::Common::Views::get_theta(state);
     Eigen::Tensor<Scalar, 0>  E =
             state.get_ENV_L().back().block
@@ -136,14 +153,26 @@ double MPS_Tools::Finite::Measure::energy_mpo(const class_finite_chain_state & s
                     .contract(theta.conjugate(),                         idx({0,2,4},{1,0,2}))
                     .contract(state.get_ENV_R().front().block,           idx({0,2,1},{0,1,2}));
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
-
+    state.energy_has_been_measured = true;
     return std::real(E(0)) ;
 }
 
 
+double MPS_Tools::Finite::Measure::energy_per_site_mpo(class_finite_chain_state &state){
+    if (state.energy_has_been_measured){
+        return state.measurements.energy_mpo/state.get_length();
+    }else{
+        return energy_mpo(state)/state.get_length();
+    }
+}
 
-double MPS_Tools::Finite::Measure::energy_variance_mpo(const class_finite_chain_state & state){
+
+
+
+
+double MPS_Tools::Finite::Measure::energy_variance_mpo(class_finite_chain_state & state){
 //    t_var_mpo.tic();
+    if (state.variance_has_been_measured){ return state.measurements.energy_variance_mpo;}
     double energy = MPS_Tools::Finite::Measure::energy_mpo(state);
     auto theta = MPS_Tools::Common::Views::get_theta(state);
     Eigen::Tensor<Scalar, 0> H2 =
@@ -155,59 +184,21 @@ double MPS_Tools::Finite::Measure::energy_variance_mpo(const class_finite_chain_
                     .contract(state.get_MPO_R().front()->MPO     , idx({4,3},{0,2}))
                     .contract(theta.conjugate()                  , idx({0,3,5},{1,0,2}))
                     .contract(state.get_ENV2_R().front().block   , idx({0,3,1,2},{0,1,2,3}));
-
+    state.variance_has_been_measured = true;
     return std::abs(H2(0) - energy*energy);
-
-//
-//    if (sim_type == SimulationType::iDMRG) {
-//        t_var_mpo.toc();
-//        variance_mpo_all_sites = std::real(H2(0))/2.0;
-//        variance_mpo           = std::real(H2(0))/2.0/L;
-//    }else{
-//        variance_mpo_all_sites = std::abs(H2(0) - energy_mpo_all_sites*energy_mpo_all_sites);
-//        variance_mpo           = variance_mpo_all_sites/L;
-//    }
-//    t_var_mpo.toc();
 }
 
 
-double MPS_Tools::Finite::Measure::energy_variance_mpo(const class_finite_chain_state & state, double energy_mpo){
-//    t_var_mpo.tic();
-    auto theta = MPS_Tools::Common::Views::get_theta(state);
-    Eigen::Tensor<Scalar, 0> H2 =
-            state.get_ENV2_L().back().block
-                    .contract(theta                              , idx({0}  ,{1}))
-                    .contract(state.get_MPO_L().back()->MPO      , idx({1,3},{0,2}))
-                    .contract(state.get_MPO_R().front()->MPO     , idx({4,2},{0,2}))
-                    .contract(state.get_MPO_L().back()->MPO      , idx({1,3},{0,2}))
-                    .contract(state.get_MPO_R().front()->MPO     , idx({4,3},{0,2}))
-                    .contract(theta.conjugate()                  , idx({0,3,5},{1,0,2}))
-                    .contract(state.get_ENV2_R().front().block   , idx({0,3,1,2},{0,1,2,3}));
-
-    return std::abs(H2(0) - energy_mpo*energy_mpo);
-
-//
-//    if (sim_type == SimulationType::iDMRG) {
-//        t_var_mpo.toc();
-//        variance_mpo_all_sites = std::real(H2(0))/2.0;
-//        variance_mpo           = std::real(H2(0))/2.0/L;
-//    }else{
-//        variance_mpo_all_sites = std::abs(H2(0) - energy_mpo_all_sites*energy_mpo_all_sites);
-//        variance_mpo           = variance_mpo_all_sites/L;
-//    }
-//    t_var_mpo.toc();
+double MPS_Tools::Finite::Measure::energy_variance_per_site_mpo(class_finite_chain_state & state){
+    if (state.variance_has_been_measured){return state.measurements.energy_variance_mpo/state.get_length();}
+    else{return energy_variance_mpo(state)/state.get_length();}
 }
-
-
-
-
 
 
 
 double MPS_Tools::Finite::Measure::midchain_entanglement_entropy(const class_finite_chain_state & state){
 //    t_entropy.tic();
     auto & LC = state.get_MPS_C();
-
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
     return std::real(SA(0));
@@ -215,7 +206,8 @@ double MPS_Tools::Finite::Measure::midchain_entanglement_entropy(const class_fin
 }
 
 
-std::vector<double> MPS_Tools::Finite::Measure::entanglement_entropy(const class_finite_chain_state & state){
+std::vector<double> MPS_Tools::Finite::Measure::entanglement_entropies(const class_finite_chain_state & state){
+    if (state.entropy_has_been_measured){return state.measurements.entanglement_entropies;}
 //    t_entropy.tic();
     std::vector<double> SA;
     for (auto & mps : state.get_MPS_L()) {
@@ -234,9 +226,22 @@ std::vector<double> MPS_Tools::Finite::Measure::entanglement_entropy(const class
 }
 
 
+std::vector<double> MPS_Tools::Finite::Measure::parities(class_finite_chain_state &state){
+    if (state.parity_has_been_measured){return state.measurements.spin_components;}
+    state.measurements.spin_component_sx                      = Measure::spin_component(state, qm::spinOneHalf::sx);
+    state.measurements.spin_component_sy                      = Measure::spin_component(state, qm::spinOneHalf::sy);
+    state.measurements.spin_component_sz                      = Measure::spin_component(state, qm::spinOneHalf::sz);
+    std::vector<double> parities = {
+            state.measurements.spin_component_sx,
+            state.measurements.spin_component_sy,
+            state.measurements.spin_component_sz};
+    return parities;
+}
+
 
 //
-double MPS_Tools::Finite::Measure::parity(const class_finite_chain_state & state,const Eigen::Matrix2cd  paulimatrix){
+double MPS_Tools::Finite::Measure::spin_component(const class_finite_chain_state &state,
+                                                  const Eigen::Matrix2cd paulimatrix){
 
     Eigen::TensorRef<Eigen::Tensor<Scalar,3>> temp;
 
@@ -291,7 +296,6 @@ double MPS_Tools::Finite::Measure::parity(const class_finite_chain_state & state
     assert(L.dimensions() == R.dimensions());
     Eigen::Tensor<Scalar,0> parity_tmp = L.contract(R, idx({0,1,2},{0,1,2}));
     double parity = std::real(parity_tmp(0));
-    std::cout << setprecision(16) << "Parity: " << parity_tmp << std::endl;
     return parity;
 }
 
@@ -366,7 +370,7 @@ double MPS_Tools::Finite::Measure::parity(const class_finite_chain_state & state
 //    Eigen::Tensor<Scalar,1> LambdaB_next(1);
 //    LambdaA_next.setConstant(1);
 //    LambdaB_next.setConstant(1);
-//    for (size_t pos = 0; pos < A_matrices.size()-1; pos++){
+//    for (int pos = 0; pos < A_matrices.size()-1; pos++){
 //        long d    = A_matrices[pos].dimension(0);
 //        long chiL = A_matrices[pos].dimension(1);
 //        long chiR = A_matrices[pos].dimension(2);
@@ -385,7 +389,7 @@ double MPS_Tools::Finite::Measure::parity(const class_finite_chain_state & state
 //        LambdaA_next = S;
 //    }
 //
-//    for (size_t pos = B_matrices.size(); pos > 0; pos--){
+//    for (int pos = B_matrices.size(); pos > 0; pos--){
 //        long d    = B_matrices[pos].dimension(0);
 //        long chiL = B_matrices[pos].dimension(1);
 //        long chiR = B_matrices[pos].dimension(2);
@@ -487,8 +491,8 @@ Eigen::Tensor<Scalar,1> MPS_Tools::Finite::Measure::mps_wavefn(const class_finit
 
 //
 //double class_measurement::get_energy_mpo(){return energy_mpo;}
-//double class_measurement::get_energy_ham(){return energy_ham;}
-//double class_measurement::get_energy_mom(){return energy_mom;}
+//double class_measurement::get_energy_ham(){return energy_per_site_ham;}
+//double class_measurement::get_energy_mom(){return energy_per_site_mom;}
 //
 //void   class_measurement::set_variance(double new_variance){
 //    variance_mpo = new_variance;
@@ -516,10 +520,10 @@ Eigen::Tensor<Scalar,1> MPS_Tools::Finite::Measure::mps_wavefn(const class_finit
 //    using namespace settings::profiling;
 //    t_ene_mpo.set_properties(on, precision,"↳ Energy (MPO)           ");
 //    t_ene_ham.set_properties(on, precision,"↳ Energy (Ham)           ");
-//    t_ene_gen.set_properties(on, precision,"↳ Energy (Gen)           ");
+//    t_ene_mom.set_properties(on, precision,"↳ Energy (Gen)           ");
 //    t_var_mpo.set_properties(on, precision,"↳ Variance (MPO)         ");
 //    t_var_ham.set_properties(on, precision,"↳ Variance (Ham)         ");
-//    t_var_gen.set_properties(on, precision,"↳ Variance (Gen)         ");
+//    t_var_mom.set_properties(on, precision,"↳ Variance (Gen)         ");
 //    t_entropy.set_properties(on, precision,"↳ Ent. Entropy           ");
 //    t_temp1.set_properties(on, precision,  "↳ Temp1                  ");
 //    t_temp2.set_properties(on, precision,  "↳ Temp2                  ");
@@ -534,10 +538,10 @@ Eigen::Tensor<Scalar,1> MPS_Tools::Finite::Measure::mps_wavefn(const class_finit
 //        std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
 //        t_ene_mpo.print_time_w_percent(t_parent);
 //        t_ene_ham.print_time_w_percent(t_parent);
-//        t_ene_gen.print_time_w_percent(t_parent);
+//        t_ene_mom.print_time_w_percent(t_parent);
 //        t_var_mpo.print_time_w_percent(t_parent);
 //        t_var_ham.print_time_w_percent(t_parent);
-//        t_var_gen.print_time_w_percent(t_parent);
+//        t_var_mom.print_time_w_percent(t_parent);
 //        t_entropy.print_time_w_percent(t_parent);
 //        t_temp1.print_time_w_percent(t_parent);
 //        t_temp2.print_time_w_percent(t_parent);

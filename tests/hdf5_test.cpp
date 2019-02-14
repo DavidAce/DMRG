@@ -52,14 +52,12 @@ int main()
     std::string output_folder           = "Testing/hdf5";
     bool        create_dir_if_not_found = true;
     bool        overwrite_file_if_found = true;
-    bool        resume_from_file        = false;
 
 
     class_hdf5_file hdf5(output_filename,
                          output_folder,
                          create_dir_if_not_found,
-                         overwrite_file_if_found,
-                         resume_from_file );
+                         overwrite_file_if_found);
 
     std::cout << "Writing vectorD: " <<  vectorD  << std::endl;
     std::cout << "Writing vectorC: " <<  vectorC  << std::endl;

@@ -627,11 +627,11 @@ long class_measurement::get_chain_length(const class_finite_chain_state & state)
 void class_measurement::set_profiling_labels() {
     using namespace settings::profiling;
     t_ene_mpo.set_properties(on, precision,"↳ Energy (MPO)           ");
-    t_ene_ham.set_properties(on, precision,"↳ Energy (Ham)           ");
-    t_ene_gen.set_properties(on, precision,"↳ Energy (Gen)           ");
+    t_ene_ham.set_properties(on, precision,"↳ Energy (HAM)           ");
+    t_ene_gen.set_properties(on, precision,"↳ Energy (MOM)           ");
     t_var_mpo.set_properties(on, precision,"↳ Variance (MPO)         ");
-    t_var_ham.set_properties(on, precision,"↳ Variance (Ham)         ");
-    t_var_gen.set_properties(on, precision,"↳ Variance (Gen)         ");
+    t_var_ham.set_properties(on, precision,"↳ Variance (HAM)         ");
+    t_var_gen.set_properties(on, precision,"↳ Variance (MOM)         ");
     t_entropy.set_properties(on, precision,"↳ Ent. Entropy           ");
     t_temp1.set_properties(on, precision,  "↳ Temp1                  ");
     t_temp2.set_properties(on, precision,  "↳ Temp2                  ");

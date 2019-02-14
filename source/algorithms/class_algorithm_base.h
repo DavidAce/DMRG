@@ -14,13 +14,14 @@
 #include <general/class_tic_toc.h>
 #include <general/nmspc_eigsolver_props.h>
 #include <sim_parameters/nmspc_sim_settings.h>
-
+#include <algorithms/class_simulation_state.h>
 class class_superblock;
 class class_finite_chain_state;
-class class_measurement;
 class class_hdf5_file;
 class class_table_profiling;
 template <typename table_type> class class_hdf5_table;
+
+
 
 class class_algorithm_base {
 
@@ -36,57 +37,41 @@ public:
     std::shared_ptr<class_hdf5_file>         hdf5;
     std::unique_ptr<class_hdf5_table<class_table_profiling>>  table_profiling;
 
-    std::string sim_name;
-    SimulationType sim_type;
+    std::string             sim_name;
+    SimulationType          sim_type;
+    class_simulation_state  sim_state;
 
     //MPS
     std::shared_ptr<class_superblock>            superblock;
-    std::shared_ptr<class_measurement>           measurement;
     std::shared_ptr<class_finite_chain_state>    state;
-
     //Console
     class_custom_cout ccout;
-    //Settings.
-
-    // Common variables
-    int    seed       = 1;
-    size_t iteration = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
-    size_t step      = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
-    size_t num_sites    ;
-    long   chi_max      ;
-    bool   chi_grow     ;
-    size_t print_freq   ;
-    size_t store_freq   ;
-    long   chi_temp   = 16;
-    bool   simulation_has_converged = false;
-    bool   simulation_has_to_stop   = false;
-    bool   bond_dimension_has_reached_max = false;
-    bool   entanglement_has_converged = false;
-    bool   entanglement_has_saturated = false;
-    size_t variance_mpo_saturated_for = 0;
-    bool   variance_mpo_has_converged = false;
-    bool   variance_mpo_has_saturated = false;
-    size_t variance_ham_saturated_for = 0;
-    bool   variance_ham_has_converged = false;
-    bool   variance_ham_has_saturated = false;
-    size_t variance_mom_saturated_for = 0;
-    bool   variance_mom_has_converged = false;
-    bool   variance_mom_has_saturated = false;
-
+    void set_verbosity();
 
 
     //Virtual Functions
     virtual void run()                                          = 0;
-    virtual void initialize_constants()                         = 0;
+    virtual void run_preprocessing()                            = 0;
+    virtual void run_simulation()                               = 0;
+    virtual void run_postprocessing()                           = 0;
+//    virtual void initialize_constants()                         = 0;
     virtual void print_profiling()                              = 0;
     virtual void print_profiling_sim(class_tic_toc &t_parent)   = 0;
-    virtual void store_table_entry_to_file(bool force = false)  = 0;
+    virtual void store_state_to_file(bool force = false)        = 0;
+    virtual void store_progress_to_file(bool force = false)     = 0;
+
+    virtual long   chi_max()    = 0;
+    virtual int    num_sites()  = 0;
+    virtual int    store_freq() = 0;
+    virtual int    print_freq() = 0;
+    virtual bool   chi_grow()   = 0;
+
 
     //Common functions
+    void store_sim_to_file();
     void print_status_update();
     void print_status_full();
     void single_DMRG_step(eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR);
-    void store_state_to_file(bool force = false);
 
     virtual void check_convergence();
     static constexpr double quietNaN = std::numeric_limits<double>::quiet_NaN();
@@ -94,7 +79,7 @@ public:
     void check_convergence_variance_ham(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_variance_mom(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_entanglement(double slope_threshold = quietNaN);
-    void update_bond_dimension(size_t min_saturation_length = 1);
+    void update_bond_dimension(int min_saturation_length = 1);
     void clear_saturation_status();
 
     void initialize_state(std::string initial_state);

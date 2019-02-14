@@ -236,18 +236,19 @@ include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's Math 
 include(cmake-modules/FindGFortran.cmake)
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
+include(cmake-modules/Fetch_spdlog.cmake)                   # spdlog library
 include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
-include(cmake-modules/Fetch_HDF5_2.cmake)                     # HDF5 binary file format for output data_struct.
+include(cmake-modules/Fetch_HDF5_2.cmake)                   # HDF5 binary file format for output data_struct.
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
 
 target_link_libraries(${PROJECT_NAME} PRIVATE eigen3)
+target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
 target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
 target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 target_link_libraries(${PROJECT_NAME} PRIVATE GSL)
-
 
 ######################################
 ###  Require experimental headers  ###
@@ -280,6 +281,7 @@ message("    BLAS     :   ${BLAS_LIBRARIES}")
 message("    LAPACK   :   ${LAPACK_LIBRARIES}")
 message("    LAPACKE  :   ${LAPACKE_LIBRARIES}")
 message("    EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
+message("    SPDLOG   :   ${SPDLOG_INCLUDE_DIR}")
 message("    HDF5     :   ${HDF5_LIBRARIES}")
 message("    ARPACK   :   ${ARPACK_LIBRARIES}")
 message("    ARPACKPP :   ${ARPACKPP_INCLUDE_DIR}")
@@ -320,7 +322,7 @@ add_custom_target(all_tests ALL
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
         DEPENDS hdf5_test_target
-        DEPENDS arpack++ hdf5 eigen3
+        DEPENDS arpack++ hdf5 eigen3 spdlog
         DEPENDS ${PROJECT_NAME}
         )
 

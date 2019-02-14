@@ -9,6 +9,7 @@ target_include_directories(hdf5_test_target PUBLIC source)
 
 target_link_libraries(hdf5_test_target PRIVATE eigen3)
 target_link_libraries(hdf5_test_target PRIVATE hdf5      )
+target_link_libraries(hdf5_test_target PRIVATE spdlog    )
 #target_link_libraries(hdf5_test_target PRIVATE hdf5::hdf5_hl    )
 #target_link_libraries(hdf5_test_target PRIVATE hdf5::hdf5_cpp   )
 #target_link_libraries(hdf5_test_target PRIVATE hdf5::hdf5_hl_cpp)
