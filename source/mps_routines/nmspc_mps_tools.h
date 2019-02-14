@@ -11,10 +11,10 @@ class class_superblock;
 class class_mps_2site;
 class class_finite_chain_state;
 class class_hdf5_file;
-
+class class_hamiltonian_base;
+class class_simulation_state;
 
 namespace MPS_Tools{
-
 
     namespace Finite
     /*!
@@ -35,46 +35,39 @@ namespace MPS_Tools{
 
 
         namespace Ops {
+            extern std::list<Eigen::Tensor<std::complex<double>,4>>
+                        make_mpo_list           (const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_R);
             extern void apply_mpo               (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
+            extern void apply_mpo2              (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
+            extern void apply_mpo3              (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
+            extern void apply_mpos              (class_finite_chain_state &state, const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
             extern void normalize_chain         (class_finite_chain_state &state);
+            extern void apply_energy_mpo_test   (class_finite_chain_state &state, class_superblock & superblock);
+            extern void set_parity_projected_mps(class_finite_chain_state &state, class_superblock & superblock, const Eigen::MatrixXcd paulimatrix);
+            extern void check_parity_properties (class_finite_chain_state &state);
             extern void rebuild_environments    (class_finite_chain_state &state);
             extern void rebuild_superblock      (class_finite_chain_state &state, class_superblock & superblock);
-            extern void set_parity_projected_mps(class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix);
+            extern double overlap               (const class_finite_chain_state &state1, const class_finite_chain_state &state2);
+            extern double expectation_value     (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
+            extern double exp_sq_value          (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,4> Ledge, const Eigen::Tensor<std::complex<double>,4> Redge);
         }
 
 
         namespace Measure{
-            namespace Results {
-                extern size_t length;
-                extern size_t bond_dimension;
-                extern double norm;
-                extern double truncation_error;
-                extern double energy_mpo;
-                extern double energy_per_site_mpo;
-                extern double energy_variance_mpo;
-                extern double midchain_entanglement_entropy;
-                extern std::vector<double> entanglement_entropy;
-                extern double parity_sx;
-                extern double parity_sy;
-                extern double parity_sz;
-                extern Eigen::Tensor<std::complex<double>,1> mps_wavefn;
-                extern bool state_measured;
 
-            }
-
-
-            extern void do_all_measurements                           (const class_finite_chain_state & state);
-            extern size_t length                                      (const class_finite_chain_state & state);
+//            extern void do_all_measurements                           (class_finite_chain_state & state);
+            extern int length                                      (const class_finite_chain_state & state);
+            extern std::vector<int> bond_dimensions                   (const class_finite_chain_state & state);
             extern double norm                                        (const class_finite_chain_state & state);
-            extern size_t bond_dimension                              (const class_finite_chain_state & state);
-            extern double energy_mpo                                  (const class_finite_chain_state & state);
-            extern double energy_variance_mpo                         (const class_finite_chain_state & state);
-            extern double energy_variance_mpo                         (const class_finite_chain_state & state, double energy);
+            extern double energy_mpo                                  (class_finite_chain_state & state);
+            extern double energy_per_site_mpo                         (class_finite_chain_state & state);
+            extern double energy_variance_mpo                         (class_finite_chain_state & state);
+            extern double energy_variance_per_site_mpo                (class_finite_chain_state & state);
             extern double midchain_entanglement_entropy               (const class_finite_chain_state & state);
-            extern std::vector<double>
-            entanglement_entropy                                      (const class_finite_chain_state & state);
-            extern double parity                                      (const class_finite_chain_state & state,const Eigen::Matrix2cd  paulimatrix);
+            extern double spin_component(const class_finite_chain_state &state, const Eigen::Matrix2cd paulimatrix);
             extern Eigen::Tensor<std::complex<double>,1> mps_wavefn   (const class_finite_chain_state & state);
+            extern std::vector<double> entanglement_entropies         (const class_finite_chain_state & state);
+            extern std::vector<double> parities                       (class_finite_chain_state & state);
 
         }
 
@@ -85,7 +78,7 @@ namespace MPS_Tools{
             extern void print_hamiltonians  (const class_finite_chain_state & state);
         }
         namespace Hdf5{
-            extern void write_all                          (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
+            extern void write_all_state                    (class_finite_chain_state &state, class_hdf5_file &hdf5, std::string sim_name);
             extern void write_bond_matrices                (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_2site_mps                    (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_2site_mpo                    (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
@@ -95,6 +88,8 @@ namespace MPS_Tools{
             extern void write_full_mpo                     (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_hamiltonian_params           (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_entanglement                 (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
+            extern void write_all_measurements             (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
+            extern void load_state_from_hdf5               (class_finite_chain_state & state,class_superblock & superblock, class_hdf5_file & hdf5, std::string sim_name);
         }
 
 
@@ -114,8 +109,8 @@ namespace MPS_Tools{
         namespace Measure{
 
             namespace Results {
-                extern size_t length;
-                extern size_t bond_dimension;
+                extern int length;
+                extern int bond_dimension;
                 extern double norm;
                 extern double truncation_error;
                 extern double energy_mpo;
@@ -129,9 +124,9 @@ namespace MPS_Tools{
                 extern bool   superblock_measured;
             }
             extern void   do_all_measurements             (const class_superblock & superblock);
-            extern size_t length                          (const class_superblock & superblock);
+            extern int    length                          (const class_superblock & superblock);
             extern double norm                            (const class_superblock & superblock);
-            extern size_t truncation_error                (const class_superblock & superblock);
+            extern double truncation_error                (const class_superblock & superblock);
             extern double energy_mpo                      (const class_superblock & superblock);
             extern double energy_ham                      (const class_superblock & superblock);
             extern double energy_mom                      (const class_superblock & superblock);
@@ -148,14 +143,15 @@ namespace MPS_Tools{
         }
 
         namespace Hdf5{
-            extern void write_all                          (const class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
-            extern void write_bond_matrix                  (const class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
-            extern void write_mps                          (const class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
-            extern void write_mpo                          (const class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
-            extern void write_env                          (const class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
-            extern void write_env2                         (const class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
-            extern void write_hamiltonian_params           (const class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
-            extern void write_entanglement                 (const class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
+            extern void write_superblock_state             (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
+            extern void write_2site_mps                    (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
+            extern void write_2site_mpo                    (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
+            extern void write_2site_env                    (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
+            extern void write_2site_env2                   (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
+            extern void write_hamiltonian_params           (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
+            extern void write_all_measurements             (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
+            extern void load_state_from_hdf5               (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
+
         }
     }
 
@@ -169,43 +165,32 @@ namespace MPS_Tools{
 
         }
 
-
+        namespace Hdf5 {
+            extern void write_simulation_state   (const class_simulation_state & sim_state,class_hdf5_file &hdf5,std::string sim_name);
+        }
 
 
         namespace Measure {
-            namespace Results {
-                extern size_t length;
-                extern size_t bond_dimension;
-                extern double norm;
-                extern double truncation_error;
-                extern double energy_mpo, energy_per_site_mpo;
-                extern double energy_ham;
-                extern double energy_mom;
-                extern double energy_variance_mpo, energy_variance_per_site_mpo;
-                extern double energy_variance_ham;
-                extern double energy_variance_mom;
-                extern double midchain_entanglement_entropy;
-                extern bool   superblock_measured;
-            }
 
-            extern void   set_not_measured();
-            extern void   do_all_measurements             (const class_superblock & superblock);
-
-            extern size_t length                          (const class_superblock & superblock);
-            extern size_t bond_dimension                  (const class_superblock & superblock);
-            extern double norm                            (const class_superblock & superblock);
-            extern double truncation_error                (const class_superblock & superblock);
-
-            extern double energy_mpo                      (const class_superblock & superblock);
-            extern double energy_ham                      (const class_superblock & superblock);
-            extern double energy_mom                      (const class_superblock & superblock);
-            extern double energy_variance_mpo             (const class_superblock & superblock);
-            extern double energy_variance_mpo             (const class_superblock & superblock, double & energy_mpo);
-            extern double energy_variance_ham             (const class_superblock & superblock);
-            extern double energy_variance_ham             (const class_superblock & superblock, double & energy_ham);
-            extern double energy_variance_mom             (const class_superblock & superblock);
-            extern double energy_variance_mom             (const class_superblock & superblock, double & energy_mom);
-            extern double midchain_entanglement_entropy   (const class_superblock & superblock);
+            extern void   set_not_measured                (class_superblock & superblock);
+            extern int    length                          (class_superblock & superblock);
+            extern int    bond_dimension                  (class_superblock & superblock);
+            extern double truncation_error                (class_superblock & superblock);
+            extern double norm                            (class_superblock & superblock);
+            extern double energy_mpo                      (class_superblock & superblock);
+            extern double energy_mpo                      (const class_superblock & superblock, const Eigen::Tensor<std::complex<double>,4> &theta);
+            extern double energy_per_site_mpo             (class_superblock & superblock);
+            extern double energy_per_site_ham             (class_superblock & superblock);
+            extern double energy_per_site_mom             (class_superblock & superblock);
+            extern double energy_variance_mpo             (class_superblock & superblock);
+            extern double energy_variance_mpo             (const class_superblock & superblock, const Eigen::Tensor<std::complex<double>,4> &theta, double & energy_mpo);
+            extern double energy_variance_mpo             (class_superblock & superblock, double &energy_mpo);
+            extern double energy_variance_per_site_mpo    (class_superblock & superblock);
+            extern double energy_variance_per_site_mpo    (class_superblock & superblock, double &energy_mpo);
+            extern double energy_variance_per_site_ham    (class_superblock & superblock);
+            extern double energy_variance_per_site_ham    (class_superblock & superblock, double &energy_per_site_ham);
+            extern double energy_variance_per_site_mom    (class_superblock & superblock);
+            extern double current_entanglement_entropy    (class_superblock & superblock);
 
         }
 

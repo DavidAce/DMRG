@@ -3,7 +3,9 @@
 //
 
 #include "nmspc_sim_settings.h"
-#include <IO/class_file_reader.h>
+#include <IO/class_settings_reader.h>
+#include <IO/class_hdf5_file.h>
+
 using namespace std;
 
 
@@ -63,8 +65,9 @@ namespace settings{
 
     //Parameters controlling Finite-DMRG
     bool   fdmrg::on                     = true;
-    int    fdmrg::num_sites             = 200;
-    int    fdmrg::max_sweeps             = 4;
+    int    fdmrg::num_sites              = 200;
+    int    fdmrg::max_sweeps             = 10;
+    int    fdmrg::min_sweeps             = 4;
     long   fdmrg::chi_max                = 8;
     bool   fdmrg::chi_grow               = true;
     int    fdmrg::print_freq             = 100;
@@ -73,13 +76,16 @@ namespace settings{
 
     //Parameters controlling excited state DMRG
     bool   xdmrg::on                     = true;
-    int    xdmrg::num_sites             = 200;
-    int    xdmrg::max_sweeps             = 4;
+    int    xdmrg::num_sites              = 200;
+    int    xdmrg::max_sweeps             = 10;
+    int    xdmrg::min_sweeps             = 4;
     long   xdmrg::chi_max                = 8;
     bool   xdmrg::chi_grow               = true;
     int    xdmrg::print_freq             = 100;
     int    xdmrg::store_freq             = 100;
     bool   xdmrg::store_wavefn           = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+    double xdmrg::energy_density         = 0.5;                     /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
+    double xdmrg::energy_window          = 0.01;                    /*!< Energy window [0-0.5] Accept states inside of energy_target +- energy_window. */
 
     //Parameters controlling imaginary TEBD (Zero temperature)
     bool   itebd::on                     = true;
@@ -126,7 +132,7 @@ namespace settings{
 */
 
 
-void settings::load_from_file(class_file_reader &indata){
+void settings::load_from_file(class_settings_reader &indata){
     input::input_filename   = indata.get_input_filename();
     input::input_file       = indata.get_input_file();
     //Parameters for the model Hamiltonian
@@ -176,8 +182,9 @@ void settings::load_from_file(class_file_reader &indata){
     //Parameters controlling Finite-DMRG
     fdmrg::on                     = indata.find_parameter<bool>   ("fdmrg::on"         , fdmrg::on);
     if(fdmrg::on){
-        fdmrg::num_sites          = indata.find_parameter<int>     ("fdmrg::num_sites ", fdmrg::num_sites);
+        fdmrg::num_sites          = indata.find_parameter<int>    ("fdmrg::num_sites ", fdmrg::num_sites);
         fdmrg::max_sweeps         = indata.find_parameter<int>    ("fdmrg::max_sweeps ", fdmrg::max_sweeps);
+        fdmrg::min_sweeps         = indata.find_parameter<int>    ("fdmrg::min_sweeps ", fdmrg::min_sweeps);
         fdmrg::chi_max            = indata.find_parameter<int>    ("fdmrg::chi_max"    , 8);
         fdmrg::chi_grow           = indata.find_parameter<bool>   ("fdmrg::chi_grow"   , fdmrg::chi_grow);
         fdmrg::print_freq         = indata.find_parameter<int>    ("fdmrg::print_freq ", fdmrg::print_freq);
@@ -189,11 +196,14 @@ void settings::load_from_file(class_file_reader &indata){
     if(xdmrg::on){
         xdmrg::num_sites          = indata.find_parameter<int>    ("xdmrg::num_sites "     , xdmrg::num_sites);
         xdmrg::max_sweeps         = indata.find_parameter<int>    ("xdmrg::max_sweeps "    , xdmrg::max_sweeps);
+        xdmrg::min_sweeps         = indata.find_parameter<int>    ("xdmrg::min_sweeps "    , xdmrg::min_sweeps);
         xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"        , xdmrg::chi_max);
         xdmrg::chi_grow           = indata.find_parameter<bool>   ("xdmrg::chi_grow"       , xdmrg::chi_grow);
         xdmrg::print_freq         = indata.find_parameter<int>    ("xdmrg::print_freq "    , xdmrg::print_freq);
         xdmrg::store_freq         = indata.find_parameter<int>    ("xdmrg::store_freq "    , xdmrg::store_freq);
         xdmrg::store_wavefn       = indata.find_parameter<bool>   ("xdmrg::store_wavefn"   , xdmrg::store_wavefn);
+        xdmrg::energy_density     = indata.find_parameter<double> ("xdmrg::energy_density" , xdmrg::energy_density);
+        xdmrg::energy_window      = indata.find_parameter<double> ("xdmrg::energy_window"  , xdmrg::energy_window);
     }
 
 
@@ -226,4 +236,18 @@ void settings::load_from_file(class_file_reader &indata){
     //Console settings
     console::verbosity             = indata.find_parameter<int>    ("console::verbosity"   , console::verbosity);
     console::timestamp             = indata.find_parameter<bool>   ("console::timestamp"   , console::timestamp);
+}
+
+void settings::load_from_hdf5(class_hdf5_file &hdf5){
+
+    std::string settings_from_hdf5;
+    std::string temp_filename = "indata_temp.cfg";
+    hdf5.read_dataset(settings_from_hdf5, "/common/input_file");
+
+    std::ofstream temp_settings_file(temp_filename);
+    temp_settings_file << settings_from_hdf5;
+    temp_settings_file.close();
+    class_settings_reader indata(temp_filename);
+    settings::load_from_file(indata);
+
 }

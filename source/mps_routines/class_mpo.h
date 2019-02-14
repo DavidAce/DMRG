@@ -26,6 +26,13 @@ public:
     parity_selector_mpo(const Eigen::MatrixXcd paulimatrix, const int sector = 1);
 
 
+    static std::tuple<
+            std::list<Eigen::Tensor<class_mpo::Scalar,4>>,
+            Eigen::Tensor<class_mpo::Scalar,3>,
+            Eigen::Tensor<class_mpo::Scalar,3>>
+    parity_projector_mpos(const Eigen::MatrixXcd paulimatrix, const size_t sites, const int sector = 1);
+
+
 
 
 };

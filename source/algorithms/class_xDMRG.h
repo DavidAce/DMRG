@@ -25,32 +25,35 @@ public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_base::class_algorithm_base;
     explicit class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
-    std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_xdmrg;
+    std::unique_ptr<class_hdf5_table<class_table_dmrg>>         table_xdmrg;
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_xdmrg_chain;
 
     enum class xDMRG_Mode {KEEP_BEST_OVERLAP,FULL_EIG_OPT,PARTIAL_EIG_OPT, DIRECT_OPT};
-    size_t    min_saturation_length;
-    size_t    max_saturation_length;
-    size_t    min_sweeps   = 2;
-    size_t    max_sweeps   ;
+    int    min_saturation_length;
+    int    max_saturation_length;
 //    int    num_sites    ;
 
     //Energy ranges
-    double energy_min = 0;
-    double energy_max = 0;
-    double energy_target = 0;
-    double energy_now = 0;
+
 
     void run()                                          override;
-    void check_convergence()                        override;
-    void initialize_constants()                         override;
+    void run_simulation()                               override;
+    void run_preprocessing()                            override;
+    void run_postprocessing()                           override;
+    void check_convergence()                            override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
-    void store_table_entry_to_file(bool force = false)  override;
-    void store_chain_entry_to_file(bool force = false);
+    void store_state_to_file(bool force = false)        override;
+    void store_progress_to_file(bool force = false)     override;
+    void store_progress_chain_to_file(bool force = false);
     void single_xDMRG_step();
     void initialize_chain();
     void find_energy_range();
+    long   chi_max()                                    override;
+    int    num_sites()                                  override;
+    int    store_freq()                                 override;
+    int    print_freq()                                 override;
+    bool   chi_grow()                                   override;
 
     std::vector<int> generate_size_list(const int shape);
 

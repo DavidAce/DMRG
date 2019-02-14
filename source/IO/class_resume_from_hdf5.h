@@ -15,27 +15,25 @@ class class_finite_chain_state;
 
 class class_resume_from_hdf5 {
 private:
-    std::shared_ptr<class_hdf5_file>            hdf5;
-    std::shared_ptr<class_superblock>           superblock;
-    std::shared_ptr<class_finite_chain_state>   state;
-    std::string                                 sim_name;
-    SimulationType                              sim_type;
-
-    void load_mps_chain ();
 
 public:
 
-    bool resume_success = false;
-
-    class_resume_from_hdf5(
-            std::shared_ptr<class_hdf5_file>            hdf5_,
-            std::shared_ptr<class_superblock>           superblock_,
-            std::shared_ptr<class_finite_chain_state>   state_,
-            std::string                                 sim_name_,
-            SimulationType                              sim_type_
+    static bool load_success;
+    static void load_state_from_hdf5 (
+            const class_hdf5_file & hdf5,
+                  class_finite_chain_state & state,
+                  class_superblock &superblock,
+                  std::string sim_name,
+                  SimulationType sim_type
             );
 
+
 };
+
+
+
+
+
 
 
 #endif //DMRG_CLASS_RESUME_H

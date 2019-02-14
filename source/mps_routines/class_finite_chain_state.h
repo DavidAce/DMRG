@@ -39,37 +39,47 @@ private:
     std::list<std::shared_ptr<class_hamiltonian_base>> MPO_L;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
     std::list<std::shared_ptr<class_hamiltonian_base>> MPO_R;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
 
-    size_t max_sites = 0;                                                 /*!< The maximum length of the chain */
-    size_t num_sweeps = 0;
+    int max_sites = 0;                                                 /*!< The maximum length of the chain */
+    int num_sweeps = 0;
     int direction  = -1;
 
 public:
     class_finite_chain_state()=default;
-    class_finite_chain_state(size_t max_sites_):max_sites(max_sites_){};
-    void set_max_length(size_t max_length_);                                        /*!< Sets the maximum length of the chain. */
+    explicit class_finite_chain_state(int max_sites_);
+
+    void do_all_measurements();
+    void set_max_sites(int max_sites_);                                        /*!< Sets the maximum length of the chain. */
+    void clear();
+
+    bool max_sites_is_set                       = false;
+    bool mps_have_been_written_to_hdf5          = false;
+    bool mpo_have_been_written_to_hdf5          = false;
+    bool env_have_been_written_to_hdf5          = false;
+    bool model_params_have_been_written_to_hdf5 = false;
 
 
-    bool max_length_is_set                          = false;
-    bool all_mps_have_been_written_to_hdf5          = false;
-    bool all_mpo_have_been_written_to_hdf5          = false;
-    bool all_env_have_been_written_to_hdf5          = false;
-    bool all_model_params_have_been_written_to_hdf5 = false;
-
-    bool energy_has_been_measured   = false;
-    bool variance_has_been_measured = false;
-    bool entropy_has_been_measured  = false;
+    bool energy_has_been_measured      = false;
+    bool variance_has_been_measured    = false;
+    bool entropy_has_been_measured     = false;
+    bool norm_has_been_measured        = false;
+    bool parity_has_been_measured      = false;
+    bool everything_has_been_measured  = false;
+    bool has_been_measured();
     void set_measured_true();
     void set_measured_false();
+    bool has_been_written();
+    void set_written_true();
+    void set_written_false();
 
 
 
-    size_t get_sweeps() const ;
+    int    get_sweeps() const ;
     void   increment_sweeps() {num_sweeps++;}
-    size_t reset_sweeps();
+    int    reset_sweeps();
 
 
-    size_t get_length() const;
-    size_t get_position() const;
+    int get_length() const;
+    int get_position() const;
 
 
     int get_direction() const;
@@ -97,6 +107,22 @@ public:
     auto & get_ENV_R() {return ENV_R;}
     auto & get_ENV2_L(){return ENV2_L;}
     auto & get_ENV2_R(){return ENV2_R;}
+
+    struct Measurements {
+        int    length                                   = 0;
+        std::vector<int> bond_dimensions                ;
+        double norm                                     = 0;
+        double energy_mpo, energy_per_site_mpo          = 0;
+        double energy_per_site_ham                      = 0;
+        double energy_variance_mpo                      = 0;
+        double energy_variance_per_site_mpo             = 0;
+        double spin_component_sx                                = 0;
+        double spin_component_sy                                = 0;
+        double spin_component_sz                                = 0;
+        std::vector<double> spin_components                       ;
+        std::vector<double> entanglement_entropies         ;
+    } measurements;
+
 
 };
 

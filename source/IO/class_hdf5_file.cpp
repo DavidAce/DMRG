@@ -3,14 +3,26 @@
 //
 //#include <directory.h>
 #include <gitversion.h>
+#include <spdlog/spdlog.h>
 #include <IO/class_hdf5_file.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 
-class_hdf5_file::class_hdf5_file(const std::string output_filename_, const std::string output_folder_, bool create_dir_, bool overwrite_, bool resume_){
+class_hdf5_file::class_hdf5_file(const std::string output_filename_, const std::string output_folder_, bool create_dir_, bool overwrite_,spdlog::level::level_enum lvl){
+    spdlog::set_level(lvl);
     output_filename = output_filename_;
     output_folder   = output_folder_;
     create_dir      = create_dir_;
     overwrite       = overwrite_;
-    resume          = resume_;
+    if (output_folder.empty()){
+        if(output_filename.is_relative()){
+            output_folder = fs::current_path();
+        }else if (output_filename.is_absolute()){
+            output_folder   = output_folder.stem();
+            output_filename = output_filename.filename();
+        }
+    }
+
+
   /*
   * Check if gzip compression is available and can be used for both
   * compression and decompression.  Normally we do not perform error
@@ -38,172 +50,170 @@ class_hdf5_file::class_hdf5_file(const std::string output_filename_, const std::
 
 }
 
+
+
+
 void class_hdf5_file::initialize(){
     set_output_file_path();
     plist_facc = H5Pcreate(H5P_FILE_ACCESS);
     plist_lncr = H5Pcreate(H5P_LINK_CREATE);   //Create missing intermediate group if they don't exist
     plist_xfer = H5Pcreate(H5P_DATASET_XFER);
+    plist_lapl = H5Pcreate(H5P_LINK_ACCESS);
     H5Pset_create_intermediate_group(plist_lncr, 1);
-    bool create;
-    if (overwrite and not resume){
-        create = true;
-    }else if (not overwrite and resume){
-        if (file_is_valid){
-            create = false;
-        }else{
-            std::cerr << "ERROR: File is invalid. Exiting." << std::endl;
-            exit(1);
-        }
-    }
-    else{
-        // The path is now a renamed path for safety
-        create = true;
-    }
+    H5T_COMPLEX_DOUBLE = H5Tcreate (H5T_COMPOUND, sizeof(H5T_COMPLEX_STRUCT));
+    H5Tinsert (H5T_COMPLEX_DOUBLE, "real", HOFFSET(H5T_COMPLEX_STRUCT,real), H5T_NATIVE_DOUBLE);
+    H5Tinsert (H5T_COMPLEX_DOUBLE, "imag", HOFFSET(H5T_COMPLEX_STRUCT,imag), H5T_NATIVE_DOUBLE);
 
-    if (create){
-        file = H5Fcreate(output_file_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, H5P_DEFAULT);
-        H5T_COMPLEX_DOUBLE = H5Tcreate (H5T_COMPOUND, sizeof(H5T_COMPLEX_STRUCT));
-        H5Tinsert (H5T_COMPLEX_DOUBLE, "real", HOFFSET(H5T_COMPLEX_STRUCT,real), H5T_NATIVE_DOUBLE);
-        H5Tinsert (H5T_COMPLEX_DOUBLE, "imag", HOFFSET(H5T_COMPLEX_STRUCT,imag), H5T_NATIVE_DOUBLE);
+
+    if (file_existed_already  and file_is_valid(output_file_full_path)){
+        spdlog::info("File existed already: {}", output_file_full_path.string());
+    }else if (overwrite){
+        hid_t file = H5Fcreate(output_file_full_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, plist_facc);
+        H5Fclose(file);
         //Put git revision in file attribute
         std::string gitversion = "Git branch: " + GIT::BRANCH + " | Commit hash: " + GIT::COMMIT_HASH + " | Revision: " + GIT::REVISION;
         write_attribute_to_file(gitversion, "GIT REVISION");
     }else{
-        file = H5Fopen(output_file_path.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+        spdlog::error("No preexisting hdf5 file found and/or no permissions overwrite it");
+        throw(std::logic_error("Failed to initialize hdf5 output file"));
     }
-//    H5Fflush(file,H5F_SCOPE_GLOBAL);
+}
+
+bool class_hdf5_file::file_is_valid(){
+    return file_is_valid(output_file_full_path);
+}
+
+bool class_hdf5_file::file_is_valid(fs::path some_hdf5_filename) {
+    if (fs::exists(some_hdf5_filename)){
+        if (H5Fis_hdf5(output_file_full_path.c_str()) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
+
+fs::path class_hdf5_file::get_new_filename(fs::path some_hdf5_filename){
+    int i=1;
+    while (fs::exists(some_hdf5_filename)){
+        some_hdf5_filename.replace_filename(some_hdf5_filename.stem().string() + "-" + std::to_string(i++) + some_hdf5_filename.extension().string() );
+    }
+    return some_hdf5_filename;
 }
 
 void class_hdf5_file::set_output_file_path() {
-//    if(output_folder.has_filename() and output_folder.has_extension()){output_folder.remove_filename();}
     fs::path current_folder    = fs::current_path();
     fs::path output_folder_abs = fs::system_complete(output_folder);
-    std::cout << "output_folder     = " << output_folder << std::endl;
-    std::cout << "output_folder_abs = " << output_folder_abs << std::endl;
-    std::cout << "output_filename   = " << output_filename << std::endl;
-
-      //Create directory if create_dir == true, always relative to executable
-    if(create_dir) {
-        if (fs::create_directories(output_folder_abs)){
-            output_folder_abs = fs::canonical(output_folder_abs);
-            std::cout << "Created directory: " <<  output_folder_abs << std::endl;
+    spdlog::debug("output_folder     : {}", output_folder.string() );
+    spdlog::debug("output_folder_abs : {}", output_folder_abs.string() );
+    spdlog::debug("output_filename   : {}", output_filename.string() );
+    output_file_full_path = fs::system_complete(output_folder_abs / output_filename);
+    if(file_is_valid(output_file_full_path)){
+        //If we are here, the file exists in the given folder. Then we have two options:
+        // 1) If we are allowed to overwrite, we do not modify the file name
+        // 2) If we are not allowed to overwrite, find a new suitable file name
+        output_file_full_path = fs::canonical(output_file_full_path);
+        file_existed_already = true;
+        spdlog::info("File already exists: {}", output_file_full_path.string());
+        if(overwrite){
+            return;
         }else{
-            output_folder_abs = fs::canonical(output_folder_abs);
-            std::cout << "Directory already exists: " <<  output_folder_abs << std::endl;
+            output_file_full_path =  get_new_filename(output_file_full_path);
+            spdlog::info("Renamed output file: {} ---> {}", output_filename.string(),output_file_full_path.filename().string());
+            return;
         }
-    }
+    }else {
+        // If we are here, the file does not exist in the given folder. Then we have two options:
+        // 1 ) If the given folder exists, just use the current filename.
+        // 2 ) If the given folder doesn't exist, check the option "create_dir":
+        //      a) Create dir and file in it
+        //      b) Exit with an error
 
-    //Now the output_folder_abs may or may not exist
-    //Now the output_file may or may not exist
-
-    //If the folder exists use it.
-    output_file_path = fs::system_complete(output_folder_abs / output_filename);
-    if (fs::exists(output_folder_abs)) {
-        if(fs::exists(output_file_path)) {
-            output_file_path = fs::canonical(output_file_path);
-            std::cout << "File already exists: " << output_file_path << std::endl;
-            if(H5Fis_hdf5(output_file_path.c_str()) > 0){
-                file_is_valid = true;
+        if(fs::exists(output_folder_abs)){
+            return;
+        }else{
+            if(create_dir){
+                if (fs::create_directories(output_folder_abs)){
+                    output_folder_abs = fs::canonical(output_folder_abs);
+                    spdlog::info("Created directory: {}",output_folder_abs.string());
+                }else{
+                    spdlog::critical("Failed to create directory: {}", output_folder_abs.string());
+                    exit(1);
+                }
             }else{
-                std::cerr <<  "WARNING: File is invalid!"<< std::endl;
-                file_is_valid = false;
-            }
-
-            if (overwrite and not resume) {
-                std::cout << "Overwrite mode is TRUE." << std::endl;
-                return;
-            }else if(not overwrite and resume and file_is_valid){
-                std::cout << "Resume mode is TRUE." << std::endl;
-                return;
-            }
-
-            else{
-                if(overwrite and resume) {
-                    std::cerr << "Warning: Can't both overwrite and resume. Renaming file for safety." << std::endl;
-                }
-                int i = 1;
-                while (fs::exists(output_file_path)){
-                    output_file_path.replace_filename(output_filename.stem().string() + "-" + std::to_string(i++) + output_filename.extension().string() );
-                }
-                std::cout << "Renamed output file: " << output_filename << "  -->  " << output_file_path.filename() << std::endl;
-                return;
+                spdlog::critical("Target folder does not exist and creation of directory is disabled in settings");
+                exit(1);
             }
         }
-        std::cout << "Creating new file: " << output_file_path << std::endl;
-        return;
-    }
-    else{
-        std::cout << "Output folder does not exist in the given path: " << output_folder_abs << std::endl;
-    }
-
-    //Now the output_folder_abs definitely does not exist in the given path
-    //As a last resort, try finding the output folder somewhere inside the project root folder, excluding .git/ and libs/ and docs/
-//    std::cout << "Searching recursively for folder " <<  output_folder_abs.stem() << " in project root directory..." << std::endl;
-//    for(auto& p: fs::recursive_directory_iterator(current_folder)) {
-//        if (p.path().has_filename() and p.path().has_extension()){continue;}
-//        fs::path trimmed_path =  p.path().string().substr(p.path().string().find(current_folder) + current_folder.string().size());
-//        if (trimmed_path.string().find(std::string(".git")) != std::string::npos){continue;}
-//        if (trimmed_path.string().find(std::string("libs")) != std::string::npos){continue;}
-//        if (trimmed_path.string().find(std::string("docs")) != std::string::npos){continue;}
-//        if (trimmed_path.string().find(std::string("cmake")) != std::string::npos){continue;}
-//        if (trimmed_path.string().find(std::string("build")) != std::string::npos){continue;}
-//        if (trimmed_path.string().find(std::string("backup")) != std::string::npos){continue;}
-//        if (trimmed_path.string().find(std::string("source")) != std::string::npos){continue;}
-//        if (p.path().stem() == output_folder_abs.stem())  {
-//            std::cout << "Found output folder: " << p.path() << std::endl;
-//            output_folder_abs = p.path();
-//            output_file_path = fs::system_complete(output_folder_abs / output_filename);
-//            break;
-//        }
-//    }
 
 
-    // If you are here the given path to the file doesn't exist.
-    // The reason could be that
-    if(fs::exists(output_file_path)) {
-        output_file_path = fs::canonical(output_file_path);
-        std::cout << "File exists already: " << output_file_path << std::endl;
-        if (overwrite and not resume) {
-            std::cout << "Overwrite mode is TRUE." << std::endl;
-            return;
-        }else if(not overwrite and resume){
-            std::cout << "Resume mode is TRUE." << std::endl;
-            return;
-        }
-
-        else{
-            if(overwrite and resume) {
-                std::cerr << "Warning: Can't both overwrite and resume. Renaming file for safety." << std::endl;
+        //Create directory if create_dir == true, always relative to executable
+        if(create_dir) {
+            if (fs::create_directories(output_folder_abs)){
+                spdlog::info("Created directory: {}",output_folder_abs.string());
+            }else{
+                spdlog::info("Directory already exists: {}",output_folder_abs.string());
             }
-            int i = 1;
-            while (fs::exists(output_file_path)){
-                output_file_path.replace_filename(output_filename.stem().string() + "-" + std::to_string(i++) + output_filename.extension().string() );
-            }
-            std::cout << "Renamed output file: " << output_filename << "  -->  " << output_file_path.filename() << std::endl;
+            output_folder_abs     = fs::canonical(output_folder_abs);
+            output_file_full_path = fs::system_complete(output_folder_abs / output_filename);
             return;
         }
     }
+
+
 }
 
-bool class_hdf5_file::check_link_exists_recursively(std::string path){
+//bool class_hdf5_file::check_link_exists_recursively(std::string path){
+//    std::stringstream path_stream(path);
+//    std::vector<std::string> split_path;
+//    std::string part;
+//    while(std::getline(path_stream, part, '/')){
+//        split_path.push_back(part);
+//    }
+//    bool exists = true;
+//    part.clear();
+//    std::cout << "Searching for path: " << path << std::endl;
+//    for(unsigned long i = 0; i < split_path.size(); i++){
+//        part += "/" + split_path[i];
+//        std::cout << "   Looking for part: " << part << std::endl;
+//        exists = exists and H5Lexists(file, part.c_str(), H5P_DEFAULT);
+//        if (not exists){break;}
+//    }
+//    return exists;
+//}
+
+bool class_hdf5_file::check_link_exists_recursively(hid_t file, std::string path){
     std::stringstream path_stream(path);
     std::vector<std::string> split_path;
     std::string part;
     while(std::getline(path_stream, part, '/')){
-        split_path.push_back(part);
+        if (not part.empty()) {
+            split_path.push_back(part);
+        }
     }
+//    std::cout << "split into: \n";
+//    for(auto & str : split_path) std::cout << " " << str << std::endl;
+
     bool exists = true;
-    part.clear();
+    std::string sum_parts;
+//    std::cout << "Searching for path: " << path << std::endl;
     for(unsigned long i = 0; i < split_path.size(); i++){
-        part += "/" + split_path[i];
-        exists = exists and H5Lexists(file, part.c_str(), H5P_DEFAULT);
+        sum_parts += "/" + split_path[i] ;
+//        std::cout << "   Looking for part: " << sum_parts << " H5Lexists: "<< H5Lexists(file, sum_parts.c_str(), H5P_DEFAULT) << std::endl;
+        exists = exists and H5Lexists(file, sum_parts.c_str(), H5P_DEFAULT) > 0;
         if (not exists){break;}
+//        else if (i < split_path.size()-1){print_contents_of_group(sum_parts);}
     }
+//    if (not exists){std::cerr << "   Could not find: " << path << std::endl;}
     return exists;
 }
 
 
-bool class_hdf5_file::check_if_attribute_exists(const std::string &link_name, const std::string &attribute_name){
+
+
+bool class_hdf5_file::check_if_attribute_exists(hid_t file,const std::string &link_name, const std::string &attribute_name){
     hid_t dataset      = H5Dopen(file, link_name.c_str(), H5P_DEFAULT);
     bool exists = false;
     unsigned int num_attrs = H5Aget_num_attrs(dataset);
@@ -235,8 +245,8 @@ bool class_hdf5_file::check_if_attribute_exists(const std::string &link_name, co
 }
 
 
-void class_hdf5_file::create_dataset_link(const DatasetProperties &props){
-    if (not check_link_exists_recursively(props.dset_name)){
+void class_hdf5_file::create_dataset_link(hid_t file, const DatasetProperties &props){
+    if (not check_link_exists_recursively(file,props.dset_name)){
         hid_t dataspace = get_DataSpace_unlimited(props.ndims);
         hid_t dset_cpl  = H5Pcreate(H5P_DATASET_CREATE);
         H5Pset_layout(dset_cpl, H5D_CHUNKED);
@@ -257,11 +267,24 @@ void class_hdf5_file::create_dataset_link(const DatasetProperties &props){
 
 void class_hdf5_file::create_group_link(const std::string &group_relative_name) {
     //Check if group exists already
-    if (not check_link_exists_recursively(group_relative_name)) {
-        hid_t group = H5Gcreate(file, group_relative_name.c_str(), plist_lncr, H5P_DEFAULT, H5P_DEFAULT);
-        H5Gclose(group);
-
+    hid_t file = open_file();
+    spdlog::trace("Creating group link: {}", group_relative_name);
+    std::stringstream path_stream(group_relative_name);
+    std::vector<std::string> split_path;
+    std::string head;
+    std::string stem = "/";
+    while(std::getline(path_stream, head, '/')){
+        split_path.push_back(stem + head);
+        stem += head + "/";
     }
+
+    for(auto &group_name : split_path){
+        if (not check_link_exists_recursively(file,group_name)) {
+            hid_t group = H5Gcreate(file, group_name.c_str(), plist_lncr, H5P_DEFAULT, H5P_DEFAULT);
+            H5Gclose(group);
+        }
+    }
+    H5Fclose(file);
 }
 
 void class_hdf5_file::select_hyperslab(const hid_t &filespace, const hid_t &memspace){
@@ -277,8 +300,8 @@ void class_hdf5_file::select_hyperslab(const hid_t &filespace, const hid_t &mems
     H5Sselect_hyperslab(filespace, H5S_SELECT_SET, start.data(), nullptr, mem_dims.data(), nullptr);
 }
 
-void class_hdf5_file::set_extent_dataset(const DatasetProperties &props){
-    if (check_link_exists_recursively(props.dset_name)) {
+void class_hdf5_file::set_extent_dataset(hid_t file,const DatasetProperties &props){
+    if (check_link_exists_recursively(file,props.dset_name)) {
         hid_t dataset = H5Dopen(file, props.dset_name.c_str(), H5P_DEFAULT);
         H5Dset_extent(dataset, props.dims.data());
         H5Dclose(dataset);
@@ -288,7 +311,7 @@ void class_hdf5_file::set_extent_dataset(const DatasetProperties &props){
     }
 }
 
-void class_hdf5_file::extend_dataset(const std::string & dataset_relative_name, const int dim, const int extent){
+void class_hdf5_file::extend_dataset(hid_t file, const std::string & dataset_relative_name, const int dim, const int extent){
     if (H5Lexists(file, dataset_relative_name.c_str(), H5P_DEFAULT)) {
         hid_t dataset = H5Dopen(file, dataset_relative_name.c_str(), H5P_DEFAULT);
         // Retrieve the current size of the memspace (act as if you don't know it's size and want to append)
@@ -305,4 +328,33 @@ void class_hdf5_file::extend_dataset(const std::string & dataset_relative_name, 
         H5Fflush(file,H5F_SCOPE_LOCAL);
     }
 
+}
+
+
+herr_t
+file_info(hid_t loc_id, const char *name, const H5L_info_t *linfo, void *opdata)
+{
+    try{
+//        hid_t group = H5Gopen2(loc_id, name, H5P_DEFAULT);
+        std::cout << "Name : " << name << std::endl; // Display the group name.
+//        H5Gclose(group);
+
+    }catch(...){
+        throw(std::logic_error("Not a group: " + std::string(name)));
+    }
+    return 0;
+}
+std::vector<std::string> class_hdf5_file::print_contents_of_group(std::string group_name){
+    hid_t file = open_file();
+    spdlog::trace("Printing contents of group: {}",group_name);
+    try{
+        herr_t idx = H5Literate_by_name (file, group_name.c_str(), H5_INDEX_NAME,
+                                         H5_ITER_NATIVE, NULL, file_info, NULL,
+                                         H5P_DEFAULT);
+    }
+    catch(std::exception &ex){
+        spdlog::debug("Failed to get contents --  {}",ex.what());
+    }
+    H5Fclose(file);
+    return std::vector<std::string>();
 }

@@ -51,8 +51,10 @@ public:
     void set_mps(const Eigen::Tensor<Scalar,3> &G_, const Eigen::Tensor<Scalar,1> &L_){G = G_; L = L_;}
     void set_L(const Eigen::Tensor<Scalar,1> &L_){L=L_;}
     void set_G(const Eigen::Tensor<Scalar,3> &G_){G=G_;}
-    auto &get_G() const {return std::as_const(G);}
-    auto &get_L() const {return std::as_const(L);}
+    const auto &get_G() const {return std::as_const(G);}
+    const auto &get_L() const {return std::as_const(L);}
+    auto &get_G() {return G;}
+    auto &get_L() {return L;}
     auto ref_A() const  {return Textra::asDiagonal(L).contract(G, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});}
     auto ref_B() const  {return G.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));}
     Eigen::Tensor<Scalar,3> get_A()  const  {return Textra::asDiagonal(L).contract(G, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});}
@@ -70,7 +72,7 @@ public:
 private:
     Eigen::Tensor<Scalar,3> G;                  /*!< \f$\Gamma \f$*/
     Eigen::Tensor<Scalar,1> L;                  /*!< \f$\Lambda\f$*/
-    long position = 0;
+    size_t position = 0;
 
 };
 

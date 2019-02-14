@@ -104,7 +104,7 @@ using namespace Textra;
 //
 //
 //
-//double MPS_Tools::Infinite::Measure::energy_ham(const class_superblock & superblock){
+//double MPS_Tools::Infinite::Measure::energy_per_site_ham(const class_superblock & superblock){
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
 //    auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
 //    auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
@@ -133,7 +133,7 @@ using namespace Textra;
 //}
 //
 //
-//double MPS_Tools::Infinite::Measure::energy_mom(const class_superblock & superblock){
+//double MPS_Tools::Infinite::Measure::energy_per_site_mom(const class_superblock & superblock){
 ////    t_var_gen.tic();
 //    Scalar a  = (0.0 + 1.0i) *5e-3;
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -159,14 +159,14 @@ using namespace Textra;
 //}
 //
 //
-//double MPS_Tools::Infinite::Measure::energy_variance_mpo(const class_superblock &superblock) {
+//double MPS_Tools::Infinite::Measure::energy_variance_per_site_mpo(const class_superblock &superblock) {
 //
 //    double VarE  = MPS_Tools::Finite::Measure::energy_variance(superblock);
 //    double L     = MPS_Tools::Finite::Measure::length(superblock);
 //    return VarE/L;
 //}
 //
-//double MPS_Tools::Infinite::Measure::energy_variance_ham(const class_superblock &superblock) {
+//double MPS_Tools::Infinite::Measure::energy_variance_per_site_ham(const class_superblock &superblock) {
 ////    t_var_ham.tic();
 //    using namespace MPS_Tools::Common::Views;
 //
@@ -308,7 +308,7 @@ using namespace Textra;
 //
 //
 //
-//double MPS_Tools::Infinite::Measure::energy_variance_mom(const class_superblock &superblock){
+//double MPS_Tools::Infinite::Measure::energy_variance_per_site_mom(const class_superblock &superblock){
 ////    t_var_gen.tic();
 //    Scalar a  = (0.0 + 1.0i) *5e-3;
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);

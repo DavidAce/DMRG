@@ -20,23 +20,25 @@ public:
     Eigen::MatrixXcd h_evn;
     Eigen::MatrixXcd h_odd;
 
-    size_t    max_steps    ;
-    double phys_time = 0;
-    double delta_t   = 0; //Make sure this one gets initialized to delta_t0!
-    double delta_t0     ;
-    double delta_tmin   ;
-    size_t suzuki_order ;
-    bool   time_step_has_converged;
+
 
     void run()                                          override;
+    void run_simulation()                               override;
+    void run_preprocessing()                            override;
+    void run_postprocessing()                           override;
     void single_TEBD_step(long chi_max);
-    void initialize_constants()                         override;
+//    void initialize_constants()                         override;
     void check_convergence_time_step();
-    void check_convergence()                        override;
+    void check_convergence()                            override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
-    void store_table_entry_to_file(bool force = false)  override;
-
+    void store_state_to_file(bool force = false)        override;
+    void store_progress_to_file(bool force = false)     override;
+    long   chi_max()                                    override;
+    int    num_sites()                                  override;
+    int    store_freq()                                 override;
+    int    print_freq()                                 override;
+    bool   chi_grow()                                   override;
 };
 
 

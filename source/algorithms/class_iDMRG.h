@@ -20,13 +20,19 @@ public:
 
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_idmrg;
 
-    size_t    max_steps  ;
     void run()                                          override;
-    void initialize_constants()                         override;
+    void run_simulation()                               override;
+    void run_preprocessing()                            override;
+    void run_postprocessing()                           override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
-    void store_table_entry_to_file(bool force = false)  override;
-
+    void store_state_to_file(bool force = false)        override;
+    void store_progress_to_file(bool force = false)     override;
+    long   chi_max()                                    override;
+    int    num_sites()                                  override;
+    int    store_freq()                                 override;
+    int    print_freq()                                 override;
+    bool   chi_grow()                                   override;
 };
 
 

@@ -7,6 +7,7 @@
 
 #include <chrono>
 #include <iostream>
+
 class class_custom_cout
 {
 public:
@@ -22,7 +23,7 @@ public:
 
     template <typename T>
     class_custom_cout &operator<<(const T &a) {
-        if (temp_verbosity <= verbosity) {
+        if (temp_verbosity >= verbosity) {
             os << a;
         }else{
             os.clear();

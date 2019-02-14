@@ -9,6 +9,7 @@
 #include <memory>
 #include <general/class_tic_toc.h>
 #include <general/nmspc_eigsolver_props.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 class class_mps_2site;
 class class_hamiltonian_base;
 class class_environment;
@@ -23,28 +24,33 @@ template<typename Scalar> class class_SVD;
 
 
 class class_superblock {
+private:
+
 public:
     using Scalar = std::complex<double>;
-public:
 
-    class_superblock();
-    ~class_superblock();
+    class_superblock(SimulationType sim_type_);
+//    ~class_superblock();
 
+    void clear();
+    SimulationType sim_type;
 
-    std::unique_ptr<class_mps_2site>         MPS;        /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
-    std::unique_ptr<class_hamiltonian_base>  HA;
-    std::unique_ptr<class_hamiltonian_base>  HB;
-    std::unique_ptr<class_environment>       Lblock;     /*!< Left  environment block. */
-    std::unique_ptr<class_environment>       Rblock;     /*!< Right environment block. */
-    std::unique_ptr<class_environment_var>   Lblock2;    /*!< Left  environment block used for variance calculation */
-    std::unique_ptr<class_environment_var>   Rblock2;    /*!< Right environment block used for variance calculation */
-    std::unique_ptr<class_SVD<Scalar>>       SVD;
+    std::shared_ptr<class_mps_2site>         MPS;        /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
+    std::shared_ptr<class_hamiltonian_base>  HA;
+    std::shared_ptr<class_hamiltonian_base>  HB;
+    std::shared_ptr<class_environment>       Lblock;     /*!< Left  environment block. */
+    std::shared_ptr<class_environment>       Rblock;     /*!< Right environment block. */
+    std::shared_ptr<class_environment_var>   Lblock2;    /*!< Left  environment block used for variance calculation */
+    std::shared_ptr<class_environment_var>   Rblock2;    /*!< Right environment block used for variance calculation */
+    std::shared_ptr<class_SVD<Scalar>>       SVD;
 
 
     double E_optimal;                                    /*!< Stores the energy obtained in the eigenvalue solver. This energy corresponds to non-truncated MPS, so it will differ a tiny bit from what you see in final resuls. */
     unsigned long    environment_size = 0;
-    int              spin_dimension;
+    size_t           spin_dimension;
+
     size_t get_length() const;
+
     Eigen::Tensor<Scalar, 4>
     optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR
     )    __attribute((hot));                            /*!< Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using [Spectra](https://github.com/yixuan/spectra). */
@@ -105,15 +111,34 @@ public:
     void swap_AB();                                     /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
 
 
+    void do_all_measurements();
+    void set_not_measured();
+    bool has_been_measured = false;
+    bool has_been_written  = false;
+    struct Measurements {
+        size_t length                                   = 0;
+        size_t bond_dimension                           = 0;
+        double norm                                     = 0;
+        double truncation_error                         = 0;
+        double energy_mpo, energy_per_site_mpo          = 0;
+        double energy_variance_mpo                      = 0;
+        double energy_per_site_ham                      = 0;
+        double energy_per_site_mom                      = 0;
+        double energy_variance_per_site_mpo             = 0;
+        double energy_variance_per_site_ham             = 0;
+        double energy_variance_per_site_mom             = 0;
+        double current_entanglement_entropy             = 0;
+    } measurements;
+
+
     //Profiling
     class_tic_toc t_eig;
-
     class_tic_toc t_ene_mpo;
     class_tic_toc t_ene_ham;
-    class_tic_toc t_ene_gen;
+    class_tic_toc t_ene_mom;
     class_tic_toc t_var_mpo;
     class_tic_toc t_var_ham;
-    class_tic_toc t_var_gen;
+    class_tic_toc t_var_mom;
     class_tic_toc t_entropy;
     class_tic_toc t_temp1;
     class_tic_toc t_temp2;

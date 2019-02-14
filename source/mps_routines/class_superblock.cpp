@@ -6,6 +6,7 @@
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 #include <mps_routines/class_mps_2site.h>
+#include <mps_routines/nmspc_mps_tools.h>
 #include <iomanip>
 #include <general/class_svd_wrapper.h>
 #include <sim_parameters/nmspc_sim_settings.h>
@@ -17,21 +18,23 @@ using namespace std;
 using namespace Textra;
 using Scalar = class_superblock::Scalar;
 
-class_superblock::class_superblock():
-        MPS(std::make_unique<class_mps_2site>()),
+class_superblock::class_superblock(SimulationType sim_type_):
+        sim_type(sim_type_),
+        MPS(std::make_shared<class_mps_2site>()),
         HA (class_hamiltonian_factory::create_mpo(settings::model::model_type)),
         HB (class_hamiltonian_factory::create_mpo(settings::model::model_type)),
-        Lblock(std::make_unique<class_environment>("L")),
-        Rblock(std::make_unique<class_environment>("R")),
-        Lblock2(std::make_unique<class_environment_var>("L")),
-        Rblock2(std::make_unique<class_environment_var>("R")),
-        SVD(std::make_unique<class_SVD<Scalar>>())
+        Lblock(std::make_shared<class_environment>("L")),
+        Rblock(std::make_shared<class_environment>("R")),
+        Lblock2(std::make_shared<class_environment_var>("L")),
+        Rblock2(std::make_shared<class_environment_var>("R")),
+        SVD(std::make_shared<class_SVD<Scalar>>())
 {
     HA->set_position(0);
     HB->set_position(1);
     t_eig.set_properties(profile_optimization, 10,"Time optimizing ");
     spin_dimension = HA->get_spin_dimension();
     MPS->initialize(spin_dimension);
+    set_profiling_labels();
 }
 
 
@@ -43,8 +46,14 @@ class_superblock::class_superblock():
 // This allows us to forward declare the abstract base class "class_hamiltonian_base"
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_superblock::~class_superblock()=default;
+//class_superblock::~class_superblock()=default;
 
+
+
+
+void class_superblock::clear(){
+    *this = class_superblock(sim_type);
+}
 
 
 size_t class_superblock::get_length() const {
@@ -68,8 +77,8 @@ Eigen::Tensor<Scalar,4> class_superblock::optimize_MPS(Eigen::Tensor<Scalar, 4> 
     t_eig.tic();
     int nev = 1;
     using namespace settings::precision;
-    class_eigsolver_arpack<Scalar, eigsolver_properties::Form::GENERAL> solver(eigThreshold,eigMaxIter,eigMaxNcv, true, false);
-    solver.optimize_mps(Lblock->block.data(), Rblock->block.data(), HA->MPO.data(), HB->MPO.data(), shape_theta4, shape_mpo4, nev, eigMaxNcv, ritz , false ,theta.data());
+    class_eigsolver_arpack<Scalar, eigsolver_properties::Form::GENERAL> solver(eigThreshold,eigMaxIter,eigMaxNcv, true, true);
+    solver.optimize_mps(Lblock->block.data(), Rblock->block.data(), HA->MPO.data(), HB->MPO.data(), shape_theta4, shape_mpo4, nev, eigMaxNcv, ritz , true ,theta.data());
 
     Eigen::TensorMap<const Eigen::Tensor<const Scalar,2>> eigvecs (solver.ref_eigvecs().data(), shape_theta4[0]*shape_theta4[1], shape_theta4[2]*shape_theta4[3]);
     Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>> eigvals (solver.ref_eigvals().data(), nev);
@@ -137,7 +146,8 @@ Eigen::Tensor<Scalar, 4> class_superblock::evolve_MPS(const Eigen::Tensor<Scalar
 Eigen::Tensor<Scalar,4> class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta,long chi_, double SVDThreshold){
     SVD->setThreshold(SVDThreshold);
     auto[U, S, V] = SVD->schmidt(theta,chi_);
-    MPS->truncation_error = SVD->get_truncation_error();
+    MPS->truncation_error         = SVD->get_truncation_error();
+    measurements.truncation_error = SVD->get_truncation_error();
     MPS->LC  = S;
     Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(MPS->MPS_A->get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
     Eigen::Tensor<Scalar,3> V_L = V.contract(asDiagonalInversed(MPS->MPS_B->get_L()), idx({2},{0}));
@@ -333,15 +343,15 @@ void class_superblock::enlarge_environment(int direction){
     if (direction == 1){
         assert(Lblock->get_position()  == HA->get_position());
         assert(Lblock2->get_position() == HA->get_position());
-        Lblock->enlarge(MPS,  HA->MPO_reduced_view());
-        Lblock2->enlarge(MPS, HA->MPO_reduced_view());
+        Lblock->enlarge(*MPS,  HA->MPO_reduced_view());
+        Lblock2->enlarge(*MPS, HA->MPO_reduced_view());
         Lblock->set_position (HB->get_position());
         Lblock2->set_position(HB->get_position());
     }else if (direction == -1){
         assert(Rblock->get_position()  == HB->get_position());
         assert(Rblock2->get_position() == HB->get_position());
-        Rblock->enlarge(MPS,  HB->MPO_reduced_view());
-        Rblock2->enlarge(MPS, HB->MPO_reduced_view());
+        Rblock->enlarge(*MPS,  HB->MPO_reduced_view());
+        Rblock2->enlarge(*MPS, HB->MPO_reduced_view());
         Rblock->set_position (HA->get_position());
         Rblock2->set_position(HA->get_position());
     }else if(direction == 0){
@@ -349,10 +359,10 @@ void class_superblock::enlarge_environment(int direction){
 //        assert(Lblock2->get_position() == HA->get_position());
 //        assert(Rblock->get_position()  == HB->get_position());
 //        assert(Rblock2->get_position() == HB->get_position());
-        Lblock->enlarge(MPS,  HA->MPO_reduced_view());
-        Rblock->enlarge(MPS,  HB->MPO_reduced_view());
-        Lblock2->enlarge(MPS, HA->MPO_reduced_view());
-        Rblock2->enlarge(MPS, HB->MPO_reduced_view());
+        Lblock->enlarge(*MPS,  HA->MPO_reduced_view());
+        Rblock->enlarge(*MPS,  HB->MPO_reduced_view());
+        Lblock2->enlarge(*MPS, HA->MPO_reduced_view());
+        Rblock2->enlarge(*MPS, HB->MPO_reduced_view());
 
         Lblock->set_position (HB->get_position());
         Rblock->set_position (HB->get_position()+1);
@@ -390,9 +400,68 @@ void class_superblock::set_superblock(
     Rblock2->block = Rblock2_;
 }
 
+void class_superblock::set_not_measured(){
+    has_been_measured = false;
+    has_been_written  = false;
+}
+
+void class_superblock::do_all_measurements() {
+    using namespace MPS_Tools::Common;
+    if (has_been_measured){return;}
+    measurements.length                         = Measure::length(*this);
+    measurements.bond_dimension                 = Measure::bond_dimension(*this);
+    measurements.norm                           = Measure::norm(*this);
+//    measurements.truncation_error               = Measure::truncation_error(*this);
+    measurements.energy_mpo                     = Measure::energy_mpo(*this);  //This number is needed for variance calculation!
+    measurements.energy_per_site_mpo            = Measure::energy_per_site_mpo(*this);
+    measurements.energy_per_site_ham            = Measure::energy_per_site_ham(*this);
+    measurements.energy_variance_mpo            = Measure::energy_variance_mpo(*this, measurements.energy_mpo);
+    measurements.energy_variance_per_site_mpo   = Measure::energy_variance_per_site_mpo(*this, measurements.energy_mpo);
+    measurements.energy_variance_per_site_ham   = Measure::energy_variance_per_site_ham(*this);
+    measurements.energy_variance_per_site_mom   = Measure::energy_variance_per_site_mom(*this);
+    measurements.current_entanglement_entropy   = Measure::current_entanglement_entropy(*this);
+    has_been_measured = true;
+}
+
 
 
 void  class_superblock::swap_AB(){
     MPS->swap_AB();
 }
 
+
+// Profiling
+
+void class_superblock::set_profiling_labels() {
+    using namespace settings::profiling;
+    t_ene_mpo.set_properties(on, precision,"↳ Energy (MPO)           ");
+    t_ene_ham.set_properties(on, precision,"↳ Energy (HAM)           ");
+    t_ene_mom.set_properties(on, precision,"↳ Energy (MOM)           ");
+    t_var_mpo.set_properties(on, precision,"↳ Variance (MPO)         ");
+    t_var_ham.set_properties(on, precision,"↳ Variance (HAM)         ");
+    t_var_mom.set_properties(on, precision,"↳ Variance (MOM)         ");
+    t_entropy.set_properties(on, precision,"↳ Ent. Entropy           ");
+    t_temp1.set_properties(on, precision,  "↳ Temp1                  ");
+    t_temp2.set_properties(on, precision,  "↳ Temp2                  ");
+    t_temp3.set_properties(on, precision,  "↳ Temp3                  ");
+    t_temp4.set_properties(on, precision,  "↳ Temp4                  ");
+
+}
+
+void class_superblock::print_profiling(class_tic_toc &t_parent){
+    if (settings::profiling::on) {
+        std::cout << "\nComputing observables breakdown:" << std::endl;
+        std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
+        t_ene_mpo.print_time_w_percent(t_parent);
+        t_ene_ham.print_time_w_percent(t_parent);
+        t_ene_mom.print_time_w_percent(t_parent);
+        t_var_mpo.print_time_w_percent(t_parent);
+        t_var_ham.print_time_w_percent(t_parent);
+        t_var_mom.print_time_w_percent(t_parent);
+        t_entropy.print_time_w_percent(t_parent);
+        t_temp1.print_time_w_percent(t_parent);
+        t_temp2.print_time_w_percent(t_parent);
+        t_temp3.print_time_w_percent(t_parent);
+        t_temp4.print_time_w_percent(t_parent);
+    }
+}
