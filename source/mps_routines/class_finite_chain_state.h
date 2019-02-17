@@ -78,8 +78,9 @@ public:
     int    reset_sweeps();
 
 
-    int get_length() const;
+    size_t get_length() const;
     int get_position() const;
+    void set_positions();
 
 
     int get_direction() const;

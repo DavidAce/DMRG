@@ -13,6 +13,20 @@
 
 using Scalar         = std::complex<double>;
 
+void MPS_Tools::Finite::Print::print_full_state(const class_finite_chain_state &state) {
+    for (auto & mps : state.get_MPS_L()){
+        std::cout << "MPS " << mps.get_position() << "  :\n";
+        std::cout << "  L:\n"<< mps.get_L() << '\n';
+        std::cout << "  G:\n"<< mps.get_G() << '\n';
+    }
+    std::cout << "  LC:\n"<< state.get_MPS_C();
+    for (auto & mps : state.get_MPS_R()){
+        std::cout << "MPS " << mps.get_position() << "  :\n";
+        std::cout << "  G:\n"<< mps.get_G() << '\n';
+        std::cout << "  L:\n"<< mps.get_L() << '\n';
+    }
+}
+
 
 
 void MPS_Tools::Finite::Print::print_state(const class_finite_chain_state &state){
@@ -24,9 +38,11 @@ void MPS_Tools::Finite::Print::print_state(const class_finite_chain_state &state
 
     int i = 0;
     std::cout << std::setprecision(10);
-    std::cout << " | Storage length: " << MPS_L.size() + MPS_R.size()
-              << " | Particles in environment: " << ENV_L.back().size + ENV_R.front().size
-              << std::endl;
+    std::cout << "State length              : " << state.get_length() << std::endl;
+    std::cout << "State position            : "    << state.get_position() << std::endl;
+    std::cout << "Environment L size        : "    << ENV_L.size() << std::endl;
+    std::cout << "Environment R size        : "    << ENV_R.size() << std::endl;
+
     if(!ENV_L.empty()){std::cout << "ENV_L[" << std::setw(3) << ENV_L.size()-1 << "]: " << ENV_L.back().block.dimensions() << " Particles: " << ENV_L.back().size << "  <--- Also current environment L" << std::endl;}
 
     for(auto &it : MPS_L){
@@ -61,9 +77,11 @@ void MPS_Tools::Finite::Print::print_state_compact(const class_finite_chain_stat
     auto & ENV_R  = state.get_ENV_R();
 
     std::cout << std::setprecision(10);
-    std::cout << " | Storage length: " << MPS_L.size() + MPS_R.size()
-              << " | Particles in environment: " << ENV_L.back().size + ENV_R.front().size
-              << std::endl;
+
+    std::cout << "State length              : "    << state.get_length() << std::endl;
+    std::cout << "State position            : "    << state.get_position() << std::endl;
+    std::cout << "Environment L size        : "    << ENV_L.size() << std::endl;
+    std::cout << "Environment R size        : "    << ENV_R.size() << std::endl;
     if(!ENV_L.empty()){std::cout << "ENV_L[" <<std::setw(3) << ENV_L.size()-1 << "]: " << ENV_L.back().block.dimensions() << " Particles: " << ENV_L.back().size << "  <--- Also current environment L" << std::endl;}
     if(!MPS_L.empty()){std::cout << "MPS_L[" <<std::setw(3) << MPS_L.size()-1 << "]: " << MPS_L.back().get_G().dimensions() <<  "   <--- Also current iteration A" << std::endl;}
     std::cout << "L[" << std::setw(3) << '*'  <<  "]: " << MPS_C.dimensions() << "                    <--- Center" << std::endl;

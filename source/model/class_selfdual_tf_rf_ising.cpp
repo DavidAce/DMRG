@@ -22,6 +22,48 @@ class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(): class_hamiltonian_base
     build_mpo();
 }
 
+
+void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4> MPO_, std::vector<double> parameters) {
+    MPO = MPO_;
+    set_hamiltonian(parameters);
+    auto mpo1 = Eigen::Map<const Eigen::VectorXcd>(MPO_.data(),MPO_.size());
+    auto mpo2 = Eigen::Map<const Eigen::VectorXcd>(MPO .data(),MPO .size());
+    assert(mpo1 == mpo2 and "MPO mismatch!");
+    if(mpo1 != mpo2)throw std::runtime_error("MPO mismatch");
+};
+
+void   class_selfdual_tf_rf_ising::set_hamiltonian(const std::vector<double> parameters) {
+    auto temp = Eigen::Map<const Eigen::VectorXd>(parameters.data(),parameters.size());
+    set_hamiltonian(temp);
+};
+
+
+void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::MatrixXd all_parameters, int position) {
+    set_hamiltonian (all_parameters.row(position));
+};
+
+
+void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::VectorXd parameters) {
+    if((int)parameters.size() != num_params ) throw std::runtime_error("Wrong number of parameters given to initialize this model");
+    assert((int)parameters.size() == num_params and "ERROR: wrong number of parameters given to initialize this model");
+    position       = parameters(0);
+    J_rnd          = parameters(1);
+    h_rnd          = parameters(2);
+    J_log_mean     = parameters(3);
+    h_log_mean     = parameters(4);
+    J_avg          = parameters(5);
+    h_avg          = parameters(6);
+    J_sigma        = parameters(7);
+    h_sigma        = parameters(8);
+    lambda         = parameters(9);
+    delta          = parameters(10);
+    e_reduced      = parameters(11);
+    spin_dim       = parameters(12);
+    build_mpo();
+};
+
+
+
 void class_selfdual_tf_rf_ising::set_realization_averages(double J_avg_,double h_avg_){
     J_avg=J_avg_;
     h_avg=h_avg_;
@@ -181,7 +223,8 @@ std::vector<double> class_selfdual_tf_rf_ising::get_parameter_values() const {
 }
 
 
-void   class_selfdual_tf_rf_ising::set_non_local_parameters(std::vector<std::vector<double>> &chain_parameters){
+
+void class_selfdual_tf_rf_ising::set_non_local_parameters(const std::vector<std::vector<double>> chain_parameters){
     // Calculate average J_rnd on the whole chain
     std::vector<double> J_rnd_vec;
     std::vector<double> h_rnd_vec;

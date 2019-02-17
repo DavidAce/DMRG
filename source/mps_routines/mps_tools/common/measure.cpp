@@ -131,7 +131,12 @@ double MPS_Tools::Common::Measure::norm(class_superblock & superblock){
     auto theta = MPS_Tools::Common::Views::get_theta(superblock);
     Eigen::Tensor<Scalar, 0> norm =
             theta.contract(theta.conjugate(), idx({1, 3, 0, 2}, {1, 3, 0, 2}));
-    return std::real(norm(0));
+    auto result = std::real(norm(0));
+    if(std::abs(result - 1.0) > 1e-10){
+        spdlog::critical("Norm too far from unity: {}", result);
+        throw std::runtime_error("Norm too far from unity: " + std::to_string(result));
+    }
+    return result;
 }
 
 
@@ -169,7 +174,10 @@ double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superbloc
                     .contract(superblock.HB->MPO,                        idx({3,1},{0,2}))
                     .contract(theta.conjugate(),                         idx({0,2,4},{1,0,2}))
                     .contract(superblock.Rblock->block,                  idx({0,2,1},{0,1,2}));
-    assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
+    if(abs(imag(E(0))) > 1e-10 ){
+        throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
+    }
+    assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part");
     return std::real(E(0)) ;
 }
 

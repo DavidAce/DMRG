@@ -522,7 +522,7 @@ void class_algorithm_base::initialize_state(std::string initial_state ) {
 
 
     if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
-        MPS_Tools::Finite::Chain::insert_superblock_to_chain(*state,*superblock);
+        MPS_Tools::Finite::Chain::insert_superblock_to_state(*state, *superblock);
     }else{
     }
 
@@ -536,8 +536,8 @@ void class_algorithm_base::initialize_state(std::string initial_state ) {
 
 void class_algorithm_base::reset_chain_mps_to_random_product_state(std::string parity) {
     spdlog::info("Resetting to random product state");
-
-    assert(state->get_length() == num_sites());
+    if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
+    assert(state->get_length() == (size_t)num_sites() and "ERROR: System size mismatch");
 
     sim_state.iteration = state->reset_sweeps();
 
@@ -578,7 +578,7 @@ void class_algorithm_base::reset_chain_mps_to_random_product_state(std::string p
         }
         //Get a properly normalized initial state.
         superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
-        MPS_Tools::Finite::Chain::copy_superblock_to_chain(*state,*superblock);
+        MPS_Tools::Finite::Chain::copy_superblock_to_state(*state, *superblock);
 //        state->print_storage();
         // It's important not to perform the last sim_state.step.
         if(sim_state.iteration > 1) {break;}
@@ -594,8 +594,9 @@ void class_algorithm_base::reset_chain_mps_to_random_product_state(std::string p
 void class_algorithm_base::set_random_fields_in_chain_mpo() {
     spdlog::info("Setting random fields in chain");
     rn::seed((unsigned long)settings::model::seed);
+    if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
+    assert(state->get_length() == (size_t)num_sites());
 
-    assert(state->get_length() == num_sites());
     std::vector<std::vector<double>> all_params;
     for (auto &mpo : state->get_MPO_L()){
         mpo->randomize_hamiltonian();
@@ -654,35 +655,35 @@ void class_algorithm_base::swap(){
 void class_algorithm_base::insert_superblock_to_chain() {
     spdlog::trace("Insert superblock into chain");
     t_ste.tic();
-    MPS_Tools::Finite::Chain::insert_superblock_to_chain(*state,*superblock);
+    MPS_Tools::Finite::Chain::insert_superblock_to_state(*state, *superblock);
     t_ste.toc();
 }
 
 void class_algorithm_base::copy_superblock_mps_to_chain(){
     spdlog::trace("Copy superblock mps to chain");
     t_ste.tic();
-    MPS_Tools::Finite::Chain::copy_superblock_mps_to_chain(*state,*superblock);
+    MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(*state, *superblock);
     t_ste.toc();
 }
 
 void class_algorithm_base::copy_superblock_mpo_to_chain(){
     spdlog::trace("Copy superblock mpo to chain");
     t_ste.tic();
-    MPS_Tools::Finite::Chain::copy_superblock_mpo_to_chain(*state,*superblock);
+    MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(*state, *superblock);
     t_ste.toc();
 }
 
 void class_algorithm_base::copy_superblock_env_to_chain(){
     spdlog::trace("Copy superblock env to chain");
     t_ste.tic();
-    MPS_Tools::Finite::Chain::copy_superblock_env_to_chain(*state,*superblock);
+    MPS_Tools::Finite::Chain::copy_superblock_env_to_state(*state, *superblock);
     t_ste.toc();
 }
 
 void class_algorithm_base::copy_superblock_to_chain(){
     spdlog::trace("Copy superblock to chain");
     t_ste.tic();
-    MPS_Tools::Finite::Chain::copy_superblock_to_chain(*state,*superblock);
+    MPS_Tools::Finite::Chain::copy_superblock_to_state(*state, *superblock);
     t_ste.toc();
 }
 

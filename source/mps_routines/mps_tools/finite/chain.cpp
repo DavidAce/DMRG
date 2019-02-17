@@ -15,14 +15,15 @@ using Scalar         = std::complex<double>;
 
 
 
-void MPS_Tools::Finite::Chain::copy_superblock_to_chain(class_finite_chain_state &  state, const class_superblock & superblock) {
-    MPS_Tools::Finite::Chain::copy_superblock_mps_to_chain(state, superblock);
-    MPS_Tools::Finite::Chain::copy_superblock_mpo_to_chain(state, superblock);
-    MPS_Tools::Finite::Chain::copy_superblock_env_to_chain(state, superblock);
+void MPS_Tools::Finite::Chain::copy_superblock_to_state(class_finite_chain_state &state,
+                                                        const class_superblock &superblock) {
+    MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(state, superblock);
+    MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(state, superblock);
+    MPS_Tools::Finite::Chain::copy_superblock_env_to_state(state, superblock);
     state.set_measured_false();
 }
 
-void MPS_Tools::Finite::Chain::copy_superblock_mps_to_chain(class_finite_chain_state &  state, const class_superblock & superblock) {
+void MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(class_finite_chain_state &state,const class_superblock &superblock) {
     auto & MPS_L  = state.get_MPS_L();
     auto & MPS_R  = state.get_MPS_R();
     auto & MPS_C  = state.get_MPS_C();
@@ -40,8 +41,7 @@ void MPS_Tools::Finite::Chain::copy_superblock_mps_to_chain(class_finite_chain_s
     state.mps_have_been_written_to_hdf5 = false;
 }
 
-
-void MPS_Tools::Finite::Chain::copy_superblock_mpo_to_chain(class_finite_chain_state &  state, const class_superblock & superblock){
+void MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(class_finite_chain_state &state,const class_superblock &superblock){
 //    std::cout << "Current state -- Overwrite: " << std::endl;
 //    std::cout << "HA: " << superblock.HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position() << std::endl;
 //    std::cout << "HB: " << superblock.HB->get_position() << " MPO_R front: " << MPO_R.front()->get_position() << std::endl;
@@ -57,7 +57,7 @@ void MPS_Tools::Finite::Chain::copy_superblock_mpo_to_chain(class_finite_chain_s
     state.mpo_have_been_written_to_hdf5 = false;
 }
 
-void MPS_Tools::Finite::Chain::copy_superblock_env_to_chain(class_finite_chain_state &  state, const class_superblock & superblock){
+void MPS_Tools::Finite::Chain::copy_superblock_env_to_state(class_finite_chain_state &state,const class_superblock &superblock){
     auto & ENV_L  = state.get_ENV_L();
     auto & ENV_R  = state.get_ENV_R();
     auto & ENV2_L = state.get_ENV2_L();
@@ -77,8 +77,7 @@ void MPS_Tools::Finite::Chain::copy_superblock_env_to_chain(class_finite_chain_s
     state.env_have_been_written_to_hdf5 = false;
 }
 
-
-int MPS_Tools::Finite::Chain::insert_superblock_to_chain(class_finite_chain_state &  state, class_superblock & superblock){
+int MPS_Tools::Finite::Chain::insert_superblock_to_state(class_finite_chain_state &state, class_superblock &superblock){
     auto & MPS_L  = state.get_MPS_L();
     auto & MPS_R  = state.get_MPS_R();
     auto & MPS_C  = state.get_MPS_C();
@@ -110,27 +109,8 @@ int MPS_Tools::Finite::Chain::insert_superblock_to_chain(class_finite_chain_stat
     MPO_R.emplace_front     (superblock.HB->clone());
 
 
-    int pos = 0;
-    for (auto &MPS: MPS_L){MPS.set_position(pos++);}
-    for (auto &MPS: MPS_R){MPS.set_position(pos++);}
-    pos = 0;
-    for (auto &ENV: ENV_L){ENV.set_position(pos++);}
-    for (auto &ENV: ENV_R){ENV.set_position(pos++);}
-    pos = 0;
-    for (auto &ENV2: ENV2_L){ENV2.set_position(pos++);}
-    for (auto &ENV2: ENV2_R){ENV2.set_position(pos++);}
-    pos = 0;
-    for (auto &MPO : MPO_L){MPO->set_position(pos++);}
-    for (auto &MPO : MPO_R){MPO->set_position(pos++);}
-
-    superblock.MPS->MPS_A->set_position(MPS_L.back().get_position());
-    superblock.MPS->MPS_B->set_position(MPS_R.front().get_position());
-    superblock.Lblock->set_position(ENV_L.back().get_position());
-    superblock.Rblock->set_position(ENV_R.front().get_position());
-    superblock.Lblock2->set_position(ENV2_L.back().get_position());
-    superblock.Rblock2->set_position(ENV2_R.front().get_position());
-    superblock.HA->set_position(MPO_L.back()->get_position());
-    superblock.HB->set_position(MPO_R.front()->get_position());
+    state.set_positions();
+    superblock.set_positions(state.get_position());
 
     assert(ENV_L.back().size + ENV_R.front().size == superblock.environment_size);
     assert(ENV_L.back().size   == superblock.Lblock->size);
@@ -142,9 +122,6 @@ int MPS_Tools::Finite::Chain::insert_superblock_to_chain(class_finite_chain_stat
     state.set_written_false();
     return (int)MPS_L.size();
 }
-
-
-
 
 int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  state, class_superblock & superblock){
     //Take current MPS and generate an Lblock one larger and store it in list for later loading
@@ -282,6 +259,26 @@ int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  stat
     return state.get_sweeps();
 }
 
+
+void MPS_Tools::Finite::Chain::copy_state_to_superblock(const class_finite_chain_state & state, class_superblock & superblock){
+    superblock.clear();
+    superblock.MPS->set_mps(
+            state.get_MPS_L().back().get_L(),
+            state.get_MPS_L().back().get_G(),
+            state.get_MPS_C(),
+            state.get_MPS_R().front().get_G(),
+            state.get_MPS_R().front().get_L()
+    );
+
+    *superblock.Lblock2 =        state.get_ENV2_L().back();
+    *superblock.Lblock  =        state.get_ENV_L().back();
+    *superblock.HA      =        *state.get_MPO_L().back();
+    *superblock.HB      =        *state.get_MPO_R().front();
+    *superblock.Rblock  =        state.get_ENV_R().front();
+    *superblock.Rblock2 =        state.get_ENV2_R().front();
+    superblock.environment_size = superblock.Lblock->size + superblock.Rblock->size;
+    superblock.set_positions(state.get_position());
+}
 
 
 
