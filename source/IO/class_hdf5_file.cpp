@@ -7,12 +7,13 @@
 #include <IO/class_hdf5_file.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 
-class_hdf5_file::class_hdf5_file(const std::string output_filename_, const std::string output_folder_, bool create_dir_, bool overwrite_,spdlog::level::level_enum lvl){
+class_hdf5_file::class_hdf5_file(const std::string output_filename_, const std::string output_folder_, bool overwrite_, bool resume_,bool create_dir_,spdlog::level::level_enum lvl){
     spdlog::set_level(lvl);
     output_filename = output_filename_;
     output_folder   = output_folder_;
     create_dir      = create_dir_;
     overwrite       = overwrite_;
+    resume          = resume_;
     if (output_folder.empty()){
         if(output_filename.is_relative()){
             output_folder = fs::current_path();
@@ -64,21 +65,40 @@ void class_hdf5_file::initialize(){
     H5Tinsert (H5T_COMPLEX_DOUBLE, "real", HOFFSET(H5T_COMPLEX_STRUCT,real), H5T_NATIVE_DOUBLE);
     H5Tinsert (H5T_COMPLEX_DOUBLE, "imag", HOFFSET(H5T_COMPLEX_STRUCT,imag), H5T_NATIVE_DOUBLE);
 
-
-    if (file_existed_already  and file_is_valid(output_file_full_path)){
-        spdlog::info("File existed already: {}", output_file_full_path.string());
-    }else if (overwrite){
-        try{
-            hid_t file = H5Fcreate(output_file_full_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, plist_facc);
-            H5Fclose(file);
-        }catch(std::exception &ex){
-            throw(std::runtime_error("Failed to create hdf5 file"));
+    switch (fileMode){
+        case FileMode::OPEN: {spdlog::info("File mode OPEN: {}", output_file_full_path.string()); break;}
+        case FileMode::TRUNCATE: {
+            spdlog::info("File mode TRUNCATE: {}", output_file_full_path.string());
+            try{
+                hid_t file = H5Fcreate(output_file_full_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, plist_facc);
+                H5Fclose(file);
+            }catch(std::exception &ex){
+                throw(std::runtime_error("Failed to create hdf5 file"));
+            }
+            //Put git revision in file attribute
+            std::string gitversion = "Git branch: " + GIT::BRANCH + " | Commit hash: " + GIT::COMMIT_HASH + " | Revision: " + GIT::REVISION;
+            write_attribute_to_file(gitversion, "GIT REVISION");
+            break;
         }
-        //Put git revision in file attribute
-        std::string gitversion = "Git branch: " + GIT::BRANCH + " | Commit hash: " + GIT::COMMIT_HASH + " | Revision: " + GIT::REVISION;
-        write_attribute_to_file(gitversion, "GIT REVISION");
-    }else{
-        spdlog::warn("No preexisting hdf5 file found and (or) no permissions overwrite it");
+        case FileMode::RENAME: {
+            output_file_full_path =  get_new_filename(output_file_full_path);
+            spdlog::info("Renamed output file: {} ---> {}", output_filename.string(),output_file_full_path.filename().string());
+            spdlog::info("File mode RENAME: {}", output_file_full_path.string());
+            try{
+                hid_t file = H5Fcreate(output_file_full_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, plist_facc);
+                H5Fclose(file);
+            }catch(std::exception &ex){
+                throw(std::runtime_error("Failed to create hdf5 file"));
+            }
+            //Put git revision in file attribute
+            std::string gitversion = "Git branch: " + GIT::BRANCH + " | Commit hash: " + GIT::COMMIT_HASH + " | Revision: " + GIT::REVISION;
+            write_attribute_to_file(gitversion, "GIT REVISION");
+            break;
+        }
+        default:{
+            spdlog::error("File Mode not set. Choose |OPEN|TRUNCATE|RENAME|");
+            throw std::runtime_error("File Mode not set. Choose |OPEN|TRUNCATE|RENAME|");
+        }
     }
 }
 
@@ -115,16 +135,22 @@ void class_hdf5_file::set_output_file_path() {
     output_file_full_path = fs::system_complete(output_folder_abs / output_filename);
     if(file_is_valid(output_file_full_path)){
         //If we are here, the file exists in the given folder. Then we have two options:
-        // 1) If we are allowed to overwrite, we do not modify the file name
-        // 2) If we are not allowed to overwrite, find a new suitable file name
+        // 1) If we can overwrite, we discard the old file and make a new one with the same name
+        // 2) If we can't overwrite, we .
         output_file_full_path = fs::canonical(output_file_full_path);
-        file_existed_already = true;
         spdlog::info("File already exists: {}", output_file_full_path.string());
-        if(overwrite){
+        if(overwrite and not resume){
+            fileMode = FileMode::TRUNCATE;
             return;
-        }else{
-            output_file_full_path =  get_new_filename(output_file_full_path);
-            spdlog::info("Renamed output file: {} ---> {}", output_filename.string(),output_file_full_path.filename().string());
+        }else if (overwrite and resume) {
+            fileMode = FileMode::OPEN;
+            return;
+        }else if (not overwrite and not resume){
+            fileMode = FileMode::RENAME;
+            return;
+        }else if (not overwrite and resume ){
+            spdlog::error("Overwrite is off and resume is on - these are mutually exclusive settings. Defaulting to FileMode::OPEN");
+            fileMode = FileMode::OPEN;
             return;
         }
     }else {
@@ -133,7 +159,7 @@ void class_hdf5_file::set_output_file_path() {
         // 2 ) If the given folder doesn't exist, check the option "create_dir":
         //      a) Create dir and file in it
         //      b) Exit with an error
-
+        fileMode = FileMode::TRUNCATE;
         if(fs::exists(output_folder_abs)){
             return;
         }else{
@@ -142,26 +168,12 @@ void class_hdf5_file::set_output_file_path() {
                     output_folder_abs = fs::canonical(output_folder_abs);
                     spdlog::info("Created directory: {}",output_folder_abs.string());
                 }else{
-                    spdlog::critical("Failed to create directory: {}", output_folder_abs.string());
-                    exit(1);
+                    spdlog::info("Directory already exists: {}",output_folder_abs.string());
                 }
             }else{
                 spdlog::critical("Target folder does not exist and creation of directory is disabled in settings");
                 exit(1);
             }
-        }
-
-
-        //Create directory if create_dir == true, always relative to executable
-        if(create_dir) {
-            if (fs::create_directories(output_folder_abs)){
-                spdlog::info("Created directory: {}",output_folder_abs.string());
-            }else{
-                spdlog::info("Directory already exists: {}",output_folder_abs.string());
-            }
-            output_folder_abs     = fs::canonical(output_folder_abs);
-            output_file_full_path = fs::system_complete(output_folder_abs / output_filename);
-            return;
         }
     }
 
@@ -334,30 +346,30 @@ void class_hdf5_file::extend_dataset(hid_t file, const std::string & dataset_rel
 }
 
 
-herr_t
-file_info(hid_t loc_id, const char *name, const H5L_info_t *linfo, void *opdata)
-{
-    try{
-//        hid_t group = H5Gopen2(loc_id, name, H5P_DEFAULT);
-        std::cout << "Name : " << name << std::endl; // Display the group name.
-//        H5Gclose(group);
-
-    }catch(...){
-        throw(std::logic_error("Not a group: " + std::string(name)));
-    }
-    return 0;
-}
-std::vector<std::string> class_hdf5_file::print_contents_of_group(std::string group_name){
-    hid_t file = open_file();
-    spdlog::trace("Printing contents of group: {}",group_name);
-    try{
-        herr_t idx = H5Literate_by_name (file, group_name.c_str(), H5_INDEX_NAME,
-                                         H5_ITER_NATIVE, NULL, file_info, NULL,
-                                         H5P_DEFAULT);
-    }
-    catch(std::exception &ex){
-        spdlog::debug("Failed to get contents --  {}",ex.what());
-    }
-    H5Fclose(file);
-    return std::vector<std::string>();
-}
+//herr_t
+//file_info(hid_t loc_id, const char *name, const H5L_info_t *linfo, void *opdata)
+//{
+//    try{
+////        hid_t group = H5Gopen2(loc_id, name, H5P_DEFAULT);
+//        std::cout << "Name : " << name << std::endl; // Display the group name.
+////        H5Gclose(group);
+//
+//    }catch(...){
+//        throw(std::logic_error("Not a group: " + std::string(name)));
+//    }
+//    return 0;
+//}
+//std::vector<std::string> class_hdf5_file::print_contents_of_group(std::string group_name){
+//    hid_t file = open_file();
+//    spdlog::trace("Printing contents of group: {}",group_name);
+//    try{
+//        herr_t idx = H5Literate_by_name (file, group_name.c_str(), H5_INDEX_NAME,
+//                                         H5_ITER_NATIVE, NULL, file_info, NULL,
+//                                         H5P_DEFAULT);
+//    }
+//    catch(std::exception &ex){
+//        spdlog::debug("Failed to get contents --  {}",ex.what());
+//    }
+//    H5Fclose(file);
+//    return std::vector<std::string>();
+//}

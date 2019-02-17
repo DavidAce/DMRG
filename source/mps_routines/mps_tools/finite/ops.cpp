@@ -710,11 +710,11 @@ void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &stat
         while(mpsL_it != state.get_MPS_L().end() and mpoL_it != state.get_MPO_L().end()) {
             state.get_ENV_L().push_back(ENV_L);
             state.get_ENV2_L().push_back(ENV2_L);
-            mpsL_it++;
-            mpoL_it++;
             if (mpsL_it == state.get_MPS_L().end()) break;
             ENV_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO);
             ENV2_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO);
+            mpsL_it++;
+            mpoL_it++;
         }
     }
 
@@ -728,11 +728,11 @@ void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &stat
         while(mpsR_it != state.get_MPS_R().rend() and mpoR_it != state.get_MPO_R().rend()){
             state.get_ENV_R().push_front(ENV_R);
             state.get_ENV2_R().push_front(ENV2_R);
-            mpsR_it++;
-            mpoR_it++;
             if (mpsR_it == state.get_MPS_R().rend()) break;
             ENV_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO);
             ENV2_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO);
+            mpsR_it++;
+            mpoR_it++;
         }
     }
 

@@ -33,7 +33,7 @@ class_iTEBD::class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_)
 
 void class_iTEBD::run() {
     if (!settings::itebd::on) { return; }
-    ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
+    spdlog::info("Starting {} simulation", sim_name);
     t_tot.tic();
     sim_state.delta_t = settings::itebd::delta_t0;
     unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(sim_state.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);

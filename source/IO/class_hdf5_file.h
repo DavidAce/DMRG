@@ -31,6 +31,7 @@ private:
     fs::path    output_file_full_path;
     bool        create_dir;
     bool        overwrite;
+    bool        resume;
     void set_output_file_path();
 
     //Mpi related constants
@@ -82,9 +83,9 @@ public:
 //    hid_t       file;
     hid_t open_file(){return H5Fopen(output_file_full_path.c_str(), H5F_ACC_RDWR, plist_facc);}
 
-    //    enum class AccessMode {READ,WRITE};
-//    AccessMode accessMode;
-    explicit class_hdf5_file(const std::string output_filename_, const std::string output_dirname_ ="", bool create_dir_ = true, bool overwrite_ = false, spdlog::level::level_enum lvl = spdlog::level::trace);
+    enum class FileMode {OPEN,TRUNCATE,RENAME};
+    FileMode fileMode;
+    explicit class_hdf5_file(const std::string output_filename_, const std::string output_dirname_ ="", bool overwrite_ = false, bool resume_ = true,bool create_dir_ = true, spdlog::level::level_enum lvl = spdlog::level::trace);
 
     ~class_hdf5_file(){
         H5Pclose(plist_facc);
@@ -99,7 +100,7 @@ public:
     bool file_is_valid();
     bool file_is_valid(fs::path  some_hdf5_filename);
     fs::path get_new_filename(fs::path some_hdf5_filename);
-    bool file_existed_already = false;
+    bool discard_old_file = false;
 
 
 
