@@ -156,6 +156,9 @@ double MPS_Tools::Finite::Measure::energy_mpo(class_finite_chain_state & state){
                     .contract(state.get_MPO_R().front()->MPO,            idx({3,1},{0,2}))
                     .contract(theta.conjugate(),                         idx({0,2,4},{1,0,2}))
                     .contract(state.get_ENV_R().front().block,           idx({0,2,1},{0,1,2}));
+    if(abs(imag(E(0))) > 1e-10 ){
+        throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
+    }
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
     state.energy_has_been_measured = true;
     return std::real(E(0)) ;

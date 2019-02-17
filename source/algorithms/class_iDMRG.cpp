@@ -24,7 +24,7 @@ class_iDMRG::class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
 
 void class_iDMRG::run() {
     if (!settings::idmrg::on) { return; }
-    ccout(0) << "\nStarting " << sim_name << " simulation" << std::endl;
+    spdlog::info("Starting {} simulation", sim_name);
     t_tot.tic();
     while(sim_state.iteration < settings::idmrg::max_steps){// and not simulation_has_converged){
         single_DMRG_step();

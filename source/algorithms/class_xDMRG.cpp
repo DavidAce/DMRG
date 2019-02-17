@@ -663,7 +663,7 @@ void class_xDMRG::initialize_chain() {
 
 void class_xDMRG::find_energy_range() {
     std::cout << "Finding energy range" << std::endl;
-    assert(state->get_length() == settings::xdmrg::num_sites);
+    assert(state->get_length() == (size_t)settings::xdmrg::num_sites);
     int max_sweeps_during_f_range = 5;
     sim_state.iteration = state->reset_sweeps();
 
