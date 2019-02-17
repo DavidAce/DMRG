@@ -77,8 +77,9 @@ void class_fDMRG::run()
             run_postprocessing();
         }else if(simOK and mpsOK){
             // We can go ahead and load the state from hdf5
+            spdlog::trace("Loading MPS from hdf5");
             try{
-                MPS_Tools::Finite::Hdf5::load_state_from_hdf5(*state, *superblock,*hdf5,sim_name);
+                MPS_Tools::Finite::Hdf5::load_from_hdf5(*state, *superblock, sim_state, *hdf5, sim_name);
             }
             catch(std::exception &ex){spdlog::error("{}"),ex.what();}
             catch(...){spdlog::error("Unknown error when loading state from hdf5.");}
@@ -152,13 +153,15 @@ void class_fDMRG::run_postprocessing(){
 
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
-        hdf5->write_dataset(Textra::to_RowMajor(MPS_Tools::Finite::Measure::mps_wavefn(*state)), sim_name + "/state/full/wavefunction");
+        hdf5->write_dataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
     }
     print_profiling();
 
     MPS_Tools::Finite::Ops::check_parity_properties(*state);
     bool OK = true;
     hdf5->write_dataset(OK, sim_name + "/simOK");
+    MPS_Tools::Finite::Print::print_full_state(*state);
+
 }
 
 

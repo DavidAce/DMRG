@@ -684,90 +684,60 @@ void MPS_Tools::Finite::Ops::check_parity_properties(class_finite_chain_state &s
 
 
 void MPS_Tools::Finite::Ops::rebuild_superblock(class_finite_chain_state &state, class_superblock &superblock) {
-    superblock.set_superblock(
-            state.get_ENV2_L().back().block,
-            state.get_ENV_L().back().block,
-            state.get_MPO_L().back()->MPO,
-            state.get_MPS_L().back().get_L(),
-            state.get_MPS_L().back().get_G(),
-            state.get_MPS_C(),
-            state.get_MPS_R().front().get_G(),
-            state.get_MPS_R().front().get_L(),
-            state.get_MPO_R().front()->MPO,
-            state.get_ENV_R().front().block,
-            state.get_ENV2_R().front().block
-    );
+    MPS_Tools::Finite::Chain::copy_state_to_superblock(state,superblock);
 }
-
 
 void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &state){
 
     // Generate new environments
-
-    auto mpsL_it   = state.get_MPS_L().begin();
-    auto mpoL_it   = state.get_MPO_L().begin();
-    auto envL_it   = state.get_ENV_L().begin();
-    auto env2L_it  = state.get_ENV2_L().begin();
-    int i = 0;
-    while(mpsL_it != state.get_MPS_L().end() and mpoL_it != state.get_MPO_L().end()) {
-        const Eigen::Tensor<Scalar,3> A = mpsL_it->get_A();
-
-        Eigen::Tensor<Scalar,3> temp =
-                envL_it->block
-                        .contract(A                   , idx({0},{1}))
-                        .contract(mpoL_it->get()->MPO , idx({1,2},{0,2}))
-                        .contract(A.conjugate()       , idx({0,3},{1,0}))
-                        .shuffle(array3{0,2,1});
+    assert(not state.get_MPS_L().empty() and "ERROR: The MPS L list is empty:");
+    assert(not state.get_MPS_R().empty() and "ERROR: The MPS R list is empty:");
+    assert(not state.get_MPO_L().empty() and "ERROR: The MPO L list is empty:");
+    assert(not state.get_MPO_R().empty() and "ERROR: The MPO R list is empty:");
 
 
-        Eigen::Tensor<Scalar,4> temp2 =
-                env2L_it->block
-                        .contract(A                   , idx({0},{1}))
-                        .contract(mpoL_it->get()->MPO , idx({1,3},{0,2}))
-                        .contract(mpoL_it->get()->MPO , idx({1,4},{0,2}))
-                        .contract(A.conjugate()       , idx({0,4},{1,0}))
-                        .shuffle(array4{0,3,1,2});
-        envL_it++;
-        env2L_it++;
-        mpsL_it++;
-        mpoL_it++;
-        if (mpsL_it == state.get_MPS_L().end()) break;
-        envL_it->block = temp;
-        env2L_it->block = temp2;
-        i++;
+    state.get_ENV_L().clear();
+    state.get_ENV2_L().clear();
+    state.get_ENV_R().clear();
+    state.get_ENV2_R().clear();
+
+    {
+        auto ENV_L = class_environment("L",state.get_MPS_L().front().get_chiL(), state.get_MPO_L().front()->MPO.dimension(0));
+        auto ENV2_L = class_environment_var("L",state.get_MPS_L().front().get_chiL(), state.get_MPO_L().front()->MPO.dimension(0));
+        auto mpsL_it   = state.get_MPS_L().begin();
+        auto mpoL_it   = state.get_MPO_L().begin();
+
+        while(mpsL_it != state.get_MPS_L().end() and mpoL_it != state.get_MPO_L().end()) {
+            state.get_ENV_L().push_back(ENV_L);
+            state.get_ENV2_L().push_back(ENV2_L);
+            mpsL_it++;
+            mpoL_it++;
+            if (mpsL_it == state.get_MPS_L().end()) break;
+            ENV_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO);
+            ENV2_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO);
+        }
     }
 
-    auto mpsR_it   = state.get_MPS_R().rbegin();
-    auto mpoR_it   = state.get_MPO_R().rbegin();
-    auto envR_it   = state.get_ENV_R().rbegin();
-    auto env2R_it  = state.get_ENV2_R().rbegin();
-    while(mpsR_it != state.get_MPS_R().rend() and mpoR_it != state.get_MPO_R().rend()){
-        const Eigen::Tensor<Scalar,3> B = mpsR_it->get_B();
-        Eigen::Tensor<Scalar,3> temp =
-                envR_it->block
-                        .contract(B                   , idx({0},{2}))
-                        .contract(mpoR_it->get()->MPO , idx({1,2},{1,2}))
-                        .contract(B.conjugate()       , idx({0,3},{2,0}))
-                        .shuffle(array3{0,2,1});
-
-        Eigen::Tensor<Scalar,4> temp2 =
-                env2R_it->block
-                        .contract(B                   , idx({0},{2}))
-                        .contract(mpoR_it->get()->MPO , idx({1,3},{1,2}))
-                        .contract(mpoR_it->get()->MPO , idx({1,4},{1,2}))
-                        .contract(B.conjugate()       , idx({0,4},{2,0}))
-                        .shuffle(array4{0,3,1,2});
 
 
-        envR_it++;
-        env2R_it++;
-        mpsR_it++;
-        mpoR_it++;
-        if (mpsR_it == state.get_MPS_R().rend()) break;
-        envR_it->block = temp;
-        env2R_it->block = temp2;
+    {
+        auto ENV_R  = class_environment("R",state.get_MPS_R().back().get_chiR(), state.get_MPO_L().back()->MPO.dimension(1));
+        auto ENV2_R = class_environment_var("R",state.get_MPS_R().back().get_chiR(), state.get_MPO_L().back()->MPO.dimension(1));
+        auto mpsR_it   = state.get_MPS_R().rbegin();
+        auto mpoR_it   = state.get_MPO_R().rbegin();
+        while(mpsR_it != state.get_MPS_R().rend() and mpoR_it != state.get_MPO_R().rend()){
+            state.get_ENV_R().push_front(ENV_R);
+            state.get_ENV2_R().push_front(ENV2_R);
+            mpsR_it++;
+            mpoR_it++;
+            if (mpsR_it == state.get_MPS_R().rend()) break;
+            ENV_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO);
+            ENV2_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO);
+        }
     }
 
+
+    state.set_positions();
 }
 
 
@@ -814,18 +784,6 @@ double MPS_Tools::Finite::Ops::overlap(const class_finite_chain_state &state1, c
 //    std::cout << "Overlap state1 and state2: " << std::setprecision(16) << norm_chain << std::endl;
     return norm_chain;
 }
-
-
-//double MPS_Tools::Finite::Ops::expectation_value(
-//        const class_finite_chain_state &state1,
-//        const class_finite_chain_state &state2,
-//        const Eigen::Tensor<std::complex<double>,4> mpo,
-//        const Eigen::Tensor<std::complex<double>,3> Ledge,
-//        const Eigen::Tensor<std::complex<double>,3> Redge)
-//{
-//    std::list<Eigen::Tensor<std::complex<double>,4>> mpos(state1.get_length(),mpo);
-//    return expectation_value(state1,state2,mpos,Ledge,Redge);
-//}
 
 double MPS_Tools::Finite::Ops::expectation_value(const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>>  &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge){
 

@@ -97,7 +97,28 @@ int main()
     //Tensor comparison isn't as straightforward
     Eigen::Map<Eigen::VectorXcd> tensorMap(tensorC.data(), tensorC.size());
     Eigen::Map<Eigen::VectorXcd> tensorMapRead(tensorC_read.data(), tensorC_read.size());
-    if (tensorMap != tensorMapRead){return 1;}
+
+
+
+
+//    for (int i = 0; i < tensorC.size(); i++ ){
+//        std::cout << tensorC.coeff(i) << "    " << tensorC_read.coeff(i) << std::endl;
+//    }
+
+    for (int i = 0; i < tensorC.dimension(0); i++ ) {
+        for (int j = 0; j < tensorC.dimension(1); j++ ) {
+            for (int k = 0; k < tensorC.dimension(2); k++ ) {
+                for (int l = 0; l < tensorC.dimension(3); l++ ) {
+                    std::cout << "[ " << i << "  " << j << " " << k << " " << l << " ]: " << tensorC(i,j,k,l) << "   " << tensorC_read(i,j,k,l) << std::endl;
+                }
+                std::cout << std::endl;
+            }
+        }
+    }
+
+
+
+        if (tensorMap != tensorMapRead){return 1;}
 
     return 0;
 }

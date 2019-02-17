@@ -38,11 +38,22 @@ private:
 public:
     using Scalar = std::complex<double>;
     std::string side;
-    size_t size = 0;                               /*!< Number of particles that have been contracted into this left environment. */
+    size_t size = 0;                               /*!< Number of particles that have been contracted into this environment. */
     Eigen::Tensor<Scalar,3> block;                 /*!< The environment block. */
     explicit class_environment(std::string side_):side(std::move(side_)){size = 0;};
-    void enlarge(class_mps_2site & MPS, const Eigen::Tensor<Scalar,4> &M);
-    void set_edge_dims(class_mps_2site &MPS, const Eigen::Tensor<Scalar, 4> &M);
+    class_environment(
+            const std::string side_,
+            const int mpsDim,
+            const int mpoDim)
+            :side(std::move(side_))
+    {
+        set_edge_dims(mpsDim,mpoDim);
+    }
+    void enlarge      (const class_mps_2site & MPS, const Eigen::Tensor<Scalar, 4> &MPO);
+    void enlarge      (const Eigen::Tensor<Scalar,3> MPS, const Eigen::Tensor<Scalar, 4> &MPO);
+    void set_edge_dims(const class_mps_2site & MPS, const Eigen::Tensor<Scalar, 4> &MPO);
+    void set_edge_dims(const Eigen::Tensor<Scalar,3> MPS, const Eigen::Tensor<Scalar, 4> &MPO);
+    void set_edge_dims(const int mpsDim, const int mpoDim);
     void set_position(const long position_){position = position_;}
     auto get_position() const {return position;}
 };
@@ -58,8 +69,19 @@ public:
     std::string side;
     Eigen::Tensor<Scalar,4> block;                         /*!< The environment block. */
     explicit class_environment_var(std::string side_):side(std::move(side_)){size = 0;};
-    void enlarge(class_mps_2site & MPS, const Eigen::Tensor<Scalar,4> &M);
-    void set_edge_dims(class_mps_2site & MPS, const Eigen::Tensor<Scalar, 4> &M);
+    class_environment_var(
+            const std::string side_,
+            const int mpsDim,
+            const int mpoDim)
+            :side(std::move(side_))
+    {
+        set_edge_dims(mpsDim,mpoDim);
+    }
+    void enlarge(const class_mps_2site & MPS, const Eigen::Tensor<Scalar,4> &MPO);
+    void enlarge(const Eigen::Tensor<Scalar,3> MPS, const Eigen::Tensor<Scalar,4> &MPO);
+    void set_edge_dims(const class_mps_2site & MPS, const Eigen::Tensor<Scalar, 4> &MPO);
+    void set_edge_dims(const Eigen::Tensor<Scalar,3> MPS, const Eigen::Tensor<Scalar, 4> &MPO);
+    void set_edge_dims(const int mpsDim, const int mpoDim);
     void set_position(const long position_){position = position_;}
     auto get_position() const {return position;}
 };

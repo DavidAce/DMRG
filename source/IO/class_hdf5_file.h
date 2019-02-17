@@ -14,6 +14,7 @@
 #include <experimental/type_traits>
 #include <general/nmspc_type_check.h>
 #include <spdlog/spdlog.h>
+#include <general/nmspc_tensor_extra.h>
 
 namespace fs = std::experimental::filesystem;
 namespace tc = TypeCheck;
@@ -382,15 +383,15 @@ void class_hdf5_file::write_dataset(const DataType &data, const DatasetPropertie
 //        retval = H5Dwrite(dataset, props.datatype, H5S_ALL, filespace,
 //                       H5P_DEFAULT, data.c_str());
         retval = H5Dwrite(dataset, props.datatype, props.memspace, filespace, H5P_DEFAULT, data.c_str());
-        if(retval < 0){std::cerr << "WARNING: Failed to write text to file.\n"; exit(1);}
+        if(retval < 0) throw std::runtime_error("Failed to write text to file");
     }
     else if constexpr(tc::has_member_data<DataType>::value){
         retval = H5Dwrite(dataset, props.datatype, props.memspace, filespace, H5P_DEFAULT, data.data());
-        if(retval < 0){std::cerr << "WARNING: Failed to write data to file.\n";}
+        if(retval < 0) throw std::runtime_error("Failed to write data to file");
     }
     else if constexpr(std::is_arithmetic<DataType>::value){
         retval = H5Dwrite(dataset, props.datatype, props.memspace, filespace, H5P_DEFAULT, &data);
-        if(retval < 0){std::cerr << "WARNING: Failed to write number to file.\n";}
+        if(retval < 0) throw std::runtime_error("Failed to write number to file");
     }
     H5Dclose(dataset);
     H5Fflush(file,H5F_SCOPE_GLOBAL);
@@ -407,24 +408,30 @@ void class_hdf5_file::write_dataset(const DataType &data, const std::string &dat
     props.ndims      = get_Rank<DataType>();
     props.dims       = get_Dimensions<DataType>(data);
     props.chunk_size = props.dims;
-    if (H5Tequal(get_DataType<DataType>(), H5T_COMPLEX_DOUBLE) and not std::is_same<std::vector<H5T_COMPLEX_STRUCT>, DataType>::value) {
-        //If complex, convert data_struct to complex struct H5T_COMPLEX_DOUBLE
-        auto new_data = convert_complex_data(data);
-        write_dataset(new_data, props);
-    }else if(H5Tequal(props.datatype, H5T_C_S1)){
-        // Read more about this step here
-        //http://www.astro.sunysb.edu/mzingale/io_tutorial/HDF5_simple/hdf5_simple.c
-        //If string, pad datatype
-//        retval = H5Tset_size (props.datatype, H5T_VARIABLE);
-//        retval = H5Tset_size (props.datatype, H5T_VARIABLE);
-        retval = H5Tset_size  (props.datatype, props.size);
 
-//        retval = H5Tset_strpad(props.datatype,H5T_STR_NULLTERM);
-        retval = H5Tset_strpad(props.datatype,H5T_STR_NULLPAD);
-        write_dataset(data, props);
-    }
-    else{
-        write_dataset(data, props);
+    if constexpr(tc::is_eigen_tensor<DataType>::value or tc::is_eigen_matrix_or_array<DataType>()){
+        auto temp = Textra::to_RowMajor(data); //Convert to Row Major first;
+        if (H5Tequal(get_DataType<DataType>(), H5T_COMPLEX_DOUBLE) and not std::is_same<std::vector<H5T_COMPLEX_STRUCT>, DataType>::value) {
+            //If complex, convert data_struct to complex struct H5T_COMPLEX_DOUBLE
+            auto new_temp = convert_complex_data(temp);
+            write_dataset(new_temp, props);
+        }else{
+            write_dataset(temp, props);
+        }
+    }else{
+        if(H5Tequal(props.datatype, H5T_C_S1)){
+            // Read more about this step here
+            //http://www.astro.sunysb.edu/mzingale/io_tutorial/HDF5_simple/hdf5_simple.c
+            retval = H5Tset_size  (props.datatype, props.size);
+            retval = H5Tset_strpad(props.datatype,H5T_STR_NULLPAD);
+            write_dataset(data, props);
+        }else if (H5Tequal(get_DataType<DataType>(), H5T_COMPLEX_DOUBLE) and not std::is_same<std::vector<H5T_COMPLEX_STRUCT>, DataType>::value) {
+            //If complex, convert data_struct to complex struct H5T_COMPLEX_DOUBLE
+            auto new_data = convert_complex_data(data);
+            write_dataset(new_data, props);
+        }else{
+            write_dataset(data, props);
+        }
     }
 }
 
@@ -433,45 +440,54 @@ template <typename DataType>
 void class_hdf5_file::read_dataset(DataType &data, const std::string &dataset_relative_name){
     hid_t file = open_file();
     if (check_link_exists_recursively(file,dataset_relative_name)) {
-        hid_t dataset   = H5Dopen(file, dataset_relative_name.c_str(), H5P_DEFAULT);
-        hid_t memspace  = H5Dget_space(dataset);
-        hid_t datatype  = H5Dget_type(dataset);
-        int ndims       = H5Sget_simple_extent_ndims(memspace);
-        std::vector<hsize_t> dims(ndims);
-        H5Sget_simple_extent_dims(memspace, dims.data(), NULL);
-        if constexpr(tc::is_eigen_matrix_or_array<DataType>()) {
+        try{
+            hid_t dataset   = H5Dopen(file, dataset_relative_name.c_str(), H5P_DEFAULT);
+            hid_t memspace  = H5Dget_space(dataset);
+            hid_t datatype  = H5Dget_type(dataset);
+            int ndims       = H5Sget_simple_extent_ndims(memspace);
+            std::vector<hsize_t> dims(ndims);
+            H5Sget_simple_extent_dims(memspace, dims.data(), NULL);
+            if constexpr(tc::is_eigen_matrix_or_array<DataType>()) {
+                Eigen::Matrix<typename DataType::Scalar, Eigen::Dynamic, Eigen::Dynamic,Eigen::RowMajor> matrix_rowmajor;
+                matrix_rowmajor.resize(dims[0], dims[1]); // Data is transposed in HDF5!
+                H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, matrix_rowmajor.data());
+                data = matrix_rowmajor;
+            }
+            else if constexpr(tc::is_eigen_tensor<DataType>()){
+                Eigen::DSizes<long, DataType::NumDimensions> test;
+                // Data is rowmajor in HDF5, so we need to convert back to ColMajor.
+                Eigen::Tensor<typename DataType::Scalar,DataType::NumIndices, Eigen::RowMajor> tensor_rowmajor;
+                std::copy(dims.begin(),dims.end(),test.begin());
+                tensor_rowmajor.resize(test);
+                H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, tensor_rowmajor.data());
+                data = Textra::to_ColMajor(tensor_rowmajor);
+            }
 
-            data.resize(dims[0], dims[1]);
-            H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
+            else if constexpr(tc::is_vector<DataType>::value) {
+                assert(ndims == 1 and "Vector cannot take 2D datasets");
+                data.resize(dims[0]);
+                H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
+            }
+            else if constexpr(std::is_same<std::string,DataType>::value) {
+                assert(ndims == 1 and "std string needs to have 1 dimension");
+                hsize_t stringsize  = H5Dget_storage_size(dataset);
+                data.resize(stringsize);
+                H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
+            }
+            else if constexpr(std::is_arithmetic<DataType>::value){
+                H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, &data);
+            }else{
+                std::cerr << "Attempted to read dataset of unknown type: " << dataset_relative_name << "[" << typeid(data).name() << "]" << std::endl;
+                exit(1);
+            }
+            H5Dclose(dataset);
+            H5Sclose(memspace);
+            H5Tclose(datatype);
+        }catch(std::exception &ex){
+            throw std::runtime_error("Failed to read dataset [ " + dataset_relative_name + " ] :" + std::string(ex.what()) );
         }
-        else if constexpr(tc::is_eigen_tensor<DataType>()){
-            Eigen::DSizes<long, DataType::NumDimensions> test;
-            std::copy(dims.begin(),dims.end(),test.begin());
-            data.resize(test);
-            H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
-        }
-
-        else if constexpr(tc::is_vector<DataType>::value) {
-            assert(ndims == 1 and "Vector cannot take 2D datasets");
-            data.resize(dims[0]);
-            H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
-        }
-        else if constexpr(std::is_same<std::string,DataType>::value) {
-            assert(ndims == 1 and "std string needs to have 1 dimension");
-            hsize_t stringsize  = H5Dget_storage_size(dataset);
-            data.resize(stringsize);
-            H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, data.data());
-        }
-        else if constexpr(std::is_arithmetic<DataType>::value){
-            H5LTread_dataset(file, dataset_relative_name.c_str(), datatype, &data);
-        }else{
-            std::cerr << "Attempted to read dataset of unknown type: " << dataset_relative_name << "[" << typeid(data).name() << "]" << std::endl;
-            exit(1);
-        }
-        H5Dclose(dataset);
-        H5Sclose(memspace);
-        H5Tclose(datatype);
-    }else{
+    }
+    else{
         std::cerr << "Attempted to read dataset that doesn't exist: " << dataset_relative_name << std::endl;
     }
     H5Fclose(file);

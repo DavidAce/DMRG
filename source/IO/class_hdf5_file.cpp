@@ -68,14 +68,17 @@ void class_hdf5_file::initialize(){
     if (file_existed_already  and file_is_valid(output_file_full_path)){
         spdlog::info("File existed already: {}", output_file_full_path.string());
     }else if (overwrite){
-        hid_t file = H5Fcreate(output_file_full_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, plist_facc);
-        H5Fclose(file);
+        try{
+            hid_t file = H5Fcreate(output_file_full_path.c_str(), H5F_ACC_TRUNC,  H5P_DEFAULT, plist_facc);
+            H5Fclose(file);
+        }catch(std::exception &ex){
+            throw(std::runtime_error("Failed to create hdf5 file"));
+        }
         //Put git revision in file attribute
         std::string gitversion = "Git branch: " + GIT::BRANCH + " | Commit hash: " + GIT::COMMIT_HASH + " | Revision: " + GIT::REVISION;
         write_attribute_to_file(gitversion, "GIT REVISION");
     }else{
-        spdlog::error("No preexisting hdf5 file found and/or no permissions overwrite it");
-        throw(std::logic_error("Failed to initialize hdf5 output file"));
+        spdlog::warn("No preexisting hdf5 file found and (or) no permissions overwrite it");
     }
 }
 

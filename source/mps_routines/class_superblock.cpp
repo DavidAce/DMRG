@@ -373,32 +373,17 @@ void class_superblock::enlarge_environment(int direction){
 }
 
 
-void class_superblock::set_superblock(
-        const Eigen::Tensor<Scalar,4> & Lblock2_,
-        const Eigen::Tensor<Scalar,3> & Lblock_,
-        const Eigen::Tensor<Scalar,4> & MPO_A,
-        const Eigen::Tensor<Scalar,1> & LA,
-        const Eigen::Tensor<Scalar,3> & GA,
-        const Eigen::Tensor<Scalar,1> & LC,
-        const Eigen::Tensor<Scalar,3> & GB,
-        const Eigen::Tensor<Scalar,1> & LB,
-        const Eigen::Tensor<Scalar,4> & MPO_B,
-        const Eigen::Tensor<Scalar,3> & Rblock_,
-        const Eigen::Tensor<Scalar,4> & Rblock2_
-        )
-{
-    Lblock2->block  = Lblock2_;
-    Lblock->block   = Lblock_;
-    HA->MPO = MPO_A;
-    MPS->MPS_A->set_L(LA);
-    MPS->MPS_A->set_G(GA);
-    MPS->LC = LC;
-    MPS->MPS_B->set_G(GB);
-    MPS->MPS_B->set_L(LB);
-    HB->MPO = MPO_B;
-    Rblock ->block = Rblock_;
-    Rblock2->block = Rblock2_;
+void class_superblock::set_positions(int position){
+    MPS->MPS_A->set_position(position);
+    MPS->MPS_B->set_position(position+1);
+    Lblock->set_position(position);
+    Rblock->set_position(position+1);
+    Lblock2->set_position(position);
+    Rblock2->set_position(position+1);
+    HA->set_position(position);
+    HB->set_position(position+1);
 }
+
 
 void class_superblock::set_not_measured(){
     has_been_measured = false;

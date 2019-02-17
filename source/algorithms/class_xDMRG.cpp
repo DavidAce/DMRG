@@ -82,7 +82,7 @@ void class_xDMRG::run() {
     find_energy_range();
     while(true) {
         single_xDMRG_step();
-        MPS_Tools::Finite::Chain::copy_superblock_to_chain(*state,*superblock);
+        MPS_Tools::Finite::Chain::copy_superblock_to_state(*state, *superblock);
         store_progress_to_file();
         store_progress_chain_to_file();
         store_profiling_to_file_total();
@@ -118,7 +118,7 @@ void class_xDMRG::run() {
     hdf5->write_dataset(state->measurements.spin_components, sim_name + "/measurements/spin_components");
 //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
-        hdf5->write_dataset(Textra::to_RowMajor(MPS_Tools::Finite::Measure::mps_wavefn(*state)), sim_name + "/state/full/wavefunction");
+        hdf5->write_dataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
     }
     print_profiling();
 }

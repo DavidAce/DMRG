@@ -24,13 +24,13 @@ namespace MPS_Tools{
      */
     {
         namespace Chain {
-            extern void copy_superblock_to_chain    (class_finite_chain_state & state , const class_superblock & superblock);    /*!< Update the MPS, MPO and ENV stored at current position.*/
-            extern void copy_superblock_mps_to_chain(class_finite_chain_state & state , const class_superblock & superblock);    /*!< Update the MPS stored at current position.*/
-            extern void copy_superblock_mpo_to_chain(class_finite_chain_state & state , const class_superblock & superblock);    /*!< Update the MPO stored at current position.*/
-            extern void copy_superblock_env_to_chain(class_finite_chain_state & state , const class_superblock & superblock);    /*!< Update the ENV stored at current position.*/
-            extern int  insert_superblock_to_chain  (class_finite_chain_state & state , class_superblock & superblock);          /*!< Store current MPS and environments indexed by their respective positions on the chain. */
+            extern void copy_superblock_to_state(class_finite_chain_state &state, const class_superblock &superblock);    /*!< Update the MPS, MPO and ENV stored at current position.*/
+            extern void copy_superblock_mps_to_state(class_finite_chain_state &state,const class_superblock &superblock);    /*!< Update the MPS stored at current position.*/
+            extern void copy_superblock_mpo_to_state(class_finite_chain_state &state,const class_superblock &superblock);    /*!< Update the MPO stored at current position.*/
+            extern void copy_superblock_env_to_state(class_finite_chain_state &state,const class_superblock &superblock);    /*!< Update the ENV stored at current position.*/
+            extern int  insert_superblock_to_state(class_finite_chain_state &state, class_superblock &superblock);          /*!< Store current MPS and environments indexed by their respective positions on the chain. */
             extern int  move_center_point           (class_finite_chain_state & state , class_superblock & superblock);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
-            extern void copy_chain_to_superblock    (const class_finite_chain_state & state , class_superblock & superblock);    /*!< Update the MPS stored at current position.*/
+            extern void copy_state_to_superblock    (const class_finite_chain_state & state , class_superblock & superblock);    /*!< Update the MPS stored at current position.*/
         }
 
 
@@ -73,6 +73,7 @@ namespace MPS_Tools{
 
 
         namespace Print {
+            extern void print_full_state    (const class_finite_chain_state & state);
             extern void print_state         (const class_finite_chain_state & state);                                                /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
             extern void print_state_compact (const class_finite_chain_state & state);                                                /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
             extern void print_hamiltonians  (const class_finite_chain_state & state);
@@ -89,7 +90,11 @@ namespace MPS_Tools{
             extern void write_hamiltonian_params           (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_entanglement                 (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_all_measurements             (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
-            extern void load_state_from_hdf5               (class_finite_chain_state & state,class_superblock & superblock, class_hdf5_file & hdf5, std::string sim_name);
+            extern void load_from_hdf5                     (class_finite_chain_state & state, class_superblock &superblock, class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
+            extern void load_state_from_hdf5               (class_finite_chain_state & state, class_hdf5_file &hdf5, std::string sim_name);
+            extern void load_sim_state_from_hdf5           (class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
+//            extern void load_sim_state_from_hdf5           (class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
+
         }
 
 
@@ -150,7 +155,9 @@ namespace MPS_Tools{
             extern void write_2site_env2                   (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
             extern void write_hamiltonian_params           (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
             extern void write_all_measurements             (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
-            extern void load_state_from_hdf5               (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
+            extern void load_from_hdf5                     (class_superblock &superblock, class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
+            extern void load_sim_state_from_hdf5           (class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
+            extern void load_superblock_from_hdf5          (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
 
         }
     }
