@@ -25,6 +25,40 @@ class_tf_ising::class_tf_ising(): class_hamiltonian_base(){
 }
 
 
+void   class_tf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4> MPO_, std::vector<double> parameters) {
+    MPO = MPO_;
+    set_hamiltonian(parameters);
+    auto mpo1 = Eigen::Map<const Eigen::VectorXcd>(MPO_.data(), MPO_.size());
+    auto mpo2 = Eigen::Map<const Eigen::VectorXcd>(MPO.data(), MPO.size());
+    assert(mpo1 == mpo2 and "MPO mismatch!");
+    if (mpo1 != mpo2) throw std::runtime_error("MPO mismatch");
+}
+
+void   class_tf_ising::set_hamiltonian(const std::vector<double> parameters) {
+    auto temp = Eigen::Map<const Eigen::VectorXd>(parameters.data(),parameters.size());
+    set_hamiltonian(temp);
+};
+
+
+void   class_tf_ising::set_hamiltonian(const Eigen::MatrixXd all_parameters, int position) {
+    set_hamiltonian (all_parameters.row(position));
+};
+
+
+void   class_tf_ising::set_hamiltonian(const Eigen::VectorXd parameters) {
+    if((int)parameters.size() != num_params ) throw std::runtime_error("Wrong number of parameters given to initialize this model");
+    position        = parameters(0);
+    J_coupling      = parameters(1);
+    g_mag_field     = parameters(2);
+    r_rnd_field     = parameters(3);
+    w_rnd_strength  = parameters(4);
+    e_reduced       = parameters(5);
+    spin_dim        = (int)parameters(6);
+    build_mpo();
+};
+
+
+
 
 void class_tf_ising::build_mpo()
 /*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
@@ -143,6 +177,6 @@ std::vector<double> class_tf_ising::get_parameter_values() const {
 }
 
 
-void class_tf_ising::set_non_local_parameters(std::vector<std::vector<double>> &chain_parameters){
+void class_tf_ising::set_non_local_parameters(const std::vector<std::vector<double>> chain_parameters){
 
 }

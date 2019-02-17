@@ -21,25 +21,25 @@ void MPS_Tools::Infinite::Hdf5::write_superblock_state (class_superblock &superb
 
 
 void MPS_Tools::Infinite::Hdf5::write_2site_mps (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name){
-    hdf5.write_dataset(Textra::to_RowMajor(superblock.MPS->MPS_A->get_A()), sim_name + "/state/2site/MPS_A");
+    hdf5.write_dataset(superblock.MPS->MPS_A->get_A(), sim_name + "/state/2site/MPS_A");
     hdf5.write_dataset(superblock.MPS->LC                                 , sim_name + "/state/2site/L_C");
-    hdf5.write_dataset(Textra::to_RowMajor(superblock.MPS->MPS_B->get_B()), sim_name + "/state/2site/MPS_B");
+    hdf5.write_dataset(superblock.MPS->MPS_B->get_B(), sim_name + "/state/2site/MPS_B");
 }
 
 void MPS_Tools::Infinite::Hdf5::write_2site_mpo (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name){
-    hdf5.write_dataset(Textra::to_RowMajor(superblock.HA->MPO), sim_name + "/state/2site/MPO_A");
-    hdf5.write_dataset(Textra::to_RowMajor(superblock.HB->MPO), sim_name + "/state/2site/MPO_B");
+    hdf5.write_dataset(superblock.HA->MPO, sim_name + "/state/2site/MPO_A");
+    hdf5.write_dataset(superblock.HB->MPO, sim_name + "/state/2site/MPO_B");
 
 }
 
 void MPS_Tools::Infinite::Hdf5::write_2site_env (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name){
-    hdf5.write_dataset(Textra::to_RowMajor(superblock.Lblock->block), sim_name + "/state/2site/ENV_L");
-    hdf5.write_dataset(Textra::to_RowMajor(superblock.Rblock->block), sim_name + "/state/2site/ENV_R");
+    hdf5.write_dataset(superblock.Lblock->block, sim_name + "/state/2site/ENV_L");
+    hdf5.write_dataset(superblock.Rblock->block, sim_name + "/state/2site/ENV_R");
 }
 
 void MPS_Tools::Infinite::Hdf5::write_2site_env2 (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name){
-    hdf5.write_dataset(Textra::to_RowMajor(superblock.Lblock2->block), sim_name + "/state/2site/ENV2_L");
-    hdf5.write_dataset(Textra::to_RowMajor(superblock.Rblock2->block), sim_name + "/state/2site/ENV2_R");
+    hdf5.write_dataset(superblock.Lblock2->block, sim_name + "/state/2site/ENV2_L");
+    hdf5.write_dataset(superblock.Rblock2->block, sim_name + "/state/2site/ENV2_R");
 }
 
 void MPS_Tools::Infinite::Hdf5::write_hamiltonian_params(class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name){
@@ -54,7 +54,7 @@ void MPS_Tools::Infinite::Hdf5::write_hamiltonian_params(class_superblock &super
     hamiltonian_props.resize(2, temp_rowA.size());
     hamiltonian_props.row(0) = temp_rowA.transpose();
     hamiltonian_props.row(1) = temp_rowB.transpose();
-    hdf5.write_dataset(Textra::to_RowMajor(hamiltonian_props.transpose()) ,sim_name + "/model/Hamiltonian");
+    hdf5.write_dataset(hamiltonian_props ,sim_name + "/model/Hamiltonian");
     int col = 0;
     for (auto &name : superblock.HA->get_parameter_names()){
         std::string attr_value = name;
@@ -80,6 +80,6 @@ void MPS_Tools::Infinite::Hdf5::write_all_measurements  (class_superblock &super
     hdf5.write_dataset(superblock.measurements.current_entanglement_entropy, sim_name + "/measurements/entanglement_entropy");
 }
 
-void MPS_Tools::Infinite::Hdf5::load_state_from_hdf5    (class_superblock &superblock,class_hdf5_file & hdf5, std::string sim_name){
+void MPS_Tools::Infinite::Hdf5::load_from_hdf5    (class_superblock &superblock,class_simulation_state &sim_state,class_hdf5_file & hdf5, std::string sim_name){
 
 }

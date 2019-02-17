@@ -105,7 +105,7 @@ public:
             const Eigen::Tensor<Scalar,4> &Rblock2_
             );
 
-
+    void set_positions(int position);
 
 //    void set_current_dimensions()      ;                /*!< Update variables for dimensions */
     void swap_AB();                                     /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/

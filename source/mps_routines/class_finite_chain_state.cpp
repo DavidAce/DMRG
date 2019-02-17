@@ -39,8 +39,25 @@ void class_finite_chain_state::set_max_sites(int max_sites_) {
     max_sites_is_set = true;
 }
 
-int class_finite_chain_state::get_length()    const {return MPS_L.size() + MPS_R.size();}
+size_t class_finite_chain_state::get_length()    const {return MPS_L.size() + MPS_R.size();}
 int class_finite_chain_state::get_position()  const {return max_sites_is_set ? MPS_L.size() - 1 : 0 ;}
+
+void class_finite_chain_state::set_positions(){
+
+    int pos = 0;
+    for (auto &MPS: MPS_L){MPS.set_position(pos++);}
+    for (auto &MPS: MPS_R){MPS.set_position(pos++);}
+    pos = 0;
+    for (auto &ENV: ENV_L){ENV.set_position(pos++);}
+    for (auto &ENV: ENV_R){ENV.set_position(pos++);}
+    pos = 0;
+    for (auto &ENV2: ENV2_L){ENV2.set_position(pos++);}
+    for (auto &ENV2: ENV2_R){ENV2.set_position(pos++);}
+    pos = 0;
+    for (auto &MPO : MPO_L){MPO->set_position(pos++);}
+    for (auto &MPO : MPO_R){MPO->set_position(pos++);}
+
+}
 
 int class_finite_chain_state::get_sweeps()    const {return num_sweeps;}
 int class_finite_chain_state::reset_sweeps()  {num_sweeps = 0; return num_sweeps;}
