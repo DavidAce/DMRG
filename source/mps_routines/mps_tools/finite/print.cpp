@@ -43,28 +43,30 @@ void MPS_Tools::Finite::Print::print_state(const class_finite_chain_state &state
     std::cout << "Environment L size        : "    << ENV_L.size() << std::endl;
     std::cout << "Environment R size        : "    << ENV_R.size() << std::endl;
 
-    if(!ENV_L.empty()){std::cout << "ENV_L[" << std::setw(3) << ENV_L.size()-1 << "]: " << ENV_L.back().block.dimensions() << " Particles: " << ENV_L.back().size << "  <--- Also current environment L" << std::endl;}
-
+    auto envitL = ENV_L.begin();
+    std::cout << std::left;
     for(auto &it : MPS_L){
-        std::cout << "L[" << std::setw(3) << i  <<  "]: " << it.get_L().dimensions()  << " "
-                  << "G[" << std::setw(3) << i  <<  "]: " << it.get_G().dimensions()  << " ";
+        std::cout << "L[" << std::setw(3) << i  <<  "]: " << it.get_L().dimensions()<< std::setw(5) << "   "
+                  << "G[" << std::setw(3) << i  <<  "]: " << it.get_G().dimensions()<< std::setw(5) << " pos: " << it.get_position() << "   ";
+        if (envitL != ENV_L.end()){std::cout << " ENV: " << envitL->block.dimensions() << "   " << " env spins: " << envitL++->size << " ";}
         if(&it == &MPS_L.back()){
             std::cout << " <--- Position A";
         }
         std::cout << std::endl;
         i++;
     }
-    std::cout << "L[" << std::setw(3) << '*'  <<  "]: " << MPS_C.dimensions() << "                    <--- Center" << std::endl;
+    std::cout << "L[" << std::setw(3) << '*'  <<  "]: " << MPS_C.dimensions() << std::setw(80) << std::right << "<--- Center" << std::left << std::endl;
+    auto envitR = ENV_R.begin();
     for(auto &it : MPS_R){
-        std::cout << "G[" << std::setw(3) << i  <<  "]: " << it.get_G().dimensions()  << " "
-                  << "L[" << std::setw(3) << i  <<  "]: " << it.get_L().dimensions()  << " ";
+        std::cout << "G[" << std::setw(3) << i  <<  "]: " << it.get_G().dimensions() << std::setw(5) << "  "
+                  << "L[" << std::setw(3) << i  <<  "]: " << it.get_L().dimensions() << std::setw(5) << " pos: " << it.get_position() << "  ";
+        if (envitR != ENV_R.end()){std::cout << " ENV: " << envitR->block.dimensions() << "   "<< " env spins: " << envitR++->size << " ";}
         if(&it == &MPS_R.front()){
             std::cout << " <--- Position B" ;
         }
         std::cout << std::endl;
         i++;
     }
-    if(!ENV_R.empty()){std::cout << "ENV_R[" << std::setw(3) << ENV_R.size()-1 << "]: " << ENV_R.front().block.dimensions() << " Particles: " << ENV_R.front().size << " <--- Also current environment R"  << std::endl;}
 
 }
 

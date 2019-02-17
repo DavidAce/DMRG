@@ -97,6 +97,12 @@ namespace MPS_Tools{
 
         }
 
+        namespace Debug {
+            extern void check_integrity        (const class_finite_chain_state &state, const class_superblock & superblock, class_simulation_state &sim_state);
+            extern void check_integrity_of_num (const class_finite_chain_state &state, const class_superblock & superblock, class_simulation_state &sim_state);
+            extern void check_integrity_of_mps (const class_finite_chain_state &state, const class_superblock & superblock, class_simulation_state &sim_state);
+            extern void check_integrity_of_env (const class_finite_chain_state &state, const class_superblock & superblock, class_simulation_state &sim_state);
+        }
 
     }
 
@@ -183,7 +189,7 @@ namespace MPS_Tools{
             extern int    length                          (class_superblock & superblock);
             extern int    bond_dimension                  (class_superblock & superblock);
             extern double truncation_error                (class_superblock & superblock);
-            extern double norm                            (class_superblock & superblock);
+            extern double norm                            (const class_superblock & superblock);
             extern double energy_mpo                      (class_superblock & superblock);
             extern double energy_mpo                      (const class_superblock & superblock, const Eigen::Tensor<std::complex<double>,4> &theta);
             extern double energy_per_site_mpo             (class_superblock & superblock);

@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
         settings::load_from_file(indata);
     }else{
         auto hdf5 = std::make_shared<class_hdf5_file> (outputfile,"",false,false);
-        if (hdf5->file_existed_already) {
+        if (hdf5->discard_old_file) {
             spdlog::info("The output file existed already: {}", hdf5->get_file_name());
             spdlog::info("Loading settings from existing file.");
             settings::load_from_hdf5(*hdf5);

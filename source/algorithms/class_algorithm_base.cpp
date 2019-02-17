@@ -49,7 +49,7 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
 
     set_verbosity();
     spdlog::trace("Constructing class_algorithm_base");
-    ccout.set_verbosity(settings::console::verbosity);
+//    ccout.set_verbosity(settings::console::verbosity);
     set_profiling_labels();
     spdlog::trace("Constructing table_profiling");
     table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(hdf5, sim_name + "/measurements", "profiling");
@@ -174,16 +174,13 @@ void class_algorithm_base::check_saturation_using_slope(
         B_vec.clear();
         has_saturated = false;
     }
-
-    ccout(3)  << setprecision(16);
-    ccout(3)  << "change per sim_state.step      : " << slope                 << " | log₁₀ : " << std::log10(slope) << '\n'
-              << "relative_slope       : " << relative_slope        << '\n'
-              << "tolerance            : " << tolerance             << '\n'
-              << "avgY                 : " << avgY                  << '\n'
-              << "has saturated        : " << std::boolalpha << has_saturated << '\n'
-              << "check from           : " << check_from            << " (" << X_vec.size() << ")\n"
-              << '\n';
-
+    spdlog::debug("Slope details:");
+    spdlog::debug(" -- change per step = {}              | log₁₀ = {}", slope, std::log10(slope));
+    spdlog::debug(" -- relative_slope  = {} ", relative_slope);
+    spdlog::debug(" -- tolerance       = {} ", tolerance);
+    spdlog::debug(" -- avgY            = {} ", avgY);
+    spdlog::debug(" -- has saturated   = {} ", has_saturated);
+    spdlog::debug(" -- check from      = {}              | {} ", check_from, X_vec.size());
 }
 
 void class_algorithm_base::check_convergence_variance_mpo(double threshold,double slope_threshold){
@@ -843,93 +840,82 @@ void class_algorithm_base::print_status_update() {
 
 void class_algorithm_base::print_status_full(){
     compute_observables();
+
     using namespace MPS_Tools::Common::Measure;
     t_prt.tic();
-    std::cout << std::endl;
-    std::cout << " -- Final results -- " << sim_name << std::endl;
-    ccout(0)  << setw(20) << "Iterations               = " << setprecision(16) << fixed      << sim_state.iteration     << std::endl;
+    spdlog::info("--- Final results  --- {} ---", sim_name);
+    spdlog::info("Iterations            = {:<16d}"    , sim_state.iteration);
     switch(sim_type){
         case SimulationType::iDMRG:
-            ccout(0)  << setw(20) << "Energy MPO           = " << setprecision(16) << fixed      << superblock->measurements.energy_per_site_mpo      << std::endl;
-            ccout(0)  << setw(20) << "Energy HAM           = " << setprecision(16) << fixed      << superblock->measurements.energy_per_site_ham      << std::endl;
-            ccout(0)  << setw(20) << "Energy MOM           = " << setprecision(16) << fixed      << superblock->measurements.energy_per_site_mom      << std::endl;
+            spdlog::info("Energy MPO            = {:<16.16f}" , superblock->measurements.energy_per_site_mpo);
+            spdlog::info("Energy HAM            = {:<16.16f}" , superblock->measurements.energy_per_site_ham);
+            spdlog::info("Energy MOM            = {:<16.16f}" , superblock->measurements.energy_per_site_mom);
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(0)  << setw(20) << "Energy MPO           = " << setprecision(16) << fixed      << superblock->measurements.energy_per_site_mpo     << std::endl;
+            spdlog::info("Energy MPO            = {:<16.16f}" , superblock->measurements.energy_per_site_mpo);
             break;
         case SimulationType::iTEBD:
-            ccout(0)  << setw(20) << "Energy HAM           = " << setprecision(16) << fixed      << superblock->measurements.energy_per_site_ham     << std::endl;
-            ccout(0)  << setw(20) << "Energy MOM           = " << setprecision(16) << fixed      << superblock->measurements.energy_per_site_mom     << std::endl;
+            spdlog::info("Energy HAM            = {:<16.16f}" , superblock->measurements.energy_per_site_ham);
+            spdlog::info("Energy MOM            = {:<16.16f}" , superblock->measurements.energy_per_site_mom);
             break;
     }
     switch(sim_type){
         case SimulationType::iDMRG:
-            ccout(0)  << setw(20) << "log₁₀ σ²(E) MPO:     = " << setprecision(6) << fixed      << log10(superblock->measurements.energy_variance_per_site_mpo)  << std::endl;
-            ccout(0)  << setw(20) << "log₁₀ σ²(E) HAM:     = " << setprecision(6) << fixed      << log10(superblock->measurements.energy_variance_per_site_ham)  << std::endl;
-            ccout(0)  << setw(20) << "log₁₀ σ²(E) MOM:     = " << setprecision(6) << fixed      << log10(superblock->measurements.energy_variance_per_site_mom)  << std::endl;
+            spdlog::info("log₁₀ σ²(E) MPO       = {:<16.16f}" , superblock->measurements.energy_per_site_mpo);
+            spdlog::info("log₁₀ σ²(E) HAM       = {:<16.16f}" , superblock->measurements.energy_per_site_ham);
+            spdlog::info("log₁₀ σ²(E) MOM       = {:<16.16f}" , superblock->measurements.energy_per_site_mom);
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(0)  << setw(20) << "log₁₀ σ²(E) MPO:     = " << setprecision(6) << fixed      << log10(superblock->measurements.energy_variance_per_site_mpo)  << std::endl;
+            spdlog::info("log₁₀ σ²(E) MPO       = {:<16.16f}" , log10(superblock->measurements.energy_variance_per_site_mpo));
             break;
         case SimulationType::iTEBD:
-            ccout(0)  << setw(20) << "log₁₀ σ²(E) HAM:     = " << setprecision(6) << fixed      << log10(superblock->measurements.energy_variance_per_site_ham)  << std::endl;
-            ccout(0)  << setw(20) << "log₁₀ σ²(E) MOM:     = " << setprecision(6) << fixed      << log10(superblock->measurements.energy_variance_per_site_mom)  << std::endl;
+            spdlog::info("log₁₀ σ²(E) HAM       = {:<16.16f}" , superblock->measurements.energy_per_site_ham);
+            spdlog::info("log₁₀ σ²(E) MOM       = {:<16.16f}" , superblock->measurements.energy_per_site_mom);
             break;
     }
-    ccout(0)  << setw(20) << "Entanglement Entropy = " << setprecision(16) << fixed      << superblock->measurements.current_entanglement_entropy                << std::endl;
-    ccout(0)  << setw(20) << "χmax                 = " << setprecision(4)  << fixed      << chi_max()                                              << std::endl;
-    ccout(0)  << setw(20) << "χ                    = " << setprecision(4)  << fixed      << superblock->measurements.bond_dimension                              << std::endl;
-    ccout(0)  << setw(20) << "log₁₀ truncation:    = " << setprecision(4)  << fixed      << log10(superblock->measurements.truncation_error)<< std::endl;
+
+    spdlog::info("Entanglement Entropy  = {:<16.16f}" , superblock->measurements.current_entanglement_entropy);
+    spdlog::info("χmax                  = {:<16d}"    , chi_max()                                            );
+    spdlog::info("χ                     = {:<16d}"    , superblock->measurements.bond_dimension              );
+    spdlog::info("log₁₀ truncation:     = {:<16.16f}" , log10(superblock->measurements.truncation_error)     );
 
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(0)  << setw(20) << "Chain length         = " << setprecision(1)  << fixed      << superblock->measurements.length     << std::endl;
-            ccout(0)  << setw(20) << "Sweep                = " << setprecision(1)  << fixed      << state->get_sweeps() << std::endl;
+            spdlog::info("Chain length          = {:<16d}"    , superblock->measurements.length);
+            spdlog::info("Sweep                 = {:<16d}"    , state->get_sweeps());
             break;
         case SimulationType::iTEBD:
-//    ccout(0)  << setw(20) << "δt:                  = " << setprecision(16) << fixed      << superblock->H->step_size << std::endl;
+            spdlog::info("δt                    = {:<16.16f}" , sim_state.delta_t);
             break;
         default:
             break;
     }
 
-    ccout(0)  << setw(20) << "Simulation converged : " << std::boolalpha << sim_state.simulation_has_converged << std::endl;
+    spdlog::info("Simulation converged  = {:<}"    , sim_state.simulation_has_converged);
 
     switch(sim_type){
         case SimulationType::iDMRG:
-            ccout(0)  << setw(20) << "S slope              = " << setprecision(16) << fixed      << S_slope
-                      << "  Converged: " << std::boolalpha << sim_state.entanglement_has_converged
-                      << "  Saturated: " << std::boolalpha << sim_state.entanglement_has_saturated
-                      << std::endl;
-            ccout(0)  << setw(20) << "σ² MPO slope         = " << setprecision(16) << fixed      << V_mpo_slope  << " " << std::boolalpha << sim_state.variance_mpo_has_converged << std::endl;
-            ccout(0)  << setw(20) << "σ² HAM slope         = " << setprecision(16) << fixed      << V_ham_slope  << " " << std::boolalpha << sim_state.variance_ham_has_converged << std::endl;
-            ccout(0)  << setw(20) << "σ² MOM slope         = " << setprecision(16) << fixed      << V_mom_slope  << " " << std::boolalpha << sim_state.variance_mom_has_converged << std::endl;
+            spdlog::info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_state.entanglement_has_converged, sim_state.entanglement_has_saturated);
+            spdlog::info("σ² MPO slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_mpo_slope ,sim_state.variance_mpo_has_converged, sim_state.variance_mpo_has_saturated);
+            spdlog::info("σ² HAM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_ham_slope ,sim_state.variance_ham_has_converged, sim_state.variance_ham_has_saturated);
+            spdlog::info("σ² MOM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_mom_slope ,sim_state.variance_mom_has_converged, sim_state.variance_mom_has_saturated);
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-//            ccout(0)  << setw(20) << "σ² MPO slope         = " << setprecision(16) << fixed      << V_mpo_slope  << " " << std::boolalpha << sim_state.variance_mpo_has_converged << std::endl;
-            ccout(0)  << setw(20) << "σ² MPO slope         = " << setprecision(16) << fixed      << V_mpo_slope
-                      << "  Converged: " << std::boolalpha << sim_state.variance_mpo_has_converged
-                      << "  Saturated: " << std::boolalpha << sim_state.variance_mpo_has_saturated
-                      << std::endl;
+            spdlog::info("σ² MPO slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_mpo_slope ,sim_state.variance_mpo_has_converged, sim_state.variance_mpo_has_saturated);
             break;
         case SimulationType::iTEBD:
-            ccout(0)  << setw(20) << "S slope              = " << setprecision(16) << fixed      << S_slope
-                      << "  Converged: " << std::boolalpha << sim_state.entanglement_has_converged
-                      << "  Saturated: " << std::boolalpha << sim_state.entanglement_has_saturated
-                      << std::endl;
-            ccout(0)  << setw(20) << "σ² HAM slope         = " << setprecision(16) << fixed      << V_ham_slope  << " " << std::boolalpha << sim_state.variance_ham_has_converged << std::endl;
-            ccout(0)  << setw(20) << "σ² MOM slope         = " << setprecision(16) << fixed      << V_mom_slope  << " " << std::boolalpha << sim_state.variance_mom_has_converged << std::endl;
+            spdlog::info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_state.entanglement_has_converged, sim_state.entanglement_has_saturated);
+            spdlog::info("σ² HAM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_ham_slope ,sim_state.variance_ham_has_converged, sim_state.variance_ham_has_saturated);
+            spdlog::info("σ² MOM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_mom_slope ,sim_state.variance_mom_has_converged, sim_state.variance_mom_has_saturated);
             break;
     }
-
-    ccout(0) << setw(20) << "Time                 = " << setw(10) << setprecision(2)    << fixed   << t_tot.get_age()  << std::endl;
-    ccout(0) << setw(20) << "Peak memory          = " << process_memory_in_mb("VmPeak") << " MB" << std::endl;
-
-    std::cout << std::endl;
+    spdlog::info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_state.entanglement_has_converged, sim_state.entanglement_has_saturated);
+    spdlog::info("Time                  = {:<16.16f}" , t_tot.get_age());
+    spdlog::info("Peak memory           = {:<6.1f} MB" , process_memory_in_mb("VmPeak"));
     t_prt.toc();
 }
 

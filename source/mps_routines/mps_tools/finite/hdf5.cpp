@@ -164,8 +164,6 @@ void MPS_Tools::Finite::Hdf5::write_full_mpo(class_finite_chain_state & state, c
     state.mpo_have_been_written_to_hdf5 = true;
 }
 
-
-
 void MPS_Tools::Finite::Hdf5::write_hamiltonian_params(class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name){
     // Write down the Hamiltonian metadata as a table
     // Remember to write tensors in row-major state order because that's what hdf5 uses.
@@ -194,7 +192,6 @@ void MPS_Tools::Finite::Hdf5::write_hamiltonian_params(class_finite_chain_state 
 
 }
 
-
 void MPS_Tools::Finite::Hdf5::write_all_measurements(class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name){
     state.do_all_measurements();
     hdf5.write_dataset(state.measurements.length                      , sim_name + "/measurements/length");
@@ -209,22 +206,17 @@ void MPS_Tools::Finite::Hdf5::write_all_measurements(class_finite_chain_state & 
     hdf5.write_dataset(state.measurements.spin_component_sz           , sim_name + "/measurements/spin_component_sz");
 }
 
-
-
 void MPS_Tools::Finite::Hdf5::load_from_hdf5(class_finite_chain_state & state, class_superblock & superblock, class_simulation_state &sim_state, class_hdf5_file & hdf5, std::string sim_name){
     // Load into state
     try{
         load_sim_state_from_hdf5(sim_state,hdf5,sim_name);
         load_state_from_hdf5(state,hdf5,sim_name);
-        MPS_Tools::Finite::Print::print_full_state(state);
         MPS_Tools::Finite::Ops::rebuild_superblock(state,superblock);
-        MPS_Tools::Finite::Measure::norm(state);
-        MPS_Tools::Common::Measure::norm(superblock);
+        MPS_Tools::Finite::Debug::check_integrity(state,superblock,sim_state);
     }catch(std::exception &ex){
         throw std::runtime_error("Failed to load from hdf5: " + std::string(ex.what()));
     }
 }
-
 
 void MPS_Tools::Finite::Hdf5::load_state_from_hdf5(class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name){
     int    position = 0;
@@ -246,7 +238,7 @@ void MPS_Tools::Finite::Hdf5::load_state_from_hdf5(class_finite_chain_state & st
     state.set_max_sites(sites);
 
     try {
-        for(int i = 0; i < sites; i++){
+        for(size_t i = 0; i < sites; i++){
             hdf5.read_dataset(G, sim_name + "/state/full/mps/G_" + std::to_string(i));
             hdf5.read_dataset(L, sim_name + "/state/full/mps/L_" + std::to_string(i));
             hdf5.read_dataset(H, sim_name + "/state/full/mpo/H_" + std::to_string(i));
@@ -267,17 +259,17 @@ void MPS_Tools::Finite::Hdf5::load_state_from_hdf5(class_finite_chain_state & st
         }
         hdf5.read_dataset(state.get_MPS_C()    , sim_name + "/state/full/mps/L_C");
         if (state.get_MPS_L().size() + state.get_MPS_R().size() != (size_t)sites){
-            throw std::runtime_error("Number of sites loaded do not match the number of sites advertised by the hdf5 file");
+            throw std::runtime_error("Number of sites loaded does not match the number of sites advertised by the hdf5 file");
+        }
+        if (position != state.get_position()){
+            throw std::runtime_error("Position loaded does not match the position read from the hdf5 file");
         }
 
     }catch (std::exception &ex){
         throw std::runtime_error("Could not read MPS/MPO tensors from file: " + std::string(ex.what()));
     }
-    MPS_Tools::Finite::Print::print_state(state);
     MPS_Tools::Finite::Ops::rebuild_environments(state);
 }
-
-
 
 void MPS_Tools::Finite::Hdf5::load_sim_state_from_hdf5 (class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name){
     sim_state.clear();

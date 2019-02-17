@@ -126,7 +126,7 @@ int MPS_Tools::Common::Measure::length(class_superblock & superblock){
 }
 
 
-double MPS_Tools::Common::Measure::norm(class_superblock & superblock){
+double MPS_Tools::Common::Measure::norm(const class_superblock & superblock){
     if (superblock.has_been_measured){return superblock.measurements.norm;}
     auto theta = MPS_Tools::Common::Views::get_theta(superblock);
     Eigen::Tensor<Scalar, 0> norm =
@@ -145,7 +145,6 @@ int MPS_Tools::Common::Measure::bond_dimension(class_superblock & superblock){
 }
 
 double MPS_Tools::Common::Measure::truncation_error(class_superblock & superblock){
-    std::cout << "truncation error                  "<< std::setprecision(16) << superblock.MPS->truncation_error << std::endl;
     return (int) superblock.MPS->truncation_error;
 }
 

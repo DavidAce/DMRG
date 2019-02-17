@@ -37,26 +37,21 @@ void class_fDMRG::run()
  * the data already existed in hdf5 storage or not.
  *
  * There can be two main scenarios that split into cases:
- *
- * 1) The hdf5 file did not exist                        -- run full simulation from scratch.
- * 2) The hdf5 file existed already and contains
+ * 1) The hdf5 file existed already and contains
  *      a) nothing recognizeable (previous crash?)       -- run full simulation from scratch.
  *      b) a converged simulation but no MPS             -- run full simulation from scratch.
  *      c) a not-yet-converged MPS                       -- resume simulation, reset the number of sweeps first.
  *      d) a converged MPS                               -- not much to do... run postprocessing
+ * 2) The hdf5 file did not exist                        -- run full simulation from scratch.
+
  *
  */
 {
     if (!settings::fdmrg::on) { return; }
     t_tot.tic();
 
-    if (not hdf5->file_existed_already){
+    if (hdf5->fileMode == class_hdf5_file::FileMode::OPEN){
         // This is case 1
-        spdlog::trace("Case 1");
-        run_preprocessing();
-        run_simulation();
-        run_postprocessing();
-    }else {
         bool fileOK;
         hdf5->read_dataset(fileOK, "common/fileOK");
         bool simOK = hdf5->link_exists(sim_name + "/simOK");
@@ -64,42 +59,50 @@ void class_fDMRG::run()
 //        hdf5->print_contents_of_group(sim_name);
 
         if (not simOK){
-            //Case 2 a -- run full simulation from scratch.
-            spdlog::trace("Case 2a");
+            //Case 1 a -- run full simulation from scratch.
+            spdlog::trace("Case 1a");
             run_preprocessing();
             run_simulation();
             run_postprocessing();
         }else if(simOK and not mpsOK){
-            // Case 2 b
-            spdlog::trace("Case 2b");
+            // Case 1 b
+            spdlog::trace("Case 1b");
             run_preprocessing();
             run_simulation();
             run_postprocessing();
         }else if(simOK and mpsOK){
             // We can go ahead and load the state from hdf5
-            spdlog::trace("Loading MPS from hdf5");
+            spdlog::trace("Loading MPS from file");
             try{
                 MPS_Tools::Finite::Hdf5::load_from_hdf5(*state, *superblock, sim_state, *hdf5, sim_name);
             }
-            catch(std::exception &ex){spdlog::error("{}"),ex.what();}
-            catch(...){spdlog::error("Unknown error when loading state from hdf5.");}
-
+            catch(std::exception &ex){
+                spdlog::error("Failed to load from hdf5: {}", ex.what());
+                throw std::runtime_error("Failed to resume from file: " + std::string(ex.what()));
+            }
+            catch(...){spdlog::error("Unknown error when trying to resume from file.");}
 
             bool convergence_was_reached;
             hdf5->read_dataset(convergence_was_reached,sim_name + "/sim_state/simulation_has_converged");
             if(not convergence_was_reached){
-                // Case 2c -- resume simulation, reset the number of sweeps first.
-                spdlog::trace("Case 2c");
+                // Case 1 c -- resume simulation, reset the number of sweeps first.
+                spdlog::trace("Case 1c");
                 sim_state.iteration = state->reset_sweeps();
                 run_simulation();
                 run_postprocessing();
 
             }else {
-                // Case 2d -- not much else to do.. redo postprocessing for good measure.
-                spdlog::trace("Case 2d");
+                // Case 1 d -- not much else to do.. redo postprocessing for good measure.
+                spdlog::trace("Case 1d");
                 run_postprocessing();
             }
         }
+    }else {
+        // This is case 2
+        spdlog::trace("Case 2");
+        run_preprocessing();
+        run_simulation();
+        run_postprocessing();
     }
     t_tot.toc();
 }
@@ -142,7 +145,7 @@ void class_fDMRG::run_simulation(){
         sim_state.iteration = state->get_sweeps();
         sim_state.position  = state->get_position();
         sim_state.step++;
-        ccout(3) << "STATUS: Finished single fDMRG step\n";
+        spdlog::trace("Finished single {} step",sim_name);
     }
 }
 void class_fDMRG::run_postprocessing(){
@@ -183,10 +186,10 @@ void class_fDMRG::check_convergence(){
     t_sim.tic();
     t_con.tic();
     check_convergence_variance_mpo();
-    ccout(2) << "Variance has saturated for " << sim_state.variance_mpo_saturated_for << " steps \n";
+    spdlog::info("Variance has saturated for {} steps",sim_state.variance_mpo_saturated_for);
     if(sim_state.variance_mpo_has_converged)
     {
-        ccout(2) << "Simulation has converged\n";
+        spdlog::info("Simulation has converged");
         sim_state.simulation_has_converged = true;
     }
 
@@ -195,7 +198,7 @@ void class_fDMRG::check_convergence(){
              sim_state.variance_mpo_saturated_for > max_saturation_length
             )
     {
-        ccout(2) << "Simulation has to stop\n";
+        spdlog::info("Simulation has to stop");
         sim_state.simulation_has_to_stop = true;
     }
     t_con.toc();
