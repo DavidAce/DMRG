@@ -74,6 +74,7 @@ public:
 
 
     int    get_sweeps() const ;
+    void   set_sweeps(int num_sweeps_) {num_sweeps = num_sweeps_;}
     void   increment_sweeps() {num_sweeps++;}
     int    reset_sweeps();
 

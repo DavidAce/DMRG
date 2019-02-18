@@ -1,7 +1,7 @@
 
 add_executable(hdf5_test_target tests/hdf5_test.cpp
-        source/IO/class_hdf5_file.cpp
-        source/IO/class_hdf5_file.h
+        source/io/class_hdf5_file.cpp
+        source/io/class_hdf5_file.h
         source/general/nmspc_tensor_extra.h
         )
 set_target_properties(hdf5_test_target PROPERTIES OUTPUT_NAME  hdf5_test)

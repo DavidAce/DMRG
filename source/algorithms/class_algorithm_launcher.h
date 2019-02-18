@@ -6,7 +6,7 @@
 #define DMRG_CLASS_ALGORITHMS_H
 
 #include <memory>
-#include <IO/class_custom_cout.h>
+#include <io/class_custom_cout.h>
 
 class class_hdf5_file;
 
