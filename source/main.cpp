@@ -35,9 +35,8 @@
 
 int main(int argc, char* argv[]) {
 
-    auto logger = spdlog::stdout_color_mt("DMRG");
-    logger->set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
-    spdlog::set_default_logger(logger);
+    spdlog::set_default_logger(spdlog::stdout_color_mt("DMRG"));
+    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
     spdlog::set_level(spdlog::level::trace);
 
     int openblas_num_threads = 1;
@@ -98,14 +97,20 @@ int main(int argc, char* argv[]) {
     }
 
 
+    // Set console settings
     if (settings::console::verbosity < 0 or settings::console::verbosity > 6){
         std::cerr << "ERROR: Expected verbosity level integer in [0-6]. Got: " << settings::console::verbosity << std::endl;
         exit(2);
     }else{
         spdlog::level::level_enum lvl = static_cast<spdlog::level::level_enum>(settings::console::verbosity);
-        logger->set_level(lvl);
-        logger->debug("Verbosity level: {}", spdlog::level::to_string_view(lvl));
+        spdlog::set_level(lvl);
+        spdlog::debug("Verbosity level: {}", spdlog::level::to_string_view(lvl));
     }
+    if ( not settings::console::timestamp){
+        spdlog::set_pattern("[%n]%^[%=8l]%$ %v");
+    }
+
+
 
 
 //
