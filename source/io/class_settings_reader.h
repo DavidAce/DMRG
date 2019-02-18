@@ -15,7 +15,7 @@
 
 #include <experimental/filesystem>
 #include <algorithm>
-#include <IO/class_custom_cout.h>
+#include <io/class_custom_cout.h>
 #include <spdlog/spdlog.h>
 
 namespace fs = std::experimental::filesystem;
@@ -34,7 +34,7 @@ private:
 public:
     bool found_file = false;
     class_settings_reader() = default;
-    explicit class_settings_reader(const fs::path &file_path_, spdlog::level::level_enum lvl = spdlog::level::trace);
+    explicit class_settings_reader(const fs::path &file_path_);
 
 
 

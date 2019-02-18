@@ -3,8 +3,8 @@
 //
 
 #include "nmspc_sim_settings.h"
-#include <IO/class_settings_reader.h>
-#include <IO/class_hdf5_file.h>
+#include <io/class_settings_reader.h>
+#include <io/class_hdf5_file.h>
 
 using namespace std;
 
@@ -72,6 +72,7 @@ namespace settings{
     bool   fdmrg::chi_grow               = true;
     int    fdmrg::print_freq             = 100;
     int    fdmrg::store_freq             = 100;
+    bool   fdmrg::store_wavefn           = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
 
 
     //Parameters controlling excited state DMRG
@@ -189,6 +190,8 @@ void settings::load_from_file(class_settings_reader &indata){
         fdmrg::chi_grow           = indata.find_parameter<bool>   ("fdmrg::chi_grow"   , fdmrg::chi_grow);
         fdmrg::print_freq         = indata.find_parameter<int>    ("fdmrg::print_freq ", fdmrg::print_freq);
         fdmrg::store_freq         = indata.find_parameter<int>    ("fdmrg::store_freq ", fdmrg::store_freq);
+        fdmrg::store_wavefn       = indata.find_parameter<bool>   ("fdmrg::store_wavefn" , fdmrg::store_wavefn);
+
     }
 
     //Parameters controlling excited state DMRG

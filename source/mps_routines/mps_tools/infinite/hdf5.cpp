@@ -7,7 +7,7 @@
 #include <mps_routines/class_mps_2site.h>
 #include <mps_routines/class_environment.h>
 #include <model/class_hamiltonian_base.h>
-#include <IO/class_hdf5_file.h>
+#include <io/class_hdf5_file.h>
 
 void MPS_Tools::Infinite::Hdf5::write_superblock_state (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name){
     if(superblock.has_been_written){return;}

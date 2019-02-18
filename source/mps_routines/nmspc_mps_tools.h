@@ -36,20 +36,21 @@ namespace MPS_Tools{
 
         namespace Ops {
             extern std::list<Eigen::Tensor<std::complex<double>,4>>
-                        make_mpo_list           (const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_R);
-            extern void apply_mpo               (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
-            extern void apply_mpo2              (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
-            extern void apply_mpo3              (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
-            extern void apply_mpos              (class_finite_chain_state &state, const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
-            extern void normalize_chain         (class_finite_chain_state &state);
-            extern void apply_energy_mpo_test   (class_finite_chain_state &state, class_superblock & superblock);
-            extern void set_parity_projected_mps(class_finite_chain_state &state, class_superblock & superblock, const Eigen::MatrixXcd paulimatrix);
-            extern void check_parity_properties (class_finite_chain_state &state);
-            extern void rebuild_environments    (class_finite_chain_state &state);
-            extern void rebuild_superblock      (class_finite_chain_state &state, class_superblock & superblock);
-            extern double overlap               (const class_finite_chain_state &state1, const class_finite_chain_state &state2);
-            extern double expectation_value     (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
-            extern double exp_sq_value          (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,4> Ledge, const Eigen::Tensor<std::complex<double>,4> Redge);
+                        make_mpo_list                 (const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_R);
+            extern void apply_mpo                     (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
+            extern void apply_mpo2                    (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
+            extern void apply_mpo3                    (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
+            extern void apply_mpos                    (class_finite_chain_state &state, const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
+            extern void normalize_chain               (class_finite_chain_state &state);
+            extern void apply_energy_mpo_test         (class_finite_chain_state &state, class_superblock & superblock);
+            extern void print_parity_properties(class_finite_chain_state &state);
+            extern void rebuild_environments          (class_finite_chain_state &state);
+            extern void rebuild_superblock            (class_finite_chain_state &state, class_superblock & superblock);
+            extern double overlap                     (const class_finite_chain_state &state1, const class_finite_chain_state &state2);
+            extern double expectation_value           (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
+            extern double exp_sq_value                (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,4> Ledge, const Eigen::Tensor<std::complex<double>,4> Redge);
+            extern class_finite_chain_state
+                        get_parity_projected_state    (const class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix, const int sign);
         }
 
 
@@ -79,7 +80,7 @@ namespace MPS_Tools{
             extern void print_hamiltonians  (const class_finite_chain_state & state);
         }
         namespace Hdf5{
-            extern void write_all_state                    (class_finite_chain_state &state, class_hdf5_file &hdf5, std::string sim_name);
+            extern void write_all_state                    (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_bond_matrices                (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_2site_mps                    (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_2site_mpo                    (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
@@ -90,6 +91,8 @@ namespace MPS_Tools{
             extern void write_hamiltonian_params           (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_entanglement                 (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_all_measurements             (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
+            extern void write_all_parity_projections       (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
+            extern void write_parity_projected_analysis    (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name,  std::string projection_name, const Eigen::MatrixXcd paulimatrix, const int sign);
             extern void load_from_hdf5                     (class_finite_chain_state & state, class_superblock &superblock, class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
             extern void load_state_from_hdf5               (class_finite_chain_state & state, class_hdf5_file &hdf5, std::string sim_name);
             extern void load_sim_state_from_hdf5           (class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
@@ -98,10 +101,9 @@ namespace MPS_Tools{
         }
 
         namespace Debug {
-            extern void check_integrity        (const class_finite_chain_state &state, const class_superblock & superblock, class_simulation_state &sim_state);
-            extern void check_integrity_of_num (const class_finite_chain_state &state, const class_superblock & superblock, class_simulation_state &sim_state);
-            extern void check_integrity_of_mps (const class_finite_chain_state &state, const class_superblock & superblock, class_simulation_state &sim_state);
-            extern void check_integrity_of_env (const class_finite_chain_state &state, const class_superblock & superblock, class_simulation_state &sim_state);
+            extern void check_integrity          (const class_finite_chain_state &state, const class_superblock & superblock, class_simulation_state &sim_state);
+            extern void check_integrity_of_sim   (const class_finite_chain_state &state, const class_superblock &superblock, class_simulation_state &sim_state);
+            extern void check_integrity_of_mps   (const class_finite_chain_state &state);
         }
 
     }

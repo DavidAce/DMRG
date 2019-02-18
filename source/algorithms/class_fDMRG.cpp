@@ -4,8 +4,8 @@
 
 
 #include <iomanip>
-#include <IO/class_hdf5_file.h>
-#include <IO/class_hdf5_table_buffer2.h>
+#include <io/class_hdf5_file.h>
+#include <io/class_hdf5_table_buffer2.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_finite_chain_state.h>
@@ -20,12 +20,12 @@ using namespace Textra;
 
 class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_algorithm_base(std::move(hdf5_),"fDMRG", SimulationType::fDMRG) {
+
     table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (hdf5, sim_name + "/measurements", "simulation_progress");
     table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name + "/measurements", "simulation_progress_full_chain");
     state             = std::make_shared<class_finite_chain_state>(settings::fdmrg::num_sites);
     min_saturation_length = 1 * (int)(1.0 * settings::fdmrg::num_sites);
     max_saturation_length = 1 * (int)(2.0 * settings::fdmrg::num_sites);
-    set_verbosity();
 }
 
 
@@ -87,7 +87,7 @@ void class_fDMRG::run()
             if(not convergence_was_reached){
                 // Case 1 c -- resume simulation, reset the number of sweeps first.
                 spdlog::trace("Case 1c");
-                sim_state.iteration = state->reset_sweeps();
+                settings::fdmrg::max_sweeps += state->get_sweeps();
                 run_simulation();
                 run_postprocessing();
 
@@ -113,13 +113,12 @@ void class_fDMRG::run_preprocessing() {
     initialize_state(settings::model::initial_state);
     initialize_chain();
     set_random_fields_in_chain_mpo();
-    std::cout << "Parameters on the finite chain: \n" <<std::endl;
     MPS_Tools::Finite::Print::print_hamiltonians(*state);
-
+    spdlog::trace("Finished {} preprocessing", sim_name);
 }
-void class_fDMRG::run_simulation(){
-    spdlog::trace("Running {} simulation",sim_name);
 
+void class_fDMRG::run_simulation(){
+    spdlog::trace("Starting {} simulation", sim_name);
     while(true) {
         single_DMRG_step();
         copy_superblock_to_chain();         //Needs to occurr after update_MPS...
@@ -133,38 +132,42 @@ void class_fDMRG::run_simulation(){
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if (sim_state.iteration >=  settings::fdmrg::min_sweeps and state->position_is_the_middle_any_direction() and
-            (sim_state.iteration >= settings::fdmrg::max_sweeps or sim_state.simulation_has_converged or sim_state.simulation_has_to_stop))
+        if (sim_state.iteration >= settings::fdmrg::min_sweeps and state->position_is_the_middle_any_direction())
         {
-            break;
+            if (sim_state.iteration >= settings::fdmrg::max_sweeps) stop_reason = StopReason::MAX_STEPS; break;
+            if (sim_state.simulation_has_converged)                 stop_reason = StopReason::CONVERGED; break;
+            if (sim_state.simulation_has_to_stop)                   stop_reason = StopReason::SATURATED; break;
         }
-
         update_bond_dimension(min_saturation_length);
         enlarge_environment(state->get_direction());
         move_center_point();
         sim_state.iteration = state->get_sweeps();
         sim_state.position  = state->get_position();
         sim_state.step++;
-        spdlog::trace("Finished single {} step",sim_name);
+        spdlog::trace("Finished step {}, iteration {}",sim_state.step,sim_state.iteration);
     }
+    switch(stop_reason){
+        case StopReason::MAX_STEPS : spdlog::trace("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
+        case StopReason::CONVERGED : spdlog::trace("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
+        case StopReason::SATURATED : spdlog::trace("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
+    }
+
 }
 void class_fDMRG::run_postprocessing(){
     spdlog::trace("Running {} postprocessing",sim_name);
+    MPS_Tools::Finite::Debug::check_integrity(*state,*superblock,sim_state);
     state->set_measured_false();
+    state->do_all_measurements();
     MPS_Tools::Finite::Hdf5::write_all_measurements(*state,*hdf5,sim_name);
-    print_status_full();
+    MPS_Tools::Finite::Ops::print_parity_properties(*state);
+    MPS_Tools::Finite::Hdf5::write_all_parity_projections(*state,*hdf5,sim_name);
 
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
-    if(settings::xdmrg::store_wavefn){
+    if(settings::fdmrg::store_wavefn){
         hdf5->write_dataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
     }
+    print_status_full();
     print_profiling();
-
-    MPS_Tools::Finite::Ops::check_parity_properties(*state);
-    bool OK = true;
-    hdf5->write_dataset(OK, sim_name + "/simOK");
-    MPS_Tools::Finite::Print::print_full_state(*state);
-
 }
 
 

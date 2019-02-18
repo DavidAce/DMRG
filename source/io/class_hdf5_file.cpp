@@ -4,11 +4,10 @@
 //#include <directory.h>
 #include <gitversion.h>
 #include <spdlog/spdlog.h>
-#include <IO/class_hdf5_file.h>
+#include <io/class_hdf5_file.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 
-class_hdf5_file::class_hdf5_file(const std::string output_filename_, const std::string output_folder_, bool overwrite_, bool resume_,bool create_dir_,spdlog::level::level_enum lvl){
-    spdlog::set_level(lvl);
+class_hdf5_file::class_hdf5_file(const std::string output_filename_, const std::string output_folder_, bool overwrite_, bool resume_,bool create_dir_){
     output_filename = output_filename_;
     output_folder   = output_folder_;
     create_dir      = create_dir_;
@@ -120,10 +119,11 @@ bool class_hdf5_file::file_is_valid(fs::path some_hdf5_filename) {
 
 fs::path class_hdf5_file::get_new_filename(fs::path some_hdf5_filename){
     int i=1;
-    while (fs::exists(some_hdf5_filename)){
-        some_hdf5_filename.replace_filename(some_hdf5_filename.stem().string() + "-" + std::to_string(i++) + some_hdf5_filename.extension().string() );
+    fs::path some_new_hdf5_filename = some_hdf5_filename;
+    while (fs::exists(some_new_hdf5_filename)){
+        some_new_hdf5_filename.replace_filename(some_hdf5_filename.stem().string() + "-" + std::to_string(i++) + some_hdf5_filename.extension().string() );
     }
-    return some_hdf5_filename;
+    return some_new_hdf5_filename;
 }
 
 void class_hdf5_file::set_output_file_path() {
@@ -140,15 +140,19 @@ void class_hdf5_file::set_output_file_path() {
         output_file_full_path = fs::canonical(output_file_full_path);
         spdlog::info("File already exists: {}", output_file_full_path.string());
         if(overwrite and not resume){
-            fileMode = FileMode::TRUNCATE;
+            spdlog::debug("Overwrite: true | Resume: false --> TRUNCATE");
+            fileMode = FileMode::OPEN;
             return;
         }else if (overwrite and resume) {
+            spdlog::debug("Overwrite: true | Resume: true --> OPEN");
             fileMode = FileMode::OPEN;
             return;
         }else if (not overwrite and not resume){
+            spdlog::debug("Overwrite: false | Resume: false --> RENAME");
             fileMode = FileMode::RENAME;
             return;
         }else if (not overwrite and resume ){
+            spdlog::debug("Overwrite: false | Resume: true --> OPEN");
             spdlog::error("Overwrite is off and resume is on - these are mutually exclusive settings. Defaulting to FileMode::OPEN");
             fileMode = FileMode::OPEN;
             return;

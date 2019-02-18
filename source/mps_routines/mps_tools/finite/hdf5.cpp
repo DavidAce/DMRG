@@ -11,9 +11,10 @@
 #include <mps_routines/class_superblock.h>
 #include <model/class_hamiltonian_factory.h>
 #include <algorithms/class_simulation_state.h>
-#include <IO/class_hdf5_file.h>
+#include <io/class_hdf5_file.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_quantum_mechanics.h>
 #include <spdlog/spdlog.h>
 #include <stdexcept>
 
@@ -193,7 +194,6 @@ void MPS_Tools::Finite::Hdf5::write_hamiltonian_params(class_finite_chain_state 
 }
 
 void MPS_Tools::Finite::Hdf5::write_all_measurements(class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name){
-    state.do_all_measurements();
     hdf5.write_dataset(state.measurements.length                      , sim_name + "/measurements/length");
     hdf5.write_dataset(state.measurements.norm                        , sim_name + "/measurements/norm");
     hdf5.write_dataset(state.measurements.bond_dimensions             , sim_name + "/measurements/bond_dimensions");
@@ -204,13 +204,36 @@ void MPS_Tools::Finite::Hdf5::write_all_measurements(class_finite_chain_state & 
     hdf5.write_dataset(state.measurements.spin_component_sx           , sim_name + "/measurements/spin_component_sx");
     hdf5.write_dataset(state.measurements.spin_component_sy           , sim_name + "/measurements/spin_component_sy");
     hdf5.write_dataset(state.measurements.spin_component_sz           , sim_name + "/measurements/spin_component_sz");
+    bool OK = true;
+    hdf5.write_dataset(OK, sim_name + "/simOK");
 }
+
+
+void MPS_Tools::Finite::Hdf5::write_all_parity_projections(class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name){
+    write_parity_projected_analysis(state,hdf5,sim_name, "sx_up", qm::spinOneHalf::sx, 1);
+    write_parity_projected_analysis(state,hdf5,sim_name, "sx_dn", qm::spinOneHalf::sx, -1);
+    write_parity_projected_analysis(state,hdf5,sim_name, "sy_up", qm::spinOneHalf::sy, 1);
+    write_parity_projected_analysis(state,hdf5,sim_name, "sy_dn", qm::spinOneHalf::sy, -1);
+    write_parity_projected_analysis(state,hdf5,sim_name, "sz_up", qm::spinOneHalf::sz, 1);
+    write_parity_projected_analysis(state,hdf5,sim_name, "sz_dn", qm::spinOneHalf::sz, -1);
+}
+
+void MPS_Tools::Finite::Hdf5::write_parity_projected_analysis(class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name, std::string projection_name,const Eigen::MatrixXcd paulimatrix, const int sign){
+    if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
+    auto state_projected = MPS_Tools::Finite::Ops::get_parity_projected_state(state,paulimatrix, sign);
+    state_projected.set_measured_false();
+    state_projected.do_all_measurements();
+    MPS_Tools::Finite::Hdf5::write_all_measurements(state_projected,hdf5, sim_name + "/" + projection_name);
+}
+
+
 
 void MPS_Tools::Finite::Hdf5::load_from_hdf5(class_finite_chain_state & state, class_superblock & superblock, class_simulation_state &sim_state, class_hdf5_file & hdf5, std::string sim_name){
     // Load into state
     try{
         load_sim_state_from_hdf5(sim_state,hdf5,sim_name);
         load_state_from_hdf5(state,hdf5,sim_name);
+        state.set_sweeps(sim_state.iteration);
         MPS_Tools::Finite::Ops::rebuild_superblock(state,superblock);
         MPS_Tools::Finite::Debug::check_integrity(state,superblock,sim_state);
     }catch(std::exception &ex){

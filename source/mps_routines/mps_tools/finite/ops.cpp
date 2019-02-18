@@ -317,6 +317,8 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
         auto chiL = A_temp.dimension(1);
         auto chiR = A_temp.dimension(2);
         std::setprecision(16);
+//        std::cout << "A_temp: \n" << A_temp << std::endl;
+
         auto [U,S,V] = svd.decompose(A_temp, d*chiL, chiR);
 //        std::cout << "A_temp: \n" << A_temp << std::endl;
 //        std::cout << "U: \n" << U << std::endl;
@@ -371,6 +373,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
         auto d    = B_temp.dimension(1);
         auto chiL = B_temp.dimension(0);
         auto chiR = B_temp.dimension(2);
+//        std::cout << "B_temp: \n" << B_temp << std::endl;
 
         auto [U,S,V] = svd.decompose(B_temp, chiL, d*chiR);
         long chiC = S.dimension(0);
@@ -490,13 +493,18 @@ void MPS_Tools::Finite::Ops::apply_energy_mpo_test(class_finite_chain_state &sta
 
 }
 
-void MPS_Tools::Finite::Ops::set_parity_projected_mps(class_finite_chain_state &state, class_superblock &superblock,const Eigen::MatrixXcd  paulimatrix) {
-
-
-
+class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix, const int sign) {
+    if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
+    class_finite_chain_state state_projected = state;
+    const auto [mpo,L,R]    = class_mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
+    apply_mpos(state_projected,mpo, L,R);
+    normalize_chain(state_projected);
+    rebuild_environments(state_projected);
+    MPS_Tools::Finite::Debug::check_integrity_of_mps(state_projected);
+    return state_projected;
 }
 
-void MPS_Tools::Finite::Ops::check_parity_properties(class_finite_chain_state &state) {
+void MPS_Tools::Finite::Ops::print_parity_properties(class_finite_chain_state &state) {
 //    std::cout << "Dimensions before projecting \n";
 //    for (auto & mps : state.ref_MPS_L) std::cout << "state.get_MPS_L dims: " << mps.get_G().dimensions()<< std::endl;
 //    std::cout << "state.ref_MPS_C dims: " << state.get_MPS_C.dimensions() << std::endl;
@@ -514,55 +522,14 @@ void MPS_Tools::Finite::Ops::check_parity_properties(class_finite_chain_state &s
     std::cout << "<psi | sx | psi> = " << sx << std::endl;
     std::cout << "<psi | sy | psi> = " << sy << std::endl;
     std::cout << "<psi | sz | psi> = " << sz << std::endl;
+    spdlog::trace("Computing parity projected states");
+    auto state_up_x = MPS_Tools::Finite::Ops::get_parity_projected_state(state,qm::spinOneHalf::sx, 1);
+    auto state_dn_x = MPS_Tools::Finite::Ops::get_parity_projected_state(state,qm::spinOneHalf::sx, -1);
+    auto state_up_y = MPS_Tools::Finite::Ops::get_parity_projected_state(state,qm::spinOneHalf::sy, 1);
+    auto state_dn_y = MPS_Tools::Finite::Ops::get_parity_projected_state(state,qm::spinOneHalf::sy, -1);
+    auto state_up_z = MPS_Tools::Finite::Ops::get_parity_projected_state(state,qm::spinOneHalf::sz, 1);
+    auto state_dn_z = MPS_Tools::Finite::Ops::get_parity_projected_state(state,qm::spinOneHalf::sz, -1);
 
-
-    spdlog::trace("Computing parity projection operators");
-    const auto [mpo_up_x,L_up_x,R_up_x]    = class_mpo::parity_projector_mpos(qm::spinOneHalf::sx,state.get_length(), 1);
-    const auto [mpo_dn_x,L_dn_x,R_dn_x]    = class_mpo::parity_projector_mpos(qm::spinOneHalf::sx,state.get_length(), -1);
-    const auto [mpo_up_y,L_up_y,R_up_y]    = class_mpo::parity_projector_mpos(qm::spinOneHalf::sy,state.get_length(), 1);
-    const auto [mpo_dn_y,L_dn_y,R_dn_y]    = class_mpo::parity_projector_mpos(qm::spinOneHalf::sy,state.get_length(), -1);
-    const auto [mpo_up_z,L_up_z,R_up_z]    = class_mpo::parity_projector_mpos(qm::spinOneHalf::sz,state.get_length(), 1);
-    const auto [mpo_dn_z,L_dn_z,R_dn_z]    = class_mpo::parity_projector_mpos(qm::spinOneHalf::sz,state.get_length(), -1);
-
-//    const auto [mpo,L,R]    = class_mpo::pauli_mpo(paulimatrix);
-
-
-    // Make a copy of the state on which to apply the mpo
-//    std::cout << std::setprecision(16);
-//    for(const auto & mps: state.get_MPS_L()){
-//        std::cout << "G state: \n" << mps.get_G() << std::endl;
-//    }
-    spdlog::trace("Copying states into temporaries");
-    class_finite_chain_state state_up_x = state;
-    class_finite_chain_state state_dn_x = state;
-    class_finite_chain_state state_up_y = state;
-    class_finite_chain_state state_dn_y = state;
-    class_finite_chain_state state_up_z = state;
-    class_finite_chain_state state_dn_z = state;
-//    class_finite_chain_state state_copy = state;
-    class_finite_chain_state state_copy2 = state;
-
-
-//    for(const auto & mps: state_copy.get_MPS_L()){
-//        std::cout << "G state_copy: \n" << mps.get_G() << std::endl;
-//    }
-//    apply_mpos(state_copy,mpo,L,R);
-    spdlog::trace("Applying parity projection operatorss");
-    apply_mpos(state_up_x,mpo_up_x,L_up_x,R_up_x);
-    apply_mpos(state_dn_x,mpo_dn_x,L_dn_x,R_dn_x);
-    apply_mpos(state_up_y,mpo_up_y,L_up_y,R_up_y);
-    apply_mpos(state_dn_y,mpo_dn_y,L_dn_y,R_dn_y);
-    apply_mpos(state_up_z,mpo_up_z,L_up_z,R_up_z);
-    apply_mpos(state_dn_z,mpo_dn_z,L_dn_z,R_dn_z);
-    spdlog::trace("Normalizing chains");
-
-//    normalize_chain(state_copy);
-    normalize_chain(state_up_x);
-    normalize_chain(state_dn_x);
-    normalize_chain(state_up_y);
-    normalize_chain(state_dn_y);
-    normalize_chain(state_up_z);
-    normalize_chain(state_dn_z);
 
     spdlog::trace("Computing more spin components");
     std::cout << "<psi_up_x | sx | psi_up_x> = " << MPS_Tools::Finite::Measure::spin_component(state_up_x,qm::spinOneHalf::sx) << std::endl;
@@ -620,7 +587,7 @@ void MPS_Tools::Finite::Ops::check_parity_properties(class_finite_chain_state &s
     auto & Ledge2 = state.get_ENV2_L().front().block;
     auto & Redge2 = state.get_ENV2_R().back().block ;
 
-
+    auto state_copy2 = state;
     apply_mpos(state_copy2,hamiltonian_mpos,Ledge,Redge);
     double overlap_H = MPS_Tools::Finite::Ops::overlap(state_copy2,state);
 

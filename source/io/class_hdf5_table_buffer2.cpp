@@ -5,8 +5,8 @@
 #include <iterator>
 #include <hdf5.h>
 #include <hdf5_hl.h>
-#include <IO/class_hdf5_file.h>
-#include <IO/class_hdf5_table_buffer2.h>
+#include <io/class_hdf5_file.h>
+#include <io/class_hdf5_table_buffer2.h>
 #include <algorithms/table_types.h>
 
 
