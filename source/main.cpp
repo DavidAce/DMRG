@@ -35,7 +35,7 @@
 
 int main(int argc, char* argv[]) {
 
-    auto logger = spdlog::stderr_color_mt("DMRG");
+    auto logger = spdlog::stdout_color_mt("DMRG");
     logger->set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
     spdlog::set_default_logger(logger);
     spdlog::set_level(spdlog::level::trace);
