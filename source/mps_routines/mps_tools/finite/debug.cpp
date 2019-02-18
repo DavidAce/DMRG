@@ -38,7 +38,7 @@ void MPS_Tools::Finite::Debug::check_integrity_of_sim(const class_finite_chain_s
                                                       const class_superblock &superblock,
                                                       class_simulation_state &sim_state)
 {
-    spdlog::trace("Checking integrity of SIM");
+    spdlog::debug("Checking integrity of SIM");
 
     if(state.get_length() != superblock.get_length())
         throw std::runtime_error("Length mismatch in state and superblock: " + std::to_string(state.get_length()) + " " + std::to_string(superblock.get_length()));
@@ -59,7 +59,24 @@ void MPS_Tools::Finite::Debug::check_integrity_of_sim(const class_finite_chain_s
 
 void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_state &state){
     {
-        spdlog::trace("Checking integrity of MPS");
+        spdlog::debug("Checking integrity of MPS");
+
+        if(state.get_MPS_L().size() + state.get_MPS_R().size() != state.get_length() )
+            throw std::runtime_error("Mismatch in MPS size: " + std::to_string(state.get_MPS_L().size() + state.get_MPS_R().size()) + " " + std::to_string(state.get_length()));
+
+        if(state.get_ENV_L().size() + state.get_ENV_R().size() != state.get_length())
+            throw std::runtime_error("Mismatch in ENV size: " + std::to_string(state.get_ENV_L().size() + state.get_ENV_R().size()) + " " + std::to_string(state.get_length()));
+
+        if(state.get_ENV2_L().size() + state.get_ENV2_R().size() != state.get_length())
+            throw std::runtime_error("Mismatch in ENV size: " + std::to_string(state.get_ENV_L().size() + state.get_ENV_R().size()) + " " + std::to_string(state.get_length()));
+
+        if(state.get_ENV_L().back().size != state.get_position())
+            throw std::runtime_error("Mismatch in ENV_L size and position: " + std::to_string(state.get_ENV_L().back().size) + " " + std::to_string(state.get_position()));
+
+        if(state.get_ENV_R().front().size != state.get_length() - state.get_position() - 2)
+            throw std::runtime_error("Mismatch in ENV_R size+1 and length-position: " + std::to_string(state.get_ENV_R().front().size) + " " + std::to_string(state.get_length() - state.get_position()-2));
+
+
         //Check left side of the chain
         auto mps_it  = state.get_MPS_L().begin();
         auto mps_nx  = state.get_MPS_L().begin();

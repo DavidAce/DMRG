@@ -72,7 +72,7 @@ void class_fDMRG::run()
             run_postprocessing();
         }else if(simOK and mpsOK){
             // We can go ahead and load the state from hdf5
-            spdlog::trace("Loading MPS from file");
+            spdlog::info("Loading MPS from file");
             try{
                 MPS_Tools::Finite::Hdf5::load_from_hdf5(*state, *superblock, sim_state, *hdf5, sim_name);
             }
@@ -109,16 +109,16 @@ void class_fDMRG::run()
 
 
 void class_fDMRG::run_preprocessing() {
-    spdlog::trace("Running {} preprocessing",sim_name);
+    spdlog::info("Running {} preprocessing",sim_name);
     initialize_state(settings::model::initial_state);
     initialize_chain();
     set_random_fields_in_chain_mpo();
     MPS_Tools::Finite::Print::print_hamiltonians(*state);
-    spdlog::trace("Finished {} preprocessing", sim_name);
+    spdlog::info("Finished {} preprocessing", sim_name);
 }
 
 void class_fDMRG::run_simulation(){
-    spdlog::trace("Starting {} simulation", sim_name);
+    spdlog::info("Starting {} simulation", sim_name);
     while(true) {
         single_DMRG_step();
         copy_superblock_to_chain();         //Needs to occurr after update_MPS...
@@ -134,9 +134,9 @@ void class_fDMRG::run_simulation(){
         // That last state would not get optimized
         if (sim_state.iteration >= settings::fdmrg::min_sweeps and state->position_is_the_middle_any_direction())
         {
-            if (sim_state.iteration >= settings::fdmrg::max_sweeps) stop_reason = StopReason::MAX_STEPS; break;
-            if (sim_state.simulation_has_converged)                 stop_reason = StopReason::CONVERGED; break;
-            if (sim_state.simulation_has_to_stop)                   stop_reason = StopReason::SATURATED; break;
+            if (sim_state.iteration >= settings::fdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
+            if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
+            if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
         update_bond_dimension(min_saturation_length);
         enlarge_environment(state->get_direction());
@@ -147,14 +147,16 @@ void class_fDMRG::run_simulation(){
         spdlog::trace("Finished step {}, iteration {}",sim_state.step,sim_state.iteration);
     }
     switch(stop_reason){
-        case StopReason::MAX_STEPS : spdlog::trace("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
-        case StopReason::CONVERGED : spdlog::trace("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
-        case StopReason::SATURATED : spdlog::trace("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
+        case StopReason::MAX_STEPS : spdlog::info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
+        case StopReason::CONVERGED : spdlog::info("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
+        case StopReason::SATURATED : spdlog::info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
+        default: spdlog::info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
     }
+
 
 }
 void class_fDMRG::run_postprocessing(){
-    spdlog::trace("Running {} postprocessing",sim_name);
+    spdlog::info("Running {} postprocessing",sim_name);
     MPS_Tools::Finite::Debug::check_integrity(*state,*superblock,sim_state);
     state->set_measured_false();
     state->do_all_measurements();
@@ -168,6 +170,7 @@ void class_fDMRG::run_postprocessing(){
     }
     print_status_full();
     print_profiling();
+    spdlog::info("Finished {} postprocessing",sim_name);
 }
 
 
@@ -188,8 +191,8 @@ void class_fDMRG::initialize_chain() {
 void class_fDMRG::check_convergence(){
     t_sim.tic();
     t_con.tic();
+    if (sim_state.iteration <= settings::fdmrg::min_sweeps){clear_saturation_status();}
     check_convergence_variance_mpo();
-    spdlog::info("Variance has saturated for {} steps",sim_state.variance_mpo_saturated_for);
     if(sim_state.variance_mpo_has_converged)
     {
         spdlog::info("Simulation has converged");
