@@ -32,6 +32,8 @@ private:
     bool        create_dir;
     bool        overwrite;
     bool        resume;
+
+    std::shared_ptr<spdlog::logger> logger;
     void set_output_file_path();
 
     //Mpi related constants
@@ -85,7 +87,7 @@ public:
 
     enum class FileMode {OPEN,TRUNCATE,RENAME};
     FileMode fileMode;
-    explicit class_hdf5_file(const std::string output_filename_, const std::string output_dirname_ ="", bool overwrite_ = false, bool resume_ = true,bool create_dir_ = true, spdlog::level::level_enum lvl = spdlog::level::trace);
+    explicit class_hdf5_file(const std::string output_filename_, const std::string output_dirname_ ="", bool overwrite_ = false, bool resume_ = true,bool create_dir_ = true);
 
     ~class_hdf5_file(){
         H5Pclose(plist_facc);
@@ -100,7 +102,7 @@ public:
     bool file_is_valid();
     bool file_is_valid(fs::path  some_hdf5_filename);
     fs::path get_new_filename(fs::path some_hdf5_filename);
-    bool discard_old_file = false;
+//    bool discard_old_file = false;
 
 
 
@@ -190,7 +192,7 @@ private:
         if constexpr (tc::is_vector<DataType>::value)                     {return  get_DataType<typename DataType::value_type>();}
         if constexpr (tc::has_member_scalar <DataType>::value)            {return  get_DataType<typename DataType::Scalar>();}
         if constexpr (tc::has_member_value_type <DataType>::value)        {return  get_DataType<typename DataType::value_type>();}
-        spdlog::critical("get_DataType could not match the type provided");
+        logger->critical("get_DataType could not match the type provided");
         throw(std::logic_error("get_DataType could not match the type provided"));
     }
 
@@ -222,7 +224,7 @@ private:
         else if constexpr(std::is_same<const char *,DataType>::value){return 1;}
         else if constexpr(std::is_array<DataType>::value){return 1;}
         else {
-            spdlog::critical("get_Rank can't match the type provided: {}" << tc::type_name<DataType>());
+            logger->critical("get_Rank can't match the type provided: {}" << tc::type_name<DataType>());
             tc::print_type_and_exit_compile_time<DataType>();
         }
     }
@@ -300,7 +302,7 @@ private:
         else{
             tc::print_type_and_exit_compile_time<DataType>();
             std::string error = "get_Dimensions can't match the type provided: " + std::string(typeid(DataType).name());
-            spdlog::critical(error);
+            logger->critical(error);
             throw(std::logic_error(error));
         }
 
@@ -553,7 +555,7 @@ void class_hdf5_file::write_attribute_to_dataset(const AttrType &attribute, cons
     else{
         std::string error = "Link " + aprops.link_name + " does not exist, yet attribute is being written.";
         H5Fclose(file);
-        spdlog::critical(error);
+        logger->critical(error);
         throw(std::logic_error(error));
     }
     H5Fclose(file);

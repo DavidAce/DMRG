@@ -5,9 +5,9 @@
 #include <fstream>
 #include <complex>
 #include "class_algorithm_base.h"
-#include <IO/class_hdf5_file.h>
-#include <IO/class_hdf5_table_buffer2.h>
-#include <IO/class_resume_from_hdf5.h>
+#include <io/class_hdf5_file.h>
+#include <io/class_hdf5_table_buffer2.h>
+#include <io/class_resume_from_hdf5.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
 //#include <mps_routines/class_measurement.h>
@@ -19,7 +19,6 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/class_svd_wrapper.h>
 #include <algorithms/table_types.h>
-#include <spdlog/spdlog.h>
 
 /*! \brief Prints the content of a vector nicely */
 template<typename T>
@@ -47,7 +46,14 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
          sim_name       (std::move(sim_name_)),
          sim_type       (sim_type_) {
 
-    set_verbosity();
+//    auto logger_exists = spdlog::get("DMRG");
+//    if (logger_exists) {
+//        spdlog::set_default_logger(logger_exists);
+//        spdlog::debug("Previous logger exists");
+//    }else{
+//        spdlog::warn("Previous logger does not exist");
+//    }
+
     spdlog::trace("Constructing class_algorithm_base");
 //    ccout.set_verbosity(settings::console::verbosity);
     set_profiling_labels();
@@ -693,16 +699,16 @@ void class_algorithm_base::move_center_point(){
 }
 
 
-void class_algorithm_base::set_verbosity(){
-    if (settings::console::verbosity < 0 or settings::console::verbosity > 6){
-        std::cerr << "ERROR: Expected verbosity level integer in [0-6]. Got: " << settings::console::verbosity << std::endl;
-        exit(2);
-    }
-
-    spdlog::level::level_enum lvl = static_cast<spdlog::level::level_enum>(settings::console::verbosity);
-    spdlog::debug("Verbosity level: {}", spdlog::level::to_string_view(lvl));
-    spdlog::set_level(lvl);
-}
+//void class_algorithm_base::set_verbosity(){
+//    if (settings::console::verbosity < 0 or settings::console::verbosity > 6){
+//        std::cerr << "ERROR: Expected verbosity level integer in [0-6]. Got: " << settings::console::verbosity << std::endl;
+//        exit(2);
+//    }
+//
+//    spdlog::level::level_enum lvl = static_cast<spdlog::level::level_enum>(settings::console::verbosity);
+//    spdlog::debug("Verbosity level: {}", spdlog::level::to_string_view(lvl));
+//    spdlog::set_level(lvl);
+//}
 
 
 
@@ -738,53 +744,55 @@ void class_algorithm_base::print_status_update() {
     if (print_freq() == 0) {return;}
     compute_observables();
     t_prt.tic();
-    std::cout << setprecision(16) << fixed << left;
-    ccout(1) << left  << sim_name << " ";
-    ccout(1) << left  << "Iter: "                       << setw(10) << sim_state.iteration;
-    ccout(1) << left  << "E: ";
+    std::stringstream report;
+    report << setprecision(16) << fixed << left;
+    report << left  << sim_name << " ";
+    report << left  << "Iter: "                       << setw(10) << sim_state.iteration;
+    report << left  << "E: ";
+
     switch(sim_type) {
         case SimulationType::iDMRG:
-            ccout(1) << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mpo;
-            ccout(1) << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_ham;
-            ccout(1) << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mom;
+            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mpo;
+            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_ham;
+            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mom;
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(1) << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mpo;
+            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mpo;
             break;
         case SimulationType::iTEBD:
-            ccout(1) << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_ham;
-            ccout(1) << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mom;
+            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_ham;
+            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mom;
             break;
     }
 
-    ccout(1) << left  << "log₁₀ σ²(E): ";
+    report << left  << "log₁₀ σ²(E): ";
     switch(sim_type) {
         case SimulationType::iDMRG:
-            ccout(1) << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mpo);
-            ccout(1) << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_ham);
-            ccout(1) << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mom);
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mpo);
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_ham);
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mom);
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(1) << setw(14) << setprecision(6)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mpo);
+            report << setw(14) << setprecision(6)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mpo);
             break;
         case SimulationType::iTEBD:
-            ccout(1) << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_ham);
-            ccout(1) << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mom);
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_ham);
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mom);
             break;
     }
 
 
-    ccout(1) << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << superblock->measurements.current_entanglement_entropy;
-    ccout(1) << left  << "χmax: "                       << setw(4)  << setprecision(3)     << fixed   << chi_max();
-    ccout(1) << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << superblock->measurements.bond_dimension;
-    ccout(1) << left  << "log₁₀ truncation: "           << setw(10) << setprecision(4)     << fixed   << std::log10(superblock->measurements.truncation_error);
-    ccout(1) << left  << "Chain length: "               << setw(6)  << setprecision(1)     << fixed   << superblock->measurements.length;
+    report << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << superblock->measurements.current_entanglement_entropy;
+    report << left  << "χmax: "                       << setw(4)  << setprecision(3)     << fixed   << chi_max();
+    report << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << superblock->measurements.bond_dimension;
+    report << left  << "log₁₀ truncation: "           << setw(10) << setprecision(4)     << fixed   << std::log10(superblock->measurements.truncation_error);
+    report << left  << "Chain length: "               << setw(6)  << setprecision(1)     << fixed   << superblock->measurements.length;
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(1) << left  << "@ site: "                    << setw(5)  << state->get_position();
+            report << left  << "@ site: "                    << setw(5)  << state->get_position();
             //ccout(1) << left  << "Dir: "                    << setw(3)  << state->get_direction();
             //ccout(1) << left  << "Sweep: "                  << setw(4)  << state->get_sweeps();
             break;
@@ -794,47 +802,43 @@ void class_algorithm_base::print_status_update() {
         default:
             break;
     }
-    ccout(1) << left  << " Convergence [";
+    report << left  << " Convergence [";
     switch(sim_type){
         case SimulationType::iDMRG:
-            ccout(1) << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_converged;
-            ccout(1) << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_converged;
+            report << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_converged;
+            report << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_converged;
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(1) << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_converged;
+            report << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_converged;
             break;
         case SimulationType::iTEBD:
-            ccout(1) << left  << " S-"  << std::boolalpha << setw(6) << sim_state.entanglement_has_converged;
+            report << left  << " S-"  << std::boolalpha << setw(6) << sim_state.entanglement_has_converged;
             break;
     }
-    ccout(1) << left  << "]";
-    ccout(1) << left  << " Saturation [";
+    report << left  << "]";
+    report << left  << " Saturation [";
     switch(sim_type){
         case SimulationType::iDMRG:
-            ccout(1) << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_saturated;
-            ccout(1) << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_saturated;
+            report << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_saturated;
+            report << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_saturated;
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            ccout(1) << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_saturated;
+            report << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_saturated;
             break;
         case SimulationType::iTEBD:
-            ccout(1) << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_saturated;
+            report << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_saturated;
             break;
     }
-    ccout(1) << left  << "]";
-
-    ccout(1) << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << t_tot.get_age() ;
-
-    ccout(1) << left << " Memory [";
-    ccout(1) << left << "Rss: "     << process_memory_in_mb("VmRSS")<< " MB ";
-    ccout(1) << left << "RssPeak: "  << process_memory_in_mb("VmHWM")<< " MB ";
-    ccout(1) << left << "VmPeak: "  << process_memory_in_mb("VmPeak")<< " MB";
-    ccout(1) << left << "]";
-
-
-    ccout(1) << std::endl;
+    report << left  << "]";
+    report << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << t_tot.get_age() ;
+    report << left << " Memory [";
+    report << left << "Rss: "     << process_memory_in_mb("VmRSS")<< " MB ";
+    report << left << "RssPeak: "  << process_memory_in_mb("VmHWM")<< " MB ";
+    report << left << "VmPeak: "  << process_memory_in_mb("VmPeak")<< " MB";
+    report << left << "]";
+    spdlog::info(report.str());
     t_prt.toc();
 }
 

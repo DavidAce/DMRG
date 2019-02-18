@@ -7,18 +7,19 @@
 #include <mps_routines/nmspc_mps_tools.h>
 #include <mps_routines/class_finite_chain_state.h>
 #include <mps_routines/class_superblock.h>
+#include <spdlog/spdlog.h>
 
 void MPS_Tools::Finite::Debug::check_integrity(const class_finite_chain_state &state,
                                                const class_superblock &superblock, class_simulation_state &sim_state)
 {
     try{
-        check_integrity_of_num(state,superblock,sim_state);
+        check_integrity_of_sim(state, superblock, sim_state);
     }catch(std::exception & ex){
         std::cout << sim_state << std::endl;
         throw std::runtime_error("Integrity check of constants failed: " + std::string(ex.what()));
     }
     try{
-        check_integrity_of_mps(state,superblock,sim_state);
+        check_integrity_of_mps(state);
     }catch(std::exception & ex){
         MPS_Tools::Finite::Print::print_state(state) ;
         throw std::runtime_error("Integrity check of MPS failed: " + std::string(ex.what()));
@@ -33,9 +34,12 @@ void MPS_Tools::Finite::Debug::check_integrity(const class_finite_chain_state &s
 
 
 
-void MPS_Tools::Finite::Debug::check_integrity_of_num(const class_finite_chain_state &state,
-                                               const class_superblock &superblock, class_simulation_state &sim_state)
+void MPS_Tools::Finite::Debug::check_integrity_of_sim(const class_finite_chain_state &state,
+                                                      const class_superblock &superblock,
+                                                      class_simulation_state &sim_state)
 {
+    spdlog::trace("Checking integrity of SIM");
+
     if(state.get_length() != superblock.get_length())
         throw std::runtime_error("Length mismatch in state and superblock: " + std::to_string(state.get_length()) + " " + std::to_string(superblock.get_length()));
 
@@ -53,10 +57,9 @@ void MPS_Tools::Finite::Debug::check_integrity_of_num(const class_finite_chain_s
 
 
 
-void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_state &state,
-                                                      const class_superblock &superblock,
-                                                      class_simulation_state &sim_state){
+void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_state &state){
     {
+        spdlog::trace("Checking integrity of MPS");
         //Check left side of the chain
         auto mps_it  = state.get_MPS_L().begin();
         auto mps_nx  = state.get_MPS_L().begin();

@@ -23,7 +23,7 @@ else()
     include(ExternalProject)
     ExternalProject_Add(library_EIGEN3
             GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
-            GIT_TAG 3.3.5
+            GIT_TAG 3.3.7
             GIT_PROGRESS 1
             PREFIX "${INSTALL_DIRECTORY}/eigen3"
             UPDATE_COMMAND ""
@@ -49,6 +49,7 @@ if(BLAS_LIBRARIES)
     endif()
     if(MKL_FOUND)
         list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_MKL_ALL)
+        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_LAPACKE_STRICT)
         list(APPEND EIGEN3_INCLUDE_DIR ${MKL_INCLUDE_DIR})
         message(STATUS "Eigen3 will use MKL")
     elseif (BLAS_FOUND)

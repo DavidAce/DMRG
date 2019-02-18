@@ -10,7 +10,8 @@
 #include <vector>
 #include <complex>
 #include <list>
-#include <IO/class_custom_cout.h>
+#include <spdlog/spdlog.h>
+#include <io/class_custom_cout.h>
 #include <general/class_tic_toc.h>
 #include <general/nmspc_eigsolver_props.h>
 #include <sim_parameters/nmspc_sim_settings.h>
@@ -24,13 +25,18 @@ template <typename table_type> class class_hdf5_table;
 
 
 class class_algorithm_base {
-
+protected:
+    //Console
+    class_custom_cout ccout;
 public:
     using Scalar = std::complex<double>;
     class_algorithm_base() = default;
     class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
                          std::string sim_name_,
                          SimulationType sim_type_);
+
+    enum class StopReason {CONVERGED, SATURATED, MAX_STEPS};
+    StopReason stop_reason;
     void set_profiling_labels ();
 
     //Storage
@@ -44,9 +50,7 @@ public:
     //MPS
     std::shared_ptr<class_superblock>            superblock;
     std::shared_ptr<class_finite_chain_state>    state;
-    //Console
-    class_custom_cout ccout;
-    void set_verbosity();
+
 
 
     //Virtual Functions
@@ -133,22 +137,22 @@ private:
     std::list<bool>   B_mpo_vec; //History of saturation true/false
     std::list<double> V_mpo_vec; //History of variances
     std::list<int>    X_mpo_vec; //History of step numbers
-    double V_mpo_slope = 1;
+    double V_mpo_slope = 0;
 
     std::list<bool>   B_ham_vec; //History of saturation true/false
     std::list<double> V_ham_vec;
     std::list<int>    X_ham_vec;
-    double V_ham_slope = 1;
+    double V_ham_slope = 0;
 
     std::list<bool>   B_mom_vec; //History of saturation true/false
     std::list<double> V_mom_vec;
     std::list<int>    X_mom_vec;
-    double V_mom_slope = 1;
+    double V_mom_slope = 0;
 
     std::list<bool>   BS_vec; //History of saturation true/false
     std::list<double> S_vec;
     std::list<int>    XS_vec;
-    double S_slope = 1;
+    double S_slope = 0;
 
 
 };

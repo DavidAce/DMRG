@@ -5,9 +5,10 @@
 #include <sim_parameters/nmspc_model.h>
 #include <algorithms/class_algorithm_launcher.h>
 #include <gitversion.h>
-#include <IO/class_settings_reader.h>
-#include <IO/class_hdf5_file.h>
+#include <io/class_settings_reader.h>
+#include <io/class_hdf5_file.h>
 #include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 //#include <El.hpp>
 
 #ifdef OpenBLAS_AVAILABLE
@@ -33,6 +34,12 @@
 */
 
 int main(int argc, char* argv[]) {
+
+    auto logger = spdlog::stderr_color_mt("DMRG");
+    logger->set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
+    spdlog::set_default_logger(logger);
+    spdlog::set_level(spdlog::level::trace);
+
     int openblas_num_threads = 1;
     #ifdef OpenBLAS_AVAILABLE
         openblas_set_num_threads(openblas_num_threads);
@@ -79,8 +86,8 @@ int main(int argc, char* argv[]) {
     if(indata.found_file){
         settings::load_from_file(indata);
     }else{
-        auto hdf5 = std::make_shared<class_hdf5_file> (outputfile,"",false,false);
-        if (hdf5->discard_old_file) {
+        auto hdf5 = std::make_shared<class_hdf5_file> (outputfile,"",false,false,true);
+        if (hdf5->fileMode == class_hdf5_file::FileMode::OPEN) {
             spdlog::info("The output file existed already: {}", hdf5->get_file_name());
             spdlog::info("Loading settings from existing file.");
             settings::load_from_hdf5(*hdf5);
@@ -90,9 +97,23 @@ int main(int argc, char* argv[]) {
 
     }
 
-    //If an output filename was given explicitly, overwrite the default , if it was given explicitly in command line.
-    //    settings::hdf5::output_filename = outputfile_given ? outputfile : settings::hdf5::output_filename;
 
+    if (settings::console::verbosity < 0 or settings::console::verbosity > 6){
+        std::cerr << "ERROR: Expected verbosity level integer in [0-6]. Got: " << settings::console::verbosity << std::endl;
+        exit(2);
+    }else{
+        spdlog::level::level_enum lvl = static_cast<spdlog::level::level_enum>(settings::console::verbosity);
+        logger->set_level(lvl);
+        logger->debug("Verbosity level: {}", spdlog::level::to_string_view(lvl));
+    }
+
+
+//
+//
+//
+//    spdlog = spdlog::get("DMRG++");
+//
+//    spdlog->warn("TESTING MY LOGGER");
     //Initialize the algorithm class
     //This class stores simulation data_struct automatically to a file specified in the input file
     class_algorithm_launcher launcher;

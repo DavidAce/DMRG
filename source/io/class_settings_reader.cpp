@@ -4,11 +4,17 @@
 
 #include <spdlog/spdlog.h>
 #include "class_settings_reader.h"
-//#include <directory.h>
 
 
-class_settings_reader::class_settings_reader(const fs::path &file_path_, spdlog::level::level_enum lvl): file_path(file_path_) {
-    spdlog::set_level(lvl);
+class_settings_reader::class_settings_reader(const fs::path &file_path_): file_path(file_path_) {
+//    auto logger_exists = spdlog::get("DMRG");
+//    if (logger_exists) {
+//        spdlog::set_default_logger(logger_exists);
+//        spdlog::debug("Previous logger exists");
+//    }else{
+//        spdlog::warn("Previous logger does not exist");
+//    }
+
     fs::path found_file =  find_input_file(file_path);
     if (not found_file.empty()){
         try {

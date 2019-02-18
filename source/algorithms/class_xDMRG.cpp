@@ -4,8 +4,8 @@
 
 
 #include <iomanip>
-#include <IO/class_hdf5_file.h>
-#include <IO/class_hdf5_table_buffer2.h>
+#include <io/class_hdf5_file.h>
+#include <io/class_hdf5_table_buffer2.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_mps_2site.h>
@@ -55,7 +55,7 @@ using namespace Textra;
 
 class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_algorithm_base(std::move(hdf5_), "xDMRG",SimulationType::xDMRG) {
-    set_verbosity();
+
     rn::seed((unsigned long)settings::model::seed);
     table_xdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (hdf5, sim_name + "/measurements", "simulation_progress");
     table_xdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name + "/measurements", "simulation_progress_full_chain");
@@ -67,19 +67,98 @@ class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
 
 
 
-void class_xDMRG::run() {
+
+void class_xDMRG::run()
+/*!
+ * \brief Dispatches xDMRG stages.
+ * This function manages the stages of simulation differently depending on whether
+ * the data already existed in hdf5 storage or not.
+ *
+ * There can be two main scenarios that split into cases:
+ * 1) The hdf5 file existed already and contains
+ *      a) nothing recognizeable (previous crash?)       -- run full simulation from scratch.
+ *      b) a converged simulation but no MPS             -- run full simulation from scratch.
+ *      c) a not-yet-converged MPS                       -- resume simulation, reset the number of sweeps first.
+ *      d) a converged MPS                               -- not much to do... run postprocessing
+ * 2) The hdf5 file did not exist                        -- run full simulation from scratch.
+
+ *
+ */
+{
     if (!settings::xdmrg::on) { return; }
-    spdlog::warn("TESTING SPDLOG");
-    spdlog::debug("TESTING SPDLOG debug logging");
-    spdlog::trace("TESTING SPDLOG trace logging");
-
-    spdlog::trace("Starting {} simulation", sim_name);
-
     t_tot.tic();
+
+    if (hdf5->fileMode == class_hdf5_file::FileMode::OPEN){
+        // This is case 1
+        bool fileOK;
+        hdf5->read_dataset(fileOK, "common/fileOK");
+        bool simOK = hdf5->link_exists(sim_name + "/simOK");
+        bool mpsOK = hdf5->link_exists(sim_name + "/state/full/mps");
+//        hdf5->print_contents_of_group(sim_name);
+
+        if (not simOK){
+            //Case 1 a -- run full simulation from scratch.
+            spdlog::trace("Case 1a");
+            run_preprocessing();
+            run_simulation();
+            run_postprocessing();
+        }else if(simOK and not mpsOK){
+            // Case 1 b
+            spdlog::trace("Case 1b");
+            run_preprocessing();
+            run_simulation();
+            run_postprocessing();
+        }else if(simOK and mpsOK){
+            // We can go ahead and load the state from hdf5
+            spdlog::trace("Loading MPS from file");
+            try{
+                MPS_Tools::Finite::Hdf5::load_from_hdf5(*state, *superblock, sim_state, *hdf5, sim_name);
+            }
+            catch(std::exception &ex){
+                spdlog::error("Failed to load from hdf5: {}", ex.what());
+                throw std::runtime_error("Failed to resume from file: " + std::string(ex.what()));
+            }
+            catch(...){spdlog::error("Unknown error when trying to resume from file.");}
+
+            bool convergence_was_reached;
+            hdf5->read_dataset(convergence_was_reached,sim_name + "/sim_state/simulation_has_converged");
+            if(not convergence_was_reached){
+                // Case 1 c -- resume simulation, reset the number of sweeps first.
+                spdlog::trace("Case 1c");
+                settings::xdmrg::max_sweeps += state->get_sweeps();
+                run_simulation();
+                run_postprocessing();
+
+            }else {
+                // Case 1 d -- not much else to do.. redo postprocessing for good measure.
+                spdlog::trace("Case 1d");
+                run_postprocessing();
+            }
+        }
+    }else {
+        // This is case 2
+        spdlog::trace("Case 2");
+        run_preprocessing();
+        run_simulation();
+        run_postprocessing();
+    }
+    t_tot.toc();
+}
+
+
+void class_xDMRG::run_preprocessing() {
+
+    spdlog::trace("Starting {} preprocessing", sim_name);
+
     initialize_chain();
     set_random_fields_in_chain_mpo();
     MPS_Tools::Finite::Print::print_hamiltonians(*state);
     find_energy_range();
+    spdlog::trace("Finished {} preprocessing", sim_name);
+}
+
+void class_xDMRG::run_simulation()    {
+    spdlog::trace("Starting {} simulation", sim_name);
     while(true) {
         single_xDMRG_step();
         MPS_Tools::Finite::Chain::copy_superblock_to_state(*state, *superblock);
@@ -87,45 +166,50 @@ void class_xDMRG::run() {
         store_progress_chain_to_file();
         store_profiling_to_file_total();
         store_state_to_file();
+
         check_convergence();
         print_status_update();
+
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if (sim_state.iteration >= settings::xdmrg::min_sweeps and state->position_is_the_middle_any_direction() and
-           (sim_state.iteration >= settings::xdmrg::max_sweeps or sim_state.simulation_has_converged or sim_state.simulation_has_to_stop))
+        if (sim_state.iteration >= settings::xdmrg::min_sweeps and state->position_is_the_middle_any_direction())
         {
-            spdlog::trace("Finished xDMRG simulation");
-            break;
+            if (sim_state.iteration >= settings::xdmrg::max_sweeps) stop_reason = StopReason::MAX_STEPS; break;
+            if (sim_state.simulation_has_converged)                 stop_reason = StopReason::CONVERGED; break;
+            if (sim_state.simulation_has_to_stop)                   stop_reason = StopReason::SATURATED; break;
         }
-//        if (sim_state.iteration >= min_sweeps) {
-            update_bond_dimension(min_saturation_length);
-//        }
+
+        update_bond_dimension(min_saturation_length);
         enlarge_environment(state->get_direction());
         move_center_point();
         sim_state.iteration = state->get_sweeps();
         sim_state.step++;
         sim_state.position = state->get_position();
-        spdlog::trace("Finished sim_state.iteration {}",sim_state.iteration);
+        spdlog::trace("Finished step {}, iteration {}",sim_state.step,sim_state.iteration);
     }
-    t_tot.toc();
-    state->do_all_measurements();
-    print_status_full();
-    MPS_Tools::Finite::Ops::check_parity_properties(*state);
+    switch(stop_reason){
+        case StopReason::MAX_STEPS : spdlog::trace("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
+        case StopReason::CONVERGED : spdlog::trace("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
+        case StopReason::SATURATED : spdlog::trace("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
+    }
 
+}
+
+void class_xDMRG::run_postprocessing(){
+    spdlog::trace("Running {} postprocessing",sim_name);
+    MPS_Tools::Finite::Debug::check_integrity(*state,*superblock,sim_state);
     state->set_measured_false();
     state->do_all_measurements();
-    print_status_full();
-    hdf5->write_dataset(state->measurements.spin_components, sim_name + "/measurements/spin_components");
-//  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
+    MPS_Tools::Finite::Hdf5::write_all_measurements(*state,*hdf5,sim_name);
+    MPS_Tools::Finite::Ops::print_parity_properties(*state);
+    MPS_Tools::Finite::Hdf5::write_all_parity_projections(*state,*hdf5,sim_name);
+    //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
         hdf5->write_dataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
     }
+    print_status_full();
     print_profiling();
 }
-
-void class_xDMRG::run_simulation()    {}
-void class_xDMRG::run_preprocessing() {}
-void class_xDMRG::run_postprocessing(){}
 
 
 void class_xDMRG::single_xDMRG_step()
@@ -136,28 +220,16 @@ void class_xDMRG::single_xDMRG_step()
 
     t_sim.tic();
     t_opt.tic();
-    ccout(3) << "STATUS: Starting single xDMRG step\n";
+    spdlog::trace("Starting single xDMRG step");
     Eigen::Tensor<Scalar,4> theta = superblock->MPS->get_theta();
 
-    xDMRG_Mode mode = xDMRG_Mode::KEEP_BEST_OVERLAP;
-    mode = sim_state.iteration >= settings::xdmrg::min_sweeps  ? xDMRG_Mode::DIRECT_OPT : mode;
-
-
-//
-//    if (sim_state.iteration > min_sweeps or theta.size() >= 4096){
-//        mode = xDMRG_Mode::DIRECT_OPT;
-//    }
-//    mode = sim_state.chi_temp >= 8  ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
-//    mode = sim_state.chi_temp >= 32 ? xDMRG_Mode::FULL_EIG_OPT : mode;
-//    mode = chi_current >= 32 ? xDMRG_Mode::DIRECT_OPT      : mode;
-//    mode = mode == xDMRG_Mode::DIRECT_OPT and state->position_is_the_middle() ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
-//    mode = sim_state.chi_temp >= 16 and sim_state.chi_temp <= 64 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
-//    mode = sim_state.chi_temp > 64 ? xDMRG_Mode::DIRECT_OPT : mode;
-//    mode = theta.size() >= 4096 ? xDMRG_Mode::DIRECT_OPT : mode;
+    xDMRG_Mode mode = xDMRG_Mode::FULL_EIG_OPT;
+    mode = sim_state.chi_temp >= 16 ? xDMRG_Mode::PARTIAL_EIG_OPT : mode;
+    mode = sim_state.chi_temp >= 32 ? xDMRG_Mode::DIRECT_OPT : mode;
 
     theta = find_state_with_greatest_overlap_part_diag3(theta,mode);
     t_opt.toc();
-    ccout(3) << "STATUS: Truncating theta \n";
+    spdlog::trace("Truncating theta");
 
     t_svd.tic();
     superblock->truncate_MPS(theta, sim_state.chi_temp, settings::precision::SVDThreshold);
@@ -177,10 +249,11 @@ void class_xDMRG::check_convergence(){
     if (sim_state.iteration <= settings::xdmrg::min_sweeps){clear_saturation_status();}
     check_convergence_variance_mpo();
 //    if (sim_state.iteration < min_sweeps){sim_state.variance_mpo_saturated_for = 0;}
-    ccout(2) << "Variance has saturated for " << sim_state.variance_mpo_saturated_for << " steps \n";
+    spdlog::info("Variance has saturated for {} steps",sim_state.variance_mpo_saturated_for );
+
     if(sim_state.variance_mpo_has_converged)
     {
-        ccout(2) << "Simulation has converged\n";
+        spdlog::info("Simulation has converged");
         sim_state.simulation_has_converged = true;
     }
 
@@ -189,7 +262,7 @@ void class_xDMRG::check_convergence(){
              sim_state.variance_mpo_saturated_for > max_saturation_length
             )
     {
-        ccout(2) << "Simulation has to stop\n";
+        spdlog::info("Simulation has to stop");
         sim_state.simulation_has_to_stop = true;
     }
 
@@ -314,12 +387,13 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
 
         t_ham.tic();
-        ccout(3) << "STATUS: Starting construction of H_local \n";
+        spdlog::trace("Starting construction of H_local");
         Eigen::MatrixXd H_local = superblock->get_H_local_matrix_real();
-        ccout(3) << "STATUS: Finished construction H_local \n";
+        spdlog::trace("Finished construction H_local");
         t_ham.toc();
         t_eig.tic();
-        ccout(3) << "STATUS: Instantiating StlMatrixProduct \n";
+        spdlog::trace("Instantiating StlMatrixProduct");
+
         // You need to copy the data into StlMatrixProduct, because the PartialPivLU will overwrite the data in H_local otherwise.
         StlMatrixProduct<double> hamiltonian_sparse (H_local.data(),H_local.rows(),Form::SYMMETRIC,Side::R, true);
         t_eig.toc();
@@ -342,7 +416,9 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         double subspace_quality_threshold = prec;
     //    double subspace_quality_threshold = 1e-10;
         double sparcity    = (double)(H_local.array().cwiseAbs() > 1e-15).count()/(double)H_local.size();
-        ccout(2) << "Starting eigensolver \n"
+        std::stringstream problem_report;
+        problem_report
+                 << "Starting eigensolver \n"
                  << std::setprecision(10)
                  << "      mode        : "    << mode << '\n'
                  << "      position    : "    << state->get_position() << '\n'
@@ -350,7 +426,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                  << "      shape       : "    << shape    << " x " << shape << '\n'
                  << "      sparcity    : "    << sparcity << '\n'
                  << "      Wall time   : "    << t_tot.get_age() << '\n' << '\n' << std::flush;
-
+        spdlog::info(problem_report.str());
         class_eigsolver solver;
         std::string reason = "none";
         for (auto nev : generate_size_list(shape)){
@@ -369,7 +445,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 //                break;
             else if (nev <= 0 or mode == xDMRG_Mode::FULL_EIG_OPT){
                 nev = shape;
-                solver.eig<Type::REAL, Form::SYMMETRIC>(H_local,true,true);
+                solver.eig<Type::REAL, Form::SYMMETRIC>(H_local,true,false);
             }
             t_eig.toc();
             auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solver.solution.meta.cols);
@@ -389,13 +465,14 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
             if(subspace_quality < subspace_quality_threshold)                 {reason = "subspace quality is good"; break;}
         }
         H_local.resize(0,0);
-        ccout(2) << "Finished eigensolver -- condition: " << reason << '\n';
+        spdlog::info("Finished eigensolver -- condition: {}",reason);
 
         auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data(),solver.solution.meta.cols);
         auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
         int nev                             = solver.solution.meta.cols;
-
-        ccout(2)<< setw(12) << right << "n eigvecs"
+        std::stringstream solver_report;
+        solver_report
+                << setw(12) << right << "n eigvecs"
                 << setw(24) << right << "max overlap"
                 << setw(24) << right << "win overlap"
                 << setw(24) << right << "min overlap"
@@ -406,7 +483,8 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                 << setw(18) << right << "Wall Time [s]"
                 << '\n';
         for(auto &log : result_log){
-            ccout(2)<< std::setprecision(16)
+            solver_report
+                    << std::setprecision(16)
                     << setw(12) << right << std::get<0>(log)
                     << setw(24) << right << std::get<1>(log)
                     << setw(24) << right << std::get<2>(log)
@@ -418,9 +496,8 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                     << setw(18) << right << std::get<8>(log)
                     << '\n';
         }
-        ccout(2) << '\n' << std::flush;
-
-        std::cout << setprecision(16);
+        solver_report << '\n' << std::flush;
+        spdlog::info(solver_report.str());
         if(nev >= 2 and max_overlap < max_overlap_threshold and mode != xDMRG_Mode::KEEP_BEST_OVERLAP){
             theta_res = subspace_optimization(energy_new,variance_new,nev,eigvecs.data(),eigvals.data(),theta);
         }else {
@@ -434,9 +511,13 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
 
     if(sim_state.energy_now < sim_state.energy_lbound or sim_state.energy_now > sim_state.energy_ubound){
-        std::cout << "WARNING: Energy far from target: \n" << std::setprecision(5)
-                  << "     Current energy =  " << sim_state.energy_now    << " | density = " << (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min)  << "\n"
-                  << "     Target energy  =  " << sim_state.energy_target << " | density = " << settings::xdmrg::energy_density << " +- " << settings::xdmrg::energy_window <<  std::endl;
+        std::stringstream window_warning;
+
+        window_warning
+            << "WARNING: Energy far from target: \n" << std::setprecision(5)
+            << "     Current energy =  " << sim_state.energy_now    << " | density = " << (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min)  << "\n"
+            << "     Target energy  =  " << sim_state.energy_target << " | density = " << settings::xdmrg::energy_density << " +- " << settings::xdmrg::energy_window <<  std::endl;
+        spdlog::warn(window_warning.str());
     }
 //    return theta;
     return Textra::Matrix_to_Tensor(theta_res, theta.dimensions());
@@ -467,11 +548,11 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
     std::vector<std::tuple<std::string,int,double,Scalar,double,int,int,double,double>> opt_log;
 
     {
-        ccout(3) << "STATUS: Starting LBFGS \n";
+        spdlog::trace("Starting LBFGS");
         t_lbfgs.tic();
-        ccout(3) << "STATUS: Starting construction of H_local_sq \n";
+        spdlog::trace("Starting construction of H_local_sq");
         Eigen::MatrixXcd H_local_sq = superblock->get_H_local_sq_matrix();
-        ccout(3) << "STATUS: Finished construction of H_local_sq \n";
+        spdlog::trace("Finished construction of H_local_sq");
         t_lbfgs.toc();
         Textra::VectorType<Scalar> theta_0 = eigvecs * xstart;
         int iter_0 = 0;
@@ -508,7 +589,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
         // x will be overwritten to be the best point found
         double fx;
         t_lbfgs.tic();
-        ccout(3) << "STATUS: Running LBFGS\n";
+        spdlog::trace("Running LBFGS");
         int niter = solver_3.minimize(functor, xstart, fx);
         int counter = functor.get_count();
         t_lbfgs.toc();
@@ -518,11 +599,13 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
         variance_new = functor.get_variance()/chain_length;
         overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
         opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_lbfgs.get_last_time_interval(), t_tot.get_age());
-
-        ccout(3) << "STATUS: Finished LBFGS \n";
+        spdlog::trace("Finished LBFGS");
     }
 
-    ccout(2)  << std::setprecision(16)
+    spdlog::trace("Finished LBFGS");
+    std::stringstream report;
+    report << std::setprecision(16);
+    report    << std::setprecision(16)
               <<"    "<< setw(24) << left << "Algorithm"
               <<"    "<< setw(8)  << left << "size"
               <<"    "<< setw(24) << left << "energy"
@@ -535,7 +618,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
               <<"    "<< setw(20) << left << "Wall time [s]"
               << '\n';
     for(auto &log : opt_log){
-        ccout(2) << std::setprecision(16)
+        report   << std::setprecision(16)
                  << "    " <<setw(24) << left << std::get<0>(log)
                  << "    " <<setw(8)  << left << std::get<1>(log)
                  << "    " <<setw(24) << left << std::get<2>(log)
@@ -548,8 +631,8 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
                  << "    " <<setw(20) << left << std::get<8>(log)
                  << '\n';
     }
-    ccout(2) << '\n';
-
+    report << '\n';
+    spdlog::info(report.str());
     return theta_new;
 
 }
@@ -612,12 +695,13 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
         variance_new = functor.get_variance()/chain_length;
         double overlap_new = (theta_old.adjoint() * xstart).cwiseAbs().sum();
         opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_lbfgs.get_last_time_interval(), t_tot.get_age());
-        spdlog::trace("Time in function = {%.3}", functor.t_lbfgs.get_measured_time()*1000);
-        std::cout << "Time in function: " << std::setprecision(3) << functor.t_lbfgs.get_measured_time()*1000 << std::endl;
-        ccout(3) << "STATUS: Finished LBFGS \n";
-    }
+        spdlog::trace("Time in function = {:.3f}", functor.t_lbfgs.get_measured_time()*1000);
+        spdlog::trace("Finished LBFGS");
 
-    ccout(2)  << std::setprecision(16)
+    }
+    std::stringstream report;
+    report << std::setprecision(16);
+    report    << std::setprecision(16)
               <<"    "<< setw(24) << left << "Algorithm"
               <<"    "<< setw(8)  << left << "size"
               <<"    "<< setw(24) << left << "energy"
@@ -630,7 +714,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
               <<"    "<< setw(20) << left << "Wall time [s]"
               << '\n';
     for(auto &log : opt_log){
-        ccout(2) << std::setprecision(16)
+        report   << std::setprecision(16)
                  << "    " <<setw(24) << left << std::get<0>(log)
                  << "    " <<setw(8)  << left << std::get<1>(log)
                  << "    " <<setw(24) << left << std::get<2>(log)
@@ -643,7 +727,36 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
                  << "    " <<setw(20) << left << std::get<8>(log)
                  << '\n';
     }
-    ccout(2) << '\n';
+    report << '\n';
+    spdlog::info(report.str());
+//
+//    ccout(2)  << std::setprecision(16)
+//              <<"    "<< setw(24) << left << "Algorithm"
+//              <<"    "<< setw(8)  << left << "size"
+//              <<"    "<< setw(24) << left << "energy"
+//              <<"    "<< setw(44) << left << "variance"
+//              <<"    "<< setw(24) << left << "overlap"
+//              <<"    "<< setw(8)  << left << "iter"
+//              <<"    "<< setw(8)  << left << "counter"
+//              <<"    "<< setw(20) << left << "Elapsed time [ms]"
+//              <<"    "<< setw(20) << left << "Time per count [ms]"
+//              <<"    "<< setw(20) << left << "Wall time [s]"
+//              << '\n';
+//    for(auto &log : opt_log){
+//        ccout(2) << std::setprecision(16)
+//                 << "    " <<setw(24) << left << std::get<0>(log)
+//                 << "    " <<setw(8)  << left << std::get<1>(log)
+//                 << "    " <<setw(24) << left << std::get<2>(log)
+//                 << "    " <<setw(44) << left << std::get<3>(log)
+//                 << "    " <<setw(24) << left << std::get<4>(log)
+//                 << "    " <<setw(8)  << left << std::get<5>(log) << std::setprecision(3)
+//                 << "    " <<setw(8)  << left << std::get<6>(log) << std::setprecision(3)
+//                 << "    " <<setw(20) << left << std::get<7>(log)*1000
+//                 << "    " <<setw(20) << left << std::get<7>(log)*1000 / (double)std::get<6>(log)
+//                 << "    " <<setw(20) << left << std::get<8>(log)
+//                 << '\n';
+//    }
+//    ccout(2) << '\n';
 
     return xstart;
 }
@@ -674,7 +787,7 @@ void class_xDMRG::find_energy_range() {
         copy_superblock_to_chain();         //Needs to occurr after update_MPS...
         print_status_update();
 
-        // It's important not to perform the last sim_state.step.
+        // It's important not to perform the last step.
         // That last state would not get optimized
         if(sim_state.iteration >= max_sweeps_during_f_range) {break;}
         enlarge_environment(state->get_direction());
@@ -693,7 +806,7 @@ void class_xDMRG::find_energy_range() {
         single_DMRG_step(eigsolver_properties::Ritz::LR);
         copy_superblock_to_chain();         //Needs to occurr after update_MPS...
         print_status_update();
-        // It's important not to perform the last sim_state.step.
+        // It's important not to perform the last step.
         // That last state would not get optimized
         if(sim_state.iteration >= max_sweeps_during_f_range) {break;}
         enlarge_environment(state->get_direction());

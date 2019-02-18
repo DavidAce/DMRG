@@ -3,7 +3,7 @@
 //
 
 #include <iomanip>
-#include <IO/class_hdf5_table_buffer2.h>
+#include <io/class_hdf5_table_buffer2.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/nmspc_mps_tools.h>
@@ -15,6 +15,7 @@ using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     : class_algorithm_base(std::move(hdf5_),"iDMRG", SimulationType::iDMRG) {
+
     table_idmrg = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
     initialize_state(settings::model::initial_state);
 
