@@ -148,17 +148,17 @@ void class_xDMRG::run()
 
 void class_xDMRG::run_preprocessing() {
 
-    spdlog::trace("Starting {} preprocessing", sim_name);
+    spdlog::info("Starting {} preprocessing", sim_name);
 
     initialize_chain();
     set_random_fields_in_chain_mpo();
     MPS_Tools::Finite::Print::print_hamiltonians(*state);
     find_energy_range();
-    spdlog::trace("Finished {} preprocessing", sim_name);
+    spdlog::info("Finished {} preprocessing", sim_name);
 }
 
 void class_xDMRG::run_simulation()    {
-    spdlog::trace("Starting {} simulation", sim_name);
+    spdlog::info("Starting {} simulation", sim_name);
     while(true) {
         single_xDMRG_step();
         MPS_Tools::Finite::Chain::copy_superblock_to_state(*state, *superblock);
@@ -174,9 +174,9 @@ void class_xDMRG::run_simulation()    {
         // That last state would not get optimized
         if (sim_state.iteration >= settings::xdmrg::min_sweeps and state->position_is_the_middle_any_direction())
         {
-            if (sim_state.iteration >= settings::xdmrg::max_sweeps) stop_reason = StopReason::MAX_STEPS; break;
-            if (sim_state.simulation_has_converged)                 stop_reason = StopReason::CONVERGED; break;
-            if (sim_state.simulation_has_to_stop)                   stop_reason = StopReason::SATURATED; break;
+            if (sim_state.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
+            if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
+            if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
 
         update_bond_dimension(min_saturation_length);
@@ -188,15 +188,16 @@ void class_xDMRG::run_simulation()    {
         spdlog::trace("Finished step {}, iteration {}",sim_state.step,sim_state.iteration);
     }
     switch(stop_reason){
-        case StopReason::MAX_STEPS : spdlog::trace("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
-        case StopReason::CONVERGED : spdlog::trace("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
-        case StopReason::SATURATED : spdlog::trace("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
+        case StopReason::MAX_STEPS : spdlog::info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
+        case StopReason::CONVERGED : spdlog::info("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
+        case StopReason::SATURATED : spdlog::info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
+        default: spdlog::info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
     }
 
 }
 
 void class_xDMRG::run_postprocessing(){
-    spdlog::trace("Running {} postprocessing",sim_name);
+    spdlog::info("Running {} postprocessing",sim_name);
     MPS_Tools::Finite::Debug::check_integrity(*state,*superblock,sim_state);
     state->set_measured_false();
     state->do_all_measurements();
@@ -209,6 +210,7 @@ void class_xDMRG::run_postprocessing(){
     }
     print_status_full();
     print_profiling();
+    spdlog::info("Finished {} postprocessing",sim_name);
 }
 
 
@@ -248,9 +250,6 @@ void class_xDMRG::check_convergence(){
     t_con.tic();
     if (sim_state.iteration <= settings::xdmrg::min_sweeps){clear_saturation_status();}
     check_convergence_variance_mpo();
-//    if (sim_state.iteration < min_sweeps){sim_state.variance_mpo_saturated_for = 0;}
-    spdlog::info("Variance has saturated for {} steps",sim_state.variance_mpo_saturated_for );
-
     if(sim_state.variance_mpo_has_converged)
     {
         spdlog::info("Simulation has converged");
@@ -265,8 +264,6 @@ void class_xDMRG::check_convergence(){
         spdlog::info("Simulation has to stop");
         sim_state.simulation_has_to_stop = true;
     }
-
-
     t_con.toc();
     t_sim.toc();
 }
@@ -471,7 +468,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
         auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
         int nev                             = solver.solution.meta.cols;
         std::stringstream solver_report;
-        solver_report
+        solver_report << '\n'
                 << setw(12) << right << "n eigvecs"
                 << setw(24) << right << "max overlap"
                 << setw(24) << right << "win overlap"
@@ -512,11 +509,9 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
 
     if(sim_state.energy_now < sim_state.energy_lbound or sim_state.energy_now > sim_state.energy_ubound){
         std::stringstream window_warning;
-
-        window_warning
-            << "WARNING: Energy far from target: \n" << std::setprecision(5)
-            << "     Current energy =  " << sim_state.energy_now    << " | density = " << (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min)  << "\n"
-            << "     Target energy  =  " << sim_state.energy_target << " | density = " << settings::xdmrg::energy_density << " +- " << settings::xdmrg::energy_window <<  std::endl;
+        window_warning << "Energy far from target: \n" << std::setprecision(5)
+            << "            Current energy =  " << sim_state.energy_now    << " | density = " << (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min)  << "\n"
+            << "            Target energy  =  " << sim_state.energy_target << " | density = " << settings::xdmrg::energy_density << " +- " << settings::xdmrg::energy_window <<  std::endl;
         spdlog::warn(window_warning.str());
     }
 //    return theta;
@@ -545,7 +540,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
     Eigen::VectorXd xstart = (theta_old.adjoint() * eigvecs).normalized().real();
 
     class_tic_toc t_lbfgs(true,5,"lbfgs");
-    std::vector<std::tuple<std::string,int,double,Scalar,double,int,int,double,double>> opt_log;
+    std::vector<std::tuple<std::string,int,double,double,double,int,int,double,double>> opt_log;
 
     {
         spdlog::trace("Starting LBFGS");
@@ -563,7 +558,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
                  energy_0 * energy_0 * chain_length * chain_length) / chain_length);
         double overlap_0 = (theta_old.adjoint() * theta_0).cwiseAbs().sum();
 
-        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0, variance_0, overlap_0, iter_0,0, t_lbfgs.get_last_time_interval(), start_time);
+        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0, std::real(variance_0), overlap_0, iter_0,0, t_lbfgs.get_last_time_interval(), start_time);
         start_time = t_tot.get_age();
         using namespace LBFGSpp;
         class_xDMRG_functor functor
@@ -604,8 +599,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
 
     spdlog::trace("Finished LBFGS");
     std::stringstream report;
-    report << std::setprecision(16);
-    report    << std::setprecision(16)
+    report    << std::setprecision(16) << '\n'
               <<"    "<< setw(24) << left << "Algorithm"
               <<"    "<< setw(8)  << left << "size"
               <<"    "<< setw(24) << left << "energy"
@@ -631,7 +625,6 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
                  << "    " <<setw(20) << left << std::get<8>(log)
                  << '\n';
     }
-    report << '\n';
     spdlog::info(report.str());
     return theta_new;
 
@@ -700,8 +693,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
 
     }
     std::stringstream report;
-    report << std::setprecision(16);
-    report    << std::setprecision(16)
+    report    << std::setprecision(16) << '\n'
               <<"    "<< setw(24) << left << "Algorithm"
               <<"    "<< setw(8)  << left << "size"
               <<"    "<< setw(24) << left << "energy"
@@ -729,35 +721,6 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
     }
     report << '\n';
     spdlog::info(report.str());
-//
-//    ccout(2)  << std::setprecision(16)
-//              <<"    "<< setw(24) << left << "Algorithm"
-//              <<"    "<< setw(8)  << left << "size"
-//              <<"    "<< setw(24) << left << "energy"
-//              <<"    "<< setw(44) << left << "variance"
-//              <<"    "<< setw(24) << left << "overlap"
-//              <<"    "<< setw(8)  << left << "iter"
-//              <<"    "<< setw(8)  << left << "counter"
-//              <<"    "<< setw(20) << left << "Elapsed time [ms]"
-//              <<"    "<< setw(20) << left << "Time per count [ms]"
-//              <<"    "<< setw(20) << left << "Wall time [s]"
-//              << '\n';
-//    for(auto &log : opt_log){
-//        ccout(2) << std::setprecision(16)
-//                 << "    " <<setw(24) << left << std::get<0>(log)
-//                 << "    " <<setw(8)  << left << std::get<1>(log)
-//                 << "    " <<setw(24) << left << std::get<2>(log)
-//                 << "    " <<setw(44) << left << std::get<3>(log)
-//                 << "    " <<setw(24) << left << std::get<4>(log)
-//                 << "    " <<setw(8)  << left << std::get<5>(log) << std::setprecision(3)
-//                 << "    " <<setw(8)  << left << std::get<6>(log) << std::setprecision(3)
-//                 << "    " <<setw(20) << left << std::get<7>(log)*1000
-//                 << "    " <<setw(20) << left << std::get<7>(log)*1000 / (double)std::get<6>(log)
-//                 << "    " <<setw(20) << left << std::get<8>(log)
-//                 << '\n';
-//    }
-//    ccout(2) << '\n';
-
     return xstart;
 }
 

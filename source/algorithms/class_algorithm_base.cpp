@@ -141,7 +141,7 @@ void class_algorithm_base::check_saturation_using_slope(
     X_vec.push_back(iter);
     unsigned long min_data_points = 2;
     if (Y_vec.size() < min_data_points){return;}
-    auto check_from =  (unsigned long)(X_vec.size()*0.5); //Check the last half of the measurements in Y_vec.
+    auto check_from =  (unsigned long)(X_vec.size()*0.75); //Check the last quarter of the measurements in Y_vec.
     while (X_vec.size() - check_from < min_data_points and check_from > 0){
         check_from -=1; //Decrease check from if out of bounds.
     }
@@ -820,12 +820,12 @@ void class_algorithm_base::print_status_update() {
     report << left  << " Saturation [";
     switch(sim_type){
         case SimulationType::iDMRG:
+            report << left  << " σ²- " << setw(2) << sim_state.variance_mpo_saturated_for << " steps";
             report << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_saturated;
-            report << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_saturated;
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            report << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_saturated;
+            report << left  << setw(2) << sim_state.variance_mpo_saturated_for << " steps";
             break;
         case SimulationType::iTEBD:
             report << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_saturated;
