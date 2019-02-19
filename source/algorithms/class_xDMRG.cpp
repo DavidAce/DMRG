@@ -55,12 +55,14 @@ using namespace Textra;
 
 class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_algorithm_base(std::move(hdf5_), "xDMRG",SimulationType::xDMRG) {
-
-    rn::seed((unsigned long)settings::model::seed);
+    set_logger(sim_name);
     table_xdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (hdf5, sim_name + "/measurements", "simulation_progress");
     table_xdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name + "/measurements", "simulation_progress_full_chain");
-    state               = std::make_shared<class_finite_chain_state>(settings::xdmrg::num_sites);
-    initialize_state(settings::model::initial_state);
+    state             = std::make_shared<class_finite_chain_state>();
+    superblock        = std::make_shared<class_superblock>(sim_type);
+    MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type, settings::xdmrg::num_sites, settings::model::seed);
+    MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
+//    initialize_superblock(settings::model::initial_state);
     min_saturation_length = 1 * (int)(0.5 * settings::xdmrg::num_sites);
     max_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
 }
@@ -150,10 +152,10 @@ void class_xDMRG::run_preprocessing() {
 
     spdlog::info("Starting {} preprocessing", sim_name);
 
-    initialize_chain();
-    set_random_fields_in_chain_mpo();
-    MPS_Tools::Finite::Print::print_hamiltonians(*state);
+//    initialize_chain();
+//    set_random_fields_in_chain_mpo();
     find_energy_range();
+    MPS_Tools::Finite::Print::print_hamiltonians(*state);
     spdlog::info("Finished {} preprocessing", sim_name);
 }
 
@@ -179,6 +181,11 @@ void class_xDMRG::run_simulation()    {
             if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
 
+        if(state->position_is_the_middle()){
+            *state = MPS_Tools::Finite::Ops::get_parity_projected_state(*state,qm::spinOneHalf::sx,1);
+            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+        }
+
         update_bond_dimension(min_saturation_length);
         enlarge_environment(state->get_direction());
         move_center_point();
@@ -200,10 +207,13 @@ void class_xDMRG::run_postprocessing(){
     spdlog::info("Running {} postprocessing",sim_name);
     MPS_Tools::Finite::Debug::check_integrity(*state,*superblock,sim_state);
     state->set_measured_false();
+    superblock->set_measured_false();
     state->do_all_measurements();
+    MPS_Tools::Infinite::Hdf5::write_all_measurements(*superblock,*hdf5,sim_name);
     MPS_Tools::Finite::Hdf5::write_all_measurements(*state,*hdf5,sim_name);
+
     MPS_Tools::Finite::Ops::print_parity_properties(*state);
-    MPS_Tools::Finite::Hdf5::write_all_parity_projections(*state,*hdf5,sim_name);
+    MPS_Tools::Finite::Hdf5::write_all_parity_projections(*state,*superblock,*hdf5,sim_name);
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
         hdf5->write_dataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
@@ -237,7 +247,7 @@ void class_xDMRG::single_xDMRG_step()
     superblock->truncate_MPS(theta, sim_state.chi_temp, settings::precision::SVDThreshold);
     t_svd.toc();
 
-    superblock->set_not_measured();
+    superblock->set_measured_false();
     t_sim.toc();
 
 }
@@ -613,16 +623,16 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
               << '\n';
     for(auto &log : opt_log){
         report   << std::setprecision(16)
-                 << "    " <<setw(24) << left << std::get<0>(log)
-                 << "    " <<setw(8)  << left << std::get<1>(log)
-                 << "    " <<setw(24) << left << std::get<2>(log)
-                 << "    " <<setw(44) << left << std::get<3>(log)
-                 << "    " <<setw(24) << left << std::get<4>(log)
-                 << "    " <<setw(8)  << left << std::get<5>(log) << std::setprecision(3)
-                 << "    " <<setw(8)  << left << std::get<6>(log) << std::setprecision(3)
-                 << "    " <<setw(20) << left << std::get<7>(log)*1000
-                 << "    " <<setw(20) << left << std::get<7>(log)*1000 / (double)std::get<6>(log)
-                 << "    " <<setw(20) << left << std::get<8>(log)
+                 << "    " <<setw(24) << left << std::fixed << std::get<0>(log)
+                 << "    " <<setw(8)  << left << std::fixed << std::get<1>(log)
+                 << "    " <<setw(24) << left << std::fixed << std::get<2>(log)
+                 << "    " <<setw(44) << left << std::fixed << std::get<3>(log)
+                 << "    " <<setw(24) << left << std::fixed << std::get<4>(log)
+                 << "    " <<setw(8)  << left << std::fixed << std::get<5>(log) << std::setprecision(3)
+                 << "    " <<setw(8)  << left << std::fixed << std::get<6>(log) << std::setprecision(3)
+                 << "    " <<setw(20) << left << std::fixed << std::get<7>(log)*1000
+                 << "    " <<setw(20) << left << std::fixed << std::get<7>(log)*1000 / (double)std::get<6>(log)
+                 << "    " <<setw(20) << left << std::fixed << std::get<8>(log)
                  << '\n';
     }
     spdlog::info(report.str());
@@ -707,16 +717,16 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
               << '\n';
     for(auto &log : opt_log){
         report   << std::setprecision(16)
-                 << "    " <<setw(24) << left << std::get<0>(log)
-                 << "    " <<setw(8)  << left << std::get<1>(log)
-                 << "    " <<setw(24) << left << std::get<2>(log)
-                 << "    " <<setw(44) << left << std::get<3>(log)
-                 << "    " <<setw(24) << left << std::get<4>(log)
-                 << "    " <<setw(8)  << left << std::get<5>(log) << std::setprecision(3)
-                 << "    " <<setw(8)  << left << std::get<6>(log) << std::setprecision(3)
-                 << "    " <<setw(20) << left << std::get<7>(log)*1000
-                 << "    " <<setw(20) << left << std::get<7>(log)*1000 / (double)std::get<6>(log)
-                 << "    " <<setw(20) << left << std::get<8>(log)
+                 << "    " <<setw(24) << left << std::fixed << std::get<0>(log)
+                 << "    " <<setw(8)  << left << std::fixed << std::get<1>(log)
+                 << "    " <<setw(24) << left << std::fixed << std::get<2>(log)
+                 << "    " <<setw(44) << left << std::fixed << std::get<3>(log)
+                 << "    " <<setw(24) << left << std::fixed << std::get<4>(log)
+                 << "    " <<setw(8)  << left << std::fixed << std::get<5>(log) << std::setprecision(3)
+                 << "    " <<setw(8)  << left << std::fixed << std::get<6>(log) << std::setprecision(3)
+                 << "    " <<setw(20) << left << std::fixed << std::get<7>(log)*1000
+                 << "    " <<setw(20) << left << std::fixed << std::get<7>(log)*1000 / (double)std::get<6>(log)
+                 << "    " <<setw(20) << left << std::fixed << std::get<8>(log)
                  << '\n';
     }
     report << '\n';
@@ -738,11 +748,10 @@ void class_xDMRG::initialize_chain() {
 
 
 void class_xDMRG::find_energy_range() {
-    std::cout << "Finding energy range" << std::endl;
+    spdlog::trace("Finding energy range");
     assert(state->get_length() == (size_t)settings::xdmrg::num_sites);
     int max_sweeps_during_f_range = 5;
     sim_state.iteration = state->reset_sweeps();
-
 
     // Find energy minimum
     while(true) {
@@ -756,9 +765,8 @@ void class_xDMRG::find_energy_range() {
         enlarge_environment(state->get_direction());
         move_center_point();
         sim_state.iteration = state->get_sweeps();
+
     }
-//    state->print_hamiltonians();
-//    exit(1);
     compute_observables();
     sim_state.energy_min = superblock->measurements.energy_per_site_mpo;
     sim_state.iteration = state->reset_sweeps();
@@ -785,16 +793,15 @@ void class_xDMRG::find_energy_range() {
     sim_state.energy_lbound  = sim_state.energy_target - settings::xdmrg::energy_window*(sim_state.energy_max-sim_state.energy_min);
 
     sim_state.energy_now = superblock->E_optimal / state->get_length();
-    std::cout << setprecision(10) ;
-    std::cout << "Energy minimum (per site) = " << sim_state.energy_min << std::endl;
-    std::cout << "Energy maximum (per site) = " << sim_state.energy_max << std::endl;
-    std::cout << "Energy target  (per site) = " << sim_state.energy_target << std::endl;
+    spdlog::info("Energy minimum (per site) = {}", sim_state.energy_min);
+    spdlog::info("Energy maximum (per site) = {}", sim_state.energy_max);
+    spdlog::info("Energy target  (per site) = {}", sim_state.energy_target);
     while(sim_state.energy_now < sim_state.energy_lbound or sim_state.energy_now > sim_state.energy_ubound){
         reset_chain_mps_to_random_product_state("none");
         compute_observables();
         sim_state.energy_now = superblock->measurements.energy_per_site_mpo;
     }
-    std::cout << "Energy initial (per site) = " << sim_state.energy_now <<  std::endl;
+    spdlog::info("Energy initial (per site) = {}", sim_state.energy_now );
 
 
 }
@@ -808,6 +815,7 @@ void class_xDMRG::store_state_to_file(bool force){
     spdlog::trace("Storing storing mps to file");
     t_sto.tic();
     MPS_Tools::Finite::Hdf5::write_all_state(*state, *hdf5, sim_name);
+    MPS_Tools::Infinite::Hdf5::write_all_superblock(*superblock, *hdf5, sim_name);
     if (settings::hdf5::resume_from_file){
         MPS_Tools::Finite::Hdf5::write_full_mps(*state,*hdf5,sim_name);
         MPS_Tools::Finite::Hdf5::write_full_mpo(*state,*hdf5,sim_name);

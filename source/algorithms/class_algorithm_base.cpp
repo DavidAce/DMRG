@@ -19,6 +19,7 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/class_svd_wrapper.h>
 #include <algorithms/table_types.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 /*! \brief Prints the content of a vector nicely */
 template<typename T>
@@ -61,12 +62,28 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5
     table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(hdf5, sim_name + "/measurements", "profiling");
     spdlog::trace("Constructing superblock");
     superblock      = std::make_shared<class_superblock>(sim_type);
-    spdlog::trace("Constructing state");
-    //Default constructed objects
-    state  = std::make_shared<class_finite_chain_state>();
     spdlog::trace("Writing input_file");
     hdf5->write_dataset(settings::input::input_file, "common/input_file");
     hdf5->write_dataset(settings::input::input_filename, "common/input_filename");
+}
+
+
+void class_algorithm_base::set_logger(std::string sim_name){
+    spdlog::set_default_logger(spdlog::stdout_color_mt(sim_name));
+    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
+    spdlog::set_level(spdlog::level::trace);
+    // Set console settings
+    if (settings::console::verbosity < 0 or settings::console::verbosity > 6){
+        std::cerr << "ERROR: Expected verbosity level integer in [0-6]. Got: " << settings::console::verbosity << std::endl;
+        exit(2);
+    }else{
+        spdlog::level::level_enum lvl = static_cast<spdlog::level::level_enum>(settings::console::verbosity);
+        spdlog::set_level(lvl);
+        spdlog::debug("Verbosity level: {}", spdlog::level::to_string_view(lvl));
+    }
+    if ( not settings::console::timestamp){
+        spdlog::set_pattern("[%n]%^[%=8l]%$ %v");
+    }
 }
 
 
@@ -90,8 +107,8 @@ void class_algorithm_base::single_DMRG_step(Ritz ritz){
 //        superblock->HA->set_reduced_energy(superblock->E_optimal);
 //        superblock->HB->set_reduced_energy(superblock->E_optimal);
 //    }
-//    measurement->set_not_measured();
-    superblock->set_not_measured();
+//    measurement->set_measured_false();
+    superblock->set_measured_false();
     t_sim.toc();
 }
 
@@ -370,7 +387,7 @@ void class_algorithm_base::store_profiling_to_file_total(bool force) {
 
 }
 
-void class_algorithm_base::initialize_state(std::string initial_state ) {
+void class_algorithm_base::initialize_superblock(std::string initial_state) {
     spdlog::trace("Initializing state: {}", initial_state);
     //Set the size and initial values for the MPS and environments
     //Choose between GHZ, W, Random, Product state (up, down, etc), None, etc...
@@ -611,15 +628,16 @@ void class_algorithm_base::set_random_fields_in_chain_mpo() {
     }
 
     for (auto &mpo : state->get_MPO_L()){
-        mpo->set_non_local_parameters(all_params);
+        mpo->set_full_lattice_parameters(all_params);
     }
     for (auto &mpo : state->get_MPO_R()){
-        mpo->set_non_local_parameters(all_params);
+        mpo->set_full_lattice_parameters(all_params);
     }
 
 
     superblock->HA = state->get_MPO_L().back()->clone();
     superblock->HB = state->get_MPO_R().front()->clone();
+    MPS_Tools::Finite::Print::print_hamiltonians(*state);
     sim_state.iteration = state->reset_sweeps();
 }
 

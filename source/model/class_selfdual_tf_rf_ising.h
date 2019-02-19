@@ -71,7 +71,7 @@ public:
     std::vector<std::string> get_parameter_names()                                      const override;
     std::vector<double>      get_parameter_values()                                     const override;
 
-    void   set_non_local_parameters(const std::vector<std::vector<double>> chain_parameters)  override;
+    void   set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters)  override;
 
 
 //    void   write_to_hdf5_table()                                                override;

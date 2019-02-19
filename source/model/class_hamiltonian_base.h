@@ -40,7 +40,7 @@ public:
     virtual size_t get_spin_dimension()                                                           const = 0;
     virtual std::vector<std::string> get_parameter_names()                                        const = 0;
     virtual std::vector<double>      get_parameter_values()                                       const = 0;
-    virtual void   set_non_local_parameters(const std::vector<std::vector<double>> parameters)          = 0;
+    virtual void   set_full_lattice_parameters(const std::vector<std::vector<double>> parameters)          = 0;
 //    virtual void   write_to_hdf5_table()                           = 0;
 //    virtual double get_energy_reduced()                      const = 0;
 //    virtual double get_random_field()                        const = 0;
@@ -48,7 +48,7 @@ public:
     void set_position(int new_pos);
 
     size_t    get_position()                 const;
-
+    bool      full_lattice_parameters_have_been_set = false;
 };
 
 

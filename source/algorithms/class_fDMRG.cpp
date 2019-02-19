@@ -20,10 +20,15 @@ using namespace Textra;
 
 class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_algorithm_base(std::move(hdf5_),"fDMRG", SimulationType::fDMRG) {
+    set_logger(sim_name);
 
     table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (hdf5, sim_name + "/measurements", "simulation_progress");
     table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name + "/measurements", "simulation_progress_full_chain");
-    state             = std::make_shared<class_finite_chain_state>(settings::fdmrg::num_sites);
+    state             = std::make_shared<class_finite_chain_state>();
+    superblock        = std::make_shared<class_superblock>(sim_type);
+    MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type, settings::fdmrg::num_sites, settings::model::seed);
+    MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
+
     min_saturation_length = 1 * (int)(0.5 * settings::fdmrg::num_sites);
     max_saturation_length = 1 * (int)(1.0 * settings::fdmrg::num_sites);
 }
@@ -110,7 +115,7 @@ void class_fDMRG::run()
 
 void class_fDMRG::run_preprocessing() {
     spdlog::info("Running {} preprocessing",sim_name);
-    initialize_state(settings::model::initial_state);
+    initialize_superblock(settings::model::initial_state);
     initialize_chain();
     set_random_fields_in_chain_mpo();
     MPS_Tools::Finite::Print::print_hamiltonians(*state);
@@ -161,8 +166,10 @@ void class_fDMRG::run_postprocessing(){
     state->set_measured_false();
     state->do_all_measurements();
     MPS_Tools::Finite::Hdf5::write_all_measurements(*state,*hdf5,sim_name);
+    MPS_Tools::Infinite::Hdf5::write_all_measurements(*superblock,*hdf5,sim_name);
+
     MPS_Tools::Finite::Ops::print_parity_properties(*state);
-    MPS_Tools::Finite::Hdf5::write_all_parity_projections(*state,*hdf5,sim_name);
+    MPS_Tools::Finite::Hdf5::write_all_parity_projections(*state,*superblock,*hdf5,sim_name);
 
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::fdmrg::store_wavefn){
