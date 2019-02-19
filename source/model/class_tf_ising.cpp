@@ -17,6 +17,7 @@ class_tf_ising::class_tf_ising(): class_hamiltonian_base(){
     extent4     = {1, 1, spin_dim, spin_dim};
     extent2     = {spin_dim, spin_dim};
     r_rnd_field = rn::uniform_double(-w_rnd_strength,w_rnd_strength);
+    full_lattice_parameters_have_been_set = true; //There are no full latice parameters on this model!
     build_mpo();
     qm::spinOneHalf::SX = qm::gen_manybody_spin(sx, 2);
     qm::spinOneHalf::SY = qm::gen_manybody_spin(sy, 2);
@@ -54,6 +55,7 @@ void   class_tf_ising::set_hamiltonian(const Eigen::VectorXd parameters) {
     w_rnd_strength  = parameters(4);
     e_reduced       = parameters(5);
     spin_dim        = (int)parameters(6);
+    full_lattice_parameters_have_been_set = true;
     build_mpo();
 };
 
@@ -77,6 +79,7 @@ void class_tf_ising::build_mpo()
  *
  */
 {
+    if (not full_lattice_parameters_have_been_set) throw std::runtime_error("Failed to build MPO: Full lattice parameters haven't been set yet.");
     MPO.resize(3, 3, spin_dim, spin_dim);
     MPO.setZero();
     MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
@@ -88,7 +91,9 @@ void class_tf_ising::build_mpo()
 
 void class_tf_ising::randomize_hamiltonian(){
     r_rnd_field = rn::uniform_double(-w_rnd_strength,w_rnd_strength);
-    MPO.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(g_mag_field+r_rnd_field) * sx);
+    if(full_lattice_parameters_have_been_set or MPO.size()>3){
+        MPO.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(g_mag_field+r_rnd_field) * sx);
+    }
 }
 
 Eigen::Tensor<Scalar,4> class_tf_ising::MPO_reduced_view() const {
@@ -177,6 +182,6 @@ std::vector<double> class_tf_ising::get_parameter_values() const {
 }
 
 
-void class_tf_ising::set_non_local_parameters(const std::vector<std::vector<double>> chain_parameters){
-
+void class_tf_ising::set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters){
+    full_lattice_parameters_have_been_set = true;
 }

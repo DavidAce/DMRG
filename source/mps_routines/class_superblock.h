@@ -112,7 +112,7 @@ public:
 
 
     void do_all_measurements();
-    void set_not_measured();
+    void set_measured_false();
     bool has_been_measured = false;
     bool has_been_written  = false;
     struct Measurements {

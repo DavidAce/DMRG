@@ -28,6 +28,7 @@ class class_algorithm_base {
 protected:
     //Console
     class_custom_cout ccout;
+    void set_logger(std::string sim_name);
 public:
     using Scalar = std::complex<double>;
     class_algorithm_base() = default;
@@ -86,7 +87,7 @@ public:
     void update_bond_dimension(int min_saturation_length = 1);
     void clear_saturation_status();
 
-    void initialize_state(std::string initial_state);
+    void initialize_superblock(std::string initial_state);
     void reset_chain_mps_to_random_product_state(std::string parity = "none");
     void set_random_fields_in_chain_mpo();
     void compute_observables();

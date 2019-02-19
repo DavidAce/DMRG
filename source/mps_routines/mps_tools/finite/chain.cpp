@@ -9,9 +9,69 @@
 #include <mps_routines/class_mps_2site.h>
 #include <mps_routines/class_environment.h>
 #include <model/class_hamiltonian_base.h>
-
+#include <model/class_hamiltonian_factory.h>
+#include <general/nmspc_random_numbers.h>
+#include <spdlog/spdlog.h>
 
 using Scalar         = std::complex<double>;
+
+
+void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state, std::string model_type, const size_t length, const size_t seed){
+    state.clear();
+
+    //Generate MPO
+    while(true){
+        state.get_MPO_L().emplace_back(class_hamiltonian_factory::create_mpo(model_type));
+        if(state.get_MPO_L().size() + state.get_MPO_R().size() >= length){break;}
+        state.get_MPO_R().emplace_front(class_hamiltonian_factory::create_mpo(model_type));
+        if(state.get_MPO_L().size() + state.get_MPO_R().size() >= length){break;}
+    }
+
+    //Generate MPS
+    auto spin_dim = state.get_MPO_L().back()->get_spin_dimension();
+    Eigen::Tensor<Scalar,3> G(spin_dim,1,1);
+    Eigen::Tensor<Scalar,1> L(1);
+    G.setValues({{{1.0}},{{0.0}}});
+    L.setValues({1});
+
+    state.set_max_sites(length);
+    state.get_MPS_C() = L;
+    while(true){
+        state.get_MPS_L().emplace_back(class_vidal_mps(G,L));
+        if(state.get_MPS_L().size() + state.get_MPS_R().size() >= length){break;}
+        state.get_MPS_R().emplace_front(class_vidal_mps(G,L));
+        if(state.get_MPS_L().size() + state.get_MPS_R().size() >= length){break;}
+    }
+    MPS_Tools::Finite::Chain::randomize_mpos(state,seed);
+    MPS_Tools::Finite::Ops::rebuild_environments(state);
+    MPS_Tools::Finite::Debug::check_integrity_of_mps(state);
+}
+
+
+void MPS_Tools::Finite::Chain::randomize_mpos(class_finite_chain_state &state, const size_t seed) {
+    spdlog::info("Setting random fields in chain");
+    rn::seed(seed);
+    if (not state.max_sites_is_set) throw std::range_error("System size not set yet");
+    if (state.get_length() != state.get_MPO_L().size() + state.get_MPO_R().size() )
+        throw std::range_error("Mismatch in system size and size of MPO lists" );
+
+    std::vector<std::vector<double>> all_params;
+    for (auto &mpo : state.get_MPO_L()){
+        mpo->randomize_hamiltonian();
+        all_params.push_back(mpo->get_parameter_values());
+    }
+    for (auto &mpo : state.get_MPO_R()){
+        mpo->randomize_hamiltonian();
+        all_params.push_back(mpo->get_parameter_values());
+    }
+
+    for (auto &mpo : state.get_MPO_L()){
+        mpo->set_full_lattice_parameters(all_params);
+    }
+    for (auto &mpo : state.get_MPO_R()){
+        mpo->set_full_lattice_parameters(all_params);
+    }
+}
 
 
 
@@ -50,8 +110,8 @@ void MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(class_finite_chain_s
 
     assert(superblock.HA->get_position() == MPO_L.back()->get_position());
     assert(superblock.HB->get_position() == MPO_R.front()->get_position());
-    MPO_L.back()    = superblock.HA->clone();
-    MPO_R.front()   = superblock.HB->clone();
+    MPO_L.back()      = superblock.HA->clone();
+    MPO_R.front()     = superblock.HB->clone();
     assert(MPO_L.size() + MPO_R.size() == state.get_length());
     state.set_measured_false();
     state.mpo_have_been_written_to_hdf5 = false;
@@ -259,7 +319,6 @@ int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  stat
     return state.get_sweeps();
 }
 
-
 void MPS_Tools::Finite::Chain::copy_state_to_superblock(const class_finite_chain_state & state, class_superblock & superblock){
     superblock.clear();
     superblock.MPS->set_mps(
@@ -272,8 +331,8 @@ void MPS_Tools::Finite::Chain::copy_state_to_superblock(const class_finite_chain
 
     *superblock.Lblock2 =        state.get_ENV2_L().back();
     *superblock.Lblock  =        state.get_ENV_L().back();
-    *superblock.HA      =        *state.get_MPO_L().back();
-    *superblock.HB      =        *state.get_MPO_R().front();
+    superblock.HA       =        state.get_MPO_L().back()->clone();
+    superblock.HB       =        state.get_MPO_R().front()->clone();
     *superblock.Rblock  =        state.get_ENV_R().front();
     *superblock.Rblock2 =        state.get_ENV2_R().front();
     superblock.environment_size = superblock.Lblock->size + superblock.Rblock->size;

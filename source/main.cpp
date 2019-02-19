@@ -97,18 +97,18 @@ int main(int argc, char* argv[]) {
     }
 
 
-    // Set console settings
-    if (settings::console::verbosity < 0 or settings::console::verbosity > 6){
-        std::cerr << "ERROR: Expected verbosity level integer in [0-6]. Got: " << settings::console::verbosity << std::endl;
-        exit(2);
-    }else{
-        spdlog::level::level_enum lvl = static_cast<spdlog::level::level_enum>(settings::console::verbosity);
-        spdlog::set_level(lvl);
-        spdlog::debug("Verbosity level: {}", spdlog::level::to_string_view(lvl));
-    }
-    if ( not settings::console::timestamp){
-        spdlog::set_pattern("[%n]%^[%=8l]%$ %v");
-    }
+//    // Set console settings
+//    if (settings::console::verbosity < 0 or settings::console::verbosity > 6){
+//        std::cerr << "ERROR: Expected verbosity level integer in [0-6]. Got: " << settings::console::verbosity << std::endl;
+//        exit(2);
+//    }else{
+//        spdlog::level::level_enum lvl = static_cast<spdlog::level::level_enum>(settings::console::verbosity);
+//        spdlog::set_level(lvl);
+//        spdlog::debug("Verbosity level: {}", spdlog::level::to_string_view(lvl));
+//    }
+//    if ( not settings::console::timestamp){
+//        spdlog::set_pattern("[%n]%^[%=8l]%$ %v");
+//    }
 
 
 

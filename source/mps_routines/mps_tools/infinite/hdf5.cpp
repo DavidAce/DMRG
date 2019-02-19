@@ -9,7 +9,8 @@
 #include <model/class_hamiltonian_base.h>
 #include <io/class_hdf5_file.h>
 
-void MPS_Tools::Infinite::Hdf5::write_superblock_state (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name){
+void MPS_Tools::Infinite::Hdf5::write_all_superblock(class_superblock &superblock, class_hdf5_file &hdf5,
+                                                     std::string sim_name){
     if(superblock.has_been_written){return;}
     write_2site_mps(superblock,hdf5,sim_name);
     write_2site_mpo(superblock,hdf5,sim_name);
@@ -54,30 +55,30 @@ void MPS_Tools::Infinite::Hdf5::write_hamiltonian_params(class_superblock &super
     hamiltonian_props.resize(2, temp_rowA.size());
     hamiltonian_props.row(0) = temp_rowA.transpose();
     hamiltonian_props.row(1) = temp_rowB.transpose();
-    hdf5.write_dataset(hamiltonian_props ,sim_name + "/model/Hamiltonian");
+    hdf5.write_dataset(hamiltonian_props ,sim_name + "/model/2site/Hamiltonian");
     int col = 0;
     for (auto &name : superblock.HA->get_parameter_names()){
         std::string attr_value = name;
         std::string attr_name  = "FIELD_" + std::to_string(col) + "_NAME";
-        hdf5.write_attribute_to_dataset(sim_name + "/model/Hamiltonian", attr_value, attr_name );
+        hdf5.write_attribute_to_dataset(sim_name + "/model/2site/Hamiltonian", attr_value, attr_name );
         col++;
     }
 }
 
 void MPS_Tools::Infinite::Hdf5::write_all_measurements  (class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name){
     superblock.do_all_measurements();
-    hdf5.write_dataset(superblock.measurements.length                      , sim_name + "/measurements/length");
-    hdf5.write_dataset(superblock.measurements.bond_dimension              , sim_name + "/measurements/bond_dimensions");
-    hdf5.write_dataset(superblock.measurements.norm                        , sim_name + "/measurements/norm");
-    hdf5.write_dataset(superblock.measurements.truncation_error            , sim_name + "/measurements/truncation_error");
-    hdf5.write_dataset(superblock.measurements.energy_mpo                  , sim_name + "/measurements/energy_mpo");
-    hdf5.write_dataset(superblock.measurements.energy_per_site_mpo         , sim_name + "/measurements/energy_per_site_mpo");
-    hdf5.write_dataset(superblock.measurements.energy_per_site_ham         , sim_name + "/measurements/energy_per_site_mom");
-    hdf5.write_dataset(superblock.measurements.energy_per_site_mom         , sim_name + "/measurements/energy_per_site_mom");
-    hdf5.write_dataset(superblock.measurements.energy_variance_per_site_mpo, sim_name + "/measurements/energy_variance_per_site_mpo");
-    hdf5.write_dataset(superblock.measurements.energy_variance_per_site_ham, sim_name + "/measurements/energy_variance_per_site_ham");
-    hdf5.write_dataset(superblock.measurements.energy_variance_per_site_mom, sim_name + "/measurements/energy_variance_per_site_mom");
-    hdf5.write_dataset(superblock.measurements.current_entanglement_entropy, sim_name + "/measurements/entanglement_entropy");
+    hdf5.write_dataset(superblock.measurements.length                      , sim_name + "/measurements/2site/length");
+    hdf5.write_dataset(superblock.measurements.bond_dimension              , sim_name + "/measurements/2site/bond_dimensions");
+    hdf5.write_dataset(superblock.measurements.norm                        , sim_name + "/measurements/2site/norm");
+    hdf5.write_dataset(superblock.measurements.truncation_error            , sim_name + "/measurements/2site/truncation_error");
+    hdf5.write_dataset(superblock.measurements.energy_mpo                  , sim_name + "/measurements/2site/energy_mpo");
+    hdf5.write_dataset(superblock.measurements.energy_per_site_mpo         , sim_name + "/measurements/2site/energy_per_site_mpo");
+    hdf5.write_dataset(superblock.measurements.energy_per_site_ham         , sim_name + "/measurements/2site/energy_per_site_mom");
+    hdf5.write_dataset(superblock.measurements.energy_per_site_mom         , sim_name + "/measurements/2site/energy_per_site_mom");
+    hdf5.write_dataset(superblock.measurements.energy_variance_per_site_mpo, sim_name + "/measurements/2site/energy_variance_per_site_mpo");
+    hdf5.write_dataset(superblock.measurements.energy_variance_per_site_ham, sim_name + "/measurements/2site/energy_variance_per_site_ham");
+    hdf5.write_dataset(superblock.measurements.energy_variance_per_site_mom, sim_name + "/measurements/2site/energy_variance_per_site_mom");
+    hdf5.write_dataset(superblock.measurements.current_entanglement_entropy, sim_name + "/measurements/2site/entanglement_entropy");
 }
 
 void MPS_Tools::Infinite::Hdf5::load_from_hdf5    (class_superblock &superblock,class_simulation_state &sim_state,class_hdf5_file & hdf5, std::string sim_name){

@@ -165,9 +165,11 @@ void MPS_Tools::Finite::Hdf5::write_full_mpo(class_finite_chain_state & state, c
     state.mpo_have_been_written_to_hdf5 = true;
 }
 
-void MPS_Tools::Finite::Hdf5::write_hamiltonian_params(class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name){
+void MPS_Tools::Finite::Hdf5::write_hamiltonian_params(const class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name){
     // Write down the Hamiltonian metadata as a table
     // Remember to write tensors in row-major state order because that's what hdf5 uses.
+    spdlog::trace("HAMILTONIANS BEFORE");
+    MPS_Tools::Finite::Print::print_hamiltonians(state);
     Eigen::MatrixXd hamiltonian_props;
     for(auto &mpo : state.get_MPO_L()){
         auto props = mpo->get_parameter_values();
@@ -181,49 +183,62 @@ void MPS_Tools::Finite::Hdf5::write_hamiltonian_params(class_finite_chain_state 
         hamiltonian_props.conservativeResize(hamiltonian_props.rows()+1, temp_row.size());
         hamiltonian_props.bottomRows(1) = temp_row.transpose();
     }
-    hdf5.write_dataset(hamiltonian_props,sim_name + "/model/Hamiltonian");
+    hdf5.write_dataset(hamiltonian_props,sim_name + "/model/full/Hamiltonian");
     int col = 0;
     for (auto &name : state.get_MPO_L().front()->get_parameter_names()){
         std::string attr_value = name;
         std::string attr_name  = "FIELD_" + std::to_string(col) + "_NAME";
-        hdf5.write_attribute_to_dataset(sim_name + "/model/Hamiltonian", attr_value, attr_name );
+        hdf5.write_attribute_to_dataset(sim_name + "/model/full/Hamiltonian", attr_value, attr_name );
         col++;
     }
+    spdlog::trace("HAMILTONIANS AFTER");
+    MPS_Tools::Finite::Print::print_hamiltonians(state);
+    spdlog::trace("DOUBLE CHECK");
+    std::cout << hamiltonian_props << std::endl;
+
     hdf5.write_dataset(settings::model::model_type,sim_name + "/model/model_type");
 
 }
 
 void MPS_Tools::Finite::Hdf5::write_all_measurements(class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name){
-    hdf5.write_dataset(state.measurements.length                      , sim_name + "/measurements/length");
-    hdf5.write_dataset(state.measurements.norm                        , sim_name + "/measurements/norm");
-    hdf5.write_dataset(state.measurements.bond_dimensions             , sim_name + "/measurements/bond_dimensions");
-    hdf5.write_dataset(state.measurements.energy_per_site_mpo         , sim_name + "/measurements/energy_per_site_mpo");
-    hdf5.write_dataset(state.measurements.energy_variance_per_site_mpo, sim_name + "/measurements/energy_variance_per_site_mpo");
-    hdf5.write_dataset(state.measurements.entanglement_entropies      , sim_name + "/measurements/entanglement_entropies");
-    hdf5.write_dataset(state.measurements.spin_components             , sim_name + "/measurements/spin_components");
-    hdf5.write_dataset(state.measurements.spin_component_sx           , sim_name + "/measurements/spin_component_sx");
-    hdf5.write_dataset(state.measurements.spin_component_sy           , sim_name + "/measurements/spin_component_sy");
-    hdf5.write_dataset(state.measurements.spin_component_sz           , sim_name + "/measurements/spin_component_sz");
+    hdf5.write_dataset(state.measurements.length                      , sim_name + "/measurements/full/length");
+    hdf5.write_dataset(state.measurements.norm                        , sim_name + "/measurements/full/norm");
+    hdf5.write_dataset(state.measurements.bond_dimensions             , sim_name + "/measurements/full/bond_dimensions");
+    hdf5.write_dataset(state.measurements.energy_per_site_mpo         , sim_name + "/measurements/full/energy_per_site_mpo");
+    hdf5.write_dataset(state.measurements.energy_variance_per_site_mpo, sim_name + "/measurements/full/energy_variance_per_site_mpo");
+    hdf5.write_dataset(state.measurements.entanglement_entropies      , sim_name + "/measurements/full/entanglement_entropies");
+    hdf5.write_dataset(state.measurements.spin_components             , sim_name + "/measurements/full/spin_components");
+    hdf5.write_dataset(state.measurements.spin_component_sx           , sim_name + "/measurements/full/spin_component_sx");
+    hdf5.write_dataset(state.measurements.spin_component_sy           , sim_name + "/measurements/full/spin_component_sy");
+    hdf5.write_dataset(state.measurements.spin_component_sz           , sim_name + "/measurements/full/spin_component_sz");
     bool OK = true;
     hdf5.write_dataset(OK, sim_name + "/simOK");
 }
 
 
-void MPS_Tools::Finite::Hdf5::write_all_parity_projections(class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name){
-    write_parity_projected_analysis(state,hdf5,sim_name, "state/projections/sx_up", qm::spinOneHalf::sx, 1);
-    write_parity_projected_analysis(state,hdf5,sim_name, "state/projections/sx_dn", qm::spinOneHalf::sx, -1);
-    write_parity_projected_analysis(state,hdf5,sim_name, "state/projections/sy_up", qm::spinOneHalf::sy, 1);
-    write_parity_projected_analysis(state,hdf5,sim_name, "state/projections/sy_dn", qm::spinOneHalf::sy, -1);
-    write_parity_projected_analysis(state,hdf5,sim_name, "state/projections/sz_up", qm::spinOneHalf::sz, 1);
-    write_parity_projected_analysis(state,hdf5,sim_name, "state/projections/sz_dn", qm::spinOneHalf::sz, -1);
+void MPS_Tools::Finite::Hdf5::write_all_parity_projections(const class_finite_chain_state & state, const class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name){
+    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sx_up", qm::spinOneHalf::sx, 1);
+    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sx_dn", qm::spinOneHalf::sx, -1);
+    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sy_up", qm::spinOneHalf::sy, 1);
+    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sy_dn", qm::spinOneHalf::sy, -1);
+    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sz_up", qm::spinOneHalf::sz, 1);
+    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sz_dn", qm::spinOneHalf::sz, -1);
 }
 
-void MPS_Tools::Finite::Hdf5::write_parity_projected_analysis(class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name, std::string projection_name,const Eigen::MatrixXcd paulimatrix, const int sign){
+void MPS_Tools::Finite::Hdf5::write_parity_projected_analysis(const class_finite_chain_state & state, const class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name, std::string projection_name,const Eigen::MatrixXcd paulimatrix, const int sign){
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
     auto state_projected = MPS_Tools::Finite::Ops::get_parity_projected_state(state,paulimatrix, sign);
     state_projected.set_measured_false();
     state_projected.do_all_measurements();
+    MPS_Tools::Finite::Hdf5::write_all_state(state_projected,hdf5, sim_name + "/" + projection_name);
     MPS_Tools::Finite::Hdf5::write_all_measurements(state_projected,hdf5, sim_name + "/" + projection_name);
+
+    auto superblock_projected = superblock;
+    MPS_Tools::Finite::Ops::rebuild_superblock(state_projected,superblock_projected);
+    superblock_projected.set_measured_false();
+    superblock_projected.do_all_measurements();
+    MPS_Tools::Infinite::Hdf5::write_all_superblock(superblock_projected,hdf5, sim_name + "/" + projection_name);
+    MPS_Tools::Infinite::Hdf5::write_all_measurements(superblock_projected,hdf5, sim_name + "/" + projection_name);
 }
 
 
@@ -252,8 +267,9 @@ void MPS_Tools::Finite::Hdf5::load_state_from_hdf5(class_finite_chain_state & st
     try{
         hdf5.read_dataset(position             , sim_name + "/state/full/position");
         hdf5.read_dataset(sites                , sim_name + "/state/full/sites");
-        hdf5.read_dataset(Hamiltonian_params   , sim_name + "/model/Hamiltonian");
+        hdf5.read_dataset(Hamiltonian_params   , sim_name + "/model/full/Hamiltonian");
         hdf5.read_dataset(model_type           , sim_name + "/model/model_type");
+        std::cout << Hamiltonian_params << std::endl;
     }catch (std::exception &ex){
         throw std::runtime_error("Couldn't read necessary model parameters: " + std::string(ex.what()));
     }

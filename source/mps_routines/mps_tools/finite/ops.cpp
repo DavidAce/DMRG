@@ -216,6 +216,9 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     if (mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
+    spdlog::trace("Applying MPO's");
+
+
     Eigen::Tensor<Scalar,1> I_tensor(1);
     I_tensor.setConstant(1);
 
@@ -481,6 +484,7 @@ void MPS_Tools::Finite::Ops::apply_energy_mpo_test(class_finite_chain_state &sta
 
 class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix, const int sign) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
+    spdlog::trace("Generating parity projected state");
     class_finite_chain_state state_projected = state;
     const auto [mpo,L,R]    = class_mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
@@ -491,15 +495,17 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(cons
 }
 
 void MPS_Tools::Finite::Ops::print_parity_properties(class_finite_chain_state &state) {
-    spdlog::trace("Computing spin components");
+    spdlog::info("Printing parity properties");
+
+    spdlog::info("\n\tComputing spin components");
     const auto sx = MPS_Tools::Finite::Measure::spin_component(state,qm::spinOneHalf::sx);
     const auto sy = MPS_Tools::Finite::Measure::spin_component(state,qm::spinOneHalf::sy);
     const auto sz = MPS_Tools::Finite::Measure::spin_component(state,qm::spinOneHalf::sz);
-    std::cout << std::setprecision(16);
-    std::cout << "<psi | sx | psi> = " << sx << std::endl;
-    std::cout << "<psi | sy | psi> = " << sy << std::endl;
-    std::cout << "<psi | sz | psi> = " << sz << std::endl;
-    spdlog::trace("Computing parity projected states");
+    spdlog::info("\t<psi | sx | psi>                = {:0.16f}", sx);
+    spdlog::info("\t<psi | sy | psi>                = {:0.16f}", sy);
+    spdlog::info("\t<psi | sz | psi>                = {:0.16f}", sz);
+
+    spdlog::info("\n\tComputing parity projected states");
     auto state_up_x = MPS_Tools::Finite::Ops::get_parity_projected_state(state,qm::spinOneHalf::sx, 1);
     auto state_dn_x = MPS_Tools::Finite::Ops::get_parity_projected_state(state,qm::spinOneHalf::sx, -1);
     auto state_up_y = MPS_Tools::Finite::Ops::get_parity_projected_state(state,qm::spinOneHalf::sy, 1);
@@ -508,55 +514,52 @@ void MPS_Tools::Finite::Ops::print_parity_properties(class_finite_chain_state &s
     auto state_dn_z = MPS_Tools::Finite::Ops::get_parity_projected_state(state,qm::spinOneHalf::sz, -1);
 
 
-    spdlog::trace("Computing more spin components");
-    std::cout << "<psi_up_x | sx | psi_up_x> = " << MPS_Tools::Finite::Measure::spin_component(state_up_x,qm::spinOneHalf::sx) << std::endl;
-    std::cout << "<psi_up_x | sy | psi_up_x> = " << MPS_Tools::Finite::Measure::spin_component(state_up_x,qm::spinOneHalf::sy) << std::endl;
-    std::cout << "<psi_up_x | sz | psi_up_x> = " << MPS_Tools::Finite::Measure::spin_component(state_up_x,qm::spinOneHalf::sz) << std::endl;
-    std::cout << "<psi_dn_x | sx | psi_dn_x> = " << MPS_Tools::Finite::Measure::spin_component(state_dn_x,qm::spinOneHalf::sx) << std::endl;
-    std::cout << "<psi_dn_x | sy | psi_dn_x> = " << MPS_Tools::Finite::Measure::spin_component(state_dn_x,qm::spinOneHalf::sy) << std::endl;
-    std::cout << "<psi_dn_x | sz | psi_dn_x> = " << MPS_Tools::Finite::Measure::spin_component(state_dn_x,qm::spinOneHalf::sz) << std::endl;
-
-    std::cout << "<psi_up_y | sx | psi_up_y> = " << MPS_Tools::Finite::Measure::spin_component(state_up_y,qm::spinOneHalf::sx) << std::endl;
-    std::cout << "<psi_up_y | sy | psi_up_y> = " << MPS_Tools::Finite::Measure::spin_component(state_up_y,qm::spinOneHalf::sy) << std::endl;
-    std::cout << "<psi_up_y | sz | psi_up_y> = " << MPS_Tools::Finite::Measure::spin_component(state_up_y,qm::spinOneHalf::sz) << std::endl;
-    std::cout << "<psi_dn_y | sx | psi_dn_y> = " << MPS_Tools::Finite::Measure::spin_component(state_dn_y,qm::spinOneHalf::sx) << std::endl;
-    std::cout << "<psi_dn_y | sy | psi_dn_y> = " << MPS_Tools::Finite::Measure::spin_component(state_dn_y,qm::spinOneHalf::sy) << std::endl;
-    std::cout << "<psi_dn_y | sz | psi_dn_y> = " << MPS_Tools::Finite::Measure::spin_component(state_dn_y,qm::spinOneHalf::sz) << std::endl;
-
-    std::cout << "<psi_up_z | sx | psi_up_z> = " << MPS_Tools::Finite::Measure::spin_component(state_up_z,qm::spinOneHalf::sx) << std::endl;
-    std::cout << "<psi_up_z | sy | psi_up_z> = " << MPS_Tools::Finite::Measure::spin_component(state_up_z,qm::spinOneHalf::sy) << std::endl;
-    std::cout << "<psi_up_z | sz | psi_up_z> = " << MPS_Tools::Finite::Measure::spin_component(state_up_z,qm::spinOneHalf::sz) << std::endl;
-    std::cout << "<psi_dn_z | sx | psi_dn_z> = " << MPS_Tools::Finite::Measure::spin_component(state_dn_z,qm::spinOneHalf::sx) << std::endl;
-    std::cout << "<psi_dn_z | sy | psi_dn_z> = " << MPS_Tools::Finite::Measure::spin_component(state_dn_z,qm::spinOneHalf::sy) << std::endl;
-    std::cout << "<psi_dn_z | sz | psi_dn_z> = " << MPS_Tools::Finite::Measure::spin_component(state_dn_z,qm::spinOneHalf::sz) << std::endl;
+    spdlog::info("\n\tMore spin components");
+    spdlog::info("\t<psi_up_x | sx | psi_up_x>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_up_x,qm::spinOneHalf::sx));
+    spdlog::info("\t<psi_up_x | sy | psi_up_x>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_up_x,qm::spinOneHalf::sy));
+    spdlog::info("\t<psi_up_x | sz | psi_up_x>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_up_x,qm::spinOneHalf::sz));
+    spdlog::info("\t<psi_dn_x | sx | psi_dn_x>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_dn_x,qm::spinOneHalf::sx));
+    spdlog::info("\t<psi_dn_x | sy | psi_dn_x>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_dn_x,qm::spinOneHalf::sy));
+    spdlog::info("\t<psi_dn_x | sz | psi_dn_x>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_dn_x,qm::spinOneHalf::sz));
+    spdlog::info("\t<psi_up_y | sx | psi_up_y>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_up_y,qm::spinOneHalf::sx));
+    spdlog::info("\t<psi_up_y | sy | psi_up_y>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_up_y,qm::spinOneHalf::sy));
+    spdlog::info("\t<psi_up_y | sz | psi_up_y>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_up_y,qm::spinOneHalf::sz));
+    spdlog::info("\t<psi_dn_y | sx | psi_dn_y>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_dn_y,qm::spinOneHalf::sx));
+    spdlog::info("\t<psi_dn_y | sy | psi_dn_y>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_dn_y,qm::spinOneHalf::sy));
+    spdlog::info("\t<psi_dn_y | sz | psi_dn_y>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_dn_y,qm::spinOneHalf::sz));
+    spdlog::info("\t<psi_up_z | sx | psi_up_z>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_up_z,qm::spinOneHalf::sx));
+    spdlog::info("\t<psi_up_z | sy | psi_up_z>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_up_z,qm::spinOneHalf::sy));
+    spdlog::info("\t<psi_up_z | sz | psi_up_z>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_up_z,qm::spinOneHalf::sz));
+    spdlog::info("\t<psi_dn_z | sx | psi_dn_z>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_dn_z,qm::spinOneHalf::sx));
+    spdlog::info("\t<psi_dn_z | sy | psi_dn_z>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_dn_z,qm::spinOneHalf::sy));
+    spdlog::info("\t<psi_dn_z | sz | psi_dn_z>      = {:0.16f}", MPS_Tools::Finite::Measure::spin_component(state_dn_z,qm::spinOneHalf::sz));
 
 
-    std::cout << std::setprecision(16);
-    std::cout << "\nNormalization check" << std::endl;
-    spdlog::trace("Computing overlaps");
-    std::cout << "<psi_up_x|psi_up_x> = "  <<  MPS_Tools::Finite::Ops::overlap(state_up_x,state_up_x) <<std::endl;
-    std::cout << "<psi_dn_x|psi_dn_x> = "  <<  MPS_Tools::Finite::Ops::overlap(state_dn_x,state_dn_x) <<std::endl;
-    std::cout << "<psi_up_y|psi_up_y> = "  <<  MPS_Tools::Finite::Ops::overlap(state_up_y,state_up_y) <<std::endl;
-    std::cout << "<psi_dn_y|psi_dn_y> = "  <<  MPS_Tools::Finite::Ops::overlap(state_dn_y,state_dn_y) <<std::endl;
-    std::cout << "<psi_up_z|psi_up_z> = "  <<  MPS_Tools::Finite::Ops::overlap(state_up_z,state_up_z) <<std::endl;
-    std::cout << "<psi_dn_z|psi_dn_z> = "  <<  MPS_Tools::Finite::Ops::overlap(state_dn_z,state_dn_z) <<std::endl;
+    spdlog::info("\n\tNormalization check");
+    spdlog::info("\tComputing overlaps");
+    spdlog::info("\t<psi_up_x|psi_up_x>             = {:0.16f}", MPS_Tools::Finite::Ops::overlap(state_up_x,state_up_x));
+    spdlog::info("\t<psi_dn_x|psi_dn_x>             = {:0.16f}", MPS_Tools::Finite::Ops::overlap(state_dn_x,state_dn_x));
+    spdlog::info("\t<psi_up_y|psi_up_y>             = {:0.16f}", MPS_Tools::Finite::Ops::overlap(state_up_y,state_up_y));
+    spdlog::info("\t<psi_dn_y|psi_dn_y>             = {:0.16f}", MPS_Tools::Finite::Ops::overlap(state_dn_y,state_dn_y));
+    spdlog::info("\t<psi_up_z|psi_up_z>             = {:0.16f}", MPS_Tools::Finite::Ops::overlap(state_up_z,state_up_z));
+    spdlog::info("\t<psi_dn_z|psi_dn_z>             = {:0.16f}", MPS_Tools::Finite::Ops::overlap(state_dn_z,state_dn_z));
 
-    std::cout << "\nOverlaps with original state" << std::endl;
-    std::cout << "<psi|psi_up_x> = "  <<  MPS_Tools::Finite::Ops::overlap(state,state_up_x) <<std::endl;
-    std::cout << "<psi|psi_dn_x> = "  <<  MPS_Tools::Finite::Ops::overlap(state,state_dn_x) <<std::endl;
-    std::cout << "<psi|psi_up_y> = "  <<  MPS_Tools::Finite::Ops::overlap(state,state_up_y) <<std::endl;
-    std::cout << "<psi|psi_dn_y> = "  <<  MPS_Tools::Finite::Ops::overlap(state,state_dn_y) <<std::endl;
-    std::cout << "<psi|psi_up_z> = "  <<  MPS_Tools::Finite::Ops::overlap(state,state_up_z) <<std::endl;
-    std::cout << "<psi|psi_dn_z> = "  <<  MPS_Tools::Finite::Ops::overlap(state,state_dn_z) <<std::endl;
+    spdlog::info("\n\tOverlaps with original state");
+    spdlog::info("\t<psi|psi_up_x>                  = {:0.16f}", MPS_Tools::Finite::Ops::overlap(state,state_up_x));
+    spdlog::info("\t<psi|psi_dn_x>                  = {:0.16f}", MPS_Tools::Finite::Ops::overlap(state,state_dn_x));
+    spdlog::info("\t<psi|psi_up_y>                  = {:0.16f}", MPS_Tools::Finite::Ops::overlap(state,state_up_y));
+    spdlog::info("\t<psi|psi_dn_y>                  = {:0.16f}", MPS_Tools::Finite::Ops::overlap(state,state_dn_y));
+    spdlog::info("\t<psi|psi_up_z>                  = {:0.16f}", MPS_Tools::Finite::Ops::overlap(state,state_up_z));
+    spdlog::info("\t<psi|psi_dn_z>                  = {:0.16f}", MPS_Tools::Finite::Ops::overlap(state,state_dn_z));
 
-    std::cout << "\nOverlaps between up/down sectors" << std::endl;
-    std::cout << "<psi_dn_x|psi_up_x> = "  <<  MPS_Tools::Finite::Ops::overlap(state_dn_x,state_up_x) <<std::endl;
-    std::cout << "<psi_dn_y|psi_up_y> = "  <<  MPS_Tools::Finite::Ops::overlap(state_dn_y,state_up_y) <<std::endl;
-    std::cout << "<psi_dn_z|psi_up_z> = "  <<  MPS_Tools::Finite::Ops::overlap(state_dn_z,state_up_z) <<std::endl;
-    std::cout << "\nOverlaps between different direction sectors" << std::endl;
-    std::cout << "<psi_up_x|psi_up_y> = "  <<  MPS_Tools::Finite::Ops::overlap(state_up_x,state_up_y) <<std::endl;
-    std::cout << "<psi_up_x|psi_up_z> = "  <<  MPS_Tools::Finite::Ops::overlap(state_up_x,state_up_z) <<std::endl;
-    spdlog::trace("Generating single hamiltonian MPO list");
+    spdlog::info("\n\tOverlaps between up/down sectors");
+    spdlog::info("\t<psi_dn_x|psi_up_x>             ={:0.16f}", MPS_Tools::Finite::Ops::overlap(state_dn_x,state_up_x));
+    spdlog::info("\t<psi_dn_y|psi_up_y>             ={:0.16f}", MPS_Tools::Finite::Ops::overlap(state_dn_y,state_up_y));
+    spdlog::info("\t<psi_dn_z|psi_up_z>             ={:0.16f}", MPS_Tools::Finite::Ops::overlap(state_dn_z,state_up_z));
+    spdlog::info("\n\tOverlaps between different direction sectors");
+    spdlog::info("\t<psi_up_x|psi_up_y>             = {:0.16f}" ,MPS_Tools::Finite::Ops::overlap(state_up_x,state_up_y));
+    spdlog::info("\t<psi_up_x|psi_up_z>             = {:0.16f}" ,MPS_Tools::Finite::Ops::overlap(state_up_x,state_up_z));
+    spdlog::trace("\tGenerating single hamiltonian MPO list");
 
     auto & Ledge = state.get_ENV_L().front().block;
     auto & Redge = state.get_ENV_R().back().block ;
@@ -565,7 +568,6 @@ void MPS_Tools::Finite::Ops::print_parity_properties(class_finite_chain_state &s
 
     auto hamiltonian_mpos = make_mpo_list(state.get_MPO_L(),state.get_MPO_R());
     spdlog::trace("Computing expectation values");
-
     double energy      = MPS_Tools::Finite::Ops::expectation_value(state     ,state     ,hamiltonian_mpos, Ledge,Redge);
     double energy_up_x = MPS_Tools::Finite::Ops::expectation_value(state_up_x,state_up_x,hamiltonian_mpos, Ledge,Redge);
     double energy_dn_x = MPS_Tools::Finite::Ops::expectation_value(state_dn_x,state_dn_x,hamiltonian_mpos, Ledge,Redge);
@@ -574,7 +576,6 @@ void MPS_Tools::Finite::Ops::print_parity_properties(class_finite_chain_state &s
     double energy_up_z = MPS_Tools::Finite::Ops::expectation_value(state_up_z,state_up_z,hamiltonian_mpos, Ledge,Redge);
     double energy_dn_z = MPS_Tools::Finite::Ops::expectation_value(state_dn_z,state_dn_z,hamiltonian_mpos, Ledge,Redge);
     spdlog::trace("Computing variances");
-
     double variance      = MPS_Tools::Finite::Ops::exp_sq_value(state     ,state     ,hamiltonian_mpos, Ledge2,Redge2) - energy      * energy ;
     double variance_up_x = MPS_Tools::Finite::Ops::exp_sq_value(state_up_x,state_up_x,hamiltonian_mpos, Ledge2,Redge2) - energy_up_x * energy_up_x;
     double variance_dn_x = MPS_Tools::Finite::Ops::exp_sq_value(state_dn_x,state_dn_x,hamiltonian_mpos, Ledge2,Redge2) - energy_dn_x * energy_dn_x;
@@ -582,39 +583,37 @@ void MPS_Tools::Finite::Ops::print_parity_properties(class_finite_chain_state &s
     double variance_dn_y = MPS_Tools::Finite::Ops::exp_sq_value(state_dn_y,state_dn_y,hamiltonian_mpos, Ledge2,Redge2) - energy_dn_y * energy_dn_y;
     double variance_up_z = MPS_Tools::Finite::Ops::exp_sq_value(state_up_z,state_up_z,hamiltonian_mpos, Ledge2,Redge2) - energy_up_z * energy_up_z;
     double variance_dn_z = MPS_Tools::Finite::Ops::exp_sq_value(state_dn_z,state_dn_z,hamiltonian_mpos, Ledge2,Redge2) - energy_dn_z * energy_dn_z;
-    std::cout << "Energy per site" << std::endl;
 
-    std::cout << "<psi     | H/L |psi     >       = "  <<  energy    /state.get_length() << std::endl;
     auto state_copy2 = state;
     apply_mpos(state_copy2,hamiltonian_mpos,Ledge,Redge);
     double overlap_H = MPS_Tools::Finite::Ops::overlap(state_copy2,state);
-    std::cout << "<psi     | H/L  psi     >       = "  <<  overlap_H /state.get_length() << std::endl;
+    spdlog::info("\n\tEnergy per site");
+    spdlog::info("\t<psi     | H/L |psi     >       = {:0.16f}" ,  energy    /state.get_length());
+    spdlog::info("\t<psi     | H/L  psi     >       = {:0.16f}" ,  overlap_H /state.get_length() );
+    spdlog::info("\t<psi_up_x| H/L |psi_up_x>       = {:0.16f}" ,  energy_up_x / state.get_length());
+    spdlog::info("\t<psi_dn_x| H/L |psi_dn_x>       = {:0.16f}" ,  energy_dn_x / state.get_length());
+    spdlog::info("\t<psi_up_y| H/L |psi_up_y>       = {:0.16f}" ,  energy_up_y / state.get_length());
+    spdlog::info("\t<psi_dn_y| H/L |psi_dn_y>       = {:0.16f}" ,  energy_dn_y / state.get_length());
+    spdlog::info("\t<psi_up_z| H/L |psi_up_z>       = {:0.16f}" ,  energy_up_z / state.get_length());
+    spdlog::info("\t<psi_dn_z| H/L |psi_dn_z>       = {:0.16f}" ,  energy_dn_z / state.get_length());
 
-    std::cout << "<psi_up_x| H/L |psi_up_x>       = "  <<  energy_up_x / state.get_length() <<std::endl;
-    std::cout << "<psi_dn_x| H/L |psi_dn_x>       = "  <<  energy_dn_x / state.get_length() <<std::endl;
-    std::cout << "<psi_up_y| H/L |psi_up_y>       = "  <<  energy_up_y / state.get_length() <<std::endl;
-    std::cout << "<psi_dn_y| H/L |psi_dn_y>       = "  <<  energy_dn_y / state.get_length() <<std::endl;
-    std::cout << "<psi_up_z| H/L |psi_up_z>       = "  <<  energy_up_z / state.get_length() <<std::endl;
-    std::cout << "<psi_dn_z| H/L |psi_dn_z>       = "  <<  energy_dn_z / state.get_length() <<std::endl;
+    spdlog::info("\n\tVariance per site");
+    spdlog::info("\t<psi     | (H2-E2)/L |psi     > = {:0.16f} | log10 = {:0.16f}", variance / state.get_length()     , std::log10(variance / state.get_length())     );
+    spdlog::info("\t<psi_up_x| (H2-E2)/L |psi_up_x> = {:0.16f} | log10 = {:0.16f}", variance_up_x / state.get_length(), std::log10(variance_up_x / state.get_length()));
+    spdlog::info("\t<psi_dn_x| (H2-E2)/L |psi_dn_x> = {:0.16f} | log10 = {:0.16f}", variance_dn_x / state.get_length(), std::log10(variance_dn_x / state.get_length()));
+    spdlog::info("\t<psi_up_y| (H2-E2)/L |psi_up_y> = {:0.16f} | log10 = {:0.16f}", variance_up_y / state.get_length(), std::log10(variance_up_y / state.get_length()));
+    spdlog::info("\t<psi_dn_y| (H2-E2)/L |psi_dn_y> = {:0.16f} | log10 = {:0.16f}", variance_dn_y / state.get_length(), std::log10(variance_dn_y / state.get_length()));
+    spdlog::info("\t<psi_up_z| (H2-E2)/L |psi_up_z> = {:0.16f} | log10 = {:0.16f}", variance_up_z / state.get_length(), std::log10(variance_up_z / state.get_length()));
+    spdlog::info("\t<psi_dn_z| (H2-E2)/L |psi_dn_z> = {:0.16f} | log10 = {:0.16f}", variance_dn_z / state.get_length(), std::log10(variance_dn_z / state.get_length()));
 
-    std::cout << "\nVariance per site" << std::endl;
-
-    std::cout << "<psi     | (H2-E2)/L |psi     > = "  << variance / state.get_length()      << "  |   log10 =  "<< std::log10(variance / state.get_length())       << std::endl;
-    std::cout << "<psi_up_x| (H2-E2)/L |psi_up_x> = "  << variance_up_x / state.get_length() << "  |   log10 =  "<< std::log10(variance_up_x / state.get_length())  << std::endl;
-    std::cout << "<psi_dn_x| (H2-E2)/L |psi_dn_x> = "  << variance_dn_x / state.get_length() << "  |   log10 =  "<< std::log10(variance_dn_x / state.get_length())  << std::endl;
-    std::cout << "<psi_up_y| (H2-E2)/L |psi_up_y> = "  << variance_up_y / state.get_length() << "  |   log10 =  "<< std::log10(variance_up_y / state.get_length())  << std::endl;
-    std::cout << "<psi_dn_y| (H2-E2)/L |psi_dn_y> = "  << variance_dn_y / state.get_length() << "  |   log10 =  "<< std::log10(variance_dn_y / state.get_length())  << std::endl;
-    std::cout << "<psi_up_z| (H2-E2)/L |psi_up_z> = "  << variance_up_z / state.get_length() << "  |   log10 =  "<< std::log10(variance_up_z / state.get_length())  << std::endl;
-    std::cout << "<psi_dn_z| (H2-E2)/L |psi_dn_z> = "  << variance_dn_z / state.get_length() << "  |   log10 =  "<< std::log10(variance_dn_z / state.get_length())  << std::endl;
-    std::cout << "\nMidchain entanglement entropies" << std::endl;
-    spdlog::trace("Computing entanglement entropies");
-    std::cout << "S(L/2) psi       = "  <<  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state     ) <<std::endl;
-    std::cout << "S(L/2) psi_up_x  = "  <<  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state_up_x) <<std::endl;
-    std::cout << "S(L/2) psi_dn_x  = "  <<  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state_dn_x) <<std::endl;
-    std::cout << "S(L/2) psi_up_y  = "  <<  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state_up_y) <<std::endl;
-    std::cout << "S(L/2) psi_dn_y  = "  <<  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state_dn_y) <<std::endl;
-    std::cout << "S(L/2) psi_up_z  = "  <<  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state_up_z) <<std::endl;
-    std::cout << "S(L/2) psi_dn_z  = "  <<  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state_dn_z) <<std::endl;
+    spdlog::info("\n\tMidchain entanglement entropies");
+    spdlog::info("\tS(L/2) psi                      = {:0.16f}" ,  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state     ));
+    spdlog::info("\tS(L/2) psi_up_x                 = {:0.16f}" ,  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state_up_x));
+    spdlog::info("\tS(L/2) psi_dn_x                 = {:0.16f}" ,  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state_dn_x));
+    spdlog::info("\tS(L/2) psi_up_y                 = {:0.16f}" ,  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state_up_y));
+    spdlog::info("\tS(L/2) psi_dn_y                 = {:0.16f}" ,  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state_dn_y));
+    spdlog::info("\tS(L/2) psi_up_z                 = {:0.16f}" ,  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state_up_z));
+    spdlog::info("\tS(L/2) psi_dn_z                 = {:0.16f}" ,  MPS_Tools::Finite::Measure::midchain_entanglement_entropy(state_dn_z));
 
 
 

@@ -19,11 +19,11 @@ using namespace std::complex_literals;
 
 class_iTEBD::class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_)
         : class_algorithm_base(std::move(hdf5_),"iTEBD", SimulationType::iTEBD) {
-
+    set_logger(sim_name);
 //    initialize_constants();
     table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(hdf5, sim_name,sim_name);
     sim_state.delta_t      = settings::itebd::delta_t0;
-    initialize_state(settings::model::initial_state);
+    initialize_superblock(settings::model::initial_state);
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
     auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
@@ -77,7 +77,7 @@ void class_iTEBD::single_TEBD_step(long chi){
         if (&U != &unitary_time_evolving_operators.back()) {
             superblock->swap_AB();        }
     }
-    superblock->set_not_measured();
+    superblock->set_measured_false();
     t_sim.toc();
 }
 
@@ -101,7 +101,7 @@ void class_iTEBD::store_state_to_file(bool force){
     }
     spdlog::trace("Storing storing mps to file");
     t_sto.tic();
-    MPS_Tools::Infinite::Hdf5::write_superblock_state(*superblock,*hdf5,sim_name);
+    MPS_Tools::Infinite::Hdf5::write_all_superblock(*superblock, *hdf5, sim_name);
     t_sto.toc();
 }
 

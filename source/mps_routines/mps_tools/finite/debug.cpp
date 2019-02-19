@@ -53,6 +53,16 @@ void MPS_Tools::Finite::Debug::check_integrity_of_sim(const class_finite_chain_s
     if(state.get_position() != sim_state.position  )
         throw std::runtime_error("Mismatch in state and sim_state positions: " + std::to_string(state.get_position()) + " " + std::to_string(sim_state.position ));
 
+
+    auto state_MPO_A      = Eigen::Map<Eigen::VectorXcd>(state.get_MPO_L().back()->MPO.data(),state.get_MPO_L().back()->MPO.size() );
+    auto superblock_MPO_A = Eigen::Map<Eigen::VectorXcd>(superblock.HA->MPO.data(),superblock.HA->MPO.size() );
+    auto state_MPO_B      = Eigen::Map<Eigen::VectorXcd>(state.get_MPO_R().front()->MPO.data(),state.get_MPO_R().front()->MPO.size() );
+    auto superblock_MPO_B = Eigen::Map<Eigen::VectorXcd>(superblock.HB->MPO.data(),superblock.HB->MPO.size() );
+    if(state_MPO_A != superblock_MPO_A )
+        throw std::runtime_error("Mismatch in state and superblock MPOS (left side)");
+    if(state_MPO_B != superblock_MPO_B )
+        throw std::runtime_error("Mismatch in state and superblock MPOS (right side)");
+
 }
 
 

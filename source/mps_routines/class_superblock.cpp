@@ -385,7 +385,7 @@ void class_superblock::set_positions(int position){
 }
 
 
-void class_superblock::set_not_measured(){
+void class_superblock::set_measured_false(){
     has_been_measured = false;
     has_been_written  = false;
 }

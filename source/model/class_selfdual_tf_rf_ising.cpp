@@ -19,7 +19,6 @@ class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(): class_hamiltonian_base
     J_rnd       = rn::log_normal(J_log_mean,J_sigma);
     h_rnd       = rn::log_normal(h_log_mean,h_sigma);
     delta       = J_log_mean - h_log_mean;
-    build_mpo();
 }
 
 
@@ -59,6 +58,7 @@ void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::VectorXd paramet
     delta          = parameters(10);
     e_reduced      = parameters(11);
     spin_dim       = parameters(12);
+    full_lattice_parameters_have_been_set = true;
     build_mpo();
 };
 
@@ -67,6 +67,7 @@ void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::VectorXd paramet
 void class_selfdual_tf_rf_ising::set_realization_averages(double J_avg_,double h_avg_){
     J_avg=J_avg_;
     h_avg=h_avg_;
+    full_lattice_parameters_have_been_set = true;
     build_mpo();
 }
 
@@ -90,6 +91,7 @@ void class_selfdual_tf_rf_ising::build_mpo()
  *
  */
 {
+    if (not full_lattice_parameters_have_been_set) throw std::runtime_error("Failed to build MPO: Full lattice parameters haven't been set yet.");
     MPO.resize(5, 5, spin_dim, spin_dim);
     MPO.setZero();
     MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
@@ -106,8 +108,11 @@ void class_selfdual_tf_rf_ising::build_mpo()
 void class_selfdual_tf_rf_ising::randomize_hamiltonian(){
     J_rnd       = rn::log_normal(J_log_mean,J_sigma);
     h_rnd       = rn::log_normal(h_log_mean,h_sigma);
-    MPO.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
-    MPO.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
+    if(full_lattice_parameters_have_been_set or MPO.size()>5){
+        MPO.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
+        MPO.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
+    }
+
 }
 
 
@@ -224,8 +229,9 @@ std::vector<double> class_selfdual_tf_rf_ising::get_parameter_values() const {
 
 
 
-void class_selfdual_tf_rf_ising::set_non_local_parameters(const std::vector<std::vector<double>> chain_parameters){
+void class_selfdual_tf_rf_ising::set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters){
     // Calculate average J_rnd on the whole chain
+    full_lattice_parameters_have_been_set = true;
     std::vector<double> J_rnd_vec;
     std::vector<double> h_rnd_vec;
     for (auto &params : chain_parameters){
