@@ -24,8 +24,8 @@ class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (hdf5, sim_name + "/measurements", "simulation_progress");
     table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name + "/measurements", "simulation_progress_full_chain");
     state             = std::make_shared<class_finite_chain_state>(settings::fdmrg::num_sites);
-    min_saturation_length = 1 * (int)(1.0 * settings::fdmrg::num_sites);
-    max_saturation_length = 1 * (int)(2.0 * settings::fdmrg::num_sites);
+    min_saturation_length = 1 * (int)(0.5 * settings::fdmrg::num_sites);
+    max_saturation_length = 1 * (int)(1.0 * settings::fdmrg::num_sites);
 }
 
 
