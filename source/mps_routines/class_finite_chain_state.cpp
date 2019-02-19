@@ -10,7 +10,6 @@ class_finite_chain_state::class_finite_chain_state(int max_sites_)
         :max_sites(max_sites_)
 {
     max_sites_is_set = true;
-
 }
 
 

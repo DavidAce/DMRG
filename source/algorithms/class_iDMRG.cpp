@@ -15,9 +15,9 @@ using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
     : class_algorithm_base(std::move(hdf5_),"iDMRG", SimulationType::iDMRG) {
-
+    set_logger(sim_name);
     table_idmrg = std::make_unique<class_hdf5_table<class_table_dmrg>>(hdf5, sim_name,sim_name);
-    initialize_state(settings::model::initial_state);
+    initialize_superblock(settings::model::initial_state);
 
 }
 
@@ -54,7 +54,7 @@ void class_iDMRG::store_state_to_file(bool force){
     }
     spdlog::trace("Storing storing mps to file");
     t_sto.tic();
-    MPS_Tools::Infinite::Hdf5::write_superblock_state(*superblock,*hdf5,sim_name);
+    MPS_Tools::Infinite::Hdf5::write_all_superblock(*superblock, *hdf5, sim_name);
     t_sto.toc();
 }
 

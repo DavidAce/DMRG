@@ -24,6 +24,9 @@ namespace MPS_Tools{
      */
     {
         namespace Chain {
+            extern void initialize_state(class_finite_chain_state &state,std::string model_type, const size_t length, const size_t seed=0);
+            extern void randomize_mpos  (class_finite_chain_state &state, const size_t seed);
+
             extern void copy_superblock_to_state(class_finite_chain_state &state, const class_superblock &superblock);    /*!< Update the MPS, MPO and ENV stored at current position.*/
             extern void copy_superblock_mps_to_state(class_finite_chain_state &state,const class_superblock &superblock);    /*!< Update the MPS stored at current position.*/
             extern void copy_superblock_mpo_to_state(class_finite_chain_state &state,const class_superblock &superblock);    /*!< Update the MPO stored at current position.*/
@@ -88,11 +91,11 @@ namespace MPS_Tools{
             extern void write_2site_env2                   (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_full_mps                     (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_full_mpo                     (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
-            extern void write_hamiltonian_params           (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
+            extern void write_hamiltonian_params           (const class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_entanglement                 (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_all_measurements             (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
-            extern void write_all_parity_projections       (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
-            extern void write_parity_projected_analysis    (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name,  std::string projection_name, const Eigen::MatrixXcd paulimatrix, const int sign);
+            extern void write_all_parity_projections       (const class_finite_chain_state & state, const class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name);
+            extern void write_parity_projected_analysis    (const class_finite_chain_state & state, const class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name,  std::string projection_name, const Eigen::MatrixXcd paulimatrix, const int sign);
             extern void load_from_hdf5                     (class_finite_chain_state & state, class_superblock &superblock, class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
             extern void load_state_from_hdf5               (class_finite_chain_state & state, class_hdf5_file &hdf5, std::string sim_name);
             extern void load_sim_state_from_hdf5           (class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
@@ -156,7 +159,7 @@ namespace MPS_Tools{
         }
 
         namespace Hdf5{
-            extern void write_superblock_state             (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
+            extern void write_all_superblock(class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
             extern void write_2site_mps                    (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
             extern void write_2site_mpo                    (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);
             extern void write_2site_env                    (class_superblock &superblock, class_hdf5_file &hdf5, std::string sim_name);

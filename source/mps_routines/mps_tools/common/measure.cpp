@@ -67,7 +67,7 @@ using namespace Textra;
 
 
 void MPS_Tools::Common::Measure::set_not_measured(class_superblock & superblock){
-    superblock.set_not_measured();
+    superblock.set_measured_false();
 }
 
 Scalar moment_generating_function(const class_mps_2site &MPS_original,
