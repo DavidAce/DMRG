@@ -168,8 +168,6 @@ void MPS_Tools::Finite::Hdf5::write_full_mpo(class_finite_chain_state & state, c
 void MPS_Tools::Finite::Hdf5::write_hamiltonian_params(const class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name){
     // Write down the Hamiltonian metadata as a table
     // Remember to write tensors in row-major state order because that's what hdf5 uses.
-    spdlog::trace("HAMILTONIANS BEFORE");
-    MPS_Tools::Finite::Print::print_hamiltonians(state);
     Eigen::MatrixXd hamiltonian_props;
     for(auto &mpo : state.get_MPO_L()){
         auto props = mpo->get_parameter_values();
@@ -191,9 +189,6 @@ void MPS_Tools::Finite::Hdf5::write_hamiltonian_params(const class_finite_chain_
         hdf5.write_attribute_to_dataset(sim_name + "/model/full/Hamiltonian", attr_value, attr_name );
         col++;
     }
-    spdlog::trace("HAMILTONIANS AFTER");
-    MPS_Tools::Finite::Print::print_hamiltonians(state);
-    spdlog::trace("DOUBLE CHECK");
     std::cout << hamiltonian_props << std::endl;
 
     hdf5.write_dataset(settings::model::model_type,sim_name + "/model/model_type");
