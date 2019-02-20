@@ -580,13 +580,13 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
 //        double threshold = 1e-10;
         LBFGSpp::LBFGSParam<double> param;
         param.max_iterations = 2000;
-        param.max_linesearch = 200; // Default is 20. 5 is really bad, 80 seems better.
-        param.m              = 6;
-        param.epsilon        = 1e-5;  // Default is 1e-5.
-        param.delta          = 1e-10; // Default is 0. Trying this one instead of ftol.
-        param.ftol           = 1e-4;  // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
+        param.max_linesearch = 40; // Default is 20. 5 is really bad, 80 seems better.
+        param.m              = 8;
+        param.epsilon        = 1e-3;  // Default is 1e-5.
+        param.delta          = 1e-6; // Default is 0. Trying this one instead of ftol.
+        param.ftol           = 1e-3;  // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
         param.past           = 1;     // Or perhaps it was this one that helped.
-//        param.wolfe          = 1e-1;
+        param.wolfe          = 5e-1;
 
 
         // Create solver and function object
@@ -675,13 +675,13 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
 //        double threshold = 1e-5;
         LBFGSpp::LBFGSParam<double> param;
         param.max_iterations = 2000;
-        param.max_linesearch = 200; // Default is 20. 5 is really bad, 80 seems better.
-        param.m              = 6;
-        param.epsilon        = 1e-5;  // Default is 1e-5.
-        param.delta          = 1e-10; // Default is 0. Trying this one instead of ftol.
-        param.ftol           = 1e-4;  // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
+        param.max_linesearch = 40; // Default is 20. 5 is really bad, 80 seems better.
+        param.m              = 8;
+        param.epsilon        = 1e-3;  // Default is 1e-5.
+        param.delta          = 1e-6; // Default is 0. Trying this one instead of ftol.
+        param.ftol           = 1e-3;  // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
         param.past           = 1;     // Or perhaps it was this one that helped.
-//        param.wolfe          = 1e-1;
+        param.wolfe          = 5e-1;
 
         // Create solver and function object
         LBFGSpp::LBFGSSolver<double> solver_3(param);
