@@ -55,6 +55,8 @@ public:
     const auto &get_L() const {return std::as_const(L);}
     auto &get_G() {return G;}
     auto &get_L() {return L;}
+    Eigen::Tensor<Scalar,2> get_L_asDiagonal() const {return Textra::asDiagonal(L);}
+
     auto ref_A() const  {return Textra::asDiagonal(L).contract(G, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});}
     auto ref_B() const  {return G.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));}
     Eigen::Tensor<Scalar,3> get_A()  const  {return Textra::asDiagonal(L).contract(G, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});}
