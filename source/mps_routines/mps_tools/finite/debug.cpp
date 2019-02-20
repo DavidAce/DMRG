@@ -70,6 +70,7 @@ void MPS_Tools::Finite::Debug::check_integrity_of_sim(const class_finite_chain_s
 void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_state &state){
     {
         spdlog::debug("Checking integrity of MPS");
+        spdlog::debug("\tChecking system size");
 
         if(state.get_MPS_L().size() + state.get_MPS_R().size() != state.get_length() )
             throw std::runtime_error("Mismatch in MPS size: " + std::to_string(state.get_MPS_L().size() + state.get_MPS_R().size()) + " " + std::to_string(state.get_length()));
@@ -86,7 +87,7 @@ void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_s
         if(state.get_ENV_R().front().size != state.get_length() - state.get_position() - 2)
             throw std::runtime_error("Mismatch in ENV_R size+1 and length-position: " + std::to_string(state.get_ENV_R().front().size) + " " + std::to_string(state.get_length() - state.get_position()-2));
 
-
+        spdlog::debug("\tChecking matrix sizes on the left side");
         //Check left side of the chain
         auto mps_it  = state.get_MPS_L().begin();
         auto mps_nx  = state.get_MPS_L().begin();
@@ -136,6 +137,7 @@ void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_s
     }
 
     {
+        spdlog::debug("\tChecking matrix sizes on the center");
         //Check center
         if(state.get_MPS_C().dimension(0) != state.get_MPS_L().back().get_chiR())
             throw std::runtime_error("Mismatch in center bond matrix dimension: " + std::to_string(state.get_MPS_C().dimension(0)) + " " + std::to_string(state.get_MPS_L().back().get_chiR()));
@@ -145,6 +147,7 @@ void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_s
     }
 
     {
+        spdlog::debug("\tChecking matrix sizes on the right side");
         auto mps_it  = state.get_MPS_R().rbegin();
         auto mps_nx  = state.get_MPS_R().rbegin();
         auto env_it  = state.get_ENV_R().rbegin();
@@ -190,8 +193,7 @@ void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_s
         }
     }
 
-
-
+    spdlog::debug("MPS OK!");
 
 
 }
