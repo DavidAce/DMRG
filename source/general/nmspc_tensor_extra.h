@@ -98,6 +98,23 @@ namespace Textra {
 //    //Different views for rank 1 and 2 tensors//
 //    //***************************************//
 //
+
+    template <typename Scalar>
+    constexpr Eigen::Tensor<Scalar,1> extractDiagonal(const Eigen::Tensor<Scalar,2> &tensor) {
+        auto rows = tensor.dimension(0);
+        auto cols = tensor.dimension(1);
+        assert(tensor.dimension(0) == tensor.dimension(1) and "extractDiagonal expects a square tensor");
+
+        Eigen::Tensor<Scalar,1> diagonals(rows);
+        for (auto i = 0; i < rows; i++){
+            diagonals(i) = tensor(i,i);
+        }
+        std::cout << "diagonals: \n" << diagonals;
+        return diagonals;
+//        return tensor.reshape(array1{rows*cols}).stride(array1{cols+1});
+    }
+
+
     template <typename Scalar>
     constexpr auto asDiagonal(const Eigen::Tensor<Scalar,1> &tensor) {
         return tensor.inflate(array1{tensor.size()+1}).reshape(array2{tensor.size(),tensor.size()});
@@ -113,11 +130,20 @@ namespace Textra {
         return tensor.inverse().inflate(array1{tensor.size()+1}).reshape(array2{tensor.size(),tensor.size()});
     }
 
+    template <typename Scalar>
+    constexpr auto asDiagonalInversed(const Eigen::Tensor<Scalar,2> &tensor) {
+        assert(tensor.dimension(0) == tensor.dimension(1) and "Textra::asDiagonalInversed expects a square tensor");
+        Eigen::Tensor<Scalar,2> inversed = asDiagonalInversed(extractDiagonal(tensor));
+        std::cout << "inversed:\n" << inversed << std::endl;
+        return inversed;
+    }
+
     template<typename Scalar>
     constexpr auto asNormalized(const Eigen::Tensor<Scalar,1> &tensor) {
         Eigen::Map<const VectorType<Scalar>> map (tensor.data(),tensor.size());
         return Eigen::TensorMap<Eigen::Tensor<const Scalar,1>>(map.normalized().eval().data(), array1{map.size()});
     }
+
 
 
 
