@@ -115,9 +115,9 @@ void class_fDMRG::run()
 
 void class_fDMRG::run_preprocessing() {
     spdlog::info("Running {} preprocessing",sim_name);
-    initialize_superblock(settings::model::initial_state);
-    initialize_chain();
-    set_random_fields_in_chain_mpo();
+//    initialize_superblock(settings::model::initial_state);
+//    initialize_chain();
+//    set_random_fields_in_chain_mpo();
     MPS_Tools::Finite::Print::print_hamiltonians(*state);
     spdlog::info("Finished {} preprocessing", sim_name);
 }
