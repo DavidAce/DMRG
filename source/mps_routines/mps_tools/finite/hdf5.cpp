@@ -189,8 +189,6 @@ void MPS_Tools::Finite::Hdf5::write_hamiltonian_params(const class_finite_chain_
         hdf5.write_attribute_to_dataset(sim_name + "/model/full/Hamiltonian", attr_value, attr_name );
         col++;
     }
-    std::cout << hamiltonian_props << std::endl;
-
     hdf5.write_dataset(settings::model::model_type,sim_name + "/model/model_type");
 
 }
@@ -264,7 +262,6 @@ void MPS_Tools::Finite::Hdf5::load_state_from_hdf5(class_finite_chain_state & st
         hdf5.read_dataset(sites                , sim_name + "/state/full/sites");
         hdf5.read_dataset(Hamiltonian_params   , sim_name + "/model/full/Hamiltonian");
         hdf5.read_dataset(model_type           , sim_name + "/model/model_type");
-        std::cout << Hamiltonian_params << std::endl;
     }catch (std::exception &ex){
         throw std::runtime_error("Couldn't read necessary model parameters: " + std::string(ex.what()));
     }
