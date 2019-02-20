@@ -180,11 +180,11 @@ void class_xDMRG::run_simulation()    {
             if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
             if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
-
-        if(state->position_is_the_middle()){
-            *state = MPS_Tools::Finite::Ops::get_parity_projected_state(*state,qm::spinOneHalf::sx,1);
-            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-        }
+//
+//        if(state->position_is_the_middle()){
+//            *state = MPS_Tools::Finite::Ops::get_parity_projected_state(*state,qm::spinOneHalf::sx,1);
+//            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+//        }
 
         update_bond_dimension(min_saturation_length);
         enlarge_environment(state->get_direction());
