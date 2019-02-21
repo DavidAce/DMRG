@@ -212,10 +212,10 @@ void MPS_Tools::Finite::Hdf5::write_all_measurements(class_finite_chain_state & 
 void MPS_Tools::Finite::Hdf5::write_all_parity_projections(const class_finite_chain_state & state, const class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name){
     write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sx_up", qm::spinOneHalf::sx, 1);
     write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sx_dn", qm::spinOneHalf::sx, -1);
-    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sy_up", qm::spinOneHalf::sy, 1);
-    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sy_dn", qm::spinOneHalf::sy, -1);
-    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sz_up", qm::spinOneHalf::sz, 1);
-    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sz_dn", qm::spinOneHalf::sz, -1);
+//    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sy_up", qm::spinOneHalf::sy, 1);
+//    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sy_dn", qm::spinOneHalf::sy, -1);
+//    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sz_up", qm::spinOneHalf::sz, 1);
+//    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sz_dn", qm::spinOneHalf::sz, -1);
 }
 
 void MPS_Tools::Finite::Hdf5::write_parity_projected_analysis(const class_finite_chain_state & state, const class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name, std::string projection_name,const Eigen::MatrixXcd paulimatrix, const int sign){
