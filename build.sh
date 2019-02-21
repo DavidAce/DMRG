@@ -103,7 +103,7 @@ fi
 
 
 
-if [[ "$hostname" == *"tetralith"* ]];then
+if [[ "$HOSTNAME" == *"tetralith"* ]];then
     echo "Running on tetralith"
     module load CMake/3.12.1
     module load buildenv-gcc/7.3.0-bare
