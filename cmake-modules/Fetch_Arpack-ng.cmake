@@ -90,19 +90,16 @@ else()
             DEPENDS blas lapack gfortran
             )
     ExternalProject_Get_Property(library_ARPACK INSTALL_DIR)
-
-    set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
-#    set(ARPACK_LIBRARIES    ${INSTALL_DIR}/lib/libarpack${CUSTOM_SUFFIX})
     find_library(ARPACK_LIBRARIES
             NAMES libarpack${CUSTOM_SUFFIX}
             PATHS  ${INSTALL_DIR}/lib  ${INSTALL_DIR}/lib64
             )
+    set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
     add_library(arpack INTERFACE)
     set_target_properties(arpack
             PROPERTIES
             INTERFACE_LINK_LIBRARIES      "${ARPACK_LIBRARIES};blas;lapack;gfortran"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
-#            INTERFACE_LINK_OPTIONS        "${PTHREAD_LIBRARY}"
             )
 
     add_dependencies(arpack library_ARPACK blas lapack gfortran)

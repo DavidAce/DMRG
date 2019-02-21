@@ -1,7 +1,27 @@
 find_package(GSL)
+
+if(GSL_FOUND)
+    if("${GSL_LIBRARY}" MATCHES "${CUSTOM_SUFFIX}")
+        message("Found GSL with correct suffix")
+    else()
+        set(GSL_FOUND OFF)
+        set(GSL_LIBRARY OFF)
+        set(GSL_CBLAS_LIBRARY OFF)
+        message("Found GSL with incorrect suffix")
+        find_library(GSL_LIBRARY
+                NAMES libgsl${CUSTOM_SUFFIX}
+                PATHS ${GSL_LIBDIR}
+                )
+        find_library(GSL_CBLAS_LIBRARY
+                NAMES libgslcblas${CUSTOM_SUFFIX}
+                PATHS ${GSL_LIBDIR}
+                )
+        endif()
+endif()
+
 if (NOT GSL_LIBRARY OR NOT GSL_CBLAS_LIBRARY OR NOT GSL_INCLUDE_DIRS)
     # Try finding arpack as module library
-    message(STATUS "SEARCHING FOR ARPACK IN LOADED MODULES")
+    message(STATUS "SEARCHING FOR GSL IN LOADED MODULES")
 
     find_library(GSL_LIBRARY
             NAMES libgsl${CUSTOM_SUFFIX}
