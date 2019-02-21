@@ -10,6 +10,12 @@ if(CMAKE_Fortran_COMPILER)
             OUTPUT_VARIABLE _libgfortran_path
             OUTPUT_STRIP_TRAILING_WHITESPACE
             )
+
+    execute_process(COMMAND ${CMAKE_Fortran_COMPILER} -print-file-name=libgfortran${CMAKE_SHARED_LIBRARY_SUFFIX}
+            OUTPUT_VARIABLE ${GFORTRAN_LIB_SHARED}
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+
 endif()
 
 if(EXISTS ${_libgfortran_path})
