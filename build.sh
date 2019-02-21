@@ -107,6 +107,8 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     echo "Running on tetralith"
     module load CMake/3.12.1
     module load buildenv-gcc/7.3.0-bare
+    export CC=gcc
+    export CXX=g++
 else
     module load arpack-ng_${march}_3.6.2
     module load arpack++
