@@ -29,5 +29,5 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     export OMP_NUM_THREADS=1
 
 
-    echo "$exec $file"
+    $exec $file
 fi
