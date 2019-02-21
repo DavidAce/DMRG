@@ -115,6 +115,22 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 
+
+if [[ "$hostname" == *"tetralith"* ]];then
+    echo "Running on tetralith"
+    module load CMake/3.12.1
+    module load buildenv-gcc/7.3.0-bare
+else
+    module load arpack-ng_${march}_3.6.2
+    module load arpack++
+    module load hdf5_1.10.3
+    module load gsl_2.4
+    module load eigen3_3.3.5
+fi
+
+
+
+
 echo "Starting Build"
 echo "Compiler        :   $compiler"
 echo "Micro arch.     :   $march"
@@ -129,11 +145,6 @@ echo "Static build    :   $static"
 
 #module load CLANG_6.x.x
 
-module load arpack-ng_${march}_3.6.2
-module load arpack++
-module load hdf5_1.10.3
-module load gsl_2.4
-module load eigen3_3.3.5
 
 cmake -E make_directory build/$mode
 cd build/$mode
