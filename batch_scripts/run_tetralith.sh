@@ -4,7 +4,7 @@
 #SBATCH --job-name               =DMRG
 #SBATCH --time                   =0-1:30:00
 #SBATCH --time-min               =0-0:30:00
-#SBATCH --mem-per-cpu            =2G
+#SBATCH --mem-per-cpu            =2000
 #SBATCH --cpus-per-task          =1
 #SBATCH --ntasks                 =1
 #SBATCH --ntasks-per-core        =1
