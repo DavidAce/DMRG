@@ -6,7 +6,7 @@ usage() {
 
 Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t <target>] [-a <march>]
 
--a               : Choose microarchitecture for cxx and openblas. | core2 | nehalem | sandybridge | haswell | (default = haswell)
+-a               : Choose microarchitecture for cxx and openblas. | core2 | nehalem | sandybridge | haswell | native | (default = sandybridge)
 -c               : Clear CMake files before build (delete ./build)
 -g <compiler>    : Compiler        | GNU | Clang | (default = "")
 -h               : Help. Shows this text.
