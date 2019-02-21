@@ -36,19 +36,19 @@ if [ $OPTIND -eq 1 ]; then echo "No flags were passed"; usage ;exit 1; fi
 
 
 
-echo "Threads         :   $threads"
-export OMP_NUM_THREADS=$threads
-
-
-shift "$((OPTIND - 1))"
-ulimit -c unlimited
-echo "Running command:  ./build/$mode/$target $file"
 
 
 if [[ "$HOSTNAME" == *"tetralith"* ]];then
     # sbatch run_triolith.sh ./build/$mode/$target $file
-    run_tetralith.sh ./build/$mode/$target $file
+    ./run_tetralith.sh ./build/$mode/$target $file
 else
-./build/$mode/$target $file
+    echo "Threads         :   $threads"
+    export OMP_NUM_THREADS=$threads
+
+    shift "$((OPTIND - 1))"
+    ulimit -c unlimited
+    echo "Running command:  ./build/$mode/$target $file"
+
+    ./build/$mode/$target $file
 fi
 
