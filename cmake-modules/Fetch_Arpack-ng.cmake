@@ -5,6 +5,7 @@ message(STATUS "SEARCHING FOR ARPACK IN SYSTEM...")
 find_library(ARPACK_LIBRARIES
         NAMES libarpack${CUSTOM_SUFFIX}
         PATHS /usr/lib/x86_64-linux-gnu/
+        NO_DEFAULT_PATH
         )
 
 if (NOT ARPACK_LIBRARIES)
@@ -14,16 +15,18 @@ if (NOT ARPACK_LIBRARIES)
     find_library(ARPACK_LIBRARIES
             NAMES arpack
             PATHS "$ENV{ARPACK_DIR}/lib"
+            NO_DEFAULT_PATH
             )
     find_path(ARPACK_INCLUDE_DIRS
             NAMES arpack
             PATHS "$ENV{ARPACK_DIR}/include"
+            NO_DEFAULT_PATH
             )
 endif()
 
 
 
-if(ARPACK_LIBRARIES)
+if(ARPACK_LIBRARIES AND ARPACK_INCLUDE_DIRS)
     message(STATUS "ARPACK found in system:   ${ARPACK_LIBRARIES}")
     add_library(arpack INTERFACE)
     set_target_properties(arpack
