@@ -1,5 +1,18 @@
 add_executable(arpack++_simple_test_target tests/arpack++_simple_test.cpp)
 set_target_properties(arpack++_simple_test_target PROPERTIES OUTPUT_NAME  arpack++_simple_test)
+
+################################################
+###  Force cmake to find .a library suffixes ###
+################################################
+if(STATIC_BUILD)
+    set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    target_link_libraries  (arpack++_simple_test_target PRIVATE -static)                  ### Static linkage
+else()
+    set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+endif()
+
 target_link_libraries  (arpack++_simple_test_target PRIVATE -Wl,--no-allow-shlib-undefined )
 target_link_libraries  (arpack++_simple_test_target PRIVATE -Wl,--no-as-needed )
 target_link_libraries  (arpack++_simple_test_target PRIVATE -Wl,--no-undefined )

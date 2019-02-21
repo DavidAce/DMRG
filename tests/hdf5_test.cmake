@@ -4,15 +4,26 @@ add_executable(hdf5_test_target tests/hdf5_test.cpp
         source/io/class_hdf5_file.h
         source/general/nmspc_tensor_extra.h
         )
+
 set_target_properties(hdf5_test_target PROPERTIES OUTPUT_NAME  hdf5_test)
 target_include_directories(hdf5_test_target PUBLIC source)
+
+################################################
+###  Force cmake to find .a library suffixes ###
+################################################
+if(STATIC_BUILD)
+    set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    target_link_libraries  (hdf5_test_target PRIVATE -static)                                             ### Static linkage
+else()
+    set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+endif()
+
 
 target_link_libraries(hdf5_test_target PRIVATE eigen3)
 target_link_libraries(hdf5_test_target PRIVATE hdf5      )
 target_link_libraries(hdf5_test_target PRIVATE spdlog    )
-#target_link_libraries(hdf5_test_target PRIVATE hdf5::hdf5_hl    )
-#target_link_libraries(hdf5_test_target PRIVATE hdf5::hdf5_cpp   )
-#target_link_libraries(hdf5_test_target PRIVATE hdf5::hdf5_hl_cpp)
 target_link_libraries(hdf5_test_target PRIVATE -lstdc++fs)
 target_link_libraries(hdf5_test_target PRIVATE -flto)
 
