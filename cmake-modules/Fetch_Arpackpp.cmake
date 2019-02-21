@@ -32,6 +32,7 @@ if (ARPACKPP_LIBRARIES OR ARPACKPP_INCLUDE_DIR AND NOT "${OS_PROPERTIES}" MATCHE
     set_target_properties(arpack++ PROPERTIES
             INTERFACE_LINK_LIBRARIES "${ARPACKPP_LIBRARIES};arpack;blas;lapack"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}")
+    add_dependencies(arpack++ blas lapack arpack)
     target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 
 else()
@@ -58,7 +59,7 @@ else()
             INTERFACE_LINK_LIBRARIES "arpack;blas;lapack"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}"
             )
-    add_dependencies(arpack++ library_ARPACK++ blas lapack)
+    add_dependencies(arpack++ library_ARPACK++ blas lapack arpack)
 #    target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 #    target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACKPP_INCLUDE_DIR})
 endif()
