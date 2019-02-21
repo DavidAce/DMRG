@@ -110,7 +110,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     module load CMake/3.12.1
     export CC=gcc
     export CXX=g++
-else
+elif [[ "$HOSTNAME" == *"anderson"* ]];then
     module load arpack-ng_${march}_3.6.2
     module load arpack++
     module load hdf5_1.10.3
