@@ -95,6 +95,7 @@ else()
             PATHS  ${INSTALL_DIR}/lib  ${INSTALL_DIR}/lib64
             )
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
+    message("THIS IS THE PATH MAKING ALL THE FUSS: ${ARPACK_INCLUDE_DIRS}")
     add_library(arpack INTERFACE)
     set_target_properties(arpack
             PROPERTIES
