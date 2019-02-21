@@ -108,6 +108,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     module load buildenv-gcc/2018a-eb
     module load GCCcore/7.3.0
     module load CMake/3.12.1
+    module load zlib/1.2.8
     export CC=gcc
     export CXX=g++
 elif [[ "$HOSTNAME" == *"anderson"* ]];then

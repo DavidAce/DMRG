@@ -1,7 +1,7 @@
 
 
 if (EXISTS "$ENV{HDF5_DIR}")
-    # Try finding in system. While avoiding Python anaconda's version.
+    # Try finding in modules.
     # Usually there is an executable present in system, "h5c++"
     cmake_policy(SET CMP0074 NEW)
     set(HDF5_ROOT "$ENV{HDF5_DIR}")
@@ -107,7 +107,8 @@ else()
     set(HDF5_C_HL_LIBRARY     ${INSTALL_DIR}/lib/libhdf5_hl${CUSTOM_SUFFIX})
     set(HDF5_CXX_LIBRARY      ${INSTALL_DIR}/lib/libhdf5_cpp${CUSTOM_SUFFIX})
     set(HDF5_CXX_HL_LIBRARY   ${INSTALL_DIR}/lib/libhdf5_hl_cpp${CUSTOM_SUFFIX})
-    set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -lz -Wl,--as-needed)
+#    set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -lz -Wl,--as-needed) // Use if you enable libz!
+    set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -Wl,--as-needed)
     set(HDF5_INCLUDE_DIR      ${INSTALL_DIR}/include)
     #    if (HDF5_IS_PARALLEL)
     #        list(APPEND HDF5_LINKER_FLAGS ${MPI_LIBRARIES})
