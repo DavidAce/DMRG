@@ -4,7 +4,6 @@
 
 #include <general/class_eigsolver_arpack_custom_products.h>
 #include <general/nmspc_tensor_extra.h>
-#include <Eigen/Core>
 
 using namespace eigsolver_properties;
 template<typename T,Form form>
