@@ -39,7 +39,7 @@ if(HDF5_LIBRARIES MATCHES "anaconda")
     set(HDF5_ANACONDA ON)
 endif()
 
-if(HDF5_FOUND AND NOT HDF5_ANACONDA)
+if(HDF5_FOUND AND NOT HDF5_ANACONDA AND HDF5_CXX_HL_LIBRARY)
     # To print all variables, use the code below:
     #
     #    get_cmake_property(_variableNames VARIABLES)
