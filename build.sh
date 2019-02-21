@@ -112,7 +112,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     export CC=gcc
     export CXX=g++
     echo $LD_LIBRARY_PATH
-    LD_LIBRARY_PATH=$(gcc -print-file-name=libstdc++.so)
+    LD_LIBRARY_PATH=$(gcc -print-file-name=libstdc++.so):$LD_LIBRARY_PATH
     export LD_LIBRARY_PATH
 elif [[ "$HOSTNAME" == *"anderson"* ]];then
     module load arpack-ng_${march}_3.6.2
