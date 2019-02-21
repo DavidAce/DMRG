@@ -75,14 +75,25 @@ else()
     include(ExternalProject)
     ExternalProject_Add(library_OpenBLAS
             GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
-            GIT_TAG             v0.3.4
+            GIT_TAG             v0.3.5
             PREFIX              "${INSTALL_DIRECTORY}/OpenBLAS"
             UPDATE_COMMAND ""
             TEST_COMMAND ""
             CONFIGURE_COMMAND ""
 
             BUILD_IN_SOURCE 1
-            BUILD_COMMAND export LD_PRELOAD=${GFORTRAN_LIB_SHARED} && $(MAKE) TARGET=${OPENBLAS_MARCH} USE_THREAD=${OpenBLAS_MULTITHREADED} USE_OPENMP=${OpenBLAS_USE_OPENMP} NO_AFFINITY=1 GEMM_MULTITHREAD_THRESHOLD=50 NUM_THREADS=64 BINARY64=64 QUIET_MAKE=1 FFLAGS=-Wno-maybe-uninitialized
+            BUILD_COMMAND export LD_LIBRARY_PATH=${GFORTRAN_PATH} &&
+                          export LDFLAGS=-L${GFORTRAN_LIB_SHARED} &&
+                          $(MAKE) TARGET=${OPENBLAS_MARCH}
+                          USE_THREAD=${OpenBLAS_MULTITHREADED}
+                          USE_OPENMP=${OpenBLAS_USE_OPENMP}
+                          NO_AFFINITY=1
+                          GEMM_MULTITHREAD_THRESHOLD=50
+                          NUM_THREADS=64
+                          BINARY64=64
+                          QUIET_MAKE=0
+                          FFLAGS=-Wno-maybe-uninitialized
+                          LDFLAGS=-L${GFORTRAN_LIB_SHARED}
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             DEPENDS gfortran
             )
