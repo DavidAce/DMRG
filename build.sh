@@ -111,6 +111,8 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     module load zlib/1.2.8
     export CC=gcc
     export CXX=g++
+    LD_LIBRARY_PATH=/usr/local/lib64/:$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH
 elif [[ "$HOSTNAME" == *"anderson"* ]];then
     module load arpack-ng_${march}_3.6.2
     module load arpack++
