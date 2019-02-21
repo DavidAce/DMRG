@@ -136,6 +136,8 @@ fi
 
 echo "Starting Build"
 echo "Compiler        :   $compiler"
+echo "CC              :   $CC"
+echo "CXX             :   $CXX"
 echo "Micro arch.     :   $march"
 echo "Target          :   $target"
 echo "Build threads   :   $make_threads"
