@@ -16,7 +16,7 @@ export OMP_NUM_THREADS=1
 base=mbl_
 exec=../build/Release/DMRG++
 
-for inputfile in ../input/L_*/$(NAME)_*.cfg; do
+for inputfile in ../input/L_*/$(base)_*.cfg; do
     [ -e "$inputfile" ] || continue
     base_id=$(basename $inputfile .cfg)
     logname=logs/log_$base_id.out
