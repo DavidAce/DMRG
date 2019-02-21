@@ -92,7 +92,11 @@ else()
     ExternalProject_Get_Property(library_ARPACK INSTALL_DIR)
 
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
-    set(ARPACK_LIBRARIES    ${INSTALL_DIR}/lib/libarpack${CUSTOM_SUFFIX})
+#    set(ARPACK_LIBRARIES    ${INSTALL_DIR}/lib/libarpack${CUSTOM_SUFFIX})
+    find_library(ARPACK_LIBRARIES
+            NAMES libarpack${CUSTOM_SUFFIX}
+            PATHS  ${INSTALL_DIR}/lib  ${INSTALL_DIR}/lib64
+            )
     add_library(arpack INTERFACE)
     set_target_properties(arpack
             PROPERTIES
