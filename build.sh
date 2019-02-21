@@ -68,19 +68,6 @@ if [ "$clear_libs" = true ] ; then
 fi
 
 
-if [ "$compiler" = "GNU" ] ; then
-    module load GNU_8.x.x
-elif [ "$compiler" = "Clang" ] ; then
-    module load CLANG_7
-fi
-
-
-if [ "$mkl" = "ON" ] ; then
-    module load intel-mkl-2019.1
-else
-    module load openblas_${march}_v0.3.4
-fi
-
 
 
 
@@ -126,6 +113,20 @@ else
     module load hdf5_1.10.3
     module load gsl_2.4
     module load eigen3_3.3.5
+
+    if [ "$compiler" = "GNU" ] ; then
+        module load GNU_8.x.x
+    elif [ "$compiler" = "Clang" ] ; then
+        module load CLANG_7
+    fi
+
+
+    if [ "$mkl" = "ON" ] ; then
+        module load intel-mkl-2019.1
+    else
+        module load openblas_${march}_v0.3.4
+    fi
+
 fi
 
 
