@@ -13,8 +13,8 @@ if (NOT ARPACK_LIBRARIES)
     message(STATUS "SEARCHING FOR ARPACK IN LOADED MODULES")
 
     find_library(ARPACK_LIBRARIES
-            NAMES arpack
-            PATHS "$ENV{ARPACK_DIR}/lib"
+            NAMES libarpack${CUSTOM_SUFFIX} arpack
+            PATHS "$ENV{ARPACK_DIR}/lib" "$ENV{ARPACK_DIR}/lib64"
             NO_DEFAULT_PATH
             )
     find_path(ARPACK_INCLUDE_DIRS
