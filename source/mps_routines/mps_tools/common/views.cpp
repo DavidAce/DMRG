@@ -19,20 +19,20 @@
 using namespace Textra;
 
 namespace MPS_Tools::Common::Views{
-    auto theta                  = Eigen::Tensor<std::complex<double>,4> ();
-    auto theta_evn_normalized   = Eigen::Tensor<std::complex<double>,4> ();
-    auto theta_odd_normalized   = Eigen::Tensor<std::complex<double>,4> ();
-    auto theta_sw               = Eigen::Tensor<std::complex<double>,4> ();
-    auto LBGA                   = Eigen::Tensor<std::complex<double>,3> ();
-    auto LAGB                   = Eigen::Tensor<std::complex<double>,3> ();
-    auto l_evn                  = Eigen::Tensor<std::complex<double>,2> ();
-    auto r_evn                  = Eigen::Tensor<std::complex<double>,2> ();
-    auto l_odd                  = Eigen::Tensor<std::complex<double>,2> ();
-    auto r_odd                  = Eigen::Tensor<std::complex<double>,2> ();
-    auto transfer_matrix_LBGA   = Eigen::Tensor<std::complex<double>,4> ();
-    auto transfer_matrix_LAGB   = Eigen::Tensor<std::complex<double>,4> ();
-    auto transfer_matrix_evn    = Eigen::Tensor<std::complex<double>,4> ();
-    auto transfer_matrix_odd    = Eigen::Tensor<std::complex<double>,4> ();
+    Eigen::Tensor<std::complex<double>,4> theta                  = Eigen::Tensor<std::complex<double>,4> ();
+    Eigen::Tensor<std::complex<double>,4> theta_evn_normalized   = Eigen::Tensor<std::complex<double>,4> ();
+    Eigen::Tensor<std::complex<double>,4> theta_odd_normalized   = Eigen::Tensor<std::complex<double>,4> ();
+    Eigen::Tensor<std::complex<double>,4> theta_sw               = Eigen::Tensor<std::complex<double>,4> ();
+    Eigen::Tensor<std::complex<double>,3> LBGA                   = Eigen::Tensor<std::complex<double>,3> ();
+    Eigen::Tensor<std::complex<double>,3> LAGB                   = Eigen::Tensor<std::complex<double>,3> ();
+    Eigen::Tensor<std::complex<double>,2> l_evn                  = Eigen::Tensor<std::complex<double>,2> ();
+    Eigen::Tensor<std::complex<double>,2> r_evn                  = Eigen::Tensor<std::complex<double>,2> ();
+    Eigen::Tensor<std::complex<double>,2> l_odd                  = Eigen::Tensor<std::complex<double>,2> ();
+    Eigen::Tensor<std::complex<double>,2> r_odd                  = Eigen::Tensor<std::complex<double>,2> ();
+    Eigen::Tensor<std::complex<double>,4> transfer_matrix_LBGA   = Eigen::Tensor<std::complex<double>,4> ();
+    Eigen::Tensor<std::complex<double>,4> transfer_matrix_LAGB   = Eigen::Tensor<std::complex<double>,4> ();
+    Eigen::Tensor<std::complex<double>,4> transfer_matrix_evn    = Eigen::Tensor<std::complex<double>,4> ();
+    Eigen::Tensor<std::complex<double>,4> transfer_matrix_odd    = Eigen::Tensor<std::complex<double>,4> ();
 }
 
 
