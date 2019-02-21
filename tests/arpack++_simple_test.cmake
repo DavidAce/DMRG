@@ -6,7 +6,7 @@ target_link_libraries  (arpack++_simple_test_target PRIVATE -Wl,--no-undefined )
 
 target_link_libraries(arpack++_simple_test_target PRIVATE -lstdc++fs)
 target_link_libraries(arpack++_simple_test_target PRIVATE -flto)
-target_link_libraries(arpack++_simple_test_target  PRIVATE  arpack++)
+target_link_libraries(arpack++_simple_test_target PRIVATE  arpack++)
 
 
 set_target_properties  (arpack++_simple_test_target PROPERTIES CXX_STANDARD_REQUIRED 17)
