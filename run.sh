@@ -47,7 +47,7 @@ echo "Running command:  ./build/$mode/$target $file"
 
 if [[ "$HOSTNAME" == *"tetralith"* ]];then
     # sbatch run_triolith.sh ./build/$mode/$target $file
-    run_triolith.sh ./build/$mode/$target $file
+    run_tetralith.sh ./build/$mode/$target $file
 else
 ./build/$mode/$target $file
 fi
