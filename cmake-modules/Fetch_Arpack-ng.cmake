@@ -48,8 +48,10 @@ else()
     string (REPLACE ";" "$<SEMICOLON>" FC_LDLAGS_GENERATOR          "${FC_LDLAGS}")
     ####################################################################
     if(${STATIC_BUILD})
+        message("BUILDING ARPACK STATIC")
         set(ARPACK_SHARED OFF)
     else()
+        message("BUILDING ARPACK SHARED")
         set(ARPACK_SHARED ON)
     endif()
 
