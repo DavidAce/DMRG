@@ -15,11 +15,12 @@ export OMP_NUM_THREADS=1
 
 base=mbl_
 exec=../build/Release/DMRG++
+inputfiles=$(find input -type f -name '*.cfg')
 
-for inputfile in ../input/L_*/$(base)_*.cfg; do
+for inputfile in $inputfiles; do
     [ -e "$inputfile" ] || continue
     base_id=$(basename $inputfile .cfg)
     logname=logs/log_$base_id.out
     errname=logs/log_$base_id.err
-    sbatch run_tetralith.sh $exec $inputfile $logname $errname
+    sbatch --output=$logname --error=$errname run_tetralith.sh $exec $inputfile
 done
