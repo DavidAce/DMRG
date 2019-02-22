@@ -14,7 +14,7 @@ if (EXISTS "$ENV{HDF5_DIR}")
     #        list(APPEND HDF5_INCLUDE_DIR  $ENV{MPI_INCLUDE})
     #    endif()
 else()
-    # Try finding in system. While avoiding Python anaconda's version.
+    # Try finding in system.
     # Usually there is an executable present in system, "h5c++"
 
     find_file(HDF5_C_COMPILER_EXECUTABLE NAMES h5cc PATHS /usr/bin /usr/local/bin NO_DEFAULT_PATH)
@@ -31,15 +31,16 @@ else()
     set(HDF5_CXX_LIBRARY       ${HDF5_CXX_LIBRARY_hdf5_cpp})
     set(HDF5_CXX_HL_LIBRARY    ${HDF5_CXX_LIBRARY_hdf5_hl_cpp})
     set(HDF5_LINKER_FLAGS       -Wl,--no-as-needed -ldl -lm -lz -Wl,--as-needed)
+    set(HDF5_EXTRA_LIBS        ${HDF5_CXX_LIBRARY_iomp5} ${HDF5_CXX_LIBRARY_sz})
 
 endif()
 
-if(HDF5_LIBRARIES MATCHES "anaconda")
-    message("Found anaconda version. Ignoring...")
-    set(HDF5_ANACONDA ON)
-endif()
+#if(HDF5_LIBRARIES MATCHES "anaconda")
+#    message("Found anaconda version. Ignoring...")
+#    set(HDF5_ANACONDA ON)
+#endif()
 
-if(HDF5_FOUND AND NOT HDF5_ANACONDA AND HDF5_CXX_HL_LIBRARY)
+if(HDF5_FOUND AND HDF5_CXX_HL_LIBRARY)
     # To print all variables, use the code below:
     #
     #    get_cmake_property(_variableNames VARIABLES)
@@ -64,6 +65,7 @@ if(HDF5_FOUND AND NOT HDF5_ANACONDA AND HDF5_CXX_HL_LIBRARY)
     message(STATUS "   HDF5_CXX_HL_LIBRARY      : ${HDF5_CXX_HL_LIBRARY}")
     message(STATUS "   HDF5_INCLUDE_DIR         : ${HDF5_INCLUDE_DIR}")
     message(STATUS "   HDF5_LINKER_FLAGS        : ${HDF5_LINKER_FLAGS}")
+    message(STATUS "   HDF5_EXTRA_LIBS          : ${HDF5_EXTRA_LIBS}")
 
 
     # Add convenience libraries
@@ -119,7 +121,7 @@ endif()
 set(HDF5_LIBRARIES  ${HDF5_CXX_HL_LIBRARY} ${HDF5_CXX_LIBRARY} ${HDF5_C_HL_LIBRARY} ${HDF5_C_LIBRARY}  )
 
 set_target_properties(hdf5 PROPERTIES
-        INTERFACE_LINK_LIBRARIES        "${HDF5_LIBRARIES};${HDF5_LINKER_FLAGS};${PTHREAD_LIBRARY}"
+        INTERFACE_LINK_LIBRARIES        "${HDF5_LIBRARIES};${HDF5_EXTRA_LIBS};${HDF5_LINKER_FLAGS};${PTHREAD_LIBRARY}"
         INTERFACE_INCLUDE_DIRECTORIES   "${HDF5_INCLUDE_DIR}"
 #        INTERFACE_LINK_OPTIONS          "${HDF5_LINKER_FLAGS}"
         )
