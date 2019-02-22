@@ -7,7 +7,7 @@ os.chdir(parentpath)
 
 src_directory='input'
 tgt_directory='bunch'
-bunch_size = 100
+bunch_size = 50
 bunch_list = []
 
 for dirName, subdirList, fileList in os.walk(src_directory):
