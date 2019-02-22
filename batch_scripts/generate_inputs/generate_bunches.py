@@ -1,8 +1,12 @@
 import numpy as np
 import os
 
-src_directory='../input'
-tgt_directory='../bunch'
+
+parentpath = os.path.abspath('..')
+os.chdir(parentpath)
+
+src_directory='input'
+tgt_directory='bunch'
 bunch_size = 100
 bunch_list = []
 
@@ -19,6 +23,7 @@ for dirName, subdirList, fileList in os.walk(src_directory):
 
 if not os.path.exists(tgt_directory):
     os.makedirs(tgt_directory)
+
 for i, bunch in enumerate(bunch_list):
     filepath = tgt_directory + '/bunch_' + str(i) + '.txt'
     with open(filepath, 'w') as file_handler:
