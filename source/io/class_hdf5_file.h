@@ -369,7 +369,7 @@ std::vector<class_hdf5_file::H5T_COMPLEX_STRUCT> class_hdf5_file::convert_comple
         return new_data;
     }
     //This should never happen, but is here so that we compile successfully.
-    assert(NAN == NAN and "Big error! Tried to convert non-complex data_struct to complex");
+    assert(NAN == NAN and "Big error! Tried to convert non-complex data to complex");
     return     std::vector<H5T_COMPLEX_STRUCT>();
 }
 
@@ -415,7 +415,7 @@ void class_hdf5_file::write_dataset(const DataType &data, const std::string &dat
     if constexpr(tc::is_eigen_tensor<DataType>::value or tc::is_eigen_matrix_or_array<DataType>()){
         auto temp = Textra::to_RowMajor(data); //Convert to Row Major first;
         if (H5Tequal(get_DataType<DataType>(), H5T_COMPLEX_DOUBLE) and not std::is_same<std::vector<H5T_COMPLEX_STRUCT>, DataType>::value) {
-            //If complex, convert data_struct to complex struct H5T_COMPLEX_DOUBLE
+            //If complex, convert data to complex struct H5T_COMPLEX_DOUBLE
             auto new_temp = convert_complex_data(temp);
             write_dataset(new_temp, props);
         }else{
@@ -429,7 +429,7 @@ void class_hdf5_file::write_dataset(const DataType &data, const std::string &dat
             retval = H5Tset_strpad(props.datatype,H5T_STR_NULLPAD);
             write_dataset(data, props);
         }else if (H5Tequal(get_DataType<DataType>(), H5T_COMPLEX_DOUBLE) and not std::is_same<std::vector<H5T_COMPLEX_STRUCT>, DataType>::value) {
-            //If complex, convert data_struct to complex struct H5T_COMPLEX_DOUBLE
+            //If complex, convert data to complex struct H5T_COMPLEX_DOUBLE
             auto new_data = convert_complex_data(data);
             write_dataset(new_data, props);
         }else{

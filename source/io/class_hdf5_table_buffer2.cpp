@@ -42,7 +42,7 @@ class_hdf5_table<table_type>::~class_hdf5_table(){
     if (hdf5_file){
         write_buffer_to_file();
     }else if (!buffer_is_empty){
-        std::cerr << "Warning: Output data_struct has not been saved to file, yet it is being discarded!\n" << std::endl;
+        std::cerr << "Warning: Output data has not been saved to file, yet it is being discarded!\n" << std::endl;
     }
 }
 

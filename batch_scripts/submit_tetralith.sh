@@ -13,14 +13,13 @@ export LD_LIBRARY_PATH
 export OMP_NUM_THREADS=1
 
 
-base=mbl_
 exec=../build/Release/DMRG++
-inputfiles=$(find input -type f -name '*.cfg')
+bunchfiles=$(find bunch -type f -name '*.txt')
 
-for inputfile in $inputfiles; do
-    [ -e "$inputfile" ] || continue
-    base_id=$(basename $inputfile .cfg)
-    logname=logs/log_$base_id.out
-    errname=logs/log_$base_id.err
-    sbatch --output=$logname --error=$errname run_tetralith.sh $exec $inputfile
+for bunchfile in $bunchfiles; do
+    [ -e "$bunchfile" ] || continue
+    bunch_id=$(basename $bunchfile .txt)
+    logname=logs/log_$bunch_id.out
+    errname=logs/log_$bunch_id.err
+    sbatch --output=$logname --error=$errname run_tetralith_bunch.sh $exec $bunchfile
 done
