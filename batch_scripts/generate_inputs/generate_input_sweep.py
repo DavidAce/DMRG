@@ -10,7 +10,7 @@ template_filename = 'input_template.cfg'
 basename    = 'mbl_'
 location    = "../input"
 
-realizations = np.arange(0,2000,1)  # Number of copies for each point on the sweep
+realizations = np.arange(0,1000,1)  # Number of copies for each point on the sweep
 sites        = np.arange(12,36,4)
 lambdas      = np.arange(0, 0.1, 0.1)
 deltas       = np.array([0]) #np.arange(-1.0, 2.0, 1.0)
