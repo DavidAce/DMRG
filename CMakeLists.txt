@@ -241,7 +241,7 @@ include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not foun
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
 include(cmake-modules/Fetch_spdlog.cmake)                   # spdlog library
 include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
-include(cmake-modules/Fetch_HDF5_2.cmake)                   # HDF5 binary file format for output data_struct.
+include(cmake-modules/Fetch_HDF5_2.cmake)                   # HDF5 binary file format for output data.
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.

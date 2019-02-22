@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
 //
 //    spdlog->warn("TESTING MY LOGGER");
     //Initialize the algorithm class
-    //This class stores simulation data_struct automatically to a file specified in the input file
+    //This class stores simulation data automatically to a file specified in the input file
     class_algorithm_launcher launcher;
 
     //Run the algorithms

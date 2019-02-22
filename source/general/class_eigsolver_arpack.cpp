@@ -361,7 +361,7 @@ void class_eigsolver_arpack<Scalar,form>::optimize_mps(
     // Stupidly enough, the only difference between the github and "apt" versions of arpack++, is that the apt version only accepts char*
     RitzToString.at(ritz).copy(ritz_char, 2);
 
-//    Lblock->block.data_struct(), Rblock->block.data_struct(), HA->MPO.data_struct(), HB->MPO.data_struct()
+//    Lblock->block.data(), Rblock->block.data(), HA->MPO.data(), HB->MPO.data()
 
 
     DenseHamiltonianProduct<Scalar>  hamiltonianProduct(Lblock, Rblock,HA, HB, shape_theta4,shape_mpo4);
