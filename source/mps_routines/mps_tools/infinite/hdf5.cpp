@@ -68,7 +68,7 @@ void MPS_Tools::Infinite::Hdf5::write_hamiltonian_params(class_superblock &super
 void MPS_Tools::Infinite::Hdf5::write_all_measurements  (class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name){
     superblock.do_all_measurements();
     hdf5.write_dataset(superblock.measurements.length                      , sim_name + "/measurements/2site/length");
-    hdf5.write_dataset(superblock.measurements.bond_dimension              , sim_name + "/measurements/2site/bond_dimensions");
+    hdf5.write_dataset(superblock.measurements.bond_dimension              , sim_name + "/measurements/2site/bond_dimension");
     hdf5.write_dataset(superblock.measurements.norm                        , sim_name + "/measurements/2site/norm");
     hdf5.write_dataset(superblock.measurements.truncation_error            , sim_name + "/measurements/2site/truncation_error");
     hdf5.write_dataset(superblock.measurements.energy_mpo                  , sim_name + "/measurements/2site/energy_mpo");
