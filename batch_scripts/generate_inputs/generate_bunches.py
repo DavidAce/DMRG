@@ -11,9 +11,6 @@ bunch_size = 100
 bunch_list = []
 
 for dirName, subdirList, fileList in os.walk(src_directory):
-    print('Found directory: %s' % dirName)
-    print('Found subdir   : %s' % subdirList)
-    print('Found files    : %s' % fileList)
     current_bunch = []
     for src_filename in fileList:
         current_bunch.append(dirName + '/' +src_filename)
