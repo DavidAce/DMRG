@@ -18,16 +18,14 @@ def chunks(l, n):
         # Create an index range for l of n items:
         yield l[i:i+n]
 
+current_bunch = []
 for dirName, subdirList, fileList in os.walk(src_directory):
-    current_bunch = []
     for src_filename in fileList:
         current_bunch.append(dirName + '/' +src_filename)
-
 
 #current_bunch.sort()
 random.shuffle(current_bunch)
 bunch_list = chunks(current_bunch,bunch_size)
-
 
 
 for i, bunch in enumerate(bunch_list):
@@ -35,3 +33,7 @@ for i, bunch in enumerate(bunch_list):
     with open(filepath, 'w') as file_handler:
         for item in bunch:
             file_handler.write("{}\n".format(item))
+
+
+
+

@@ -1,0 +1,16 @@
+
+# Login to node to view usage (use squeue to find out the job_id and node_id
+jobsh -j <job_id> <node_id>
+
+# View more information on squeue with -l
+squeue -u <user> -l
+
+# View memory usage for each job
+sacct -u <user> --format="CPUTime,MaxRSS"
+
+
+# View storage quota
+snicquota
+
+# View cpu usage quota
+projinfo
