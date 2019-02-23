@@ -40,12 +40,6 @@ while getopts a:dhp:s:t:u:L o; do
       esac
 done
 
-if [ "$dry_run" == true ]; then
-echo "Dry-run mode ON."
-rsync -r --progress --dry-run --update  $default_src ${default_usr}@${default_adr}:${default_pfx}/${default_tgt}
-exit 0
-fi
-
 #if [ $OPTIND -eq 1 ]; then echo "No flags were passed"; usage ;exit 1; fi
 
 
