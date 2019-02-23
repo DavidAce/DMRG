@@ -22,5 +22,5 @@ for bunchfile in $bunchfiles; do
     bunch_id=$(basename $bunchfile .txt)
     logname=logs/log_$bunch_id.out
     errname=logs/log_$bunch_id.err
-    sbatch --output=$logname --error=$errname run_parallel.sh $exec $bunchfile
+    sbatch --output=$logname --error=$errname run_tetralith_bunch_parallel.sh $exec $bunchfile
 done
