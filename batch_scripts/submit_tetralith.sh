@@ -14,7 +14,7 @@ export OMP_NUM_THREADS=1
 
 
 exec=../build/Release/DMRG++
-bunchfiles=$(find bunch -type f -name '*.txt')
+bunchfiles=$(find -L bunch -type f -name '*.txt')
 
 for bunchfile in $bunchfiles; do
     [ -e "$bunchfile" ] || continue
