@@ -7,7 +7,7 @@ os.chdir(parentpath)
 
 src_directory='input'
 tgt_directory='bunch'
-bunch_size = 50
+bunch_size = 200
 bunch_list = []
 if not os.path.exists(tgt_directory):
     os.makedirs(tgt_directory)

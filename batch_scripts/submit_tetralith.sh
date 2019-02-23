@@ -5,6 +5,7 @@
 
 module load buildenv-gcc/2018a-eb
 module load GCCcore/7.3.0
+module load parallel/20181122-nsc1
 export CC=gcc
 export CXX=g++
 echo $LD_LIBRARY_PATH
@@ -21,5 +22,5 @@ for bunchfile in $bunchfiles; do
     bunch_id=$(basename $bunchfile .txt)
     logname=logs/log_$bunch_id.out
     errname=logs/log_$bunch_id.err
-    sbatch --output=$logname --error=$errname run_tetralith_bunch.sh $exec $bunchfile
+    sbatch --output=$logname --error=$errname run_parallel.sh $exec $bunchfile
 done
