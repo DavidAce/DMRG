@@ -65,6 +65,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
 //    initialize_superblock(settings::model::initial_state);
     min_saturation_length = 1 * (int)(0.5 * settings::xdmrg::num_sites);
     max_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
+    settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(int)(std::log2(chi_max())/2));
 }
 
 
@@ -181,10 +182,10 @@ void class_xDMRG::run_simulation()    {
             if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
 //
-        if(state->position_is_the_middle()){
-            *state = MPS_Tools::Finite::Ops::get_parity_projected_state(*state,qm::spinOneHalf::sx,1);
-            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-        }
+//        if(state->position_is_the_middle()){
+//            *state = MPS_Tools::Finite::Ops::get_parity_projected_state(*state,qm::spinOneHalf::sx,1);
+//            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+//        }
 
         update_bond_dimension(min_saturation_length);
         enlarge_environment(state->get_direction());
@@ -212,7 +213,7 @@ void class_xDMRG::run_postprocessing(){
     MPS_Tools::Infinite::Hdf5::write_all_measurements(*superblock,*hdf5,sim_name);
     MPS_Tools::Finite::Hdf5::write_all_measurements(*state,*hdf5,sim_name);
 
-    MPS_Tools::Finite::Ops::print_parity_properties(*state);
+    MPS_Tools::Finite::Debug::print_parity_properties(*state);
     MPS_Tools::Finite::Hdf5::write_all_parity_projections(*state,*superblock,*hdf5,sim_name);
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){

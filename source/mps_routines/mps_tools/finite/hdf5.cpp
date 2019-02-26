@@ -210,15 +210,20 @@ void MPS_Tools::Finite::Hdf5::write_all_measurements(class_finite_chain_state & 
 
 
 void MPS_Tools::Finite::Hdf5::write_all_parity_projections(const class_finite_chain_state & state, const class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name){
-    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sx_up", qm::spinOneHalf::sx, 1);
-    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sx_dn", qm::spinOneHalf::sx, -1);
+    double var_sxup = write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sx_up", qm::spinOneHalf::sx, 1);
+    double var_sxdn = write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sx_dn", qm::spinOneHalf::sx, -1);
+
 //    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sy_up", qm::spinOneHalf::sy, 1);
 //    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sy_dn", qm::spinOneHalf::sy, -1);
 //    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sz_up", qm::spinOneHalf::sz, 1);
 //    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sz_dn", qm::spinOneHalf::sz, -1);
+    std::string best = var_sxup < var_sxdn ? "sx_up" : "sx_dn";
+    hdf5.write_symbolic_link(sim_name + "/projections/" + best, sim_name + "/projections/best");
 }
 
-void MPS_Tools::Finite::Hdf5::write_parity_projected_analysis(const class_finite_chain_state & state, const class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name, std::string projection_name,const Eigen::MatrixXcd paulimatrix, const int sign){
+
+
+double MPS_Tools::Finite::Hdf5::write_parity_projected_analysis(const class_finite_chain_state & state, const class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name, std::string projection_name,const Eigen::MatrixXcd paulimatrix, const int sign){
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
     auto state_projected = MPS_Tools::Finite::Ops::get_parity_projected_state(state,paulimatrix, sign);
     state_projected.set_measured_false();
@@ -232,6 +237,9 @@ void MPS_Tools::Finite::Hdf5::write_parity_projected_analysis(const class_finite
     superblock_projected.do_all_measurements();
     MPS_Tools::Infinite::Hdf5::write_all_superblock(superblock_projected,hdf5, sim_name + "/" + projection_name);
     MPS_Tools::Infinite::Hdf5::write_all_measurements(superblock_projected,hdf5, sim_name + "/" + projection_name);
+
+    return superblock.measurements.energy_variance_mpo;
+
 }
 
 

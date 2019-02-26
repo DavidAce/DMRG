@@ -46,7 +46,6 @@ namespace MPS_Tools{
             extern void apply_mpos                    (class_finite_chain_state &state, const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
             extern void normalize_chain               (class_finite_chain_state &state);
             extern void apply_energy_mpo_test         (class_finite_chain_state &state, class_superblock & superblock);
-            extern void print_parity_properties(class_finite_chain_state &state);
             extern void rebuild_environments          (class_finite_chain_state &state);
             extern void rebuild_superblock            (class_finite_chain_state &state, class_superblock & superblock);
             extern double overlap                     (const class_finite_chain_state &state1, const class_finite_chain_state &state2);
@@ -95,7 +94,7 @@ namespace MPS_Tools{
             extern void write_entanglement                 (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_all_measurements             (class_finite_chain_state & state, class_hdf5_file & hdf5, std::string sim_name);
             extern void write_all_parity_projections       (const class_finite_chain_state & state, const class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name);
-            extern void write_parity_projected_analysis    (const class_finite_chain_state & state, const class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name,  std::string projection_name, const Eigen::MatrixXcd paulimatrix, const int sign);
+            extern double write_parity_projected_analysis    (const class_finite_chain_state & state, const class_superblock &superblock, class_hdf5_file & hdf5, std::string sim_name,  std::string projection_name, const Eigen::MatrixXcd paulimatrix, const int sign);
             extern void load_from_hdf5                     (class_finite_chain_state & state, class_superblock &superblock, class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
             extern void load_state_from_hdf5               (class_finite_chain_state & state, class_hdf5_file &hdf5, std::string sim_name);
             extern void load_sim_state_from_hdf5           (class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
@@ -107,6 +106,8 @@ namespace MPS_Tools{
             extern void check_integrity          (const class_finite_chain_state &state, const class_superblock & superblock, class_simulation_state &sim_state);
             extern void check_integrity_of_sim   (const class_finite_chain_state &state, const class_superblock &superblock, class_simulation_state &sim_state);
             extern void check_integrity_of_mps   (const class_finite_chain_state &state);
+            extern void print_parity_properties  (const class_finite_chain_state &state);
+
         }
 
     }

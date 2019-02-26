@@ -203,6 +203,17 @@ void class_hdf5_file::set_output_file_path() {
 //    return exists;
 //}
 
+
+void class_hdf5_file::write_symbolic_link(const std::string &src_path, const std::string &tgt_path){
+    hid_t file = open_file();
+//    hid_t src_link = H5Dopen(file, src_path.c_str(), H5P_DEFAULT);
+
+    retval = H5Lcreate_soft(src_path.c_str(), file, tgt_path.c_str(), H5P_DEFAULT, H5P_DEFAULT);
+    H5Fclose(file);
+}
+
+
+
 bool class_hdf5_file::check_link_exists_recursively(hid_t file, std::string path){
     std::stringstream path_stream(path);
     std::vector<std::string> split_path;

@@ -104,7 +104,7 @@ public:
     fs::path get_new_filename(fs::path some_hdf5_filename);
 //    bool discard_old_file = false;
 
-
+    void write_symbolic_link(const std::string &src_path, const std::string &tgt_path);
 
     template <typename DataType>
     void write_dataset(const DataType &data, const std::string &dataset_relative_name);
