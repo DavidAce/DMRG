@@ -20,3 +20,7 @@ do
     $exec $infile
 done < $bunch_filename
 
+# Explanation
+
+# This proces will read the lines in bunch_filename and feed them to the executable as arguments, one by one.
+# It will wait for the executable to terminate before going to the next iteration.

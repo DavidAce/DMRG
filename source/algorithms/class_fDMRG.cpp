@@ -31,6 +31,7 @@ class_fDMRG::class_fDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
 
     min_saturation_length = 1 * (int)(0.5 * settings::fdmrg::num_sites);
     max_saturation_length = 1 * (int)(1.0 * settings::fdmrg::num_sites);
+    settings::fdmrg::min_sweeps = std::max(settings::fdmrg::min_sweeps, 1+(int)(std::log2(chi_max())/2));
 }
 
 
@@ -168,7 +169,7 @@ void class_fDMRG::run_postprocessing(){
     MPS_Tools::Finite::Hdf5::write_all_measurements(*state,*hdf5,sim_name);
     MPS_Tools::Infinite::Hdf5::write_all_measurements(*superblock,*hdf5,sim_name);
 
-    MPS_Tools::Finite::Ops::print_parity_properties(*state);
+    MPS_Tools::Finite::Debug::print_parity_properties(*state);
     MPS_Tools::Finite::Hdf5::write_all_parity_projections(*state,*superblock,*hdf5,sim_name);
 
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
