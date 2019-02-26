@@ -493,6 +493,7 @@ Eigen::Tensor<Scalar,1> MPS_Tools::Finite::Measure::mps_wavefn(const class_finit
     Eigen::Tensor<Scalar,1> mps_chain = chain.reshape(array1{chain.dimension(0)});
     double norm_chain = Textra::Tensor2_to_Matrix(chain).norm();
     assert(std::abs(norm_chain - 1.0) < 1e-10 );
+    if (std::abs(norm_chain - 1.0) > 1e-10 ) throw std::runtime_error("Norm too far from unity.");
     return mps_chain;
 }
 
