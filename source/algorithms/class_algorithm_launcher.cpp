@@ -42,7 +42,7 @@ void class_algorithm_launcher::run_algorithms(){
     spdlog::info("All simulations finished");
     bool OK = true;
     hdf5->write_dataset(OK, "/common/fileOK");
-};
+}
 
 
 void class_algorithm_launcher::run_iDMRG(){
