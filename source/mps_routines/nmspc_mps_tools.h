@@ -45,6 +45,7 @@ namespace MPS_Tools{
             extern void apply_mpo3                    (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
             extern void apply_mpos                    (class_finite_chain_state &state, const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
             extern void normalize_chain               (class_finite_chain_state &state);
+            extern void normalize_chain2              (class_finite_chain_state &state);
             extern void apply_energy_mpo_test         (class_finite_chain_state &state, class_superblock & superblock);
             extern void rebuild_environments          (class_finite_chain_state &state);
             extern void rebuild_superblock            (class_finite_chain_state &state, class_superblock & superblock);
