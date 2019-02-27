@@ -378,33 +378,66 @@ void MPS_Tools::Finite::Debug::check_normalization_routine(const class_finite_ch
     auto state_sx_up    = state;
     auto state_sx_dn    = state;
     auto state_sx_dn_up = state;
+    auto state_sx_up_up = state;
+    auto state_sx_dn_dn = state;
     spdlog::info("\t Applying Pauli sx up/dn mpos");
     MPS_Tools::Finite::Ops::apply_mpos(state_sx_up,mpo_up,L_up,R_up);
     MPS_Tools::Finite::Ops::apply_mpos(state_sx_dn,mpo_dn,L_dn,R_dn);
+
     MPS_Tools::Finite::Ops::apply_mpos(state_sx_dn_up,mpo_up,L_dn,R_dn);
     MPS_Tools::Finite::Ops::apply_mpos(state_sx_dn_up,mpo_dn,L_dn,R_dn);
+
+    MPS_Tools::Finite::Ops::apply_mpos(state_sx_up_up,mpo_up,L_dn,R_dn);
+    MPS_Tools::Finite::Ops::apply_mpos(state_sx_up_up,mpo_up,L_dn,R_dn);
+
+    MPS_Tools::Finite::Ops::apply_mpos(state_sx_dn_dn,mpo_dn,L_dn,R_dn);
+    MPS_Tools::Finite::Ops::apply_mpos(state_sx_dn_dn,mpo_dn,L_dn,R_dn);
 
     spdlog::info("\t Measuring new norms");
     auto norm_sx_up     = MPS_Tools::Finite::Measure::norm(state_sx_up);
     auto norm_sx_dn     = MPS_Tools::Finite::Measure::norm(state_sx_dn);
     auto norm_sx_dn_up  = MPS_Tools::Finite::Measure::norm(state_sx_dn_up);
+    auto norm_sx_up_up  = MPS_Tools::Finite::Measure::norm(state_sx_up_up);
+    auto norm_sx_dn_dn  = MPS_Tools::Finite::Measure::norm(state_sx_dn_dn);
+    auto overlap_sx_up_up_up = MPS_Tools::Finite::Ops::overlap(state_sx_up,state_sx_up_up);
+    auto overlap_sx_dn_dn_dn = MPS_Tools::Finite::Ops::overlap(state_sx_dn,state_sx_dn_dn);
+    std::cout << "<P+   psi | P+   psi>      = " << norm_sx_up << std::endl;
+    std::cout << "<P-   psi | P-   psi>      = " << norm_sx_dn << std::endl;
+    std::cout << "<P-P+ psi | P-P+ psi>      = " << norm_sx_dn_up << std::endl;
+    std::cout << "<P+ psi   | P+P+ psi>      = " << overlap_sx_up_up_up << std::endl;
+    std::cout << "<P- psi   | P-P- psi>      = " << overlap_sx_dn_dn_dn << std::endl;
+
     spdlog::info("\t Normalizing states");
     MPS_Tools::Finite::Ops::normalize_chain(state_sx_up);
     MPS_Tools::Finite::Ops::normalize_chain(state_sx_dn);
     MPS_Tools::Finite::Ops::normalize_chain(state_sx_dn_up);
+    MPS_Tools::Finite::Ops::normalize_chain(state_sx_up_up);
+    MPS_Tools::Finite::Ops::normalize_chain(state_sx_dn_dn);
     spdlog::info("\t Measuring new norms");
     norm_sx_up     = MPS_Tools::Finite::Measure::norm(state_sx_up);
     norm_sx_dn     = MPS_Tools::Finite::Measure::norm(state_sx_dn);
     norm_sx_dn_up  = MPS_Tools::Finite::Measure::norm(state_sx_dn_up);
-    std::cout << "Norm sx up    = " << norm_sx_up << std::endl;
-    std::cout << "Norm sx dn    = " << norm_sx_dn << std::endl;
-    std::cout << "Norm sx dn up = " << norm_sx_dn_up << std::endl;
+    norm_sx_up_up  = MPS_Tools::Finite::Measure::norm(state_sx_up_up);
+    norm_sx_dn_dn  = MPS_Tools::Finite::Measure::norm(state_sx_dn_dn);
+    std::cout << "<N(P+   psi) psi | N(P+   psi)>      = " << norm_sx_up << std::endl;
+    std::cout << "<N(P-   psi) psi | N(P-   psi)>      = " << norm_sx_dn << std::endl;
+    std::cout << "<N(P-P+ psi) psi | N(P-P+ psi)>      = " << norm_sx_dn_up << std::endl;
+    std::cout << "<N(P+P+ psi) psi | N(P+P+ psi)>      = " << norm_sx_up_up << std::endl;
+    std::cout << "<N(P-P- psi) psi | N(P-P- psi)>      = " << norm_sx_dn_dn << std::endl;
 
     spdlog::info("\t Measuring new overlap");
     auto overlap_sx_up  = MPS_Tools::Finite::Ops::overlap(state,state_sx_up);
     auto overlap_sx_dn  = MPS_Tools::Finite::Ops::overlap(state,state_sx_dn);
     auto overlap_sx_dn_up = MPS_Tools::Finite::Ops::overlap(state,state_sx_dn_up);
-    std::cout << "Overlap sx up = " << overlap_sx_up << std::endl;
-    std::cout << "Overlap sx dn = " << overlap_sx_dn << std::endl;
-    std::cout << "Overlap sx dn = " << overlap_sx_dn_up << std::endl;
+    auto overlap_sx_up_up = MPS_Tools::Finite::Ops::overlap(state,state_sx_up_up);
+    auto overlap_sx_dn_dn = MPS_Tools::Finite::Ops::overlap(state,state_sx_dn_dn);
+    overlap_sx_up_up_up = MPS_Tools::Finite::Ops::overlap(state_sx_up,state_sx_up_up);
+    overlap_sx_dn_dn_dn = MPS_Tools::Finite::Ops::overlap(state_sx_dn,state_sx_dn_dn);
+    std::cout << "<psi | N(P+   psi)>      = " << overlap_sx_up << std::endl;
+    std::cout << "<psi | N(P-   psi)>      = " << overlap_sx_dn << std::endl;
+    std::cout << "<psi | N(P-P+ psi)>      = " << overlap_sx_dn_up << std::endl;
+    std::cout << "<psi | N(P+P+ psi)>      = " << overlap_sx_up_up << std::endl;
+    std::cout << "<psi | N(P-P- psi)>      = " << overlap_sx_dn_dn << std::endl;
+    std::cout << "<N(P+ psi) | N(P+P+ psi)>      = " << overlap_sx_up_up_up << std::endl;
+    std::cout << "<N(P- psi) | N(P-P- psi)>      = " << overlap_sx_dn_dn_dn << std::endl;
 }

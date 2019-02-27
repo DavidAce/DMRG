@@ -119,10 +119,6 @@ class_mpo::parity_projector_mpos(const Eigen::MatrixXcd paulimatrix, const size_
     MPO_sign.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sector*paulimatrix);
 
 
-
-
-
-
     std::list<Eigen::Tensor<class_mpo::Scalar,4>> mpos;
     mpos.push_back(MPO_sign);
 
