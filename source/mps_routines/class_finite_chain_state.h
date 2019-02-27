@@ -90,7 +90,7 @@ public:
     bool position_is_the_middle_any_direction() const ;
     bool position_is_the_left_edge() const ;
     bool position_is_the_right_edge() const ;
-
+    bool position_is_at(int pos)const;
     const auto & get_MPS_L() const {return std::as_const(MPS_L);}
     const auto & get_MPS_R() const {return std::as_const(MPS_R);}
     const auto & get_MPS_C() const {return std::as_const(MPS_C);}

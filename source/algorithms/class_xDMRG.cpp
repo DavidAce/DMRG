@@ -175,17 +175,25 @@ void class_xDMRG::run_simulation()    {
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if (sim_state.iteration >= settings::xdmrg::min_sweeps and state->position_is_the_middle_any_direction())
+//        if (sim_state.iteration >= settings::xdmrg::min_sweeps and state->position_is_the_middle_any_direction())
+//        {
+//            if (sim_state.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
+//            if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
+//            if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
+//        }
+
+        if (sim_state.iteration >= settings::xdmrg::min_sweeps and state->position_is_at(5))
         {
             if (sim_state.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
             if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
             if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
 
-        if(state->position_is_the_middle()){
-            *state = MPS_Tools::Finite::Ops::get_parity_projected_state(*state,qm::spinOneHalf::sx,1);
-            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-        }
+
+//        if(state->position_is_the_middle()){
+//            *state = MPS_Tools::Finite::Ops::get_parity_projected_state(*state,qm::spinOneHalf::sx,1);
+//            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+//        }
 
         update_bond_dimension(min_saturation_length);
         enlarge_environment(state->get_direction());
@@ -207,6 +215,9 @@ void class_xDMRG::run_simulation()    {
 void class_xDMRG::run_postprocessing(){
     spdlog::info("Running {} postprocessing",sim_name);
     MPS_Tools::Finite::Debug::check_integrity(*state,*superblock,sim_state);
+
+    MPS_Tools::Finite::Debug::check_normalization_routine(*state);
+
     state->set_measured_false();
     superblock->set_measured_false();
     state->do_all_measurements();

@@ -2,9 +2,10 @@
 // Created by david on 2019-02-17.
 //
 #include <iostream>
-
+#include <iomanip>
 #include <algorithms/class_simulation_state.h>
 #include <mps_routines/nmspc_mps_tools.h>
+#include <mps_routines/class_mpo.h>
 #include <mps_routines/class_finite_chain_state.h>
 #include <mps_routines/class_superblock.h>
 #include <general/nmspc_quantum_mechanics.h>
@@ -333,3 +334,77 @@ void MPS_Tools::Finite::Debug::print_parity_properties(const class_finite_chain_
 
 }
 
+
+
+void MPS_Tools::Finite::Debug::check_normalization_routine(const class_finite_chain_state &state){
+    spdlog::info("Checking normalization routine");
+    spdlog::info("\t Generating Pauli Identity mpo");
+
+    auto [mpo,L,R] = class_mpo::pauli_mpo(3*qm::spinOneHalf::I);
+    auto state_3ID = state;
+    spdlog::info("\t Measuring original norm");
+    auto norm_3ID     = MPS_Tools::Finite::Measure::norm(state_3ID);
+    spdlog::info("\t Measuring original overlap");
+    auto overlap_3ID  = MPS_Tools::Finite::Ops::overlap(state,state_3ID);
+    std::cout << std::setprecision(16) << std::endl;
+    std::cout << "Norm 3ID    = " << norm_3ID << std::endl;
+    std::cout << "Overlap 3ID = " << overlap_3ID << std::endl;
+
+    spdlog::info("\t Applying Pauli Identity mpo");
+    MPS_Tools::Finite::Ops::apply_mpo(state_3ID,mpo,L,R);
+    spdlog::info("\t Measuring new norm");
+    norm_3ID     = MPS_Tools::Finite::Measure::norm(state_3ID);
+    spdlog::info("\t Measuring new overlap");
+
+    overlap_3ID  = MPS_Tools::Finite::Ops::overlap(state,state_3ID);
+    std::cout << std::setprecision(16) << std::endl;
+    std::cout << "Norm 3ID    = " << norm_3ID << std::endl;
+    std::cout << "Overlap 3ID = " << overlap_3ID << std::endl;
+    spdlog::info("\t Normalizing state");
+
+    MPS_Tools::Finite::Ops::normalize_chain(state_3ID);
+    spdlog::info("\t Measuring new norm");
+    norm_3ID     = MPS_Tools::Finite::Measure::norm(state_3ID);
+    spdlog::info("\t Measuring new overlap");
+    overlap_3ID  = MPS_Tools::Finite::Ops::overlap(state,state_3ID);
+    std::cout << "Norm 3ID    = " << norm_3ID << std::endl;
+    std::cout << "Overlap 3ID = " << overlap_3ID << std::endl;
+
+
+
+    spdlog::info("\t Generating Pauli  sx up/dn mpos");
+    auto [mpo_up,L_up,R_up] = class_mpo::parity_projector_mpos(qm::spinOneHalf::sx, state.get_length() ,1);
+    auto [mpo_dn,L_dn,R_dn] = class_mpo::parity_projector_mpos(qm::spinOneHalf::sx, state.get_length() ,-1);
+    auto state_sx_up    = state;
+    auto state_sx_dn    = state;
+    auto state_sx_dn_up = state;
+    spdlog::info("\t Applying Pauli sx up/dn mpos");
+    MPS_Tools::Finite::Ops::apply_mpos(state_sx_up,mpo_up,L_up,R_up);
+    MPS_Tools::Finite::Ops::apply_mpos(state_sx_dn,mpo_dn,L_dn,R_dn);
+    MPS_Tools::Finite::Ops::apply_mpos(state_sx_dn_up,mpo_up,L_dn,R_dn);
+    MPS_Tools::Finite::Ops::apply_mpos(state_sx_dn_up,mpo_dn,L_dn,R_dn);
+
+    spdlog::info("\t Measuring new norms");
+    auto norm_sx_up     = MPS_Tools::Finite::Measure::norm(state_sx_up);
+    auto norm_sx_dn     = MPS_Tools::Finite::Measure::norm(state_sx_dn);
+    auto norm_sx_dn_up  = MPS_Tools::Finite::Measure::norm(state_sx_dn_up);
+    spdlog::info("\t Normalizing states");
+    MPS_Tools::Finite::Ops::normalize_chain(state_sx_up);
+    MPS_Tools::Finite::Ops::normalize_chain(state_sx_dn);
+    MPS_Tools::Finite::Ops::normalize_chain(state_sx_dn_up);
+    spdlog::info("\t Measuring new norms");
+    norm_sx_up     = MPS_Tools::Finite::Measure::norm(state_sx_up);
+    norm_sx_dn     = MPS_Tools::Finite::Measure::norm(state_sx_dn);
+    norm_sx_dn_up  = MPS_Tools::Finite::Measure::norm(state_sx_dn_up);
+    std::cout << "Norm sx up    = " << norm_sx_up << std::endl;
+    std::cout << "Norm sx dn    = " << norm_sx_dn << std::endl;
+    std::cout << "Norm sx dn up = " << norm_sx_dn_up << std::endl;
+
+    spdlog::info("\t Measuring new overlap");
+    auto overlap_sx_up  = MPS_Tools::Finite::Ops::overlap(state,state_sx_up);
+    auto overlap_sx_dn  = MPS_Tools::Finite::Ops::overlap(state,state_sx_dn);
+    auto overlap_sx_dn_up = MPS_Tools::Finite::Ops::overlap(state,state_sx_dn_up);
+    std::cout << "Overlap sx up = " << overlap_sx_up << std::endl;
+    std::cout << "Overlap sx dn = " << overlap_sx_dn << std::endl;
+    std::cout << "Overlap sx dn = " << overlap_sx_dn_up << std::endl;
+}
