@@ -207,7 +207,8 @@ void class_hdf5_file::set_output_file_path() {
 void class_hdf5_file::write_symbolic_link(const std::string &src_path, const std::string &tgt_path){
     hid_t file = open_file();
 //    hid_t src_link = H5Dopen(file, src_path.c_str(), H5P_DEFAULT);
-
+    bool exists = check_link_exists_recursively(file,src_path);
+    if (not exists)throw std::runtime_error("Trying to write soft link to non-existing path: " + src_path);
     retval = H5Lcreate_soft(src_path.c_str(), file, tgt_path.c_str(), H5P_DEFAULT, H5P_DEFAULT);
     H5Fclose(file);
 }

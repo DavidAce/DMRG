@@ -218,7 +218,7 @@ void MPS_Tools::Finite::Hdf5::write_all_parity_projections(const class_finite_ch
 //    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sz_up", qm::spinOneHalf::sz, 1);
 //    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sz_dn", qm::spinOneHalf::sz, -1);
     std::string best = var_sxup < var_sxdn ? "sx_up" : "sx_dn";
-    hdf5.write_symbolic_link(sim_name + "/projections/" + best, sim_name + "/projections/best");
+//    hdf5.write_symbolic_link("/" +sim_name + "/projections/" + best, "/" + sim_name + "/projections/best");
 }
 
 
