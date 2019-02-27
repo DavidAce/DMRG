@@ -80,6 +80,11 @@ bool class_finite_chain_state::position_is_the_right_edge() const {
     return get_position() == max_sites - 2;
 }
 
+bool class_finite_chain_state::position_is_at(int pos)const{
+    return get_position() == pos;
+}
+
+
 bool class_finite_chain_state::has_been_measured(){
     return
     energy_has_been_measured   and

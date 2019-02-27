@@ -124,8 +124,8 @@ double MPS_Tools::Finite::Measure::norm(const class_finite_chain_state & state){
 //    std::cout << setprecision(16) << "Norm: " << norm_chain << std::endl;
 //    assert(std::abs(norm_chain - 1.0) < 1e-10 and "ERROR: Norm too small!" );
     if(std::abs(norm_chain - 1.0) > 1e-10){
-        spdlog::critical("Norm too far from unity: {}", norm_chain);
-        throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
+        spdlog::warn("Norm far from unity: {}", norm_chain);
+//        throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
     }
     return norm_chain;
 }
