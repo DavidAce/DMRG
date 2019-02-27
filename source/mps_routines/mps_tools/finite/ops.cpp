@@ -365,6 +365,13 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
             mpsL_1->set_L(S);
             mpsL_1->set_G(V_L);
 
+            // Check that you get identity matrices
+            Eigen::Tensor<Scalar,2> ID_tensor = mpsL_0->get_A().contract(mpsL_0->get_A().conjugate(),idx({0,1},{0,1}));
+            std::cout << "Left normalized: " <<std::boolalpha << Textra::Tensor2_to_Matrix(ID_tensor).isIdentity(1e-12)  << std::endl;
+
+
+
+
             mpsL_0++;
             mpsL_1++;
             if(mpsL_2 != state.get_MPS_L().end()){mpsL_2++;}
@@ -396,6 +403,10 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
             mpsR_0->set_G(V_L);
             mpsR_1->set_L(S);
             mpsR_1->set_G(L_U);
+            // Check that you get identity matrices
+            Eigen::Tensor<Scalar,2> ID_tensor = mpsR_0->get_B().contract(mpsR_0->get_B().conjugate(),idx({0,2},{0,2}));
+            std::cout << "Right normalized: " << std::boolalpha << Textra::Tensor2_to_Matrix(ID_tensor).isIdentity(1e-12) << std::endl;
+
 
             mpsR_0++;
             mpsR_1++;
