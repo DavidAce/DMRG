@@ -188,7 +188,24 @@ class_SVD<Scalar>::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor) {
     );
 }
 
+template<typename Scalar>
+std::tuple <Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>  >
+class_SVD<Scalar>::schmidt_unnormalized(const Eigen::Tensor<Scalar,4> &tensor) {
+    long dL   = tensor.dimension(0);
+    long chiL = tensor.dimension(1);
+    long dR   = tensor.dimension(2);
+    long chiR = tensor.dimension(3);
+    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
+    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    long chiC            = SVD.rank();
 
+
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
+    return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), dL, chiL, chiC),
+                           Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).template cast<Scalar>(), chiC),
+                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(),  dR, chiR, chiC).shuffle(Textra::array3{0,2,1})
+    );
+}
 // ============================ //
 //   Explicit instantiations
 // ============================ //
