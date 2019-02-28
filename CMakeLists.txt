@@ -197,7 +197,8 @@ if(USE_OpenMP)
 #            message(STATUS "${_variableName}=${${_variableName}}")
 #        endif()
 #    endforeach()
-
+else()
+    list(APPEND COMMON_OPTIONS -Wno-unknown-pragmas)
 endif()
 
 

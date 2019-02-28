@@ -92,7 +92,7 @@ else()
             -DHDF5_ENABLE_PARALLEL=${HDF5_IS_PARALLEL}
             -DALLOW_UNSUPPORTED=ON
             -DBUILD_TESTING:BOOL=OFF
-            -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF
+            -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=ON
             -DHDF5_BUILD_TOOLS:BOOL=ON
             -DHDF5_BUILD_EXAMPLES:BOOL=OFF
             -DHDF5_BUILD_FORTRAN:BOOL=OFF
@@ -109,8 +109,8 @@ else()
     set(HDF5_C_HL_LIBRARY     ${INSTALL_DIR}/lib/libhdf5_hl${CUSTOM_SUFFIX})
     set(HDF5_CXX_LIBRARY      ${INSTALL_DIR}/lib/libhdf5_cpp${CUSTOM_SUFFIX})
     set(HDF5_CXX_HL_LIBRARY   ${INSTALL_DIR}/lib/libhdf5_hl_cpp${CUSTOM_SUFFIX})
-#    set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -lz -Wl,--as-needed) // Use if you enable libz!
-    set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -Wl,--as-needed)
+    set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -lz -Wl,--as-needed) # Use if you enable libz!
+#    set(HDF5_LINKER_FLAGS      -Wl,--no-as-needed -ldl -lm -Wl,--as-needed)
     set(HDF5_INCLUDE_DIR      ${INSTALL_DIR}/include)
     #    if (HDF5_IS_PARALLEL)
     #        list(APPEND HDF5_LINKER_FLAGS ${MPI_LIBRARIES})
