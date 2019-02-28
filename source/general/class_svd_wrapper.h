@@ -54,6 +54,9 @@ public:
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>, double >
     schmidt_with_norm  (const Eigen::Tensor<Scalar,4> &tensor);
 
+    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
+    schmidt_unnormalized (const Eigen::Tensor<Scalar,4> &tensor);
+
 
 
 
