@@ -340,32 +340,32 @@ void class_algorithm_base::store_sim_to_file(){
 
 
 void class_algorithm_base::store_profiling_to_file_delta(bool force) {
-    if (Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
+    if (not force and Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
+    if (not force and not state->position_is_the_middle()) {return;}
+    if (not settings::profiling::on or not settings::hdf5::store_profiling){return;}
 //    t_sto.tic();
-
-    if (force or (settings::profiling::on and settings::hdf5::store_profiling)) {
-        spdlog::trace("Storing profiling data to file (delta)");
-        table_profiling->append_record(
-                sim_state.iteration,
-                t_tot.get_last_time_interval(),
-                t_opt.get_last_time_interval(),
-                t_sim.get_last_time_interval(),
-                t_svd.get_last_time_interval(),
-                t_env.get_last_time_interval(),
-                t_evo.get_last_time_interval(),
-                t_udt.get_last_time_interval(),
-                t_sto.get_last_time_interval(),
-                t_ste.get_last_time_interval(),
-                t_prt.get_last_time_interval(),
-                t_obs.get_last_time_interval(),
-                t_mps.get_last_time_interval(),
-                t_con.get_last_time_interval()
-        );
-    }
+    spdlog::trace("Storing profiling data to file (delta)");
+    table_profiling->append_record(
+            sim_state.iteration,
+            t_tot.get_last_time_interval(),
+            t_opt.get_last_time_interval(),
+            t_sim.get_last_time_interval(),
+            t_svd.get_last_time_interval(),
+            t_env.get_last_time_interval(),
+            t_evo.get_last_time_interval(),
+            t_udt.get_last_time_interval(),
+            t_sto.get_last_time_interval(),
+            t_ste.get_last_time_interval(),
+            t_prt.get_last_time_interval(),
+            t_obs.get_last_time_interval(),
+            t_mps.get_last_time_interval(),
+            t_con.get_last_time_interval()
+    );
 }
 
 void class_algorithm_base::store_profiling_to_file_total(bool force) {
     if (not force and Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
+    if (not force and not state->position_is_the_middle()) {return;}
     if (not settings::profiling::on or not settings::hdf5::store_profiling){return;}
     spdlog::trace("Storing profiling data to file");
     table_profiling->append_record(

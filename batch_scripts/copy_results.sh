@@ -43,4 +43,4 @@ done
 #if [ $OPTIND -eq 1 ]; then echo "No flags were passed"; usage ;exit 1; fi
 
 
-rsync -r $follow_sym $dry_run --progress --update --compress $default_src ${default_usr}@${default_adr}:${default_pfx}/${default_tgt}
+rsync -r $follow_sym $dry_run --progress --update $default_src ${default_usr}@${default_adr}:${default_pfx}/${default_tgt}

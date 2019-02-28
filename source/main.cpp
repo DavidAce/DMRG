@@ -10,6 +10,9 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 //#include <El.hpp>
+#include <zlib.h>
+#include <experimental/filesystem>
+
 
 #ifdef OpenBLAS_AVAILABLE
 #include <cblas.h>
@@ -125,6 +128,37 @@ int main(int argc, char* argv[]) {
 
     //Run the algorithms
     launcher.run_algorithms();
+
+
+//    namespace fs = std::experimental::filesystem;
+//    std::string tar_filename = fs::path(launcher.hdf5_path).filename().string() + ".tar.gz";
+//    fs::path tar_path        = fs::path(launcher.hdf5_path).parent_path().string() + "/"+ tar_filename;
+//    gzFile tar_file = gzopen(tar_path.c_str(), "wb");
+//    if(tar_file == nullptr)
+//    {
+//        throw std::runtime_error("Could not open gzip file for writing: " );
+//    }
+
+    /* Open file to compress */
+
+//    std::ifstream h5file (launcher.hdf5_path);
+//    std::vector<char> buffer (1024,0); //reads only the first 1024 bytes
+//
+//    while(h5file.read(buffer.data(), buffer.size())) {
+//        std::streamsize bytes_loaded=h5file.gcount();
+//        int bytes_written = gzwrite(tar_file, buffer.data(), bytes_loaded);
+//        if (bytes_written == 0)
+//        {
+//            spdlog::warn("No bytes written!");
+//            break;
+//        }
+//        ///do with buffer
+//    }
+//    gzclose(tar_file);
+//    h5file.close();
+
+
+
 
 
     return 0;

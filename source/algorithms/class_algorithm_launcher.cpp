@@ -20,6 +20,7 @@ using namespace Textra;
 
 class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<class_hdf5_file> hdf5_):hdf5(std::move(hdf5_))
 {
+    hdf5_path = hdf5->get_file_path();
 
 }
 class_algorithm_launcher::class_algorithm_launcher()
@@ -31,6 +32,7 @@ class_algorithm_launcher::class_algorithm_launcher()
             settings::hdf5::resume_from_file,
             settings::hdf5::create_dir_if_not_found
             );
+    hdf5_path = hdf5->get_file_path();
 }
 
 
