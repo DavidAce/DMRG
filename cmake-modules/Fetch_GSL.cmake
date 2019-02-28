@@ -46,7 +46,7 @@ if(GSL_LIBRARY AND GSL_CBLAS_LIBRARY AND GSL_INCLUDE_DIRS)
 else()
     message(STATUS "GSL will be installed into ${INSTALL_DIRECTORY}/gsl on first build.")
     include(ExternalProject)
-    ExternalProject_Add(library_GSL
+    ExternalProject_Add(external_GSL
             URL      http://ftp.acc.umu.se/mirror/gnu.org/gnu/gsl/gsl-2.4.tar.gz
             PREFIX              "${INSTALL_DIRECTORY}/gsl"
             CONFIGURE_COMMAND
@@ -63,9 +63,9 @@ else()
                 ${CMAKE_MAKE_PROGRAM} --quiet install
             )
 
-    ExternalProject_Get_Property(library_GSL INSTALL_DIR)
+    ExternalProject_Get_Property(external_GSL INSTALL_DIR)
     add_library(GSL INTERFACE)
-    add_dependencies(GSL library_GSL)
+    add_dependencies(GSL external_GSL)
     set(GSL_LIBRARY        ${INSTALL_DIR}/lib/libgsl${CUSTOM_SUFFIX})
     set(GSL_CBLAS_LIBRARY  ${INSTALL_DIR}/lib/libgslcblas${CUSTOM_SUFFIX})
     set(GSL_LIBRARIES ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY})

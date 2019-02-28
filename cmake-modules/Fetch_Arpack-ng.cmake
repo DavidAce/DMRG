@@ -59,7 +59,7 @@ else()
     endif()
 
     include(ExternalProject)
-    ExternalProject_Add(library_ARPACK
+    ExternalProject_Add(external_ARPACK
             GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
 #            GIT_TAG             master
             GIT_TAG             3.6.3
@@ -92,7 +92,7 @@ else()
             -DEXTRA_LDLAGS=${FC_LDLAGS_GENERATOR}
             DEPENDS blas lapack gfortran
             )
-    ExternalProject_Get_Property(library_ARPACK INSTALL_DIR)
+    ExternalProject_Get_Property(external_ARPACK INSTALL_DIR)
     find_library(ARPACK_LIBRARIES
             NAMES libarpack${CUSTOM_SUFFIX}
             PATHS  ${INSTALL_DIR}/lib  ${INSTALL_DIR}/lib64
@@ -106,6 +106,6 @@ else()
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
             )
 
-    add_dependencies(arpack library_ARPACK blas lapack gfortran)
+    add_dependencies(arpack external_ARPACK blas lapack gfortran)
     #target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
 endif()

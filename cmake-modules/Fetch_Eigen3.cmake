@@ -21,7 +21,7 @@ else()
     message(STATUS "Eigen3 will be installed into ${INSTALL_DIRECTORY}/eigen3 on first build.")
 
     include(ExternalProject)
-    ExternalProject_Add(library_EIGEN3
+    ExternalProject_Add(external_EIGEN3
             GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
             GIT_TAG 3.3.7
             GIT_PROGRESS 1
@@ -36,10 +36,10 @@ else()
         )
 
 
-    ExternalProject_Get_Property(library_EIGEN3 INSTALL_DIR)
+    ExternalProject_Get_Property(external_EIGEN3 INSTALL_DIR)
     add_library(eigen3 INTERFACE)
     set(EIGEN3_INCLUDE_DIR ${INSTALL_DIR}/include/eigen3)
-    add_dependencies(eigen3 library_EIGEN3)
+    add_dependencies(eigen3 external_EIGEN3)
 endif()
 
 if(BLAS_LIBRARIES)
