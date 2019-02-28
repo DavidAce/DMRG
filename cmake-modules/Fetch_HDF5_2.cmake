@@ -78,7 +78,7 @@ else()
 
     include(ExternalProject)
     set(HDF5_IS_PARALLEL OFF)
-    ExternalProject_Add(library_HDF5
+    ExternalProject_Add(external_HDF5
             URL     https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.3/src/hdf5-1.10.3.tar.bz2 # version 1.10.2
             PREFIX              "${INSTALL_DIRECTORY}/hdf5"
             UPDATE_DISCONNECTED 1
@@ -101,10 +101,10 @@ else()
             -DCMAKE_C_FLAGS=-w
             )
 
-    ExternalProject_Get_Property(library_HDF5 INSTALL_DIR)
+    ExternalProject_Get_Property(external_HDF5 INSTALL_DIR)
     add_library(hdf5 INTERFACE)
 
-    add_dependencies(hdf5          library_HDF5)
+    add_dependencies(hdf5          external_HDF5)
     set(HDF5_C_LIBRARY        ${INSTALL_DIR}/lib/libhdf5${CUSTOM_SUFFIX})
     set(HDF5_C_HL_LIBRARY     ${INSTALL_DIR}/lib/libhdf5_hl${CUSTOM_SUFFIX})
     set(HDF5_CXX_LIBRARY      ${INSTALL_DIR}/lib/libhdf5_cpp${CUSTOM_SUFFIX})

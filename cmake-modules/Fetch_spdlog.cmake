@@ -2,7 +2,7 @@
 message(STATUS "Spdlog will be installed into ${INSTALL_DIRECTORY}/spdlog on first build.")
 
 include(ExternalProject)
-ExternalProject_Add(library_SPDLOG
+ExternalProject_Add(external_SPDLOG
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
         GIT_TAG v1.x
         GIT_PROGRESS 1
@@ -14,11 +14,11 @@ ExternalProject_Add(library_SPDLOG
         )
 
 
-ExternalProject_Get_Property(library_SPDLOG INSTALL_DIR)
+ExternalProject_Get_Property(external_SPDLOG INSTALL_DIR)
 add_library(spdlog INTERFACE)
 set(SPDLOG_INCLUDE_DIR ${INSTALL_DIR}/include)
 message("SPDLOG INCLUDE DIR: ${SPDLOG_INCLUDE_DIR}" )
-add_dependencies(spdlog library_SPDLOG)
+add_dependencies(spdlog external_SPDLOG)
 
 set_target_properties(spdlog PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES   "${SPDLOG_INCLUDE_DIR}"
