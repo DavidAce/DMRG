@@ -1,7 +1,7 @@
 message(STATUS "LBFGS++ will be installed into ${INSTALL_DIRECTORY}/LBFGS++ on first build.")
 
 include(ExternalProject)
-ExternalProject_Add(library_LBFGSpp
+ExternalProject_Add(external_LBFGSpp
         GIT_REPOSITORY https://github.com/yixuan/LBFGSpp.git
         GIT_TAG master
         GIT_PROGRESS 1
@@ -16,10 +16,10 @@ ExternalProject_Add(library_LBFGSpp
         )
 
 
-ExternalProject_Get_Property(library_LBFGSpp INSTALL_DIR)
+ExternalProject_Get_Property(external_LBFGSpp INSTALL_DIR)
 add_library(LBFGSpp INTERFACE)
 set(LBFGSpp_INCLUDE_DIR ${INSTALL_DIR}/include)
-add_dependencies(LBFGSpp library_LBFGSpp)
+add_dependencies(LBFGSpp external_LBFGSpp)
 
 set_target_properties(LBFGSpp PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES   "${LBFGSpp_INCLUDE_DIR}"

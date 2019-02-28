@@ -73,7 +73,7 @@ else()
     endif()
 
     include(ExternalProject)
-    ExternalProject_Add(library_OpenBLAS
+    ExternalProject_Add(external_OpenBLAS
             GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
             GIT_TAG             v0.3.5
             PREFIX              "${INSTALL_DIRECTORY}/OpenBLAS"
@@ -98,11 +98,11 @@ else()
             DEPENDS gfortran
             )
 
-ExternalProject_Get_Property(library_OpenBLAS INSTALL_DIR)
+ExternalProject_Get_Property(external_OpenBLAS INSTALL_DIR)
     add_library(blas   INTERFACE)
     add_library(lapack INTERFACE)
-    add_dependencies(blas         library_OpenBLAS)
-    add_dependencies(lapack       library_OpenBLAS)
+    add_dependencies(blas         external_OpenBLAS)
+    add_dependencies(lapack       external_OpenBLAS)
     set(BLAS_INCLUDE_DIRS   ${INSTALL_DIR}/include)
     set(LAPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
 

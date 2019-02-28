@@ -37,7 +37,7 @@ if (ARPACKPP_LIBRARIES OR ARPACKPP_INCLUDE_DIR AND NOT "${OS_PROPERTIES}" MATCHE
 else()
     message(STATUS "Arpack++ will be installed into ${INSTALL_DIRECTORY}/arpackpp on first build.")
     include(ExternalProject)
-    ExternalProject_Add(library_ARPACK++
+    ExternalProject_Add(external_ARPACK++
             GIT_REPOSITORY      https://github.com/m-reuter/arpackpp.git
             GIT_TAG             master
             PREFIX              "${INSTALL_DIRECTORY}/arpack++"
@@ -51,14 +51,14 @@ else()
             DEPENDS blas lapack arpack gfortran
             )
 
-    ExternalProject_Get_Property(library_ARPACK++ INSTALL_DIR)
+    ExternalProject_Get_Property(external_ARPACK++ INSTALL_DIR)
     add_library(arpack++ INTERFACE)
     set(ARPACKPP_INCLUDE_DIR ${INSTALL_DIR}/include)
     set_target_properties(arpack++ PROPERTIES
             INTERFACE_LINK_LIBRARIES "arpack;blas;lapack"
             INTERFACE_INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}"
             )
-    add_dependencies(arpack++ library_ARPACK++ blas lapack arpack)
+    add_dependencies(arpack++ external_ARPACK++ blas lapack arpack)
 #    target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 #    target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACKPP_INCLUDE_DIR})
 endif()
