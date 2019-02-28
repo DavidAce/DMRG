@@ -353,12 +353,13 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
                 state.get_A(pos_A)
                 .contract(asDiagonal(state.get_L(pos_LC)),idx({2},{0}))
                 .contract(state.get_B(pos_B), idx({2},{1}));
+        auto [U,S,V,norm] = svd.schmidt_with_norm(theta);
 
 
         if (direction == 1){
-            auto [U,S,V] = svd.schmidt_unnormalized(theta);
             Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
-            diagonalNorm.setConstant(1.0);
+            if (pos_B == state.get_length()-1 ) { diagonalNorm.setConstant(1.0); }
+            else{diagonalNorm.setConstant(norm);}
             Eigen::Tensor<Scalar,3> LA_U = asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
             Eigen::Tensor<Scalar,3> d_V_LB =
                     Textra::asDiagonal(diagonalNorm).contract(V ,idx({1},{1})).contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0})).shuffle(array3{1,0,2});
@@ -367,7 +368,6 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
             state.get_G(pos_B)  = d_V_LB;
 
         }else if (direction == -1){
-            auto [U,S,V,norm] = svd.schmidt_with_norm(theta);
             Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
             if (pos_A == 0 ) { diagonalNorm.setConstant(1.0);}
             else{diagonalNorm.setConstant(norm);}
