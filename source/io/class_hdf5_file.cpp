@@ -30,21 +30,21 @@ class_hdf5_file::class_hdf5_file(const std::string output_filename_, const std::
   * case we will make an exception because this filter is an
   * optional part of the hdf5 library.
   */
-    herr_t          status;
-    htri_t          avail;
-    H5Z_filter_t    filter_type;
-    unsigned int    flags, filter_info;
-    avail = H5Zfilter_avail(H5Z_FILTER_DEFLATE);
-    if (!avail) {
-        std::cerr << "zlib filter not available.\n" << std::endl;
-        exit(1);
-    }
-    status = H5Zget_filter_info (H5Z_FILTER_DEFLATE, &filter_info);
-    if ( !(filter_info & H5Z_FILTER_CONFIG_ENCODE_ENABLED) ||
-         !(filter_info & H5Z_FILTER_CONFIG_DECODE_ENABLED) ) {
-        std::cerr <<  "zlib filter not available for encoding and decoding." << std::endl;
-        exit(1);
-    }
+//    herr_t          status;
+//    htri_t          avail;
+//    H5Z_filter_t    filter_type;
+//    unsigned int    flags, filter_info;
+//    avail = H5Zfilter_avail(H5Z_FILTER_DEFLATE);
+//    if (!avail) {
+//        std::cerr << "zlib filter not available.\n" << std::endl;
+//        exit(1);
+//    }
+//    status = H5Zget_filter_info (H5Z_FILTER_DEFLATE, &filter_info);
+//    if ( !(filter_info & H5Z_FILTER_CONFIG_ENCODE_ENABLED) ||
+//         !(filter_info & H5Z_FILTER_CONFIG_DECODE_ENABLED) ) {
+//        std::cerr <<  "zlib filter not available for encoding and decoding." << std::endl;
+//        exit(1);
+//    }
 
     initialize();
 
@@ -282,7 +282,7 @@ void class_hdf5_file::create_dataset_link(hid_t file, const DatasetProperties &p
         hid_t dset_cpl  = H5Pcreate(H5P_DATASET_CREATE);
         H5Pset_layout(dset_cpl, H5D_CHUNKED);
         H5Pset_chunk(dset_cpl, props.ndims, props.chunk_size.data());
-        H5Pset_deflate (dset_cpl ,props.compression_level);
+//        H5Pset_deflate (dset_cpl ,props.compression_level);
         hid_t dataset = H5Dcreate(file,
                                   props.dset_name.c_str(),
                                   props.datatype,
