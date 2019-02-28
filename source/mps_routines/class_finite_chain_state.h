@@ -110,6 +110,12 @@ public:
     auto & get_ENV2_L(){return ENV2_L;}
     auto & get_ENV2_R(){return ENV2_R;}
 
+
+    Eigen::Tensor<Scalar,3> & get_G(size_t pos);
+    Eigen::Tensor<Scalar,1> & get_L(size_t pos);
+    Eigen::Tensor<Scalar,3>   get_A(size_t pos);
+    Eigen::Tensor<Scalar,3>   get_B(size_t pos);
+
     struct Measurements {
         int    length                                   = 0;
         std::vector<int> bond_dimensions                ;
