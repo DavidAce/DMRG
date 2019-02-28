@@ -90,9 +90,9 @@ int main()
     std::cout << "Reading tensorC: " <<  tensorC_read  << std::endl;
     std::cout << "Reading stringX: " <<  stringX_read  << std::endl;
 
-    if (vectorD != vectorD_read){return 1;}
-    if (vectorC != vectorC_read){return 1;}
-    if (stringX != stringX_read){return 1;}
+    if (vectorD != vectorD_read){throw std::runtime_error("vectorD != vectorD_read");}
+    if (vectorC != vectorC_read){throw std::runtime_error("vectorC != vectorC_read");}
+    if (stringX != stringX_read){throw std::runtime_error("stringX != stringX_read");}
 
     //Tensor comparison isn't as straightforward
     Eigen::Map<Eigen::VectorXcd> tensorMap(tensorC.data(), tensorC.size());
@@ -118,7 +118,7 @@ int main()
 
 
 
-        if (tensorMap != tensorMapRead){return 1;}
+    if (tensorMap != tensorMapRead){throw std::runtime_error("tensorMap != tensorMapRead");}
 
     return 0;
 }
