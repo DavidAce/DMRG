@@ -85,6 +85,40 @@ bool class_finite_chain_state::position_is_at(int pos)const{
 }
 
 
+Eigen::Tensor<class_finite_chain_state::Scalar,3> & class_finite_chain_state::get_G(size_t pos){
+    if (pos < 0 or pos >= get_length()){throw std::range_error("get_G(pos) pos out of range: " + std::to_string(pos));}
+    if(pos <= get_MPS_L().size()-1){
+        return std::next(get_MPS_L().begin(), pos)->get_G();
+    }else{
+        pos -= get_MPS_L().size();
+        return std::next(get_MPS_R().begin(), pos)->get_G();
+    }
+
+}
+Eigen::Tensor<class_finite_chain_state::Scalar,1> & class_finite_chain_state::get_L(size_t pos){
+    if (pos < 0 or pos >= get_length()+1 ){throw std::range_error("get_L(pos):  pos out of range: " + std::to_string(pos));}
+    if(pos <= get_MPS_L().size()-1){
+        return std::next(get_MPS_L().begin(), pos)->get_L();
+    }else if (pos == get_MPS_L().size()){
+        return get_MPS_C();
+    }
+    else {
+        pos -= (get_MPS_L().size() + 1);
+        return std::next(get_MPS_R().begin(), pos)->get_L();
+    }
+
+}
+
+Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_A(size_t pos){
+    return Textra::asDiagonal(get_L(pos)).contract(get_G(pos), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+}
+
+Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_B(size_t pos){
+    return get_G(pos).contract(Textra::asDiagonal(get_L(pos+1)), Textra::idx({2},{0}));
+}
+
+
+
 bool class_finite_chain_state::has_been_measured(){
     return
     energy_has_been_measured   and
