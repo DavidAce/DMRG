@@ -333,142 +333,206 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
 
 void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
+
+    // Sweep back and forth once on the chain
+
     // First the left side
     spdlog::trace("Starting normalization");
     class_SVD<Scalar> svd;
-//    svd.setThreshold(1e-8);
-    {
-        auto mpsL_0            = state.get_MPS_L().begin();
-        auto mpsL_1            = state.get_MPS_L().begin();
-        auto mpsL_2            = state.get_MPS_L().begin();
-        std::advance(mpsL_1,1);
-        std::advance(mpsL_2,2);
-        // Make sure the first lambda is a 1
-        Eigen::Tensor<Scalar,1> L0(1);
-        L0.setConstant(1.0);
-        mpsL_0->set_L(L0);
+    size_t pos_LA = 0; // Lambda left of GA
+    size_t pos_LC = 1; //Center Lambda
+    size_t pos_LB = 2; // Lambda right of GB
+    size_t pos_A  = 0; // Lambda * G
+    size_t pos_B  = 1; // G * Lambda
+    bool finished = false;
+    size_t num_traversals = 0;
+    int direction = 1;
 
-        while(mpsL_1 != state.get_MPS_L().end()) {
-            const auto & L0 = mpsL_0->get_L();
-            const auto & A0 = mpsL_0->get_A();
-            const auto & A1 = mpsL_1->get_A();
-            const auto & L2 = mpsL_2 != state.get_MPS_L().end() ? mpsL_2->get_L() : state.get_MPS_C();
-            Eigen::Tensor<Scalar,4> theta = A0.contract(A1, idx({2},{1})).contract(Textra::asDiagonal(L2), idx({3},{0}));
-            auto [U,S,V,norm] = svd.schmidt_with_norm(theta);
-            Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(L0).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-            Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
-            diagonalNorm.setConstant(norm);
-            Eigen::Tensor<Scalar,3> d_V_L =
-                    Textra::asDiagonal(diagonalNorm)
-                    .contract(V ,idx({1},{1}))
-                    .contract(asDiagonalInversed(L2), idx({2},{0}))
-                    .shuffle(array3{1,0,2});
-
-            // Now you can update your matrices
-            mpsL_0->set_G(L_U);
-            mpsL_1->set_L(S);
-            mpsL_1->set_G(d_V_L);
-
-            // Check that you get identity matrices
-//            Eigen::Tensor<Scalar,2> ID_tensor = mpsL_0->get_A().contract(mpsL_0->get_A().conjugate(),idx({0,1},{0,1}));
-//            std::cout << "Left normalized: " <<std::boolalpha << Textra::Tensor2_to_Matrix(ID_tensor).isIdentity(1e-12)  << std::endl;
-
-
-
-
-            mpsL_0++;
-            mpsL_1++;
-            if(mpsL_2 != state.get_MPS_L().end()){mpsL_2++;}
-        }
-    }
-
-
-    // Now take care of the middle
-    {
-        const auto & L0 = state.get_MPS_L().back().get_L();
-        const auto & A  = state.get_MPS_L().back().get_A();
-        const auto & C  = Textra::asDiagonal(state.get_MPS_C());
-        const auto & B  = state.get_MPS_R().front().get_B();
-        const auto & L2 = state.get_MPS_R().front().get_L();
-
-        Eigen::Tensor<Scalar,4> theta = A.contract(C,idx({2},{0})).contract(B, idx({2},{1}));
+    while(num_traversals < 2){
+        Eigen::Tensor<Scalar,4> theta =
+                state.get_A(pos_A)
+                .contract(asDiagonal(state.get_L(pos_LC)),idx({2},{0}))
+                .contract(state.get_B(pos_B), idx({2},{1}));
         auto [U,S,V,norm] = svd.schmidt_with_norm(theta);
-        Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(L0).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-        Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
-        diagonalNorm.setConstant(norm);
-        Eigen::Tensor<Scalar,3> d_V_L =
-                Textra::asDiagonal(diagonalNorm)
-                        .contract(V ,idx({1},{1}))
-                        .contract(asDiagonalInversed(L2), idx({2},{0}))
-                        .shuffle(array3{1,0,2});
 
-        state.get_MPS_L().back().set_G (L_U);
-        state.get_MPS_C() = S;
-        state.get_MPS_R().front().set_G(d_V_L);
+
+        if (direction == 1){
+            Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
+            if (pos_B == state.get_length()-1 ) { diagonalNorm.setConstant(1.0); }
+            else{diagonalNorm.setConstant(norm);}
+            Eigen::Tensor<Scalar,3> LA_U = asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
+            Eigen::Tensor<Scalar,3> d_V_LB =
+                    Textra::asDiagonal(diagonalNorm).contract(V ,idx({1},{1})).contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0})).shuffle(array3{1,0,2});
+            state.get_G(pos_A)  = LA_U;
+            state.get_L(pos_LC) = S;
+            state.get_G(pos_B)  = d_V_LB;
+
+        }else if (direction == -1){
+            Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
+            if (pos_A == 0 ) { diagonalNorm.setConstant(1.0);}
+            else{diagonalNorm.setConstant(norm);}
+
+            Eigen::Tensor<Scalar,3> LA_U_d = asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).contract(Textra::asDiagonal(diagonalNorm), idx({2},{0})).shuffle(array3{1,0,2});
+            Eigen::Tensor<Scalar,3> V_LB   = V.contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0}));
+
+            state.get_G(pos_A)  = LA_U_d;
+            state.get_L(pos_LC) = S;
+            state.get_G(pos_B)  = V_LB;
+
+        }
+
+        if (direction == 1  and pos_B == state.get_length()-1){num_traversals++ ;direction *= -1;}
+        if (direction == -1 and pos_A == 0){num_traversals++; direction *= -1;}
+
+        pos_LA += direction;
+        pos_LC += direction;
+        pos_LB += direction;
+        pos_A  += direction;
+        pos_B  += direction;
+
 
     }
 
 
 
-    {
-        auto mpsR_0            = state.get_MPS_R().begin();
-        auto mpsR_1            = state.get_MPS_R().begin();
-        std::advance(mpsR_1,1);
+
+
+
+
+
+
+
+//
+//
+//
+//
+//    // First the left side
+//    spdlog::trace("Starting normalization");
+//    class_SVD<Scalar> svd;
+////    svd.setThreshold(1e-8);
+//    {
+//        auto mpsL_0            = state.get_MPS_L().begin();
+//        auto mpsL_1            = state.get_MPS_L().begin();
+//        auto mpsL_2            = state.get_MPS_L().begin();
+//        std::advance(mpsL_1,1);
+//        std::advance(mpsL_2,2);
 //        // Make sure the first lambda is a 1
 //        Eigen::Tensor<Scalar,1> L0(1);
 //        L0.setConstant(1.0);
-//        mpsR_0->set_L(L0);
-        Eigen::Tensor<Scalar,1> Lt = state.get_MPS_C();
-        while(mpsR_1 != state.get_MPS_R().end()) {
-            const auto & B0 = mpsR_0->get_B();
-            const auto & B1 = mpsR_1->get_B();
-            const auto & L2 = mpsR_1->get_L();
-            Eigen::Tensor<Scalar,4> theta = asDiagonal(Lt).contract(B0, idx({1},{1})).contract(B1, idx({2},{1})).shuffle(array4{1,0,2,3});
-            auto [U,S,V,norm] = svd.schmidt_with_norm(theta);
-            Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(Lt).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-            Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
-            if (mpsR_1->get_position() == state.get_length()-1) {
-                diagonalNorm.setConstant(1.0);
-
-            }
-            else{
-                diagonalNorm.setConstant(norm);
-            }
-
-            Eigen::Tensor<Scalar,3> d_V_L =
-                    Textra::asDiagonal(diagonalNorm)
-                            .contract(V ,idx({1},{1}))
-                            .contract(asDiagonalInversed(L2), idx({2},{0}))
-                            .shuffle(array3{1,0,2});
-
-
-            // Now you can update your matrices
-            mpsR_0->set_G(L_U);
-            mpsR_0->set_L(S);
-            mpsR_1->set_G(d_V_L);
-            Lt = S;
-            // Check that you get identity matrices
-//            Eigen::Tensor<Scalar,2> ID_tensor = mpsR_0->get_B().contract(mpsR_0->get_B().conjugate(),idx({0,2},{0,2}));
-//            std::cout << "Right normalized: " << std::boolalpha << Textra::Tensor2_to_Matrix(ID_tensor).isIdentity(1e-12) << std::endl;
-
-
-            mpsR_0++;
-            mpsR_1++;
-            if(mpsR_1 == state.get_MPS_R().end()){std::cout << "Norm: " << norm << std::endl;}
-        }
-
-    }
-
-
-
-    // Print bond dimensions:
-    //    for(auto & mps : state.get_MPS_L()){
-    //        std::cout << "chi : " << mps.get_chiL() << std::endl;
-    //    }
-    //    std::cout << "chiC: " << state.get_MPS_C().dimension(0) << std::endl;
-    //    for(auto & mps : state.get_MPS_R()){
-    //        std::cout << "chi : " << mps.get_chiR() << std::endl;
-    //    }
+//        mpsL_0->set_L(L0);
+//
+//        while(mpsL_1 != state.get_MPS_L().end()) {
+//            const auto & L0 = mpsL_0->get_L();
+//            const auto & A0 = mpsL_0->get_A();
+//            const auto & A1 = mpsL_1->get_A();
+//            const auto & L2 = mpsL_2 != state.get_MPS_L().end() ? mpsL_2->get_L() : state.get_MPS_C();
+//            Eigen::Tensor<Scalar,4> theta = A0.contract(A1, idx({2},{1})).contract(Textra::asDiagonal(L2), idx({3},{0}));
+//            auto [U,S,V,norm] = svd.schmidt_with_norm(theta);
+//            Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(L0).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
+//            Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
+//            if (mpsL_1->get_position() == state.get_length()-1) { diagonalNorm.setConstant(1.0); }
+//            else{diagonalNorm.setConstant(norm);}
+////            diagonalNorm.setConstant(norm);
+//            Eigen::Tensor<Scalar,3> d_V_L =
+//                    Textra::asDiagonal(diagonalNorm)
+//                    .contract(V ,idx({1},{1}))
+//                    .contract(asDiagonalInversed(L2), idx({2},{0}))
+//                    .shuffle(array3{1,0,2});
+//
+//            // Now you can update your matrices
+//            mpsL_0->set_G(L_U);
+//            mpsL_1->set_L(S);
+//            mpsL_1->set_G(d_V_L);
+//
+//            mpsL_0++;
+//            mpsL_1++;
+//            if(mpsL_2 != state.get_MPS_L().end()){mpsL_2++;}
+//        }
+//    }
+//
+//
+//    // Now take care of the middle
+//    {
+//        const auto & L0 = state.get_MPS_L().back().get_L();
+//        const auto & A  = state.get_MPS_L().back().get_A();
+//        const auto & C  = Textra::asDiagonal(state.get_MPS_C());
+//        const auto & B  = state.get_MPS_R().front().get_B();
+//        const auto & L2 = state.get_MPS_R().front().get_L();
+//
+//        Eigen::Tensor<Scalar,4> theta = A.contract(C,idx({2},{0})).contract(B, idx({2},{1}));
+//        auto [U,S,V,norm] = svd.schmidt_with_norm(theta);
+//        Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(L0).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
+//        Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
+//        if (state.get_MPS_R().size() == 1) { diagonalNorm.setConstant(1.0); }
+//        else{diagonalNorm.setConstant(norm);}
+//        Eigen::Tensor<Scalar,3> d_V_L =
+//                Textra::asDiagonal(diagonalNorm).contract(V ,idx({1},{1})).contract(asDiagonalInversed(L2), idx({2},{0})).shuffle(array3{1,0,2});
+//
+//        state.get_MPS_L().back().set_G (L_U);
+//        state.get_MPS_C() = S;
+//        state.get_MPS_R().front().set_G(d_V_L);
+//    }
+//
+//
+//
+//    {
+//        auto mpsR_0            = state.get_MPS_R().begin();
+//        auto mpsR_1            = state.get_MPS_R().begin();
+//        std::advance(mpsR_1,1);
+////        // Make sure the first lambda is a 1
+////        Eigen::Tensor<Scalar,1> L0(1);
+////        L0.setConstant(1.0);
+////        mpsR_0->set_L(L0);
+//        Eigen::Tensor<Scalar,1> Lt = state.get_MPS_C();
+//        while(mpsR_1 != state.get_MPS_R().end()) {
+//            const auto & B0 = mpsR_0->get_B();
+//            const auto & B1 = mpsR_1->get_B();
+//            const auto & L2 = mpsR_1->get_L();
+//            Eigen::Tensor<Scalar,4> theta = asDiagonal(Lt).contract(B0, idx({1},{1})).contract(B1, idx({2},{1})).shuffle(array4{1,0,2,3});
+//            auto [U,S,V,norm] = svd.schmidt_with_norm(theta);
+//            Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(Lt).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
+//            Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
+//            if (mpsR_1->get_position() == state.get_length()-1) {
+//                diagonalNorm.setConstant(1.0);
+//            }
+//            else{
+//                diagonalNorm.setConstant(norm);
+//            }
+//
+//            Eigen::Tensor<Scalar,3> d_V_L =
+//                    Textra::asDiagonal(diagonalNorm)
+//                            .contract(V ,idx({1},{1}))
+//                            .contract(asDiagonalInversed(L2), idx({2},{0}))
+//                            .shuffle(array3{1,0,2});
+//
+//
+//            // Now you can update your matrices
+//            mpsR_0->set_G(L_U);
+//            mpsR_0->set_L(S);
+//            mpsR_1->set_G(d_V_L);
+//            Lt = S;
+//            // Check that you get identity matrices
+////            Eigen::Tensor<Scalar,2> ID_tensor = mpsR_0->get_B().contract(mpsR_0->get_B().conjugate(),idx({0,2},{0,2}));
+////            std::cout << "Right normalized: " << std::boolalpha << Textra::Tensor2_to_Matrix(ID_tensor).isIdentity(1e-12) << std::endl;
+//
+//
+//            mpsR_0++;
+//            mpsR_1++;
+//            if(mpsR_1 == state.get_MPS_R().end()){std::cout << "Norm: " << norm << std::endl;}
+//        }
+//
+//    }
+//
+//
+//
+//    // Print bond dimensions:
+//    //    for(auto & mps : state.get_MPS_L()){
+//    //        std::cout << "chi : " << mps.get_chiL() << std::endl;
+//    //    }
+//    //    std::cout << "chiC: " << state.get_MPS_C().dimension(0) << std::endl;
+//    //    for(auto & mps : state.get_MPS_R()){
+//    //        std::cout << "chi : " << mps.get_chiR() << std::endl;
+//    //    }
 }
 
 void MPS_Tools::Finite::Ops::normalize_chain2(class_finite_chain_state & state){
