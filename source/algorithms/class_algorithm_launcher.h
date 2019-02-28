@@ -14,6 +14,7 @@ class class_algorithm_launcher  {
 public:
 
     std::shared_ptr <class_hdf5_file> hdf5;
+    std::string hdf5_path;
     class_custom_cout       ccout;
     class_algorithm_launcher(std::shared_ptr<class_hdf5_file> hdf5_);
     class_algorithm_launcher();
@@ -23,6 +24,8 @@ public:
     void run_fDMRG();
     void run_xDMRG();
     void run_iTEBD();
+
+
 };
 
 

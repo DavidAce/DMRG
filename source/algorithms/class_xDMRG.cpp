@@ -175,14 +175,7 @@ void class_xDMRG::run_simulation()    {
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-//        if (sim_state.iteration >= settings::xdmrg::min_sweeps and state->position_is_the_middle_any_direction())
-//        {
-//            if (sim_state.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
-//            if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
-//            if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
-//        }
-
-        if (sim_state.iteration >= settings::xdmrg::min_sweeps and state->position_is_at(5))
+        if (sim_state.iteration >= settings::xdmrg::min_sweeps and state->position_is_the_middle_any_direction())
         {
             if (sim_state.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
             if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
@@ -190,10 +183,12 @@ void class_xDMRG::run_simulation()    {
         }
 
 
-//        if(state->position_is_the_middle()){
-//            *state = MPS_Tools::Finite::Ops::get_parity_projected_state(*state,qm::spinOneHalf::sx,1);
-//            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-//        }
+
+
+        if(state->position_is_the_middle()){
+            *state = MPS_Tools::Finite::Ops::get_parity_projected_state(*state,qm::spinOneHalf::sx,1);
+            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+        }
 
         update_bond_dimension(min_saturation_length);
         enlarge_environment(state->get_direction());
@@ -203,6 +198,8 @@ void class_xDMRG::run_simulation()    {
         sim_state.position = state->get_position();
         spdlog::trace("Finished step {}, iteration {}",sim_state.step,sim_state.iteration);
     }
+    store_state_to_file(true);
+
     switch(stop_reason){
         case StopReason::MAX_STEPS : spdlog::info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
         case StopReason::CONVERGED : spdlog::info("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
@@ -216,7 +213,7 @@ void class_xDMRG::run_postprocessing(){
     spdlog::info("Running {} postprocessing",sim_name);
     MPS_Tools::Finite::Debug::check_integrity(*state,*superblock,sim_state);
 
-    MPS_Tools::Finite::Debug::check_normalization_routine(*state);
+//    MPS_Tools::Finite::Debug::check_normalization_routine(*state);
 
     state->set_measured_false();
     superblock->set_measured_false();
@@ -224,8 +221,8 @@ void class_xDMRG::run_postprocessing(){
     MPS_Tools::Infinite::Hdf5::write_all_measurements(*superblock,*hdf5,sim_name);
     MPS_Tools::Finite::Hdf5::write_all_measurements(*state,*hdf5,sim_name);
 
-    MPS_Tools::Finite::Debug::print_parity_properties(*state);
-    MPS_Tools::Finite::Hdf5::write_all_parity_projections(*state,*superblock,*hdf5,sim_name);
+//    MPS_Tools::Finite::Debug::print_parity_properties(*state);
+//    MPS_Tools::Finite::Hdf5::write_all_parity_projections(*state,*superblock,*hdf5,sim_name);
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
         hdf5->write_dataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
@@ -873,7 +870,7 @@ void class_xDMRG::store_progress_chain_to_file(bool force){
     if (not force) {
         if (Math::mod(sim_state.iteration, settings::xdmrg::store_freq) != 0) { return; }
         if (settings::xdmrg::store_freq == 0) { return; }
-        if (not(state->get_direction() == 1 or state->position_is_the_middle_any_direction())) { return; }
+        if (not state->position_is_the_middle()) { return; }
     }
     spdlog::trace("Storing chain_entry to file");
     t_sto.tic();
