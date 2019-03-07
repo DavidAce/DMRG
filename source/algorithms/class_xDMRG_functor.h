@@ -9,7 +9,7 @@
 #include <iostream>
 #include <iomanip>
 #include <complex>
-
+#include <spdlog/spdlog.h>
 template<typename Scalar>
 class class_xDMRG_functor {
 private:
@@ -107,19 +107,21 @@ public:
                 energy = vEv / vv;
                 log10var = std::log10(var);
 //                double fx = log10var  + lambda * std::pow(vv-1.0,2);
-                fx = log10var  +  lambda * std::abs(vv-1.0);
-                if (std::isnan(var)) {
-                    std::cout << "eigvals: \n" << eigvals << std::endl;
-                    std::cout << "v: \n" << v << std::endl;
-                    std::cout << "H2: \n" << H2 << std::endl;
-                    std::cout << "vH2v            : " << vH2v << std::endl;
-                    std::cout << "vEv             : " << vEv << std::endl;
-                    std::cout << "vv              : " << vv << std::endl;
-                    std::cout << "vH2v/vv         : " << vH2v / vv << std::endl;
-                    std::cout << "vEv*vEv/vv/vv   : " << vEv * vEv / vv / vv << std::endl;
-                    std::cout << "var             : " << var << std::endl << std::endl;
-                    exit(1);
+                if(std::isnan(log10var)){
+                    spdlog::warn("log10 variance is NAN");
+//                std::cout << "v: \n" << v << std::endl;
+                    spdlog::warn("vH2v            =  " , vH2v );
+                    spdlog::warn("vEv             =  " , vEv  );
+                    spdlog::warn("vv              =  " , vv   );
+                    spdlog::warn("vH2v/vv         =  " , vH2v/vv    );
+                    spdlog::warn("vEv*vEv/vv/vv   =  " , vEv*vEv/vv/vv    );
+                    spdlog::warn("var             =  " , var);
+//                exit(1);
+
+                    log10var    = std::abs(var) ==0  ?  -20.0 : std::log10(std::abs(var));
                 }
+                fx = log10var  +  lambda * std::abs(vv-1.0);
+
             }
             #pragma omp barrier
             #pragma omp for schedule(static,1)
