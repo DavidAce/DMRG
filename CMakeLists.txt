@@ -362,7 +362,7 @@ add_custom_target(all_tests ALL
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
         DEPENDS hdf5_test_target
-        DEPENDS arpack++ hdf5 Eigen3 spdlog
+        DEPENDS arpack++ hdf5 Eigen3::Eigen spdlog::spdlog
         DEPENDS ${PROJECT_NAME}
         )
 
