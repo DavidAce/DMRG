@@ -1,9 +1,6 @@
 
 enable_language(Fortran)
-add_library(gfortran STATIC IMPORTED)
-#if(GFORTRAN_LIB AND QUADMATH_LIB)
-#    return()
-#endif()
+add_library(gfortran INTERFACE)
 
 if(CMAKE_Fortran_COMPILER)
     execute_process(COMMAND ${CMAKE_Fortran_COMPILER} -print-file-name=libgfortran${CMAKE_STATIC_LIBRARY_SUFFIX}
@@ -15,8 +12,6 @@ if(CMAKE_Fortran_COMPILER)
             OUTPUT_VARIABLE GFORTRAN_LIB_SHARED
             OUTPUT_STRIP_TRAILING_WHITESPACE
             )
-    message("LIB GFORTRAN: " ${GFORTRAN_LIB_SHARED})
-    message("LIB GFORTRAN: " ${_libgfortran_path})
 endif()
 
 if(EXISTS ${_libgfortran_path})
@@ -50,6 +45,6 @@ if (${CMAKE_HOST_APPLE})
 endif()
 
 set_target_properties(gfortran PROPERTIES
-        IMPORTED_LOCATION        "${GFORTRAN_LIB}"
-        INTERFACE_LINK_LIBRARIES "${QUADMATH_LIB}")
+#        IMPORTED_LOCATION        "${GFORTRAN_LIB}"
+        INTERFACE_LINK_LIBRARIES "${GFORTRAN_LIB};${QUADMATH_LIB}")
 #target_link_libraries(${PROJECT_NAME} PRIVATE gfortran)

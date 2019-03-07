@@ -9,11 +9,34 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 ################################################################
 ### Set options for compilation                              ###
 ################################################################
-option(USE_OpenMP    "Use OpenMP"                       OFF)
-option(USE_MKL       "Use Intel MKL libraries"          ON)
-option(STATIC_BUILD  "Static linking"                   ON)
-cmake_policy(SET CMP0074 NEW)
-cmake_policy(SET CMP0075 NEW)
+
+#option(STATIC_BUILD  "Static linking"                   ON)
+
+################################################################
+### Set options for compilation                              ###
+################################################################
+option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          OFF)
+option(BUILD_EXAMPLES     "Build examples"                                      OFF)
+option(ENABLE_TESTS       "Enable testing"                                      ON)
+option(DOWNLOAD_HDF5      "Download and install HDF5 if not found"              OFF)
+option(DOWNLOAD_SPDLOG    "Download and install spdlog if not found"            OFF)
+option(DOWNLOAD_EIGEN3    "Download and install Eigen3 if not found"            OFF)
+option(DOWNLOAD_ALL       "Download and install all dependencies if not found"  ON)
+option(USE_OpenMP         "Use OpenMP"                                          OFF)
+option(USE_MKL            "Use Intel MKL libraries"                             ON)
+
+
+
+#################################################################
+### Set default policies if CMake is new enough               ###
+#################################################################
+if (CMAKE_VERSION VERSION_LESS 3.12)
+    message(STATUS "Not setting policies")
+else()
+    cmake_policy(SET CMP0074 NEW)
+    cmake_policy(SET CMP0075 NEW)
+endif()
+
 
 if(USE_MKL AND NOT DEFINED ENV{MKLROOT})
     set(ENV{MKLROOT}  "/opt/intel/mkl")
@@ -148,13 +171,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC source)
 ################################################
 ###  Force cmake to find .a library suffixes ###
 ################################################
-if(STATIC_BUILD)
+if(BUILD_SHARED_LIBS)
+    set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+else()
     set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
     target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                                             ### Static linkage
-else()
-    set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
 endif()
 
 
@@ -242,17 +265,19 @@ include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not foun
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
 include(cmake-modules/Fetch_spdlog.cmake)                   # spdlog library
 include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
-include(cmake-modules/Fetch_HDF5_2.cmake)                   # HDF5 binary file format for output data.
+include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
+include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
 
-target_link_libraries(${PROJECT_NAME} PRIVATE eigen3)
-target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
+target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
+target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
 target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 target_link_libraries(${PROJECT_NAME} PRIVATE GSL)
+target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp)
 
 ######################################
 ###  Require experimental headers  ###
@@ -274,24 +299,35 @@ endif()
 
 
 
+get_target_property(BLAS_INFO       blas             INTERFACE_LINK_LIBRARIES)
+get_target_property(LAPACK_INFO     lapack           INTERFACE_LINK_LIBRARIES)
+get_target_property(LAPACKE_INFO    lapack           INTERFACE_LINK_LIBRARIES)
+get_target_property(ARPACK_INFO     arpack           INTERFACE_LINK_LIBRARIES)
+get_target_property(ARPACKPP_INFO   arpack++         INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(EIGEN_INFO      Eigen3::Eigen    INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(SPDLOG_INFO     spdlog::spdlog   INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(HDF5_INFO       hdf5             INTERFACE_LINK_LIBRARIES)
+get_target_property(GSL_INFO        GSL              INTERFACE_LINK_LIBRARIES)
+get_target_property(FORTRAN_INFO    gfortran         INTERFACE_LINK_LIBRARIES)
+get_target_property(H5PP_INFO       h5pp::h5pp       INTERFACE_INCLUDE_DIRECTORIES)
 
 
 
 message("=============================================================================")
 message("=== SUMMARY OF CMAKE CONFIGURATION:  THE FOLLOWING LIBRARIES WILL BE USED ===")
 message("=============================================================================")
-message("    INTEL MKL:   ${MKL_LIBRARIES}")
-message("    BLAS     :   ${BLAS_LIBRARIES}")
-message("    LAPACK   :   ${LAPACK_LIBRARIES}")
-message("    LAPACKE  :   ${LAPACKE_LIBRARIES}")
-message("    EIGEN3   :   ${EIGEN3_INCLUDE_DIR}")
-message("    SPDLOG   :   ${SPDLOG_INCLUDE_DIR}")
-message("    HDF5     :   ${HDF5_LIBRARIES}")
-message("    ARPACK   :   ${ARPACK_LIBRARIES}")
-message("    ARPACKPP :   ${ARPACKPP_INCLUDE_DIR}")
-message("    GSL      :   ${GSL_LIBRARIES} ${GSLCBLAS_LIBRARIES}")
-message("    GFORTRAN :   ${GFORTRAN_LIB}")
-message("    QUADMATH :   ${QUADMATH_LIB}")
+message("    BLAS     :   ${BLAS_INFO}")
+message("    LAPACK   :   ${LAPACK_INFO}")
+message("    LAPACKE  :   ${LAPACKE_INFO}")
+message("    EIGEN3   :   ${EIGEN_INFO}")
+message("    SPDLOG   :   ${SPDLOG_INFO}")
+message("    HDF5     :   ${HDF5_INFO}")
+message("    ARPACK   :   ${ARPACK_INFO}")
+message("    ARPACKPP :   ${ARPACKPP_INFO}")
+message("    GSL      :   ${GSL_INFO}")
+message("    h5pp     :   ${H5PP_INFO}")
+message("    GFORTRAN :   ${FORTRAN_INFO}")
+#message("    QUADMATH :   ${QUADMATH_LIB}")
 message("=============================================================================")
 message("")
 
@@ -326,7 +362,7 @@ add_custom_target(all_tests ALL
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
         DEPENDS hdf5_test_target
-        DEPENDS arpack++ hdf5 eigen3 spdlog
+        DEPENDS arpack++ hdf5 Eigen3 spdlog
         DEPENDS ${PROJECT_NAME}
         )
 

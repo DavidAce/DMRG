@@ -3,6 +3,7 @@
 //
 
 #include "class_xDMRG_full_functor.h"
+#include <spdlog/spdlog.h>
 template<typename Scalar>
 class_xDMRG_full_functor<Scalar>::class_xDMRG_full_functor(
         const Eigen::Tensor<Scalar,4> &HA_MPO_,
@@ -126,19 +127,22 @@ double class_xDMRG_full_functor<Scalar>::operator()(const Eigen::Matrix<double,E
             energy      = vHv/vv;
             log10var    = std::log10(var);
 //            log10norm   = std::log10(std::abs(vv));
-             fx = log10var  + lambda * std::pow(vv-1.0,2);
 //            fx = log10var  +  lambda * std::abs(vv-1.0);
 //            fx = log10var  +  lambda * log10norm;
             if(std::isnan(log10var)){
-                std::cout << "v: \n" << v << std::endl;
-                std::cout << "vH2v            : " << vH2v << std::endl;
-                std::cout << "vHv             : " << vHv  << std::endl;
-                std::cout << "vv              : " << vv   << std::endl;
-                std::cout << "vH2v/vv         : " << vH2v/vv    << std::endl;
-                std::cout << "vEv*vEv/vv/vv   : " << vHv*vHv/vv/vv    << std::endl;
-                std::cout << "var             : " << var  << std::endl << std::endl;
-                exit(1);
+                spdlog::warn("log10 variance is NAN");
+//                std::cout << "v: \n" << v << std::endl;
+                spdlog::warn("vH2v            =  " , vH2v );
+                spdlog::warn("vHv             =  " , vHv  );
+                spdlog::warn("vv              =  " , vv   );
+                spdlog::warn("vH2v/vv         =  " , vH2v/vv    );
+                spdlog::warn("vEv*vEv/vv/vv   =  " , vHv*vHv/vv/vv    );
+                spdlog::warn("var             =  " , var);
+//                exit(1);
+
+                log10var    = std::abs(var) ==0  ?  -20.0 : std::log10(std::abs(var));
             }
+            fx = log10var  + lambda * std::pow(vv-1.0,2);
         }
         #pragma omp barrier
         #pragma omp for schedule(static,1)

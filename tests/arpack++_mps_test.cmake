@@ -25,8 +25,7 @@ target_link_libraries  (arpack++_mps_test_target PRIVATE -Wl,--no-allow-shlib-un
 target_link_libraries  (arpack++_mps_test_target PRIVATE -Wl,--no-as-needed )
 target_link_libraries  (arpack++_mps_test_target PRIVATE -Wl,--no-undefined )
 
-target_link_libraries(arpack++_mps_test_target PRIVATE  arpack++ eigen3)
-target_link_libraries(arpack++_mps_test_target PRIVATE  eigen3)
+target_link_libraries(arpack++_mps_test_target PRIVATE  arpack++ Eigen3::Eigen)
 target_link_libraries(arpack++_mps_test_target PRIVATE -lstdc++fs)
 target_link_libraries(arpack++_mps_test_target PRIVATE -flto)
 
@@ -37,4 +36,4 @@ target_compile_options (arpack++_mps_test_target PRIVATE "$<$<CONFIG:DEBUG>:${DE
 target_compile_options (arpack++_mps_test_target PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
 
 add_test(NAME arpack++_mps_test COMMAND arpack++_mps_test_target)
-add_dependencies(arpack++_mps_test_target arpack++ eigen3)
+add_dependencies(arpack++_mps_test_target arpack++ Eigen3::Eigen)
