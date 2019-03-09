@@ -5,10 +5,10 @@
 #include <iterator>
 #include <hdf5.h>
 #include <hdf5_hl.h>
-#include <io/class_hdf5_file.h>
+//#include <io/class_hdf5_file.h>
 #include <io/class_hdf5_table_buffer2.h>
 #include <algorithms/table_types.h>
-
+#include <h5pp/h5pp.h>
 
 /*! \brief Prints the content of a vector nicely */
 template<typename T, size_t N>
@@ -22,11 +22,13 @@ std::ostream &operator<<(std::ostream &out, const std::array<T,N> &v) {
 }
 
 template<typename table_type>
-class_hdf5_table<table_type>::class_hdf5_table(std::shared_ptr<class_hdf5_file> hdf5_out_,
-                 std::string group_name_,
-                 std::string table_name_,
-                 bool mpi_on_):
-        hdf5_file(std::move(hdf5_out_)),
+class_hdf5_table<table_type>::class_hdf5_table(
+        std::shared_ptr<h5pp::File> h5ppFile_,
+        std::string group_name_,
+        std::string table_name_,
+        bool mpi_on_)
+        :
+        h5ppFile(std::move(h5ppFile_)),
         group_name(group_name_),
         table_name(table_name_),
         mpi_on(mpi_on_)
@@ -39,7 +41,7 @@ class_hdf5_table<table_type>::class_hdf5_table(std::shared_ptr<class_hdf5_file> 
 
 template<typename table_type>
 class_hdf5_table<table_type>::~class_hdf5_table(){
-    if (hdf5_file){
+    if (h5ppFile){
         write_buffer_to_file();
     }else if (!buffer_is_empty){
         std::cerr << "Warning: Output data has not been saved to file, yet it is being discarded!\n" << std::endl;
@@ -51,14 +53,14 @@ template<typename table_type>
 void class_hdf5_table<table_type>::initialize_table(){
     if (table_entries->buffer.empty() and !table_is_ready) {
         hsize_t NRECORDS = table_entries->buffer.size();
-        hdf5_file->create_group_link(group_name);
-        if (not hdf5_file->link_exists(table_path)){
-            hid_t file = hdf5_file->open_file();
+        h5ppFile->create_group_link(group_name);
+        if (not h5ppFile->linkExists(table_path)){
+            hid_t file = h5ppFile->openFileHandle();
             H5TBmake_table(table_name.c_str(), file, table_path.c_str(), table_entries->meta.NFIELDS, NRECORDS,
                            table_entries->meta.dst_size, table_entries->meta.field_names.data(), table_entries->meta.dst_offsets.data(), table_entries->meta.field_types.data(),
                            table_entries->meta.chunk_size, table_entries->meta.fill_data, table_entries->meta.compress, table_entries->buffer.data());
             H5Fflush(file,H5F_SCOPE_GLOBAL);
-            H5Fclose(file);
+            h5ppFile->closeFileHandle(file);
         }
         table_is_ready = true;
     }
@@ -68,15 +70,15 @@ template<typename table_type>
 void class_hdf5_table<table_type>:: write_buffer_to_file() {
     if (!table_entries->buffer.empty() and table_is_ready) {
         hsize_t NRECORDS = table_entries->buffer.size();
-        hdf5_file->create_group_link(group_name);
-        hid_t file = hdf5_file->open_file();
+        h5ppFile->create_group_link(group_name);
+        hid_t file = h5ppFile->openFileHandle();
         H5TBappend_records(file, table_path.c_str(), NRECORDS, table_entries->meta.dst_size,
                            table_entries->meta.dst_offsets.data(), table_entries->meta.dst_sizes.data(), table_entries->buffer.data());
 
         table_entries->buffer.clear();
         recorded_elements += NRECORDS;
         H5Fflush(file,H5F_SCOPE_GLOBAL);
-        H5Fclose(file);
+        h5ppFile->closeFileHandle(file);
     }
     buffer_is_empty = true;
 }

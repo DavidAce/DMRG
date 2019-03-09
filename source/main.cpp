@@ -6,11 +6,9 @@
 #include <algorithms/class_algorithm_launcher.h>
 #include <gitversion.h>
 #include <io/class_settings_reader.h>
-#include <io/class_hdf5_file.h>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
-//#include <El.hpp>
-#include <zlib.h>
+#include <h5pp/h5pp.h>
 #include <experimental/filesystem>
 
 
@@ -88,40 +86,17 @@ int main(int argc, char* argv[]) {
     if(indata.found_file){
         settings::load_from_file(indata);
     }else{
-        auto hdf5 = std::make_shared<class_hdf5_file> (outputfile,"",false,false,true);
-        if (hdf5->fileMode == class_hdf5_file::FileMode::OPEN) {
-            spdlog::info("The output file existed already: {}", hdf5->get_file_name());
-            spdlog::info("Loading settings from existing file.");
-            settings::load_from_hdf5(*hdf5);
-        }else{
-            spdlog::warn("Couldn't find an inputfile or previous outputfile to load settings. Running defaults.");
+        try{
+            auto h5ppFile = std::make_shared<h5pp::File> (outputfile,h5pp::AccessMode::READONLY,h5pp::CreateMode::OPEN);
+            spdlog::info("Loading settings from existing file [{}]", h5ppFile->get_file_path());
+            settings::load_from_hdf5(*h5ppFile);
+        }catch(std::exception &ex){
+            spdlog::info("Couldn't find an inputfile or previous outputfile to load settings: {}", outputfile,ex.what() );
+            spdlog::info("Running defaults");
         }
-
     }
 
 
-//    // Set console settings
-//    if (settings::console::verbosity < 0 or settings::console::verbosity > 6){
-//        std::cerr << "ERROR: Expected verbosity level integer in [0-6]. Got: " << settings::console::verbosity << std::endl;
-//        exit(2);
-//    }else{
-//        spdlog::level::level_enum lvl = static_cast<spdlog::level::level_enum>(settings::console::verbosity);
-//        spdlog::set_level(lvl);
-//        spdlog::debug("Verbosity level: {}", spdlog::level::to_string_view(lvl));
-//    }
-//    if ( not settings::console::timestamp){
-//        spdlog::set_pattern("[%n]%^[%=8l]%$ %v");
-//    }
-
-
-
-
-//
-//
-//
-//    spdlog = spdlog::get("DMRG++");
-//
-//    spdlog->warn("TESTING MY LOGGER");
     //Initialize the algorithm class
     //This class stores simulation data automatically to a file specified in the input file
     class_algorithm_launcher launcher;

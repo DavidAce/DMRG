@@ -21,7 +21,9 @@ class class_finite_chain_state;
 class class_hdf5_file;
 class class_table_profiling;
 template <typename table_type> class class_hdf5_table;
-
+namespace h5pp{
+    class File;
+}
 
 
 class class_algorithm_base {
@@ -32,16 +34,19 @@ protected:
 public:
     using Scalar = std::complex<double>;
     class_algorithm_base() = default;
-    class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
+//    class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
+//                         std::string sim_name_,
+//                         SimulationType sim_type_);
+    class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_,
                          std::string sim_name_,
                          SimulationType sim_type_);
-
     enum class StopReason {CONVERGED, SATURATED, MAX_STEPS};
     StopReason stop_reason;
     void set_profiling_labels ();
 
     //Storage
-    std::shared_ptr<class_hdf5_file>         hdf5;
+//    std::shared_ptr<class_hdf5_file>         hdf5;
+    std::shared_ptr<h5pp::File>              h5ppFile;
     std::unique_ptr<class_hdf5_table<class_table_profiling>>  table_profiling;
 
     std::string             sim_name;

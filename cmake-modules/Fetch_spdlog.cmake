@@ -19,7 +19,8 @@ elseif (DOWNLOAD_SPDLOG OR DOWNLOAD_ALL)
             GIT_PROGRESS 1
             UPDATE_COMMAND ""
             TEST_COMMAND ""
-            PREFIX      ${INSTALL_DIRECTORY}/spdlog
+            PREFIX      ${BUILD_DIRECTORY}/spdlog
+            INSTALL_DIR ${INSTALL_DIRECTORY}/spdlog
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             )

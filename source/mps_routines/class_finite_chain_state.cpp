@@ -86,7 +86,7 @@ bool class_finite_chain_state::position_is_at(int pos)const{
 
 
 Eigen::Tensor<class_finite_chain_state::Scalar,3> & class_finite_chain_state::get_G(size_t pos){
-    if (pos < 0 or pos >= get_length()){throw std::range_error("get_G(pos) pos out of range: " + std::to_string(pos));}
+    if (pos >= get_length()){throw std::range_error("get_G(pos) pos out of range: " + std::to_string(pos));}
     if(pos <= get_MPS_L().size()-1){
         return std::next(get_MPS_L().begin(), pos)->get_G();
     }else{

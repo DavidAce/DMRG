@@ -3,7 +3,8 @@ message(STATUS "SZIP will be installed into ${INSTALL_DIRECTORY}/szip on first b
 include(ExternalProject)
 ExternalProject_Add(external_SZIP
         URL      https://support.hdfgroup.org/ftp/lib-external/szip/2.1.1/src/szip-2.1.1.tar.gz
-        PREFIX              "${INSTALL_DIRECTORY}/szip"
+        PREFIX      ${BUILD_DIRECTORY}/szip
+        INSTALL_DIR ${INSTALL_DIRECTORY}/szip
         UPDATE_DISCONNECTED 1
         TEST_COMMAND ""
         CMAKE_ARGS
