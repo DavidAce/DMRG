@@ -38,12 +38,12 @@ void   class_tf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4> MPO_, std::
 void   class_tf_ising::set_hamiltonian(const std::vector<double> parameters) {
     auto temp = Eigen::Map<const Eigen::VectorXd>(parameters.data(),parameters.size());
     set_hamiltonian(temp);
-};
+}
 
 
 void   class_tf_ising::set_hamiltonian(const Eigen::MatrixXd all_parameters, int position) {
     set_hamiltonian (all_parameters.row(position));
-};
+}
 
 
 void   class_tf_ising::set_hamiltonian(const Eigen::VectorXd parameters) {
@@ -57,7 +57,7 @@ void   class_tf_ising::set_hamiltonian(const Eigen::VectorXd parameters) {
     spin_dim        = (int)parameters(6);
     full_lattice_parameters_have_been_set = true;
     build_mpo();
-};
+}
 
 
 

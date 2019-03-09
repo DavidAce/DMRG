@@ -30,6 +30,7 @@ void MPS_Tools::Finite::Print::print_full_state(const class_finite_chain_state &
 
 
 void MPS_Tools::Finite::Print::print_state(const class_finite_chain_state &state){
+    using namespace Textra;
     auto & MPS_L  = state.get_MPS_L();
     auto & MPS_R  = state.get_MPS_R();
     auto & MPS_C  = state.get_MPS_C();
@@ -72,6 +73,7 @@ void MPS_Tools::Finite::Print::print_state(const class_finite_chain_state &state
 
 
 void MPS_Tools::Finite::Print::print_state_compact(const class_finite_chain_state &state){
+    using namespace Textra;
     auto & MPS_L  = state.get_MPS_L();
     auto & MPS_R  = state.get_MPS_R();
     auto & MPS_C  = state.get_MPS_C();

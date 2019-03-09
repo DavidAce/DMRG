@@ -4,7 +4,6 @@
 
 
 #include <iomanip>
-#include <io/class_hdf5_file.h>
 #include <io/class_hdf5_table_buffer2.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_superblock.h>
@@ -25,6 +24,7 @@
 #include <LBFGS.h>
 #include <algorithms/class_xDMRG_functor.h>
 #include <algorithms/class_xDMRG_full_functor.h>
+#include <h5pp/h5pp.h>
 #include <spdlog/spdlog.h>
 
 #include "class_xDMRG.h"
@@ -53,12 +53,10 @@ std::ostream& operator<<(std::ostream& str, class_xDMRG::xDMRG_Mode const& mode)
 using namespace std;
 using namespace Textra;
 
-class_xDMRG::class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_)
-        : class_algorithm_base(std::move(hdf5_), "xDMRG",SimulationType::xDMRG) {
-    set_logger(sim_name);
-    table_xdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (hdf5, sim_name + "/measurements", "simulation_progress");
-    table_xdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(hdf5, sim_name + "/measurements", "simulation_progress_full_chain");
-    state             = std::make_shared<class_finite_chain_state>();
+class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
+        : class_algorithm_base(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG) {
+    table_xdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5ppFile, sim_name + "/measurements", "simulation_progress");
+    table_xdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5ppFile, sim_name + "/measurements", "simulation_progress_full_chain");
     superblock        = std::make_shared<class_superblock>(sim_type);
     MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type, settings::xdmrg::num_sites, settings::model::seed);
     MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
@@ -91,13 +89,13 @@ void class_xDMRG::run()
     if (!settings::xdmrg::on) { return; }
     t_tot.tic();
 
-    if (hdf5->fileMode == class_hdf5_file::FileMode::OPEN){
+    if (h5ppFile->getCreateMode() == h5pp::CreateMode::OPEN){
         // This is case 1
         bool fileOK;
-        hdf5->read_dataset(fileOK, "common/fileOK");
-        bool simOK = hdf5->link_exists(sim_name + "/simOK");
-        bool mpsOK = hdf5->link_exists(sim_name + "/state/full/mps");
-//        hdf5->print_contents_of_group(sim_name);
+        h5ppFile->readDataset(fileOK, "common/fileOK");
+        bool simOK = h5ppFile->linkExists(sim_name + "/simOK");
+        bool mpsOK = h5ppFile->linkExists(sim_name + "/state/full/mps");
+//        h5ppFile->print_contents_of_group(sim_name);
 
         if (not simOK){
             //Case 1 a -- run full simulation from scratch.
@@ -115,7 +113,7 @@ void class_xDMRG::run()
             // We can go ahead and load the state from hdf5
             spdlog::trace("Loading MPS from file");
             try{
-                MPS_Tools::Finite::Hdf5::load_from_hdf5(*state, *superblock, sim_state, *hdf5, sim_name);
+                MPS_Tools::Finite::H5pp::load_from_hdf5(*state, *superblock, sim_state, *h5ppFile, sim_name);
             }
             catch(std::exception &ex){
                 spdlog::error("Failed to load from hdf5: {}", ex.what());
@@ -124,7 +122,7 @@ void class_xDMRG::run()
             catch(...){spdlog::error("Unknown error when trying to resume from file.");}
 
             bool convergence_was_reached;
-            hdf5->read_dataset(convergence_was_reached,sim_name + "/sim_state/simulation_has_converged");
+            h5ppFile->readDataset(convergence_was_reached,sim_name + "/sim_state/simulation_has_converged");
             if(not convergence_was_reached){
                 // Case 1 c -- resume simulation, reset the number of sweeps first.
                 spdlog::trace("Case 1c");
@@ -218,14 +216,14 @@ void class_xDMRG::run_postprocessing(){
     state->set_measured_false();
     superblock->set_measured_false();
     state->do_all_measurements();
-    MPS_Tools::Infinite::Hdf5::write_all_measurements(*superblock,*hdf5,sim_name);
-    MPS_Tools::Finite::Hdf5::write_all_measurements(*state,*hdf5,sim_name);
+    MPS_Tools::Infinite::H5pp::write_all_measurements(*superblock,*h5ppFile,sim_name);
+    MPS_Tools::Finite::H5pp::write_all_measurements(*state,*h5ppFile,sim_name);
 
 //    MPS_Tools::Finite::Debug::print_parity_properties(*state);
-//    MPS_Tools::Finite::Hdf5::write_all_parity_projections(*state,*superblock,*hdf5,sim_name);
+//    MPS_Tools::Finite::H5pp::write_all_parity_projections(*state,*superblock,*hdf5,sim_name);
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
-        hdf5->write_dataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
+        h5ppFile->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
     }
     print_status_full();
     print_profiling();
@@ -442,7 +440,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                  << "      shape       : "    << shape    << " x " << shape << '\n'
                  << "      sparcity    : "    << sparcity << '\n'
                  << "      Wall time   : "    << t_tot.get_age() << '\n' << '\n' << std::flush;
-        spdlog::info(problem_report.str());
+        spdlog::debug(problem_report.str());
         class_eigsolver solver;
         std::string reason = "none";
         for (auto nev : generate_size_list(shape)){
@@ -481,7 +479,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
             if(subspace_quality < subspace_quality_threshold)                 {reason = "subspace quality is good"; break;}
         }
         H_local.resize(0,0);
-        spdlog::info("Finished eigensolver -- condition: {}",reason);
+        spdlog::debug("Finished eigensolver -- condition: {}",reason);
 
         auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data(),solver.solution.meta.cols);
         auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
@@ -513,7 +511,7 @@ Eigen::Tensor<class_xDMRG::Scalar,4> class_xDMRG::find_state_with_greatest_overl
                     << '\n';
         }
         solver_report << '\n' << std::flush;
-        spdlog::info(solver_report.str());
+        spdlog::debug(solver_report.str());
         if(nev >= 2 and max_overlap < max_overlap_threshold and mode != xDMRG_Mode::KEEP_BEST_OVERLAP){
             theta_res = subspace_optimization(energy_new,variance_new,nev,eigvecs.data(),eigvals.data(),theta);
         }else {
@@ -644,7 +642,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::subspace_optimi
                  << "    " <<setw(20) << left << std::fixed << std::get<8>(log)
                  << '\n';
     }
-    spdlog::info(report.str());
+    spdlog::debug(report.str());
     return theta_new;
 
 }
@@ -739,7 +737,7 @@ Eigen::Matrix<class_xDMRG::Scalar,Eigen::Dynamic,1> class_xDMRG::direct_optimiza
                  << '\n';
     }
     report << '\n';
-    spdlog::info(report.str());
+    spdlog::debug(report.str());
     return xstart;
 }
 
@@ -823,11 +821,11 @@ void class_xDMRG::store_state_to_file(bool force){
     }
     spdlog::trace("Storing storing mps to file");
     t_sto.tic();
-    MPS_Tools::Finite::Hdf5::write_all_state(*state, *hdf5, sim_name);
-    MPS_Tools::Infinite::Hdf5::write_all_superblock(*superblock, *hdf5, sim_name);
-    if (settings::hdf5::resume_from_file){
-        MPS_Tools::Finite::Hdf5::write_full_mps(*state,*hdf5,sim_name);
-        MPS_Tools::Finite::Hdf5::write_full_mpo(*state,*hdf5,sim_name);
+    MPS_Tools::Finite::H5pp::write_all_state(*state, *h5ppFile, sim_name);
+    MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5ppFile, sim_name);
+    if (settings::hdf5::save_progress){
+        MPS_Tools::Finite::H5pp::write_full_mps(*state,*h5ppFile,sim_name);
+        MPS_Tools::Finite::H5pp::write_full_mpo(*state,*h5ppFile,sim_name);
     }
     t_sto.toc();
     store_sim_to_file();

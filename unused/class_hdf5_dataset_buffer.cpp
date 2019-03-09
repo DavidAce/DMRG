@@ -1,7 +1,7 @@
 //
 // Created by david on 2017-12-02.
 //
-#include "class_hdf5_file.h"
+#include <h5pp/h5pp.h>
 #include "class_hdf5_dataset_buffer.h"
 
 template<typename DataType, typename AttrType,typename IterType>
@@ -13,11 +13,11 @@ std::string class_hdf5_dataset_buffer<DataType, AttrType, IterType>::left_pad(co
 
 
 template<typename DataType, typename AttrType,typename IterType>
-class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(std::shared_ptr<class_hdf5_file> hdf5_out_,
+class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(std::shared_ptr<h5pp::File> h5ppFile_,
                                                                          const std::string &group_name_,
                                                                          const IterType &iteration_,
                                                                          const std::string &dataset_name_)
-: hdf5_out(std::move(hdf5_out_)),
+: h5ppFile(std::move(h5ppFile_)),
 group_name     (group_name_),
 iteration      (iteration_),
 dataset_name   (dataset_name_)
@@ -26,14 +26,14 @@ dataset_name   (dataset_name_)
 }
 
 template<typename DataType, typename AttrType,typename IterType>
-class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(std::shared_ptr<class_hdf5_file> hdf5_out_,
+class_hdf5_dataset_buffer<DataType, AttrType, IterType>::class_hdf5_dataset_buffer(std::shared_ptr<h5pp::File> h5ppFile_,
                                                                                    const std::string &group_name_,
                                                                                    const IterType &iteration_,
                                                                                    const std::string &dataset_name_,
                                                                                    const AttrType &attribute_,
                                                                                    const std::string &attribute_name_)
         :
-        hdf5_out(std::move(hdf5_out_)),
+        h5ppFile(std::move(h5ppFile_)),
         group_name(group_name_),
         iteration(iteration_),
         dataset_name(dataset_name_),
@@ -106,10 +106,10 @@ template<typename DataType, typename AttrType,typename IterType>
 void class_hdf5_dataset_buffer<DataType, AttrType, IterType>::write_buffer_to_file() {
     if (!this->empty()) {
         hdf5_refresh_relative_name();
-        hdf5_out->write_dataset(static_cast<std::vector<DataType>>(*this), dataset_relative_name);
+        h5ppFile->writeDataset(static_cast<std::vector<DataType>>(*this), dataset_relative_name);
 
         if (attribute_set) {
-            hdf5_out->write_attribute_to_dataset(dataset_relative_name, attribute, attribute_name);
+            h5ppFile->writeAttributeToLink(attribute, attribute_name,dataset_relative_name);
         }
         this->clear();
     }

@@ -1,7 +1,6 @@
 
-add_executable(hdf5_test_target tests/hdf5_test.cpp
-        source/io/class_hdf5_file.cpp
-        source/io/class_hdf5_file.h
+add_executable(hdf5_test_target
+        tests/hdf5_test.cpp
         source/general/nmspc_tensor_extra.h
         )
 
@@ -24,6 +23,7 @@ endif()
 target_link_libraries(hdf5_test_target PRIVATE Eigen3::Eigen)
 target_link_libraries(hdf5_test_target PRIVATE hdf5      )
 target_link_libraries(hdf5_test_target PRIVATE spdlog::spdlog)
+target_link_libraries(hdf5_test_target PRIVATE h5pp::h5pp)
 target_link_libraries(hdf5_test_target PRIVATE -lstdc++fs)
 target_link_libraries(hdf5_test_target PRIVATE -flto)
 
@@ -35,4 +35,4 @@ target_compile_options (hdf5_test_target PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_
 
 add_test(NAME hdf5_test COMMAND hdf5_test_target)
 #add_dependencies(hdf5_test_target Eigen3 hdf5::hdf5 hdf5::hdf5_hl hdf5::hdf5_cpp hdf5::hdf5_hl_cpp)
-add_dependencies(hdf5_test_target Eigen3::Eigen hdf5 spdlog::spdlog )
+add_dependencies(hdf5_test_target Eigen3::Eigen hdf5 spdlog::spdlog  h5pp::h5pp)

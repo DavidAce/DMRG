@@ -25,7 +25,7 @@ class_settings_reader::class_settings_reader(const fs::path &file_path_): file_p
             exit(1);
         }
     }
-};
+}
 
 
 bool class_settings_reader::check_if_input_file_exists(const fs::path &path_to_file){

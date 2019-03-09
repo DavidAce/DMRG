@@ -1,10 +1,10 @@
 
 
 if(NOT HDF5_ROOT)
-    set(HDF5_ROOT ${INSTALL_DIRECTORY_THIRD_PARTY}/hdf5)
+    set(HDF5_ROOT ${INSTALL_DIRECTORY}/hdf5)
 endif()
 if(NOT HDF5_DIR)
-    set(HDF5_DIR ${INSTALL_DIR}/share/cmake/hdf5)
+    set(HDF5_DIR ${INSTALL_DIRECTORY}/share/cmake/hdf5)
 endif()
 include(cmake-modules/FindPackageHDF5.cmake)
 
@@ -15,13 +15,15 @@ elseif (DOWNLOAD_HDF5 OR DOWNLOAD_ALL)
     include(ExternalProject)
     set(HDF5_IS_PARALLEL OFF)
     ExternalProject_Add(external_HDF5
-            URL     https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.3/src/hdf5-1.10.3.tar.bz2 # version 1.10.2
-            PREFIX      ${INSTALL_DIRECTORY}/hdf5
+            URL     https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.3/src/hdf5-1.10.3.tar.bz2
+            PREFIX      ${BUILD_DIRECTORY}/hdf5
+            INSTALL_DIR ${INSTALL_DIRECTORY}/hdf5
             UPDATE_DISCONNECTED 1
             TEST_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_ANSI_CFLAGS:STRING=-fPIC
+            -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
             -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF
             -DHDF5_ENABLE_PARALLEL=${HDF5_IS_PARALLEL}
             -DALLOW_UNSUPPORTED=ON
@@ -37,6 +39,7 @@ elseif (DOWNLOAD_HDF5 OR DOWNLOAD_ALL)
 
     ExternalProject_Get_Property(external_HDF5 INSTALL_DIR)
     add_library(hdf5 INTERFACE)
+    add_library(hdf5::hdf5 ALIAS hdf5)
     add_dependencies(hdf5          external_HDF5)
     set(HDF5_ROOT             ${INSTALL_DIR})
     set(HDF5_DIR              ${INSTALL_DIR}/share/cmake/hdf5)
@@ -49,8 +52,6 @@ elseif (DOWNLOAD_HDF5 OR DOWNLOAD_ALL)
             INTERFACE
             ${INSTALL_DIR}/lib/libhdf5_hl${HDF5_LIBRARY_SUFFIX}
             ${INSTALL_DIR}/lib/libhdf5${HDF5_LIBRARY_SUFFIX}
-            ${INSTALL_DIR}/lib/libhdf5_hl_cpp${HDF5_LIBRARY_SUFFIX}
-            ${INSTALL_DIR}/lib/libhdf5_cpp${HDF5_LIBRARY_SUFFIX}
             $<LINK_ONLY:-ldl -lm -lz -lpthread>
 #            $<LINK_ONLY:-lm>
 #            $<LINK_ONLY:-lz>
