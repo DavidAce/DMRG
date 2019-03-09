@@ -16,13 +16,15 @@
  */
 
 class class_settings_reader;
-class class_hdf5_file;
+namespace h5pp{
+    class File;
+}
 
 enum class SimulationType{iDMRG,fDMRG, xDMRG, iTEBD};
 
 namespace settings {
     extern void load_from_file(class_settings_reader &indata);
-    extern void load_from_hdf5(class_hdf5_file &hdf5);
+    extern void load_from_hdf5(h5pp::File &h5ppFile);
 
     namespace input{
         extern std::string input_filename;
@@ -128,14 +130,12 @@ namespace settings {
 
     }
 
-    //Save data_struct to hdf5 (NOT FULLY IMPLEMENTED YET)
     namespace hdf5 {
         extern bool         save_to_file            ;        /*!< If true, saves the simulation data to an HDF5 file instead of just outputting to console */
-        extern bool         create_dir_if_not_found ;        /*!< If true, an output directory will be created in the project root folder if it isn't found */
-        extern bool         overwrite_file_if_found ;        /*!< If true, an hdf5-file with the provided filename will be overwritten if found in output_folder */
-        extern bool         resume_from_file        ;        /*!< Attempt to resume if the file is found (and if "overwrite_file_if_found = false") */
-        extern std::string  output_filename         ;        /*!< Name of the output HDF5 file. Without quotes!  */
-        extern std::string  output_folder           ;        /*!< Name of the output HDF5 folder, relative to the executable */
+        extern bool         save_progress           ;        /*!< If true, saves the simulation data periodically */
+        extern std::string  access_mode             ;        /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
+        extern std::string  create_mode             ;        /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
+        extern std::string  output_filename         ;        /*!< Name of the output HDF5 file relative to the executable  */
         extern bool         full_storage            ;        /*!< If true, saves the full MPS to file. Set to false to reduce output file size. */
         extern bool         store_profiling         ;        /*!< Whether to store profiling information to file. */
     }

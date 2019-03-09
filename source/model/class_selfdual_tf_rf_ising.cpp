@@ -29,17 +29,17 @@ void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4>
     auto mpo2 = Eigen::Map<const Eigen::VectorXcd>(MPO .data(),MPO .size());
     assert(mpo1 == mpo2 and "MPO mismatch!");
     if(mpo1 != mpo2)throw std::runtime_error("MPO mismatch");
-};
+}
 
 void   class_selfdual_tf_rf_ising::set_hamiltonian(const std::vector<double> parameters) {
     auto temp = Eigen::Map<const Eigen::VectorXd>(parameters.data(),parameters.size());
     set_hamiltonian(temp);
-};
+}
 
 
 void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::MatrixXd all_parameters, int position) {
     set_hamiltonian (all_parameters.row(position));
-};
+}
 
 
 void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::VectorXd parameters) {
@@ -60,7 +60,7 @@ void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::VectorXd paramet
     spin_dim       = parameters(12);
     full_lattice_parameters_have_been_set = true;
     build_mpo();
-};
+}
 
 
 

@@ -8,7 +8,6 @@
 #include <iostream>
 #include <sim_parameters/nmspc_sim_settings.h>
 
-class class_hdf5_file;
 class class_superblock;
 class class_finite_chain_state;
 

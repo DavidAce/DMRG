@@ -4,8 +4,7 @@
 
 #include "nmspc_sim_settings.h"
 #include <io/class_settings_reader.h>
-#include <io/class_hdf5_file.h>
-
+#include <h5pp/h5pp.h>
 using namespace std;
 
 
@@ -65,7 +64,7 @@ namespace settings{
 
     //Parameters controlling Finite-DMRG
     bool   fdmrg::on                     = true;
-    int    fdmrg::num_sites              = 200;
+    int    fdmrg::num_sites              = 30;
     int    fdmrg::max_sweeps             = 10;
     int    fdmrg::min_sweeps             = 4;
     long   fdmrg::chi_max                = 8;
@@ -101,11 +100,10 @@ namespace settings{
 
     //Save data_struct to hdf5
     bool   hdf5::save_to_file             = true;
-    bool   hdf5::create_dir_if_not_found  = true;
-    bool   hdf5::overwrite_file_if_found  = false;
-    string hdf5::output_filename          = "data_struct.h5";
-    string hdf5::output_folder            = "output";
-    bool   hdf5::resume_from_file         = false;
+    bool   hdf5::save_progress            = true;
+    string hdf5::output_filename          = "output/default.h5";
+    string hdf5::access_mode              = "READWRITE";            /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
+    string hdf5::create_mode              = "RENAME" ;              /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
     bool   hdf5::full_storage             = true;
     bool   hdf5::store_profiling          = true;
 
@@ -117,9 +115,6 @@ namespace settings{
     bool console::timestamp              = false;
 
 }
-
-
-
 
 
 
@@ -225,11 +220,10 @@ void settings::load_from_file(class_settings_reader &indata){
 
     //Save data_struct to hdf5
     hdf5::save_to_file             = indata.find_parameter<bool>   ("hdf5::save_to_file"            , hdf5::save_to_file           );
-    hdf5::create_dir_if_not_found  = indata.find_parameter<bool>   ("hdf5::create_dir_if_not_found" , hdf5::create_dir_if_not_found);
-    hdf5::overwrite_file_if_found  = indata.find_parameter<bool>   ("hdf5::overwrite_file_if_found" , hdf5::overwrite_file_if_found);
+    hdf5::save_progress            = indata.find_parameter<bool>   ("hdf5::save_progress"           , hdf5::save_progress          );
     hdf5::output_filename          = indata.find_parameter<string> ("hdf5::output_filename"         , hdf5::output_filename);
-    hdf5::output_folder            = indata.find_parameter<string> ("hdf5::output_folder"           , hdf5::output_folder);
-    hdf5::resume_from_file         = indata.find_parameter<bool>   ("hdf5::resume_from_file"        , hdf5::resume_from_file       );
+    hdf5::access_mode              = indata.find_parameter<string> ("hdf5::access_mode"             , hdf5::access_mode);
+    hdf5::create_mode              = indata.find_parameter<string> ("hdf5::create_mode"             , hdf5::create_mode);
     hdf5::full_storage             = indata.find_parameter<bool>   ("hdf5::full_storage"            , hdf5::full_storage           );
     hdf5::store_profiling          = indata.find_parameter<bool>   ("hdf5::store_profiling"         , hdf5::store_profiling        );
 
@@ -241,11 +235,11 @@ void settings::load_from_file(class_settings_reader &indata){
     console::timestamp             = indata.find_parameter<bool>   ("console::timestamp"   , console::timestamp);
 }
 
-void settings::load_from_hdf5(class_hdf5_file &hdf5){
+void settings::load_from_hdf5(h5pp::File & h5ppFile){
 
     std::string settings_from_hdf5;
     std::string temp_filename = "indata_temp.cfg";
-    hdf5.read_dataset(settings_from_hdf5, "/common/input_file");
+    h5ppFile.readDataset(settings_from_hdf5, "/common/input_file");
 
     std::ofstream temp_settings_file(temp_filename);
     temp_settings_file << settings_from_hdf5;

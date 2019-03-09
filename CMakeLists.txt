@@ -237,8 +237,8 @@ target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                          
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
 set(PTHREAD_LIBRARY  -Wl,--whole-archive -lpthread -Wl,--no-whole-archive)
 #target_link_libraries  (${PROJECT_NAME} PRIVATE ${PTHREAD_LIBRARY} )
-target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-allow-shlib-undefined )
-target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-undefined )
+#target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-allow-shlib-undefined )
+#target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-undefined )
 
 
 ###############################
@@ -258,6 +258,7 @@ set_target_properties(${PROJECT_NAME}
 ###########################################
 ###  Find or fetch all dependencies   ###
 ###########################################
+set(BUILD_DIRECTORY   ${PROJECT_SOURCE_DIR}/cmake-build-libs)
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
 #include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake-modules/FindGFortran.cmake)
@@ -265,10 +266,10 @@ include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not foun
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
 include(cmake-modules/Fetch_spdlog.cmake)                   # spdlog library
 include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
-include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
+include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
 include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)

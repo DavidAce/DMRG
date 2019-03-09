@@ -5,7 +5,8 @@ ExternalProject_Add(external_LBFGSpp
         GIT_REPOSITORY https://github.com/yixuan/LBFGSpp.git
         GIT_TAG master
         GIT_PROGRESS 1
-        PREFIX "${INSTALL_DIRECTORY}/LBFGS++"
+        PREFIX      ${BUILD_DIRECTORY}/LBFGS++
+        INSTALL_DIR ${INSTALL_DIRECTORY}/LBFGS++
         UPDATE_COMMAND ""
         TEST_COMMAND ""
         INSTALL_COMMAND ""

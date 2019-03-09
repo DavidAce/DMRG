@@ -16,7 +16,8 @@ class class_iDMRG : public class_algorithm_base {
 public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_base::class_algorithm_base;
-    explicit class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
+//    explicit class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
+    explicit class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
 
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_idmrg;
 

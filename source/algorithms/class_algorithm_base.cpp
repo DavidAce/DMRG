@@ -5,12 +5,9 @@
 #include <fstream>
 #include <complex>
 #include "class_algorithm_base.h"
-#include <io/class_hdf5_file.h>
 #include <io/class_hdf5_table_buffer2.h>
-#include <io/class_resume_from_hdf5.h>
 #include <mps_routines/class_superblock.h>
 #include <mps_routines/class_environment.h>
-//#include <mps_routines/class_measurement.h>
 #include <mps_routines/class_finite_chain_state.h>
 #include <mps_routines/nmspc_mps_tools.h>
 #include <mps_routines/class_mps_2site.h>
@@ -20,7 +17,7 @@
 #include <general/class_svd_wrapper.h>
 #include <algorithms/table_types.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
-
+#include <h5pp/h5pp.h>
 /*! \brief Prints the content of a vector nicely */
 template<typename T>
 std::ostream &operator<<(std::ostream &out, const std::list<T> &v) {
@@ -40,31 +37,29 @@ using namespace std::complex_literals;
 using namespace eigsolver_properties;
 using Scalar = class_algorithm_base::Scalar;
 
-class_algorithm_base::class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
+
+
+
+class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_,
                                            std::string sim_name_,
                                            SimulationType sim_type_)
-        :hdf5           (std::move(hdf5_)),
+        :h5ppFile       (std::move(h5ppFile_)),
          sim_name       (std::move(sim_name_)),
          sim_type       (sim_type_) {
 
-//    auto logger_exists = spdlog::get("DMRG");
-//    if (logger_exists) {
-//        spdlog::set_default_logger(logger_exists);
-//        spdlog::debug("Previous logger exists");
-//    }else{
-//        spdlog::warn("Previous logger does not exist");
-//    }
-
+    set_logger(sim_name);
     spdlog::trace("Constructing class_algorithm_base");
 //    ccout.set_verbosity(settings::console::verbosity);
     set_profiling_labels();
+    spdlog::trace("Constructing default state");
+    state             = std::make_shared<class_finite_chain_state>();
     spdlog::trace("Constructing table_profiling");
-    table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(hdf5, sim_name + "/measurements", "profiling");
+    table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(h5ppFile, sim_name + "/measurements", "profiling");
     spdlog::trace("Constructing superblock");
     superblock      = std::make_shared<class_superblock>(sim_type);
     spdlog::trace("Writing input_file");
-    hdf5->write_dataset(settings::input::input_file, "common/input_file");
-    hdf5->write_dataset(settings::input::input_filename, "common/input_filename");
+    h5ppFile->writeDataset(settings::input::input_file, "common/input_file");
+    h5ppFile->writeDataset(settings::input::input_filename, "common/input_filename");
 }
 
 
@@ -334,7 +329,7 @@ void class_algorithm_base::clear_saturation_status(){
 void class_algorithm_base::store_sim_to_file(){
     spdlog::trace("Storing simulation state to file");
     t_sto.tic();
-    MPS_Tools::Common::Hdf5::write_simulation_state(sim_state,*hdf5, sim_name);
+    MPS_Tools::Common::H5pp::write_simulation_state(sim_state,*h5ppFile, sim_name);
     t_sto.toc();
 }
 

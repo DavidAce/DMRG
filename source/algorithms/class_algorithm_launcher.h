@@ -8,15 +8,16 @@
 #include <memory>
 #include <io/class_custom_cout.h>
 
-class class_hdf5_file;
+namespace h5pp{class File;}
 
 class class_algorithm_launcher  {
 public:
 
-    std::shared_ptr <class_hdf5_file> hdf5;
+//    std::shared_ptr <class_hdf5_file> hdf5;
+    std::shared_ptr<h5pp::File> h5ppFile;
     std::string hdf5_path;
     class_custom_cout       ccout;
-    class_algorithm_launcher(std::shared_ptr<class_hdf5_file> hdf5_);
+    class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_);
     class_algorithm_launcher();
 
     void run_algorithms();

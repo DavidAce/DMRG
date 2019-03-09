@@ -50,20 +50,14 @@ else()
     string (REPLACE ";" "$<SEMICOLON>" LAPACK_LIBRARIES_GENERATOR   "${LAPACK_LIBRARIES}")
     string (REPLACE ";" "$<SEMICOLON>" FC_LDLAGS_GENERATOR          "${FC_LDLAGS}")
     ####################################################################
-    if(${STATIC_BUILD})
-        message("BUILDING ARPACK STATIC")
-        set(ARPACK_SHARED OFF)
-    else()
-        message("BUILDING ARPACK SHARED")
-        set(ARPACK_SHARED ON)
-    endif()
 
     include(ExternalProject)
     ExternalProject_Add(external_ARPACK
             GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
 #            GIT_TAG             master
             GIT_TAG             3.6.3
-            PREFIX              "${INSTALL_DIRECTORY}/arpack-ng"
+            PREFIX      ${BUILD_DIRECTORY}/arpack-ng
+            INSTALL_DIR ${INSTALL_DIRECTORY}/arpack-ng
             UPDATE_COMMAND ""
             BUILD_IN_SOURCE 1
 #            CONFIGURE_COMMAND
@@ -86,7 +80,7 @@ else()
             -DCMAKE_BUILD_TYPE=Release
             -DMPI=OFF
             -DINTERFACE64=OFF
-            -DBUILD_SHARED_LIBS=${ARPACK_SHARED}
+            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
             -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR}
             -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES_GENERATOR}
             -DEXTRA_LDLAGS=${FC_LDLAGS_GENERATOR}
@@ -97,6 +91,9 @@ else()
             NAMES libarpack${CUSTOM_SUFFIX}
             PATHS  ${INSTALL_DIR}/lib  ${INSTALL_DIR}/lib64
             )
+    if(NOT ARPACK_LIBRARIES)
+        set(ARPACK_LIBRARIES ${INSTALL_DIR}/lib/libarpack${CUSTOM_SUFFIX})
+    endif()
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
     message("THIS IS THE PATH MAKING ALL THE FUSS: ${ARPACK_INCLUDE_DIRS}")
     add_library(arpack INTERFACE)

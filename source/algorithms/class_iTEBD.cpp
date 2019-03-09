@@ -12,16 +12,16 @@
 #include <general/nmspc_math.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <spdlog/spdlog.h>
+#include <h5pp/h5pp.h>
 #include "class_iTEBD.h"
 using namespace std;
 using namespace Textra;
 using namespace std::complex_literals;
 
-class_iTEBD::class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_)
-        : class_algorithm_base(std::move(hdf5_),"iTEBD", SimulationType::iTEBD) {
-    set_logger(sim_name);
+class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
+        : class_algorithm_base(std::move(h5ppFile_),"iTEBD", SimulationType::iTEBD) {
 //    initialize_constants();
-    table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(hdf5, sim_name,sim_name);
+    table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(h5ppFile, sim_name,sim_name);
     sim_state.delta_t      = settings::itebd::delta_t0;
     initialize_superblock(settings::model::initial_state);
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -101,7 +101,7 @@ void class_iTEBD::store_state_to_file(bool force){
     }
     spdlog::trace("Storing storing mps to file");
     t_sto.tic();
-    MPS_Tools::Infinite::Hdf5::write_all_superblock(*superblock, *hdf5, sim_name);
+    MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5ppFile, sim_name);
     t_sto.toc();
 }
 

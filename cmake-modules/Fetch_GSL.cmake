@@ -48,7 +48,8 @@ else()
     include(ExternalProject)
     ExternalProject_Add(external_GSL
             URL      http://ftp.acc.umu.se/mirror/gnu.org/gnu/gsl/gsl-2.4.tar.gz
-            PREFIX              "${INSTALL_DIRECTORY}/gsl"
+            PREFIX      ${BUILD_DIRECTORY}/gsl
+            INSTALL_DIR ${INSTALL_DIRECTORY}/gsl
             CONFIGURE_COMMAND
                 cd <SOURCE_DIR> &&
                 pwd &&

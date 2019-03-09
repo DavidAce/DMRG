@@ -40,7 +40,8 @@ else()
     ExternalProject_Add(external_ARPACK++
             GIT_REPOSITORY      https://github.com/m-reuter/arpackpp.git
             GIT_TAG             master
-            PREFIX              "${INSTALL_DIRECTORY}/arpack++"
+            PREFIX      ${BUILD_DIRECTORY}/arpack++
+            INSTALL_DIR ${INSTALL_DIRECTORY}/arpack++
             UPDATE_COMMAND ""
             TEST_COMMAND ""
             INSTALL_COMMAND ""

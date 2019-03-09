@@ -3,10 +3,11 @@
 //
 
 
-#include <io/class_hdf5_file.h>
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_type_check.h>
 #include <iomanip>
 #include <iostream>
+#include <h5pp/h5pp.h>
 
 
 /*! \brief Prints the content of a vector nicely */
@@ -48,30 +49,21 @@ int main()
     std::string stringX = "Dummy string with spaces";
 
 
-    std::string output_filename         = "hdf5_test.h5";
-    std::string output_folder           = "Testing/hdf5";
-    bool        create_dir_if_not_found = true;
-    bool        overwrite_file_if_found = true;
-
-
-    class_hdf5_file hdf5(output_filename,
-                         output_folder,
-                         create_dir_if_not_found,
-                         overwrite_file_if_found);
-
+    std::string output_filename         = "Testing/h5pp_test.h5";
+    h5pp::File h5ppFile (output_filename);
     std::cout << "Writing vectorD: " <<  vectorD  << std::endl;
     std::cout << "Writing vectorC: " <<  vectorC  << std::endl;
     std::cout << "Writing tensorC: " <<  tensorC  << std::endl;
     std::cout << "Writing stringX: " <<  stringX  << std::endl;
 
-    hdf5.write_dataset(vectorD,"vectorD");
-    hdf5.write_dataset(vectorC,"vectorC");
-    hdf5.write_dataset(tensorC,"tensorC");
-    hdf5.write_dataset(stringX,"stringX");
-    hdf5.write_attribute_to_dataset("vectorD" ,std::string("This is an attribute"), "TestAttr");
-    hdf5.write_attribute_to_dataset("vectorC" ,std::string("This is an attribute"), "TestAttr");
-    hdf5.write_attribute_to_dataset("tensorC" ,std::string("This is an attribute"), "TestAttr");
-    hdf5.write_attribute_to_dataset("stringX" ,std::string("This is an attribute"), "TestAttr");
+    h5ppFile.writeDataset(vectorD,"vectorD");
+    h5ppFile.writeDataset(vectorC,"vectorC");
+    h5ppFile.writeDataset(tensorC,"tensorC");
+    h5ppFile.writeDataset(stringX,"stringX");
+    h5ppFile.writeAttributeToLink(std::string("This is an attribute"), "TestAttr","vectorD");
+    h5ppFile.writeAttributeToLink(std::string("This is an attribute"), "TestAttr","vectorC");
+    h5ppFile.writeAttributeToLink(std::string("This is an attribute"), "TestAttr","tensorC");
+    h5ppFile.writeAttributeToLink(std::string("This is an attribute"), "TestAttr","stringX");
 
 
     // Read the data back
@@ -81,10 +73,10 @@ int main()
     std::string             stringX_read;
 
 
-    hdf5.read_dataset(vectorD_read,"vectorD");
-    hdf5.read_dataset(vectorC_read,"vectorC");
-    hdf5.read_dataset(tensorC_read,"tensorC");
-    hdf5.read_dataset(stringX_read,"stringX");
+    h5ppFile.readDataset(vectorD_read,"vectorD");
+    h5ppFile.readDataset(vectorC_read,"vectorC");
+    h5ppFile.readDataset(tensorC_read,"tensorC");
+    h5ppFile.readDataset(stringX_read,"stringX");
     std::cout << "Reading vectorD: " <<  vectorD_read  << std::endl;
     std::cout << "Reading vectorC: " <<  vectorC_read  << std::endl;
     std::cout << "Reading tensorC: " <<  tensorC_read  << std::endl;
