@@ -109,6 +109,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     module load GCCcore/7.3.0
     module load CMake/3.12.1
     module load zlib/1.2.8
+    source activate dmrg
     export CC=gcc
     export CXX=g++
     echo $LD_LIBRARY_PATH
