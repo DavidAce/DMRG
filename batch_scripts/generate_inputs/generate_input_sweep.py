@@ -4,11 +4,12 @@ import numpy as np
 
 # Using the input_template.cfg, make num_copies new files enumerated as 0....num_copies,
 # while replacing the fields stated in find_replace.
-# Use '@' as a wildcard to be replaced by the the copy number.
 
 template_filename = 'input_template.cfg'
 basename    = 'mbl_'
 location    = "../input"
+os.makedirs(os.path.dirname(location), exist_ok=True)
+
 
 realizations = np.arange(0,4,1)  # Number of copies for each point on the sweep
 sites        = np.linspace(12,40,8,dtype=int)
@@ -26,8 +27,8 @@ for num_L in sites:
         for num_j in range(len(J_log_mean)):
             for num_h in range(len(h_log_mean)):
                 for num_r in realizations:
-                    input_filenames.append('L_'+ str(num_L) + '/' +  basename + str(num_total) + '_l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '_' + str(num_r) + '.cfg')
-                    settings.append({
+                    input_filename = 'L_'+ str(num_L) + '/' +  basename + str(num_total) + '_l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '_' + str(num_r) + '.cfg'
+                    settings = {
                         "model::selfdual_tf_rf_ising::J_log_mean"     : "{:.2f}".format(J_log_mean[num_j]),
                         "model::selfdual_tf_rf_ising::h_log_mean"     : "{:.2f}".format(h_log_mean[num_h]),
                         "model::selfdual_tf_rf_ising::lambda"         : "{:.2f}".format(lambdas[num_l]),
@@ -38,12 +39,12 @@ for num_L in sites:
 			            "xdmrg::chi_max"                              : "64",
                         "fdmrg::num_sites"                            : str(num_L),
                         "fdmrg::chi_max"                              : "64",
-                        # "hdf5::output_folder"                         : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h),
                         "hdf5::output_filename"                       : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h)+ '/' + basename + str(num_r) + '.h5'
-                    })
-                    num_total  = num_total + 1
+                    }
+                    num_total = num_total + 1
+                    generate_input_file(settings, location + '/' +input_filename, template_filename)
 
-generate_input_files(settings, input_filenames, template_filename,location)
+# generate_input_files(settings, input_filenames, template_filename,location)
 
 
 
