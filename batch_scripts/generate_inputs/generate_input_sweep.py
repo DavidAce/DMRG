@@ -11,7 +11,7 @@ basename    = 'mbl_'
 location    = "../input"
 
 realizations = np.arange(0,4000,1)  # Number of copies for each point on the sweep
-sites        = np.linspace(12,40,8)
+sites        = np.linspace(12,40,8,dtype=int)
 lambdas      = np.linspace(0,0.2,5)
 deltas       = [0] # np.linspace(-1.0,1.0,5)
 J_log_mean   = np.array([1])
