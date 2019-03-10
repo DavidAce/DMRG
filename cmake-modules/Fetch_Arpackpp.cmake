@@ -38,7 +38,7 @@ else()
     message(STATUS "Arpack++ will be installed into ${INSTALL_DIRECTORY}/arpackpp on first build.")
     include(ExternalProject)
     ExternalProject_Add(external_ARPACK++
-            GIT_REPOSITORY      https://github.com/m-reuter/arpackpp.git
+            GIT_REPOSITORY      git@github.com:m-reuter/arpackpp.git
             GIT_TAG             master
             PREFIX      ${BUILD_DIRECTORY}/arpack++
             INSTALL_DIR ${INSTALL_DIRECTORY}/arpack++
