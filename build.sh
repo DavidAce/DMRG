@@ -12,7 +12,7 @@ Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t 
 -h               : Help. Shows this text.
 -i <ON|OFF>      : Intel MKL use   | ON | OFF | (default = OFF)
 -j <num_threads> : Number of threads used by CMake
--l               : Clear downloaded libraries before build (i.e. delete ./libs)
+-l               : Clear downloaded libraries before build (i.e. delete ./libs and ./cmake-build-libs)
 -m <mode>        : Release         | Debug | Profile |  (default = Release)
 -o <ON|OFF>      : OpenMP use      | ON | OFF | (default = OFF)
 -s <ON|OFF>      : Static linking  | ON | OFF | (default = ON)
@@ -64,7 +64,7 @@ fi
 
 if [ "$clear_libs" = true ] ; then
     echo "Clearing downloaded libraries."
-	rm -rf ./libs
+	rm -rf ./libs ./cmake-build-libs
 fi
 
 
