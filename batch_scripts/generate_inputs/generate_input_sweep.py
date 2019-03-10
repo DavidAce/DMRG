@@ -10,7 +10,7 @@ template_filename = 'input_template.cfg'
 basename    = 'mbl_'
 location    = "../input"
 
-realizations = np.arange(0,4000,1)  # Number of copies for each point on the sweep
+realizations = np.arange(0,4,1)  # Number of copies for each point on the sweep
 sites        = np.linspace(12,40,8,dtype=int)
 lambdas      = np.linspace(0,0.2,5)
 deltas       = [0] # np.linspace(-1.0,1.0,5)
@@ -38,8 +38,8 @@ for num_L in sites:
 			            "xdmrg::chi_max"                              : "64",
                         "fdmrg::num_sites"                            : str(num_L),
                         "fdmrg::chi_max"                              : "64",
-                        "hdf5::output_folder"                         : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h),
-                        "hdf5::output_filename"                       : basename + str(num_r) + '.h5'
+                        # "hdf5::output_folder"                         : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h),
+                        "hdf5::output_filename"                       : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h)+ '/' + basename + str(num_r) + '.h5'
                     })
                     num_total  = num_total + 1
 
