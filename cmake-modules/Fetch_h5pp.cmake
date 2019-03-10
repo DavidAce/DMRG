@@ -9,7 +9,7 @@ else()
 
     include(ExternalProject)
     ExternalProject_Add(external_H5PP
-            GIT_REPOSITORY git@github.com:DavidAce/h5pp.git
+            GIT_REPOSITORY https://github.com/DavidAce/h5pp.git
             GIT_TAG master
             GIT_PROGRESS 1
             PREFIX      ${BUILD_DIRECTORY}/h5pp
