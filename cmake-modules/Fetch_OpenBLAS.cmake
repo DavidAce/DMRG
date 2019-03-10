@@ -9,18 +9,17 @@ endif()
 # Otherwise, arpack-ng will complain later about undefined references.
 
 
-message(STATUS "SEARCHING FOR OpenBLAS IN SYSTEM...")
 set(BLA_VENDOR OpenBLAS)
 set(BLAS_VERBOSE OFF)
 set(BLA_STATIC ${STATIC_BUILD})
 
 
-if (EXISTS "$ENV{BLAS_DIR}")
+if ($ENV{BLAS_DIR})
     # Try finding openblas as module library
-    message(STATUS "Attempting to find BLAS and LAPACK from environment modules.")
+    message(STATUS "Searching for OpenBLAS in environment modules.")
     find_library(BLAS_openblas_LIBRARY
             NAMES libopenblas${CUSTOM_SUFFIX}
-            PATHS "$ENV{BLAS_DIR}/lib"
+            PATHS $ENV{BLAS_DIR}/lib
             NO_DEFAULT_PATH
             )
 
@@ -33,15 +32,16 @@ if (EXISTS "$ENV{BLAS_DIR}")
         set(OpenBLAS_MULTITHREADED 1 )
     endif()
 else()
+    message(STATUS "Searching for OpenBLAS in system.")
     find_library(BLAS_openblas_LIBRARY
             NAMES libopenblas${CUSTOM_SUFFIX}
-            PATHS "/usr/lib/x86_64-linux-gnu"
-            NO_DEFAULT_PATH
+            PATHS /usr/lib/x86_64-linux-gnu
+#            NO_DEFAULT_PATH
             )
     find_path(BLAS_INCLUDE_DIRS
             NAMES cblas.h
-            PATHS "/usr/include" "/usr/include/x86_64-linux-gnu"
-            NO_DEFAULT_PATH
+            PATHS /usr/include /usr/include/x86_64-linux-gnu
+#            NO_DEFAULT_PATH
             )
     if (BLAS_openblas_LIBRARY)
         include(cmake-modules/FindLAPACKE.cmake)
@@ -49,7 +49,20 @@ else()
     endif()
 endif()
 
-
+#if(NOT BLAS_openblas_LIBRARY)
+#    message(STATUS "Searching for OpenBLAS IN PATH: ")
+#    find_package(BLAS PATHS /home/david/Programs/anaconda3/lib )
+#    if(BLAS_FOUND)
+#        # To print all variables, use the code below:
+#        #
+#            get_cmake_property(_variableNames VARIABLES)
+#            foreach (_variableName ${_variableNames})
+#                if("${_variableName}" MATCHES "BLAS" OR "${_variableName}" MATCHES "blas" OR "${_variableName}" MATCHES "Blas")
+#                    message(STATUS "${_variableName}=${${_variableName}}")
+#                endif()
+#            endforeach()
+#    endif()
+#endif()
 
 if(BLAS_openblas_LIBRARY)
     message(STATUS "BLAS FOUND IN SYSTEM: ${BLAS_openblas_LIBRARY}")
