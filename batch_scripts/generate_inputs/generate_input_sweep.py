@@ -21,7 +21,7 @@ h_log_mean   = J_log_mean - deltas
 num_total = 0
 settings = []
 input_filenames = []
-
+print("Generating", len(lambdas) * len(J_log_mean) * len(h_log_mean) * len(realizations), "input files")
 for num_L in sites:
     for num_l in range(len(lambdas)):
         for num_j in range(len(J_log_mean)):
