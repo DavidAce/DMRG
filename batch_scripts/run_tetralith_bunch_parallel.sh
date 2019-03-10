@@ -4,7 +4,7 @@
 #SBATCH --job-name=DMRG
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=32
-#SBATCH --time=0-10:00:00
+#SBATCH --time=0-0:20:00
 #SBATCH --mem-per-cpu=2000
 #SBATCH --kill-on-invalid-dep=yes
 

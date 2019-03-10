@@ -135,7 +135,7 @@ namespace settings {
         extern bool         save_progress           ;        /*!< If true, saves the simulation data periodically */
         extern std::string  access_mode             ;        /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
         extern std::string  create_mode             ;        /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
-        extern std::string  output_filename         ;        /*!< Name of the output HDF5 file relative to the executable  */
+        extern std::string  output_filename         ;        /*!< Name of the output HDF5 file relative to the execution point  */
         extern bool         full_storage            ;        /*!< If true, saves the full MPS to file. Set to false to reduce output file size. */
         extern bool         store_profiling         ;        /*!< Whether to store profiling information to file. */
     }
