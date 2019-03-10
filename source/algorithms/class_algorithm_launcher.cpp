@@ -18,7 +18,7 @@ using namespace std;
 
 class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_):h5ppFile(std::move(h5ppFile_))
 {
-    hdf5_path = h5ppFile->get_file_path();
+    hdf5_path = h5ppFile->getFilePath();
 
 }
 class_algorithm_launcher::class_algorithm_launcher()
@@ -35,7 +35,7 @@ class_algorithm_launcher::class_algorithm_launcher()
             settings::hdf5::output_filename,
             h5pp::AccessMode::READWRITE,
             createMode);
-    hdf5_path = h5ppFile->get_file_path();
+    hdf5_path = h5ppFile->getFilePath();
 }
 
 
@@ -47,7 +47,7 @@ void class_algorithm_launcher::run_algorithms(){
     spdlog::info("All simulations finished");
     bool OK = true;
     h5ppFile->writeDataset(OK, "/common/fileOK");
-    spdlog::info("Simulation data written to file: {}", h5ppFile->get_file_path());
+    spdlog::info("Simulation data written to file: {}", h5ppFile->getFilePath());
 }
 
 

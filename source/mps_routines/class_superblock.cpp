@@ -400,6 +400,7 @@ void class_superblock::do_all_measurements() {
     measurements.energy_mpo                     = Measure::energy_mpo(*this);  //This number is needed for variance calculation!
     measurements.energy_per_site_mpo            = Measure::energy_per_site_mpo(*this);
     measurements.energy_per_site_ham            = Measure::energy_per_site_ham(*this);
+    measurements.energy_per_site_mom            = Measure::energy_per_site_mom(*this);
     measurements.energy_variance_mpo            = Measure::energy_variance_mpo(*this, measurements.energy_mpo);
     measurements.energy_variance_per_site_mpo   = Measure::energy_variance_per_site_mpo(*this, measurements.energy_mpo);
     measurements.energy_variance_per_site_ham   = Measure::energy_variance_per_site_ham(*this);

@@ -100,7 +100,7 @@ Eigen::VectorXd class_xDMRG_full_functor<Scalar>::get_vH (const Eigen::Matrix<do
 template<typename Scalar>
 double class_xDMRG_full_functor<Scalar>::operator()(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, Eigen::Matrix<double,Eigen::Dynamic,1> &grad) {
     double vH2v,vHv,vv;
-    double lambda,var,log10var,log10norm, fx;
+    double lambda,var,log10var, fx;
     Eigen::VectorXd vH, vH2;
 //    num_threads(2)
     #pragma omp parallel

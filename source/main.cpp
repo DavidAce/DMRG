@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
     }else{
         try{
             auto h5ppFile = std::make_shared<h5pp::File> (outputfile,h5pp::AccessMode::READONLY,h5pp::CreateMode::OPEN);
-            spdlog::info("Loading settings from existing file [{}]", h5ppFile->get_file_path());
+            spdlog::info("Loading settings from existing file [{}]", h5ppFile->getFilePath());
             settings::load_from_hdf5(*h5ppFile);
         }catch(std::exception &ex){
             spdlog::info("Couldn't find an inputfile or previous outputfile to load settings: {}", outputfile,ex.what() );

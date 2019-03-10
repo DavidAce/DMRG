@@ -200,12 +200,11 @@ double MPS_Tools::Common::Measure::energy_per_site_mpo(class_superblock & superb
 
 
 double MPS_Tools::Common::Measure::energy_per_site_ham(class_superblock & superblock){
-    if (superblock.has_been_measured
-    or superblock.sim_type != SimulationType::iTEBD
-    or superblock.sim_type != SimulationType::iDMRG
-    or superblock.measurements.bond_dimension <= 2 ){
-        return superblock.measurements.energy_per_site_ham;
-    }
+    if (superblock.has_been_measured) return superblock.measurements.energy_per_site_ham;
+    if (superblock.sim_type == SimulationType::fDMRG) return superblock.measurements.energy_per_site_ham;
+    if (superblock.sim_type == SimulationType::xDMRG) return superblock.measurements.energy_per_site_ham;
+    if (superblock.measurements.bond_dimension <= 2 ) return superblock.measurements.energy_per_site_ham;
+
     superblock.t_ene_ham.tic();
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -236,14 +235,10 @@ double MPS_Tools::Common::Measure::energy_per_site_ham(class_superblock & superb
 
 
 double MPS_Tools::Common::Measure::energy_per_site_mom(class_superblock & superblock){
-    if (superblock.has_been_measured
-     or superblock.sim_type != SimulationType::iTEBD
-     or superblock.sim_type != SimulationType::iDMRG
-     or superblock.measurements.bond_dimension <= 2)
-    {
-        return superblock.measurements.energy_per_site_mom;
-    }
-
+    if (superblock.has_been_measured) return superblock.measurements.energy_per_site_mom;
+    if (superblock.sim_type == SimulationType::fDMRG) return superblock.measurements.energy_per_site_mom;
+    if (superblock.sim_type == SimulationType::xDMRG) return superblock.measurements.energy_per_site_mom;
+    if (superblock.measurements.bond_dimension <= 2 ) return superblock.measurements.energy_per_site_mom;
     superblock.t_ene_mom.tic();
     Scalar a  = (0.0 + 1.0i) *5e-3;
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);

@@ -139,7 +139,8 @@ void class_iTEBD::store_progress_to_file(bool force){
     if (not force){
         if (Math::mod(sim_state.iteration, settings::itebd::store_freq) != 0) {return;}
     }
-    superblock->do_all_measurements();
+//    superblock->do_all_measurements();
+    compute_observables();
     t_sto.tic();
     table_itebd->append_record(
             sim_state.iteration,
