@@ -53,7 +53,7 @@ else()
 
     include(ExternalProject)
     ExternalProject_Add(external_ARPACK
-            GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
+            GIT_REPOSITORY      git@github.com:opencollab/arpack-ng.git
 #            GIT_TAG             master
             GIT_TAG             3.6.3
             PREFIX      ${BUILD_DIRECTORY}/arpack-ng
