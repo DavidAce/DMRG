@@ -26,8 +26,10 @@ for num_L in sites:
     for num_l in range(len(lambdas)):
         for num_j in range(len(J_log_mean)):
             for num_h in range(len(h_log_mean)):
+                input_filename_dir = location + '/' + 'L_'+ str(num_L)
+                os.makedirs(os.path.dirname(input_filename_dir), exist_ok=True)
                 for num_r in realizations:
-                    input_filename = 'L_'+ str(num_L) + '/' +  basename + str(num_total) + '_l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '_' + str(num_r) + '.cfg'
+                    input_filename = input_filename_dir + '/' + basename + str(num_total) + '_l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '_' + str(num_r) + '.cfg'
                     settings = {
                         "model::selfdual_tf_rf_ising::J_log_mean"     : "{:.2f}".format(J_log_mean[num_j]),
                         "model::selfdual_tf_rf_ising::h_log_mean"     : "{:.2f}".format(h_log_mean[num_h]),
@@ -42,7 +44,7 @@ for num_L in sites:
                         "hdf5::output_filename"                       : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h)+ '/' + basename + str(num_r) + '.h5'
                     }
                     num_total = num_total + 1
-                    generate_input_file(settings, location + '/' +input_filename, template_filename)
+                    generate_input_file(settings, input_filename, template_filename)
 
 # generate_input_files(settings, input_filenames, template_filename,location)
 
