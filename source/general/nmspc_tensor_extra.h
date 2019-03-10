@@ -247,6 +247,7 @@ namespace Textra {
 
     template<typename Derived>
     Eigen::Matrix<typename Derived::Scalar,Eigen::Dynamic,Eigen::Dynamic, Eigen::RowMajor> to_RowMajor(const Eigen::MatrixBase<Derived> &matrix){
+        if(matrix.IsRowMajor) {return matrix;}
         Eigen::Matrix<typename Derived::Scalar,Eigen::Dynamic,Eigen::Dynamic, Eigen::RowMajor> matrowmajor = matrix;
         return matrowmajor;
     }
@@ -261,6 +262,7 @@ namespace Textra {
 
     template<typename Derived>
     Eigen::Matrix<typename Derived::Scalar,Eigen::Dynamic,Eigen::Dynamic, Eigen::ColMajor> to_ColMajor(const Eigen::MatrixBase<Derived> &matrix){
+        if(not matrix.IsRowMajor) {return matrix;}
         Eigen::Matrix<typename Derived::Scalar,Eigen::Dynamic,Eigen::Dynamic, Eigen::ColMajor> matrowmajor = matrix;
         return matrowmajor;
     }

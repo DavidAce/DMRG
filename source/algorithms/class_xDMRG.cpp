@@ -216,11 +216,13 @@ void class_xDMRG::run_postprocessing(){
     state->set_measured_false();
     superblock->set_measured_false();
     state->do_all_measurements();
+    store_state_to_file(true);
+
     MPS_Tools::Infinite::H5pp::write_all_measurements(*superblock,*h5ppFile,sim_name);
     MPS_Tools::Finite::H5pp::write_all_measurements(*state,*h5ppFile,sim_name);
 
 //    MPS_Tools::Finite::Debug::print_parity_properties(*state);
-//    MPS_Tools::Finite::H5pp::write_all_parity_projections(*state,*superblock,*hdf5,sim_name);
+    MPS_Tools::Finite::H5pp::write_all_parity_projections(*state,*superblock,*h5ppFile,sim_name);
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
         h5ppFile->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
@@ -815,6 +817,7 @@ void class_xDMRG::find_energy_range() {
 
 void class_xDMRG::store_state_to_file(bool force){
     if(not force){
+        if (not settings::hdf5::save_progress){return;}
         if (Math::mod(sim_state.iteration, settings::xdmrg::store_freq) != 0) {return;}
         if (not state->position_is_the_middle_any_direction()) {return;}
         if (settings::xdmrg::store_freq == 0){return;}
@@ -823,10 +826,6 @@ void class_xDMRG::store_state_to_file(bool force){
     t_sto.tic();
     MPS_Tools::Finite::H5pp::write_all_state(*state, *h5ppFile, sim_name);
     MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5ppFile, sim_name);
-    if (settings::hdf5::save_progress){
-        MPS_Tools::Finite::H5pp::write_full_mps(*state,*h5ppFile,sim_name);
-        MPS_Tools::Finite::H5pp::write_full_mpo(*state,*h5ppFile,sim_name);
-    }
     t_sto.toc();
     store_sim_to_file();
 }
