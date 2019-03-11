@@ -130,28 +130,30 @@ ExternalProject_Get_Property(external_OpenBLAS INSTALL_DIR)
 
 endif()
 
-set_target_properties(blas PROPERTIES
-        INTERFACE_LINK_LIBRARIES        "${BLAS_LIBRARIES};${PTHREAD_LIBRARY}"
-        INTERFACE_INCLUDE_DIRECTORIES   "${BLAS_INCLUDE_DIRS}"
-#        INTERFACE_LINK_OPTIONS          "${PTHREAD_LIBRARY}"
-        )
 
-set_target_properties(lapack PROPERTIES
-        INTERFACE_LINK_LIBRARIES        "${LAPACK_LIBRARIES};${PTHREAD_LIBRARY}"
-        INTERFACE_INCLUDE_DIRECTORIES   "${LAPACK_INCLUDE_DIRS}"
-#        INTERFACE_LINK_OPTIONS          "${PTHREAD_LIBRARY}"
-        )
 
+target_link_libraries(blas INTERFACE ${BLAS_LIBRARIES} ${PTHREAD_LIBRARY})
+target_include_directories(blas INTERFACE ${BLAS_INCLUDE_DIRS})
+if(TARGET lapacke)
+    target_link_libraries(blas INTERFACE lapacke)
+endif()
+
+
+target_link_libraries(lapack INTERFACE blas)
 
 set(FC_LDLAGS -fPIC ${PTHREAD_LIBRARY})
 
 if(OpenBLAS_USE_OPENMP AND OpenMP_FOUND)
-    set_target_properties(blas   PROPERTIES INTERFACE_LINK_OPTIONS "${OpenMP_CXX_FLAGS}")
-    set_target_properties(lapack PROPERTIES INTERFACE_LINK_OPTIONS "${OpenMP_CXX_FLAGS}")
-    list(APPEND BLAS_LIBRARIES        ${OpenMP_LIBRARIES})
-    list(APPEND BLAS_LIBRARIES_STATIC ${OpenMP_LIBRARIES})
-    list(APPEND BLAS_LIBRARIES_SHARED ${OpenMP_LIBRARIES})
+    target_link_libraries(blas INTERFACE ${OpenMP_LIBRARIES})
+    target_link_options(blas INTERFACE ${OpenMP_CXX_FLAGS})
+    target_link_options(lapack INTERFACE ${OpenMP_CXX_FLAGS})
+#
+#    list(APPEND BLAS_LIBRARIES        ${OpenMP_LIBRARIES})
+#    list(APPEND BLAS_LIBRARIES_STATIC ${OpenMP_LIBRARIES})
+#    list(APPEND BLAS_LIBRARIES_SHARED ${OpenMP_LIBRARIES})
 endif()
+
+
 
 add_definitions(-DOpenBLAS_AVAILABLE)
 
