@@ -94,10 +94,6 @@ matrix:
             - gcc-7
             - g++-7
             - gfortran-7
-            - libhdf5-dev
-            - libhdf5-serial-dev
-            - hdf5-helpers
-            - hdf5-tools
             - libsz2
             - zlibc
             - libgsl0-dev
@@ -106,6 +102,14 @@ matrix:
             - libarpack++2-dev
             - liblapacke
             - liblapacke-dev
+      before_install:
+        # Here we just install Miniconda, which you shouldn't have to change.
+        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        - chmod +x miniconda.sh
+        - ./miniconda.sh -b -p $HOME/miniconda
+        - export PATH=$HOME/miniconda/bin:$PATH
+        - conda update --yes conda
+        - conda install --yes hdf5 eigen
 #    - os: osx
 #      osx_image: xcode10.1 #Newer versions don't like experimental/filesystem or _stdio.h?
 #      compiler: gcc-7

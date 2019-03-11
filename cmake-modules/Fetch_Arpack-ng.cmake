@@ -22,6 +22,8 @@ if (NOT ARPACK_LIBRARIES)
             PATHS "$ENV{ARPACK_DIR}/include"
             NO_DEFAULT_PATH
             )
+else()
+    set(ARPACK_INCLUDE_DIRS TRUE)
 endif()
 
 
