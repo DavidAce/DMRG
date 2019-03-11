@@ -138,7 +138,6 @@ if(TARGET lapacke)
     target_link_libraries(blas INTERFACE lapacke)
 endif()
 
-
 target_link_libraries(lapack INTERFACE blas)
 
 set(FC_LDLAGS -fPIC ${PTHREAD_LIBRARY})
@@ -154,6 +153,8 @@ if(OpenBLAS_USE_OPENMP AND OpenMP_FOUND)
 endif()
 
 
-
-add_definitions(-DOpenBLAS_AVAILABLE)
-
+include(CheckIncludeFileCXX)
+check_include_file_cxx(cblas.h    has_cblas_h)
+if(has_cblas_h)
+    add_definitions(-DOpenBLAS_AVAILABLE)
+endif()
