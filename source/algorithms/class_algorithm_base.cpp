@@ -938,18 +938,18 @@ void class_algorithm_base::print_status_full(){
 
 void class_algorithm_base::set_profiling_labels() {
     using namespace settings::profiling;
-    t_tot.set_properties(on, precision,"+Total Time              ");
-    t_sto.set_properties(on, precision,"↳ Store to file          ");
-    t_ste.set_properties(on, precision,"↳ Finite chain storage   ");
-    t_prt.set_properties(on, precision,"↳ Printing to console    ");
-    t_obs.set_properties(on, precision,"↳ Computing observables  ");
-    t_sim.set_properties(on, precision,"↳+Simulation             ");
-    t_evo.set_properties(on, precision,"↳ Time Evolution         ");
-    t_opt.set_properties(on, precision,"↳+Optimize MPS           ");
-    t_eig.set_properties(on, precision," ↳ Eigenvalue solver     ");
-    t_ham.set_properties(on, precision," ↳ Build Hamiltonian     ");
-    t_svd.set_properties(on, precision,"↳ SVD Truncation         ");
-    t_udt.set_properties(on, precision,"↳ Update Timestep        ");
-    t_env.set_properties(on, precision,"↳ Update Environments    ");
-    t_con.set_properties(on, precision,"↳ Check Convergence      ");
+    t_tot.set_properties(true, precision,"+Total Time              ");
+    t_sto.set_properties(on,   precision,"↳ Store to file          ");
+    t_ste.set_properties(on,   precision,"↳ Finite chain storage   ");
+    t_prt.set_properties(on,   precision,"↳ Printing to console    ");
+    t_obs.set_properties(on,   precision,"↳ Computing observables  ");
+    t_sim.set_properties(on,   precision,"↳+Simulation             ");
+    t_evo.set_properties(on,   precision,"↳ Time Evolution         ");
+    t_opt.set_properties(on,   precision,"↳+Optimize MPS           ");
+    t_eig.set_properties(on,   precision," ↳ Eigenvalue solver     ");
+    t_ham.set_properties(on,   precision," ↳ Build Hamiltonian     ");
+    t_svd.set_properties(on,   precision,"↳ SVD Truncation         ");
+    t_udt.set_properties(on,   precision,"↳ Update Timestep        ");
+    t_env.set_properties(on,   precision,"↳ Update Environments    ");
+    t_con.set_properties(on,   precision,"↳ Check Convergence      ");
 }
