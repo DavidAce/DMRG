@@ -11,9 +11,9 @@ location    = "../input"
 os.makedirs(location, exist_ok=True)
 
 
-realizations = np.arange(0,4,1)  # Number of copies for each point on the sweep
+realizations = np.arange(0,2000,1)  # Number of copies for each point on the sweep
 sites        = np.linspace(12,40,8,dtype=int)
-lambdas      = np.linspace(0,0.2,5)
+lambdas      = np.linspace(0,0.2,3)
 deltas       = [0] # np.linspace(-1.0,1.0,5)
 J_log_mean   = np.array([1])
 h_log_mean   = J_log_mean - deltas
@@ -21,7 +21,7 @@ h_log_mean   = J_log_mean - deltas
 num_total = 0
 settings = []
 input_filenames = []
-print("Generating", len(lambdas) * len(J_log_mean) * len(h_log_mean) * len(realizations), "input files")
+print("Generating", len(sites) * len(lambdas) * len(J_log_mean) * len(h_log_mean) * len(realizations), "input files")
 for num_L in sites:
     for num_l in range(len(lambdas)):
         for num_j in range(len(J_log_mean)):
