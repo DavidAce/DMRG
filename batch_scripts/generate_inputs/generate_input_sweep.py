@@ -8,7 +8,7 @@ import numpy as np
 template_filename = 'input_template.cfg'
 basename    = 'mbl_'
 location    = "../input"
-os.makedirs(os.path.dirname(location), exist_ok=True)
+os.makedirs(location, exist_ok=True)
 
 
 realizations = np.arange(0,4,1)  # Number of copies for each point on the sweep
@@ -27,7 +27,7 @@ for num_L in sites:
         for num_j in range(len(J_log_mean)):
             for num_h in range(len(h_log_mean)):
                 input_filename_dir = location + '/' + 'L_'+ str(num_L)
-                os.makedirs(os.path.dirname(input_filename_dir), exist_ok=True)
+                os.makedirs(input_filename_dir, exist_ok=True)
                 for num_r in realizations:
                     input_filename = input_filename_dir + '/' + basename + str(num_total) + '_l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '_' + str(num_r) + '.cfg'
                     settings = {
