@@ -73,9 +73,8 @@ else()
     set(GSL_INCLUDE_DIRS ${INSTALL_DIR}/include)
 endif()
 
-set_target_properties(GSL PROPERTIES
-        INTERFACE_LINK_LIBRARIES      "${GSL_LIBRARY};${GSL_CBLAS_LIBRARY}"
-        INTERFACE_INCLUDE_DIRECTORIES "${GSL_INCLUDE_DIRS}"
-        )
+target_link_libraries(GSL INTERFACE ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY})
+target_include_directories(GSL INTERFACE ${GSL_INCLUDE_DIRS})
+
 
 #target_link_libraries(${PROJECT_NAME} PRIVATE GSL)

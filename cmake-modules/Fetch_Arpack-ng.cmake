@@ -29,15 +29,9 @@ endif()
 if(ARPACK_LIBRARIES AND ARPACK_INCLUDE_DIRS)
     message(STATUS "ARPACK found in system:   ${ARPACK_LIBRARIES}")
     add_library(arpack INTERFACE)
-    set_target_properties(arpack
-            PROPERTIES
-            INTERFACE_LINK_LIBRARIES      "${ARPACK_LIBRARIES};blas;lapack;gfortran"
-            INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
-            #            INTERFACE_LINK_OPTIONS        "${PTHREAD_LIBRARY}"
-            )
-
-    add_dependencies(arpack blas lapack gfortran)
-    return()
+    target_link_libraries(arpack INTERFACE ${ARPACK_LIBRARIES})
+    target_link_libraries(arpack INTERFACE blas lapack gfortran)
+    target_include_directories(arpack INTERFACE ${ARPACK_INCLUDE_DIRS})
 else()
     message(STATUS "Arpack-ng will be installed into ${INSTALL_DIRECTORY}/arpack-ng on first build.")
 
@@ -60,17 +54,6 @@ else()
             INSTALL_DIR ${INSTALL_DIRECTORY}/arpack-ng
             UPDATE_COMMAND ""
             BUILD_IN_SOURCE 1
-#            CONFIGURE_COMMAND
-#                ./bootstrap && export INTERFACE64=1 &&
-#                ./configure INTERFACE64=1
-#                            --prefix=<INSTALL_DIR>
-#                            --enable-silent-rules
-#                            --with-blas=${BLAS_LIBRARIES_GENERATOR}
-#                            --with-lapack=${LAPACK_LIBRARIES_GENERATOR}
-#
-#            BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} && ${CMAKE_MAKE_PROGRAM} check
-#            INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install
-
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
@@ -95,14 +78,9 @@ else()
         set(ARPACK_LIBRARIES ${INSTALL_DIR}/lib/libarpack${CUSTOM_SUFFIX})
     endif()
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
-    message("THIS IS THE PATH MAKING ALL THE FUSS: ${ARPACK_INCLUDE_DIRS}")
     add_library(arpack INTERFACE)
-    set_target_properties(arpack
-            PROPERTIES
-            INTERFACE_LINK_LIBRARIES      "${ARPACK_LIBRARIES};blas;lapack;gfortran"
-            INTERFACE_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}"
-            )
-
-    add_dependencies(arpack external_ARPACK blas lapack gfortran)
-    #target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
+    add_dependencies(arpack external_ARPACK)
+    target_link_libraries(arpack INTERFACE ${ARPACK_LIBRARIES})
+    target_link_libraries(arpack INTERFACE blas lapack gfortran)
+    target_include_directories(arpack INTERFACE ${ARPACK_INCLUDE_DIRS})
 endif()

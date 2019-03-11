@@ -29,10 +29,8 @@ if (ARPACKPP_LIBRARIES OR ARPACKPP_INCLUDE_DIR AND NOT "${OS_PROPERTIES}" MATCHE
     message(STATUS "Arpack++ library found in system: ${ARPACKPP_LIBRARIES}")
     message(STATUS "Arpack++ include found in system: ${ARPACKPP_INCLUDE_DIR}")
     add_library(arpack++ INTERFACE)
-    set_target_properties(arpack++ PROPERTIES
-            INTERFACE_LINK_LIBRARIES "${ARPACKPP_LIBRARIES};arpack;blas;lapack"
-            INTERFACE_INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}")
-    target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
+    target_link_libraries(arpack++ INTERFACE ${ARPACKPP_LIBRARIES} arpack blas lapack)
+    target_include_directories(arpack++ INTERFACE ${ARPACKPP_INCLUDE_DIR})
 
 else()
     message(STATUS "Arpack++ will be installed into ${INSTALL_DIRECTORY}/arpackpp on first build.")
@@ -49,19 +47,14 @@ else()
             BUILD_COMMAND
             ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include && find <INSTALL_DIR>/include -maxdepth 1 -type l -delete &&
             ${CMAKE_COMMAND} -E create_symlink <SOURCE_DIR>/include <INSTALL_DIR>/include/arpack++
-            DEPENDS blas lapack arpack gfortran
+            DEPENDS blas lapack arpack
             )
 
     ExternalProject_Get_Property(external_ARPACK++ INSTALL_DIR)
     add_library(arpack++ INTERFACE)
-    set(ARPACKPP_INCLUDE_DIR ${INSTALL_DIR}/include)
-    set_target_properties(arpack++ PROPERTIES
-            INTERFACE_LINK_LIBRARIES "arpack;blas;lapack"
-            INTERFACE_INCLUDE_DIRECTORIES "${ARPACKPP_INCLUDE_DIR}"
-            )
-    add_dependencies(arpack++ external_ARPACK++ blas lapack arpack)
-#    target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
-#    target_include_directories(${PROJECT_NAME} PRIVATE ${ARPACKPP_INCLUDE_DIR})
+    add_dependencies(arpack++ external_ARPACK++)
+    target_link_libraries(arpack++ INTERFACE arpack blas lapack)
+    target_include_directories(arpack++ INTERFACE ${INSTALL_DIR}/include)
 endif()
 
 
