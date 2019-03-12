@@ -74,7 +74,6 @@ if(BLAS_openblas_LIBRARY)
     set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
     set(LAPACK_LIBRARIES   ${BLAS_openblas_LIBRARY})
     set(LAPACK_INCLUDE_DIRS ${BLAS_INCLUDE_DIRS})
-    add_definitions(-DOpenBLAS_AVAILABLE)
 
 else()
     message(STATUS "OpenBLAS will be installed into ${INSTALL_DIRECTORY}/OpenBLAS on first build.")
