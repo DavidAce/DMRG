@@ -171,7 +171,12 @@ endif()
 
 
 include(CheckIncludeFileCXX)
+include(CheckSymbolExists)
 check_include_file_cxx(cblas.h    has_cblas_h)
 if(has_cblas_h)
+    check_symbol_exists(openblas_set_num_threads cblas.h has_openblas_symbols)
+endif()
+if(has_cblas_h AND has_openblas_symbols)
     add_definitions(-DOpenBLAS_AVAILABLE)
 endif()
+
