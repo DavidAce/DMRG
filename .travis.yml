@@ -110,7 +110,7 @@ matrix:
         - export PATH=$HOME/miniconda/bin:$PATH
         - conda update --yes conda
         - conda install --yes hdf5 eigen
-        - conda install --yes -c conda-forge openblas
+        #- conda install --yes -c conda-forge openblas
 
 #    - os: osx
 #      osx_image: xcode10.1 #Newer versions don't like experimental/filesystem or _stdio.h?
