@@ -37,13 +37,25 @@ if (NOT LAPACKE_FOUND AND EXISTS "$ENV{LAPACKE_DIR}")
     message(STATUS "Attempting to find LAPACKE in loaded environment modules.")
     find_library(LAPACKE_LIBRARY
             NAMES libopenblas${SUFFIX}
-            PATHS "$ENV{BLAS_DIR}/lib"
-#            NO_DEFAULT_PATH
+            PATHS
+            $ENV{BLAS_DIR}/lib
+            $ENV{BLAS_DIR}/lib
+            $ENV{HOME}/.conda/lib
+            $ENV{HOME}/anaconda3/lib
+            /usr/lib/x86_64-linux-gnu
+
+            #            NO_DEFAULT_PATH
             )
 
     find_path(LAPACKE_INCLUDE_DIRS
             NAMES lapacke.h
-            PATHS "$ENV{BLAS_DIR}/include"
+            PATHS
+            $ENV{BLAS_DIR}/include
+            $ENV{BLAS_DIR}/include
+            $ENV{HOME}/.conda/include
+            $ENV{HOME}/anaconda3/include
+            /usr/include
+            /usr/include/x86_64-linux-gnu
 #            NO_DEFAULT_PATH
             )
     if(LAPACKE_LIBRARY AND LAPACKE_INCLUDE_DIRS)

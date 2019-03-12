@@ -13,35 +13,53 @@ set(BLA_VENDOR OpenBLAS)
 set(BLAS_VERBOSE OFF)
 set(BLA_STATIC ${STATIC_BUILD})
 
-
-if ($ENV{BLAS_DIR})
-    # Try finding openblas as module library
-    message(STATUS "Searching for OpenBLAS in environment modules.")
-    find_library(BLAS_openblas_LIBRARY
-            NAMES libopenblas${CUSTOM_SUFFIX}
-            PATHS $ENV{BLAS_DIR}/lib
-            NO_DEFAULT_PATH
-            )
-
-    find_path(BLAS_INCLUDE_DIRS
-            NAMES openblas_config.h
-            PATHS "$ENV{BLAS_DIR}/include"
-            NO_DEFAULT_PATH
-            )
-    if (BLAS_openblas_LIBRARY)
-        set(OpenBLAS_MULTITHREADED 1 )
-    endif()
-else()
+if(NOT BLAS_FOUND)
     message(STATUS "Searching for OpenBLAS in system.")
+    find_package(OpenBLAS
+            PATHS
+            ${INSTALL_DIRECTORY}/OpenBLAS
+            $ENV{BLAS_DIR}/lib
+            $ENV{HOME}/.conda/lib
+            $ENV{HOME}/.conda
+            $ENV{HOME}/anaconda3/lib
+            $ENV{HOME}/anaconda3
+            /usr/lib/x86_64-linux-gnu/
+            )
+    if(OpenBLAS_FOUND)
+        get_filename_component(OpenBLAS_LIBRARIES_WE ${OpenBLAS_LIBRARIES} NAME_WE)
+        get_filename_component(OpenBLAS_ROOT ${OpenBLAS_LIBRARIES} DIRECTORY)
+        set(BLAS_openblas_LIBRARY ${OpenBLAS_ROOT}/${OpenBLAS_LIBRARIES_WE}${CUSTOM_SUFFIX})
+        set(BLAS_INCLUDE_DIRS ${OpenBLAS_INCLUDE_DIRS})
+        if (BLAS_openblas_LIBRARY)
+            include(cmake-modules/FindLAPACKE.cmake)
+            set(OpenBLAS_MULTITHREADED 1 )
+        endif()
+    endif()
+endif()
+
+# To print all variables, use the code below:
+#
+
+if(NOT BLAS_openblas_LIBRARY)
+    message(STATUS "Searching for OpenBLAS in standard paths")
     find_library(BLAS_openblas_LIBRARY
             NAMES libopenblas${CUSTOM_SUFFIX}
-            PATHS /usr/lib/x86_64-linux-gnu
-#            NO_DEFAULT_PATH
+            PATHS
+            ${INSTALL_DIRECTORY}/OpenBLAS
+            $ENV{BLAS_DIR}/lib
+            $ENV{HOME}/.conda/lib
+            $ENV{HOME}/anaconda3/lib
+            /usr/lib/x86_64-linux-gnu
             )
     find_path(BLAS_INCLUDE_DIRS
             NAMES cblas.h
-            PATHS /usr/include /usr/include/x86_64-linux-gnu
-#            NO_DEFAULT_PATH
+            PATHS
+            ${INSTALL_DIRECTORY}/OpenBLAS
+            $ENV{BLAS_DIR}/include
+            $ENV{HOME}/.conda/include
+            $ENV{HOME}/anaconda3/include
+            /usr/include
+            /usr/include/x86_64-linux-gnu
             )
     if (BLAS_openblas_LIBRARY)
         include(cmake-modules/FindLAPACKE.cmake)
