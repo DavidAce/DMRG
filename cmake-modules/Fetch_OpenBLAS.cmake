@@ -148,12 +148,11 @@ ExternalProject_Get_Property(external_OpenBLAS INSTALL_DIR)
 endif()
 
 
-
-target_link_libraries(blas INTERFACE ${BLAS_LIBRARIES} ${PTHREAD_LIBRARY})
-target_include_directories(blas INTERFACE ${BLAS_INCLUDE_DIRS})
 if(TARGET lapacke)
     target_link_libraries(blas INTERFACE lapacke)
 endif()
+target_link_libraries(blas INTERFACE ${BLAS_LIBRARIES} ${PTHREAD_LIBRARY})
+target_include_directories(blas INTERFACE ${BLAS_INCLUDE_DIRS})
 
 target_link_libraries(lapack INTERFACE blas)
 
