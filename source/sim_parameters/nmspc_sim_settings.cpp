@@ -99,12 +99,13 @@ namespace settings{
     int    itebd::store_freq             = 100;
 
     //Save data_struct to hdf5
-    bool   hdf5::save_to_file             = true;
+//    bool   hdf5::save_to_file             = true;
     bool   hdf5::save_progress            = true;
     string hdf5::output_filename          = "output/default.h5";
     string hdf5::access_mode              = "READWRITE";            /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
     string hdf5::create_mode              = "RENAME" ;              /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
-    bool   hdf5::full_storage             = true;
+//    bool   hdf5::full_storage             = true;
+    StorageLevel hdf5::storage_level            = StorageLevel::NORMAL;
     bool   hdf5::store_profiling          = true;
 
     //Profiling
@@ -219,12 +220,14 @@ void settings::load_from_file(class_settings_reader &indata){
     }
 
     //Save data_struct to hdf5
-    hdf5::save_to_file             = indata.find_parameter<bool>   ("hdf5::save_to_file"            , hdf5::save_to_file           );
+//    hdf5::save_to_file             = indata.find_parameter<bool>   ("hdf5::save_to_file"            , hdf5::save_to_file           );
     hdf5::save_progress            = indata.find_parameter<bool>   ("hdf5::save_progress"           , hdf5::save_progress          );
     hdf5::output_filename          = indata.find_parameter<string> ("hdf5::output_filename"         , hdf5::output_filename);
     hdf5::access_mode              = indata.find_parameter<string> ("hdf5::access_mode"             , hdf5::access_mode);
     hdf5::create_mode              = indata.find_parameter<string> ("hdf5::create_mode"             , hdf5::create_mode);
-    hdf5::full_storage             = indata.find_parameter<bool>   ("hdf5::full_storage"            , hdf5::full_storage           );
+//    hdf5::full_storage             = indata.find_parameter<bool>   ("hdf5::full_storage"            , hdf5::full_storage           );
+    size_t storageLevelRead        = indata.find_parameter<size_t> ("hdf5::storage_level"           , 2       );
+    hdf5::storage_level            = static_cast<StorageLevel>(storageLevelRead );
     hdf5::store_profiling          = indata.find_parameter<bool>   ("hdf5::store_profiling"         , hdf5::store_profiling        );
 
     //Profiling

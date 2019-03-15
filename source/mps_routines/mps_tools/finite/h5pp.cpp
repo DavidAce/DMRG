@@ -22,14 +22,20 @@ using Scalar    = std::complex<double>;
 void MPS_Tools::Finite::H5pp::write_all_state(class_finite_chain_state &state, h5pp::File & h5ppFile,
                                               std::string sim_name) {
     if(state.has_been_written()){return;}
-    write_2site_mps(state,h5ppFile,sim_name);
-    write_2site_mpo(state,h5ppFile,sim_name);
-    write_2site_env(state,h5ppFile,sim_name);
-    write_2site_env2(state,h5ppFile,sim_name);
-    write_bond_matrices(state,h5ppFile,sim_name);
-    write_hamiltonian_params(state,h5ppFile,sim_name);
 
-    if (settings::hdf5::full_storage){
+    if (settings::hdf5::storage_level >= StorageLevel::LIGHT){
+        write_bond_matrices(state,h5ppFile,sim_name);
+        write_hamiltonian_params(state,h5ppFile,sim_name);
+    }
+    if (settings::hdf5::storage_level >= StorageLevel::NORMAL){
+        write_2site_mps(state,h5ppFile,sim_name);
+        write_2site_mpo(state,h5ppFile,sim_name);
+        write_2site_env(state,h5ppFile,sim_name);
+        write_2site_env2(state,h5ppFile,sim_name);
+    }
+
+
+    if (settings::hdf5::storage_level >= StorageLevel::FULL){
         write_full_mps(state,h5ppFile,sim_name);
         write_full_mpo(state,h5ppFile,sim_name);
     }

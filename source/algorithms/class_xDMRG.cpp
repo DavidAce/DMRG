@@ -821,13 +821,14 @@ void class_xDMRG::store_state_to_file(bool force){
         if (Math::mod(sim_state.iteration, settings::xdmrg::store_freq) != 0) {return;}
         if (not state->position_is_the_middle_any_direction()) {return;}
         if (settings::xdmrg::store_freq == 0){return;}
+        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
     }
     spdlog::trace("Storing storing mps to file");
     t_sto.tic();
     MPS_Tools::Finite::H5pp::write_all_state(*state, *h5ppFile, sim_name);
     MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5ppFile, sim_name);
     t_sto.toc();
-    store_sim_to_file();
+    store_algorithm_state_to_file();
 }
 
 
@@ -836,6 +837,8 @@ void class_xDMRG::store_progress_to_file(bool force){
         if (Math::mod(sim_state.iteration, settings::xdmrg::store_freq) != 0) { return; }
         if (not state->position_is_the_middle_any_direction()) { return; }
         if (settings::xdmrg::store_freq == 0) { return; }
+        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
+
     }
     compute_observables();
     spdlog::trace("Storing table_entry to file");
@@ -868,6 +871,7 @@ void class_xDMRG::store_progress_chain_to_file(bool force){
         if (Math::mod(sim_state.iteration, settings::xdmrg::store_freq) != 0) { return; }
         if (settings::xdmrg::store_freq == 0) { return; }
         if (not state->position_is_the_middle()) { return; }
+        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
     }
     spdlog::trace("Storing chain_entry to file");
     t_sto.tic();

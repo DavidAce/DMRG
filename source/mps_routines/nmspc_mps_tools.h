@@ -191,7 +191,8 @@ namespace MPS_Tools{
         }
 
         namespace H5pp {
-            extern void write_simulation_state   (const class_simulation_state & sim_state,h5pp::File &h5ppFile,std::string sim_name);
+            extern void write_algorithm_state(const class_simulation_state &sim_state, h5pp::File &h5ppFile,
+                                              std::string sim_name);
         }
 
         namespace Measure {

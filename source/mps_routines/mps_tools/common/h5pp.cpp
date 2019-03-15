@@ -6,7 +6,8 @@
 #include <algorithms/class_simulation_state.h>
 #include <h5pp/h5pp.h>
 
-void MPS_Tools::Common::H5pp::write_simulation_state(const class_simulation_state &sim_state,h5pp::File &h5ppFile, std::string sim_name) {
+void MPS_Tools::Common::H5pp::write_algorithm_state(const class_simulation_state &sim_state, h5pp::File &h5ppFile,
+                                                    std::string sim_name) {
     h5ppFile.writeDataset(sim_state.iteration                     ,sim_name + "/sim_state/iteration");
     h5ppFile.writeDataset(sim_state.step                          ,sim_name + "/sim_state/step");
     h5ppFile.writeDataset(sim_state.position                      ,sim_name + "/sim_state/position");

@@ -30,15 +30,8 @@ if(NOT BLAS_FOUND)
         get_filename_component(OpenBLAS_ROOT ${OpenBLAS_LIBRARIES} DIRECTORY)
         set(BLAS_openblas_LIBRARY ${OpenBLAS_ROOT}/${OpenBLAS_LIBRARIES_WE}${CUSTOM_SUFFIX})
         set(BLAS_INCLUDE_DIRS ${OpenBLAS_INCLUDE_DIRS})
-        if (BLAS_openblas_LIBRARY)
-            include(cmake-modules/FindLAPACKE.cmake)
-            set(OpenBLAS_MULTITHREADED 1 )
-        endif()
     endif()
 endif()
-
-# To print all variables, use the code below:
-#
 
 if(NOT BLAS_openblas_LIBRARY)
     message(STATUS "Searching for OpenBLAS in standard paths")
@@ -62,25 +55,24 @@ if(NOT BLAS_openblas_LIBRARY)
             /usr/include/x86_64-linux-gnu
             )
     if (BLAS_openblas_LIBRARY)
-        include(cmake-modules/FindLAPACKE.cmake)
+        set(OpenBLAS_MULTITHREADED 1 )
         set(OpenBLAS_MULTITHREADED 1 )
     endif()
 endif()
 
-#if(NOT BLAS_openblas_LIBRARY)
-#    message(STATUS "Searching for OpenBLAS IN PATH: ")
-#    find_package(BLAS PATHS /home/david/Programs/anaconda3/lib )
-#    if(BLAS_FOUND)
-#        # To print all variables, use the code below:
-#        #
-#            get_cmake_property(_variableNames VARIABLES)
-#            foreach (_variableName ${_variableNames})
-#                if("${_variableName}" MATCHES "BLAS" OR "${_variableName}" MATCHES "blas" OR "${_variableName}" MATCHES "Blas")
-#                    message(STATUS "${_variableName}=${${_variableName}}")
-#                endif()
-#            endforeach()
-#    endif()
-#endif()
+
+
+
+# To print all variables, use the code below:
+#
+# get_cmake_property(_variableNames VARIABLES)
+# foreach (_variableName ${_variableNames})
+#     if("${_variableName}" MATCHES "BLAS" OR "${_variableName}" MATCHES "blas" OR "${_variableName}" MATCHES "Blas")
+#         message(STATUS "${_variableName}=${${_variableName}}")
+#     endif()
+# endforeach()
+
+
 
 if(BLAS_openblas_LIBRARY)
     message(STATUS "BLAS FOUND IN SYSTEM: ${BLAS_openblas_LIBRARY}")
@@ -148,24 +140,20 @@ ExternalProject_Get_Property(external_OpenBLAS INSTALL_DIR)
 endif()
 
 
-if(TARGET lapacke)
-    target_link_libraries(blas INTERFACE lapacke)
-endif()
-target_link_libraries(blas INTERFACE ${BLAS_LIBRARIES} ${PTHREAD_LIBRARY})
+
+target_link_libraries(blas INTERFACE ${BLAS_LIBRARIES} ${PTHREAD_LIBRARY} gfortran)
 target_include_directories(blas INTERFACE ${BLAS_INCLUDE_DIRS})
 
-target_link_libraries(lapack INTERFACE blas)
+target_link_libraries(lapack INTERFACE ${LAPACK_LIBRARIES} ${PTHREAD_LIBRARY} gfortran)
+target_include_directories(lapack INTERFACE ${LAPACK_INCLUDE_DIRS})
 
 set(FC_LDLAGS -fPIC ${PTHREAD_LIBRARY})
 
 if(OpenBLAS_USE_OPENMP AND OpenMP_FOUND)
     target_link_libraries(blas INTERFACE ${OpenMP_LIBRARIES})
+    target_link_libraries(lapack INTERFACE ${OpenMP_LIBRARIES})
     target_link_options(blas INTERFACE ${OpenMP_CXX_FLAGS})
     target_link_options(lapack INTERFACE ${OpenMP_CXX_FLAGS})
-#
-#    list(APPEND BLAS_LIBRARIES        ${OpenMP_LIBRARIES})
-#    list(APPEND BLAS_LIBRARIES_STATIC ${OpenMP_LIBRARIES})
-#    list(APPEND BLAS_LIBRARIES_SHARED ${OpenMP_LIBRARIES})
 endif()
 
 
@@ -173,9 +161,17 @@ include(CheckIncludeFileCXX)
 include(CheckSymbolExists)
 check_include_file_cxx(cblas.h    has_cblas_h)
 if(has_cblas_h)
+    set(CMAKE_REQUIRED_LIBRARIES blas)
     check_symbol_exists(openblas_set_num_threads cblas.h has_openblas_symbols)
 endif()
 if(has_cblas_h AND has_openblas_symbols)
     add_definitions(-DOpenBLAS_AVAILABLE)
 endif()
 
+if (TARGET blas AND TARGET lapack)
+    include(cmake-modules/FindLAPACKE.cmake)
+    if(TARGET lapacke)
+        target_link_libraries(blas   INTERFACE lapacke)
+        target_link_libraries(lapack INTERFACE lapacke)
+    endif()
+endif()
