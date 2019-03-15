@@ -12,12 +12,27 @@
 void MPS_Tools::Infinite::H5pp::write_all_superblock(class_superblock &superblock, h5pp::File & h5ppFile,
                                                      std::string sim_name){
     if(superblock.has_been_written){return;}
-    write_2site_mps(superblock,h5ppFile,sim_name);
-    write_2site_mpo(superblock,h5ppFile,sim_name);
-    write_2site_env(superblock,h5ppFile,sim_name);
-    write_2site_env2(superblock,h5ppFile,sim_name);
-    write_hamiltonian_params(superblock,h5ppFile,sim_name);
-    superblock.has_been_written = true;
+
+
+    if (settings::hdf5::storage_level >= StorageLevel::NONE) {
+    }
+
+    if (settings::hdf5::storage_level >= StorageLevel::LIGHT) {
+        write_hamiltonian_params(superblock,h5ppFile,sim_name);
+    }
+
+    if (settings::hdf5::storage_level >= StorageLevel::NORMAL) {
+        write_2site_mps(superblock,h5ppFile,sim_name);
+        write_2site_mpo(superblock,h5ppFile,sim_name);
+        write_2site_env(superblock,h5ppFile,sim_name);
+        write_2site_env2(superblock,h5ppFile,sim_name);
+    }
+
+    if (settings::hdf5::storage_level >= StorageLevel::FULL) {
+    }
+
+
+        superblock.has_been_written = true;
 }
 
 

@@ -21,6 +21,7 @@ namespace h5pp{
 }
 
 enum class SimulationType{iDMRG,fDMRG, xDMRG, iTEBD};
+enum class StorageLevel:size_t {NONE,LIGHT,NORMAL,FULL};
 
 namespace settings {
     extern void load_from_file(class_settings_reader &indata);
@@ -131,12 +132,13 @@ namespace settings {
     }
 
     namespace hdf5 {
-        extern bool         save_to_file            ;        /*!< If true, saves the simulation data to an HDF5 file instead of just outputting to console */
+//        extern bool         save_to_file            ;        /*!< If true, saves the simulation data to an HDF5 file instead of just outputting to console */
         extern bool         save_progress           ;        /*!< If true, saves the simulation data periodically */
         extern std::string  access_mode             ;        /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
         extern std::string  create_mode             ;        /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
         extern std::string  output_filename         ;        /*!< Name of the output HDF5 file relative to the execution point  */
-        extern bool         full_storage            ;        /*!< If true, saves the full MPS to file. Set to false to reduce output file size. */
+//        extern bool         full_storage          ;        /*!< If true, saves the full MPS to file. Set to false to reduce output file size. */
+        extern StorageLevel storage_level           ;        /*!< Sets the storage level: choose "0=NONE,1=LIGHT,2=NORMAL,3=FULL */
         extern bool         store_profiling         ;        /*!< Whether to store profiling information to file. */
     }
     //Profiling

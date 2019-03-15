@@ -235,7 +235,7 @@ void class_fDMRG::store_state_to_file(bool force){
         MPS_Tools::Finite::H5pp::write_full_mpo(*state,*h5ppFile,sim_name);
     }
     t_sto.toc();
-    store_sim_to_file();
+    store_algorithm_state_to_file();
 }
 
 

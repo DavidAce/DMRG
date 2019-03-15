@@ -326,10 +326,11 @@ void class_algorithm_base::clear_saturation_status(){
 }
 
 
-void class_algorithm_base::store_sim_to_file(){
+void class_algorithm_base::store_algorithm_state_to_file(){
+    if (settings::hdf5::storage_level <= StorageLevel::LIGHT){return;}
     spdlog::trace("Storing simulation state to file");
     t_sto.tic();
-    MPS_Tools::Common::H5pp::write_simulation_state(sim_state,*h5ppFile, sim_name);
+    MPS_Tools::Common::H5pp::write_algorithm_state(sim_state, *h5ppFile, sim_name);
     t_sto.toc();
 }
 
@@ -338,6 +339,7 @@ void class_algorithm_base::store_profiling_to_file_delta(bool force) {
     if (not force and Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
     if (not force and not state->position_is_the_middle()) {return;}
     if (not settings::profiling::on or not settings::hdf5::store_profiling){return;}
+    if (settings::hdf5::storage_level <= StorageLevel::LIGHT){return;}
 //    t_sto.tic();
     spdlog::trace("Storing profiling data to file (delta)");
     table_profiling->append_record(
@@ -362,6 +364,8 @@ void class_algorithm_base::store_profiling_to_file_total(bool force) {
     if (not force and Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
     if (not force and not state->position_is_the_middle()) {return;}
     if (not settings::profiling::on or not settings::hdf5::store_profiling){return;}
+    if (settings::hdf5::storage_level <= StorageLevel::LIGHT){return;}
+
     spdlog::trace("Storing profiling data to file");
     table_profiling->append_record(
             sim_state.iteration,

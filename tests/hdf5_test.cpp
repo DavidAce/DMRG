@@ -28,7 +28,6 @@ using namespace std::complex_literals;
 // Store some dummy data to an hdf5 file
 
 
-
 int main()
 {
     using Scalar = std::complex<double>;

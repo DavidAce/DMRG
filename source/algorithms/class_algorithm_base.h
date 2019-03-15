@@ -78,7 +78,7 @@ public:
 
 
     //Common functions
-    void store_sim_to_file();
+    void store_algorithm_state_to_file();
     void print_status_update();
     void print_status_full();
     void single_DMRG_step(eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR);
