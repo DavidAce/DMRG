@@ -74,16 +74,29 @@ int main(int argc, char* argv[]) {
     std::string inputfile  = "input.cfg";
     std::string outputfile = "output.h5";
     int seed = -1; //Only accept non-negative seeds
-    for (int i=0; i < argc; i++){
-        std::istringstream iss(std::string(argv[i]));
-        std::string arg_string;
-        while(iss >> arg_string){
-            spdlog::info("Input argument {} : {}",i,arg_string);
-            if (arg_string.find(".cfg") != std::string::npos) {inputfile  = arg_string;}
-            if (arg_string.find(".h5")  != std::string::npos) {outputfile = arg_string;}
-            if (arg_string.find_first_not_of( "0123456789" ) == std::string::npos){seed = std::stoi(arg_string);}
+    int i = 0;
+    std::vector<std::string> allArgs(argv+1, argv + argc);
+    for (auto &arg_word : allArgs){
+        std::istringstream iss(arg_word);
+        std::string arg;
+        while(iss >> arg){
+            spdlog::info("Input argument {} : {}",i++,arg);
+            if (arg.find(".cfg") != std::string::npos) {inputfile  = arg;}
+            if (arg.find(".h5")  != std::string::npos) {outputfile = arg;}
+            if (arg.find_first_not_of( "0123456789" ) == std::string::npos){seed = std::stoi(arg);}
         }
     }
+
+//    for (int i=0; i < argc; i++){
+//        std::istringstream iss(std::string(argv[i]));
+//        std::string arg_string;
+//        while(iss >> arg_string){
+//            spdlog::info("Input argument {} : {}",i,arg_string);
+//            if (arg_string.find(".cfg") != std::string::npos) {inputfile  = arg_string;}
+//            if (arg_string.find(".h5")  != std::string::npos) {outputfile = arg_string;}
+//            if (arg_string.find_first_not_of( "0123456789" ) == std::string::npos){seed = std::stoi(arg_string);}
+//        }
+//    }
     class_settings_reader indata(inputfile);
     if(indata.found_file){
         settings::load_from_file(indata);
