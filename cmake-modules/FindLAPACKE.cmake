@@ -22,23 +22,38 @@ if(MKL_FOUND)
     endif()
 endif()
 
+
+
+
+
+
 add_library(lapacke INTERFACE)
 add_dependencies(lapacke INTERFACE lapack)
+
+if(TARGET openblas::lapacke)
+    target_link_libraries(lapacke INTERFACE openblas::lapacke)
+    return()
+endif()
+
+
+
 if(TARGET lapack)
     get_target_property(LAPACKE_LAPACK_LIBRARY   lapack INTERFACE_LINK_LIBRARIES)
     get_target_property(LAPACKE_LAPACK_INCLUDE   lapack INTERFACE_INCLUDE_DIRECTORIES)
 endif()
 
-find_path(LAPACKE_INCLUDE_DIRS
-        NAMES lapacke.h
-        $ENV{BLAS_DIR}/include
-        $ENV{BLAS_DIR}/include
-        $ENV{HOME}/.conda/include
-        $ENV{HOME}/anaconda3/include
-        /usr/include
-        /usr/include/x86_64-linux-gnu
-        )
+if(NOT LAPACKE_FOUND)
 
+    find_path(LAPACKE_INCLUDE_DIRS
+            NAMES lapacke.h
+            $ENV{BLAS_DIR}/include
+            $ENV{BLAS_DIR}/include
+            $ENV{HOME}/.conda/include
+            $ENV{HOME}/anaconda3/include
+            /usr/include
+            /usr/include/x86_64-linux-gnu
+            )
+endif()
 
 if (NOT LAPACKE_FOUND )
     # Try finding lapacke in OpenBLAS
@@ -132,10 +147,10 @@ endif()
 if(LAPACKE_FOUND)
     message(STATUS "LAPACKE LIBRARY : ${LAPACKE_LIBRARY}")
     message(STATUS "LAPACKE INCLUDE : ${LAPACKE_INCLUDE_DIRS}")
+
+    target_link_libraries(lapacke INTERFACE ${LAPACKE_LIBRARY} ${LAPACKE_LAPACK_LIBRARY})
+    target_include_directories(lapacke INTERFACE ${LAPACKE_INCLUDE_DIRS} ${LAPACKE_LAPACK_INCLUDE})
 else()
     message(WARNING "Could not find working package LAPACKE")
 endif()
 
-# Whatever was found, link it even if it didn't compile successfully.. might just be a build-time dependency
-target_link_libraries(lapacke INTERFACE ${LAPACKE_LIBRARY} ${LAPACKE_LAPACK_LIBRARY})
-target_include_directories(lapacke INTERFACE ${LAPACKE_INCLUDE_DIRS} ${LAPACKE_LAPACK_INCLUDE})

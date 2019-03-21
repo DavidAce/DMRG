@@ -15,7 +15,7 @@ set(BLA_STATIC ${STATIC_BUILD})
 
 if(NOT BLAS_FOUND)
     message(STATUS "Searching for OpenBLAS in system.")
-    find_package(OpenBLAS
+    find_package(OpenBLAS 0.3
             PATHS
             ${INSTALL_DIRECTORY}/OpenBLAS
             $ENV{BLAS_DIR}/lib
@@ -43,6 +43,7 @@ if(NOT BLAS_openblas_LIBRARY)
             $ENV{HOME}/.conda/lib
             $ENV{HOME}/anaconda3/lib
             /usr/lib/x86_64-linux-gnu
+            NO_DEFAULT_PATH
             )
     find_path(BLAS_INCLUDE_DIRS
             NAMES cblas.h
@@ -53,6 +54,7 @@ if(NOT BLAS_openblas_LIBRARY)
             $ENV{HOME}/anaconda3/include
             /usr/include
             /usr/include/x86_64-linux-gnu
+            NO_DEFAULT_PATH
             )
     if (BLAS_openblas_LIBRARY)
         set(OpenBLAS_MULTITHREADED 1 )
@@ -85,6 +87,17 @@ if(BLAS_openblas_LIBRARY)
     set(LAPACK_LIBRARIES   ${BLAS_openblas_LIBRARY})
     set(LAPACK_INCLUDE_DIRS ${BLAS_INCLUDE_DIRS})
 
+    include(CheckIncludeFileCXX)
+    include(CheckSymbolExists)
+    check_include_file_cxx(cblas.h    has_cblas_h)
+    if(has_cblas_h)
+        set(CMAKE_REQUIRED_LIBRARIES ${BLAS_LIBRARIES} ${PTHREAD_LIBRARY} gfortran)
+        set(CMAKE_REQUIRED_INCLUDES  ${BLAS_INCLUDE_DIRS})
+        check_symbol_exists(openblas_set_num_threads cblas.h has_openblas_symbols)
+    endif()
+    if(has_cblas_h AND has_openblas_symbols)
+        add_definitions(-DOpenBLAS_AVAILABLE)
+    endif()
 else()
     message(STATUS "OpenBLAS will be installed into ${INSTALL_DIRECTORY}/OpenBLAS on first build.")
     set(OpenBLAS_MULTITHREADED 1 )
@@ -124,6 +137,7 @@ else()
 ExternalProject_Get_Property(external_OpenBLAS INSTALL_DIR)
     add_library(blas   INTERFACE)
     add_library(lapack INTERFACE)
+    add_library(openblas::lapacke ALIAS blas)
     add_dependencies(blas         external_OpenBLAS)
     add_dependencies(lapack       external_OpenBLAS)
     set(BLAS_INCLUDE_DIRS   ${INSTALL_DIR}/include)
@@ -135,7 +149,7 @@ ExternalProject_Get_Property(external_OpenBLAS INSTALL_DIR)
     set(LAPACK_LIBRARIES_STATIC  ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
     set(BLAS_LIBRARIES_SHARED    ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
     set(LAPACK_LIBRARIES_SHARED  ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(LAPACKE_FROM_OPENBLAS 1)
+    add_definitions(-DOpenBLAS_AVAILABLE)
 
 endif()
 
@@ -157,17 +171,7 @@ if(OpenBLAS_USE_OPENMP AND OpenMP_FOUND)
 endif()
 
 
-include(CheckIncludeFileCXX)
-include(CheckSymbolExists)
-check_include_file_cxx(cblas.h    has_cblas_h)
-if(has_cblas_h)
-    set(CMAKE_REQUIRED_LIBRARIES ${BLAS_LIBRARIES} ${PTHREAD_LIBRARY} gfortran)
-    set(CMAKE_REQUIRED_INCLUDES  ${BLAS_INCLUDE_DIRS})
-    check_symbol_exists(openblas_set_num_threads cblas.h has_openblas_symbols)
-endif()
-if(has_cblas_h AND has_openblas_symbols)
-    add_definitions(-DOpenBLAS_AVAILABLE)
-endif()
+
 
 if (TARGET blas AND TARGET lapack)
     include(cmake-modules/FindLAPACKE.cmake)
