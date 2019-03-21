@@ -6,6 +6,7 @@
 #include <algorithms/class_algorithm_launcher.h>
 #include <io/class_settings_reader.h>
 #include <spdlog/spdlog.h>
+#include <iostream>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <h5pp/h5pp.h>
 #include <experimental/filesystem>
@@ -74,11 +75,14 @@ int main(int argc, char* argv[]) {
     std::string outputfile = "output.h5";
     int seed = -1; //Only accept non-negative seeds
     for (int i=0; i < argc; i++){
-        std::string arg_string = std::string(argv[i]);
-        spdlog::info("Input argument {} : {}",i,arg_string);
-        if (arg_string.find(".cfg") != std::string::npos) {inputfile  = arg_string;}
-        if (arg_string.find(".h5")  != std::string::npos) {outputfile = arg_string;}
-        if (arg_string.find_first_not_of( "0123456789" ) == std::string::npos){seed = std::stoi(arg_string);}
+        std::istringstream iss(std::string(argv[i]));
+        std::string arg_string;
+        while(iss >> arg_string){
+            spdlog::info("Input argument {} : {}",i,arg_string);
+            if (arg_string.find(".cfg") != std::string::npos) {inputfile  = arg_string;}
+            if (arg_string.find(".h5")  != std::string::npos) {outputfile = arg_string;}
+            if (arg_string.find_first_not_of( "0123456789" ) == std::string::npos){seed = std::stoi(arg_string);}
+        }
     }
     class_settings_reader indata(inputfile);
     if(indata.found_file){

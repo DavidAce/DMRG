@@ -100,6 +100,7 @@ if(BLAS_openblas_LIBRARY)
     endif()
 else()
     message(STATUS "OpenBLAS will be installed into ${INSTALL_DIRECTORY}/OpenBLAS on first build.")
+    message(STATUS "OpenBLAS TARGET: ${OPENBLAS_MARCH}")
     set(OpenBLAS_MULTITHREADED 1 )
     if(OpenMP_FOUND)
         set(OpenBLAS_USE_OPENMP 0) # Openmp doesnt work on clang it seems
@@ -121,16 +122,16 @@ else()
             BUILD_COMMAND export LD_LIBRARY_PATH=${GFORTRAN_PATH} &&
                           export LDFLAGS=-L${GFORTRAN_LIB_SHARED} &&
                           $(MAKE) TARGET=${OPENBLAS_MARCH}
-                          DYNAMIC_ARCH=1
                           USE_THREAD=${OpenBLAS_MULTITHREADED}
                           USE_OPENMP=${OpenBLAS_USE_OPENMP}
                           NO_AFFINITY=1
-                          GEMM_MULTITHREAD_THRESHOLD=50
-                          QUIET_MAKE=1
+                          QUIET_MAKE=0
                           NUM_THREADS=128
                           FFLAGS=-frecursive
-#                          BINARY64=64
-                          LDFLAGS=-L${GFORTRAN_LIB_SHARED}
+                          #DYNAMIC_ARCH=1
+                          #BINARY64=64
+                          #GEMM_MULTITHREAD_THRESHOLD=50
+                          #LDFLAGS=-L${GFORTRAN_LIB_SHARED}
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             DEPENDS gfortran
             )
