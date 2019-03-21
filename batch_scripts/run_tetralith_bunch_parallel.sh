@@ -15,7 +15,7 @@ bunchbase=$(basename $bunchfile .txt)
 outdir=logs/$bunchbase
 mkdir -p $outdir
 
-cat $bunchfile | parallel -n 2 --colsep ' ' $exec {1} {2} ">" $outdir/{/.}_{2}.out
+cat $bunchfile | parallel --colsep ' ' $exec {1} {2} ">" $outdir/{1/.}_{2}.out
 
 
 # Explanation
