@@ -93,11 +93,22 @@ int main(int argc, char* argv[]) {
             spdlog::info("Running defaults");
         }
     }
-
+    if (outputfile != "output.h5"){
+        spdlog::info("Replacing output filename {} --> {}",settings::hdf5::output_filename, outputfile);
+        settings::hdf5::output_filename = outputfile;
+    }
     if (seed >= 0){
         spdlog::info("Replacing seed {} --> {}",settings::model::seed, seed);
         settings::model::seed = seed;
+        //Append the seed to the output filename
+        namespace fs = std::experimental::filesystem;
+        fs::path oldFileName = settings::hdf5::output_filename;
+        fs::path newFileName = settings::hdf5::output_filename;
+        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(seed) + oldFileName.extension().string() );
+        settings::hdf5::output_filename = newFileName.string();
+        spdlog::info("Appending seed to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
     }
+
 
 
     //Initialize the algorithm class
@@ -108,7 +119,6 @@ int main(int argc, char* argv[]) {
     launcher.run_algorithms();
 
 
-//    namespace fs = std::experimental::filesystem;
 //    std::string tar_filename = fs::path(launcher.hdf5_path).filename().string() + ".tar.gz";
 //    fs::path tar_path        = fs::path(launcher.hdf5_path).parent_path().string() + "/"+ tar_filename;
 //    gzFile tar_file = gzopen(tar_path.c_str(), "wb");
