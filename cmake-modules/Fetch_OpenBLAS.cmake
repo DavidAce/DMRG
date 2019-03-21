@@ -121,14 +121,15 @@ else()
             BUILD_COMMAND export LD_LIBRARY_PATH=${GFORTRAN_PATH} &&
                           export LDFLAGS=-L${GFORTRAN_LIB_SHARED} &&
                           $(MAKE) TARGET=${OPENBLAS_MARCH}
+                          DYNAMIC_ARCH=1
                           USE_THREAD=${OpenBLAS_MULTITHREADED}
                           USE_OPENMP=${OpenBLAS_USE_OPENMP}
                           NO_AFFINITY=1
                           GEMM_MULTITHREAD_THRESHOLD=50
-                          NUM_THREADS=64
-                          BINARY64=64
-                          QUIET_MAKE=0
-                          FFLAGS=-Wno-maybe-uninitialized
+                          QUIET_MAKE=1
+                          NUM_THREADS=128
+                          FFLAGS=-frecursive
+#                          BINARY64=64
                           LDFLAGS=-L${GFORTRAN_LIB_SHARED}
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             DEPENDS gfortran
