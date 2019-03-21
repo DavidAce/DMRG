@@ -87,16 +87,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-//    for (int i=0; i < argc; i++){
-//        std::istringstream iss(std::string(argv[i]));
-//        std::string arg_string;
-//        while(iss >> arg_string){
-//            spdlog::info("Input argument {} : {}",i,arg_string);
-//            if (arg_string.find(".cfg") != std::string::npos) {inputfile  = arg_string;}
-//            if (arg_string.find(".h5")  != std::string::npos) {outputfile = arg_string;}
-//            if (arg_string.find_first_not_of( "0123456789" ) == std::string::npos){seed = std::stoi(arg_string);}
-//        }
-//    }
+
     class_settings_reader indata(inputfile);
     if(indata.found_file){
         settings::load_from_file(indata);
