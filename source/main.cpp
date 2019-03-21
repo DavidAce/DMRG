@@ -4,7 +4,6 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <sim_parameters/nmspc_model.h>
 #include <algorithms/class_algorithm_launcher.h>
-#include <gitversion.h>
 #include <io/class_settings_reader.h>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -27,6 +26,7 @@
 #include <mkl_service.h>
 #include <mkl.h>
 #endif
+
 
 
 /*!
@@ -66,21 +66,19 @@ int main(int argc, char* argv[]) {
 
 
 
-    // Print current Git status
-    spdlog::info("Git branch      : {}",GIT::BRANCH);
-    spdlog::info("    commit hash : {}",GIT::COMMIT_HASH);
-    spdlog::info("    revision    : {}",GIT::REVISION);
 
     //Print all given parameters
     //Load input and output files from command line. If none were given use defaults.
     //Normally an output filename is given in the input file. But it can also be given from command line.
     std::string inputfile  = "input.cfg";
     std::string outputfile = "output.h5";
+    int seed = -1; //Only accept non-negative seeds
     for (int i=0; i < argc; i++){
         std::string arg_string = std::string(argv[i]);
         spdlog::info("Input argument {} : {}",i,arg_string);
         if (arg_string.find(".cfg") != std::string::npos) {inputfile  = arg_string;}
         if (arg_string.find(".h5")  != std::string::npos) {outputfile = arg_string;}
+        if (arg_string.find_first_not_of( "0123456789" ) == std::string::npos){seed = std::stoi(arg_string);}
     }
     class_settings_reader indata(inputfile);
     if(indata.found_file){
@@ -94,6 +92,11 @@ int main(int argc, char* argv[]) {
             spdlog::info("Couldn't find an inputfile or previous outputfile to load settings: {}", outputfile,ex.what() );
             spdlog::info("Running defaults");
         }
+    }
+
+    if (seed >= 0){
+        spdlog::info("Replacing seed {} --> {}",settings::model::seed, seed);
+        settings::model::seed = seed;
     }
 
 

@@ -13,7 +13,7 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <iomanip>
 #include <spdlog/spdlog.h>
-
+#include <general/nmspc_random_numbers.h>
 
 
 using Scalar         = std::complex<double>;
@@ -344,7 +344,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
     size_t pos_LB = 2; // Lambda right of GB
     size_t pos_A  = 0; // Lambda * G
     size_t pos_B  = 1; // G * Lambda
-    bool finished = false;
+//    bool finished = false;
     size_t num_traversals = 0;
     int direction = 1;
 
@@ -638,6 +638,61 @@ void MPS_Tools::Finite::Ops::normalize_chain2(class_finite_chain_state & state){
     //        std::cout << "chi : " << mps.get_chiR() << std::endl;
     //    }
 }
+
+
+void MPS_Tools::Finite::Ops::reset_to_random_product_state(class_finite_chain_state &state, const std::string parity){
+    std::array<Eigen::Tensor <Scalar,1>,2> paulieigvec;
+    Eigen::Matrix2cd paulimatrix;
+    bool no_parity = false;
+    if(parity == "sx"){
+        paulimatrix = qm::spinOneHalf::sx;
+        paulieigvec[0] = Textra::Matrix_to_Tensor1(qm::spinOneHalf::sx_eigvecs[0]);
+        paulieigvec[1] = Textra::Matrix_to_Tensor1(qm::spinOneHalf::sx_eigvecs[1]);
+    }else if (parity == "sy"){
+        paulimatrix = qm::spinOneHalf::sy;
+        paulieigvec[0] = Textra::Matrix_to_Tensor1(qm::spinOneHalf::sy_eigvecs[0]);
+        paulieigvec[1] = Textra::Matrix_to_Tensor1(qm::spinOneHalf::sy_eigvecs[1]);
+    }else if (parity == "sz"){
+        paulimatrix = qm::spinOneHalf::sz;
+        paulieigvec[0] = Textra::Matrix_to_Tensor1(qm::spinOneHalf::sz_eigvecs[0]);
+        paulieigvec[1] = Textra::Matrix_to_Tensor1(qm::spinOneHalf::sz_eigvecs[1]);
+    }else if (parity == "random" or parity == "none"){
+        no_parity = true;
+    }else {
+        throw std::runtime_error("Invalid spin parity name: " + parity);
+    }
+
+    Eigen::Tensor<Scalar,3> G (2,1,1);
+    Eigen::Tensor<Scalar,1> L (1);
+    L.setConstant(1);
+
+    for (auto &mpsL : state.get_MPS_L() ){
+        if(no_parity){
+            G.setRandom();
+        }else{
+            auto rnd = rn::uniform_integer_1();
+            G = paulieigvec[rnd].reshape(Textra::array3{2,1,1});
+        }
+        mpsL.set_mps(G,L);
+    }
+    auto C = Eigen::Tensor<Scalar,1>(1);
+    C.setConstant(1);
+    state.get_MPS_C() = C;
+    for (auto &mpsR : state.get_MPS_R() ){
+        if(no_parity){
+            G.setRandom();
+        }else{
+            auto rnd = rn::uniform_integer_1();
+            G = paulieigvec[rnd].reshape(Textra::array3{2,1,1});
+        }
+        mpsR.set_mps(G,L);
+    }
+
+    normalize_chain(state);
+    rebuild_environments(state);
+    MPS_Tools::Finite::Debug::check_integrity_of_mps(state);
+}
+
 
 
 void MPS_Tools::Finite::Ops::apply_energy_mpo_test(class_finite_chain_state &state, class_superblock &superblock) {

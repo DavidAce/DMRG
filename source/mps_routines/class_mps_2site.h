@@ -121,7 +121,7 @@ public:
         LC = LC_;
     }
 
-
+    Eigen::DSizes<long,4> dimensions(){return Eigen::DSizes<long,4>{spin_dimension,chiA(), spin_dimension,chiB()};}
     class_mps_2site();
     class_mps_2site(const class_mps_2site &other);
 

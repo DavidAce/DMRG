@@ -48,6 +48,9 @@ void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state,
 }
 
 
+
+
+
 void MPS_Tools::Finite::Chain::randomize_mpos(class_finite_chain_state &state, const size_t seed) {
     spdlog::info("Setting random fields in chain");
     rn::seed(seed);

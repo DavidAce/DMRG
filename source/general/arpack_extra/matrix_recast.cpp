@@ -8,15 +8,15 @@
 #include <iterator>
 
 /*! \brief Prints the content of a vector nicely */
-template<typename T>
-std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
-    if (!v.empty()) {
-//        out << "[ ";
-        std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, "  "));
-        out << '\n';
-    }
-    return out;
-}
+//template<typename Scalar_>
+//std::ostream &operator<<(std::ostream &out, const std::vector<Scalar_> &v) {
+//    if (!v.empty()) {
+////        out << "[ ";
+//        std::copy(v.begin(), v.end(), std::ostream_iterator<Scalar_>(out, "  "));
+//        out << '\n';
+//    }
+//    return out;
+//}
 
 template<typename Scalar>
 matrix_recast<Scalar>::matrix_recast(const Scalar *matrix_ptr_, int L_):matrix_ptr(matrix_ptr_), L(L_){

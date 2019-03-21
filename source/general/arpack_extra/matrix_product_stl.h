@@ -20,6 +20,7 @@ template <typename Scalar_>
 class StlMatrixProduct {
 public:
     using Scalar      = Scalar_;
+    constexpr static bool  can_shift = true;
 private:
 
     std::vector<Scalar> A_stl;           // The actual matrix. Given matrices will be copied into this one.

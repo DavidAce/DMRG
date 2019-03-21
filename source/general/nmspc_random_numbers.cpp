@@ -4,13 +4,45 @@
 
 #include "nmspc_random_numbers.h"
 
-
 using namespace Eigen;
 using namespace std;
 namespace rn{
     std::mt19937 rng;
     void seed(unsigned long n){
         rng.seed(n);
+    }
+
+    int uniform_integer_1(){
+        std::uniform_int_distribution<>  rand_int(0, 1);
+        return rand_int(rng);
+    }
+
+    int uniform_integer(const int min, const int max){
+        std::uniform_int_distribution<>  rand_int(min,max);
+        return rand_int(rng);
+    }
+
+    double uniform_double_1(){
+        std::uniform_real_distribution<>  rand_real(0,1);
+        return rand_real(rng);
+    }
+
+    double uniform_double(const double min, const double max){
+        std::uniform_real_distribution<>  rand_real(std::min(min,max),std::max(min,max));
+        return rand_real(rng);
+    }
+
+
+     std::complex<double> uniform_complex_1(){
+        std::uniform_real_distribution<>  rand_real(0,2.0*M_PI);
+        return std::polar(1.0,rand_real(rng));
+    }
+
+
+
+     double log_normal(const double mean, const double std){
+        std::lognormal_distribution<double>  distribution(mean, std);
+        return distribution(rng);
     }
 
     ArrayXd random_with_replacement(const ArrayXd & in){

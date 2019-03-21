@@ -340,7 +340,7 @@ void MPS_Tools::Finite::Debug::check_normalization_routine(const class_finite_ch
     spdlog::info("Checking normalization routine");
     spdlog::info("\t Generating Pauli Identity mpo");
 
-    auto [mpo,L,R] = class_mpo::pauli_mpo(3*qm::spinOneHalf::I);
+    auto [mpo,L,R] = class_mpo::pauli_mpo(3*qm::spinOneHalf::Id);
     auto state_3ID = state;
     spdlog::info("\t Measuring original norm");
     auto norm_3ID     = MPS_Tools::Finite::Measure::norm(state_3ID);

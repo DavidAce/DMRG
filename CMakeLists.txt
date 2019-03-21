@@ -22,6 +22,8 @@ option(DOWNLOAD_HDF5      "Download and install HDF5 if not found"              
 option(DOWNLOAD_SPDLOG    "Download and install spdlog if not found"            OFF)
 option(DOWNLOAD_EIGEN3    "Download and install Eigen3 if not found"            OFF)
 option(DOWNLOAD_ALL       "Download and install all dependencies if not found"  ON)
+option(ENABLE_CCACHE      "Use ccache to speed up compilation"                  OFF)
+option(ENABLE_COTIRE      "Use cotire to speed up compilation"                  OFF)
 option(USE_OpenMP         "Use OpenMP"                                          OFF)
 option(USE_MKL            "Use Intel MKL libraries"                             ON)
 
@@ -105,10 +107,18 @@ if(MARCH)
 endif()
 
 message("Using microarchitechture: ${CXX_MARCH}")
+if(ENABLE_CCACHE)
+    find_program(CCACHE_FOUND ccache)
+    if(CCACHE_FOUND)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+        set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
+    endif(CCACHE_FOUND)
+endif()
 set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
-set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
+set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0 )
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
-set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g)
+set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g  -ftime-report)
 
 #################################
 ### Microarch dependent flags ###
@@ -334,6 +344,31 @@ message("    GFORTRAN :   ${FORTRAN_INFO}")
 message("=============================================================================")
 message("")
 
+
+
+###########################################
+### Use precompiled headers with cotire ###
+###########################################
+if (ENABLE_COTIRE)
+    get_target_property(LAPACKE_DIRS   lapacke         INTERFACE_INCLUDE_DIRECTORIES)
+    get_target_property(ARPACK++_DIRS  arpack++        INTERFACE_INCLUDE_DIRECTORIES)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+            COTIRE_PREFIX_HEADER_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/source"
+            COTIRE_PREFIX_HEADER_IGNORE_PATH
+            "${LAPACKE_DIRS};${ARPACK++_DIRS}"
+            )
+    include(cmake-modules/cotire.cmake)
+    cotire(${PROJECT_NAME})
+
+    #    set_property(DIRECTORY
+#            PROPERTY
+#            COTIRE_PREFIX_HEADER_IGNORE_PATH
+#            ${PROJECT_SOURCE_DIR}/libs/arpack++
+#            /usr/include/lapacke.h
+#            )
+
+
+endif()
 
 
 

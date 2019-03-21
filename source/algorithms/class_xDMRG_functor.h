@@ -15,6 +15,10 @@ class class_xDMRG_functor {
 private:
     double variance;
     double energy  ;
+    double energy_lower_bound;
+    double energy_upper_bound;
+    double energy_target;
+    double energy_window;
 public:
     template <typename T>
     int sgn(const T val) const {
@@ -24,6 +28,19 @@ public:
     using MatrixType_ = Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic>;
     using VectorType_ = Eigen::Matrix<Scalar,Eigen::Dynamic, 1>;
     int   counter = 0;
+//    void set_energy_bounds(double E_lower, double E_upper);
+    bool have_bounds_on_energy = false;
+    void set_energy_bounds(double E_lower, double E_upper) {
+        energy_lower_bound = E_lower;
+        energy_upper_bound = E_upper;
+        energy_target = 0.5*(energy_upper_bound + energy_lower_bound);
+        energy_window = 1.0*(energy_upper_bound - energy_lower_bound);
+        have_bounds_on_energy = true;
+        std::cout << "energy_lower_bound    = " << energy_lower_bound << std::endl;
+        std::cout << "energy_upper_bound    = " << energy_upper_bound << std::endl;
+        std::cout << "energy_target         = " << energy_target << std::endl;
+        std::cout << "energy_window         = " << energy_window << std::endl;
+    }
     const size_t shape;
     const size_t nev;
 
@@ -85,8 +102,8 @@ public:
 //    double operator()(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, Eigen::Matrix<double,Eigen::Dynamic,1> &grad) const;
     double operator()(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, Eigen::Matrix<double,Eigen::Dynamic,1> &grad) {
         auto eigvals  = Eigen::Map<const VectorType_> (eigvals_ptr,nev);
-        double vH2v,vEv,vv;
-        double lambda,var,log10var, fx;
+        double vH2v,vEv,vv,energy_penalty;
+        double lambda,lambda2,var,log10var, fx;
         #pragma omp parallel
         {
             #pragma omp sections
@@ -102,9 +119,13 @@ public:
             #pragma omp single
             {
                 lambda = 1.0;
+                lambda2 = 1.0;
                 var = vH2v / vv - vEv * vEv / vv / vv;
                 variance = var;
                 energy = vEv / vv;
+//                energy_penalty = std::abs(energy - energy_target) - 0.5*energy_window;
+                double energy_distance = std::abs(energy - energy_target);
+                energy_penalty = energy_distance > energy_window/2.0 ?  energy - energy_target : 0.0;
                 log10var = std::log10(var);
 //                double fx = log10var  + lambda * std::pow(vv-1.0,2);
                 if(std::isnan(log10var)){
@@ -121,6 +142,12 @@ public:
                     log10var    = std::abs(var) ==0  ?  -20.0 : std::log10(std::abs(var));
                 }
                 fx = log10var  +  lambda * std::abs(vv-1.0);
+                if (have_bounds_on_energy) {
+                    fx += lambda2 * std::pow(energy_penalty,2);
+                }
+//                if (energy_penalty > 0 and have_bounds_on_energy){
+//                }
+
 
             }
             #pragma omp barrier
@@ -132,6 +159,11 @@ public:
 //                      + lambda * 4.0 * v(k) * (vv - 1);
                 grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vEv*vEv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
                           + lambda * 2.0 * v(k) * sgn(vv - 1);
+                if (have_bounds_on_energy){
+//                    grad(k) -= lambda2*sgn(energy - energy_target) * 2*v(k)/vv*(eigvals(k) - energy) / energy_penalty;
+                    grad(k) += lambda2* 4 * v(k) * energy_penalty*(eigvals(k)/vv - energy/vv);
+                }
+
             }
         }
         counter++;

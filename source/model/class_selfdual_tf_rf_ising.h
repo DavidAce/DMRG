@@ -10,7 +10,7 @@
 #include <iomanip>
 #include "class_hamiltonian_base.h"
 
-class class_hdf5_table;
+template<typename table_type> class class_hdf5_table;
 class class_selfdual_tf_rf_ising_table;
 
 class class_selfdual_tf_rf_ising : public class_hamiltonian_base {

@@ -7,6 +7,7 @@
 
 #include "class_algorithm_base.h"
 #include <unsupported/Eigen/CXX11/Tensor>
+#include <Eigen/Core>
 class class_table_finite_chain;
 class class_table_dmrg;
 
@@ -24,7 +25,6 @@ private:
 public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_base::class_algorithm_base;
-//    explicit class_xDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
     explicit class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
     std::unique_ptr<class_hdf5_table<class_table_dmrg>>         table_xdmrg;
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_xdmrg_chain;
@@ -32,7 +32,7 @@ public:
     enum class xDMRG_Mode {KEEP_BEST_OVERLAP,FULL_EIG_OPT,PARTIAL_EIG_OPT, DIRECT_OPT};
     int    min_saturation_length;
     int    max_saturation_length;
-//    int    num_sites    ;
+    bool   projected_once = false;
 
     //Energy ranges
 
@@ -55,31 +55,6 @@ public:
     int    store_freq()                                 override;
     int    print_freq()                                 override;
     bool   chi_grow()                                   override;
-
-    std::vector<int> generate_size_list(const int shape);
-
-    template <typename Derived>
-    std::vector<size_t> make_sorted_index(const Eigen::MatrixBase<Derived>& values)
-    {
-        std::vector<size_t> index(values.derived().size());
-        std::iota(index.begin(), index.end(), 0);
-        std::sort(index.begin(), index.end(), [&values](size_t a, size_t b) { return std::real(values[a]) > std::real(values[b]); } );
-        return index;
-    }
-
-    void sort_and_filter_eigenstates(Eigen::VectorXcd &eigvals,
-                                     Eigen::MatrixXcd &eigvecs,
-                                     Eigen::VectorXd  &overlaps,
-                                     int &nev,
-                                     double overlap_cutoff = 1e-2);
-
-    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_full_diag (Eigen::Tensor<Scalar, 4> &theta);
-    Eigen::Tensor<Scalar,4> find_state_with_greatest_overlap_part_diag3 (Eigen::Tensor<Scalar, 4> &theta, xDMRG_Mode mode = xDMRG_Mode::PARTIAL_EIG_OPT);
-    Eigen::Tensor<Scalar,4> find_state_with_greatest_state_in_subspace (Eigen::Tensor<Scalar, 4> &theta);
-    Eigen::Matrix<Scalar,Eigen::Dynamic,1> subspace_optimization(double &energy_new,double &variance_new,int nev,const double * eigvecs_ptr, const double *eigvals_ptr, const Eigen::Tensor<Scalar,4> &theta);
-    Eigen::Matrix<Scalar,Eigen::Dynamic,1> direct_optimization(double &energy_new, double &variance_new,
-                                                               const Eigen::Tensor<Scalar, 4> &theta);
-
 
 };
 

@@ -8,11 +8,9 @@
 #include <mps_routines/class_environment.h>
 #include <model/class_hamiltonian_base.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <general/class_svd_wrapper.h>
-#include <general/class_eigsolver_arpack.h>
+#include <general/class_eigsolver.h>
 
 using Scalar = std::complex<double>;
-using namespace eigsolver_properties;
 using namespace Textra;
 
 

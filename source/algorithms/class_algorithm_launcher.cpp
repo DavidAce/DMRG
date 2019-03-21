@@ -12,6 +12,8 @@
 #include <algorithms/class_iTEBD.h>
 #include <spdlog/spdlog.h>
 #include <h5pp/h5pp.h>
+#include <gitversion.h>
+
 
 namespace s = settings;
 using namespace std;
@@ -35,6 +37,20 @@ class_algorithm_launcher::class_algorithm_launcher()
             settings::hdf5::output_filename,
             h5pp::AccessMode::READWRITE,
             createMode);
+
+
+    // Print current Git status
+    spdlog::info("Git branch      : {}",GIT::BRANCH);
+    spdlog::info("    commit hash : {}",GIT::COMMIT_HASH);
+    spdlog::info("    revision    : {}",GIT::REVISION);
+
+    if (createMode == h5pp::CreateMode::TRUNCATE or createMode == h5pp::CreateMode::RENAME){
+        //Put git revision in file attribute
+        h5ppFile->writeAttributeToFile(GIT::BRANCH      , "GIT BRANCH");
+        h5ppFile->writeAttributeToFile(GIT::COMMIT_HASH , "GIT COMMIT");
+        h5ppFile->writeAttributeToFile(GIT::REVISION    , "GIT REVISION");
+    }
+
     hdf5_path = h5ppFile->getFilePath();
 }
 

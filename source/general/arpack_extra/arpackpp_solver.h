@@ -40,8 +40,8 @@ public:
     void eigs();
     template <typename Derived>  void find_solution(Derived &solver, int nev);
 
-    template <typename Derived>  void copy_solution_symm(Derived &solver);
-    template <typename Derived>  void copy_solution_nsym(Derived &solver);
+//    template <typename Derived>  void copy_solution_symm(Derived &solver);
+//    template <typename Derived>  void copy_solution_nsym(Derived &solver);
 
 //    template <eigutils::eigSetting::Type type,
 //              eigutils::eigSetting::Form form,
@@ -70,9 +70,8 @@ public:
     {
         if constexpr (std::is_same<Scalar, std::complex<double>>::value) {
             if (nev > 0){
-                using namespace std::complex_literals;
                 for (int i = 0; i < nev; i++) {
-                    Scalar inv_phase = -1.0i * std::arg(eigvecs[i * L]);
+                    Scalar inv_phase = Scalar(0.0,-1.0) * std::arg(eigvecs[i * L]);
                     auto begin = eigvecs.begin() + i * L;
                     auto end = begin + L;
                     Scalar exp_inv_phase = std::exp(inv_phase);
@@ -98,7 +97,9 @@ public:
         auto & eigvals = solution.get_eigvals<form>();
         int eigvecsize = solution.meta.rows * solution.meta.cols;
         int eigvalsize = solution.meta.cols;
-
+        solution.meta.form = form;
+        solution.meta.type = type;
+        solution.meta.side = side;
         // Copy eigenvalues
         eigvals.resize(eigvalsize);
         if constexpr(form == Form::SYMMETRIC){
