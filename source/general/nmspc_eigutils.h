@@ -166,6 +166,10 @@ namespace eigutils{
             bool    eigvecs_found   = false; // For symmetric problems
             bool    eigvecsR_found  = false; // For nonsymmetric problems
             bool    eigvecsL_found  = false; // For nonsymmetric problems
+            eigSetting::Form  form;
+            eigSetting::Ritz  ritz;
+            eigSetting::Type  type;
+            eigSetting::Side  side;
         } meta;
         void reset(){
             eigvals_real.clear();

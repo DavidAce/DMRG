@@ -11,11 +11,10 @@
 #include <model/class_hamiltonian_base.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/class_svd_wrapper.h>
-#include <general/class_eigsolver_arpack.h>
+#include <general/class_eigsolver.h>
 #include <iomanip>
 #include <spdlog/spdlog.h>
 using Scalar = std::complex<double>;
-using namespace eigsolver_properties;
 using namespace Textra;
 
 
@@ -100,11 +99,14 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
     Eigen::Tensor<Scalar,2> transfer_matrix_theta_evn       = MPS_Tools::Common::Views::get_transfer_matrix_theta_evn(*MPS_evolved).reshape(array2{sizeLB,sizeLB});
 //    t_temp3.toc();
     using namespace settings::precision;
-
+    using namespace eigutils::eigSetting;
 //    t_temp4.tic();
-    class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
-    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
-    auto new_theta_evn_normalized        = MPS_Tools::Common::Views::get_theta_evn(*MPS_evolved, sqrt(solver.ref_eigvals()[0]));
+//    class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
+    class_eigsolver solver;
+    solver.eigs<Storage::DENSE>(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv,NAN,Form::NONSYMMETRIC,Ritz::LM,Side::R,false);
+
+//    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
+    auto new_theta_evn_normalized        = MPS_Tools::Common::Views::get_theta_evn(*MPS_evolved, sqrt(solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0]));
 //    t_temp4.toc();
     long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original.chiA();// theta_evn_normalized.dimension(1);
     long sizeR = new_theta_evn_normalized.dimension(3) * MPS_original.chiB();// theta_evn_normalized.dimension(3);
@@ -114,8 +116,9 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
             .shuffle(array4{0,2,1,3})
             .reshape(array2{sizeL,sizeR});
     //Compute the characteristic function G(a).
-    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eigMaxNcv, Ritz::LM, Side::R, false);
-    Scalar lambdaG = solver.ref_eigvals()[0];
+    solver.eigs<Storage::DENSE>(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eigMaxNcv,NAN,Form::NONSYMMETRIC,Ritz::LM,Side::R,false);
+//    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eigMaxNcv, Ritz::LM, Side::R, false);
+    Scalar lambdaG = solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0];
 //    t_temp1.toc();
     return lambdaG;
 }
@@ -240,7 +243,7 @@ double MPS_Tools::Common::Measure::energy_per_site_mom(class_superblock & superb
     if (superblock.sim_type == SimulationType::xDMRG) return superblock.measurements.energy_per_site_mom;
     if (superblock.measurements.bond_dimension <= 2 ) return superblock.measurements.energy_per_site_mom;
     superblock.t_ene_mom.tic();
-    Scalar a  = (0.0 + 1.0i) *5e-3;
+    Scalar a  = Scalar(0.0 , 1.0) * 5e-3;
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
     auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
@@ -323,16 +326,12 @@ double MPS_Tools::Common::Measure::energy_variance_per_site_mpo(class_superblock
 
 
 double MPS_Tools::Common::Measure::energy_variance_per_site_ham(class_superblock & superblock) {
-    if (superblock.has_been_measured
-       or superblock.measurements.bond_dimension <= 2
-       or superblock.MPS->chiA() != superblock.MPS->chiB()
-       or superblock.MPS->chiA() != superblock.MPS->chiC()
-       or superblock.sim_type != SimulationType::iTEBD
-       or superblock.sim_type != SimulationType::iDMRG
-        )
-    {
-        return superblock.measurements.energy_variance_per_site_ham;
-    }
+    if (superblock.has_been_measured) return superblock.measurements.energy_per_site_mom;
+    if (superblock.MPS->chiA() != superblock.MPS->chiB()) return superblock.measurements.energy_variance_per_site_ham;
+    if (superblock.MPS->chiA() != superblock.MPS->chiC()) return superblock.measurements.energy_variance_per_site_ham;
+    if (superblock.sim_type == SimulationType::fDMRG)     return superblock.measurements.energy_variance_per_site_ham;
+    if (superblock.sim_type == SimulationType::xDMRG)     return superblock.measurements.energy_variance_per_site_ham;
+    if (superblock.measurements.bond_dimension <= 2 )     return superblock.measurements.energy_variance_per_site_ham;
 
 
     spdlog::trace("Measuring energy variance ham from superblock");

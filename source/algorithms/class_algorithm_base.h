@@ -10,10 +10,10 @@
 #include <vector>
 #include <complex>
 #include <list>
+#include <general/nmspc_eigutils.h>
 #include <spdlog/spdlog.h>
 #include <io/class_custom_cout.h>
 #include <general/class_tic_toc.h>
-#include <general/nmspc_eigsolver_props.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <algorithms/class_simulation_state.h>
 class class_superblock;
@@ -29,7 +29,7 @@ namespace h5pp{
 class class_algorithm_base {
 protected:
     //Console
-    class_custom_cout ccout;
+//    class_custom_cout ccout;
     void set_logger(std::string sim_name);
 public:
     using Scalar = std::complex<double>;
@@ -81,7 +81,7 @@ public:
     void store_algorithm_state_to_file();
     void print_status_update();
     void print_status_full();
-    void single_DMRG_step(eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR);
+    void single_DMRG_step(eigutils::eigSetting::Ritz ritz = eigutils::eigSetting::Ritz::SR);
 
     virtual void check_convergence();
     static constexpr double quietNaN = std::numeric_limits<double>::quiet_NaN();
@@ -93,7 +93,7 @@ public:
     void clear_saturation_status();
 
     void initialize_superblock(std::string initial_state);
-    void reset_chain_mps_to_random_product_state(std::string parity = "none");
+    void reset_full_mps_to_random_product_state(std::string parity = "none");
     void set_random_fields_in_chain_mpo();
     void compute_observables();
     void enlarge_environment();

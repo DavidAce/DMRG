@@ -25,10 +25,12 @@ template <typename Scalar_>
 class DenseMatrixProduct {
 public:
     using Scalar      = Scalar_;
+    constexpr static bool  can_shift = true;
+
+private:
     using MatrixType  = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic, Eigen::ColMajor>;
     using VectorType  = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
     using VectorTypeT = Eigen::Matrix<Scalar,1,Eigen::Dynamic>;
-private:
 
     const MatrixType A_matrix;           // The actual matrix. Given matrices will be copied into this one.
     const int L;                         // The linear matrix dimension

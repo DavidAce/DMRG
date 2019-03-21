@@ -14,7 +14,6 @@
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <general/class_svd_wrapper.h>
 #include <algorithms/table_types.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <h5pp/h5pp.h>
@@ -33,8 +32,8 @@ std::ostream &operator<<(std::ostream &out, const std::list<T> &v) {
 namespace s = settings;
 using namespace std;
 using namespace Textra;
-using namespace std::complex_literals;
-using namespace eigsolver_properties;
+//using namespace std::complex_literals;
+//using namespace eigsolver_properties;
 using Scalar = class_algorithm_base::Scalar;
 
 
@@ -82,7 +81,7 @@ void class_algorithm_base::set_logger(std::string sim_name){
 }
 
 
-void class_algorithm_base::single_DMRG_step(Ritz ritz){
+void class_algorithm_base::single_DMRG_step(eigutils::eigSetting::Ritz ritz){
 /*!
  * \fn void single_DMRG_step(class_superblock &superblock)
  */
@@ -448,8 +447,8 @@ void class_algorithm_base::initialize_superblock(std::string initial_state) {
 
         // GA^0 = (1,0)
         // GA^1 = (0,1)
-        // GB^0 = (1,0)^T
-        // GB^1 = (0,1)^T
+        // GB^0 = (1,0)^Scalar_
+        // GB^1 = (0,1)^Scalar_
         GA(0, 0, 0) = 1;
         GA(0, 0, 1) = 0;
         GA(1, 0, 0) = 0;
@@ -474,8 +473,8 @@ void class_algorithm_base::initialize_superblock(std::string initial_state) {
         LC.setConstant(1.0/std::sqrt(2));
         // GA^0 = (1,0)
         // GA^1 = (0,1)
-        // GB^0 = (0,1)^T
-        // GB^1 = (1,0)^T
+        // GB^0 = (0,1)^Scalar_
+        // GB^1 = (1,0)^Scalar_
         GA(0, 0, 0) = 1;
         GA(0, 0, 1) = 0;
         GA(1, 0, 0) = 0;
@@ -553,60 +552,32 @@ void class_algorithm_base::initialize_superblock(std::string initial_state) {
     swap();
 }
 
-void class_algorithm_base::reset_chain_mps_to_random_product_state(std::string parity) {
+void class_algorithm_base::reset_full_mps_to_random_product_state(std::string parity) {
     spdlog::info("Resetting to random product state");
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     assert(state->get_length() == (size_t)num_sites() and "ERROR: System size mismatch");
 
     sim_state.iteration = state->reset_sweeps();
+    // Randomize chain
 
-    while(true) {
-        // Random product state
-        long chiA = superblock->MPS->chiA();
-        long chiB = superblock->MPS->chiB();
-        long d    = superblock->HA->get_spin_dimension();
-        Eigen::Tensor<Scalar,4> theta;
-        Eigen::MatrixXcd vecs1(d*chiA,d*chiB);
-        Eigen::MatrixXcd vecs2(d*chiA,d*chiB);
-        if (parity == "none"){
-            theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
-        }else{
-            if (parity == "sx"){
-                vecs1.col(0) = qm::spinOneHalf::sx_eigvecs[0];
-                vecs1.col(1) = qm::spinOneHalf::sx_eigvecs[1];
-            }else if (parity == "sz"){
-                vecs1.col(0) = qm::spinOneHalf::sz_eigvecs[0];
-                vecs1.col(1) = qm::spinOneHalf::sz_eigvecs[1];
-            }else if (parity == "sy"){
-                vecs1.col(0) = qm::spinOneHalf::sy_eigvecs[0];
-                vecs1.col(1) = qm::spinOneHalf::sy_eigvecs[1];
-            }else{
-                std::cerr << "Invalid spin_component name" << std::endl;
-                exit(1);
-            }
-            theta.resize(d,chiA,d,chiB);
-            Eigen::array<long, 4> extent4{2,1,2,1};
-            Eigen::array<long, 2> extent2{2,2};
-            if(rn::uniform_double_1() < 0.5){
-                theta.slice(Eigen::array<long,4>{0,0,0,0},extent4).reshape(extent2) = Textra::Matrix_to_Tensor(vecs1);
 
-            }else{
-                theta.slice(Eigen::array<long,4>{0,0,0,0},extent4).reshape(extent2) = Textra::Matrix_to_Tensor(vecs2);
-            }
+    // Project into whatever
+    MPS_Tools::Finite::Ops::reset_to_random_product_state(*state,parity);
 
-        }
-        //Get a properly normalized initial state.
-        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
-        MPS_Tools::Finite::Chain::copy_superblock_to_state(*state, *superblock);
-//        state->print_storage();
-        // It's important not to perform the last sim_state.step.
-        if(sim_state.iteration > 1) {break;}
-        enlarge_environment(state->get_direction());
-        MPS_Tools::Finite::Chain::move_center_point(*state,*superblock);
-        sim_state.iteration = state->get_sweeps();
 
-    }
-    sim_state.iteration = state->reset_sweeps();
+//
+//
+//    if (parity == "sx"){
+//        MPS_Tools::Finite::Ops::reset_to_random_product_state(*state,qm::spinOneHalf::sx);
+//    }else if (parity == "sz"){
+//        MPS_Tools::Finite::Ops::reset_to_random_product_state(*state,qm::spinOneHalf::sy);
+//    }else if (parity == "sy"){
+//        MPS_Tools::Finite::Ops::reset_to_random_product_state(*state,qm::spinOneHalf::sz);
+//    }else{
+//        std::cerr << "Invalid spin_component name" << std::endl;
+//        exit(1);
+//    }
+    MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
     MPS_Tools::Common::Measure::set_not_measured(*superblock);
 }
 

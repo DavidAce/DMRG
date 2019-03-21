@@ -10,7 +10,11 @@
 #include <arpack++/ardgcomp.h>
 #include <arpack++/ardssym.h>
 #include <arpack++/arseig.h>
-#include <general/class_eigsolver_arpack_custom_products.h>
+#include <general/arpack_extra/matrix_product_hamiltonian.h>
+#include <general/arpack_extra/matrix_product_dense.h>
+#include <general/arpack_extra/matrix_product_sparse.h>
+#include <general/arpack_extra/matrix_product_stl.h>
+//#include <general/class_eigsolver_arpack_custom_products.h>
 //#include <sim_parameters/nmspc_sim_settings.h>
 
 #define profile_eigsolver 0

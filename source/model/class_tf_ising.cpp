@@ -22,7 +22,7 @@ class_tf_ising::class_tf_ising(): class_hamiltonian_base(){
     qm::spinOneHalf::SX = qm::gen_manybody_spin(sx, 2);
     qm::spinOneHalf::SY = qm::gen_manybody_spin(sy, 2);
     qm::spinOneHalf::SZ = qm::gen_manybody_spin(sz, 2);
-    qm::spinOneHalf::II = qm::gen_manybody_spin(I , 2);
+    qm::spinOneHalf::II = qm::gen_manybody_spin(Id , 2);
 }
 
 
@@ -82,11 +82,11 @@ void class_tf_ising::build_mpo()
     if (not full_lattice_parameters_have_been_set) throw std::runtime_error("Failed to build MPO: Full lattice parameters haven't been set yet.");
     MPO.resize(3, 3, spin_dim, spin_dim);
     MPO.setZero();
-    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
+    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
     MPO.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sz);
     MPO.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(g_mag_field + r_rnd_field) * sx);
     MPO.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_coupling * sz);
-    MPO.slice(Eigen::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
+    MPO.slice(Eigen::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
 }
 
 void class_tf_ising::randomize_hamiltonian(){
@@ -104,7 +104,7 @@ Eigen::Tensor<Scalar,4> class_tf_ising::MPO_reduced_view() const {
 Eigen::Tensor<Scalar,4> class_tf_ising::MPO_reduced_view(double site_energy) const {
     if (site_energy == 0){return MPO;}
     Eigen::Tensor<Scalar,4> temp  = MPO;
-    temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(g_mag_field+r_rnd_field) * sx - site_energy * I);
+    temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(g_mag_field+r_rnd_field) * sx - site_energy * Id);
     return temp;
 }
 

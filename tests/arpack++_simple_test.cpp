@@ -2,8 +2,6 @@
 #include <arpack++/ardscomp.h>
 #include <arpack++/ardnsmat.h>
 #include <complex>
-using namespace std::complex_literals;
-
 
 int main()
 {
@@ -13,13 +11,14 @@ int main()
     int                ncv = 4;
     char ritz[10];
     std::string("LR").copy(ritz,2);
-    std::vector<std::complex<double>> data = {1.0+0.0i,0.0+1.0i,0.0+1.0i,0.0+1.0i,
-                                              0.0-1.0i,2.0+0.0i,0.0+2.0i,0.0+2.0i,
-                                              0.0-1.0i,0.0+2.0i,3.0+3.0i,0.0+3.0i,
-                                              0.0-1.0i,0.0+2.0i,0.0-3.0i,4.0+0.0i};
+    using Scalar = std::complex<double>;
+    std::vector<Scalar> data = {Scalar(1.0,+0.0),Scalar(0.0,+1.0),Scalar(0.0,+1.0),Scalar(0.0,+1.0),
+                                Scalar(0.0,-1.0),Scalar(2.0,+0.0),Scalar(0.0,+2.0),Scalar(0.0,+2.0),
+                                Scalar(0.0,-1.0),Scalar(0.0,+2.0),Scalar(3.0,+3.0),Scalar(0.0,+3.0),
+                                Scalar(0.0,-1.0),Scalar(0.0,+2.0),Scalar(0.0,-3.0),Scalar(4.0,+0.0)};
 
     // Creating a complex matrix.
-    ARdsNonSymMatrix<std::complex<double>, double> A(n, data.data());
+    ARdsNonSymMatrix<Scalar, double> A(n, data.data());
 
     ARluCompStdEig<double> solver(nev, A,ritz,ncv);
     solver.FindEigenvectors();

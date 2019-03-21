@@ -84,13 +84,13 @@ namespace TypeCheck{
 
     //This does not work for "non-type" class template parameters.
     //In fact it doesn't seem to work very well at all...
-//    template < template <typename...> class Template, typename T >
+//    template < template <typename...> class Template, typename Scalar_ >
 //    struct is_instance_of : std::false_type {};
 //
 //    template < template <typename...> class Template, typename... Args >
 //    struct is_instance_of< Template, Template<Args...> > : std::true_type {};
 //
-//    template <typename T> using is_ofEigen              = is_instance_of<Eigen::EigenBase,T>;
+//    template <typename Scalar_> using is_ofEigen              = is_instance_of<Eigen::EigenBase,Scalar_>;
 }
 
 #endif //PT_NMSPC_TYPE_CHECK_H

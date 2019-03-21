@@ -226,7 +226,7 @@ void settings::load_from_file(class_settings_reader &indata){
     hdf5::access_mode              = indata.find_parameter<string> ("hdf5::access_mode"             , hdf5::access_mode);
     hdf5::create_mode              = indata.find_parameter<string> ("hdf5::create_mode"             , hdf5::create_mode);
 //    hdf5::full_storage             = indata.find_parameter<bool>   ("hdf5::full_storage"            , hdf5::full_storage           );
-    size_t storageLevelRead        = indata.find_parameter<size_t> ("hdf5::storage_level"           , 2       );
+    int storageLevelRead        = indata.find_parameter<int>  ("hdf5::storage_level"           , 2       );
     hdf5::storage_level            = static_cast<StorageLevel>(storageLevelRead );
     hdf5::store_profiling          = indata.find_parameter<bool>   ("hdf5::store_profiling"         , hdf5::store_profiling        );
 

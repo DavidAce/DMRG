@@ -2,11 +2,14 @@
 // Created by david on 2019-01-29.
 //
 
-#ifndef NMSPC_FINITE_CHAIN_TOOLS_H
-#define NMSPC_FINITE_CHAIN_TOOLS_H
+#ifndef MPS_TOOLS_H
+#define MPS_TOOLS_H
 #include <memory>
 #include <string>
 #include <general/nmspc_tensor_extra.h>
+
+
+
 class class_superblock;
 class class_mps_2site;
 class class_finite_chain_state;
@@ -16,6 +19,10 @@ class class_simulation_state;
 namespace h5pp{
     class File;
 }
+
+
+
+
 namespace MPS_Tools{
 
     namespace Finite
@@ -48,6 +55,8 @@ namespace MPS_Tools{
             extern void apply_mpos                    (class_finite_chain_state &state, const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
             extern void normalize_chain               (class_finite_chain_state &state);
             extern void normalize_chain2              (class_finite_chain_state &state);
+            extern void reset_to_random_product_state (class_finite_chain_state &state, const std::string parity);
+
             extern void apply_energy_mpo_test         (class_finite_chain_state &state, class_superblock & superblock);
             extern void rebuild_environments          (class_finite_chain_state &state);
             extern void rebuild_superblock            (class_finite_chain_state &state, class_superblock & superblock);
@@ -58,6 +67,23 @@ namespace MPS_Tools{
                         get_parity_projected_state    (const class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix, const int sign);
         }
 
+
+        namespace Opt{
+            enum class OptMode  {OVERLAP, VARIANCE};
+            enum class OptSpace {PARTIAL,FULL,DIRECT};
+            extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_excited_state(const class_superblock & superblock, double energy_shift, OptMode optMode, OptSpace optSpace);
+
+            namespace internals{
+                extern std::tuple<Eigen::MatrixXd, Eigen::VectorXd> find_subspace(const class_superblock & superblock,double energy_shift, OptMode &optMode, OptSpace &optSpace);
+                extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> direct_optimization(const class_superblock & superblock);
+                extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> subspace_optimization(const class_superblock & superblock, double energy_shift, OptMode &optMode, OptSpace &optSpace);
+                extern std::vector<int> generate_size_list(const int shape);
+                class base_functor;
+                class subspace_functor;
+                class direct_functor;
+            }
+
+        }
 
         namespace Measure{
 

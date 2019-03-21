@@ -21,6 +21,10 @@ class class_xDMRG_full_functor {
 private:
     double variance;
     double energy  ;
+    double energy_lower_bound;
+    double energy_upper_bound;
+    double energy_target;
+    double energy_window;
 public:
     template <typename T>
     int sgn(const T val) const {
@@ -31,7 +35,8 @@ public:
     using VectorType_ = Eigen::Matrix<Scalar,Eigen::Dynamic, 1>;
     size_t   counter = 0;
 //    const size_t shape;
-
+    void set_energy_bounds(double E_lower, double E_upper);
+    bool have_bounds_on_energy = false;
     double get_variance(){return variance;}
     double get_energy  (){return energy  ;}
     size_t get_count   (){return counter;}

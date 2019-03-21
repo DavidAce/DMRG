@@ -1,8 +1,9 @@
 enable_language(Fortran)
 
 add_executable(arpack++_mps_test_target tests/arpack++_mps_test.cpp
-                                        source/general/class_eigsolver_arpack.cpp
-                                        source/general/class_eigsolver_arpack_custom_products.cpp
+                                        source/general/class_eigsolver.cpp
+                                        source/general/arpack_extra/arpackpp_solver.cpp
+                                        source/general/arpack_extra/matrix_product_stl.cpp
                                         source/general/class_tic_toc.cpp)
 set_target_properties(arpack++_mps_test_target PROPERTIES OUTPUT_NAME  arpack++_mps_test)
 target_include_directories(arpack++_mps_test_target PUBLIC source)

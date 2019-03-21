@@ -5,6 +5,9 @@
 #define HAVE_LAPACK_CONFIG_H
 #endif
 
+#include "class_eigsolver.h"
+
+
 #include <complex>
 
 #ifdef MKL_AVAILABLE
@@ -22,7 +25,6 @@
 
 #endif
 
-#include "class_eigsolver.h"
 
 //using namespace eigSetting;
 
@@ -84,11 +86,10 @@ void class_eigsolver::eigs_init(const int L,
 }
 
 
-void class_eigsolver::eig_init  (const int L,
-                                  const eigutils::eigSetting::Type type      ,
+void class_eigsolver::eig_init  ( const eigutils::eigSetting::Type type      ,
                                   const eigutils::eigSetting::Form form      ,
                                   const eigutils::eigSetting::Side side      ,
-                                  const bool compute_eigvecs_               ,
+                                  const bool compute_eigvecs_                ,
                                   const bool remove_phase_
 )
 {
@@ -127,6 +128,8 @@ int class_eigsolver::eig_dsyevd(const double* matrix, int L){
         solution.meta.cols           = L;
         solution.meta.nev            = L;
         solution.meta.n              = L;
+        solution.meta.form           = Form::SYMMETRIC;
+        solution.meta.type           = Type::REAL ;
     }
     return info;
 }
@@ -167,6 +170,8 @@ int class_eigsolver::eig_zheevd(const std::complex<double>* matrix, int L){
         solution.meta.cols           = L;
         solution.meta.nev            = L;
         solution.meta.n              = L;
+        solution.meta.form           = Form::SYMMETRIC;
+        solution.meta.type           = Type::CPLX ;
     }
     return info;
 }
@@ -215,6 +220,9 @@ int class_eigsolver::eig_dgeev(const double* matrix, int L){
         solution.meta.cols           = L;
         solution.meta.nev            = L;
         solution.meta.n              = L;
+
+        solution.meta.form = Form::NONSYMMETRIC;
+        solution.meta.type = Type::REAL ;
     }
     return info;
 }
@@ -301,6 +309,8 @@ int class_eigsolver::eig_zgeev(const std::complex<double>* matrix, int L){
         solution.meta.cols           = L;
         solution.meta.nev            = L;
         solution.meta.n              = L;
+        solution.meta.form           = Form::NONSYMMETRIC;
+        solution.meta.type           = Type::CPLX ;
     }
     return info;
 }

@@ -8,7 +8,8 @@
 #include <general/nmspc_tensor_extra.h>
 #include <memory>
 #include <general/class_tic_toc.h>
-#include <general/nmspc_eigsolver_props.h>
+//#include <general/nmspc_eigsolver_props.h>
+#include <general/nmspc_eigutils.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 class class_mps_2site;
 class class_hamiltonian_base;
@@ -50,9 +51,14 @@ public:
     size_t           spin_dimension;
 
     size_t get_length() const;
+    size_t get_position() const;
+    size_t get_chi() const ;
+    Eigen::Tensor<Scalar, 4> get_theta() const;
+    Eigen::DSizes<long,4> dimensions() const;
+
 
     Eigen::Tensor<Scalar, 4>
-    optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, eigsolver_properties::Ritz ritz = eigsolver_properties::Ritz::SR
+    optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, eigutils::eigSetting::Ritz ritz = eigutils::eigSetting::Ritz::SR
     )    __attribute((hot));                            /*!< Finds the smallest algebraic eigenvalue and eigenvector (the ground state) using [Spectra](https://github.com/yixuan/spectra). */
 
 
@@ -80,16 +86,16 @@ public:
                                                          * \f[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \f] */
 
 
-    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_H_local_matrix();
-    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> get_H_local_matrix_real();
-    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_H_local_sq_matrix();
-    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> get_H_local_sq_matrix_real();
-    Textra::SparseMatrixType<Scalar>                    get_H_local_sparse_matrix(double prune = 1e-15);
-    Textra::SparseMatrixType<Scalar>                    get_H_local_sq_sparse_matrix(double prune = 1e-15);
-    Eigen::Tensor<Scalar,2> get_H_local_rank2 ();
-    Eigen::Tensor<Scalar,8> get_H_local_rank8 ();
-    Eigen::Tensor<Scalar,2> get_H_local_sq_rank2 ();
-    Eigen::Tensor<Scalar,8> get_H_local_sq_rank8 ();
+    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_H_local_matrix()            const;
+    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> get_H_local_matrix_real()       const;
+    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_H_local_sq_matrix()         const;
+    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> get_H_local_sq_matrix_real()    const;
+    Textra::SparseMatrixType<Scalar>                    get_H_local_sparse_matrix(double prune = 1e-15)     const;
+    Textra::SparseMatrixType<Scalar>                    get_H_local_sq_sparse_matrix(double prune = 1e-15)  const;
+    Eigen::Tensor<Scalar,2> get_H_local_rank2 ()        const;
+    Eigen::Tensor<Scalar,8> get_H_local_rank8 ()        const;
+    Eigen::Tensor<Scalar,2> get_H_local_sq_rank2 ()     const;
+    Eigen::Tensor<Scalar,8> get_H_local_sq_rank8 ()     const;
 
     void set_superblock(
             const Eigen::Tensor<Scalar,4> &Lblock2_,

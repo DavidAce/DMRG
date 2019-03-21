@@ -7,7 +7,7 @@
 #include "matrix_product_dense.h"
 #include "matrix_product_sparse.h"
 #include "matrix_product_stl.h"
-
+#include "matrix_product_hamiltonian.h"
 #include <arpack++/arssym.h>
 #include <arpack++/arsnsym.h>
 #include <arpack++/arscomp.h>
@@ -43,10 +43,6 @@ arpackpp_solver<MatrixType>::arpackpp_solver(
 template<typename MatrixType>
 void arpackpp_solver<MatrixType>::eigs() {
     solution.reset();
-//    solution.meta.eigvecsR_found = false;
-//    solution.meta.eigvals_found = false;
-//    solution.eigvals.clear();
-//    solution.eigvecs.clear();
     nev_internal = std::min(matrix.rows()/2,solverConf.eigMaxNev);
     ncv_internal = std::max(solverConf.eigMaxNcv, 2+solverConf.eigMaxNev);
     ncv_internal = std::min(ncv_internal, matrix.rows());
@@ -55,17 +51,19 @@ void arpackpp_solver<MatrixType>::eigs() {
 
     // Stupidly enough, the only difference between the github and "apt" versions of arpack++,
     // is that the apt version only accepts char*, whereas the github one accepts string and char*.
-    // For this reason we have to convert the ritz to a format both can take.
+    // For this reason we have to convert the ritz to a format that both can take.
     solverConf.writeRitzChar();
     matrix.set_mode(solverConf.form);
     matrix.set_side(solverConf.side);
-    // Calculate shift-inverse mat-vec mult operator by LU decomposition
-    if(solverConf.shift == eigutils::eigSetting::Shift::ON){
-//        std::cout << "Setting up shift: " << solverConf.sigma << std::endl;
-        matrix.set_shift(solverConf.sigma);
-        matrix.FactorOP();
-    }
 
+    // Calculate shift-inverse mat-vec mult operator by LU decomposition
+    if constexpr(MatrixType::can_shift){
+        if(solverConf.shift == eigutils::eigSetting::Shift::ON) {
+            matrix.set_shift(solverConf.sigma);
+            matrix.FactorOP();
+        }
+    }
+    if(not solverConf.confOK) throw std::runtime_error("solverConf isn't ready!");
     assert(solverConf.confOK and "solverConf isn't ready!");
     // Dispatch to symmetric or nonsymmetric. If complex, there's only a nonsymmetric option available.
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){
@@ -93,18 +91,21 @@ void arpackpp_solver<MatrixType>::eigs_sym() {
                 solverConf.eigThreshold,
                 solverConf.eigMaxIter,
                 residual);
-        switch (solverConf.shift) {
-            case Shift::OFF :
-                break;
-            case Shift::ON :
-                solver.SetShiftInvertMode(std::real(solverConf.sigma), &matrix, &MatrixType::MultOPv);
-                break;
+        if constexpr(MatrixType::can_shift){
+            switch (solverConf.shift) {
+                case Shift::OFF :
+                    break;
+                case Shift::ON :
+                    solver.SetShiftInvertMode(std::real(solverConf.sigma), &matrix, &MatrixType::MultOPv);
+                    break;
+            }
         }
+
 
         this->find_solution(solver, solverConf.eigMaxNev);
         this->copy_solution<Type::REAL, Form::SYMMETRIC>(solver);
     }else{
-        std::cerr << "ERROR: Called with wrong eigs_nsym() with wrong type: " << tc::type_name<MatrixType>() << '\n';
+        std::cerr << "ERROR: Called eigs_sym() with wrong type: " << tc::type_name<MatrixType>() << '\n';
         exit(1);
     }
 }
@@ -127,14 +128,16 @@ void arpackpp_solver<MatrixType>::eigs_nsym() {
                 solverConf.eigMaxIter,
                 residual);
 
-
-        switch (solverConf.shift) {
-            case Shift::OFF :
-                break;
-            case Shift::ON :
-                solver.SetShiftInvertMode(std::real(solverConf.sigma), &matrix, &MatrixType::MultOPv);
-                break;
+        if constexpr(MatrixType::can_shift){
+            switch (solverConf.shift) {
+                case Shift::OFF :
+                    break;
+                case Shift::ON :
+                    solver.SetShiftInvertMode(std::real(solverConf.sigma), &matrix, &MatrixType::MultOPv);
+                    break;
+            }
         }
+
         this->find_solution(solver, solverConf.eigMaxNev);
         if (matrix.get_side() == Side::R){
             this->copy_solution<Type::REAL, Form::NONSYMMETRIC, Side::R>(solver);
@@ -144,7 +147,7 @@ void arpackpp_solver<MatrixType>::eigs_nsym() {
 
 
     }else{
-        std::cerr << "ERROR: Called with wrong eigs_nsym() with wrong type: " << tc::type_name<MatrixType>() << '\n';
+        std::cerr << "ERROR: Called eigs_nsym() with wrong type: " << tc::type_name<MatrixType>() << '\n';
         exit(1);
     }
 }
@@ -167,12 +170,14 @@ void arpackpp_solver<MatrixType>::eigs_comp() {
                 solverConf.eigMaxIter,
                 residual);
 
-        switch (solverConf.shift){
-            case Shift::OFF :
-                break;
-            case Shift::ON :
-                solver.SetShiftInvertMode(solverConf.sigma, &matrix, &MatrixType::MultOPv);
-                break;
+        if constexpr(MatrixType::can_shift){
+            switch (solverConf.shift) {
+                case Shift::OFF :
+                    break;
+                case Shift::ON :
+                    solver.SetShiftInvertMode(std::real(solverConf.sigma), &matrix, &MatrixType::MultOPv);
+                    break;
+            }
         }
         this->find_solution(solver, solverConf.eigMaxNev);
 
@@ -194,26 +199,8 @@ void arpackpp_solver<MatrixType>::eigs_comp() {
 }
 
 
-
-
 //
-//template<typename Scalar>
-//void arpackpp_solver<Scalar>::shift_invert_eigvals(std::complex<double> sigma) {
-//    if (solution.meta.eigvals_found){
-//        std::transform(solution.eigvals.begin(), solution.eigvals.end(), solution.eigvals.begin(),
-//                       [sigma](std::complex<double> num) -> Scalar
-//                       {
-//                            if constexpr(std::is_same<Scalar,double>::value){return std::real(1.0/(num - sigma));}
-//                            else
-//                            if constexpr(std::is_same<Scalar,std::complex<double>>::value) {return 1.0/(num - sigma);}
-//                       });
-//    }else{
-//        std::cerr << "Eigenvalues haven't been computed yet. Can't invert. Exiting " << std::endl;
-//    }
 //
-//}
-
-
 template <typename MatrixType>
 template <typename Derived>
 void arpackpp_solver<MatrixType>::find_solution(Derived &solver, int nev) {
@@ -243,107 +230,83 @@ void arpackpp_solver<MatrixType>::find_solution(Derived &solver, int nev) {
     }
 }
 
-
-
-template <typename MatrixType>
-template <typename Derived>
-void arpackpp_solver<MatrixType>::copy_solution_symm(Derived &solver) {
-    int eigvecsize = solution.meta.n * solution.meta.nev;
-    int eigvalsize = solution.meta.nev;
-//    solution.eigvals.assign(solver.RawEigenvalues() , solver.RawEigenvalues() + solution.meta.nev);
-    if (solverConf.compute_eigvecs) {
-        if(solverConf.side == Side::R){
-            if constexpr(std::is_same<double,typename MatrixType::Scalar>::value ){
-                solution.eigvecsR_real.resize(eigvecsize);
-                solution.eigvals_real.resize(eigvalsize);
-                std::copy(solver.RawEigenvectors(),solver.RawEigenvectors() + eigvecsize, solution.eigvecsR_real.begin());
-                std::copy(solver.RawEigenvalues() , solver.RawEigenvalues() + eigvalsize, solution.eigvals_real.begin());
-            }else if constexpr(std::is_same<std::complex<double>,typename MatrixType::Scalar>::value ){
-                solution.eigvecsR_cplx.resize(eigvecsize);
-                solution.eigvals_cplx.resize(eigvalsize);
-                std::copy(solver.RawEigenvectors(),solver.RawEigenvectors() + eigvecsize, solution.eigvecsR_cplx.begin());
-                std::copy(solver.RawEigenvalues() ,solver.RawEigenvalues() + eigvalsize, solution.eigvals_cplx.begin());
-                if(solverConf.form == Form::SYMMETRIC){
-                    for (int j = 0; j < eigvalsize; j++) {
-                        solution.eigvals_real.emplace_back(solution.eigvals_cplx[j].real());
-                    }
-                }
-            }
-        }
-        if(solverConf.side == Side::L){
-            if constexpr(std::is_same<double,typename MatrixType::Scalar>::value ){
-                solution.eigvecsL_real.resize(eigvecsize);
-                solution.eigvals_real.resize(eigvalsize);
-                std::copy(solver.RawEigenvectors(),solver.RawEigenvectors() + eigvecsize, solution.eigvecsL_real.begin());
-                std::copy(solver.RawEigenvalues() ,solver.RawEigenvalues() + eigvalsize, solution.eigvals_real.begin());
-
-            }else if constexpr(std::is_same<std::complex<double>,typename MatrixType::Scalar>::value ){
-                solution.eigvecsL_cplx.resize(eigvecsize);
-                solution.eigvals_cplx.resize(eigvalsize);
-                std::copy(solver.RawEigenvectors(),solver.RawEigenvectors() + eigvecsize, solution.eigvecsL_cplx.begin());
-                std::copy(solver.RawEigenvalues() ,solver.RawEigenvalues() + eigvalsize, solution.eigvals_cplx.begin());
-                if(solverConf.form == Form::SYMMETRIC){
-                    for (int j = 0; j < eigvalsize; j++) {
-                        solution.eigvals_real.emplace_back(solution.eigvals_cplx[j].real());
-                    }
-                }
-            }
-
-        }
-    }
-
-}
-
-
-
-template <typename MatrixType>
-template <typename Derived>
-void arpackpp_solver<MatrixType>::copy_solution_nsym(Derived &solver) {
-    for (int j = 0; j < solution.meta.cols; j++) {
-        solution.eigvals_cplx.emplace_back(std::complex<double>(solver.EigenvalueReal(j), solver.EigenvalueImag(j)));
-    }
-    if(solverConf.compute_eigvecs){
-        for (int j = 0; j < solution.meta.cols; j++){
-            for (int i = 0; i < solution.meta.rows; i++){
-                solution.eigvecsR_cplx.emplace_back(std::complex<double>(solver.EigenvectorReal(j,i), solver.EigenvectorImag(j,i)));
-            }
-        }
-    }
-}
-
-
-
-
-
-
-//template<typename MatrixType>
-//void arpackpp_solver<MatrixType>::subtract_phase(std::vector<Scalar> &eigvecs) {
 //
-//    if constexpr (std::is_same<Scalar, std::complex<double>>::value) {
-//        if (solution.meta.eigvecsR_found){
-//            using namespace std::complex_literals;
-//            for (int i = 0; i < solution.meta.nev; i++) {
-//                Scalar inv_phase = -1.0i * std::arg(eigvecs[i * solution.meta.rows]);
-//                auto begin = eigvecs.begin() + i * solution.meta.rows;
-//                auto end = begin + solution.meta.rows;
-//                Scalar exp_inv_phase = std::exp(inv_phase);
-//                std::transform(begin, end, begin,
-//                               [exp_inv_phase](std::complex<double> num) -> std::complex<double>
-//                               { return (num * exp_inv_phase); });
+//
+//template <typename MatrixType>
+//template <typename Derived>
+//void arpackpp_solver<MatrixType>::copy_solution_symm(Derived &solver) {
+//    int eigvecsize = solution.meta.n * solution.meta.nev;
+//    int eigvalsize = solution.meta.nev;
+//    if (solverConf.compute_eigvecs) {
+//        if(solverConf.side == Side::R){
+//            if constexpr(std::is_same<double,typename MatrixType::Scalar>::value ){
+//                solution.eigvecsR_real.resize(eigvecsize);
+//                solution.eigvals_real.resize(eigvalsize);
+//                std::copy(solver.RawEigenvectors(),solver.RawEigenvectors() + eigvecsize, solution.eigvecsR_real.begin());
+//                std::copy(solver.RawEigenvalues() , solver.RawEigenvalues() + eigvalsize, solution.eigvals_real.begin());
+//            }else if constexpr(std::is_same<std::complex<double>,typename MatrixType::Scalar>::value ){
+//                solution.eigvecsR_cplx.resize(eigvecsize);
+//                solution.eigvals_cplx.resize(eigvalsize);
+//                std::copy(solver.RawEigenvectors(),solver.RawEigenvectors() + eigvecsize, solution.eigvecsR_cplx.begin());
+//                std::copy(solver.RawEigenvalues() ,solver.RawEigenvalues() + eigvalsize, solution.eigvals_cplx.begin());
+//                if(solverConf.form == Form::SYMMETRIC){
+//                    for (int j = 0; j < eigvalsize; j++) {
+//                        solution.eigvals_real.emplace_back(solution.eigvals_cplx[j].real());
+//                    }
+//                }
 //            }
-//        }else{
-//            std::cerr << "Eigenvalues haven't been computed yet. Can't subtract phase. Exiting " << std::endl;
 //        }
+//        if(solverConf.side == Side::L){
+//            if constexpr(std::is_same<double,typename MatrixType::Scalar>::value ){
+//                solution.eigvecsL_real.resize(eigvecsize);
+//                solution.eigvals_real.resize(eigvalsize);
+//                std::copy(solver.RawEigenvectors(),solver.RawEigenvectors() + eigvecsize, solution.eigvecsL_real.begin());
+//                std::copy(solver.RawEigenvalues() ,solver.RawEigenvalues() + eigvalsize, solution.eigvals_real.begin());
 //
+//            }else if constexpr(std::is_same<std::complex<double>,typename MatrixType::Scalar>::value ){
+//                solution.eigvecsL_cplx.resize(eigvecsize);
+//                solution.eigvals_cplx.resize(eigvalsize);
+//                std::copy(solver.RawEigenvectors(),solver.RawEigenvectors() + eigvecsize, solution.eigvecsL_cplx.begin());
+//                std::copy(solver.RawEigenvalues() ,solver.RawEigenvalues() + eigvalsize, solution.eigvals_cplx.begin());
+//                if(solverConf.form == Form::SYMMETRIC){
+//                    for (int j = 0; j < eigvalsize; j++) {
+//                        solution.eigvals_real.emplace_back(solution.eigvals_cplx[j].real());
+//                    }
+//                }
+//            }
+//
+//        }
+//    }
+//
+//}
+
+
+//
+//template <typename MatrixType>
+//template <typename Derived>
+//void arpackpp_solver<MatrixType>::copy_solution_nsym(Derived &solver) {
+//    for (int j = 0; j < solution.meta.cols; j++) {
+//        solution.eigvals_cplx.emplace_back(std::complex<double>(solver.EigenvalueReal(j), solver.EigenvalueImag(j)));
+//    }
+//    if(solverConf.compute_eigvecs){
+//        for (int j = 0; j < solution.meta.cols; j++){
+//            for (int i = 0; i < solution.meta.rows; i++){
+//                solution.eigvecsR_cplx.emplace_back(std::complex<double>(solver.EigenvectorReal(j,i), solver.EigenvectorImag(j,i)));
+//            }
+//        }
 //    }
 //}
 
 
-// Explicit instantiations
 
+
+// Explicit instantiations
+//
 template class arpackpp_solver<DenseMatrixProduct<double>>;
 template class arpackpp_solver<DenseMatrixProduct<std::complex<double>>>;
 template class arpackpp_solver<SparseMatrixProduct<double>>;
 template class arpackpp_solver<SparseMatrixProduct<std::complex<double>>>;
 template class arpackpp_solver<StlMatrixProduct<double>>;
 template class arpackpp_solver<StlMatrixProduct<std::complex<double>>>;
+template class arpackpp_solver<DenseHamiltonianProduct<double>>;
+template class arpackpp_solver<DenseHamiltonianProduct<std::complex<double>>>;
