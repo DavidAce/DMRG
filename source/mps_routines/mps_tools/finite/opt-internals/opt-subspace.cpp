@@ -111,9 +111,13 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
         has_solution     = true;
 //        offset           = sim_state.energy_target - eigvals(best_state_idx)/chain_length;
         result_log.emplace_back(nev, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig->get_last_time_interval(),t_lu,start_time);
-        std::cout << "eigvecs: \n" << eigvecs <<std::endl;
-        std::cout << "eigvals: \n" << eigvals << std::endl;
-        std::cout << "overlap: \n" << overlaps << std::endl;
+        if(superblock.get_position() == 1){
+            std::cout << "theta: \n"    << theta << std::endl;
+            std::cout << "eigvecs: \n" << eigvecs <<std::endl;
+            std::cout << "eigvals: \n" << eigvals << std::endl;
+            std::cout << "overlap: \n" << overlaps << std::endl;
+        }
+
         if(max_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : " + std::to_string(sq_sum_overlap));
         if(max_overlap > 1.0 + 1e-10) throw std::runtime_error("max_overlap larger than one : " + std::to_string(max_overlap));
         if(min_overlap < 0.0)         throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
