@@ -80,6 +80,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
             << "      sparcity    : "    << sparcity << '\n' << '\n' << std::flush;
     spdlog::debug(problem_report.str());
     class_eigsolver solver;
+    solver.setLogLevel(0);
     std::string reason = "none";
     bool has_solution = false;
     for (auto nev : generate_size_list(theta.size())){

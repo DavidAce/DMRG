@@ -17,8 +17,13 @@
 
 
 class class_eigsolver {
+private:
+    size_t      logLevel  = 5;
 
 public:
+
+    class_eigsolver(size_t logLevel_ = 5);
+    void setLogLevel(size_t logLevelZeroToSix);
 
     eigutils::eigConfig     solverConf;
     eigutils::eigSolution   solution;

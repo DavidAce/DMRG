@@ -27,8 +27,15 @@
 
 
 //using namespace eigSetting;
+class_eigsolver::class_eigsolver(size_t logLevel_){
+    eigutils::eigLogger::setLogger("eig",logLevel,false);
+}
 
 
+void class_eigsolver::setLogLevel(size_t logLevelZeroToSix){
+    logLevel = logLevelZeroToSix;
+    eigutils::eigLogger::setLogLevel(logLevelZeroToSix);
+};
 
 
 void class_eigsolver::eigs_init(const int L,
@@ -44,6 +51,7 @@ void class_eigsolver::eigs_init(const int L,
                                 const bool remove_phase_
 )
 {
+    eigutils::eigLogger::log->trace("Init full");
     using namespace eigutils::eigSetting;
     solution.reset();
     bool is_shifted             = sigma == sigma;
@@ -93,6 +101,7 @@ void class_eigsolver::eig_init  ( const eigutils::eigSetting::Type type      ,
                                   const bool remove_phase_
 )
 {
+    eigutils::eigLogger::log->trace("Init light");
     using namespace eigutils::eigSetting;
     solution.reset();
     bool is_shifted             = false;
@@ -114,6 +123,7 @@ void class_eigsolver::eig_init  ( const eigutils::eigSetting::Type type      ,
 
 
 int class_eigsolver::eig_dsyevd(const double* matrix, int L){
+    eigutils::eigLogger::log->trace("Starting eig_dsyevd");
     using namespace eigutils::eigSetting;
     auto & eigvals = solution.get_eigvals<Form::SYMMETRIC>();
     auto & eigvecs = solution.get_eigvecs<Type::REAL,Form::SYMMETRIC>();
@@ -135,6 +145,7 @@ int class_eigsolver::eig_dsyevd(const double* matrix, int L){
 }
 
 int class_eigsolver::eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L){
+    eigutils::eigLogger::log->trace("Starting eig_dsyevd (lapacke)");
     //These nice values are inspired from armadillo. The prefactors give good performance.
     int lwork  =  2 * (1 + 6*L + 2*(L*L));
     int liwork =  3 * (3 + 5*L);
@@ -156,6 +167,7 @@ int class_eigsolver::eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L)
 
 
 int class_eigsolver::eig_zheevd(const std::complex<double>* matrix, int L){
+    eigutils::eigLogger::log->trace("Starting eig_zheevd");
     using namespace eigutils::eigSetting;
     auto & eigvals = solution.get_eigvals<Form::SYMMETRIC>();
     auto & eigvecs = solution.get_eigvecs<Type::CPLX,Form::SYMMETRIC>();
@@ -177,6 +189,7 @@ int class_eigsolver::eig_zheevd(const std::complex<double>* matrix, int L){
 }
 
 int class_eigsolver::eig_zheevd(std::complex<double>* matrix2eigvecs, double *eigvals, int L){
+    eigutils::eigLogger::log->trace("Starting eig_zheevd (lapacke)");
     using Scalar = std::complex<double>;
     //These nice values are inspired from armadillo. The prefactors give good performance.
     int lwork  = 2 * (2*L + L*L);
@@ -203,6 +216,7 @@ int class_eigsolver::eig_zheevd(std::complex<double>* matrix2eigvecs, double *ei
 
 
 int class_eigsolver::eig_dgeev(const double* matrix, int L){
+    eigutils::eigLogger::log->trace("Starting eig_dgeev");
     using namespace eigutils::eigSetting;
     auto & eigvals  = solution.get_eigvals<Form::NONSYMMETRIC>();
     auto & eigvecsR = solution.get_eigvecs<Type::REAL,Form::NONSYMMETRIC, Side::R>();
@@ -228,6 +242,8 @@ int class_eigsolver::eig_dgeev(const double* matrix, int L){
 }
 
 int class_eigsolver::eig_dgeev(const double* matrix, std::complex<double> *eigvecsR, std::complex<double>* eigvecsL, std::complex<double> *eigvals, int L){
+    eigutils::eigLogger::log->trace("Starting eig_dgeev (lapacke)");
+
     // For some reason the recommended lwork from netlib doesn't work. It's better to ask lapack with a query.
 //    int lwork   = 2 * (4*L);
     int info    = 0;
@@ -293,6 +309,7 @@ int class_eigsolver::eig_dgeev(const double* matrix, std::complex<double> *eigve
 
 
 int class_eigsolver::eig_zgeev(const std::complex<double>* matrix, int L){
+    eigutils::eigLogger::log->trace("Starting eig_zgeev");
     using namespace eigutils::eigSetting;
     auto & eigvals  = solution.get_eigvals<Form::NONSYMMETRIC>();
     auto & eigvecsR = solution.get_eigvecs<Type::CPLX,Form::NONSYMMETRIC, Side::R>();
@@ -318,6 +335,7 @@ int class_eigsolver::eig_zgeev(const std::complex<double>* matrix, int L){
 
 
 int class_eigsolver::eig_zgeev(const std::complex<double>* matrix, std::complex<double>* eigvecsR, std::complex<double>* eigvecsL, std::complex<double> *eigvals, int L){
+    eigutils::eigLogger::log->trace("Starting eig_zgeev (lapacke)");
     using Scalar = std::complex<double>;
     // int lwork   =  2*2*L;
     // For some reason the recommended lwork from netlib doesn't work. It's better to ask lapack with a query.

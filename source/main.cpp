@@ -6,8 +6,9 @@
 #include <algorithms/class_algorithm_launcher.h>
 #include <io/class_settings_reader.h>
 #include <spdlog/spdlog.h>
-#include <iostream>
 #include <spdlog/sinks/stdout_color_sinks.h>
+
+#include <iostream>
 #include <h5pp/h5pp.h>
 #include <experimental/filesystem>
 
@@ -36,10 +37,9 @@
 */
 
 int main(int argc, char* argv[]) {
-
-    spdlog::set_default_logger(spdlog::stdout_color_mt("DMRG"));
-    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
-    spdlog::set_level(spdlog::level::trace);
+    auto log = spdlog::stdout_color_mt("DMRG");
+    log->set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
+    log->set_level(spdlog::level::trace);
 
     int openblas_num_threads = 1;
     #ifdef OpenBLAS_AVAILABLE
@@ -56,11 +56,11 @@ int main(int argc, char* argv[]) {
 //        omp_set_dynamic(0);
 //        Eigen::setNbThreads(OpenMP_NUM_THREADS);
 //        Eigen::setNbThreads(0);
-        spdlog::info("Using Eigen  with {} threads",Eigen::nbThreads( )  );
-        spdlog::info("Using OpenMP with {} threads",omp_get_max_threads());
+        log->info("Using Eigen  with {} threads",Eigen::nbThreads( )  );
+        log->info("Using OpenMP with {} threads",omp_get_max_threads());
         #ifdef MKL_AVAILABLE
 //            mkl_set_num_threads(OpenMP_NUM_THREADS);
-            spdlog::info("Using Intel MKL with {} threads", mkl_get_max_threads());
+            log->info("Using Intel MKL with {} threads", mkl_get_max_threads());
         #endif
     #endif
 
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
         std::istringstream iss(arg_word);
         std::string arg;
         while(iss >> arg){
-            spdlog::info("Input argument {} : {}",i++,arg);
+            log->info("Input argument {} : {}",i++,arg);
             if (arg.find(".cfg") != std::string::npos) {inputfile  = arg;}
             if (arg.find(".h5")  != std::string::npos) {outputfile = arg;}
             if (arg.find_first_not_of( "0123456789" ) == std::string::npos){seed = std::stoi(arg);}
@@ -94,19 +94,19 @@ int main(int argc, char* argv[]) {
     }else{
         try{
             auto h5ppFile = std::make_shared<h5pp::File> (outputfile,h5pp::AccessMode::READONLY,h5pp::CreateMode::OPEN);
-            spdlog::info("Loading settings from existing file [{}]", h5ppFile->getFilePath());
+            log->info("Loading settings from existing file [{}]", h5ppFile->getFilePath());
             settings::load_from_hdf5(*h5ppFile);
         }catch(std::exception &ex){
-            spdlog::info("Couldn't find an inputfile or previous outputfile to load settings: {}", outputfile,ex.what() );
-            spdlog::info("Running defaults");
+            log->info("Couldn't find an inputfile or previous outputfile to load settings: {}", outputfile,ex.what() );
+            log->info("Running defaults");
         }
     }
     if (outputfile != "output.h5"){
-        spdlog::info("Replacing output filename {} --> {}",settings::hdf5::output_filename, outputfile);
+        log->info("Replacing output filename {} --> {}",settings::hdf5::output_filename, outputfile);
         settings::hdf5::output_filename = outputfile;
     }
     if (seed >= 0){
-        spdlog::info("Replacing seed {} --> {}",settings::model::seed, seed);
+        log->info("Replacing seed {} --> {}",settings::model::seed, seed);
         settings::model::seed = seed;
         //Append the seed to the output filename
         namespace fs = std::experimental::filesystem;
@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
         fs::path newFileName = settings::hdf5::output_filename;
         newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(seed) + oldFileName.extension().string() );
         settings::hdf5::output_filename = newFileName.string();
-        spdlog::info("Appending seed to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
+        log->info("Appending seed to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
     }
 
 

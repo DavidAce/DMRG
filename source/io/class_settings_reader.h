@@ -31,10 +31,13 @@ private:
     bool has_only_digits(const std::string s);
     bool is_parameterline(const std::string s);
     std::string::size_type find_comment_character(const std::string s);
+    std::shared_ptr<spdlog::logger> log;
+    void setLogger(std::string name);
+
 public:
     bool found_file = false;
     class_settings_reader() = default;
-    explicit class_settings_reader(const fs::path &file_path_);
+    explicit class_settings_reader(const fs::path &file_path_, std::string logName="DMRG");
 
 
 
@@ -61,7 +64,7 @@ public:
         if (file.is_open()){
             return find_parameter<T>(param_requested);
         }else{
-            spdlog::warn("Missing input file: Using default value: {}", default_value);
+            log->warn("Missing input file: Using default value: {}", default_value);
             return default_value;
         }
     }
@@ -91,16 +94,16 @@ public:
                 std::transform(param_key.begin(), param_key.end(), param_key.begin(), ::tolower);
                 std::transform(param_requested.begin(), param_requested.end(), param_requested.begin(), ::tolower);
                 if (param_requested == param_key && !param_key.empty()) {
-                    spdlog::debug("Loading line: {}",line);
+                    log->debug("Loading line: {}",line);
                     if constexpr (std::is_same<T,int>::value){
                         if (has_only_digits(param_val)) {
                             try {
                                 T parsed_val = std::stoi(param_val);
                                 return parsed_val;
                             }
-                            catch (...) {spdlog::error("Error reading parameter from file: Unknown error."); }
+                            catch (...) {log->error("Error reading parameter from file: Unknown error."); }
                         }else{
-                            spdlog::error("Error reading parameter from file. Wrong format: [{}]. Expected an integer", param_val);
+                            log->error("Error reading parameter from file. Wrong format: [{}]. Expected an integer", param_val);
                         }
                     }
                     if constexpr (std::is_same<T,long>::value){
@@ -109,10 +112,10 @@ public:
                                 T parsed_val = std::stol(param_val);
                                 return parsed_val;
                             }
-                            catch (...) {spdlog::error("Error reading parameter from file: Unknown error."); }
+                            catch (...) {log->error("Error reading parameter from file: Unknown error."); }
 
                         }else{
-                            spdlog::error("Error reading parameter from file. Wrong format: [{}]. Expected a long integer", param_val);
+                            log->error("Error reading parameter from file. Wrong format: [{}]. Expected a long integer", param_val);
 
                         }
                     }
@@ -122,7 +125,7 @@ public:
                             return std::stod(param_val);
                         }
                         catch (...) {
-                            spdlog::error("Error reading parameter from file. Wrong format: [{}]. Expected double", param_val);
+                            log->error("Error reading parameter from file. Wrong format: [{}]. Expected double", param_val);
                         }
                     }
                     if constexpr (std::is_same<T,bool>::value) {
@@ -133,21 +136,21 @@ public:
                     if constexpr (std::is_same<T,std::string>::value){
                         return param_val;
                     }
-                    spdlog::critical("Critical error when reading parameter from file. Possible type mismatch.");
-                    spdlog::critical("Requested : [{}] with type [{}]", param_requested ,typeid(T).name());
-                    spdlog::critical("Found key : [{}]", param_key);
-                    spdlog::critical("Found val : [{}]", param_val);
-                    spdlog::critical("Exiting...");
+                    log->critical("Critical error when reading parameter from file. Possible type mismatch.");
+                    log->critical("Requested : [{}] with type [{}]", param_requested ,typeid(T).name());
+                    log->critical("Found key : [{}]", param_key);
+                    log->critical("Found val : [{}]", param_val);
+                    log->critical("Exiting...");
                     exit(1);
                 }
             }
 
-            spdlog::critical("Input file does not contain a parameter matching your query: [{}]", param_requested);
-            spdlog::critical("Exiting...");
+            log->critical("Input file does not contain a parameter matching your query: [{}]", param_requested);
+            log->critical("Exiting...");
             exit(1);
         }
         else {
-            spdlog::critical("Error: Input file has not been found yet and no default value was given. Exiting...");
+            log->critical("Error: Input file has not been found yet and no default value was given. Exiting...");
             exit(1);
         }
     }
