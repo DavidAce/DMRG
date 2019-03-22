@@ -395,12 +395,14 @@ enable_testing()
 include(tests/arpack++_simple_test.cmake)
 include(tests/arpack++_mps_test.cmake)
 include(tests/hdf5_test.cmake)
+include(tests/lapacke_test.cmake)
 
 add_custom_target(all_tests ALL
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
         DEPENDS hdf5_test_target
-        DEPENDS arpack++ hdf5 Eigen3::Eigen spdlog::spdlog
+        DEPENDS lapacke_test_target
+        DEPENDS arpack++ h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog
         DEPENDS ${PROJECT_NAME}
         )
 

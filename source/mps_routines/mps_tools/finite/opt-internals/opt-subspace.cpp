@@ -11,7 +11,7 @@
 #include <mps_routines/class_superblock.h>
 #include <general/class_eigsolver.h>
 #include <LBFGS.h>
-
+#include <h5pp/h5pp.h>
 
 
 
@@ -100,8 +100,10 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
             solver.eig<Type::REAL, Form::SYMMETRIC>(H_local,true,false);
         }
         t_eig->toc();
-        auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solver.solution.meta.cols);
-        auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
+//        auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solver.solution.meta.cols);
+//        auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
+        Eigen::VectorXd eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solver.solution.meta.cols);
+        Eigen::MatrixXd eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
 
         overlaps         = (theta_old.adjoint() * eigvecs).cwiseAbs();
         max_overlap      = overlaps.maxCoeff(&best_state_idx);
@@ -118,6 +120,12 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
 //            std::cout << "eigvecs: \n" << eigvecs <<std::endl;
 //            std::cout << "eigvals: \n" << eigvals << std::endl;
             std::cout << "overlap: \n" << overlaps << std::endl;
+
+            h5pp::File tempfile("lapacke_matrix.h5");
+            tempfile.writeDataset(H_local,"matrix");
+            tempfile.writeDataset(eigvecs,"eigvecs");
+            tempfile.writeDataset(eigvecs,"eigvals");
+            tempfile.writeDataset(eigvecs,"overlaps");
         }
 
         if(sq_sum_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : " + std::to_string(sq_sum_overlap));
