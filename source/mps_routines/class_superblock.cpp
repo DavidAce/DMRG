@@ -196,9 +196,22 @@ Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_loc
     return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
 }
 
-
+template<typename Scalar, auto rank>
+bool has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, double threshold = 1e-14) {
+    Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>> vector (tensor.data(),tensor.size());
+    if constexpr (std::is_same<Scalar, std::complex<double>>::value){
+        return vector.imag().cwiseAbs().sum() > threshold;
+    }else{
+        return false;
+    }
+}
 Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_matrix_real ()const{
     long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
+    if(has_imaginary_part(Lblock->block)){throw std::runtime_error("Discarding imaginary data from Lblock when building H_local");}
+    if(has_imaginary_part(Rblock->block)){throw std::runtime_error("Discarding imaginary data from Rblock when building H_local");}
+    if(has_imaginary_part(HA->MPO))      {throw std::runtime_error("Discarding imaginary data from MPO A when building H_local");}
+    if(has_imaginary_part(HB->MPO))      {throw std::runtime_error("Discarding imaginary data from MPO B when building H_local");}
+
     Eigen::Tensor<double,5>tempL   = Lblock->block.contract(HA->MPO,Textra::idx({2},{0})).real().shuffle(Textra::array5{4,1,3,0,2});
     Eigen::Tensor<double,5>tempR   = Rblock->block.contract(HB->MPO,Textra::idx({2},{1})).real().shuffle(Textra::array5{4,1,3,0,2});
     Eigen::Tensor<double,8>H_local = tempL.contract(tempR, Textra::idx({4},{4})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
@@ -220,6 +233,10 @@ Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_loc
 }
 
 Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_sq_matrix_real ()const{
+    if(has_imaginary_part(Lblock2->block)){throw std::runtime_error("Discarding imaginary data from Lblock when building H_local");}
+    if(has_imaginary_part(Rblock2->block)){throw std::runtime_error("Discarding imaginary data from Rblock when building H_local");}
+    if(has_imaginary_part(HA->MPO))      {throw std::runtime_error("Discarding imaginary data from MPO A when building H_local");}
+    if(has_imaginary_part(HB->MPO))      {throw std::runtime_error("Discarding imaginary data from MPO B when building H_local");}
     long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
     Eigen::Tensor<double,6>tempL = Lblock2->block.contract(HA->MPO,Textra::idx({2},{0}))
                                                  .contract(HA->MPO,Textra::idx({2,5},{0,2}))

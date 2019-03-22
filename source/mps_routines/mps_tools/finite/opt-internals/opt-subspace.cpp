@@ -67,7 +67,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
     double prec                       = settings::precision::VarConvergenceThreshold;
     double max_overlap_threshold      = 1 - prec; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
     double subspace_quality_threshold = prec;
-    double sparcity    = (double)(H_local.array().cwiseAbs() > 1e-15).count()/(double)H_local.size();
+    double sparcity    = (double)(H_local.array().cwiseAbs() > 1e-14).count()/(double)H_local.size();
     std::stringstream problem_report;
     problem_report
             << "Starting eigensolver \n"
