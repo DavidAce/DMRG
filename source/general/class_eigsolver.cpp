@@ -141,6 +141,8 @@ int class_eigsolver::eig_dsyevd(const double* matrix, int L){
         solution.meta.n              = L;
         solution.meta.form           = Form::SYMMETRIC;
         solution.meta.type           = Type::REAL ;
+    }else{
+        throw std::runtime_error("LAPACK dsyevd failed with error: " + std::to_string(info));
     }
     return info;
 }
@@ -185,6 +187,8 @@ int class_eigsolver::eig_zheevd(const std::complex<double>* matrix, int L){
         solution.meta.n              = L;
         solution.meta.form           = Form::SYMMETRIC;
         solution.meta.type           = Type::CPLX ;
+    }else{
+        throw std::runtime_error("LAPACK zheevd failed with error: " + std::to_string(info));
     }
     return info;
 }
@@ -238,6 +242,8 @@ int class_eigsolver::eig_dgeev(const double* matrix, int L){
 
         solution.meta.form = Form::NONSYMMETRIC;
         solution.meta.type = Type::REAL ;
+    }else{
+        throw std::runtime_error("LAPACK dgeev failed with error: " + std::to_string(info));
     }
     return info;
 }
@@ -329,6 +335,8 @@ int class_eigsolver::eig_zgeev(const std::complex<double>* matrix, int L){
         solution.meta.n              = L;
         solution.meta.form           = Form::NONSYMMETRIC;
         solution.meta.type           = Type::CPLX ;
+    }else{
+        throw std::runtime_error("LAPACK zgeev failed with error: " + std::to_string(info));
     }
     return info;
 }

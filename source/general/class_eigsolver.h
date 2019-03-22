@@ -260,27 +260,31 @@ void class_eigsolver::eig(const Scalar * matrix,
     using namespace eigutils::eigSetting;
     eig_init(type,form,side,compute_eigvecs_,remove_phase_);
     int info = 0;
-
-    if constexpr(form == Form::SYMMETRIC) {
-        if constexpr(type == Type::REAL) {
-            static_assert(std::is_same<Scalar, double>::value);
-            info = eig_dsyevd(matrix,L);
-        } else if constexpr (type == Type::CPLX) {
-            static_assert(std::is_same<Scalar, std::complex<double>>::value);
-            info = eig_zheevd(matrix,L);
+    try{
+        if constexpr(form == Form::SYMMETRIC) {
+            if constexpr(type == Type::REAL) {
+                static_assert(std::is_same<Scalar, double>::value);
+                info = eig_dsyevd(matrix,L);
+            } else if constexpr (type == Type::CPLX) {
+                static_assert(std::is_same<Scalar, std::complex<double>>::value);
+                info = eig_zheevd(matrix,L);
+            }
         }
+
+        else
+        if constexpr( form == Form::NONSYMMETRIC) {
+            if constexpr(type == Type::REAL) {
+                static_assert(std::is_same<Scalar, double>::value);
+                info = eig_dgeev(matrix, L);
+            } else if constexpr (type == Type::CPLX) {
+                static_assert(std::is_same<Scalar, std::complex<double>>::value);
+                info = eig_zgeev(matrix, L);
+            }
+        }
+    }catch(std::exception &ex){
+        std::cerr << "WARNING: eigenvalue solver failed: " << std::string(ex.what()) << std::endl;
     }
 
-    else
-    if constexpr( form == Form::NONSYMMETRIC) {
-        if constexpr(type == Type::REAL) {
-            static_assert(std::is_same<Scalar, double>::value);
-            info = eig_dgeev(matrix, L);
-        } else if constexpr (type == Type::CPLX) {
-            static_assert(std::is_same<Scalar, std::complex<double>>::value);
-            info = eig_zgeev(matrix, L);
-        }
-    }
     if (info == 0 and solverConf.remove_phase){
      // The solution to  the eigenvalue equation Av = l*v is determined up to a constant phase factor, i.e., if v
      // is a solution, so is v*exp(i*theta). By computing the complex angle of the first element in v, one can then
