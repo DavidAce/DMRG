@@ -7,10 +7,13 @@
 
 #include <memory>
 #include <io/class_custom_cout.h>
-
+#include <spdlog/spdlog.h>
 namespace h5pp{class File;}
 
 class class_algorithm_launcher  {
+private:
+    std::shared_ptr<spdlog::logger> log;
+    void setLogger(std::string name);
 public:
 
 //    std::shared_ptr <class_hdf5_file> hdf5;

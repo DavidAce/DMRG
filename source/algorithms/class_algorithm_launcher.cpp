@@ -18,13 +18,29 @@
 namespace s = settings;
 using namespace std;
 
+void class_algorithm_launcher::setLogger(std::string name){
+    if(spdlog::get(name) == nullptr){
+        log = spdlog::stdout_color_mt(name);
+        log->set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
+        log->set_level(spdlog::level::trace);
+    }else{
+        log = spdlog::get(name);
+    }
+
+}
+
+
+
 class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_):h5ppFile(std::move(h5ppFile_))
 {
+
+    setLogger("DMRG");
     hdf5_path = h5ppFile->getFilePath();
 
 }
 class_algorithm_launcher::class_algorithm_launcher()
 {
+    setLogger("DMRG");
 
     h5pp::CreateMode createMode;
     if(settings::hdf5::create_mode == "TRUNCATE") createMode        = h5pp::CreateMode::TRUNCATE;
@@ -38,11 +54,10 @@ class_algorithm_launcher::class_algorithm_launcher()
             h5pp::AccessMode::READWRITE,
             createMode);
 
-
     // Print current Git status
-    spdlog::info("Git branch      : {}",GIT::BRANCH);
-    spdlog::info("    commit hash : {}",GIT::COMMIT_HASH);
-    spdlog::info("    revision    : {}",GIT::REVISION);
+    log->info("Git branch      : {}",GIT::BRANCH);
+    log->info("    commit hash : {}",GIT::COMMIT_HASH);
+    log->info("    revision    : {}",GIT::REVISION);
 
     if (createMode == h5pp::CreateMode::TRUNCATE or createMode == h5pp::CreateMode::RENAME){
         //Put git revision in file attribute
@@ -60,10 +75,10 @@ void class_algorithm_launcher::run_algorithms(){
     run_fDMRG();
     run_xDMRG();
     run_iTEBD();
-    spdlog::info("All simulations finished");
+    log->info("All simulations finished");
     bool OK = true;
     h5ppFile->writeDataset(OK, "/common/fileOK");
-    spdlog::info("Simulation data written to file: {}", h5ppFile->getFilePath());
+    log->info("Simulation data written to file: {}", h5ppFile->getFilePath());
 }
 
 
