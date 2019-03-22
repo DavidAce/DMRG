@@ -175,7 +175,7 @@ int class_eigsolver::eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L)
     std::vector<double> work  ( lwork );
     std::vector<int   > iwork ( liwork );
     char jobz = solverConf.compute_eigvecs ? 'V' : 'N';
-    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
+    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'L',L,
                                matrix2eigvecs,
                                L,
                                eigvals,
