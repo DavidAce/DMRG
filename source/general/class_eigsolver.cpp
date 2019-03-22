@@ -124,6 +124,7 @@ void class_eigsolver::eig_init  ( const eigutils::eigSetting::Type type      ,
 
 int class_eigsolver::eig_dsyevd(const double* matrix, int L){
     eigutils::eigLogger::log->trace("Starting eig_dsyevd");
+    eigutils::eigLogger::log->trace("         L = {}", L);
     using namespace eigutils::eigSetting;
     auto & eigvals = solution.get_eigvals<Form::SYMMETRIC>();
     auto & eigvecs = solution.get_eigvecs<Type::REAL,Form::SYMMETRIC>();
