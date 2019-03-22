@@ -112,12 +112,12 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
 //        offset           = sim_state.energy_target - eigvals(best_state_idx)/chain_length;
         result_log.emplace_back(nev, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig->get_last_time_interval(),t_lu,start_time);
         if(superblock.get_position() == 2 or max_overlap > 1.0 + 1e-10){
+
 //            std::cout << "theta: \n"   << theta << std::endl;
             std::cout << "H_local symmetric " << std::boolalpha << H_local.isApprox(H_local.adjoint(), 1e-14) << std::endl;
 //            std::cout << "eigvecs: \n" << eigvecs <<std::endl;
 //            std::cout << "eigvals: \n" << eigvals << std::endl;
             std::cout << "overlap: \n" << overlaps << std::endl;
-//            if (theta.size() == 64 and superblock.get_chi() == 4){exit(1);}
         }
 
         if(sq_sum_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : " + std::to_string(sq_sum_overlap));

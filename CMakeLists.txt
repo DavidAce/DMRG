@@ -124,14 +124,14 @@ set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g  -ftime-report)
 ### Microarch dependent flags ###
 #################################
 # Check supported options here http://man7.org/linux/man-pages/man1/gcc.1.html
-if (${MARCH} STREQUAL "sandybridge")
-    list(APPEND RELEASE_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1  -mpopcnt  -maes -mpclmul -mavx -fstack-protector-strong -Wformat -Wformat-security)
-elseif(${MARCH} STREQUAL "haswell" OR ${MARCH} STREQUAL "skylake" OR ${MARCH} STREQUAL "zen" )
-    list(APPEND RELEASE_OPTIONS -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -maes -mpclmul -mavx -mavx2 -mmovbe -mrdrnd -mf16c -mfsgsbase -mfma  -mbmi -mbmi2 -fstack-protector-strong -Wformat -Wformat-security)
-else()
-    # Set default to whatever nehalem can manage
-    list(APPEND RELEASE_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -fstack-protector-strong -Wformat -Wformat-security)
-endif()
+#if (${MARCH} STREQUAL "sandybridge")
+#    list(APPEND RELEASE_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1  -mpopcnt  -maes -mpclmul -mavx -fstack-protector-strong -Wformat -Wformat-security)
+#elseif(${MARCH} STREQUAL "haswell" OR ${MARCH} STREQUAL "skylake" OR ${MARCH} STREQUAL "zen" )
+#    list(APPEND RELEASE_OPTIONS -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -maes -mpclmul -mavx -mavx2 -mmovbe -mrdrnd -mf16c -mfsgsbase -mfma  -mbmi -mbmi2 -fstack-protector-strong -Wformat -Wformat-security)
+#else()
+#    # Set default to whatever nehalem can manage
+#    list(APPEND RELEASE_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -fstack-protector-strong -Wformat -Wformat-security)
+#endif()
 
 
 ##########################
