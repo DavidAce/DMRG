@@ -1,6 +1,6 @@
 
-find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 NO_DEFAULT_PATH)
-find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 NO_CMAKE_PACKAGE_REGISTRY)
+find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_DEFAULT_PATH)
+find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_CMAKE_PACKAGE_REGISTRY)
 
 
 if(BLAS_LIBRARIES)
@@ -23,7 +23,7 @@ endif()
 
 
 if(EIGEN3_FOUND AND TARGET Eigen3::Eigen)
-    message(STATUS "EIGEN FOUND IN SYSTEM: ${EIGEN3_INCLUDE_DIR}")
+    message(STATUS "EIGEN VERSION ${EIGEN3_VERSION} FOUND IN SYSTEM: ${EIGEN3_INCLUDE_DIR}")
     target_compile_options(Eigen3::Eigen INTERFACE ${EIGEN3_COMPILER_FLAGS})
 
     add_library(Eigen3 INTERFACE)

@@ -9,8 +9,8 @@
 #include "arpack_extra/matrix_product_stl.h"
 #include "arpack_extra/matrix_product_hamiltonian.h"
 #include "arpack_extra/arpackpp_solver.h"
-#include "general/nmspc_eigutils.h"
 #include "arpack_extra/matrix_recast.h"
+#include "general/nmspc_eigutils.h"
 #include <fstream>
 
 

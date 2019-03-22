@@ -5,10 +5,14 @@
 #define HAVE_LAPACK_CONFIG_H
 #endif
 
-#include "class_eigsolver.h"
-
 
 #include <complex>
+
+#ifdef I
+#undef I
+#endif
+
+#include "class_eigsolver.h"
 
 #ifdef MKL_AVAILABLE
 #define MKL_Complex8 std::complex<float>
@@ -22,8 +26,10 @@
 #define ComplexFloat  __complex__ float
 #define ComplexDouble __complex__ double
 #include <lapacke.h>
-
 #endif
+
+
+
 
 
 //using namespace eigSetting;
