@@ -104,6 +104,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
 //        auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
         Eigen::VectorXd eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solver.solution.meta.cols);
         Eigen::MatrixXd eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
+        Eigen::VectorXcd theta_cplx       = Eigen::Map<const Eigen::VectorXcd> theta_old (theta.data(),theta.size());
 
         overlaps         = (theta_old.adjoint() * eigvecs).cwiseAbs();
         max_overlap      = overlaps.maxCoeff(&best_state_idx);
@@ -126,7 +127,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
             tempfile.writeDataset(eigvecs,"eigvecs");
             tempfile.writeDataset(eigvecs,"eigvals");
             tempfile.writeDataset(eigvecs,"overlaps");
-            tempfile.writeDataset(theta,"theta");
+            tempfile.writeDataset(theta_cplx,"theta");
         }
 
         if(sq_sum_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : " + std::to_string(sq_sum_overlap));
