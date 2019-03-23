@@ -119,13 +119,19 @@ int main(){
     fileB1.readDataset(overlapsB1,"overlaps");
     fileB2.readDataset(overlapsB2,"overlaps");
 
-
+    std::cout << std::setprecision(16);
 
     auto [eigvalsA2_calc,eigvecsA2_calc,infoA2] = eig_dsyevd(H_localA2.data(),H_localA2.rows());
     auto [eigvalsB2_calc,eigvecsB2_calc,infoB2] = eig_dsyevd(H_localB2.data(),H_localB2.rows());
-    std::cout << "local vs remote diff H sum    =   " << std::boolalpha << (H_localA2.array() - H_localB2.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "local vs remote diff eigvals  =   " << std::boolalpha << (eigvalsA2_calc.array() - eigvalsB2_calc.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "local vs remote diff eigvecs  =   " << std::boolalpha << (eigvecsA2_calc.array() - eigvecsB2_calc.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "H_localA2      vs H_localB2      diff =   " << std::boolalpha << (H_localA2.array() - H_localB2.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsA2_read vs eigvalsA2_calc diff =   " << std::boolalpha << (eigvalsA2.array() - eigvalsA2_calc.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvecsA2_read vs eigvecsA2_calc diff =   " << std::boolalpha << (eigvecsA2.array() - eigvecsA2_calc.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB2_read vs eigvalsB2_calc diff =   " << std::boolalpha << (eigvalsB2.array() - eigvalsB2_calc.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvecsB2_read vs eigvecsB2_calc diff =   " << std::boolalpha << (eigvecsB2.array() - eigvecsB2_calc.array()).cwiseAbs().sum() << std::endl;
+
+
+
+//    std::cout << "theta * eigvecsA2         = \n" << std::fixed << (thetaA2.adjoint() * eigvecsA2).cwiseAbs().transpose() << std::endl;
 
 
 }
