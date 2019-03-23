@@ -126,6 +126,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
             tempfile.writeDataset(eigvecs,"eigvecs");
             tempfile.writeDataset(eigvecs,"eigvals");
             tempfile.writeDataset(eigvecs,"overlaps");
+            tempfile.writeDataset(theta,"theta");
         }
 
         if(sq_sum_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : " + std::to_string(sq_sum_overlap));
