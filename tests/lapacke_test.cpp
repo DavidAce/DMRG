@@ -72,6 +72,12 @@ int main(){
     Eigen::MatrixXd eigvalsA0,eigvalsA1, eigvalsA2;
     Eigen::MatrixXd eigvalsB0,eigvalsB1, eigvalsB2;
 
+    Eigen::VectorXcd thetaA0,thetaA1, thetaA2;
+    Eigen::VectorXcd thetaB0,thetaB1, thetaB2;
+
+    Eigen::VectorXd overlapsA0,overlapsA1, overlapsA2;
+    Eigen::VectorXd overlapsB0,overlapsB1, overlapsB2;
+
     h5pp::File fileA0("../tests/testmatrices-A/lapacke_matrix.h5"  , h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
     h5pp::File fileA1("../tests/testmatrices-A/lapacke_matrix-1.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
     h5pp::File fileA2("../tests/testmatrices-A/lapacke_matrix-2.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
@@ -85,14 +91,41 @@ int main(){
     fileB1.readDataset(H_localB1,"matrix");
     fileB2.readDataset(H_localB2,"matrix");
 
-    std::cout << std::boolalpha << (H_localA2.array() - H_localB2.array()).cwiseAbs().sum() << std::endl;
+    fileA0.readDataset(eigvecsA0,"eigvecs");
+    fileA1.readDataset(eigvecsA1,"eigvecs");
+    fileA2.readDataset(eigvecsA2,"eigvecs");
+    fileB0.readDataset(eigvecsB0,"eigvecs");
+    fileB1.readDataset(eigvecsB1,"eigvecs");
+    fileB2.readDataset(eigvecsB2,"eigvecs");
+
+    fileA0.readDataset(eigvalsA0,"eigvals");
+    fileA1.readDataset(eigvalsA1,"eigvals");
+    fileA2.readDataset(eigvalsA2,"eigvals");
+    fileB0.readDataset(eigvalsB0,"eigvals");
+    fileB1.readDataset(eigvalsB1,"eigvals");
+    fileB2.readDataset(eigvalsB2,"eigvals");
+
+    fileA0.readDataset(thetaA0,"theta");
+    fileA1.readDataset(thetaA1,"theta");
+    fileA2.readDataset(thetaA2,"theta");
+    fileB0.readDataset(thetaB0,"theta");
+    fileB1.readDataset(thetaB1,"theta");
+    fileB2.readDataset(thetaB2,"theta");
+
+    fileA0.readDataset(overlapsA0,"overlaps");
+    fileA1.readDataset(overlapsA1,"overlaps");
+    fileA2.readDataset(overlapsA2,"overlaps");
+    fileB0.readDataset(overlapsB0,"overlaps");
+    fileB1.readDataset(overlapsB1,"overlaps");
+    fileB2.readDataset(overlapsB2,"overlaps");
+
+
 
     auto [eigvalsA2_calc,eigvecsA2_calc,infoA2] = eig_dsyevd(H_localA2.data(),H_localA2.rows());
     auto [eigvalsB2_calc,eigvecsB2_calc,infoB2] = eig_dsyevd(H_localB2.data(),H_localB2.rows());
-    std::cout << std::boolalpha << (eigvalsA2_calc.array() - eigvalsB2_calc.array()).cwiseAbs().sum() << std::endl;
-    std::cout << std::boolalpha << (eigvecsA2_calc.array() - eigvecsB2_calc.array()).cwiseAbs().sum() << std::endl;
-
-
+    std::cout << "local vs remote diff H sum    =   " << std::boolalpha << (H_localA2.array() - H_localB2.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "local vs remote diff eigvals  =   " << std::boolalpha << (eigvalsA2_calc.array() - eigvalsB2_calc.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "local vs remote diff eigvecs  =   " << std::boolalpha << (eigvecsA2_calc.array() - eigvecsB2_calc.array()).cwiseAbs().sum() << std::endl;
 
 
 }

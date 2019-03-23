@@ -125,8 +125,8 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
             h5pp::File tempfile("lapacke_matrix.h5");
             tempfile.writeDataset(H_local,"matrix");
             tempfile.writeDataset(eigvecs,"eigvecs");
-            tempfile.writeDataset(eigvecs,"eigvals");
-            tempfile.writeDataset(eigvecs,"overlaps");
+            tempfile.writeDataset(eigvals,"eigvals");
+            tempfile.writeDataset(overlaps,"overlaps");
             tempfile.writeDataset(theta_cplx,"theta");
         }
 
