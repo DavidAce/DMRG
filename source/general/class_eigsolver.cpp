@@ -146,18 +146,18 @@ int class_eigsolver::eig_dsyevd(const double* matrix, int L){
         solution.meta.n              = L;
         solution.meta.form           = Form::SYMMETRIC;
         solution.meta.type           = Type::REAL ;
-        int i = 0;
-        int j = 0;
-        int c = 0;
-        if(L == 64){
-            for(auto & val : eigvecs){
-                std::cout << "eigvec(" << i << "," << j << ") = " << std::setprecision(16) << std::setw(20) <<  std::fixed<< std::right  << val
-                          <<  " matrix = "  << std::setw(20) << std::fixed << std::right  << matrix[c] << std::endl;
-                i++;
-                c++;
-                if (i == L){i = 0; j++;}
-            }
-        }
+//        int i = 0;
+//        int j = 0;
+//        int c = 0;
+//        if(L == 64){
+//            for(auto & val : eigvecs){
+//                std::cout << "eigvec(" << i << "," << j << ") = " << std::setprecision(16) << std::setw(20) <<  std::fixed<< std::right  << val
+//                          <<  " matrix = "  << std::setw(20) << std::fixed << std::right  << matrix[c] << std::endl;
+//                i++;
+//                c++;
+//                if (i == L){i = 0; j++;}
+//            }
+//        }
 
     }else{
         throw std::runtime_error("LAPACK dsyevd failed with error: " + std::to_string(info));

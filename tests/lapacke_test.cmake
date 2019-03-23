@@ -1,4 +1,9 @@
-add_executable(lapacke_test_target tests/lapacke_test.cpp)
+add_executable(lapacke_test_target tests/lapacke_test.cpp
+                                   source/general/class_eigsolver.cpp
+#                                   source/general/arpack_extra/arpackpp_solver.cpp
+                                   source/general/class_tic_toc.cpp)
+
+
 set_target_properties(lapacke_test_target PROPERTIES OUTPUT_NAME  lapacke_test)
 target_include_directories(lapacke_test_target PUBLIC source)
 

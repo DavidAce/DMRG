@@ -1,6 +1,6 @@
 #include <Eigen/Core>
 
-//#include <general/class_eigsolver.h>
+#include <general/class_eigsolver.h>
 #include <h5pp/h5pp.h>
 #include <lapacke.h>
 
@@ -121,13 +121,33 @@ int main(){
 
     std::cout << std::setprecision(16);
 
-    auto [eigvalsA2_calc,eigvecsA2_calc,infoA2] = eig_dsyevd(H_localA2.data(),H_localA2.rows());
-    auto [eigvalsB2_calc,eigvecsB2_calc,infoB2] = eig_dsyevd(H_localB2.data(),H_localB2.rows());
+    auto [eigvalsA2_lapacke,eigvecsA2_lapacke,infoA2] = eig_dsyevd(H_localA2.data(),H_localA2.rows());
+    auto [eigvalsB2_lapacke,eigvecsB2_lapacke,infoB2] = eig_dsyevd(H_localB2.data(),H_localB2.rows());
+
+    class_eigsolver solverA2;
+    class_eigsolver solverB2;
+    using namespace eigutils::eigSetting;
+    solverA2.eig<Type::REAL, Form::SYMMETRIC>(H_localA2,true,false);
+    solverB2.eig<Type::REAL, Form::SYMMETRIC>(H_localB2,true,false);
+    Eigen::VectorXd eigvalsA2_eig           = Eigen::Map<const Eigen::VectorXd> (solverA2.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solverA2.solution.meta.cols);
+    Eigen::MatrixXd eigvecsA2_eig           = Eigen::Map<const Eigen::MatrixXd> (solverA2.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solverA2.solution.meta.rows,solverA2.solution.meta.cols);
+    Eigen::VectorXd eigvalsB2_eig           = Eigen::Map<const Eigen::VectorXd> (solverB2.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solverB2.solution.meta.cols);
+    Eigen::MatrixXd eigvecsB2_eig           = Eigen::Map<const Eigen::MatrixXd> (solverB2.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solverB2.solution.meta.rows,solverB2.solution.meta.cols);
+
+
     std::cout << "H_localA2      vs H_localB2      diff =   " << std::boolalpha << (H_localA2.array() - H_localB2.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsA2_read vs eigvalsA2_calc diff =   " << std::boolalpha << (eigvalsA2.array() - eigvalsA2_calc.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsA2_read vs eigvecsA2_calc diff =   " << std::boolalpha << (eigvecsA2.array() - eigvecsA2_calc.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsB2_read vs eigvalsB2_calc diff =   " << std::boolalpha << (eigvalsB2.array() - eigvalsB2_calc.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsB2_read vs eigvecsB2_calc diff =   " << std::boolalpha << (eigvecsB2.array() - eigvecsB2_calc.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsA2_read    vs eigvalsA2_lapacke   diff   =   " << std::boolalpha << (eigvalsA2.array() - eigvalsA2_lapacke.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvecsA2_read    vs eigvecsA2_lapacke   diff   =   " << std::boolalpha << (eigvecsA2.array() - eigvecsA2_lapacke.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB2_read    vs eigvalsB2_lapacke   diff   =   " << std::boolalpha << (eigvalsB2.array() - eigvalsB2_lapacke.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvecsB2_read    vs eigvecsB2_lapacke   diff   =   " << std::boolalpha << (eigvecsB2.array() - eigvecsB2_lapacke.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsA2_read    vs eigvalsA2_solver    diff   =   " << std::boolalpha << (eigvalsA2.array() - eigvalsA2_eig.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvecsA2_read    vs eigvecsA2_solver    diff   =   " << std::boolalpha << (eigvecsA2.array() - eigvecsA2_eig.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB2_read    vs eigvalsB2_solver    diff   =   " << std::boolalpha << (eigvalsB2.array() - eigvalsB2_eig.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvecsB2_read    vs eigvecsB2_solver    diff   =   " << std::boolalpha << (eigvecsB2.array() - eigvecsB2_eig.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsA2_lapacke vs eigvalsA2_solver    diff   =   " << std::boolalpha << (eigvalsA2_lapacke.array() - eigvalsA2_eig.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvecsA2_lapacke vs eigvecsA2_solver    diff   =   " << std::boolalpha << (eigvecsA2_lapacke.array() - eigvecsA2_eig.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB2_lapacke vs eigvalsB2_solver    diff   =   " << std::boolalpha << (eigvalsB2_lapacke.array() - eigvalsB2_eig.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvecsB2_lapacke vs eigvecsB2_solver    diff   =   " << std::boolalpha << (eigvecsB2_lapacke.array() - eigvecsB2_eig.array()).cwiseAbs().sum() << std::endl;
 
 
 
