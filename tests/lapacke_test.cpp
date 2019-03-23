@@ -119,11 +119,9 @@ int main(){
     fileB1.readDataset(overlapsB1,"overlaps");
     fileB2.readDataset(overlapsB2,"overlaps");
 
-    std::cout << std::setprecision(16);
 
     auto [eigvalsA2_lapacke,eigvecsA2_lapacke,infoA2] = eig_dsyevd(H_localA2.data(),H_localA2.rows());
     auto [eigvalsB2_lapacke,eigvecsB2_lapacke,infoB2] = eig_dsyevd(H_localB2.data(),H_localB2.rows());
-
     class_eigsolver solverA2;
     class_eigsolver solverB2;
     using namespace eigutils::eigSetting;
@@ -134,8 +132,24 @@ int main(){
     Eigen::VectorXd eigvalsB2_eig           = Eigen::Map<const Eigen::VectorXd> (solverB2.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solverB2.solution.meta.cols);
     Eigen::MatrixXd eigvecsB2_eig           = Eigen::Map<const Eigen::MatrixXd> (solverB2.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solverB2.solution.meta.rows,solverB2.solution.meta.cols);
 
+    Eigen::VectorXd overlapsA2_read         = (thetaA2.adjoint() * eigvecsA2).cwiseAbs();
+    Eigen::VectorXd overlapsA2_lapacke      = (thetaA2.adjoint() * eigvecsA2_lapacke).cwiseAbs();
+    Eigen::VectorXd overlapsA2_eig          = (thetaA2.adjoint() * eigvecsA2_eig).cwiseAbs();
+    Eigen::VectorXd overlapsB2_read         = (thetaB2.adjoint() * eigvecsB2).cwiseAbs();
+    Eigen::VectorXd overlapsB2_lapacke      = (thetaB2.adjoint() * eigvecsB2_lapacke).cwiseAbs();
+    Eigen::VectorXd overlapsB2_eig          = (thetaB2.adjoint() * eigvecsB2_eig).cwiseAbs();
 
-    std::cout << "H_localA2      vs H_localB2      diff =   " << std::boolalpha << (H_localA2.array() - H_localB2.array()).cwiseAbs().sum() << std::endl;
+
+    double max_overlapA2_read        = overlapsA2_read    .maxCoeff();
+    double max_overlapA2_lapacke     = overlapsA2_lapacke .maxCoeff();
+    double max_overlapA2_eig         = overlapsA2_eig     .maxCoeff();
+    double max_overlapB2_read        = overlapsB2_read    .maxCoeff();
+    double max_overlapB2_lapacke     = overlapsB2_lapacke .maxCoeff();
+    double max_overlapB2_eig         = overlapsB2_eig     .maxCoeff();
+
+
+    std::cout << std::setprecision(16);
+    std::cout << "H_localA2         vs H_localB2           diff   =   " << std::boolalpha << (H_localA2.array() - H_localB2.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvalsA2_read    vs eigvalsA2_lapacke   diff   =   " << std::boolalpha << (eigvalsA2.array() - eigvalsA2_lapacke.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvecsA2_read    vs eigvecsA2_lapacke   diff   =   " << std::boolalpha << (eigvecsA2.array() - eigvecsA2_lapacke.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvalsB2_read    vs eigvalsB2_lapacke   diff   =   " << std::boolalpha << (eigvalsB2.array() - eigvalsB2_lapacke.array()).cwiseAbs().sum() << std::endl;
@@ -149,7 +163,12 @@ int main(){
     std::cout << "eigvalsB2_lapacke vs eigvalsB2_solver    diff   =   " << std::boolalpha << (eigvalsB2_lapacke.array() - eigvalsB2_eig.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvecsB2_lapacke vs eigvecsB2_solver    diff   =   " << std::boolalpha << (eigvecsB2_lapacke.array() - eigvecsB2_eig.array()).cwiseAbs().sum() << std::endl;
 
-
+    std::cout << "max_overlapA2_read     =  " << max_overlapA2_read     << std::endl;
+    std::cout << "max_overlapA2_lapacke  =  " << max_overlapA2_lapacke  << std::endl;
+    std::cout << "max_overlapA2_eig      =  " << max_overlapA2_eig      << std::endl;
+    std::cout << "max_overlapB2_read     =  " << max_overlapB2_read     << std::endl;
+    std::cout << "max_overlapB2_lapacke  =  " << max_overlapB2_lapacke  << std::endl;
+    std::cout << "max_overlapB2_eig      =  " << max_overlapB2_eig      << std::endl;
 
 //    std::cout << "theta * eigvecsA2         = \n" << std::fixed << (thetaA2.adjoint() * eigvecsA2).cwiseAbs().transpose() << std::endl;
 
