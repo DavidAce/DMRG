@@ -15,7 +15,7 @@ Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t 
 -l               : Clear downloaded libraries before build (i.e. delete ./libs and ./cmake-build-libs)
 -m <mode>        : Release         | Debug | Profile |  (default = Release)
 -o <ON|OFF>      : OpenMP use      | ON | OFF | (default = OFF)
--s <ON|OFF>      : Static linking  | ON | OFF | (default = ON)
+-s <ON|OFF>      : Shared libs     | ON | OFF | (default = OFF)
 -t <target>      : DMRG++          | all | hdf5_test_target | arpack++_simple_test_target | arpack++_mps_test_target | (default = all)
 EOF
   exit 1
@@ -30,7 +30,7 @@ make_threads="8"
 march="sandybridge"
 omp="OFF"
 mkl="OFF"
-static="ON"
+shared="OFF"
 compiler=""
 
 while getopts a:cg:hi:j:lm:o:s:t: o; do
@@ -45,7 +45,7 @@ while getopts a:cg:hi:j:lm:o:s:t: o; do
         (t) target=$OPTARG;;
         (o) omp=$OPTARG;;
         (i) mkl=$OPTARG;;
-        (s) static=$OPTARG;;
+        (s) shared=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
   esac
@@ -150,7 +150,7 @@ echo "Build threads   :   $make_threads"
 echo "Mode            :   $mode"
 echo "OpenMP          :   $omp"
 echo "Intel MKL       :   $mkl"
-echo "Static build    :   $static"
+echo "Shared build    :   $shared"
 
 
 
@@ -159,5 +159,5 @@ echo "Static build    :   $static"
 
 cmake -E make_directory build/$mode
 cd build/$mode
-cmake -DCMAKE_BUILD_TYPE=$mode -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DSTATIC_BUILD=$static  -G "CodeBlocks - Unix Makefiles" ../../
+cmake -DCMAKE_BUILD_TYPE=$mode -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DBUILD_SHARED_LIBS=$shared  -G "CodeBlocks - Unix Makefiles" ../../
 cmake --build . --target $target -- -j $make_threads
