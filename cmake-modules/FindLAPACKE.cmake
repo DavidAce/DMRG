@@ -41,6 +41,10 @@ if(NOT LAPACKE_FOUND)
             /usr/include
             /usr/include/x86_64-linux-gnu
             )
+    if(LAPACKE_INCLUDE_DIRS)
+        message(STATUS "Found lapacke.h headers in: ${LAPACKE_INCLUDE_DIRS}")
+    endif()
+
 endif()
 
 
