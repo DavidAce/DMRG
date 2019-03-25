@@ -11,7 +11,11 @@ endif()
 
 set(BLA_VENDOR OpenBLAS)
 set(BLAS_VERBOSE OFF)
-set(BLA_STATIC ${STATIC_BUILD})
+if(NOT ${BUILD_SHARED_LIBS})
+    set(BLA_STATIC ON)
+else()
+    set(BLA_STATIC OFF)
+endif()
 
 if(NOT BLAS_FOUND)
     message(STATUS "Searching for OpenBLAS in system.")
@@ -25,17 +29,23 @@ if(NOT BLAS_FOUND)
             $ENV{HOME}/anaconda3
             /usr/lib/x86_64-linux-gnu/
             )
-    if(OpenBLAS_FOUND)
+
+    if(OpenBLAS_FOUND AND OpenBLAS_LIBRARIES AND NOT OpenBLAS_LIBRARY)
         get_filename_component(OpenBLAS_LIBRARIES_WE ${OpenBLAS_LIBRARIES} NAME_WE)
         get_filename_component(OpenBLAS_ROOT ${OpenBLAS_LIBRARIES} DIRECTORY)
-        set(BLAS_openblas_LIBRARY ${OpenBLAS_ROOT}/${OpenBLAS_LIBRARIES_WE}${CUSTOM_SUFFIX})
-        set(BLAS_INCLUDE_DIRS ${OpenBLAS_INCLUDE_DIRS})
+        set(OpenBLAS_LIBRARY ${OpenBLAS_ROOT}/${OpenBLAS_LIBRARIES_WE}${CUSTOM_SUFFIX})
+    endif()
+
+    if(OpenBLAS_FOUND AND OpenBLAS_LIBRARY AND OpenBLAS_INCLUDE_DIRS)
+        set(OpenBLAS_INCLUDE_DIRS ${OpenBLAS_INCLUDE_DIRS} ${OpenBLAS_INCLUDE_DIRS}/openblas)
+        set(OpenBLAS_FOUND TRUE)
+        set(BLAS_FOUND TRUE)
     endif()
 endif()
 
-if(NOT BLAS_openblas_LIBRARY)
+if(NOT OpenBLAS_FOUND)
     message(STATUS "Searching for OpenBLAS in standard paths")
-    find_library(BLAS_openblas_LIBRARY
+    find_library(OpenBLAS_LIBRARY
             NAMES libopenblas${CUSTOM_SUFFIX}
             PATHS
             ${INSTALL_DIRECTORY}/OpenBLAS
@@ -45,8 +55,8 @@ if(NOT BLAS_openblas_LIBRARY)
             /usr/lib/x86_64-linux-gnu
             NO_DEFAULT_PATH
             )
-    find_path(BLAS_INCLUDE_DIRS
-            NAMES cblas.h
+    find_path(OpenBLAS_INCLUDE_DIRS
+            NAMES openblas_config.h
             PATHS
             ${INSTALL_DIRECTORY}/OpenBLAS
             $ENV{BLAS_DIR}/include
@@ -56,9 +66,10 @@ if(NOT BLAS_openblas_LIBRARY)
             /usr/include/x86_64-linux-gnu
             NO_DEFAULT_PATH
             )
-    if (BLAS_openblas_LIBRARY)
+    if (OpenBLAS_LIBRARY AND OpenBLAS_INCLUDE_DIRS)
         set(OpenBLAS_MULTITHREADED 1 )
-        set(OpenBLAS_MULTITHREADED 1 )
+        set(BLAS_FOUND TRUE)
+        set(OpenBLAS_FOUND TRUE)
     endif()
 endif()
 
@@ -76,23 +87,20 @@ endif()
 
 
 
-if(BLAS_openblas_LIBRARY)
-    message(STATUS "BLAS FOUND IN SYSTEM: ${BLAS_openblas_LIBRARY}")
-    message(STATUS "                      ${BLAS_INCLUDE_DIRS}")
+if(OpenBLAS_FOUND)
+    message(STATUS "OpenBLAS FOUND IN SYSTEM: ${OpenBLAS_LIBRARY}")
+    message(STATUS "                          ${OpenBLAS_INCLUDE_DIRS}")
 
     #For convenience, define these variables
     add_library(blas   INTERFACE)
-    add_library(lapack INTERFACE)
-    set(BLAS_LIBRARIES     ${BLAS_openblas_LIBRARY})
-    set(LAPACK_LIBRARIES   ${BLAS_openblas_LIBRARY})
-    set(LAPACK_INCLUDE_DIRS ${BLAS_INCLUDE_DIRS})
+    add_library(lapack ALIAS blas)
 
     include(CheckIncludeFileCXX)
     include(CheckSymbolExists)
     check_include_file_cxx(cblas.h    has_cblas_h)
     if(has_cblas_h)
-        set(CMAKE_REQUIRED_LIBRARIES ${BLAS_LIBRARIES} ${PTHREAD_LIBRARY} gfortran)
-        set(CMAKE_REQUIRED_INCLUDES  ${BLAS_INCLUDE_DIRS})
+        set(CMAKE_REQUIRED_LIBRARIES ${OpenBLAS_LIBRARY} ${PTHREAD_LIBRARY} gfortran)
+        set(CMAKE_REQUIRED_INCLUDES  ${OpenBLAS_INCLUDE_DIRS})
         check_symbol_exists(openblas_set_num_threads cblas.h has_openblas_symbols)
     endif()
     if(has_cblas_h AND has_openblas_symbols)
@@ -120,7 +128,8 @@ else()
 
             CMAKE_ARGS
 #            -j8
-            -DDYNAMIC_ARCH:BOOL=ON
+            -DTARGET=${OPENBLAS_MARCH}
+            -DDYNAMIC_ARCH:BOOL=OFF
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -157,47 +166,36 @@ else()
 
 ExternalProject_Get_Property(external_OpenBLAS INSTALL_DIR)
     add_library(blas   INTERFACE)
-    add_library(lapack INTERFACE)
+    add_library(lapack ALIAS blas)
     add_library(openblas::lapacke ALIAS blas)
     add_dependencies(blas         external_OpenBLAS)
-    add_dependencies(lapack       external_OpenBLAS)
-    set(BLAS_INCLUDE_DIRS   ${INSTALL_DIR}/include)
-    set(LAPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
 
-    set(BLAS_LIBRARIES           ${INSTALL_DIR}/lib/libopenblas${CUSTOM_SUFFIX})
-    set(LAPACK_LIBRARIES         ${INSTALL_DIR}/lib/libopenblas${CUSTOM_SUFFIX})
-    set(BLAS_LIBRARIES_STATIC    ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(LAPACK_LIBRARIES_STATIC  ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(BLAS_LIBRARIES_SHARED    ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(LAPACK_LIBRARIES_SHARED  ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(OpenBLAS_LIBRARY           ${INSTALL_DIR}/lib/libopenblas${CUSTOM_SUFFIX})
+    set(OpenBLAS_LIBRARY_STATIC    ${INSTALL_DIR}/lib/libopenblas${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(OpenBLAS_LIBRARY_SHARED    ${INSTALL_DIR}/lib/libopenblas${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(OpenBLAS_INCLUDE_DIRS      ${INSTALL_DIR}/include ${INSTALL_DIR}/include/openblas)
     add_definitions(-DOpenBLAS_AVAILABLE)
-
 endif()
 
 
 
-target_link_libraries(blas INTERFACE ${BLAS_LIBRARIES} ${PTHREAD_LIBRARY} gfortran)
-target_include_directories(blas INTERFACE ${BLAS_INCLUDE_DIRS})
-
-target_link_libraries(lapack INTERFACE ${LAPACK_LIBRARIES} ${PTHREAD_LIBRARY} gfortran)
-target_include_directories(lapack INTERFACE ${LAPACK_INCLUDE_DIRS})
-
+target_link_libraries(blas INTERFACE ${OpenBLAS_LIBRARY} ${PTHREAD_LIBRARY} gfortran)
+target_include_directories(blas INTERFACE ${OpenBLAS_INCLUDE_DIRS})
 set(FC_LDLAGS -fPIC ${PTHREAD_LIBRARY})
 
 if(OpenBLAS_USE_OPENMP AND OpenMP_FOUND)
     target_link_libraries(blas INTERFACE ${OpenMP_LIBRARIES})
-    target_link_libraries(lapack INTERFACE ${OpenMP_LIBRARIES})
     target_link_options(blas INTERFACE ${OpenMP_CXX_FLAGS})
-    target_link_options(lapack INTERFACE ${OpenMP_CXX_FLAGS})
 endif()
 
 
+if (TARGET blas)
+    set(BLAS_LIBRARIES   ${OpenBLAS_LIBRARY})
+    set(LAPACK_LIBRARIES ${OpenBLAS_LIBRARY})
 
 
-if (TARGET blas AND TARGET lapack)
     include(cmake-modules/FindLAPACKE.cmake)
     if(TARGET lapacke)
         target_link_libraries(blas   INTERFACE lapacke)
-        target_link_libraries(lapack INTERFACE lapacke)
     endif()
 endif()

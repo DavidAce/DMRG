@@ -23,15 +23,33 @@ if(MKL_FOUND)
 endif()
 
 
+if(TARGET openblas::lapacke)
+    include(CheckIncludeFileCXX)
+    check_include_file_cxx(lapacke.h    has_lapacke_h)
+    if(has_lapacke_h)
+        message(STATUS "Found lapacke in OpenBLAS")
+        set(LAPACKE_FOUND TRUE)
+        get_target_property(LAPACKE_LIBRARY        openblas::lapacke INTERFACE_LINK_LIBRARIES)
+        get_target_property(LAPACKE_INCLUDE_DIRS   openblas::lapacke INTERFACE_INCLUDE_DIRECTORIES)
+        add_dependencies(lapacke openblas::lapacke)
+        target_link_libraries(lapacke INTERFACE openblas::lapacke)
+        return()
+    endif()
+endif()
+
+
+add_library(lapacke INTERFACE)
 if(TARGET lapack)
     get_target_property(LAPACKE_LAPACK_LIBRARY   lapack INTERFACE_LINK_LIBRARIES)
     get_target_property(LAPACKE_LAPACK_INCLUDE   lapack INTERFACE_INCLUDE_DIRECTORIES)
+    add_dependencies(lapacke INTERFACE lapack)
 endif()
 
 
 
-if(NOT LAPACKE_FOUND)
 
+if(NOT LAPACKE_FOUND)
+    message(STATUS "Searching for header: lapacke.h")
     find_path(LAPACKE_INCLUDE_DIRS
             NAMES lapacke.h
             PATHS
@@ -44,20 +62,14 @@ if(NOT LAPACKE_FOUND)
             )
     if(LAPACKE_INCLUDE_DIRS)
         message(STATUS "Found lapacke.h headers in: ${LAPACKE_INCLUDE_DIRS}")
+    else()
+        message(STATUS "Could not find lapacke.h")
     endif()
 
 endif()
 
 
 
-add_library(lapacke INTERFACE)
-add_dependencies(lapacke INTERFACE lapack)
-
-if(TARGET openblas::lapacke)
-    set(LAPACKE_FOUND TRUE)
-    target_link_libraries(lapacke INTERFACE openblas::lapacke)
-    target_include_directories(lapacke INTERFACE ${LAPACKE_INCLUDE_DIRS} )
-endif()
 
 
 
@@ -66,7 +78,7 @@ endif()
 
 if (NOT LAPACKE_FOUND )
     # Try finding lapacke in OpenBLAS
-    message(STATUS "Attempting to find LAPACKE in OpenBLAS")
+    message(STATUS "Checking that lapacke headers work")
     if(LAPACKE_LAPACK_LIBRARY AND LAPACKE_INCLUDE_DIRS)
         set(LAPACKE_LIBRARY ${LAPACKE_LAPACK_LIBRARY})
         #   Test features

@@ -4,7 +4,7 @@
 
 #ifndef CLASS_EIGSOLVER_H
 #define CLASS_EIGSOLVER_H
-#include "arpack_extra/matrix_product_dense.h"
+//#include "arpack_extra/matrix_product_dense.h"
 #include "arpack_extra/matrix_product_sparse.h"
 #include "arpack_extra/matrix_product_stl.h"
 #include "arpack_extra/matrix_product_hamiltonian.h"
@@ -13,7 +13,7 @@
 #include "general/nmspc_eigutils.h"
 #include <fstream>
 
-
+template<typename T> class DenseMatrixProduct;
 
 
 class class_eigsolver {

@@ -2,8 +2,6 @@
 // Created by david on 2018-10-30.
 //
 
-#include <algorithm>
-#include "arpackpp_solver.h"
 #include "matrix_product_dense.h"
 #include "matrix_product_sparse.h"
 #include "matrix_product_stl.h"
@@ -12,6 +10,8 @@
 #include <arpack++/arsnsym.h>
 #include <arpack++/arscomp.h>
 #include <general/nmspc_type_check.h>
+#include <algorithm>
+#include "arpackpp_solver.h"
 
 namespace tc = TypeCheck;
 using namespace eigutils::eigSetting;
