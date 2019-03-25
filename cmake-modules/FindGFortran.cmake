@@ -16,7 +16,7 @@ endif()
 
 if(EXISTS ${_libgfortran_path})
     get_filename_component(GFORTRAN_PATH ${_libgfortran_path} PATH)
-    find_library(GFORTRAN_LIB NAMES libgfortran${CMAKE_STATIC_LIBRARY_SUFFIX} PATHS ${GFORTRAN_PATH})
+    find_library(GFORTRAN_LIB NAMES gfortran PATHS ${GFORTRAN_PATH})
     message(STATUS "Found gfortran library:   ${GFORTRAN_LIB}")
 else()
     # if libgfortran wasn't found at this point, the installation is probably broken
@@ -29,7 +29,7 @@ if (NOT GFORTRAN_LIB)
 endif ()
 
 # also need libquadmath.a
-find_library(QUADMATH_LIB NAMES libquadmath.a PATHS ${GFORTRAN_PATH})
+find_library(QUADMATH_LIB NAMES quadmath PATHS ${GFORTRAN_PATH})
 if (NOT QUADMATH_LIB)
     message (FATAL_ERROR "quadmath could not be found")
 endif ()

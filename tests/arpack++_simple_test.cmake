@@ -4,14 +4,15 @@ set_target_properties(arpack++_simple_test_target PROPERTIES OUTPUT_NAME  arpack
 ################################################
 ###  Force cmake to find .a library suffixes ###
 ################################################
-if(STATIC_BUILD)
-    set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
-    target_link_libraries  (arpack++_simple_test_target PRIVATE -static)                  ### Static linkage
-else()
+if(BUILD_SHARED_LIBS)
     set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+else()
+    set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    target_link_libraries  (arpack++_simple_test_target PRIVATE -static)                                             ### Static linkage
 endif()
+
 
 target_link_libraries  (arpack++_simple_test_target PRIVATE -Wl,--no-allow-shlib-undefined )
 target_link_libraries  (arpack++_simple_test_target PRIVATE -Wl,--no-as-needed )
