@@ -125,6 +125,7 @@ else()
                           USE_THREAD=${OpenBLAS_MULTITHREADED}
                           USE_OPENMP=${OpenBLAS_USE_OPENMP}
                           NO_AFFINITY=1
+                          NO_WARMUP=1
                           QUIET_MAKE=0
                           NUM_THREADS=128
 #                          FFLAGS=-frecursive
