@@ -10,8 +10,8 @@
 
 int eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L){
     //These nice values are inspired from armadillo. The prefactors give good performance.
-    int lwork  =  2 * (1 + 6*L + 2*(L*L));
-    int liwork =  3 * (3 + 5*L);
+    int lwork  = 5 * 2 * (1 + 6*L + 2*(L*L));
+    int liwork = 5 * 3 * (3 + 5*L);
     int info   = 0;
     std::vector<double> work  ( lwork );
     std::vector<int   > iwork ( liwork );
@@ -132,6 +132,9 @@ int main(){
 
     solverA.eig<Type::REAL, Form::SYMMETRIC>(H_localA0,true,false);
     solverB.eig<Type::REAL, Form::SYMMETRIC>(H_localB0,true,false);
+    solverA.setLogLevel(0);
+    solverB.setLogLevel(0);
+
     Eigen::VectorXd eigvalsA0_eig           = Eigen::Map<const Eigen::VectorXd> (solverA.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solverA.solution.meta.cols);
     Eigen::MatrixXd eigvecsA0_eig           = Eigen::Map<const Eigen::MatrixXd> (solverA.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solverA.solution.meta.rows,solverA.solution.meta.cols);
     Eigen::VectorXd eigvalsB0_eig           = Eigen::Map<const Eigen::VectorXd> (solverB.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solverB.solution.meta.cols);
