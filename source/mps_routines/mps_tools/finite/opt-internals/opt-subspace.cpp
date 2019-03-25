@@ -2,7 +2,6 @@
 // Created by david on 2019-03-18.
 //
 #include <Eigen/Core>
-#include <Eigen/Dense>
 #include <iostream>
 #include <iomanip>
 #include <general/class_eigsolver.h>

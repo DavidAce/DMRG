@@ -3,6 +3,8 @@
 //
 #include <Eigen/Core>
 #include <vector>
+#include <complex.h>
+#undef I
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>
 #include "nmspc_quantum_mechanics.h"

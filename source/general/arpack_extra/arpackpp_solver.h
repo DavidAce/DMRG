@@ -4,14 +4,12 @@
 
 #ifndef CLASS_EIGSOLVER_BASE_H
 #define CLASS_EIGSOLVER_BASE_H
-#include <complex>
 #include <vector>
-#include <map>
-#include <memory>
-#include <algorithm>
-#include <assert.h>
 #include <general/class_tic_toc.h>
 #include "general/nmspc_eigutils.h"
+#include <complex>
+#undef I
+
 #define profile_arpack 0
 
 

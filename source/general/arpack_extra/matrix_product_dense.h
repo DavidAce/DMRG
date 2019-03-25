@@ -12,11 +12,15 @@
 
 
 
+
 #include <general/nmspc_eigutils.h>
 #include <general/class_tic_toc.h>
 #include <iostream>
 #include <iomanip>
 #include <Eigen/Core>
+#include <complex.h>
+#undef I
+
 #include <Eigen/LU>
 #define profile_matrix_product_dense 1
 
