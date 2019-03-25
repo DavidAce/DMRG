@@ -10,8 +10,8 @@
 
 int eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L){
     //These nice values are inspired from armadillo. The prefactors give good performance.
-    int lwork  = 5 * 2 * (1 + 6*L + 2*(L*L));
-    int liwork = 5 * 3 * (3 + 5*L);
+    int lwork  = 2 * (1 + 6*L + 2*(L*L));
+    int liwork = 3 * (3 + 5*L);
     int info   = 0;
     std::vector<double> work  ( lwork );
     std::vector<int   > iwork ( liwork );
