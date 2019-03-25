@@ -7,8 +7,6 @@
 #include <general/class_eigsolver.h>
 #include <lapacke.h>
 
-#include <filesystem>
-
 
 int eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L){
     //These nice values are inspired from armadillo. The prefactors give good performance.
