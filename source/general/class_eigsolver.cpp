@@ -40,7 +40,7 @@ class_eigsolver::class_eigsolver(size_t logLevel_){
 void class_eigsolver::setLogLevel(size_t logLevelZeroToSix){
     logLevel = logLevelZeroToSix;
     eigutils::eigLogger::setLogLevel(logLevelZeroToSix);
-};
+}
 
 
 void class_eigsolver::eigs_init(const int L,
@@ -177,14 +177,21 @@ int class_eigsolver::eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L)
     double lwork_query [1];
     int    liwork_query[1];
 
-    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
-                               matrix2eigvecs,
-                               L,
-                               eigvals,
-                               lwork_query,
-                               -1,
-                               liwork_query,
-                               -1);
+
+//    info = LAPACKE_dsyev(LAPACK_COL_MAJOR,jobz,'U',L,
+//                               matrix2eigvecs,
+//                               L,
+//                               eigvals);
+
+//
+//    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
+//                               matrix2eigvecs,
+//                               L,
+//                               eigvals,
+//                               lwork_query,
+//                               -1,
+//                               liwork_query,
+//                               -1);
 
     int lwork     = (int) lwork_query[0]; //Make it twice as big for performance.
     int liwork    = (int) liwork_query[0]; //Make it twice as big for performance.
@@ -195,24 +202,19 @@ int class_eigsolver::eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L)
     std::vector<int   > iwork ( (unsigned long) liwork );
 
 
-//    info = LAPACKE_dsyevd_2stage_work(LAPACK_COL_MAJOR,jobz,'U',L,
+
+    info = LAPACKE_dsyev(LAPACK_COL_MAJOR,jobz,'U',L,
+                               matrix2eigvecs,
+                               L,
+                               eigvals);
+//    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
 //                               matrix2eigvecs,
 //                               L,
 //                               eigvals,
 //                               work.data(),
 //                               lwork,
 //                               iwork.data(),
-//                               liwork
-//                               );
-
-    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
-                               matrix2eigvecs,
-                               L,
-                               eigvals,
-                               work.data(),
-                               lwork,
-                               iwork.data(),
-                               liwork);
+//                               liwork);
     return info;
 }
 
