@@ -34,6 +34,7 @@ if(NOT LAPACKE_FOUND)
 
     find_path(LAPACKE_INCLUDE_DIRS
             NAMES lapacke.h
+            PATHS
             ${LAPACKE_LAPACK_INCLUDE}
             $ENV{BLAS_DIR}/include
             $ENV{HOME}/.conda/include
