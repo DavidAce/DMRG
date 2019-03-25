@@ -224,18 +224,18 @@ int main(){
     std::cout << "H_localA0         vs H_localB0           diff   =   " << std::boolalpha << (H_localA0.array() - H_localB0.array()).cwiseAbs().sum() << std::endl;
     std::cout << "thetaA0           vs thetaB0             diff   =   " << std::boolalpha << (thetaA0.array()   - thetaB0.array()).cwiseAbs().sum() << std::endl;
     std::cout << "overlapsA0        vs overlapsB0          diff   =   " << std::boolalpha << (overlapsA0.array()- overlapsB0.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsA0_read    vs eigvalsA0_lapacke   diff   =   " << std::boolalpha << (eigvalsA0.array() - eigvalsA0_lapacke.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsA0_read    vs eigvecsA0_lapacke   diff   =   " << std::boolalpha << (eigvecsA0.array() - eigvecsA0_lapacke.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsB0_read    vs eigvalsB0_lapacke   diff   =   " << std::boolalpha << (eigvalsB0.array() - eigvalsB0_lapacke.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsB0_read    vs eigvecsB0_lapacke   diff   =   " << std::boolalpha << (eigvecsB0.array() - eigvecsB0_lapacke.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsA0_read    vs eigvalsA0_solver    diff   =   " << std::boolalpha << (eigvalsA0.array() - eigvalsA0_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsA0_read    vs eigvecsA0_solver    diff   =   " << std::boolalpha << (eigvecsA0.array() - eigvecsA0_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsB0_read    vs eigvalsB0_solver    diff   =   " << std::boolalpha << (eigvalsB0.array() - eigvalsB0_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsB0_read    vs eigvecsB0_solver    diff   =   " << std::boolalpha << (eigvecsB0.array() - eigvecsB0_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsA0_lapacke vs eigvalsA0_solver    diff   =   " << std::boolalpha << (eigvalsA0_lapacke.array() - eigvalsA0_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsA0_lapacke vs eigvecsA0_solver    diff   =   " << std::boolalpha << (eigvecsA0_lapacke.array() - eigvecsA0_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsB0_lapacke vs eigvalsB0_solver    diff   =   " << std::boolalpha << (eigvalsB0_lapacke.array() - eigvalsB0_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsB0_lapacke vs eigvecsB0_solver    diff   =   " << std::boolalpha << (eigvecsB0_lapacke.array() - eigvecsB0_eig.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvecsA0_read    vs eigvecsA0_lapacke   diff   =   " << std::boolalpha << (eigvecsA0.adjoint()         * eigvecsA0_lapacke).diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsB0_read    vs eigvecsB0_lapacke   diff   =   " << std::boolalpha << (eigvecsB0.adjoint()         * eigvecsB0_lapacke).diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsA0_read    vs eigvecsA0_solver    diff   =   " << std::boolalpha << (eigvecsA0.adjoint()         * eigvecsA0_eig)    .diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsB0_read    vs eigvecsB0_solver    diff   =   " << std::boolalpha << (eigvecsB0.adjoint()         * eigvecsB0_eig)    .diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsA0_lapacke vs eigvecsA0_solver    diff   =   " << std::boolalpha << (eigvecsA0_lapacke.adjoint() * eigvecsA0_eig)    .diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsB0_lapacke vs eigvecsB0_solver    diff   =   " << std::boolalpha << (eigvecsB0_lapacke.adjoint() * eigvecsB0_eig)    .diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvalsA0_read    vs eigvalsA0_lapacke   diff   =   " << std::boolalpha << (eigvalsA0.array()           - eigvalsA0_lapacke.array())   .cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB0_read    vs eigvalsB0_lapacke   diff   =   " << std::boolalpha << (eigvalsB0.array()           - eigvalsB0_lapacke.array())   .cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsA0_read    vs eigvalsA0_solver    diff   =   " << std::boolalpha << (eigvalsA0.array()           - eigvalsA0_eig    .array())   .cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB0_read    vs eigvalsB0_solver    diff   =   " << std::boolalpha << (eigvalsB0.array()           - eigvalsB0_eig    .array())   .cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsA0_lapacke vs eigvalsA0_solver    diff   =   " << std::boolalpha << (eigvalsA0_lapacke.array()   - eigvalsA0_eig    .array())   .cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB0_lapacke vs eigvalsB0_solver    diff   =   " << std::boolalpha << (eigvalsB0_lapacke.array()   - eigvalsB0_eig    .array())   .cwiseAbs().sum() << std::endl;
 
     std::cout << "max_overlapA0_read     =  " << max_overlapA0_read     << std::endl;
     std::cout << "max_overlapA0_lapacke  =  " << max_overlapA0_lapacke  << std::endl;
@@ -249,18 +249,19 @@ int main(){
     std::cout << "H_localA1         vs H_localB1           diff   =   " << std::boolalpha << (H_localA1.array() - H_localB1.array()).cwiseAbs().sum() << std::endl;
     std::cout << "thetaA1           vs thetaB1             diff   =   " << std::boolalpha << (thetaA1.array()   - thetaB1.array()).cwiseAbs().sum() << std::endl;
     std::cout << "overlapsA1        vs overlapsB1          diff   =   " << std::boolalpha << (overlapsA1.array()- overlapsB1.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsA1_read    vs eigvalsA1_lapacke   diff   =   " << std::boolalpha << (eigvalsA1.array() - eigvalsA1_lapacke.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsA1_read    vs eigvecsA1_lapacke   diff   =   " << std::boolalpha << (eigvecsA1.array() - eigvecsA1_lapacke.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsB1_read    vs eigvalsB1_lapacke   diff   =   " << std::boolalpha << (eigvalsB1.array() - eigvalsB1_lapacke.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsB1_read    vs eigvecsB1_lapacke   diff   =   " << std::boolalpha << (eigvecsB1.array() - eigvecsB1_lapacke.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsA1_read    vs eigvalsA1_solver    diff   =   " << std::boolalpha << (eigvalsA1.array() - eigvalsA1_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsA1_read    vs eigvecsA1_solver    diff   =   " << std::boolalpha << (eigvecsA1.array() - eigvecsA1_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsB1_read    vs eigvalsB1_solver    diff   =   " << std::boolalpha << (eigvalsB1.array() - eigvalsB1_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsB1_read    vs eigvecsB1_solver    diff   =   " << std::boolalpha << (eigvecsB1.array() - eigvecsB1_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsA1_lapacke vs eigvalsA1_solver    diff   =   " << std::boolalpha << (eigvalsA1_lapacke.array() - eigvalsA1_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsA1_lapacke vs eigvecsA1_solver    diff   =   " << std::boolalpha << (eigvecsA1_lapacke.array() - eigvecsA1_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsB1_lapacke vs eigvalsB1_solver    diff   =   " << std::boolalpha << (eigvalsB1_lapacke.array() - eigvalsB1_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsB1_lapacke vs eigvecsB1_solver    diff   =   " << std::boolalpha << (eigvecsB1_lapacke.array() - eigvecsB1_eig.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvecsA1_read    vs eigvecsA1_lapacke   diff   =   " << std::boolalpha << (eigvecsA1.adjoint()         * eigvecsA1_lapacke).diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsB1_read    vs eigvecsB1_lapacke   diff   =   " << std::boolalpha << (eigvecsB1.adjoint()         * eigvecsB1_lapacke).diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsA1_read    vs eigvecsA1_solver    diff   =   " << std::boolalpha << (eigvecsA1.adjoint()         * eigvecsA1_eig)    .diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsB1_read    vs eigvecsB1_solver    diff   =   " << std::boolalpha << (eigvecsB1.adjoint()         * eigvecsB1_eig)    .diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsA1_lapacke vs eigvecsA1_solver    diff   =   " << std::boolalpha << (eigvecsA1_lapacke.adjoint() * eigvecsA1_eig)    .diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsB1_lapacke vs eigvecsB1_solver    diff   =   " << std::boolalpha << (eigvecsB1_lapacke.adjoint() * eigvecsB1_eig)    .diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvalsA1_read    vs eigvalsA1_lapacke   diff   =   " << std::boolalpha << (eigvalsA1.array()           - eigvalsA1_lapacke.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB1_read    vs eigvalsB1_lapacke   diff   =   " << std::boolalpha << (eigvalsB1.array()           - eigvalsB1_lapacke.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsA1_read    vs eigvalsA1_solver    diff   =   " << std::boolalpha << (eigvalsA1.array()           - eigvalsA1_eig    .array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB1_read    vs eigvalsB1_solver    diff   =   " << std::boolalpha << (eigvalsB1.array()           - eigvalsB1_eig    .array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsA1_lapacke vs eigvalsA1_solver    diff   =   " << std::boolalpha << (eigvalsA1_lapacke.array()   - eigvalsA1_eig    .array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB1_lapacke vs eigvalsB1_solver    diff   =   " << std::boolalpha << (eigvalsB1_lapacke.array()   - eigvalsB1_eig    .array()).cwiseAbs().sum() << std::endl;
+
 
     std::cout << "max_overlapA1_read     =  " << max_overlapA1_read     << std::endl;
     std::cout << "max_overlapA1_lapacke  =  " << max_overlapA1_lapacke  << std::endl;
@@ -274,18 +275,20 @@ int main(){
     std::cout << "H_localA2         vs H_localB2           diff   =   " << std::boolalpha << (H_localA2.array() - H_localB2.array()).cwiseAbs().sum() << std::endl;
     std::cout << "thetaA2           vs thetaB2             diff   =   " << std::boolalpha << (thetaA2.array()   - thetaB2.array()).cwiseAbs().sum() << std::endl;
     std::cout << "overlapsA2        vs overlapsB2          diff   =   " << std::boolalpha << (overlapsA2.array()- overlapsB2.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsA2_read    vs eigvalsA2_lapacke   diff   =   " << std::boolalpha << (eigvalsA2.array() - eigvalsA2_lapacke.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsA2_read    vs eigvecsA2_lapacke   diff   =   " << std::boolalpha << (eigvecsA2.array() - eigvecsA2_lapacke.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsB2_read    vs eigvalsB2_lapacke   diff   =   " << std::boolalpha << (eigvalsB2.array() - eigvalsB2_lapacke.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsB2_read    vs eigvecsB2_lapacke   diff   =   " << std::boolalpha << (eigvecsB2.array() - eigvecsB2_lapacke.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsA2_read    vs eigvalsA2_solver    diff   =   " << std::boolalpha << (eigvalsA2.array() - eigvalsA2_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsA2_read    vs eigvecsA2_solver    diff   =   " << std::boolalpha << (eigvecsA2.array() - eigvecsA2_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsB2_read    vs eigvalsB2_solver    diff   =   " << std::boolalpha << (eigvalsB2.array() - eigvalsB2_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsB2_read    vs eigvecsB2_solver    diff   =   " << std::boolalpha << (eigvecsB2.array() - eigvecsB2_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsA2_lapacke vs eigvalsA2_solver    diff   =   " << std::boolalpha << (eigvalsA2_lapacke.array() - eigvalsA2_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsA2_lapacke vs eigvecsA2_solver    diff   =   " << std::boolalpha << (eigvecsA2_lapacke.array() - eigvecsA2_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvalsB2_lapacke vs eigvalsB2_solver    diff   =   " << std::boolalpha << (eigvalsB2_lapacke.array() - eigvalsB2_eig.array()).cwiseAbs().sum() << std::endl;
-    std::cout << "eigvecsB2_lapacke vs eigvecsB2_solver    diff   =   " << std::boolalpha << (eigvecsB2_lapacke.array() - eigvecsB2_eig.array()).cwiseAbs().sum() << std::endl;
+
+    std::cout << "eigvecsA2_read    vs eigvecsA2_lapacke   diff   =   " << std::boolalpha << (eigvecsA2.adjoint()         * eigvecsA2_lapacke).diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsB2_read    vs eigvecsB2_lapacke   diff   =   " << std::boolalpha << (eigvecsB2.adjoint()         * eigvecsB2_lapacke).diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsA2_read    vs eigvecsA2_solver    diff   =   " << std::boolalpha << (eigvecsA2.adjoint()         * eigvecsA2_eig)    .diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsB2_read    vs eigvecsB2_solver    diff   =   " << std::boolalpha << (eigvecsB2.adjoint()         * eigvecsB2_eig)    .diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsA2_lapacke vs eigvecsA2_solver    diff   =   " << std::boolalpha << (eigvecsA2_lapacke.adjoint() * eigvecsA2_eig)    .diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvecsB2_lapacke vs eigvecsB2_solver    diff   =   " << std::boolalpha << (eigvecsB2_lapacke.adjoint() * eigvecsB2_eig)    .diagonal().cwiseAbs().mean() << std::endl;
+    std::cout << "eigvalsA2_read    vs eigvalsA2_lapacke   diff   =   " << std::boolalpha << (eigvalsA2.array()           - eigvalsA2_lapacke.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB2_read    vs eigvalsB2_lapacke   diff   =   " << std::boolalpha << (eigvalsB2.array()           - eigvalsB2_lapacke.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsA2_read    vs eigvalsA2_solver    diff   =   " << std::boolalpha << (eigvalsA2.array()           - eigvalsA2_eig    .array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB2_read    vs eigvalsB2_solver    diff   =   " << std::boolalpha << (eigvalsB2.array()           - eigvalsB2_eig    .array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsA2_lapacke vs eigvalsA2_solver    diff   =   " << std::boolalpha << (eigvalsA2_lapacke.array()   - eigvalsA2_eig    .array()).cwiseAbs().sum() << std::endl;
+    std::cout << "eigvalsB2_lapacke vs eigvalsB2_solver    diff   =   " << std::boolalpha << (eigvalsB2_lapacke.array()   - eigvalsB2_eig    .array()).cwiseAbs().sum() << std::endl;
+
 
     std::cout << "max_overlapA2_read     =  " << max_overlapA2_read     << std::endl;
     std::cout << "max_overlapA2_lapacke  =  " << max_overlapA2_lapacke  << std::endl;
