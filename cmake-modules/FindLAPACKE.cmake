@@ -2,6 +2,7 @@
 set(SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
 
 
+add_library(lapacke INTERFACE)
 
 
 # Find from MKL
@@ -22,7 +23,6 @@ if(MKL_FOUND)
     endif()
 endif()
 
-
 if(TARGET openblas::lapacke)
     include(CheckIncludeFileCXX)
     check_include_file_cxx(lapacke.h    has_lapacke_h)
@@ -38,7 +38,6 @@ if(TARGET openblas::lapacke)
 endif()
 
 
-add_library(lapacke INTERFACE)
 if(TARGET lapack)
     get_target_property(LAPACKE_LAPACK_LIBRARY   lapack INTERFACE_LINK_LIBRARIES)
     get_target_property(LAPACKE_LAPACK_INCLUDE   lapack INTERFACE_INCLUDE_DIRECTORIES)
