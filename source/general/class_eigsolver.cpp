@@ -31,7 +31,6 @@
 
 
 
-
 //using namespace eigSetting;
 class_eigsolver::class_eigsolver(size_t logLevel_){
     eigutils::eigLogger::setLogger("eig",logLevel,false);
@@ -196,19 +195,24 @@ int class_eigsolver::eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L)
     std::vector<int   > iwork ( (unsigned long) liwork );
 
 
-    info = LAPACKE_dsyevd_2stage(LAPACK_COL_MAJOR,jobz,'U',L,
-                               matrix2eigvecs,
-                               L,
-                               eigvals);
-
-//    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
+//    info = LAPACKE_dsyevd_2stage_work(LAPACK_COL_MAJOR,jobz,'U',L,
 //                               matrix2eigvecs,
 //                               L,
 //                               eigvals,
 //                               work.data(),
 //                               lwork,
 //                               iwork.data(),
-//                               liwork);
+//                               liwork
+//                               );
+
+    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
+                               matrix2eigvecs,
+                               L,
+                               eigvals,
+                               work.data(),
+                               lwork,
+                               iwork.data(),
+                               liwork);
     return info;
 }
 
