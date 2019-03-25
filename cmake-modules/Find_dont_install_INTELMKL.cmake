@@ -59,7 +59,7 @@ if (MKL_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES   "${MKL_INCLUDE_DIR}"
             INTERFACE_COMPILE_OPTIONS       "${MKL_FLAGS}"
             )
-
+    add_library(mkl::lapacke ALIAS mkl)
 
     # BLAS and LAPACK are included in the MKL.
     set(BLAS_LIBRARIES   ${MKL_LIBRARIES})
