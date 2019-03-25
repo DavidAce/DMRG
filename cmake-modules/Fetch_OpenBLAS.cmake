@@ -127,10 +127,10 @@ else()
                           NO_AFFINITY=1
                           QUIET_MAKE=0
                           NUM_THREADS=128
-                          FFLAGS=-frecursive
-                          #DYNAMIC_ARCH=1
-                          #BINARY64=64
-                          #GEMM_MULTITHREAD_THRESHOLD=50
+#                          FFLAGS=-frecursive
+                          DYNAMIC_ARCH=1
+                          BINARY64=64
+                          GEMM_MULTITHREAD_THRESHOLD=4
                           #LDFLAGS=-L${GFORTRAN_LIB_SHARED}
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             DEPENDS gfortran

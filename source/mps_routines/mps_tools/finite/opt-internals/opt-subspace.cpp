@@ -128,9 +128,8 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
             tempfile.writeDataset(overlaps,"overlaps");
             tempfile.writeDataset(theta_cplx,"theta");
         }
-
-        if(sq_sum_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : " + std::to_string(sq_sum_overlap));
         if(max_overlap    > 1.0 + 1e-10) throw std::runtime_error("max_overlap larger than one : " + std::to_string(max_overlap));
+        if(sq_sum_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : " + std::to_string(sq_sum_overlap));
         if(min_overlap    < 0.0)         throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
 
 

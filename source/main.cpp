@@ -12,9 +12,9 @@
 #include <h5pp/h5pp.h>
 #include <experimental/filesystem>
 
-
 #ifdef OpenBLAS_AVAILABLE
 #include <cblas.h>
+#include <openblas_config.h>
 #endif
 
 
@@ -44,9 +44,11 @@ int main(int argc, char* argv[]) {
     int openblas_num_threads = 1;
     #ifdef OpenBLAS_AVAILABLE
         openblas_set_num_threads(openblas_num_threads);
-    std::cout << "OpenBLAS compiled with mode " << openblas_get_parallel()
+    std::cout << OPENBLAS_VERSION
+              << " compiled with parallel mode " << openblas_get_parallel()
               << " for target " << openblas_get_corename()
               << " with config " << openblas_get_config()
+              << " with multithread threshold " << OPENBLAS_GEMM_MULTITHREAD_THRESHOLD
               << ". Running with " << openblas_get_num_threads() << " thread(s)" << std::endl;
     #endif
 
