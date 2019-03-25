@@ -187,8 +187,8 @@ int class_eigsolver::eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L)
                                liwork_query,
                                -1);
 
-    int lwork     = (int) std::real(1.0*lwork_query[0]); //Make it twice as big for performance.
-    int liwork    = (int) std::real(1.0*liwork_query[0]); //Make it twice as big for performance.
+    int lwork     = (int) lwork_query[0]; //Make it twice as big for performance.
+    int liwork    = (int) liwork_query[0]; //Make it twice as big for performance.
     eigutils::eigLogger::log->trace(" lwork  = {}", lwork);
     eigutils::eigLogger::log->trace(" liwork = {}", liwork);
 
@@ -196,14 +196,19 @@ int class_eigsolver::eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L)
     std::vector<int   > iwork ( (unsigned long) liwork );
 
 
-    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
+    info = LAPACKE_dsyevd_2stage(LAPACK_COL_MAJOR,jobz,'U',L,
                                matrix2eigvecs,
                                L,
-                               eigvals,
-                               work.data(),
-                               lwork,
-                               iwork.data(),
-                               liwork);
+                               eigvals);
+
+//    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
+//                               matrix2eigvecs,
+//                               L,
+//                               eigvals,
+//                               work.data(),
+//                               lwork,
+//                               iwork.data(),
+//                               liwork);
     return info;
 }
 
