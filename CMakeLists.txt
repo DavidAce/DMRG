@@ -265,6 +265,34 @@ set_target_properties(${PROJECT_NAME}
 
 
 
+######################################
+###  Require experimental headers  ###
+######################################
+# Use cmake_policy CMP0067 to let try_compile honor current CMAKE_CXX_STANDARD setting.
+# See here
+# https://stackoverflow.com/questions/47213356/cmake-using-corrext-c-standard-when-checking-for-header-files
+cmake_policy(SET CMP0067 NEW)
+include(CheckIncludeFileCXX)
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+    set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs )
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    set(CMAKE_REQUIRED_FLAGS -std=c++17 -lc++fs )
+endif()
+
+check_include_file_cxx(experimental/filesystem    has_experimental_filesystem)
+check_include_file_cxx(experimental/type_traits   has_experimental_type_traits)
+if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
+    message(FATAL_ERROR "\n\
+        Missing one or more experimental headers.\n\
+        Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
+        or checking the compiler flags.")
+endif()
+
+
+
+
+
+
 ###########################################
 ###  Find or fetch all dependencies   ###
 ###########################################
@@ -289,26 +317,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
 target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 target_link_libraries(${PROJECT_NAME} PRIVATE GSL)
 target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp)
-
-######################################
-###  Require experimental headers  ###
-######################################
-# Use cmake_policy CMP0067 to let try_compile honor current CMAKE_CXX_STANDARD setting.
-# See here
-# https://stackoverflow.com/questions/47213356/cmake-using-corrext-c-standard-when-checking-for-header-files
-cmake_policy(SET CMP0067 NEW)
-include(CheckIncludeFileCXX)
-set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs -l${PATH_TO_LIBSTDCXXFS})
-check_include_file_cxx(experimental/filesystem    has_experimental_filesystem)
-check_include_file_cxx(experimental/type_traits   has_experimental_type_traits)
-if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
-    message(FATAL_ERROR "\n\
-        Missing one or more experimental headers.\n\
-        Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
-        or checking the compiler flags.")
-endif()
-
-
 
 get_target_property(BLAS_INFO       blas             INTERFACE_LINK_LIBRARIES)
 get_target_property(LAPACK_INFO     lapack           INTERFACE_LINK_LIBRARIES)
