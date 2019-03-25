@@ -17,24 +17,10 @@ if(MKL_FOUND)
         add_library(lapacke INTERFACE)
         set(LAPACKE_FOUND TRUE)
         message(STATUS "Found LAPACKE in Intel MKL")
+        target_link_libraries(lapacke INTERFACE mkl::lapacke)
         target_include_directories(lapacke INTERFACE ${LAPACKE_INCLUDE_DIRS})
-        return()
     endif()
 endif()
-
-
-
-
-
-
-add_library(lapacke INTERFACE)
-add_dependencies(lapacke INTERFACE lapack)
-
-if(TARGET openblas::lapacke)
-    target_link_libraries(lapacke INTERFACE openblas::lapacke)
-    return()
-endif()
-
 
 
 if(TARGET lapack)
@@ -42,11 +28,13 @@ if(TARGET lapack)
     get_target_property(LAPACKE_LAPACK_INCLUDE   lapack INTERFACE_INCLUDE_DIRECTORIES)
 endif()
 
+
+
 if(NOT LAPACKE_FOUND)
 
     find_path(LAPACKE_INCLUDE_DIRS
             NAMES lapacke.h
-            $ENV{BLAS_DIR}/include
+            ${LAPACKE_LAPACK_INCLUDE}
             $ENV{BLAS_DIR}/include
             $ENV{HOME}/.conda/include
             $ENV{HOME}/anaconda3/include
@@ -54,6 +42,22 @@ if(NOT LAPACKE_FOUND)
             /usr/include/x86_64-linux-gnu
             )
 endif()
+
+
+
+add_library(lapacke INTERFACE)
+add_dependencies(lapacke INTERFACE lapack)
+
+if(TARGET openblas::lapacke)
+    set(LAPACKE_FOUND TRUE)
+    target_link_libraries(lapacke INTERFACE openblas::lapacke)
+    target_include_directories(lapacke INTERFACE ${LAPACKE_INCLUDE_DIRS} )
+endif()
+
+
+
+
+
 
 if (NOT LAPACKE_FOUND )
     # Try finding lapacke in OpenBLAS
@@ -148,8 +152,8 @@ if(LAPACKE_FOUND)
     message(STATUS "LAPACKE LIBRARY : ${LAPACKE_LIBRARY}")
     message(STATUS "LAPACKE INCLUDE : ${LAPACKE_INCLUDE_DIRS}")
 
-    target_link_libraries(lapacke INTERFACE ${LAPACKE_LIBRARY} ${LAPACKE_LAPACK_LIBRARY})
-    target_include_directories(lapacke INTERFACE ${LAPACKE_INCLUDE_DIRS} ${LAPACKE_LAPACK_INCLUDE})
+    target_link_libraries(lapacke INTERFACE ${LAPACKE_LIBRARY})
+    target_include_directories(lapacke INTERFACE ${LAPACKE_INCLUDE_DIRS})
 else()
     message(WARNING "Could not find working package LAPACKE")
 endif()
