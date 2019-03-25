@@ -129,7 +129,7 @@ void class_eigsolver::eig_init  ( const eigutils::eigSetting::Type type      ,
 
 
 int class_eigsolver::eig_dsyevd(const double* matrix, int L){
-    eigutils::eigLogger::log->trace("Starting eig_dsyevd");
+    eigutils::eigLogger::log->trace("Starting eig_dsyevd. Eigvecs: {}", solverConf.compute_eigvecs);
     using namespace eigutils::eigSetting;
     auto & eigvals = solution.get_eigvals<Form::SYMMETRIC>();
     auto & eigvecs = solution.get_eigvecs<Type::REAL,Form::SYMMETRIC>();
@@ -166,15 +166,15 @@ int class_eigsolver::eig_dsyevd(const double* matrix, int L){
 }
 
 int class_eigsolver::eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L){
-    eigutils::eigLogger::log->trace("Starting eig_dsyevd (lapacke)");
+    eigutils::eigLogger::log->trace("Starting eig_dsyevd (lapacke). Eigvecs: {}", solverConf.compute_eigvecs);
     //These nice values are inspired from armadillo. The prefactors give good performance.
-    int lwork  =  2 * (1 + 6*L + 2*(L*L));
-    int liwork =  3 * (3 + 5*L);
+    int lwork  = 2* 2 * (1 + 6*L + 2*(L*L));
+    int liwork = 2* 3 * (3 + 5*L);
     int info   = 0;
     std::vector<double> work  ( lwork );
     std::vector<int   > iwork ( liwork );
     char jobz = solverConf.compute_eigvecs ? 'V' : 'N';
-    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'L',L,
+    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
                                matrix2eigvecs,
                                L,
                                eigvals,
