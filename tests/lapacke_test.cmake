@@ -27,7 +27,7 @@ target_link_libraries  (lapacke_test_target PRIVATE -Wl,--no-undefined )
 
 target_link_libraries(lapacke_test_target PRIVATE -lstdc++fs)
 target_link_libraries(lapacke_test_target PRIVATE -flto)
-target_link_libraries(lapacke_test_target PRIVATE  arpack++  h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog )
+target_link_libraries(lapacke_test_target PRIVATE  arpack++  h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog LBFGSpp)
 
 
 set_target_properties  (lapacke_test_target PROPERTIES CXX_STANDARD_REQUIRED 17)
@@ -37,4 +37,4 @@ target_compile_options (lapacke_test_target PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_O
 target_compile_options (lapacke_test_target PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
 add_test(NAME lapacke_test COMMAND lapacke_test_target)
 
-add_dependencies(lapacke_test_target arpack++  h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog )
+add_dependencies(lapacke_test_target arpack++  h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog LBFGSpp)

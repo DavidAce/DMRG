@@ -1,7 +1,10 @@
 #include <Eigen/Core>
-
-#include <general/class_eigsolver.h>
+#include <mps_routines/nmspc_mps_tools.h>
+#include <complex>
+#include <mps_routines/class_superblock.h>
+#include <LBFGS.h>
 #include <h5pp/h5pp.h>
+#include <general/class_eigsolver.h>
 #include <lapacke.h>
 
 
@@ -213,6 +216,8 @@ int main(){
     std::cout << std::setprecision(16);
 
     std::cout << "H_localA0         vs H_localB0           diff   =   " << std::boolalpha << (H_localA0.array() - H_localB0.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "thetaA0           vs thetaB0             diff   =   " << std::boolalpha << (thetaA0.array()   - thetaB0.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "overlapsA0        vs overlapsB0          diff   =   " << std::boolalpha << (overlapsA0.array()- overlapsB0.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvalsA0_read    vs eigvalsA0_lapacke   diff   =   " << std::boolalpha << (eigvalsA0.array() - eigvalsA0_lapacke.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvecsA0_read    vs eigvecsA0_lapacke   diff   =   " << std::boolalpha << (eigvecsA0.array() - eigvecsA0_lapacke.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvalsB0_read    vs eigvalsB0_lapacke   diff   =   " << std::boolalpha << (eigvalsB0.array() - eigvalsB0_lapacke.array()).cwiseAbs().sum() << std::endl;
@@ -236,6 +241,8 @@ int main(){
 
 
     std::cout << "H_localA1         vs H_localB1           diff   =   " << std::boolalpha << (H_localA1.array() - H_localB1.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "thetaA1           vs thetaB1             diff   =   " << std::boolalpha << (thetaA1.array()   - thetaB1.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "overlapsA1        vs overlapsB1          diff   =   " << std::boolalpha << (overlapsA1.array()- overlapsB1.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvalsA1_read    vs eigvalsA1_lapacke   diff   =   " << std::boolalpha << (eigvalsA1.array() - eigvalsA1_lapacke.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvecsA1_read    vs eigvecsA1_lapacke   diff   =   " << std::boolalpha << (eigvecsA1.array() - eigvecsA1_lapacke.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvalsB1_read    vs eigvalsB1_lapacke   diff   =   " << std::boolalpha << (eigvalsB1.array() - eigvalsB1_lapacke.array()).cwiseAbs().sum() << std::endl;
@@ -259,6 +266,8 @@ int main(){
 
 
     std::cout << "H_localA2         vs H_localB2           diff   =   " << std::boolalpha << (H_localA2.array() - H_localB2.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "thetaA2           vs thetaB2             diff   =   " << std::boolalpha << (thetaA2.array()   - thetaB2.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "overlapsA2        vs overlapsB2          diff   =   " << std::boolalpha << (overlapsA2.array()- overlapsB2.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvalsA2_read    vs eigvalsA2_lapacke   diff   =   " << std::boolalpha << (eigvalsA2.array() - eigvalsA2_lapacke.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvecsA2_read    vs eigvecsA2_lapacke   diff   =   " << std::boolalpha << (eigvecsA2.array() - eigvecsA2_lapacke.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvalsB2_read    vs eigvalsB2_lapacke   diff   =   " << std::boolalpha << (eigvalsB2.array() - eigvalsB2_lapacke.array()).cwiseAbs().sum() << std::endl;

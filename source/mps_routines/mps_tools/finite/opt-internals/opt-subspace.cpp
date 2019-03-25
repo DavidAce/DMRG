@@ -5,11 +5,10 @@
 #include <Eigen/Dense>
 #include <iostream>
 #include <iomanip>
-#include <complex>
+#include <general/class_eigsolver.h>
 #include <spdlog/spdlog.h>
 #include <mps_routines/mps_tools/finite/opt.h>
 #include <mps_routines/class_superblock.h>
-#include <general/class_eigsolver.h>
 #include <LBFGS.h>
 #include <h5pp/h5pp.h>
 
