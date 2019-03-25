@@ -192,7 +192,43 @@ endif()
 
 
 
-#endif()
+###############################
+###  Require c++17 support  ###
+###############################
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+set_target_properties(${PROJECT_NAME}
+        PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF)
+
+
+
+######################################
+###  Require experimental headers  ###
+######################################
+# Use cmake_policy CMP0067 to let try_compile honor current CMAKE_CXX_STANDARD setting.
+# See here
+# https://stackoverflow.com/questions/47213356/cmake-using-corrext-c-standard-when-checking-for-header-files
+cmake_policy(SET CMP0067 NEW)
+include(CheckIncludeFileCXX)
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+    set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs )
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs )
+endif()
+
+check_include_file_cxx(experimental/filesystem    has_experimental_filesystem)
+check_include_file_cxx(experimental/type_traits   has_experimental_type_traits)
+if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
+    message(FATAL_ERROR "\n\
+        Missing one or more experimental headers.\n\
+        Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
+        or checking the compiler flags.")
+endif()
+
 
 
 
@@ -250,43 +286,6 @@ set(PTHREAD_LIBRARY  -Wl,--whole-archive -lpthread -Wl,--no-whole-archive)
 #target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-allow-shlib-undefined )
 #target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-undefined )
 
-
-###############################
-###  Require c++17 support  ###
-###############################
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
-set_target_properties(${PROJECT_NAME}
-        PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED ON
-        CXX_EXTENSIONS OFF)
-
-
-
-######################################
-###  Require experimental headers  ###
-######################################
-# Use cmake_policy CMP0067 to let try_compile honor current CMAKE_CXX_STANDARD setting.
-# See here
-# https://stackoverflow.com/questions/47213356/cmake-using-corrext-c-standard-when-checking-for-header-files
-cmake_policy(SET CMP0067 NEW)
-include(CheckIncludeFileCXX)
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs )
-elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_REQUIRED_FLAGS -std=c++17 -stdlib=libc++  -lstdc++fs  -lc++fs )
-endif()
-
-check_include_file_cxx(experimental/filesystem    has_experimental_filesystem)
-check_include_file_cxx(experimental/type_traits   has_experimental_type_traits)
-if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
-    message(WARNING "\n\
-        Missing one or more experimental headers.\n\
-        Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
-        or checking the compiler flags.")
-endif()
 
 
 
