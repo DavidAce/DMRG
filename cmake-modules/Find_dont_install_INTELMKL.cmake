@@ -30,25 +30,37 @@ endif()
 
 
 if (MKL_FOUND)
+    get_cmake_property(_variableNames VARIABLES)
+    foreach (_variableName ${_variableNames})
+        if("${_variableName}" MATCHES "MKL" OR "${_variableName}" MATCHES "mkl")
+            message(STATUS "${_variableName}=${${_variableName}}")
+        endif()
+    endforeach()
 
     #The order of these libraries is important when doing static linking!
     #To find out the order, check the Intel link line advisor.
-    set(MKL_LIBRARIES  ${MKL_BLAS_LP_LIBRARY} ${MKL_LAPACK_LP_LIBRARY}  -Wl,--start-group  ${MKL_GF_LP_LIBRARY})
-
-    if(MKL_MULTI_THREADED)
-        list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group)
-        if(BUILD_SHARED_LIBS)
-            list(APPEND MKL_LIBRARIES ${MKL_IOMP5_LIBRARY})
-        else()
-            list(APPEND MKL_LIBRARIES ${OpenMP_LIBRARIES})
-        endif()
+    if(BUILD_SHARED_LIBS AND MKL_USE_SINGLE_DYNAMIC_LIBRARY)
+        #This doesn't seem to work,  The gnu fortran GF_LP library doesn't get enabled --> arpack++ complains!
+        set(MKL_LIBRARIES -Wl,--no-as-needed ${MKL_RT_LIBRARY} -Wl,--as-needed  )
     else()
-        list(APPEND MKL_LIBRARIES  ${MKL_SEQUENTIAL_LIBRARY}  ${MKL_CORE_LIBRARY}  -Wl,--end-group )
+        set(MKL_LIBRARIES  ${MKL_BLAS_LP_LIBRARY} ${MKL_LAPACK_LP_LIBRARY}  -Wl,--start-group  ${MKL_GF_LP_LIBRARY})
+
+        if(MKL_MULTI_THREADED)
+            list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group)
+            if(BUILD_SHARED_LIBS)
+                list(APPEND MKL_LIBRARIES ${MKL_IOMP5_LIBRARY})
+            else()
+                list(APPEND MKL_LIBRARIES ${OpenMP_LIBRARIES})
+            endif()
+        else()
+            list(APPEND MKL_LIBRARIES  ${MKL_SEQUENTIAL_LIBRARY}  ${MKL_CORE_LIBRARY}  -Wl,--end-group )
+        endif()
     endif()
-    list(APPEND MKL_LIBRARIES  -lm -ldl -fPIC)
+    list(APPEND MKL_LIBRARIES  -lm -ldl)
 
 
     add_definitions(-DMKL_AVAILABLE)
+    add_definitions(-DMKL_VERBOSE)
     set(MKL_FLAGS -m64 -I${MKL_ROOT_DIR}/lib/intel64/lp64 )
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
@@ -62,6 +74,7 @@ if (MKL_FOUND)
     # BLAS and LAPACK are included in the MKL.
     set(BLAS_LIBRARIES   ${MKL_LIBRARIES})
     set(LAPACK_LIBRARIES ${MKL_LIBRARIES})
+#    set(FC_LDLAGS -lm -ldl ${PTHREAD_LIBRARY}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
     set(FC_LDLAGS -lm -ldl -fPIC ${PTHREAD_LIBRARY}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
 
 

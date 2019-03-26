@@ -18,9 +18,6 @@
 
 
 #include <Eigen/Core>
-#include <mps_routines/nmspc_mps_tools.h>
-#include <mps_routines/class_superblock.h>
-#include <LBFGS.h>
 #include <h5pp/h5pp.h>
 #include <general/class_eigsolver.h>
 
