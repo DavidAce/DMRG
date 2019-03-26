@@ -3,25 +3,31 @@ enable_language(Fortran)
 add_library(gfortran INTERFACE)
 
 if(CMAKE_Fortran_COMPILER)
-    execute_process(COMMAND ${CMAKE_Fortran_COMPILER} -print-file-name=libgfortran${CMAKE_STATIC_LIBRARY_SUFFIX}
-            OUTPUT_VARIABLE _libgfortran_path
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
-
-    execute_process(COMMAND ${CMAKE_Fortran_COMPILER} -print-file-name=libgfortran${CMAKE_SHARED_LIBRARY_SUFFIX}
-            OUTPUT_VARIABLE GFORTRAN_LIB_SHARED
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
+    if(BUILD_SHARED_LIBS)
+        execute_process(COMMAND ${CMAKE_Fortran_COMPILER} -print-file-name=libgfortran${CMAKE_SHARED_LIBRARY_SUFFIX}
+                OUTPUT_VARIABLE GFORTRAN_LIB_SHARED
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                )
+    else()
+        execute_process(COMMAND ${CMAKE_Fortran_COMPILER} -print-file-name=libgfortran${CMAKE_STATIC_LIBRARY_SUFFIX}
+                OUTPUT_VARIABLE GFORTRAN_LIB_STATIC
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                )
+    endif()
 endif()
 
-if(EXISTS ${_libgfortran_path})
-    get_filename_component(GFORTRAN_PATH ${_libgfortran_path} PATH)
+if(EXISTS ${GFORTRAN_LIB_STATIC})
+    get_filename_component(GFORTRAN_PATH ${GFORTRAN_LIB_STATIC} PATH)
+    find_library(GFORTRAN_LIB NAMES gfortran PATHS ${GFORTRAN_PATH})
+    message(STATUS "Found gfortran library:   ${GFORTRAN_LIB}")
+elseif(EXISTS ${GFORTRAN_LIB_SHARED})
+    get_filename_component(GFORTRAN_PATH ${GFORTRAN_LIB_SHARED} PATH)
     find_library(GFORTRAN_LIB NAMES gfortran PATHS ${GFORTRAN_PATH})
     message(STATUS "Found gfortran library:   ${GFORTRAN_LIB}")
 else()
     # if libgfortran wasn't found at this point, the installation is probably broken
     # Let's try to find the library nonetheless.
-    find_library(GFORTRAN_LIB libgfortran.so)
+    find_library(GFORTRAN_LIB gfortran)
 endif()
 
 if (NOT GFORTRAN_LIB)
@@ -44,7 +50,5 @@ if (${CMAKE_HOST_APPLE})
     endif ()
 endif()
 
-set_target_properties(gfortran PROPERTIES
-#        IMPORTED_LOCATION        "${GFORTRAN_LIB}"
-        INTERFACE_LINK_LIBRARIES "${GFORTRAN_LIB};${QUADMATH_LIB}")
-#target_link_libraries(${PROJECT_NAME} PRIVATE gfortran)
+target_link_libraries(gfortran INTERFACE ${GFORTRAN_LIB}  ${QUADMATH_LIB} )
+#target_link_options(gfortran INTERFACE -L${GFORTRAN_PATH})
