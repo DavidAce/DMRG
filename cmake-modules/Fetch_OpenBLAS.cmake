@@ -193,8 +193,8 @@ endif()
 
 
 if (TARGET blas)
-    set(BLAS_LIBRARIES   ${OpenBLAS_LIBRARY})
-    set(LAPACK_LIBRARIES ${OpenBLAS_LIBRARY})
+    set(BLAS_LIBRARIES   ${OpenBLAS_LIBRARY} ${FC_LDLAGS})
+    set(LAPACK_LIBRARIES ${OpenBLAS_LIBRARY} ${FC_LDLAGS})
     include(cmake-modules/FindLAPACKE.cmake)
     if(TARGET lapacke)
         target_link_libraries(blas   INTERFACE lapacke)
