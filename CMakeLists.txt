@@ -297,7 +297,6 @@ include(cmake-modules/Fetch_spdlog.cmake)                   # spdlog library
 include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
-#include(cmake-modules/Fetch_GSL.cmake)                      # GSL for computing some numerical integrals.
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
 include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
 
@@ -306,7 +305,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
 target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
-#target_link_libraries(${PROJECT_NAME} PRIVATE GSL)
 target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp)
 
 get_target_property(BLAS_INFO       blas             INTERFACE_LINK_LIBRARIES)
@@ -318,7 +316,6 @@ get_target_property(EIGEN_INFO      Eigen3::Eigen    INTERFACE_INCLUDE_DIRECTORI
 get_target_property(LBFGS_INFO      LBFGSpp          INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(SPDLOG_INFO     spdlog::spdlog   INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(HDF5_INFO       hdf5             INTERFACE_LINK_LIBRARIES)
-#get_target_property(GSL_INFO        GSL              INTERFACE_LINK_LIBRARIES)
 get_target_property(FORTRAN_INFO    gfortran         INTERFACE_LINK_LIBRARIES)
 get_target_property(H5PP_INFO       h5pp::h5pp       INTERFACE_INCLUDE_DIRECTORIES)
 
@@ -385,40 +382,50 @@ message("=======================================================================
 message("")
 
 
-############################
-# UNIT TEST
-############################
 
-enable_testing()
+#############################
+## UNIT TEST
+#############################
+if(ENABLE_TESTS)
+    enable_testing()
+    add_subdirectory(tests/arpack++_simple   EXCLUDE_FROM_ALL)
+    add_subdirectory(tests/arpack++_mps      EXCLUDE_FROM_ALL)
+    add_subdirectory(tests/file_io           EXCLUDE_FROM_ALL)
+    add_subdirectory(tests/eigsolver         EXCLUDE_FROM_ALL)
 
-include(tests/arpack++_simple_test.cmake)
-include(tests/arpack++_mps_test.cmake)
-include(tests/hdf5_test.cmake)
-include(tests/lapacke_test.cmake)
-include(tests/sanity_test.cmake)
+    add_custom_target(TEST-all ALL
+            DEPENDS TEST-arpack++_simple
+            DEPENDS TEST-arpack++_mps
+            DEPENDS TEST-file_io
+            DEPENDS TEST-eigsolver
+            )
 
-add_custom_target(all_tests ALL
-        DEPENDS arpack++_simple_test_target
-        DEPENDS arpack++_mps_test_target
-        DEPENDS hdf5_test_target
-        DEPENDS lapacke_test_target
-        DEPENDS sanity_test_target
-        DEPENDS arpack++ h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog
-        DEPENDS ${PROJECT_NAME}
-        )
+    add_custom_command(TARGET TEST-all
+            POST_BUILD
+            COMMENT "Running Tests"
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            DEPENDS arpack++ h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog
+            COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failures)
 
-
-add_custom_command(
-        TARGET all_tests
-        COMMENT "Running Tests"
-        PRE_BUILD
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failures
-        DEPENDS ${PROJECT_NAME} all_tests
-)
+endif()
 
 
-#add_dependencies(${PROJECT_NAME} all_tests)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#add_dependencies(${PROJECT_NAME} TEST-all)
 
 # To print all variables, use the code below:
 #

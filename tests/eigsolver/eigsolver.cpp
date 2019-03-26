@@ -44,32 +44,6 @@ std::tuple<Eigen::VectorXd,Eigen::MatrixXd, int> eig_dsyevd(const double* matrix
     Eigen::MatrixXd eigvecs(L,L);
     std::copy(matrix, matrix + L*L, eigvecs.data());
     int info = eig_dsyevd(eigvecs.data(),eigvals.data(), L);
-//    if (info == 0){
-//        solution.meta.eigvecs_found = true;
-//        solution.meta.eigvals_found = true;
-//        solution.meta.rows           = L;
-//        solution.meta.cols           = L;
-//        solution.meta.nev            = L;
-//        solution.meta.n              = L;
-//        solution.meta.form           = Form::SYMMETRIC;
-//        solution.meta.type           = Type::REAL ;
-//        int i = 0;
-//        int j = 0;
-//        int c = 0;
-//        if(L == 64){
-//            for(auto & val : eigvecs){
-//                std::cout << "eigvec(" << i << "," << j << ") = " << std::setprecision(16) << std::setw(20) <<  std::fixed<< std::right  << val
-//                          <<  " matrix = "  << std::setw(20) << std::fixed << std::right  << matrix[c] << std::endl;
-//                i++;
-//                c++;
-//                if (i == L){i = 0; j++;}
-//            }
-//        }
-
-//    }else{
-//        throw std::runtime_error("LAPACK dsyevd failed with error: " + std::to_string(info));
-//    }
-
 
     return std::make_tuple(eigvals,eigvecs,info);
 }
@@ -92,12 +66,12 @@ int main(){
     Eigen::VectorXd overlapsA0,overlapsA1, overlapsA2;
     Eigen::VectorXd overlapsB0,overlapsB1, overlapsB2;
 
-    h5pp::File fileA0("../tests/testmatrices-A/lapacke_matrix.h5"  , h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
-    h5pp::File fileA1("../tests/testmatrices-A/lapacke_matrix-1.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
-    h5pp::File fileA2("../tests/testmatrices-A/lapacke_matrix-2.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
-    h5pp::File fileB0("../tests/testmatrices-B/lapacke_matrix.h5"  , h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
-    h5pp::File fileB1("../tests/testmatrices-B/lapacke_matrix-1.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
-    h5pp::File fileB2("../tests/testmatrices-B/lapacke_matrix-2.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
+    h5pp::File fileA0(std::string(TEST_MATRIX_DIR) + "/testmatrices-A/lapacke_matrix.h5"  , h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
+    h5pp::File fileA1(std::string(TEST_MATRIX_DIR) + "/testmatrices-A/lapacke_matrix-1.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
+    h5pp::File fileA2(std::string(TEST_MATRIX_DIR) + "/testmatrices-A/lapacke_matrix-2.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
+    h5pp::File fileB0(std::string(TEST_MATRIX_DIR) + "/testmatrices-B/lapacke_matrix.h5"  , h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
+    h5pp::File fileB1(std::string(TEST_MATRIX_DIR) + "/testmatrices-B/lapacke_matrix-1.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
+    h5pp::File fileB2(std::string(TEST_MATRIX_DIR) + "/testmatrices-B/lapacke_matrix-2.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
     fileA0.readDataset(H_localA0,"matrix");
     fileA1.readDataset(H_localA1,"matrix");
     fileA2.readDataset(H_localA2,"matrix");

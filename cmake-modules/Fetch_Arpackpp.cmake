@@ -29,7 +29,7 @@ if (ARPACKPP_LIBRARIES OR ARPACKPP_INCLUDE_DIR AND NOT "${OS_PROPERTIES}" MATCHE
     message(STATUS "Arpack++ library found in system: ${ARPACKPP_LIBRARIES}")
     message(STATUS "Arpack++ include found in system: ${ARPACKPP_INCLUDE_DIR}")
     add_library(arpack++ INTERFACE)
-    target_link_libraries(arpack++ INTERFACE ${ARPACKPP_LIBRARIES} arpack blas lapack)
+    target_link_libraries(arpack++ INTERFACE ${ARPACKPP_LIBRARIES} arpack)
     target_include_directories(arpack++ INTERFACE ${ARPACKPP_INCLUDE_DIR})
 
 else()
@@ -47,14 +47,13 @@ else()
             BUILD_COMMAND
             ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include && find <INSTALL_DIR>/include -maxdepth 1 -type l -delete &&
             ${CMAKE_COMMAND} -E create_symlink <SOURCE_DIR>/include <INSTALL_DIR>/include/arpack++
-            DEPENDS blas lapack arpack
+            DEPENDS arpack
             )
 
     ExternalProject_Get_Property(external_ARPACK++ INSTALL_DIR)
     add_library(arpack++ INTERFACE)
-    add_dependencies(arpack++ external_ARPACK++)
-    add_dependencies(arpack++ arpack blas lapack)
-    target_link_libraries(arpack++ INTERFACE arpack blas lapack)
+    add_dependencies(arpack++ external_ARPACK++ arpack)
+    target_link_libraries(arpack++ INTERFACE arpack)
     target_include_directories(arpack++ INTERFACE ${INSTALL_DIR}/include)
 endif()
 
