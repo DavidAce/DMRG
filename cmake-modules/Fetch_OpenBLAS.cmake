@@ -182,9 +182,9 @@ endif()
 
 
 
-target_link_libraries(blas INTERFACE ${OpenBLAS_LIBRARY} ${PTHREAD_LIBRARY} gfortran)
+target_link_libraries(blas INTERFACE ${OpenBLAS_LIBRARY} pthread gfortran)
 target_include_directories(blas INTERFACE ${OpenBLAS_INCLUDE_DIRS})
-set(FC_LDLAGS -fPIC ${PTHREAD_LIBRARY})
+set(FC_LDLAGS ${PTHREAD_LIBRARY} ${GFORTRAN_LIB})
 
 if(OpenBLAS_USE_OPENMP AND OpenMP_FOUND)
     target_link_libraries(blas INTERFACE ${OpenMP_LIBRARIES})
