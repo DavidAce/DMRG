@@ -10,6 +10,16 @@
 # Acutally, sometimes all you need to do is sudo ldconfig to update the linker, because intel mkl installation
 # automatically puts a file in /etc/ld.so.conf.d
 
+
+
+#########################
+# Getting SIGSEGVS / SEGFAULTS?
+# When linking statically, pthreads need to be linked in a special way:
+# set(PTHREAD_LIBRARY "-Wl,--whole-archive  -lpthread -Wl,--no-whole-archive") # This is needed with static linking!
+# Use the quotations to force -lpthread to remain inside the whole-archive directive, otherwise cmake black magic
+# can put it outside. Check with cmake verbose ON that the linking goes through as above.
+#########################
+
 if (USE_MKL)
 #    set(MKL_USE_STATIC_LIBS ON)
     set(MKL_MULTI_THREADED ${USE_OpenMP})
@@ -38,7 +48,7 @@ if (MKL_FOUND)
         #This doesn't seem to work,  The gnu fortran GF_LP library doesn't get enabled --> arpack++ complains!
         set(MKL_LIBRARIES -Wl,--no-as-needed ${MKL_RT_LIBRARY} -Wl,--as-needed  )
     else()
-        set(MKL_LIBRARIES ${MKL_LAPACK_LP_LIBRARY}  ${MKL_BLAS_LP_LIBRARY}  -Wl,--start-group  ${MKL_GF_LP_LIBRARY})
+        set(MKL_LIBRARIES ${MKL_BLAS_LP_LIBRARY} ${MKL_LAPACK_LP_LIBRARY}   -Wl,--start-group  ${MKL_GF_LP_LIBRARY})
 
         if(MKL_MULTI_THREADED)
             list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group)
@@ -63,13 +73,12 @@ if (MKL_FOUND)
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
-    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES})
-    target_link_libraries(mkl INTERFACE gfortran)
+    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES} gfortran)
     target_include_directories(mkl INTERFACE ${MKL_INCLUDE_DIR})
     target_compile_options(mkl INTERFACE ${MKL_FLAGS})
     set_target_properties(mkl PROPERTIES INTERFACE_LINK_DIRECTORIES  "${MKL_ROOT_DIR}/lib/intel64")
-
-    # BLAS and LAPACK are included in the MKL.
+    add_dependencies(mkl gfortran)
+     # BLAS and LAPACK are included in the MKL.
     set(BLAS_LIBRARIES   ${MKL_LIBRARIES})
     set(LAPACK_LIBRARIES ${MKL_LIBRARIES})
     set(FC_LDLAGS -lm -ldl ${PTHREAD_LIBRARY}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
