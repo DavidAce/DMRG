@@ -41,9 +41,9 @@ int main(int argc, char* argv[]) {
     log->set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
     log->set_level(spdlog::level::trace);
 
-    int openblas_num_threads = 1;
+    int num_threads = 1;
     #ifdef OpenBLAS_AVAILABLE
-        openblas_set_num_threads(openblas_num_threads);
+        openblas_set_num_threads(num_threads);
     std::cout << OPENBLAS_VERSION
               << " compiled with parallel mode " << openblas_get_parallel()
               << " for target " << openblas_get_corename()
@@ -54,19 +54,18 @@ int main(int argc, char* argv[]) {
 
     #ifdef OpenMP_AVAILABLE
         Eigen::initParallel();
-//        omp_set_num_threads(OpenMP_NUM_THREADS);
+        omp_set_num_threads(num_threads);
 //        omp_set_dynamic(0);
-//        Eigen::setNbThreads(OpenMP_NUM_THREADS);
+        Eigen::setNbThreads(num_threads);
 //        Eigen::setNbThreads(0);
         log->info("Using Eigen  with {} threads",Eigen::nbThreads( )  );
         log->info("Using OpenMP with {} threads",omp_get_max_threads());
-        #ifdef MKL_AVAILABLE
-//            mkl_set_num_threads(OpenMP_NUM_THREADS);
-            log->info("Using Intel MKL with {} threads", mkl_get_max_threads());
-        #endif
     #endif
 
-
+    #ifdef MKL_AVAILABLE
+        mkl_set_num_threads(num_threads);
+        log->info("Using Intel MKL with {} threads", mkl_get_max_threads());
+    #endif
 
 
 
