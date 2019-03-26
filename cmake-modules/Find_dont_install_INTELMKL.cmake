@@ -64,7 +64,7 @@ if (MKL_FOUND)
     if(BUILD_SHARED_LIBS)
         list(APPEND MKL_LIBRARIES -fPIC)
     endif()
-    list(APPEND MKL_LIBRARIES -ldl -lm ${GFORTRAN_LIB}  ${QUADMATH_LIB} ${PTHREAD_LIBRARY} )
+    list(APPEND MKL_LIBRARIES -ldl -lm ${GFORTRAN_LIB}  ${QUADMATH_LIB})
 
 
     add_definitions(-DMKL_AVAILABLE)
@@ -74,7 +74,7 @@ if (MKL_FOUND)
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
     target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES})
-    target_link_libraries(mkl INTERFACE gfortran)
+    target_link_libraries(mkl INTERFACE pthread gfortran)
     target_include_directories(mkl INTERFACE ${MKL_INCLUDE_DIR})
     target_compile_options(mkl INTERFACE ${MKL_FLAGS})
     set_target_properties(mkl PROPERTIES INTERFACE_LINK_DIRECTORIES  "${MKL_ROOT_DIR}/lib/intel64")
@@ -109,7 +109,7 @@ if (MKL_FOUND)
 
     #   Test features
     include(CheckCXXSourceCompiles)
-    set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES})
+    set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES} ${PTHREAD_LIBRARY})
     set(CMAKE_REQUIRED_INCLUDES  ${MKL_INCLUDE_DIR})
     set(CMAKE_REQUIRED_FLAGS     ${MKL_FLAGS})
     check_cxx_source_compiles("
