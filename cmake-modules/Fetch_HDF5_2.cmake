@@ -30,7 +30,7 @@ else()
     set(HDF5_C_HL_LIBRARY      ${HDF5_CXX_LIBRARY_hdf5_hl})
     set(HDF5_CXX_LIBRARY       ${HDF5_CXX_LIBRARY_hdf5_cpp})
     set(HDF5_CXX_HL_LIBRARY    ${HDF5_CXX_LIBRARY_hdf5_hl_cpp})
-    set(HDF5_LINKER_FLAGS       -Wl,--no-as-needed -ldl -lm -lz -Wl,--as-needed)
+    set(HDF5_LINKER_FLAGS       -Wl,--no-as-needed -ldl -lm -lz -Wl,--as-needed ${PTHREAD_LIBRARY})
     set(HDF5_EXTRA_LIBS        ${HDF5_CXX_LIBRARY_iomp5} ${HDF5_CXX_LIBRARY_sz})
 
 endif()
@@ -121,9 +121,9 @@ endif()
 set(HDF5_LIBRARIES  ${HDF5_CXX_HL_LIBRARY} ${HDF5_CXX_LIBRARY} ${HDF5_C_HL_LIBRARY} ${HDF5_C_LIBRARY}  )
 
 set_target_properties(hdf5 PROPERTIES
-        INTERFACE_LINK_LIBRARIES        "${HDF5_LIBRARIES};${HDF5_EXTRA_LIBS};${HDF5_LINKER_FLAGS};${PTHREAD_LIBRARY}"
+        INTERFACE_LINK_LIBRARIES        "${HDF5_LIBRARIES};${HDF5_EXTRA_LIBS};${HDF5_LINKER_FLAGS}"
         INTERFACE_INCLUDE_DIRECTORIES   "${HDF5_INCLUDE_DIR}"
-#        INTERFACE_LINK_OPTIONS          "${HDF5_LINKER_FLAGS}"
+        INTERFACE_LINK_OPTIONS          "${PTHREAD_LIBRARY}"
         )
 
 #target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)

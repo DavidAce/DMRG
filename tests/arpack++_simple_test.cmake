@@ -4,20 +4,9 @@ set_target_properties(arpack++_simple_test_target PROPERTIES OUTPUT_NAME  arpack
 ################################################
 ###  Force cmake to find .a library suffixes ###
 ################################################
-if(BUILD_SHARED_LIBS)
-    set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
-else()
-    set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (arpack++_simple_test_target PRIVATE -static)                                             ### Static linkage
 endif()
-
-
-target_link_libraries  (arpack++_simple_test_target PRIVATE -Wl,--no-allow-shlib-undefined )
-target_link_libraries  (arpack++_simple_test_target PRIVATE -Wl,--no-as-needed )
-target_link_libraries  (arpack++_simple_test_target PRIVATE -Wl,--no-undefined )
-
 target_link_libraries(arpack++_simple_test_target PRIVATE -lstdc++fs)
 target_link_libraries(arpack++_simple_test_target PRIVATE -flto)
 target_link_libraries(arpack++_simple_test_target PRIVATE  arpack++)
@@ -30,4 +19,4 @@ target_compile_options (arpack++_simple_test_target PRIVATE "$<$<CONFIG:DEBUG>:$
 target_compile_options (arpack++_simple_test_target PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
 add_test(NAME arpack++_simple_test COMMAND arpack++_simple_test_target)
 
-add_dependencies(arpack++_simple_test_target arpack arpack++)
+add_dependencies(arpack++_simple_test_target arpack++)

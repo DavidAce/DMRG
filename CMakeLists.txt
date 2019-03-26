@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(DMRG++)
 
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 
 
@@ -15,7 +15,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 ################################################################
 ### Set options for compilation                              ###
 ################################################################
-option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          ON)
+option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          OFF)
 option(BUILD_EXAMPLES     "Build examples"                                      OFF)
 option(ENABLE_TESTS       "Enable testing"                                      ON)
 option(DOWNLOAD_HDF5      "Download and install HDF5 if not found"              OFF)
@@ -116,7 +116,7 @@ if(ENABLE_CCACHE)
     endif(CCACHE_FOUND)
 endif()
 set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
-set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0 -fstack-check )
+set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
 set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g  -ftime-report)
 
@@ -124,14 +124,14 @@ set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g  -ftime-report)
 ### Microarch dependent flags ###
 #################################
 # Check supported options here http://man7.org/linux/man-pages/man1/gcc.1.html
-#if (${MARCH} STREQUAL "sandybridge")
-#    list(APPEND RELEASE_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1  -mpopcnt  -maes -mpclmul -mavx -fstack-protector-strong -Wformat -Wformat-security)
-#elseif(${MARCH} STREQUAL "haswell" OR ${MARCH} STREQUAL "skylake" OR ${MARCH} STREQUAL "zen" )
-#    list(APPEND RELEASE_OPTIONS -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -maes -mpclmul -mavx -mavx2 -mmovbe -mrdrnd -mf16c -mfsgsbase -mfma  -mbmi -mbmi2 -fstack-protector-strong -Wformat -Wformat-security)
-#else()
-#    # Set default to whatever nehalem can manage
-#    list(APPEND RELEASE_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -fstack-protector-strong -Wformat -Wformat-security)
-#endif()
+if (${MARCH} STREQUAL "sandybridge")
+    list(APPEND RELEASE_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1  -mpopcnt  -maes -mpclmul -mavx -fstack-protector-strong -Wformat -Wformat-security)
+elseif(${MARCH} STREQUAL "haswell" OR ${MARCH} STREQUAL "skylake" OR ${MARCH} STREQUAL "zen" )
+    list(APPEND RELEASE_OPTIONS -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -maes -mpclmul -mavx -mavx2 -mmovbe -mrdrnd -mf16c -mfsgsbase -mfma  -mbmi -mbmi2 -fstack-protector-strong -Wformat -Wformat-security)
+else()
+    # Set default to whatever nehalem can manage
+    list(APPEND RELEASE_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -fstack-protector-strong -Wformat -Wformat-security)
+endif()
 
 
 ##########################
@@ -281,17 +281,8 @@ target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_O
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_OPTIONS}>")           ### Profiling build options
 target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                                               ### Link time optimization flag
 target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
-set(PTHREAD_LIBRARY  -lpthread)
-#set(PTHREAD_LIBRARY  -Wl,--whole-archive -lpthread -Wl,--no-whole-archive)
-#target_link_libraries  (${PROJECT_NAME} PRIVATE ${PTHREAD_LIBRARY} )
-#target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-allow-shlib-undefined )
-#target_link_libraries  (${PROJECT_NAME} PRIVATE -Wl,--no-undefined )
 
-
-
-
-
-
+set(PTHREAD_LIBRARY "-Wl,--whole-archive  -lpthread -Wl,--no-whole-archive") # This is needed with static linking!
 
 ###########################################
 ###  Find or fetch all dependencies   ###
@@ -404,12 +395,14 @@ include(tests/arpack++_simple_test.cmake)
 include(tests/arpack++_mps_test.cmake)
 include(tests/hdf5_test.cmake)
 include(tests/lapacke_test.cmake)
+include(tests/sanity_test.cmake)
 
 add_custom_target(all_tests ALL
         DEPENDS arpack++_simple_test_target
         DEPENDS arpack++_mps_test_target
         DEPENDS hdf5_test_target
         DEPENDS lapacke_test_target
+        DEPENDS sanity_test_target
         DEPENDS arpack++ h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog
         DEPENDS ${PROJECT_NAME}
         )

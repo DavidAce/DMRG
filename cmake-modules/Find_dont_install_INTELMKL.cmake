@@ -30,13 +30,15 @@ endif()
 
 
 if (MKL_FOUND)
+
+
     #The order of these libraries is important when doing static linking!
     #To find out the order, check the Intel link line advisor.
     if(BUILD_SHARED_LIBS AND MKL_USE_SINGLE_DYNAMIC_LIBRARY)
         #This doesn't seem to work,  The gnu fortran GF_LP library doesn't get enabled --> arpack++ complains!
         set(MKL_LIBRARIES -Wl,--no-as-needed ${MKL_RT_LIBRARY} -Wl,--as-needed  )
     else()
-        set(MKL_LIBRARIES  ${MKL_BLAS_LP_LIBRARY} ${MKL_LAPACK_LP_LIBRARY}  -Wl,--start-group  ${MKL_GF_LP_LIBRARY})
+        set(MKL_LIBRARIES ${MKL_LAPACK_LP_LIBRARY}  ${MKL_BLAS_LP_LIBRARY}  -Wl,--start-group  ${MKL_GF_LP_LIBRARY})
 
         if(MKL_MULTI_THREADED)
             list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group)
@@ -49,16 +51,19 @@ if (MKL_FOUND)
             list(APPEND MKL_LIBRARIES  ${MKL_SEQUENTIAL_LIBRARY}  ${MKL_CORE_LIBRARY}  -Wl,--end-group )
         endif()
     endif()
-    list(APPEND MKL_LIBRARIES  -lm -ldl)
+    if(BUILD_SHARED_LIBS)
+        list(APPEND MKL_LIBRARIES -fPIC)
+    endif()
+    list(APPEND MKL_LIBRARIES -ldl -lm ${PTHREAD_LIBRARY} )
 
 
     add_definitions(-DMKL_AVAILABLE)
-#    add_definitions(-DMKL_VERBOSE)
+#    add_definitions(-DMKL_VERBOSE -DMKL_Complex8=std::complex<float> -DMKL_Complex16=std::complex<double>)
     set(MKL_FLAGS -m64 -I${MKL_ROOT_DIR}/lib/intel64/lp64 )
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
-    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES} ${PTHREAD_LIBRARY})
+    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES})
     target_link_libraries(mkl INTERFACE gfortran)
     target_include_directories(mkl INTERFACE ${MKL_INCLUDE_DIR})
     target_compile_options(mkl INTERFACE ${MKL_FLAGS})
@@ -67,8 +72,8 @@ if (MKL_FOUND)
     # BLAS and LAPACK are included in the MKL.
     set(BLAS_LIBRARIES   ${MKL_LIBRARIES})
     set(LAPACK_LIBRARIES ${MKL_LIBRARIES})
-#    set(FC_LDLAGS -lm -ldl ${PTHREAD_LIBRARY}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
-    set(FC_LDLAGS -lm -ldl -fPIC ${PTHREAD_LIBRARY}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
+    set(FC_LDLAGS -lm -ldl ${PTHREAD_LIBRARY}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
+#    set(FC_LDLAGS -lm -ldl  -fPIC ${PTHREAD_LIBRARY}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
 
 
     # Make the rest of the build structure aware of blas and lapack included in MKL.
@@ -80,7 +85,7 @@ if (MKL_FOUND)
 
     message("")
     message("======MKL SUMMARY ======")
-    message("MKL_LIBRARIES                             : ${MKL_LIBRARIES};${PTHREAD_LIBRARY}" )
+    message("MKL_LIBRARIES                             : ${MKL_LIBRARIES}" )
     message("MKL_RT_LIBRARY                            : ${MKL_RT_LIBRARY}" )
     message("MKL_INCLUDE_DIR                           : ${MKL_INCLUDE_DIR}" )
     message("MKL_FLAGS                                 : ${MKL_FLAGS}" )
@@ -95,7 +100,7 @@ if (MKL_FOUND)
 
     #   Test features
     include(CheckCXXSourceCompiles)
-    set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES} ${PTHREAD_LIBRARY})
+    set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES} -ldl -lm ${PTHREAD_LIBRARY})
     set(CMAKE_REQUIRED_INCLUDES  ${MKL_INCLUDE_DIR})
     set(CMAKE_REQUIRED_FLAGS     ${MKL_FLAGS})
     check_cxx_source_compiles("
