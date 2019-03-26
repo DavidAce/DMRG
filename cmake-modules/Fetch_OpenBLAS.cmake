@@ -43,6 +43,9 @@ if(NOT BLAS_FOUND)
     endif()
 endif()
 
+
+
+
 if(NOT OpenBLAS_FOUND)
     message(STATUS "Searching for OpenBLAS in standard paths")
     find_library(OpenBLAS_LIBRARY
@@ -133,7 +136,7 @@ else()
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-
+            -DBINARY=64
             #            -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
 #            -DCMAKE_C_FLAGS=-w
 #            -DCMAKE_CXX_FLAGS=-w
@@ -167,7 +170,7 @@ else()
 ExternalProject_Get_Property(external_OpenBLAS INSTALL_DIR)
     add_library(blas   INTERFACE)
     add_library(lapack ALIAS blas)
-    add_library(openblas::lapacke ALIAS blas)
+    add_library(OpenBLAS::lapacke ALIAS blas)
     add_dependencies(blas         external_OpenBLAS)
 
     set(OpenBLAS_LIBRARY           ${INSTALL_DIR}/lib/libopenblas${CUSTOM_SUFFIX})
