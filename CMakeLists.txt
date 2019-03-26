@@ -28,7 +28,6 @@ option(USE_OpenMP         "Use OpenMP"                                          
 option(USE_MKL            "Use Intel MKL libraries"                             ON)
 
 
-
 #################################################################
 ### Set default policies if CMake is new enough               ###
 #################################################################

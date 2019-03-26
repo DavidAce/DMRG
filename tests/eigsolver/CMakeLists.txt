@@ -19,8 +19,7 @@ endif()
 
 target_link_libraries(TEST-eigsolver PRIVATE -lstdc++fs)
 target_link_libraries(TEST-eigsolver PRIVATE -flto)
-target_link_libraries(TEST-eigsolver PRIVATE Eigen3::Eigen h5pp::h5pp  hdf5   spdlog::spdlog)
-target_link_libraries(TEST-eigsolver PRIVATE gfortran)
+target_link_libraries(TEST-eigsolver PRIVATE Eigen3::Eigen lapacke h5pp::h5pp  hdf5   spdlog::spdlog)
 
 set_target_properties  (TEST-eigsolver PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(TEST-eigsolver PRIVATE cxx_std_17)
@@ -29,4 +28,4 @@ target_compile_options (TEST-eigsolver PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTION
 target_compile_options (TEST-eigsolver PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
 add_test(NAME eigsolver_test COMMAND TEST-eigsolver)
 
-add_dependencies(TEST-eigsolver h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog )
+add_dependencies(TEST-eigsolver h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog gfortran )
