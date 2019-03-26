@@ -15,7 +15,6 @@ if(MKL_FOUND)
             NO_DEFAULT_PATH
             )
     if(DEFINED LAPACKE_INCLUDE_DIRS)
-        add_library(lapacke INTERFACE)
         set(LAPACKE_FOUND TRUE)
         message(STATUS "Found LAPACKE in Intel MKL")
         target_link_libraries(lapacke INTERFACE mkl::lapacke)
