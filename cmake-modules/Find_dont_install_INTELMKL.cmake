@@ -61,14 +61,14 @@ if (MKL_FOUND)
             list(APPEND MKL_LIBRARIES  ${MKL_SEQUENTIAL_LIBRARY}  ${MKL_CORE_LIBRARY}  -Wl,--end-group )
         endif()
     endif()
-    if(BUILD_SHARED_LIBS)
-        list(APPEND MKL_LIBRARIES -fPIC)
-    endif()
 
+    set(MKL_FLAGS -m64 -I${MKL_ROOT_DIR}/lib/intel64/lp64 )
+    if(BUILD_SHARED_LIBS)
+        list(APPEND MKL_FLAGS -fPIC)
+    endif()
 
     add_definitions(-DMKL_AVAILABLE)
 #    add_definitions(-DMKL_VERBOSE -DMKL_Complex8=std::complex<float> -DMKL_Complex16=std::complex<double>)
-    set(MKL_FLAGS -m64 -I${MKL_ROOT_DIR}/lib/intel64/lp64 )
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)

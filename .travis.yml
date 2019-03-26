@@ -7,13 +7,13 @@ branches:
   only:
     - master
 
-
 matrix:
   fast_finish: true
   include:
     - os: linux
       compiler: gcc-7
       env:
+        - BUILD_ARGS=-m Debug -j2
         - COMPILER_NAME=gcc
         - GCC_VERSION=7
         - CC=gcc-7
@@ -34,6 +34,7 @@ matrix:
     - os: linux
       compiler: gcc-8
       env:
+        - BUILD_ARGS=-m Debug -j2
         - COMPILER_NAME=gcc
         - GCC_VERSION=8
         - CC=gcc-8
@@ -77,6 +78,8 @@ matrix:
     - os: linux
       compiler: gcc-7 (preinstalled libs)
       env:
+        - BUILD_ARGS=-m Debug -j2 -i OFF
+        - BUILD_ARGS=-m Debug -j2 -i ON
         - COMPILER_NAME=gcc
         - GCC_VERSION=7
         - CC=gcc-7
@@ -102,6 +105,7 @@ matrix:
             - libarpack++2-dev
             - liblapacke
             - liblapacke-dev
+            - intel-mkl
       before_install:
         # Here we just install Miniconda, which you shouldn't have to change.
         - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
@@ -146,6 +150,6 @@ before_install:
   - eval "${MATRIX_EVAL}"
 
 script:
-  - ./build.sh -m Debug -j2
+  - ./build.sh $BUILD_ARGS
 
 
