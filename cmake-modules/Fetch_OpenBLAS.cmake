@@ -148,7 +148,7 @@ else()
             BUILD_IN_SOURCE 1
             BUILD_COMMAND
                         export LD_LIBRARY_PATH=${GFORTRAN_PATH} &&
-                        export LDFLAGS=-L${GFORTRAN_PATH} -l${GFORTRAN_LIB} -l${QUADMATH_LIB} &&
+#                        export LDFLAGS=-L${GFORTRAN_PATH} -l${GFORTRAN_LIB} -l${QUADMATH_LIB} &&
                         $(MAKE) TARGET=SANDYBRIDGE
                         DYNAMIC_ARCH=1
                         USE_THREAD=${OpenBLAS_MULTITHREADED}
