@@ -22,7 +22,6 @@ if(TARGET blas)
 endif()
 
 
-
 if(EIGEN3_FOUND AND TARGET Eigen3::Eigen)
     message(STATUS "EIGEN VERSION ${EIGEN3_VERSION} FOUND IN SYSTEM: ${EIGEN3_INCLUDE_DIR}")
     if(TARGET blas)
@@ -32,9 +31,11 @@ if(EIGEN3_FOUND AND TARGET Eigen3::Eigen)
     target_include_directories(Eigen3::Eigen INTERFACE ${EIGEN3_INCLUDE_DIR})
     add_library(Eigen3 INTERFACE)
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
-    target_link_libraries(Eigen3 INTERFACE Eigen3::Eigen)
+    get_target_property(EIGEN3_LINK_LIBRARIES Eigen3::Eigen INTERFACE_LINK_LIBRARIES)
+    get_target_property(EIGEN3_COMPILE_OPTIONS Eigen3::Eigen INTERFACE_COMPILE_OPTIONS)
+    target_link_libraries(Eigen3 INTERFACE Eigen3::Eigen ${EIGEN3_LINK_LIBRARIES})
     target_include_directories(Eigen3 INTERFACE ${EIGEN3_INCLUDE_DIR})
-
+    target_compile_options(Eigen3 INTERFACE ${EIGEN3_COMPILE_OPTIONS})
 elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
     message(STATUS "Eigen3 will be installed into ${INSTALL_DIRECTORY}/Eigen3 on first build.")
 

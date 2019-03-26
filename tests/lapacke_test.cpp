@@ -1,26 +1,18 @@
 
 #include <complex>
 
-#ifdef MKL_AVAILABLE
-#define MKL_Complex8 std::complex<float>
-#define MKL_Complex16 std::complex<double>
-#define ComplexFloat  std::complex<float>
-#define ComplexDouble std::complex<double>
-#include <mkl_types.h>
-#include <mkl_service.h>
-#include <mkl.h>
-#include <mkl_lapacke.h>
-#else
-#define ComplexFloat  __complex__ float
-#define ComplexDouble __complex__ double
-#include <lapacke.h>
-#endif
-
 
 #include <Eigen/Core>
 #include <h5pp/h5pp.h>
 #include <general/class_eigsolver.h>
 
+
+
+#ifdef MKL_AVAILABLE
+#include <mkl_lapacke.h>
+#else
+#include <lapacke.h>
+#endif
 
 
 

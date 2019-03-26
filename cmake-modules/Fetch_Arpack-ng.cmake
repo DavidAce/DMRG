@@ -60,8 +60,8 @@ else()
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
-            -DCMAKE_C_FLAGS=-w -m64 -fPIC
-            -DCMAKE_Fortran_FLAGS=-w -m64 -fPIC
+            -DCMAKE_C_FLAGS=-w -m64
+            -DCMAKE_Fortran_FLAGS=-w -m64
             -DEXAMPLES=ON
             -DCMAKE_BUILD_TYPE=Release
             -DMPI=OFF

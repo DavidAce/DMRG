@@ -8,31 +8,31 @@
 
 #include <complex>
 
-#ifdef I
-#undef I
-#endif
-
-
 #ifdef MKL_AVAILABLE
+#ifndef MKL_Complex8
 #define MKL_Complex8 std::complex<float>
+#endif
+#ifndef MKL_Complex16
 #define MKL_Complex16 std::complex<double>
-#define ComplexFloat  std::complex<float>
-#define ComplexDouble std::complex<double>
-#include <mkl_types.h>
-#include <mkl_service.h>
-#include <mkl.h>
+#endif
+#ifndef ComplexFloat_
+#define ComplexFloat_  MKL_Complex8
+#endif
+#ifndef ComplexDouble_
+#define ComplexDouble_ MKL_Complex16
+#endif
 #include <mkl_lapacke.h>
 #else
-#define ComplexFloat  __complex__ float
-#define ComplexDouble __complex__ double
+#define ComplexFloat_  __complex__ float
+#define ComplexDouble_ __complex__ double
 #include <lapacke.h>
 #endif
-
 #include "class_eigsolver.h"
 
 
 
-//using namespace eigSetting;
+
+
 class_eigsolver::class_eigsolver(size_t logLevel_){
     eigutils::eigLogger::setLogger("eig",logLevel,false);
 }
@@ -146,19 +146,6 @@ int class_eigsolver::eig_dsyevd(const double* matrix, int L){
         solution.meta.n              = L;
         solution.meta.form           = Form::SYMMETRIC;
         solution.meta.type           = Type::REAL ;
-//        int i = 0;
-//        int j = 0;
-//        int c = 0;
-//        if(L == 64){
-//            for(auto & val : eigvecs){
-//                std::cout << "eigvec(" << i << "," << j << ") = " << std::setprecision(16) << std::setw(20) <<  std::fixed<< std::right  << val
-//                          <<  " matrix = "  << std::setw(20) << std::fixed << std::right  << matrix[c] << std::endl;
-//                i++;
-//                c++;
-//                if (i == L){i = 0; j++;}
-//            }
-//        }
-
     }else{
         throw std::runtime_error("LAPACK dsyevd failed with error: " + std::to_string(info));
     }
@@ -178,13 +165,6 @@ int class_eigsolver::eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L)
     double lwork_query [1];
     int    liwork_query[1];
 
-
-//    info = LAPACKE_dsyev(LAPACK_COL_MAJOR,jobz,'U',L,
-//                               matrix2eigvecs,
-//                               L,
-//                               eigvals);
-
-//
     info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
                                matrix2eigvecs,
                                L,
@@ -202,12 +182,6 @@ int class_eigsolver::eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L)
     std::vector<double> work  ( (unsigned long) lwork );
     std::vector<int   > iwork ( (unsigned long) liwork );
 
-
-
-//    info = LAPACKE_dsyev(LAPACK_COL_MAJOR,jobz,'U',L,
-//                               matrix2eigvecs,
-//                               L,
-//                               eigvals);
     info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
                                matrix2eigvecs,
                                L,
@@ -258,10 +232,10 @@ int class_eigsolver::eig_zheevd(std::complex<double>* matrix2eigvecs, double *ei
     std::vector<int   > iwork ( liwork );
     char jobz = solverConf.compute_eigvecs ? 'V' : 'N';
     info = LAPACKE_zheevd_work(LAPACK_COL_MAJOR,jobz,'U',L,
-            reinterpret_cast< ComplexDouble *>(matrix2eigvecs),
+            reinterpret_cast< ComplexDouble_ *>(matrix2eigvecs),
             L,
             eigvals,
-            reinterpret_cast< ComplexDouble *>(work.data()),
+            reinterpret_cast< ComplexDouble_ *>(work.data()),
             lwork,
             rwork.data(),
             lrwork,
@@ -269,7 +243,6 @@ int class_eigsolver::eig_zheevd(std::complex<double>* matrix2eigvecs, double *ei
             liwork);
     return info;
 }
-
 
 
 int class_eigsolver::eig_dgeev(const double* matrix, int L){
@@ -299,6 +272,7 @@ int class_eigsolver::eig_dgeev(const double* matrix, int L){
     }
     return info;
 }
+
 
 int class_eigsolver::eig_dgeev(const double* matrix, std::complex<double> *eigvecsR, std::complex<double>* eigvecsL, std::complex<double> *eigvals, int L){
     eigutils::eigLogger::log->trace("Starting eig_dgeev (lapacke)");
@@ -395,6 +369,7 @@ int class_eigsolver::eig_zgeev(const std::complex<double>* matrix, int L){
 
 
 
+
 int class_eigsolver::eig_zgeev(const std::complex<double>* matrix, std::complex<double>* eigvecsR, std::complex<double>* eigvecsL, std::complex<double> *eigvals, int L){
     eigutils::eigLogger::log->trace("Starting eig_zgeev (lapacke)");
     using Scalar = std::complex<double>;
@@ -406,27 +381,27 @@ int class_eigsolver::eig_zgeev(const std::complex<double>* matrix, std::complex<
     std::vector<double> rwork  ( (unsigned long) lrwork);
 
     info = LAPACKE_zgeev_work(LAPACK_COL_MAJOR,'V','V',L,
-                              reinterpret_cast< ComplexDouble *>(const_cast<Scalar *>(matrix)),
+                              reinterpret_cast< ComplexDouble_ *>(const_cast<Scalar *>(matrix)),
                               L,
-                              reinterpret_cast< ComplexDouble *>(eigvals),
-                              reinterpret_cast< ComplexDouble *>(eigvecsL),
+                              reinterpret_cast< ComplexDouble_ *>(eigvals),
+                              reinterpret_cast< ComplexDouble_ *>(eigvecsL),
                               L,
-                              reinterpret_cast< ComplexDouble *>(eigvecsR),
+                              reinterpret_cast< ComplexDouble_ *>(eigvecsR),
                               L,
-                              reinterpret_cast< ComplexDouble *>(&lwork_query),
+                              reinterpret_cast< ComplexDouble_ *>(&lwork_query),
                               -1,
                               rwork.data());
     int lwork = (int) std::real(2.0*lwork_query); //Make it twice as big for performance.
     std::vector<Scalar> work  ( (unsigned long)lwork );
     info = LAPACKE_zgeev_work(LAPACK_COL_MAJOR,'V','V',L,
-                              reinterpret_cast< ComplexDouble *>(const_cast<Scalar *>(matrix)),
+                              reinterpret_cast< ComplexDouble_ *>(const_cast<Scalar *>(matrix)),
                               L,
-                              reinterpret_cast< ComplexDouble *>(eigvals),
-                              reinterpret_cast< ComplexDouble *>(eigvecsL),
+                              reinterpret_cast< ComplexDouble_ *>(eigvals),
+                              reinterpret_cast< ComplexDouble_ *>(eigvecsL),
                               L,
-                              reinterpret_cast< ComplexDouble *>(eigvecsR),
+                              reinterpret_cast< ComplexDouble_ *>(eigvecsR),
                               L,
-                              reinterpret_cast< ComplexDouble *>(work.data()),
+                              reinterpret_cast< ComplexDouble_ *>(work.data()),
                               lwork,
                               rwork.data());
 

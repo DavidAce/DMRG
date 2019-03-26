@@ -12,19 +12,10 @@ target_include_directories(arpack++_mps_test_target PUBLIC source)
 ################################################
 ###  Force cmake to find .a library suffixes ###
 ################################################
-if(BUILD_SHARED_LIBS)
-    set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
-else()
-    set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (arpack++_mps_test_target PRIVATE -static)                                             ### Static linkage
 endif()
 
-
-target_link_libraries  (arpack++_mps_test_target PRIVATE -Wl,--no-allow-shlib-undefined )
-target_link_libraries  (arpack++_mps_test_target PRIVATE -Wl,--no-as-needed )
-target_link_libraries  (arpack++_mps_test_target PRIVATE -Wl,--no-undefined )
 
 target_link_libraries(arpack++_mps_test_target PRIVATE  arpack++ Eigen3::Eigen spdlog::spdlog)
 target_link_libraries(arpack++_mps_test_target PRIVATE -lstdc++fs)

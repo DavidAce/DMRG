@@ -2,13 +2,12 @@
 // Created by david on 2018-10-30.
 //
 
-#ifndef CLASS_EIGSOLVER_BASE_H
-#define CLASS_EIGSOLVER_BASE_H
+#ifndef CLASS_ARPACKPP_SOLVER_H
+#define CLASS_ARPACKPP_SOLVER_H
 #include <vector>
 #include <general/class_tic_toc.h>
 #include "general/nmspc_eigutils.h"
 #include <complex>
-#undef I
 
 #define profile_arpack 0
 
@@ -172,4 +171,4 @@ public:
 
 
 
-#endif //EIGBENCH_CLASS_EIGSOLVER_BASE_H
+#endif //CLASS_ARPACKPP_SOLVER_H
