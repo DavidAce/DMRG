@@ -67,6 +67,11 @@ find_path(MKL_ROOT_DIR
         $ENV{MKLROOT}
         $ENV{MKL_ROOT}
         /opt/intel/mkl
+        $ENV{BLAS_DIR}
+        $ENV{MKL_DIR}
+        $ENV{HOME}/.conda
+        $ENV{HOME}/anaconda3
+        /usr/lib/x86_64-linux-gnu
         /Library/Frameworks/Intel_MKL.framework/Versions/Current/lib/universal
         "Program Files (x86)/Intel/ComposerXE-2011/mkl"
         )

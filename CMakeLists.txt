@@ -298,7 +298,7 @@ set(PTHREAD_LIBRARY  -lpthread)
 ###########################################
 set(BUILD_DIRECTORY   ${PROJECT_SOURCE_DIR}/cmake-build-libs)
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
-#include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake-modules/FindGFortran.cmake)
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library

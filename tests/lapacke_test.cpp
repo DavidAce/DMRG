@@ -223,6 +223,7 @@ int main(){
 
     std::cout << "H_localA0         vs H_localB0           diff   =   " << std::boolalpha << (H_localA0.array() - H_localB0.array()).cwiseAbs().sum() << std::endl;
     std::cout << "thetaA0           vs thetaB0             diff   =   " << std::boolalpha << (thetaA0.array()   - thetaB0.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "<thetaA0          | thetaB0 >            diff   =   " << std::boolalpha << (thetaA0.adjoint() * thetaB0).cwiseAbs().sum() << std::endl;
     std::cout << "overlapsA0        vs overlapsB0          diff   =   " << std::boolalpha << (overlapsA0.array()- overlapsB0.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvecsA0_read    vs eigvecsA0_lapacke   diff   =   " << std::boolalpha << (eigvecsA0.adjoint()         * eigvecsA0_lapacke).diagonal().cwiseAbs().mean() << std::endl;
     std::cout << "eigvecsB0_read    vs eigvecsB0_lapacke   diff   =   " << std::boolalpha << (eigvecsB0.adjoint()         * eigvecsB0_lapacke).diagonal().cwiseAbs().mean() << std::endl;
@@ -248,6 +249,7 @@ int main(){
 
     std::cout << "H_localA1         vs H_localB1           diff   =   " << std::boolalpha << (H_localA1.array() - H_localB1.array()).cwiseAbs().sum() << std::endl;
     std::cout << "thetaA1           vs thetaB1             diff   =   " << std::boolalpha << (thetaA1.array()   - thetaB1.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "<thetaA1          |  thetaB1 >            diff  =   " << std::boolalpha << (thetaA1.adjoint() * thetaB1).cwiseAbs().sum() << std::endl;
     std::cout << "overlapsA1        vs overlapsB1          diff   =   " << std::boolalpha << (overlapsA1.array()- overlapsB1.array()).cwiseAbs().sum() << std::endl;
     std::cout << "eigvecsA1_read    vs eigvecsA1_lapacke   diff   =   " << std::boolalpha << (eigvecsA1.adjoint()         * eigvecsA1_lapacke).diagonal().cwiseAbs().mean() << std::endl;
     std::cout << "eigvecsB1_read    vs eigvecsB1_lapacke   diff   =   " << std::boolalpha << (eigvecsB1.adjoint()         * eigvecsB1_lapacke).diagonal().cwiseAbs().mean() << std::endl;
@@ -274,6 +276,7 @@ int main(){
 
     std::cout << "H_localA2         vs H_localB2           diff   =   " << std::boolalpha << (H_localA2.array() - H_localB2.array()).cwiseAbs().sum() << std::endl;
     std::cout << "thetaA2           vs thetaB2             diff   =   " << std::boolalpha << (thetaA2.array()   - thetaB2.array()).cwiseAbs().sum() << std::endl;
+    std::cout << "<thetaA2          |  thetaB2 >            diff  =   " << std::boolalpha << (thetaA2.adjoint() * thetaB2).cwiseAbs().sum() << std::endl;
     std::cout << "overlapsA2        vs overlapsB2          diff   =   " << std::boolalpha << (overlapsA2.array()- overlapsB2.array()).cwiseAbs().sum() << std::endl;
 
     std::cout << "eigvecsA2_read    vs eigvecsA2_lapacke   diff   =   " << std::boolalpha << (eigvecsA2.adjoint()         * eigvecsA2_lapacke).diagonal().cwiseAbs().mean() << std::endl;
