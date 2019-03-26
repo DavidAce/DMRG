@@ -3,8 +3,9 @@ find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{HOME}/.conda  
 find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_CMAKE_PACKAGE_REGISTRY)
 
 
-if(BLAS_LIBRARIES)
+if(TARGET blas)
     set(EIGEN3_COMPILER_FLAGS  -Wno-parentheses) # -Wno-parentheses
+    set(EIGEN3_USING_BLAS ON)
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
         list(APPEND EIGEN3_COMPILER_FLAGS -Wno-unused-but-set-variable)
     endif()
@@ -25,7 +26,7 @@ endif()
 if(EIGEN3_FOUND AND TARGET Eigen3::Eigen)
     message(STATUS "EIGEN VERSION ${EIGEN3_VERSION} FOUND IN SYSTEM: ${EIGEN3_INCLUDE_DIR}")
     target_compile_options(Eigen3::Eigen INTERFACE ${EIGEN3_COMPILER_FLAGS})
-
+    target_include_directories(Eigen3::Eigen INTERFACE ${EIGEN3_INCLUDE_DIR})
     add_library(Eigen3 INTERFACE)
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     target_link_libraries(Eigen3 INTERFACE Eigen3::Eigen)
@@ -68,5 +69,7 @@ else()
     message("WARNING: Dependency Eigen3 not found and DOWNLOAD_EIGEN3 is OFF. Build will fail.")
 endif()
 
-
+if(TARGET blas)
+    target_link_libraries(Eigen3 INTERFACE blas)
+endif()
 

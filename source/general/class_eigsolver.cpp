@@ -12,13 +12,13 @@
 #undef I
 #endif
 
-#include "class_eigsolver.h"
 
 #ifdef MKL_AVAILABLE
 #define MKL_Complex8 std::complex<float>
 #define MKL_Complex16 std::complex<double>
 #define ComplexFloat  std::complex<float>
 #define ComplexDouble std::complex<double>
+#include <mkl_types.h>
 #include <mkl_service.h>
 #include <mkl.h>
 #include <mkl_lapacke.h>
@@ -28,6 +28,7 @@
 #include <lapacke.h>
 #endif
 
+#include "class_eigsolver.h"
 
 
 

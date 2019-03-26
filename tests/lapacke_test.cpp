@@ -1,11 +1,30 @@
+
+#include <complex>
+
+#ifdef MKL_AVAILABLE
+#define MKL_Complex8 std::complex<float>
+#define MKL_Complex16 std::complex<double>
+#define ComplexFloat  std::complex<float>
+#define ComplexDouble std::complex<double>
+#include <mkl_types.h>
+#include <mkl_service.h>
+#include <mkl.h>
+#include <mkl_lapacke.h>
+#else
+#define ComplexFloat  __complex__ float
+#define ComplexDouble __complex__ double
+#include <lapacke.h>
+#endif
+
+
 #include <Eigen/Core>
 #include <mps_routines/nmspc_mps_tools.h>
-#include <complex>
 #include <mps_routines/class_superblock.h>
 #include <LBFGS.h>
 #include <h5pp/h5pp.h>
 #include <general/class_eigsolver.h>
-#include <lapacke.h>
+
+
 
 
 int eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L){
