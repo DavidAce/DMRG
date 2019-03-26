@@ -14,8 +14,8 @@ if (USE_MKL)
 #    set(MKL_USE_STATIC_LIBS ON)
     set(MKL_MULTI_THREADED ${USE_OpenMP})
     set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF) # This doesn't work for some reason...
-    if (MKL_USE_SINGLE_DYNAMIC_LIBRARY AND STATIC_BUILD)
-        message(WARNING "Disabling single dynamic mkl library\nCan't use MKL_USE_SINGLE_DYNAMIC_LIBRARY and STATIC_BUILD simultaneously.")
+    if (MKL_USE_SINGLE_DYNAMIC_LIBRARY AND NOT BUILD_SHARED_LIBS)
+        message(WARNING "Disabling single dynamic mkl library\nCan't use MKL_USE_SINGLE_DYNAMIC_LIBRARY and -static simultaneously.")
     endif()
 
     find_package(MKL)
@@ -37,15 +37,15 @@ if (MKL_FOUND)
 
     if(MKL_MULTI_THREADED)
         list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group)
-        if(STATIC_BUILD)
-            list(APPEND MKL_LIBRARIES ${OpenMP_LIBRARIES})
-        else()
+        if(BUILD_SHARED_LIBS)
             list(APPEND MKL_LIBRARIES ${MKL_IOMP5_LIBRARY})
+        else()
+            list(APPEND MKL_LIBRARIES ${OpenMP_LIBRARIES})
         endif()
     else()
         list(APPEND MKL_LIBRARIES  ${MKL_SEQUENTIAL_LIBRARY}  ${MKL_CORE_LIBRARY}  -Wl,--end-group )
     endif()
-    list(APPEND MKL_LIBRARIES  -lm -ldl)
+    list(APPEND MKL_LIBRARIES  -lm -ldl -fPIC)
 
 
     add_definitions(-DMKL_AVAILABLE)
@@ -53,13 +53,11 @@ if (MKL_FOUND)
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
-    set_target_properties(mkl PROPERTIES
-            INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES};${PTHREAD_LIBRARY}"
-            INTERFACE_LINK_DIRECTORIES      "${MKL_ROOT_DIR}/lib/intel64"
-            INTERFACE_INCLUDE_DIRECTORIES   "${MKL_INCLUDE_DIR}"
-            INTERFACE_COMPILE_OPTIONS       "${MKL_FLAGS}"
-            )
-    add_library(mkl::lapacke ALIAS mkl)
+    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES} ${PTHREAD_LIBRARY})
+    target_link_libraries(mkl INTERFACE gfortran)
+    target_include_directories(mkl INTERFACE ${MKL_INCLUDE_DIR})
+    target_compile_options(mkl INTERFACE ${MKL_FLAGS})
+    set_target_properties(mkl PROPERTIES INTERFACE_LINK_DIRECTORIES  "${MKL_ROOT_DIR}/lib/intel64")
 
     # BLAS and LAPACK are included in the MKL.
     set(BLAS_LIBRARIES   ${MKL_LIBRARIES})
@@ -68,22 +66,9 @@ if (MKL_FOUND)
 
 
     # Make the rest of the build structure aware of blas and lapack included in MKL.
-    add_library(blas INTERFACE)
-    set_target_properties(blas PROPERTIES
-            INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES};${PTHREAD_LIBRARY}"
-            INTERFACE_LINK_DIRECTORIES      "${MKL_ROOT_DIR}/lib/intel64"
-            INTERFACE_INCLUDE_DIRECTORIES   "${MKL_INCLUDE_DIR}"
-            INTERFACE_COMPILE_OPTIONS       "${MKL_FLAGS}"
-            )
-
-    add_library(lapack INTERFACE)
-    set_target_properties(lapack PROPERTIES
-            INTERFACE_LINK_LIBRARIES        "${MKL_LIBRARIES};${PTHREAD_LIBRARY}"
-            INTERFACE_LINK_DIRECTORIES      "${MKL_ROOT_DIR}/lib/intel64"
-            INTERFACE_INCLUDE_DIRECTORIES   "${MKL_INCLUDE_DIR}"
-            INTERFACE_COMPILE_OPTIONS       "${MKL_FLAGS}"
-            )
-
+    add_library(mkl::lapacke ALIAS mkl)
+    add_library(blas ALIAS mkl)
+    add_library(lapack ALIAS mkl)
 
     include(FindLAPACKE)
 
