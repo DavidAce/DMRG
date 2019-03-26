@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(DMRG++)
 
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 
 
@@ -289,8 +289,10 @@ set(PTHREAD_LIBRARY "-Wl,--whole-archive  -lpthread -Wl,--no-whole-archive") # T
 ###########################################
 set(BUILD_DIRECTORY   ${PROJECT_SOURCE_DIR}/cmake-build-libs)
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
-include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake-modules/FindGFortran.cmake)
+if(USE_MKL)
+    include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's Math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+endif()
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
 include(cmake-modules/Fetch_spdlog.cmake)                   # spdlog library
