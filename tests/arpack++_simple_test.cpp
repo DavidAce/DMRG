@@ -1,10 +1,11 @@
 
 #include <complex>
 //
-//#ifdef MKL_AVAILABLE
+#ifdef MKL_AVAILABLE
+#include <mkl_service.h>
 //#define MKL_Complex8 std::complex<float>
 //#define MKL_Complex16 std::complex<double>
-//#endif
+#endif
 //
 ////#include <mkl.h>
 ////#define LAPACKF_H
@@ -18,6 +19,11 @@
 
 int main(int argc, char* argv[])
 {
+
+#ifdef MKL_VERBOSE
+    MKL_Verbose(1);
+#endif
+
     int                n = 4;
     int                nev = 2;
     int                ncv = 4;
