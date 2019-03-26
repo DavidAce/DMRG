@@ -13,8 +13,7 @@
 
 
 
-find_file(HDF5_C_COMPILER_EXECUTABLE        NAMES h5cc  PATHS $ENV{PATH} /usr/bin /usr/local/bin $ENV{HOME}/.conda/bin  $ENV{HOME}/anaconda3/bin)
-find_file(HDF5_CXX_COMPILER_EXECUTABLE      NAMES h5c++ PATHS $ENV{PATH} /usr/bin /usr/local/bin $ENV{HOME}/.conda/bin  $ENV{HOME}/anaconda3/bin)
+
 if(BUILD_SHARED_LIBS)
     set(HDF5_TARGET_SUFFIX "shared")
     set(HDF5_LIBRARY_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
@@ -33,10 +32,23 @@ if(NOT HDF5_ROOT AND $ENV{HDF5_ROOT})
     set(HDF5_ROOT $ENV{HDF5_ROOT})
 endif()
 
+
+
+
 if(HDF5_REQUIRED)
     find_package(HDF5 ${HDF5_WANT_VERSION} COMPONENTS C HL REQUIRED)
 else()
     find_package(HDF5 ${HDF5_WANT_VERSION} COMPONENTS C HL)
+endif()
+
+if(NOT HDF5_FOUND)
+find_file(HDF5_C_COMPILER_EXECUTABLE        NAMES h5cc  PATHS $ENV{PATH} /usr/bin /usr/local/bin $ENV{HOME}/.conda/bin  $ENV{HOME}/anaconda3/bin)
+find_file(HDF5_CXX_COMPILER_EXECUTABLE      NAMES h5c++ PATHS $ENV{PATH} /usr/bin /usr/local/bin $ENV{HOME}/.conda/bin  $ENV{HOME}/anaconda3/bin)
+if(HDF5_REQUIRED)
+    find_package(HDF5 ${HDF5_WANT_VERSION} COMPONENTS C HL REQUIRED)
+else()
+    find_package(HDF5 ${HDF5_WANT_VERSION} COMPONENTS C HL)
+endif()
 endif()
 
 # To print all variables, use the code below:
