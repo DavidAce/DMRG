@@ -122,11 +122,17 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     echo $LD_LIBRARY_PATH
     export LD_LIBRARY_PATH
 elif [[ "$HOSTNAME" == *"anderson"* ]];then
-    module load arpack-ng_${march}_3.6.2
+    if [ "$mkl" = "ON" ] ; then
+        module load intel-mkl-2019.1
+        module load arpack-ng_3.7.0_mkl
+    else
+        module load openblas_v0.3.5
+        module load arpack-ng_3.7.0_openblas
+    fi
     module load arpack++
     module load hdf5_1.10.3
     module load gsl_2.4
-    module load eigen3_3.3.5
+    module load eigen3_3.3.7
 
     if [ "$compiler" = "GNU" ] ; then
         module load GNU_8.x.x
