@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(DMRG++)
 
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 
 
@@ -302,11 +302,11 @@ include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for a
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
 include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
 
+target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
-target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp)
 
 get_target_property(BLAS_INFO       blas             INTERFACE_LINK_LIBRARIES)
@@ -338,7 +338,6 @@ message("    ARPACKPP :   ${ARPACKPP_INFO}")
 message("    GSL      :   ${GSL_INFO}")
 message("    h5pp     :   ${H5PP_INFO}")
 message("    GFORTRAN :   ${FORTRAN_INFO}")
-#message("    QUADMATH :   ${QUADMATH_LIB}")
 message("=============================================================================")
 message("")
 

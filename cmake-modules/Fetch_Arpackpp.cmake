@@ -31,7 +31,6 @@ if (ARPACKPP_LIBRARIES OR ARPACKPP_INCLUDE_DIR AND NOT "${OS_PROPERTIES}" MATCHE
     add_library(arpack++ INTERFACE)
     target_link_libraries(arpack++ INTERFACE ${ARPACKPP_LIBRARIES} arpack)
     target_include_directories(arpack++ INTERFACE ${ARPACKPP_INCLUDE_DIR})
-
 else()
     message(STATUS "Arpack++ will be installed into ${INSTALL_DIRECTORY}/arpackpp on first build.")
     include(ExternalProject)

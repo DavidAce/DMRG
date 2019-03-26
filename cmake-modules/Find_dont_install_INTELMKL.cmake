@@ -64,7 +64,7 @@ if (MKL_FOUND)
     if(BUILD_SHARED_LIBS)
         list(APPEND MKL_LIBRARIES -fPIC)
     endif()
-    list(APPEND MKL_LIBRARIES -ldl -lm ${PTHREAD_LIBRARY} )
+    list(APPEND MKL_LIBRARIES -ldl -lm ${GFORTRAN_LIB}  ${QUADMATH_LIB} ${PTHREAD_LIBRARY} )
 
 
     add_definitions(-DMKL_AVAILABLE)
@@ -73,11 +73,11 @@ if (MKL_FOUND)
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
-    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES} gfortran)
+    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES})
+    target_link_libraries(mkl INTERFACE gfortran)
     target_include_directories(mkl INTERFACE ${MKL_INCLUDE_DIR})
     target_compile_options(mkl INTERFACE ${MKL_FLAGS})
     set_target_properties(mkl PROPERTIES INTERFACE_LINK_DIRECTORIES  "${MKL_ROOT_DIR}/lib/intel64")
-    add_dependencies(mkl gfortran)
      # BLAS and LAPACK are included in the MKL.
     set(BLAS_LIBRARIES   ${MKL_LIBRARIES})
     set(LAPACK_LIBRARIES ${MKL_LIBRARIES})
