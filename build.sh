@@ -139,14 +139,6 @@ elif [[ "$HOSTNAME" == *"anderson"* ]];then
     elif [ "$compiler" = "Clang" ] ; then
         module load CLANG_7
     fi
-
-
-    if [ "$mkl" = "ON" ] ; then
-        module load intel-mkl-2019.1
-    else
-        module load openblas_${march}_v0.3.4
-    fi
-
 fi
 
 
@@ -165,8 +157,6 @@ echo "Intel MKL       :   $mkl"
 echo "Shared build    :   $shared"
 
 
-
-#module load CLANG_6.x.x
 
 
 cmake -E make_directory build/$mode
