@@ -3,7 +3,6 @@
 #include <general/arpack_extra/matrix_product_hamiltonian.h>
 #include <general/nmspc_tensor_extra.h>
 #include <iomanip>
-using namespace std::complex_literals;
 using namespace eigutils::eigSetting;
 
 // Find the optimal MPS representation given an effective Hamiltonian made of left, right environments and a Hamiltonian MPO
@@ -30,21 +29,7 @@ int main()
     DenseHamiltonianProduct<Scalar> matrix(L.data(),R.data(),M.data(),M.data(),shape_theta4,shape_mpo4);
     class_eigsolver solver;
     solver.eigs_dense(matrix,nev,eigMaxNcv, NAN,Form::SYMMETRIC,Ritz::LM,Side::R, true,false);
-//
-//    solver.eigs<>();
-//    class_eigsolver<Scalar, Form::GENERAL> solver(eigThreshold,eigMaxIter,eigMaxNcv, true, false);
-//    solver.optimize_mps(Lblock->block.data(), Rblock->block.data(), HA->MPO.data(), HB->MPO.data(), shape_theta4, shape_mpo4, nev, eigMaxNcv, ritz , false ,theta.data());
-//    solver.optimize_mps(L.data(),
-//                        R.data(),
-//                        M.data(),
-//                        M.data(),
-//                        shape_theta4,
-//                        shape_mpo4,
-//                        nev,
-//                        eigMaxNcv,
-//                        Ritz::SR,
-//                        false,
-//                        theta.data());
+
     using namespace Textra;
     using namespace Eigen;
     auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solver.solution.meta.cols);
