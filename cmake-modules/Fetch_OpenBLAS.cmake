@@ -125,45 +125,42 @@ else()
             GIT_TAG             v0.3.5
             PREFIX      ${BUILD_DIRECTORY}/OpenBLAS
             INSTALL_DIR ${INSTALL_DIRECTORY}/OpenBLAS
-#            UPDATE_COMMAND ""
-#            TEST_COMMAND ""
-#            CONFIGURE_COMMAND ""
+            UPDATE_COMMAND ""
+            TEST_COMMAND ""
+            CONFIGURE_COMMAND ""
 
-            CMAKE_ARGS
-#            -j8
-            -DTARGET=${OPENBLAS_MARCH}
-            -DDYNAMIC_ARCH:BOOL=OFF
-            -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
-            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DBINARY=64
-            #            -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
+#            CMAKE_ARGS
+#            -DTARGET=${OPENBLAS_MARCH}
+#            -DDYNAMIC_ARCH:BOOL=OFF
+#            -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+#            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+#            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+#            -DBINARY=64
+#            -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
 #            -DCMAKE_C_FLAGS=-w
 #            -DCMAKE_CXX_FLAGS=-w
 #            -DCMAKE_FORTRAN_FLAGS=-w
 
 
 
-
-
-            #            BUILD_IN_SOURCE 1
 #            BUILD_COMMAND export LD_LIBRARY_PATH=${GFORTRAN_PATH}:$LD_LIBRARY_PATH &&
-#                          export LDFLAGS="-L${GFORTRAN_PATH} $LDFLAGS" &&
-#                          $(MAKE) TARGET=SKYLAKE
-#                          USE_THREAD=${OpenBLAS_MULTITHREADED}
-#                          USE_OPENMP=${OpenBLAS_USE_OPENMP}
-#                          NO_AFFINITY=1
-#                          NO_WARMUP=1
-#                          QUIET_MAKE=0
-#                          NUM_THREADS=128
-#                          DEBUG=1
-##                          FFLAGS=-frecursive
-#                          DYNAMIC_ARCH=1
-#                          BINARY64=64
-#                          GEMM_MULTITHREAD_THRESHOLD=4
-#                          LDFLAGS=-L${GFORTRAN_PATH}
-#                          FFLAGS=-O2 -Wno-maybe-uninitialized -Wno-conversion -Wno-unused-but-set-variable -Wno-unused-variable
-#            INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
+#            export LDFLAGS="-L${GFORTRAN_PATH} $LDFLAGS" &&
+            BUILD_IN_SOURCE 1
+            BUILD_COMMAND $(MAKE) TARGET=${OPENBLAS_MARCH}
+                          USE_THREAD=${OpenBLAS_MULTITHREADED}
+                          USE_OPENMP=${OpenBLAS_USE_OPENMP}
+                          NO_AFFINITY=1
+                          NO_WARMUP=1
+                          QUIET_MAKE=0
+                          NUM_THREADS=128
+                          DEBUG=0
+                          FFLAGS=-frecursive
+                          DYNAMIC_ARCH=0
+                          BINARY64=64
+                          GEMM_MULTITHREAD_THRESHOLD=16
+                          LDFLAGS=-L${GFORTRAN_PATH}
+                          FFLAGS=-O3 -Wno-maybe-uninitialized -Wno-conversion -Wno-unused-but-set-variable -Wno-unused-variable
+            INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             DEPENDS gfortran
             )
 
