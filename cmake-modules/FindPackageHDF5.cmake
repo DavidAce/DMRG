@@ -29,27 +29,24 @@ if(NOT HDF5_WANT_VERSION)
 endif()
 
 set(HDF5_ROOT ${HDF5_ROOT} $ENV{ROOT} $ENV{HOME}/.conda $ENV{HOME}/anaconda3 $ENV{HOME}/miniconda3)
-
-
-#find_package(HDF5 ${HDF5_WANT_VERSION} COMPONENTS C HL PATHS ${HDF5_ROOT} $ENV{ROOT} $ENV{HOME}/.conda $ENV{HOME}/anaconda3)
-if(NOT HDF5_FOUND)
 find_file(HDF5_C_COMPILER_EXECUTABLE        NAMES h5cc  PATHS $ENV{PATH} /usr/bin /usr/local/bin $ENV{HOME}/.conda/bin  $ENV{HOME}/anaconda3/bin)
 find_file(HDF5_CXX_COMPILER_EXECUTABLE      NAMES h5c++ PATHS $ENV{PATH} /usr/bin /usr/local/bin $ENV{HOME}/.conda/bin  $ENV{HOME}/anaconda3/bin)
+
+
 if(HDF5_REQUIRED)
     find_package(HDF5 ${HDF5_WANT_VERSION} COMPONENTS C HL REQUIRED)
 else()
     find_package(HDF5 ${HDF5_WANT_VERSION} COMPONENTS C HL)
 endif()
-endif()
 
 # To print all variables, use the code below:
 ##
-#get_cmake_property(_variableNames VARIABLES)
-#foreach (_variableName ${_variableNames})
-#    if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5" OR "${_variableName}" MATCHES "h5")
-#        message(STATUS "${_variableName}=${${_variableName}}")
-#    endif()
-#endforeach()
+get_cmake_property(_variableNames VARIABLES)
+foreach (_variableName ${_variableNames})
+    if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5" OR "${_variableName}" MATCHES "h5")
+        message(STATUS "${_variableName}=${${_variableName}}")
+    endif()
+endforeach()
 
 
 if(HDF5_FOUND)
