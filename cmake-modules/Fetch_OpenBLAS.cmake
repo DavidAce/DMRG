@@ -146,7 +146,10 @@ else()
 #            BUILD_COMMAND export LD_LIBRARY_PATH=${GFORTRAN_PATH}:$LD_LIBRARY_PATH &&
 #            export LDFLAGS="-L${GFORTRAN_PATH} $LDFLAGS" &&
             BUILD_IN_SOURCE 1
-            BUILD_COMMAND $(MAKE) TARGET=SANDYBRIDGE
+            BUILD_COMMAND
+                        export LD_LIBRARY_PATH=${GFORTRAN_PATH}:$LD_LIBRARY_PATH &&
+                        export LDFLAGS="-l${GFORTRAN_LIB} $LDFLAGS" &&
+                        $(MAKE) TARGET=SANDYBRIDGE
                         DYNAMIC_ARCH=1
                         USE_THREAD=${OpenBLAS_MULTITHREADED}
                         USE_OPENMP=${OpenBLAS_USE_OPENMP}
@@ -158,7 +161,7 @@ else()
                         FFLAGS=-frecursive
                         BINARY64=64
                         GEMM_MULTITHREAD_THRESHOLD=16
-                        LDFLAGS=-L${GFORTRAN_PATH}
+                        LDFLAGS=-l${GFORTRAN_LIB} -l${QUADMATH_LIB}
                         FFLAGS=-O3 -Wno-maybe-uninitialized -Wno-conversion -Wno-unused-but-set-variable -Wno-unused-variable
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             DEPENDS gfortran
