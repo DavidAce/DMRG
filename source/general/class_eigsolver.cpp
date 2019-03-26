@@ -1,9 +1,9 @@
 //
 // Created by david on 2018-10-29.
 //
-#ifndef HAVE_LAPACK_CONFIG_H
-#define HAVE_LAPACK_CONFIG_H
-#endif
+//#ifndef HAVE_LAPACK_CONFIG_H
+//#define HAVE_LAPACK_CONFIG_H
+//#endif
 
 
 #include <complex>

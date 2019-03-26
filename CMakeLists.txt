@@ -15,7 +15,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 ################################################################
 ### Set options for compilation                              ###
 ################################################################
-option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          OFF)
+option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          ON)
 option(BUILD_EXAMPLES     "Build examples"                                      OFF)
 option(ENABLE_TESTS       "Enable testing"                                      ON)
 option(DOWNLOAD_HDF5      "Download and install HDF5 if not found"              OFF)
@@ -116,7 +116,7 @@ if(ENABLE_CCACHE)
     endif(CCACHE_FOUND)
 endif()
 set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
-set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0 )
+set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0 -fstack-check )
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
 set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g  -ftime-report)
 

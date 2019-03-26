@@ -25,6 +25,9 @@ endif()
 
 if(EIGEN3_FOUND AND TARGET Eigen3::Eigen)
     message(STATUS "EIGEN VERSION ${EIGEN3_VERSION} FOUND IN SYSTEM: ${EIGEN3_INCLUDE_DIR}")
+    if(TARGET blas)
+        target_link_libraries(Eigen3::Eigen INTERFACE blas)
+    endif()
     target_compile_options(Eigen3::Eigen INTERFACE ${EIGEN3_COMPILER_FLAGS})
     target_include_directories(Eigen3::Eigen INTERFACE ${EIGEN3_INCLUDE_DIR})
     add_library(Eigen3 INTERFACE)
@@ -65,11 +68,12 @@ elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
             $<BUILD_INTERFACE:${INSTALL_DIR}/include/eigen3>
             $<INSTALL_INTERFACE:third-party/Eigen3/include/eigen3>
     )
+    if(TARGET blas)
+        target_link_libraries(Eigen3 INTERFACE blas)
+    endif()
 else()
     message("WARNING: Dependency Eigen3 not found and DOWNLOAD_EIGEN3 is OFF. Build will fail.")
 endif()
 
-if(TARGET blas)
-    target_link_libraries(Eigen3 INTERFACE blas)
-endif()
+
 
