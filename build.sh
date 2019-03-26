@@ -106,10 +106,10 @@ fi
 if [[ "$HOSTNAME" == *"tetralith"* ]];then
     echo "Running on tetralith"
     module load buildenv-gcc/2018a-eb
-    module load GCCcore/7.3.0
     if [ "$mkl" = "ON" ] ; then
         module load gimkl
     fi
+    module load GCCcore/7.3.0
     #module load clang/6.0.1
     module load CMake/3.12.1
     module load zlib/1.2.8
