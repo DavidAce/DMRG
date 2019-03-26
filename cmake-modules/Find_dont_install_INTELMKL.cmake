@@ -30,13 +30,6 @@ endif()
 
 
 if (MKL_FOUND)
-    get_cmake_property(_variableNames VARIABLES)
-    foreach (_variableName ${_variableNames})
-        if("${_variableName}" MATCHES "MKL" OR "${_variableName}" MATCHES "mkl")
-            message(STATUS "${_variableName}=${${_variableName}}")
-        endif()
-    endforeach()
-
     #The order of these libraries is important when doing static linking!
     #To find out the order, check the Intel link line advisor.
     if(BUILD_SHARED_LIBS AND MKL_USE_SINGLE_DYNAMIC_LIBRARY)
@@ -60,7 +53,7 @@ if (MKL_FOUND)
 
 
     add_definitions(-DMKL_AVAILABLE)
-    add_definitions(-DMKL_VERBOSE)
+#    add_definitions(-DMKL_VERBOSE)
     set(MKL_FLAGS -m64 -I${MKL_ROOT_DIR}/lib/intel64/lp64 )
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.

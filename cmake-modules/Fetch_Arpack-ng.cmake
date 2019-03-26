@@ -1,7 +1,7 @@
 
+unset(ARPACK_LIBRARIES)
 
-
-message(STATUS "SEARCHING FOR ARPACK IN SYSTEM...")
+message(STATUS "SEARCHING FOR ARPACK IN SYSTEM")
 find_library(ARPACK_LIBRARIES
         NAMES libarpack${CUSTOM_SUFFIX}
         PATHS /usr/lib/x86_64-linux-gnu/
