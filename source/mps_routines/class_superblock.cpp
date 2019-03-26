@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <general/class_svd_wrapper.h>
 #include <general/class_eigsolver.h>
+#include <general/arpack_extra/matrix_product_hamiltonian.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <model/class_hamiltonian_factory.h>
 #define profile_optimization 0
