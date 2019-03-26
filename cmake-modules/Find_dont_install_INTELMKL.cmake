@@ -109,7 +109,7 @@ if (MKL_FOUND)
 
     #   Test features
     include(CheckCXXSourceCompiles)
-    set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES} -ldl -lm ${PTHREAD_LIBRARY})
+    set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES})
     set(CMAKE_REQUIRED_INCLUDES  ${MKL_INCLUDE_DIR})
     set(CMAKE_REQUIRED_FLAGS     ${MKL_FLAGS})
     check_cxx_source_compiles("
