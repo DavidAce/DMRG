@@ -41,7 +41,6 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd>
 MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superblock, double energy_shift,OptMode & optMode, OptSpace &optSpace){
     spdlog::trace("Finding subspace");
 
-    double start_time = t_tot->get_age();
     using namespace eigutils::eigSetting;
     t_ham->tic();
     Eigen::MatrixXd H_local = superblock.get_H_local_matrix_real();

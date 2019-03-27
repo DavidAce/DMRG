@@ -23,6 +23,7 @@ public:
     double energy_ubound                  = 0;
     double energy_lbound                  = 0;
     double energy_now                     = 0;
+    double energy_dens                    = 0;
     double phys_time                      = 0;
     double delta_t                        = 0; //Make sure this one gets initialized to delta_t0!
     bool   time_step_has_converged        = false;
@@ -58,6 +59,7 @@ public:
                   << std::string("energy_ubound                  : ")  << sim_state.energy_ubound                                     << '\n'
                   << std::string("energy_lbound                  : ")  << sim_state.energy_lbound                                     << '\n'
                   << std::string("energy_now                     : ")  << sim_state.energy_now                                        << '\n'
+                  << std::string("energy_dens                    : ")  << sim_state.energy_dens                                       << '\n'
                   << std::string("phys_time                      : ")  << sim_state.phys_time                                         << '\n'
                   << std::string("delta_t                        : ")  << sim_state.delta_t                                           << '\n'
                   << std::string("time_step_has_converged        : ")  << std::boolalpha << sim_state.time_step_has_converged         << '\n'

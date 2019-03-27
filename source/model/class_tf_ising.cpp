@@ -13,7 +13,7 @@ using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
 
-class_tf_ising::class_tf_ising(): class_hamiltonian_base(){
+class_tf_ising::class_tf_ising(std::string logName): class_hamiltonian_base(logName){
     extent4     = {1, 1, spin_dim, spin_dim};
     extent2     = {spin_dim, spin_dim};
     r_rnd_field = rn::uniform_double(-w_rnd_strength,w_rnd_strength);
@@ -79,7 +79,7 @@ void class_tf_ising::build_mpo()
  *
  */
 {
-    if (not full_lattice_parameters_have_been_set) throw std::runtime_error("Failed to build MPO: Full lattice parameters haven't been set yet.");
+    if (not full_lattice_parameters_have_been_set) log->warn("Improperly built MPO: Full lattice parameters haven't been set yet.");
     MPO.resize(3, 3, spin_dim, spin_dim);
     MPO.setZero();
     MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
@@ -182,6 +182,6 @@ std::vector<double> class_tf_ising::get_parameter_values() const {
 }
 
 
-void class_tf_ising::set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters){
+void class_tf_ising::set_full_lattice_parameters([[maybe_unused]] const std::vector<std::vector<double>> chain_parameters){
     full_lattice_parameters_have_been_set = true;
 }

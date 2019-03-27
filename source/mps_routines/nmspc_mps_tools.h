@@ -257,6 +257,7 @@ namespace MPS_Tools{
             extern Eigen::Tensor<std::complex<double>,4> transfer_matrix_LAGB;
             extern Eigen::Tensor<std::complex<double>,4> transfer_matrix_evn;
             extern Eigen::Tensor<std::complex<double>,4> transfer_matrix_odd;
+            extern bool components_computed;
             extern void compute_mps_components(const class_superblock &superblock);
 
             extern Eigen::Tensor<std::complex<double>,4> get_theta                       (const class_finite_chain_state & state, std::complex<double> norm = 1.0);              /*!< Returns rank 4 tensor \f$\Theta\f$.*/

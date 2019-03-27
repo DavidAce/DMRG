@@ -97,8 +97,8 @@ int main(){
     class_eigsolver solverA;
     class_eigsolver solverB;
 
-    auto [eigvalsA1_lapacke,eigvecsA1_lapacke,infoA1] = eig_dsyevd(H_localA1.data(),H_localA1.rows());
-    auto [eigvalsB1_lapacke,eigvecsB1_lapacke,infoB1] = eig_dsyevd(H_localB1.data(),H_localB1.rows());
+    [[maybe_unused]] auto [eigvalsA1_lapacke,eigvecsA1_lapacke,infoA1] = eig_dsyevd(H_localA1.data(),H_localA1.rows());
+    [[maybe_unused]] auto [eigvalsB1_lapacke,eigvecsB1_lapacke,infoB1] = eig_dsyevd(H_localB1.data(),H_localB1.rows());
 
     solverA.eig<Type::REAL, Form::SYMMETRIC>(H_localA1,true,false);
     solverB.eig<Type::REAL, Form::SYMMETRIC>(H_localB1,true,false);
@@ -128,8 +128,8 @@ int main(){
     auto overlap_A1A1_lapacke =     (eigvecsA1.adjoint() * eigvecsA1_lapacke).diagonal().cwiseAbs().mean();
     auto overlap_A1B1_lapacke =     (eigvecsA1.adjoint() * eigvecsB1_lapacke).diagonal().cwiseAbs().mean();
 
-    auto [eigvalsA2_lapacke,eigvecsA2_lapacke,infoA2] = eig_dsyevd(H_localA2.data(),H_localA2.rows());
-    auto [eigvalsB2_lapacke,eigvecsB2_lapacke,infoB2] = eig_dsyevd(H_localB2.data(),H_localB2.rows());
+    [[maybe_unused]] auto [eigvalsA2_lapacke,eigvecsA2_lapacke,infoA2] = eig_dsyevd(H_localA2.data(),H_localA2.rows());
+    [[maybe_unused]] auto [eigvalsB2_lapacke,eigvecsB2_lapacke,infoB2] = eig_dsyevd(H_localB2.data(),H_localB2.rows());
     solverA.eig<Type::REAL, Form::SYMMETRIC>(H_localA2,true,false);
     solverB.eig<Type::REAL, Form::SYMMETRIC>(H_localB2,true,false);
     Eigen::VectorXd eigvalsA2_eig           = Eigen::Map<const Eigen::VectorXd> (solverA.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solverA.solution.meta.cols);

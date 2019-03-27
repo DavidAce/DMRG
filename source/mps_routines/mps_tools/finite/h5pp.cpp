@@ -284,7 +284,7 @@ void MPS_Tools::Finite::H5pp::load_state_from_hdf5(class_finite_chain_state & st
             h5ppFile.readDataset(G, sim_name + "/state/full/mps/G_" + std::to_string(i));
             h5ppFile.readDataset(L, sim_name + "/state/full/mps/L_" + std::to_string(i));
             h5ppFile.readDataset(H, sim_name + "/state/full/mpo/H_" + std::to_string(i));
-            if(i <= position ) {
+            if(i <= (size_t)position ) {
                 if(not state.get_MPS_L().empty() and state.get_MPS_L().back().get_chiR() != G.dimension(1)){
                     throw std::runtime_error("Mismatch in adjacent MPS dimensions");
                 }
@@ -328,6 +328,7 @@ void MPS_Tools::Finite::H5pp::load_sim_state_from_hdf5 (class_simulation_state &
         h5ppFile.readDataset(sim_state.energy_ubound                  , sim_name + "/sim_state/energy_ubound");
         h5ppFile.readDataset(sim_state.energy_lbound                  , sim_name + "/sim_state/energy_lbound");
         h5ppFile.readDataset(sim_state.energy_now                     , sim_name + "/sim_state/energy_now");
+        h5ppFile.readDataset(sim_state.energy_dens                    , sim_name + "/sim_state/energy_dens");
         h5ppFile.readDataset(sim_state.phys_time                      , sim_name + "/sim_state/phys_time");
         h5ppFile.readDataset(sim_state.delta_t                        , sim_name + "/sim_state/delta_t");
         h5ppFile.readDataset(sim_state.time_step_has_converged        , sim_name + "/sim_state/time_step_has_converged");

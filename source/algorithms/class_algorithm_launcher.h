@@ -6,7 +6,6 @@
 #define DMRG_CLASS_ALGORITHMS_H
 
 #include <memory>
-#include <io/class_custom_cout.h>
 #include <spdlog/spdlog.h>
 namespace h5pp{class File;}
 
@@ -19,7 +18,6 @@ public:
 //    std::shared_ptr <class_hdf5_file> hdf5;
     std::shared_ptr<h5pp::File> h5ppFile;
     std::string hdf5_path;
-    class_custom_cout       ccout;
     class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_);
     class_algorithm_launcher();
 

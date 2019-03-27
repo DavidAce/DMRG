@@ -2,37 +2,41 @@
 // Created by david on 2018-01-12.
 //
 
-#include <spdlog/spdlog.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
 #include "class_settings_reader.h"
-
-
-void class_settings_reader::setLogger(std::string name){
-    if(spdlog::get(name) == nullptr){
-        log = spdlog::stdout_color_mt(name);
-        log->set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
-        log->set_level(spdlog::level::trace);
-    }else{
-        log = spdlog::get(name);
-    }
-
-}
-
+#include <io/nmspc_logger.h>
 
 
 class_settings_reader::class_settings_reader(const fs::path &file_path_,std::string logName): file_path(file_path_) {
-    setLogger(logName);
+    log = Logger::setLogger(logName,2,true);
     fs::path found_file =  find_input_file(file_path);
     if (not found_file.empty()){
         try {
             file.open(found_file.c_str());
         }
         catch(std::exception &ex){
-            log->critical("Exiting: {}", ex.what() );
-            exit(1);
+            log->critical("Could not open file [ {} ]: {}", found_file.string(), std::string(ex.what()) );
+            throw std::runtime_error("Could not open file [ " + found_file.string() + "]: " + std::string(ex.what()));
         }
     }
 }
+
+std::string class_settings_reader::get_input_file(){
+    if (file.is_open()) {
+        file.clear();
+        file.seekg(0, std::ios::beg);
+        std::string the_file ( (std::istreambuf_iterator<char>(file) ),
+                               (std::istreambuf_iterator<char>()     ) );
+
+        return the_file;
+    }else{
+        return "";
+    }
+}
+
+std::string class_settings_reader::get_input_filename(){
+    return file_path.string();
+}
+
 
 
 bool class_settings_reader::check_if_input_file_exists(const fs::path &path_to_file){

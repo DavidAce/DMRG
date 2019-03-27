@@ -12,11 +12,15 @@ using namespace qm;
 using Scalar = std::complex<double>;
 
 
-
-
-void class_hamiltonian_base::set_position(int new_pos) {
-    position = new_pos;
+class_hamiltonian_base::class_hamiltonian_base(std::string logName){
+    log = Logger::setLogger(logName);
 }
+
+void class_hamiltonian_base::set_position(size_t position_){
+    position = position_;
+}
+
+
 
 size_t class_hamiltonian_base::get_position() const{
     return position;

@@ -18,55 +18,9 @@ using Scalar = std::complex<double>;
 using namespace Textra;
 
 
-//namespace MPS_Tools::Common::Measure::Results {
-//    int length                           = 0;
-//    int bond_dimension                   = 0;
-//    double norm                             = 0;
-//    double truncation_error                 = 0;
-//
-//    double energy_mpo                       = 0;
-//    double energy_per_site_mpo              = 0;
-//    double energy_per_site_ham              = 0;
-//    double energy_per_site_mom              = 0;
-//    double energy_variance_mpo              = 0;
-//    double energy_variance_per_site_mpo     = 0;
-//    double energy_variance_per_site_ham     = 0;
-//    double energy_variance_per_site_mom     = 0;
-//    double current_entanglement_entropy     = 0;
-//    bool   superblock_measured              = false;
-//}
-
-
-//
-//
-//void MPS_Tools::Common::Measure::do_all_measurements(class_superblock & superblock)
-//{
-//    using namespace MPS_Tools::Common::Measure;
-//    if (superblock.has_been_measured){return;}
-//
-//    superblock.measurements.length                         = length(superblock);
-//    superblock.measurements.bond_dimension                 = bond_dimension(superblock);
-//    superblock.measurements.norm                           = norm(superblock);
-//    superblock.measurements.truncation_error               = truncation_error(superblock);
-//    superblock.measurements.energy_mpo                     = energy_mpo(superblock);  //This number is needed for variance calculation!
-//    superblock.measurements.energy_per_site_mpo            = energy_per_site_mpo(superblock);
-//    superblock.measurements.energy_per_site_ham            = energy_per_site_ham(superblock);
-//    superblock.measurements.energy_variance_mpo            = energy_variance_mpo(superblock, Results::energy_mpo);
-//    superblock.measurements.energy_variance_per_site_mpo   = energy_variance_per_site_mpo(superblock, Results::energy_mpo);
-//    superblock.measurements.energy_variance_per_site_ham   = energy_variance_per_site_ham(superblock);
-//    superblock.measurements.energy_variance_per_site_mom   = energy_variance_per_site_mom(superblock);
-//
-//    //    Results::energy_per_site_mom             = energy_per_site_mom(superblock);
-//
-//    superblock.measurements.current_entanglement_entropy  = current_entanglement_entropy(superblock);
-//    superblock.measurements.superblock_measured = true;
-//}
-
-
-
-
 void MPS_Tools::Common::Measure::set_not_measured(class_superblock & superblock){
     superblock.set_measured_false();
+    MPS_Tools::Common::Views::components_computed = false;
 }
 
 Scalar moment_generating_function(const class_mps_2site &MPS_original,
@@ -131,10 +85,10 @@ int MPS_Tools::Common::Measure::length(class_superblock & superblock){
 
 double MPS_Tools::Common::Measure::norm(const class_superblock & superblock){
     if (superblock.has_been_measured){return superblock.measurements.norm;}
-    auto theta = MPS_Tools::Common::Views::get_theta(superblock);
+    auto theta = superblock.get_theta();
     Eigen::Tensor<Scalar, 0> norm =
             theta.contract(theta.conjugate(), idx({1, 3, 0, 2}, {1, 3, 0, 2}));
-    auto result = std::real(norm(0));
+    auto result = std::abs(norm(0));
     if(std::abs(result - 1.0) > 1e-10){
         spdlog::critical("Norm too far from unity: {}", result);
         throw std::runtime_error("Norm too far from unity: " + std::to_string(result));

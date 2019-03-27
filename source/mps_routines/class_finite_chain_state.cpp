@@ -96,7 +96,7 @@ Eigen::Tensor<class_finite_chain_state::Scalar,3> & class_finite_chain_state::ge
 
 }
 Eigen::Tensor<class_finite_chain_state::Scalar,1> & class_finite_chain_state::get_L(size_t pos){
-    if (pos < 0 or pos >= get_length()+1 ){throw std::range_error("get_L(pos):  pos out of range: " + std::to_string(pos));}
+    if (pos >= get_length()+1 ){throw std::range_error("get_L(pos):  pos out of range: " + std::to_string(pos));}
     if(pos <= get_MPS_L().size()-1){
         return std::next(get_MPS_L().begin(), pos)->get_L();
     }else if (pos == get_MPS_L().size()){

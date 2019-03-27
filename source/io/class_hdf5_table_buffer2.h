@@ -10,6 +10,7 @@
 #include <hdf5_hl.h>
 #include <memory>
 #include <algorithms/table_types.h>
+#include <spdlog/spdlog.h>
 
 class class_hdf5_file;
 namespace h5pp{
@@ -27,22 +28,31 @@ private:
     std::string table_name              = "default_table";
     std::string table_path;
     hsize_t recorded_elements       = 0;
+    std::shared_ptr<spdlog::logger> log;
+    size_t logLevel      = 3;
+    std::string logName  = "DMRG";
+
     bool buffer_is_empty = false;
     bool table_is_ready  = false;
     bool mpi_on          = false;
+
+
+
+
     void initialize_table();
     void write_buffer_to_file();
-
 public:
-    class_hdf5_table() = default;
+    explicit class_hdf5_table(std::string logName_ = "DMRG");
     ~class_hdf5_table();
     class_hdf5_table(std::shared_ptr<h5pp::File> h5ppFile_,
                      std::string group_name_,
                      std::string table_name_,
+                     std::string logName_ = "DMRG" ,
                      bool mpi_on_ = false  );
 
     template<typename ...Args>
     void append_record(Args&& ... args){
+        log->trace("Appending record to hdf5 table: {}", table_name);
         table_entries->buffer.emplace_back(std::forward<Args> (args)...);
         if (table_entries->buffer.size() >= table_entries->meta.chunk_size){
             write_buffer_to_file();

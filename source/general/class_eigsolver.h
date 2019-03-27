@@ -59,8 +59,8 @@ public:
                                    { return (num * exp_inv_phase); });
                 }
             }else{
-                std::cerr << "Eigenvalues haven't been computed yet. Can't subtract phase. Exiting " << std::endl;
-                exit(1);
+                eigutils::eigLogger::log->error("Eigenvalues haven't been computed yet. Can't subtract phase.");
+                throw std::logic_error("Eigenvalues haven't been computed yet. Can't subtract phase.");
             }
         }
     }
@@ -281,7 +281,7 @@ void class_eigsolver::eig(const Scalar * matrix,
             }
         }
     }catch(std::exception &ex){
-        std::cerr << "WARNING: eigenvalue solver failed: " << std::string(ex.what()) << std::endl;
+        eigutils::eigLogger::log->error("Eigenvalue solver failed: " + std::string(ex.what()) );
     }
 
     if (info == 0 and solverConf.remove_phase){

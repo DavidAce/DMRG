@@ -11,8 +11,6 @@
 #include <complex>
 #include <list>
 #include <general/nmspc_eigutils.h>
-#include <spdlog/spdlog.h>
-#include <io/class_custom_cout.h>
 #include <general/class_tic_toc.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <algorithms/class_simulation_state.h>
@@ -21,16 +19,13 @@ class class_finite_chain_state;
 class class_hdf5_file;
 class class_table_profiling;
 template <typename table_type> class class_hdf5_table;
-namespace h5pp{
-    class File;
-}
+namespace h5pp{class File;}
+namespace spdlog{class logger;}
 
 
 class class_algorithm_base {
 protected:
-    //Console
-//    class_custom_cout ccout;
-    void set_logger(std::string sim_name);
+    std::shared_ptr<spdlog::logger> log;
 public:
     using Scalar = std::complex<double>;
     class_algorithm_base() = default;

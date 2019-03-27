@@ -15,7 +15,7 @@ using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     : class_algorithm_base(std::move(h5ppFile_),"iDMRG", SimulationType::iDMRG) {
-    table_idmrg = std::make_unique<class_hdf5_table<class_table_dmrg>>(h5ppFile, sim_name,sim_name);
+    table_idmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>(h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
     initialize_superblock(settings::model::initial_state);
 
 }
@@ -24,19 +24,36 @@ class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 
 void class_iDMRG::run() {
     if (!settings::idmrg::on) { return; }
-    spdlog::info("Starting {} simulation", sim_name);
+    log->info("Starting {} simulation", sim_name);
     t_tot.tic();
-    while(sim_state.iteration < settings::idmrg::max_steps){// and not simulation_has_converged){
+    while(true){
         single_DMRG_step();
         print_status_update();
         store_progress_to_file();
         store_profiling_to_file_delta();
         check_convergence();
+
+        // It's important not to perform the last swap.
+        // That last state would not get optimized
+
+        if (sim_state.iteration >= settings::idmrg::max_steps)  {stop_reason = StopReason::MAX_STEPS; break;}
+        if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
+        if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
+
+
         enlarge_environment();
         swap();
         sim_state.iteration++;
     }
     t_tot.toc();
+    switch(stop_reason){
+        case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
+        case StopReason::CONVERGED : log->info("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
+        case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
+        default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
+    }
+
+
     print_status_full();
     print_profiling();
     superblock->t_eig.print_time();
@@ -51,7 +68,7 @@ void class_iDMRG::store_state_to_file(bool force){
         if (Math::mod(sim_state.iteration, settings::idmrg::store_freq) != 0) {return;}
         if (settings::fdmrg::store_freq == 0){return;}
     }
-    spdlog::trace("Storing storing mps to file");
+    log->trace("Storing storing mps to file");
     t_sto.tic();
     MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5ppFile, sim_name);
     t_sto.toc();

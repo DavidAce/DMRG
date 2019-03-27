@@ -33,6 +33,7 @@ void MPS_Tools::Common::H5pp::write_algorithm_state(const class_simulation_state
     h5ppFile.writeDataset(sim_state.energy_ubound                 ,sim_name + "/sim_state/energy_ubound");
     h5ppFile.writeDataset(sim_state.energy_lbound                 ,sim_name + "/sim_state/energy_lbound");
     h5ppFile.writeDataset(sim_state.energy_now                    ,sim_name + "/sim_state/energy_now");
+    h5ppFile.writeDataset(sim_state.energy_dens                   ,sim_name + "/sim_state/energy_dens");
     h5ppFile.writeDataset(sim_state.phys_time                     ,sim_name + "/sim_state/phys_time");
     h5ppFile.writeDataset(sim_state.delta_t                       ,sim_name + "/sim_state/delta_t");
     h5ppFile.writeDataset(sim_state.time_step_has_converged       ,sim_name + "/sim_state/time_step_has_converged");

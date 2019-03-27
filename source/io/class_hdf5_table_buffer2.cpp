@@ -5,10 +5,11 @@
 #include <iterator>
 #include <hdf5.h>
 #include <hdf5_hl.h>
-//#include <io/class_hdf5_file.h>
+#include <io/nmspc_logger.h>
 #include <io/class_hdf5_table_buffer2.h>
 #include <algorithms/table_types.h>
 #include <h5pp/h5pp.h>
+
 
 /*! \brief Prints the content of a vector nicely */
 template<typename T, size_t N>
@@ -22,17 +23,29 @@ std::ostream &operator<<(std::ostream &out, const std::array<T,N> &v) {
 }
 
 template<typename table_type>
+class_hdf5_table<table_type>::class_hdf5_table(std::string logName_)
+:logName(logName_)
+{
+    log = Logger::setLogger(logName,logLevel);
+}
+
+
+
+template<typename table_type>
 class_hdf5_table<table_type>::class_hdf5_table(
         std::shared_ptr<h5pp::File> h5ppFile_,
         std::string group_name_,
         std::string table_name_,
+        std::string logName_,
         bool mpi_on_)
         :
         h5ppFile(std::move(h5ppFile_)),
         group_name(group_name_),
         table_name(table_name_),
+        logName(logName_),
         mpi_on(mpi_on_)
 {
+    log = Logger::setLogger(logName,logLevel);
     table_entries      = std::make_unique<table_type>();
     table_path = group_name + "/" + table_name;
     initialize_table();
@@ -44,7 +57,7 @@ class_hdf5_table<table_type>::~class_hdf5_table(){
     if (h5ppFile){
         write_buffer_to_file();
     }else if (!buffer_is_empty){
-        std::cerr << "Warning: Output data has not been saved to file, yet it is being discarded!\n" << std::endl;
+        log->warn("Output data has not been saved to file, yet it is being discarded!");
     }
 }
 
@@ -52,6 +65,7 @@ class_hdf5_table<table_type>::~class_hdf5_table(){
 template<typename table_type>
 void class_hdf5_table<table_type>::initialize_table(){
     if (table_entries->buffer.empty() and !table_is_ready) {
+        log->trace("Initializing hdf5 table: {}", table_name);
         hsize_t NRECORDS = table_entries->buffer.size();
         h5ppFile->create_group_link(group_name);
         if (not h5ppFile->linkExists(table_path)){
@@ -69,6 +83,7 @@ void class_hdf5_table<table_type>::initialize_table(){
 template<typename table_type>
 void class_hdf5_table<table_type>:: write_buffer_to_file() {
     if (!table_entries->buffer.empty() and table_is_ready) {
+        log->trace("Writing buffer to hdf5 table: {}", table_name);
         hsize_t NRECORDS = table_entries->buffer.size();
         h5ppFile->create_group_link(group_name);
         hid_t file = h5ppFile->openFileHandle();
