@@ -48,7 +48,7 @@ if (MKL_FOUND)
         #This doesn't seem to work,  The gnu fortran GF_LP library doesn't get enabled --> arpack++ complains!
         set(MKL_LIBRARIES -Wl,--no-as-needed ${MKL_RT_LIBRARY} -Wl,--as-needed  )
     else()
-        set(MKL_LIBRARIES ${MKL_BLAS_LP_LIBRARY} ${MKL_LAPACK_LP_LIBRARY}   -Wl,--start-group  ${MKL_GF_LP_LIBRARY})
+        set(MKL_LIBRARIES  -Wl,--no-as-needed ${MKL_BLAS_LP_LIBRARY} ${MKL_LAPACK_LP_LIBRARY}   -Wl,--start-group  ${MKL_GF_LP_LIBRARY})
 
         if(MKL_MULTI_THREADED)
             list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group)
@@ -58,7 +58,7 @@ if (MKL_FOUND)
                 list(APPEND MKL_LIBRARIES ${OpenMP_LIBRARIES})
             endif()
         else()
-            list(APPEND MKL_LIBRARIES  ${MKL_SEQUENTIAL_LIBRARY}  ${MKL_CORE_LIBRARY}  -Wl,--end-group )
+            list(APPEND MKL_LIBRARIES  ${MKL_SEQUENTIAL_LIBRARY}  ${MKL_CORE_LIBRARY}  -Wl,--end-group -Wl,--as-needed )
         endif()
     endif()
 
