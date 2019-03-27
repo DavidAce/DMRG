@@ -62,21 +62,21 @@ if(HDF5_FOUND)
             ${HDF5_C_LIBRARY}
             ${HDF5_C_LIBRARY_hdf5}
             $<LINK_ONLY:-ldl -lm -lz>
-            ${PTHREAD_LIBRARY}
+            pthread
             )
     target_include_directories(hdf5 INTERFACE  ${HDF5_INCLUDE_DIR})
-    if(HDF5_ENABLE_Z_LIB_SUPPORT)
-        target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lz>  )
-    endif()
+#    if(HDF5_ENABLE_Z_LIB_SUPPORT)
+#        target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lz>  )
+#    endif()
     if (_HDF5_LPATH)
         set(HDF5_ROOT ${_HDF5_LPATH})
     endif()
     if(HDF5_C_LIBRARY_sz)
         target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lsz>  )
     endif()
-    if(HDF5_C_LIBRARY_z)
-        target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lz>  )
-    endif()
+#    if(HDF5_C_LIBRARY_z)
+#        target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lz>  )
+#    endif()
 
 #
 #    if(TARGET hdf5::hdf5-${HDF5_TARGET_SUFFIX} AND DEFINED HDF5_C_HL_LIBRARY AND DEFINED HDF5_C_LIBRARY)
