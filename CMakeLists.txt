@@ -9,23 +9,17 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 ################################################################
 ### Set options for compilation                              ###
 ################################################################
-
-#option(STATIC_BUILD  "Static linking"                   ON)
-
-################################################################
-### Set options for compilation                              ###
-################################################################
 option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          OFF)
 option(BUILD_EXAMPLES     "Build examples"                                      OFF)
-option(ENABLE_TESTS       "Enable testing"                                      ON)
+option(ENABLE_TESTS       "Enable testing"                                      ON )
 option(DOWNLOAD_HDF5      "Download and install HDF5 if not found"              OFF)
 option(DOWNLOAD_SPDLOG    "Download and install spdlog if not found"            OFF)
 option(DOWNLOAD_EIGEN3    "Download and install Eigen3 if not found"            OFF)
-option(DOWNLOAD_ALL       "Download and install all dependencies if not found"  ON)
+option(DOWNLOAD_ALL       "Download and install all dependencies if not found"  ON )
 option(ENABLE_CCACHE      "Use ccache to speed up compilation"                  OFF)
 option(ENABLE_COTIRE      "Use cotire to speed up compilation"                  OFF)
 option(USE_OpenMP         "Use OpenMP"                                          OFF)
-option(USE_MKL            "Use Intel MKL libraries"                             ON)
+option(USE_MKL            "Use Intel MKL libraries"                             ON )
 
 
 #################################################################
