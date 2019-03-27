@@ -53,7 +53,7 @@ elseif (DOWNLOAD_HDF5 OR DOWNLOAD_ALL)
             ${INSTALL_DIR}/lib/libhdf5_hl${HDF5_LIBRARY_SUFFIX}
             ${INSTALL_DIR}/lib/libhdf5${HDF5_LIBRARY_SUFFIX}
             $<LINK_ONLY:-ldl -lm -lz>
-            ${PTHREAD_LIBRARY}
+            pthread
             )
     target_include_directories(
             hdf5
