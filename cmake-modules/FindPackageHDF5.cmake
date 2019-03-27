@@ -67,9 +67,15 @@ if(HDF5_FOUND)
         if(HDF5_ENABLE_Z_LIB_SUPPORT)
             target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lz>  )
         endif()
-        target_include_directories(hdf5
+        target_include_directories(hdf5 INTERFACE  ${HDF5_INCLUDE_DIR})
+    elseif(HDF5_INCLUDE_DIR MATCHES "conda3")
+
+        target_link_libraries(hdf5
                 INTERFACE
-                ${HDF5_INCLUDE_DIR}
+                ${HDF5_hdf5_hl_LIBRARY}
+                ${HDF5_hdf5_LIBRARY}
+                $<LINK_ONLY:-ldl -lm -lz>
+                ${PTHREAD_LIBRARY}
                 )
 
     else()
@@ -91,10 +97,6 @@ if(HDF5_FOUND)
         if(HDF5_C_LIBRARY_z)
             target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lz>  )
         endif()
-        target_include_directories(
-                hdf5
-                INTERFACE
-                ${HDF5_INCLUDE_DIR}
-        )
+        target_include_directories(hdf5 INTERFACE ${HDF5_INCLUDE_DIR})
     endif()
 endif()
