@@ -4,6 +4,8 @@
 
 #include "nmspc_model.h"
 #include <iomanip>
+#include <complex.h>
+#undef I
 #include <unsupported/Eigen/KroneckerProduct>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <sim_parameters/nmspc_sim_settings.h>
