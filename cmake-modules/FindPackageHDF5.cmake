@@ -53,51 +53,77 @@ if(HDF5_FOUND)
     # Add convenience libraries to collect all the hdf5 libraries
     add_library(hdf5    INTERFACE)
     add_library(hdf5::hdf5 ALIAS hdf5)
-    if(TARGET hdf5::hdf5-${HDF5_TARGET_SUFFIX})
-        set(HDF5_DIR              ${HDF5_BUILD_DIR}/share/cmake/hdf5)
-        set(HDF5_ROOT             ${HDF5_BUILD_DIR})
-
-        target_link_libraries(hdf5
-                INTERFACE
-                ${HDF5_C_HL_LIBRARY}
-                ${HDF5_C_LIBRARY}
-                $<LINK_ONLY:-ldl -lm>
-                ${PTHREAD_LIBRARY}
-                )
-        if(HDF5_ENABLE_Z_LIB_SUPPORT)
-            target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lz>  )
-        endif()
-        target_include_directories(hdf5 INTERFACE  ${HDF5_INCLUDE_DIR})
-    elseif(HDF5_INCLUDE_DIR MATCHES "conda3")
-
-        target_link_libraries(hdf5
-                INTERFACE
-                ${HDF5_hdf5_hl_LIBRARY}
-                ${HDF5_hdf5_LIBRARY}
-                $<LINK_ONLY:-ldl -lm -lz>
-                ${PTHREAD_LIBRARY}
-                )
-        target_include_directories(hdf5 INTERFACE  ${HDF5_INCLUDE_DIR})
-
-    else()
-        #        add_dependencies(hdf5  SZIP)
-        if (_HDF5_LPATH)
-            set(HDF5_ROOT ${_HDF5_LPATH})
-        endif()
-
-        target_link_libraries(hdf5
-                INTERFACE
-                ${HDF5_C_LIBRARY_hdf5_hl}
-                ${HDF5_C_LIBRARY_hdf5}
-                $<LINK_ONLY:-ldl -lm>
-                ${PTHREAD_LIBRARY}
-                )
-        if(HDF5_C_LIBRARY_sz)
-            target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lsz>  )
-        endif()
-        if(HDF5_C_LIBRARY_z)
-            target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lz>  )
-        endif()
-        target_include_directories(hdf5 INTERFACE ${HDF5_INCLUDE_DIR})
+    target_link_libraries(hdf5
+            INTERFACE
+            ${HDF5_hdf5_hl_LIBRARY}
+            ${HDF5_C_LIBRARY_hdf5_hl}
+            ${HDF5_C_HL_LIBRARY}
+            ${HDF5_hdf5_LIBRARY}
+            ${HDF5_C_LIBRARY}
+            ${HDF5_C_LIBRARY_hdf5}
+            $<LINK_ONLY:-ldl -lm -lz>
+            ${PTHREAD_LIBRARY}
+            )
+    target_include_directories(hdf5 INTERFACE  ${HDF5_INCLUDE_DIR})
+    if(HDF5_ENABLE_Z_LIB_SUPPORT)
+        target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lz>  )
     endif()
+    if (_HDF5_LPATH)
+        set(HDF5_ROOT ${_HDF5_LPATH})
+    endif()
+    if(HDF5_C_LIBRARY_sz)
+        target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lsz>  )
+    endif()
+    if(HDF5_C_LIBRARY_z)
+        target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lz>  )
+    endif()
+
+#
+#    if(TARGET hdf5::hdf5-${HDF5_TARGET_SUFFIX} AND DEFINED HDF5_C_HL_LIBRARY AND DEFINED HDF5_C_LIBRARY)
+#        set(HDF5_DIR              ${HDF5_BUILD_DIR}/share/cmake/hdf5)
+#        set(HDF5_ROOT             ${HDF5_BUILD_DIR})
+#
+#        target_link_libraries(hdf5
+#                INTERFACE
+#                ${HDF5_C_HL_LIBRARY}
+#                ${HDF5_C_LIBRARY}
+#                $<LINK_ONLY:-ldl -lm>
+#                ${PTHREAD_LIBRARY}
+#                )
+#        if(HDF5_ENABLE_Z_LIB_SUPPORT)
+#            target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lz>  )
+#        endif()
+#        target_include_directories(hdf5 INTERFACE  ${HDF5_INCLUDE_DIR})
+#    elseif(DEFINED HDF5_hdf5_hl_LIBRARY AND DEFINED HDF5_hdf5_LIBRARY)
+#
+#        target_link_libraries(hdf5
+#                INTERFACE
+#                ${HDF5_hdf5_hl_LIBRARY}
+#                ${HDF5_hdf5_LIBRARY}
+#                $<LINK_ONLY:-ldl -lm -lz>
+#                ${PTHREAD_LIBRARY}
+#                )
+#        target_include_directories(hdf5 INTERFACE  ${HDF5_INCLUDE_DIR})
+#
+#    elseif(DEFINED HDF5_C_LIBRARY_hdf5 AND DEFINED HDF5_C_LIBRARY_hdf5_hl)
+#        #        add_dependencies(hdf5  SZIP)
+#        if (_HDF5_LPATH)
+#            set(HDF5_ROOT ${_HDF5_LPATH})
+#        endif()
+#
+#        target_link_libraries(hdf5
+#                INTERFACE
+#                ${HDF5_C_LIBRARY_hdf5_hl}
+#                ${HDF5_C_LIBRARY_hdf5}
+#                $<LINK_ONLY:-ldl -lm>
+#                ${PTHREAD_LIBRARY}
+#                )
+#        if(HDF5_C_LIBRARY_sz)
+#            target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lsz>  )
+#        endif()
+#        if(HDF5_C_LIBRARY_z)
+#            target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lz>  )
+#        endif()
+#        target_include_directories(hdf5 INTERFACE ${HDF5_INCLUDE_DIR})
+#    endif()
 endif()
