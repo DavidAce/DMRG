@@ -77,6 +77,7 @@ if(HDF5_FOUND)
                 $<LINK_ONLY:-ldl -lm -lz>
                 ${PTHREAD_LIBRARY}
                 )
+        target_include_directories(hdf5 INTERFACE  ${HDF5_INCLUDE_DIR})
 
     else()
         #        add_dependencies(hdf5  SZIP)
