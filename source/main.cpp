@@ -5,8 +5,7 @@
 #include <sim_parameters/nmspc_model.h>
 #include <algorithms/class_algorithm_launcher.h>
 #include <io/class_settings_reader.h>
-#include <spdlog/spdlog.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
+#include <io/nmspc_logger.h>
 
 #include <iostream>
 #include <h5pp/h5pp.h>
@@ -37,9 +36,7 @@
 */
 
 int main(int argc, char* argv[]) {
-    auto log = spdlog::stdout_color_mt("DMRG");
-    log->set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
-    log->set_level(spdlog::level::trace);
+    auto log = Logger::setLogger("DMRG",0);
 
     int num_threads = 1;
     #ifdef OpenBLAS_AVAILABLE
@@ -126,37 +123,6 @@ int main(int argc, char* argv[]) {
 
     //Run the algorithms
     launcher.run_algorithms();
-
-
-//    std::string tar_filename = fs::path(launcher.hdf5_path).filename().string() + ".tar.gz";
-//    fs::path tar_path        = fs::path(launcher.hdf5_path).parent_path().string() + "/"+ tar_filename;
-//    gzFile tar_file = gzopen(tar_path.c_str(), "wb");
-//    if(tar_file == nullptr)
-//    {
-//        throw std::runtime_error("Could not open gzip file for writing: " );
-//    }
-
-    /* Open file to compress */
-
-//    std::ifstream h5file (launcher.hdf5_path);
-//    std::vector<char> buffer (1024,0); //reads only the first 1024 bytes
-//
-//    while(h5file.read(buffer.data(), buffer.size())) {
-//        std::streamsize bytes_loaded=h5file.gcount();
-//        int bytes_written = gzwrite(tar_file, buffer.data(), bytes_loaded);
-//        if (bytes_written == 0)
-//        {
-//            spdlog::warn("No bytes written!");
-//            break;
-//        }
-//        ///do with buffer
-//    }
-//    gzclose(tar_file);
-//    h5file.close();
-
-
-
-
 
     return 0;
 }

@@ -14,8 +14,6 @@ int main()
     using Scalar = std::complex<double>;
     int nev = 1;
     int eigMaxNcv = 16;
-    int eigMaxIter = 1000;
-    double eigThreshold = 1e-12;
     std::array<long,4> shape_theta4 = {2,1,2,1};
     std::array<long,4> shape_mpo4   = {3,3,2,2};
     std::vector<Scalar> L = {0.924445, 0.381316, 1.0};

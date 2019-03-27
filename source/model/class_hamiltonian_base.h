@@ -8,17 +8,18 @@
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <sim_parameters/nmspc_sim_settings.h>
+#include <io/nmspc_logger.h>
 
 class class_hamiltonian_base{
     using Scalar = std::complex<double>;
 protected:
     Eigen::array<long, 4> extent4;                           /*!< Extent of pauli matrices in a rank-4 tensor */
     Eigen::array<long, 2> extent2;                           /*!< Extent of pauli matrices in a rank-2 tensor */
-    int position = 0;                                        /*!< Position on a finite chain */
-
+    size_t position = 0;                                     /*!< Position on a finite chain */
+    std::shared_ptr<spdlog::logger> log;
 public:
 
-    class_hamiltonian_base() = default;
+    class_hamiltonian_base(std::string logName = "MODEL");
     virtual ~class_hamiltonian_base() = default;
     virtual std::unique_ptr<class_hamiltonian_base> clone()                     const = 0;
     Eigen::Tensor<Scalar,4> MPO;
@@ -45,7 +46,7 @@ public:
 //    virtual double get_energy_reduced()                      const = 0;
 //    virtual double get_random_field()                        const = 0;
 //    virtual double get_randomness_strength()                 const = 0;
-    void set_position(int new_pos);
+    void set_position(size_t new_pos);
 
     size_t    get_position()                 const;
     bool      full_lattice_parameters_have_been_set = false;

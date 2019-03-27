@@ -13,12 +13,13 @@ using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
 
-class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(): class_hamiltonian_base(){
+class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(std::string logName): class_hamiltonian_base(logName){
     extent4     = {1, 1, spin_dim, spin_dim};
     extent2     = {spin_dim, spin_dim};
     J_rnd       = rn::log_normal(J_log_mean,J_sigma);
     h_rnd       = rn::log_normal(h_log_mean,h_sigma);
     delta       = J_log_mean - h_log_mean;
+    build_mpo();
 }
 
 
@@ -91,7 +92,7 @@ void class_selfdual_tf_rf_ising::build_mpo()
  *
  */
 {
-    if (not full_lattice_parameters_have_been_set) throw std::runtime_error("Failed to build MPO: Full lattice parameters haven't been set yet.");
+    if (not full_lattice_parameters_have_been_set) log->warn("Improperly built MPO: Full lattice parameters haven't been set yet.");
     MPO.resize(5, 5, spin_dim, spin_dim);
     MPO.setZero();
     MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);

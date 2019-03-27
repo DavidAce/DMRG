@@ -15,9 +15,7 @@
 
 #include <experimental/filesystem>
 #include <algorithm>
-#include <io/class_custom_cout.h>
-#include <spdlog/spdlog.h>
-
+#include <io/nmspc_logger.h>
 namespace fs = std::experimental::filesystem;
 
 
@@ -32,32 +30,13 @@ private:
     bool is_parameterline(const std::string s);
     std::string::size_type find_comment_character(const std::string s);
     std::shared_ptr<spdlog::logger> log;
-    void setLogger(std::string name);
-
 public:
     bool found_file = false;
     class_settings_reader() = default;
     explicit class_settings_reader(const fs::path &file_path_, std::string logName="DMRG");
 
-
-
-    std::string get_input_file(){
-        if (file.is_open()) {
-            file.clear();
-            file.seekg(0, std::ios::beg);
-            std::string the_file ( (std::istreambuf_iterator<char>(file) ),
-                                   (std::istreambuf_iterator<char>()     ) );
-
-            return the_file;
-        }else{
-            return "";
-        }
-
-    }
-
-    std::string get_input_filename(){
-        return file_path.string();
-    }
+    std::string get_input_file();
+    std::string get_input_filename();
 
     template <typename T>
     T find_parameter(std::string param_requested, T default_value){

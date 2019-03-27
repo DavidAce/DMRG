@@ -34,7 +34,7 @@ private:
 
 public:
 
-    class_selfdual_tf_rf_ising();
+    class_selfdual_tf_rf_ising(std::string logName = "SDUAL-ISING");
 
     // Functions that extend the base (no override)
     void set_realization_averages(double J_avg_,double h_avg_);

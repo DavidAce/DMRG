@@ -21,7 +21,7 @@ using namespace Textra;
 class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_base(std::move(h5ppFile_),"iTEBD", SimulationType::iTEBD) {
 //    initialize_constants();
-    table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(h5ppFile, sim_name,sim_name);
+    table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
     sim_state.delta_t      = settings::itebd::delta_t0;
     initialize_superblock(settings::model::initial_state);
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -34,7 +34,7 @@ class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
 
 void class_iTEBD::run() {
     if (!settings::itebd::on) { return; }
-    spdlog::info("Starting {} simulation", sim_name);
+    log->info("Starting {} simulation", sim_name);
     t_tot.tic();
     sim_state.delta_t = settings::itebd::delta_t0;
     unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(sim_state.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
@@ -99,7 +99,7 @@ void class_iTEBD::store_state_to_file(bool force){
         if (Math::mod(sim_state.iteration, settings::itebd::store_freq) != 0) {return;}
         if (settings::itebd::store_freq == 0){return;}
     }
-    spdlog::trace("Storing storing mps to file");
+    log->trace("Storing storing mps to file");
     t_sto.tic();
     MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5ppFile, sim_name);
     t_sto.toc();

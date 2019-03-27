@@ -695,7 +695,7 @@ void MPS_Tools::Finite::Ops::reset_to_random_product_state(class_finite_chain_st
 
 
 
-void MPS_Tools::Finite::Ops::apply_energy_mpo_test(class_finite_chain_state &state, class_superblock &superblock) {
+void MPS_Tools::Finite::Ops::apply_energy_mpo_test(class_finite_chain_state &state, [[maybe_unused]]class_superblock &superblock) {
 
 //    const auto [mpo,L,R]    = class_mpo::pauli_mpo(paulimatrix);
     auto hamiltonian_mpos = make_mpo_list(state.get_MPO_L(),state.get_MPO_R());

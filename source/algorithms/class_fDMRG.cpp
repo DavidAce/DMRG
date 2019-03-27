@@ -22,9 +22,8 @@ using namespace Textra;
 class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_base(std::move(h5ppFile_),"fDMRG", SimulationType::fDMRG) {
 
-    table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5ppFile, sim_name + "/measurements", "simulation_progress");
-    table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5ppFile, sim_name + "/measurements", "simulation_progress_full_chain");
-    superblock        = std::make_shared<class_superblock>(sim_type);
+    table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
+    table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5ppFile, sim_name + "/measurements", "simulation_progress_full_chain",sim_name);
     MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type, settings::fdmrg::num_sites, settings::model::seed);
     MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
 
@@ -65,46 +64,46 @@ void class_fDMRG::run()
 
         if (not simOK){
             //Case 1 a -- run full simulation from scratch.
-            spdlog::trace("Case 1a");
+            log->trace("Case 1a");
             run_preprocessing();
             run_simulation();
             run_postprocessing();
         }else if(simOK and not mpsOK){
             // Case 1 b
-            spdlog::trace("Case 1b");
+            log->trace("Case 1b");
             run_preprocessing();
             run_simulation();
             run_postprocessing();
         }else if(simOK and mpsOK){
             // We can go ahead and load the state from hdf5
-            spdlog::info("Loading MPS from file");
+            log->info("Loading MPS from file");
             try{
                 MPS_Tools::Finite::H5pp::load_from_hdf5(*state, *superblock, sim_state, *h5ppFile, sim_name);
             }
             catch(std::exception &ex){
-                spdlog::error("Failed to load from hdf5: {}", ex.what());
+                log->error("Failed to load from hdf5: {}", ex.what());
                 throw std::runtime_error("Failed to resume from file: " + std::string(ex.what()));
             }
-            catch(...){spdlog::error("Unknown error when trying to resume from file.");}
+            catch(...){log->error("Unknown error when trying to resume from file.");}
 
             bool convergence_was_reached;
             h5ppFile->readDataset(convergence_was_reached,sim_name + "/sim_state/simulation_has_converged");
             if(not convergence_was_reached){
                 // Case 1 c -- resume simulation, reset the number of sweeps first.
-                spdlog::trace("Case 1c");
+                log->trace("Case 1c");
                 settings::fdmrg::max_sweeps += state->get_sweeps();
                 run_simulation();
                 run_postprocessing();
 
             }else {
                 // Case 1 d -- not much else to do.. redo postprocessing for good measure.
-                spdlog::trace("Case 1d");
+                log->trace("Case 1d");
                 run_postprocessing();
             }
         }
     }else {
         // This is case 2
-        spdlog::trace("Case 2");
+        log->trace("Case 2");
         run_preprocessing();
         run_simulation();
         run_postprocessing();
@@ -114,16 +113,16 @@ void class_fDMRG::run()
 
 
 void class_fDMRG::run_preprocessing() {
-    spdlog::info("Running {} preprocessing",sim_name);
+    log->info("Running {} preprocessing",sim_name);
 //    initialize_superblock(settings::model::initial_state);
 //    initialize_chain();
 //    set_random_fields_in_chain_mpo();
     MPS_Tools::Finite::Print::print_hamiltonians(*state);
-    spdlog::info("Finished {} preprocessing", sim_name);
+    log->info("Finished {} preprocessing", sim_name);
 }
 
 void class_fDMRG::run_simulation(){
-    spdlog::info("Starting {} simulation", sim_name);
+    log->info("Starting {} simulation", sim_name);
     while(true) {
         single_DMRG_step();
         copy_superblock_to_chain();         //Needs to occurr after update_MPS...
@@ -149,19 +148,19 @@ void class_fDMRG::run_simulation(){
         sim_state.iteration = state->get_sweeps();
         sim_state.position  = state->get_position();
         sim_state.step++;
-        spdlog::trace("Finished step {}, iteration {}",sim_state.step,sim_state.iteration);
+        log->trace("Finished step {}, iteration {}",sim_state.step,sim_state.iteration);
     }
     switch(stop_reason){
-        case StopReason::MAX_STEPS : spdlog::info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
-        case StopReason::CONVERGED : spdlog::info("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
-        case StopReason::SATURATED : spdlog::info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
-        default: spdlog::info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
+        case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
+        case StopReason::CONVERGED : log->info("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
+        case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
+        default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
     }
 
 
 }
 void class_fDMRG::run_postprocessing(){
-    spdlog::info("Running {} postprocessing",sim_name);
+    log->info("Running {} postprocessing",sim_name);
     MPS_Tools::Finite::Debug::check_integrity(*state,*superblock,sim_state);
     state->set_measured_false();
     state->do_all_measurements();
@@ -177,7 +176,7 @@ void class_fDMRG::run_postprocessing(){
     }
     print_status_full();
     print_profiling();
-    spdlog::info("Finished {} postprocessing",sim_name);
+    log->info("Finished {} postprocessing",sim_name);
 }
 
 
@@ -210,7 +209,7 @@ void class_fDMRG::check_convergence(){
              sim_state.variance_mpo_saturated_for > max_saturation_length
             )
     {
-        spdlog::info("Simulation has to stop");
+        log->info("Simulation has to stop");
         sim_state.simulation_has_to_stop = true;
     }
     t_con.toc();
@@ -226,7 +225,7 @@ void class_fDMRG::store_state_to_file(bool force){
         if (not state->position_is_the_middle_any_direction()) {return;}
         if (settings::fdmrg::store_freq == 0){return;}
     }
-    spdlog::trace("Storing storing mps to file");
+    log->trace("Storing storing mps to file");
     t_sto.tic();
 
     MPS_Tools::Finite::H5pp::write_all_state(*state, *h5ppFile, sim_name);

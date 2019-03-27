@@ -121,7 +121,7 @@ template<typename Scalar>
 std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
 class_SVD<Scalar>::decompose(const Eigen::Tensor<Scalar,2> &tensor, const long chi_max) {
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-    if(mat.isZero()){std::cerr << "WARNING: SVD on zeroed matrix" << std::endl;}
+    if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).squaredNorm();
     long chi = std::min(SVD.rank(), chi_max);
@@ -136,7 +136,7 @@ template<typename Scalar>
 std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
 class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,2> &tensor, long d, long chiL, long chi_max, long chiR) {
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-    if(mat.isZero()){std::cerr << "WARNING: SVD on zeroed matrix" << std::endl;}
+    if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chi            = std::min(SVD.rank(),chi_max);
 
@@ -156,7 +156,7 @@ class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,2> &tensor) {
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-    if(mat.isZero()){std::cerr << "WARNING: SVD on zeroed matrix" << std::endl;}
+    if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chiC = SVD.rank();
     truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
@@ -174,7 +174,7 @@ class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,3> &tensor, long rows,long
     long chiL = tensor.dimension(1);
     long chiR = tensor.dimension(2);
     Eigen::Map<const MatrixType> mat (tensor.data(), rows,cols);
-    if(mat.isZero()){std::cerr << "WARNING: SVD on zeroed matrix" << std::endl;}
+    if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chiC = SVD.rank();
     truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
@@ -194,7 +194,7 @@ class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,4> &tensor) {
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
-    if(mat.isZero()){std::cerr << "WARNING: SVD on zeroed matrix" << std::endl;}
+    if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chiC = SVD.rank();
     truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
@@ -212,7 +212,7 @@ class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,4> &tensor, long chi_max) 
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
-    if(mat.isZero()){std::cerr << "WARNING: SVD on zeroed matrix" << std::endl;}
+    if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chiC            = std::min(SVD.rank(),chi_max);
     truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
@@ -232,7 +232,7 @@ class_SVD<Scalar>::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor) {
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
-    if(mat.isZero()){std::cerr << "WARNING: SVD on zeroed matrix" << std::endl;}
+    if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chiC = SVD.rank();
 
@@ -253,7 +253,7 @@ class_SVD<Scalar>::schmidt_unnormalized(const Eigen::Tensor<Scalar,4> &tensor) {
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
-    if(mat.isZero()){std::cerr << "WARNING: SVD on zeroed matrix" << std::endl;}
+    if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chiC = SVD.rank();
 

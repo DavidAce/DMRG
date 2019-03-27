@@ -48,19 +48,6 @@ endif()
 include(cmake-modules/gitversion.cmake)
 
 
-##################################################################
-### Define variables for directory paths accessible at runtime ###
-##################################################################
-#include(cmake-modules/directory.cmake)
-
-
-##################################################################
-### Add a debugging type message, only active in Debug-mode   ###
-##################################################################
-#include(cmake-modules/debug_msg.cmake)
-
-
-
 
 ##################################################################
 ### Get operating system properties into a variable            ###
@@ -353,14 +340,6 @@ if (ENABLE_COTIRE)
     include(cmake-modules/cotire.cmake)
     cotire(${PROJECT_NAME})
 
-    #    set_property(DIRECTORY
-#            PROPERTY
-#            COTIRE_PREFIX_HEADER_IGNORE_PATH
-#            ${PROJECT_SOURCE_DIR}/libs/arpack++
-#            /usr/include/lapacke.h
-#            )
-
-
 endif()
 
 
@@ -395,6 +374,7 @@ if(ENABLE_TESTS)
             DEPENDS TEST-arpack++_mps
             DEPENDS TEST-file_io
             DEPENDS TEST-eigsolver
+            DEPENDS ${PROJECT_NAME}
             )
 
     add_custom_command(TARGET TEST-all
@@ -410,23 +390,3 @@ endif()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-#add_dependencies(${PROJECT_NAME} TEST-all)
-
-# To print all variables, use the code below:
-#
-#get_cmake_property(_variableNames VARIABLES)
-#foreach (_variableName ${_variableNames})
-#    message(STATUS "${_variableName}=${${_variableName}}")
-#endforeach()

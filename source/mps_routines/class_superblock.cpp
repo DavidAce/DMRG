@@ -91,21 +91,15 @@ Eigen::Tensor<Scalar,4> class_superblock::optimize_MPS(Eigen::Tensor<Scalar, 4> 
     DenseHamiltonianProduct<Scalar>  matrix (Lblock->block.data(), Rblock->block.data(), HA->MPO.data(), HB->MPO.data(), shape_theta4, shape_mpo4);
     class_eigsolver solver;
     solver.eigs_dense(matrix,nev,eigMaxNcv,NAN,Form::SYMMETRIC,ritz,Side::R,true,true);
-//    class_eigsolver_arpack<Scalar, eigsolver_properties::Form::GENERAL> solver(eigThreshold,eigMaxIter,eigMaxNcv, true, true);
-//    solver.optimize_mps(Lblock->block.data(), Rblock->block.data(), HA->MPO.data(), HB->MPO.data(), shape_theta4, shape_mpo4, nev, eigMaxNcv, ritz , true ,theta.data());
 
-    auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data() ,solver.solution.meta.cols);
-    auto eigvecs           = Eigen::Map<const Eigen::MatrixXcd> (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
+    auto eigvals           = Eigen::TensorMap<const Eigen::Tensor<double,1>>  (solver.solution.get_eigvals<Form::SYMMETRIC>().data() ,solver.solution.meta.cols);
+    auto eigvecs           = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
 
-//    Eigen::TensorMap<const Eigen::Tensor<const double,1>> eigvecs (solver.solution.get_eigvecs<eigutils::eigSetting::Type::REAL, eigutils::eigSetting::Form::SYMMETRIC>().data(), solver.solution.meta.rows*solver.solution.meta.cols);
-//    Eigen::TensorMap<const Eigen::Tensor<const double,1>> eigvals (solver.solution.get_eigvals<eigutils::eigSetting::Form::SYMMETRIC>().data(), nev);
     t_eig.toc();
     t_eig.print_delta();
 
     E_optimal = std::real(eigvals(0));
-
-//    Eigen::MatrixXcd eigvecs_cplx = eigvecs;
-    return Textra::Matrix_to_Tensor(eigvecs, theta.dimensions());
+    return eigvecs.reshape(theta.dimensions());
 }
 
 
@@ -166,8 +160,7 @@ Eigen::Tensor<Scalar,4> class_superblock::truncate_MPS(const Eigen::Tensor<Scala
     Eigen::Tensor<Scalar,3> V_L = V.contract(asDiagonalInversed(MPS->MPS_B->get_L()), idx({2},{0}));
     MPS->MPS_A->set_G(L_U);
     MPS->MPS_B->set_G(V_L);
-//    std::cout << setprecision(3) << "S: \n "<< S << "\nU\n" << U << "\nV\n" << V<< std::endl;
-    return MPS->get_theta();
+    return get_theta();
 }
 
 void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const std::shared_ptr<class_mps_2site> &MPS_out,long chi_, double SVDThreshold){
@@ -355,6 +348,7 @@ void class_superblock::set_positions(int position){
 void class_superblock::set_measured_false(){
     has_been_measured = false;
     has_been_written  = false;
+    MPS_Tools::Common::Views::components_computed = false;
 }
 
 void class_superblock::do_all_measurements() {

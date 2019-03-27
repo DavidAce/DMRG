@@ -105,8 +105,8 @@ void arpackpp_solver<MatrixType>::eigs_sym() {
         this->find_solution(solver, solverConf.eigMaxNev);
         this->copy_solution<Type::REAL, Form::SYMMETRIC>(solver);
     }else{
-        std::cerr << "ERROR: Called eigs_sym() with wrong type: " << tc::type_name<MatrixType>() << '\n';
-        exit(1);
+        eigutils::eigLogger::log->critical("Called eigs_sym() with wrong type: " + std::string(tc::type_name<MatrixType>()) );
+        throw std::runtime_error("Called eigs_sym() with wrong type: " + std::string(tc::type_name<MatrixType>()));
     }
 }
 
@@ -147,8 +147,8 @@ void arpackpp_solver<MatrixType>::eigs_nsym() {
 
 
     }else{
-        std::cerr << "ERROR: Called eigs_nsym() with wrong type: " << tc::type_name<MatrixType>() << '\n';
-        exit(1);
+        eigutils::eigLogger::log->critical("Called eigs_nsym() with wrong type: " + std::string(tc::type_name<MatrixType>()) );
+        throw std::runtime_error("Called eigs_nsym() with wrong type: " + std::string(tc::type_name<MatrixType>()));
     }
 }
 
@@ -193,8 +193,8 @@ void arpackpp_solver<MatrixType>::eigs_comp() {
 
 
     }else{
-        std::cerr << "ERROR: Called with wrong eigs_nsym() with wrong type: " << tc::type_name<MatrixType>() << '\n';
-        exit(1);
+        eigutils::eigLogger::log->critical("Called eigs_nsym() with wrong type: " + std::string(tc::type_name<MatrixType>()) );
+        throw std::runtime_error("Called eigs_nsym() with wrong type: " + std::string(tc::type_name<MatrixType>()));
     }
 }
 

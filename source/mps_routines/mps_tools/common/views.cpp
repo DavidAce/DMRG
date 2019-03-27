@@ -33,61 +33,45 @@ namespace MPS_Tools::Common::Views{
     Eigen::Tensor<std::complex<double>,4> transfer_matrix_LAGB   = Eigen::Tensor<std::complex<double>,4> ();
     Eigen::Tensor<std::complex<double>,4> transfer_matrix_evn    = Eigen::Tensor<std::complex<double>,4> ();
     Eigen::Tensor<std::complex<double>,4> transfer_matrix_odd    = Eigen::Tensor<std::complex<double>,4> ();
+    bool components_computed = false;
 }
 
-
+template<eigutils::eigSetting::Side side>
+std::pair<Eigen::VectorXcd, std::complex<double>> dominant_eig(Eigen::Tensor<std::complex<double>,2> transfer_mat, int L, int ncv){
+    using namespace eigutils::eigSetting;
+    class_eigsolver solver;
+    solver.eigs<Storage::DENSE>(transfer_mat.data(),L, 1, ncv,NAN,Form::NONSYMMETRIC,Ritz::LM,side, true,true);
+    Eigen::VectorXcd eigvec = Eigen::Map<const Eigen::VectorXcd>(solver.solution.get_eigvecs<Type::CPLX,Form::NONSYMMETRIC, side>().data(), solver.solution.meta.rows,1);
+    std::complex<double> eigval= solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0];
+    return std::make_pair(eigvec,eigval);
+}
 
 void MPS_Tools::Common::Views::compute_mps_components(const class_superblock & superblock){
 //    int chiA2 = (int)(chiA()*chiA());
+    if (components_computed)return;
+
     int chiB2 = (int)(superblock.MPS->chiB()*superblock.MPS->chiB());
     int chiC2 = (int)(superblock.MPS->chiC()*superblock.MPS->chiC());
 
     theta = get_theta(superblock);
     Eigen::Tensor<std::complex<double>,2> theta_evn_transfer_mat   = get_transfer_matrix_theta_evn(superblock).reshape(array2{chiB2,chiB2});
     Eigen::Tensor<std::complex<double>,2> theta_odd_transfer_mat   = get_transfer_matrix_theta_odd(superblock).reshape(array2{chiC2,chiC2});
-    class_eigsolver solver;
 
     using namespace eigutils::eigSetting;
-    //    class_eigsolver_arpack<std::complex<double>, eigsolver_properties::Form::GENERAL> solver;
-
     int ncvC = std::min(16, chiC2);
     int ncvB = std::min(16, chiB2);
-    solver.eigs<Storage::DENSE>(theta_evn_transfer_mat.data(),chiB2, 1, ncvB,NAN,Form::NONSYMMETRIC,Ritz::LM,Side::R, true,true);
-    auto eigvec_R_evn_map = Eigen::Map<const MatrixType<std::complex<double>>>(solver.solution.get_eigvecs<Type::CPLX,Form::NONSYMMETRIC>().data(), solver.solution.meta.rows,1);
-    auto eigval_R_evn = solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0];
+    [[maybe_unused]] auto [eigvec_R_evn, eigval_R_evn] = dominant_eig<Side::R>(theta_evn_transfer_mat, chiB2, ncvB);
+    [[maybe_unused]] auto [eigvec_L_evn, eigval_L_evn] = dominant_eig<Side::L>(theta_evn_transfer_mat, chiB2, ncvB);
+    [[maybe_unused]] auto [eigvec_R_odd, eigval_R_odd] = dominant_eig<Side::R>(theta_odd_transfer_mat, chiC2, ncvC);
+    [[maybe_unused]] auto [eigvec_L_odd, eigval_L_odd] = dominant_eig<Side::L>(theta_odd_transfer_mat, chiC2, ncvC);
 
-    solver.eigs<Storage::DENSE>(theta_evn_transfer_mat.data(),chiB2, 1, ncvB,NAN,Form::NONSYMMETRIC,Ritz::LM,Side::L, true,true);
-    auto eigvec_L_evn_map = Eigen::Map<const MatrixType<std::complex<double>>>(solver.solution.get_eigvecs<Type::CPLX,Form::NONSYMMETRIC>().data(), solver.solution.meta.rows,1);
+    std::complex<double> normalization_evn = sqrt((eigvec_L_evn.transpose() * eigvec_R_evn).sum());
+    std::complex<double> normalization_odd = sqrt((eigvec_L_odd.transpose() * eigvec_R_odd).sum());
 
-    solver.eigs<Storage::DENSE>(theta_odd_transfer_mat.data(),chiC2, 1, ncvC,NAN,Form::NONSYMMETRIC,Ritz::LM,Side::R, true,true);
-    auto eigvec_R_odd_map = Eigen::Map<const MatrixType<std::complex<double>>>(solver.solution.get_eigvecs<Type::CPLX,Form::NONSYMMETRIC>().data(), solver.solution.meta.rows,1);
-    auto eigval_R_odd = solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0];
-    solver.eigs<Storage::DENSE>(theta_odd_transfer_mat.data(),chiC2, 1, ncvC,NAN,Form::NONSYMMETRIC,Ritz::LM,Side::L, true,true);
-    auto eigvec_L_odd_map = Eigen::Map<const MatrixType<std::complex<double>>>(solver.solution.get_eigvecs<Type::CPLX,Form::NONSYMMETRIC>().data(), solver.solution.meta.rows,1);
-
-
-//    auto[eigvec_R_evn,eigval_R_evn]  = solver.get_eig_vecs_vals();
-//    solver.eig(theta_evn_transfer_mat.data(), chiB2, 1, ncvB, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, true, true);
-//    auto[eigvec_R_evn,eigval_R_evn]  = solver.get_eig_vecs_vals();
-//    solver.eig(theta_evn_transfer_mat.data(), chiB2, 1, ncvB, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::L, true, true);
-//    auto[eigvec_L_evn,eigval_L_evn]  = solver.get_eig_vecs_vals();
-//    solver.eig(theta_odd_transfer_mat.data(), chiC2, 1, ncvC, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, true, true);
-//    auto[eigvec_R_odd,eigval_R_odd]  = solver.get_eig_vecs_vals();
-//    solver.eig(theta_odd_transfer_mat.data(), chiC2, 1, ncvC, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::L, true, true);
-//    auto[eigvec_L_odd,eigval_L_odd]  = solver.get_eig_vecs_vals();
-
-//    MatrixType<std::complex<double>> eigvec_R_evn_map = Eigen::Map<const MatrixType<std::complex<double>>>(eigvec_R_evn.data(), eigvec_R_evn.size(),1);
-//    MatrixType<std::complex<double>> eigvec_L_evn_map = Eigen::Map<const MatrixType<std::complex<double>>>(eigvec_L_evn.data(), eigvec_L_evn.size(),1);
-//    MatrixType<std::complex<double>> eigvec_R_odd_map = Eigen::Map<const MatrixType<std::complex<double>>>(eigvec_R_odd.data(), eigvec_R_odd.size(),1);
-//    MatrixType<std::complex<double>> eigvec_L_odd_map = Eigen::Map<const MatrixType<std::complex<double>>>(eigvec_L_odd.data(), eigvec_L_odd.size(),1);
-
-    std::complex<double> normalization_evn = sqrt((eigvec_L_evn_map.transpose() * eigvec_R_evn_map).sum());
-    std::complex<double> normalization_odd = sqrt((eigvec_L_odd_map.transpose() * eigvec_R_odd_map).sum());
-
-    r_evn = Matrix_to_Tensor2(eigvec_R_evn_map).reshape(array2{superblock.MPS->chiB(),superblock.MPS->chiB()})/normalization_evn;
-    l_evn = Matrix_to_Tensor2(eigvec_L_evn_map).reshape(array2{superblock.MPS->chiB(),superblock.MPS->chiB()})/normalization_evn;
-    r_odd = Matrix_to_Tensor2(eigvec_R_odd_map).reshape(array2{superblock.MPS->chiC(),superblock.MPS->chiC()})/normalization_odd;
-    l_odd = Matrix_to_Tensor2(eigvec_L_odd_map).reshape(array2{superblock.MPS->chiC(),superblock.MPS->chiC()})/normalization_odd;
+    r_evn = Matrix_to_Tensor2(eigvec_R_evn).reshape(array2{superblock.MPS->chiB(),superblock.MPS->chiB()})/normalization_evn;
+    l_evn = Matrix_to_Tensor2(eigvec_L_evn).reshape(array2{superblock.MPS->chiB(),superblock.MPS->chiB()})/normalization_evn;
+    r_odd = Matrix_to_Tensor2(eigvec_R_odd).reshape(array2{superblock.MPS->chiC(),superblock.MPS->chiC()})/normalization_odd;
+    l_odd = Matrix_to_Tensor2(eigvec_L_odd).reshape(array2{superblock.MPS->chiC(),superblock.MPS->chiC()})/normalization_odd;
 
     theta                = get_theta(superblock);
     theta_sw             = get_theta_swapped(superblock);
@@ -109,8 +93,8 @@ void MPS_Tools::Common::Views::compute_mps_components(const class_superblock & s
     transfer_matrix_LBGA = transfer_matrix_LBGA_unnormalized /l_evn_LBGA_r_odd(0);
     LAGB = LAGB / sqrt(l_odd_LAGB_r_evn(0));
     LBGA = LBGA / sqrt(l_evn_LBGA_r_odd(0));
-
-//    std::cout << "Check:" << setprecision(10) <<  std::endl;
+    components_computed = true;
+//    std::cout << "Check:" << std::setprecision(10) <<  std::endl;
 //    std::cout << " l_odd_LAGB_r_evn          = " << l_odd_LAGB_r_evn(0) << std::endl;
 //    std::cout << " l_evn_LBGA_r_odd          = " << l_evn_LBGA_r_odd(0) << std::endl;
 //    std::cout << " < l_evn | r_evn >         = " << l_evn.contract(r_evn, idx({0,1},{0,1})) << std::endl;
@@ -209,7 +193,7 @@ MPS_Tools::Common::Views::get_theta_odd(const class_superblock & superblock, std
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
-        1--[ LA ]--[ GB ]-- [ LB ] -- [ GA ]--3
+        1--[ LC ]--[ GB ]-- [ LB ] -- [ GA ]--3
                      |                 |
                      0                 2
      @endverbatim
