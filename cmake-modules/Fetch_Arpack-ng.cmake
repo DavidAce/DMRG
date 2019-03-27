@@ -1,9 +1,15 @@
 
 unset(ARPACK_LIBRARIES)
 
+if(BUILD_SHARED_LIBS)
+    set(ARPACK_LIBRARY_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
+else()
+    set(ARPACK_LIBRARY_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+endif()
+
 message(STATUS "SEARCHING FOR ARPACK IN SYSTEM")
 find_library(ARPACK_LIBRARIES
-        NAMES libarpack${CUSTOM_SUFFIX}
+        NAMES libarpack${ARPACK_LIBRARY_SUFFIX}
         PATHS /usr/lib/x86_64-linux-gnu/
         NO_DEFAULT_PATH
         )
@@ -13,7 +19,7 @@ if (NOT ARPACK_LIBRARIES)
     message(STATUS "SEARCHING FOR ARPACK IN LOADED MODULES")
 
     find_library(ARPACK_LIBRARIES
-            NAMES libarpack${CUSTOM_SUFFIX} arpack
+            NAMES libarpack${ARPACK_LIBRARY_SUFFIX} arpack
             PATHS "$ENV{ARPACK_DIR}/lib" "$ENV{ARPACK_DIR}/lib64"
             NO_DEFAULT_PATH
             )
@@ -74,11 +80,11 @@ else()
             )
     ExternalProject_Get_Property(external_ARPACK INSTALL_DIR)
     find_library(ARPACK_LIBRARIES
-            NAMES libarpack${CUSTOM_SUFFIX}
+            NAMES libarpack${ARPACK_LIBRARY_SUFFIX}
             PATHS  ${INSTALL_DIR}/lib  ${INSTALL_DIR}/lib64
             )
     if(NOT ARPACK_LIBRARIES)
-        set(ARPACK_LIBRARIES ${INSTALL_DIR}/lib/libarpack${CUSTOM_SUFFIX})
+        set(ARPACK_LIBRARIES ${INSTALL_DIR}/lib/libarpack${ARPACK_LIBRARY_SUFFIX})
     endif()
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
     add_library(arpack INTERFACE)
