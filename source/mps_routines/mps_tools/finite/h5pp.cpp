@@ -62,8 +62,8 @@ void MPS_Tools::Finite::H5pp::write_2site_mpo(class_finite_chain_state & state, 
     // Remember to write tensors in row-major state order because that's what hdf5 uses.
     auto &mpoL = state.get_MPO_L().back();
     auto &mpoR = state.get_MPO_R().front();
-    h5ppFile.writeDataset(mpoL->MPO, sim_name + "/state/2site/MPO_L");
-    h5ppFile.writeDataset(mpoR->MPO, sim_name + "/state/2site/MPO_R");
+    h5ppFile.writeDataset(mpoL->MPO(), sim_name + "/state/2site/MPO_L");
+    h5ppFile.writeDataset(mpoR->MPO(), sim_name + "/state/2site/MPO_R");
     auto valuesL = mpoL->get_parameter_values();
     auto valuesR = mpoR->get_parameter_values();
     auto namesL  = mpoL->get_parameter_names();
@@ -143,7 +143,7 @@ void MPS_Tools::Finite::H5pp::write_full_mpo(class_finite_chain_state & state, h
     if(state.mpo_have_been_written_to_hdf5){return;}
     unsigned long counter = 0;
     for(auto &mpo : state.get_MPO_L()){
-        h5ppFile.writeDataset(mpo->MPO, sim_name + "/state/full/mpo/H_" + std::to_string(counter));
+        h5ppFile.writeDataset(mpo->MPO(), sim_name + "/state/full/mpo/H_" + std::to_string(counter));
         //Write MPO properties as attributes
         auto values = mpo->get_parameter_values();
         auto names  = mpo->get_parameter_names();
@@ -153,7 +153,7 @@ void MPS_Tools::Finite::H5pp::write_full_mpo(class_finite_chain_state & state, h
         counter++;
     }
     for(auto &mpo : state.get_MPO_R()){
-        h5ppFile.writeDataset(mpo->MPO, sim_name + "/state/full/mpo/H_" + std::to_string(counter));
+        h5ppFile.writeDataset(mpo->MPO(), sim_name + "/state/full/mpo/H_" + std::to_string(counter));
         //Write MPO properties as attributes
         auto values = mpo->get_parameter_values();
         auto names  = mpo->get_parameter_names();

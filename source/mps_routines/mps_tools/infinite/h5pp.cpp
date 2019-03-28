@@ -43,8 +43,8 @@ void MPS_Tools::Infinite::H5pp::write_2site_mps (class_superblock &superblock, h
 }
 
 void MPS_Tools::Infinite::H5pp::write_2site_mpo (class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
-    h5ppFile.writeDataset(superblock.HA->MPO, sim_name + "/state/2site/MPO_A");
-    h5ppFile.writeDataset(superblock.HB->MPO, sim_name + "/state/2site/MPO_B");
+    h5ppFile.writeDataset(superblock.HA->MPO(), sim_name + "/state/2site/MPO_A");
+    h5ppFile.writeDataset(superblock.HB->MPO(), sim_name + "/state/2site/MPO_B");
 
 }
 

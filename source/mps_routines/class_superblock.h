@@ -11,6 +11,7 @@
 //#include <general/nmspc_eigsolver_props.h>
 #include <general/nmspc_eigutils.h>
 #include <sim_parameters/nmspc_sim_settings.h>
+#include <io/nmspc_logger.h>
 class class_mps_2site;
 class class_hamiltonian_base;
 class class_environment;
@@ -25,16 +26,19 @@ template<typename Scalar> class class_SVD;
 
 
 class class_superblock {
+public:
+    SimulationType sim_type;
+    std::string sim_name;
 private:
-
+    std::shared_ptr<spdlog::logger> log;
 public:
     using Scalar = std::complex<double>;
 
-    class_superblock(SimulationType sim_type_);
+    class_superblock(SimulationType sim_type_, std::string sim_name_);
 //    ~class_superblock();
 
     void clear();
-    SimulationType sim_type;
+
 
     std::shared_ptr<class_mps_2site>         MPS;        /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
     std::shared_ptr<class_hamiltonian_base>  HA;

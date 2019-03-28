@@ -151,8 +151,8 @@ double MPS_Tools::Finite::Measure::energy_mpo(class_finite_chain_state & state){
     Eigen::Tensor<Scalar, 0>  E =
             state.get_ENV_L().back().block
                     .contract(theta,                                     idx({0},{1}))
-                    .contract(state.get_MPO_L().back()->MPO,             idx({1,2},{0,2}))
-                    .contract(state.get_MPO_R().front()->MPO,            idx({3,1},{0,2}))
+                    .contract(state.get_MPO_L().back()->MPO(),           idx({1,2},{0,2}))
+                    .contract(state.get_MPO_R().front()->MPO(),          idx({3,1},{0,2}))
                     .contract(theta.conjugate(),                         idx({0,2,4},{1,0,2}))
                     .contract(state.get_ENV_R().front().block,           idx({0,2,1},{0,1,2}));
     if(abs(imag(E(0))) > 1e-10 ){
@@ -184,10 +184,10 @@ double MPS_Tools::Finite::Measure::energy_variance_mpo(class_finite_chain_state 
     Eigen::Tensor<Scalar, 0> H2 =
             state.get_ENV2_L().back().block
                     .contract(theta                              , idx({0}  ,{1}))
-                    .contract(state.get_MPO_L().back()->MPO      , idx({1,3},{0,2}))
-                    .contract(state.get_MPO_R().front()->MPO     , idx({4,2},{0,2}))
-                    .contract(state.get_MPO_L().back()->MPO      , idx({1,3},{0,2}))
-                    .contract(state.get_MPO_R().front()->MPO     , idx({4,3},{0,2}))
+                    .contract(state.get_MPO_L().back()->MPO()    , idx({1,3},{0,2}))
+                    .contract(state.get_MPO_R().front()->MPO()   , idx({4,2},{0,2}))
+                    .contract(state.get_MPO_L().back()->MPO()    , idx({1,3},{0,2}))
+                    .contract(state.get_MPO_R().front()->MPO()   , idx({4,3},{0,2}))
                     .contract(theta.conjugate()                  , idx({0,3,5},{1,0,2}))
                     .contract(state.get_ENV2_R().front().block   , idx({0,3,1,2},{0,1,2,3}));
     state.variance_has_been_measured = true;

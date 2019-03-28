@@ -48,6 +48,7 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
          sim_type       (sim_type_) {
 
     log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
+    MPS_Tools::log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
     log->trace("Constructing class_algorithm_base");
 //    ccout.set_verbosity(settings::console::verbosity);
     set_profiling_labels();
@@ -56,7 +57,7 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     log->trace("Constructing table_profiling");
     table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(h5ppFile, sim_name + "/measurements", "profiling",sim_name);
     log->trace("Constructing superblock");
-    superblock      = std::make_shared<class_superblock>(sim_type);
+    superblock      = std::make_shared<class_superblock>(sim_type,sim_name);
     log->trace("Writing input_file");
     h5ppFile->writeDataset(settings::input::input_file, "common/input_file");
     h5ppFile->writeDataset(settings::input::input_filename, "common/input_filename");
@@ -510,10 +511,10 @@ void class_algorithm_base::initialize_superblock(std::string initial_state) {
 
 
     //Reset the environment blocks to the correct dimensions
-    superblock->Lblock->set_edge_dims(*superblock->MPS, superblock->HA->MPO);
-    superblock->Rblock->set_edge_dims(*superblock->MPS, superblock->HB->MPO);
-    superblock->Lblock2->set_edge_dims(*superblock->MPS, superblock->HA->MPO);
-    superblock->Rblock2->set_edge_dims(*superblock->MPS, superblock->HB->MPO);
+    superblock->Lblock->set_edge_dims(*superblock->MPS, superblock->HA->MPO());
+    superblock->Rblock->set_edge_dims(*superblock->MPS, superblock->HB->MPO());
+    superblock->Lblock2->set_edge_dims(*superblock->MPS, superblock->HA->MPO());
+    superblock->Rblock2->set_edge_dims(*superblock->MPS, superblock->HB->MPO());
 
     superblock->environment_size = superblock->Lblock->size + superblock->Rblock->size;
 
@@ -536,30 +537,14 @@ void class_algorithm_base::initialize_superblock(std::string initial_state) {
 }
 
 void class_algorithm_base::reset_full_mps_to_random_product_state(std::string parity) {
-    log->info("Resetting to random product state");
+    log->trace("Resetting to random product state");
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
-    assert(state->get_length() == (size_t)num_sites() and "ERROR: System size mismatch");
-
     sim_state.iteration = state->reset_sweeps();
     // Randomize chain
 
 
     // Project into whatever
     MPS_Tools::Finite::Ops::reset_to_random_product_state(*state,parity);
-
-
-//
-//
-//    if (parity == "sx"){
-//        MPS_Tools::Finite::Ops::reset_to_random_product_state(*state,qm::spinOneHalf::sx);
-//    }else if (parity == "sz"){
-//        MPS_Tools::Finite::Ops::reset_to_random_product_state(*state,qm::spinOneHalf::sy);
-//    }else if (parity == "sy"){
-//        MPS_Tools::Finite::Ops::reset_to_random_product_state(*state,qm::spinOneHalf::sz);
-//    }else{
-//        std::cerr << "Invalid spin_component name" << std::endl;
-//        exit(1);
-//    }
     MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
     MPS_Tools::Common::Measure::set_not_measured(*superblock);
 }
@@ -737,7 +722,7 @@ void class_algorithm_base::print_status_update() {
     }
 
     if (sim_type == SimulationType::xDMRG){
-        report << left  << " ε: "<< setw(5) << setprecision(3) << fixed << sim_state.energy_dens;
+        report << left  << " ε: "<< setw(8) << setprecision(4) << fixed << sim_state.energy_dens;
     }
 
     report << left  << "log₁₀ σ²(E): ";

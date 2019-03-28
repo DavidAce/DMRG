@@ -17,20 +17,22 @@ class_tf_ising::class_tf_ising(std::string logName): class_hamiltonian_base(logN
     extent4     = {1, 1, spin_dim, spin_dim};
     extent2     = {spin_dim, spin_dim};
     r_rnd_field = rn::uniform_double(-w_rnd_strength,w_rnd_strength);
-    full_lattice_parameters_have_been_set = true; //There are no full latice parameters on this model!
-    build_mpo();
+
     qm::spinOneHalf::SX = qm::gen_manybody_spin(sx, 2);
     qm::spinOneHalf::SY = qm::gen_manybody_spin(sy, 2);
     qm::spinOneHalf::SZ = qm::gen_manybody_spin(sz, 2);
     qm::spinOneHalf::II = qm::gen_manybody_spin(Id , 2);
+
+    all_mpo_parameters_have_been_set = true; //There are no full latice parameters on this model!
+    build_mpo();
 }
 
 
 void   class_tf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4> MPO_, std::vector<double> parameters) {
-    MPO = MPO_;
+    mpo_internal = MPO_;
     set_hamiltonian(parameters);
-    auto mpo1 = Eigen::Map<const Eigen::VectorXcd>(MPO_.data(), MPO_.size());
-    auto mpo2 = Eigen::Map<const Eigen::VectorXcd>(MPO.data(), MPO.size());
+    auto mpo1 = Eigen::Map<const Eigen::VectorXcd>(MPO_ .data(), MPO_ .size());
+    auto mpo2 = Eigen::Map<const Eigen::VectorXcd>(MPO().data(), MPO().size());
     assert(mpo1 == mpo2 and "MPO mismatch!");
     if (mpo1 != mpo2) throw std::runtime_error("MPO mismatch");
 }
@@ -55,7 +57,7 @@ void   class_tf_ising::set_hamiltonian(const Eigen::VectorXd parameters) {
     w_rnd_strength  = parameters(4);
     e_reduced       = parameters(5);
     spin_dim        = (int)parameters(6);
-    full_lattice_parameters_have_been_set = true;
+    all_mpo_parameters_have_been_set = true;
     build_mpo();
 }
 
@@ -79,31 +81,31 @@ void class_tf_ising::build_mpo()
  *
  */
 {
-    if (not full_lattice_parameters_have_been_set) log->warn("Improperly built MPO: Full lattice parameters haven't been set yet.");
-    MPO.resize(3, 3, spin_dim, spin_dim);
-    MPO.setZero();
-    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
-    MPO.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sz);
-    MPO.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(g_mag_field + r_rnd_field) * sx);
-    MPO.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_coupling * sz);
-    MPO.slice(Eigen::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
+    if (not all_mpo_parameters_have_been_set) throw std::runtime_error("Improperly built MPO: Full lattice parameters haven't been set yet.");
+    mpo_internal.resize(3, 3, spin_dim, spin_dim);
+    mpo_internal.setZero();
+    mpo_internal.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
+    mpo_internal.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sz);
+    mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(g_mag_field + r_rnd_field) * sx);
+    mpo_internal.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_coupling * sz);
+    mpo_internal.slice(Eigen::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
 }
 
 void class_tf_ising::randomize_hamiltonian(){
     r_rnd_field = rn::uniform_double(-w_rnd_strength,w_rnd_strength);
-    if(full_lattice_parameters_have_been_set or MPO.size()>3){
-        MPO.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(g_mag_field+r_rnd_field) * sx);
+    if(all_mpo_parameters_have_been_set or mpo_internal.size()>3){
+        mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(g_mag_field+r_rnd_field) * sx);
     }
 }
 
 Eigen::Tensor<Scalar,4> class_tf_ising::MPO_reduced_view() const {
-    if (e_reduced == 0){return MPO;}
+    if (e_reduced == 0){return MPO();}
     return MPO_reduced_view(e_reduced);
 }
 
 Eigen::Tensor<Scalar,4> class_tf_ising::MPO_reduced_view(double site_energy) const {
-    if (site_energy == 0){return MPO;}
-    Eigen::Tensor<Scalar,4> temp  = MPO;
+    if (site_energy == 0){return MPO();}
+    Eigen::Tensor<Scalar,4> temp  = MPO();
     temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(g_mag_field+r_rnd_field) * sx - site_energy * Id);
     return temp;
 }
@@ -183,5 +185,5 @@ std::vector<double> class_tf_ising::get_parameter_values() const {
 
 
 void class_tf_ising::set_full_lattice_parameters([[maybe_unused]] const std::vector<std::vector<double>> chain_parameters){
-    full_lattice_parameters_have_been_set = true;
+    all_mpo_parameters_have_been_set = true;
 }

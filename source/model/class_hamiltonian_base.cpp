@@ -11,6 +11,14 @@
 using namespace qm;
 using Scalar = std::complex<double>;
 
+const Eigen::Tensor<Scalar,4> & class_hamiltonian_base::MPO() const{
+    if (all_mpo_parameters_have_been_set){
+        return mpo_internal;
+    }else{
+        throw std::runtime_error("All MPO parameters haven't been set yet.");
+    }
+}
+
 
 class_hamiltonian_base::class_hamiltonian_base(std::string logName){
     log = Logger::setLogger(logName);
@@ -27,8 +35,8 @@ size_t class_hamiltonian_base::get_position() const{
 }
 
 Eigen::MatrixXcd class_hamiltonian_base::MPO_matrix_view(){
-    auto rows = MPO.dimension(0)*MPO.dimension(2);
-    auto cols = MPO.dimension(1)*MPO.dimension(3);
-    Eigen::Tensor<Scalar,4> MPO_temp = MPO.shuffle(Textra::array4{0,2,1,3});
+    auto rows = MPO().dimension(0)*MPO().dimension(2);
+    auto cols = MPO().dimension(1)*MPO().dimension(3);
+    Eigen::Tensor<Scalar,4> MPO_temp = MPO().shuffle(Textra::array4{0,2,1,3});
     return Textra::Tensor_to_Matrix<Scalar>(MPO_temp, rows ,cols);
 }

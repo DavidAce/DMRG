@@ -17,13 +17,13 @@ protected:
     Eigen::array<long, 2> extent2;                           /*!< Extent of pauli matrices in a rank-2 tensor */
     size_t position = 0;                                     /*!< Position on a finite chain */
     std::shared_ptr<spdlog::logger> log;
+    Eigen::Tensor<Scalar,4> mpo_internal;
 public:
 
     class_hamiltonian_base(std::string logName = "MODEL");
     virtual ~class_hamiltonian_base() = default;
     virtual std::unique_ptr<class_hamiltonian_base> clone()                     const = 0;
-    Eigen::Tensor<Scalar,4> MPO;
-
+    const Eigen::Tensor<Scalar,4> & MPO() const;
     virtual Eigen::Tensor<Scalar,4> MPO_reduced_view()                          const = 0;
     virtual Eigen::Tensor<Scalar,4> MPO_reduced_view(double single_site_energy) const = 0;
 
@@ -49,7 +49,7 @@ public:
     void set_position(size_t new_pos);
 
     size_t    get_position()                 const;
-    bool      full_lattice_parameters_have_been_set = false;
+    bool      all_mpo_parameters_have_been_set = false;
 };
 
 
