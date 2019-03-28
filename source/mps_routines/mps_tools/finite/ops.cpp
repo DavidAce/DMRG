@@ -22,10 +22,10 @@ using namespace Textra;
 std::list<Eigen::Tensor<Scalar,4>> MPS_Tools::Finite::Ops::make_mpo_list (const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_R){
     std::list<Eigen::Tensor<Scalar,4>> mpos;
     for(auto &mpo_L : mpos_L){
-        mpos.push_back(mpo_L->MPO);
+        mpos.push_back(mpo_L->MPO());
     }
     for(auto &mpo_R : mpos_R){
-        mpos.push_back(mpo_R->MPO);
+        mpos.push_back(mpo_R->MPO());
     }
     return mpos;
 }
@@ -333,11 +333,10 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
 
 void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
+    MPS_Tools::log->trace("Normalizing chain");
 
     // Sweep back and forth once on the chain
 
-    // First the left side
-    spdlog::trace("Starting normalization");
     class_SVD<Scalar> svd;
     size_t pos_LA = 0; // Lambda left of GA
     size_t pos_LC = 1; //Center Lambda
@@ -758,7 +757,7 @@ void MPS_Tools::Finite::Ops::apply_energy_mpo_test(class_finite_chain_state &sta
 
 class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix, const int sign) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
-    spdlog::trace("Generating parity projected state");
+    MPS_Tools::log->trace("Generating parity projected state");
     class_finite_chain_state state_projected = state;
     const auto [mpo,L,R]    = class_mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
@@ -771,10 +770,12 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(cons
 
 
 void MPS_Tools::Finite::Ops::rebuild_superblock(class_finite_chain_state &state, class_superblock &superblock) {
+    MPS_Tools::log->trace("Rebuilding superblock");
     MPS_Tools::Finite::Chain::copy_state_to_superblock(state,superblock);
 }
 
 void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &state){
+    MPS_Tools::log->trace("Rebuilding environments");
 
     // Generate new environments
     assert(not state.get_MPS_L().empty() and "ERROR: The MPS L list is empty:");
@@ -789,8 +790,8 @@ void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &stat
     state.get_ENV2_R().clear();
 
     {
-        auto ENV_L = class_environment("L",state.get_MPS_L().front().get_chiL(), state.get_MPO_L().front()->MPO.dimension(0));
-        auto ENV2_L = class_environment_var("L",state.get_MPS_L().front().get_chiL(), state.get_MPO_L().front()->MPO.dimension(0));
+        auto ENV_L = class_environment("L",state.get_MPS_L().front().get_chiL(), state.get_MPO_L().front()->MPO().dimension(0));
+        auto ENV2_L = class_environment_var("L",state.get_MPS_L().front().get_chiL(), state.get_MPO_L().front()->MPO().dimension(0));
         auto mpsL_it   = state.get_MPS_L().begin();
         auto mpoL_it   = state.get_MPO_L().begin();
 
@@ -798,8 +799,8 @@ void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &stat
             state.get_ENV_L().push_back(ENV_L);
             state.get_ENV2_L().push_back(ENV2_L);
             if (mpsL_it == state.get_MPS_L().end()) break;
-            ENV_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO);
-            ENV2_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO);
+            ENV_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO());
+            ENV2_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO());
             mpsL_it++;
             mpoL_it++;
         }
@@ -808,16 +809,16 @@ void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &stat
 
 
     {
-        auto ENV_R  = class_environment("R",state.get_MPS_R().back().get_chiR(), state.get_MPO_L().back()->MPO.dimension(1));
-        auto ENV2_R = class_environment_var("R",state.get_MPS_R().back().get_chiR(), state.get_MPO_L().back()->MPO.dimension(1));
+        auto ENV_R  = class_environment("R",state.get_MPS_R().back().get_chiR(), state.get_MPO_L().back()->MPO().dimension(1));
+        auto ENV2_R = class_environment_var("R",state.get_MPS_R().back().get_chiR(), state.get_MPO_L().back()->MPO().dimension(1));
         auto mpsR_it   = state.get_MPS_R().rbegin();
         auto mpoR_it   = state.get_MPO_R().rbegin();
         while(mpsR_it != state.get_MPS_R().rend() and mpoR_it != state.get_MPO_R().rend()){
             state.get_ENV_R().push_front(ENV_R);
             state.get_ENV2_R().push_front(ENV2_R);
             if (mpsR_it == state.get_MPS_R().rend()) break;
-            ENV_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO);
-            ENV2_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO);
+            ENV_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO());
+            ENV2_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO());
             mpsR_it++;
             mpoR_it++;
         }

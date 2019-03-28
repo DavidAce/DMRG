@@ -19,15 +19,14 @@ class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(std::string logName): cla
     J_rnd       = rn::log_normal(J_log_mean,J_sigma);
     h_rnd       = rn::log_normal(h_log_mean,h_sigma);
     delta       = J_log_mean - h_log_mean;
-    build_mpo();
 }
 
 
 void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4> MPO_, std::vector<double> parameters) {
-    MPO = MPO_;
+    mpo_internal = MPO_;
     set_hamiltonian(parameters);
-    auto mpo1 = Eigen::Map<const Eigen::VectorXcd>(MPO_.data(),MPO_.size());
-    auto mpo2 = Eigen::Map<const Eigen::VectorXcd>(MPO .data(),MPO .size());
+    auto mpo1 = Eigen::Map<const Eigen::VectorXcd>(MPO_ .data(),MPO_ .size());
+    auto mpo2 = Eigen::Map<const Eigen::VectorXcd>(MPO().data(),MPO().size());
     assert(mpo1 == mpo2 and "MPO mismatch!");
     if(mpo1 != mpo2)throw std::runtime_error("MPO mismatch");
 }
@@ -59,7 +58,7 @@ void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::VectorXd paramet
     delta          = parameters(10);
     e_reduced      = parameters(11);
     spin_dim       = parameters(12);
-    full_lattice_parameters_have_been_set = true;
+    all_mpo_parameters_have_been_set = true;
     build_mpo();
 }
 
@@ -68,7 +67,7 @@ void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::VectorXd paramet
 void class_selfdual_tf_rf_ising::set_realization_averages(double J_avg_,double h_avg_){
     J_avg=J_avg_;
     h_avg=h_avg_;
-    full_lattice_parameters_have_been_set = true;
+    all_mpo_parameters_have_been_set = true;
     build_mpo();
 }
 
@@ -92,39 +91,39 @@ void class_selfdual_tf_rf_ising::build_mpo()
  *
  */
 {
-    if (not full_lattice_parameters_have_been_set) log->warn("Improperly built MPO: Full lattice parameters haven't been set yet.");
-    MPO.resize(5, 5, spin_dim, spin_dim);
-    MPO.setZero();
-    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
-    MPO.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sz);
-    MPO.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sx);
-    MPO.slice(Eigen::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
-    MPO.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
-    MPO.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
-    MPO.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*h_avg) * sx);
-    MPO.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*J_avg) * sz);
-    MPO.slice(Eigen::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
+    if (not all_mpo_parameters_have_been_set) throw std::runtime_error("Improperly built MPO: Full lattice parameters haven't been set yet.");
+    mpo_internal.resize(5, 5, spin_dim, spin_dim);
+    mpo_internal.setZero();
+    mpo_internal.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
+    mpo_internal.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sz);
+    mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sx);
+    mpo_internal.slice(Eigen::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
+    mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
+    mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
+    mpo_internal.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*h_avg) * sx);
+    mpo_internal.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*J_avg) * sz);
+    mpo_internal.slice(Eigen::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
 }
 
 void class_selfdual_tf_rf_ising::randomize_hamiltonian(){
     J_rnd       = rn::log_normal(J_log_mean,J_sigma);
     h_rnd       = rn::log_normal(h_log_mean,h_sigma);
-    if(full_lattice_parameters_have_been_set or MPO.size()>5){
-        MPO.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
-        MPO.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
+    if(all_mpo_parameters_have_been_set or mpo_internal.size()>5){
+        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
+        mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
     }
 
 }
 
 
 Eigen::Tensor<Scalar,4> class_selfdual_tf_rf_ising::MPO_reduced_view() const {
-    if (e_reduced == 0){return MPO;}
+    if (e_reduced == 0){return MPO();}
     return MPO_reduced_view(e_reduced);
 }
 
 Eigen::Tensor<Scalar,4> class_selfdual_tf_rf_ising::MPO_reduced_view(double site_energy) const {
-    if (site_energy == 0){return MPO;}
-    Eigen::Tensor<Scalar,4> temp  = MPO;
+    if (site_energy == 0){return MPO();}
+    Eigen::Tensor<Scalar,4> temp  = MPO();
     temp.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx - site_energy * Id);
     return temp;
 }
@@ -232,7 +231,7 @@ std::vector<double> class_selfdual_tf_rf_ising::get_parameter_values() const {
 
 void class_selfdual_tf_rf_ising::set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters){
     // Calculate average J_rnd on the whole chain
-    full_lattice_parameters_have_been_set = true;
+    all_mpo_parameters_have_been_set = true;
     std::vector<double> J_rnd_vec;
     std::vector<double> h_rnd_vec;
     for (auto &params : chain_parameters){

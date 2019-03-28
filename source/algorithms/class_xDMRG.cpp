@@ -51,10 +51,8 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_base(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG) {
     table_xdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
     table_xdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5ppFile, sim_name + "/measurements", "simulation_progress_full_chain",sim_name);
-    superblock        = std::make_shared<class_superblock>(sim_type);
     MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type, settings::xdmrg::num_sites, settings::model::seed);
     MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
-//    initialize_superblock(settings::model::initial_state);
     min_saturation_length = 1 * (int)(0.5 * settings::xdmrg::num_sites);
     max_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
     settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(int)(std::log2(chi_max())/2));
@@ -371,12 +369,23 @@ void class_xDMRG::find_energy_range() {
     log->info("Energy minimum (per site) = {}", sim_state.energy_min);
     log->info("Energy maximum (per site) = {}", sim_state.energy_max);
     log->info("Energy target  (per site) = {}", sim_state.energy_target);
+    int counterA = 0;
+    int counterB = 0;
     while(sim_state.energy_now < sim_state.energy_lbound or sim_state.energy_now > sim_state.energy_ubound){
         reset_full_mps_to_random_product_state("sx");
         sim_state.energy_now = MPS_Tools::Common::Measure::energy_per_site_mpo(*superblock);
         sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
+        counterA++;
+        counterB++;
+        if(counterA >= 100){
+            counterA = 0;
+            if(settings::xdmrg::energy_window >= 0.5){break;}
+            settings::xdmrg::energy_window *= 2;
+            sim_state.energy_ubound  = sim_state.energy_target + settings::xdmrg::energy_window*(sim_state.energy_max-sim_state.energy_min);
+            sim_state.energy_lbound  = sim_state.energy_target - settings::xdmrg::energy_window*(sim_state.energy_max-sim_state.energy_min);
+        }
     }
-    log->info("Energy initial (per site) = {} | density = {}", sim_state.energy_now, sim_state.energy_dens );
+    log->info("Energy initial (per site) = {} | density = {} | retries = {}", sim_state.energy_now, sim_state.energy_dens,counterB );
 
 
 }

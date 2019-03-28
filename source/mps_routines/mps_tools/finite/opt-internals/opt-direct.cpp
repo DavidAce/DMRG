@@ -131,8 +131,8 @@ MPS_Tools::Finite::Opt::internals::direct_functor::direct_functor(
         const class_superblock & superblock_): base_functor()
 
 {
-    superblock.HA_MPO  = superblock_.HA->MPO.real();
-    superblock.HB_MPO  = superblock_.HB->MPO.real();
+    superblock.HA_MPO  = superblock_.HA->MPO().real();
+    superblock.HB_MPO  = superblock_.HB->MPO().real();
     superblock.Lblock  = superblock_.Lblock->block.real();
     superblock.Rblock  = superblock_.Rblock->block.real();
     superblock.Lblock2 = superblock_.Lblock2->block.real();

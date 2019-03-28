@@ -11,9 +11,9 @@
 #include <model/class_hamiltonian_base.h>
 #include <model/class_hamiltonian_factory.h>
 #include <general/nmspc_random_numbers.h>
-#include <spdlog/spdlog.h>
 
-using Scalar         = std::complex<double>;
+
+using Scalar = std::complex<double>;
 
 
 void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state, std::string model_type, const size_t length, const size_t seed){
@@ -52,7 +52,7 @@ void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state,
 
 
 void MPS_Tools::Finite::Chain::randomize_mpos(class_finite_chain_state &state, const size_t seed) {
-    spdlog::info("Setting random fields in chain");
+    MPS_Tools::log->info("Setting random fields in chain");
     rn::seed(seed);
     if (not state.max_sites_is_set) throw std::range_error("System size not set yet");
     if (state.get_length() != state.get_MPO_L().size() + state.get_MPO_R().size() )
@@ -323,6 +323,7 @@ int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  stat
 }
 
 void MPS_Tools::Finite::Chain::copy_state_to_superblock(const class_finite_chain_state & state, class_superblock & superblock){
+    MPS_Tools::log->trace("Copying state to superblock");
     superblock.clear();
     superblock.MPS->set_mps(
             state.get_MPS_L().back().get_L(),

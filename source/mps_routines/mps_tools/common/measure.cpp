@@ -126,8 +126,8 @@ double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superbloc
     Eigen::Tensor<Scalar, 0>  E =
             superblock.Lblock->block
                     .contract(theta,                                     idx({0},{1}))
-                    .contract(superblock.HA->MPO,                        idx({1,2},{0,2}))
-                    .contract(superblock.HB->MPO,                        idx({3,1},{0,2}))
+                    .contract(superblock.HA->MPO(),                      idx({1,2},{0,2}))
+                    .contract(superblock.HB->MPO(),                      idx({3,1},{0,2}))
                     .contract(theta.conjugate(),                         idx({0,2,4},{1,0,2}))
                     .contract(superblock.Rblock->block,                  idx({0,2,1},{0,1,2}));
     if(abs(imag(E(0))) > 1e-10 ){
@@ -210,10 +210,10 @@ double MPS_Tools::Common::Measure::energy_per_site_mom(class_superblock & superb
     Scalar lambdaG  = moment_generating_function(*superblock.MPS, Op_vec);
     Scalar l        = 2.0; //Number of sites in unit cell
     Scalar G        = pow(lambdaG,1.0/l);
-    Scalar logG     = log(lambdaG) * 1.0/l;
-    Scalar logGc    = log(conj(lambdaG) ) * 1.0/l;
+    Scalar logG     = std::log(lambdaG) * 1.0/l;
+    Scalar logGc    = std::log(conj(lambdaG) ) * 1.0/l;
     Scalar O        = (logG - logGc)/(2.0*a);
-    Scalar VarO     = 2.0*log(abs(G))/ (a*a);
+    Scalar VarO     = 2.0*std::log(abs(G))/ (a*a);
     superblock.measurements.energy_per_site_mom           = std::real(O);
     superblock.measurements.energy_variance_per_site_mom  = std::real(VarO);
     superblock.t_ene_mom.toc();
@@ -229,10 +229,10 @@ double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock & 
     Eigen::Tensor<Scalar, 0> H2 =
             superblock.Lblock2->block
                     .contract(theta              ,               idx({0}  ,{1}))
-                    .contract(superblock.HA->MPO,                idx({1,3},{0,2}))
-                    .contract(superblock.HB->MPO,                idx({4,2},{0,2}))
-                    .contract(superblock.HA->MPO,                idx({1,3},{0,2}))
-                    .contract(superblock.HB->MPO,                idx({4,3},{0,2}))
+                    .contract(superblock.HA->MPO(),              idx({1,3},{0,2}))
+                    .contract(superblock.HB->MPO(),              idx({4,2},{0,2}))
+                    .contract(superblock.HA->MPO(),              idx({1,3},{0,2}))
+                    .contract(superblock.HB->MPO(),              idx({4,3},{0,2}))
                     .contract(theta.conjugate()  ,               idx({0,3,5},{1,0,2}))
                     .contract(superblock.Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
     return std::abs(H2(0) - energy_mpo*energy_mpo);

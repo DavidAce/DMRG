@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 #include <general/nmspc_tensor_extra.h>
-
+#include <io/nmspc_logger.h>
 
 
 class class_superblock;
@@ -24,7 +24,7 @@ namespace h5pp{
 
 
 namespace MPS_Tools{
-
+    inline std::shared_ptr<spdlog::logger> log;
     namespace Finite
     /*!
      * Functions for finite MPS algorithms like fDMRG and xDMRG
