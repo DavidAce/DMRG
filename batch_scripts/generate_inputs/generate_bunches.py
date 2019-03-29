@@ -8,7 +8,7 @@ os.chdir(parentpath)
 src_directory='input'
 tgt_directory='bunch'
 
-realizations = 2000
+realizations = 1000
 bunch_size = 300
 bunch_list = []
 seed_counter = 0
