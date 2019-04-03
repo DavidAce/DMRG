@@ -388,10 +388,11 @@ void class_xDMRG::store_state_and_measurements_to_file(bool force){
         h5ppFile->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
     }
 
-
+    h5ppFile->writeDataset(false, sim_name + "/simOK");
     MPS_Tools::Finite::H5pp::write_all_state(*state, *h5ppFile, sim_name);
     MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5ppFile, sim_name);
     store_algorithm_state_to_file();
+    h5ppFile->writeDataset(true, sim_name + "/simOK");
     h5ppFile->writeDataset(true, "/common/fileOK");
     t_sto.toc();
 }
