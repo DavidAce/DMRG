@@ -29,7 +29,7 @@ void class_iDMRG::run() {
     while(true){
         single_DMRG_step();
         print_status_update();
-        store_progress_to_file();
+        store_table_entry_progress();
         store_profiling_to_file_delta();
         check_convergence();
 
@@ -63,7 +63,7 @@ void class_iDMRG::run_simulation()    {}
 void class_iDMRG::run_preprocessing() {}
 void class_iDMRG::run_postprocessing(){}
 
-void class_iDMRG::store_state_to_file(bool force){
+void class_iDMRG::store_state_and_measurements_to_file(bool force){
     if(not force){
         if (Math::mod(sim_state.iteration, settings::idmrg::store_freq) != 0) {return;}
         if (settings::fdmrg::store_freq == 0){return;}
@@ -74,7 +74,7 @@ void class_iDMRG::store_state_to_file(bool force){
     t_sto.toc();
 }
 
-void class_iDMRG::store_progress_to_file(bool force){
+void class_iDMRG::store_table_entry_progress(bool force){
     if (not force){
         if (Math::mod(sim_state.iteration, settings::idmrg::store_freq) != 0) {return;}
     }

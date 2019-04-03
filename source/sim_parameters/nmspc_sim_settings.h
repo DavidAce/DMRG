@@ -35,7 +35,8 @@ namespace settings {
     namespace model {
         extern std::string  initial_state ;                   /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
         extern std::string  model_type    ;                   /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising} above*/
-        extern int          seed          ;                   /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
+        extern int          seed_init_mpo ;                   /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
+        extern int          seed_init_mps ;                   /*!< Seed for the random number generator when selecting the initial random product state. */
 
         //Parameters for the transverse-field Ising model
         namespace tf_ising {

@@ -62,8 +62,8 @@ public:
 //    virtual void initialize_constants()                         = 0;
     virtual void print_profiling()                              = 0;
     virtual void print_profiling_sim(class_tic_toc &t_parent)   = 0;
-    virtual void store_state_to_file(bool force = false)        = 0;
-    virtual void store_progress_to_file(bool force = false)     = 0;
+    virtual void store_state_and_measurements_to_file(bool force = false)        = 0;
+    virtual void store_table_entry_progress(bool force = false)     = 0;
 
     virtual long   chi_max()    = 0;
     virtual int    num_sites()  = 0;
@@ -106,7 +106,7 @@ public:
 
     // Profiling
     void store_profiling_to_file_delta(bool force = false);
-    void store_profiling_to_file_total(bool force = false);
+    void store_table_entry_profiling(bool force = false);
 
     class_tic_toc t_tot;
     class_tic_toc t_opt;

@@ -39,13 +39,20 @@ else()
             GIT_TAG             master
             PREFIX      ${BUILD_DIRECTORY}/arpack++
             INSTALL_DIR ${INSTALL_DIRECTORY}/arpack++
+#            CMAKE_ARGS
+#            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+#            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+#            -DARPACK_LIB=${ARPACK_LIBRARIES_GENERATOR}
+#            -LAPACK_LIBRARIES=${LAPACK_LIBRARIES_GENERATOR}
             UPDATE_COMMAND ""
             TEST_COMMAND ""
             INSTALL_COMMAND ""
             CONFIGURE_COMMAND ""
+#            BUILD_COMMAND
+#            ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include && find <INSTALL_DIR>/include -maxdepth 1 -type l -delete &&
+#            ${CMAKE_COMMAND} -E create_symlink <SOURCE_DIR>/include <INSTALL_DIR>/include/arpack++
             BUILD_COMMAND
-            ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include && find <INSTALL_DIR>/include -maxdepth 1 -type l -delete &&
-            ${CMAKE_COMMAND} -E create_symlink <SOURCE_DIR>/include <INSTALL_DIR>/include/arpack++
+            ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include <INSTALL_DIR>/include/arpack++
             DEPENDS arpack
             )
 

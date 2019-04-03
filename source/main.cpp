@@ -71,7 +71,8 @@ int main(int argc, char* argv[]) {
     //Normally an output filename is given in the input file. But it can also be given from command line.
     std::string inputfile  = "input.cfg";
     std::string outputfile = "output.h5";
-    int seed = -1; //Only accept non-negative seeds
+    int seed_init_mpo = -1; //Only accept non-negative seeds
+    int seed_init_mps = -1; //Only accept non-negative seeds
     int i = 0;
     std::vector<std::string> allArgs(argv+1, argv + argc);
     for (auto &arg_word : allArgs){
@@ -81,7 +82,8 @@ int main(int argc, char* argv[]) {
             log->info("Input argument {} : {}",i++,arg);
             if (arg.find(".cfg") != std::string::npos) {inputfile  = arg;}
             if (arg.find(".h5")  != std::string::npos) {outputfile = arg;}
-            if (arg.find_first_not_of( "0123456789" ) == std::string::npos){seed = std::stoi(arg);}
+            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_init_mpo < 0){seed_init_mpo = std::stoi(arg); continue;}
+            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_init_mps < 0){seed_init_mps = std::stoi(arg);}
         }
     }
 
@@ -103,18 +105,28 @@ int main(int argc, char* argv[]) {
         log->info("Replacing output filename {} --> {}",settings::hdf5::output_filename, outputfile);
         settings::hdf5::output_filename = outputfile;
     }
-    if (seed >= 0){
-        log->info("Replacing seed {} --> {}",settings::model::seed, seed);
-        settings::model::seed = seed;
-        //Append the seed to the output filename
+    if (seed_init_mpo >= 0){
+        log->info("Replacing seed_init_mpo {} --> {}",settings::model::seed_init_mpo, seed_init_mpo);
+        settings::model::seed_init_mpo = seed_init_mpo;
+        //Append the seed_init_mpo to the output filename
         namespace fs = std::experimental::filesystem;
         fs::path oldFileName = settings::hdf5::output_filename;
         fs::path newFileName = settings::hdf5::output_filename;
-        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(seed) + oldFileName.extension().string() );
+        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(seed_init_mpo) + oldFileName.extension().string() );
         settings::hdf5::output_filename = newFileName.string();
-        log->info("Appending seed to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
+        log->info("Appending seed_init_mpo to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
     }
-
+    if (seed_init_mps >= 0){
+        log->info("Replacing seed_init_mps {} --> {}",settings::model::seed_init_mps, seed_init_mps);
+        settings::model::seed_init_mps = seed_init_mps;
+        //Append the seed_init_mpo to the output filename
+        namespace fs = std::experimental::filesystem;
+        fs::path oldFileName = settings::hdf5::output_filename;
+        fs::path newFileName = settings::hdf5::output_filename;
+        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(seed_init_mps) + oldFileName.extension().string() );
+        settings::hdf5::output_filename = newFileName.string();
+        log->info("Appending seed_init_mps to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
+    }
 
 
     //Initialize the algorithm class

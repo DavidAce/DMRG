@@ -20,7 +20,10 @@ namespace settings{
     //Common parameters for the model Hamiltonian
     std::string model::model_type        = "tf_ising";                    /*!< The default choice of model type from the enum */
     std::string model::initial_state     = "rps";                         /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi)} "cat" or "random". Default "rps". Note that "random_chi" works poorly for finite algorithms */
-    int         model::seed              = 1;
+    int         model::seed_init_mpo     = 1;                             /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
+    int         model::seed_init_mps     = 1;                             /*!< Seed for the random number generator when selecting the initial random product state. */
+
+
     //Parameters for the transverse-field Ising model
     double model::tf_ising::J            = 1;                             /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
     double model::tf_ising::g            = 1;                             /*!< Transverse field strength */
@@ -135,8 +138,8 @@ void settings::load_from_file(class_settings_reader &indata){
     //Parameters for the model Hamiltonian
     model::model_type                   = indata.find_parameter<std::string>("model::model_type"   , model::model_type);
     model::initial_state                = indata.find_parameter<std::string>("model::initial_state", model::initial_state);
-    model::seed                         = indata.find_parameter<int>        ("model::seed"         , model::seed);
-
+    model::seed_init_mpo                = indata.find_parameter<int>        ("model::seed_init_mpo", model::seed_init_mpo);
+    model::seed_init_mps                = indata.find_parameter<int>        ("model::seed_init_mps", model::seed_init_mps);
 
     model::tf_ising::J                  = indata.find_parameter<double> ("model::tf_ising::J"    , model::tf_ising::J);
     model::tf_ising::g                  = indata.find_parameter<double> ("model::tf_ising::g"    , model::tf_ising::g);

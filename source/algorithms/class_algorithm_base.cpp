@@ -343,7 +343,7 @@ void class_algorithm_base::store_profiling_to_file_delta(bool force) {
     );
 }
 
-void class_algorithm_base::store_profiling_to_file_total(bool force) {
+void class_algorithm_base::store_table_entry_profiling(bool force) {
     if (not force and Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
     if (not force and not state->position_is_the_middle()) {return;}
     if (not settings::profiling::on or not settings::hdf5::store_profiling){return;}
@@ -376,7 +376,7 @@ void class_algorithm_base::initialize_superblock(std::string initial_state) {
     long d    = superblock->HA->get_spin_dimension();
     long chiA = superblock->MPS->chiA();
     long chiB = superblock->MPS->chiB();
-    std::srand((unsigned int) settings::model::seed);
+    std::srand((unsigned int) settings::model::seed_init_mps);
     Eigen::Tensor<Scalar,1> LA;
     Eigen::Tensor<Scalar,3> GA;
     Eigen::Tensor<Scalar,1> LC;
@@ -551,7 +551,7 @@ void class_algorithm_base::reset_full_mps_to_random_product_state(std::string pa
 
 //void class_algorithm_base::set_random_fields_in_chain_mpo() {
 //    log->info("Setting random fields in chain");
-//    rn::seed((unsigned long)settings::model::seed);
+//    rn::seed_init_mpo((unsigned long)settings::model::seed_init_mpo);
 //    if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
 //    assert(state->get_length() == (size_t)num_sites());
 //
@@ -580,10 +580,8 @@ void class_algorithm_base::reset_full_mps_to_random_product_state(std::string pa
 
 void class_algorithm_base::compute_observables(){
     log->trace("Starting all measurements on current superblock");
-//    ccout(3) << "STATUS: Doing all measurements on current superblock\n";
     t_obs.tic();
     superblock->do_all_measurements();
-//    measurement->compute_all_observables_from_superblock(*superblock);
     t_obs.toc();
 }
 

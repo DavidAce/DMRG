@@ -27,8 +27,8 @@ public:
     void run_postprocessing()                           override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
-    void store_state_to_file(bool force = false)        override;
-    void store_progress_to_file(bool force = false)     override;
+    void store_state_and_measurements_to_file(bool force = false)        override;
+    void store_table_entry_progress(bool force = false)     override;
     long   chi_max()                                    override;
     int    num_sites()                                  override;
     int    store_freq()                                 override;
