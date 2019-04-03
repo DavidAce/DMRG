@@ -51,7 +51,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_base(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG) {
     table_xdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
     table_xdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5ppFile, sim_name + "/measurements", "simulation_progress_full_chain",sim_name);
-    MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type, settings::xdmrg::num_sites, settings::model::seed);
+    MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type, settings::xdmrg::num_sites, settings::model::seed_init_mpo);
     MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
     min_saturation_length = 1 * (int)(0.5 * settings::xdmrg::num_sites);
     max_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
@@ -155,10 +155,10 @@ void class_xDMRG::run_simulation()    {
     while(true) {
         single_xDMRG_step();
         MPS_Tools::Finite::Chain::copy_superblock_to_state(*state, *superblock);
-        store_progress_to_file();
-        store_progress_chain_to_file();
-        store_profiling_to_file_total();
-        store_state_to_file();
+        store_table_entry_progress();
+        store_table_entry_site_state();
+        store_table_entry_profiling();
+        store_state_and_measurements_to_file();
 
         check_convergence();
         print_status_update();
@@ -173,10 +173,6 @@ void class_xDMRG::run_simulation()    {
         }
 
 
-
-
-
-
         update_bond_dimension(min_saturation_length);
         enlarge_environment(state->get_direction());
         move_center_point();
@@ -185,8 +181,6 @@ void class_xDMRG::run_simulation()    {
         sim_state.position = state->get_position();
         log->trace("Finished step {}, iteration {}",sim_state.step,sim_state.iteration);
     }
-    store_state_to_file(true);
-
     switch(stop_reason){
         case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
         case StopReason::CONVERGED : log->info("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
@@ -204,18 +198,8 @@ void class_xDMRG::run_postprocessing(){
 
     state->set_measured_false();
     superblock->set_measured_false();
-    state->do_all_measurements();
-    store_state_to_file(true);
 
-    MPS_Tools::Infinite::H5pp::write_all_measurements(*superblock,*h5ppFile,sim_name);
-    MPS_Tools::Finite::H5pp::write_all_measurements(*state,*h5ppFile,sim_name);
-
-//    MPS_Tools::Finite::Debug::print_parity_properties(*state);
-    MPS_Tools::Finite::H5pp::write_all_parity_projections(*state,*superblock,*h5ppFile,sim_name);
-    //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
-    if(settings::xdmrg::store_wavefn){
-        h5ppFile->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
-    }
+    store_state_and_measurements_to_file(true);
     print_status_full();
     print_profiling();
     log->info("Finished {} postprocessing",sim_name);
@@ -248,14 +232,6 @@ void class_xDMRG::single_xDMRG_step()
 
     std::tie(theta, sim_state.energy_now) = MPS_Tools::Finite::Opt::find_optimal_excited_state(*superblock,sim_state.energy_now,optMode, optSpace);
     sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
-//    if(sim_state.energy_now < sim_state.energy_lbound or sim_state.energy_now > sim_state.energy_ubound){
-//        std::stringstream window_warning;
-//        window_warning << "Energy far from target: \n" << std::setprecision(5)
-//                       << "            Current energy =  " << sim_state.energy_now    << " | density = " << (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min)  << "\n"
-//                       << "            Target energy  =  " << sim_state.energy_target << " | density = " << settings::xdmrg::energy_density << " +- " << settings::xdmrg::energy_window <<  std::endl;
-//        log->warn(window_warning.str());
-//    }
-
 
 
     t_opt.toc();
@@ -293,13 +269,14 @@ void class_xDMRG::check_convergence(){
         sim_state.simulation_has_to_stop = true;
     }
 
-    if (sim_state.variance_mpo_saturated_for >= 1 and not projected_once){
-        if(state->position_is_the_middle()){
-            *state = MPS_Tools::Finite::Ops::get_parity_projected_state(*state,qm::spinOneHalf::sx,1);
-            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-            projected_once = true;
-        }
-    }
+//    if (sim_state.variance_mpo_saturated_for >= 1 and not projected_once){
+//        if(state->position_is_the_middle()){
+//            *state = MPS_Tools::Finite::Ops::get_parity_projected_state(*state,qm::spinOneHalf::sx,1);
+//            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+//            clear_saturation_status();
+//            projected_once = true;
+//        }
+//    }
 
 
     t_con.toc();
@@ -323,6 +300,7 @@ void class_xDMRG::initialize_chain() {
 void class_xDMRG::find_energy_range() {
     log->trace("Finding energy range");
     assert(state->get_length() == (size_t)settings::xdmrg::num_sites);
+    std::srand((unsigned int) settings::model::seed_init_mps);
     int max_sweeps_during_f_range = 3;
     sim_state.iteration = state->reset_sweeps();
 
@@ -390,7 +368,7 @@ void class_xDMRG::find_energy_range() {
 
 }
 
-void class_xDMRG::store_state_to_file(bool force){
+void class_xDMRG::store_state_and_measurements_to_file(bool force){
     if(not force){
         if (not settings::hdf5::save_progress){return;}
         if (Math::mod(sim_state.iteration, settings::xdmrg::store_freq) != 0) {return;}
@@ -400,14 +378,26 @@ void class_xDMRG::store_state_to_file(bool force){
     }
     log->trace("Storing storing mps to file");
     t_sto.tic();
+    state->do_all_measurements();
+    h5ppFile->writeDataset(false, "/common/fileOK");
+    MPS_Tools::Infinite::H5pp::write_all_measurements(*superblock,*h5ppFile,sim_name);
+    MPS_Tools::Finite::H5pp::write_all_measurements(*state,*h5ppFile,sim_name);
+    MPS_Tools::Finite::H5pp::write_all_parity_projections(*state,*superblock,*h5ppFile,sim_name);
+    //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
+    if(settings::xdmrg::store_wavefn){
+        h5ppFile->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
+    }
+
+
     MPS_Tools::Finite::H5pp::write_all_state(*state, *h5ppFile, sim_name);
     MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5ppFile, sim_name);
-    t_sto.toc();
     store_algorithm_state_to_file();
+    h5ppFile->writeDataset(true, "/common/fileOK");
+    t_sto.toc();
 }
 
 
-void class_xDMRG::store_progress_to_file(bool force){
+void class_xDMRG::store_table_entry_progress(bool force){
     if(not force) {
         if (Math::mod(sim_state.iteration, settings::xdmrg::store_freq) != 0) { return; }
         if (not state->position_is_the_middle_any_direction()) { return; }
@@ -416,7 +406,7 @@ void class_xDMRG::store_progress_to_file(bool force){
 
     }
     compute_observables();
-    log->trace("Storing table_entry to file");
+    log->trace("Storing table entry to file");
     t_sto.tic();
     table_xdmrg->append_record(
             sim_state.iteration,
@@ -441,13 +431,14 @@ void class_xDMRG::store_progress_to_file(bool force){
 
 
 
-void class_xDMRG::store_progress_chain_to_file(bool force){
+void class_xDMRG::store_table_entry_site_state(bool force){
     if (not force) {
         if (Math::mod(sim_state.iteration, settings::xdmrg::store_freq) != 0) { return; }
         if (settings::xdmrg::store_freq == 0) { return; }
-        if (not state->position_is_the_middle()) { return; }
+//        if (not state->position_is_the_middle()) { return; }
         if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
     }
+
     log->trace("Storing chain_entry to file");
     t_sto.tic();
     table_xdmrg_chain->append_record(

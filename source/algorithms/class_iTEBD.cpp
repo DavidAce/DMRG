@@ -42,7 +42,7 @@ void class_iTEBD::run() {
     while(sim_state.iteration < settings::itebd::max_steps and not sim_state.simulation_has_converged) {
         single_TEBD_step(sim_state.chi_temp);
         sim_state.phys_time += sim_state.delta_t;
-        store_progress_to_file();
+        store_table_entry_progress();
         store_profiling_to_file_delta();
         print_status_update();
         check_convergence();
@@ -94,7 +94,7 @@ void class_iTEBD::single_TEBD_step(long chi){
 //    settings::itebd::store_freq   = itebd::settings::itebd::store_freq  ;
 //}
 
-void class_iTEBD::store_state_to_file(bool force){
+void class_iTEBD::store_state_and_measurements_to_file(bool force){
     if(not force){
         if (Math::mod(sim_state.iteration, settings::itebd::store_freq) != 0) {return;}
         if (settings::itebd::store_freq == 0){return;}
@@ -135,7 +135,7 @@ void class_iTEBD::check_convergence(){
 }
 
 
-void class_iTEBD::store_progress_to_file(bool force){
+void class_iTEBD::store_table_entry_progress(bool force){
     if (not force){
         if (Math::mod(sim_state.iteration, settings::itebd::store_freq) != 0) {return;}
     }

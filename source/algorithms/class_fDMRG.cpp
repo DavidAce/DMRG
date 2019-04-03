@@ -24,7 +24,7 @@ class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 
     table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
     table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5ppFile, sim_name + "/measurements", "simulation_progress_full_chain",sim_name);
-    MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type, settings::fdmrg::num_sites, settings::model::seed);
+    MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type, settings::fdmrg::num_sites, settings::model::seed_init_mpo);
     MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
 
     min_saturation_length = 1 * (int)(0.5 * settings::fdmrg::num_sites);
@@ -126,10 +126,10 @@ void class_fDMRG::run_simulation(){
     while(true) {
         single_DMRG_step();
         copy_superblock_to_chain();         //Needs to occurr after update_MPS...
-        store_progress_to_file();
+        store_table_entry_progress();
         store_chain_entry_to_file();
         store_profiling_to_file_delta();
-        store_state_to_file();
+        store_state_and_measurements_to_file();
 
         check_convergence();
         print_status_update();
@@ -219,7 +219,7 @@ void class_fDMRG::check_convergence(){
 
 
 
-void class_fDMRG::store_state_to_file(bool force){
+void class_fDMRG::store_state_and_measurements_to_file(bool force){
     if(not force){
         if (Math::mod(sim_state.iteration, settings::fdmrg::store_freq) != 0) {return;}
         if (not state->position_is_the_middle_any_direction()) {return;}
@@ -238,7 +238,7 @@ void class_fDMRG::store_state_to_file(bool force){
 }
 
 
-void class_fDMRG::store_progress_to_file(bool force){
+void class_fDMRG::store_table_entry_progress(bool force){
     if (not force){
         if (Math::mod(sim_state.iteration, settings::fdmrg::store_freq) != 0) {return;}
         if (not state->position_is_the_middle()) {return;}

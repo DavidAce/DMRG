@@ -118,7 +118,6 @@ void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_s
             if(mps_it->get_chiL() != env_it->block.dimension(0))
                 throw std::runtime_error("Mismatch in MPS and ENV dimensions (left side) @ site " + std::to_string(i) + ": " +  std::to_string(mps_it->get_chiL()) + " " + std::to_string(env_it->block.dimension(0)));
 
-
             if(env_it->block.dimension(2) != mpo_it->get()->MPO().dimension(0))
                 throw std::runtime_error("Mismatch in ENV and MPO dimensions (left side) @ site " + std::to_string(i) + ": " + std::to_string(env_it->block.dimension(2)) + " " + std::to_string(mpo_it->get()->MPO().dimension(0)));
 

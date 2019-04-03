@@ -44,9 +44,9 @@ public:
     void check_convergence()                            override;
     void print_profiling()                              override;
     void print_profiling_sim(class_tic_toc &t_parent)   override;
-    void store_state_to_file(bool force = false)        override;
-    void store_progress_to_file(bool force = false)     override;
-    void store_progress_chain_to_file(bool force = false);
+    void store_state_and_measurements_to_file(bool force = false)        override;
+    void store_table_entry_progress(bool force = false)     override;
+    void store_table_entry_site_state(bool force = false);
     void single_xDMRG_step();
     void initialize_chain();
     void find_energy_range();
