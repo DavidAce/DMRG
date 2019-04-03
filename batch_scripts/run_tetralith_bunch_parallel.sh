@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #SBATCH --exclusive
-#SBATCH --job-name=DMRG
+#SBATCH --job-name=DMRG256
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=32
-#SBATCH --time=0-1:00:00
+#SBATCH --time=0-36:00:00
 #SBATCH --mem-per-cpu=2000
 #SBATCH --kill-on-invalid-dep=yes
 

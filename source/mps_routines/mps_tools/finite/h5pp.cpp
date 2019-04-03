@@ -22,7 +22,6 @@ using Scalar    = std::complex<double>;
 void MPS_Tools::Finite::H5pp::write_all_state(class_finite_chain_state &state, h5pp::File & h5ppFile,
                                               std::string sim_name) {
     if(state.has_been_written()){return;}
-
     if (settings::hdf5::storage_level >= StorageLevel::LIGHT){
         write_bond_matrices(state,h5ppFile,sim_name);
         write_hamiltonian_params(state,h5ppFile,sim_name);
@@ -33,7 +32,6 @@ void MPS_Tools::Finite::H5pp::write_all_state(class_finite_chain_state &state, h
         write_2site_env(state,h5ppFile,sim_name);
         write_2site_env2(state,h5ppFile,sim_name);
     }
-
 
     if (settings::hdf5::storage_level >= StorageLevel::FULL){
         write_full_mps(state,h5ppFile,sim_name);
@@ -207,8 +205,7 @@ void MPS_Tools::Finite::H5pp::write_all_measurements(class_finite_chain_state & 
     h5ppFile.writeDataset(state.measurements.spin_component_sx           , sim_name + "/measurements/full/spin_component_sx");
     h5ppFile.writeDataset(state.measurements.spin_component_sy           , sim_name + "/measurements/full/spin_component_sy");
     h5ppFile.writeDataset(state.measurements.spin_component_sz           , sim_name + "/measurements/full/spin_component_sz");
-    bool OK = true;
-    h5ppFile.writeDataset(OK, sim_name + "/simOK");
+
 }
 
 

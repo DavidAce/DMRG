@@ -36,9 +36,7 @@ for num_L in sites:
                     "model::selfdual_tf_rf_ising::h_sigma"        : "1.0",
                     "model::seed"                                 : str(num_total),
                     "xdmrg::num_sites"                            : str(num_L),
-                    "xdmrg::chi_max"                              : "128",
-                    "fdmrg::num_sites"                            : str(num_L),
-                    "fdmrg::chi_max"                              : "64",
+                    "xdmrg::chi_max"                              : "256",
                     "hdf5::output_filename"                       : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h)+ '/' + basename + '.h5'
                 }
                 num_total = num_total + 1
