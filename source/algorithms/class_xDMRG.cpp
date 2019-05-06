@@ -252,7 +252,16 @@ void class_xDMRG::check_convergence(){
 //    if(sim_state.iteration < 5){return;}
     t_sim.tic();
     t_con.tic();
-    if (sim_state.iteration <= settings::xdmrg::min_sweeps){clear_saturation_status();}
+    if (sim_state.iteration <= settings::xdmrg::min_sweeps){
+        if(state->position_is_the_middle()){
+            *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
+            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+        }
+        clear_saturation_status();
+    }
+
+
+
     check_convergence_variance_mpo();
     if(sim_state.variance_mpo_has_converged)
     {
@@ -269,14 +278,14 @@ void class_xDMRG::check_convergence(){
         sim_state.simulation_has_to_stop = true;
     }
 
-//    if (sim_state.variance_mpo_saturated_for >= 1 and not projected_once){
-//        if(state->position_is_the_middle()){
-//            *state = MPS_Tools::Finite::Ops::get_parity_projected_state(*state,qm::spinOneHalf::sx,1);
-//            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-//            clear_saturation_status();
-//            projected_once = true;
-//        }
-//    }
+    if (sim_state.variance_mpo_saturated_for >= 1 and not projected_once){
+        if(state->position_is_the_middle()){
+            *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
+            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+            clear_saturation_status();
+            projected_once = true;
+        }
+    }
 
 
     t_con.toc();

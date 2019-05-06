@@ -214,7 +214,7 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     if (mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
-    spdlog::trace("Applying MPO's");
+    MPS_Tools::log->trace("Applying MPO's");
     // Print bond dimensions:
     //    for(auto & mps : state.get_MPS_L()){
     //        std::cout << "start chi : " << mps.get_chiL() << std::endl;
@@ -406,7 +406,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 //
 //
 //    // First the left side
-//    spdlog::trace("Starting normalization");
+//    MPS_Tools::log->trace("Starting normalization");
 //    class_SVD<Scalar> svd;
 ////    svd.setThreshold(1e-8);
 //    {
@@ -537,7 +537,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 void MPS_Tools::Finite::Ops::normalize_chain2(class_finite_chain_state & state){
 
     // First the left side
-    spdlog::trace("Starting normalization");
+    MPS_Tools::log->trace("Starting normalization");
     class_SVD<Scalar> svd;
 //    svd.setThreshold(1e-8);
     {
@@ -693,7 +693,6 @@ void MPS_Tools::Finite::Ops::reset_to_random_product_state(class_finite_chain_st
 }
 
 
-
 void MPS_Tools::Finite::Ops::apply_energy_mpo_test(class_finite_chain_state &state, [[maybe_unused]]class_superblock &superblock) {
 
 //    const auto [mpo,L,R]    = class_mpo::pauli_mpo(paulimatrix);
@@ -767,6 +766,16 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(cons
     return state_projected;
 }
 
+class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix) {
+    double measured_spin_component = MPS_Tools::Finite::Measure::spin_component(state, paulimatrix);
+    if (measured_spin_component > 0){
+        return get_parity_projected_state(state, paulimatrix,1);
+    }else{
+        return get_parity_projected_state(state, paulimatrix,-1);
+    }
+
+
+}
 
 
 void MPS_Tools::Finite::Ops::rebuild_superblock(class_finite_chain_state &state, class_superblock &superblock) {

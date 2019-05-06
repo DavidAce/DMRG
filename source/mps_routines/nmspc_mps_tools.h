@@ -64,7 +64,9 @@ namespace MPS_Tools{
             extern double expectation_value           (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
             extern double exp_sq_value                (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,4> Ledge, const Eigen::Tensor<std::complex<double>,4> Redge);
             extern class_finite_chain_state
-                        get_parity_projected_state    (const class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix, const int sign);
+            get_parity_projected_state                (const class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix, const int sign);
+            extern class_finite_chain_state
+            get_closest_parity_state                  (const class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix);
         }
 
 

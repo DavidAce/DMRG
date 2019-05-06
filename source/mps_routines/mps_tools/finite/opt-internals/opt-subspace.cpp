@@ -39,7 +39,7 @@ std::vector<int> MPS_Tools::Finite::Opt::internals::generate_size_list(const int
 
 std::tuple<Eigen::MatrixXd, Eigen::VectorXd>
 MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superblock, double energy_shift,OptMode & optMode, OptSpace &optSpace){
-    spdlog::trace("Finding subspace");
+    MPS_Tools::log->trace("Finding subspace");
 
     using namespace eigutils::eigSetting;
     t_ham->tic();
@@ -51,7 +51,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
     StlMatrixProduct<double> hamiltonian_sparse (H_local.data(),H_local.rows(),Form::SYMMETRIC,Side::R, true);
     t_eig->toc();
     Eigen::VectorXd overlaps;
-    std::vector<std::tuple<int,double,double,double,double,double,double,double>> result_log;
+    std::vector<std::tuple<int,double,double,double,double,double,double>> result_log;
     const auto theta = superblock.get_theta();
     Eigen::Map<const Eigen::VectorXcd> theta_old (theta.data(),theta.size());
     int chain_length = superblock.get_length();
@@ -76,13 +76,12 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
             << "      chi         : "    << superblock.get_chi() << '\n'
             << "      shape       : "    << theta.size() << " x " << theta.size() << '\n'
             << "      sparcity    : "    << sparcity << '\n' << '\n' << std::flush;
-    spdlog::debug(problem_report.str());
+    MPS_Tools::log->debug(problem_report.str());
     class_eigsolver solver;
     std::string reason = "none";
     bool has_solution = false;
     for (auto nev : generate_size_list(theta.size())){
         t_eig->tic();
-        double start_time = 0;//  t_tot->get_age();
         if (nev <= 0 and optMode == OptMode::OVERLAP and has_solution){reason = "good enough for overlap mode"; break;}
         if (nev > 0 and  optSpace == OptSpace::PARTIAL){
             hamiltonian_sparse.set_shift(energy_shift*chain_length);
@@ -110,7 +109,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
         subspace_quality = 1.0 - sq_sum_overlap;
         has_solution     = true;
 //        offset           = sim_state.energy_target - eigvals(best_state_idx)/chain_length;
-        result_log.emplace_back(nev, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig->get_last_time_interval(),t_lu,start_time);
+        result_log.emplace_back(nev, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig->get_last_time_interval(),t_lu);
         if(max_overlap    > 1.0 + 1e-10) throw std::runtime_error("max_overlap larger than one : " + std::to_string(max_overlap));
         if(sq_sum_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : " + std::to_string(sq_sum_overlap));
         if(min_overlap    < 0.0)         throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
@@ -122,7 +121,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
 
     }
     H_local.resize(0,0);
-    spdlog::debug("Finished eigensolver -- condition: {}",reason);
+    MPS_Tools::log->debug("Finished eigensolver -- condition: {}",reason);
 
     auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data(),solver.solution.meta.cols);
     auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
@@ -135,7 +134,6 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
                   << std::setw(32) << std::right << "quality = log10(1 - eps)"
                   << std::setw(18) << std::right << "Eig Time[ms]"
                   << std::setw(18) << std::right << "LU  Time[ms]"
-                  << std::setw(18) << std::right << "Wall Time [s]"
                   << '\n';
     for(auto &log : result_log){
         solver_report
@@ -147,11 +145,10 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
                 << std::setw(32) << std::right << std::get<4>(log) << std::setprecision(3)
                 << std::setw(18) << std::right << std::get<5>(log)*1000
                 << std::setw(18) << std::right << std::get<6>(log)*1000
-                << std::setw(18) << std::right << std::get<7>(log)
                 << '\n';
     }
     solver_report << '\n' << std::flush;
-    spdlog::debug(solver_report.str());
+    MPS_Tools::log->debug(solver_report.str());
 
     if (optMode == OptMode::OVERLAP){
         return std::make_tuple(eigvecs.col(best_state_idx),eigvals.row(best_state_idx));
@@ -163,7 +160,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
 
 std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
 MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock & superblock, double energy_shift, OptMode &optMode, OptSpace &optSpace){
-    spdlog::trace("Optimizing in SUBSPACE mode");
+    MPS_Tools::log->trace("Optimizing in SUBSPACE mode");
     using Scalar = std::complex<double>;
     auto [eigvecs,eigvals]  = find_subspace(superblock,energy_shift, optMode,optSpace);
 
@@ -182,12 +179,11 @@ MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock 
 
     double overlap_new  = 0;
     double energy_new,variance_new;
-    double start_time =  t_tot->get_age();
     //Should really use xstart as the projection towards the previous theta, not best overlapping!
     // Note that alpha_i = <theta_old | theta_new_i> is not supposed to be squared! The overlap
     // Between xstart and theta_old should be
     Eigen::VectorXd xstart = (theta_old.adjoint() * eigvecs).normalized().real();
-    std::vector<std::tuple<std::string,int,double,double,double,int,int,double,double>> opt_log;
+    std::vector<std::tuple<std::string,int,double,double,double,int,int,double>> opt_log;
 
     {
         t_opt->tic();
@@ -198,8 +194,7 @@ MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock 
         int iter_0 = 0;
         double overlap_0 = (theta_old.adjoint() * theta_0).cwiseAbs().sum();
 
-        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, std::log10(variance_0/chain_length), overlap_0, iter_0,0, t_opt->get_last_time_interval(), start_time);
-        start_time = t_tot->get_age();
+        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, std::log10(variance_0/chain_length), overlap_0, iter_0,0, t_opt->get_last_time_interval());
         using namespace LBFGSpp;
         MPS_Tools::Finite::Opt::internals::subspace_functor
                 functor (
@@ -224,7 +219,7 @@ MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock 
         // x will be overwritten to be the best point found
         double fx;
         t_opt->tic();
-        spdlog::trace("Running LBFGS");
+        MPS_Tools::log->trace("Running LBFGS");
         int niter = solver_3.minimize(functor, xstart, fx);
         int counter = functor.get_count();
         t_opt->toc();
@@ -234,8 +229,8 @@ MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock 
         variance_new = functor.get_variance()/chain_length;
         overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
 //        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_lbfgs.get_last_time_interval(), 0);
-        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval(), t_tot->get_age());
-        spdlog::trace("Finished LBFGS");
+        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval());
+        MPS_Tools::log->trace("Finished LBFGS");
     }
 
     std::stringstream report;
@@ -249,7 +244,6 @@ MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock 
               <<"    "<< std::setw(8)  << std::left << "counter"
               <<"    "<< std::setw(20) << std::left << "Elapsed time [ms]"
               <<"    "<< std::setw(20) << std::left << "Time per count [ms]"
-              <<"    "<< std::setw(20) << std::left << "Wall time [s]"
               << '\n';
     for(auto &log : opt_log){
         report   << std::setprecision(16)
@@ -262,10 +256,9 @@ MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock 
                  << "    " << std::setw(8)  << std::left << std::fixed << std::get<6>(log) << std::setprecision(3)
                  << "    " << std::setw(20) << std::left << std::fixed << std::get<7>(log)*1000
                  << "    " << std::setw(20) << std::left << std::fixed << std::get<7>(log)*1000 / (double)std::get<6>(log)
-                 << "    " << std::setw(20) << std::left << std::fixed << std::get<8>(log)
                  << '\n';
     }
-    spdlog::debug(report.str());
+    MPS_Tools::log->debug(report.str());
 
     return std::make_tuple(
             Textra::Matrix_to_Tensor(theta_new, superblock.dimensions()),
@@ -346,16 +339,14 @@ double MPS_Tools::Finite::Opt::internals::subspace_functor::operator()(const Eig
     }
 
     if(std::isnan(log10var) or std::isinf(log10var)){
-        spdlog::warn("log10 variance is invalid");
-        std::cout << "v: \n" << v << std::endl;
-        std::cout << "grad: \n" << grad << std::endl;
-        spdlog::warn("vH2v            = {}" , vH2v );
-        spdlog::warn("vEv             = {}" , vEv  );
-        spdlog::warn("vv              = {}" , vv   );
-        spdlog::warn("vH2v/vv         = {}" , vH2v/vv    );
-        spdlog::warn("vEv*vEv/vv/vv   = {}" , vEv*vEv/vv/vv    );
-        spdlog::warn("var             = {}" , var);
-        spdlog::warn("log10var        = {}" , log10var );
+        MPS_Tools::log->warn("log10 variance is invalid");
+        MPS_Tools::log->warn("vH2v            = {}" , vH2v );
+        MPS_Tools::log->warn("vEv             = {}" , vEv  );
+        MPS_Tools::log->warn("vv              = {}" , vv   );
+        MPS_Tools::log->warn("vH2v/vv         = {}" , vH2v/vv    );
+        MPS_Tools::log->warn("vEv*vEv/vv/vv   = {}" , vEv*vEv/vv/vv    );
+        MPS_Tools::log->warn("var             = {}" , var);
+        MPS_Tools::log->warn("log10var        = {}" , log10var );
 //                exit(1);
         log10var    = std::abs(var) ==0  ?  -20.0 : std::log10(std::abs(var));
     }
