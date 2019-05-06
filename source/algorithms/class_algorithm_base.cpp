@@ -265,6 +265,7 @@ void class_algorithm_base::check_convergence_entanglement(double slope_threshold
 }
 
 void class_algorithm_base::update_bond_dimension(int min_saturation_length){
+    sim_state.chi_max = chi_max();
     if(not chi_grow() or sim_state.bond_dimension_has_reached_max or sim_state.chi_temp == chi_max() ){
         sim_state.chi_temp = chi_max();
         sim_state.bond_dimension_has_reached_max = true;
@@ -310,7 +311,7 @@ void class_algorithm_base::clear_saturation_status(){
 
 
 void class_algorithm_base::store_algorithm_state_to_file(){
-    if (settings::hdf5::storage_level <= StorageLevel::LIGHT){return;}
+    if (settings::hdf5::storage_level < StorageLevel::LIGHT){return;}
     log->trace("Storing simulation state to file");
     t_sto.tic();
     MPS_Tools::Common::H5pp::write_algorithm_state(sim_state, *h5ppFile, sim_name);

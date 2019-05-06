@@ -17,7 +17,7 @@
 
 std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
 MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & superblock){
-    spdlog::trace("Optimizing in DIRECT mode");
+    MPS_Tools::log->trace("Optimizing in DIRECT mode");
     using Scalar = std::complex<double>;
     class_tic_toc t_lbfgs(true,5,"lbfgs");
     t_opt->tic();
@@ -38,16 +38,16 @@ MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & 
             << "      position    : "    << superblock.get_position() << '\n'
             << "      chi         : "    << superblock.get_chi() << '\n'
             << "      shape       : "    << theta.size() << " x " << theta.size() << '\n' << '\n' << std::flush;
-    spdlog::debug(problem_report.str());
+    MPS_Tools::log->debug(problem_report.str());
 
 
-    std::vector<std::tuple<std::string,int,double,Scalar,double,int,int,double,double>> opt_log;
+    std::vector<std::tuple<std::string,int,double,Scalar,double,int,int,double>> opt_log;
     {
         int iter_0 = 0;
         double energy_0   = MPS_Tools::Common::Measure::energy_mpo(superblock,theta);
         double variance_0 = MPS_Tools::Common::Measure::energy_variance_mpo(superblock,theta,energy_0);
         t_opt->toc();
-        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, std::log10(variance_0/chain_length), 1.0, iter_0 ,0,t_opt->get_last_time_interval(),  t_tot->get_age());
+        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, std::log10(variance_0/chain_length), 1.0, iter_0 ,0,t_opt->get_last_time_interval());
         t_opt->tic();
         using namespace LBFGSpp;
         MPS_Tools::Finite::Opt::internals::direct_functor functor (superblock);
@@ -68,7 +68,7 @@ MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & 
         LBFGSpp::LBFGSSolver<double> solver_3(param);
         // x will be overwritten to be the best point found
         double fx;
-        spdlog::trace("Running LBFGS");
+        MPS_Tools::log->trace("Running LBFGS");
         int niter = solver_3.minimize(functor, xstart, fx);
         int counter = functor.get_count();
         t_opt->toc();
@@ -79,9 +79,9 @@ MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & 
         variance_new = functor.get_variance()/chain_length;
         overlap_new  = (theta_old.adjoint() * xstart).cwiseAbs().sum();
 //        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval(), 0);
-        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval(), t_tot->get_age());
-        spdlog::trace("Time in function = {:.3f}", t_opt->get_measured_time()*1000);
-        spdlog::trace("Finished LBFGS");
+        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval());
+        MPS_Tools::log->trace("Time in function = {:.3f}", t_opt->get_measured_time()*1000);
+        MPS_Tools::log->trace("Finished LBFGS");
 
     }
     std::stringstream report;
@@ -95,7 +95,6 @@ MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & 
               <<"    "<< std::setw(8)  << std::left << "counter"
               <<"    "<< std::setw(20) << std::left << "Elapsed time [ms]"
               <<"    "<< std::setw(20) << std::left << "Time per count [ms]"
-              <<"    "<< std::setw(20) << std::left << "Wall time [s]"
               << '\n';
     for(auto &log : opt_log){
         report   << std::setprecision(16)
@@ -108,11 +107,10 @@ MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & 
                  << "    " << std::setw(8)  << std::left << std::fixed << std::get<6>(log) << std::setprecision(3)
                  << "    " << std::setw(20) << std::left << std::fixed << std::get<7>(log)*1000
                  << "    " << std::setw(20) << std::left << std::fixed << std::get<7>(log)*1000 / (double)std::get<6>(log)
-                 << "    " << std::setw(20) << std::left << std::fixed << std::get<8>(log)
                  << '\n';
     }
     report << '\n';
-    spdlog::debug(report.str());
+    MPS_Tools::log->debug(report.str());
 
     return  std::make_tuple(Textra::Matrix_to_Tensor(xstart.cast<Scalar>(), superblock.dimensions()), energy_new);
 }
@@ -203,15 +201,15 @@ double MPS_Tools::Finite::Opt::internals::direct_functor::operator()(const Eigen
     }
 //    grad.normalize(); //Seems to stabilize the step size
     if(std::isnan(log10var) or std::isinf(log10var)){
-        spdlog::warn("log10 variance is invalid");
+        MPS_Tools::log->warn("log10 variance is invalid");
         std::cout << "v: \n" << v << std::endl;
         std::cout << "grad: \n" << grad << std::endl;
-        spdlog::warn("vH2v            = {}" , vH2v );
-        spdlog::warn("vHv             = {}" , vHv  );
-        spdlog::warn("vv              = {}" , vv   );
-        spdlog::warn("vH2v/vv         = {}" , vH2v/vv    );
-        spdlog::warn("vEv*vEv/vv/vv   = {}" , vHv*vHv/vv/vv    );
-        spdlog::warn("var             = {}" , var);
+        MPS_Tools::log->warn("vH2v            = {}" , vH2v );
+        MPS_Tools::log->warn("vHv             = {}" , vHv  );
+        MPS_Tools::log->warn("vv              = {}" , vv   );
+        MPS_Tools::log->warn("vH2v/vv         = {}" , vH2v/vv    );
+        MPS_Tools::log->warn("vEv*vEv/vv/vv   = {}" , vHv*vHv/vv/vv    );
+        MPS_Tools::log->warn("var             = {}" , var);
         exit(1);
         log10var    = std::abs(var) == 0  ?  -20.0 : std::log10(std::abs(var));
     }

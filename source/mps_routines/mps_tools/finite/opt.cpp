@@ -14,7 +14,7 @@
 
 std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
 MPS_Tools::Finite::Opt::find_optimal_excited_state(const class_superblock & superblock, double energy_shift, OptMode optMode, OptSpace optSpace){
-    spdlog::trace("Finding optimal excited state");
+    MPS_Tools::log->trace("Finding optimal excited state");
     internals::initialize_timers();
     if (optSpace == OptSpace::DIRECT){
         return internals::direct_optimization(superblock);

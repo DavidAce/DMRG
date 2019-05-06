@@ -12,6 +12,7 @@ void MPS_Tools::Common::H5pp::write_algorithm_state(const class_simulation_state
     h5ppFile.writeDataset(sim_state.step                          ,sim_name + "/sim_state/step");
     h5ppFile.writeDataset(sim_state.position                      ,sim_name + "/sim_state/position");
     h5ppFile.writeDataset(sim_state.chi_temp                      ,sim_name + "/sim_state/chi_temp");
+    h5ppFile.writeDataset(sim_state.chi_max                       ,sim_name + "/sim_state/chi_max");
     h5ppFile.writeDataset(sim_state.min_sweeps                    ,sim_name + "/sim_state/min_sweeps");
     h5ppFile.writeDataset(sim_state.simulation_has_converged      ,sim_name + "/sim_state/simulation_has_converged");
     h5ppFile.writeDataset(sim_state.simulation_has_to_stop        ,sim_name + "/sim_state/simulation_has_to_stop");

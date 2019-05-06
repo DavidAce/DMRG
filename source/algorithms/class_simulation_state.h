@@ -16,6 +16,7 @@ public:
     int    step                           = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
     int    position                       = 0;
     long   chi_temp                       = 8;
+    long   chi_max                        = 8;
     int    min_sweeps                     = 2 ;
     double energy_min                     = 0;
     double energy_max                     = 0;
@@ -52,6 +53,7 @@ public:
                   << std::string("step                           : ")  << sim_state.step                                              << '\n'
                   << std::string("position                       : ")  << sim_state.position                                          << '\n'
                   << std::string("chi_temp                       : ")  << sim_state.chi_temp                                          << '\n'
+                  << std::string("chi_max                        : ")  << sim_state.chi_max                                           << '\n'
                   << std::string("min_sweeps                     : ")  << sim_state.min_sweeps                                        << '\n'
                   << std::string("energy_min                     : ")  << sim_state.energy_min                                        << '\n'
                   << std::string("energy_max                     : ")  << sim_state.energy_max                                        << '\n'

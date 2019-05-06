@@ -237,11 +237,9 @@ std::vector<double> MPS_Tools::Finite::Measure::parities(class_finite_chain_stat
     state.measurements.spin_component_sx                      = Measure::spin_component(state, qm::spinOneHalf::sx);
     state.measurements.spin_component_sy                      = Measure::spin_component(state, qm::spinOneHalf::sy);
     state.measurements.spin_component_sz                      = Measure::spin_component(state, qm::spinOneHalf::sz);
-    std::vector<double> parities = {
-            state.measurements.spin_component_sx,
+    return {state.measurements.spin_component_sx,
             state.measurements.spin_component_sy,
             state.measurements.spin_component_sz};
-    return parities;
 }
 
 
