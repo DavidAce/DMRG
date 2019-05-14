@@ -13,5 +13,5 @@ batch_scripts/logs/*
 batch_scripts/input/*
 batch_scripts/output/*
 batch_scripts/bunch/*
-*/__pychache__
-*/__pycache__/*
+__pycache__/
+*.pyc
