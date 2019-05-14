@@ -49,7 +49,7 @@ int main()
 
 
     std::string output_filename         = "Testing/h5pp_test.h5";
-    h5pp::File h5ppFile (output_filename);
+    h5pp::File h5ppFile (output_filename, h5pp::AccessMode::READWRITE, h5pp::CreateMode::TRUNCATE,0);
     std::cout << "Writing vectorD: " <<  vectorD  << std::endl;
     std::cout << "Writing vectorC: " <<  vectorC  << std::endl;
     std::cout << "Writing tensorC: " <<  tensorC  << std::endl;
