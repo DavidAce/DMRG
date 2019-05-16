@@ -28,6 +28,7 @@ if(NOT BLAS_FOUND)
             $ENV{HOME}/anaconda3/lib
             $ENV{HOME}/anaconda3
             /usr/lib/x86_64-linux-gnu/
+            /usr/lib/
             )
 
     if(OpenBLAS_FOUND AND OpenBLAS_LIBRARIES AND NOT OpenBLAS_LIBRARY)
