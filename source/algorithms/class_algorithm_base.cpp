@@ -306,6 +306,10 @@ void class_algorithm_base::clear_saturation_status(){
     sim_state.variance_ham_has_saturated      = false;
     sim_state.variance_mom_has_saturated      = false;
 
+    sim_state.variance_mpo_saturated_for = 0;
+    sim_state.variance_ham_saturated_for = 0;
+    sim_state.variance_mom_saturated_for = 0;
+
 
 }
 

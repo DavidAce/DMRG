@@ -38,6 +38,11 @@ namespace MPS_Tools::Finite::Opt{
         extern std::shared_ptr<class_tic_toc> t_eig;
         extern std::shared_ptr<class_tic_toc> t_ham;
         extern std::shared_ptr<class_tic_toc> t_tot;
+        extern std::shared_ptr<class_tic_toc> t_vH2v;
+        extern std::shared_ptr<class_tic_toc> t_vHv ;
+        extern std::shared_ptr<class_tic_toc> t_vH2 ;
+        extern std::shared_ptr<class_tic_toc> t_vH  ;
+        extern std::shared_ptr<class_tic_toc> t_op  ;
 
 
         struct superblock_components{
@@ -52,8 +57,10 @@ namespace MPS_Tools::Finite::Opt{
             Eigen::DSizes<long,4>   dsizes;
         };
 
-
-
+        extern std::pair<Eigen::VectorXd,double>
+                get_vH_vHv(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components & superblock);
+        extern std::pair<Eigen::VectorXd,double>
+                get_vH2_vH2v(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components & superblock);
         extern double          get_vH2v(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components & superblock);
         extern double          get_vHv (const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components & superblock);
         extern Eigen::VectorXd get_vH2 (const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components & superblock);
@@ -106,9 +113,8 @@ namespace MPS_Tools::Finite::Opt{
         private:
             superblock_components superblock;
         public:
-            direct_functor(const class_superblock &superblock);
+            explicit direct_functor(const class_superblock &superblock);
             double operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) override;
-
         };
 
 
