@@ -10,14 +10,16 @@ endif()
 message(STATUS "SEARCHING FOR ARPACK IN SYSTEM")
 find_library(ARPACK_LIBRARIES
         NAMES libarpack${ARPACK_LIBRARY_SUFFIX}
-        PATHS /usr/lib/x86_64-linux-gnu/
+        PATHS
+            /usr/lib/x86_64-linux-gnu/
+            /usr/lib
         NO_DEFAULT_PATH
-        )
+    )
 
 if (NOT ARPACK_LIBRARIES)
     # Try finding arpack as module library
+    message(STATUS "ARPACK NOT FOUND IN SYSTEM. SEARCH RETURNED:  ${ARPACK_LIBRARIES}")
     message(STATUS "SEARCHING FOR ARPACK IN LOADED MODULES")
-
     find_library(ARPACK_LIBRARIES
             NAMES libarpack${ARPACK_LIBRARY_SUFFIX} arpack
             PATHS "$ENV{ARPACK_DIR}/lib" "$ENV{ARPACK_DIR}/lib64"
