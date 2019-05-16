@@ -111,6 +111,43 @@ matrix:
         - conda install --yes hdf5 eigen
         - conda install --yes -c conda-forge openblas
 
+    - os: linux
+      compiler: gcc-7 (preinstalled libs)
+      env:
+        - COMPILER_NAME=gcc
+        - GCC_VERSION=7
+        - CC=gcc-7
+        - CXX=g++-7
+        - FC=gfortran-7
+        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+      cache:
+        apt: true
+      addons:
+        apt:
+          update: true
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - gcc-7
+            - g++-7
+            - gfortran-7
+            - libsz2
+            - zlibc
+            - libgsl0-dev
+            - libopenblas-dev
+            - libarpack2-dev
+            - libarpack++2-dev
+            - liblapacke
+            - liblapacke-dev
+      before_install:
+        # Here we just install Miniconda, which you shouldn't have to change.
+        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        - chmod +x miniconda.sh
+        - ./miniconda.sh -b -p $HOME/miniconda
+        - export PATH=$HOME/miniconda/bin:$PATH
+        - conda update --yes conda
+        - conda install --yes hdf5 eigen
+
 #    - os: osx
 #      osx_image: xcode10.1 #Newer versions don't like experimental/filesystem or _stdio.h?
 #      compiler: gcc-7
