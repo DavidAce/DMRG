@@ -767,9 +767,10 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(cons
 }
 
 class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix) {
+    MPS_Tools::log->trace("Finding closest projection");
     double measured_spin_component = MPS_Tools::Finite::Measure::spin_component(state, paulimatrix);
     if (measured_spin_component > 0){
-        return get_parity_projected_state(state, paulimatrix,1);
+        return get_parity_projected_state(state, paulimatrix, 1);
     }else{
         return get_parity_projected_state(state, paulimatrix,-1);
     }

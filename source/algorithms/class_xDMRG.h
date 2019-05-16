@@ -32,7 +32,8 @@ public:
     enum class xDMRG_Mode {KEEP_BEST_OVERLAP,FULL_EIG_OPT,PARTIAL_EIG_OPT, DIRECT_OPT};
     int    min_saturation_length;
     int    max_saturation_length;
-    bool   projected_once = false;
+    bool   projected_during_warmup      = false;
+    bool   projected_during_saturation  = false;
 
     //Energy ranges
 

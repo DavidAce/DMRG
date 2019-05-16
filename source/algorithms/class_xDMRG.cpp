@@ -53,8 +53,8 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     table_xdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5ppFile, sim_name + "/measurements", "simulation_progress_full_chain",sim_name);
     MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type, settings::xdmrg::num_sites, settings::model::seed_init_mpo);
     MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
-    min_saturation_length = 1 * (int)(0.5 * settings::xdmrg::num_sites);
-    max_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
+    min_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
+    max_saturation_length = 1 * (int)(2.0 * settings::xdmrg::num_sites);
     settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(int)(std::log2(chi_max())/2));
 }
 
@@ -172,7 +172,6 @@ void class_xDMRG::run_simulation()    {
             if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
 
-
         update_bond_dimension(min_saturation_length);
         enlarge_environment(state->get_direction());
         move_center_point();
@@ -187,8 +186,8 @@ void class_xDMRG::run_simulation()    {
         case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
         default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
     }
-
 }
+
 
 void class_xDMRG::run_postprocessing(){
     log->info("Running {} postprocessing",sim_name);
@@ -217,18 +216,31 @@ void class_xDMRG::single_xDMRG_step()
     log->trace("Starting single xDMRG step");
     Eigen::Tensor<Scalar,4> theta;
     auto dims = superblock->dimensions();
+    auto eigsize = dims[1] * dims[3];
+
+    using namespace  MPS_Tools::Finite::Opt;
+
+    // Table
+
+    // Mode / Space |   FULL        PARTIAL     DIRECT
+    // ---------------------------------------------------
+    // OVERLAP      |   FO          FP          DV
+    // VARIANCE     |   FV          FV          DV
 
 
-    auto optMode  =  MPS_Tools::Finite::Opt::OptMode::OVERLAP;
-    auto optSpace =  MPS_Tools::Finite::Opt::OptSpace::FULL;
+    auto optMode  =  OptMode::OVERLAP;
+    optMode  = sim_state.iteration   >= settings::xdmrg::min_sweeps             ?  OptMode::VARIANCE : optMode;
+    optMode  = sim_state.iteration   >= 1 and
+               superblock->measurements.energy_variance_per_site_mpo  < 1e-4    ?  OptMode::VARIANCE : optMode;
 
 
-    optMode  = sim_state.iteration   >  1 ?  MPS_Tools::Finite::Opt::OptMode::VARIANCE : optMode;
-    optSpace = dims[1] * dims[3] >  16*16 ?  MPS_Tools::Finite::Opt::OptSpace::PARTIAL : optSpace;
-    optSpace =
-            optMode == MPS_Tools::Finite::Opt::OptMode::VARIANCE and
-            dims[1] * dims[3] >= 32*32 ?
-            MPS_Tools::Finite::Opt::OptSpace::DIRECT  : optSpace;
+
+    auto optSpace =  OptSpace::FULL;
+    optSpace = eigsize >  16*16                     ? OptSpace::PARTIAL : optSpace;
+    optSpace = eigsize >= 32*32                     ? OptSpace::DIRECT  : optSpace;
+    optSpace = optMode == OptMode::VARIANCE         ? OptSpace::DIRECT  : optSpace;
+
+
 
     std::tie(theta, sim_state.energy_now) = MPS_Tools::Finite::Opt::find_optimal_excited_state(*superblock,sim_state.energy_now,optMode, optSpace);
     sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
@@ -248,21 +260,29 @@ void class_xDMRG::single_xDMRG_step()
 
 
 void class_xDMRG::check_convergence(){
-//    if(not state->position_is_the_middle()){return;}
-//    if(sim_state.iteration < 5){return;}
+
     t_sim.tic();
     t_con.tic();
-    if (sim_state.iteration <= settings::xdmrg::min_sweeps){
-        if(state->position_is_the_middle()){
-            *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
-            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-        }
+    check_convergence_variance_mpo();
+
+    if (sim_state.iteration == 2 and not projected_during_warmup){
+        *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
+        MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
         clear_saturation_status();
+        projected_during_warmup = true;
+    }
+
+    if (sim_state.variance_mpo_has_saturated
+        and sim_state.variance_mpo_saturated_for > min_saturation_length
+        and not projected_during_saturation)
+    {
+        *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
+        MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+        clear_saturation_status();
+        projected_during_saturation = true;
     }
 
 
-
-    check_convergence_variance_mpo();
     if(sim_state.variance_mpo_has_converged)
     {
         log->debug("Simulation has converged");
@@ -278,14 +298,6 @@ void class_xDMRG::check_convergence(){
         sim_state.simulation_has_to_stop = true;
     }
 
-    if (sim_state.variance_mpo_saturated_for >= 1 and not projected_once){
-        if(state->position_is_the_middle()){
-            *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
-            MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-            clear_saturation_status();
-            projected_once = true;
-        }
-    }
 
 
     t_con.toc();
@@ -347,7 +359,7 @@ void class_xDMRG::find_energy_range() {
     compute_observables();
     sim_state.energy_max = superblock->measurements.energy_per_site_mpo;
 
-    sim_state.iteration = state->reset_sweeps();
+    sim_state.iteration      = state->reset_sweeps();
     sim_state.energy_target  = settings::xdmrg::energy_density * (sim_state.energy_max+sim_state.energy_min);
     sim_state.energy_ubound  = sim_state.energy_target + settings::xdmrg::energy_window*(sim_state.energy_max-sim_state.energy_min);
     sim_state.energy_lbound  = sim_state.energy_target - settings::xdmrg::energy_window*(sim_state.energy_max-sim_state.energy_min);

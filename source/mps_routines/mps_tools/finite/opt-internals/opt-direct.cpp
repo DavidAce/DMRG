@@ -23,9 +23,6 @@ MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & 
     t_opt->tic();
     double chain_length    = superblock.get_length();
     double energy_new,variance_new,overlap_new;
-    //Should really use xstart as the projection towards the previous theta, not best overlapping!
-    // Note that alpha_i = <theta_old | theta_new_i> is not supposed to be squared! The overlap
-    // Between xstart and theta_old should be
 
     auto theta = superblock.get_theta();
     Eigen::VectorXd xstart = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).real();
@@ -54,22 +51,25 @@ MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & 
 //        functor.set_energy_bounds(sim_state.energy_ubound,sim_state.energy_lbound);
 //        double threshold = 1e-5;
         LBFGSpp::LBFGSParam<double> param;
+        // READ HERE http://pages.mtu.edu/~msgocken/ma5630spring2003/lectures/lines/lines/node3.html
+        // I think c1 corresponds to ftol, and c2 corresponds to wolfe
         param.max_iterations = 2000;
         param.max_linesearch = 60; // Default is 20. 5 is really bad, 80 seems better.
-        param.m              = 8;
-        param.epsilon        = 1e-3;  // Default is 1e-5.
-        param.delta          = 1e-6;  // Default is 0. Trying this one instead of ftol.
-        param.ftol           = 1e-3;  // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
+        param.m              = 8;     // Default is 6
         param.past           = 1;     // Or perhaps it was this one that helped.
-        param.wolfe          = 5e-1;
+        param.epsilon        = 1e-5;  // Default is 1e-5.
+        param.delta          = 1e-8;  // Default is 0. Trying this one instead of ftol.
+        param.ftol           = 1e-4;  // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
+        param.wolfe          = 0.9;   // Default is 0.9
         param.min_step       = 1e-40;
         param.max_step       = 1e+40;
+        param.linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_STRONG_WOLFE;
         // Create solver and function object
-        LBFGSpp::LBFGSSolver<double> solver_3(param);
+        LBFGSpp::LBFGSSolver<double> solver(param);
         // x will be overwritten to be the best point found
         double fx;
         MPS_Tools::log->trace("Running LBFGS");
-        int niter = solver_3.minimize(functor, xstart, fx);
+        int niter = solver.minimize(functor, xstart, fx);
         int counter = functor.get_count();
         t_opt->toc();
         xstart.normalize();
@@ -112,6 +112,38 @@ MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & 
     report << '\n';
     MPS_Tools::log->debug(report.str());
 
+
+    std::stringstream lbfgs_report;
+    lbfgs_report
+                << std::setprecision(3) << '\n'
+                << "    " << std::setw(24) << std::left << "LBFGS Time report"
+                << "    " << std::setw(12) << std::left << "vH2v  [ms]"
+                << "    " << std::setw(12) << std::left << "vHv  [ms]"
+                << "    " << std::setw(12) << std::left << "vH2  [ms]"
+                << "    " << std::setw(12) << std::left << "vH  [ms]"
+                << "    " << std::setw(12) << std::left << "tot  [ms]"
+                << "    " << std::setw(12) << std::left << "op  [ms]"
+                << '\n';
+    lbfgs_report
+                << std::setprecision(3)
+                << "    " << std::setw(24) << std::left << " "
+                << "    " << std::setw(12) << std::left << std::fixed << 1000 * MPS_Tools::Finite::Opt::internals::t_vH2v->get_measured_time()
+                << "    " << std::setw(12) << std::left << std::fixed << 1000 * MPS_Tools::Finite::Opt::internals::t_vHv->get_measured_time()
+                << "    " << std::setw(12) << std::left << std::fixed << 1000 * MPS_Tools::Finite::Opt::internals::t_vH2->get_measured_time()
+                << "    " << std::setw(12) << std::left << std::fixed << 1000 * MPS_Tools::Finite::Opt::internals::t_vH->get_measured_time()
+                << "    " << std::setw(12) << std::left << std::fixed << 1000 *
+                                                        (  MPS_Tools::Finite::Opt::internals::t_vH2v->get_measured_time()
+                                                         + MPS_Tools::Finite::Opt::internals::t_vHv->get_measured_time()
+                                                         + MPS_Tools::Finite::Opt::internals::t_vH2->get_measured_time()
+                                                         + MPS_Tools::Finite::Opt::internals::t_vH->get_measured_time()
+                                                        )
+                << "    " << std::setw(12) << std::left << std::fixed << 1000 * MPS_Tools::Finite::Opt::internals::t_op->get_measured_time()
+                << '\n';
+
+    lbfgs_report << '\n';
+    MPS_Tools::log->debug(lbfgs_report.str());
+
+
     return  std::make_tuple(Textra::Matrix_to_Tensor(xstart.cast<Scalar>(), superblock.dimensions()), energy_new);
 }
 
@@ -129,15 +161,15 @@ MPS_Tools::Finite::Opt::internals::direct_functor::direct_functor(
         const class_superblock & superblock_): base_functor()
 
 {
-    superblock.HA_MPO  = superblock_.HA->MPO().real();
-    superblock.HB_MPO  = superblock_.HB->MPO().real();
-    superblock.Lblock  = superblock_.Lblock->block.real();
-    superblock.Rblock  = superblock_.Rblock->block.real();
-    superblock.Lblock2 = superblock_.Lblock2->block.real();
-    superblock.Rblock2 = superblock_.Rblock2->block.real();
-    superblock.dsizes  = superblock_.dimensions();
-    superblock.HAHB    = superblock.HA_MPO.contract(superblock.HB_MPO, Textra::idx({1},{0}));
-    superblock.HAHB2   = superblock.HAHB.contract(superblock.HAHB, Textra::idx({2,5},{1,4}));
+    superblock.HA_MPO        = superblock_.HA->MPO().real();
+    superblock.HB_MPO        = superblock_.HB->MPO().real();
+    superblock.Lblock        = superblock_.Lblock->block.real();
+    superblock.Rblock        = superblock_.Rblock->block.real();
+    superblock.Lblock2       = superblock_.Lblock2->block.real();
+    superblock.Rblock2       = superblock_.Rblock2->block.real();
+    superblock.dsizes        = superblock_.dimensions();
+    superblock.HAHB          = superblock.HA_MPO.contract(superblock.HB_MPO, Textra::idx({1},{0}));
+    superblock.HAHB2         = superblock.HAHB.contract(superblock.HAHB, Textra::idx({2,5},{1,4}));
 }
 
 
@@ -145,52 +177,53 @@ MPS_Tools::Finite::Opt::internals::direct_functor::direct_functor(
 
 
 double MPS_Tools::Finite::Opt::internals::direct_functor::operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) {
+    t_op->tic();
     long double vH2v,vHv,vv,var;
-    double lambda,lambda2,log10var, fx,energy_penalty;
+    double lambda,log10var, fx;
     Eigen::VectorXd vH, vH2;
 
     #pragma omp parallel
     {
         #pragma omp sections
         {
+
             #pragma omp section
-            {vH2v   = get_vH2v(v,superblock);}
+            {std::tie(vH2,vH2v)  = get_vH2_vH2v(v,superblock);}
             #pragma omp section
-            {vHv    = get_vHv(v,superblock);}
+            {std::tie(vH,vHv)    = get_vH_vHv(v,superblock);}
             #pragma omp section
             {vv     = v.cwiseAbs2().sum();}
-            #pragma omp section
-            {vH2    = get_vH2(v,superblock);}
-            #pragma omp section
-            {vH     = get_vH(v,superblock);}
+//            #pragma omp section
+//            {vH2v   = get_vH2v(v,superblock);}
+//            #pragma omp section
+//            {vHv    = get_vHv(v,superblock);}
+//            #pragma omp section
+//            {vH2    = get_vH2(v,superblock);}
+//            #pragma omp section
+//            {vH     = get_vH(v,superblock);}
         }
         #pragma omp barrier
+
         #pragma omp single
         {
             lambda         = 1.0;
-            lambda2        = 1.0;
             var            = std::abs(vH2v*vv - vHv*vHv)/std::pow(vv,2);
             variance       = var;
             var            = var == 0  ? std::numeric_limits<double>::epsilon() : var;
             energy         = vHv/vv;
-            double energy_distance = std::abs(energy - energy_target);
-            energy_penalty = energy_distance > energy_window/2.0 ?  energy - energy_target : 0.0;
-            log10var    = std::log10(var);
+            log10var       = std::log10(var);
 
         }
         #pragma omp barrier
+        auto vv2   = std::pow(vv,2);
+        auto vv4   = std::pow(vv,4);
+        auto varlog10 = 1.0/var/std::log(10.0);
         #pragma omp for schedule(static,1)
         for (int k = 0; k < v.size(); k++){
             double vi2H2ik         = 2.0*vH2(k);             // 2 * sum_i x_i H2_ik
             double vk4EkvEv        = 4.0*vH(k) * vHv ;       // 4 * x_k * E_k * (sum_i x_i^2 E_i)
-            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vHv*vHv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
+            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/vv2 - (vk4EkvEv*vv*vv - vHv*vHv*4.0*v(k)*vv)/vv4)*varlog10
                       + lambda * 4.0 * v(k) * (vv - 1);
-            if (have_bounds_on_energy){
-//                grad(k) +=  (2*vH(k)/vv - 2*v(k)*vHv/vv/vv);
-//                grad(k) +=  sgn(energy-energy_target) *2/vv*(vH(k) - v(k)*energy);
-                grad(k) += lambda2* 4 * energy_penalty*(vH(k)/vv - energy*v(k)/vv);
-
-            }
             grad(k) = std::isinf(grad(k)) ? std::numeric_limits<double>::max() * sgn(grad(k)) : grad(k);
 
 //            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vHv*vHv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
@@ -211,34 +244,51 @@ double MPS_Tools::Finite::Opt::internals::direct_functor::operator()(const Eigen
         MPS_Tools::log->warn("vEv*vEv/vv/vv   = {}" , vHv*vHv/vv/vv    );
         MPS_Tools::log->warn("var             = {}" , var);
         exit(1);
-        log10var    = std::abs(var) == 0  ?  -20.0 : std::log10(std::abs(var));
+//        log10var    = std::abs(var) == 0  ?  -20.0 : std::log10(std::abs(var));
     }
     fx = log10var  + lambda * std::pow(vv-1.0,2);
-    if (have_bounds_on_energy) {
-        fx += lambda2 * std::pow(energy_penalty,2);
-    }
-
 
     counter++;
+    t_op->toc();
     return fx;
+}
+
+
+std::pair<Eigen::VectorXd,double> MPS_Tools::Finite::Opt::internals::get_vH_vHv(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components & superblock){
+    auto vH = MPS_Tools::Finite::Opt::internals::get_vH(v,superblock);
+    t_vHv->tic();
+    auto vHv = vH.cwiseProduct(v).sum();
+    t_vHv->toc();
+    return std::make_pair(vH,vHv);
+}
+
+std::pair<Eigen::VectorXd,double> MPS_Tools::Finite::Opt::internals::get_vH2_vH2v(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components & superblock){
+    auto vH2 = MPS_Tools::Finite::Opt::internals::get_vH2(v,superblock);
+    t_vH2v->tic();
+    auto vH2v = vH2.cwiseProduct(v).sum();
+    t_vH2v->toc();
+    return std::make_pair(vH2,vH2v);
 }
 
 
 
 
-
 double MPS_Tools::Finite::Opt::internals::get_vH2v(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components & superblock){
-    auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superblock.dsizes);
+    t_vH2v->tic();
+    auto theta   = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superblock.dsizes);
+
     Eigen::Tensor<double, 0> H2 =
             superblock.Lblock2
                     .contract(theta,                Textra::idx({0}  ,{1}))
                     .contract(superblock.HAHB2,     Textra::idx({2,1,3,4},{4,0,1,3}))
                     .contract(theta.conjugate(),    Textra::idx({0,3,5},{1,0,2}))
                     .contract(superblock.Rblock2,   Textra::idx({0,3,1,2},{0,1,2,3})).real();
+    t_vH2v->toc();
     return H2(0);
 }
 
 double MPS_Tools::Finite::Opt::internals::get_vHv(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components & superblock){
+    t_vHv->tic();
     auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superblock.dsizes);
     Eigen::Tensor<double, 0>  E =
             superblock.Lblock
@@ -246,29 +296,35 @@ double MPS_Tools::Finite::Opt::internals::get_vHv(const Eigen::Matrix<double,Eig
                     .contract(superblock.HAHB,                 Textra::idx({1,2,3},{0,1,4}))
                     .contract(theta.conjugate(),               Textra::idx({0,2,4},{1,0,2}))
                     .contract(superblock.Rblock,               Textra::idx({0,2,1},{0,1,2}));
+    t_vHv->toc();
     return E(0);
 }
 
 
 Eigen::VectorXd MPS_Tools::Finite::Opt::internals::get_vH2 (const Eigen::Matrix<double,Eigen::Dynamic,1> &v,const superblock_components & superblock){
     auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superblock.dsizes);
+    t_vH2->tic();
     Eigen::Tensor<double, 4> vH2 =
             superblock.Lblock2
-                    .contract(theta,                            Textra::idx({0}  ,{1}))
+                    .contract(theta,                            Textra::idx({0},{1}))
                     .contract(superblock.HAHB2,                 Textra::idx({2,1,3,4},{4,0,1,3}))
                     .contract(superblock.Rblock2,               Textra::idx({1,2,4},{0,2,3}))
                     .shuffle(Textra::array4{1,0,2,3});
+    t_vH2->toc();
     return Eigen::Map<Eigen::VectorXd>(vH2.data(),vH2.size());
 }
 
 Eigen::VectorXd MPS_Tools::Finite::Opt::internals::get_vH (const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components & superblock){
     auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superblock.dsizes);
+    t_vH->tic();
     Eigen::Tensor<double, 4> vH =
             superblock.Lblock
                     .contract(theta,                               Textra::idx({0},{1}))
                     .contract(superblock.HAHB,                     Textra::idx({1,2,3},{0,1,4}))
                     .contract(superblock.Rblock ,                  Textra::idx({1,3},{0,2}))
                     .shuffle(Textra::array4{1,0,2,3});
+    t_vH->toc();
+
     return Eigen::Map<Eigen::VectorXd>(vH.data(),vH.size());
 }
 
