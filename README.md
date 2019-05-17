@@ -97,8 +97,9 @@ The compilation of DMRG++ requires several libraries. To meet the requirements, 
  - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
  - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on Fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
  - [**Arpackpp**](https://github.com/m-reuter/eigsolver_properties) C++ frontend for Arpack.
+ - [**h5pp**](https://github.com/DavidAce/h5pp) a wrapper for HDF5.
  - [**HDF5**](https://support.hdfgroup.org/HDF5/) for hdf5 binary output file support (tested with version >= 1.10).
- - [**GSL**](https://www.gnu.org/software/gsl/) for numerical integration (tested with version >= 2.4).
+ - [**spdlog**](https://github.com/gabime/spdlog) logger).
 
 ---
 
