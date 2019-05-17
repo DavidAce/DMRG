@@ -1,5 +1,3 @@
-
-
 import numpy as np
 import os
 import random
@@ -10,8 +8,7 @@ os.chdir(parentpath)
 src_directory='input'
 tgt_directory='bunch'
 
-realizations = 20
-bunch_size = 5
+realizations = 1000
 bunch_list = []
 seed_counter = 0
 
@@ -40,5 +37,3 @@ with open(filepath, 'w') as file_handler:
 print("Seeds        :   ", seed_counter)
 print("Sim types    :   ", seed_counter/realizations)
 print("Realizations :   ", realizations)
-
-
