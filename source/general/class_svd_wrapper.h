@@ -272,8 +272,9 @@ class_SVD<Scalar>::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor) {
     long chiC = SVD.rank();
     if (chiC <= 0){throw std::runtime_error("schmidt_with_norm error: Dimension is zero: SVD rank a.k.a. \"chiC\"");}
 
-
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
+    long num_tail = SVD.nonzeroSingularValues()-chiC;
+    truncation_error = num_tail <= 0? 0 : SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
+//    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
     return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), dL, chiL, chiC),
                            Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).normalized().template cast<Scalar>(), chiC),
                            Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(),  dR, chiR, chiC).shuffle(Textra::array3{0,2,1}),
