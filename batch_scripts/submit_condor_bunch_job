@@ -2,7 +2,7 @@ ID         = $(Process)
 NAME       = mbl
 universe   = vanilla
 executable = ../build/Release/DMRG++
-arguments  = $(inputfiles)
+arguments  = $(inputfile) $(seed) 
 requirements = true
 
 ########################################################
@@ -73,11 +73,11 @@ environment    = "OMP_NUM_THREADS=1"
 ########################################################
 
 requirements = $(requirements) && \
-                TARGET.CpuMarch_SANDYBRIDGE == true
+                TARGET.CpuMarch_HASWELL == true
 
 
-#requirements = $(requirements) && \
-#                TARGET.has_avx == true
+requirements = $(requirements) && \
+                TARGET.has_avx == true
 #
 
 
@@ -111,6 +111,7 @@ log        = logs/$(NAME)_$(ID).log
 output     = logs/$(NAME)_$(ID).out
 error      = logs/$(NAME)_$(ID).error
 
-queue arguments from bunch/bunch_*.txt
+
+queue inputfile,seed from bunch/bunch.condor
 
 

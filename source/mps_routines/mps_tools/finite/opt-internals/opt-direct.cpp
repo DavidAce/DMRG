@@ -173,9 +173,6 @@ MPS_Tools::Finite::Opt::internals::direct_functor::direct_functor(
 }
 
 
-
-
-
 double MPS_Tools::Finite::Opt::internals::direct_functor::operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) {
     t_op->tic();
     long double vH2v,vHv,vv,var;
@@ -186,21 +183,12 @@ double MPS_Tools::Finite::Opt::internals::direct_functor::operator()(const Eigen
     {
         #pragma omp sections
         {
-
             #pragma omp section
             {std::tie(vH2,vH2v)  = get_vH2_vH2v(v,superblock);}
             #pragma omp section
             {std::tie(vH,vHv)    = get_vH_vHv(v,superblock);}
             #pragma omp section
             {vv     = v.cwiseAbs2().sum();}
-//            #pragma omp section
-//            {vH2v   = get_vH2v(v,superblock);}
-//            #pragma omp section
-//            {vHv    = get_vHv(v,superblock);}
-//            #pragma omp section
-//            {vH2    = get_vH2(v,superblock);}
-//            #pragma omp section
-//            {vH     = get_vH(v,superblock);}
         }
         #pragma omp barrier
 
@@ -225,14 +213,9 @@ double MPS_Tools::Finite::Opt::internals::direct_functor::operator()(const Eigen
             grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/vv2 - (vk4EkvEv*vv*vv - vHv*vHv*4.0*v(k)*vv)/vv4)*varlog10
                       + lambda * 4.0 * v(k) * (vv - 1);
             grad(k) = std::isinf(grad(k)) ? std::numeric_limits<double>::max() * sgn(grad(k)) : grad(k);
-
-//            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vHv*vHv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
-//                      + lambda * 2.0 * v(k) * sgn(vv - 1);//
-//            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vHv*vHv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
-//                      + lambda * 2.0 * v(k) / vv / std::log(10);
         }
     }
-//    grad.normalize(); //Seems to stabilize the step size
+
     if(std::isnan(log10var) or std::isinf(log10var)){
         MPS_Tools::log->warn("log10 variance is invalid");
         std::cout << "v: \n" << v << std::endl;
