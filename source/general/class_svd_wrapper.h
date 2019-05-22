@@ -84,6 +84,8 @@ void class_SVD<Scalar>::setThreshold(double newThreshold) {
 template<typename Scalar>
 Eigen::Tensor<Scalar, 2>
 class_SVD<Scalar>::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor){
+    if (tensor.dimension(0) <= 0)  {throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(0)");}
+    if (tensor.dimension(1) <= 0)  {throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(1)");}
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
     return Textra::Matrix_to_Tensor2(mat.completeOrthogonalDecomposition().pseudoInverse() );
 }
@@ -93,6 +95,8 @@ class_SVD<Scalar>::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor){
 template<typename Scalar>
 std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
 class_SVD<Scalar>::decompose(const Eigen::Tensor<Scalar,2> &tensor) {
+    if (tensor.dimension(0) <= 0)  {throw std::runtime_error("decompose error: Dimension is zero: tensor.dimension(0)");}
+    if (tensor.dimension(1) <= 0)  {throw std::runtime_error("decompose error: Dimension is zero: tensor.dimension(1)");}
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chi).squaredNorm();
@@ -106,6 +110,8 @@ class_SVD<Scalar>::decompose(const Eigen::Tensor<Scalar,2> &tensor) {
 template<typename Scalar>
 std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
 class_SVD<Scalar>::decompose(const Eigen::Tensor<Scalar,3> &tensor,const long rows,const long cols) {
+    if (rows <= 0)  {throw std::runtime_error("decompose error: Dimension is zero: rows");}
+    if (cols <= 0)  {throw std::runtime_error("decompose error: Dimension is zero: cols");}
     Eigen::Map<const MatrixType> mat (tensor.data(), rows, cols);
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chi = SVD.rank();
@@ -120,6 +126,9 @@ class_SVD<Scalar>::decompose(const Eigen::Tensor<Scalar,3> &tensor,const long ro
 template<typename Scalar>
 std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
 class_SVD<Scalar>::decompose(const Eigen::Tensor<Scalar,2> &tensor, const long chi_max) {
+    if (tensor.dimension(0) <= 0)  {throw std::runtime_error("decompose error: Dimension is zero: tensor.dimension(0)");}
+    if (tensor.dimension(1) <= 0)  {throw std::runtime_error("decompose error: Dimension is zero: tensor.dimension(1)");}
+
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
     if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -135,6 +144,10 @@ class_SVD<Scalar>::decompose(const Eigen::Tensor<Scalar,2> &tensor, const long c
 template<typename Scalar>
 std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
 class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,2> &tensor, long d, long chiL, long chi_max, long chiR) {
+    if (d <= 0)   {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 0, a.k.a. \"d\"");}
+    if (chiL <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 1, a.k.a. \"chiL\"");}
+    if (chiR <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 3, a.k.a. \"chiR\"");}
+
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
     if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -155,6 +168,11 @@ class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,2> &tensor) {
     long chiL = tensor.dimension(1);
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
+    if (dL <= 0)  {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 0, a.k.a. \"dL\"");}
+    if (dR <= 0)  {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 2, a.k.a. \"dR\"");}
+    if (chiL <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 1, a.k.a. \"chiL\"");}
+    if (chiR <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 3, a.k.a. \"chiR\"");}
+
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
     if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -173,6 +191,9 @@ class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,3> &tensor, long rows,long
     long d    = tensor.dimension(0);
     long chiL = tensor.dimension(1);
     long chiR = tensor.dimension(2);
+    if (d <= 0)   {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 0, a.k.a. \"d\"");}
+    if (chiL <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 1, a.k.a. \"chiL\"");}
+    if (chiR <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 3, a.k.a. \"chiR\"");}
     Eigen::Map<const MatrixType> mat (tensor.data(), rows,cols);
     if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -193,6 +214,10 @@ class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,4> &tensor) {
     long chiL = tensor.dimension(1);
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
+    if (dL <= 0)  {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 0, a.k.a. \"dL\"");}
+    if (dR <= 0)  {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 2, a.k.a. \"dR\"");}
+    if (chiL <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 1, a.k.a. \"chiL\"");}
+    if (chiR <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 3, a.k.a. \"chiR\"");}
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
     if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -211,6 +236,11 @@ class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,4> &tensor, long chi_max) 
     long chiL = tensor.dimension(1);
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
+    if (dL <= 0)  {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 0, a.k.a. \"dL\"");}
+    if (dR <= 0)  {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 2, a.k.a. \"dR\"");}
+    if (chiL <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 1, a.k.a. \"chiL\"");}
+    if (chiR <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 3, a.k.a. \"chiR\"");}
+
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
     if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -231,10 +261,16 @@ class_SVD<Scalar>::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor) {
     long chiL = tensor.dimension(1);
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
+    if (dL <= 0)  {throw std::runtime_error("schmidt_with_norm error: Dimension is zero: theta dim 0, a.k.a. \"dL\"");}
+    if (dR <= 0)  {throw std::runtime_error("schmidt_with_norm error: Dimension is zero: theta dim 2, a.k.a. \"dR\"");}
+    if (chiL <= 0){throw std::runtime_error("schmidt_with_norm error: Dimension is zero: theta dim 1, a.k.a. \"chiL\"");}
+    if (chiR <= 0){throw std::runtime_error("schmidt_with_norm error: Dimension is zero: theta dim 3, a.k.a. \"chiR\"");}
+
     Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
     if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chiC = SVD.rank();
+    if (chiC <= 0){throw std::runtime_error("schmidt_with_norm error: Dimension is zero: SVD rank a.k.a. \"chiC\"");}
 
 
     truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
