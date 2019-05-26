@@ -33,19 +33,10 @@ MPS_Tools::Finite::Opt::internals::guided_optimization(const class_superblock & 
             << "      shape       : "    << theta.size() << " x " << theta.size() << '\n' << '\n' << std::flush;
     MPS_Tools::log->debug(problem_report.str());
 
-
-
-
     t_opt->tic();
     double chain_length    = superblock.get_length();
     double energy_new,variance_new,overlap_new;
-    Eigen::VectorXd xstart = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).real();
-    xstart.conservativeResize(theta.size() + 2); // Add lambda1 and lambda2, lagrange multipliers
-    xstart.tail(2).setConstant(1.0);
-    Eigen::VectorXd theta_new;
-
-
-
+    Eigen::VectorXd theta_new = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).real();
 
 
     std::vector<std::tuple<std::string,int,double,Scalar,double,int,int,double>> opt_log;
@@ -60,21 +51,19 @@ MPS_Tools::Finite::Opt::internals::guided_optimization(const class_superblock & 
         MPS_Tools::Finite::Opt::internals::guided_functor functor (superblock, sim_state);
 
         // Create solver and function object
-        LBFGSpp::LBFGSSolver<double> solver(get_lbfgs_params());
+        LBFGSpp::LBFGSSolver<double> solver(*params);
         // x will be overwritten to be the best point found
-        double fx;
         MPS_Tools::log->trace("Running LBFGS");
-        int niter = solver.minimize(functor, xstart, fx);
+        double fx;
+        int niter = solver.minimize(functor, theta_new, fx);
         int counter = functor.get_count();
         t_opt->toc();
-//        xstart.normalize();
-        theta_new = Eigen::Map<const Eigen::Matrix<double,Eigen::Dynamic,1>>(xstart.data(),theta.size()).real().normalized();
+        theta_new.normalize();
         auto theta_old = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).real();
 
         energy_new   = functor.get_energy() / chain_length;
         variance_new = functor.get_variance()/chain_length;
         overlap_new  = theta_old.dot(theta_new);
-//        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval(), 0);
         opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval());
         MPS_Tools::log->trace("Time in function = {:.3f}", t_opt->get_measured_time()*1000);
         MPS_Tools::log->trace("Finished LBFGS");
@@ -139,17 +128,7 @@ MPS_Tools::Finite::Opt::internals::guided_optimization(const class_superblock & 
     lbfgs_report << '\n';
     MPS_Tools::log->debug(lbfgs_report.str());
 
-    // Check if energy is outside of the window or not
-//    if(energy_new < sim_state.energy_lbound or energy_new > sim_state.energy_ubound) {
-//        MPS_Tools::log->debug("DISCARDED");
-//        return  std::make_tuple(theta, energy_new);
-//    }
-//    else{
-//    }
-
     return  std::make_tuple(Textra::Matrix_to_Tensor(theta_new.cast<Scalar>(), superblock.dimensions()), energy_new);
-
-
 }
 
 

@@ -6,12 +6,13 @@
 #define MPS_TOOLS_FINITE_OPT_H
 
 #include <mps_routines/nmspc_mps_tools.h>
-#include <LBFGS.h>
 #include <iomanip>
 
 class class_tic_toc;
 class class_superblock;
-
+namespace LBFGSpp{
+    template <typename T> class LBFGSParam;
+}
 
 namespace MPS_Tools::Finite::Opt{
 
@@ -50,8 +51,9 @@ namespace MPS_Tools::Finite::Opt{
         extern std::shared_ptr<class_tic_toc> t_op  ;
 
 
-        extern LBFGSpp::LBFGSParam<double> get_lbfgs_params();
-
+//        extern LBFGSpp::LBFGSParam<double> get_lbfgs_params();
+        extern void initialize_params();
+        extern std::shared_ptr<LBFGSpp::LBFGSParam<double>> params;
 
         struct superblock_components{
             Eigen::Tensor<double,4> HA_MPO;
