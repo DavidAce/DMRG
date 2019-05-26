@@ -204,7 +204,7 @@ MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock 
                 eigvals);
 
         // Create solver and function object
-        LBFGSpp::LBFGSSolver<double> solver_3(get_lbfgs_params());
+        LBFGSpp::LBFGSSolver<double> solver_3(*params);
         // x will be overwritten to be the best point found
         double fx;
         t_opt->tic();

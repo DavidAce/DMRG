@@ -48,7 +48,7 @@ MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & 
         t_opt->tic();
         using namespace LBFGSpp;
         MPS_Tools::Finite::Opt::internals::direct_functor functor (superblock);
-        LBFGSpp::LBFGSSolver<double> solver(get_lbfgs_params()); // Create solver and function object
+        LBFGSpp::LBFGSSolver<double> solver(*params); // Create solver and function object
 
         // x will be overwritten to be the best point found
         double fx;
@@ -62,7 +62,6 @@ MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & 
         energy_new   = functor.get_energy() / chain_length;
         variance_new = functor.get_variance()/chain_length;
         overlap_new  = (theta_old.adjoint() * xstart).cwiseAbs().sum();
-//        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval(), 0);
         opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval());
         MPS_Tools::log->trace("Time in function = {:.3f}", t_opt->get_measured_time()*1000);
         MPS_Tools::log->trace("Finished LBFGS");

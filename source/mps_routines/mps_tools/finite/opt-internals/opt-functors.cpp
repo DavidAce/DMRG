@@ -15,24 +15,7 @@
 #include <algorithms/class_simulation_state.h>
 
 
-LBFGSpp::LBFGSParam<double> MPS_Tools::Finite::Opt::internals::get_lbfgs_params(){
-    using namespace LBFGSpp;
-    LBFGSpp::LBFGSParam<double> param;
-    // READ HERE http://pages.mtu.edu/~msgocken/ma5630spring2003/lectures/lines/lines/node3.html
-    // I think c1 corresponds to ftol, and c2 corresponds to wolfe
-    param.max_iterations = 2000;
-    param.max_linesearch = 60; // Default is 20. 5 is really bad, 80 seems better.
-    param.m              = 8;     // Default is 6
-    param.past           = 1;     // Or perhaps it was this one that helped.
-    param.epsilon        = 1e-5;  // Default is 1e-5.
-    param.delta          = 1e-8;  // Default is 0. Trying this one instead of ftol.
-    param.ftol           = 1e-4;  // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
-    param.wolfe          = 0.9;   // Default is 0.9
-    param.min_step       = 1e-40;
-    param.max_step       = 1e+40;
-    param.linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_STRONG_WOLFE;
-    return param;
-}
+
 
 
 
@@ -119,10 +102,6 @@ double MPS_Tools::Finite::Opt::internals::direct_functor::operator()(const Eigen
 
 
 
-
-
-
-
 MPS_Tools::Finite::Opt::internals::guided_functor::guided_functor(
         const class_superblock & superblock_, class_simulation_state &sim_state): base_functor()
 
@@ -144,15 +123,12 @@ MPS_Tools::Finite::Opt::internals::guided_functor::guided_functor(
 }
 
 
-double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen::VectorXd &v_and_lambdas, Eigen::VectorXd &grad) {
+double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) {
     t_op->tic();
-    long double vH2v,vHv,vv,var;
+    double vH2v,vHv,vv,var;
     double log10var, fx;
     Eigen::VectorXd vH, vH2;
-    auto v       = Eigen::Map<const Eigen::VectorXd>(v_and_lambdas.data(), v_and_lambdas.size()-2);
-//    auto lambdas = v_and_lambdas.tail(2);
     auto lambdas = Eigen::VectorXd::Ones(2);
-//    lambdas.setConstant(1.0);
     #pragma omp parallel
     {
         #pragma omp sections
@@ -162,7 +138,7 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
             #pragma omp section
             {std::tie(vH,vHv)    = get_vH_vHv(v,superblock);}
             #pragma omp section
-            {vv     = v.dot(v);}
+            {vv     = v.squaredNorm();}
         }
         #pragma omp barrier
 
@@ -183,12 +159,13 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
         auto vv_1  = std::pow(vv,-1);
         auto vv_2  = std::pow(vv,-2);
         auto var_1 = 1.0/var/std::log(10.0);
-        std::cout << "Variance: " << var << std::endl;
-        std::cout << "Energy  : " << energy << std::endl;
-        std::cout << "Energy o: " << energy_offset << std::endl;
-        std::cout << "norm o  : " << norm_offset << std::endl;
-        std::cout << "lambda 0: " << lambdas(0) << std::endl;
-        std::cout << "lambda 1: " << lambdas(1) << std::endl;
+//        std::cout << "Variance: " << var << std::endl;
+//        std::cout << "Energy  : " << energy << std::endl;
+//        std::cout << "Energy o: " << energy_offset << std::endl;
+//        std::cout << "norm o  : " << norm_offset << std::endl;
+//        std::cout << "lambda 0: " << lambdas(0) << std::endl;
+//        std::cout << "lambda 1: " << lambdas(1) << std::endl;
+
         #pragma omp for schedule(static,1)
         for (int k = 0; k < v.size(); k++){
 
@@ -201,33 +178,11 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
             grad(k)  = vi2H2ikvv_1 - vk2vH2vvv_2;
             grad(k) -= 2.0*energy * (vi2Hikvv_1 -vk2vHvvv_2);
             grad(k) *= var_1;
-//            grad(k) += 2.0 *lambdas(0) * sgn(norm_offset)   * v(k);
-//            grad(k) += 1.0 *lambdas(1) * sgn(energy_offset) * (vi2Hikvv_1 - vk2vHvvv_2) ;
             grad(k) += 2.0 *std::abs(lambdas(0)) * norm_offset   * v(k);
-            grad(k) += 2.0 *std::abs(lambdas(1)) * energy_offset * (vi2Hikvv_1 - vk2vHvvv_2) ;
-//            grad(k) += 2.0 * sgn(norm_offset)   * v(k);
-//            grad(k) += 2.0 * sgn(energy_offset) * (vi2Hikvv_1 - vk2vHvvv_2) ;
-//            grad(k) = std::isinf(grad(k)) ? std::numeric_limits<double>::max() * sgn(grad(k)) : grad(k);
+            grad(k) += 2.0 *std::abs(lambdas(1)) * energy_offset * (vi2Hikvv_1 - vk2vHvvv_2);
         }
-//        grad(v.size())   = std::abs(norm_offset);
-//        grad(v.size()+1) = std::abs(energy_offset);
-        grad(v.size())   = sgn(lambdas(0)) * std::pow(norm_offset,2);
-        grad(v.size()+1) = sgn(lambdas(1)) * std::pow(energy_offset,2);
-//        grad(v.size())   = 0.0;
-//        grad(v.size()+1) = 0.0;
     }
-    if (std::abs(norm_offset)> 1){
-        MPS_Tools::log->warn("energy offset   = {}" , energy_offset );
-        MPS_Tools::log->warn("norm   offset   = {}" , norm_offset );
-        MPS_Tools::log->warn("vH2v            = {}" , vH2v );
-        MPS_Tools::log->warn("vHv             = {}" , vHv  );
-        MPS_Tools::log->warn("vv              = {}" , vv   );
-        MPS_Tools::log->warn("vH2v/vv         = {}" , vH2v/vv    );
-        MPS_Tools::log->warn("vEv*vEv/vv/vv   = {}" , vHv*vHv/vv/vv    );
-        MPS_Tools::log->warn("var             = {}" , var);
-        MPS_Tools::log->warn("lambda 0        = {}" , lambdas(0));
-        MPS_Tools::log->warn("lambda 1        = {}" , lambdas(1));
-    }
+
     if(std::isnan(log10var) or std::isinf(log10var)){
         MPS_Tools::log->warn("log10 variance is invalid");
         MPS_Tools::log->warn("energy offset   = {}" , energy_offset );
@@ -240,10 +195,14 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
         MPS_Tools::log->warn("var             = {}" , var);
         MPS_Tools::log->warn("lambda 0        = {}" , lambdas(0));
         MPS_Tools::log->warn("lambda 1        = {}" , lambdas(1));
+        std::cout << "v: \n" << v << std::endl;
+        std::cout << "grad: \n" << grad << std::endl;
         throw std::runtime_error("LBFGS: log10 variance is invalid");
     }
-//    fx = log10var  + lambdas(0) * std::abs(norm_offset) +  lambdas(1) * std::abs(energy_offset);
-    fx = log10var  + std::abs(lambdas(0)) * std::pow(norm_offset,2) +  std::abs(lambdas(1)) * std::pow(energy_offset,2);
+
+    fx = log10var
+            + std::abs(lambdas(0)) * std::pow(norm_offset,2)
+            + std::abs(lambdas(1)) * std::pow(energy_offset,2);
 
     counter++;
     t_op->toc();
