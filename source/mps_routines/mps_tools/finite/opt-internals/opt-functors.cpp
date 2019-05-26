@@ -183,12 +183,12 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
         auto vv_1  = std::pow(vv,-1);
         auto vv_2  = std::pow(vv,-2);
         auto var_1 = 1.0/var/std::log(10.0);
-//        std::cout << "Variance: " << var << std::endl;
-//        std::cout << "Energy  : " << energy << std::endl;
-//        std::cout << "Energy o: " << energy_offset << std::endl;
-//        std::cout << "norm o  : " << norm_offset << std::endl;
-//        std::cout << "lambda 0: " << lambdas(0) << std::endl;
-//        std::cout << "lambda 1: " << lambdas(1) << std::endl;
+        std::cout << "Variance: " << var << std::endl;
+        std::cout << "Energy  : " << energy << std::endl;
+        std::cout << "Energy o: " << energy_offset << std::endl;
+        std::cout << "norm o  : " << norm_offset << std::endl;
+        std::cout << "lambda 0: " << lambdas(0) << std::endl;
+        std::cout << "lambda 1: " << lambdas(1) << std::endl;
         #pragma omp for schedule(static,1)
         for (int k = 0; k < v.size(); k++){
 
@@ -217,7 +217,6 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
 //        grad(v.size()+1) = 0.0;
     }
     if (std::abs(norm_offset)> 1){
-        MPS_Tools::log->warn("log10 variance is invalid");
         MPS_Tools::log->warn("energy offset   = {}" , energy_offset );
         MPS_Tools::log->warn("norm   offset   = {}" , norm_offset );
         MPS_Tools::log->warn("vH2v            = {}" , vH2v );
