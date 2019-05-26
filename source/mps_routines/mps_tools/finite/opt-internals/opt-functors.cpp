@@ -216,11 +216,10 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
 //        grad(v.size())   = 0.0;
 //        grad(v.size()+1) = 0.0;
     }
-
-    if(std::isnan(log10var) or std::isinf(log10var)){
+    if (std::abs(norm_offset)> 1){
         MPS_Tools::log->warn("log10 variance is invalid");
-        std::cout << "v: \n" << v << std::endl;
-        std::cout << "grad: \n" << grad << std::endl;
+        MPS_Tools::log->warn("energy offset   = {}" , energy_offset );
+        MPS_Tools::log->warn("norm   offset   = {}" , norm_offset );
         MPS_Tools::log->warn("vH2v            = {}" , vH2v );
         MPS_Tools::log->warn("vHv             = {}" , vHv  );
         MPS_Tools::log->warn("vv              = {}" , vv   );
@@ -229,7 +228,20 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
         MPS_Tools::log->warn("var             = {}" , var);
         MPS_Tools::log->warn("lambda 0        = {}" , lambdas(0));
         MPS_Tools::log->warn("lambda 1        = {}" , lambdas(1));
-        exit(1);
+    }
+    if(std::isnan(log10var) or std::isinf(log10var)){
+        MPS_Tools::log->warn("log10 variance is invalid");
+        MPS_Tools::log->warn("energy offset   = {}" , energy_offset );
+        MPS_Tools::log->warn("norm   offset   = {}" , norm_offset );
+        MPS_Tools::log->warn("vH2v            = {}" , vH2v );
+        MPS_Tools::log->warn("vHv             = {}" , vHv  );
+        MPS_Tools::log->warn("vv              = {}" , vv   );
+        MPS_Tools::log->warn("vH2v/vv         = {}" , vH2v/vv    );
+        MPS_Tools::log->warn("vEv*vEv/vv/vv   = {}" , vHv*vHv/vv/vv    );
+        MPS_Tools::log->warn("var             = {}" , var);
+        MPS_Tools::log->warn("lambda 0        = {}" , lambdas(0));
+        MPS_Tools::log->warn("lambda 1        = {}" , lambdas(1));
+        throw std::runtime_error("LBFGS: log10 variance is invalid");
     }
 //    fx = log10var  + lambdas(0) * std::abs(norm_offset) +  lambdas(1) * std::abs(energy_offset);
     fx = log10var  + std::abs(lambdas(0)) * std::pow(norm_offset,2) +  std::abs(lambdas(1)) * std::pow(energy_offset,2);
