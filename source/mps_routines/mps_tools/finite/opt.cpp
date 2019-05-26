@@ -13,14 +13,21 @@
 
 
 std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
-MPS_Tools::Finite::Opt::find_optimal_excited_state(const class_superblock & superblock, double energy_shift, OptMode optMode, OptSpace optSpace){
+MPS_Tools::Finite::Opt::find_optimal_excited_state(const class_superblock & superblock, class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace){
     MPS_Tools::log->trace("Finding optimal excited state");
     internals::initialize_timers();
-    if (optSpace == OptSpace::DIRECT){
-        return internals::direct_optimization(superblock);
-    }else {
-        return internals::subspace_optimization(superblock, energy_shift , optMode, optSpace);
+    switch (optSpace){
+        case OptSpace::DIRECT:
+            return internals::direct_optimization(superblock);
+        case OptSpace::GUIDED:
+            return internals::guided_optimization(superblock,sim_state);
+        case OptSpace::FULL:
+            return internals::subspace_optimization(superblock, sim_state , optMode, optSpace);
+        case OptSpace::PARTIAL:
+            return internals::subspace_optimization(superblock, sim_state , optMode, optSpace);
+
     }
+
 }
 
 namespace MPS_Tools::Finite::Opt::internals{

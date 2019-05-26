@@ -16,6 +16,7 @@ class class_finite_chain_state;
 class class_hdf5_file;
 class class_hamiltonian_base;
 class class_simulation_state;
+
 namespace h5pp{
     class File;
 }
@@ -72,13 +73,14 @@ namespace MPS_Tools{
 
         namespace Opt{
             enum class OptMode  {OVERLAP, VARIANCE};
-            enum class OptSpace {PARTIAL,FULL,DIRECT};
-            extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_excited_state(const class_superblock & superblock, double energy_shift, OptMode optMode, OptSpace optSpace);
+            enum class OptSpace {PARTIAL,FULL,DIRECT,GUIDED};
+            extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_excited_state(const class_superblock & superblock, class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace);
 
             namespace internals{
-                extern std::tuple<Eigen::MatrixXd, Eigen::VectorXd> find_subspace(const class_superblock & superblock,double energy_shift, OptMode &optMode, OptSpace &optSpace);
+                extern std::tuple<Eigen::MatrixXd, Eigen::VectorXd>              find_subspace(const class_superblock & superblock, class_simulation_state & sim_state, OptMode &optMode, OptSpace &optSpace);
                 extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> direct_optimization(const class_superblock & superblock);
-                extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> subspace_optimization(const class_superblock & superblock, double energy_shift, OptMode &optMode, OptSpace &optSpace);
+                extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> guided_optimization(const class_superblock & superblock, class_simulation_state & sim_state);
+                extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> subspace_optimization(const class_superblock & superblock, class_simulation_state & sim_state, OptMode &optMode, OptSpace &optSpace);
                 extern std::vector<int> generate_size_list(const int shape);
                 class base_functor;
                 class subspace_functor;

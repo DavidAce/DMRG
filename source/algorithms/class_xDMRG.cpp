@@ -241,8 +241,10 @@ void class_xDMRG::single_xDMRG_step()
     optSpace = optMode == OptMode::VARIANCE         ? OptSpace::DIRECT  : optSpace;
 
 
+    optMode   = OptMode::VARIANCE;
+    optSpace  = OptSpace::GUIDED;
 
-    std::tie(theta, sim_state.energy_now) = MPS_Tools::Finite::Opt::find_optimal_excited_state(*superblock,sim_state.energy_now,optMode, optSpace);
+    std::tie(theta, sim_state.energy_now) = MPS_Tools::Finite::Opt::find_optimal_excited_state(*superblock,sim_state,optMode, optSpace);
     sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
 
 
@@ -360,9 +362,9 @@ void class_xDMRG::find_energy_range() {
     sim_state.energy_max = superblock->measurements.energy_per_site_mpo;
 
     sim_state.iteration      = state->reset_sweeps();
-    sim_state.energy_target  = settings::xdmrg::energy_density * (sim_state.energy_max+sim_state.energy_min);
-    sim_state.energy_ubound  = sim_state.energy_target + settings::xdmrg::energy_window*(sim_state.energy_max-sim_state.energy_min);
-    sim_state.energy_lbound  = sim_state.energy_target - settings::xdmrg::energy_window*(sim_state.energy_max-sim_state.energy_min);
+    sim_state.energy_target  = sim_state.energy_min    + settings::xdmrg::energy_density * (sim_state.energy_max-sim_state.energy_min);
+    sim_state.energy_ubound  = sim_state.energy_target + settings::xdmrg::energy_window  * (sim_state.energy_max-sim_state.energy_min);
+    sim_state.energy_lbound  = sim_state.energy_target - settings::xdmrg::energy_window  * (sim_state.energy_max-sim_state.energy_min);
 
     sim_state.energy_now = superblock->E_optimal / state->get_length();
     log->info("Energy minimum (per site) = {}", sim_state.energy_min);

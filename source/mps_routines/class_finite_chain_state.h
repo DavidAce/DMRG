@@ -78,10 +78,9 @@ public:
     void   increment_sweeps() {num_sweeps++;}
     int    reset_sweeps();
 
-
+    void set_positions();
     size_t get_length() const;
     int get_position() const;
-    void set_positions();
 
 
     int get_direction() const;
@@ -115,6 +114,18 @@ public:
     Eigen::Tensor<Scalar,1> & get_L(size_t pos);
     Eigen::Tensor<Scalar,3>   get_A(size_t pos);
     Eigen::Tensor<Scalar,3>   get_B(size_t pos);
+    Eigen::Tensor<Scalar,4>   get_theta(size_t pos);
+    std::tuple<long,long,long>  get_dims(size_t pos);
+
+    Eigen::Tensor<Scalar,3> & get_GA();
+    Eigen::Tensor<Scalar,3> & get_GB();
+    Eigen::Tensor<Scalar,1> & get_LA();
+    Eigen::Tensor<Scalar,1> & get_LC();
+    Eigen::Tensor<Scalar,1> & get_LB();
+    Eigen::Tensor<Scalar,3>   get_A();
+    Eigen::Tensor<Scalar,3>   get_B();
+    Eigen::Tensor<Scalar,4>   get_theta();
+
 
     struct Measurements {
         int    length                                   = 0;

@@ -6,6 +6,9 @@
 #define MPS_TOOLS_FINITE_OPT_H
 
 #include <mps_routines/nmspc_mps_tools.h>
+#include <LBFGS.h>
+#include <iomanip>
+
 class class_tic_toc;
 class class_superblock;
 
@@ -29,9 +32,11 @@ namespace MPS_Tools::Finite::Opt{
                 case OptSpace::PARTIAL  : str << "PARTIAL"; break;
                 case OptSpace::FULL     : str << "FULL";    break;
                 case OptSpace::DIRECT   : str << "DIRECT";  break;
+                case OptSpace::GUIDED   : str << "GUIDED";  break;
             }
             return str;
         }
+
 
         extern void initialize_timers();
         extern std::shared_ptr<class_tic_toc> t_opt;
@@ -43,6 +48,9 @@ namespace MPS_Tools::Finite::Opt{
         extern std::shared_ptr<class_tic_toc> t_vH2 ;
         extern std::shared_ptr<class_tic_toc> t_vH  ;
         extern std::shared_ptr<class_tic_toc> t_op  ;
+
+
+        extern LBFGSpp::LBFGSParam<double> get_lbfgs_params();
 
 
         struct superblock_components{
@@ -78,6 +86,8 @@ namespace MPS_Tools::Finite::Opt{
             double energy_upper_bound;
             double energy_target;
             double energy_window;
+            double energy_offset;
+            double norm_offset;
             int    counter = 0;
             bool   have_bounds_on_energy = false;
 
@@ -117,6 +127,81 @@ namespace MPS_Tools::Finite::Opt{
             double operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) override;
         };
 
+
+        class guided_functor: public base_functor{
+        private:
+            superblock_components superblock;
+        public:
+            explicit guided_functor(const class_superblock &superblock, class_simulation_state & sim_state);
+            double operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) override;
+        };
+
+
+
+
+//
+//        class report_printer{
+//        private:
+//            std::map<std::string, int> meta;
+//            std::map<std::string, std::list<std::string>> report;
+//
+//            bool data_still_left(){
+//                unsigned long length = 0;
+//                for (auto &item : report){
+//                    length = std::max(length, item.second.size());
+//                }
+//                return length > 0;
+//            }
+//
+//        public:
+//            report_printer() = default;
+//
+//
+//            void make_column(std::string key, int width){
+//                meta[key]   = width;
+//                report[key] = std::list<std::string>();
+//            }
+//
+//            template <typename StrConvertibleType>
+//            void insert_line(std::string key, StrConvertibleType val){
+//                if (report.find(key) == report.end()){throw std::runtime_error("Key does not exist: "+ key);}
+//                if (meta.find(key)   == meta.end())  {throw std::runtime_error("Key does not exist: "+ key);}
+//                report[key].push_back(std::string(val));
+//            }
+//
+//
+//            template <typename ... StrConvertibleTypes>
+//            void insert_line(StrConvertibleTypes ... items ){
+//                auto num_elems = sizeof...(StrConvertibleTypes);
+//
+//            }
+//
+//            void print(){
+//                std::stringstream sstream;
+//
+//                sstream << '\n';
+//                for (auto &item : meta){
+//                    sstream << std::setw(item.second) << std::fixed << std::right << item.first;
+//                }
+//                sstream << '\n';
+//                while(data_still_left()){
+//                    for (auto &item : report){
+//                        int width = meta[item.first];
+//                        if(item.second.empty()){
+//                            sstream << std::setw(width) << " ";
+//                        }else{
+//                            sstream << std::setw(width) << item.second.front();
+//                            item.second.pop_front();
+//                        }
+//                    }
+//                    sstream << '\n';
+//                }
+//
+//            }
+
+
+
+//        };
 
 
     }
