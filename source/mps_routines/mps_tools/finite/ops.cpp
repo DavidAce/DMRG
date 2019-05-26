@@ -36,178 +36,7 @@ void MPS_Tools::Finite::Ops::apply_mpo(class_finite_chain_state &state,const Eig
     apply_mpos(state,mpos,Ledge,Redge);
 }
 
-//
-//void MPS_Tools::Finite::Ops::apply_mpo2(class_finite_chain_state &state,const Eigen::Tensor<Scalar,4> mpo,const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge){
-//    // First the left side
-//    long mpoDim = mpo.dimension(0);
-//    auto I_tensor1 = Eigen::Tensor<Scalar,1>(mpoDim);
-//    I_tensor1.setConstant(1);
-//
-//    // Apply MPO's on Gamma matrices and
-//    // increase the size on all Lambdas
-//
-//    for (auto & mps : state.get_MPS_L()){
-//        auto [d,chiL,chiR] = mps.get_dims();
-//        Eigen::Tensor<Scalar,3> G_temp =
-//                mps.get_G()
-//                        .contract(mpo, idx({0},{2}))
-//                        .shuffle(array5{4,2,0,3,1})
-//                        .reshape(array3{d, chiL*mpoDim, chiR*mpoDim});
-//        Eigen::Tensor<Scalar,1> L_temp = I_tensor1.contract(mps.get_L(), idx()).reshape(array1{chiL * mpoDim});
-//        mps.set_G(G_temp);
-//        mps.set_L(L_temp);
-////        std::cout << "LCurrent Lambda: \n" << std::setprecision(16)  << mps.get_L() << std::endl;
-//
-//    }
-//
-//    for (auto & mps : state.get_MPS_R()){
-////        if (mps.get_position() == state.get_length() - 1) continue;
-//        auto [d,chiL,chiR] = mps.get_dims();
-//        Eigen::Tensor<Scalar,3> G_temp =
-//                mps.get_G()
-//                        .contract(mpo, idx({0},{2}))
-//                        .shuffle(array5{4,2,0,3,1})
-//                        .reshape(array3{d, chiL*mpoDim, chiR*mpoDim});
-//        Eigen::Tensor<Scalar,1> L_temp = I_tensor1.contract(mps.get_L(), idx()).reshape(array1{chiR * mpoDim});
-//        mps.set_G(G_temp);
-//        mps.set_L(L_temp);
-////        std::cout << "RCurrent Lambda: \n" << std::setprecision(16) << mps.get_L() << std::endl;
-//
-//    }
-//
-//
-//
-//    //Take care of the middle
-//    auto chiC = state.get_MPS_C().dimension(0);
-//    Eigen::Tensor<Scalar,1> C_temp = I_tensor1.contract(state.get_MPS_C(), idx()).reshape(array1{chiC * mpoDim});
-//    state.get_MPS_C() = C_temp;
-////    std::cout << "C_temp: \n" << C_temp << std::endl;
-//
-//    // Take care of the edges. It's enough to apply the left and right MPO-edges on Gamma's and
-//    // leave edge lambda's unchanged.
-//    {
-////        auto[d, chiL, chiR] = state.get_MPS_L().front().get_dims();
-//        auto Ldim = Ledge.dimension(0);
-//        Eigen::Tensor<Scalar, 3> G_temp =
-//                Ledge
-//                        .shuffle(Textra::array3{0,2,1})
-//                        .reshape(Textra::array2{Ldim*mpoDim,Ldim})
-//                        .contract(state.get_MPS_L().front().get_A(),Textra::idx({0},{1}))
-//                        .shuffle(Textra::array3{1,0,2});
-//        state.get_MPS_L().front().set_G(G_temp);
-//        state.get_MPS_L().front().set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1));
-////        std::cout << "LEdge Lambda: \n" << std::setprecision(16)  << state.get_MPS_L().front().get_L() << std::endl;
-//
-//    }
-//    {
-////        auto[d, chiL, chiR] = state.get_MPS_R().back().get_dims();
-//        auto Rdim = Redge.dimension(0);
-//        Eigen::Tensor<Scalar, 3> G_temp =
-//                Redge
-//                        .shuffle(Textra::array3{0,2,1})
-//                        .reshape(Textra::array2{Rdim*mpoDim,Rdim})
-//                        .contract(state.get_MPS_R().back().get_B(),Textra::idx({0},{2}))
-//                        .shuffle(Textra::array3{1,2,0});
-//        state.get_MPS_R().back().set_G(G_temp);
-//        state.get_MPS_R().back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1));
-////        std::cout << "REdge Lambda: \n" << std::setprecision(16)  << state.get_MPS_R().back().get_L() << std::endl;
-//
-//    }
-//
-//
-//}
-//
-//void MPS_Tools::Finite::Ops::apply_mpo3(class_finite_chain_state &state,const Eigen::Tensor<Scalar,4> mpo,const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge){
-//    // First the left side
-//    long mpoDim = mpo.dimension(0);
-//    auto I_tensor1 = Eigen::Tensor<Scalar,1>(mpoDim);
-//    I_tensor1.setConstant(1);
-//
-//    // Apply MPO's on Gamma matrices and
-//    // increase the size on all Lambdas
-//
-//    for (auto & mps : state.get_MPS_L()){
-//        auto [d,chiL,chiR] = mps.get_dims();
-//        Eigen::Tensor<Scalar,3> G_temp =
-//                mps.get_A()
-//                        .contract(mpo, idx({0},{2}))
-//                        .shuffle(array5{4,2,0,3,1})
-//                        .reshape(array3{d, chiL*mpoDim, chiR*mpoDim});
-////        Eigen::Tensor<Scalar,1> L_temp = mps.get_L().contract(I_tensor1, idx()).reshape(array1{chiL * mpoDim});
-//        double normalization = 1.0 ;// / std::sqrt(chiL*mpoDim);
-//        mps.set_L(Eigen::Tensor<Scalar,1>(chiL*mpoDim).constant(normalization));
-////        std::cout << "LCurrent Lambda  : \n" << std::setprecision(16)  << mps.get_L() << std::endl;
-////        std::cout << "LCurrent G_before: \n" << std::setprecision(16)  << mps.get_G() << std::endl;
-////        std::cout << "LCurrent G_temp  : \n" << std::setprecision(16)  << G_temp << std::endl;
-////        std::cout << "LCurrent mpo     : \n" << std::setprecision(16)  << mpo << std::endl;
-//        mps.set_G(G_temp);
-////        std::cout << "LCurrent G_after: \n" << std::setprecision(16)  << mps.get_G() << std::endl;
-//
-//
-//    }
-//
-//    for (auto & mps : state.get_MPS_R()){
-////        if (mps.get_position() == state.get_length() - 1) continue;
-//        auto [d,chiL,chiR] = mps.get_dims();
-//        Eigen::Tensor<Scalar,3> G_temp =
-//                mps.get_B()
-//                        .contract(mpo, idx({0},{2}))
-//                        .shuffle(array5{4,2,0,3,1})
-//                        .reshape(array3{d, chiL*mpoDim, chiR*mpoDim});
-////        Eigen::Tensor<Scalar,1> L_temp = mps.get_L().contract(I_tensor1, idx()).reshape(array1{chiR * mpoDim});
-//        mps.set_G(G_temp);
-//        double normalization = 1.0 ;/// std::sqrt(chiR*mpoDim);
-//        mps.set_L(Eigen::Tensor<Scalar,1>(chiR*mpoDim).constant(normalization));
-////        std::cout << "RCurrent Lambda: \n" << std::setprecision(16) << mps.get_L() << std::endl;
-//
-//    }
-//
-//
-//
-//    //Take care of the middle
-//    auto chiC = state.get_MPS_C().dimension(0);
-//    Eigen::Tensor<Scalar,1> C_temp =  I_tensor1.contract(state.get_MPS_C(), idx()).reshape(array1{chiC * mpoDim});
-////    Eigen::Tensor<Scalar,1> C_temp = state.get_MPS_C().contract(I_tensor1, idx()).reshape(array1{chiC * mpoDim});
-//    state.get_MPS_C() = C_temp;
-////    double normalization = 1.0;// / std::sqrt(chiC*mpoDim);
-////    state.get_MPS_C() = Eigen::Tensor<Scalar,1>(chiC*mpoDim).constant(normalization);
-//
-////    std::cout << "C_temp: \n" << C_temp << std::endl;
-//
-//    // Take care of the edges. It's enough to apply the left and right MPO-edges on Gamma's and
-//    // leave edge lambda's unchanged.
-//    {
-////        auto[d, chiL, chiR] = state.get_MPS_L().front().get_dims();
-//        auto Ldim = Ledge.dimension(0);
-//        Eigen::Tensor<Scalar, 3> G_temp =
-//                Ledge
-//                        .shuffle(Textra::array3{0,2,1})
-//                        .reshape(Textra::array2{Ldim*mpoDim,Ldim})
-//                        .contract(state.get_MPS_L().front().get_A(),Textra::idx({0},{1}))
-//                        .shuffle(Textra::array3{1,0,2});
-//        state.get_MPS_L().front().set_G(G_temp);
-//        double normalization = 1.0 ;// / std::sqrt(Ldim*mpoDim);
-//        state.get_MPS_L().front().set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(normalization));
-////        std::cout << "LEdge Lambda: \n" << std::setprecision(16)  << state.get_MPS_L().front().get_L() << std::endl;
-//    }
-//    {
-////        auto[d, chiL, chiR] = state.get_MPS_R().back().get_dims();
-//        auto Rdim = Redge.dimension(0);
-//        Eigen::Tensor<Scalar, 3> G_temp =
-//                Redge
-//                        .shuffle(Textra::array3{0,2,1})
-//                        .reshape(Textra::array2{Rdim*mpoDim,Rdim})
-//                        .contract(state.get_MPS_R().back().get_B(),Textra::idx({0},{2}))
-//                        .shuffle(Textra::array3{1,2,0});
-//        state.get_MPS_R().back().set_G(G_temp);
-//        double normalization = 1.0 ;//  std::sqrt(Rdim*mpoDim);
-//        state.get_MPS_R().back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(normalization));
-////        std::cout << "REdge Lambda: \n" << std::setprecision(16)  << state.get_MPS_R().back().get_L() << std::endl;
-//
-//    }
-//
-//
-//}
+
 
 void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const std::list<Eigen::Tensor<Scalar,4>> &mpos,const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge){
     assert(mpos.size() == state.get_length() and "ERROR: number of mpo's doesn't match the number of sites on the system");
@@ -215,19 +44,8 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
     MPS_Tools::log->trace("Applying MPO's");
-    // Print bond dimensions:
-    //    for(auto & mps : state.get_MPS_L()){
-    //        std::cout << "start chi : " << mps.get_chiL() << std::endl;
-    //    }
-    //    std::cout << "start chiC: " << state.get_MPS_C().dimension(0) << std::endl;
-    //    for(auto & mps : state.get_MPS_R()){
-    //        std::cout << "start chi : " << mps.get_chiR() << std::endl;
-    //    }
-
-    Eigen::Tensor<Scalar,1> I_tensor(1);
-    I_tensor.setConstant(1);
-
     auto mpo = mpos.begin();
+
     {
         for (auto & mps : state.get_MPS_L()){
             long mpoDimL = mpo->dimension(0);
@@ -240,22 +58,11 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
                             .shuffle(array5{4,0,2,1,3})
                             .reshape(array3{d, chiL*mpoDimL, chiR*mpoDimR});
 
-            mps.set_G(G_temp);
-
             Eigen::Tensor<Scalar,1> L_temp = mps.get_L().broadcast(array1{mpoDimL});
-//            Eigen::Tensor<Scalar,1> L_temp = mps.get_L().contract(I_tensor.broadcast(array1{mpoDimL}), idx()).reshape(array1{chiL * mpoDimL});
-//            Eigen::Tensor<Scalar,1> L_temp = I_tensor.broadcast(array1{mpoDimL}).contract(mps.get_L(), idx()).reshape(array1{chiL * mpoDimL});
+            Scalar Lnorm = Textra::Tensor1_to_Vector(L_temp).norm();
 
-            double Lnorm = Textra::Tensor1_to_Vector(L_temp).cwiseAbs2().sum();
-            if (Lnorm < 1e-1){
-                std::cout << "Ltemp\n" << L_temp<< std::endl;
-                std::cout << "chiL = " << chiL << std::endl;
-                std::cout << "mpoDimL = " << mpoDimL << std::endl;
-                throw std::runtime_error("Schmidt values became too small when applying MPO");
-            }
-//            std::cout << "Ltemp\n" << L_temp<< std::endl;
-            mps.set_L(L_temp);
-//            std::cout << "applied chi  : " << mps.get_chiL() << std::endl;
+            mps.set_G(G_temp);
+            mps.set_L(L_temp/Lnorm);
             mpo++;
         }
     }
@@ -263,14 +70,9 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     //Take care of the middle
     {
         long mpoDim = mpo->dimension(0);
-//        auto chiC = state.get_MPS_C().dimension(0);
-//        Eigen::Tensor<Scalar,1> C_temp = state.get_MPS_C().contract(I_tensor.broadcast(array1{mpoDim}), idx()).reshape(array1{chiC * mpoDim});
-//        Eigen::Tensor<Scalar,1> C_temp = I_tensor.broadcast(array1{mpoDim}).contract(state.get_MPS_C(), idx()).reshape(array1{chiC * mpoDim});
-
         Eigen::Tensor<Scalar, 1> C_temp = state.get_MPS_C().broadcast(array1{mpoDim});
-        state.get_MPS_C() = C_temp;
-//        std::cout << "applied chiC : " << state.get_MPS_C().dimension(0) << std::endl;
-
+        Scalar Cnorm = Textra::Tensor1_to_Vector(C_temp).norm();
+        state.get_MPS_C() = C_temp / Cnorm;
     }
     {
         for (auto & mps : state.get_MPS_R()){
@@ -283,20 +85,11 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
                             .shuffle(array5{4,0,2,1,3})
                             .reshape(array3{d, chiL*mpoDimL, chiR*mpoDimR});
 
-            mps.set_G(G_temp);
             Eigen::Tensor<Scalar,1> L_temp = mps.get_L().broadcast(array1{mpoDimR});
-//            Eigen::Tensor<Scalar,1> L_temp = mps.get_L().contract(I_tensor.broadcast(array1{mpoDimR}), idx()).reshape(array1{chiR * mpoDimR});
-//            Eigen::Tensor<Scalar,1> L_temp = I_tensor.broadcast(array1{mpoDimR}).contract(mps.get_L(), idx()).reshape(array1{chiR * mpoDimR});
-            double Lnorm = Textra::Tensor1_to_Vector(L_temp).cwiseAbs2().sum();
-            if (Lnorm < 1e-1) {
-                std::cout << "Ltemp\n" << L_temp<< std::endl;
-                std::cout << "chiL = " << chiL << std::endl;
-                std::cout << "mpoDimL = " << mpoDimR << std::endl;
-                throw std::runtime_error("Schmidt values became too small when applying MPO");
-            }
-            mps.set_L(L_temp);
-//            std::cout << "applied chi  : " << mps.get_chiR() << std::endl;
-//            std::cout << "Ltemp\n" << L_temp<< std::endl;
+            Scalar Lnorm = Textra::Tensor1_to_Vector(L_temp).norm();
+
+            mps.set_G(G_temp);
+            mps.set_L(L_temp / Lnorm);
             mpo++;
         }
     }
@@ -305,7 +98,8 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     // so the left and right most lambdas become ones
     {
         long mpoDimL = mpos.front().dimension(0);
-        auto Ldim = Ledge.dimension(0);
+        auto Ldim    = Ledge.dimension(0);
+        Scalar norm  = std::sqrt(Ldim);
         Eigen::Tensor<Scalar, 3> G_temp =
                 Ledge
                         .shuffle(Textra::array3{0,2,1})
@@ -313,11 +107,12 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
                         .contract(state.get_MPS_L().front().get_A(),Textra::idx({0},{1}))
                         .shuffle(Textra::array3{1,0,2});
         state.get_MPS_L().front().set_G(G_temp);
-        state.get_MPS_L().front().set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1.0));
+        state.get_MPS_L().front().set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1.0)/norm);
     }
     {
         long mpoDimR = mpos.back().dimension(1);
-        auto Rdim = Redge.dimension(0);
+        auto Rdim    = Redge.dimension(0);
+        Scalar norm  = std::sqrt(Rdim);
         Eigen::Tensor<Scalar, 3> G_temp =
                 Redge
                         .shuffle(Textra::array3{0,2,1})
@@ -325,11 +120,12 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
                         .contract(state.get_MPS_R().back().get_B(),Textra::idx({0},{2}))
                         .shuffle(Textra::array3{1,2,0});
         state.get_MPS_R().back().set_G(G_temp);
-        state.get_MPS_R().back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0));
+        state.get_MPS_R().back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0)/norm);
     }
 
 
 }
+
 
 void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
@@ -351,40 +147,33 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
     Eigen::Tensor<Scalar,3> V;
     double norm;
     while(num_traversals < 2){
-        Eigen::Tensor<Scalar,4> theta = state.get_A(pos_A)
-                .contract(asDiagonal(state.get_L(pos_LC)),idx({2},{0}))
-                .contract(state.get_B(pos_B), idx({2},{1}));
-
+        Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
         try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta);}
-        catch(std::exception &ex){throw std::runtime_error("SVD failed on theta: " + std::string(ex.what()) ); }
-
-
-        if (direction == 1){
-            Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
-            if (pos_B == state.get_length()-1 ) { diagonalNorm.setConstant(1.0); }
-            else{diagonalNorm.setConstant(norm);}
-            Eigen::Tensor<Scalar,3> LA_U   = Textra::asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-            Eigen::Tensor<Scalar,3> d_V_LB = Textra::asDiagonal(diagonalNorm).contract(V ,idx({1},{1})).contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0})).shuffle(array3{1,0,2});
-            state.get_G(pos_A)  = LA_U;
-            state.get_L(pos_LC) = S;
-            state.get_G(pos_B)  = d_V_LB;
-
-        }else if (direction == -1){
-            Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
-            if (pos_A == 0 ) { diagonalNorm.setConstant(1.0);}
-            else{diagonalNorm.setConstant(norm);}
-
-            Eigen::Tensor<Scalar,3> LA_U_d = asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).contract(Textra::asDiagonal(diagonalNorm), idx({2},{0})).shuffle(array3{1,0,2});
-            Eigen::Tensor<Scalar,3> V_LB   = V.contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0}));
-
-            state.get_G(pos_A)  = LA_U_d;
-            state.get_L(pos_LC) = S;
-            state.get_G(pos_B)  = V_LB;
-
+        catch(std::exception &ex){
+            std::cerr << "A:\n" << state.get_A(pos_A) << std::endl;
+            std::cerr << "L:\n" << state.get_L(pos_LC) << std::endl;
+            std::cerr << "B:\n" << state.get_B(pos_B) << std::endl;
+            throw std::runtime_error("SVD failed on theta: " + std::string(ex.what()) );
         }
 
-        if (direction == 1  and pos_B == state.get_length()-1){num_traversals++ ;direction *= -1;}
-        if (direction == -1 and pos_A == 0){num_traversals++; direction *= -1;}
+        Eigen::Tensor<Scalar,3> LA_U = Textra::asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
+        Eigen::Tensor<Scalar,3> V_LB = V.contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0}));
+        norm = pos_B == state.get_length()-1 or pos_A == 0 ? 1.0 : norm;
+
+        if (direction == 1){
+            state.get_G(pos_A)  = LA_U;
+            state.get_L(pos_LC) = S;
+            state.get_G(pos_B)  = Scalar(norm)*V_LB;
+
+        }
+        if (direction == -1){
+            state.get_G(pos_A)  = LA_U * Scalar(norm);
+            state.get_L(pos_LC) = S;
+            state.get_G(pos_B)  = V_LB;
+        }
+
+        if (direction ==  1 and pos_B == state.get_length()-1)  {num_traversals++; direction *= -1;}
+        if (direction == -1 and pos_A == 0)                     {num_traversals++; direction *= -1;}
 
         pos_LA += direction;
         pos_LC += direction;
@@ -756,6 +545,7 @@ void MPS_Tools::Finite::Ops::apply_energy_mpo_test(class_finite_chain_state &sta
 //    rebuild_superblock(state, superblock);
 
 }
+
 
 class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix, const int sign) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));

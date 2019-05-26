@@ -270,7 +270,14 @@ class_SVD<Scalar>::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor) {
     if(mat.isZero()){std::cout << "WARNING: SVD on zeroed matrix" << std::endl;}
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long chiC = SVD.rank();
-    if (chiC <= 0){throw std::runtime_error("schmidt_with_norm error: Dimension is zero: SVD rank a.k.a. \"chiC\"");}
+    if (chiC <= 0){
+        std::cerr << "M" << mat << std::endl;
+        std::cerr << "U: \n" << SVD.matrixU() << std::endl;
+        std::cerr << "S: \n" << SVD.singularValues() << std::endl;
+        std::cerr << "V: \n" << SVD.matrixV() << std::endl;
+        std::cerr << "rank: " << chiC << std::endl;
+        throw std::runtime_error("schmidt_with_norm error: Dimension is zero: SVD rank a.k.a. \"chiC\"");
+    }
 
     long num_tail = SVD.nonzeroSingularValues()-chiC;
     truncation_error = num_tail <= 0? 0 : SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();

@@ -38,8 +38,7 @@ void class_finite_chain_state::set_max_sites(int max_sites_) {
     max_sites_is_set = true;
 }
 
-size_t class_finite_chain_state::get_length()    const {return MPS_L.size() + MPS_R.size();}
-int class_finite_chain_state::get_position()  const {return max_sites_is_set ? MPS_L.size() - 1 : 0 ;}
+
 
 void class_finite_chain_state::set_positions(){
 
@@ -57,6 +56,9 @@ void class_finite_chain_state::set_positions(){
     for (auto &MPO : MPO_R){MPO->set_position(pos++);}
 
 }
+
+size_t class_finite_chain_state::get_length()    const {return MPS_L.size() + MPS_R.size();}
+int class_finite_chain_state::get_position()  const {return max_sites_is_set ? MPS_L.size() - 1 : 0 ;}
 
 int class_finite_chain_state::get_sweeps()    const {return num_sweeps;}
 int class_finite_chain_state::reset_sweeps()  {num_sweeps = 0; return num_sweeps;}
@@ -85,6 +87,8 @@ bool class_finite_chain_state::position_is_at(int pos)const{
 }
 
 
+//With indices
+
 Eigen::Tensor<class_finite_chain_state::Scalar,3> & class_finite_chain_state::get_G(size_t pos){
     if (pos >= get_length()){throw std::range_error("get_G(pos) pos out of range: " + std::to_string(pos));}
     if(pos <= get_MPS_L().size()-1){
@@ -110,12 +114,68 @@ Eigen::Tensor<class_finite_chain_state::Scalar,1> & class_finite_chain_state::ge
 }
 
 Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_A(size_t pos){
+    if(pos > get_length()-2 )  {throw std::range_error("get_A(pos): pos larger than length-2");}
     return Textra::asDiagonal(get_L(pos)).contract(get_G(pos), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
 }
 
 Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_B(size_t pos){
+    if(pos > get_length()-1 )  {throw std::range_error("get_B(pos): pos larger than length-1");}
     return get_G(pos).contract(Textra::asDiagonal(get_L(pos+1)), Textra::idx({2},{0}));
 }
+
+Eigen::Tensor<class_finite_chain_state::Scalar,4> class_finite_chain_state::get_theta(size_t pos){
+    if(pos > get_length()-2 )  {throw std::range_error("get_theta(pos): pos larger than length-2");}
+    return get_A(pos)
+            .contract(Textra::asDiagonal(get_L(pos+1)), Textra::idx({2},{0}))
+            .contract(get_B(pos+1), Textra::idx({2},{1}));
+}
+
+std::tuple<long,long,long> class_finite_chain_state::get_dims(size_t pos){
+    return {get_G(pos).dimension(0),get_G(pos).dimension(1),get_G(pos).dimension(2)};
+}
+
+
+
+// Without indices
+
+Eigen::Tensor<class_finite_chain_state::Scalar,3> & class_finite_chain_state::get_GA(){
+    return get_MPS_L().back().get_G();
+}
+
+Eigen::Tensor<class_finite_chain_state::Scalar,3> & class_finite_chain_state::get_GB(){
+    return get_MPS_R().front().get_G();
+}
+
+
+Eigen::Tensor<class_finite_chain_state::Scalar,1> & class_finite_chain_state::get_LA(){
+    return get_MPS_L().back().get_L();
+}
+
+Eigen::Tensor<class_finite_chain_state::Scalar,1> & class_finite_chain_state::get_LC(){
+    return get_MPS_C();
+}
+
+Eigen::Tensor<class_finite_chain_state::Scalar,1> & class_finite_chain_state::get_LB(){
+    return get_MPS_R().front().get_L();
+}
+
+
+Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_A(){
+    return Textra::asDiagonal(get_LA()).contract(get_GA(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+}
+
+Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_B(){
+    return get_GB().contract(Textra::asDiagonal(get_LB()), Textra::idx({2},{0}));
+}
+
+
+Eigen::Tensor<class_finite_chain_state::Scalar,4> class_finite_chain_state::get_theta(){
+    return
+    get_A()
+    .contract(Textra::asDiagonal(get_LC()), Textra::idx({2},{0}))
+    .contract(get_B(), Textra::idx({2},{1}));
+}
+
 
 
 
