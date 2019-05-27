@@ -6,62 +6,76 @@
 #define DMRG_CLASS_SVD_H
 
 #include "nmspc_tensor_extra.h"
-#include <Eigen/SVD>
 #include <iomanip>
 #include <Eigen/QR>
 
 
-template<typename Scalar>
+//template<typename Scalar>
 class class_SVD{
 private:
     double SVDThreshold         = 1e-14;
     double truncation_error     = 0;
-//    int chi                     = 0;
-    using MatrixType  = Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>;
-    Eigen::BDCSVD<MatrixType> SVD;
+
+    template <typename Scalar> using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
+    template <typename Scalar> using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
+
+    template<typename Scalar>
+    std::tuple<MatrixType<Scalar>, VectorType<Scalar>,MatrixType<Scalar>, long>
+    do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max);
+
+//    std::tuple<Eigen::MatrixXcd, Eigen::VectorXcd, Eigen::MatrixXcd, long>
+//    do_svd(const Eigen::MatrixXcd & mat );
+//
+
+    template<typename Derived>
+    std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>,MatrixType<typename Derived::Scalar>, long>
+    do_svd(const Eigen::MatrixBase<Derived> & mat, long rank_max );
+
+    template<typename Derived>
+    std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>,MatrixType<typename Derived::Scalar>, long>
+    do_svd(const Eigen::MatrixBase<Derived> & mat );
+
+
+
+
 public:
 
-    class_SVD(){
-        setThreshold(SVDThreshold);
-    }
+    class_SVD()=default;
 
     double get_truncation_error();
     void setThreshold(double newThreshold);
+
+    template<typename Scalar>
     Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar,2> &tensor);
 
+    template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
     decompose(const Eigen::Tensor<Scalar,2> &tensor);
-
+    template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
     decompose(const Eigen::Tensor<Scalar,2> &tensor, const long chi_max);
-
+    template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
     decompose(const Eigen::Tensor<Scalar,3> &tensor, const long rows,const long cols);
-
+    template<typename Scalar,auto rank>
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-    schmidt  (const Eigen::Tensor<Scalar,2> &tensor, long d, long chiL, long chi_max, long chiR);
-
+    schmidt  (const Eigen::Tensor<Scalar,rank> &tensor, long dL, long dR, long chiL, long chi_max, long chiR);
+    template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
     schmidt  (const Eigen::Tensor<Scalar,2> &tensor);
-
+    template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
     schmidt  (const Eigen::Tensor<Scalar,3> &tensor, long rows, long cols);
 
-
+    template<typename Scalar>
     std::tuple <Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
     schmidt  (const Eigen::Tensor<Scalar,4> &tensor, long chi_max);
-
+    template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
     schmidt  (const Eigen::Tensor<Scalar,4> &tensor);
-
+    template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>, double >
     schmidt_with_norm  (const Eigen::Tensor<Scalar,4> &tensor);
-
-    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-    schmidt_unnormalized (const Eigen::Tensor<Scalar,4> &tensor);
-
-
-
 
 };
 
@@ -70,23 +84,45 @@ public:
 // Definitions
 //
 
-
-template<typename Scalar>
-double class_SVD<Scalar>::get_truncation_error(){
-    return truncation_error;
+template<typename Derived>
+std::tuple<class_SVD::MatrixType<typename Derived::Scalar>, class_SVD::VectorType<typename Derived::Scalar>,class_SVD::MatrixType<typename Derived::Scalar>, long>
+class_SVD::do_svd(const Eigen::MatrixBase<Derived> & mat, long rank_max ){
+    return do_svd(mat.derived().data(), mat.rows(),mat.cols(),rank_max);
 }
 
-template<typename Scalar>
-void class_SVD<Scalar>::setThreshold(double newThreshold) {
-    SVD.setThreshold(newThreshold);
+template<typename Derived>
+std::tuple<class_SVD::MatrixType<typename Derived::Scalar>, class_SVD::VectorType<typename Derived::Scalar>,class_SVD::MatrixType<typename Derived::Scalar>, long>
+class_SVD::do_svd(const Eigen::MatrixBase<Derived> & mat ){
+    long rank_max = std::min(mat.rows(),mat.cols());
+    return do_svd(mat.derived().data(), mat.rows(),mat.cols(),rank_max);
 }
+
+
+
+
+//template<typename Scalar>
+//std::tuple<class_SVD::MatrixType<Scalar>, class_SVD::VectorType<Scalar>, class_SVD::MatrixType<Scalar>, long>
+//class_SVD::do_svd(const MatrixType<Scalar> & mat, long rank_max )
+//{
+//    auto [U,S,V,rank] = do_svd(mat);
+//    rank = std::min(rank,rank_max);
+//    truncation_error = 1.0 - S.head(rank).squaredNorm();
+//    return std::make_tuple(
+//            U.leftCols(rank),
+//            S.head(rank),
+//            V.topRows(rank),
+//            rank
+//    );
+//}
+
+
 
 template<typename Scalar>
 Eigen::Tensor<Scalar, 2>
-class_SVD<Scalar>::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor){
+class_SVD::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor){
     if (tensor.dimension(0) <= 0)  {throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(0)");}
     if (tensor.dimension(1) <= 0)  {throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(1)");}
-    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
+    Eigen::Map<const MatrixType<Scalar>> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
     return Textra::Matrix_to_Tensor2(mat.completeOrthogonalDecomposition().pseudoInverse() );
 }
 
@@ -94,283 +130,94 @@ class_SVD<Scalar>::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor){
 
 template<typename Scalar>
 std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
-class_SVD<Scalar>::decompose(const Eigen::Tensor<Scalar,2> &tensor) {
-    if (tensor.dimension(0) <= 0)  {throw std::runtime_error("decompose error: Dimension is zero: tensor.dimension(0)");}
-    if (tensor.dimension(1) <= 0)  {throw std::runtime_error("decompose error: Dimension is zero: tensor.dimension(1)");}
-    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long chiC = SVD.rank();
-    if (chiC <= 0 or mat.isZero(0)){
-        std::cout << "schmidt error: Rank is zero or invalid matrix" << std::endl;
-        std::cerr << "M: \n" << mat << std::endl;
-        std::cerr << "U: \n" << SVD.matrixU() << std::endl;
-        std::cerr << "S: \n" << SVD.singularValues() << std::endl;
-        std::cerr << "V: \n" << SVD.matrixV() << std::endl;
-        std::cerr << "rank: " << chiC << std::endl;
-        throw std::runtime_error("schmidt error:  Rank is zero or invalid matrix");
-    }
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
-    return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), SVD.matrixU().rows(), chiC),
-                           Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).normalized().template cast<Scalar>() , chiC),
-                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(), SVD.matrixV().rows(), chiC).shuffle(Textra::array2{1,0})
+class_SVD::decompose(const Eigen::Tensor<Scalar,2> &tensor) {
+    Eigen::Map<const MatrixType<Scalar>> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
+    auto[U,S,V,rank] = do_svd(mat);
+    return std::make_tuple(Textra::Matrix_to_Tensor2(U),
+                           Textra::Matrix_to_Tensor1(S.normalized().template cast<Scalar>()),
+                           Textra::Matrix_to_Tensor2(V)
     );
 }
 
 template<typename Scalar>
 std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
-class_SVD<Scalar>::decompose(const Eigen::Tensor<Scalar,3> &tensor,const long rows,const long cols) {
-    if (rows <= 0)  {throw std::runtime_error("decompose error: Dimension is zero: rows");}
-    if (cols <= 0)  {throw std::runtime_error("decompose error: Dimension is zero: cols");}
-    Eigen::Map<const MatrixType> mat (tensor.data(), rows, cols);
-    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long chiC = SVD.rank();
-
-    return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), SVD.matrixU().rows(), chiC),
-                           Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).normalized().template cast<Scalar>() , chiC),
-                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(), SVD.matrixV().rows(), chiC).shuffle(Textra::array2{1,0})
-    );
+class_SVD::decompose(const Eigen::Tensor<Scalar,3> &tensor,const long rows,const long cols) {
+    auto tensormap = Eigen::TensorMap<Eigen::Tensor<Scalar,2>> (tensor.data(), rows,cols);
+    return decompose(tensormap);
 }
 
 
 
 template<typename Scalar>
 std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
-class_SVD<Scalar>::decompose(const Eigen::Tensor<Scalar,2> &tensor, const long chi_max) {
-    if (tensor.dimension(0) <= 0)  {throw std::runtime_error("decompose error: Dimension is zero: tensor.dimension(0)");}
-    if (tensor.dimension(1) <= 0)  {throw std::runtime_error("decompose error: Dimension is zero: tensor.dimension(1)");}
-
-    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-    if (mat.isZero(1e-14)){std::cout << "WARNING: SVD matrix almost zero" << std::endl; throw std::runtime_error("SVD: Matrix is near zero");}
-    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long chiC = std::min(SVD.rank(), chi_max);
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
-    return std::make_tuple
-            (Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), SVD.matrixU().rows(), chiC),
-             Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).normalized().template cast<Scalar>() , chiC),
-             Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate() ,  chiC, SVD.matrixV().rows() ).shuffle(Textra::array2{1,0})
-            );
+class_SVD::decompose(const Eigen::Tensor<Scalar,2> &tensor, const long chi_max) {
+    Eigen::Map<const MatrixType<Scalar>> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
+    auto[U,S,V,rank] = do_svd(mat,chi_max);
+    return std::make_tuple(Textra::Matrix_to_Tensor2(U),
+                           Textra::Matrix_to_Tensor1(S.normalized().template cast<Scalar>()),
+                           Textra::Matrix_to_Tensor2(V)
+    );
 }
 
-template<typename Scalar>
+template<typename Scalar, auto tensor_rank>
 std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,2> &tensor, long d, long chiL, long chi_max, long chiR) {
-    if (d <= 0)   {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 0, a.k.a. \"d\"");}
-    if (chiL <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 1, a.k.a. \"chiL\"");}
-    if (chiR <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 3, a.k.a. \"chiR\"");}
-
-    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long chiC            = std::min(SVD.rank(),chi_max);
-    if (mat.isZero(1e-14)){std::cout << "WARNING: SVD matrix almost zero" << std::endl; throw std::runtime_error("SVD: Matrix is near zero");}
-    if (chiC <= 0 or mat.isZero(0)){
-        std::cout << "schmidt error: Rank is zero or invalid matrix" << std::endl;
-        std::cerr << "M: \n" << mat << std::endl;
-        std::cerr << "U: \n" << SVD.matrixU() << std::endl;
-        std::cerr << "S: \n" << SVD.singularValues() << std::endl;
-        std::cerr << "V: \n" << SVD.matrixV() << std::endl;
-        std::cerr << "rank: " << chiC << std::endl;
-        throw std::runtime_error("schmidt error:  Rank is zero or invalid matrix");
-    }
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
-    return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), d, chiL, chiC),
-                           Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).normalized().template cast<Scalar>(),  chiC ),
-                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(),  d, chiR, chiC ).shuffle(Textra::array3{ 0, 2, 1 })
+class_SVD::schmidt(const Eigen::Tensor<Scalar,tensor_rank> &tensor, long dL, long dR, long chiL, long chi_max, long chiR) {
+    if (dL*chiL * dR*chiR != tensor.size()){throw std::range_error("schmidt error: tensor size does not match given dimensions.");}
+    Eigen::Map<const MatrixType<Scalar>> mat (tensor.data(), dL*chiL, dR*chiR);
+    auto [U,S,V,rank] = do_svd(mat,chi_max);
+    return std::make_tuple(Textra::Matrix_to_Tensor(U, dL, chiL, rank),
+                           Textra::Matrix_to_Tensor(S.normalized().template cast<Scalar>(), rank),
+                           Textra::Matrix_to_Tensor(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 })
     );
 }
 
 
-template<typename Scalar>
-std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,2> &tensor) {
-    long dL   = tensor.dimension(0);
-    long chiL = tensor.dimension(1);
-    long dR   = tensor.dimension(2);
-    long chiR = tensor.dimension(3);
-    if (dL <= 0)  {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 0, a.k.a. \"dL\"");}
-    if (dR <= 0)  {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 2, a.k.a. \"dR\"");}
-    if (chiL <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 1, a.k.a. \"chiL\"");}
-    if (chiR <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 3, a.k.a. \"chiR\"");}
-
-    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long chiC = SVD.rank();
-    if (mat.isZero(1e-14)){std::cout << "WARNING: SVD matrix almost zero" << std::endl; throw std::runtime_error("SVD: Matrix is near zero");}
-    if (chiC <= 0 or mat.isZero(0)){
-        std::cout << "schmidt error: Rank is zero or invalid matrix" << std::endl;
-        std::cerr << "M: \n" << mat << std::endl;
-        std::cerr << "U: \n" << SVD.matrixU() << std::endl;
-        std::cerr << "S: \n" << SVD.singularValues() << std::endl;
-        std::cerr << "V: \n" << SVD.matrixV() << std::endl;
-        std::cerr << "rank: " << chiC << std::endl;
-        throw std::runtime_error("schmidt error:  Rank is zero or invalid matrix");
-    }
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
-    return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), dL, chiL, chiC),
-                           Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).normalized().template cast<Scalar>(),  chiC ),
-                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(),  dR, chiR, chiC ).shuffle(Textra::array3{ 0, 2, 1 })
-    );
-}
-
-
-template<typename Scalar>
-std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,3> &tensor, long rows,long cols) {
-    long d    = tensor.dimension(0);
-    long chiL = tensor.dimension(1);
-    long chiR = tensor.dimension(2);
-    if (d <= 0)   {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 0, a.k.a. \"d\"");}
-    if (chiL <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 1, a.k.a. \"chiL\"");}
-    if (chiR <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 3, a.k.a. \"chiR\"");}
-    Eigen::Map<const MatrixType> mat (tensor.data(), rows,cols);
-    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long chiC = SVD.rank();
-    if (mat.isZero(1e-14)){std::cout << "WARNING: SVD matrix almost zero" << std::endl; throw std::runtime_error("SVD: Matrix is near zero");}
-    if (chiC <= 0 or mat.isZero(0)){
-        std::cout << "schmidt error: Rank is zero or invalid matrix" << std::endl;
-        std::cerr << "M: \n" << mat << std::endl;
-        std::cerr << "U: \n" << SVD.matrixU() << std::endl;
-        std::cerr << "S: \n" << SVD.singularValues() << std::endl;
-        std::cerr << "V: \n" << SVD.matrixV() << std::endl;
-        std::cerr << "rank: " << chiC << std::endl;
-        throw std::runtime_error("schmidt error:  Rank is zero or invalid matrix");
-    }
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
-    return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), d, chiL, chiC),
-                           Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).normalized().template cast<Scalar>(),  chiC ),
-                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(),  d, chiR, chiC ).shuffle(Textra::array3{ 0, 2, 1 })
-    );
-}
 
 
 
 template<typename Scalar>
 std::tuple <Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,4> &tensor) {
+class_SVD::schmidt(const Eigen::Tensor<Scalar,4> &tensor) {
     long dL   = tensor.dimension(0);
     long chiL = tensor.dimension(1);
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
-    if (dL <= 0)  {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 0, a.k.a. \"dL\"");}
-    if (dR <= 0)  {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 2, a.k.a. \"dR\"");}
-    if (chiL <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 1, a.k.a. \"chiL\"");}
-    if (chiR <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 3, a.k.a. \"chiR\"");}
-    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
-    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long chiC = SVD.rank();
-    if (mat.isZero(1e-14)){std::cout << "WARNING: SVD matrix almost zero" << std::endl; throw std::runtime_error("SVD: Matrix is near zero");}
-    if (chiC <= 0 or mat.isZero(0)){
-        std::cout << "schmidt error: Rank is zero or invalid matrix" << std::endl;
-        std::cerr << "M: \n" << mat << std::endl;
-        std::cerr << "U: \n" << SVD.matrixU() << std::endl;
-        std::cerr << "S: \n" << SVD.singularValues() << std::endl;
-        std::cerr << "V: \n" << SVD.matrixV() << std::endl;
-        std::cerr << "rank: " << chiC << std::endl;
-        throw std::runtime_error("schmidt error:  Rank is zero or invalid matrix");
-    }
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
-    return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), dL, chiL, chiC),
-                           Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).normalized().template cast<Scalar>(), chiC),
-                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(),  dR, chiR, chiC).shuffle(Textra::array3{0,2,1})
-    );
+    long chi_max = std::max(dL*chiL, dR*chiR);
+    return schmidt(tensor,dL,dR,chiL,chi_max,chiR);
+
 }
 
 template<typename Scalar>
 std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-class_SVD<Scalar>::schmidt(const Eigen::Tensor<Scalar,4> &tensor, long chi_max) {
+class_SVD::schmidt(const Eigen::Tensor<Scalar,4> &tensor, long chi_max) {
     long dL   = tensor.dimension(0);
     long chiL = tensor.dimension(1);
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
-    if (dL <= 0)  {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 0, a.k.a. \"dL\"");}
-    if (dR <= 0)  {throw std::runtime_error("schmidt error: Dimension is zero: theta dim 2, a.k.a. \"dR\"");}
-    if (chiL <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 1, a.k.a. \"chiL\"");}
-    if (chiR <= 0){throw std::runtime_error("schmidt error: Dimension is zero: theta dim 3, a.k.a. \"chiR\"");}
-
-    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
-    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long chiC            = std::min(SVD.rank(),chi_max);
-    if (mat.isZero(1e-14)){std::cout << "WARNING: SVD matrix almost zero" << std::endl; throw std::runtime_error("SVD: Matrix is near zero");}
-    if (chiC <= 0 or mat.isZero(0)){
-        std::cout << "schmidt error: Rank is zero or invalid matrix" << std::endl;
-        std::cerr << "M: \n" << mat << std::endl;
-        std::cerr << "U: \n" << SVD.matrixU() << std::endl;
-        std::cerr << "S: \n" << SVD.singularValues() << std::endl;
-        std::cerr << "V: \n" << SVD.matrixV() << std::endl;
-        std::cerr << "rank: " << chiC << std::endl;
-        throw std::runtime_error("schmidt error:  Rank is zero or invalid matrix");
-    }
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
-    return std::make_tuple(
-            Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), dL, chiL, chiC),
-            Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).normalized().template cast<Scalar>(),  chiC ),
-            Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(),  dR, chiR, chiC).shuffle(Textra::array3{0,2,1})
-    );
+    return schmidt(tensor,dL,dR,chiL,chi_max,chiR);
 }
 
 
 template<typename Scalar>
 std::tuple <Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>,double  >
-class_SVD<Scalar>::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor) {
+class_SVD::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor) {
     long dL   = tensor.dimension(0);
     long chiL = tensor.dimension(1);
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
-    if (dL <= 0)  {throw std::runtime_error("schmidt_with_norm error: Dimension is zero: theta dim 0, a.k.a. \"dL\"");}
-    if (dR <= 0)  {throw std::runtime_error("schmidt_with_norm error: Dimension is zero: theta dim 2, a.k.a. \"dR\"");}
-    if (chiL <= 0){throw std::runtime_error("schmidt_with_norm error: Dimension is zero: theta dim 1, a.k.a. \"chiL\"");}
-    if (chiR <= 0){throw std::runtime_error("schmidt_with_norm error: Dimension is zero: theta dim 3, a.k.a. \"chiR\"");}
+    if (dL*chiL * dR*chiR != tensor.size()){throw std::range_error("schmidt_with_norm error: tensor size does not match given dimensions.");}
 
-    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
-
-    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long chiC = SVD.rank();
-    if (mat.isZero(1e-14)){std::cout << "WARNING: SVD matrix almost zero" << std::endl; throw std::runtime_error("SVD: Matrix is near zero");}
-    if (chiC <= 0 or mat.isZero(0)){
-        std::cout << "schmidt_with_norm error: Rank is zero or invalid matrix" << std::endl;
-        std::cerr << "M: \n" << mat << std::endl;
-        std::cerr << "U: \n" << SVD.matrixU() << std::endl;
-        std::cerr << "S: \n" << SVD.singularValues() << std::endl;
-        std::cerr << "V: \n" << SVD.matrixV() << std::endl;
-        std::cerr << "rank: " << chiC << std::endl;
-        throw std::runtime_error("schmidt_with_norm error:  Rank is zero or invalid matrix");
-    }
-
-    long num_tail = SVD.nonzeroSingularValues()-chiC;
-    truncation_error = num_tail <= 0? 0 : SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
-//    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
-    return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), dL, chiL, chiC),
-                           Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).normalized().template cast<Scalar>(), chiC),
-                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(),  dR, chiR, chiC).shuffle(Textra::array3{0,2,1}),
-                           SVD.singularValues().head(chiC).norm()
+    Eigen::Map<const MatrixType<Scalar>> mat (tensor.data(), dL*chiL, dR*chiR);
+    auto [U,S,V,rank] = do_svd(mat);
+    return std::make_tuple(Textra::Matrix_to_Tensor(U, dL, chiL, rank),
+                           Textra::Matrix_to_Tensor(S.normalized().template cast<Scalar>(), rank),
+                           Textra::Matrix_to_Tensor(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 }),
+                           S.norm()
     );
+
+
 }
 
-template<typename Scalar>
-std::tuple <Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>  >
-class_SVD<Scalar>::schmidt_unnormalized(const Eigen::Tensor<Scalar,4> &tensor) {
-    long dL   = tensor.dimension(0);
-    long chiL = tensor.dimension(1);
-    long dR   = tensor.dimension(2);
-    long chiR = tensor.dimension(3);
-    Eigen::Map<const MatrixType> mat (tensor.data(), tensor.dimension(0)*tensor.dimension(1), tensor.dimension(2)*tensor.dimension(3));
-    if (mat.isZero(1e-14)){std::cout << "WARNING: SVD matrix almost zero" << std::endl; throw std::runtime_error("SVD: Matrix is near zero");}
-    SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long chiC = SVD.rank();
-
-
-    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-chiC).squaredNorm();
-    return std::make_tuple(Textra::Matrix_to_Tensor(SVD.matrixU().leftCols(chiC), dL, chiL, chiC),
-                           Textra::Matrix_to_Tensor(SVD.singularValues().head(chiC).template cast<Scalar>(), chiC),
-                           Textra::Matrix_to_Tensor(SVD.matrixV().leftCols(chiC).conjugate(),  dR, chiR, chiC).shuffle(Textra::array3{0,2,1})
-    );
-}
-// ============================ //
-//   Explicit instantiations
-// ============================ //
-//
-//template class class_SVD<double>;
-//template class class_SVD<std::complex<double>>;
-//
 
 
 

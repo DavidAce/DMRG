@@ -94,13 +94,11 @@ void class_xDMRG::run()
             log->trace("Case 1a");
             run_preprocessing();
             run_simulation();
-            run_postprocessing();
         }else if(simOK and not mpsOK){
             // Case 1 b
             log->trace("Case 1b");
             run_preprocessing();
             run_simulation();
-            run_postprocessing();
         }else if(simOK and mpsOK){
             // We can go ahead and load the state from hdf5
             log->trace("Loading MPS from file");
@@ -120,12 +118,10 @@ void class_xDMRG::run()
                 log->trace("Case 1c");
                 settings::xdmrg::max_sweeps += state->get_sweeps();
                 run_simulation();
-                run_postprocessing();
 
             }else {
                 // Case 1 d -- not much else to do.. redo postprocessing for good measure.
                 log->trace("Case 1d");
-                run_postprocessing();
             }
         }
     }else {
@@ -133,8 +129,10 @@ void class_xDMRG::run()
         log->trace("Case 2");
         run_preprocessing();
         run_simulation();
-        run_postprocessing();
     }
+    run_postprocessing();
+    print_status_full();
+    print_profiling();
     t_tot.toc();
 }
 
@@ -197,11 +195,10 @@ void class_xDMRG::run_postprocessing(){
 
     state->set_measured_false();
     superblock->set_measured_false();
-
+    log->info("Storing state and measurements to file");
     store_state_and_measurements_to_file(true);
-    print_status_full();
-    print_profiling();
     log->info("Finished {} postprocessing",sim_name);
+
 }
 
 

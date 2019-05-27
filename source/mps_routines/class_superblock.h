@@ -16,7 +16,7 @@ class class_mps_2site;
 class class_hamiltonian_base;
 class class_environment;
 class class_environment_var;
-template<typename Scalar> class class_SVD;
+class class_SVD;
 
 /*!
   \class class_superblock
@@ -47,7 +47,7 @@ public:
     std::shared_ptr<class_environment>       Rblock;     /*!< Right environment block. */
     std::shared_ptr<class_environment_var>   Lblock2;    /*!< Left  environment block used for variance calculation */
     std::shared_ptr<class_environment_var>   Rblock2;    /*!< Right environment block used for variance calculation */
-    std::shared_ptr<class_SVD<Scalar>>       SVD;
+    std::shared_ptr<class_SVD>               SVD;
 
 
     double E_optimal;                                    /*!< Stores the energy obtained in the eigenvalue solver. This energy corresponds to non-truncated MPS, so it will differ a tiny bit from what you see in final resuls. */
