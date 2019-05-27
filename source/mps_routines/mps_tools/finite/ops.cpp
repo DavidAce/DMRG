@@ -39,7 +39,6 @@ void MPS_Tools::Finite::Ops::apply_mpo(class_finite_chain_state &state,const Eig
 
 
 void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const std::list<Eigen::Tensor<Scalar,4>> &mpos,const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge){
-    assert(mpos.size() == state.get_length() and "ERROR: number of mpo's doesn't match the number of sites on the system");
     if (mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
@@ -51,7 +50,8 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
             long mpoDimL = mpo->dimension(0);
             long mpoDimR = mpo->dimension(1);
             auto [d,chiL,chiR] = mps.get_dims();
-
+//            std::cout << "L     " << mps.get_L().dimensions() <<"\n" << mps.get_L() << std::endl;
+//            std::cout << "G     " << mps.get_G().dimensions() <<"\n" << mps.get_G() << std::endl;
             Eigen::Tensor<Scalar,3> G_temp =
                     mps.get_G()
                             .contract(*mpo, idx({0},{2}))
@@ -59,7 +59,7 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
                             .reshape(array3{d, chiL*mpoDimL, chiR*mpoDimR});
 
             Eigen::Tensor<Scalar,1> L_temp = mps.get_L().broadcast(array1{mpoDimL});
-            Scalar Lnorm = Textra::Tensor1_to_Vector(L_temp).norm();
+            Scalar Lnorm = 1.0;//Textra::Tensor1_to_Vector(L_temp).norm();
 
             mps.set_G(G_temp);
             mps.set_L(L_temp/Lnorm);
@@ -71,7 +71,7 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     {
         long mpoDim = mpo->dimension(0);
         Eigen::Tensor<Scalar, 1> C_temp = state.get_MPS_C().broadcast(array1{mpoDim});
-        Scalar Cnorm = Textra::Tensor1_to_Vector(C_temp).norm();
+        Scalar Cnorm = 1.0;//Textra::Tensor1_to_Vector(C_temp).norm();
         state.get_MPS_C() = C_temp / Cnorm;
     }
     {
@@ -79,6 +79,8 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
             long mpoDimL = mpo->dimension(0);
             long mpoDimR = mpo->dimension(1);
             auto [d,chiL,chiR] = mps.get_dims();
+//            std::cout << "G     " << mps.get_G().dimensions() <<"\n" << mps.get_G() << std::endl;
+//            std::cout << "L     " << mps.get_L().dimensions() <<"\n" << mps.get_L() << std::endl;
             Eigen::Tensor<Scalar,3> G_temp =
                     mps.get_G()
                             .contract(*mpo, idx({0},{2}))
@@ -86,7 +88,7 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
                             .reshape(array3{d, chiL*mpoDimL, chiR*mpoDimR});
 
             Eigen::Tensor<Scalar,1> L_temp = mps.get_L().broadcast(array1{mpoDimR});
-            Scalar Lnorm = Textra::Tensor1_to_Vector(L_temp).norm();
+            Scalar Lnorm = 1.0;//Textra::Tensor1_to_Vector(L_temp).norm();
 
             mps.set_G(G_temp);
             mps.set_L(L_temp / Lnorm);
@@ -153,7 +155,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
             std::cerr << "A:\n" << state.get_A(pos_A) << std::endl;
             std::cerr << "L:\n" << state.get_L(pos_LC) << std::endl;
             std::cerr << "B:\n" << state.get_B(pos_B) << std::endl;
-            throw std::runtime_error("SVD failed on theta: " + std::string(ex.what()) );
+            throw std::runtime_error("Normalization failed at step " + std::to_string(pos_A) + ": " + std::string(ex.what()) );
         }
 
         Eigen::Tensor<Scalar,3> LA_U = Textra::asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
@@ -187,248 +189,8 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
 
 
-
-
-
-
-
-
-//
-//
-//
-//
-//    // First the left side
-//    MPS_Tools::log->trace("Starting normalization");
-//    class_SVD<Scalar> svd;
-////    svd.setThreshold(1e-8);
-//    {
-//        auto mpsL_0            = state.get_MPS_L().begin();
-//        auto mpsL_1            = state.get_MPS_L().begin();
-//        auto mpsL_2            = state.get_MPS_L().begin();
-//        std::advance(mpsL_1,1);
-//        std::advance(mpsL_2,2);
-//        // Make sure the first lambda is a 1
-//        Eigen::Tensor<Scalar,1> L0(1);
-//        L0.setConstant(1.0);
-//        mpsL_0->set_L(L0);
-//
-//        while(mpsL_1 != state.get_MPS_L().end()) {
-//            const auto & L0 = mpsL_0->get_L();
-//            const auto & A0 = mpsL_0->get_A();
-//            const auto & A1 = mpsL_1->get_A();
-//            const auto & L2 = mpsL_2 != state.get_MPS_L().end() ? mpsL_2->get_L() : state.get_MPS_C();
-//            Eigen::Tensor<Scalar,4> theta = A0.contract(A1, idx({2},{1})).contract(Textra::asDiagonal(L2), idx({3},{0}));
-//            auto [U,S,V,norm] = svd.schmidt_with_norm(theta);
-//            Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(L0).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-//            Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
-//            if (mpsL_1->get_position() == state.get_length()-1) { diagonalNorm.setConstant(1.0); }
-//            else{diagonalNorm.setConstant(norm);}
-////            diagonalNorm.setConstant(norm);
-//            Eigen::Tensor<Scalar,3> d_V_L =
-//                    Textra::asDiagonal(diagonalNorm)
-//                    .contract(V ,idx({1},{1}))
-//                    .contract(asDiagonalInversed(L2), idx({2},{0}))
-//                    .shuffle(array3{1,0,2});
-//
-//            // Now you can update your matrices
-//            mpsL_0->set_G(L_U);
-//            mpsL_1->set_L(S);
-//            mpsL_1->set_G(d_V_L);
-//
-//            mpsL_0++;
-//            mpsL_1++;
-//            if(mpsL_2 != state.get_MPS_L().end()){mpsL_2++;}
-//        }
-//    }
-//
-//
-//    // Now take care of the middle
-//    {
-//        const auto & L0 = state.get_MPS_L().back().get_L();
-//        const auto & A  = state.get_MPS_L().back().get_A();
-//        const auto & C  = Textra::asDiagonal(state.get_MPS_C());
-//        const auto & B  = state.get_MPS_R().front().get_B();
-//        const auto & L2 = state.get_MPS_R().front().get_L();
-//
-//        Eigen::Tensor<Scalar,4> theta = A.contract(C,idx({2},{0})).contract(B, idx({2},{1}));
-//        auto [U,S,V,norm] = svd.schmidt_with_norm(theta);
-//        Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(L0).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-//        Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
-//        if (state.get_MPS_R().size() == 1) { diagonalNorm.setConstant(1.0); }
-//        else{diagonalNorm.setConstant(norm);}
-//        Eigen::Tensor<Scalar,3> d_V_L =
-//                Textra::asDiagonal(diagonalNorm).contract(V ,idx({1},{1})).contract(asDiagonalInversed(L2), idx({2},{0})).shuffle(array3{1,0,2});
-//
-//        state.get_MPS_L().back().set_G (L_U);
-//        state.get_MPS_C() = S;
-//        state.get_MPS_R().front().set_G(d_V_L);
-//    }
-//
-//
-//
-//    {
-//        auto mpsR_0            = state.get_MPS_R().begin();
-//        auto mpsR_1            = state.get_MPS_R().begin();
-//        std::advance(mpsR_1,1);
-////        // Make sure the first lambda is a 1
-////        Eigen::Tensor<Scalar,1> L0(1);
-////        L0.setConstant(1.0);
-////        mpsR_0->set_L(L0);
-//        Eigen::Tensor<Scalar,1> Lt = state.get_MPS_C();
-//        while(mpsR_1 != state.get_MPS_R().end()) {
-//            const auto & B0 = mpsR_0->get_B();
-//            const auto & B1 = mpsR_1->get_B();
-//            const auto & L2 = mpsR_1->get_L();
-//            Eigen::Tensor<Scalar,4> theta = asDiagonal(Lt).contract(B0, idx({1},{1})).contract(B1, idx({2},{1})).shuffle(array4{1,0,2,3});
-//            auto [U,S,V,norm] = svd.schmidt_with_norm(theta);
-//            Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(Lt).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-//            Eigen::Tensor<Scalar,1> diagonalNorm (S.dimension(0));
-//            if (mpsR_1->get_position() == state.get_length()-1) {
-//                diagonalNorm.setConstant(1.0);
-//            }
-//            else{
-//                diagonalNorm.setConstant(norm);
-//            }
-//
-//            Eigen::Tensor<Scalar,3> d_V_L =
-//                    Textra::asDiagonal(diagonalNorm)
-//                            .contract(V ,idx({1},{1}))
-//                            .contract(asDiagonalInversed(L2), idx({2},{0}))
-//                            .shuffle(array3{1,0,2});
-//
-//
-//            // Now you can update your matrices
-//            mpsR_0->set_G(L_U);
-//            mpsR_0->set_L(S);
-//            mpsR_1->set_G(d_V_L);
-//            Lt = S;
-//            // Check that you get identity matrices
-////            Eigen::Tensor<Scalar,2> ID_tensor = mpsR_0->get_B().contract(mpsR_0->get_B().conjugate(),idx({0,2},{0,2}));
-////            std::cout << "Right normalized: " << std::boolalpha << Textra::Tensor2_to_Matrix(ID_tensor).isIdentity(1e-12) << std::endl;
-//
-//
-//            mpsR_0++;
-//            mpsR_1++;
-//            if(mpsR_1 == state.get_MPS_R().end()){std::cout << "Norm: " << norm << std::endl;}
-//        }
-//
-//    }
-//
-//
-//
-//    // Print bond dimensions:
-//    //    for(auto & mps : state.get_MPS_L()){
-//    //        std::cout << "chi : " << mps.get_chiL() << std::endl;
-//    //    }
-//    //    std::cout << "chiC: " << state.get_MPS_C().dimension(0) << std::endl;
-//    //    for(auto & mps : state.get_MPS_R()){
-//    //        std::cout << "chi : " << mps.get_chiR() << std::endl;
-//    //    }
 }
 
-void MPS_Tools::Finite::Ops::normalize_chain2(class_finite_chain_state & state){
-
-    // First the left side
-    MPS_Tools::log->trace("Starting normalization");
-    class_SVD<Scalar> svd;
-//    svd.setThreshold(1e-8);
-    {
-        auto mpsL_0            = state.get_MPS_L().begin();
-        auto mpsL_1            = state.get_MPS_L().begin();
-        auto mpsL_2            = state.get_MPS_L().begin();
-        std::advance(mpsL_1,1);
-        std::advance(mpsL_2,2);
-        // Make sure the first lambda is a 1
-        Eigen::Tensor<Scalar,1> L0(1);
-        L0.setConstant(1.0);
-        mpsL_0->set_L(L0);
-
-        while(mpsL_1 != state.get_MPS_L().end()) {
-            const auto & L0 = mpsL_0->get_L();
-            const auto & A0 = mpsL_0->get_A();
-            const auto & A1 = mpsL_1->get_A();
-            const auto & L2 = mpsL_2 != state.get_MPS_L().end() ? mpsL_2->get_L() : state.get_MPS_C();
-            Eigen::Tensor<Scalar,4> theta = A0.contract(A1, idx({2},{1})).contract(Textra::asDiagonal(L2), idx({3},{0}));
-            auto [U,S,V] = svd.schmidt(theta);
-            Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(L0).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-            Eigen::Tensor<Scalar,3> V_L = V.contract(asDiagonalInversed(L2), idx({2},{0}));
-
-            // Now you can update your matrices
-            mpsL_0->set_G(L_U);
-            mpsL_1->set_L(S);
-            mpsL_1->set_G(V_L);
-
-            // Check that you get identity matrices
-//            Eigen::Tensor<Scalar,2> ID_tensor = mpsL_0->get_A().contract(mpsL_0->get_A().conjugate(),idx({0,1},{0,1}));
-//            std::cout << "Left normalized: " <<std::boolalpha << Textra::Tensor2_to_Matrix(ID_tensor).isIdentity(1e-12)  << std::endl;
-
-
-
-
-            mpsL_0++;
-            mpsL_1++;
-            if(mpsL_2 != state.get_MPS_L().end()){mpsL_2++;}
-        }
-    }
-
-    {
-        auto mpsR_0            = state.get_MPS_R().rbegin();
-        auto mpsR_1            = state.get_MPS_R().rbegin();
-        auto mpsR_2            = state.get_MPS_R().rbegin();
-        std::advance(mpsR_1,1);
-        std::advance(mpsR_2,2);
-        // Make sure the first lambda is a 1
-        Eigen::Tensor<Scalar,1> L0(1);
-        L0.setConstant(1.0);
-        mpsR_0->set_L(L0);
-
-        while(mpsR_1 != state.get_MPS_R().rend()) {
-            const auto & L0 = mpsR_0->get_L();
-            const auto & B0 = mpsR_0->get_B();
-            const auto & B1 = mpsR_1->get_B();
-            const auto & L2 = mpsR_2 != state.get_MPS_R().rend() ? mpsR_2->get_L() : state.get_MPS_C();
-            Eigen::Tensor<Scalar,4> theta =B0.contract(B1, idx({1},{2})).contract(Textra::asDiagonal(L2), idx({3},{1})).shuffle(array4{2,3,0,1});
-            auto [U,S,V] = svd.schmidt(theta);
-            Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(L2).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-            Eigen::Tensor<Scalar,3> V_L = V.contract(asDiagonalInversed(L0), idx({2},{0}));
-
-            // Now you can update your matrices
-            mpsR_0->set_G(V_L);
-            mpsR_1->set_L(S);
-            mpsR_1->set_G(L_U);
-            // Check that you get identity matrices
-//            Eigen::Tensor<Scalar,2> ID_tensor = mpsR_0->get_B().contract(mpsR_0->get_B().conjugate(),idx({0,2},{0,2}));
-//            std::cout << "Right normalized: " << std::boolalpha << Textra::Tensor2_to_Matrix(ID_tensor).isIdentity(1e-12) << std::endl;
-
-
-            mpsR_0++;
-            mpsR_1++;
-            if(mpsR_2 != state.get_MPS_R().rend()){mpsR_2++;}
-        }
-
-    }
-
-    // Now take care of the middle
-    {
-        const auto & A = state.get_MPS_L().back().get_A();
-        const auto & C = Textra::asDiagonal(state.get_MPS_C());
-        const auto & B = state.get_MPS_R().front().get_B();
-        Eigen::Tensor<Scalar,4> theta = A.contract(C,idx({2},{0})).contract(B, idx({2},{1}));
-        auto [U,S,V] = svd.schmidt(theta);
-        state.get_MPS_L().back().set_G (Textra::asDiagonalInversed(state.get_MPS_L().back().get_L()).contract(U, idx({1},{1})).shuffle(array3{1,0,2}));
-        state.get_MPS_R().front().set_G(V.contract(Textra::asDiagonalInversed(state.get_MPS_R().front().get_L()), idx({2},{0})));
-        state.get_MPS_C() = S;
-    }
-
-    // Print bond dimensions:
-    //    for(auto & mps : state.get_MPS_L()){
-    //        std::cout << "chi : " << mps.get_chiL() << std::endl;
-    //    }
-    //    std::cout << "chiC: " << state.get_MPS_C().dimension(0) << std::endl;
-    //    for(auto & mps : state.get_MPS_R()){
-    //        std::cout << "chi : " << mps.get_chiR() << std::endl;
-    //    }
-}
 
 
 void MPS_Tools::Finite::Ops::reset_to_random_product_state(class_finite_chain_state &state, const std::string parity){
@@ -485,66 +247,6 @@ void MPS_Tools::Finite::Ops::reset_to_random_product_state(class_finite_chain_st
 }
 
 
-void MPS_Tools::Finite::Ops::apply_energy_mpo_test(class_finite_chain_state &state, [[maybe_unused]]class_superblock &superblock) {
-
-//    const auto [mpo,L,R]    = class_mpo::pauli_mpo(paulimatrix);
-    auto hamiltonian_mpos = make_mpo_list(state.get_MPO_L(),state.get_MPO_R());
-
-//    const auto mpo = superblock.HA->MPO;
-    const auto L   = state.get_ENV_L().front().block;
-    const auto R   = state.get_ENV_R().back().block;
-
-
-    // Make a copy of the state on which to apply the mpo
-    std::cout << std::setprecision(16);
-    class_finite_chain_state state_copy1 = state;
-    class_finite_chain_state state_copy2 = state;
-    double overlap0 = MPS_Tools::Finite::Ops::overlap(state,state_copy1);
-    double exp_val0 = MPS_Tools::Finite::Ops::expectation_value(state,state_copy1,hamiltonian_mpos,L,R);
-    std::cout << "overlap 0: " << overlap0 << " |  per site: " << overlap0/state.get_length() << std::endl;
-    std::cout << "energy  0: " << exp_val0 << " |  per site: " << exp_val0/state.get_length() << std::endl;
-
-    apply_mpos(state_copy1,hamiltonian_mpos,L,R);
-    apply_mpos(state_copy2,hamiltonian_mpos,L,R);
-
-    double overlap11 = MPS_Tools::Finite::Ops::overlap(state,state_copy1);
-    double exp_val11 = MPS_Tools::Finite::Ops::expectation_value(state,state_copy1,hamiltonian_mpos,L,R);
-    std::cout << "overlap 11: " << overlap11 << " |  per site: " << overlap11/state.get_length() << std::endl;
-    std::cout << "energy  11: " << exp_val11 << " |  per site: " << exp_val11/state.get_length() << std::endl;
-
-    double overlap12 = MPS_Tools::Finite::Ops::overlap(state,state_copy1);
-    double exp_val12 = MPS_Tools::Finite::Ops::expectation_value(state,state_copy1,hamiltonian_mpos,L,R);
-    std::cout << "overlap 12: " << overlap12 << " |  per site: " << overlap12/state.get_length() << std::endl;
-    std::cout << "energy  12: " << exp_val12 << " |  per site: " << exp_val12/state.get_length() << std::endl;
-
-
-
-    normalize_chain(state_copy1);
-
-    double overlap21 = MPS_Tools::Finite::Ops::overlap(state,state_copy1);
-    double exp_val21 = MPS_Tools::Finite::Ops::expectation_value(state,state_copy1,hamiltonian_mpos,L,R);
-    std::cout << "overlap per site 21: " << overlap21 << " |  per site: " << overlap21/state.get_length() << std::endl;
-    std::cout << "energy  per site 21: " << exp_val21 << " |  per site: " << exp_val21/state.get_length() << std::endl;
-
-
-    normalize_chain(state_copy2);
-
-    double overlap22 = MPS_Tools::Finite::Ops::overlap(state,state_copy2);
-    double exp_val22 = MPS_Tools::Finite::Ops::expectation_value(state,state_copy2,hamiltonian_mpos,L,R);
-    std::cout << "overlap per site 22: " << overlap22 << " |  per site: " << overlap22/state.get_length() << std::endl;
-    std::cout << "energy  per site 22: " << exp_val22 << " |  per site: " << exp_val22/state.get_length() << std::endl;
-//
-
-    class_finite_chain_state state_copy3 = state;
-    normalize_chain(state_copy3);
-    double overlap3 = MPS_Tools::Finite::Ops::overlap(state,state_copy3);
-    std::cout << "overlap per site 3: " << overlap3 << " |  per site: " << overlap3/state.get_length() << std::endl;
-//
-//    rebuild_environments(state);
-//
-//    rebuild_superblock(state, superblock);
-
-}
 
 
 class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix, const int sign) {
@@ -567,10 +269,22 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const 
     }else{
         return get_parity_projected_state(state, paulimatrix,-1);
     }
-
-
 }
 
+class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const class_finite_chain_state &state, const std::string paulistring) {
+    MPS_Tools::log->trace("Finding closest projection");
+    Eigen::MatrixXcd paulimatrix;
+    if (paulistring == "sx"){paulimatrix = qm::spinOneHalf::sx;}
+    if (paulistring == "sy"){paulimatrix = qm::spinOneHalf::sy;}
+    if (paulistring == "sz"){paulimatrix = qm::spinOneHalf::sz;}
+
+    double measured_spin_component = MPS_Tools::Finite::Measure::spin_component(state, paulimatrix);
+    if (measured_spin_component > 0){
+        return get_parity_projected_state(state, paulimatrix, 1);
+    }else{
+        return get_parity_projected_state(state, paulimatrix,-1);
+    }
+}
 
 void MPS_Tools::Finite::Ops::rebuild_superblock(class_finite_chain_state &state, class_superblock &superblock) {
     MPS_Tools::log->trace("Rebuilding superblock");

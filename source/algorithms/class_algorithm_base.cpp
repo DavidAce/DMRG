@@ -554,34 +554,6 @@ void class_algorithm_base::reset_full_mps_to_random_product_state(std::string pa
     MPS_Tools::Common::Measure::set_not_measured(*superblock);
 }
 
-//void class_algorithm_base::set_random_fields_in_chain_mpo() {
-//    log->info("Setting random fields in chain");
-//    rn::seed_init_mpo((unsigned long)settings::model::seed_init_mpo);
-//    if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
-//    assert(state->get_length() == (size_t)num_sites());
-//
-//    std::vector<std::vector<double>> all_params;
-//    for (auto &mpo : state->get_MPO_L()){
-//        mpo->randomize_hamiltonian();
-//        all_params.push_back(mpo->get_parameter_values());
-//    }
-//    for (auto &mpo : state->get_MPO_R()){
-//        mpo->randomize_hamiltonian();
-//        all_params.push_back(mpo->get_parameter_values());
-//    }
-//
-//    for (auto &mpo : state->get_MPO_L()){
-//        mpo->set_full_lattice_parameters(all_params);
-//    }
-//    for (auto &mpo : state->get_MPO_R()){
-//        mpo->set_full_lattice_parameters(all_params);
-//    }
-//
-//
-//    superblock->HA = state->get_MPO_L().back()->clone();
-//    superblock->HB = state->get_MPO_R().front()->clone();
-//    sim_state.iteration = state->reset_sweeps();
-//}
 
 void class_algorithm_base::compute_observables(){
     log->trace("Starting all measurements on current superblock");

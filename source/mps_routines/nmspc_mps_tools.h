@@ -68,6 +68,8 @@ namespace MPS_Tools{
             get_parity_projected_state                (const class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix, const int sign);
             extern class_finite_chain_state
             get_closest_parity_state                  (const class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix);
+            extern class_finite_chain_state
+            get_closest_parity_state                  (const class_finite_chain_state &state, const std::string paulistring);
         }
 
 
