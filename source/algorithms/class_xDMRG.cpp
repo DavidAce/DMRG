@@ -374,6 +374,7 @@ void class_xDMRG::find_energy_range() {
     int counterB = 0;
     while(sim_state.energy_now < sim_state.energy_lbound or sim_state.energy_now > sim_state.energy_ubound){
         reset_full_mps_to_random_product_state("sx");
+        *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,"sx");
         sim_state.energy_now = MPS_Tools::Common::Measure::energy_per_site_mpo(*superblock);
         sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
         counterA++;
