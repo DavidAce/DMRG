@@ -29,7 +29,7 @@ class_superblock::class_superblock(SimulationType sim_type_,std::string sim_name
         Rblock(std::make_shared<class_environment>("R")),
         Lblock2(std::make_shared<class_environment_var>("L")),
         Rblock2(std::make_shared<class_environment_var>("R")),
-        SVD(std::make_shared<class_SVD<Scalar>>())
+        SVD(std::make_shared<class_SVD>())
 {
     log = Logger::setLogger(sim_name,settings::console::verbosity);
     HA->set_position(0);

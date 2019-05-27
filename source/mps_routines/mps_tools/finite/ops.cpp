@@ -135,7 +135,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
     // Sweep back and forth once on the chain
 
-    class_SVD<Scalar> svd;
+    class_SVD svd;
     size_t pos_LA = 0; // Lambda left of GA
     size_t pos_LC = 1; //Center Lambda
     size_t pos_LB = 2; // Lambda right of GB

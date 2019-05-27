@@ -14,6 +14,7 @@
 void MPS_Tools::Finite::Debug::check_integrity(const class_finite_chain_state &state,
                                                const class_superblock &superblock, class_simulation_state &sim_state)
 {
+    MPS_Tools::log->info("Checking integrity...");
     try{
         check_integrity_of_sim(state, superblock, sim_state);
     }catch(std::exception & ex){
@@ -27,6 +28,7 @@ void MPS_Tools::Finite::Debug::check_integrity(const class_finite_chain_state &s
         throw std::runtime_error("Integrity check of MPS failed: " + std::string(ex.what()));
     }
     try {
+        MPS_Tools::log->info("Checking norms");
         MPS_Tools::Finite::Measure::norm(state);
         MPS_Tools::Common::Measure::norm(superblock);
     }catch(std::exception & ex){
@@ -40,7 +42,7 @@ void MPS_Tools::Finite::Debug::check_integrity_of_sim(const class_finite_chain_s
                                                       const class_superblock &superblock,
                                                       class_simulation_state &sim_state)
 {
-    MPS_Tools::log->debug("Checking integrity of SIM");
+    MPS_Tools::log->info("Checking integrity of simulation");
 
     if(state.get_length() != superblock.get_length())
         throw std::runtime_error("Length mismatch in state and superblock: " + std::to_string(state.get_length()) + " " + std::to_string(superblock.get_length()));
@@ -71,9 +73,8 @@ void MPS_Tools::Finite::Debug::check_integrity_of_sim(const class_finite_chain_s
 
 void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_state &state){
     {
-        MPS_Tools::log->trace("Checking integrity of MPS");
+        MPS_Tools::log->info("Checking integrity of MPS");
         MPS_Tools::log->trace("\tChecking system sizes");
-
         if(state.get_MPS_L().size() + state.get_MPS_R().size() != state.get_length() )
             throw std::runtime_error("Mismatch in MPS size: " + std::to_string(state.get_MPS_L().size() + state.get_MPS_R().size()) + " " + std::to_string(state.get_length()));
 
