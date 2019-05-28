@@ -82,6 +82,10 @@ bool class_finite_chain_state::position_is_the_right_edge() const {
     return get_position() == max_sites - 2;
 }
 
+bool class_finite_chain_state::position_is_any_edge() const {
+    return position_is_the_left_edge() or position_is_the_right_edge();
+}
+
 bool class_finite_chain_state::position_is_at(int pos)const{
     return get_position() == pos;
 }

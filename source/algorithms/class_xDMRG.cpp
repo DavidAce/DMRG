@@ -271,15 +271,15 @@ void class_xDMRG::check_convergence(){
         projected_during_warmup = true;
     }
 
-    if (sim_state.variance_mpo_has_saturated
-        and sim_state.variance_mpo_saturated_for > min_saturation_length
-        and not projected_during_saturation)
-    {
-        *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
-        MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-        clear_saturation_status();
-        projected_during_saturation = true;
-    }
+//    if (sim_state.variance_mpo_has_saturated
+//        and sim_state.variance_mpo_saturated_for > min_saturation_length
+//        and not projected_during_saturation)
+//    {
+//        *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
+//        MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+//        clear_saturation_status();
+//        projected_during_saturation = true;
+//    }
 
 
     if(sim_state.variance_mpo_has_converged)
@@ -371,7 +371,6 @@ void class_xDMRG::find_energy_range() {
     int counterB = 0;
     while(sim_state.energy_now < sim_state.energy_lbound or sim_state.energy_now > sim_state.energy_ubound){
         reset_full_mps_to_random_product_state("sx");
-        *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,"sx");
         sim_state.energy_now = MPS_Tools::Common::Measure::energy_per_site_mpo(*superblock);
         sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
         counterA++;

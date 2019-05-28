@@ -210,14 +210,15 @@ void MPS_Tools::Finite::H5pp::write_all_measurements(class_finite_chain_state & 
 
 
 void MPS_Tools::Finite::H5pp::write_all_parity_projections(const class_finite_chain_state & state, const class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
-    double var_sxup = write_parity_projected_analysis(state,superblock,h5ppFile,sim_name, "projections/sx_up", qm::spinOneHalf::sx, 1);
-    double var_sxdn = write_parity_projected_analysis(state,superblock,h5ppFile,sim_name, "projections/sx_dn", qm::spinOneHalf::sx, -1);
+    double measured_spin_component = MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx);
+    if (measured_spin_component > 1e-5){
+        double var_sxup = write_parity_projected_analysis(state,superblock,h5ppFile,sim_name, "projections/sx_up", qm::spinOneHalf::sx, 1);
+    }else
+    if (measured_spin_component < 1e-5){
+        double var_sxdn = write_parity_projected_analysis(state,superblock,h5ppFile,sim_name, "projections/sx_dn", qm::spinOneHalf::sx, -1);
+    }
 
-//    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sy_up", qm::spinOneHalf::sy, 1);
-//    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sy_dn", qm::spinOneHalf::sy, -1);
-//    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sz_up", qm::spinOneHalf::sz, 1);
-//    write_parity_projected_analysis(state,superblock,hdf5,sim_name, "projections/sz_dn", qm::spinOneHalf::sz, -1);
-    std::string best = var_sxup < var_sxdn ? "sx_up" : "sx_dn";
+//    std::string best = var_sxup < var_sxdn ? "sx_up" : "sx_dn";
 //    hdf5.write_symbolic_link("/" +sim_name + "/projections/" + best, "/" + sim_name + "/projections/best");
 }
 

@@ -56,20 +56,21 @@ namespace MPS_Tools{
             extern void apply_mpos                    (class_finite_chain_state &state, const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
             extern void normalize_chain               (class_finite_chain_state &state);
             extern void normalize_chain2              (class_finite_chain_state &state);
-            extern void reset_to_random_product_state (class_finite_chain_state &state, const std::string parity);
 
-            extern void apply_energy_mpo_test         (class_finite_chain_state &state, class_superblock & superblock);
-            extern void rebuild_environments          (class_finite_chain_state &state);
-            extern void rebuild_superblock            (class_finite_chain_state &state, class_superblock & superblock);
-            extern double overlap                     (const class_finite_chain_state &state1, const class_finite_chain_state &state2);
-            extern double expectation_value           (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
             extern double exp_sq_value                (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,4> Ledge, const Eigen::Tensor<std::complex<double>,4> Redge);
+            extern void  set_random_product_state     (class_finite_chain_state &state, const std::string parity);
             extern class_finite_chain_state
             get_parity_projected_state                (const class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix, const int sign);
             extern class_finite_chain_state
             get_closest_parity_state                  (const class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix);
             extern class_finite_chain_state
             get_closest_parity_state                  (const class_finite_chain_state &state, const std::string paulistring);
+            extern void apply_energy_mpo_test         (class_finite_chain_state &state, class_superblock & superblock);
+            extern void rebuild_environments          (class_finite_chain_state &state);
+            extern void rebuild_superblock            (class_finite_chain_state &state, class_superblock & superblock);
+            extern double overlap                     (const class_finite_chain_state &state1, const class_finite_chain_state &state2);
+            extern double expectation_value           (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
+
         }
 
 

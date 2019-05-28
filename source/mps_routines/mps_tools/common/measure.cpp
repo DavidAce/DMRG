@@ -89,10 +89,10 @@ double MPS_Tools::Common::Measure::norm(const class_superblock & superblock){
     Eigen::Tensor<Scalar, 0> norm =
             theta.contract(theta.conjugate(), idx({1, 3, 0, 2}, {1, 3, 0, 2}));
     auto result = std::abs(norm(0));
-    if(std::abs(result - 1.0) > 1e-10){
-        spdlog::critical("Norm too far from unity: {}", result);
-        throw std::runtime_error("Norm too far from unity: " + std::to_string(result));
-    }
+//    if(std::abs(result - 1.0) > 1e-10){
+//        spdlog::warning("Norm too far from unity: {}", result);
+//        throw std::runtime_error("Norm too far from unity: " + std::to_string(result));
+//    }
     return result;
 }
 

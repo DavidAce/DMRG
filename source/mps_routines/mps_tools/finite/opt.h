@@ -87,6 +87,10 @@ namespace MPS_Tools::Finite::Opt{
             double energy_lower_bound;
             double energy_upper_bound;
             double energy_target;
+            double energy_min;
+            double energy_max;
+            double energy_dens;
+            double energy_target_dens;
             double energy_window;
             double energy_offset;
             double norm_offset;

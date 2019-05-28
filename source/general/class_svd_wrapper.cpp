@@ -24,7 +24,8 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
     SVD.setThreshold(SVDThreshold);
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long rank = std::min(SVD.rank(),rank_max);
-    truncation_error = 1.0 - SVD.singularValues().head(rank).squaredNorm();
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();
+
     if (SVD.rank() <= 0 or mat.isZero(0)){
         std::cout << "SVD error: Rank is zero or invalid matrix" << std::endl;
         std::cerr << "M: \n" << mat << std::endl;

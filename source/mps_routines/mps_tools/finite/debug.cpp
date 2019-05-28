@@ -29,9 +29,18 @@ void MPS_Tools::Finite::Debug::check_integrity(const class_finite_chain_state &s
     }
     try {
         MPS_Tools::log->info("Checking norms");
-        MPS_Tools::Finite::Measure::norm(state);
-        MPS_Tools::Common::Measure::norm(superblock);
-    }catch(std::exception & ex){
+        auto norm_chain = MPS_Tools::Finite::Measure::norm(state);
+        auto norm_block = MPS_Tools::Common::Measure::norm(superblock);
+        if(std::abs(norm_chain - 1.0) > 1e-10) {
+            MPS_Tools::log->warn("Norm of chain far from unity: {}", norm_chain);
+            throw std::runtime_error("Norm of chain too far from unity: " + std::to_string(norm_chain));
+        }
+        if(std::abs(norm_block - 1.0) > 1e-10) {
+            MPS_Tools::log->warn("Norm of superblock far from unity: {}", norm_block);
+            throw std::runtime_error("Norm of superblock too far from unity: " + std::to_string(norm_block));
+        }
+    }
+    catch(std::exception & ex){
         throw std::runtime_error("Integrity check of norm failed: " + std::string(ex.what()));
     }
 }
@@ -73,7 +82,7 @@ void MPS_Tools::Finite::Debug::check_integrity_of_sim(const class_finite_chain_s
 
 void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_state &state){
     {
-        MPS_Tools::log->info("Checking integrity of MPS");
+        MPS_Tools::log->trace("Checking integrity of MPS");
         MPS_Tools::log->trace("\tChecking system sizes");
         if(state.get_MPS_L().size() + state.get_MPS_R().size() != state.get_length() )
             throw std::runtime_error("Mismatch in MPS size: " + std::to_string(state.get_MPS_L().size() + state.get_MPS_R().size()) + " " + std::to_string(state.get_length()));
