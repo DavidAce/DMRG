@@ -262,9 +262,10 @@ void class_xDMRG::check_convergence(){
 
     t_sim.tic();
     t_con.tic();
+    check_convergence_variance_mpo();
 
-    if (sim_state.iteration >= settings::xdmrg::min_sweeps){
-        check_convergence_variance_mpo();
+    if (sim_state.iteration < settings::xdmrg::min_sweeps){
+        clear_saturation_status();
     }
 
     if (sim_state.iteration == 2 and not projected_during_warmup){
