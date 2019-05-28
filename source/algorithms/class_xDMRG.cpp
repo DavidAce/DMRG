@@ -163,7 +163,7 @@ void class_xDMRG::run_simulation()    {
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if (sim_state.iteration >= settings::xdmrg::min_sweeps and state->position_is_the_middle_any_direction())
+        if (state->position_is_the_middle_any_direction())
         {
             if (sim_state.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
             if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
