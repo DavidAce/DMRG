@@ -262,7 +262,10 @@ void class_xDMRG::check_convergence(){
 
     t_sim.tic();
     t_con.tic();
-    check_convergence_variance_mpo();
+
+    if (sim_state.iteration >= settings::xdmrg::min_sweeps){
+        check_convergence_variance_mpo();
+    }
 
     if (sim_state.iteration == 2 and not projected_during_warmup){
         *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
@@ -271,15 +274,15 @@ void class_xDMRG::check_convergence(){
         projected_during_warmup = true;
     }
 
-//    if (sim_state.variance_mpo_has_saturated
-//        and sim_state.variance_mpo_saturated_for > min_saturation_length
-//        and not projected_during_saturation)
-//    {
-//        *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
-//        MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-//        clear_saturation_status();
-//        projected_during_saturation = true;
-//    }
+    if (sim_state.variance_mpo_has_saturated
+        and sim_state.variance_mpo_saturated_for > min_saturation_length
+        and not projected_during_saturation)
+    {
+        *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
+        MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+        clear_saturation_status();
+        projected_during_saturation = true;
+    }
 
 
     if(sim_state.variance_mpo_has_converged)
