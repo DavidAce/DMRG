@@ -84,16 +84,19 @@ class_mpo::parity_selector_mpo(const Eigen::MatrixXcd paulimatrix, const int sec
 }
 
 
+
 std::tuple<
-std::list<Eigen::Tensor<class_mpo::Scalar,4>>,
-Eigen::Tensor<class_mpo::Scalar,3>,
-Eigen::Tensor<class_mpo::Scalar,3>>
+        std::list<Eigen::Tensor<class_mpo::Scalar,4>>,
+        Eigen::Tensor<class_mpo::Scalar,3>,
+        Eigen::Tensor<class_mpo::Scalar,3>>
 class_mpo::parity_projector_mpos(const Eigen::MatrixXcd paulimatrix, const size_t sites, const int sector)/*! Builds the MPO that projects out the MPS component in a parity sector.
- *      |psi+->  = O |psi>=  (1 +- P) |psi>
- *  Note that |psi+-> aren't normalized after applying this MPO!
+ *      |psi+->  = O |psi>=  (1/2) (1 +- P) |psi>
+ *      Here 1 = outer product of 2x2 identity matrices, "sites" times.
+ *      Also P = outer product of 2x2 pauli matrices, "sites" times.
+ *      The sign in "sector" and the factor 1/2 is put into the left edge at the end.
  *
- *       | I   0  |
- * O   = | 0   s  |
+ *            | I   0  |
+ * O   =      | 0   s  |
  *
  *
  *        2
@@ -113,21 +116,12 @@ class_mpo::parity_projector_mpos(const Eigen::MatrixXcd paulimatrix, const size_
     MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
     MPO.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(paulimatrix);
 
-    Eigen::Tensor<Scalar,4> MPO_sign(2, 2, spin_dim, spin_dim);
-    MPO_sign.setZero();
-    MPO_sign.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
-    MPO_sign.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sector*paulimatrix);
-
-
-    std::list<Eigen::Tensor<class_mpo::Scalar,4>> mpos;
-    mpos.push_back(MPO_sign);
-
-    for(size_t i = 1; i < sites; i++){mpos.push_back(MPO);}
+    std::list<Eigen::Tensor<class_mpo::Scalar,4>> mpos(sites,MPO);
     //Create compatible edges
     Eigen::Tensor<Scalar,3> Ledge(1,1,2); // The left  edge
     Eigen::Tensor<Scalar,3> Redge(1,1,2); // The right edge
-    Ledge(0,0,0) = 1;
-    Ledge(0,0,1) = 1;
+    Ledge(0,0,0) = 1.0/2.0;
+    Ledge(0,0,1) = 1.0/2.0 * sector;
     Redge(0,0,0) = 1;
     Redge(0,0,1) = 1;
 

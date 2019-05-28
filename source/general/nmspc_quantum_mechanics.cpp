@@ -33,11 +33,14 @@ std::vector<Eigen::MatrixXcd> qm::gen_manybody_spin(const Eigen::MatrixXcd &s, i
 namespace qm::spinOneHalf {
     auto imp = std::complex<double>(0.0,1.0);
     auto imn = std::complex<double>(0.0,-1.0);
-    Matrix2cd sx = (Matrix2cd() << 0.0, 1.0,
+    Matrix2cd sx = (Matrix2cd() <<
+            0.0, 1.0,
             1.0, 0.0).finished();
-    Matrix2cd sy = (Matrix2cd() << 0.0, imn,
+    Matrix2cd sy = (Matrix2cd() <<
+            0.0, imn,
             imp, 0.0).finished();
-    Matrix2cd sz = (Matrix2cd() << 1.0, 0.0,
+    Matrix2cd sz = (Matrix2cd() <<
+            1.0, 0.0,
             0.0, -1.0).finished();
     Matrix2cd Id  = (Matrix2cd() << 1.0, 0.0,
             0.0, 1.0).finished();

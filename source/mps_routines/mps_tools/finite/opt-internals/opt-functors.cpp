@@ -116,9 +116,11 @@ MPS_Tools::Finite::Opt::internals::guided_functor::guided_functor(
     superblock.HAHB          = superblock.HA_MPO.contract(superblock.HB_MPO, Textra::idx({1},{0}));
     superblock.HAHB2         = superblock.HAHB.contract(superblock.HAHB, Textra::idx({2,5},{1,4}));
     energy_target            = sim_state.energy_target;
+    energy_max               = sim_state.energy_max;
+    energy_min               = sim_state.energy_min;
+    energy_target_dens       = (sim_state.energy_target - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
     energy_lower_bound       = sim_state.energy_lbound;
     energy_upper_bound       = sim_state.energy_ubound;
-
 
 }
 
@@ -146,8 +148,10 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
         {
 
             energy         = vHv/vv;
-            energy_offset  = energy - energy_target;
+            energy_dens    = (energy - energy_min ) / (energy_max - energy_min);
 
+//            energy_offset  = energy - energy_target;
+            energy_offset  = energy_dens - energy_target_dens;
             var            = vH2v/vv - energy*energy;
             variance       = var;
             var            = var == 0  ? std::numeric_limits<double>::epsilon() : var;
@@ -159,7 +163,7 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
         auto vv_1  = std::pow(vv,-1);
         auto vv_2  = std::pow(vv,-2);
         auto var_1 = 1.0/var/std::log(10.0);
-//        std::cout << "Variance: " << var << std::endl;
+//        std::cout << "Variance: " << log10var << std::endl;
 //        std::cout << "Energy  : " << energy << std::endl;
 //        std::cout << "Energy o: " << energy_offset << std::endl;
 //        std::cout << "norm o  : " << norm_offset << std::endl;

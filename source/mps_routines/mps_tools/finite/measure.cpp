@@ -31,7 +31,7 @@ using Scalar = std::complex<double>;
 
 namespace MPS_Tools::Finite::Measure::Results {
     int length;
-    int bond_dimension                       = 0;
+    int bond_dimension                          = 0;
     double norm                                 = 0;
     double truncation_error                     = 0;
     double energy_mpo                           = 0;
@@ -49,39 +49,11 @@ namespace MPS_Tools::Finite::Measure::Results {
 
 
 
-
-//
-//void MPS_Tools::Finite::Measure::do_all_measurements(class_finite_chain_state & state){
-//    using namespace MPS_Tools::Finite::Measure;
-//    if (state.has_been_measured()){return;}
-//
-//    Results::length                         = length(state);
-//    Results::bond_dimension                 = bond_dimension(state);
-//    Results::norm                           = norm(state);
-//    Results::energy_mpo                     = energy_mpo(state);  //This number is needed for variance calculation!
-//    Results::energy_per_site_mpo            = Results::energy_mpo/Results::length;
-//    Results::energy_variance_mpo            = energy_variance_mpo(state, Results::energy_mpo);
-//    Results::midchain_entanglement_entropy  = midchain_entanglement_entropy(state);
-//    Results::entanglement_entropy           = entanglement_entropy(state);
-//    Results::spin_component_sx                      = spin_component(state,qm::spinOneHalf::sx);
-//    Results::spin_component_sy                      = spin_component(state,qm::spinOneHalf::sy);
-//    Results::spin_component_sz                      = spin_component(state,qm::spinOneHalf::sz);
-//
-//    if (Results::length <= 14){
-//        Results::mps_wavefn = mps_wavefn(state);
-//    }
-//
-//    state.set_measured_true();
-//}
-
-
 int MPS_Tools::Finite::Measure::length(const class_finite_chain_state & state){
-//    ccout(3) << "STATUS: Measuring length\n";
     return state.get_length();
 }
 
 double MPS_Tools::Finite::Measure::norm(const class_finite_chain_state & state){
-//    ccout(3) << "STATUS: Measuring norm\n";
     if (state.norm_has_been_measured){return state.measurements.norm;}
     auto mpsL  = state.get_MPS_L().begin();
     auto endL  = state.get_MPS_L().end();
@@ -120,12 +92,10 @@ double MPS_Tools::Finite::Measure::norm(const class_finite_chain_state & state){
         mpsR++;
     }
     double norm_chain = std::real(Textra::Tensor2_to_Matrix(chain).trace());
-//    std::cout << setprecision(16) << "Norm: " << norm_chain << std::endl;
-//    assert(std::abs(norm_chain - 1.0) < 1e-10 and "ERROR: Norm too small!" );
-    if(std::abs(norm_chain - 1.0) > 1e-10){
-        spdlog::warn("Norm far from unity: {}", norm_chain);
+//    if(std::abs(norm_chain - 1.0) > 1e-10){
+//        MPS_Tools::log->warn("Norm far from unity: {}", norm_chain);
 //        throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
-    }
+//    }
     return norm_chain;
 }
 
@@ -353,69 +323,9 @@ Eigen::Tensor<Scalar,1> MPS_Tools::Finite::Measure::mps_wavefn(const class_finit
     }
     Eigen::Tensor<Scalar,1> mps_chain = chain.reshape(array1{chain.dimension(0)});
     double norm_chain = Textra::Tensor2_to_Matrix(chain).norm();
-    assert(std::abs(norm_chain - 1.0) < 1e-10 );
-    if (std::abs(norm_chain - 1.0) > 1e-10 ) throw std::runtime_error("Norm too far from unity.");
+    if(std::abs(norm_chain - 1.0) > 1e-10){
+        MPS_Tools::log->warn("Norm far from unity: {}", norm_chain);
+        throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
+    }
     return mps_chain;
 }
-
-//
-//double class_measurement::get_energy_mpo(){return energy_mpo;}
-//double class_measurement::get_energy_ham(){return energy_per_site_ham;}
-//double class_measurement::get_energy_mom(){return energy_per_site_mom;}
-//
-//void   class_measurement::set_variance(double new_variance){
-//    variance_mpo = new_variance;
-//    variance_ham = new_variance;
-//    variance_mom = new_variance;
-//}
-//
-//double class_measurement::get_variance_mpo(){return std::abs(variance_mpo);}
-//double class_measurement::get_variance_ham(){return std::abs(variance_ham);}
-//double class_measurement::get_variance_mom(){return std::abs(variance_mom);}
-//
-//double class_measurement::get_entanglement_entropy(const class_superblock & superblock){
-//    compute_entanglement_entropy(superblock);
-//    return entanglement_entropy;
-//}
-//
-//double class_measurement::get_truncation_error(const class_superblock & superblock){
-//    return superblock.MPS->truncation_error;
-//}
-
-
-//// Profiling
-//
-//void class_measurement::set_profiling_labels() {
-//    using namespace settings::profiling;
-//    t_ene_mpo.set_properties(on, precision,"↳ Energy (MPO)           ");
-//    t_ene_ham.set_properties(on, precision,"↳ Energy (Ham)           ");
-//    t_ene_mom.set_properties(on, precision,"↳ Energy (Gen)           ");
-//    t_var_mpo.set_properties(on, precision,"↳ Variance (MPO)         ");
-//    t_var_ham.set_properties(on, precision,"↳ Variance (Ham)         ");
-//    t_var_mom.set_properties(on, precision,"↳ Variance (Gen)         ");
-//    t_entropy.set_properties(on, precision,"↳ Ent. Entropy           ");
-//    t_temp1.set_properties(on, precision,  "↳ Temp1                  ");
-//    t_temp2.set_properties(on, precision,  "↳ Temp2                  ");
-//    t_temp3.set_properties(on, precision,  "↳ Temp3                  ");
-//    t_temp4.set_properties(on, precision,  "↳ Temp4                  ");
-//
-//}
-//
-//void class_measurement::print_profiling(class_tic_toc &t_parent){
-//    if (settings::profiling::on) {
-//        std::cout << "\nComputing observables breakdown:" << std::endl;
-//        std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
-//        t_ene_mpo.print_time_w_percent(t_parent);
-//        t_ene_ham.print_time_w_percent(t_parent);
-//        t_ene_mom.print_time_w_percent(t_parent);
-//        t_var_mpo.print_time_w_percent(t_parent);
-//        t_var_ham.print_time_w_percent(t_parent);
-//        t_var_mom.print_time_w_percent(t_parent);
-//        t_entropy.print_time_w_percent(t_parent);
-//        t_temp1.print_time_w_percent(t_parent);
-//        t_temp2.print_time_w_percent(t_parent);
-//        t_temp3.print_time_w_percent(t_parent);
-//        t_temp4.print_time_w_percent(t_parent);
-//    }
-//}
-//

@@ -43,6 +43,11 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
     MPS_Tools::log->trace("Applying MPO's");
+    state.set_measured_false();
+//    std::cout << "Norm              (before mpos): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
+//    std::cout << "Spin component sx (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
+//    std::cout << "Spin component sy (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
+//    std::cout << "Spin component sz (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
     auto mpo = mpos.begin();
 
     {
@@ -50,8 +55,6 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
             long mpoDimL = mpo->dimension(0);
             long mpoDimR = mpo->dimension(1);
             auto [d,chiL,chiR] = mps.get_dims();
-//            std::cout << "L     " << mps.get_L().dimensions() <<"\n" << mps.get_L() << std::endl;
-//            std::cout << "G     " << mps.get_G().dimensions() <<"\n" << mps.get_G() << std::endl;
             Eigen::Tensor<Scalar,3> G_temp =
                     mps.get_G()
                             .contract(*mpo, idx({0},{2}))
@@ -79,8 +82,6 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
             long mpoDimL = mpo->dimension(0);
             long mpoDimR = mpo->dimension(1);
             auto [d,chiL,chiR] = mps.get_dims();
-//            std::cout << "G     " << mps.get_G().dimensions() <<"\n" << mps.get_G() << std::endl;
-//            std::cout << "L     " << mps.get_L().dimensions() <<"\n" << mps.get_L() << std::endl;
             Eigen::Tensor<Scalar,3> G_temp =
                     mps.get_G()
                             .contract(*mpo, idx({0},{2}))
@@ -101,7 +102,7 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     {
         long mpoDimL = mpos.front().dimension(0);
         auto Ldim    = Ledge.dimension(0);
-        Scalar norm  = std::sqrt(Ldim);
+        Scalar norm  = 1.0;//std::sqrt(Ldim);
         Eigen::Tensor<Scalar, 3> G_temp =
                 Ledge
                         .shuffle(Textra::array3{0,2,1})
@@ -114,7 +115,7 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     {
         long mpoDimR = mpos.back().dimension(1);
         auto Rdim    = Redge.dimension(0);
-        Scalar norm  = std::sqrt(Rdim);
+        Scalar norm  = 1.0;//std::sqrt(Rdim);
         Eigen::Tensor<Scalar, 3> G_temp =
                 Redge
                         .shuffle(Textra::array3{0,2,1})
@@ -124,7 +125,10 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
         state.get_MPS_R().back().set_G(G_temp);
         state.get_MPS_R().back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0)/norm);
     }
-
+//    std::cout << "Norm              (after mpos): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
+//    std::cout << "Spin component sx (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
+//    std::cout << "Spin component sy (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
+//    std::cout << "Spin component sz (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
 
 }
 
@@ -132,7 +136,13 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
 void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
     MPS_Tools::log->trace("Normalizing chain");
-
+    state.set_measured_false();
+    auto norm_old = MPS_Tools::Finite::Measure::norm(state);
+    if (norm_old == 1){return;}
+//    std::cout << "Norm              (before normalization): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
+//    std::cout << "Spin component sx (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
+//    std::cout << "Spin component sy (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
+//    std::cout << "Spin component sz (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
     // Sweep back and forth once on the chain
 
     class_SVD svd;
@@ -150,6 +160,8 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
     double norm;
     while(num_traversals < 2){
         Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
+        bool isZero = Eigen::Map <Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).isZero();
+        if(isZero){MPS_Tools::log->warn("Theta is all zeros at positions: {},{}", pos_A, pos_B );}
         try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta);}
         catch(std::exception &ex){
             std::cerr << "A:\n" << state.get_A(pos_A) << std::endl;
@@ -174,6 +186,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
             state.get_G(pos_B)  = V_LB;
         }
 
+
         if (direction ==  1 and pos_B == state.get_length()-1)  {num_traversals++; direction *= -1;}
         if (direction == -1 and pos_A == 0)                     {num_traversals++; direction *= -1;}
 
@@ -185,65 +198,49 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
 
     }
-
-
+//    std::cout << "Norm              (after normalization): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
+//    std::cout << "Spin component sx (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
+//    std::cout << "Spin component sy (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
+//    std::cout << "Spin component sz (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
 
 
 }
 
 
 
-void MPS_Tools::Finite::Ops::reset_to_random_product_state(class_finite_chain_state &state, const std::string parity){
-    std::array<Eigen::Tensor <Scalar,1>,2> paulieigvec;
-    Eigen::Matrix2cd paulimatrix;
-    bool no_parity = false;
+void MPS_Tools::Finite::Ops::set_random_product_state(class_finite_chain_state &state, const std::string parity){
+    MPS_Tools::log->trace("Setting a random product state");
+    Eigen::MatrixXcd  paulimatrix;
+    bool get_parity = true;
     if(parity == "sx"){
         paulimatrix = qm::spinOneHalf::sx;
-        paulieigvec[0] = Textra::Matrix_to_Tensor1(qm::spinOneHalf::sx_eigvecs[0]);
-        paulieigvec[1] = Textra::Matrix_to_Tensor1(qm::spinOneHalf::sx_eigvecs[1]);
     }else if (parity == "sy"){
         paulimatrix = qm::spinOneHalf::sy;
-        paulieigvec[0] = Textra::Matrix_to_Tensor1(qm::spinOneHalf::sy_eigvecs[0]);
-        paulieigvec[1] = Textra::Matrix_to_Tensor1(qm::spinOneHalf::sy_eigvecs[1]);
     }else if (parity == "sz"){
         paulimatrix = qm::spinOneHalf::sz;
-        paulieigvec[0] = Textra::Matrix_to_Tensor1(qm::spinOneHalf::sz_eigvecs[0]);
-        paulieigvec[1] = Textra::Matrix_to_Tensor1(qm::spinOneHalf::sz_eigvecs[1]);
     }else if (parity == "random" or parity == "none"){
-        no_parity = true;
+        get_parity = false;
     }else {
         throw std::runtime_error("Invalid spin parity name: " + parity);
     }
 
-    Eigen::Tensor<Scalar,3> G (2,1,1);
     Eigen::Tensor<Scalar,1> L (1);
     L.setConstant(1);
 
     for (auto &mpsL : state.get_MPS_L() ){
-        if(no_parity){
-            G.setRandom();
-        }else{
-            auto rnd = rn::uniform_integer_1();
-            G = paulieigvec[rnd].reshape(Textra::array3{2,1,1});
-        }
+        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
         mpsL.set_mps(G,L);
     }
-    auto C = Eigen::Tensor<Scalar,1>(1);
-    C.setConstant(1);
-    state.get_MPS_C() = C;
+    state.get_MPS_C() = L;
     for (auto &mpsR : state.get_MPS_R() ){
-        if(no_parity){
-            G.setRandom();
-        }else{
-            auto rnd = rn::uniform_integer_1();
-            G = paulieigvec[rnd].reshape(Textra::array3{2,1,1});
-        }
+        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
         mpsR.set_mps(G,L);
     }
 
-    normalize_chain(state);
-    rebuild_environments(state);
-    MPS_Tools::Finite::Debug::check_integrity_of_mps(state);
+    if(get_parity){
+        state = get_closest_parity_state(state, paulimatrix);
+    }
+
 }
 
 
@@ -273,17 +270,10 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const 
 
 class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const class_finite_chain_state &state, const std::string paulistring) {
     MPS_Tools::log->trace("Finding closest projection");
-    Eigen::MatrixXcd paulimatrix;
-    if (paulistring == "sx"){paulimatrix = qm::spinOneHalf::sx;}
-    if (paulistring == "sy"){paulimatrix = qm::spinOneHalf::sy;}
-    if (paulistring == "sz"){paulimatrix = qm::spinOneHalf::sz;}
-
-    double measured_spin_component = MPS_Tools::Finite::Measure::spin_component(state, paulimatrix);
-    if (measured_spin_component > 0){
-        return get_parity_projected_state(state, paulimatrix, 1);
-    }else{
-        return get_parity_projected_state(state, paulimatrix,-1);
-    }
+    if      (paulistring == "sx"){return get_closest_parity_state(state,qm::spinOneHalf::sx);}
+    else if (paulistring == "sy"){return get_closest_parity_state(state,qm::spinOneHalf::sy);}
+    else if (paulistring == "sz"){return get_closest_parity_state(state,qm::spinOneHalf::sz);}
+    else{throw std::runtime_error("Wrong pauli string. Expected one of  \"sx\",\"sy\" or \"sz\". Got: " + paulistring);}
 }
 
 void MPS_Tools::Finite::Ops::rebuild_superblock(class_finite_chain_state &state, class_superblock &superblock) {

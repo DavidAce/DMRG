@@ -136,7 +136,7 @@ void class_algorithm_base::check_saturation_using_slope(
     X_vec.push_back(iter);
     unsigned long min_data_points = 2;
     if (Y_vec.size() < min_data_points){return;}
-    auto check_from =  (unsigned long)(X_vec.size()*0.75); //Check the last quarter of the measurements in Y_vec.
+    auto check_from =  (unsigned long)(X_vec.size()*0.5); //Check the last quarter of the measurements in Y_vec.
     while (X_vec.size() - check_from < min_data_points and check_from > 0){
         check_from -=1; //Decrease check from if out of bounds.
     }
@@ -542,14 +542,14 @@ void class_algorithm_base::initialize_superblock(std::string initial_state) {
 }
 
 void class_algorithm_base::reset_full_mps_to_random_product_state(std::string parity) {
-    log->trace("Resetting to random product state");
+    log->trace("Resetting MPS to random product state");
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     sim_state.iteration = state->reset_sweeps();
     // Randomize chain
 
 
     // Project into whatever
-    MPS_Tools::Finite::Ops::reset_to_random_product_state(*state,parity);
+    MPS_Tools::Finite::Ops::set_random_product_state(*state,parity);
     MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
     MPS_Tools::Common::Measure::set_not_measured(*superblock);
 }

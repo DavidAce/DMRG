@@ -79,14 +79,14 @@ void MPS_Tools::Finite::Opt::internals::initialize_params(){
     using namespace LBFGSpp;
     // READ HERE http://pages.mtu.edu/~msgocken/ma5630spring2003/lectures/lines/lines/node3.html
     // I think c1 corresponds to ftol, and c2 corresponds to wolfe
-    params->max_iterations = 2000;
+    params->max_iterations = 1000;
     params->max_linesearch = 60; // Default is 20. 5 is really bad, 80 seems better.
     params->m              = 8;     // Default is 6
     params->past           = 1;     // Or perhaps it was this one that helped.
-    params->epsilon        = 1e-5;  // Default is 1e-5.
-    params->delta          = 1e-8;  // Default is 0. Trying this one instead of ftol.
+    params->epsilon        = 1e-2;  // Default is 1e-5.
+    params->delta          = 1e-6; // Default is 0. Trying this one instead of ftol.
     params->ftol           = 1e-4;  // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
-    params->wolfe          = 0.9;   // Default is 0.9
+    params->wolfe          = 0.90;   // Default is 0.9
     params->min_step       = 1e-40;
     params->max_step       = 1e+40;
     params->linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_STRONG_WOLFE;
