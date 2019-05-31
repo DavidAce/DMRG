@@ -151,6 +151,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
     size_t pos_LB = 2; // Lambda right of GB
     size_t pos_A  = 0; // Lambda * G
     size_t pos_B  = 1; // G * Lambda
+    long chi_max  = state.get_L(state.get_length()/2).size();
 //    bool finished = false;
     size_t num_traversals = 0;
     int direction = 1;
@@ -162,7 +163,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
         Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
         bool isZero = Eigen::Map <Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).isZero();
         if(isZero){MPS_Tools::log->warn("Theta is all zeros at positions: {},{}", pos_A, pos_B );}
-        try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta);}
+        try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta,chi_max);}
         catch(std::exception &ex){
             std::cerr << "A:\n" << state.get_A(pos_A) << std::endl;
             std::cerr << "L:\n" << state.get_L(pos_LC) << std::endl;

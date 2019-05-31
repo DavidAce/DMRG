@@ -13,7 +13,7 @@
 //template<typename Scalar>
 class class_SVD{
 private:
-    double SVDThreshold         = 1e-14;
+    double SVDThreshold         = 1e-8;
     double truncation_error     = 0;
 
     template <typename Scalar> using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
@@ -22,10 +22,6 @@ private:
     template<typename Scalar>
     std::tuple<MatrixType<Scalar>, VectorType<Scalar>,MatrixType<Scalar>, long>
     do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max);
-
-//    std::tuple<Eigen::MatrixXcd, Eigen::VectorXcd, Eigen::MatrixXcd, long>
-//    do_svd(const Eigen::MatrixXcd & mat );
-//
 
     template<typename Derived>
     std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>,MatrixType<typename Derived::Scalar>, long>
@@ -76,6 +72,9 @@ public:
     template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>, double >
     schmidt_with_norm  (const Eigen::Tensor<Scalar,4> &tensor);
+    template<typename Scalar>
+    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>, double >
+    schmidt_with_norm  (const Eigen::Tensor<Scalar,4> &tensor, long chi_max);
 
 };
 
@@ -96,24 +95,6 @@ class_SVD::do_svd(const Eigen::MatrixBase<Derived> & mat ){
     long rank_max = std::min(mat.rows(),mat.cols());
     return do_svd(mat.derived().data(), mat.rows(),mat.cols(),rank_max);
 }
-
-
-
-
-//template<typename Scalar>
-//std::tuple<class_SVD::MatrixType<Scalar>, class_SVD::VectorType<Scalar>, class_SVD::MatrixType<Scalar>, long>
-//class_SVD::do_svd(const MatrixType<Scalar> & mat, long rank_max )
-//{
-//    auto [U,S,V,rank] = do_svd(mat);
-//    rank = std::min(rank,rank_max);
-//    truncation_error = 1.0 - S.head(rank).squaredNorm();
-//    return std::make_tuple(
-//            U.leftCols(rank),
-//            S.head(rank),
-//            V.topRows(rank),
-//            rank
-//    );
-//}
 
 
 
@@ -182,7 +163,7 @@ class_SVD::schmidt(const Eigen::Tensor<Scalar,4> &tensor) {
     long chiL = tensor.dimension(1);
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
-    long chi_max = std::max(dL*chiL, dR*chiR);
+    long chi_max = std::min(dL*chiL, dR*chiR);
     return schmidt(tensor,dL,dR,chiL,chi_max,chiR);
 
 }
@@ -205,20 +186,28 @@ class_SVD::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor) {
     long chiL = tensor.dimension(1);
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
+    long chi_max = std::min(dL*chiL,dR*chiR);
+    return schmidt_with_norm(tensor,chi_max);
+}
+
+template<typename Scalar>
+std::tuple <Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>,double  >
+class_SVD::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor, long chi_max) {
+    long dL   = tensor.dimension(0);
+    long chiL = tensor.dimension(1);
+    long dR   = tensor.dimension(2);
+    long chiR = tensor.dimension(3);
     if (dL*chiL * dR*chiR != tensor.size()){throw std::range_error("schmidt_with_norm error: tensor size does not match given dimensions.");}
 
     Eigen::Map<const MatrixType<Scalar>> mat (tensor.data(), dL*chiL, dR*chiR);
-    auto [U,S,V,rank] = do_svd(mat);
+    auto [U,S,V,rank] = do_svd(mat,chi_max);
     return std::make_tuple(Textra::Matrix_to_Tensor(U, dL, chiL, rank),
                            Textra::Matrix_to_Tensor(S.normalized().template cast<Scalar>(), rank),
                            Textra::Matrix_to_Tensor(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 }),
                            S.norm()
     );
 
-
 }
-
-
 
 
 
