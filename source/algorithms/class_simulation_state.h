@@ -15,8 +15,8 @@ public:
     int    iteration                      = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
     int    step                           = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
     int    position                       = 0;
-    long   chi_temp                       = 8;
-    long   chi_max                        = 8;
+    long   chi_temp                       = 16;
+    long   chi_max                        = 16;
     int    min_sweeps                     = 2 ;
     double energy_min                     = 0;
     double energy_max                     = 0;

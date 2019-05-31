@@ -3,7 +3,6 @@
 //
 #include <Eigen/Core>
 #include <iostream>
-#include <iomanip>
 #include <algorithms/class_simulation_state.h>
 #include <general/class_eigsolver.h>
 #include <general/arpack_extra/matrix_product_stl.h>
@@ -52,7 +51,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
     StlMatrixProduct<double> hamiltonian_sparse (H_local.data(),H_local.rows(),Form::SYMMETRIC,Side::R, true);
     t_eig->toc();
     Eigen::VectorXd overlaps;
-    std::vector<std::tuple<int,double,double,double,double,double,double>> result_log;
+    std::vector<reports::eig_tuple> eig_log;
     const auto theta = superblock.get_theta();
     Eigen::Map<const Eigen::VectorXcd> theta_old (theta.data(),theta.size());
     int chain_length = superblock.get_length();
@@ -66,18 +65,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
     double prec                       = settings::precision::VarConvergenceThreshold;
     double max_overlap_threshold      = 1 - prec; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
     double subspace_quality_threshold = prec;
-    double sparcity    = (double)(H_local.array().cwiseAbs() > 1e-12).count()/(double)H_local.size();
-    std::stringstream problem_report;
-    problem_report
-            << "Starting eigensolver \n"
-            << std::setprecision(10)
-            << "      mode        : "    << optMode << '\n'
-            << "      space       : "    << optSpace << '\n'
-            << "      position    : "    << superblock.get_position() << '\n'
-            << "      chi         : "    << superblock.get_chi() << '\n'
-            << "      shape       : "    << theta.size() << " x " << theta.size() << '\n'
-            << "      sparcity    : "    << sparcity << '\n' << '\n' << std::flush;
-    MPS_Tools::log->debug(problem_report.str());
+
     class_eigsolver solver;
     std::string reason = "none";
     bool has_solution = false;
@@ -110,7 +98,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
         subspace_quality = 1.0 - sq_sum_overlap;
         has_solution     = true;
 //        offset           = sim_state.energy_target - eigvals(best_state_idx)/chain_length;
-        result_log.emplace_back(nev, max_overlap,min_overlap,sq_sum_overlap,std::log10(subspace_quality),t_eig->get_last_time_interval(),t_lu);
+        eig_log.emplace_back(nev, max_overlap, min_overlap, sq_sum_overlap, std::log10(subspace_quality), t_eig->get_last_time_interval(), t_lu);
         if(max_overlap    > 1.0 + 1e-10) throw std::runtime_error("max_overlap larger than one : " + std::to_string(max_overlap));
         if(sq_sum_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : " + std::to_string(sq_sum_overlap));
         if(min_overlap    < 0.0)         throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
@@ -126,30 +114,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
 
     auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data(),solver.solution.meta.cols);
     auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
-    std::stringstream solver_report;
-    solver_report << '\n'
-                  << std::setw(12) << std::right << "n eigvecs"
-                  << std::setw(24) << std::right << "max overlap"
-                  << std::setw(24) << std::right << "min overlap"
-                  << std::setw(34) << std::right << "eps = Σ_i |<state_i|old>|^2"
-                  << std::setw(32) << std::right << "quality = log10(1 - eps)"
-                  << std::setw(18) << std::right << "Eig Time[ms]"
-                  << std::setw(18) << std::right << "LU  Time[ms]"
-                  << '\n';
-    for(auto &log : result_log){
-        solver_report
-                << std::setprecision(16)
-                << std::setw(12) << std::right << std::get<0>(log)
-                << std::setw(24) << std::right << std::get<1>(log)
-                << std::setw(24) << std::right << std::get<2>(log)
-                << std::setw(34) << std::right << std::get<3>(log)
-                << std::setw(32) << std::right << std::get<4>(log) << std::setprecision(3)
-                << std::setw(18) << std::right << std::get<5>(log)*1000
-                << std::setw(18) << std::right << std::get<6>(log)*1000
-                << '\n';
-    }
-    solver_report << '\n' << std::flush;
-    MPS_Tools::log->debug(solver_report.str());
+    reports::print_report(eig_log);
 
     if (optMode == OptMode::OVERLAP){
         return std::make_tuple(eigvecs.col(best_state_idx),eigvals.row(best_state_idx));
@@ -184,7 +149,7 @@ MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock 
     // Note that alpha_i = <theta_old | theta_new_i> is not supposed to be squared! The overlap
     // Between xstart and theta_old should be
     Eigen::VectorXd xstart = (theta_old.adjoint() * eigvecs).normalized().real();
-    std::vector<std::tuple<std::string,int,double,double,double,int,int,double>> opt_log;
+    std::vector<reports::subspc_opt_tuple> opt_log;
 
     {
         t_opt->tic();
@@ -200,6 +165,7 @@ MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock 
         MPS_Tools::Finite::Opt::internals::subspace_functor
                 functor (
                 superblock,
+                sim_state,
                 eigvecs,
                 eigvals);
 
@@ -217,37 +183,10 @@ MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock 
         energy_new   = functor.get_energy() / chain_length;
         variance_new = functor.get_variance()/chain_length;
         overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
-//        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_lbfgs.get_last_time_interval(), 0);
         opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval());
         MPS_Tools::log->trace("Finished LBFGS");
     }
-
-    std::stringstream report;
-    report    << std::setprecision(16) << '\n'
-              <<"    "<< std::setw(24) << std::left << "Algorithm"
-              <<"    "<< std::setw(8)  << std::left << "size"
-              <<"    "<< std::setw(24) << std::left << "energy"
-              <<"    "<< std::setw(44) << std::left << "variance"
-              <<"    "<< std::setw(24) << std::left << "overlap"
-              <<"    "<< std::setw(8)  << std::left << "iter"
-              <<"    "<< std::setw(8)  << std::left << "counter"
-              <<"    "<< std::setw(20) << std::left << "Elapsed time [ms]"
-              <<"    "<< std::setw(20) << std::left << "Time per count [ms]"
-              << '\n';
-    for(auto &log : opt_log){
-        report   << std::setprecision(16)
-                 << "    " << std::setw(24) << std::left << std::fixed << std::get<0>(log)
-                 << "    " << std::setw(8)  << std::left << std::fixed << std::get<1>(log)
-                 << "    " << std::setw(24) << std::left << std::fixed << std::get<2>(log)
-                 << "    " << std::setw(44) << std::left << std::fixed << std::get<3>(log)
-                 << "    " << std::setw(24) << std::left << std::fixed << std::get<4>(log)
-                 << "    " << std::setw(8)  << std::left << std::fixed << std::get<5>(log) << std::setprecision(3)
-                 << "    " << std::setw(8)  << std::left << std::fixed << std::get<6>(log) << std::setprecision(3)
-                 << "    " << std::setw(20) << std::left << std::fixed << std::get<7>(log)*1000
-                 << "    " << std::setw(20) << std::left << std::fixed << std::get<7>(log)*1000 / (double)std::get<6>(log)
-                 << '\n';
-    }
-    MPS_Tools::log->debug(report.str());
+    reports::print_report(opt_log);
 
     return std::make_tuple(
             Textra::Matrix_to_Tensor(theta_new, superblock.dimensions()),

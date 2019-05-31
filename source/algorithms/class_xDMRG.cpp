@@ -264,7 +264,7 @@ void class_xDMRG::check_convergence(){
     t_con.tic();
     check_convergence_variance_mpo();
 
-    if (sim_state.iteration < settings::xdmrg::min_sweeps){
+    if (sim_state.iteration <= settings::xdmrg::min_sweeps){
         clear_saturation_status();
     }
 
@@ -325,7 +325,7 @@ void class_xDMRG::find_energy_range() {
     log->trace("Finding energy range");
     assert(state->get_length() == (size_t)settings::xdmrg::num_sites);
     std::srand((unsigned int) settings::model::seed_init_mps);
-    int max_sweeps_during_f_range = 3;
+    int max_sweeps_during_f_range = 4;
     sim_state.iteration = state->reset_sweeps();
 
     // Find energy minimum

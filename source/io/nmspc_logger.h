@@ -6,6 +6,7 @@
 #define DMRG_NMSPC_LOGGER_H
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/stdout_sinks.h>
 
 namespace Logger{
     inline void enableTimeStamp(std::shared_ptr<spdlog::logger> &log){
@@ -31,7 +32,9 @@ namespace Logger{
 
     inline void setLogger(std::shared_ptr<spdlog::logger> &log, std::string name, size_t levelZeroToSix = 2, bool timestamp = true){
         if(spdlog::get(name) == nullptr){
-            log = spdlog::stdout_color_mt(name);
+            log = spdlog::stdout_logger_mt(name);
+//            log = spdlog::stdout_color_mt(name);
+
             if (timestamp){enableTimeStamp(log);}
             else{disableTimeStamp(log); }
             setLogLevel(log,levelZeroToSix);
@@ -42,7 +45,9 @@ namespace Logger{
 
     inline std::shared_ptr<spdlog::logger>  setLogger(std::string name, size_t levelZeroToSix = 2, bool timestamp = true){
         if(spdlog::get(name) == nullptr){
-            auto log = spdlog::stdout_color_mt(name);
+            auto log = spdlog::stdout_logger_mt(name);
+//            auto log = spdlog::stdout_color_mt(name);
+
             if (timestamp){enableTimeStamp(log);}
             else{disableTimeStamp(log); }
             setLogLevel(log,levelZeroToSix);

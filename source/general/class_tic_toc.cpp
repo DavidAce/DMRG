@@ -17,9 +17,7 @@ class_tic_toc::class_tic_toc(bool on_off, int prec, string output_text)
         if (!name.empty()){
             name = name + ": ";
         }
-        measured_time   = measured_time.zero();
-        delta_time      = delta_time.zero();
-        start_timepoint = high_resolution_clock::now();
+        reset();
     }
 }
 
@@ -108,8 +106,8 @@ double class_tic_toc::get_last_time_interval() {
 
 void class_tic_toc::reset() {
     if (profiling) {
-        delta_time    = delta_time.zero();
-        measured_time = measured_time.zero();
+        measured_time   = high_resolution_clock::duration::zero();
+        delta_time      = high_resolution_clock::duration::zero();
         start_timepoint = high_resolution_clock::now();
     }
 }
