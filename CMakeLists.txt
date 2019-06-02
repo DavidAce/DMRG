@@ -284,6 +284,7 @@ include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenval
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
 include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
+include(cmake-modules/Fetch_CppNumSolvers.cmake)            # For numerical optimization algorithms
 
 target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
@@ -291,6 +292,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
 target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp)
+target_link_libraries(${PROJECT_NAME} PRIVATE CppNumSolvers)
 
 get_target_property(BLAS_INFO       blas             INTERFACE_LINK_LIBRARIES)
 get_target_property(LAPACK_INFO     lapack           INTERFACE_LINK_LIBRARIES)
@@ -303,24 +305,26 @@ get_target_property(SPDLOG_INFO     spdlog::spdlog   INTERFACE_INCLUDE_DIRECTORI
 get_target_property(HDF5_INFO       hdf5             INTERFACE_LINK_LIBRARIES)
 get_target_property(FORTRAN_INFO    gfortran         INTERFACE_LINK_LIBRARIES)
 get_target_property(H5PP_INFO       h5pp::h5pp       INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(CPPSOLV_INFO    CppNumSolvers    INTERFACE_INCLUDE_DIRECTORIES)
 
 
 
 message("=============================================================================")
 message("=== SUMMARY OF CMAKE CONFIGURATION:  THE FOLLOWING LIBRARIES WILL BE USED ===")
 message("=============================================================================")
-message("    BLAS     :   ${BLAS_INFO}")
-message("    LAPACK   :   ${LAPACK_INFO}")
-message("    LAPACKE  :   ${LAPACKE_INCLUDE_DIRS} ${LAPACKE_INFO}")
-message("    EIGEN3   :   ${EIGEN_INFO}")
-message("    LBFGS++  :   ${LBFGS_INFO}")
-message("    SPDLOG   :   ${SPDLOG_INFO}")
-message("    HDF5     :   ${HDF5_INFO}")
-message("    ARPACK   :   ${ARPACK_INFO}")
-message("    ARPACKPP :   ${ARPACKPP_INFO}")
-message("    GSL      :   ${GSL_INFO}")
-message("    h5pp     :   ${H5PP_INFO}")
-message("    GFORTRAN :   ${FORTRAN_INFO}")
+message("    BLAS           :   ${BLAS_INFO}")
+message("    LAPACK         :   ${LAPACK_INFO}")
+message("    LAPACKE        :   ${LAPACKE_INCLUDE_DIRS} ${LAPACKE_INFO}")
+message("    EIGEN3         :   ${EIGEN_INFO}")
+message("    LBFGS++        :   ${LBFGS_INFO}")
+message("    CppNumSolvers  :   ${CPPSOLV_INFO}")
+message("    SPDLOG         :   ${SPDLOG_INFO}")
+message("    HDF5           :   ${HDF5_INFO}")
+message("    ARPACK         :   ${ARPACK_INFO}")
+message("    ARPACKPP       :   ${ARPACKPP_INFO}")
+message("    GSL            :   ${GSL_INFO}")
+message("    h5pp           :   ${H5PP_INFO}")
+message("    GFORTRAN       :   ${FORTRAN_INFO}")
 message("=============================================================================")
 message("")
 

@@ -20,23 +20,23 @@ MPS_Tools::Finite::Opt::find_optimal_excited_state(const class_superblock & supe
     std::stringstream problem_report;
     auto dims = superblock.dimensions();
     problem_report
-            << "Starting optimization \n"
+            << "Starting optimization"
             << std::setprecision(10)
-            << "      mode        : "    << optSpace << '\n'
-            << "      position    : "    << superblock.get_position() << '\n'
-            << "      chi         : "    << superblock.get_chi() << '\n'
-            << "      shape       : "    << dims[0]*dims[1] << " x " << dims[2]*dims[3] << '\n' << '\n' << std::flush;
+            << "\t mode [ "    << optSpace << " ]"
+            << "\t position [ "    << superblock.get_position() << " ]"
+            << "\t chi [ "    << superblock.get_chi() << " ]"
+            << "\t shape [ "    << dims[0] << " " << dims[1] << " " << dims[2]<< " " <<dims[3]  << " ] = [ " << dims[0]*dims[1]*dims[2]*dims[3] << " ]" << std::flush;
     MPS_Tools::log->debug(problem_report.str());
 
 
 
     switch (optSpace){
-        case OptSpace::DIRECT:  return internals::direct_optimization(superblock,sim_state);
-        case OptSpace::GUIDED:  return internals::guided_optimization(superblock,sim_state);
-        case OptSpace::FULL:    return internals::subspace_optimization(superblock, sim_state , optMode, optSpace);
-        case OptSpace::PARTIAL: return internals::subspace_optimization(superblock, sim_state , optMode, optSpace);
+        case OptSpace::DIRECT:      return internals::direct_optimization(superblock,sim_state);
+        case OptSpace::GUIDED:      return internals::guided_optimization(superblock,sim_state);
+        case OptSpace::CPPOPTLIB:   return internals::cppoptlib_optimization(superblock,sim_state);
+        case OptSpace::FULL:        return internals::subspace_optimization(superblock, sim_state , optMode, optSpace);
+        case OptSpace::PARTIAL:     return internals::subspace_optimization(superblock, sim_state , optMode, optSpace);
     }
-
 }
 
 namespace MPS_Tools::Finite::Opt::internals{
@@ -93,3 +93,47 @@ void MPS_Tools::Finite::Opt::internals::reset_timers(){
 
 
 
+
+std::pair<Eigen::VectorXd,double> MPS_Tools::Finite::Opt::internals::get_vH_vHv(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents){
+    auto vH = MPS_Tools::Finite::Opt::internals::get_vH(v,superComponents);
+    t_vHv->tic();
+    auto vHv = vH.dot(v);
+    t_vHv->toc();
+    return std::make_pair(vH,vHv);
+}
+
+std::pair<Eigen::VectorXd,double> MPS_Tools::Finite::Opt::internals::get_vH2_vH2v(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents){
+    auto vH2 = MPS_Tools::Finite::Opt::internals::get_vH2(v,superComponents);
+    t_vH2v->tic();
+    auto vH2v = vH2.dot(v);
+    t_vH2v->toc();
+    return std::make_pair(vH2,vH2v);
+}
+
+
+Eigen::VectorXd MPS_Tools::Finite::Opt::internals::get_vH2 (const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents){
+    auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superComponents.dsizes);
+    t_vH2->tic();
+    Eigen::Tensor<double, 4> vH2 =
+            superComponents.Lblock2
+                    .contract(theta,                            Textra::idx({0},{1}))
+                    .contract(superComponents.HAHB2,            Textra::idx({2,1,3,4},{4,0,1,3}))
+                    .contract(superComponents.Rblock2,          Textra::idx({1,2,4},{0,2,3}))
+                    .shuffle(Textra::array4{1,0,2,3});
+    t_vH2->toc();
+    return Eigen::Map<Eigen::VectorXd>(vH2.data(),vH2.size());
+}
+
+Eigen::VectorXd MPS_Tools::Finite::Opt::internals::get_vH (const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents){
+    auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superComponents.dsizes);
+    t_vH->tic();
+    Eigen::Tensor<double, 4> vH =
+            superComponents.Lblock
+                    .contract(theta,                               Textra::idx({0},{1}))
+                    .contract(superComponents.HAHB,                Textra::idx({1,2,3},{0,1,4}))
+                    .contract(superComponents.Rblock ,             Textra::idx({1,3},{0,2}))
+                    .shuffle(Textra::array4{1,0,2,3});
+    t_vH->toc();
+
+    return Eigen::Map<Eigen::VectorXd>(vH.data(),vH.size());
+}

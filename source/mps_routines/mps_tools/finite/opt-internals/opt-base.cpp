@@ -47,50 +47,6 @@ size_t MPS_Tools::Finite::Opt::internals::base_functor::get_count   ()const{retu
 
 
 
-std::pair<Eigen::VectorXd,double> MPS_Tools::Finite::Opt::internals::base_functor::get_vH_vHv(const Eigen::Matrix<double,Eigen::Dynamic,1> &v){
-    auto vH = MPS_Tools::Finite::Opt::internals::base_functor::get_vH(v);
-    t_vHv->tic();
-    auto vHv = vH.dot(v);
-    t_vHv->toc();
-    return std::make_pair(vH,vHv);
-}
-
-std::pair<Eigen::VectorXd,double> MPS_Tools::Finite::Opt::internals::base_functor::get_vH2_vH2v(const Eigen::Matrix<double,Eigen::Dynamic,1> &v){
-    auto vH2 = MPS_Tools::Finite::Opt::internals::base_functor::get_vH2(v);
-    t_vH2v->tic();
-    auto vH2v = vH2.dot(v);
-    t_vH2v->toc();
-    return std::make_pair(vH2,vH2v);
-}
-
-
-Eigen::VectorXd MPS_Tools::Finite::Opt::internals::base_functor::get_vH2 (const Eigen::Matrix<double,Eigen::Dynamic,1> &v){
-    auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superComponents.dsizes);
-    t_vH2->tic();
-    Eigen::Tensor<double, 4> vH2 =
-            superComponents.Lblock2
-                    .contract(theta,                            Textra::idx({0},{1}))
-                    .contract(superComponents.HAHB2,            Textra::idx({2,1,3,4},{4,0,1,3}))
-                    .contract(superComponents.Rblock2,          Textra::idx({1,2,4},{0,2,3}))
-                    .shuffle(Textra::array4{1,0,2,3});
-    t_vH2->toc();
-    return Eigen::Map<Eigen::VectorXd>(vH2.data(),vH2.size());
-}
-
-Eigen::VectorXd MPS_Tools::Finite::Opt::internals::base_functor::get_vH (const Eigen::Matrix<double,Eigen::Dynamic,1> &v){
-    auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superComponents.dsizes);
-    t_vH->tic();
-    Eigen::Tensor<double, 4> vH =
-            superComponents.Lblock
-                    .contract(theta,                               Textra::idx({0},{1}))
-                    .contract(superComponents.HAHB,                Textra::idx({1,2,3},{0,1,4}))
-                    .contract(superComponents.Rblock ,             Textra::idx({1,3},{0,2}))
-                    .shuffle(Textra::array4{1,0,2,3});
-    t_vH->toc();
-
-    return Eigen::Map<Eigen::VectorXd>(vH.data(),vH.size());
-}
-
 
 
 

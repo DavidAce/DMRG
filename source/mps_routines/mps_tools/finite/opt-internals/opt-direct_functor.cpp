@@ -28,9 +28,9 @@ double MPS_Tools::Finite::Opt::internals::direct_functor::operator()(const Eigen
         #pragma omp sections
         {
             #pragma omp section
-            {std::tie(vH2,vH2v)  = get_vH2_vH2v(v);}
+            {std::tie(vH2,vH2v)  = get_vH2_vH2v(v,superComponents);}
             #pragma omp section
-            {std::tie(vH,vHv)    = get_vH_vHv(v);}
+            {std::tie(vH,vHv)    = get_vH_vHv(v,superComponents);}
             #pragma omp section
             {vv     = v.squaredNorm();}
         }
@@ -52,22 +52,22 @@ double MPS_Tools::Finite::Opt::internals::direct_functor::operator()(const Eigen
         auto vv_2  = std::pow(vv,-2);
         auto var_1 = 1.0/var/std::log(10);
 
-        grad.head(v.size())  = var_1 * (2.0*(vH2*vv_1 - v * vH2v * vv_2) - 4.0 * energy * (vH * vv_1 - v * vHv * vv_2))
+        grad = var_1 * (2.0*(vH2*vv_1 - v * vH2v * vv_2) - 4.0 * energy * (vH * vv_1 - v * vHv * vv_2))
                                + lambda * 2.0 * norm_offset * 2.0 * v;
     }
 
-    std::cout   << std::setprecision(12) << std::fixed
-                << " Variance: "   << std::setw(18)   << log10var
-                << " Energy : "    << std::setw(18)   << energy
-                << " Energy t : "  << std::setw(18)   << energy_target
-                << " Energy w : "  << std::setw(18)   << energy_window
-                << " Energy d : "  << std::setw(18)   << energy_dens
-                << " Energy td : " << std::setw(18)   << energy_target_dens
-                << " Energy o : "  << std::setw(18)   << energy_offset
-                << " norm o : "    << std::setw(18)   << norm_offset
-                << " lambda : "    << std::setw(18)   << lambda
-                << " fx : "        << std::setw(18)   << fx
-                << std::endl;
+//    std::cout   << std::setprecision(12) << std::fixed
+//                << " Variance: "   << std::setw(18)   << log10var
+//                << " Energy : "    << std::setw(18)   << energy
+//                << " Energy t : "  << std::setw(18)   << energy_target
+//                << " Energy w : "  << std::setw(18)   << energy_window
+//                << " Energy d : "  << std::setw(18)   << energy_dens
+//                << " Energy td : " << std::setw(18)   << energy_target_dens
+//                << " Energy o : "  << std::setw(18)   << energy_offset
+//                << " norm o : "    << std::setw(18)   << norm_offset
+//                << " lambda : "    << std::setw(18)   << lambda
+//                << " fx : "        << std::setw(18)   << fx
+//                << std::endl;
 
 
     if(std::isnan(log10var) or std::isinf(log10var)){

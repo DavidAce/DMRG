@@ -241,6 +241,7 @@ void class_xDMRG::single_xDMRG_step()
     optMode   = OptMode::VARIANCE;
     optSpace  = OptSpace::GUIDED;
 
+
     std::tie(theta, sim_state.energy_now) = MPS_Tools::Finite::Opt::find_optimal_excited_state(*superblock,sim_state,optMode, optSpace);
     sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
 
@@ -333,10 +334,11 @@ void class_xDMRG::find_energy_range() {
         single_DMRG_step(eigutils::eigSetting::Ritz::SR);
         copy_superblock_to_chain();         //Needs to occurr after update_MPS...
         print_status_update();
-
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if(sim_state.iteration >= max_sweeps_during_f_range) {break;}
+        if(sim_state.iteration >= max_sweeps_during_f_range
+            or superblock->measurements.energy_variance_per_site_mpo < 1e-8)
+        {break;}
         enlarge_environment(state->get_direction());
         move_center_point();
         sim_state.iteration = state->get_sweeps();
@@ -354,7 +356,9 @@ void class_xDMRG::find_energy_range() {
         print_status_update();
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if(sim_state.iteration >= max_sweeps_during_f_range) {break;}
+        if(sim_state.iteration >= max_sweeps_during_f_range
+           or superblock->measurements.energy_variance_per_site_mpo < 1e-8)
+        {break;}
         enlarge_environment(state->get_direction());
         move_center_point();
         sim_state.iteration = state->get_sweeps();
