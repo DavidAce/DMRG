@@ -34,9 +34,7 @@ MPS_Tools::Finite::Opt::internals::guided_optimization(const class_superblock & 
         double energy_0   = MPS_Tools::Common::Measure::energy_mpo(superblock,theta);
         double variance_0 = MPS_Tools::Common::Measure::energy_variance_mpo(superblock,theta,energy_0);
         t_opt->toc();
-        std::cout << "t_opt: "<< t_opt->get_last_time_interval() << std::endl;
         opt_log.emplace_back("Initial",theta.size(), energy_0/chain_length, std::log10(variance_0/chain_length), 1.0, iter_0 ,0,t_opt->get_last_time_interval());
-        std::cout << "t_opt: "<< t_opt->get_last_time_interval() << std::endl;
         t_opt->tic();
         using namespace LBFGSpp;
         MPS_Tools::Finite::Opt::internals::guided_functor functor (superblock, sim_state);
@@ -49,7 +47,6 @@ MPS_Tools::Finite::Opt::internals::guided_optimization(const class_superblock & 
         int niter = solver.minimize(functor, xstart, fx);
         int counter = functor.get_count();
         t_opt->toc();
-        std::cout << "t_opt: "<< t_opt->get_last_time_interval() << std::endl;
 
         theta_new = xstart.head(theta.size());
         theta_new.normalize();
@@ -58,7 +55,6 @@ MPS_Tools::Finite::Opt::internals::guided_optimization(const class_superblock & 
         energy_new   = functor.get_energy() / chain_length;
         variance_new = functor.get_variance()/chain_length;
         overlap_new  = theta_old.dot(theta_new);
-        std::cout << "t_opt: "<< t_opt->get_last_time_interval() << std::endl;
         opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval());
         MPS_Tools::log->trace("Finished LBFGS");
     }

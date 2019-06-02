@@ -65,9 +65,9 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
         #pragma omp sections
         {
             #pragma omp section
-            {std::tie(vH2,vH2v)  = get_vH2_vH2v(v);}
+            {std::tie(vH2,vH2v)  = get_vH2_vH2v(v,superComponents);}
             #pragma omp section
-            {std::tie(vH,vHv)    = get_vH_vHv(v);}
+            {std::tie(vH,vHv)    = get_vH_vHv(v,superComponents);}
             #pragma omp section
             {vv     = v.squaredNorm(); }
         }
@@ -107,18 +107,18 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
     }
 
 
-    std::cout   << std::setprecision(12) << std::fixed
-                << " Variance: "   << std::setw(18)   << log10var
-                << " Energy : "    << std::setw(18)   << energy
-                << " Energy t : "  << std::setw(18)   << energy_target
-                << " Energy w : "  << std::setw(18)   << energy_window
-                << " Energy d : "  << std::setw(18)   << energy_dens
-                << " Energy td : " << std::setw(18)   << energy_target_dens
-                << " Energy o : "  << std::setw(18)   << energy_offset
-                << " norm o : "    << std::setw(18)   << norm_offset
-                << " lambda 0: "   << std::setw(18)   << lambdas(0)
-                << " fx : "        << std::setw(18)   << fx
-                << std::endl;
+//    std::cout   << std::setprecision(12) << std::fixed
+//                << " Variance: "   << std::setw(18)   << log10var
+//                << " Energy : "    << std::setw(18)   << energy
+//                << " Energy t : "  << std::setw(18)   << energy_target
+//                << " Energy w : "  << std::setw(18)   << energy_window
+//                << " Energy d : "  << std::setw(18)   << energy_dens
+//                << " Energy td : " << std::setw(18)   << energy_target_dens
+//                << " Energy o : "  << std::setw(18)   << energy_offset
+//                << " norm o : "    << std::setw(18)   << norm_offset
+//                << " lambda 0: "   << std::setw(18)   << lambdas(0)
+//                << " fx : "        << std::setw(18)   << fx
+//                << std::endl;
 
 
     if(std::isnan(log10var) or std::isinf(log10var)){

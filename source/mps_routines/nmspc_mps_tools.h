@@ -76,13 +76,14 @@ namespace MPS_Tools{
 
         namespace Opt{
             enum class OptMode  {OVERLAP, VARIANCE};
-            enum class OptSpace {PARTIAL,FULL,DIRECT,GUIDED};
+            enum class OptSpace {PARTIAL,FULL,DIRECT,GUIDED,CPPOPTLIB};
             extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_excited_state(const class_superblock & superblock, class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace);
 
             namespace internals{
                 extern std::tuple<Eigen::MatrixXd, Eigen::VectorXd>              find_subspace(const class_superblock & superblock, class_simulation_state & sim_state, OptMode &optMode, OptSpace &optSpace);
                 extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> direct_optimization(const class_superblock & superblock, class_simulation_state & sim_state);
                 extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> guided_optimization(const class_superblock & superblock, class_simulation_state & sim_state);
+                extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> cppoptlib_optimization(const class_superblock & superblock, class_simulation_state & sim_state);
                 extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> subspace_optimization(const class_superblock & superblock, class_simulation_state & sim_state, OptMode &optMode, OptSpace &optSpace);
                 extern std::vector<int> generate_size_list(const int shape);
                 class base_functor;
