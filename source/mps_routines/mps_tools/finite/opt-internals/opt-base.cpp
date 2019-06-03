@@ -25,6 +25,10 @@ MPS_Tools::Finite::Opt::internals::base_functor::base_functor(
     superComponents.Rblock2       = superblock.Rblock2->block.real();
     superComponents.dsizes        = superblock.dimensions();
     superComponents.HAHB          = superComponents.HA_MPO.contract(superComponents.HB_MPO, Textra::idx({1},{0}));
+    superComponents.HAHA          = superComponents.HA_MPO.contract(superComponents.HA_MPO, Textra::idx({3},{2}));
+    superComponents.HBHB          = superComponents.HB_MPO.contract(superComponents.HB_MPO, Textra::idx({3},{2}));
+    superComponents.Lblock2HAHA   = superComponents.Lblock2.contract(superComponents.HAHA, Textra::idx({2,3},{0,3})).shuffle(Textra::array6{0,3,2,4,5,1});
+    superComponents.Rblock2HBHB   = superComponents.Rblock2.contract(superComponents.HBHB, Textra::idx({2,3},{1,4})).shuffle(Textra::array6{0,3,2,4,5,1});
     superComponents.HAHB2         = superComponents.HAHB.contract(superComponents.HAHB, Textra::idx({2,5},{1,4}));
     length                        = superblock.get_length();
 

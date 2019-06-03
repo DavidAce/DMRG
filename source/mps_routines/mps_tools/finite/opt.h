@@ -79,7 +79,11 @@ namespace MPS_Tools::Finite::Opt{
             Eigen::Tensor<double,4> Lblock2;
             Eigen::Tensor<double,4> Rblock2;
             Eigen::Tensor<double,6> HAHB;
+            Eigen::Tensor<double,6> HAHA;
+            Eigen::Tensor<double,6> HBHB;
             Eigen::Tensor<double,8> HAHB2;
+            Eigen::Tensor<double,6> Lblock2HAHA;
+            Eigen::Tensor<double,6> Rblock2HBHB;
             Eigen::DSizes<long,4>   dsizes;
         } ;
 

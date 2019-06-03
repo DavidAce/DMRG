@@ -121,6 +121,15 @@ Eigen::VectorXd MPS_Tools::Finite::Opt::internals::get_vH2 (const Eigen::Matrix<
                     .contract(superComponents.Rblock2,          Textra::idx({1,2,4},{0,2,3}))
                     .shuffle(Textra::array4{1,0,2,3});
     t_vH2->toc();
+////
+//    t_vH2->tic();
+//    Eigen::Tensor<double, 4> vH2 =
+//            theta
+//            .contract(superComponents.Lblock2HAHA,Textra::idx({1,0},{0,1}))
+//            .contract(superComponents.Rblock2HBHB,Textra::idx({1,0,2,3},{0,1,2,3}));
+//    t_vH2->toc();
+
+
     return Eigen::Map<Eigen::VectorXd>(vH2.data(),vH2.size());
 }
 
