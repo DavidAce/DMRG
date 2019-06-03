@@ -112,14 +112,17 @@ std::pair<Eigen::VectorXd,double> MPS_Tools::Finite::Opt::internals::get_vH2_vH2
 
 
 Eigen::VectorXd MPS_Tools::Finite::Opt::internals::get_vH2 (const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents){
-    auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superComponents.dsizes);
+//    auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superComponents.dsizes);
+    Eigen::Tensor<double, 4> theta = Eigen::TensorMap<Eigen::Tensor<const double, 4>>(v.data(), superComponents.dsizes).shuffle(Textra::array4{1,0,3,2});
+
     t_vH2->tic();
     Eigen::Tensor<double, 4> vH2 =
-            superComponents.Lblock2
-                    .contract(theta,                            Textra::idx({0},{1}))
-                    .contract(superComponents.HAHB2,            Textra::idx({2,1,3,4},{4,0,1,3}))
-                    .contract(superComponents.Rblock2,          Textra::idx({1,2,4},{0,2,3}))
-                    .shuffle(Textra::array4{1,0,2,3});
+            theta
+            .contract(superComponents.Lblock2, Textra::idx({0}, {0}))
+            .contract(superComponents.HAHB2, Textra::idx({5,4,0,2}, {4, 0, 1, 3}))
+            .contract(superComponents.Rblock2, Textra::idx({0,2,4}, {0, 2, 3}))
+            .shuffle(Textra::array4{1, 0, 2, 3});
+
     t_vH2->toc();
 ////
 //    t_vH2->tic();

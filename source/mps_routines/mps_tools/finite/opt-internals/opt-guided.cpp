@@ -25,8 +25,8 @@ MPS_Tools::Finite::Opt::internals::guided_optimization(const class_superblock & 
     double energy_new,variance_new,overlap_new;
     Eigen::VectorXd theta_new = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).real();
     Eigen::VectorXd xstart    = theta_new;
-    xstart.conservativeResize(theta.size()+1);
-    xstart.tail(1).setConstant(1.0);
+//    xstart.conservativeResize(theta.size()+0);
+//    xstart.tail(1).setConstant(1.0);
 
     std::vector<reports::direct_opt_tuple> opt_log;
     {
@@ -66,6 +66,7 @@ MPS_Tools::Finite::Opt::internals::guided_optimization(const class_superblock & 
             MPS_Tools::Finite::Opt::internals::t_vH->get_measured_time(),
             MPS_Tools::Finite::Opt::internals::t_op->get_measured_time()
             ));
+
 
     return  std::make_tuple(Textra::Matrix_to_Tensor(theta_new.cast<Scalar>(), superblock.dimensions()), energy_new);
 }
