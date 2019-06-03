@@ -286,6 +286,31 @@ void class_xDMRG::check_convergence(){
         projected_during_saturation = true;
     }
 
+    if (sim_state.variance_mpo_has_saturated or sim_state.variance_mpo_has_converged){
+        if ( std::abs(sim_state.energy_dens - settings::xdmrg::energy_density)  >= settings::xdmrg::energy_window  ){
+            std::cout << "ROOOOOOLL THE DICE" << std::endl;
+            std::cout <<  " |eps-0.5|       = " << std::abs(sim_state.energy_dens - settings::xdmrg::energy_density) << std::endl;
+            std::cout <<  "||eps-0.5| - w | = " << std::abs(std::abs(sim_state.energy_dens - settings::xdmrg::energy_density) - settings::xdmrg::energy_window)  << std::endl;
+            int counterA = 0;
+            int counterB = 0;
+            sim_state.chi_temp = 1;
+            while(sim_state.energy_now < sim_state.energy_lbound or sim_state.energy_now > sim_state.energy_ubound){
+                // Project into whatever
+                MPS_Tools::Finite::Ops::set_random_product_state(*state,"sx");
+                MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+                MPS_Tools::Common::Measure::set_not_measured(*superblock);
+                sim_state.energy_now = MPS_Tools::Common::Measure::energy_per_site_mpo(*superblock);
+                sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
+                counterA++;
+                counterB++;
+            }
+            log->info("Energy initial (per site) = {} | density = {} | retries = {}", sim_state.energy_now, sim_state.energy_dens,counterB );
+            clear_saturation_status();
+
+        }
+    }
+
+
 
     if(sim_state.variance_mpo_has_converged)
     {
@@ -300,6 +325,7 @@ void class_xDMRG::check_convergence(){
     {
         log->debug("Simulation has to stop");
         sim_state.simulation_has_to_stop = true;
+
     }
 
 

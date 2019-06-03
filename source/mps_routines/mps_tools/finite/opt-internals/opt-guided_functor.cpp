@@ -37,12 +37,12 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::windowed_func_pow(doub
     if (std::abs(x) >= window){
         return std::pow(x,2);
     }else{
-        return std::pow(window,2);;
+        return std::pow(window,2);
     }
 }
 double MPS_Tools::Finite::Opt::internals::guided_functor::windowed_grad_pow(double x,double window){
     if (std::abs(x) >= window){
-        return 2.0*(x);
+        return 2.0*x;
     }else{
         return 0.0;
     }
@@ -58,8 +58,11 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
     double energy_func, energy_grad;
     double norm_func,norm_grad;
     Eigen::VectorXd vH, vH2;
-    Eigen::Map<const Eigen::VectorXd> v (v_and_lambdas.data(), v_and_lambdas.size()-1);
-    auto lambdas = v_and_lambdas.tail(1);
+    Eigen::Map<const Eigen::VectorXd> v (v_and_lambdas.data(), v_and_lambdas.size()-0);
+//    Eigen::VectorXd lambdas = v_and_lambdas.tail(1);
+    auto lambdas =    Eigen::VectorXd::Ones(1) ;
+//    auto lambdas =  iteration > 3 ? Eigen::VectorXd::Zero(1) : Eigen::VectorXd::Ones(1);
+//    lambdas.setConstant(toggle);
     #pragma omp parallel
     {
         #pragma omp sections
@@ -78,8 +81,8 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
             energy         = vHv/vv;
             energy_dens    = (energy/length - energy_min ) / (energy_max - energy_min);
             energy_offset  = energy_dens - energy_target_dens;
-            energy_func    = windowed_func_pow(energy_offset,energy_window);
-            energy_grad    = windowed_grad_pow(energy_offset,energy_window);
+            energy_func    = windowed_func_abs(energy_offset,energy_window);
+            energy_grad    = windowed_grad_abs(energy_offset,energy_window);
 
             var            = vH2v/vv - energy*energy;
             variance       = var;
@@ -92,7 +95,6 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
             log10var       = std::log10(var);
         }
         #pragma omp barrier
-
         fx = log10var
              + energy_func * lambdas(0)
              + norm_func;
@@ -103,7 +105,7 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
         grad.head(v.size())  = var_1 * (2.0*(vH2*vv_1 - v * vH2v * vv_2) - 4.0 * energy * (vH * vv_1 - v * vHv * vv_2))
                                + lambdas(0) * energy_grad * 2.0 * (vH * vv_1 - v * vHv * vv_2)
                                + norm_grad * 2.0 * v;
-        grad(grad.size()-1)  = energy_func;
+//        grad(grad.size()-1)  = energy_func;
     }
 
 
