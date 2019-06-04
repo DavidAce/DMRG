@@ -7,125 +7,6 @@
 #include <h5pp/h5pp.h>
 using namespace std;
 
-
-/*
- * The section below defines default values for all the parameters,
- * in case an input file is not found, or if values are missing in that file.
- *
-*/
-
-namespace settings{
-    std::string input::input_file;
-    std::string input::input_filename;
-    //Common parameters for the model Hamiltonian
-    std::string model::model_type        = "tf_ising";                    /*!< The default choice of model type from the enum */
-    std::string model::initial_state     = "rps";                         /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi)} "cat" or "random". Default "rps". Note that "random_chi" works poorly for finite algorithms */
-    int         model::seed_init_mpo     = 1;                             /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
-    int         model::seed_init_mps     = 1;                             /*!< Seed for the random number generator when selecting the initial random product state. */
-
-
-    //Parameters for the transverse-field Ising model
-    double model::tf_ising::J            = 1;                             /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
-    double model::tf_ising::g            = 1;                             /*!< Transverse field strength */
-    double model::tf_ising::w            = 0;                             /*!< Randomness strength for the random field */
-    int    model::tf_ising::d            = 2;                             /*!< Local spin dimension */
-
-    //Parameters for the transvese-field next-nearest neighbor Ising model
-    double model::tf_nn_ising::J1        = 1;                             /*!< Ferromagnetic coupling for nearest neighbors.*/
-    double model::tf_nn_ising::J2        = 1;                             /*!< Ferromagnetic coupling for next-nearest neighbors.*/
-    double model::tf_nn_ising::g         = 1;                             /*!< Transverse field strength */
-    double model::tf_nn_ising::w         = 0;                             /*!< Randomness strength for the random field */
-    int    model::tf_nn_ising::d         = 2;                             /*!< Local spin dimension */
-
-    //Parameters for the selfdual transvese-field random-field next-neighbor Ising model
-    double model::selfdual_tf_rf_ising::J_log_mean = 0;                  /*!< Average ferromagnetic coupling strength.*/
-    double model::selfdual_tf_rf_ising::h_log_mean = 0;                  /*!< Average transverse magnetic field strength */
-    double model::selfdual_tf_rf_ising::J_sigma    = 1;                  /*!< Standard deviation for the lognormal distribution, i.e. = std(log(J)) , for the ferromagnetic coupling */
-    double model::selfdual_tf_rf_ising::h_sigma    = 0;                  /*!< Standard deviation for the lognormal distribution, i.e. = std(log(h))   for the transverse magnetic field */
-    double model::selfdual_tf_rf_ising::lambda     = 0;                  /*!< Lambda parameter */
-    int    model::selfdual_tf_rf_ising::d          = 2;                  /*!< Local spin dimension */
-
-
-
-    int    precision::eigMaxIter                   = 1000  ;
-    double precision::eigThreshold                 = 1e-12 ;
-    int    precision::eigMaxNcv                    = 16    ;
-    double precision::SVDThreshold                 = 1e-12 ;
-    double precision::VarConvergenceThreshold      = 1e-8  ;            /*!< Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value */
-    double precision::VarSaturationThreshold       = 1e-4  ;            /*!< Variance saturation  threshold. The variance has saturated when its (absolute) slope reaches below this value */
-    double precision::EntEntrSaturationThreshold   = 1e-4  ;            /*!< Entanglement Entropy saturation threshold. The entanglement entropy has saturated when its (absolute) slope reaches below this value*/
-    int    precision::MaxSizeFullDiag              = 2048  ;            /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
-
-
-    //Parameters controlling infinite-DMRG
-    bool   idmrg::on                     = true;
-    int    idmrg::max_steps              = 5000;
-    long   idmrg::chi_max                = 8;
-    bool   idmrg::chi_grow               = true;
-    int    idmrg::print_freq             = 1000;
-    int    idmrg::store_freq             = 100;
-
-    //Parameters controlling Finite-DMRG
-    bool   fdmrg::on                     = true;
-    int    fdmrg::num_sites              = 30;
-    int    fdmrg::max_sweeps             = 10;
-    int    fdmrg::min_sweeps             = 4;
-    long   fdmrg::chi_max                = 8;
-    bool   fdmrg::chi_grow               = true;
-    int    fdmrg::print_freq             = 100;
-    int    fdmrg::store_freq             = 100;
-    bool   fdmrg::store_wavefn           = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-
-
-    //Parameters controlling excited state DMRG
-    bool   xdmrg::on                     = true;
-    int    xdmrg::num_sites              = 200;
-    int    xdmrg::max_sweeps             = 10;
-    int    xdmrg::min_sweeps             = 4;
-    long   xdmrg::chi_max                = 8;
-    bool   xdmrg::chi_grow               = true;
-    int    xdmrg::print_freq             = 100;
-    int    xdmrg::store_freq             = 100;
-    bool   xdmrg::store_wavefn           = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-    double xdmrg::energy_density         = 0.5;                     /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
-    double xdmrg::energy_window          = 0.01;                    /*!< Energy window [0-0.5] Accept states inside of energy_target +- energy_window. */
-
-    //Parameters controlling imaginary TEBD (Zero temperature)
-    bool   itebd::on                     = true;
-    int    itebd::max_steps              = 100000;
-    double itebd::delta_t0               = 0.1;
-    double itebd::delta_tmin             = 0.00001;
-    int    itebd::suzuki_order           = 1;
-    long   itebd::chi_max                = 8;
-    bool   itebd::chi_grow               = true;
-    int    itebd::print_freq             = 5000;
-    int    itebd::store_freq             = 100;
-
-    //Save data_struct to hdf5
-//    bool   hdf5::save_to_file             = true;
-    bool   hdf5::save_progress            = true;
-    string hdf5::output_filename          = "output/default.h5";
-    string hdf5::access_mode              = "READWRITE";            /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
-    string hdf5::create_mode              = "RENAME" ;              /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
-//    bool   hdf5::full_storage             = true;
-    StorageLevel hdf5::storage_level            = StorageLevel::NORMAL;
-    bool   hdf5::store_profiling          = true;
-
-    //Profiling
-    bool profiling::on                   = false;
-    int  profiling::precision            = 5;
-    //Console settings
-    int  console::verbosity              = 2;
-    bool console::timestamp              = false;
-
-}
-
-
-
-
-
-
-
 /*
  * The section below attempts to find and read the parameters from the given inputfile.
  *
@@ -133,41 +14,36 @@ namespace settings{
 
 
 void settings::load_from_file(class_settings_reader &indata){
-    input::input_filename   = indata.get_input_filename();
-    input::input_file       = indata.get_input_file();
-    //Parameters for the model Hamiltonian
-    model::model_type                   = indata.find_parameter<std::string>("model::model_type"   , model::model_type);
-    model::initial_state                = indata.find_parameter<std::string>("model::initial_state", model::initial_state);
-    model::seed_init_mpo                = indata.find_parameter<int>        ("model::seed_init_mpo", model::seed_init_mpo);
-    model::seed_init_mps                = indata.find_parameter<int>        ("model::seed_init_mps", model::seed_init_mps);
-
-    model::tf_ising::J                  = indata.find_parameter<double> ("model::tf_ising::J"    , model::tf_ising::J);
-    model::tf_ising::g                  = indata.find_parameter<double> ("model::tf_ising::g"    , model::tf_ising::g);
-    model::tf_ising::w                  = indata.find_parameter<double> ("model::tf_ising::w"    , model::tf_ising::w);
-    model::tf_ising::d                  = indata.find_parameter<int>    ("model::tf_ising::d"    , model::tf_ising::d);
-
-    model::tf_nn_ising::J1              = indata.find_parameter<double> ("model::tf_nn_ising::J1", model::tf_nn_ising::J1);
-    model::tf_nn_ising::J2              = indata.find_parameter<double> ("model::tf_nn_ising::J2", model::tf_nn_ising::J2);
-    model::tf_nn_ising::g               = indata.find_parameter<double> ("model::tf_nn_ising::g" , model::tf_nn_ising::g);
-    model::tf_nn_ising::d               = indata.find_parameter<int>    ("model::tf_nn_ising::d" , model::tf_nn_ising::d);
-    model::tf_nn_ising::w               = indata.find_parameter<double> ("model::tf_nn_ising::w" , model::tf_nn_ising::w);
-
-    model::selfdual_tf_rf_ising::J_log_mean  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::J_log_mean"    , model::selfdual_tf_rf_ising::J_log_mean);
-    model::selfdual_tf_rf_ising::h_log_mean  = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::h_log_mean"    , model::selfdual_tf_rf_ising::h_log_mean);
-    model::selfdual_tf_rf_ising::J_sigma     = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::J_sigma" , model::selfdual_tf_rf_ising::J_sigma);
-    model::selfdual_tf_rf_ising::h_sigma     = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::h_sigma" , model::selfdual_tf_rf_ising::h_sigma);
-    model::selfdual_tf_rf_ising::lambda      = indata.find_parameter<double> ("model::selfdual_tf_rf_ising::lambda"  , model::selfdual_tf_rf_ising::lambda);
-    model::selfdual_tf_rf_ising::d           = indata.find_parameter<int>    ("model::selfdual_tf_rf_ising::d"       , model::selfdual_tf_rf_ising::d);
-
-    //Parmaters that control eigensolver and SVD precision
-    precision::eigMaxIter                  = indata.find_parameter<int>    ("precision::eigMaxIter"  , precision::eigMaxIter);
-    precision::eigThreshold                = indata.find_parameter<double> ("precision::eigThreshold", precision::eigThreshold);
-    precision::eigMaxNcv                   = indata.find_parameter<int>    ("precision::eigMaxNcv"   , precision::eigMaxNcv);
-    precision::SVDThreshold                = indata.find_parameter<double> ("precision::SVDThreshold", precision::SVDThreshold);
-    precision::VarConvergenceThreshold     = indata.find_parameter<double> ("precision::VarConvergenceThreshold"   , precision::VarConvergenceThreshold);
-    precision::VarSaturationThreshold      = indata.find_parameter<double> ("precision::VarSaturationThreshold"    , precision::VarSaturationThreshold);
-    precision::EntEntrSaturationThreshold  = indata.find_parameter<double> ("precision::EntEntrSaturationThreshold", precision::EntEntrSaturationThreshold);
-    precision::MaxSizeFullDiag             = indata.find_parameter<int>    ("precision::MaxSizeFullDiag"           , precision::MaxSizeFullDiag);
+    input::input_filename                    = indata.get_input_filename();
+    input::input_file                        = indata.get_input_file();
+    model::model_type                        = indata.find_parameter<std::string>("model::model_type"   , model::model_type);
+    model::initial_state                     = indata.find_parameter<std::string>("model::initial_state", model::initial_state);
+    model::seed_init_mpo                     = indata.find_parameter<int>        ("model::seed_init_mpo", model::seed_init_mpo);
+    model::seed_init_mps                     = indata.find_parameter<int>        ("model::seed_init_mps", model::seed_init_mps);
+    model::symmetry                          = indata.find_parameter<std::string>("model::symmetry"     , model::symmetry);
+    model::tf_ising::J                       = indata.find_parameter<double>     ("model::tf_ising::J"    , model::tf_ising::J);
+    model::tf_ising::g                       = indata.find_parameter<double>     ("model::tf_ising::g"    , model::tf_ising::g);
+    model::tf_ising::w                       = indata.find_parameter<double>     ("model::tf_ising::w"    , model::tf_ising::w);
+    model::tf_ising::d                       = indata.find_parameter<int>        ("model::tf_ising::d"    , model::tf_ising::d);
+    model::tf_nn_ising::J1                   = indata.find_parameter<double>     ("model::tf_nn_ising::J1", model::tf_nn_ising::J1);
+    model::tf_nn_ising::J2                   = indata.find_parameter<double>     ("model::tf_nn_ising::J2", model::tf_nn_ising::J2);
+    model::tf_nn_ising::g                    = indata.find_parameter<double>     ("model::tf_nn_ising::g" , model::tf_nn_ising::g);
+    model::tf_nn_ising::d                    = indata.find_parameter<int>        ("model::tf_nn_ising::d" , model::tf_nn_ising::d);
+    model::tf_nn_ising::w                    = indata.find_parameter<double>     ("model::tf_nn_ising::w" , model::tf_nn_ising::w);
+    model::selfdual_tf_rf_ising::J_log_mean  = indata.find_parameter<double>     ("model::selfdual_tf_rf_ising::J_log_mean"    , model::selfdual_tf_rf_ising::J_log_mean);
+    model::selfdual_tf_rf_ising::h_log_mean  = indata.find_parameter<double>     ("model::selfdual_tf_rf_ising::h_log_mean"    , model::selfdual_tf_rf_ising::h_log_mean);
+    model::selfdual_tf_rf_ising::J_sigma     = indata.find_parameter<double>     ("model::selfdual_tf_rf_ising::J_sigma" , model::selfdual_tf_rf_ising::J_sigma);
+    model::selfdual_tf_rf_ising::h_sigma     = indata.find_parameter<double>     ("model::selfdual_tf_rf_ising::h_sigma" , model::selfdual_tf_rf_ising::h_sigma);
+    model::selfdual_tf_rf_ising::lambda      = indata.find_parameter<double>     ("model::selfdual_tf_rf_ising::lambda"  , model::selfdual_tf_rf_ising::lambda);
+    model::selfdual_tf_rf_ising::d           = indata.find_parameter<int>        ("model::selfdual_tf_rf_ising::d"       , model::selfdual_tf_rf_ising::d);
+    precision::eigMaxIter                    = indata.find_parameter<int>        ("precision::eigMaxIter"  , precision::eigMaxIter);
+    precision::eigThreshold                  = indata.find_parameter<double>     ("precision::eigThreshold", precision::eigThreshold);
+    precision::eigMaxNcv                     = indata.find_parameter<int>        ("precision::eigMaxNcv"   , precision::eigMaxNcv);
+    precision::SVDThreshold                  = indata.find_parameter<double>     ("precision::SVDThreshold", precision::SVDThreshold);
+    precision::VarConvergenceThreshold       = indata.find_parameter<double>     ("precision::VarConvergenceThreshold"   , precision::VarConvergenceThreshold);
+    precision::VarSaturationThreshold        = indata.find_parameter<double>     ("precision::VarSaturationThreshold"    , precision::VarSaturationThreshold);
+    precision::EntEntrSaturationThreshold    = indata.find_parameter<double>     ("precision::EntEntrSaturationThreshold", precision::EntEntrSaturationThreshold);
+    precision::MaxSizeFullDiag               = indata.find_parameter<int>        ("precision::MaxSizeFullDiag"           , precision::MaxSizeFullDiag);
 
     //Parameters controlling infinite-DMRG
     idmrg::on                           = indata.find_parameter<bool>   ("idmrg::on"         , idmrg::on);

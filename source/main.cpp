@@ -80,8 +80,8 @@ int main(int argc, char* argv[]) {
         std::string arg;
         while(iss >> arg){
             log->info("Input argument {} : {}",i++,arg);
-            if (arg.find(".cfg") != std::string::npos) {inputfile  = arg;}
-            if (arg.find(".h5")  != std::string::npos) {outputfile = arg;}
+            if (arg.find(".cfg") != std::string::npos) {inputfile  = arg;continue;}
+            if (arg.find(".h5")  != std::string::npos) {outputfile = arg;continue;}
             if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_init_mpo < 0){seed_init_mpo = std::stoi(arg); continue;}
             if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_init_mps < 0){seed_init_mps = std::stoi(arg);}
         }
@@ -126,6 +126,9 @@ int main(int argc, char* argv[]) {
         newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(seed_init_mps) + oldFileName.extension().string() );
         settings::hdf5::output_filename = newFileName.string();
         log->info("Appending seed_init_mps to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
+    }else if (seed_init_mpo >= 0){
+        log->info("Replacing seed_init_mps {} --> {}",settings::model::seed_init_mps, seed_init_mpo);
+        settings::model::seed_init_mps = seed_init_mpo;
     }
 
 

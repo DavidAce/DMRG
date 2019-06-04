@@ -51,7 +51,7 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     auto mpo = mpos.begin();
 
     {
-        for (auto & mps : state.get_MPS_L()){
+        for (auto & mps : state.MPS_L){
             long mpoDimL = mpo->dimension(0);
             long mpoDimR = mpo->dimension(1);
             auto [d,chiL,chiR] = mps.get_dims();
@@ -73,12 +73,12 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     //Take care of the middle
     {
         long mpoDim = mpo->dimension(0);
-        Eigen::Tensor<Scalar, 1> C_temp = state.get_MPS_C().broadcast(array1{mpoDim});
+        Eigen::Tensor<Scalar, 1> C_temp = state.MPS_C.broadcast(array1{mpoDim});
         Scalar Cnorm = 1.0;//Textra::Tensor1_to_Vector(C_temp).norm();
-        state.get_MPS_C() = C_temp / Cnorm;
+        state.MPS_C = C_temp / Cnorm;
     }
     {
-        for (auto & mps : state.get_MPS_R()){
+        for (auto & mps : state.MPS_R){
             long mpoDimL = mpo->dimension(0);
             long mpoDimR = mpo->dimension(1);
             auto [d,chiL,chiR] = mps.get_dims();
@@ -107,10 +107,10 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
                 Ledge
                         .shuffle(Textra::array3{0,2,1})
                         .reshape(Textra::array2{Ldim*mpoDimL,Ldim})
-                        .contract(state.get_MPS_L().front().get_A(),Textra::idx({0},{1}))
+                        .contract(state.MPS_L.front().get_A(),Textra::idx({0},{1}))
                         .shuffle(Textra::array3{1,0,2});
-        state.get_MPS_L().front().set_G(G_temp);
-        state.get_MPS_L().front().set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1.0)/norm);
+        state.MPS_L.front().set_G(G_temp);
+        state.MPS_L.front().set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1.0)/norm);
     }
     {
         long mpoDimR = mpos.back().dimension(1);
@@ -120,10 +120,10 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
                 Redge
                         .shuffle(Textra::array3{0,2,1})
                         .reshape(Textra::array2{Rdim*mpoDimR,Rdim})
-                        .contract(state.get_MPS_R().back().get_B(),Textra::idx({0},{2}))
+                        .contract(state.MPS_R.back().get_B(),Textra::idx({0},{2}))
                         .shuffle(Textra::array3{1,2,0});
-        state.get_MPS_R().back().set_G(G_temp);
-        state.get_MPS_R().back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0)/norm);
+        state.MPS_R.back().set_G(G_temp);
+        state.MPS_R.back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0)/norm);
     }
 //    std::cout << "Norm              (after mpos): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
 //    std::cout << "Spin component sx (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
@@ -209,8 +209,9 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
 
 
-void MPS_Tools::Finite::Ops::set_random_product_state(class_finite_chain_state &state, const std::string parity){
+class_finite_chain_state MPS_Tools::Finite::Ops::set_random_product_state(const class_finite_chain_state &state, const std::string parity, const size_t mps_seed){
     MPS_Tools::log->trace("Setting a random product state");
+    class_finite_chain_state product_state = state;
     Eigen::MatrixXcd  paulimatrix;
     bool get_parity = true;
     if(parity == "sx"){
@@ -227,20 +228,22 @@ void MPS_Tools::Finite::Ops::set_random_product_state(class_finite_chain_state &
 
     Eigen::Tensor<Scalar,1> L (1);
     L.setConstant(1);
+    std::srand((unsigned int) mps_seed);
 
-    for (auto &mpsL : state.get_MPS_L() ){
+    for (auto &mpsL : product_state.MPS_L ){
         auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
         mpsL.set_mps(G,L);
     }
-    state.get_MPS_C() = L;
-    for (auto &mpsR : state.get_MPS_R() ){
+    product_state.MPS_C = L;
+    for (auto &mpsR : product_state.MPS_R ){
         auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
         mpsR.set_mps(G,L);
     }
 
     if(get_parity){
-        state = get_closest_parity_state(state, paulimatrix);
+        product_state = get_closest_parity_state(product_state, paulimatrix);
     }
+    return product_state;
 
 }
 
@@ -274,7 +277,15 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const 
     if      (paulistring == "sx"){return get_closest_parity_state(state,qm::spinOneHalf::sx);}
     else if (paulistring == "sy"){return get_closest_parity_state(state,qm::spinOneHalf::sy);}
     else if (paulistring == "sz"){return get_closest_parity_state(state,qm::spinOneHalf::sz);}
-    else{throw std::runtime_error("Wrong pauli string. Expected one of  \"sx\",\"sy\" or \"sz\". Got: " + paulistring);}
+    else{
+        MPS_Tools::log->warn(R"(Wrong pauli string. Expected one of  "sx","sy" or "sz". Got: )" + paulistring);
+        auto spin_components = state.measurements.spin_components;
+        auto max_idx = std::distance(spin_components.begin(), std::max_element(spin_components.begin(),spin_components.end()));
+        if(max_idx == 0)      {return get_closest_parity_state(state,"sx"); }
+        else if(max_idx == 1) {return get_closest_parity_state(state,"sy"); }
+        else if(max_idx == 2) {return get_closest_parity_state(state,"sz"); }
+        else {throw std::runtime_error("Wrong pauli string and could not find closest parity state");}
+    }
 }
 
 void MPS_Tools::Finite::Ops::rebuild_superblock(class_finite_chain_state &state, class_superblock &superblock) {
@@ -286,27 +297,27 @@ void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &stat
     MPS_Tools::log->trace("Rebuilding environments");
 
     // Generate new environments
-    assert(not state.get_MPS_L().empty() and "ERROR: The MPS L list is empty:");
-    assert(not state.get_MPS_R().empty() and "ERROR: The MPS R list is empty:");
-    assert(not state.get_MPO_L().empty() and "ERROR: The MPO L list is empty:");
-    assert(not state.get_MPO_R().empty() and "ERROR: The MPO R list is empty:");
+    assert(not state.MPS_L.empty() and "ERROR: The MPS L list is empty:");
+    assert(not state.MPS_R.empty() and "ERROR: The MPS R list is empty:");
+    assert(not state.MPO_L.empty() and "ERROR: The MPO L list is empty:");
+    assert(not state.MPO_R.empty() and "ERROR: The MPO R list is empty:");
 
 
-    state.get_ENV_L().clear();
-    state.get_ENV2_L().clear();
-    state.get_ENV_R().clear();
-    state.get_ENV2_R().clear();
+    state.ENV_L.clear();
+    state.ENV2_L.clear();
+    state.ENV_R.clear();
+    state.ENV2_R.clear();
 
     {
-        auto ENV_L = class_environment("L",state.get_MPS_L().front().get_chiL(), state.get_MPO_L().front()->MPO().dimension(0));
-        auto ENV2_L = class_environment_var("L",state.get_MPS_L().front().get_chiL(), state.get_MPO_L().front()->MPO().dimension(0));
-        auto mpsL_it   = state.get_MPS_L().begin();
-        auto mpoL_it   = state.get_MPO_L().begin();
+        auto ENV_L = class_environment("L",state.MPS_L.front().get_chiL(), state.MPO_L.front()->MPO().dimension(0));
+        auto ENV2_L = class_environment_var("L",state.MPS_L.front().get_chiL(), state.MPO_L.front()->MPO().dimension(0));
+        auto mpsL_it   = state.MPS_L.begin();
+        auto mpoL_it   = state.MPO_L.begin();
 
-        while(mpsL_it != state.get_MPS_L().end() and mpoL_it != state.get_MPO_L().end()) {
-            state.get_ENV_L().push_back(ENV_L);
-            state.get_ENV2_L().push_back(ENV2_L);
-            if (mpsL_it == state.get_MPS_L().end()) break;
+        while(mpsL_it != state.MPS_L.end() and mpoL_it != state.MPO_L.end()) {
+            state.ENV_L.push_back(ENV_L);
+            state.ENV2_L.push_back(ENV2_L);
+            if (mpsL_it == state.MPS_L.end()) break;
             ENV_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO());
             ENV2_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO());
             mpsL_it++;
@@ -317,14 +328,14 @@ void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &stat
 
 
     {
-        auto ENV_R  = class_environment("R",state.get_MPS_R().back().get_chiR(), state.get_MPO_L().back()->MPO().dimension(1));
-        auto ENV2_R = class_environment_var("R",state.get_MPS_R().back().get_chiR(), state.get_MPO_L().back()->MPO().dimension(1));
-        auto mpsR_it   = state.get_MPS_R().rbegin();
-        auto mpoR_it   = state.get_MPO_R().rbegin();
-        while(mpsR_it != state.get_MPS_R().rend() and mpoR_it != state.get_MPO_R().rend()){
-            state.get_ENV_R().push_front(ENV_R);
-            state.get_ENV2_R().push_front(ENV2_R);
-            if (mpsR_it == state.get_MPS_R().rend()) break;
+        auto ENV_R  = class_environment("R",state.MPS_R.back().get_chiR(), state.MPO_L.back()->MPO().dimension(1));
+        auto ENV2_R = class_environment_var("R",state.MPS_R.back().get_chiR(), state.MPO_L.back()->MPO().dimension(1));
+        auto mpsR_it   = state.MPS_R.rbegin();
+        auto mpoR_it   = state.MPO_R.rbegin();
+        while(mpsR_it != state.MPS_R.rend() and mpoR_it != state.MPO_R.rend()){
+            state.ENV_R.push_front(ENV_R);
+            state.ENV2_R.push_front(ENV2_R);
+            if (mpsR_it == state.MPS_R.rend()) break;
             ENV_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO());
             ENV2_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO());
             mpsR_it++;
@@ -343,14 +354,14 @@ double MPS_Tools::Finite::Ops::overlap(const class_finite_chain_state &state1, c
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
 
     Eigen::Tensor<Scalar,2> overlap =
-            state1.get_MPS_L().front().get_A()
-            .contract(state2.get_MPS_L().front().get_A().conjugate(), Textra::idx({0,1},{0,1}));
-    auto mps1_it_L = state1.get_MPS_L().begin();
-    auto mps2_it_L = state2.get_MPS_L().begin();
+            state1.MPS_L.front().get_A()
+            .contract(state2.MPS_L.front().get_A().conjugate(), Textra::idx({0,1},{0,1}));
+    auto mps1_it_L = state1.MPS_L.begin();
+    auto mps2_it_L = state2.MPS_L.begin();
     mps1_it_L++;
     mps2_it_L++;
 
-    while (mps1_it_L != state1.get_MPS_L().end() ){
+    while (mps1_it_L != state1.MPS_L.end() ){
         Eigen::Tensor<Scalar,2> temp = overlap
                 .contract(mps1_it_L->get_A()            , Textra::idx({0},{1}))
                 .contract(mps2_it_L->get_A().conjugate(), Textra::idx({0,1},{1,0}));
@@ -360,15 +371,15 @@ double MPS_Tools::Finite::Ops::overlap(const class_finite_chain_state &state1, c
     }
 
     Eigen::Tensor<Scalar,2> temp = overlap
-            .contract(Textra::asDiagonal(state1.get_MPS_C()), Textra::idx({0},{0}))
-            .contract(Textra::asDiagonal(state2.get_MPS_C()), Textra::idx({0},{0}));
+            .contract(Textra::asDiagonal(state1.MPS_C), Textra::idx({0},{0}))
+            .contract(Textra::asDiagonal(state2.MPS_C), Textra::idx({0},{0}));
     overlap = temp;
 
 
 
-    auto mps1_it_R = state1.get_MPS_R().begin();
-    auto mps2_it_R = state2.get_MPS_R().begin();
-    while (mps1_it_R != state1.get_MPS_R().end() ){
+    auto mps1_it_R = state1.MPS_R.begin();
+    auto mps2_it_R = state2.MPS_R.begin();
+    while (mps1_it_R != state1.MPS_R.end() ){
         Eigen::Tensor<Scalar,2> temp = overlap
                 .contract(mps1_it_R->get_B()            , Textra::idx({0},{1}))
                 .contract(mps2_it_R->get_B().conjugate(), Textra::idx({0,1},{1,0}));
@@ -385,11 +396,11 @@ double MPS_Tools::Finite::Ops::expectation_value(const class_finite_chain_state 
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
-    auto mps1_it_L = state1.get_MPS_L().begin();
-    auto mps2_it_L = state2.get_MPS_L().begin();
+    auto mps1_it_L = state1.MPS_L.begin();
+    auto mps2_it_L = state2.MPS_L.begin();
     auto mpo_it    = mpos.begin();
     Eigen::Tensor<Scalar,3> L = Ledge;
-    while(mps1_it_L != state1.get_MPS_L().end()){
+    while(mps1_it_L != state1.MPS_L.end()){
         Eigen::Tensor<Scalar,3> temp =
                 L
                 .contract(mps1_it_L->get_A()                   , idx({0},{1}))
@@ -405,8 +416,8 @@ double MPS_Tools::Finite::Ops::expectation_value(const class_finite_chain_state 
 
     {
         //Contract the center point
-        auto &MPS_C1 = state1.get_MPS_C();
-        auto &MPS_C2 = state2.get_MPS_C();
+        auto &MPS_C1 = state1.MPS_C;
+        auto &MPS_C2 = state2.MPS_C;
         Eigen::Tensor<Scalar,3> temp =
                 L
                 .contract(asDiagonal(MPS_C1), idx({0}, {0}))
@@ -416,9 +427,9 @@ double MPS_Tools::Finite::Ops::expectation_value(const class_finite_chain_state 
     }
     //Contract the right half of the chain
     Eigen::Tensor<Scalar,3> R = Redge;
-    auto mps1_it_R = state1.get_MPS_R().begin();
-    auto mps2_it_R = state2.get_MPS_R().begin();
-    while(mps1_it_R != state1.get_MPS_R().end()){
+    auto mps1_it_R = state1.MPS_R.begin();
+    auto mps2_it_R = state2.MPS_R.begin();
+    while(mps1_it_R != state1.MPS_R.end()){
         Eigen::Tensor<Scalar,3> temp =
                 L
                 .contract(mps1_it_R->get_B()                   , idx({0},{1}))
@@ -442,11 +453,11 @@ double MPS_Tools::Finite::Ops::exp_sq_value(const class_finite_chain_state &stat
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
-    auto mps1_it_L = state1.get_MPS_L().begin();
-    auto mps2_it_L = state2.get_MPS_L().begin();
+    auto mps1_it_L = state1.MPS_L.begin();
+    auto mps2_it_L = state2.MPS_L.begin();
     auto mpo_it    = mpos.begin();
     Eigen::Tensor<Scalar,4> L = Ledge;
-    while(mps1_it_L != state1.get_MPS_L().end()){
+    while(mps1_it_L != state1.MPS_L.end()){
         Eigen::Tensor<Scalar,4> temp =
                 L
                 .contract(mps1_it_L->get_A()                   , idx({0},{1}))
@@ -463,8 +474,8 @@ double MPS_Tools::Finite::Ops::exp_sq_value(const class_finite_chain_state &stat
 
     {
         //Contract the center point
-        auto &MPS_C1 = state1.get_MPS_C();
-        auto &MPS_C2 = state2.get_MPS_C();
+        auto &MPS_C1 = state1.MPS_C;
+        auto &MPS_C2 = state2.MPS_C;
         Eigen::Tensor<Scalar,4> temp =
                 L
                         .contract(asDiagonal(MPS_C1), idx({0}, {0}))
@@ -474,9 +485,9 @@ double MPS_Tools::Finite::Ops::exp_sq_value(const class_finite_chain_state &stat
     }
     //Contract the right half of the chain
     Eigen::Tensor<Scalar,4> R = Redge;
-    auto mps1_it_R = state1.get_MPS_R().begin();
-    auto mps2_it_R = state2.get_MPS_R().begin();
-    while(mps1_it_R != state1.get_MPS_R().end()){
+    auto mps1_it_R = state1.MPS_R.begin();
+    auto mps2_it_R = state2.MPS_R.begin();
+    while(mps1_it_R != state1.MPS_R.end()){
         Eigen::Tensor<Scalar,4> temp =
                 L
                 .contract(mps1_it_R->get_B()                  , idx({0},{1}))

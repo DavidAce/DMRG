@@ -16,33 +16,36 @@
 using Scalar = std::complex<double>;
 
 
-void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state, std::string model_type, const size_t length, const size_t seed){
+void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state, std::string model_type, std::string parity, const size_t length, const size_t mpo_seed, const size_t mps_seed){
     state.clear();
+    state.set_max_sites(length);
 
     //Generate MPO
     while(true){
-        state.get_MPO_L().emplace_back(class_hamiltonian_factory::create_mpo(model_type));
-        if(state.get_MPO_L().size() + state.get_MPO_R().size() >= length){break;}
-        state.get_MPO_R().emplace_front(class_hamiltonian_factory::create_mpo(model_type));
-        if(state.get_MPO_L().size() + state.get_MPO_R().size() >= length){break;}
+        state.MPO_L.emplace_back(class_hamiltonian_factory::create_mpo(model_type));
+        if(state.MPO_L.size() + state.MPO_R.size() >= length){break;}
+        state.MPO_R.emplace_front(class_hamiltonian_factory::create_mpo(model_type));
+        if(state.MPO_L.size() + state.MPO_R.size() >= length){break;}
     }
+    MPS_Tools::Finite::Chain::randomize_mpos(state,mpo_seed);
 
     //Generate MPS
-    auto spin_dim = state.get_MPO_L().back()->get_spin_dimension();
+    auto spin_dim = state.MPO_L.back()->get_spin_dimension();
     Eigen::Tensor<Scalar,3> G(spin_dim,1,1);
     Eigen::Tensor<Scalar,1> L(1);
     G.setValues({{{1.0}},{{0.0}}});
     L.setValues({1});
 
-    state.set_max_sites(length);
-    state.get_MPS_C() = L;
+    state.MPS_C = L;
     while(true){
-        state.get_MPS_L().emplace_back(class_vidal_mps(G,L));
-        if(state.get_MPS_L().size() + state.get_MPS_R().size() >= length){break;}
-        state.get_MPS_R().emplace_front(class_vidal_mps(G,L));
-        if(state.get_MPS_L().size() + state.get_MPS_R().size() >= length){break;}
+        state.MPS_L.emplace_back(class_vidal_mps(G,L));
+        if(state.MPS_L.size() + state.MPS_R.size() >= length){break;}
+        state.MPS_R.emplace_front(class_vidal_mps(G,L));
+        if(state.MPS_L.size() + state.MPS_R.size() >= length){break;}
     }
-    MPS_Tools::Finite::Chain::randomize_mpos(state,seed);
+
+
+    state = MPS_Tools::Finite::Ops::set_random_product_state(state,parity,mps_seed);
     MPS_Tools::Finite::Ops::rebuild_environments(state);
     MPS_Tools::Finite::Debug::check_integrity_of_mps(state);
 }
@@ -51,27 +54,25 @@ void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state,
 
 
 
-void MPS_Tools::Finite::Chain::randomize_mpos(class_finite_chain_state &state, const size_t seed) {
+void MPS_Tools::Finite::Chain::randomize_mpos(class_finite_chain_state &state, const size_t mpo_seed) {
     MPS_Tools::log->info("Setting random fields in chain");
-    rn::seed(seed);
+    rn::seed(mpo_seed);
     if (not state.max_sites_is_set) throw std::range_error("System size not set yet");
-    if (state.get_length() != state.get_MPO_L().size() + state.get_MPO_R().size() )
-        throw std::range_error("Mismatch in system size and size of MPO lists" );
 
     std::vector<std::vector<double>> all_params;
-    for (auto &mpo : state.get_MPO_L()){
+    for (auto &mpo : state.MPO_L){
         mpo->randomize_hamiltonian();
         all_params.push_back(mpo->get_parameter_values());
     }
-    for (auto &mpo : state.get_MPO_R()){
+    for (auto &mpo : state.MPO_R){
         mpo->randomize_hamiltonian();
         all_params.push_back(mpo->get_parameter_values());
     }
 
-    for (auto &mpo : state.get_MPO_L()){
+    for (auto &mpo : state.MPO_L){
         mpo->set_full_lattice_parameters(all_params);
     }
-    for (auto &mpo : state.get_MPO_R()){
+    for (auto &mpo : state.MPO_R){
         mpo->set_full_lattice_parameters(all_params);
     }
 }
@@ -87,9 +88,9 @@ void MPS_Tools::Finite::Chain::copy_superblock_to_state(class_finite_chain_state
 }
 
 void MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(class_finite_chain_state &state,const class_superblock &superblock) {
-    auto & MPS_L  = state.get_MPS_L();
-    auto & MPS_R  = state.get_MPS_R();
-    auto & MPS_C  = state.get_MPS_C();
+    auto & MPS_L  = state.MPS_L;
+    auto & MPS_R  = state.MPS_R;
+    auto & MPS_C  = state.MPS_C;
 
     assert(!MPS_L.empty() and !MPS_R.empty());
     assert(MPS_L.size() + MPS_R.size() <= state.get_length());
@@ -101,15 +102,14 @@ void MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(class_finite_chain_s
     MPS_C           = superblock.MPS->LC;
     MPS_R.front()   = *superblock.MPS->MPS_B;
     state.set_measured_false();
-    state.mps_have_been_written_to_hdf5 = false;
 }
 
 void MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(class_finite_chain_state &state,const class_superblock &superblock){
 //    std::cout << "Current state -- Overwrite: " << std::endl;
 //    std::cout << "HA: " << superblock.HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position() << std::endl;
 //    std::cout << "HB: " << superblock.HB->get_position() << " MPO_R front: " << MPO_R.front()->get_position() << std::endl;
-    auto & MPO_L  = state.get_MPO_L();
-    auto & MPO_R  = state.get_MPO_R();
+    auto & MPO_L  = state.MPO_L;
+    auto & MPO_R  = state.MPO_R;
 
     assert(superblock.HA->get_position() == MPO_L.back()->get_position());
     assert(superblock.HB->get_position() == MPO_R.front()->get_position());
@@ -117,14 +117,13 @@ void MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(class_finite_chain_s
     MPO_R.front()     = superblock.HB->clone();
     assert(MPO_L.size() + MPO_R.size() == state.get_length());
     state.set_measured_false();
-    state.mpo_have_been_written_to_hdf5 = false;
 }
 
 void MPS_Tools::Finite::Chain::copy_superblock_env_to_state(class_finite_chain_state &state,const class_superblock &superblock){
-    auto & ENV_L  = state.get_ENV_L();
-    auto & ENV_R  = state.get_ENV_R();
-    auto & ENV2_L = state.get_ENV2_L();
-    auto & ENV2_R = state.get_ENV2_R();
+    auto & ENV_L  = state.ENV_L;
+    auto & ENV_R  = state.ENV_R;
+    auto & ENV2_L = state.ENV2_L;
+    auto & ENV2_R = state.ENV2_R;
     assert(superblock.Lblock->get_position() == ENV_L.back().get_position());
     assert(superblock.Rblock->get_position() == ENV_R.front().get_position());
     assert(superblock.Lblock2->get_position() == ENV2_L.back().get_position());
@@ -137,19 +136,18 @@ void MPS_Tools::Finite::Chain::copy_superblock_env_to_state(class_finite_chain_s
     ENV2_R.front()  = *superblock.Rblock2;
     assert(ENV_L.size() + ENV_R.size() == state.get_length());
     state.set_measured_false();
-    state.env_have_been_written_to_hdf5 = false;
 }
 
 int MPS_Tools::Finite::Chain::insert_superblock_to_state(class_finite_chain_state &state, class_superblock &superblock){
-    auto & MPS_L  = state.get_MPS_L();
-    auto & MPS_R  = state.get_MPS_R();
-    auto & MPS_C  = state.get_MPS_C();
-    auto & MPO_L  = state.get_MPO_L();
-    auto & MPO_R  = state.get_MPO_R();
-    auto & ENV_L  = state.get_ENV_L();
-    auto & ENV_R  = state.get_ENV_R();
-    auto & ENV2_L = state.get_ENV2_L();
-    auto & ENV2_R = state.get_ENV2_R();
+    auto & MPS_L  = state.MPS_L;
+    auto & MPS_R  = state.MPS_R;
+    auto & MPS_C  = state.MPS_C;
+    auto & MPO_L  = state.MPO_L;
+    auto & MPO_R  = state.MPO_R;
+    auto & ENV_L  = state.ENV_L;
+    auto & ENV_R  = state.ENV_R;
+    auto & ENV2_L = state.ENV2_L;
+    auto & ENV2_R = state.ENV2_R;
 
 
     assert(ENV_L .size() + ENV_L.size() <= state.get_length());
@@ -182,7 +180,6 @@ int MPS_Tools::Finite::Chain::insert_superblock_to_state(class_finite_chain_stat
     assert(ENV2_R.front().size == superblock.Rblock2->size);
 
     state.set_measured_false();
-    state.set_written_false();
     return (int)MPS_L.size();
 }
 
@@ -192,15 +189,15 @@ int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  stat
 //    std::cout << "HA: " << superblock.HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position() << std::endl;
 //    std::cout << "HB: " << superblock.HB->get_position() << " MPO_R front: " << MPO_R.front()->get_position() << std::endl;
 //
-    auto & MPS_L  = state.get_MPS_L();
-    auto & MPS_R  = state.get_MPS_R();
-    auto & MPS_C  = state.get_MPS_C();
-    auto & MPO_L  = state.get_MPO_L();
-    auto & MPO_R  = state.get_MPO_R();
-    auto & ENV_L  = state.get_ENV_L();
-    auto & ENV_R  = state.get_ENV_R();
-    auto & ENV2_L = state.get_ENV2_L();
-    auto & ENV2_R = state.get_ENV2_R();
+    auto & MPS_L  = state.MPS_L;
+    auto & MPS_R  = state.MPS_R;
+    auto & MPS_C  = state.MPS_C;
+    auto & MPO_L  = state.MPO_L;
+    auto & MPO_R  = state.MPO_R;
+    auto & ENV_L  = state.ENV_L;
+    auto & ENV_R  = state.ENV_R;
+    auto & ENV2_L = state.ENV2_L;
+    auto & ENV2_R = state.ENV2_R;
     assert(!MPS_L.empty() and !MPS_R.empty());
     assert(MPS_L.size() + MPS_R.size() == state.get_length());
     assert(ENV_L.size() + ENV_R.size() == state.get_length());
@@ -318,7 +315,6 @@ int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  stat
     }
 
     state.set_measured_false();
-    state.set_written_false();
     return state.get_sweeps();
 }
 
@@ -326,19 +322,19 @@ void MPS_Tools::Finite::Chain::copy_state_to_superblock(const class_finite_chain
     MPS_Tools::log->trace("Copying state to superblock");
     superblock.clear();
     superblock.MPS->set_mps(
-            state.get_MPS_L().back().get_L(),
-            state.get_MPS_L().back().get_G(),
-            state.get_MPS_C(),
-            state.get_MPS_R().front().get_G(),
-            state.get_MPS_R().front().get_L()
+            state.MPS_L.back().get_L(),
+            state.MPS_L.back().get_G(),
+            state.MPS_C,
+            state.MPS_R.front().get_G(),
+            state.MPS_R.front().get_L()
     );
 
-    *superblock.Lblock2 =        state.get_ENV2_L().back();
-    *superblock.Lblock  =        state.get_ENV_L().back();
-    superblock.HA       =        state.get_MPO_L().back()->clone();
-    superblock.HB       =        state.get_MPO_R().front()->clone();
-    *superblock.Rblock  =        state.get_ENV_R().front();
-    *superblock.Rblock2 =        state.get_ENV2_R().front();
+    *superblock.Lblock2 =        state.ENV2_L.back();
+    *superblock.Lblock  =        state.ENV_L.back();
+    superblock.HA       =        state.MPO_L.back()->clone();
+    superblock.HB       =        state.MPO_R.front()->clone();
+    *superblock.Rblock  =        state.ENV_R.front();
+    *superblock.Rblock2 =        state.ENV2_R.front();
     superblock.environment_size = superblock.Lblock->size + superblock.Rblock->size;
     superblock.set_positions(state.get_position());
 }

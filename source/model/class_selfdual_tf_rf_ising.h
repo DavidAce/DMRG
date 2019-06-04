@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <general/nmspc_tensor_extra.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 #include <iomanip>
 #include "class_hamiltonian_base.h"
 
@@ -16,16 +17,16 @@ class class_selfdual_tf_rf_ising_table;
 class class_selfdual_tf_rf_ising : public class_hamiltonian_base {
     using Scalar = std::complex<double>;
 private:
-    int    spin_dim            = settings::model::selfdual_tf_rf_ising::d;           /*!< Spin dimension */
+    int    spin_dim            = 0;           /*!< Spin dimension */
     double J_rnd               = 0;
     double h_rnd               = 0;
-    double J_log_mean          = settings::model::selfdual_tf_rf_ising::J_log_mean;
-    double h_log_mean          = settings::model::selfdual_tf_rf_ising::h_log_mean;
-    double J_avg               = 0; //std::exp(settings::model::selfdual_tf_rf_ising::J_log_mean);
-    double h_avg               = 0; //std::exp(settings::model::selfdual_tf_rf_ising::h_log_mean);
-    double J_sigma             = settings::model::selfdual_tf_rf_ising::J_sigma;
-    double h_sigma             = settings::model::selfdual_tf_rf_ising::h_sigma;
-    double lambda              = settings::model::selfdual_tf_rf_ising::lambda;
+    double J_log_mean          = 0;
+    double h_log_mean          = 0;
+    double J_avg               = 0;
+    double h_avg               = 0;
+    double J_sigma             = 0;
+    double h_sigma             = 0;
+    double lambda              = 0;
     double delta               = 0;
     double e_reduced           = 0;                            /*!< Energy offset for this mpo (to make "reduced" MPO views) */
 

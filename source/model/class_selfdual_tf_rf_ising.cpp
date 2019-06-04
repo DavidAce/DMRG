@@ -8,17 +8,31 @@
 #include <general/nmspc_random_numbers.h>
 #include <iomanip>
 #include <general/nmspc_math.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 
 using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
 
 class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(std::string logName): class_hamiltonian_base(logName){
+
+    spin_dim            = settings::model::selfdual_tf_rf_ising::d;           /*!< Spin dimension */
+    J_log_mean          = settings::model::selfdual_tf_rf_ising::J_log_mean;
+    h_log_mean          = settings::model::selfdual_tf_rf_ising::h_log_mean;
+    J_sigma             = settings::model::selfdual_tf_rf_ising::J_sigma;
+    h_sigma             = settings::model::selfdual_tf_rf_ising::h_sigma;
+    lambda              = settings::model::selfdual_tf_rf_ising::lambda;
+    e_reduced           = 0;
+
+
     extent4     = {1, 1, spin_dim, spin_dim};
     extent2     = {spin_dim, spin_dim};
     J_rnd       = rn::log_normal(J_log_mean,J_sigma);
     h_rnd       = rn::log_normal(h_log_mean,h_sigma);
     delta       = J_log_mean - h_log_mean;
+
+
+
 }
 
 

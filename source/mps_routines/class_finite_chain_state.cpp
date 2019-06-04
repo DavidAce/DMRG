@@ -29,7 +29,7 @@ void class_finite_chain_state::do_all_measurements(){
     measurements.energy_variance_mpo            = Measure::energy_variance_mpo(*this);
     measurements.energy_variance_per_site_mpo   = Measure::energy_variance_per_site_mpo(*this);
     measurements.entanglement_entropies         = Measure::entanglement_entropies(*this);
-    measurements.spin_components                = Measure::parities(*this);
+    measurements.spin_components                = Measure::spin_components(*this);
     set_measured_true();
 }
 
@@ -92,107 +92,109 @@ bool class_finite_chain_state::position_is_at(int pos)const{
 
 
 //With indices
+const class_hamiltonian_base & class_finite_chain_state::get_MPO(size_t pos) const {
+    if (pos >= get_length()){throw std::range_error("get_MPO(pos) pos out of range: " + std::to_string(pos));}
+    if(pos <= MPO_L.size()-1){
+        return *std::next(MPO_L.begin(), pos)->get();
+    }else{
+        pos -= MPS_L.size();
+        return *std::next(MPO_R.begin(), pos)->get();
+    }
+}
+
+
+const Eigen::Tensor<class_finite_chain_state::Scalar,3> & class_finite_chain_state::get_G(size_t pos)const{
+    if (pos >= get_length()){throw std::range_error("get_G(pos) pos out of range: " + std::to_string(pos));}
+    if(pos <= MPS_L.size()-1){
+        return std::next(MPS_L.begin(), pos)->get_G();
+    }else{
+        pos -= MPS_L.size();
+        return std::next(MPS_R.begin(), pos)->get_G();
+    }
+}
+
+const Eigen::Tensor<class_finite_chain_state::Scalar,1> & class_finite_chain_state::get_L(size_t pos) const {
+    if (pos >= get_length()+1 ){throw std::range_error("get_L(pos):  pos out of range: " + std::to_string(pos));}
+    if(pos <= MPS_L.size()-1){
+        return std::next(MPS_L.begin(), pos)->get_L();
+    }else if (pos == MPS_L.size()){
+        return MPS_C;
+    }
+    else {
+        pos -= (MPS_L.size() + 1);
+        return std::next(MPS_R.begin(), pos)->get_L();
+    }
+}
+
 
 Eigen::Tensor<class_finite_chain_state::Scalar,3> & class_finite_chain_state::get_G(size_t pos){
     if (pos >= get_length()){throw std::range_error("get_G(pos) pos out of range: " + std::to_string(pos));}
-    if(pos <= get_MPS_L().size()-1){
-        return std::next(get_MPS_L().begin(), pos)->get_G();
+    if(pos <= MPS_L.size()-1){
+        return std::next(MPS_L.begin(), pos)->get_G();
     }else{
-        pos -= get_MPS_L().size();
-        return std::next(get_MPS_R().begin(), pos)->get_G();
+        pos -= MPS_L.size();
+        return std::next(MPS_R.begin(), pos)->get_G();
     }
-
 }
-Eigen::Tensor<class_finite_chain_state::Scalar,1> & class_finite_chain_state::get_L(size_t pos){
+
+Eigen::Tensor<class_finite_chain_state::Scalar,1> & class_finite_chain_state::get_L(size_t pos) {
     if (pos >= get_length()+1 ){throw std::range_error("get_L(pos):  pos out of range: " + std::to_string(pos));}
-    if(pos <= get_MPS_L().size()-1){
-        return std::next(get_MPS_L().begin(), pos)->get_L();
-    }else if (pos == get_MPS_L().size()){
-        return get_MPS_C();
+    if(pos <= MPS_L.size()-1){
+        return std::next(MPS_L.begin(), pos)->get_L();
+    }else if (pos == MPS_L.size()){
+        return MPS_C;
     }
     else {
-        pos -= (get_MPS_L().size() + 1);
-        return std::next(get_MPS_R().begin(), pos)->get_L();
+        pos -= (MPS_L.size() + 1);
+        return std::next(MPS_R.begin(), pos)->get_L();
     }
-
 }
 
-Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_A(size_t pos){
+
+
+
+Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_A(size_t pos) const {
     if(pos > get_length()-2 )  {throw std::range_error("get_A(pos): pos larger than length-2");}
     return Textra::asDiagonal(get_L(pos)).contract(get_G(pos), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
 }
 
-Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_B(size_t pos){
+Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_B(size_t pos) const {
     if(pos > get_length()-1 )  {throw std::range_error("get_B(pos): pos larger than length-1");}
     return get_G(pos).contract(Textra::asDiagonal(get_L(pos+1)), Textra::idx({2},{0}));
 }
 
-Eigen::Tensor<class_finite_chain_state::Scalar,4> class_finite_chain_state::get_theta(size_t pos){
+
+
+std::tuple<long,long,long> class_finite_chain_state::get_dims(size_t pos) const{
+    return {get_G(pos).dimension(0),get_G(pos).dimension(1),get_G(pos).dimension(2)};
+}
+
+
+
+Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_A() const{
+    return Textra::asDiagonal(MPS_L.back().get_L()).contract(MPS_L.back().get_G(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+}
+
+Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_B() const{
+    return MPS_R.front().get_G().contract(Textra::asDiagonal(MPS_R.front().get_L()), Textra::idx({2},{0}));
+}
+
+
+Eigen::Tensor<class_finite_chain_state::Scalar,4> class_finite_chain_state::get_theta() const{
+    return
+    get_A()
+    .contract(Textra::asDiagonal(MPS_C), Textra::idx({2},{0}))
+    .contract(get_B(), Textra::idx({2},{1}));
+}
+
+Eigen::Tensor<class_finite_chain_state::Scalar,4> class_finite_chain_state::get_theta(size_t pos) const {
     if(pos > get_length()-2 )  {throw std::range_error("get_theta(pos): pos larger than length-2");}
     return get_A(pos)
             .contract(Textra::asDiagonal(get_L(pos+1)), Textra::idx({2},{0}))
             .contract(get_B(pos+1), Textra::idx({2},{1}));
 }
 
-std::tuple<long,long,long> class_finite_chain_state::get_dims(size_t pos){
-    return {get_G(pos).dimension(0),get_G(pos).dimension(1),get_G(pos).dimension(2)};
-}
 
-
-
-// Without indices
-
-Eigen::Tensor<class_finite_chain_state::Scalar,3> & class_finite_chain_state::get_GA(){
-    return get_MPS_L().back().get_G();
-}
-
-Eigen::Tensor<class_finite_chain_state::Scalar,3> & class_finite_chain_state::get_GB(){
-    return get_MPS_R().front().get_G();
-}
-
-
-Eigen::Tensor<class_finite_chain_state::Scalar,1> & class_finite_chain_state::get_LA(){
-    return get_MPS_L().back().get_L();
-}
-
-Eigen::Tensor<class_finite_chain_state::Scalar,1> & class_finite_chain_state::get_LC(){
-    return get_MPS_C();
-}
-
-Eigen::Tensor<class_finite_chain_state::Scalar,1> & class_finite_chain_state::get_LB(){
-    return get_MPS_R().front().get_L();
-}
-
-
-Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_A(){
-    return Textra::asDiagonal(get_LA()).contract(get_GA(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
-}
-
-Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_B(){
-    return get_GB().contract(Textra::asDiagonal(get_LB()), Textra::idx({2},{0}));
-}
-
-
-Eigen::Tensor<class_finite_chain_state::Scalar,4> class_finite_chain_state::get_theta(){
-    return
-    get_A()
-    .contract(Textra::asDiagonal(get_LC()), Textra::idx({2},{0}))
-    .contract(get_B(), Textra::idx({2},{1}));
-}
-
-
-
-
-bool class_finite_chain_state::has_been_measured(){
-    return
-    energy_has_been_measured   and
-    variance_has_been_measured and
-    entropy_has_been_measured  and
-    norm_has_been_measured     and
-    parity_has_been_measured   and
-    everything_has_been_measured
-    ;
-}
 
 void class_finite_chain_state::set_measured_true(){
     energy_has_been_measured     = true;
@@ -211,28 +213,13 @@ void class_finite_chain_state::set_measured_false(){
     everything_has_been_measured = false;
 }
 
-bool class_finite_chain_state::has_been_written(){
+
+bool class_finite_chain_state::has_been_measured()const{
     return
-            mps_have_been_written_to_hdf5          and
-            mpo_have_been_written_to_hdf5          and
-            env_have_been_written_to_hdf5          and
-            env_have_been_written_to_hdf5          and
-            model_params_have_been_written_to_hdf5;
-}
-
-
-
-void class_finite_chain_state::set_written_true() {
-    mps_have_been_written_to_hdf5          = true;
-    mpo_have_been_written_to_hdf5          = true;
-    env_have_been_written_to_hdf5          = true;
-    env_have_been_written_to_hdf5          = true;
-    model_params_have_been_written_to_hdf5 = true;
-}
-
-void class_finite_chain_state::set_written_false() {
-    mps_have_been_written_to_hdf5          = false;
-    mpo_have_been_written_to_hdf5          = false;
-    env_have_been_written_to_hdf5          = false;
-    model_params_have_been_written_to_hdf5 = false;
+            energy_has_been_measured   and
+            variance_has_been_measured and
+            entropy_has_been_measured  and
+            norm_has_been_measured     and
+            parity_has_been_measured   and
+            everything_has_been_measured;
 }

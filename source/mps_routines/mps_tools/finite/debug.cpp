@@ -67,9 +67,9 @@ void MPS_Tools::Finite::Debug::check_integrity_of_sim(const class_finite_chain_s
         throw std::runtime_error("Mismatch in state and sim_state positions: " + std::to_string(state.get_position()) + " " + std::to_string(sim_state.position ));
 
 
-    auto state_MPO_A      = Eigen::Map<const Eigen::VectorXcd>(state.get_MPO_L().back()->MPO().data(),state.get_MPO_L().back()->MPO().size() );
+    auto state_MPO_A      = Eigen::Map<const Eigen::VectorXcd>(state.MPO_L.back()->MPO().data(),state.MPO_L.back()->MPO().size() );
     auto superblock_MPO_A = Eigen::Map<const Eigen::VectorXcd>(superblock.HA->MPO().data(),superblock.HA->MPO().size() );
-    auto state_MPO_B      = Eigen::Map<const Eigen::VectorXcd>(state.get_MPO_R().front()->MPO().data(),state.get_MPO_R().front()->MPO().size() );
+    auto state_MPO_B      = Eigen::Map<const Eigen::VectorXcd>(state.MPO_R.front()->MPO().data(),state.MPO_R.front()->MPO().size() );
     auto superblock_MPO_B = Eigen::Map<const Eigen::VectorXcd>(superblock.HB->MPO().data(),superblock.HB->MPO().size() );
     if(state_MPO_A != superblock_MPO_A )
         throw std::runtime_error("Mismatch in state and superblock MPOS (left side)");
@@ -84,36 +84,36 @@ void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_s
     {
         MPS_Tools::log->trace("Checking integrity of MPS");
         MPS_Tools::log->trace("\tChecking system sizes");
-        if(state.get_MPS_L().size() + state.get_MPS_R().size() != state.get_length() )
-            throw std::runtime_error("Mismatch in MPS size: " + std::to_string(state.get_MPS_L().size() + state.get_MPS_R().size()) + " " + std::to_string(state.get_length()));
+        if(state.MPS_L.size() + state.MPS_R.size() != state.get_length() )
+            throw std::runtime_error("Mismatch in MPS size: " + std::to_string(state.MPS_L.size() + state.MPS_R.size()) + " " + std::to_string(state.get_length()));
 
-        if(state.get_ENV_L().size() + state.get_ENV_R().size() != state.get_length())
-            throw std::runtime_error("Mismatch in ENV size: " + std::to_string(state.get_ENV_L().size() + state.get_ENV_R().size()) + " " + std::to_string(state.get_length()));
+        if(state.ENV_L.size() + state.ENV_R.size() != state.get_length())
+            throw std::runtime_error("Mismatch in ENV size: " + std::to_string(state.ENV_L.size() + state.ENV_R.size()) + " " + std::to_string(state.get_length()));
 
-        if(state.get_ENV2_L().size() + state.get_ENV2_R().size() != state.get_length())
-            throw std::runtime_error("Mismatch in ENV size: " + std::to_string(state.get_ENV_L().size() + state.get_ENV_R().size()) + " " + std::to_string(state.get_length()));
+        if(state.ENV2_L.size() + state.ENV2_R.size() != state.get_length())
+            throw std::runtime_error("Mismatch in ENV size: " + std::to_string(state.ENV_L.size() + state.ENV_R.size()) + " " + std::to_string(state.get_length()));
 
-        if((int) state.get_ENV_L().back().size != state.get_position())
-            throw std::runtime_error("Mismatch in ENV_L size and position: " + std::to_string(state.get_ENV_L().back().size) + " " + std::to_string(state.get_position()));
+        if((int) state.ENV_L.back().size != state.get_position())
+            throw std::runtime_error("Mismatch in ENV_L size and position: " + std::to_string(state.ENV_L.back().size) + " " + std::to_string(state.get_position()));
 
-        if((int) state.get_ENV_R().front().size != (int)(state.get_length() - state.get_position() - 2))
-            throw std::runtime_error("Mismatch in ENV_R size+1 and length-position: " + std::to_string(state.get_ENV_R().front().size) + " " + std::to_string(state.get_length() - state.get_position()-2));
+        if((int) state.ENV_R.front().size != (int)(state.get_length() - state.get_position() - 2))
+            throw std::runtime_error("Mismatch in ENV_R size+1 and length-position: " + std::to_string(state.ENV_R.front().size) + " " + std::to_string(state.get_length() - state.get_position()-2));
 
         MPS_Tools::log->trace("\tChecking matrix sizes on the left side");
         //Check left side of the chain
-        auto mps_it  = state.get_MPS_L().begin();
-        auto mps_nx  = state.get_MPS_L().begin();
-        auto env_it  = state.get_ENV_L().begin();
-        auto env2_it = state.get_ENV2_L().begin();
-        auto mpo_it  = state.get_MPO_L().begin();
+        auto mps_it  = state.MPS_L.begin();
+        auto mps_nx  = state.MPS_L.begin();
+        auto env_it  = state.ENV_L.begin();
+        auto env2_it = state.ENV2_L.begin();
+        auto mpo_it  = state.MPO_L.begin();
         std::advance(mps_nx,1);
         int i = 0;
         while(
-            mps_it  != state.get_MPS_L().end() and
-            mps_nx  != state.get_MPS_L().end() and
-            env_it  != state.get_ENV_L().end() and
-            env2_it != state.get_ENV2_L().end() and
-            mpo_it  != state.get_MPO_L().end()
+            mps_it  != state.MPS_L.end() and
+            mps_nx  != state.MPS_L.end() and
+            env_it  != state.ENV_L.end() and
+            env2_it != state.ENV2_L.end() and
+            mpo_it  != state.MPO_L.end()
             )
         {
             if(mps_it->get_chiR() != mps_nx->get_chiL())
@@ -150,28 +150,28 @@ void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_s
     {
         MPS_Tools::log->trace("\tChecking matrix sizes on the center");
         //Check center
-        if(state.get_MPS_C().dimension(0) != state.get_MPS_L().back().get_chiR())
-            throw std::runtime_error("Mismatch in center bond matrix dimension: " + std::to_string(state.get_MPS_C().dimension(0)) + " " + std::to_string(state.get_MPS_L().back().get_chiR()));
-        if(state.get_MPS_C().dimension(0) != state.get_MPS_R().front().get_chiL())
-            throw std::runtime_error("Mismatch in center bond matrix dimension: " + std::to_string(state.get_MPS_C().dimension(0)) + " " + std::to_string(state.get_MPS_R().front().get_chiL()));
+        if(state.MPS_C.dimension(0) != state.MPS_L.back().get_chiR())
+            throw std::runtime_error("Mismatch in center bond matrix dimension: " + std::to_string(state.MPS_C.dimension(0)) + " " + std::to_string(state.MPS_L.back().get_chiR()));
+        if(state.MPS_C.dimension(0) != state.MPS_R.front().get_chiL())
+            throw std::runtime_error("Mismatch in center bond matrix dimension: " + std::to_string(state.MPS_C.dimension(0)) + " " + std::to_string(state.MPS_R.front().get_chiL()));
 
     }
 
     {
         MPS_Tools::log->trace("\tChecking matrix sizes on the right side");
-        auto mps_it  = state.get_MPS_R().rbegin();
-        auto mps_nx  = state.get_MPS_R().rbegin();
-        auto env_it  = state.get_ENV_R().rbegin();
-        auto env2_it = state.get_ENV2_R().rbegin();
-        auto mpo_it  = state.get_MPO_R().rbegin();
+        auto mps_it  = state.MPS_R.rbegin();
+        auto mps_nx  = state.MPS_R.rbegin();
+        auto env_it  = state.ENV_R.rbegin();
+        auto env2_it = state.ENV2_R.rbegin();
+        auto mpo_it  = state.MPO_R.rbegin();
         std::advance(mps_nx,1);
         int i = state.get_length()-1;
         while(
-            mps_it  != state.get_MPS_R().rend() and
-            mps_nx  != state.get_MPS_R().rend() and
-            env_it  != state.get_ENV_R().rend() and
-            env2_it != state.get_ENV2_R().rend() and
-            mpo_it  != state.get_MPO_R().rend())
+            mps_it  != state.MPS_R.rend() and
+            mps_nx  != state.MPS_R.rend() and
+            env_it  != state.ENV_R.rend() and
+            env2_it != state.ENV2_R.rend() and
+            mpo_it  != state.MPO_R.rend())
         {
             if(mps_it->get_chiL() != mps_nx->get_chiR())
                 throw std::runtime_error("Mismatch in adjacent MPS dimensions (right side) @ site " + std::to_string(i) + ": "+ std::to_string(mps_nx->get_chiR()) + " " + std::to_string(mps_it->get_chiL()));
@@ -277,12 +277,12 @@ void MPS_Tools::Finite::Debug::print_parity_properties(const class_finite_chain_
     MPS_Tools::log->info("\t<psi_up_x|psi_up_z>             = {:0.16f}" ,MPS_Tools::Finite::Ops::overlap(state_up_x,state_up_z));
     MPS_Tools::log->info("\tGenerating single hamiltonian MPO list");
 
-    auto & Ledge = state.get_ENV_L().front().block;
-    auto & Redge = state.get_ENV_R().back().block ;
-    auto & Ledge2 = state.get_ENV2_L().front().block;
-    auto & Redge2 = state.get_ENV2_R().back().block ;
+    auto & Ledge = state.ENV_L.front().block;
+    auto & Redge = state.ENV_R.back().block ;
+    auto & Ledge2 = state.ENV2_L.front().block;
+    auto & Redge2 = state.ENV2_R.back().block ;
 
-    auto hamiltonian_mpos = MPS_Tools::Finite::Ops::make_mpo_list(state.get_MPO_L(),state.get_MPO_R());
+    auto hamiltonian_mpos = MPS_Tools::Finite::Ops::make_mpo_list(state.MPO_L,state.MPO_R);
     MPS_Tools::log->info("Computing expectation values");
     double energy      = MPS_Tools::Finite::Ops::expectation_value(state     ,state     ,hamiltonian_mpos, Ledge,Redge);
     double energy_up_x = MPS_Tools::Finite::Ops::expectation_value(state_up_x,state_up_x,hamiltonian_mpos, Ledge,Redge);

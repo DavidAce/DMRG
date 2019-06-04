@@ -55,8 +55,8 @@ int MPS_Tools::Finite::Measure::length(const class_finite_chain_state & state){
 
 double MPS_Tools::Finite::Measure::norm(const class_finite_chain_state & state){
     if (state.norm_has_been_measured){return state.measurements.norm;}
-    auto mpsL  = state.get_MPS_L().begin();
-    auto endL  = state.get_MPS_L().end();
+    auto mpsL  = state.MPS_L.begin();
+    auto endL  = state.MPS_L.end();
     const Eigen::Tensor<Scalar,3>  & A = mpsL->ref_A(); // std::get<1>(*mpsL);
     Eigen::Tensor<Scalar,2> chain = A.contract(A.conjugate(), idx({0,1},{0,1}));
     Eigen::TensorRef<Eigen::Tensor<Scalar,2>> temp;
@@ -72,14 +72,14 @@ double MPS_Tools::Finite::Measure::norm(const class_finite_chain_state & state){
     }
 
 //    Contract the center point
-    auto &MPS_C = state.get_MPS_C();
+    auto &MPS_C = state.MPS_C;
     temp = chain
             .contract(asDiagonal(MPS_C), idx({0},{0}))
             .contract(asDiagonal(MPS_C), idx({0},{0}));
     chain = temp;
     //Contract the right half of the chain
-    auto mpsR  = state.get_MPS_R().begin();
-    auto endR  = state.get_MPS_R().end();
+    auto mpsR  = state.MPS_R.begin();
+    auto endR  = state.MPS_R.end();
 
     while(mpsR != endR){
         const Eigen::Tensor<Scalar,3> &B  = mpsR->ref_B(); //std::get<0>(*mpsR);
@@ -103,11 +103,11 @@ double MPS_Tools::Finite::Measure::norm(const class_finite_chain_state & state){
 std::vector<int> MPS_Tools::Finite::Measure::bond_dimensions(const class_finite_chain_state & state){
 //    ccout(3) << "STATUS: Measuring bond dimension\n";
     std::vector<int> bond_dimensions;
-    for (auto &mps : state.get_MPS_L()){
+    for (auto &mps : state.MPS_L){
         bond_dimensions.emplace_back(mps.get_L().dimension(0));
     }
-    bond_dimensions.emplace_back(state.get_MPS_C().dimension(0));
-    for (auto &mps : state.get_MPS_R()){
+    bond_dimensions.emplace_back(state.MPS_C.dimension(0));
+    for (auto &mps : state.MPS_R){
         bond_dimensions.emplace_back(mps.get_L().dimension(0));
     }
     return bond_dimensions;
@@ -119,12 +119,12 @@ double MPS_Tools::Finite::Measure::energy_mpo(class_finite_chain_state & state){
     if (state.energy_has_been_measured){ return state.measurements.energy_mpo;}
     auto theta = MPS_Tools::Common::Views::get_theta(state);
     Eigen::Tensor<Scalar, 0>  E =
-            state.get_ENV_L().back().block
+            state.ENV_L.back().block
                     .contract(theta,                                     idx({0},{1}))
-                    .contract(state.get_MPO_L().back()->MPO(),           idx({1,2},{0,2}))
-                    .contract(state.get_MPO_R().front()->MPO(),          idx({3,1},{0,2}))
+                    .contract(state.MPO_L.back()->MPO(),           idx({1,2},{0,2}))
+                    .contract(state.MPO_R.front()->MPO(),          idx({3,1},{0,2}))
                     .contract(theta.conjugate(),                         idx({0,2,4},{1,0,2}))
-                    .contract(state.get_ENV_R().front().block,           idx({0,2,1},{0,1,2}));
+                    .contract(state.ENV_R.front().block,           idx({0,2,1},{0,1,2}));
     if(abs(imag(E(0))) > 1e-10 ){
         throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
     }
@@ -150,16 +150,16 @@ double MPS_Tools::Finite::Measure::energy_variance_mpo(class_finite_chain_state 
 //    t_var_mpo.tic();
     if (state.variance_has_been_measured){ return state.measurements.energy_variance_mpo;}
     double energy = MPS_Tools::Finite::Measure::energy_mpo(state);
-    auto theta = MPS_Tools::Common::Views::get_theta(state);
+    auto theta = state.get_theta();
     Eigen::Tensor<Scalar, 0> H2 =
-            state.get_ENV2_L().back().block
-                    .contract(theta                              , idx({0}  ,{1}))
-                    .contract(state.get_MPO_L().back()->MPO()    , idx({1,3},{0,2}))
-                    .contract(state.get_MPO_R().front()->MPO()   , idx({4,2},{0,2}))
-                    .contract(state.get_MPO_L().back()->MPO()    , idx({1,3},{0,2}))
-                    .contract(state.get_MPO_R().front()->MPO()   , idx({4,3},{0,2}))
-                    .contract(theta.conjugate()                  , idx({0,3,5},{1,0,2}))
-                    .contract(state.get_ENV2_R().front().block   , idx({0,3,1,2},{0,1,2,3}));
+            state.ENV2_L.back().block
+                    .contract(theta                        , idx({0}  ,{1}))
+                    .contract(state.MPO_L.back()->MPO()    , idx({1,3},{0,2}))
+                    .contract(state.MPO_R.front()->MPO()   , idx({4,2},{0,2}))
+                    .contract(state.MPO_L.back()->MPO()    , idx({1,3},{0,2}))
+                    .contract(state.MPO_R.front()->MPO()   , idx({4,3},{0,2}))
+                    .contract(theta.conjugate()            , idx({0,3,5},{1,0,2}))
+                    .contract(state.ENV2_R.front().block   , idx({0,3,1,2},{0,1,2,3}));
     state.variance_has_been_measured = true;
     return std::abs(H2(0) - energy*energy);
 }
@@ -174,7 +174,7 @@ double MPS_Tools::Finite::Measure::energy_variance_per_site_mpo(class_finite_cha
 
 double MPS_Tools::Finite::Measure::midchain_entanglement_entropy(const class_finite_chain_state & state){
 //    t_entropy.tic();
-    auto & LC = state.get_MPS_C();
+    auto & LC = state.MPS_C;
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
     return std::real(SA(0));
@@ -186,13 +186,13 @@ std::vector<double> MPS_Tools::Finite::Measure::entanglement_entropies(const cla
     if (state.entropy_has_been_measured){return state.measurements.entanglement_entropies;}
 //    t_entropy.tic();
     std::vector<double> SA;
-    for (auto & mps : state.get_MPS_L()) {
+    for (auto & mps : state.MPS_L) {
         auto &L = mps.get_L();
         Eigen::Tensor<Scalar, 0> SA_L = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
         SA.emplace_back(std::real(SA_L(0)));
     }
     SA.emplace_back(midchain_entanglement_entropy(state));
-    for (auto & mps : state.get_MPS_R()) {
+    for (auto & mps : state.MPS_R) {
         auto &L = mps.get_L();
         Eigen::Tensor<Scalar, 0> SA_R = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
         SA.emplace_back(std::real(SA_R(0)));
@@ -202,25 +202,25 @@ std::vector<double> MPS_Tools::Finite::Measure::entanglement_entropies(const cla
 }
 
 
-std::vector<double> MPS_Tools::Finite::Measure::parities(class_finite_chain_state &state){
+std::vector<double> MPS_Tools::Finite::Measure::spin_components(class_finite_chain_state &state){
     if (state.parity_has_been_measured){return state.measurements.spin_components;}
     state.measurements.spin_component_sx                      = Measure::spin_component(state, qm::spinOneHalf::sx);
     state.measurements.spin_component_sy                      = Measure::spin_component(state, qm::spinOneHalf::sy);
     state.measurements.spin_component_sz                      = Measure::spin_component(state, qm::spinOneHalf::sz);
+    state.parity_has_been_measured = true;
     return {state.measurements.spin_component_sx,
             state.measurements.spin_component_sy,
             state.measurements.spin_component_sz};
 }
 
 
-//
 double MPS_Tools::Finite::Measure::spin_component(const class_finite_chain_state &state,
                                                   const Eigen::Matrix2cd paulimatrix){
 
     Eigen::TensorRef<Eigen::Tensor<Scalar,3>> temp;
 
-    auto mpsL        = state.get_MPS_L().begin();
-    auto endL        = state.get_MPS_L().end();
+    auto mpsL        = state.MPS_L.begin();
+    auto endL        = state.MPS_L.end();
     auto [mpo,L,R]   = class_mpo::pauli_mpo(paulimatrix);
 
     int iter = 0;
@@ -243,15 +243,15 @@ double MPS_Tools::Finite::Measure::spin_component(const class_finite_chain_state
 
 
     //Contract the center point
-    auto &MPS_C = state.get_MPS_C();
+    auto &MPS_C = state.MPS_C;
     temp = L.contract(asDiagonal(MPS_C) , idx({0},{0}))
             .contract(asDiagonal(MPS_C) , idx({0},{0}))
             .shuffle(array3{1,2,0});
     L = temp;
 
     //Contract the right half of the chain
-    auto mpsR  = state.get_MPS_R().begin();
-    auto endR  = state.get_MPS_R().end();
+    auto mpsR  = state.MPS_R.begin();
+    auto endR  = state.MPS_R.end();
     while(mpsR != endR){
         const Eigen::Tensor<Scalar,3> &GB = mpsR->get_G(); // std::get<0>(*mpsR);
         const Eigen::Tensor<Scalar,1> &LB = mpsR->get_L(); // std::get<1>(*mpsR);
@@ -276,8 +276,8 @@ double MPS_Tools::Finite::Measure::spin_component(const class_finite_chain_state
 
 Eigen::Tensor<Scalar,1> MPS_Tools::Finite::Measure::mps_wavefn(const class_finite_chain_state & state){
 
-    auto mpsL  = state.get_MPS_L().begin();
-    auto endL  = state.get_MPS_L().end();
+    auto mpsL  = state.MPS_L.begin();
+    auto endL  = state.MPS_L.end();
     Eigen::Tensor<Scalar,2> chain(1,1);
     chain.setConstant(1.0);
     Eigen::TensorRef<Eigen::Tensor<Scalar,2>> temp;
@@ -302,13 +302,13 @@ Eigen::Tensor<Scalar,1> MPS_Tools::Finite::Measure::mps_wavefn(const class_finit
     }
 
 //    Contract the center point
-    auto &MPS_C = state.get_MPS_C();
+    auto &MPS_C = state.MPS_C;
     temp = chain.contract(asDiagonal(MPS_C), idx({1},{0}));
     chain = temp;
 
     //Contract the right half of the chain
-    auto mpsR  = state.get_MPS_R().begin();
-    auto endR  = state.get_MPS_R().end();
+    auto mpsR  = state.MPS_R.begin();
+    auto endR  = state.MPS_R.end();
 
     while(mpsR != endR){
         const Eigen::Tensor<Scalar,3> &GB  = mpsR->get_G(); // std::get<0>(*mpsR);

@@ -88,8 +88,7 @@ public:
     void clear_saturation_status();
 
     void initialize_superblock(std::string initial_state);
-    void reset_full_mps_to_random_product_state(std::string parity = "none");
-    void set_random_fields_in_chain_mpo();
+    void reset_full_mps_to_random_product_state(const std::string parity, const size_t mps_seed);
     void compute_observables();
     void enlarge_environment();
     void enlarge_environment(int direction);

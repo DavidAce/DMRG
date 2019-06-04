@@ -34,8 +34,8 @@ namespace MPS_Tools{
      */
     {
         namespace Chain {
-            extern void initialize_state(class_finite_chain_state &state,std::string model_type, const size_t length, const size_t seed=0);
-            extern void randomize_mpos  (class_finite_chain_state &state, const size_t seed);
+            extern void initialize_state(class_finite_chain_state &state, std::string model_type, std::string parity, const size_t length, const size_t mpo_seed, const size_t mps_seed);
+            extern void randomize_mpos  (class_finite_chain_state &state, const size_t mpo_seed);
 
             extern void copy_superblock_to_state(class_finite_chain_state &state, const class_superblock &superblock);    /*!< Update the MPS, MPO and ENV stored at current position.*/
             extern void copy_superblock_mps_to_state(class_finite_chain_state &state,const class_superblock &superblock);    /*!< Update the MPS stored at current position.*/
@@ -58,7 +58,8 @@ namespace MPS_Tools{
             extern void normalize_chain2              (class_finite_chain_state &state);
 
             extern double exp_sq_value                (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,4> Ledge, const Eigen::Tensor<std::complex<double>,4> Redge);
-            extern void  set_random_product_state     (class_finite_chain_state &state, const std::string parity);
+            extern class_finite_chain_state
+            set_random_product_state                  (const class_finite_chain_state &state, const std::string parity, const size_t mps_seed);
             extern class_finite_chain_state
             get_parity_projected_state                (const class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix, const int sign);
             extern class_finite_chain_state
@@ -96,7 +97,7 @@ namespace MPS_Tools{
         namespace Measure{
 
 //            extern void do_all_measurements                           (class_finite_chain_state & state);
-            extern int length                                      (const class_finite_chain_state & state);
+            extern int length                                         (const class_finite_chain_state & state);
             extern std::vector<int> bond_dimensions                   (const class_finite_chain_state & state);
             extern double norm                                        (const class_finite_chain_state & state);
             extern double energy_mpo                                  (class_finite_chain_state & state);
@@ -104,11 +105,10 @@ namespace MPS_Tools{
             extern double energy_variance_mpo                         (class_finite_chain_state & state);
             extern double energy_variance_per_site_mpo                (class_finite_chain_state & state);
             extern double midchain_entanglement_entropy               (const class_finite_chain_state & state);
-            extern double spin_component(const class_finite_chain_state &state, const Eigen::Matrix2cd paulimatrix);
+            extern double spin_component                              (const class_finite_chain_state &state, const Eigen::Matrix2cd paulimatrix);
             extern Eigen::Tensor<std::complex<double>,1> mps_wavefn   (const class_finite_chain_state & state);
             extern std::vector<double> entanglement_entropies         (const class_finite_chain_state & state);
-            extern std::vector<double> parities                       (class_finite_chain_state & state);
-
+            extern std::vector<double> spin_components                (class_finite_chain_state & state);
         }
 
 
@@ -120,22 +120,18 @@ namespace MPS_Tools{
         }
 
         namespace H5pp{
-            extern void write_all_state                    (class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_bond_matrices                (class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_2site_mps                    (class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_2site_mpo                    (class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_2site_env                    (class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_2site_env2                   (class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_full_mps                     (class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_full_mpo                     (class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_all_state                    (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_bond_matrices                (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_bond_matrix                  (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_full_mps                     (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_full_mpo                     (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
             extern void write_hamiltonian_params           (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_entanglement                 (class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_all_measurements             (class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_all_parity_projections       (const class_finite_chain_state & state, const class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name);
-            extern double write_parity_projected_analysis    (const class_finite_chain_state & state, const class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name,  std::string projection_name, const Eigen::MatrixXcd paulimatrix, const int sign);
-            extern void load_from_hdf5                     (class_finite_chain_state & state, class_superblock &superblock, class_simulation_state &sim_state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void load_state_from_hdf5               (class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void load_sim_state_from_hdf5           (class_simulation_state &sim_state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_entanglement                 (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_all_measurements             (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_closest_parity_projection    (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name, std::string paulistring);
+            extern void load_from_hdf5                     (class_finite_chain_state & state    , class_superblock &superblock, class_simulation_state &sim_state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void load_state_from_hdf5               (class_finite_chain_state & state    , h5pp::File & h5ppFile, std::string sim_name);
+            extern void load_sim_state_from_hdf5           (class_simulation_state   & sim_state, h5pp::File & h5ppFile, std::string sim_name);
 //            extern void load_sim_state_from_hdf5           (class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
 
         }

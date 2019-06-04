@@ -7,7 +7,6 @@
 
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
-#include <sim_parameters/nmspc_sim_settings.h>
 #include <io/nmspc_logger.h>
 
 class class_hamiltonian_base{

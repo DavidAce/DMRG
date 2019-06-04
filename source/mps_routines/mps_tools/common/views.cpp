@@ -122,8 +122,8 @@ MPS_Tools::Common::Views::get_theta(const class_finite_chain_state & state, std:
  */
 {
     return
-            state.get_MPS_L().back().get_A().contract(Textra::asDiagonal(state.get_MPS_C()), idx({2},{0}))
-                    .contract(state.get_MPS_R().front().get_B(), idx({2},{1})) / norm;
+            state.MPS_L.back().get_A().contract(Textra::asDiagonal(state.MPS_C), idx({2},{0}))
+                    .contract(state.MPS_R.front().get_B(), idx({2},{1})) / norm;
 }
 
 
