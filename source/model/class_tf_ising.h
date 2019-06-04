@@ -13,10 +13,10 @@
 class class_tf_ising : public class_hamiltonian_base {
     using Scalar = std::complex<double>;
 private:
-    int    spin_dim            = settings::model::tf_ising::d;           /*!< Spin dimension */
-    double J_coupling          = settings::model::tf_ising::J;
-    double g_mag_field         = settings::model::tf_ising::g;
-    double w_rnd_strength      = settings::model::tf_ising::w;           /*!< Randomness strength. The random field is uniformly distributed in (-w,w) */
+    int    spin_dim            = 0;           /*!< Spin dimension */
+    double J_coupling          = 0;
+    double g_mag_field         = 0;
+    double w_rnd_strength      = 0;           /*!< Randomness strength. The random field is uniformly distributed in (-w,w) */
     double r_rnd_field         = 0;                            /*!< Random field value */
     double e_reduced           = 0;                            /*!< Energy offset for this mpo (to make "reduced" MPO views) */
     int    num_params          = 7;  //Number of parameters for this model excluding this one.

@@ -8,6 +8,7 @@
 #include <mps_routines/nmspc_mps_tools.h>
 #include <cppoptlib/problem.h>
 #include <cppoptlib/meta.h>
+#include <general/class_tic_toc.h>
 #include <iomanip>
 
 class class_tic_toc;
@@ -56,15 +57,15 @@ namespace MPS_Tools::Finite::Opt{
 
 
         void reset_timers();
-        extern std::shared_ptr<class_tic_toc> t_opt;
-        extern std::shared_ptr<class_tic_toc> t_eig;
-        extern std::shared_ptr<class_tic_toc> t_ham;
-        extern std::shared_ptr<class_tic_toc> t_tot;
-        extern std::shared_ptr<class_tic_toc> t_vH2v;
-        extern std::shared_ptr<class_tic_toc> t_vHv ;
-        extern std::shared_ptr<class_tic_toc> t_vH2 ;
-        extern std::shared_ptr<class_tic_toc> t_vH  ;
-        extern std::shared_ptr<class_tic_toc> t_op  ;
+        inline std::shared_ptr<class_tic_toc> t_opt  =  std::make_shared<class_tic_toc>(true,5,"t_opt ");;
+        inline std::shared_ptr<class_tic_toc> t_eig  =  std::make_shared<class_tic_toc>(true,5,"t_eig ");;
+        inline std::shared_ptr<class_tic_toc> t_ham  =  std::make_shared<class_tic_toc>(true,5,"t_ham ");;
+        inline std::shared_ptr<class_tic_toc> t_tot  =  std::make_shared<class_tic_toc>(true,5,"t_tot ");;
+        inline std::shared_ptr<class_tic_toc> t_vH2v =  std::make_shared<class_tic_toc>(true,5,"t_vH2v");;
+        inline std::shared_ptr<class_tic_toc> t_vHv  =  std::make_shared<class_tic_toc>(true,5,"t_vHv ");;
+        inline std::shared_ptr<class_tic_toc> t_vH2  =  std::make_shared<class_tic_toc>(true,5,"t_vH2 ");;
+        inline std::shared_ptr<class_tic_toc> t_vH   =  std::make_shared<class_tic_toc>(true,5,"t_vH  ");;
+        inline std::shared_ptr<class_tic_toc> t_op   =  std::make_shared<class_tic_toc>(true,5,"t_op  ");;
 
 
         void initialize_params();

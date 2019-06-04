@@ -8,12 +8,18 @@
 #include <general/nmspc_random_numbers.h>
 #include <iomanip>
 #include <general/nmspc_math.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 
 using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
 
 class_tf_ising::class_tf_ising(std::string logName): class_hamiltonian_base(logName){
+    spin_dim            = settings::model::tf_ising::d;
+    J_coupling          = settings::model::tf_ising::J;
+    g_mag_field         = settings::model::tf_ising::g;
+    w_rnd_strength      = settings::model::tf_ising::w;
+
     extent4     = {1, 1, spin_dim, spin_dim};
     extent2     = {spin_dim, spin_dim};
     r_rnd_field = rn::uniform_double(-w_rnd_strength,w_rnd_strength);

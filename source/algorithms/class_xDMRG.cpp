@@ -51,7 +51,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_base(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG) {
     table_xdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
     table_xdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5ppFile, sim_name + "/measurements", "simulation_progress_full_chain",sim_name);
-    MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type, settings::xdmrg::num_sites, settings::model::seed_init_mpo);
+    MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type,settings::model::symmetry, settings::xdmrg::num_sites, settings::model::seed_init_mpo, settings::model::seed_init_mps);
     MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
     min_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
     max_saturation_length = 1 * (int)(2.0 * settings::xdmrg::num_sites);
@@ -140,9 +140,6 @@ void class_xDMRG::run()
 void class_xDMRG::run_preprocessing() {
 
     log->info("Starting {} preprocessing", sim_name);
-
-//    initialize_chain();
-//    set_random_fields_in_chain_mpo();
     find_energy_range();
     MPS_Tools::Finite::Print::print_hamiltonians(*state);
     log->info("Finished {} preprocessing", sim_name);
@@ -163,7 +160,7 @@ void class_xDMRG::run_simulation()    {
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if (state->position_is_the_middle_any_direction())
+        if (state->position_is_any_edge())
         {
             if (sim_state.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
             if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
@@ -269,46 +266,39 @@ void class_xDMRG::check_convergence(){
         clear_saturation_status();
     }
 
-    if (sim_state.iteration == 2 and not projected_during_warmup){
-        *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
-        MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-        clear_saturation_status();
-        projected_during_warmup = true;
+
+    bool outside_of_window = std::abs(sim_state.energy_dens - settings::xdmrg::energy_density)  >= settings::xdmrg::energy_window;
+    if ((sim_state.variance_mpo_has_saturated or sim_state.variance_mpo_has_converged)
+        and sim_state.variance_mpo_saturated_for > min_saturation_length
+        and outside_of_window)
+    {
+        std::cout << "ROOOOOOLL THE DICE" << std::endl;
+        std::cout <<  " |eps-0.5|       = " << std::abs(sim_state.energy_dens - settings::xdmrg::energy_density) << std::endl;
+        std::cout <<  "||eps-0.5| - w | = " << std::abs(std::abs(sim_state.energy_dens - settings::xdmrg::energy_density) - settings::xdmrg::energy_window)  << std::endl;
+        int counter = 0;
+        while(outside_of_window){
+            reset_full_mps_to_random_product_state("sx",settings::model::seed_init_mps++);
+            sim_state.energy_now = MPS_Tools::Common::Measure::energy_per_site_mpo(*superblock);
+            sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
+            outside_of_window = std::abs(sim_state.energy_dens - settings::xdmrg::energy_density)  >= settings::xdmrg::energy_window;
+            counter++;
+        }
+        log->info("Energy initial (per site) = {} | density = {} | retries = {}", sim_state.energy_now, sim_state.energy_dens,counter );
+        projected_during_saturation      = false;
+
     }
 
-    if (sim_state.variance_mpo_has_saturated
-        and sim_state.variance_mpo_saturated_for > min_saturation_length
+
+
+    if (sim_state.variance_mpo_saturated_for > min_saturation_length
         and not projected_during_saturation)
     {
-        *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,qm::spinOneHalf::sx);
+        *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,settings::model::symmetry);
         MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
         clear_saturation_status();
         projected_during_saturation = true;
     }
 
-    if (sim_state.variance_mpo_has_saturated or sim_state.variance_mpo_has_converged){
-        if ( std::abs(sim_state.energy_dens - settings::xdmrg::energy_density)  >= settings::xdmrg::energy_window  ){
-            std::cout << "ROOOOOOLL THE DICE" << std::endl;
-            std::cout <<  " |eps-0.5|       = " << std::abs(sim_state.energy_dens - settings::xdmrg::energy_density) << std::endl;
-            std::cout <<  "||eps-0.5| - w | = " << std::abs(std::abs(sim_state.energy_dens - settings::xdmrg::energy_density) - settings::xdmrg::energy_window)  << std::endl;
-            int counterA = 0;
-            int counterB = 0;
-            sim_state.chi_temp = 1;
-            while(sim_state.energy_now < sim_state.energy_lbound or sim_state.energy_now > sim_state.energy_ubound){
-                // Project into whatever
-                MPS_Tools::Finite::Ops::set_random_product_state(*state,"sx");
-                MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-                MPS_Tools::Common::Measure::set_not_measured(*superblock);
-                sim_state.energy_now = MPS_Tools::Common::Measure::energy_per_site_mpo(*superblock);
-                sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
-                counterA++;
-                counterB++;
-            }
-            log->info("Energy initial (per site) = {} | density = {} | retries = {}", sim_state.energy_now, sim_state.energy_dens,counterB );
-            clear_saturation_status();
-
-        }
-    }
 
 
 
@@ -351,7 +341,6 @@ void class_xDMRG::initialize_chain() {
 void class_xDMRG::find_energy_range() {
     log->trace("Finding energy range");
     assert(state->get_length() == (size_t)settings::xdmrg::num_sites);
-    std::srand((unsigned int) settings::model::seed_init_mps);
     int max_sweeps_during_f_range = 4;
     sim_state.iteration = state->reset_sweeps();
 
@@ -374,7 +363,7 @@ void class_xDMRG::find_energy_range() {
     sim_state.energy_min = superblock->measurements.energy_per_site_mpo;
     sim_state.iteration = state->reset_sweeps();
 
-    reset_full_mps_to_random_product_state("sx");
+    reset_full_mps_to_random_product_state("sx",settings::model::seed_init_mps++);
     // Find energy maximum
     while(true) {
         single_DMRG_step(eigutils::eigSetting::Ritz::LR);
@@ -404,7 +393,7 @@ void class_xDMRG::find_energy_range() {
     int counterA = 0;
     int counterB = 0;
     while(sim_state.energy_now < sim_state.energy_lbound or sim_state.energy_now > sim_state.energy_ubound){
-        reset_full_mps_to_random_product_state("sx");
+        reset_full_mps_to_random_product_state("sx",settings::model::seed_init_mps++);
         sim_state.energy_now = MPS_Tools::Common::Measure::energy_per_site_mpo(*superblock);
         sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
         counterA++;
@@ -426,29 +415,24 @@ void class_xDMRG::store_state_and_measurements_to_file(bool force){
     if(not force){
         if (not settings::hdf5::save_progress){return;}
         if (Math::mod(sim_state.iteration, settings::xdmrg::store_freq) != 0) {return;}
-        if (not state->position_is_the_middle_any_direction()) {return;}
+        if (not state->position_is_any_edge()) {return;}
         if (settings::xdmrg::store_freq == 0){return;}
         if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
     }
     log->trace("Storing storing mps to file");
     t_sto.tic();
     state->do_all_measurements();
-    h5ppFile->writeDataset(false, "/common/fileOK");
-    MPS_Tools::Infinite::H5pp::write_all_measurements(*superblock,*h5ppFile,sim_name);
     MPS_Tools::Finite::H5pp::write_all_measurements(*state,*h5ppFile,sim_name);
-    MPS_Tools::Finite::H5pp::write_all_parity_projections(*state,*superblock,*h5ppFile,sim_name);
+    MPS_Tools::Finite::H5pp::write_closest_parity_projection(*state, *h5ppFile, sim_name, settings::model::symmetry);
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
-        h5ppFile->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
+        h5ppFile->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/psi");
     }
-
-    h5ppFile->writeDataset(false, sim_name + "/simOK");
     MPS_Tools::Finite::H5pp::write_all_state(*state, *h5ppFile, sim_name);
-    MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5ppFile, sim_name);
-    store_algorithm_state_to_file();
-    h5ppFile->writeDataset(true, sim_name + "/simOK");
-    h5ppFile->writeDataset(true, "/common/fileOK");
+    h5ppFile->writeDataset(false, "/common/fileOK");
+    h5ppFile->writeDataset(false, sim_name + "/simOK");
     t_sto.toc();
+    store_algorithm_state_to_file();
 }
 
 
@@ -457,7 +441,7 @@ void class_xDMRG::store_table_entry_progress(bool force){
         if (Math::mod(sim_state.iteration, settings::xdmrg::store_freq) != 0) { return; }
         if (not state->position_is_the_middle_any_direction()) { return; }
         if (settings::xdmrg::store_freq == 0) { return; }
-        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
+        if (settings::hdf5::storage_level < StorageLevel::FULL){return;}
 
     }
     compute_observables();
@@ -491,7 +475,7 @@ void class_xDMRG::store_table_entry_site_state(bool force){
         if (Math::mod(sim_state.iteration, settings::xdmrg::store_freq) != 0) { return; }
         if (settings::xdmrg::store_freq == 0) { return; }
 //        if (not state->position_is_the_middle()) { return; }
-        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
+        if (settings::hdf5::storage_level < StorageLevel::FULL){return;}
     }
 
     log->trace("Storing chain_entry to file");

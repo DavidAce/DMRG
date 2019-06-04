@@ -7,7 +7,6 @@
 #include <spdlog/spdlog.h>
 #include <mps_routines/mps_tools/finite/opt.h>
 #include <mps_routines/class_superblock.h>
-#include <general/class_tic_toc.h>
 #include <LBFGS.h>
 
 
@@ -60,21 +59,6 @@ void MPS_Tools::Finite::Opt::internals::initialize_params(){
     params->min_step       = 1e-40;
     params->max_step       = 1e+40;
     params->linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_STRONG_WOLFE;
-}
-
-
-
-
-namespace MPS_Tools::Finite::Opt::internals{
-    std::shared_ptr<class_tic_toc>  t_opt  =  std::make_shared<class_tic_toc>(true,5,"t_opt ");
-    std::shared_ptr<class_tic_toc>  t_eig  =  std::make_shared<class_tic_toc>(true,5,"t_eig ");
-    std::shared_ptr<class_tic_toc>  t_ham  =  std::make_shared<class_tic_toc>(true,5,"t_ham ");
-    std::shared_ptr<class_tic_toc>  t_tot  =  std::make_shared<class_tic_toc>(true,5,"t_tot ");
-    std::shared_ptr<class_tic_toc>  t_vH2v =  std::make_shared<class_tic_toc>(true,5,"t_vH2v");
-    std::shared_ptr<class_tic_toc>  t_vHv  =  std::make_shared<class_tic_toc>(true,5,"t_vHv ");
-    std::shared_ptr<class_tic_toc>  t_vH2  =  std::make_shared<class_tic_toc>(true,5,"t_vH2 ");
-    std::shared_ptr<class_tic_toc>  t_vH   =  std::make_shared<class_tic_toc>(true,5,"t_vH  ");
-    std::shared_ptr<class_tic_toc>  t_op   =  std::make_shared<class_tic_toc>(true,5,"t_op  ");
 }
 
 

@@ -3,6 +3,7 @@
 //
 
 #include <iomanip>
+#include <h5pp/h5pp.h>
 #include <io/class_hdf5_table_buffer2.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_routines/class_superblock.h>
@@ -16,7 +17,7 @@ using namespace Textra;
 class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     : class_algorithm_base(std::move(h5ppFile_),"iDMRG", SimulationType::iDMRG) {
     table_idmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>(h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
-    initialize_superblock(settings::model::initial_state);
+//    initialize_superblock(settings::model::initial_state);
 
 }
 
@@ -57,6 +58,7 @@ void class_iDMRG::run() {
     print_status_full();
     print_profiling();
     superblock->t_eig.print_time();
+    h5ppFile->writeDataset(true, sim_name + "/simOK");
 }
 
 void class_iDMRG::run_simulation()    {}

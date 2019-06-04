@@ -24,7 +24,7 @@ class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 
     table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
     table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5ppFile, sim_name + "/measurements", "simulation_progress_full_chain",sim_name);
-    MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type, settings::fdmrg::num_sites, settings::model::seed_init_mpo);
+    MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type,settings::model::symmetry, settings::fdmrg::num_sites, settings::model::seed_init_mpo, settings::model::seed_init_mps);
     MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
 
     min_saturation_length = 1 * (int)(0.5 * settings::fdmrg::num_sites);
@@ -114,9 +114,6 @@ void class_fDMRG::run()
 
 void class_fDMRG::run_preprocessing() {
     log->info("Running {} preprocessing",sim_name);
-//    initialize_superblock(settings::model::initial_state);
-//    initialize_chain();
-//    set_random_fields_in_chain_mpo();
     MPS_Tools::Finite::Print::print_hamiltonians(*state);
     log->info("Finished {} preprocessing", sim_name);
 }
@@ -168,14 +165,15 @@ void class_fDMRG::run_postprocessing(){
     MPS_Tools::Infinite::H5pp::write_all_measurements(*superblock,*h5ppFile,sim_name);
 
     MPS_Tools::Finite::Debug::print_parity_properties(*state);
-    MPS_Tools::Finite::H5pp::write_all_parity_projections(*state,*superblock,*h5ppFile,sim_name);
+    MPS_Tools::Finite::H5pp::write_closest_parity_projection(*state, *h5ppFile, sim_name, settings::model::symmetry);
 
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::fdmrg::store_wavefn){
-        h5ppFile->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/full/wavefunction");
+        h5ppFile->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/psi");
     }
     print_status_full();
     print_profiling();
+    h5ppFile->writeDataset(true, sim_name + "/simOK");
     log->info("Finished {} postprocessing",sim_name);
 }
 
@@ -233,6 +231,8 @@ void class_fDMRG::store_state_and_measurements_to_file(bool force){
         MPS_Tools::Finite::H5pp::write_full_mps(*state,*h5ppFile,sim_name);
         MPS_Tools::Finite::H5pp::write_full_mpo(*state,*h5ppFile,sim_name);
     }
+    h5ppFile->writeDataset(false, "/common/fileOK");
+    h5ppFile->writeDataset(false, sim_name + "/simOK");
     t_sto.toc();
     store_algorithm_state_to_file();
 }

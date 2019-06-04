@@ -14,13 +14,14 @@
 using Scalar         = std::complex<double>;
 
 void MPS_Tools::Finite::Print::print_full_state(const class_finite_chain_state &state) {
-    for (auto & mps : state.get_MPS_L()){
+    
+    for (auto & mps : state.MPS_L){
         std::cout << "MPS " << mps.get_position() << "  :\n";
         std::cout << "  L:\n"<< mps.get_L() << '\n';
         std::cout << "  G:\n"<< mps.get_G() << '\n';
     }
-    std::cout << "  LC:\n"<< state.get_MPS_C();
-    for (auto & mps : state.get_MPS_R()){
+    std::cout << "  LC:\n"<< state.MPS_C;
+    for (auto & mps : state.MPS_R){
         std::cout << "MPS " << mps.get_position() << "  :\n";
         std::cout << "  G:\n"<< mps.get_G() << '\n';
         std::cout << "  L:\n"<< mps.get_L() << '\n';
@@ -31,11 +32,11 @@ void MPS_Tools::Finite::Print::print_full_state(const class_finite_chain_state &
 
 void MPS_Tools::Finite::Print::print_state(const class_finite_chain_state &state){
     using namespace Textra;
-    auto & MPS_L  = state.get_MPS_L();
-    auto & MPS_R  = state.get_MPS_R();
-    auto & MPS_C  = state.get_MPS_C();
-    auto & ENV_L  = state.get_ENV_L();
-    auto & ENV_R  = state.get_ENV_R();
+    auto & MPS_L  = state.MPS_L;
+    auto & MPS_R  = state.MPS_R;
+    auto & MPS_C  = state.MPS_C;
+    auto & ENV_L  = state.ENV_L;
+    auto & ENV_R  = state.ENV_R;
 
     int i = 0;
     std::cout << std::setprecision(10);
@@ -74,11 +75,11 @@ void MPS_Tools::Finite::Print::print_state(const class_finite_chain_state &state
 
 void MPS_Tools::Finite::Print::print_state_compact(const class_finite_chain_state &state){
     using namespace Textra;
-    auto & MPS_L  = state.get_MPS_L();
-    auto & MPS_R  = state.get_MPS_R();
-    auto & MPS_C  = state.get_MPS_C();
-    auto & ENV_L  = state.get_ENV_L();
-    auto & ENV_R  = state.get_ENV_R();
+    auto & MPS_L  = state.MPS_L;
+    auto & MPS_R  = state.MPS_R;
+    auto & MPS_C  = state.MPS_C;
+    auto & ENV_L  = state.ENV_L;
+    auto & ENV_R  = state.ENV_R;
 
     std::cout << std::setprecision(10);
 
@@ -97,8 +98,8 @@ void MPS_Tools::Finite::Print::print_state_compact(const class_finite_chain_stat
 
 
 void MPS_Tools::Finite::Print::print_hamiltonians(const class_finite_chain_state &state) {
-    auto & MPO_L  = state.get_MPO_L();
-    auto & MPO_R  = state.get_MPO_R();
+    auto & MPO_L  = state.MPO_L;
+    auto & MPO_R  = state.MPO_R;
 
     MPO_L.begin()->get()->print_parameter_names();
     for(auto &it : MPO_L){

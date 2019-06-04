@@ -23,7 +23,7 @@ class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
 //    initialize_constants();
     table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
     sim_state.delta_t      = settings::itebd::delta_t0;
-    initialize_superblock(settings::model::initial_state);
+//    initialize_superblock(settings::model::initial_state);
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
     auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);

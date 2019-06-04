@@ -311,6 +311,9 @@ void class_algorithm_base::clear_saturation_status(){
     sim_state.variance_mom_saturated_for = 0;
 
 
+
+    sim_state.simulation_has_to_stop = false;
+
 }
 
 
@@ -374,184 +377,186 @@ void class_algorithm_base::store_table_entry_profiling(bool force) {
 
 }
 
-void class_algorithm_base::initialize_superblock(std::string initial_state) {
-    log->trace("Initializing state: {}", initial_state);
-    //Set the size and initial values for the MPS and environments
-    //Choose between GHZ, W, Random, Product state (up, down, etc), None, etc...
-    long d    = superblock->HA->get_spin_dimension();
-    long chiA = superblock->MPS->chiA();
-    long chiB = superblock->MPS->chiB();
-    std::srand((unsigned int) settings::model::seed_init_mps);
-    Eigen::Tensor<Scalar,1> LA;
-    Eigen::Tensor<Scalar,3> GA;
-    Eigen::Tensor<Scalar,1> LC;
-    Eigen::Tensor<Scalar,3> GB;
-    Eigen::Tensor<Scalar,1> LB;
-    Eigen::Tensor<Scalar,4> theta;
+//void class_algorithm_base::initialize_superblock(std::string initial_state) {
+//    log->trace("Initializing state: {}", initial_state);
+//    //Set the size and initial values for the MPS and environments
+//    //Choose between GHZ, W, Random, Product state (up, down, etc), None, etc...
+//    long d    = superblock->HA->get_spin_dimension();
+//    long chiA = superblock->MPS->chiA();
+//    long chiB = superblock->MPS->chiB();
+//    std::srand((unsigned int) settings::model::seed_init_mps);
+//    Eigen::Tensor<Scalar,1> LA;
+//    Eigen::Tensor<Scalar,3> GA;
+//    Eigen::Tensor<Scalar,1> LC;
+//    Eigen::Tensor<Scalar,3> GB;
+//    Eigen::Tensor<Scalar,1> LB;
+//    Eigen::Tensor<Scalar,4> theta;
+//
+//    GA.setZero();
+//    GB.setZero();
+//
+//    if(initial_state == "upup"){
+//        log->info("Initializing Up-Up-state  |up,up>");
+//        GA.resize(array3{d,1,1});
+//        GB.resize(array3{d,1,1});
+//        LA.resize(array1{1});
+//        LB.resize(array1{1});
+//        LC.resize(array1{1});
+//        LA.setConstant(1.0);
+//        LB.setConstant(1.0);
+//        LC.setConstant(1.0);
+//        GA(0, 0, 0) = 1;
+//        GB(0, 0, 0) = 1;
+//        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
+//        theta = superblock->get_theta();
+//        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
+//    }else if(initial_state == "updown"){
+//        log->info("Initializing Up down -state  |up,down>");
+//        GA.resize(array3{d,1,1});
+//        GB.resize(array3{d,1,1});
+//        LA.resize(array1{1});
+//        LB.resize(array1{1});
+//        LC.resize(array1{1});
+//        LA.setConstant(1.0);
+//        LB.setConstant(1.0);
+//        LC.setConstant(1.0);
+//        GA(0  , 0, 0) = 1;
+//        GB(d-1, 0, 0) = 1;
+//        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
+//        theta = superblock->get_theta();
+//        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
+//    }else if(initial_state == "ghz"){
+//        log->info("Initializing GHZ-statee");
+//        // GHZ state (|up,up> + |down, down > ) /sqrt(2)
+//        GA.resize(array3{d,1,2});
+//        GB.resize(array3{d,2,1});
+//        LA.resize(array1{1});
+//        LB.resize(array1{1});
+//        LC.resize(array1{2});
+//        LA.setConstant(1.0);
+//        LB.setConstant(1.0);
+//        LC.setConstant(1.0/std::sqrt(2));
+//
+//        // GA^0 = (1,0)
+//        // GA^1 = (0,1)
+//        // GB^0 = (1,0)^Scalar_
+//        // GB^1 = (0,1)^Scalar_
+//        GA(0, 0, 0) = 1;
+//        GA(0, 0, 1) = 0;
+//        GA(1, 0, 0) = 0;
+//        GA(1, 0, 1) = 1;
+//        GB(0, 0, 0) = 1;
+//        GB(0, 1, 0) = 0;
+//        GB(1, 0, 0) = 0;
+//        GB(1, 1, 0) = 1;
+//        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
+//        theta = superblock->get_theta();
+//        superblock->truncate_MPS(theta, 2, settings::precision::SVDThreshold);
+//    }else if(initial_state == "lambda"){
+//        log->info("Initializing W-state");
+//        // W state (|up,down> + |down, up > ) /sqrt(2)
+//        GA.resize(array3{d,1,2});
+//        GB.resize(array3{d,2,1});
+//        LA.resize(array1{1});
+//        LB.resize(array1{1});
+//        LC.resize(array1{2});
+//        LA.setConstant(1.0);
+//        LB.setConstant(1.0);
+//        LC.setConstant(1.0/std::sqrt(2));
+//        // GA^0 = (1,0)
+//        // GA^1 = (0,1)
+//        // GB^0 = (0,1)^Scalar_
+//        // GB^1 = (1,0)^Scalar_
+//        GA(0, 0, 0) = 1;
+//        GA(0, 0, 1) = 0;
+//        GA(1, 0, 0) = 0;
+//        GA(1, 0, 1) = 1;
+//        GB(0, 0, 0) = 0;
+//        GB(0, 1, 0) = 1;
+//        GB(1, 0, 0) = 1;
+//        GB(1, 1, 0) = 0;
+//        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
+//        theta = superblock->get_theta();
+//        superblock->truncate_MPS(theta, 2, settings::precision::SVDThreshold);
+//    }
+//
+//    else if (initial_state == "rps"){
+//        // Random product state
+//        log->info("Initializing random product state");
+//
+//        //Initialize as spinors
+//        theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
+//        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
+//
+//    }else if (initial_state == "random_chi" ){
+//        // Random state
+//        log->info("Initializing random state with bond dimension chi = {}", chi_max());
+//        sim_state.chi_temp = chi_max();
+//        GA.resize(array3{d,chi_max(),chi_max()});
+//        GB.resize(array3{d,chi_max(),chi_max()});
+//        LA.resize(array1{chi_max()});
+//        LB.resize(array1{chi_max()});
+//        LC.resize(array1{chi_max()});
+//        LA.setConstant(1.0/sqrt(chi_max()));
+//        LB.setConstant(1.0/sqrt(chi_max()));
+//        LC.setConstant(1.0/sqrt(chi_max()));
+//        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
+//        theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chi_max(),d*chi_max()),d,chi_max(),d,chi_max());
+//        superblock->truncate_MPS(theta, chi_max(), settings::precision::SVDThreshold);
+//
+//    }else{
+//        std::cerr << "Invalid state given for initialization. Check 'model::initial_state' your input file. Please choose one of: " << std::endl;
+//        std::cerr << "  upup" << std::endl;
+//        std::cerr << "  updown" << std::endl;
+//        std::cerr << "  GHZ" << std::endl;
+//        std::cerr << "  W" << std::endl;
+//        std::cerr << "  rps" << std::endl;
+//        std::cerr << "  random_chi (only for iDMRG!)" << std::endl;
+//        exit(1);
+//    }
+//
+//
+//
+//
+//    //Reset the environment blocks to the correct dimensions
+//    superblock->Lblock->set_edge_dims(*superblock->MPS, superblock->HA->MPO());
+//    superblock->Rblock->set_edge_dims(*superblock->MPS, superblock->HB->MPO());
+//    superblock->Lblock2->set_edge_dims(*superblock->MPS, superblock->HA->MPO());
+//    superblock->Rblock2->set_edge_dims(*superblock->MPS, superblock->HB->MPO());
+//
+//    superblock->environment_size = superblock->Lblock->size + superblock->Rblock->size;
+//
+//    assert(superblock->Lblock->block.dimension(0) == superblock->MPS->chiA());
+//    assert(superblock->Rblock->block.dimension(0) == superblock->MPS->chiB());
+//
+//
+//
+//    if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
+//        MPS_Tools::Finite::Chain::insert_superblock_to_state(*state, *superblock);
+//    }else{
+//    }
+//
+//    enlarge_environment();
+//
+//    if (sim_type == SimulationType::iDMRG){
+//        sim_state.iteration = (int)superblock->Lblock->size;
+//    }
+//    swap();
+//}
 
-    GA.setZero();
-    GB.setZero();
-
-    if(initial_state == "upup"){
-        log->info("Initializing Up-Up-state  |up,up>");
-        GA.resize(array3{d,1,1});
-        GB.resize(array3{d,1,1});
-        LA.resize(array1{1});
-        LB.resize(array1{1});
-        LC.resize(array1{1});
-        LA.setConstant(1.0);
-        LB.setConstant(1.0);
-        LC.setConstant(1.0);
-        GA(0, 0, 0) = 1;
-        GB(0, 0, 0) = 1;
-        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-        theta = superblock->get_theta();
-        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
-    }else if(initial_state == "updown"){
-        log->info("Initializing Up down -state  |up,down>");
-        GA.resize(array3{d,1,1});
-        GB.resize(array3{d,1,1});
-        LA.resize(array1{1});
-        LB.resize(array1{1});
-        LC.resize(array1{1});
-        LA.setConstant(1.0);
-        LB.setConstant(1.0);
-        LC.setConstant(1.0);
-        GA(0  , 0, 0) = 1;
-        GB(d-1, 0, 0) = 1;
-        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-        theta = superblock->get_theta();
-        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
-    }else if(initial_state == "ghz"){
-        log->info("Initializing GHZ-statee");
-        // GHZ state (|up,up> + |down, down > ) /sqrt(2)
-        GA.resize(array3{d,1,2});
-        GB.resize(array3{d,2,1});
-        LA.resize(array1{1});
-        LB.resize(array1{1});
-        LC.resize(array1{2});
-        LA.setConstant(1.0);
-        LB.setConstant(1.0);
-        LC.setConstant(1.0/std::sqrt(2));
-
-        // GA^0 = (1,0)
-        // GA^1 = (0,1)
-        // GB^0 = (1,0)^Scalar_
-        // GB^1 = (0,1)^Scalar_
-        GA(0, 0, 0) = 1;
-        GA(0, 0, 1) = 0;
-        GA(1, 0, 0) = 0;
-        GA(1, 0, 1) = 1;
-        GB(0, 0, 0) = 1;
-        GB(0, 1, 0) = 0;
-        GB(1, 0, 0) = 0;
-        GB(1, 1, 0) = 1;
-        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-        theta = superblock->get_theta();
-        superblock->truncate_MPS(theta, 2, settings::precision::SVDThreshold);
-    }else if(initial_state == "lambda"){
-        log->info("Initializing W-state");
-        // W state (|up,down> + |down, up > ) /sqrt(2)
-        GA.resize(array3{d,1,2});
-        GB.resize(array3{d,2,1});
-        LA.resize(array1{1});
-        LB.resize(array1{1});
-        LC.resize(array1{2});
-        LA.setConstant(1.0);
-        LB.setConstant(1.0);
-        LC.setConstant(1.0/std::sqrt(2));
-        // GA^0 = (1,0)
-        // GA^1 = (0,1)
-        // GB^0 = (0,1)^Scalar_
-        // GB^1 = (1,0)^Scalar_
-        GA(0, 0, 0) = 1;
-        GA(0, 0, 1) = 0;
-        GA(1, 0, 0) = 0;
-        GA(1, 0, 1) = 1;
-        GB(0, 0, 0) = 0;
-        GB(0, 1, 0) = 1;
-        GB(1, 0, 0) = 1;
-        GB(1, 1, 0) = 0;
-        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-        theta = superblock->get_theta();
-        superblock->truncate_MPS(theta, 2, settings::precision::SVDThreshold);
-    }
-
-    else if (initial_state == "rps"){
-        // Random product state
-        log->info("Initializing random product state");
-
-        //Initialize as spinors
-        theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
-        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
-
-    }else if (initial_state == "random_chi" ){
-        // Random state
-        log->info("Initializing random state with bond dimension chi = {}", chi_max());
-        sim_state.chi_temp = chi_max();
-        GA.resize(array3{d,chi_max(),chi_max()});
-        GB.resize(array3{d,chi_max(),chi_max()});
-        LA.resize(array1{chi_max()});
-        LB.resize(array1{chi_max()});
-        LC.resize(array1{chi_max()});
-        LA.setConstant(1.0/sqrt(chi_max()));
-        LB.setConstant(1.0/sqrt(chi_max()));
-        LC.setConstant(1.0/sqrt(chi_max()));
-        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-        theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chi_max(),d*chi_max()),d,chi_max(),d,chi_max());
-        superblock->truncate_MPS(theta, chi_max(), settings::precision::SVDThreshold);
-
-    }else{
-        std::cerr << "Invalid state given for initialization. Check 'model::initial_state' your input file. Please choose one of: " << std::endl;
-        std::cerr << "  upup" << std::endl;
-        std::cerr << "  updown" << std::endl;
-        std::cerr << "  GHZ" << std::endl;
-        std::cerr << "  W" << std::endl;
-        std::cerr << "  rps" << std::endl;
-        std::cerr << "  random_chi (only for iDMRG!)" << std::endl;
-        exit(1);
-    }
-
-
-
-
-    //Reset the environment blocks to the correct dimensions
-    superblock->Lblock->set_edge_dims(*superblock->MPS, superblock->HA->MPO());
-    superblock->Rblock->set_edge_dims(*superblock->MPS, superblock->HB->MPO());
-    superblock->Lblock2->set_edge_dims(*superblock->MPS, superblock->HA->MPO());
-    superblock->Rblock2->set_edge_dims(*superblock->MPS, superblock->HB->MPO());
-
-    superblock->environment_size = superblock->Lblock->size + superblock->Rblock->size;
-
-    assert(superblock->Lblock->block.dimension(0) == superblock->MPS->chiA());
-    assert(superblock->Rblock->block.dimension(0) == superblock->MPS->chiB());
-
-
-
-    if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
-        MPS_Tools::Finite::Chain::insert_superblock_to_state(*state, *superblock);
-    }else{
-    }
-
-    enlarge_environment();
-
-    if (sim_type == SimulationType::iDMRG){
-        sim_state.iteration = (int)superblock->Lblock->size;
-    }
-    swap();
-}
-
-void class_algorithm_base::reset_full_mps_to_random_product_state(std::string parity) {
+void class_algorithm_base::reset_full_mps_to_random_product_state(const std::string parity, const size_t mps_seed) {
     log->trace("Resetting MPS to random product state");
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     sim_state.iteration = state->reset_sweeps();
+    sim_state.chi_temp = 1;
+
     // Randomize chain
-
-
-    // Project into whatever
-    MPS_Tools::Finite::Ops::set_random_product_state(*state,parity);
+    *state = MPS_Tools::Finite::Ops::set_random_product_state(*state,parity,mps_seed);
     MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
     MPS_Tools::Common::Measure::set_not_measured(*superblock);
+
+    clear_saturation_status();
+    sim_state.simulation_has_to_stop = false;
 }
 
 

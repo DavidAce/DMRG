@@ -19,230 +19,126 @@ using Scalar    = std::complex<double>;
 
 
 
-void MPS_Tools::Finite::H5pp::write_all_state(class_finite_chain_state &state, h5pp::File & h5ppFile,
-                                              std::string sim_name) {
-    if(state.has_been_written()){return;}
-    if (settings::hdf5::storage_level >= StorageLevel::LIGHT){
-        write_bond_matrices(state,h5ppFile,sim_name);
-        write_hamiltonian_params(state,h5ppFile,sim_name);
-    }
-    if (settings::hdf5::storage_level >= StorageLevel::NORMAL){
-        write_2site_mps(state,h5ppFile,sim_name);
-        write_2site_mpo(state,h5ppFile,sim_name);
-        write_2site_env(state,h5ppFile,sim_name);
-        write_2site_env2(state,h5ppFile,sim_name);
+void MPS_Tools::Finite::H5pp::write_all_state(const class_finite_chain_state &state, h5pp::File & h5ppFile,std::string sim_name) {
+    switch(settings::hdf5::storage_level){
+        case StorageLevel::NONE:
+            break;
+        case StorageLevel::LIGHT:
+            write_bond_matrix(state,h5ppFile,sim_name);
+            write_hamiltonian_params(state,h5ppFile,sim_name);
+            break;
+        case StorageLevel::NORMAL:
+            write_bond_matrices(state,h5ppFile,sim_name);
+            write_hamiltonian_params(state,h5ppFile,sim_name);
+            break;
+        case StorageLevel::FULL:
+            write_full_mps(state,h5ppFile,sim_name);
+            write_full_mpo(state,h5ppFile,sim_name);
+            write_hamiltonian_params(state,h5ppFile,sim_name);
+            break;
     }
 
-    if (settings::hdf5::storage_level >= StorageLevel::FULL){
-        write_full_mps(state,h5ppFile,sim_name);
-        write_full_mpo(state,h5ppFile,sim_name);
-    }
-    state.set_written_true();
+    h5ppFile.writeDataset(state.get_position()       ,sim_name + "/state/position");
+    h5ppFile.writeDataset(state.get_length()         ,sim_name + "/state/sites");
+    h5ppFile.writeDataset(settings::model::model_type,sim_name + "/model/model_type");
 }
 
 
-
-
-void MPS_Tools::Finite::H5pp::write_2site_mps(class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)
-/*! Writes down the local two-site MPS in "A - LC - B" notation.
- */
-{
-    // Write MPS in A-B notation.
-    // Also write down all the center Lambdas (singular values) , so that we can obtain the entanglement spectrum easily.'
-    // Remember to write tensors in row-major state order because that's what hdf5 uses.
-    h5ppFile.writeDataset(state.get_MPS_L().back().get_A(), sim_name + "/state/2site/MPS_A");
-    h5ppFile.writeDataset(state.get_MPS_C(), sim_name + "/state/2site/L_C");
-    h5ppFile.writeDataset(state.get_MPS_R().front().get_B(),sim_name + "/state/2site/MPS_B");
-}
-
-void MPS_Tools::Finite::H5pp::write_2site_mpo(class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name) {
-    // Write two current the MPO's
-    // Remember to write tensors in row-major state order because that's what hdf5 uses.
-    auto &mpoL = state.get_MPO_L().back();
-    auto &mpoR = state.get_MPO_R().front();
-    h5ppFile.writeDataset(mpoL->MPO(), sim_name + "/state/2site/MPO_L");
-    h5ppFile.writeDataset(mpoR->MPO(), sim_name + "/state/2site/MPO_R");
-    auto valuesL = mpoL->get_parameter_values();
-    auto valuesR = mpoR->get_parameter_values();
-    auto namesL  = mpoL->get_parameter_names();
-    auto namesR  = mpoR->get_parameter_names();
-
-    for (size_t i = 0; i < std::min(valuesL.size(), namesL.size()); i++){
-        h5ppFile.writeAttributeToLink(valuesL[i], namesL[i],sim_name + "/state/2site/MPO_L");
-    }
-    for (size_t i = 0; i < std::min(valuesR.size(), namesR.size()); i++){
-        h5ppFile.writeAttributeToLink(valuesR[i], namesR[i],sim_name + "/state/2site/MPO_R");
-    }
-}
-
-void MPS_Tools::Finite::H5pp::write_2site_env(class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name){
-    // Write the environment blocks
-    h5ppFile.writeDataset(state.get_ENV_L().back().block, sim_name + "/state/2site/ENV_L");
-    h5ppFile.writeAttributeToLink(state.get_ENV_L().back().size, "sites",sim_name + "/state/2site/ENV_L");
-    h5ppFile.writeDataset(state.get_ENV_R().front().block, sim_name + "/state/2site/ENV_R");
-    h5ppFile.writeAttributeToLink(state.get_ENV_R().front().size, "sites",sim_name + "/state/2site/ENV_R");
-}
-
-
-void MPS_Tools::Finite::H5pp::write_2site_env2(class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name){
-    // Write the environment squared blocks
-    // Remember to write tensors in row-major state order because that's what hdf5 uses.
-    h5ppFile.writeDataset(state.get_ENV2_L().back().block, sim_name + "/state/2site/ENV2_L");
-    h5ppFile.writeAttributeToLink(state.get_ENV2_L().back().size, "sites",sim_name + "/state/2site/ENV2_L");
-    h5ppFile.writeDataset(state.get_ENV2_R().front().block, sim_name + "/state/2site/ENV2_R");
-    h5ppFile.writeAttributeToLink(state.get_ENV2_R().front().size, "sites",sim_name + "/state/2site/ENV2_R");
-}
-
-void MPS_Tools::Finite::H5pp::write_bond_matrices(class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)
+void MPS_Tools::Finite::H5pp::write_bond_matrices(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)
 /*! Writes down all the "Lambda" bond matrices (singular value matrices), so we can obtain the entanglement spectrum easily.
  */
 {
-    unsigned long counter = 0;
-    for (auto &mps : state.get_MPS_L()){
-        h5ppFile.writeDataset(mps.get_L()                     ,sim_name + "/state/full/bonds/L_" + std::to_string(counter++));
+    auto middle = (size_t) (state.get_length() / 2);
+    for (size_t i = 0; i < state.get_length(); i++){
+        if (i == middle){
+            h5ppFile.writeDataset(state.get_L(i),sim_name + "/state/mps/L_C");
+        }else{
+            h5ppFile.writeDataset(state.get_L(i),sim_name + "/state/mps/L_" + std::to_string(i));
+        }
     }
-    h5ppFile.writeDataset(state.get_MPS_C(),sim_name + "/state/full/bonds/L_C");
-    for (auto &mps : state.get_MPS_R()){
-        h5ppFile.writeDataset(mps.get_L()                      ,sim_name + "/state/full/bonds/L_" + std::to_string(counter++));
-    }
-    h5ppFile.writeDataset(state.get_position() ,sim_name + "/state/full/position");
-    h5ppFile.writeDataset(state.get_length()   ,sim_name + "/state/full/sites");
 }
 
-void MPS_Tools::Finite::H5pp::write_full_mps(class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)
+
+void MPS_Tools::Finite::H5pp::write_bond_matrix(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)
+/*! Writes down all the "Lambda" bond matrices (singular value matrices), so we can obtain the entanglement spectrum easily.
+ */
+{
+    auto middle = (size_t) (state.get_length() / 2);
+    h5ppFile.writeDataset(state.get_L(middle),sim_name + "/state/mps/L_C");
+}
+
+void MPS_Tools::Finite::H5pp::write_full_mps(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)
 /*!
  * Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation.
  *
  */
 {
-    if(state.mps_have_been_written_to_hdf5){return;}
-    unsigned long counter = 0;
-    for (auto &mps : state.get_MPS_L()){
-        h5ppFile.writeDataset(mps.get_G(),sim_name + "/state/full/mps/G_" + std::to_string(counter));
-        h5ppFile.writeDataset(mps.get_L()                     ,sim_name + "/state/full/mps/L_" + std::to_string(counter++));
+    write_bond_matrices(state,h5ppFile,sim_name);
+    for (size_t i = 0; i < state.get_length(); i++){
+        h5ppFile.writeDataset(state.get_G(i) ,sim_name + "/state/mps/G_" + std::to_string(i));
     }
-
-    h5ppFile.writeDataset(state.get_MPS_C(), sim_name + "/state/full/mps/L_C");
-    for (auto &mps : state.get_MPS_R()){
-        h5ppFile.writeDataset(mps.get_G() ,sim_name + "/state/full/mps/G_" + std::to_string(counter));
-        h5ppFile.writeDataset(mps.get_L()                      ,sim_name + "/state/full/mps/L_" + std::to_string(counter++));
-    }
-    h5ppFile.writeDataset(state.get_position() ,sim_name + "/state/full/position");
-    h5ppFile.writeDataset(state.get_length()   ,sim_name + "/state/full/sites");
-    state.mps_have_been_written_to_hdf5 = true;
 }
 
 
 
 
-void MPS_Tools::Finite::H5pp::write_full_mpo(class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name) {
+void MPS_Tools::Finite::H5pp::write_full_mpo(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name) {
     // Write all the MPO's
     // Remember to write tensors in row-major state order because that's what hdf5 uses.
-    if(state.mpo_have_been_written_to_hdf5){return;}
-    unsigned long counter = 0;
-    for(auto &mpo : state.get_MPO_L()){
-        h5ppFile.writeDataset(mpo->MPO(), sim_name + "/state/full/mpo/H_" + std::to_string(counter));
+    for (auto site = 0ul; site < state.get_length(); site++){
+        h5ppFile.writeDataset(state.get_MPO(site).MPO(), sim_name + "/state/mpo/H_" + std::to_string(site));
         //Write MPO properties as attributes
-        auto values = mpo->get_parameter_values();
-        auto names  = mpo->get_parameter_names();
+        auto values = state.get_MPO(site).get_parameter_values();
+        auto names  = state.get_MPO(site).get_parameter_names();
         for (size_t i = 0; i < std::min(values.size(), names.size()); i++){
-            h5ppFile.writeAttributeToLink(values[i], names[i],sim_name + "/state/full/mpo/H_" + std::to_string(counter));
+            h5ppFile.writeAttributeToLink(values[i], names[i],sim_name + "/state/mpo/H_" + std::to_string(site));
         }
-        counter++;
     }
-    for(auto &mpo : state.get_MPO_R()){
-        h5ppFile.writeDataset(mpo->MPO(), sim_name + "/state/full/mpo/H_" + std::to_string(counter));
-        //Write MPO properties as attributes
-        auto values = mpo->get_parameter_values();
-        auto names  = mpo->get_parameter_names();
-        for (size_t i = 0; i < std::min(values.size(), names.size()); i++){
-            h5ppFile.writeAttributeToLink(values[i], names[i],sim_name + "/state/full/mpo/H_" + std::to_string(counter));
-        }
-        counter++;
-    }
-    h5ppFile.writeDataset(state.get_position() ,sim_name + "/state/full/position");
-    h5ppFile.writeDataset(state.get_length()   ,sim_name + "/state/full/sites");
-    h5ppFile.writeDataset(settings::model::model_type,sim_name + "/model/model_type");
-    state.mpo_have_been_written_to_hdf5 = true;
 }
 
 void MPS_Tools::Finite::H5pp::write_hamiltonian_params(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name){
     // Write down the Hamiltonian metadata as a table
     // Remember to write tensors in row-major state order because that's what hdf5 uses.
     Eigen::MatrixXd hamiltonian_props;
-    for(auto &mpo : state.get_MPO_L()){
-        auto props = mpo->get_parameter_values();
+    for (auto site = 0ul ; site < state.get_length(); site++){
+        auto props = state.get_MPO(site).get_parameter_values();
         Eigen::ArrayXd  temp_row  = Eigen::Map<Eigen::ArrayXd> (props.data(),props.size());
         hamiltonian_props.conservativeResize(hamiltonian_props.rows()+1, temp_row.size());
         hamiltonian_props.bottomRows(1) = temp_row.transpose();
     }
-    for(auto &mpo : state.get_MPO_R()){
-        auto props = mpo->get_parameter_values();
-        Eigen::ArrayXd  temp_row  = Eigen::Map<Eigen::ArrayXd> (props.data(),props.size());
-        hamiltonian_props.conservativeResize(hamiltonian_props.rows()+1, temp_row.size());
-        hamiltonian_props.bottomRows(1) = temp_row.transpose();
-    }
-    h5ppFile.writeDataset(hamiltonian_props,sim_name + "/model/full/Hamiltonian");
+    h5ppFile.writeDataset(hamiltonian_props,sim_name + "/model/Hamiltonian");
+
     int col = 0;
-    for (auto &name : state.get_MPO_L().front()->get_parameter_names()){
+    for (auto &name : state.MPO_L.front()->get_parameter_names()){
         std::string attr_value = name;
         std::string attr_name  = "FIELD_" + std::to_string(col) + "_NAME";
-        h5ppFile.writeAttributeToLink(attr_value, attr_name,sim_name + "/model/full/Hamiltonian");
+        h5ppFile.writeAttributeToLink(attr_value, attr_name,sim_name + "/model/Hamiltonian");
         col++;
     }
-    h5ppFile.writeDataset(settings::model::model_type,sim_name + "/model/model_type");
+}
+
+void MPS_Tools::Finite::H5pp::write_all_measurements(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name){
+    h5ppFile.writeDataset(state.measurements.length                      , sim_name + "/measurements/length");
+    h5ppFile.writeDataset(state.measurements.norm                        , sim_name + "/measurements/norm");
+    h5ppFile.writeDataset(state.measurements.bond_dimensions             , sim_name + "/measurements/bond_dimensions");
+    h5ppFile.writeDataset(state.measurements.energy_per_site_mpo         , sim_name + "/measurements/energy_per_site_mpo");
+    h5ppFile.writeDataset(state.measurements.energy_variance_per_site_mpo, sim_name + "/measurements/energy_variance_per_site_mpo");
+    h5ppFile.writeDataset(state.measurements.entanglement_entropies      , sim_name + "/measurements/entanglement_entropies");
+    h5ppFile.writeDataset(state.measurements.spin_components             , sim_name + "/measurements/spin_components");
+    h5ppFile.writeDataset(state.measurements.spin_component_sx           , sim_name + "/measurements/spin_component_sx");
+    h5ppFile.writeDataset(state.measurements.spin_component_sy           , sim_name + "/measurements/spin_component_sy");
+    h5ppFile.writeDataset(state.measurements.spin_component_sz           , sim_name + "/measurements/spin_component_sz");
 
 }
 
-void MPS_Tools::Finite::H5pp::write_all_measurements(class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name){
-    h5ppFile.writeDataset(state.measurements.length                      , sim_name + "/measurements/full/length");
-    h5ppFile.writeDataset(state.measurements.norm                        , sim_name + "/measurements/full/norm");
-    h5ppFile.writeDataset(state.measurements.bond_dimensions             , sim_name + "/measurements/full/bond_dimensions");
-    h5ppFile.writeDataset(state.measurements.energy_per_site_mpo         , sim_name + "/measurements/full/energy_per_site_mpo");
-    h5ppFile.writeDataset(state.measurements.energy_variance_per_site_mpo, sim_name + "/measurements/full/energy_variance_per_site_mpo");
-    h5ppFile.writeDataset(state.measurements.entanglement_entropies      , sim_name + "/measurements/full/entanglement_entropies");
-    h5ppFile.writeDataset(state.measurements.spin_components             , sim_name + "/measurements/full/spin_components");
-    h5ppFile.writeDataset(state.measurements.spin_component_sx           , sim_name + "/measurements/full/spin_component_sx");
-    h5ppFile.writeDataset(state.measurements.spin_component_sy           , sim_name + "/measurements/full/spin_component_sy");
-    h5ppFile.writeDataset(state.measurements.spin_component_sz           , sim_name + "/measurements/full/spin_component_sz");
 
-}
-
-
-void MPS_Tools::Finite::H5pp::write_all_parity_projections(const class_finite_chain_state & state, const class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
-    double measured_spin_component = MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx);
-    if (measured_spin_component > 1e-5){
-        double var_sxup = write_parity_projected_analysis(state,superblock,h5ppFile,sim_name, "projections/sx_up", qm::spinOneHalf::sx, 1);
-    }else
-    if (measured_spin_component < 1e-5){
-        double var_sxdn = write_parity_projected_analysis(state,superblock,h5ppFile,sim_name, "projections/sx_dn", qm::spinOneHalf::sx, -1);
-    }
-
-//    std::string best = var_sxup < var_sxdn ? "sx_up" : "sx_dn";
-//    hdf5.write_symbolic_link("/" +sim_name + "/projections/" + best, "/" + sim_name + "/projections/best");
-}
-
-
-
-double MPS_Tools::Finite::H5pp::write_parity_projected_analysis(const class_finite_chain_state & state, const class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name, std::string projection_name,const Eigen::MatrixXcd paulimatrix, const int sign){
-    if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
-    auto state_projected = MPS_Tools::Finite::Ops::get_parity_projected_state(state,paulimatrix, sign);
+void MPS_Tools::Finite::H5pp::write_closest_parity_projection(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name, std::string paulistring){
+    auto state_projected = MPS_Tools::Finite::Ops::get_closest_parity_state(state,paulistring);
     state_projected.set_measured_false();
     state_projected.do_all_measurements();
-    MPS_Tools::Finite::H5pp::write_all_state(state_projected,h5ppFile, sim_name + "/" + projection_name);
-    MPS_Tools::Finite::H5pp::write_all_measurements(state_projected,h5ppFile, sim_name + "/" + projection_name);
-
-    auto superblock_projected = superblock;
-    MPS_Tools::Finite::Ops::rebuild_superblock(state_projected,superblock_projected);
-    superblock_projected.set_measured_false();
-    superblock_projected.do_all_measurements();
-    MPS_Tools::Infinite::H5pp::write_all_superblock(superblock_projected,h5ppFile, sim_name + "/" + projection_name);
-    MPS_Tools::Infinite::H5pp::write_all_measurements(superblock_projected,h5ppFile, sim_name + "/" + projection_name);
-
-    return superblock.measurements.energy_variance_mpo;
-
+    MPS_Tools::Finite::H5pp::write_all_state(state_projected,h5ppFile, sim_name + "/projections/" + paulistring);
+    MPS_Tools::Finite::H5pp::write_all_measurements(state_projected,h5ppFile, sim_name + "/projections/" + paulistring);
 }
-
 
 
 void MPS_Tools::Finite::H5pp::load_from_hdf5(class_finite_chain_state & state, class_superblock & superblock, class_simulation_state &sim_state, h5pp::File & h5ppFile, std::string sim_name){
@@ -267,9 +163,9 @@ void MPS_Tools::Finite::H5pp::load_state_from_hdf5(class_finite_chain_state & st
     Eigen::MatrixXd Hamiltonian_params;
     std::string model_type;
     try{
-        h5ppFile.readDataset(position             , sim_name + "/state/full/position");
-        h5ppFile.readDataset(sites                , sim_name + "/state/full/sites");
-        h5ppFile.readDataset(Hamiltonian_params   , sim_name + "/model/full/Hamiltonian");
+        h5ppFile.readDataset(position             , sim_name + "/state/position");
+        h5ppFile.readDataset(sites                , sim_name + "/state/sites");
+        h5ppFile.readDataset(Hamiltonian_params   , sim_name + "/model/Hamiltonian");
         h5ppFile.readDataset(model_type           , sim_name + "/model/model_type");
     }catch (std::exception &ex){
         throw std::runtime_error("Couldn't read necessary model parameters: " + std::string(ex.what()));
@@ -279,26 +175,26 @@ void MPS_Tools::Finite::H5pp::load_state_from_hdf5(class_finite_chain_state & st
 
     try {
         for(size_t i = 0; i < sites; i++){
-            h5ppFile.readDataset(G, sim_name + "/state/full/mps/G_" + std::to_string(i));
-            h5ppFile.readDataset(L, sim_name + "/state/full/mps/L_" + std::to_string(i));
-            h5ppFile.readDataset(H, sim_name + "/state/full/mpo/H_" + std::to_string(i));
+            h5ppFile.readDataset(G, sim_name + "/state/mps/G_" + std::to_string(i));
+            h5ppFile.readDataset(L, sim_name + "/state/mps/L_" + std::to_string(i));
+            h5ppFile.readDataset(H, sim_name + "/state/mpo/H_" + std::to_string(i));
             if(i <= (size_t)position ) {
-                if(not state.get_MPS_L().empty() and state.get_MPS_L().back().get_chiR() != G.dimension(1)){
+                if(not state.MPS_L.empty() and state.MPS_L.back().get_chiR() != G.dimension(1)){
                     throw std::runtime_error("Mismatch in adjacent MPS dimensions");
                 }
-                state.get_MPS_L().emplace_back(G,L,i);
-                state.get_MPO_L().emplace_back(class_hamiltonian_factory::create_mpo(model_type,Hamiltonian_params.row(i)));
+                state.MPS_L.emplace_back(G,L,i);
+                state.MPO_L.emplace_back(class_hamiltonian_factory::create_mpo(model_type,Hamiltonian_params.row(i)));
             }
             else{
-                if(not state.get_MPS_R().empty() and state.get_MPS_R().back().get_chiR() != G.dimension(1)){
+                if(not state.MPS_R.empty() and state.MPS_R.back().get_chiR() != G.dimension(1)){
                     throw std::runtime_error("Mismatch in adjacent MPS dimensions");
                 }
-                state.get_MPS_R().emplace_back(G,L,i);
-                state.get_MPO_R().emplace_back(class_hamiltonian_factory::create_mpo(model_type,Hamiltonian_params.row(i)));
+                state.MPS_R.emplace_back(G,L,i);
+                state.MPO_R.emplace_back(class_hamiltonian_factory::create_mpo(model_type,Hamiltonian_params.row(i)));
             }
         }
-        h5ppFile.readDataset(state.get_MPS_C()    , sim_name + "/state/full/mps/L_C");
-        if (state.get_MPS_L().size() + state.get_MPS_R().size() != (size_t)sites){
+        h5ppFile.readDataset(state.MPS_C    , sim_name + "/state/mps/L_C");
+        if (state.MPS_L.size() + state.MPS_R.size() != (size_t)sites){
             throw std::runtime_error("Number of sites loaded does not match the number of sites advertised by the hdf5 file");
         }
         if (position != state.get_position()){
