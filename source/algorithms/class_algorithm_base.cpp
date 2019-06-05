@@ -88,6 +88,8 @@ void class_algorithm_base::single_DMRG_step(eigutils::eigSetting::Ritz ritz){
 //    measurement->set_measured_false();
     superblock->set_measured_false();
     t_sim.toc();
+    sim_state.wall_time = t_tot.get_age();
+    sim_state.simu_time = t_sim.get_age();
 }
 
 
@@ -632,19 +634,6 @@ void class_algorithm_base::move_center_point(){
     MPS_Tools::Finite::Chain::move_center_point(*state,*superblock);
     t_ste.toc();
 }
-
-
-//void class_algorithm_base::set_verbosity(){
-//    if (settings::console::verbosity < 0 or settings::console::verbosity > 6){
-//        std::cerr << "ERROR: Expected verbosity level integer in [0-6]. Got: " << settings::console::verbosity << std::endl;
-//        exit(2);
-//    }
-//
-//    log->level::level_enum lvl = static_cast<log->level::level_enum>(settings::console::verbosity);
-//    log->debug("Verbosity level: {}", log->level::to_string_view(lvl));
-//    log->set_level(lvl);
-//}
-
 
 
 double process_memory_in_mb(std::string name){

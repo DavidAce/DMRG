@@ -47,23 +47,23 @@ public:
     std::list<std::shared_ptr<class_hamiltonian_base>> MPO_L;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
     std::list<std::shared_ptr<class_hamiltonian_base>> MPO_R;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
 
-
-
+    void clear();
     void do_all_measurements();
     void set_max_sites(int max_sites_);                                        /*!< Sets the maximum length of the chain. */
-    void clear();
+    bool max_sites_is_set                      = false;
 
-    bool max_sites_is_set              = false;
-    bool energy_has_been_measured      = false;
-    bool variance_has_been_measured    = false;
-    bool entropy_has_been_measured     = false;
-    bool norm_has_been_measured        = false;
-    bool parity_has_been_measured      = false;
-    bool everything_has_been_measured  = false;
+
+
+    mutable bool energy_has_been_measured      = false;
+    mutable bool variance_has_been_measured    = false;
+    mutable bool entropy_has_been_measured     = false;
+    mutable bool norm_has_been_measured        = false;
+    mutable bool parity_has_been_measured      = false;
+    mutable bool everything_has_been_measured  = false;
     bool has_been_measured() const;
 
-    void set_measured_true();
-    void set_measured_false();
+    void set_measured_true()  const;
+    void set_measured_false() const;
 
     int    get_sweeps()                         const ;
     void   set_sweeps(int num_sweeps_) {num_sweeps = num_sweeps_;}
@@ -111,8 +111,8 @@ public:
         double spin_component_sz                        = 0;
         std::vector<double> spin_components                ;
         std::vector<double> entanglement_entropies         ;
-    } measurements;
-
+    };
+    mutable Measurements measurements;
 
 };
 

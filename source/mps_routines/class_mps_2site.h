@@ -97,7 +97,7 @@ private:
     }
 public:
     bool swapped = false;                                  /*!< Tracks the swapped state of A and B positions. */
-    double truncation_error = 1;
+    double truncation_error = 0;
 
     std::unique_ptr<class_vidal_mps> MPS_A;
     std::unique_ptr<class_vidal_mps> MPS_B;

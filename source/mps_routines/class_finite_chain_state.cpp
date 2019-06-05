@@ -196,7 +196,7 @@ Eigen::Tensor<class_finite_chain_state::Scalar,4> class_finite_chain_state::get_
 
 
 
-void class_finite_chain_state::set_measured_true(){
+void class_finite_chain_state::set_measured_true()const{
     energy_has_been_measured     = true;
     variance_has_been_measured   = true;
     entropy_has_been_measured    = true;
@@ -204,7 +204,7 @@ void class_finite_chain_state::set_measured_true(){
     parity_has_been_measured     = true;
     everything_has_been_measured = true;
 }
-void class_finite_chain_state::set_measured_false(){
+void class_finite_chain_state::set_measured_false()const{
     energy_has_been_measured     = false;
     variance_has_been_measured   = false;
     entropy_has_been_measured    = false;

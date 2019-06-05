@@ -114,7 +114,7 @@ std::vector<int> MPS_Tools::Finite::Measure::bond_dimensions(const class_finite_
 }
 
 
-double MPS_Tools::Finite::Measure::energy_mpo(class_finite_chain_state & state){
+double MPS_Tools::Finite::Measure::energy_mpo(const class_finite_chain_state & state){
 //    ccout(3) << "STATUS: Measuring energy_mpo\n";
     if (state.energy_has_been_measured){ return state.measurements.energy_mpo;}
     auto theta = MPS_Tools::Common::Views::get_theta(state);
@@ -134,7 +134,7 @@ double MPS_Tools::Finite::Measure::energy_mpo(class_finite_chain_state & state){
 }
 
 
-double MPS_Tools::Finite::Measure::energy_per_site_mpo(class_finite_chain_state &state){
+double MPS_Tools::Finite::Measure::energy_per_site_mpo(const class_finite_chain_state &state){
     if (state.energy_has_been_measured){
         return state.measurements.energy_mpo/state.get_length();
     }else{
@@ -146,7 +146,7 @@ double MPS_Tools::Finite::Measure::energy_per_site_mpo(class_finite_chain_state 
 
 
 
-double MPS_Tools::Finite::Measure::energy_variance_mpo(class_finite_chain_state & state){
+double MPS_Tools::Finite::Measure::energy_variance_mpo(const class_finite_chain_state & state){
 //    t_var_mpo.tic();
     if (state.variance_has_been_measured){ return state.measurements.energy_variance_mpo;}
     double energy = MPS_Tools::Finite::Measure::energy_mpo(state);
@@ -165,7 +165,7 @@ double MPS_Tools::Finite::Measure::energy_variance_mpo(class_finite_chain_state 
 }
 
 
-double MPS_Tools::Finite::Measure::energy_variance_per_site_mpo(class_finite_chain_state & state){
+double MPS_Tools::Finite::Measure::energy_variance_per_site_mpo(const class_finite_chain_state & state){
     if (state.variance_has_been_measured){return state.measurements.energy_variance_mpo/state.get_length();}
     else{return energy_variance_mpo(state)/state.get_length();}
 }
@@ -202,7 +202,7 @@ std::vector<double> MPS_Tools::Finite::Measure::entanglement_entropies(const cla
 }
 
 
-std::vector<double> MPS_Tools::Finite::Measure::spin_components(class_finite_chain_state &state){
+std::vector<double> MPS_Tools::Finite::Measure::spin_components(const class_finite_chain_state &state){
     if (state.parity_has_been_measured){return state.measurements.spin_components;}
     state.measurements.spin_component_sx                      = Measure::spin_component(state, qm::spinOneHalf::sx);
     state.measurements.spin_component_sy                      = Measure::spin_component(state, qm::spinOneHalf::sy);

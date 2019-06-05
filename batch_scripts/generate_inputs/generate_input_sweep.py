@@ -11,7 +11,7 @@ location    = "../input"
 os.makedirs(location, exist_ok=True)
 
 
-sites        = np.linspace(16,36,4,dtype=int)
+sites        = np.linspace(16,28,4, dtype=int)
 lambdas      = [0] # np.linspace(0,0.2,3)
 deltas       = [0] # np.linspace(-1.0,1.0,5)
 J_log_mean   = np.array([1])
@@ -36,7 +36,7 @@ for num_L in sites:
                     "model::selfdual_tf_rf_ising::h_sigma"        : "1.0",
                     "model::seed"                                 : str(num_total),
                     "xdmrg::num_sites"                            : str(num_L),
-                    "xdmrg::chi_max"                              : "64",
+                    "xdmrg::chi_max"                              : "128",
                     "hdf5::output_filename"                       : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h)+ '/' + basename + '.h5'
                 }
                 num_total = num_total + 1

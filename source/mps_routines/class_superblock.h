@@ -8,7 +8,6 @@
 #include <general/nmspc_tensor_extra.h>
 #include <memory>
 #include <general/class_tic_toc.h>
-//#include <general/nmspc_eigsolver_props.h>
 #include <general/nmspc_eigutils.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <io/nmspc_logger.h>
@@ -16,7 +15,6 @@ class class_mps_2site;
 class class_hamiltonian_base;
 class class_environment;
 class class_environment_var;
-class class_SVD;
 
 /*!
   \class class_superblock
@@ -47,7 +45,6 @@ public:
     std::shared_ptr<class_environment>       Rblock;     /*!< Right environment block. */
     std::shared_ptr<class_environment_var>   Lblock2;    /*!< Left  environment block used for variance calculation */
     std::shared_ptr<class_environment_var>   Rblock2;    /*!< Right environment block used for variance calculation */
-    std::shared_ptr<class_SVD>               SVD;
 
 
     double E_optimal;                                    /*!< Stores the energy obtained in the eigenvalue solver. This energy corresponds to non-truncated MPS, so it will differ a tiny bit from what you see in final resuls. */
@@ -121,10 +118,6 @@ public:
     void swap_AB();                                     /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
 
 
-    void do_all_measurements();
-    void set_measured_false();
-    bool has_been_measured = false;
-    bool has_been_written  = false;
     struct Measurements {
         size_t length                                   = 0;
         size_t bond_dimension                           = 0;
@@ -138,22 +131,29 @@ public:
         double energy_variance_per_site_ham             = 0;
         double energy_variance_per_site_mom             = 0;
         double current_entanglement_entropy             = 0;
-    } measurements;
+    };
+    mutable Measurements measurements;
+    mutable bool has_been_measured = false;
+    mutable bool has_been_written  = false;
+    void do_all_measurements() const;
+    void set_measured_false()  const;
+
+
 
 
     //Profiling
-    class_tic_toc t_eig;
-    class_tic_toc t_ene_mpo;
-    class_tic_toc t_ene_ham;
-    class_tic_toc t_ene_mom;
-    class_tic_toc t_var_mpo;
-    class_tic_toc t_var_ham;
-    class_tic_toc t_var_mom;
-    class_tic_toc t_entropy;
-    class_tic_toc t_temp1;
-    class_tic_toc t_temp2;
-    class_tic_toc t_temp3;
-    class_tic_toc t_temp4;
+    mutable class_tic_toc t_eig;
+    mutable class_tic_toc t_ene_mpo;
+    mutable class_tic_toc t_ene_ham;
+    mutable class_tic_toc t_ene_mom;
+    mutable class_tic_toc t_var_mpo;
+    mutable class_tic_toc t_var_ham;
+    mutable class_tic_toc t_var_mom;
+    mutable class_tic_toc t_entropy;
+    mutable class_tic_toc t_temp1;
+    mutable class_tic_toc t_temp2;
+    mutable class_tic_toc t_temp3;
+    mutable class_tic_toc t_temp4;
 
     void set_profiling_labels();
     void print_profiling(class_tic_toc &t_parent);

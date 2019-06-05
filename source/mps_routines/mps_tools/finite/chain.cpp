@@ -315,6 +315,7 @@ int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  stat
     }
 
     state.set_measured_false();
+    superblock.set_measured_false();
     return state.get_sweeps();
 }
 
@@ -337,6 +338,7 @@ void MPS_Tools::Finite::Chain::copy_state_to_superblock(const class_finite_chain
     *superblock.Rblock2 =        state.ENV2_R.front();
     superblock.environment_size = superblock.Lblock->size + superblock.Rblock->size;
     superblock.set_positions(state.get_position());
+    superblock.set_measured_false();
 }
 
 

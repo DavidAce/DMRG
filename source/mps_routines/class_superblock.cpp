@@ -28,8 +28,7 @@ class_superblock::class_superblock(SimulationType sim_type_,std::string sim_name
         Lblock(std::make_shared<class_environment>("L")),
         Rblock(std::make_shared<class_environment>("R")),
         Lblock2(std::make_shared<class_environment_var>("L")),
-        Rblock2(std::make_shared<class_environment_var>("R")),
-        SVD(std::make_shared<class_SVD>())
+        Rblock2(std::make_shared<class_environment_var>("R"))
 {
     log = Logger::setLogger(sim_name,settings::console::verbosity);
     HA->set_position(0);
@@ -154,10 +153,10 @@ Eigen::Tensor<Scalar, 4> class_superblock::evolve_MPS(const Eigen::Tensor<Scalar
 // Do SVD decomposition, truncation and normalization of the MPS->
 //============================================================================//
 Eigen::Tensor<Scalar,4> class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta,long chi_, double SVDThreshold){
-    SVD->setThreshold(SVDThreshold);
-    auto[U, S, V] = SVD->schmidt(theta,chi_);
-    MPS->truncation_error         = SVD->get_truncation_error();
-    measurements.truncation_error = SVD->get_truncation_error();
+    class_SVD SVD;
+    SVD.setThreshold(SVDThreshold);
+    auto[U, S, V] = SVD.schmidt(theta,chi_);
+    MPS->truncation_error         = SVD.get_truncation_error();
     MPS->LC  = S;
     Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(MPS->MPS_A->get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
     Eigen::Tensor<Scalar,3> V_L = V.contract(asDiagonalInversed(MPS->MPS_B->get_L()), idx({2},{0}));
@@ -167,15 +166,15 @@ Eigen::Tensor<Scalar,4> class_superblock::truncate_MPS(const Eigen::Tensor<Scala
 }
 
 void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const std::shared_ptr<class_mps_2site> &MPS_out,long chi_, double SVDThreshold){
-    SVD->setThreshold(SVDThreshold);
-    auto[U, S, V] = SVD->schmidt(theta, chi_);
-    MPS_out->truncation_error = SVD->get_truncation_error();
+    class_SVD SVD;
+    SVD.setThreshold(SVDThreshold);
+    auto[U, S, V] = SVD.schmidt(theta, chi_);
+    MPS_out->truncation_error = SVD.get_truncation_error();
     MPS_out->LC  = S;
     Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(MPS_out->MPS_A->get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
     Eigen::Tensor<Scalar,3> V_L = V.contract(asDiagonalInversed(MPS_out->MPS_B->get_L()), idx({2},{0}));
     MPS_out->MPS_A->set_G(L_U);
     MPS_out->MPS_B->set_G(V_L);
-
 }
 
 
@@ -333,6 +332,7 @@ void class_superblock::enlarge_environment(int direction){
         Rblock2->set_position(HB->get_position()+1);
         environment_size = Lblock->size + Rblock->size;
     }
+    set_measured_false();
 }
 
 
@@ -348,19 +348,19 @@ void class_superblock::set_positions(int position){
 }
 
 
-void class_superblock::set_measured_false(){
+void class_superblock::set_measured_false() const {
     has_been_measured = false;
     has_been_written  = false;
     MPS_Tools::Common::Views::components_computed = false;
 }
 
-void class_superblock::do_all_measurements() {
+void class_superblock::do_all_measurements() const {
     using namespace MPS_Tools::Common;
     if (has_been_measured){return;}
     measurements.length                         = Measure::length(*this);
     measurements.bond_dimension                 = Measure::bond_dimension(*this);
     measurements.norm                           = Measure::norm(*this);
-//    measurements.truncation_error               = Measure::truncation_error(*this);
+    measurements.truncation_error               = Measure::truncation_error(*this);
     measurements.energy_mpo                     = Measure::energy_mpo(*this);  //This number is needed for variance calculation!
     measurements.energy_per_site_mpo            = Measure::energy_per_site_mpo(*this);
     measurements.energy_per_site_ham            = Measure::energy_per_site_ham(*this);

@@ -18,7 +18,7 @@ using Scalar = std::complex<double>;
 using namespace Textra;
 
 
-void MPS_Tools::Common::Measure::set_not_measured(class_superblock & superblock){
+void MPS_Tools::Common::Measure::set_not_measured(const class_superblock & superblock){
     superblock.set_measured_false();
     MPS_Tools::Common::Views::components_computed = false;
 }
@@ -29,6 +29,8 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
     std::unique_ptr<class_mps_2site> MPS_evolved = std::make_unique<class_mps_2site>(MPS_original);
 
     class_SVD SVD;
+    SVD.setThreshold(settings::precision::SVDThreshold);
+
     long chi_max = 5*MPS_evolved->chiC();
 //    t_temp2.tic();
     for (auto &Op: Op_vec) {
@@ -78,7 +80,7 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
 }
 
 
-int MPS_Tools::Common::Measure::length(class_superblock & superblock){
+int MPS_Tools::Common::Measure::length(const class_superblock & superblock){
     return superblock.get_length();
 }
 
@@ -97,17 +99,17 @@ double MPS_Tools::Common::Measure::norm(const class_superblock & superblock){
 }
 
 
-int MPS_Tools::Common::Measure::bond_dimension(class_superblock & superblock){
+int MPS_Tools::Common::Measure::bond_dimension(const class_superblock & superblock){
     return (int) superblock.MPS->LC.dimension(0);
 }
 
-double MPS_Tools::Common::Measure::truncation_error(class_superblock & superblock){
-    return (int) superblock.MPS->truncation_error;
+double MPS_Tools::Common::Measure::truncation_error(const class_superblock & superblock){
+    return superblock.MPS->truncation_error;
 }
 
 
 
-double MPS_Tools::Common::Measure::current_entanglement_entropy(class_superblock & superblock){
+double MPS_Tools::Common::Measure::current_entanglement_entropy(const class_superblock & superblock){
     spdlog::trace("Measuring entanglement entropy from superblock");
     superblock.t_entropy.tic();
     if (superblock.has_been_measured){return superblock.measurements.current_entanglement_entropy;}
@@ -138,7 +140,7 @@ double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superbloc
 }
 
 
-double MPS_Tools::Common::Measure::energy_mpo(class_superblock & superblock){
+double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superblock){
 
     if (superblock.has_been_measured){return superblock.measurements.energy_mpo;}
     if (superblock.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
@@ -150,13 +152,13 @@ double MPS_Tools::Common::Measure::energy_mpo(class_superblock & superblock){
 }
 
 
-double MPS_Tools::Common::Measure::energy_per_site_mpo(class_superblock & superblock){
+double MPS_Tools::Common::Measure::energy_per_site_mpo(const class_superblock & superblock){
     auto L     = MPS_Tools::Common::Measure::length(superblock);
     return MPS_Tools::Common::Measure::energy_mpo(superblock) / L;
 }
 
 
-double MPS_Tools::Common::Measure::energy_per_site_ham(class_superblock & superblock){
+double MPS_Tools::Common::Measure::energy_per_site_ham(const class_superblock & superblock){
     if (superblock.has_been_measured) return superblock.measurements.energy_per_site_ham;
     if (superblock.sim_type == SimulationType::fDMRG) return superblock.measurements.energy_per_site_ham;
     if (superblock.sim_type == SimulationType::xDMRG) return superblock.measurements.energy_per_site_ham;
@@ -191,7 +193,7 @@ double MPS_Tools::Common::Measure::energy_per_site_ham(class_superblock & superb
 }
 
 
-double MPS_Tools::Common::Measure::energy_per_site_mom(class_superblock & superblock){
+double MPS_Tools::Common::Measure::energy_per_site_mom(const class_superblock & superblock){
     if (superblock.has_been_measured) return superblock.measurements.energy_per_site_mom;
     if (superblock.sim_type == SimulationType::fDMRG) return superblock.measurements.energy_per_site_mom;
     if (superblock.sim_type == SimulationType::xDMRG) return superblock.measurements.energy_per_site_mom;
@@ -240,7 +242,7 @@ double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock & 
 
 
 
-double MPS_Tools::Common::Measure::energy_variance_mpo(class_superblock & superblock, double &energy_mpo) {
+double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock & superblock, double &energy_mpo) {
     if (superblock.has_been_measured){return superblock.measurements.energy_variance_mpo;}
     if (superblock.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     superblock.t_var_mpo.tic();
@@ -250,7 +252,7 @@ double MPS_Tools::Common::Measure::energy_variance_mpo(class_superblock & superb
     return result;
 }
 
-double MPS_Tools::Common::Measure::energy_variance_mpo(class_superblock & superblock) {
+double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock & superblock) {
     if (superblock.has_been_measured){return superblock.measurements.energy_variance_mpo;}
     if (superblock.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     superblock.t_var_mpo.tic();
@@ -264,14 +266,14 @@ double MPS_Tools::Common::Measure::energy_variance_mpo(class_superblock & superb
 }
 
 
-double MPS_Tools::Common::Measure::energy_variance_per_site_mpo(class_superblock & superblock) {
+double MPS_Tools::Common::Measure::energy_variance_per_site_mpo(const class_superblock & superblock) {
     if (superblock.has_been_measured){return superblock.measurements.energy_variance_per_site_mpo;}
     auto L = MPS_Tools::Common::Measure::length(superblock);
     return MPS_Tools::Common::Measure::energy_variance_mpo(superblock)/L;
 }
 
 
-double MPS_Tools::Common::Measure::energy_variance_per_site_mpo(class_superblock & superblock, double & energy_mpo){
+double MPS_Tools::Common::Measure::energy_variance_per_site_mpo(const class_superblock & superblock, double & energy_mpo){
     if (superblock.has_been_measured){return superblock.measurements.energy_variance_per_site_mpo;}
     auto L = MPS_Tools::Common::Measure::length(superblock);
     return MPS_Tools::Common::Measure::energy_variance_mpo(superblock,energy_mpo)/L;
@@ -279,7 +281,7 @@ double MPS_Tools::Common::Measure::energy_variance_per_site_mpo(class_superblock
 }
 
 
-double MPS_Tools::Common::Measure::energy_variance_per_site_ham(class_superblock & superblock) {
+double MPS_Tools::Common::Measure::energy_variance_per_site_ham(const class_superblock & superblock) {
     if (superblock.has_been_measured) return superblock.measurements.energy_per_site_mom;
     if (superblock.MPS->chiA() != superblock.MPS->chiB()) return superblock.measurements.energy_variance_per_site_ham;
     if (superblock.MPS->chiA() != superblock.MPS->chiC()) return superblock.measurements.energy_variance_per_site_ham;
@@ -406,6 +408,7 @@ double MPS_Tools::Common::Measure::energy_variance_per_site_ham(class_superblock
     Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_evn = Matrix_to_Tensor2(MatrixType<Scalar>::Identity(sizeLB*sizeLB, sizeLA*sizeLA).eval()) - (transfer_matrix_evn-fixpoint_evn).reshape(array2{sizeLB*sizeLB, sizeLA*sizeLA});
     Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_odd = Matrix_to_Tensor2(MatrixType<Scalar>::Identity(sizeLA*sizeLA, sizeLB*sizeLB).eval()) - (transfer_matrix_odd-fixpoint_odd).reshape(array2{sizeLA*sizeLA, sizeLB*sizeLB});
     class_SVD SVD;
+    SVD.setThreshold(settings::precision::SVDThreshold);
     Eigen::Tensor<Scalar,4> E_evn_pinv  = SVD.pseudo_inverse(one_minus_transfer_matrix_evn).reshape(array4{sizeLB,sizeLB,sizeLA,sizeLA});
     Eigen::Tensor<Scalar,4> E_odd_pinv  = SVD.pseudo_inverse(one_minus_transfer_matrix_odd).reshape(array4{sizeLA,sizeLA,sizeLB,sizeLB});
     Eigen::Tensor<Scalar,0> E2LRP_ABAB  = E2d_L_evn.contract(E_evn_pinv,idx({0,1},{0,1})).contract(E2d_R_evn,idx({0,1},{0,1}));
@@ -430,7 +433,7 @@ double MPS_Tools::Common::Measure::energy_variance_per_site_ham(class_superblock
 }
 
 
-double MPS_Tools::Common::Measure::energy_variance_per_site_mom(class_superblock & superblock){
+double MPS_Tools::Common::Measure::energy_variance_per_site_mom(const class_superblock & superblock){
     if(superblock.sim_type != SimulationType::iTEBD or superblock.sim_type != SimulationType::iDMRG) {
         return superblock.measurements.energy_variance_per_site_mom;
     }
