@@ -79,6 +79,8 @@ void class_iTEBD::single_TEBD_step(long chi){
     }
     superblock->set_measured_false();
     t_sim.toc();
+    sim_state.wall_time = t_tot.get_age();
+    sim_state.simu_time = t_sim.get_age();
 }
 
 

@@ -100,15 +100,15 @@ namespace MPS_Tools{
             extern int length                                         (const class_finite_chain_state & state);
             extern std::vector<int> bond_dimensions                   (const class_finite_chain_state & state);
             extern double norm                                        (const class_finite_chain_state & state);
-            extern double energy_mpo                                  (class_finite_chain_state & state);
-            extern double energy_per_site_mpo                         (class_finite_chain_state & state);
-            extern double energy_variance_mpo                         (class_finite_chain_state & state);
-            extern double energy_variance_per_site_mpo                (class_finite_chain_state & state);
+            extern double energy_mpo                                  (const class_finite_chain_state & state);
+            extern double energy_per_site_mpo                         (const class_finite_chain_state & state);
+            extern double energy_variance_mpo                         (const class_finite_chain_state & state);
+            extern double energy_variance_per_site_mpo                (const class_finite_chain_state & state);
             extern double midchain_entanglement_entropy               (const class_finite_chain_state & state);
             extern double spin_component                              (const class_finite_chain_state &state, const Eigen::Matrix2cd paulimatrix);
             extern Eigen::Tensor<std::complex<double>,1> mps_wavefn   (const class_finite_chain_state & state);
             extern std::vector<double> entanglement_entropies         (const class_finite_chain_state & state);
-            extern std::vector<double> spin_components                (class_finite_chain_state & state);
+            extern std::vector<double> spin_components                (const class_finite_chain_state & state);
         }
 
 
@@ -227,25 +227,25 @@ namespace MPS_Tools{
 
         namespace Measure {
 
-            extern void   set_not_measured                (class_superblock & superblock);
-            extern int    length                          (class_superblock & superblock);
-            extern int    bond_dimension                  (class_superblock & superblock);
-            extern double truncation_error                (class_superblock & superblock);
+            extern void   set_not_measured                (const class_superblock & superblock);
+            extern int    length                          (const class_superblock & superblock);
+            extern int    bond_dimension                  (const class_superblock & superblock);
+            extern double truncation_error                (const class_superblock & superblock);
             extern double norm                            (const class_superblock & superblock);
-            extern double energy_mpo                      (class_superblock & superblock);
+            extern double energy_mpo                      (const class_superblock & superblock);
             extern double energy_mpo                      (const class_superblock & superblock, const Eigen::Tensor<std::complex<double>,4> &theta);
-            extern double energy_per_site_mpo             (class_superblock & superblock);
-            extern double energy_per_site_ham             (class_superblock & superblock);
-            extern double energy_per_site_mom             (class_superblock & superblock);
-            extern double energy_variance_mpo             (class_superblock & superblock);
+            extern double energy_per_site_mpo             (const class_superblock & superblock);
+            extern double energy_per_site_ham             (const class_superblock & superblock);
+            extern double energy_per_site_mom             (const class_superblock & superblock);
+            extern double energy_variance_mpo             (const class_superblock & superblock);
             extern double energy_variance_mpo             (const class_superblock & superblock, const Eigen::Tensor<std::complex<double>,4> &theta, double & energy_mpo);
-            extern double energy_variance_mpo             (class_superblock & superblock, double &energy_mpo);
-            extern double energy_variance_per_site_mpo    (class_superblock & superblock);
-            extern double energy_variance_per_site_mpo    (class_superblock & superblock, double &energy_mpo);
-            extern double energy_variance_per_site_ham    (class_superblock & superblock);
-            extern double energy_variance_per_site_ham    (class_superblock & superblock, double &energy_per_site_ham);
-            extern double energy_variance_per_site_mom    (class_superblock & superblock);
-            extern double current_entanglement_entropy    (class_superblock & superblock);
+            extern double energy_variance_mpo             (const class_superblock & superblock, double &energy_mpo);
+            extern double energy_variance_per_site_mpo    (const class_superblock & superblock);
+            extern double energy_variance_per_site_mpo    (const class_superblock & superblock, double &energy_mpo);
+            extern double energy_variance_per_site_ham    (const class_superblock & superblock);
+            extern double energy_variance_per_site_ham    (const class_superblock & superblock, double &energy_per_site_ham);
+            extern double energy_variance_per_site_mom    (const class_superblock & superblock);
+            extern double current_entanglement_entropy    (const class_superblock & superblock);
 
         }
 

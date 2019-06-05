@@ -13,7 +13,7 @@
 //template<typename Scalar>
 class class_SVD{
 private:
-    double SVDThreshold         = 1e-8;
+    double SVDThreshold         = 1e-12;
     double truncation_error     = 0;
 
     template <typename Scalar> using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;

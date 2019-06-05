@@ -215,6 +215,7 @@ void MPS_Tools::Finite::H5pp::load_sim_state_from_hdf5 (class_simulation_state &
         h5ppFile.readDataset(sim_state.step                           , sim_name + "/sim_state/step");
         h5ppFile.readDataset(sim_state.position                       , sim_name + "/sim_state/position");
         h5ppFile.readDataset(sim_state.chi_temp                       , sim_name + "/sim_state/chi_temp");
+        h5ppFile.readDataset(sim_state.chi_max                        , sim_name + "/sim_state/chi_temp");
         h5ppFile.readDataset(sim_state.min_sweeps                     , sim_name + "/sim_state/min_sweeps");
         h5ppFile.readDataset(sim_state.energy_min                     , sim_name + "/sim_state/energy_min");
         h5ppFile.readDataset(sim_state.energy_max                     , sim_name + "/sim_state/energy_max");
@@ -223,7 +224,11 @@ void MPS_Tools::Finite::H5pp::load_sim_state_from_hdf5 (class_simulation_state &
         h5ppFile.readDataset(sim_state.energy_lbound                  , sim_name + "/sim_state/energy_lbound");
         h5ppFile.readDataset(sim_state.energy_now                     , sim_name + "/sim_state/energy_now");
         h5ppFile.readDataset(sim_state.energy_dens                    , sim_name + "/sim_state/energy_dens");
+        h5ppFile.readDataset(sim_state.energy_dens_target             , sim_name + "/sim_state/energy_dens_target");
+        h5ppFile.readDataset(sim_state.energy_dens_window             , sim_name + "/sim_state/energy_dens_window");
         h5ppFile.readDataset(sim_state.phys_time                      , sim_name + "/sim_state/phys_time");
+        h5ppFile.readDataset(sim_state.wall_time                      , sim_name + "/sim_state/wall_time");
+        h5ppFile.readDataset(sim_state.simu_time                      , sim_name + "/sim_state/simu_time");
         h5ppFile.readDataset(sim_state.delta_t                        , sim_name + "/sim_state/delta_t");
         h5ppFile.readDataset(sim_state.time_step_has_converged        , sim_name + "/sim_state/time_step_has_converged");
         h5ppFile.readDataset(sim_state.simulation_has_converged       , sim_name + "/sim_state/simulation_has_converged");
