@@ -81,8 +81,8 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
             energy         = vHv/vv;
             energy_dens    = (energy/length - energy_min ) / (energy_max - energy_min);
             energy_offset  = energy_dens - energy_target_dens;
-            energy_func    = windowed_func_abs(energy_offset,energy_window);
-            energy_grad    = windowed_grad_abs(energy_offset,energy_window);
+            energy_func    = windowed_func_pow(energy_offset,energy_window);
+            energy_grad    = windowed_grad_pow(energy_offset,energy_window);
 
             var            = vH2v/vv - energy*energy;
             variance       = var;
