@@ -383,12 +383,14 @@ void class_xDMRG::find_energy_range() {
         move_center_point();
         sim_state.iteration = state->get_sweeps();
     }
-    sim_state.energy_max         = MPS_Tools::Finite::Measure::energy_per_site_mpo(*state);
+    compute_observables();
+    sim_state.energy_max = superblock->measurements.energy_per_site_mpo;
+    sim_state.energy_now = superblock->measurements.energy_per_site_mpo;
+
     sim_state.energy_target      = sim_state.energy_min    + settings::xdmrg::energy_density * (sim_state.energy_max-sim_state.energy_min);
     sim_state.energy_ubound      = sim_state.energy_target + settings::xdmrg::energy_window  * (sim_state.energy_max-sim_state.energy_min);
     sim_state.energy_lbound      = sim_state.energy_target - settings::xdmrg::energy_window  * (sim_state.energy_max-sim_state.energy_min);
     sim_state.energy_dens        = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
-    sim_state.energy_now         = superblock->E_optimal / state->get_length();
     log->info("Energy minimum (per site) = {}", sim_state.energy_min);
     log->info("Energy maximum (per site) = {}", sim_state.energy_max);
     log->info("Energy target  (per site) = {}", sim_state.energy_target);
