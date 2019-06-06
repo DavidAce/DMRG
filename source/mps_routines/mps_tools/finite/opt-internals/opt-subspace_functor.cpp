@@ -9,7 +9,7 @@
 
 MPS_Tools::Finite::Opt::internals::subspace_functor::subspace_functor(
         const class_superblock &superblock,
-        class_simulation_state &sim_state,
+        const class_simulation_state &sim_state,
         const Eigen::MatrixXd & eigvecs_,
         const Eigen::VectorXd & eigvals_)
         :

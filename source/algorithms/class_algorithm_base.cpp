@@ -386,7 +386,6 @@ void class_algorithm_base::store_table_entry_profiling(bool force) {
 //    long d    = superblock->HA->get_spin_dimension();
 //    long chiA = superblock->MPS->chiA();
 //    long chiB = superblock->MPS->chiB();
-//    std::srand((unsigned int) settings::model::seed_init_mps);
 //    Eigen::Tensor<Scalar,1> LA;
 //    Eigen::Tensor<Scalar,3> GA;
 //    Eigen::Tensor<Scalar,1> LC;
@@ -546,14 +545,14 @@ void class_algorithm_base::store_table_entry_profiling(bool force) {
 //    swap();
 //}
 
-void class_algorithm_base::reset_full_mps_to_random_product_state(const std::string parity, const size_t mps_seed) {
+void class_algorithm_base::reset_full_mps_to_random_product_state(const std::string parity) {
     log->trace("Resetting MPS to random product state");
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     sim_state.iteration = state->reset_sweeps();
     sim_state.chi_temp = 1;
 
     // Randomize chain
-    *state = MPS_Tools::Finite::Ops::set_random_product_state(*state,parity,mps_seed);
+    *state = MPS_Tools::Finite::Ops::set_random_product_state(*state,parity);
     MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
     MPS_Tools::Common::Measure::set_not_measured(*superblock);
 
@@ -595,7 +594,8 @@ void class_algorithm_base::swap(){
 void class_algorithm_base::insert_superblock_to_chain() {
     log->trace("Insert superblock into chain");
     t_ste.tic();
-    MPS_Tools::Finite::Chain::insert_superblock_to_state(*state, *superblock);
+    auto new_position = MPS_Tools::Finite::Chain::insert_superblock_to_state(*state, *superblock);
+    superblock->set_positions(new_position);
     t_ste.toc();
 }
 

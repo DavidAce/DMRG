@@ -16,11 +16,10 @@ using namespace std;
 void settings::load_from_file(class_settings_reader &indata){
     input::input_filename                    = indata.get_input_filename();
     input::input_file                        = indata.get_input_file();
-    model::model_type                        = indata.find_parameter<std::string>("model::model_type"   , model::model_type);
-    model::initial_state                     = indata.find_parameter<std::string>("model::initial_state", model::initial_state);
-    model::seed_init_mpo                     = indata.find_parameter<int>        ("model::seed_init_mpo", model::seed_init_mpo);
-    model::seed_init_mps                     = indata.find_parameter<int>        ("model::seed_init_mps", model::seed_init_mps);
-    model::symmetry                          = indata.find_parameter<std::string>("model::symmetry"     , model::symmetry);
+    model::model_type                        = indata.find_parameter<std::string>("model::model_type"     , model::model_type);
+    model::initial_state                     = indata.find_parameter<std::string>("model::initial_state"  , model::initial_state);
+    model::seed_init                         = indata.find_parameter<int>        ("model::seed_init"      , model::seed_init);
+    model::symmetry                          = indata.find_parameter<std::string>("model::symmetry"       , model::symmetry);
     model::tf_ising::J                       = indata.find_parameter<double>     ("model::tf_ising::J"    , model::tf_ising::J);
     model::tf_ising::g                       = indata.find_parameter<double>     ("model::tf_ising::g"    , model::tf_ising::g);
     model::tf_ising::w                       = indata.find_parameter<double>     ("model::tf_ising::w"    , model::tf_ising::w);

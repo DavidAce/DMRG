@@ -10,6 +10,7 @@ namespace rn{
     std::mt19937 rng;
     void seed(unsigned long n){
         rng.seed(n);
+        std::srand((unsigned int) n);
     }
 
     int uniform_integer_1(){

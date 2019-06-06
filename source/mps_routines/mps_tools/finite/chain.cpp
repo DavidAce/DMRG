@@ -16,7 +16,7 @@
 using Scalar = std::complex<double>;
 
 
-void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state, std::string model_type, std::string parity, const size_t length, const size_t mpo_seed, const size_t mps_seed){
+void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state, std::string model_type, std::string parity, const size_t length){
     state.clear();
     state.set_max_sites(length);
 
@@ -27,7 +27,7 @@ void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state,
         state.MPO_R.emplace_front(class_hamiltonian_factory::create_mpo(model_type));
         if(state.MPO_L.size() + state.MPO_R.size() >= length){break;}
     }
-    MPS_Tools::Finite::Chain::randomize_mpos(state,mpo_seed);
+    MPS_Tools::Finite::Chain::randomize_mpos(state);
 
     //Generate MPS
     auto spin_dim = state.MPO_L.back()->get_spin_dimension();
@@ -45,7 +45,7 @@ void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state,
     }
 
 
-    state = MPS_Tools::Finite::Ops::set_random_product_state(state,parity,mps_seed);
+    state = MPS_Tools::Finite::Ops::set_random_product_state(state,parity);
     MPS_Tools::Finite::Ops::rebuild_environments(state);
     MPS_Tools::Finite::Debug::check_integrity_of_mps(state);
 }
@@ -54,9 +54,8 @@ void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state,
 
 
 
-void MPS_Tools::Finite::Chain::randomize_mpos(class_finite_chain_state &state, const size_t mpo_seed) {
+void MPS_Tools::Finite::Chain::randomize_mpos(class_finite_chain_state &state) {
     MPS_Tools::log->info("Setting random fields in chain");
-    rn::seed(mpo_seed);
     if (not state.max_sites_is_set) throw std::range_error("System size not set yet");
 
     std::vector<std::vector<double>> all_params;
@@ -138,7 +137,7 @@ void MPS_Tools::Finite::Chain::copy_superblock_env_to_state(class_finite_chain_s
     state.set_measured_false();
 }
 
-int MPS_Tools::Finite::Chain::insert_superblock_to_state(class_finite_chain_state &state, class_superblock &superblock){
+int MPS_Tools::Finite::Chain::insert_superblock_to_state(class_finite_chain_state &state, const class_superblock &superblock){
     auto & MPS_L  = state.MPS_L;
     auto & MPS_R  = state.MPS_R;
     auto & MPS_C  = state.MPS_C;
@@ -171,7 +170,6 @@ int MPS_Tools::Finite::Chain::insert_superblock_to_state(class_finite_chain_stat
 
 
     state.set_positions();
-    superblock.set_positions(state.get_position());
 
     assert(ENV_L.back().size + ENV_R.front().size == superblock.environment_size);
     assert(ENV_L.back().size   == superblock.Lblock->size);
@@ -180,7 +178,7 @@ int MPS_Tools::Finite::Chain::insert_superblock_to_state(class_finite_chain_stat
     assert(ENV2_R.front().size == superblock.Rblock2->size);
 
     state.set_measured_false();
-    return (int)MPS_L.size();
+    return state.get_position();
 }
 
 int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  state, class_superblock & superblock){

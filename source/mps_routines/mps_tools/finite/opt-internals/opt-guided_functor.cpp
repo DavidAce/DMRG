@@ -12,7 +12,7 @@
 
 
 MPS_Tools::Finite::Opt::internals::guided_functor::guided_functor(
-        const class_superblock & superblock, class_simulation_state &sim_state): base_functor(superblock,sim_state)
+        const class_superblock & superblock, const class_simulation_state &sim_state): base_functor(superblock,sim_state)
         {}
 
 

@@ -38,7 +38,7 @@ std::vector<int> MPS_Tools::Finite::Opt::internals::generate_size_list(const int
 }
 
 std::tuple<Eigen::MatrixXd, Eigen::VectorXd>
-MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superblock, class_simulation_state & sim_state, OptMode & optMode, OptSpace &optSpace){
+MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace){
     MPS_Tools::log->trace("Finding subspace");
 
     using namespace eigutils::eigSetting;
@@ -125,7 +125,7 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
 
 
 std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
-MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock & superblock, class_simulation_state & sim_state, OptMode &optMode, OptSpace &optSpace){
+MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace){
     MPS_Tools::log->trace("Optimizing in SUBSPACE mode");
     using Scalar = std::complex<double>;
     auto [eigvecs,eigvals]  = find_subspace(superblock,sim_state, optMode,optSpace);

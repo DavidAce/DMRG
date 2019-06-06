@@ -13,7 +13,7 @@
 
 
 MPS_Tools::Finite::Opt::internals::direct_functor::direct_functor(
-        const class_superblock & superblock_, class_simulation_state &sim_state):
+        const class_superblock & superblock_, const class_simulation_state &sim_state):
         base_functor(superblock_,sim_state){}
 
 

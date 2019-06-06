@@ -15,7 +15,7 @@
 
 
 std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
-MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & superblock, class_simulation_state &sim_state){
+MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & superblock, const class_simulation_state &sim_state){
     MPS_Tools::log->trace("Optimizing in DIRECT mode");
     using Scalar = std::complex<double>;
     t_opt->tic();
