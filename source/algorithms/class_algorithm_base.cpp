@@ -314,8 +314,12 @@ void class_algorithm_base::clear_saturation_status(){
 
 
 
-    sim_state.simulation_has_to_stop = false;
+    sim_state.variance_mpo_has_converged = false;
+    sim_state.variance_ham_has_converged = false;
+    sim_state.variance_mom_has_converged = false;
 
+    sim_state.bond_dimension_has_reached_max = false;
+    sim_state.simulation_has_to_stop = false;
 }
 
 
@@ -549,15 +553,11 @@ void class_algorithm_base::reset_full_mps_to_random_product_state(const std::str
     log->trace("Resetting MPS to random product state");
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     sim_state.iteration = state->reset_sweeps();
-    sim_state.chi_temp = 1;
 
     // Randomize chain
     *state = MPS_Tools::Finite::Ops::set_random_product_state(*state,parity);
     MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
-    MPS_Tools::Common::Measure::set_not_measured(*superblock);
-
     clear_saturation_status();
-    sim_state.simulation_has_to_stop = false;
 }
 
 
