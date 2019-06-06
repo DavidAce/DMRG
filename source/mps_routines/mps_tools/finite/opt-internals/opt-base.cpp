@@ -13,7 +13,7 @@
 
 MPS_Tools::Finite::Opt::internals::base_functor::base_functor(
         const class_superblock & superblock,
-        class_simulation_state & sim_state)
+        const class_simulation_state & sim_state)
 {
     reset_timers();
     initialize_params();
@@ -38,9 +38,8 @@ MPS_Tools::Finite::Opt::internals::base_functor::base_functor(
     energy_min               = sim_state.energy_min;
     energy_lower_bound       = sim_state.energy_lbound;
     energy_upper_bound       = sim_state.energy_ubound;
-    energy_target_dens       = (energy_target - energy_min ) / (energy_max - energy_min);
-    energy_window            = 0.5*(energy_upper_bound - energy_lower_bound ) / (energy_max - energy_min);
-
+    energy_target_dens       = sim_state.energy_dens_target;
+    energy_window            = sim_state.energy_dens_window;
     iteration                = sim_state.iteration;
 }
 

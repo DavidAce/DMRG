@@ -3,6 +3,7 @@
 
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <sim_parameters/nmspc_model.h>
+#include <general/nmspc_random_numbers.h>
 #include <algorithms/class_algorithm_launcher.h>
 #include <io/class_settings_reader.h>
 #include <io/nmspc_logger.h>
@@ -71,8 +72,7 @@ int main(int argc, char* argv[]) {
     //Normally an output filename is given in the input file. But it can also be given from command line.
     std::string inputfile  = "input.cfg";
     std::string outputfile = "output.h5";
-    int seed_init_mpo = -1; //Only accept non-negative seeds
-    int seed_init_mps = -1; //Only accept non-negative seeds
+    int seed_init = -1; //Only accept non-negative seeds
     int i = 0;
     std::vector<std::string> allArgs(argv+1, argv + argc);
     for (auto &arg_word : allArgs){
@@ -82,8 +82,7 @@ int main(int argc, char* argv[]) {
             log->info("Input argument {} : {}",i++,arg);
             if (arg.find(".cfg") != std::string::npos) {inputfile  = arg;continue;}
             if (arg.find(".h5")  != std::string::npos) {outputfile = arg;continue;}
-            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_init_mpo < 0){seed_init_mpo = std::stoi(arg); continue;}
-            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_init_mps < 0){seed_init_mps = std::stoi(arg);}
+            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_init < 0){seed_init = std::stoi(arg); continue;}
         }
     }
 
@@ -105,32 +104,19 @@ int main(int argc, char* argv[]) {
         log->info("Replacing output filename {} --> {}",settings::hdf5::output_filename, outputfile);
         settings::hdf5::output_filename = outputfile;
     }
-    if (seed_init_mpo >= 0){
-        log->info("Replacing seed_init_mpo {} --> {}",settings::model::seed_init_mpo, seed_init_mpo);
-        settings::model::seed_init_mpo = seed_init_mpo;
-        //Append the seed_init_mpo to the output filename
+    if (seed_init >= 0){
+        log->info("Replacing seed_init {} --> {}", settings::model::seed_init, seed_init);
+        settings::model::seed_init = seed_init;
+        //Append the seed_init to the output filename
         namespace fs = std::experimental::filesystem;
         fs::path oldFileName = settings::hdf5::output_filename;
         fs::path newFileName = settings::hdf5::output_filename;
-        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(seed_init_mpo) + oldFileName.extension().string() );
+        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(seed_init) + oldFileName.extension().string() );
         settings::hdf5::output_filename = newFileName.string();
-        log->info("Appending seed_init_mpo to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
+        log->info("Appending seed_init to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
     }
-    if (seed_init_mps >= 0){
-        log->info("Replacing seed_init_mps {} --> {}",settings::model::seed_init_mps, seed_init_mps);
-        settings::model::seed_init_mps = seed_init_mps;
-        //Append the seed_init_mpo to the output filename
-        namespace fs = std::experimental::filesystem;
-        fs::path oldFileName = settings::hdf5::output_filename;
-        fs::path newFileName = settings::hdf5::output_filename;
-        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(seed_init_mps) + oldFileName.extension().string() );
-        settings::hdf5::output_filename = newFileName.string();
-        log->info("Appending seed_init_mps to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
-    }else if (seed_init_mpo >= 0){
-        log->info("Replacing seed_init_mps {} --> {}",settings::model::seed_init_mps, seed_init_mpo);
-        settings::model::seed_init_mps = seed_init_mpo;
-    }
-
+    // Seed only this once (This also takes care of srand used by Eigen
+    rn::seed(settings::model::seed_init);
 
     //Initialize the algorithm class
     //This class stores simulation data automatically to a file specified in the input file

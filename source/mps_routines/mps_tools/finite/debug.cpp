@@ -12,7 +12,7 @@
 #include <spdlog/spdlog.h>
 
 void MPS_Tools::Finite::Debug::check_integrity(const class_finite_chain_state &state,
-                                               const class_superblock &superblock, class_simulation_state &sim_state)
+                                               const class_superblock &superblock, const class_simulation_state &sim_state)
 {
     MPS_Tools::log->info("Checking integrity...");
     try{
@@ -49,7 +49,7 @@ void MPS_Tools::Finite::Debug::check_integrity(const class_finite_chain_state &s
 
 void MPS_Tools::Finite::Debug::check_integrity_of_sim(const class_finite_chain_state &state,
                                                       const class_superblock &superblock,
-                                                      class_simulation_state &sim_state)
+                                                      const class_simulation_state &sim_state)
 {
     MPS_Tools::log->info("Checking integrity of simulation");
 

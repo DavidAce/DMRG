@@ -44,10 +44,7 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     // increase the size on all Lambdas by chi*mpoDim
     MPS_Tools::log->trace("Applying MPO's");
     state.set_measured_false();
-//    std::cout << "Norm              (before mpos): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
-//    std::cout << "Spin component sx (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-//    std::cout << "Spin component sy (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-//    std::cout << "Spin component sz (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
+
     auto mpo = mpos.begin();
 
     {
@@ -125,11 +122,6 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
         state.MPS_R.back().set_G(G_temp);
         state.MPS_R.back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0)/norm);
     }
-//    std::cout << "Norm              (after mpos): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
-//    std::cout << "Spin component sx (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-//    std::cout << "Spin component sy (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-//    std::cout << "Spin component sz (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
-
 }
 
 
@@ -208,9 +200,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
 }
 
-
-
-class_finite_chain_state MPS_Tools::Finite::Ops::set_random_product_state(const class_finite_chain_state &state, const std::string parity, const size_t mps_seed){
+class_finite_chain_state MPS_Tools::Finite::Ops::set_random_product_state(const class_finite_chain_state &state, const std::string parity){
     MPS_Tools::log->trace("Setting a random product state");
     class_finite_chain_state product_state = state;
     Eigen::MatrixXcd  paulimatrix;
@@ -229,7 +219,6 @@ class_finite_chain_state MPS_Tools::Finite::Ops::set_random_product_state(const 
 
     Eigen::Tensor<Scalar,1> L (1);
     L.setConstant(1);
-    std::srand((unsigned int) mps_seed);
 
     for (auto &mpsL : product_state.MPS_L ){
         auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
@@ -247,8 +236,6 @@ class_finite_chain_state MPS_Tools::Finite::Ops::set_random_product_state(const 
     product_state.set_measured_false();
     return product_state;
 }
-
-
 
 
 class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix, const int sign) {
@@ -289,7 +276,7 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const 
     }
 }
 
-void MPS_Tools::Finite::Ops::rebuild_superblock(class_finite_chain_state &state, class_superblock &superblock) {
+void MPS_Tools::Finite::Ops::rebuild_superblock(const class_finite_chain_state &state, class_superblock &superblock) {
     MPS_Tools::log->trace("Rebuilding superblock");
     MPS_Tools::Finite::Chain::copy_state_to_superblock(state,superblock);
 }

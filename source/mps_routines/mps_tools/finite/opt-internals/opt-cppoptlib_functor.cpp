@@ -11,7 +11,7 @@
 
 
 MPS_Tools::Finite::Opt::internals::cppoptlib_functor::cppoptlib_functor(const class_superblock &superblock,
-                                                                        class_simulation_state &sim_state){
+                                                                        const class_simulation_state &sim_state){
     reset_timers();
     superComponents.HA_MPO        = superblock.HA->MPO().real();
     superComponents.HB_MPO        = superblock.HB->MPO().real();

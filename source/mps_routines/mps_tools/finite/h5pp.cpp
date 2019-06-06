@@ -141,11 +141,11 @@ void MPS_Tools::Finite::H5pp::write_closest_parity_projection(const class_finite
 }
 
 
-void MPS_Tools::Finite::H5pp::load_from_hdf5(class_finite_chain_state & state, class_superblock & superblock, class_simulation_state &sim_state, h5pp::File & h5ppFile, std::string sim_name){
+void MPS_Tools::Finite::H5pp::load_from_hdf5(const h5pp::File & h5ppFile, class_finite_chain_state & state, class_superblock & superblock, class_simulation_state &sim_state, std::string sim_name){
     // Load into state
     try{
-        load_sim_state_from_hdf5(sim_state,h5ppFile,sim_name);
-        load_state_from_hdf5(state,h5ppFile,sim_name);
+        load_sim_state_from_hdf5(h5ppFile,sim_state,sim_name);
+        load_state_from_hdf5(h5ppFile,state,sim_name);
         state.set_sweeps(sim_state.iteration);
         MPS_Tools::Finite::Ops::rebuild_superblock(state,superblock);
         MPS_Tools::Finite::Debug::check_integrity(state,superblock,sim_state);
@@ -154,7 +154,7 @@ void MPS_Tools::Finite::H5pp::load_from_hdf5(class_finite_chain_state & state, c
     }
 }
 
-void MPS_Tools::Finite::H5pp::load_state_from_hdf5(class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name){
+void MPS_Tools::Finite::H5pp::load_state_from_hdf5(const h5pp::File & h5ppFile, class_finite_chain_state & state, std::string sim_name){
     int    position = 0;
     size_t sites   = 0;
     Eigen::Tensor<Scalar,3> G;
@@ -207,7 +207,7 @@ void MPS_Tools::Finite::H5pp::load_state_from_hdf5(class_finite_chain_state & st
     MPS_Tools::Finite::Ops::rebuild_environments(state);
 }
 
-void MPS_Tools::Finite::H5pp::load_sim_state_from_hdf5 (class_simulation_state &sim_state, h5pp::File & h5ppFile, std::string sim_name){
+void MPS_Tools::Finite::H5pp::load_sim_state_from_hdf5 (const h5pp::File & h5ppFile, class_simulation_state &sim_state, std::string sim_name){
     sim_state.clear();
     // Common variables
     try{

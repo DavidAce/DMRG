@@ -51,7 +51,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_base(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG) {
     table_xdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
     table_xdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5ppFile, sim_name + "/measurements", "simulation_progress_full_chain",sim_name);
-    MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type,settings::model::symmetry, settings::xdmrg::num_sites, settings::model::seed_init_mpo, settings::model::seed_init_mps);
+    MPS_Tools::Finite::Chain::initialize_state(*state, settings::model::model_type, settings::model::symmetry, settings::xdmrg::num_sites);
     MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
     min_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
     max_saturation_length = 1 * (int)(2.0 * settings::xdmrg::num_sites);
@@ -103,7 +103,7 @@ void class_xDMRG::run()
             // We can go ahead and load the state from hdf5
             log->trace("Loading MPS from file");
             try{
-                MPS_Tools::Finite::H5pp::load_from_hdf5(*state, *superblock, sim_state, *h5ppFile, sim_name);
+                MPS_Tools::Finite::H5pp::load_from_hdf5(*h5ppFile, *state, *superblock, sim_state, sim_name);
             }
             catch(std::exception &ex){
                 log->error("Failed to load from hdf5: {}", ex.what());
@@ -281,7 +281,7 @@ void class_xDMRG::check_convergence(){
         log->info("Resetting to product state -- saturated outside of energy window. Energy density: {}",sim_state.energy_dens );
         int counter = 0;
         while(outside_of_window){
-            reset_full_mps_to_random_product_state("sx",settings::model::seed_init_mps++);
+            reset_full_mps_to_random_product_state("sx");
             sim_state.energy_now = MPS_Tools::Common::Measure::energy_per_site_mpo(*superblock);
             sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
             outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  >= sim_state.energy_dens_window;
@@ -369,7 +369,7 @@ void class_xDMRG::find_energy_range() {
     sim_state.energy_min = superblock->measurements.energy_per_site_mpo;
     sim_state.iteration = state->reset_sweeps();
 
-    reset_full_mps_to_random_product_state("sx",settings::model::seed_init_mps++);
+    reset_full_mps_to_random_product_state("sx");
     // Find energy maximum
     while(true) {
         single_DMRG_step(eigutils::eigSetting::Ritz::LR);
@@ -399,7 +399,7 @@ void class_xDMRG::find_energy_range() {
     int counterB = 0;
     bool outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  >= sim_state.energy_dens_window;
     while(outside_of_window){
-        reset_full_mps_to_random_product_state("sx",settings::model::seed_init_mps++);
+        reset_full_mps_to_random_product_state("sx");
         sim_state.energy_now  = MPS_Tools::Finite::Measure::energy_per_site_mpo(*state);
         sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
         outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  >= sim_state.energy_dens_window;

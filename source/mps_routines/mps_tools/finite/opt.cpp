@@ -13,7 +13,7 @@
 
 
 std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
-MPS_Tools::Finite::Opt::find_optimal_excited_state(const class_superblock & superblock, class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace){
+MPS_Tools::Finite::Opt::find_optimal_excited_state(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace){
     MPS_Tools::log->trace("Finding optimal excited state");
     using namespace Opt::internals;
     std::stringstream problem_report;

@@ -124,7 +124,7 @@ namespace MPS_Tools::Finite::Opt{
 
 
         public:
-            base_functor(const class_superblock & superblock, class_simulation_state &sim_state);
+            base_functor(const class_superblock & superblock, const class_simulation_state &sim_state);
             double get_variance() const ;
             double get_energy  () const ;
             size_t get_count   () const ;
@@ -137,7 +137,7 @@ namespace MPS_Tools::Finite::Opt{
         class direct_functor: public base_functor{
         private:
         public:
-            explicit direct_functor(const class_superblock & superblock_, class_simulation_state &sim_state);
+            explicit direct_functor(const class_superblock & superblock_, const class_simulation_state &sim_state);
             double operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) override;
         };
 
@@ -153,7 +153,7 @@ namespace MPS_Tools::Finite::Opt{
 
             explicit subspace_functor(
                     const class_superblock & superblock,
-                    class_simulation_state &sim_state,
+                    const class_simulation_state &sim_state,
                     const Eigen::MatrixXd &eigvecs_,
                     const Eigen::VectorXd &eigvals_);
 
@@ -170,7 +170,7 @@ namespace MPS_Tools::Finite::Opt{
             double windowed_grad_pow(double x,double window);
 
         public:
-            explicit guided_functor(const class_superblock &superblock, class_simulation_state & sim_state);
+            explicit guided_functor(const class_superblock &superblock, const class_simulation_state & sim_state);
             double operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) override;
         };
 
@@ -213,7 +213,7 @@ namespace MPS_Tools::Finite::Opt{
             size_t get_count   () const ;
             size_t get_iter    () const ;
 
-            explicit cppoptlib_functor(const class_superblock &superblock, class_simulation_state & sim_state);
+            explicit cppoptlib_functor(const class_superblock &superblock, const class_simulation_state & sim_state);
             double value (const Eigen::VectorXd &v);
             void gradient(const Eigen::VectorXd &v, Eigen::VectorXd &grad);
             bool callback(const cppoptlib::Criteria<double> &state, const Eigen::VectorXd &x0);

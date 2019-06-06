@@ -9,7 +9,7 @@
 #include <model/class_hamiltonian_base.h>
 #include <h5pp/h5pp.h>
 
-void MPS_Tools::Infinite::H5pp::write_all_superblock(class_superblock &superblock, h5pp::File & h5ppFile,
+void MPS_Tools::Infinite::H5pp::write_all_superblock(const class_superblock &superblock, h5pp::File & h5ppFile,
                                                      std::string sim_name){
     if(superblock.has_been_written){return;}
 
@@ -36,29 +36,29 @@ void MPS_Tools::Infinite::H5pp::write_all_superblock(class_superblock &superbloc
 }
 
 
-void MPS_Tools::Infinite::H5pp::write_2site_mps (class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
+void MPS_Tools::Infinite::H5pp::write_2site_mps (const class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
     h5ppFile.writeDataset(superblock.MPS->MPS_A->get_A(), sim_name + "/state/2site/MPS_A");
     h5ppFile.writeDataset(superblock.MPS->LC                                 , sim_name + "/state/2site/L_C");
     h5ppFile.writeDataset(superblock.MPS->MPS_B->get_B(), sim_name + "/state/2site/MPS_B");
 }
 
-void MPS_Tools::Infinite::H5pp::write_2site_mpo (class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
+void MPS_Tools::Infinite::H5pp::write_2site_mpo (const class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
     h5ppFile.writeDataset(superblock.HA->MPO(), sim_name + "/state/2site/MPO_A");
     h5ppFile.writeDataset(superblock.HB->MPO(), sim_name + "/state/2site/MPO_B");
 
 }
 
-void MPS_Tools::Infinite::H5pp::write_2site_env (class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
+void MPS_Tools::Infinite::H5pp::write_2site_env (const class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
     h5ppFile.writeDataset(superblock.Lblock->block, sim_name + "/state/2site/ENV_L");
     h5ppFile.writeDataset(superblock.Rblock->block, sim_name + "/state/2site/ENV_R");
 }
 
-void MPS_Tools::Infinite::H5pp::write_2site_env2 (class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
+void MPS_Tools::Infinite::H5pp::write_2site_env2 (const class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
     h5ppFile.writeDataset(superblock.Lblock2->block, sim_name + "/state/2site/ENV2_L");
     h5ppFile.writeDataset(superblock.Rblock2->block, sim_name + "/state/2site/ENV2_R");
 }
 
-void MPS_Tools::Infinite::H5pp::write_hamiltonian_params(class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
+void MPS_Tools::Infinite::H5pp::write_hamiltonian_params(const class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
     // Write down the Hamiltonian metadata as a table
     // Remember to write tensors in row-major state order because that's what hdf5 uses.
     Eigen::MatrixXd hamiltonian_props;
@@ -80,7 +80,7 @@ void MPS_Tools::Infinite::H5pp::write_hamiltonian_params(class_superblock &super
     }
 }
 
-void MPS_Tools::Infinite::H5pp::write_all_measurements  (class_superblock &superblock, h5pp::File & h5ppFile, std::string sim_name){
+void MPS_Tools::Infinite::H5pp::write_all_measurements  (const class_superblock & superblock, h5pp::File & h5ppFile, std::string sim_name){
     superblock.do_all_measurements();
     h5ppFile.writeDataset(superblock.measurements.length                      , sim_name + "/measurements/2site/length");
     h5ppFile.writeDataset(superblock.measurements.bond_dimension              , sim_name + "/measurements/2site/bond_dimension");
@@ -96,6 +96,6 @@ void MPS_Tools::Infinite::H5pp::write_all_measurements  (class_superblock &super
     h5ppFile.writeDataset(superblock.measurements.current_entanglement_entropy, sim_name + "/measurements/2site/entanglement_entropy");
 }
 
-void MPS_Tools::Infinite::H5pp::load_from_hdf5    ([[maybe_unused]] class_superblock &superblock,[[maybe_unused]] class_simulation_state &sim_state,[[maybe_unused]] h5pp::File & h5ppFile, [[maybe_unused]] std::string sim_name){
+void MPS_Tools::Infinite::H5pp::load_from_hdf5    ([[maybe_unused]] const h5pp::File & h5ppFile, [[maybe_unused]] class_superblock & superblock,[[maybe_unused]] class_simulation_state &sim_state,[[maybe_unused]] std::string sim_name){
 
 }

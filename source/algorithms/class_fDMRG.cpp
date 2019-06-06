@@ -24,7 +24,7 @@ class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 
     table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
     table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5ppFile, sim_name + "/measurements", "simulation_progress_full_chain",sim_name);
-    MPS_Tools::Finite::Chain::initialize_state(*state,settings::model::model_type,settings::model::symmetry, settings::fdmrg::num_sites, settings::model::seed_init_mpo, settings::model::seed_init_mps);
+    MPS_Tools::Finite::Chain::initialize_state(*state, settings::model::model_type, settings::model::symmetry, settings::fdmrg::num_sites);
     MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
 
     min_saturation_length = 1 * (int)(0.5 * settings::fdmrg::num_sites);
@@ -78,7 +78,7 @@ void class_fDMRG::run()
             // We can go ahead and load the state from hdf5
             log->info("Loading MPS from file");
             try{
-                MPS_Tools::Finite::H5pp::load_from_hdf5(*state, *superblock, sim_state, *h5ppFile, sim_name);
+                MPS_Tools::Finite::H5pp::load_from_hdf5(*h5ppFile, *state, *superblock, sim_state, sim_name);
             }
             catch(std::exception &ex){
                 log->error("Failed to load from hdf5: {}", ex.what());
