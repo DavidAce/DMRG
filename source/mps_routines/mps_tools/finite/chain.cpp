@@ -83,7 +83,7 @@ void MPS_Tools::Finite::Chain::copy_superblock_to_state(class_finite_chain_state
     MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(state, superblock);
     MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(state, superblock);
     MPS_Tools::Finite::Chain::copy_superblock_env_to_state(state, superblock);
-    state.set_measured_false();
+    state.unset_measurements();
 }
 
 void MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(class_finite_chain_state &state,const class_superblock &superblock) {
@@ -100,7 +100,7 @@ void MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(class_finite_chain_s
     MPS_L.back()    = *superblock.MPS->MPS_A;
     MPS_C           = superblock.MPS->LC;
     MPS_R.front()   = *superblock.MPS->MPS_B;
-    state.set_measured_false();
+    state.unset_measurements();
 }
 
 void MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(class_finite_chain_state &state,const class_superblock &superblock){
@@ -115,7 +115,7 @@ void MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(class_finite_chain_s
     MPO_L.back()      = superblock.HA->clone();
     MPO_R.front()     = superblock.HB->clone();
     assert(MPO_L.size() + MPO_R.size() == state.get_length());
-    state.set_measured_false();
+    state.unset_measurements();
 }
 
 void MPS_Tools::Finite::Chain::copy_superblock_env_to_state(class_finite_chain_state &state,const class_superblock &superblock){
@@ -134,7 +134,7 @@ void MPS_Tools::Finite::Chain::copy_superblock_env_to_state(class_finite_chain_s
     ENV_R.front()   = *superblock.Rblock;
     ENV2_R.front()  = *superblock.Rblock2;
     assert(ENV_L.size() + ENV_R.size() == state.get_length());
-    state.set_measured_false();
+    state.unset_measurements();
 }
 
 int MPS_Tools::Finite::Chain::insert_superblock_to_state(class_finite_chain_state &state, const class_superblock &superblock){
@@ -177,7 +177,7 @@ int MPS_Tools::Finite::Chain::insert_superblock_to_state(class_finite_chain_stat
     assert(ENV2_L.back().size  == superblock.Lblock2->size);
     assert(ENV2_R.front().size == superblock.Rblock2->size);
 
-    state.set_measured_false();
+    state.unset_measurements();
     return state.get_position();
 }
 
@@ -312,8 +312,8 @@ int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  stat
         state.increment_sweeps();
     }
 
-    state.set_measured_false();
-    superblock.set_measured_false();
+    state.unset_measurements();
+    superblock.unset_measurements();
     return state.get_sweeps();
 }
 
@@ -336,7 +336,7 @@ void MPS_Tools::Finite::Chain::copy_state_to_superblock(const class_finite_chain
     *superblock.Rblock2 =        state.ENV2_R.front();
     superblock.environment_size = superblock.Lblock->size + superblock.Rblock->size;
     superblock.set_positions(state.get_position());
-    superblock.set_measured_false();
+    superblock.unset_measurements();
 }
 
 

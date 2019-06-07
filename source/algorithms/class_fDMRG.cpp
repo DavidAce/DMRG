@@ -159,7 +159,7 @@ void class_fDMRG::run_simulation(){
 void class_fDMRG::run_postprocessing(){
     log->info("Running {} postprocessing",sim_name);
     MPS_Tools::Finite::Debug::check_integrity(*state,*superblock,sim_state);
-    state->set_measured_false();
+    state->unset_measurements();
     state->do_all_measurements();
     MPS_Tools::Finite::H5pp::write_all_measurements(*state,*h5ppFile,sim_name);
     MPS_Tools::Infinite::H5pp::write_all_measurements(*superblock,*h5ppFile,sim_name);
@@ -251,19 +251,19 @@ void class_fDMRG::store_table_entry_progress(bool force){
             sim_state.iteration,
             state->get_length(),
             state->get_position(),
-            superblock->measurements.bond_dimension,
+            superblock->measurements.bond_dimension.value(),
             settings::fdmrg::chi_max,
-            superblock->measurements.energy_per_site_mpo,
-            std::numeric_limits<double>::quiet_NaN(),
-            std::numeric_limits<double>::quiet_NaN(),
-            std::numeric_limits<double>::quiet_NaN(),
-            std::numeric_limits<double>::quiet_NaN(),
-            std::numeric_limits<double>::quiet_NaN(),
-            superblock->measurements.energy_variance_per_site_mpo,
-            std::numeric_limits<double>::quiet_NaN(),
-            std::numeric_limits<double>::quiet_NaN(),
-            superblock->measurements.current_entanglement_entropy,
-            superblock->measurements.truncation_error,
+            superblock->measurements.energy_per_site_mpo.value(),
+            superblock->measurements.energy_per_site_ham.value(),
+            superblock->measurements.energy_per_site_mom.value(),
+            sim_state.energy_min,
+            sim_state.energy_max,
+            sim_state.energy_target,
+            superblock->measurements.energy_variance_per_site_mpo.value(),
+            superblock->measurements.energy_variance_per_site_ham.value(),
+            superblock->measurements.energy_variance_per_site_mom.value(),
+            superblock->measurements.current_entanglement_entropy.value(),
+            superblock->measurements.truncation_error.value(),
             t_tot.get_age());
     t_sto.toc();
 }

@@ -20,7 +20,6 @@ void class_finite_chain_state::clear(){
 
 void class_finite_chain_state::do_all_measurements(){
     using namespace MPS_Tools::Finite;
-    if (has_been_measured()){return;}
     measurements.length                         = Measure::length(*this);
     measurements.bond_dimensions                = Measure::bond_dimensions(*this);
     measurements.norm                           = Measure::norm(*this);
@@ -30,7 +29,6 @@ void class_finite_chain_state::do_all_measurements(){
     measurements.energy_variance_per_site_mpo   = Measure::energy_variance_per_site_mpo(*this);
     measurements.entanglement_entropies         = Measure::entanglement_entropies(*this);
     measurements.spin_components                = Measure::spin_components(*this);
-    set_measured_true();
 }
 
 void class_finite_chain_state::set_max_sites(int max_sites_) {
@@ -196,30 +194,22 @@ Eigen::Tensor<class_finite_chain_state::Scalar,4> class_finite_chain_state::get_
 
 
 
-void class_finite_chain_state::set_measured_true()const{
-    energy_has_been_measured     = true;
-    variance_has_been_measured   = true;
-    entropy_has_been_measured    = true;
-    norm_has_been_measured       = true;
-    parity_has_been_measured     = true;
-    everything_has_been_measured = true;
-}
-void class_finite_chain_state::set_measured_false()const{
-    energy_has_been_measured     = false;
-    variance_has_been_measured   = false;
-    entropy_has_been_measured    = false;
-    norm_has_been_measured       = false;
-    parity_has_been_measured     = false;
-    everything_has_been_measured = false;
+void class_finite_chain_state::unset_measurements()const {
+    measurements = Measurements();
 }
 
-
-bool class_finite_chain_state::has_been_measured()const{
-    return
-            energy_has_been_measured   and
-            variance_has_been_measured and
-            entropy_has_been_measured  and
-            norm_has_been_measured     and
-            parity_has_been_measured   and
-            everything_has_been_measured;
+void class_finite_chain_state::do_all_measurements()const {
+    measurements.length                           = MPS_Tools::Finite::Measure::length                      (*this);
+    measurements.bond_dimensions                  = MPS_Tools::Finite::Measure::bond_dimensions             (*this);
+    measurements.norm                             = MPS_Tools::Finite::Measure::norm                        (*this);
+    measurements.energy_mpo                       = MPS_Tools::Finite::Measure::energy_mpo                  (*this);
+    measurements.energy_per_site_mpo              = MPS_Tools::Finite::Measure::energy_per_site_mpo         (*this);
+    measurements.energy_variance_mpo              = MPS_Tools::Finite::Measure::energy_variance_mpo         (*this);
+    measurements.energy_variance_per_site_mpo     = MPS_Tools::Finite::Measure::energy_variance_per_site_mpo(*this);
+    measurements.spin_component_sx                = MPS_Tools::Finite::Measure::spin_component              (*this,qm::spinOneHalf::sx);
+    measurements.spin_component_sy                = MPS_Tools::Finite::Measure::spin_component              (*this,qm::spinOneHalf::sy);
+    measurements.spin_component_sz                = MPS_Tools::Finite::Measure::spin_component              (*this,qm::spinOneHalf::sz);
+    measurements.spin_components                  = MPS_Tools::Finite::Measure::spin_components             (*this);
+    measurements.entanglement_entropies           = MPS_Tools::Finite::Measure::entanglement_entropies      (*this);
 }
+

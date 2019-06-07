@@ -119,24 +119,24 @@ public:
 
 
     struct Measurements {
-        size_t length                                   = 0;
-        size_t bond_dimension                           = 0;
-        double norm                                     = 0;
-        double truncation_error                         = 0;
-        double energy_mpo, energy_per_site_mpo          = 0;
-        double energy_variance_mpo                      = 0;
-        double energy_per_site_ham                      = 0;
-        double energy_per_site_mom                      = 0;
-        double energy_variance_per_site_mpo             = 0;
-        double energy_variance_per_site_ham             = 0;
-        double energy_variance_per_site_mom             = 0;
-        double current_entanglement_entropy             = 0;
+        std::optional<size_t> length                            = {};
+        std::optional<size_t> bond_dimension                    = {};
+        std::optional<double> norm                              = {};
+        std::optional<double> truncation_error                  = {};
+        std::optional<double> energy_mpo                        = {};
+        std::optional<double> energy_per_site_mpo               = {};
+        std::optional<double> energy_variance_mpo               = {};
+        std::optional<double> energy_per_site_ham               = {};
+        std::optional<double> energy_per_site_mom               = {};
+        std::optional<double> energy_variance_per_site_mpo      = {};
+        std::optional<double> energy_variance_per_site_ham      = {};
+        std::optional<double> energy_variance_per_site_mom      = {};
+        std::optional<double> current_entanglement_entropy      = {};
     };
     mutable Measurements measurements;
-    mutable bool has_been_measured = false;
     mutable bool has_been_written  = false;
     void do_all_measurements() const;
-    void set_measured_false()  const;
+    void unset_measurements()  const;
 
 
 

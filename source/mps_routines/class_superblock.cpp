@@ -332,7 +332,7 @@ void class_superblock::enlarge_environment(int direction){
         Rblock2->set_position(HB->get_position()+1);
         environment_size = Lblock->size + Rblock->size;
     }
-    set_measured_false();
+    unset_measurements();
 }
 
 
@@ -348,15 +348,13 @@ void class_superblock::set_positions(int position){
 }
 
 
-void class_superblock::set_measured_false() const {
-    has_been_measured = false;
-    has_been_written  = false;
+void class_superblock::unset_measurements() const {
+    measurements = Measurements();
     MPS_Tools::Common::Views::components_computed = false;
 }
 
 void class_superblock::do_all_measurements() const {
     using namespace MPS_Tools::Common;
-    if (has_been_measured){return;}
     measurements.length                         = Measure::length(*this);
     measurements.bond_dimension                 = Measure::bond_dimension(*this);
     measurements.norm                           = Measure::norm(*this);
@@ -365,12 +363,11 @@ void class_superblock::do_all_measurements() const {
     measurements.energy_per_site_mpo            = Measure::energy_per_site_mpo(*this);
     measurements.energy_per_site_ham            = Measure::energy_per_site_ham(*this);
     measurements.energy_per_site_mom            = Measure::energy_per_site_mom(*this);
-    measurements.energy_variance_mpo            = Measure::energy_variance_mpo(*this, measurements.energy_mpo);
-    measurements.energy_variance_per_site_mpo   = Measure::energy_variance_per_site_mpo(*this, measurements.energy_mpo);
+    measurements.energy_variance_mpo            = Measure::energy_variance_mpo(*this);
+    measurements.energy_variance_per_site_mpo   = Measure::energy_variance_per_site_mpo(*this);
     measurements.energy_variance_per_site_ham   = Measure::energy_variance_per_site_ham(*this);
     measurements.energy_variance_per_site_mom   = Measure::energy_variance_per_site_mom(*this);
     measurements.current_entanglement_entropy   = Measure::current_entanglement_entropy(*this);
-    has_been_measured = true;
 }
 
 

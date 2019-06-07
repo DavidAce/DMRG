@@ -118,23 +118,24 @@ void MPS_Tools::Finite::H5pp::write_hamiltonian_params(const class_finite_chain_
 }
 
 void MPS_Tools::Finite::H5pp::write_all_measurements(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name){
-    h5ppFile.writeDataset(state.measurements.length                      , sim_name + "/measurements/length");
-    h5ppFile.writeDataset(state.measurements.norm                        , sim_name + "/measurements/norm");
-    h5ppFile.writeDataset(state.measurements.bond_dimensions             , sim_name + "/measurements/bond_dimensions");
-    h5ppFile.writeDataset(state.measurements.energy_per_site_mpo         , sim_name + "/measurements/energy_per_site_mpo");
-    h5ppFile.writeDataset(state.measurements.energy_variance_per_site_mpo, sim_name + "/measurements/energy_variance_per_site_mpo");
-    h5ppFile.writeDataset(state.measurements.entanglement_entropies      , sim_name + "/measurements/entanglement_entropies");
-    h5ppFile.writeDataset(state.measurements.spin_components             , sim_name + "/measurements/spin_components");
-    h5ppFile.writeDataset(state.measurements.spin_component_sx           , sim_name + "/measurements/spin_component_sx");
-    h5ppFile.writeDataset(state.measurements.spin_component_sy           , sim_name + "/measurements/spin_component_sy");
-    h5ppFile.writeDataset(state.measurements.spin_component_sz           , sim_name + "/measurements/spin_component_sz");
+    state.do_all_measurements();
+    h5ppFile.writeDataset(state.measurements.length.value()                      , sim_name + "/measurements/length");
+    h5ppFile.writeDataset(state.measurements.norm.value()                        , sim_name + "/measurements/norm");
+    h5ppFile.writeDataset(state.measurements.bond_dimensions.value()             , sim_name + "/measurements/bond_dimensions");
+    h5ppFile.writeDataset(state.measurements.energy_per_site_mpo.value()         , sim_name + "/measurements/energy_per_site_mpo");
+    h5ppFile.writeDataset(state.measurements.energy_variance_per_site_mpo.value(), sim_name + "/measurements/energy_variance_per_site_mpo");
+    h5ppFile.writeDataset(state.measurements.entanglement_entropies.value()      , sim_name + "/measurements/entanglement_entropies");
+    h5ppFile.writeDataset(state.measurements.spin_components.value()             , sim_name + "/measurements/spin_components");
+    h5ppFile.writeDataset(state.measurements.spin_component_sx.value()           , sim_name + "/measurements/spin_component_sx");
+    h5ppFile.writeDataset(state.measurements.spin_component_sy.value()           , sim_name + "/measurements/spin_component_sy");
+    h5ppFile.writeDataset(state.measurements.spin_component_sz.value()           , sim_name + "/measurements/spin_component_sz");
 
 }
 
 
 void MPS_Tools::Finite::H5pp::write_closest_parity_projection(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name, std::string paulistring){
     auto state_projected = MPS_Tools::Finite::Ops::get_closest_parity_state(state,paulistring);
-    state_projected.set_measured_false();
+    state_projected.unset_measurements();
     state_projected.do_all_measurements();
     MPS_Tools::Finite::H5pp::write_all_state(state_projected,h5ppFile, sim_name + "/projections/" + paulistring);
     MPS_Tools::Finite::H5pp::write_all_measurements(state_projected,h5ppFile, sim_name + "/projections/" + paulistring);

@@ -43,7 +43,7 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
     MPS_Tools::log->trace("Applying MPO's");
-    state.set_measured_false();
+    state.unset_measurements();
 
     auto mpo = mpos.begin();
 
@@ -128,7 +128,7 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
 void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
     MPS_Tools::log->trace("Normalizing chain");
-    state.set_measured_false();
+    state.unset_measurements();
     auto norm_old = MPS_Tools::Finite::Measure::norm(state);
     if (norm_old == 1){return;}
 //    std::cout << "Norm              (before normalization): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
@@ -233,7 +233,7 @@ class_finite_chain_state MPS_Tools::Finite::Ops::set_random_product_state(const 
     if(get_parity){
         product_state = get_closest_parity_state(product_state, paulimatrix);
     }
-    product_state.set_measured_false();
+    product_state.unset_measurements();
     return product_state;
 }
 
@@ -268,7 +268,7 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const 
     else{
         MPS_Tools::log->warn(R"(Wrong pauli string. Expected one of  "sx","sy" or "sz". Got: )" + paulistring);
         auto spin_components = state.measurements.spin_components;
-        auto max_idx = std::distance(spin_components.begin(), std::max_element(spin_components.begin(),spin_components.end()));
+        auto max_idx = std::distance(spin_components.value().begin(), std::max_element(spin_components.value().begin(),spin_components.value().end()));
         if(max_idx == 0)      {return get_closest_parity_state(state,"sx"); }
         else if(max_idx == 1) {return get_closest_parity_state(state,"sy"); }
         else if(max_idx == 2) {return get_closest_parity_state(state,"sz"); }

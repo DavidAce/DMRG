@@ -54,16 +54,6 @@ public:
 
 
 
-    mutable bool energy_has_been_measured      = false;
-    mutable bool variance_has_been_measured    = false;
-    mutable bool entropy_has_been_measured     = false;
-    mutable bool norm_has_been_measured        = false;
-    mutable bool parity_has_been_measured      = false;
-    mutable bool everything_has_been_measured  = false;
-    bool has_been_measured() const;
-
-    void set_measured_true()  const;
-    void set_measured_false() const;
 
     int    get_sweeps()                         const ;
     void   set_sweeps(int num_sweeps_) {num_sweeps = num_sweeps_;}
@@ -99,21 +89,23 @@ public:
 
 
     struct Measurements {
-        int    length                                   = 0;
-        std::vector<int> bond_dimensions                ;
-        double norm                                     = 0;
-        double energy_mpo, energy_per_site_mpo          = 0;
-        double energy_per_site_ham                      = 0;
-        double energy_variance_mpo                      = 0;
-        double energy_variance_per_site_mpo             = 0;
-        double spin_component_sx                        = 0;
-        double spin_component_sy                        = 0;
-        double spin_component_sz                        = 0;
-        std::vector<double> spin_components                ;
-        std::vector<double> entanglement_entropies         ;
+        std::optional<int>                  length                                  = {};
+        std::optional<std::vector<int>>     bond_dimensions                         = {};
+        std::optional<double>               norm                                    = {};
+        std::optional<double>               energy_mpo                              = {};
+        std::optional<double>               energy_per_site_mpo                     = {};
+        std::optional<double>               energy_variance_mpo                     = {};
+        std::optional<double>               energy_variance_per_site_mpo            = {};
+        std::optional<double>               midchain_entanglement_entropy           = {};
+        std::optional<double>               spin_component_sx                       = {};
+        std::optional<double>               spin_component_sy                       = {};
+        std::optional<double>               spin_component_sz                       = {};
+        std::optional<std::vector<double>>  spin_components                         = {};
+        std::optional<std::vector<double>>  entanglement_entropies                  = {};
     };
     mutable Measurements measurements;
-
+    void unset_measurements() const;
+    void do_all_measurements()const;
 };
 
 

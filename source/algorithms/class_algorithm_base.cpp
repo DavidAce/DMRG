@@ -85,8 +85,8 @@ void class_algorithm_base::single_DMRG_step(eigutils::eigSetting::Ritz ritz){
 //        superblock->HA->set_reduced_energy(superblock->E_optimal);
 //        superblock->HB->set_reduced_energy(superblock->E_optimal);
 //    }
-//    measurement->set_measured_false();
-    superblock->set_measured_false();
+//    measurement->unset_measurements();
+    superblock->unset_measurements();
     t_sim.toc();
     sim_state.wall_time = t_tot.get_age();
     sim_state.simu_time = t_sim.get_age();
@@ -676,17 +676,17 @@ void class_algorithm_base::print_status_update() {
 
     switch(sim_type) {
         case SimulationType::iDMRG:
-            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mpo;
-            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_ham;
-            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mom;
+            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mpo.value();
+            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_ham.value();
+            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mom.value();
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mpo;
+            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mpo.value();
             break;
         case SimulationType::iTEBD:
-            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_ham;
-            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mom;
+            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_ham.value();
+            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mom.value();
             break;
     }
 
@@ -697,26 +697,26 @@ void class_algorithm_base::print_status_update() {
     report << left  << "log₁₀ σ²(E): ";
     switch(sim_type) {
         case SimulationType::iDMRG:
-            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mpo);
-            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_ham);
-            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mom);
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mpo.value());
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_ham.value());
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mom.value());
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            report << setw(14) << setprecision(6)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mpo);
+            report << setw(14) << setprecision(6)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mpo.value());
             break;
         case SimulationType::iTEBD:
-            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_ham);
-            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mom);
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_ham.value());
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mom.value());
             break;
     }
 
 
-    report << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << superblock->measurements.current_entanglement_entropy;
+    report << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << superblock->measurements.current_entanglement_entropy.value();
     report << left  << "χmax: "                       << setw(4)  << setprecision(3)     << fixed   << chi_max();
-    report << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << superblock->measurements.bond_dimension;
-    report << left  << "log₁₀ trunc: "                << setw(10) << setprecision(4)     << fixed   << std::log10(superblock->measurements.truncation_error);
-    report << left  << "Sites: "                      << setw(6)  << setprecision(1)     << fixed   << superblock->measurements.length;
+    report << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << superblock->measurements.bond_dimension.value();
+    report << left  << "log₁₀ trunc: "                << setw(10) << setprecision(4)     << fixed   << std::log10(superblock->measurements.truncation_error.value());
+    report << left  << "Sites: "                      << setw(6)  << setprecision(1)     << fixed   << superblock->measurements.length.value();
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
@@ -779,44 +779,44 @@ void class_algorithm_base::print_status_full(){
     log->info("Iterations            = {:<16d}"    , sim_state.iteration);
     switch(sim_type){
         case SimulationType::iDMRG:
-            log->info("Energy MPO            = {:<16.16f}" , superblock->measurements.energy_per_site_mpo);
-            log->info("Energy HAM            = {:<16.16f}" , superblock->measurements.energy_per_site_ham);
-            log->info("Energy MOM            = {:<16.16f}" , superblock->measurements.energy_per_site_mom);
+            log->info("Energy MPO            = {:<16.16f}" , superblock->measurements.energy_per_site_mpo.value());
+            log->info("Energy HAM            = {:<16.16f}" , superblock->measurements.energy_per_site_ham.value());
+            log->info("Energy MOM            = {:<16.16f}" , superblock->measurements.energy_per_site_mom.value());
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            log->info("Energy MPO            = {:<16.16f}" , superblock->measurements.energy_per_site_mpo);
+            log->info("Energy MPO            = {:<16.16f}" , superblock->measurements.energy_per_site_mpo.value());
             break;
         case SimulationType::iTEBD:
-            log->info("Energy HAM            = {:<16.16f}" , superblock->measurements.energy_per_site_ham);
-            log->info("Energy MOM            = {:<16.16f}" , superblock->measurements.energy_per_site_mom);
+            log->info("Energy HAM            = {:<16.16f}" , superblock->measurements.energy_per_site_ham.value());
+            log->info("Energy MOM            = {:<16.16f}" , superblock->measurements.energy_per_site_mom.value());
             break;
     }
     switch(sim_type){
         case SimulationType::iDMRG:
-            log->info("log₁₀ σ²(E) MPO       = {:<16.16f}" , superblock->measurements.energy_per_site_mpo);
-            log->info("log₁₀ σ²(E) HAM       = {:<16.16f}" , superblock->measurements.energy_per_site_ham);
-            log->info("log₁₀ σ²(E) MOM       = {:<16.16f}" , superblock->measurements.energy_per_site_mom);
+            log->info("log₁₀ σ²(E) MPO       = {:<16.16f}" , superblock->measurements.energy_per_site_mpo.value());
+            log->info("log₁₀ σ²(E) HAM       = {:<16.16f}" , superblock->measurements.energy_per_site_ham.value());
+            log->info("log₁₀ σ²(E) MOM       = {:<16.16f}" , superblock->measurements.energy_per_site_mom.value());
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            log->info("log₁₀ σ²(E) MPO       = {:<16.16f}" , log10(superblock->measurements.energy_variance_per_site_mpo));
+            log->info("log₁₀ σ²(E) MPO       = {:<16.16f}" , log10(superblock->measurements.energy_variance_per_site_mpo.value()));
             break;
         case SimulationType::iTEBD:
-            log->info("log₁₀ σ²(E) HAM       = {:<16.16f}" , superblock->measurements.energy_per_site_ham);
-            log->info("log₁₀ σ²(E) MOM       = {:<16.16f}" , superblock->measurements.energy_per_site_mom);
+            log->info("log₁₀ σ²(E) HAM       = {:<16.16f}" , superblock->measurements.energy_per_site_ham.value());
+            log->info("log₁₀ σ²(E) MOM       = {:<16.16f}" , superblock->measurements.energy_per_site_mom.value());
             break;
     }
 
-    log->info("Entanglement Entropy  = {:<16.16f}" , superblock->measurements.current_entanglement_entropy);
+    log->info("Entanglement Entropy  = {:<16.16f}" , superblock->measurements.current_entanglement_entropy.value());
     log->info("χmax                  = {:<16d}"    , chi_max()                                            );
-    log->info("χ                     = {:<16d}"    , superblock->measurements.bond_dimension              );
-    log->info("log₁₀ truncation:     = {:<16.16f}" , log10(superblock->measurements.truncation_error)     );
+    log->info("χ                     = {:<16d}"    , superblock->measurements.bond_dimension.value()      );
+    log->info("log₁₀ truncation:     = {:<16.16f}" , log10(superblock->measurements.truncation_error.value()));
 
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            log->info("Chain length          = {:<16d}"    , superblock->measurements.length);
+            log->info("Chain length          = {:<16d}"    , superblock->measurements.length.value());
             log->info("Sweep                 = {:<16d}"    , state->get_sweeps());
             break;
         case SimulationType::iTEBD:
