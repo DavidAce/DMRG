@@ -60,7 +60,7 @@ double MPS_Tools::Finite::Opt::internals::direct_functor::operator()(const Eigen
 //                << " Variance: "   << std::setw(18)   << log10var
 //                << " Energy : "    << std::setw(18)   << energy
 //                << " Energy t : "  << std::setw(18)   << energy_target
-//                << " Energy w : "  << std::setw(18)   << energy_window
+//                << " Energy w : "  << std::setw(18)   << energy_density_window
 //                << " Energy d : "  << std::setw(18)   << energy_dens
 //                << " Energy td : " << std::setw(18)   << energy_target_dens
 //                << " Energy o : "  << std::setw(18)   << energy_offset

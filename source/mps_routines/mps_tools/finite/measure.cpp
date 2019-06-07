@@ -54,7 +54,7 @@ int MPS_Tools::Finite::Measure::length(const class_finite_chain_state & state){
 }
 
 double MPS_Tools::Finite::Measure::norm(const class_finite_chain_state & state){
-    if (state.norm_has_been_measured){return state.measurements.norm;}
+    if (state.measurements.norm){return state.measurements.norm.value();}
     auto mpsL  = state.MPS_L.begin();
     auto endL  = state.MPS_L.end();
     const Eigen::Tensor<Scalar,3>  & A = mpsL->ref_A(); // std::get<1>(*mpsL);
@@ -101,7 +101,7 @@ double MPS_Tools::Finite::Measure::norm(const class_finite_chain_state & state){
 
 
 std::vector<int> MPS_Tools::Finite::Measure::bond_dimensions(const class_finite_chain_state & state){
-//    ccout(3) << "STATUS: Measuring bond dimension\n";
+    if (state.measurements.bond_dimensions){return state.measurements.bond_dimensions.value();}
     std::vector<int> bond_dimensions;
     for (auto &mps : state.MPS_L){
         bond_dimensions.emplace_back(mps.get_L().dimension(0));
@@ -115,8 +115,7 @@ std::vector<int> MPS_Tools::Finite::Measure::bond_dimensions(const class_finite_
 
 
 double MPS_Tools::Finite::Measure::energy_mpo(const class_finite_chain_state & state){
-//    ccout(3) << "STATUS: Measuring energy_mpo\n";
-    if (state.energy_has_been_measured){ return state.measurements.energy_mpo;}
+    if (state.measurements.energy_mpo){return state.measurements.energy_mpo.value();}
     auto theta = MPS_Tools::Common::Views::get_theta(state);
     Eigen::Tensor<Scalar, 0>  E =
             state.ENV_L.back().block
@@ -129,26 +128,17 @@ double MPS_Tools::Finite::Measure::energy_mpo(const class_finite_chain_state & s
         throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
     }
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
-    state.energy_has_been_measured = true;
     return std::real(E(0)) ;
 }
 
 
 double MPS_Tools::Finite::Measure::energy_per_site_mpo(const class_finite_chain_state &state){
-    if (state.energy_has_been_measured){
-        return state.measurements.energy_mpo/state.get_length();
-    }else{
-        return energy_mpo(state)/state.get_length();
-    }
+    return energy_mpo(state)/state.get_length();
 }
 
 
-
-
-
 double MPS_Tools::Finite::Measure::energy_variance_mpo(const class_finite_chain_state & state){
-//    t_var_mpo.tic();
-    if (state.variance_has_been_measured){ return state.measurements.energy_variance_mpo;}
+    if (state.measurements.energy_variance_mpo){return state.measurements.energy_variance_mpo.value();}
     double energy = MPS_Tools::Finite::Measure::energy_mpo(state);
     auto theta = state.get_theta();
     Eigen::Tensor<Scalar, 0> H2 =
@@ -160,57 +150,53 @@ double MPS_Tools::Finite::Measure::energy_variance_mpo(const class_finite_chain_
                     .contract(state.MPO_R.front()->MPO()   , idx({4,3},{0,2}))
                     .contract(theta.conjugate()            , idx({0,3,5},{1,0,2}))
                     .contract(state.ENV2_R.front().block   , idx({0,3,1,2},{0,1,2,3}));
-    state.variance_has_been_measured = true;
     return std::abs(H2(0) - energy*energy);
 }
 
 
 double MPS_Tools::Finite::Measure::energy_variance_per_site_mpo(const class_finite_chain_state & state){
-    if (state.variance_has_been_measured){return state.measurements.energy_variance_mpo/state.get_length();}
+    if (state.measurements.energy_variance_per_site_mpo){return state.measurements.energy_variance_per_site_mpo.value();}
     else{return energy_variance_mpo(state)/state.get_length();}
 }
 
 
 
 double MPS_Tools::Finite::Measure::midchain_entanglement_entropy(const class_finite_chain_state & state){
-//    t_entropy.tic();
+    if (state.measurements.midchain_entanglement_entropy){return state.measurements.midchain_entanglement_entropy.value();}
     auto & LC = state.MPS_C;
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
     return std::real(SA(0));
-//    t_entropy.toc();
 }
 
 
 std::vector<double> MPS_Tools::Finite::Measure::entanglement_entropies(const class_finite_chain_state & state){
-    if (state.entropy_has_been_measured){return state.measurements.entanglement_entropies;}
-//    t_entropy.tic();
+    if (state.measurements.entanglement_entropies){return state.measurements.entanglement_entropies.value();}
     std::vector<double> SA;
     for (auto & mps : state.MPS_L) {
         auto &L = mps.get_L();
         Eigen::Tensor<Scalar, 0> SA_L = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
         SA.emplace_back(std::real(SA_L(0)));
     }
-    SA.emplace_back(midchain_entanglement_entropy(state));
+    state.measurements.midchain_entanglement_entropy = midchain_entanglement_entropy(state);
+    SA.emplace_back(state.measurements.midchain_entanglement_entropy.value());
     for (auto & mps : state.MPS_R) {
         auto &L = mps.get_L();
         Eigen::Tensor<Scalar, 0> SA_R = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
         SA.emplace_back(std::real(SA_R(0)));
     }
     return SA;
-//    t_entropy.toc();
 }
 
 
 std::vector<double> MPS_Tools::Finite::Measure::spin_components(const class_finite_chain_state &state){
-    if (state.parity_has_been_measured){return state.measurements.spin_components;}
+    if (state.measurements.spin_components){return state.measurements.spin_components.value();}
     state.measurements.spin_component_sx                      = Measure::spin_component(state, qm::spinOneHalf::sx);
     state.measurements.spin_component_sy                      = Measure::spin_component(state, qm::spinOneHalf::sy);
     state.measurements.spin_component_sz                      = Measure::spin_component(state, qm::spinOneHalf::sz);
-    state.parity_has_been_measured = true;
-    return {state.measurements.spin_component_sx,
-            state.measurements.spin_component_sy,
-            state.measurements.spin_component_sz};
+    return {state.measurements.spin_component_sx.value(),
+            state.measurements.spin_component_sy.value(),
+            state.measurements.spin_component_sz.value()};
 }
 
 

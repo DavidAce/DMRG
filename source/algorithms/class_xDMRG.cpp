@@ -55,6 +55,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
     min_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
     max_saturation_length = 1 * (int)(2.0 * settings::xdmrg::num_sites);
+
 //    settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(int)(std::log2(chi_max())/2));
 }
 
@@ -140,8 +141,8 @@ void class_xDMRG::run()
 void class_xDMRG::run_preprocessing() {
 
     log->info("Starting {} preprocessing", sim_name);
-    sim_state.energy_dens_target = settings::xdmrg::energy_density;
-    sim_state.energy_dens_window = settings::xdmrg::energy_window;
+    sim_state.energy_dens_target = settings::xdmrg::energy_density_target;
+    sim_state.energy_dens_window = settings::xdmrg::energy_density_window;
 
     find_energy_range();
     MPS_Tools::Finite::Print::print_hamiltonians(*state);
@@ -193,8 +194,8 @@ void class_xDMRG::run_postprocessing(){
 
 //    MPS_Tools::Finite::Debug::check_normalization_routine(*state);
 
-    state->set_measured_false();
-    superblock->set_measured_false();
+    state->unset_measurements();
+    superblock->unset_measurements();
     log->info("Storing state and measurements to file");
     store_state_and_measurements_to_file(true);
     log->info("Finished {} postprocessing",sim_name);
@@ -253,8 +254,8 @@ void class_xDMRG::single_xDMRG_step()
     superblock->truncate_MPS(theta, sim_state.chi_temp, settings::precision::SVDThreshold);
     t_svd.toc();
 
-    superblock->set_measured_false();
-    state->set_measured_false();
+    superblock->unset_measurements();
+    state->unset_measurements();
 
     t_sim.toc();
 
@@ -276,13 +277,13 @@ void class_xDMRG::check_convergence(){
 
 
     bool outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  > sim_state.energy_dens_window;
-    if (outside_of_window and (sim_state.variance_mpo_has_saturated or sim_state.variance_mpo_has_converged))
+    if (outside_of_window and (sim_state.variance_mpo_saturated_for > min_saturation_length or sim_state.variance_mpo_has_converged))
     {
-        log->info("Resetting to product state -- saturated outside of energy window. Energy density: {}",sim_state.energy_dens );
+        log->info("Resetting to product state -- saturated outside of energy window. Energy density: {}, Energy window: {} --> {}",sim_state.energy_dens, sim_state.energy_dens_window, std::min(1.2*sim_state.energy_dens_window, 0.5) );
         int counter = 0;
         while(outside_of_window){
             reset_full_mps_to_random_product_state("sx");
-            sim_state.energy_now = MPS_Tools::Common::Measure::energy_per_site_mpo(*superblock);
+            sim_state.energy_now  = MPS_Tools::Common::Measure::energy_per_site_mpo(*superblock);
             sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
             outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  >= sim_state.energy_dens_window;
             counter++;
@@ -290,7 +291,9 @@ void class_xDMRG::check_convergence(){
         log->info("Energy initial (per site) = {} | density = {} | retries = {}", sim_state.energy_now, sim_state.energy_dens,counter );
         clear_saturation_status();
         projected_during_saturation      = false;
-
+        sim_state.energy_dens_window = std::min(1.2*sim_state.energy_dens_window, 0.5);
+        sim_state.energy_ubound      = sim_state.energy_target + sim_state.energy_dens_window * (sim_state.energy_max-sim_state.energy_min);
+        sim_state.energy_lbound      = sim_state.energy_target - sim_state.energy_dens_window * (sim_state.energy_max-sim_state.energy_min);
     }
 
 
@@ -366,7 +369,7 @@ void class_xDMRG::find_energy_range() {
 
     }
     compute_observables();
-    sim_state.energy_min = superblock->measurements.energy_per_site_mpo;
+    sim_state.energy_min = superblock->measurements.energy_per_site_mpo.value();
 
     reset_full_mps_to_random_product_state("sx");
     // Find energy maximum
@@ -384,12 +387,11 @@ void class_xDMRG::find_energy_range() {
         sim_state.iteration = state->get_sweeps();
     }
     compute_observables();
-    sim_state.energy_max = superblock->measurements.energy_per_site_mpo;
-    sim_state.energy_now = superblock->measurements.energy_per_site_mpo;
-
-    sim_state.energy_target      = sim_state.energy_min    + settings::xdmrg::energy_density * (sim_state.energy_max-sim_state.energy_min);
-    sim_state.energy_ubound      = sim_state.energy_target + settings::xdmrg::energy_window  * (sim_state.energy_max-sim_state.energy_min);
-    sim_state.energy_lbound      = sim_state.energy_target - settings::xdmrg::energy_window  * (sim_state.energy_max-sim_state.energy_min);
+    sim_state.energy_max = superblock->measurements.energy_per_site_mpo.value();
+    sim_state.energy_now = superblock->measurements.energy_per_site_mpo.value();
+    sim_state.energy_target      = sim_state.energy_min    + sim_state.energy_dens_target  * (sim_state.energy_max - sim_state.energy_min);
+    sim_state.energy_ubound      = sim_state.energy_target + sim_state.energy_dens_window  * (sim_state.energy_max - sim_state.energy_min);
+    sim_state.energy_lbound      = sim_state.energy_target - sim_state.energy_dens_window  * (sim_state.energy_max - sim_state.energy_min);
     sim_state.energy_dens        = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
     log->info("Energy minimum (per site) = {}", sim_state.energy_min);
     log->info("Energy maximum (per site) = {}", sim_state.energy_max);
@@ -408,7 +410,7 @@ void class_xDMRG::find_energy_range() {
         if(counterA >= 100){
             counterA = 0;
             if(sim_state.energy_dens_window >= 0.5){break;}
-            sim_state.energy_dens_window *= 2;
+            sim_state.energy_dens_window = std::min(1.2*sim_state.energy_dens_window, 0.5);
             sim_state.energy_ubound       = sim_state.energy_target +  sim_state.energy_dens_window*(sim_state.energy_max-sim_state.energy_min);
             sim_state.energy_lbound       = sim_state.energy_target -  sim_state.energy_dens_window*(sim_state.energy_max-sim_state.energy_min);
         }
@@ -458,19 +460,19 @@ void class_xDMRG::store_table_entry_progress(bool force){
             sim_state.iteration,
             state->get_length(),
             state->get_position(),
-            superblock->measurements.bond_dimension,
+            superblock->measurements.bond_dimension.value(),
             settings::xdmrg::chi_max,
-            superblock->measurements.energy_per_site_mpo,
-            std::numeric_limits<double>::quiet_NaN(),
-            std::numeric_limits<double>::quiet_NaN(),
+            superblock->measurements.energy_per_site_mpo.value(),
+            superblock->measurements.energy_per_site_ham.value(),
+            superblock->measurements.energy_per_site_mom.value(),
             sim_state.energy_min,
             sim_state.energy_max,
             sim_state.energy_target,
-            superblock->measurements.energy_variance_per_site_mpo,
-            std::numeric_limits<double>::quiet_NaN(),
-            std::numeric_limits<double>::quiet_NaN(),
-            superblock->measurements.current_entanglement_entropy,
-            superblock->measurements.truncation_error,
+            superblock->measurements.energy_variance_per_site_mpo.value(),
+            superblock->measurements.energy_variance_per_site_ham.value(),
+            superblock->measurements.energy_variance_per_site_mom.value(),
+            superblock->measurements.current_entanglement_entropy.value(),
+            superblock->measurements.truncation_error.value(),
             t_tot.get_age());
     t_sto.toc();
 }

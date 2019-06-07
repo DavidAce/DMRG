@@ -77,7 +77,7 @@ void class_iTEBD::single_TEBD_step(long chi){
         if (&U != &unitary_time_evolving_operators.back()) {
             superblock->swap_AB();        }
     }
-    superblock->set_measured_false();
+    superblock->unset_measurements();
     t_sim.toc();
     sim_state.wall_time = t_tot.get_age();
     sim_state.simu_time = t_sim.get_age();
@@ -146,17 +146,17 @@ void class_iTEBD::store_table_entry_progress(bool force){
     t_sto.tic();
     table_itebd->append_record(
             sim_state.iteration,
-            superblock->measurements.bond_dimension,
+            superblock->measurements.bond_dimension.value(),
             settings::itebd::chi_max,
             sim_state.delta_t,
-            superblock->measurements.energy_per_site_mpo,
-            superblock->measurements.energy_per_site_ham,
-            superblock->measurements.energy_per_site_mom,
-            superblock->measurements.energy_variance_per_site_mpo,
-            superblock->measurements.energy_variance_per_site_ham,
-            superblock->measurements.energy_variance_per_site_mom,
-            superblock->measurements.current_entanglement_entropy,
-            superblock->measurements.truncation_error,
+            superblock->measurements.energy_per_site_mpo.value(),
+            superblock->measurements.energy_per_site_ham.value(),
+            superblock->measurements.energy_per_site_mom.value(),
+            superblock->measurements.energy_variance_per_site_mpo.value(),
+            superblock->measurements.energy_variance_per_site_ham.value(),
+            superblock->measurements.energy_variance_per_site_mom.value(),
+            superblock->measurements.current_entanglement_entropy.value(),
+            superblock->measurements.truncation_error.value(),
             sim_state.phys_time,
             t_tot.get_age());
 

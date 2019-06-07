@@ -18,9 +18,9 @@ MPS_Tools::Finite::Opt::internals::guided_functor::guided_functor(
 
 double MPS_Tools::Finite::Opt::internals::guided_functor::windowed_func_abs(double x,double window){
     if (std::abs(x) >= window){
-        return std::abs(x);
+        return std::abs(x)-window;
     }else{
-        return std::abs(window);
+        return 0;
     }
 }
 double MPS_Tools::Finite::Opt::internals::guided_functor::windowed_grad_abs(double x,double window){
@@ -35,10 +35,15 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::windowed_grad_abs(doub
 
 double MPS_Tools::Finite::Opt::internals::guided_functor::windowed_func_pow(double x,double window){
     if (std::abs(x) >= window){
-        return std::pow(x,2);
+        return x*x - window*window;
     }else{
-        return std::pow(window,2);
+        return 0.0;
     }
+//    if (std::abs(x) >= window){
+//        return std::pow(x,2);
+//    }else{
+//        return std::pow(window,2);
+//    }
 }
 double MPS_Tools::Finite::Opt::internals::guided_functor::windowed_grad_pow(double x,double window){
     if (std::abs(x) >= window){
@@ -58,9 +63,9 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
     double energy_func, energy_grad;
     double norm_func,norm_grad;
     Eigen::VectorXd vH, vH2;
-    Eigen::Map<const Eigen::VectorXd> v (v_and_lambdas.data(), v_and_lambdas.size()-0);
-//    Eigen::VectorXd lambdas = v_and_lambdas.tail(1);
-    auto lambdas =    Eigen::VectorXd::Ones(1) ;
+    Eigen::Map<const Eigen::VectorXd> v (v_and_lambdas.data(), v_and_lambdas.size()-1);
+    Eigen::VectorXd lambdas = v_and_lambdas.tail(1);
+//    auto lambdas =    Eigen::VectorXd::Ones(1) ;
 //    auto lambdas =  iteration > 3 ? Eigen::VectorXd::Zero(1) : Eigen::VectorXd::Ones(1);
 //    lambdas.setConstant(toggle);
     #pragma omp parallel
@@ -87,7 +92,6 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
             var            = vH2v/vv - energy*energy;
             variance       = var;
             var            = var == 0  ? std::numeric_limits<double>::epsilon() : var;
-
             norm_offset    = vv - 1.0 ;
             norm_func      = windowed_func_pow(norm_offset,1e-1);
             norm_grad      = windowed_grad_pow(norm_offset,1e-1);
@@ -101,11 +105,10 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
         auto vv_1  = std::pow(vv,-1);
         auto vv_2  = std::pow(vv,-2);
         auto var_1 = 1.0/var/std::log(10);
-
         grad.head(v.size())  = var_1 * (2.0*(vH2*vv_1 - v * vH2v * vv_2) - 4.0 * energy * (vH * vv_1 - v * vHv * vv_2))
                                + lambdas(0) * energy_grad * 2.0 * (vH * vv_1 - v * vHv * vv_2)
                                + norm_grad * 2.0 * v;
-//        grad(grad.size()-1)  = energy_func;
+        grad(grad.size()-1)  = energy_func;
     }
 
 
@@ -113,7 +116,7 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
 //                << " Variance: "   << std::setw(18)   << log10var
 //                << " Energy : "    << std::setw(18)   << energy
 //                << " Energy t : "  << std::setw(18)   << energy_target
-//                << " Energy w : "  << std::setw(18)   << energy_window
+//                << " Energy w : "  << std::setw(18)   << energy_density_window
 //                << " Energy d : "  << std::setw(18)   << energy_dens
 //                << " Energy td : " << std::setw(18)   << energy_target_dens
 //                << " Energy o : "  << std::setw(18)   << energy_offset

@@ -114,8 +114,8 @@ namespace settings {
         inline int     print_freq     = 100;                     /*!< Print frequency for console output. In units of sweeps. (0 = off). */
         inline int     store_freq     = 100;                     /*!< Store frequency,for output file buffer. In units of sweeps. (0 = off). */
         inline bool    store_wavefn   = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-        inline double  energy_density = 0.5;                     /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
-        inline double  energy_window  = 0.01;                    /*!< Accept states inside of energy_target +- energy_window. */
+        inline double  energy_density_target = 0.5;                     /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
+        inline double  energy_density_window  = 0.01;                    /*!< Accept states inside of energy_target +- energy_window. */
 
     }
 

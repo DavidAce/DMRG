@@ -71,16 +71,16 @@ void settings::load_from_file(class_settings_reader &indata){
     //Parameters controlling excited state DMRG
     xdmrg::on                     = indata.find_parameter<bool>   ("xdmrg::on"         , xdmrg::on);
     if(xdmrg::on){
-        xdmrg::num_sites          = indata.find_parameter<int>    ("xdmrg::num_sites "     , xdmrg::num_sites);
-        xdmrg::max_sweeps         = indata.find_parameter<int>    ("xdmrg::max_sweeps "    , xdmrg::max_sweeps);
-        xdmrg::min_sweeps         = indata.find_parameter<int>    ("xdmrg::min_sweeps "    , xdmrg::min_sweeps);
-        xdmrg::chi_max            = indata.find_parameter<int>    ("xdmrg::chi_max"        , xdmrg::chi_max);
-        xdmrg::chi_grow           = indata.find_parameter<bool>   ("xdmrg::chi_grow"       , xdmrg::chi_grow);
-        xdmrg::print_freq         = indata.find_parameter<int>    ("xdmrg::print_freq "    , xdmrg::print_freq);
-        xdmrg::store_freq         = indata.find_parameter<int>    ("xdmrg::store_freq "    , xdmrg::store_freq);
-        xdmrg::store_wavefn       = indata.find_parameter<bool>   ("xdmrg::store_wavefn"   , xdmrg::store_wavefn);
-        xdmrg::energy_density     = indata.find_parameter<double> ("xdmrg::energy_density" , xdmrg::energy_density);
-        xdmrg::energy_window      = indata.find_parameter<double> ("xdmrg::energy_window"  , xdmrg::energy_window);
+        xdmrg::num_sites                = indata.find_parameter<int>    ("xdmrg::num_sites "     , xdmrg::num_sites);
+        xdmrg::max_sweeps               = indata.find_parameter<int>    ("xdmrg::max_sweeps "    , xdmrg::max_sweeps);
+        xdmrg::min_sweeps               = indata.find_parameter<int>    ("xdmrg::min_sweeps "    , xdmrg::min_sweeps);
+        xdmrg::chi_max                  = indata.find_parameter<int>    ("xdmrg::chi_max"        , xdmrg::chi_max);
+        xdmrg::chi_grow                 = indata.find_parameter<bool>   ("xdmrg::chi_grow"       , xdmrg::chi_grow);
+        xdmrg::print_freq               = indata.find_parameter<int>    ("xdmrg::print_freq "    , xdmrg::print_freq);
+        xdmrg::store_freq               = indata.find_parameter<int>    ("xdmrg::store_freq "    , xdmrg::store_freq);
+        xdmrg::store_wavefn             = indata.find_parameter<bool>   ("xdmrg::store_wavefn"   , xdmrg::store_wavefn);
+        xdmrg::energy_density_target    = indata.find_parameter<double> ("xdmrg::energy_density_target"  , xdmrg::energy_density_target);
+        xdmrg::energy_density_window    = indata.find_parameter<double> ("xdmrg::energy_density_window"  , xdmrg::energy_density_window);
     }
 
 

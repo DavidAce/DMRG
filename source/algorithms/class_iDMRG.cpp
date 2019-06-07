@@ -85,21 +85,21 @@ void class_iDMRG::store_table_entry_progress(bool force){
     t_sto.tic();
     table_idmrg->append_record(
             sim_state.iteration,
-            superblock->measurements.length,
+            superblock->measurements.length.value(),
             sim_state.iteration,
-            superblock->measurements.bond_dimension,
+            superblock->measurements.bond_dimension.value(),
             settings::idmrg::chi_max,
-            superblock->measurements.energy_per_site_mpo,
-            superblock->measurements.energy_per_site_ham,
-            superblock->measurements.energy_per_site_mom,
+            superblock->measurements.energy_per_site_mpo.value(),
+            superblock->measurements.energy_per_site_ham.value(),
+            superblock->measurements.energy_per_site_mom.value(),
             std::numeric_limits<double>::quiet_NaN(),
             std::numeric_limits<double>::quiet_NaN(),
             std::numeric_limits<double>::quiet_NaN(),
-            superblock->measurements.energy_variance_per_site_mpo ,
-            superblock->measurements.energy_variance_per_site_ham,
-            superblock->measurements.energy_variance_per_site_mom,
-            superblock->measurements.current_entanglement_entropy,
-            superblock->measurements.truncation_error,
+            superblock->measurements.energy_variance_per_site_mpo.value(),
+            superblock->measurements.energy_variance_per_site_ham.value(),
+            superblock->measurements.energy_variance_per_site_mom.value(),
+            superblock->measurements.current_entanglement_entropy.value(),
+            superblock->measurements.truncation_error.value(),
             t_tot.get_age());
 
 

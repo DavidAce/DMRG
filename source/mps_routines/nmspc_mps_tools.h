@@ -221,8 +221,6 @@ namespace MPS_Tools{
         }
 
         namespace Measure {
-
-            extern void   set_not_measured                (const class_superblock & superblock);
             extern int    length                          (const class_superblock & superblock);
             extern int    bond_dimension                  (const class_superblock & superblock);
             extern double truncation_error                (const class_superblock & superblock);
@@ -232,16 +230,15 @@ namespace MPS_Tools{
             extern double energy_per_site_mpo             (const class_superblock & superblock);
             extern double energy_per_site_ham             (const class_superblock & superblock);
             extern double energy_per_site_mom             (const class_superblock & superblock);
+            extern double energy_variance_mpo             (const class_superblock & superblock, const Eigen::Tensor<std::complex<double>,4> &theta, double &energy_mpo);
+            extern double energy_variance_mpo             (const class_superblock & superblock, const Eigen::Tensor<std::complex<double>,4> &theta);
             extern double energy_variance_mpo             (const class_superblock & superblock);
-            extern double energy_variance_mpo             (const class_superblock & superblock, const Eigen::Tensor<std::complex<double>,4> &theta, double & energy_mpo);
-            extern double energy_variance_mpo             (const class_superblock & superblock, double &energy_mpo);
             extern double energy_variance_per_site_mpo    (const class_superblock & superblock);
-            extern double energy_variance_per_site_mpo    (const class_superblock & superblock, double &energy_mpo);
+            extern double energy_variance_per_site_mpo    (const class_superblock & superblock);
             extern double energy_variance_per_site_ham    (const class_superblock & superblock);
-            extern double energy_variance_per_site_ham    (const class_superblock & superblock, double &energy_per_site_ham);
+            extern double energy_variance_per_site_ham    (const class_superblock & superblock);
             extern double energy_variance_per_site_mom    (const class_superblock & superblock);
             extern double current_entanglement_entropy    (const class_superblock & superblock);
-
         }
 
 
