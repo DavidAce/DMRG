@@ -23,7 +23,7 @@ private:
         double  energy_mpo; double  energy_ham; double  energy_mom;
         double  energy_min; double  energy_max; double  energy_tgt;
         double  variance_mpo; double  variance_ham; double  variance_mom;
-        double  entanglement_entropy;
+        double  middle_entanglement_entropy;
         double  truncation_error;
         double  wall_time;
 
@@ -39,17 +39,17 @@ private:
         double entropy_,
         double truncation_error_,
         double wall_time_) :
-        iteration(iteration_),
-        chain_length(chain_length_),
-        position(position_),
-        chi(chi_),
-        chi_max(chi_max_),
-        energy_mpo(energy_mpo_), energy_ham(energy_ham_), energy_mom(energy_mom_),
-        energy_min(energy_min_), energy_max(energy_max_), energy_tgt(energy_tgt_),
-        variance_mpo(variance_mpo_), variance_ham(variance_ham_), variance_mom(variance_mom_),
-        entanglement_entropy(entropy_),
-        truncation_error(truncation_error_),
-        wall_time(wall_time_)
+                iteration(iteration_),
+                chain_length(chain_length_),
+                position(position_),
+                chi(chi_),
+                chi_max(chi_max_),
+                energy_mpo(energy_mpo_), energy_ham(energy_ham_), energy_mom(energy_mom_),
+                energy_min(energy_min_), energy_max(energy_max_), energy_tgt(energy_tgt_),
+                variance_mpo(variance_mpo_), variance_ham(variance_ham_), variance_mom(variance_mom_),
+                middle_entanglement_entropy(entropy_),
+                truncation_error(truncation_error_),
+                wall_time(wall_time_)
         {}
     };
     struct meta_struct {
@@ -63,7 +63,7 @@ private:
                                                    HOFFSET(data_struct, energy_mpo), HOFFSET(data_struct, energy_ham), HOFFSET(data_struct, energy_mom),
                                                    HOFFSET(data_struct, energy_min), HOFFSET(data_struct, energy_max), HOFFSET(data_struct, energy_tgt),
                                                    HOFFSET(data_struct, variance_mpo), HOFFSET(data_struct, variance_ham), HOFFSET(data_struct, variance_mom),
-                                                   HOFFSET(data_struct, entanglement_entropy),
+                                                   HOFFSET(data_struct, middle_entanglement_entropy),
                                                    HOFFSET(data_struct, truncation_error),
                                                    HOFFSET(data_struct, wall_time)
         };
@@ -76,7 +76,7 @@ private:
                 sizeof(data_struct::energy_mpo), sizeof(data_struct::energy_ham), sizeof(data_struct::energy_mom),
                 sizeof(data_struct::energy_min), sizeof(data_struct::energy_max), sizeof(data_struct::energy_tgt),
                 sizeof(data_struct::variance_mpo), sizeof(data_struct::variance_ham), sizeof(data_struct::variance_mom),
-                sizeof(data_struct::entanglement_entropy), sizeof(data_struct::truncation_error), sizeof(data_struct::wall_time)
+                sizeof(data_struct::middle_entanglement_entropy), sizeof(data_struct::truncation_error), sizeof(data_struct::wall_time)
         };
         std::array<const char *, NFIELDS> field_names = {
                 "iteration",
@@ -87,7 +87,7 @@ private:
                 "energy_mpo","energy_per_site_ham","energy_per_site_mom",
                 "energy_min","energy_max","energy_tgt",
                 "variance_mpo","variance_ham","variance_mom",
-                "entanglement_entropy",
+                "middle_entanglement_entropy",
                 "truncation_error",
                 "wall_time"
         };
@@ -182,7 +182,7 @@ private:
                                                          "time_step",
                                                          "energy_mpo","energy_per_site_ham","energy_per_site_mom",
                                                          "variance_mpo","variance_ham","variance_mom",
-                                                         "entanglement_entropy",
+                                                         "middle_entanglement_entropy",
                                                          "truncation_error",
                                                          "phys_time",
                                                          "wall_time"
@@ -260,7 +260,7 @@ private:
                                                          "position",
                                                          "chi",
                                                          "energy",
-                                                         "entanglement_entropy",
+                                                         "middle_entanglement_entropy",
                                                          "truncation_error"
         };
 

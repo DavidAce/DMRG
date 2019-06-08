@@ -83,13 +83,14 @@ public:
     void check_convergence_variance_mpo(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_variance_ham(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_variance_mom(double threshold = quietNaN, double slope_threshold = quietNaN);
-    void check_convergence_entanglement(double slope_threshold = quietNaN);
+    void check_convergence_entg_entropy(double slope_threshold = quietNaN);
     void update_bond_dimension(int min_saturation_length = 1);
     void clear_saturation_status();
 
     void initialize_superblock(std::string initial_state);
     void reset_full_mps_to_random_product_state(const std::string parity);
-    void compute_observables();
+    void compute_observables(const class_superblock & superblock);
+    void compute_observables(const class_finite_chain_state & state);
     void enlarge_environment();
     void enlarge_environment(int direction);
     void swap();
@@ -104,8 +105,8 @@ public:
 
 
     // Profiling
-    void store_profiling_to_file_delta(bool force = false);
-    void store_table_entry_profiling(bool force = false);
+    void store_profiling_deltas(bool force = false);
+    void store_profiling_totals(bool force = false);
 
     class_tic_toc t_tot;
     class_tic_toc t_opt;

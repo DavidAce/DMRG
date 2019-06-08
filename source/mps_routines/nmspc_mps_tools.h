@@ -8,7 +8,7 @@
 #include <string>
 #include <general/nmspc_tensor_extra.h>
 #include <io/nmspc_logger.h>
-
+#include <general/class_tic_toc.h>
 
 class class_superblock;
 class class_mps_2site;
@@ -16,6 +16,8 @@ class class_finite_chain_state;
 class class_hdf5_file;
 class class_hamiltonian_base;
 class class_simulation_state;
+
+
 
 namespace h5pp{
     class File;
@@ -212,6 +214,26 @@ namespace MPS_Tools{
     namespace Common{
 
         namespace Info{
+
+        }
+
+        namespace Prof{
+            namespace Obs{
+                inline class_tic_toc t_eig;
+                inline class_tic_toc t_ene_mpo;
+                inline class_tic_toc t_ene_ham;
+                inline class_tic_toc t_ene_mom;
+                inline class_tic_toc t_var_mpo;
+                inline class_tic_toc t_var_ham;
+                inline class_tic_toc t_var_mom;
+                inline class_tic_toc t_entropy;
+                inline class_tic_toc t_temp1  ;
+                inline class_tic_toc t_temp2  ;
+                inline class_tic_toc t_temp3  ;
+                inline class_tic_toc t_temp4  ;
+                extern void print_profiling(class_tic_toc &t_parent);
+            }
+            extern void enable_profiling(int precision = 5);
 
         }
 

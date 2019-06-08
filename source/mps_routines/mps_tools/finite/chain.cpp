@@ -305,10 +305,8 @@ int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  stat
     assert(MPO_R.front()->get_position() == superblock.HB->get_position() );
 
     //    Check edge
-    if (state.position_is_the_left_edge() or state.position_is_the_right_edge()) {
+    if (state.position_is_any_edge()){
         state.flip_direction();
-    }
-    if (state.position_is_the_left_edge()){
         state.increment_sweeps();
     }
 

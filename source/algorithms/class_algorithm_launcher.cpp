@@ -75,7 +75,7 @@ void class_algorithm_launcher::run_algorithms(){
     run_fDMRG();
     run_xDMRG();
     run_iTEBD();
-    h5ppFile->writeDataset(true, "/common/fileOK");
+    h5ppFile->writeDataset(true, "/common/finOK");
     log->info("All simulations finished");
     log->info("Simulation data written to file: {}", h5ppFile->getFilePath());
 }

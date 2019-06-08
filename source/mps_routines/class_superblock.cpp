@@ -388,10 +388,10 @@ void class_superblock::set_profiling_labels() {
     t_var_ham.set_properties(on, precision,"↳ Variance (HAM)         ");
     t_var_mom.set_properties(on, precision,"↳ Variance (MOM)         ");
     t_entropy.set_properties(on, precision,"↳ Ent. Entropy           ");
-    t_temp1.set_properties(on, precision,  "↳ Temp1                  ");
-    t_temp2.set_properties(on, precision,  "↳ Temp2                  ");
-    t_temp3.set_properties(on, precision,  "↳ Temp3                  ");
-    t_temp4.set_properties(on, precision,  "↳ Temp4                  ");
+    t_temp1.set_properties  (on, precision,"↳ Temp1                  ");
+    t_temp2.set_properties  (on, precision,"↳ Temp2                  ");
+    t_temp3.set_properties  (on, precision,"↳ Temp3                  ");
+    t_temp4.set_properties  (on, precision,"↳ Temp4                  ");
 
 }
 

@@ -115,6 +115,7 @@ double MPS_Tools::Common::Measure::current_entanglement_entropy(const class_supe
 
 double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superblock, const Eigen::Tensor<Scalar,4> &theta){
     spdlog::trace("Measuring energy mpo from superblock");
+    superblock.t_ene_mpo.tic();
     Eigen::Tensor<Scalar, 0>  E =
             superblock.Lblock->block
                     .contract(theta,                                     idx({0},{1}))
@@ -126,6 +127,7 @@ double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superbloc
         throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
     }
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part");
+    superblock.t_ene_mpo.toc();
     return std::real(E(0)) ;
 }
 
@@ -133,10 +135,8 @@ double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superbloc
 double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superblock){
     if(superblock.measurements.energy_mpo){return superblock.measurements.energy_mpo.value();}
     if(superblock.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
-    superblock.t_ene_mpo.tic();
     auto theta    = MPS_Tools::Common::Views::get_theta(superblock);
     double result = MPS_Tools::Common::Measure::energy_mpo(superblock,theta);
-    superblock.t_ene_mpo.toc();
     return result ;
 }
 
@@ -216,7 +216,7 @@ double MPS_Tools::Common::Measure::energy_per_site_mom(const class_superblock & 
 double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock & superblock,const Eigen::Tensor<std::complex<double>,4> &theta , double &energy_mpo) {
     if (superblock.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     spdlog::trace("Measuring energy variance mpo from superblock");
-
+    superblock.t_var_mpo.tic();
     Eigen::Tensor<Scalar, 0> H2 =
             superblock.Lblock2->block
                     .contract(theta              ,               idx({0}  ,{1}))
@@ -226,6 +226,7 @@ double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock & 
                     .contract(superblock.HB->MPO(),              idx({4,3},{0,2}))
                     .contract(theta.conjugate()  ,               idx({0,3,5},{1,0,2}))
                     .contract(superblock.Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
+    superblock.t_var_mpo.toc();
     return std::abs(H2(0) - energy_mpo*energy_mpo);
 }
 
@@ -234,23 +235,16 @@ double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock & 
 double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock & superblock,const Eigen::Tensor<std::complex<double>,4> &theta) {
     if (superblock.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     auto energy_mpo = MPS_Tools::Common::Measure::energy_mpo(superblock,theta);
-    superblock.t_var_mpo.tic();
     double result = MPS_Tools::Common::Measure::energy_variance_mpo(superblock,theta,energy_mpo);
-    superblock.t_var_mpo.toc();
     return result;
 }
 
 double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock & superblock) {
     if(superblock.measurements.energy_variance_mpo){return superblock.measurements.energy_variance_mpo.value();}
     if (superblock.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
-    superblock.t_var_mpo.tic();
-    auto theta      = MPS_Tools::Common::Views::get_theta(superblock);
-    superblock.t_var_mpo.toc();
     auto energy_mpo = MPS_Tools::Common::Measure::energy_mpo(superblock);
-    superblock.t_var_mpo.tic();
-    double result = MPS_Tools::Common::Measure::energy_variance_mpo(superblock,theta,energy_mpo);
-    superblock.t_var_mpo.toc();
-    return result;
+    auto theta      = MPS_Tools::Common::Views::get_theta(superblock);
+    return            MPS_Tools::Common::Measure::energy_variance_mpo(superblock,theta,energy_mpo);
 }
 
 
