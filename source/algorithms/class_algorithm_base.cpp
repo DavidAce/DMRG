@@ -7,11 +7,11 @@
 #include "class_algorithm_base.h"
 #include <io/class_hdf5_table_buffer2.h>
 #include <io/nmspc_logger.h>
-#include <mps_routines/class_superblock.h>
-#include <mps_routines/class_environment.h>
-#include <mps_routines/class_finite_chain_state.h>
-#include <mps_routines/nmspc_mps_tools.h>
-#include <mps_routines/class_mps_2site.h>
+#include <mps_state/class_superblock.h>
+#include <mps_state/class_environment.h>
+#include <mps_state/class_finite_chain_state.h>
+#include <mps_state/nmspc_mps_tools.h>
+#include <mps_state/class_mps_2site.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_quantum_mechanics.h>

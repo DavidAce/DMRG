@@ -13,7 +13,6 @@
 class class_superblock;
 class class_mps_2site;
 class class_finite_chain_state;
-class class_hdf5_file;
 class class_hamiltonian_base;
 class class_simulation_state;
 

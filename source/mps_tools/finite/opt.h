@@ -5,7 +5,7 @@
 #ifndef MPS_TOOLS_FINITE_OPT_H
 #define MPS_TOOLS_FINITE_OPT_H
 
-#include <mps_routines/nmspc_mps_tools.h>
+#include <mps_state/nmspc_mps_tools.h>
 #include <cppoptlib/problem.h>
 #include <cppoptlib/meta.h>
 #include <general/class_tic_toc.h>

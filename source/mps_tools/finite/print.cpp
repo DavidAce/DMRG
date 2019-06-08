@@ -3,9 +3,9 @@
 //
 
 
-#include <mps_routines/nmspc_mps_tools.h>
-#include <mps_routines/class_finite_chain_state.h>
-#include <mps_routines/class_environment.h>
+#include <mps_state/nmspc_mps_tools.h>
+#include <mps_state/class_finite_chain_state.h>
+#include <mps_state/class_environment.h>
 #include <general/nmspc_tensor_extra.h>
 #include <string>
 #include <iomanip>

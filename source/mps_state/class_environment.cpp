@@ -4,7 +4,7 @@
 
 
 #include "class_environment.h"
-#include <mps_routines/class_mps_2site.h>
+#include <mps_state/class_mps_2site.h>
 
 using namespace std;
 using namespace Textra;
