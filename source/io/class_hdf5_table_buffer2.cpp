@@ -66,7 +66,6 @@ template<typename table_type>
 void class_hdf5_table<table_type>::initialize_table(){
     if (table_entries->buffer.empty() and !table_is_ready) {
         log->trace("Initializing hdf5 table: {}", table_name);
-        h5ppFile->writeDataset(false, "/common/fileOK");
         hsize_t NRECORDS = table_entries->buffer.size();
         h5ppFile->create_group_link(group_name);
         if (not h5ppFile->linkExists(table_path)){
@@ -76,7 +75,6 @@ void class_hdf5_table<table_type>::initialize_table(){
                            table_entries->meta.chunk_size, table_entries->meta.fill_data, table_entries->meta.compress, table_entries->buffer.data());
             H5Fflush(file,H5F_SCOPE_GLOBAL);
             h5ppFile->closeFileHandle(file);
-            h5ppFile->writeDataset(true, "/common/fileOK");
         }
         table_is_ready = true;
     }
@@ -86,7 +84,6 @@ template<typename table_type>
 void class_hdf5_table<table_type>:: write_buffer_to_file() {
     if (!table_entries->buffer.empty() and table_is_ready) {
         log->trace("Writing buffer to hdf5 table: {}", table_name);
-        h5ppFile->writeDataset(false, "/common/fileOK");
         hsize_t NRECORDS = table_entries->buffer.size();
         h5ppFile->create_group_link(group_name);
         hid_t file = h5ppFile->openFileHandle();
@@ -97,8 +94,6 @@ void class_hdf5_table<table_type>:: write_buffer_to_file() {
         recorded_elements += NRECORDS;
         H5Fflush(file,H5F_SCOPE_GLOBAL);
         h5ppFile->closeFileHandle(file);
-        h5ppFile->writeDataset(true, "/common/fileOK");
-
     }
     buffer_is_empty = true;
 }

@@ -56,25 +56,27 @@ void class_fDMRG::run()
 
     if (h5ppFile->getCreateMode() == h5pp::CreateMode::OPEN){
         // This is case 1
-        bool fileOK;
-        h5ppFile->readDataset(fileOK, "common/fileOK");
-        bool simOK = h5ppFile->linkExists(sim_name + "/simOK");
-        bool mpsOK = h5ppFile->linkExists(sim_name + "/state/full/mps");
-//        h5ppFile->print_contents_of_group(sim_name);
+        bool finOK_exists = h5ppFile->linkExists("common/finOK");
+        bool simOK_exists = h5ppFile->linkExists(sim_name + "/simOK");
+        bool mps_exists   = h5ppFile->linkExists(sim_name + "/state/mps");
+        bool finOK = false;
+        bool simOK = false;
+        if(finOK_exists) finOK = h5ppFile->readDataset<bool>("common/finOK");
+        if(simOK_exists) simOK = h5ppFile->readDataset<bool>(sim_name + "/simOK");
 
-        if (not simOK){
+
+
+        if (not simOK or not finOK ){
             //Case 1 a -- run full simulation from scratch.
             log->trace("Case 1a");
             run_preprocessing();
             run_simulation();
-            run_postprocessing();
-        }else if(simOK and not mpsOK){
+        }else if(simOK and not mps_exists){
             // Case 1 b
             log->trace("Case 1b");
             run_preprocessing();
             run_simulation();
-            run_postprocessing();
-        }else if(simOK and mpsOK){
+        }else if(simOK and mps_exists){
             // We can go ahead and load the state from hdf5
             log->info("Loading MPS from file");
             try{
@@ -86,19 +88,16 @@ void class_fDMRG::run()
             }
             catch(...){log->error("Unknown error when trying to resume from file.");}
 
-            bool convergence_was_reached;
-            h5ppFile->readDataset(convergence_was_reached,sim_name + "/sim_state/simulation_has_converged");
+            bool convergence_was_reached  = h5ppFile->readDataset<bool>(sim_name + "/sim_state/simulation_has_converged");
             if(not convergence_was_reached){
                 // Case 1 c -- resume simulation, reset the number of sweeps first.
                 log->trace("Case 1c");
                 settings::fdmrg::max_sweeps += state->get_sweeps();
                 run_simulation();
-                run_postprocessing();
 
             }else {
                 // Case 1 d -- not much else to do.. redo postprocessing for good measure.
                 log->trace("Case 1d");
-                run_postprocessing();
             }
         }
     }else {
@@ -106,9 +105,11 @@ void class_fDMRG::run()
         log->trace("Case 2");
         run_preprocessing();
         run_simulation();
-        run_postprocessing();
     }
+    run_postprocessing();
+    print_status_full();
     t_tot.toc();
+    print_profiling();
 }
 
 
@@ -125,7 +126,7 @@ void class_fDMRG::run_simulation(){
         copy_superblock_to_chain();         //Needs to occurr after update_MPS...
         store_table_entry_progress();
         store_chain_entry_to_file();
-        store_profiling_to_file_delta();
+        store_profiling_deltas();
         store_state_and_measurements_to_file();
 
         check_convergence();
@@ -195,21 +196,33 @@ void class_fDMRG::initialize_chain() {
 void class_fDMRG::check_convergence(){
     t_sim.tic();
     t_con.tic();
-    if (sim_state.iteration <= settings::fdmrg::min_sweeps){clear_saturation_status();}
     check_convergence_variance_mpo();
-    if(sim_state.variance_mpo_has_converged)
+    if(state->position_is_the_middle_any_direction()){
+        check_convergence_entg_entropy();
+    }
+
+    if (sim_state.iteration <= settings::xdmrg::min_sweeps){
+        clear_saturation_status();
+    }
+
+
+    if(     sim_state.variance_mpo_has_converged
+            and sim_state.entanglement_has_converged)
     {
+        log->debug("Simulation has converged");
         sim_state.simulation_has_converged = true;
     }
 
-    else if (sim_state.variance_mpo_has_saturated and
-             sim_state.bond_dimension_has_reached_max and
-             sim_state.variance_mpo_saturated_for > max_saturation_length
-            )
+    if (        sim_state.variance_mpo_has_saturated
+                and sim_state.entanglement_has_saturated
+                and sim_state.bond_dimension_has_reached_max
+                and sim_state.variance_mpo_saturated_for > max_saturation_length)
     {
-        log->info("Simulation has to stop");
+        log->debug("Simulation has to stop");
         sim_state.simulation_has_to_stop = true;
     }
+
+
     t_con.toc();
     t_sim.toc();
 
@@ -219,22 +232,26 @@ void class_fDMRG::check_convergence(){
 
 void class_fDMRG::store_state_and_measurements_to_file(bool force){
     if(not force){
+        if (not settings::hdf5::save_progress){return;}
         if (Math::mod(sim_state.iteration, settings::fdmrg::store_freq) != 0) {return;}
-        if (not state->position_is_the_middle_any_direction()) {return;}
+        if (not state->position_is_any_edge()) {return;}
         if (settings::fdmrg::store_freq == 0){return;}
+        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
     }
-    log->trace("Storing storing mps to file");
+    compute_observables(*state);
+    log->trace("Storing all measurements to file");
     t_sto.tic();
-
-    MPS_Tools::Finite::H5pp::write_all_state(*state, *h5ppFile, sim_name);
-    if (settings::hdf5::save_progress){
-        MPS_Tools::Finite::H5pp::write_full_mps(*state,*h5ppFile,sim_name);
-        MPS_Tools::Finite::H5pp::write_full_mpo(*state,*h5ppFile,sim_name);
-    }
-    h5ppFile->writeDataset(false, "/common/fileOK");
     h5ppFile->writeDataset(false, sim_name + "/simOK");
+    MPS_Tools::Finite::H5pp::write_all_measurements(*state,*h5ppFile,sim_name);
+    MPS_Tools::Finite::H5pp::write_closest_parity_projection(*state, *h5ppFile, sim_name, settings::model::symmetry);
+    //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
+    if(settings::xdmrg::store_wavefn){
+        h5ppFile->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/psi");
+    }
+    MPS_Tools::Finite::H5pp::write_all_state(*state, *h5ppFile, sim_name);
     t_sto.toc();
     store_algorithm_state_to_file();
+    h5ppFile->writeDataset(true, sim_name + "/simOK");
 }
 
 
@@ -245,7 +262,7 @@ void class_fDMRG::store_table_entry_progress(bool force){
         if (settings::fdmrg::store_freq == 0){return;}
     }
 
-    compute_observables();
+    compute_observables(*superblock);
     t_sto.tic();
     table_fdmrg->append_record(
             sim_state.iteration,

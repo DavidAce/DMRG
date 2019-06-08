@@ -93,7 +93,7 @@ void MPS_Tools::Infinite::H5pp::write_all_measurements  (const class_superblock 
     h5ppFile.writeDataset(superblock.measurements.energy_variance_per_site_mpo.value(), sim_name + "/measurements/2site/energy_variance_per_site_mpo");
     h5ppFile.writeDataset(superblock.measurements.energy_variance_per_site_ham.value(), sim_name + "/measurements/2site/energy_variance_per_site_ham");
     h5ppFile.writeDataset(superblock.measurements.energy_variance_per_site_mom.value(), sim_name + "/measurements/2site/energy_variance_per_site_mom");
-    h5ppFile.writeDataset(superblock.measurements.current_entanglement_entropy.value(), sim_name + "/measurements/2site/entanglement_entropy");
+    h5ppFile.writeDataset(superblock.measurements.current_entanglement_entropy.value(), sim_name + "/measurements/2site/middle_entanglement_entropy");
 }
 
 void MPS_Tools::Infinite::H5pp::load_from_hdf5    ([[maybe_unused]] const h5pp::File & h5ppFile, [[maybe_unused]] class_superblock & superblock,[[maybe_unused]] class_simulation_state &sim_state,[[maybe_unused]] std::string sim_name){

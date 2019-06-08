@@ -84,23 +84,26 @@ void class_xDMRG::run()
 
     if (h5ppFile->getCreateMode() == h5pp::CreateMode::OPEN){
         // This is case 1
-        bool fileOK;
-        h5ppFile->readDataset(fileOK, "common/fileOK");
-        bool simOK = h5ppFile->linkExists(sim_name + "/simOK");
-        bool mpsOK = h5ppFile->linkExists(sim_name + "/state/full/mps");
-//        h5ppFile->print_contents_of_group(sim_name);
+        bool finOK_exists = h5ppFile->linkExists("common/finOK");
+        bool simOK_exists = h5ppFile->linkExists(sim_name + "/simOK");
+        bool mps_exists   = h5ppFile->linkExists(sim_name + "/state/mps");
+        bool finOK = false;
+        bool simOK = false;
+        if(finOK_exists) finOK = h5ppFile->readDataset<bool>("common/finOK");
+        if(simOK_exists) simOK = h5ppFile->readDataset<bool>(sim_name + "/simOK");
 
-        if (not simOK){
+
+        if (not simOK or not finOK){
             //Case 1 a -- run full simulation from scratch.
             log->trace("Case 1a");
             run_preprocessing();
             run_simulation();
-        }else if(simOK and not mpsOK){
+        }else if(simOK and not mps_exists){
             // Case 1 b
             log->trace("Case 1b");
             run_preprocessing();
             run_simulation();
-        }else if(simOK and mpsOK){
+        }else if(simOK and mps_exists){
             // We can go ahead and load the state from hdf5
             log->trace("Loading MPS from file");
             try{
@@ -112,8 +115,7 @@ void class_xDMRG::run()
             }
             catch(...){log->error("Unknown error when trying to resume from file.");}
 
-            bool convergence_was_reached;
-            h5ppFile->readDataset(convergence_was_reached,sim_name + "/sim_state/simulation_has_converged");
+            bool convergence_was_reached  = h5ppFile->readDataset<bool>(sim_name + "/sim_state/simulation_has_converged");
             if(not convergence_was_reached){
                 // Case 1 c -- resume simulation, reset the number of sweeps first.
                 log->trace("Case 1c");
@@ -133,8 +135,8 @@ void class_xDMRG::run()
     }
     run_postprocessing();
     print_status_full();
-    print_profiling();
     t_tot.toc();
+    print_profiling();
 }
 
 
@@ -156,7 +158,7 @@ void class_xDMRG::run_simulation()    {
         MPS_Tools::Finite::Chain::copy_superblock_to_state(*state, *superblock);
         store_table_entry_progress();
         store_table_entry_site_state();
-        store_table_entry_profiling();
+        store_profiling_totals();
         store_state_and_measurements_to_file();
 
         check_convergence();
@@ -270,6 +272,9 @@ void class_xDMRG::check_convergence(){
     t_sim.tic();
     t_con.tic();
     check_convergence_variance_mpo();
+    if(state->position_is_the_middle_any_direction()){
+        check_convergence_entg_entropy();
+    }
 
     if (sim_state.iteration <= settings::xdmrg::min_sweeps){
         clear_saturation_status();
@@ -312,19 +317,20 @@ void class_xDMRG::check_convergence(){
 
 
 
-    if(sim_state.variance_mpo_has_converged)
+    if(     sim_state.variance_mpo_has_converged
+        and sim_state.entanglement_has_converged)
     {
         log->debug("Simulation has converged");
         sim_state.simulation_has_converged = true;
     }
-    else if (sim_state.variance_mpo_has_saturated and
-             sim_state.bond_dimension_has_reached_max and
-             sim_state.variance_mpo_saturated_for > max_saturation_length
-            )
+
+    if (        sim_state.variance_mpo_has_saturated
+            and sim_state.entanglement_has_saturated
+            and sim_state.bond_dimension_has_reached_max
+            and sim_state.variance_mpo_saturated_for > max_saturation_length)
     {
         log->debug("Simulation has to stop");
         sim_state.simulation_has_to_stop = true;
-
     }
 
 
@@ -368,7 +374,7 @@ void class_xDMRG::find_energy_range() {
         sim_state.iteration = state->get_sweeps();
 
     }
-    compute_observables();
+    compute_observables(*superblock);
     sim_state.energy_min = superblock->measurements.energy_per_site_mpo.value();
 
     reset_full_mps_to_random_product_state("sx");
@@ -386,7 +392,7 @@ void class_xDMRG::find_energy_range() {
         move_center_point();
         sim_state.iteration = state->get_sweeps();
     }
-    compute_observables();
+    compute_observables(*superblock);
     sim_state.energy_max = superblock->measurements.energy_per_site_mpo.value();
     sim_state.energy_now = superblock->measurements.energy_per_site_mpo.value();
     sim_state.energy_target      = sim_state.energy_min    + sim_state.energy_dens_target  * (sim_state.energy_max - sim_state.energy_min);
@@ -428,9 +434,10 @@ void class_xDMRG::store_state_and_measurements_to_file(bool force){
         if (settings::xdmrg::store_freq == 0){return;}
         if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
     }
-    log->trace("Storing storing mps to file");
+    compute_observables(*state);
+    log->trace("Storing all measurements to file");
     t_sto.tic();
-    state->do_all_measurements();
+    h5ppFile->writeDataset(false, sim_name + "/simOK");
     MPS_Tools::Finite::H5pp::write_all_measurements(*state,*h5ppFile,sim_name);
     MPS_Tools::Finite::H5pp::write_closest_parity_projection(*state, *h5ppFile, sim_name, settings::model::symmetry);
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
@@ -438,10 +445,9 @@ void class_xDMRG::store_state_and_measurements_to_file(bool force){
         h5ppFile->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/psi");
     }
     MPS_Tools::Finite::H5pp::write_all_state(*state, *h5ppFile, sim_name);
-    h5ppFile->writeDataset(false, "/common/fileOK");
-    h5ppFile->writeDataset(false, sim_name + "/simOK");
     t_sto.toc();
     store_algorithm_state_to_file();
+    h5ppFile->writeDataset(true, sim_name + "/simOK");
 }
 
 
@@ -450,10 +456,10 @@ void class_xDMRG::store_table_entry_progress(bool force){
         if (Math::mod(sim_state.iteration, settings::xdmrg::store_freq) != 0) { return; }
         if (not state->position_is_the_middle_any_direction()) { return; }
         if (settings::xdmrg::store_freq == 0) { return; }
-        if (settings::hdf5::storage_level < StorageLevel::FULL){return;}
+        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
 
     }
-    compute_observables();
+    compute_observables(*superblock);
     log->trace("Storing table entry to file");
     t_sto.tic();
     table_xdmrg->append_record(

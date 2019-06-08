@@ -43,7 +43,7 @@ void class_iTEBD::run() {
         single_TEBD_step(sim_state.chi_temp);
         sim_state.phys_time += sim_state.delta_t;
         store_table_entry_progress();
-        store_profiling_to_file_delta();
+        store_profiling_deltas();
         print_status_update();
         check_convergence();
         sim_state.iteration++;
@@ -120,7 +120,7 @@ void class_iTEBD::check_convergence_time_step(){
 
 void class_iTEBD::check_convergence(){
     t_con.tic();
-    check_convergence_entanglement();
+    check_convergence_entg_entropy();
     check_convergence_variance_ham();
     check_convergence_variance_mom();
     update_bond_dimension();
@@ -141,8 +141,7 @@ void class_iTEBD::store_table_entry_progress(bool force){
     if (not force){
         if (Math::mod(sim_state.iteration, settings::itebd::store_freq) != 0) {return;}
     }
-//    superblock->do_all_measurements();
-    compute_observables();
+    compute_observables(*superblock);
     t_sto.tic();
     table_itebd->append_record(
             sim_state.iteration,

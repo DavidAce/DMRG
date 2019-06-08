@@ -96,7 +96,7 @@ void class_algorithm_base::single_DMRG_step(eigutils::eigSetting::Ritz ritz){
 void class_algorithm_base::check_convergence(){
     log->trace("Checking convergence");
     t_con.tic();
-    check_convergence_entanglement();
+    check_convergence_entg_entropy();
     check_convergence_variance_mpo();
     check_convergence_variance_ham();
     check_convergence_variance_mom();
@@ -138,7 +138,7 @@ void class_algorithm_base::check_saturation_using_slope(
     X_vec.push_back(iter);
     unsigned long min_data_points = 2;
     if (Y_vec.size() < min_data_points){return;}
-    auto check_from =  (unsigned long)(X_vec.size()*0.5); //Check the last quarter of the measurements in Y_vec.
+    auto check_from =  (unsigned long)(X_vec.size()*0.75); //Check the last quarter of the measurements in Y_vec.
     while (X_vec.size() - check_from < min_data_points and check_from > 0){
         check_from -=1; //Decrease check from if out of bounds.
     }
@@ -189,7 +189,7 @@ void class_algorithm_base::check_saturation_using_slope(
 void class_algorithm_base::check_convergence_variance_mpo(double threshold,double slope_threshold){
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
-    log->trace("Checking convergence of variance mpo");
+    log->debug("Checking convergence of variance mpo");
     threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
 //    compute_observables();
@@ -248,17 +248,17 @@ void class_algorithm_base::check_convergence_variance_mom(double threshold,doubl
     sim_state.variance_mom_has_converged = MPS_Tools::Common::Measure::energy_variance_per_site_mom(*superblock) < threshold;
 }
 
-void class_algorithm_base::check_convergence_entanglement(double slope_threshold) {
-    //Based on the the slope of entanglement entanglement_entropy
+void class_algorithm_base::check_convergence_entg_entropy(double slope_threshold) {
+    //Based on the the slope of entanglement middle_entanglement_entropy
     // This one is cheap to compute.
-    log->trace("Checking convergence of entanglement");
+    log->debug("Checking convergence of entanglement");
 
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::EntEntrSaturationThreshold  : slope_threshold;
     check_saturation_using_slope(BS_vec,
                                  S_vec,
                                  XS_vec,
                                  MPS_Tools::Common::Measure::current_entanglement_entropy(*superblock),
-                                 sim_state.step,
+                                 sim_state.iteration,
                                  1,
                                  slope_threshold,
                                  S_slope,
@@ -314,12 +314,13 @@ void class_algorithm_base::clear_saturation_status(){
 
 
 
+    sim_state.entanglement_has_converged = false;
     sim_state.variance_mpo_has_converged = false;
     sim_state.variance_ham_has_converged = false;
     sim_state.variance_mom_has_converged = false;
 
     sim_state.bond_dimension_has_reached_max = false;
-    sim_state.simulation_has_to_stop = false;
+    sim_state.simulation_has_to_stop         = false;
 }
 
 
@@ -332,13 +333,16 @@ void class_algorithm_base::store_algorithm_state_to_file(){
 }
 
 
-void class_algorithm_base::store_profiling_to_file_delta(bool force) {
-    if (not force and Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
-    if (not force and not state->position_is_the_middle()) {return;}
-    if (not settings::profiling::on or not settings::hdf5::store_profiling){return;}
-    if (settings::hdf5::storage_level <= StorageLevel::LIGHT){return;}
-//    t_sto.tic();
-    log->trace("Storing profiling data to file (delta)");
+void class_algorithm_base::store_profiling_deltas(bool force) {
+    if(not force){
+        if (Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
+        if (not state->position_is_any_edge()) {return;}
+        if (not settings::profiling::on or not settings::hdf5::store_profiling){return;}
+        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
+    }
+
+    log->trace("Storing profiling deltas");
+    t_sto.tic();
     table_profiling->append_record(
             sim_state.iteration,
             t_tot.get_last_time_interval(),
@@ -355,15 +359,20 @@ void class_algorithm_base::store_profiling_to_file_delta(bool force) {
             t_mps.get_last_time_interval(),
             t_con.get_last_time_interval()
     );
+    t_sto.toc();
 }
 
-void class_algorithm_base::store_table_entry_profiling(bool force) {
-    if (not force and Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
-    if (not force and not state->position_is_the_middle()) {return;}
-    if (not settings::profiling::on or not settings::hdf5::store_profiling){return;}
-    if (settings::hdf5::storage_level <= StorageLevel::LIGHT){return;}
+void class_algorithm_base::store_profiling_totals(bool force) {
+    if(not force){
+        if (Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
+        if (not state->position_is_any_edge()) {return;}
+        if (not settings::profiling::on or not settings::hdf5::store_profiling){return;}
+        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
+    }
 
-    log->trace("Storing profiling data to file");
+
+
+    log->trace("Storing profiling totals");
     table_profiling->append_record(
             sim_state.iteration,
             t_tot.get_measured_time(),
@@ -561,11 +570,23 @@ void class_algorithm_base::reset_full_mps_to_random_product_state(const std::str
 }
 
 
-void class_algorithm_base::compute_observables(){
+void class_algorithm_base::compute_observables(const class_superblock & superblock){
     log->trace("Starting all measurements on current superblock");
+    t_sim.tic();
     t_obs.tic();
-    superblock->do_all_measurements();
+    superblock.do_all_measurements();
     t_obs.toc();
+    t_sim.toc();
+}
+
+void class_algorithm_base::compute_observables(const class_finite_chain_state & state){
+    log->trace("Starting all measurements on current superblock");
+    t_sim.tic();
+    t_obs.tic();
+    state.do_all_measurements();
+    t_obs.toc();
+    t_sim.toc();
+
 }
 
 void class_algorithm_base::enlarge_environment(){
@@ -588,51 +609,65 @@ void class_algorithm_base::enlarge_environment(int direction){
 
 void class_algorithm_base::swap(){
     log->trace("Swap AB sites on superblock");
+    t_sim.tic();
     superblock->swap_AB();
+    t_sim.toc();
 }
 
 void class_algorithm_base::insert_superblock_to_chain() {
     log->trace("Insert superblock into chain");
+    t_sim.tic();
     t_ste.tic();
     auto new_position = MPS_Tools::Finite::Chain::insert_superblock_to_state(*state, *superblock);
     superblock->set_positions(new_position);
     t_ste.toc();
+    t_sim.toc();
 }
 
 void class_algorithm_base::copy_superblock_mps_to_chain(){
     log->trace("Copy superblock mps to chain");
+    t_sim.tic();
     t_ste.tic();
     MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(*state, *superblock);
     t_ste.toc();
+    t_sim.toc();
 }
 
 void class_algorithm_base::copy_superblock_mpo_to_chain(){
     log->trace("Copy superblock mpo to chain");
+    t_sim.tic();
     t_ste.tic();
     MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(*state, *superblock);
     t_ste.toc();
+    t_sim.toc();
 }
 
 void class_algorithm_base::copy_superblock_env_to_chain(){
     log->trace("Copy superblock env to chain");
+    t_sim.tic();
     t_ste.tic();
     MPS_Tools::Finite::Chain::copy_superblock_env_to_state(*state, *superblock);
     t_ste.toc();
+    t_sim.toc();
 }
 
 void class_algorithm_base::copy_superblock_to_chain(){
     log->trace("Copy superblock to chain");
+    t_sim.tic();
     t_ste.tic();
     MPS_Tools::Finite::Chain::copy_superblock_to_state(*state, *superblock);
     t_ste.toc();
+    t_sim.toc();
 }
 
 
 void class_algorithm_base::move_center_point(){
     log->trace("Moving center point ");
+    t_sim.tic();
     t_ste.tic();
     MPS_Tools::Finite::Chain::move_center_point(*state,*superblock);
     t_ste.toc();
+    t_sim.toc();
 }
 
 
@@ -666,7 +701,7 @@ void class_algorithm_base::print_status_update() {
     if (Math::mod(sim_state.iteration, print_freq()) != 0) {return;}
 //    if (not state->position_is_the_middle()) {return;}
     if (print_freq() == 0) {return;}
-    compute_observables();
+    compute_observables(*superblock);
     t_prt.tic();
     std::stringstream report;
     report << setprecision(16) << fixed << left;
@@ -739,6 +774,7 @@ void class_algorithm_base::print_status_update() {
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
             report << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_converged;
+            report << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_converged;
             break;
         case SimulationType::iTEBD:
             report << left  << " S-"  << std::boolalpha << setw(6) << sim_state.entanglement_has_converged;
@@ -753,7 +789,7 @@ void class_algorithm_base::print_status_update() {
             break;
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            report << left  << setw(2) << sim_state.variance_mpo_saturated_for << " steps";
+            report << left  << " σ²-" << setw(2) << sim_state.variance_mpo_saturated_for << " steps";
             break;
         case SimulationType::iTEBD:
             report << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_saturated;
@@ -771,7 +807,7 @@ void class_algorithm_base::print_status_update() {
 }
 
 void class_algorithm_base::print_status_full(){
-    compute_observables();
+    compute_observables(*superblock);
 
     using namespace MPS_Tools::Common::Measure;
     t_prt.tic();

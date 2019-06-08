@@ -31,7 +31,7 @@ void class_iDMRG::run() {
         single_DMRG_step();
         print_status_update();
         store_table_entry_progress();
-        store_profiling_to_file_delta();
+        store_profiling_deltas();
         check_convergence();
 
         // It's important not to perform the last swap.
@@ -80,7 +80,7 @@ void class_iDMRG::store_table_entry_progress(bool force){
     if (not force){
         if (Math::mod(sim_state.iteration, settings::idmrg::store_freq) != 0) {return;}
     }
-    compute_observables();
+    compute_observables(*superblock);
     using namespace MPS_Tools::Common::Measure;
     t_sto.tic();
     table_idmrg->append_record(
