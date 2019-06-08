@@ -8,7 +8,7 @@
 #include <general/arpack_extra/matrix_product_stl.h>
 #include <general/arpack_extra/matrix_product_sparse.h>
 #include <spdlog/spdlog.h>
-#include <mps_routines/mps_tools/finite/opt.h>
+#include <mps_tools/finite/opt.h>
 #include <mps_routines/class_superblock.h>
 #include <LBFGS.h>
 
