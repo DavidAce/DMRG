@@ -3,9 +3,9 @@
 //
 
 
-#include <mps_routines/nmspc_mps_tools.h>
-#include <mps_routines/class_finite_chain_state.h>
-#include <mps_routines/class_superblock.h>
+#include <mps_state/nmspc_mps_tools.h>
+#include <mps_state/class_finite_chain_state.h>
+#include <mps_state/class_superblock.h>
 #include <model/class_hamiltonian_factory.h>
 #include <algorithms/class_simulation_state.h>
 #include <sim_parameters/nmspc_sim_settings.h>

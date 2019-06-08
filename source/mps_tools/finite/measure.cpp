@@ -10,15 +10,14 @@
 
 #include <iomanip>
 #include <complex>
-
-#include <mps_routines/nmspc_mps_tools.h>
-#include <general/nmspc_tensor_extra.h>
-#include <mps_routines/class_superblock.h>
-#include <mps_routines/class_environment.h>
-#include <mps_routines/class_mps_2site.h>
-#include <mps_routines/class_finite_chain_state.h>
-#include <mps_routines/class_mpo.h>
+#include <mps_state/nmspc_mps_tools.h>
+#include <mps_state/class_superblock.h>
+#include <mps_state/class_environment.h>
+#include <mps_state/class_mps_2site.h>
+#include <mps_state/class_finite_chain_state.h>
+#include <mps_state/class_mpo.h>
 #include <general/nmspc_quantum_mechanics.h>
+#include <general/nmspc_tensor_extra.h>
 #include <spdlog/spdlog.h>
 
 

@@ -4,7 +4,7 @@
 
 
 #include "class_finite_chain_state.h"
-#include <mps_routines/nmspc_mps_tools.h>
+#include <mps_state/nmspc_mps_tools.h>
 #include <general/nmspc_quantum_mechanics.h>
 class_finite_chain_state::class_finite_chain_state(int max_sites_)
         :max_sites(max_sites_)
