@@ -219,7 +219,7 @@ endif()
 check_include_file_cxx(experimental/filesystem    has_experimental_filesystem  )
 check_include_file_cxx(experimental/type_traits   has_experimental_type_traits )
 if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
-    message(FATAL_ERROR "\n\
+    message(WARNING "\n\
         Missing one or more experimental headers.\n\
         Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
         or checking the compiler flags.")
@@ -239,7 +239,7 @@ check_cxx_source_compiles("
     }
     " FS_COMPILES)
 if(NOT FS_COMPILES)
-    message(FATAL_ERROR "Unable to compile with experimental/filesystem headers")
+    message(WARNING "Unable to compile with experimental/filesystem headers")
 endif()
 
 ##############################################
