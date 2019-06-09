@@ -12,15 +12,7 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 target_link_libraries(TEST-arpack++_simple PRIVATE  arpack++)
-
-#######################################
-### Compiler-dependent linker flags ###
-#######################################
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    target_link_libraries  (TEST-arpack++_simple PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
-elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    target_link_libraries  (TEST-arpack++_simple PRIVATE -stdlib=libc++)                                      ### For experimental::filesystem
-endif()
+target_link_libraries(TEST-arpack++_simple PRIVATE ${COMPILER_LFLAGS})
 
 
 add_dependencies(TEST-arpack++_simple arpack++)

@@ -24,14 +24,7 @@ target_link_libraries(TEST-file_io PRIVATE Eigen3::Eigen)
 target_link_libraries(TEST-file_io PRIVATE hdf5::hdf5   )
 target_link_libraries(TEST-file_io PRIVATE spdlog::spdlog)
 target_link_libraries(TEST-file_io PRIVATE h5pp::h5pp)
-#######################################
-### Compiler-dependent linker flags ###
-#######################################
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    target_link_libraries  (TEST-file_io PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
-elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    target_link_libraries  (TEST-file_io PRIVATE -stdlib=libc++)                                      ### For experimental::filesystem
-endif()
+target_link_libraries(TEST-file_io PRIVATE ${COMPILER_LFLAGS})
 
 
 set_target_properties  (TEST-file_io PROPERTIES CXX_STANDARD_REQUIRED 17)
