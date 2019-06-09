@@ -43,24 +43,25 @@ using Scalar = class_algorithm_base::Scalar;
 class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_,
                                            std::string sim_name_,
                                            SimulationType sim_type_)
-        :h5ppFile       (std::move(h5ppFile_)),
-         sim_name       (std::move(sim_name_)),
-         sim_type       (sim_type_) {
+        : h5pp_file       (std::move(h5ppFile_)),
+          sim_name       (std::move(sim_name_)),
+          sim_type       (sim_type_) {
 
     log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
     MPS_Tools::log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
     log->trace("Constructing class_algorithm_base");
 //    ccout.set_verbosity(settings::console::verbosity);
     set_profiling_labels();
+    MPS_Tools::Common::Prof::init_profiling(settings::profiling::on,settings::profiling::precision);
     log->trace("Constructing default state");
     state             = std::make_shared<class_finite_chain_state>();
     log->trace("Constructing table_profiling");
-    table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(h5ppFile, sim_name + "/measurements", "profiling",sim_name);
+    table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(h5pp_file, sim_name + "/measurements", "profiling", sim_name);
     log->trace("Constructing superblock");
     superblock      = std::make_shared<class_superblock>(sim_type,sim_name);
     log->trace("Writing input_file");
-    h5ppFile->writeDataset(settings::input::input_file, "common/input_file");
-    h5ppFile->writeDataset(settings::input::input_filename, "common/input_filename");
+    h5pp_file->writeDataset(settings::input::input_file, "common/input_file");
+    h5pp_file->writeDataset(settings::input::input_filename, "common/input_filename");
 }
 
 
@@ -266,7 +267,7 @@ void class_algorithm_base::check_convergence_entg_entropy(double slope_threshold
     sim_state.entanglement_has_converged = sim_state.entanglement_has_saturated;
 }
 
-void class_algorithm_base::update_bond_dimension(int min_saturation_length){
+void class_algorithm_base::update_bond_dimension(size_t min_saturation_length){
     sim_state.chi_max = chi_max();
     if(not chi_grow() or sim_state.bond_dimension_has_reached_max or sim_state.chi_temp == chi_max() ){
         sim_state.chi_temp = chi_max();
@@ -328,7 +329,7 @@ void class_algorithm_base::store_algorithm_state_to_file(){
     if (settings::hdf5::storage_level < StorageLevel::LIGHT){return;}
     log->trace("Storing simulation state to file");
     t_sto.tic();
-    MPS_Tools::Common::H5pp::write_algorithm_state(sim_state, *h5ppFile, sim_name);
+    MPS_Tools::Common::H5pp::write_algorithm_state(sim_state, *h5pp_file, sim_name);
     t_sto.toc();
 }
 

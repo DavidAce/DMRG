@@ -36,7 +36,6 @@ class_superblock::class_superblock(SimulationType sim_type_,std::string sim_name
     t_eig.set_properties(profile_optimization, 10,"Time optimizing ");
     spin_dimension = HA->get_spin_dimension();
     MPS->initialize(spin_dimension);
-    set_profiling_labels();
 }
 
 
@@ -374,41 +373,4 @@ void class_superblock::do_all_measurements() const {
 
 void  class_superblock::swap_AB(){
     MPS->swap_AB();
-}
-
-
-// Profiling
-
-void class_superblock::set_profiling_labels() {
-    using namespace settings::profiling;
-    t_ene_mpo.set_properties(on, precision,"↳ Energy (MPO)           ");
-    t_ene_ham.set_properties(on, precision,"↳ Energy (HAM)           ");
-    t_ene_mom.set_properties(on, precision,"↳ Energy (MOM)           ");
-    t_var_mpo.set_properties(on, precision,"↳ Variance (MPO)         ");
-    t_var_ham.set_properties(on, precision,"↳ Variance (HAM)         ");
-    t_var_mom.set_properties(on, precision,"↳ Variance (MOM)         ");
-    t_entropy.set_properties(on, precision,"↳ Ent. Entropy           ");
-    t_temp1.set_properties  (on, precision,"↳ Temp1                  ");
-    t_temp2.set_properties  (on, precision,"↳ Temp2                  ");
-    t_temp3.set_properties  (on, precision,"↳ Temp3                  ");
-    t_temp4.set_properties  (on, precision,"↳ Temp4                  ");
-
-}
-
-void class_superblock::print_profiling(class_tic_toc &t_parent){
-    if (settings::profiling::on) {
-        std::cout << "\nComputing observables breakdown:" << std::endl;
-        std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
-        t_ene_mpo.print_time_w_percent(t_parent);
-        t_ene_ham.print_time_w_percent(t_parent);
-        t_ene_mom.print_time_w_percent(t_parent);
-        t_var_mpo.print_time_w_percent(t_parent);
-        t_var_ham.print_time_w_percent(t_parent);
-        t_var_mom.print_time_w_percent(t_parent);
-        t_entropy.print_time_w_percent(t_parent);
-        t_temp1.print_time_w_percent(t_parent);
-        t_temp2.print_time_w_percent(t_parent);
-        t_temp3.print_time_w_percent(t_parent);
-        t_temp4.print_time_w_percent(t_parent);
-    }
 }

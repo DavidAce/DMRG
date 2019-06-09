@@ -22,7 +22,7 @@ void MPS_Tools::Common::Prof::Obs:: print_profiling(class_tic_toc &t_parent){
         t_temp4.print_time_w_percent(t_parent);
     }
 }
-void MPS_Tools::Common::Prof::enable_profiling(int precision){
+void MPS_Tools::Common::Prof::init_profiling(bool on, int precision){
     using namespace settings::profiling;
     Obs::t_ene_mpo.set_properties(on, precision,"↳ Energy (MPO)           ");
     Obs::t_ene_ham.set_properties(on, precision,"↳ Energy (HAM)           ");

@@ -16,7 +16,7 @@ using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     : class_algorithm_base(std::move(h5ppFile_),"iDMRG", SimulationType::iDMRG) {
-    table_idmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>(h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
+    table_idmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>(h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
 //    initialize_superblock(settings::model::initial_state);
 
 }
@@ -58,7 +58,7 @@ void class_iDMRG::run() {
     print_status_full();
     print_profiling();
     superblock->t_eig.print_time();
-    h5ppFile->writeDataset(true, sim_name + "/simOK");
+    h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
 void class_iDMRG::run_simulation()    {}
@@ -72,7 +72,7 @@ void class_iDMRG::store_state_and_measurements_to_file(bool force){
     }
     log->trace("Storing storing mps to file");
     t_sto.tic();
-    MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5ppFile, sim_name);
+    MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5pp_file, sim_name);
     t_sto.toc();
 }
 
@@ -108,9 +108,9 @@ void class_iDMRG::store_table_entry_progress(bool force){
 
 
 long   class_iDMRG::chi_max()   {return settings::idmrg::chi_max;}
-int    class_iDMRG::num_sites() {return 2;}
-int    class_iDMRG::store_freq(){return settings::idmrg::store_freq;}
-int    class_iDMRG::print_freq(){return settings::idmrg::print_freq;}
+size_t class_iDMRG::num_sites() {return 2u;}
+size_t class_iDMRG::store_freq(){return settings::idmrg::store_freq;}
+size_t class_iDMRG::print_freq(){return settings::idmrg::print_freq;}
 bool   class_iDMRG::chi_grow()  {return settings::idmrg::chi_grow;}
 
 
@@ -123,7 +123,7 @@ void class_iDMRG::print_profiling(){
         t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
         print_profiling_sim(t_sim);
-        superblock->print_profiling(t_obs);
+//        superblock->print_profiling(t_obs);
     }
 }
 

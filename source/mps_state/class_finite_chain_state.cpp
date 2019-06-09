@@ -31,8 +31,8 @@ void class_finite_chain_state::do_all_measurements(){
     measurements.spin_components                = Measure::spin_components(*this);
 }
 
-void class_finite_chain_state::set_max_sites(int max_sites_) {
-    max_sites = max_sites_;
+void class_finite_chain_state::set_max_sites(size_t max_sites_) {
+    max_sites        = max_sites_;
     max_sites_is_set = true;
 }
 
@@ -40,7 +40,7 @@ void class_finite_chain_state::set_max_sites(int max_sites_) {
 
 void class_finite_chain_state::set_positions(){
 
-    int pos = 0;
+    size_t pos = 0;
     for (auto &MPS: MPS_L){MPS.set_position(pos++);}
     for (auto &MPS: MPS_R){MPS.set_position(pos++);}
     pos = 0;
@@ -56,7 +56,7 @@ void class_finite_chain_state::set_positions(){
 }
 
 size_t class_finite_chain_state::get_length()    const {return MPS_L.size() + MPS_R.size();}
-int class_finite_chain_state::get_position()  const {return max_sites_is_set ? MPS_L.size() - 1 : 0 ;}
+size_t class_finite_chain_state::get_position()  const {return max_sites_is_set ? MPS_L.size() - 1u : 0u ;}
 
 int class_finite_chain_state::get_sweeps()    const {return num_sweeps;}
 int class_finite_chain_state::reset_sweeps()  {num_sweeps = 0; return num_sweeps;}
@@ -66,10 +66,10 @@ void class_finite_chain_state::flip_direction() {direction *= -1;}
 
 
 bool class_finite_chain_state::position_is_the_middle() const {
-    return max_sites_is_set ? (unsigned) get_position() + 1 == (unsigned)(max_sites / 2.0) and direction == 1: true ;
+    return max_sites_is_set ? (size_t) get_position() + 1 == (size_t)(max_sites / 2.0) and direction == 1: true ;
 }
 bool class_finite_chain_state::position_is_the_middle_any_direction() const {
-    return max_sites_is_set ? (unsigned) get_position() + 1 == (unsigned)(max_sites / 2.0) : true ;
+    return max_sites_is_set ? (size_t) get_position() + 1 == (size_t)(max_sites / 2.0) : true ;
 }
 
 bool class_finite_chain_state::position_is_the_left_edge() const {
@@ -84,7 +84,7 @@ bool class_finite_chain_state::position_is_any_edge() const {
     return position_is_the_left_edge() or position_is_the_right_edge();
 }
 
-bool class_finite_chain_state::position_is_at(int pos)const{
+bool class_finite_chain_state::position_is_at(size_t pos)const{
     return get_position() == pos;
 }
 

@@ -30,8 +30,8 @@ public:
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_xdmrg_chain;
 
     enum class xDMRG_Mode {KEEP_BEST_OVERLAP,FULL_EIG_OPT,PARTIAL_EIG_OPT, DIRECT_OPT};
-    int    min_saturation_length;
-    int    max_saturation_length;
+    size_t min_saturation_length;
+    size_t max_saturation_length;
     bool   projected_during_saturation  = false;
 
     //Energy ranges
@@ -51,9 +51,9 @@ public:
     void initialize_chain();
     void find_energy_range();
     long   chi_max()                                    override;
-    int    num_sites()                                  override;
-    int    store_freq()                                 override;
-    int    print_freq()                                 override;
+    size_t num_sites()                                  override;
+    size_t store_freq()                                 override;
+    size_t print_freq()                                 override;
     bool   chi_grow()                                   override;
 
 };

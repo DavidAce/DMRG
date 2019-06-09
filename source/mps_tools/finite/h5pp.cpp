@@ -156,7 +156,7 @@ void MPS_Tools::Finite::H5pp::load_from_hdf5(const h5pp::File & h5ppFile, class_
 }
 
 void MPS_Tools::Finite::H5pp::load_state_from_hdf5(const h5pp::File & h5ppFile, class_finite_chain_state & state, std::string sim_name){
-    int    position = 0;
+    size_t position = 0;
     size_t sites   = 0;
     Eigen::Tensor<Scalar,3> G;
     Eigen::Tensor<Scalar,1> L;

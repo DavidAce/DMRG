@@ -16,6 +16,7 @@
 #include <spdlog/spdlog.h>
 using Scalar = std::complex<double>;
 using namespace Textra;
+using namespace MPS_Tools::Common::Prof::Obs;
 
 
 Scalar moment_generating_function(const class_mps_2site &MPS_original,
@@ -103,19 +104,19 @@ double MPS_Tools::Common::Measure::truncation_error(const class_superblock & sup
 
 double MPS_Tools::Common::Measure::current_entanglement_entropy(const class_superblock & superblock){
     spdlog::trace("Measuring entanglement entropy from superblock");
-    superblock.t_entropy.tic();
+    t_entropy.tic();
     if(superblock.measurements.current_entanglement_entropy){return superblock.measurements.current_entanglement_entropy.value();}
     auto & LC = superblock.MPS->LC;
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
-    superblock.t_entropy.toc();
+    t_entropy.toc();
     return std::real(SA(0));
 }
 
 
 double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superblock, const Eigen::Tensor<Scalar,4> &theta){
     spdlog::trace("Measuring energy mpo from superblock");
-    superblock.t_ene_mpo.tic();
+    t_ene_mpo.tic();
     Eigen::Tensor<Scalar, 0>  E =
             superblock.Lblock->block
                     .contract(theta,                                     idx({0},{1}))
@@ -127,7 +128,7 @@ double MPS_Tools::Common::Measure::energy_mpo(const class_superblock & superbloc
         throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
     }
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part");
-    superblock.t_ene_mpo.toc();
+    t_ene_mpo.toc();
     return std::real(E(0)) ;
 }
 
@@ -154,7 +155,7 @@ double MPS_Tools::Common::Measure::energy_per_site_ham(const class_superblock & 
     if (superblock.sim_type == SimulationType::xDMRG){return std::numeric_limits<double>::quiet_NaN();}
     if (superblock.measurements.bond_dimension <= 2 ){return std::numeric_limits<double>::quiet_NaN();}
 
-    superblock.t_ene_ham.tic();
+    t_ene_ham.tic();
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
     auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
@@ -177,7 +178,7 @@ double MPS_Tools::Common::Measure::energy_per_site_ham(const class_superblock & 
             .contract(l_odd,                           idx({0, 2}, {0, 1}))
             .contract(r_odd,                           idx({0, 1}, {0, 1}));
     assert(abs(imag(E_evn(0)+ E_odd(0))) < 1e-10 and "Energy has an imaginary part!!!" );
-    superblock.t_ene_ham.toc();
+    t_ene_ham.toc();
     return 0.5*std::real(E_evn(0) + E_odd(0));
 
 }
@@ -188,7 +189,7 @@ double MPS_Tools::Common::Measure::energy_per_site_mom(const class_superblock & 
     if (superblock.sim_type == SimulationType::fDMRG){return std::numeric_limits<double>::quiet_NaN();}
     if (superblock.sim_type == SimulationType::xDMRG){return std::numeric_limits<double>::quiet_NaN();}
     if (superblock.measurements.bond_dimension <= 2 ){return std::numeric_limits<double>::quiet_NaN();}
-    superblock.t_ene_mom.tic();
+    t_ene_mom.tic();
     Scalar a  = Scalar(0.0 , 1.0) * 5e-3;
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -208,7 +209,7 @@ double MPS_Tools::Common::Measure::energy_per_site_mom(const class_superblock & 
     Scalar VarO     = 2.0*std::log(abs(G))/ (a*a);
     superblock.measurements.energy_per_site_mom           = std::real(O);
     superblock.measurements.energy_variance_per_site_mom  = std::real(VarO);
-    superblock.t_ene_mom.toc();
+    t_ene_mom.toc();
     return std::real(O);
 }
 
@@ -216,7 +217,7 @@ double MPS_Tools::Common::Measure::energy_per_site_mom(const class_superblock & 
 double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock & superblock,const Eigen::Tensor<std::complex<double>,4> &theta , double &energy_mpo) {
     if (superblock.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     spdlog::trace("Measuring energy variance mpo from superblock");
-    superblock.t_var_mpo.tic();
+    t_var_mpo.tic();
     Eigen::Tensor<Scalar, 0> H2 =
             superblock.Lblock2->block
                     .contract(theta              ,               idx({0}  ,{1}))
@@ -226,7 +227,7 @@ double MPS_Tools::Common::Measure::energy_variance_mpo(const class_superblock & 
                     .contract(superblock.HB->MPO(),              idx({4,3},{0,2}))
                     .contract(theta.conjugate()  ,               idx({0,3,5},{1,0,2}))
                     .contract(superblock.Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
-    superblock.t_var_mpo.toc();
+    t_var_mpo.toc();
     return std::abs(H2(0) - energy_mpo*energy_mpo);
 }
 
@@ -268,7 +269,7 @@ double MPS_Tools::Common::Measure::energy_variance_per_site_ham(const class_supe
 
     spdlog::trace("Measuring energy variance ham from superblock");
 
-    superblock.t_var_ham.tic();
+    t_var_ham.tic();
     using namespace MPS_Tools::Common::Views;
 
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -403,7 +404,7 @@ double MPS_Tools::Common::Measure::energy_variance_per_site_ham(const class_supe
     Scalar e2lrpabba      = E2LRP_ABBA(0);
     Scalar e2lrpbaba      = E2LRP_BABA(0);
     Scalar e2lrpbaab      = E2LRP_BAAB(0);
-    superblock.t_var_ham.toc();
+    t_var_ham.toc();
 
     return std::real(0.5*(e2ab + e2ba) + 0.5*(e2aba_1  + e2bab_1  + e2aba_2  + e2bab_2 )  + e2lrpabab + e2lrpabba + e2lrpbaba  + e2lrpbaab) ;
 }

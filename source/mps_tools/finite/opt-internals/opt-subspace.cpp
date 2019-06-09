@@ -14,7 +14,7 @@
 
 
 
-std::vector<int> MPS_Tools::Finite::Opt::internals::generate_size_list(const int shape){
+std::vector<int> MPS_Tools::Finite::Opt::internals::generate_size_list(size_t shape){
     std::vector<int> nev_list;
     if (shape <= 512){
         nev_list.push_back(-1);
@@ -22,8 +22,8 @@ std::vector<int> MPS_Tools::Finite::Opt::internals::generate_size_list(const int
     }
 
     int min_nev = 1;
-    min_nev =  shape > 1024 ? std::min(8,shape/16) : min_nev;
-    int max_nev = std::max(1,shape/16);
+    min_nev =  shape > 1024 ? std::min(8,(int)shape/16) : min_nev;
+    int max_nev = std::max(1,(int)shape/16);
     max_nev = std::min(max_nev,256);
     int tmp_nev = min_nev;
     while (tmp_nev <= max_nev){

@@ -30,9 +30,9 @@ public:
     void store_state_and_measurements_to_file(bool force = false)        override;
     void store_table_entry_progress(bool force = false)     override;
     long   chi_max()                                    override;
-    int    num_sites()                                  override;
-    int    store_freq()                                 override;
-    int    print_freq()                                 override;
+    size_t num_sites()                                  override;
+    size_t store_freq()                                 override;
+    size_t print_freq()                                 override;
     bool   chi_grow()                                   override;
 };
 

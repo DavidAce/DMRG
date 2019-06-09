@@ -27,9 +27,9 @@ class class_finite_chain_state {
 private:
 
 
-    int max_sites = 0;                                                 /*!< The maximum length of the chain */
-    int num_sweeps = 0;
-    int direction  = -1;
+    size_t max_sites = 0;                                                 /*!< The maximum length of the chain */
+    int num_sweeps   = 0;
+    int direction    = -1;
 
 public:
     using Scalar = std::complex<double>;
@@ -49,7 +49,7 @@ public:
 
     void clear();
     void do_all_measurements();
-    void set_max_sites(int max_sites_);                                        /*!< Sets the maximum length of the chain. */
+    void set_max_sites(size_t max_sites_);                                        /*!< Sets the maximum length of the chain. */
     bool max_sites_is_set                      = false;
 
 
@@ -62,15 +62,15 @@ public:
 
     void set_positions();
     size_t get_length()                         const;
-    int get_position()                          const;
+    size_t get_position()                       const;
     void flip_direction();
-    int get_direction()                         const;
+    int  get_direction()                        const;
     bool position_is_the_middle()               const;
     bool position_is_the_middle_any_direction() const;
     bool position_is_the_left_edge()            const;
     bool position_is_the_right_edge()           const;
     bool position_is_any_edge()                 const;
-    bool position_is_at(int pos)                const;
+    bool position_is_at(size_t pos)             const;
 
 
 
