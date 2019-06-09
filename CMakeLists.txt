@@ -30,6 +30,9 @@ if (CMAKE_VERSION VERSION_LESS 3.12)
 else()
     cmake_policy(SET CMP0074 NEW)
     cmake_policy(SET CMP0075 NEW)
+    # Use cmake_policy CMP0067 to let try_compile honor current CMAKE_CXX_STANDARD setting.
+    # See here https://stackoverflow.com/questions/47213356/cmake-using-corrext-c-standard-when-checking-for-header-files
+    cmake_policy(SET CMP0067 NEW)
 endif()
 
 
@@ -177,7 +180,7 @@ endif()
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    target_link_libraries  (${PROJECT_NAME} PRIVATE -lc++fs -lc++experimental)                                          ### For experimental::filesystem
+    target_link_libraries  (${PROJECT_NAME} PRIVATE -lc++experimental)                                          ### For experimental::filesystem
 endif()
 
 
@@ -199,19 +202,16 @@ set_target_properties(${PROJECT_NAME}
 ######################################
 ###  Require experimental headers  ###
 ######################################
-# Use cmake_policy CMP0067 to let try_compile honor current CMAKE_CXX_STANDARD setting.
-# See here
-# https://stackoverflow.com/questions/47213356/cmake-using-corrext-c-standard-when-checking-for-header-files
-cmake_policy(SET CMP0067 NEW)
+
 include(CheckIncludeFileCXX)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    set(CMAKE_REQUIRED_FLAGS -std=c++17 -lstdc++fs )
+    set(CMAKE_REQUIRED_FLAGS "-std=c++17 -lstdc++fs" )
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_REQUIRED_FLAGS -std=c++17  -lc++fs -lc++experimental)
+    set(CMAKE_REQUIRED_FLAGS " -std=c++17 -stdlib=libc++" )
+    set(CMAKE_REQUIRED_LIBRARIES "-stdlib=libc++" )
 endif()
-
-check_include_file_cxx(experimental/filesystem    has_experimental_filesystem)
-check_include_file_cxx(experimental/type_traits   has_experimental_type_traits)
+check_include_file_cxx(experimental/filesystem    has_experimental_filesystem  )
+check_include_file_cxx(experimental/type_traits   has_experimental_type_traits )
 if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
     message(FATAL_ERROR "\n\
         Missing one or more experimental headers.\n\
@@ -219,8 +219,20 @@ if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
         or checking the compiler flags.")
 endif()
 
+include(CheckCXXSourceCompiles)
+check_cxx_source_compiles("
+    #include <experimental/filesystem>
+    #include <experimental/type_traits>
+    namespace fs = std::experimental::filesystem;
 
-
+    int main(){
+        fs::path testpath;
+        return 0;
+    }
+    " FS_COMPILES)
+if(NOT FS_COMPILES)
+    message(FATAL_ERROR "Unable to compile with experimental/filesystem headers")
+endif()
 
 ##############################################
 ###  Optional OpenMP support               ###
