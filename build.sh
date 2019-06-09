@@ -110,14 +110,14 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     if [ "$mkl" = "ON" ] ; then
         module load gimkl
     fi
-    module load GCCcore/7.3.0
-    #module load clang/6.0.1
+    #module load GCCcore/7.3.0
+    module load clang/6.0.1
     module load CMake/3.12.1
     source activate dmrg
-    export CC=gcc
-    export CXX=g++
-    #export CC=clang
-    #export CXX=clang++
+    #export CC=gcc
+    #export CXX=g++
+    export CC=clang
+    export CXX=clang++
     LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$($CC -print-file-name=libstdc++.so)
     echo $LD_LIBRARY_PATH
     export LD_LIBRARY_PATH
