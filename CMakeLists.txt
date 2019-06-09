@@ -195,7 +195,7 @@ include(CheckIncludeFileCXX)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs )
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs )
+    set(CMAKE_REQUIRED_FLAGS -std=c++17  -stdlib=libstdc++ -lstdc++fs )
 endif()
 
 check_include_file_cxx(experimental/filesystem    has_experimental_filesystem)
