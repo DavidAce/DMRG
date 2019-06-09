@@ -5,8 +5,8 @@
 #ifndef CLASS_FINITE_CHAIN_STORAGE_H
 #define CLASS_FINITE_CHAIN_STORAGE_H
 #include <memory>
-#include <variant>
 #include <complex>
+#include <optional>
 #include <general/nmspc_tensor_extra.h>
 #include <mps_state/class_environment.h>
 #include <mps_state/class_mps_2site.h>
