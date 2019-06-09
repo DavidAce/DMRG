@@ -7,6 +7,7 @@
 
 #include <general/nmspc_tensor_extra.h>
 #include <memory>
+#include <optional>
 #include <general/class_tic_toc.h>
 #include <general/nmspc_eigutils.h>
 #include <sim_parameters/nmspc_sim_settings.h>
