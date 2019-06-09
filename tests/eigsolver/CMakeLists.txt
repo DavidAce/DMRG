@@ -18,6 +18,7 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 target_link_libraries(TEST-eigsolver PRIVATE Eigen3::Eigen lapacke h5pp::h5pp  hdf5   spdlog::spdlog)
 target_link_libraries(TEST-eigsolver PRIVATE ${COMPILER_LFLAGS})
+target_link_options(TEST-eigsolver PRIVATE ${COMPILER_LFLAGS})
 
 
 

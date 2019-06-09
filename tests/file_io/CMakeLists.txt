@@ -25,6 +25,7 @@ target_link_libraries(TEST-file_io PRIVATE hdf5::hdf5   )
 target_link_libraries(TEST-file_io PRIVATE spdlog::spdlog)
 target_link_libraries(TEST-file_io PRIVATE h5pp::h5pp)
 target_link_libraries(TEST-file_io PRIVATE ${COMPILER_LFLAGS})
+target_link_options(TEST-file_io PRIVATE ${COMPILER_LFLAGS})
 
 
 set_target_properties  (TEST-file_io PROPERTIES CXX_STANDARD_REQUIRED 17)
