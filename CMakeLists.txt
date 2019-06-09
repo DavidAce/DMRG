@@ -286,6 +286,7 @@ set(PTHREAD_LIBRARY -Wl,--whole-archive  -lpthread -Wl,--no-whole-archive)      
 add_library(pthread INTERFACE)
 target_link_libraries(pthread INTERFACE -Wl,--whole-archive  -lpthread -Wl,--no-whole-archive)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
+target_link_options(${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
 
 ###########################################
 ###  Find or fetch all dependencies   ###
