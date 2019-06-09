@@ -224,6 +224,7 @@ include(CheckCXXSourceCompiles)
 check_cxx_source_compiles("
     #include <experimental/filesystem>
     #include <experimental/type_traits>
+    #include <optional>
     namespace fs = std::experimental::filesystem;
 
     int main(){
