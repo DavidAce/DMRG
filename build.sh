@@ -113,7 +113,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
        module load clang/6.0.1
        module load GCCcore/7.3.0
        LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(g++ -print-file-name=libstdc++.a)
-       LIBRARY_PATH   =$LIBRARY_PATH:$(g++ -print-file-name=libstdc++.a)
+       LIBRARY_PATH=$LIBRARY_PATH:$(g++ -print-file-name=libstdc++.a)
        echo $LD_LIBRARY_PATH
        echo $LIBRARY_PATH
        export LD_LIBRARY_PATH
