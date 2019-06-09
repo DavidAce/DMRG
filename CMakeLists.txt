@@ -128,7 +128,8 @@ endif()
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     list(APPEND COMMON_OPTIONS -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    list(APPEND COMMON_OPTIONS -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
+#    list(APPEND COMMON_OPTIONS -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
+    list(APPEND COMMON_OPTIONS -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
 endif()
 
 
@@ -170,6 +171,17 @@ endif()
 
 
 
+#######################################
+### Compiler-dependent linker flags ###
+#######################################
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
+    target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    target_link_libraries  (${PROJECT_NAME} PRIVATE -lc++fs)                                          ### For experimental::filesystem
+endif()
+
+
+
 ###############################
 ###  Require c++17 support  ###
 ###############################
@@ -193,9 +205,9 @@ set_target_properties(${PROJECT_NAME}
 cmake_policy(SET CMP0067 NEW)
 include(CheckIncludeFileCXX)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    set(CMAKE_REQUIRED_FLAGS -std=c++17  -lstdc++fs )
+    set(CMAKE_REQUIRED_FLAGS -std=c++17 -lstdc++fs )
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_REQUIRED_FLAGS -std=c++17  -stdlib=libstdc++ -lstdc++fs )
+    set(CMAKE_REQUIRED_FLAGS -std=c++17  -lc++ -lc++fs )
 endif()
 
 check_include_file_cxx(experimental/filesystem    has_experimental_filesystem)
@@ -258,7 +270,6 @@ target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIO
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_OPTIONS}>")           ### Profiling build options
 target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                                               ### Link time optimization flag
-target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
 
 set(PTHREAD_LIBRARY -Wl,--whole-archive  -lpthread -Wl,--no-whole-archive) # This is needed with static linking!
 add_library(pthread INTERFACE)
