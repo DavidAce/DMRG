@@ -131,7 +131,7 @@ endif()
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     list(APPEND COMMON_OPTIONS -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    list(APPEND COMMON_OPTIONS --gcc-toolchain="${GCC_TOOLCHAIN}")
+    list(APPEND COMMON_OPTIONS --gcc-toolchain=${GCC_TOOLCHAIN})
     list(APPEND COMMON_OPTIONS -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
 endif()
 
@@ -219,7 +219,7 @@ endif()
 check_include_file_cxx(experimental/filesystem    has_experimental_filesystem  )
 check_include_file_cxx(experimental/type_traits   has_experimental_type_traits )
 if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
-    message(WARNING "\n\
+    message(FATAL_ERROR "\n\
         Missing one or more experimental headers.\n\
         Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
         or checking the compiler flags.")
@@ -239,7 +239,7 @@ check_cxx_source_compiles("
     }
     " FS_COMPILES)
 if(NOT FS_COMPILES)
-    message(WARNING "Unable to compile with experimental/filesystem headers")
+    message(FATAL_ERROR "Unable to compile with experimental/filesystem headers")
 endif()
 
 ##############################################
