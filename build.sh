@@ -120,7 +120,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
        export LIBRARY_PATH
 
        module load CMake/3.12.1
-       conda activate dmrg
+       source activate dmrg
        #export CC=gcc
        #export CXX=g++
        export CC=clang
