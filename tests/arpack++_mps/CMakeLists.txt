@@ -22,7 +22,7 @@ endif()
 
 target_link_libraries(TEST-arpack++_mps PRIVATE  arpack++ Eigen3::Eigen spdlog::spdlog)
 target_link_libraries(TEST-arpack++_mps PRIVATE ${COMPILER_LFLAGS})
-target_link_options(TEST-arpack++_mps PRIVATE ${COMPILER_LFLAGS})
+target_compile_options(TEST-arpack++_mps PRIVATE ${COMPILER_LFLAGS})
 
 
 set_target_properties  (TEST-arpack++_mps PROPERTIES CXX_STANDARD_REQUIRED 17)

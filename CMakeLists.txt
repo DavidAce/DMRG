@@ -285,12 +285,13 @@ target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_O
 set(PTHREAD_LIBRARY -Wl,--whole-archive  -lpthread -Wl,--no-whole-archive)                           # This is needed with static linking!
 add_library(pthread INTERFACE)
 target_link_libraries(pthread INTERFACE -Wl,--whole-archive  -lpthread -Wl,--no-whole-archive)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
-target_link_options(${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
+target_link_libraries (${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
+target_compile_options(${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
 
-###########################################
+
+##########################################
 ###  Find or fetch all dependencies   ###
-###########################################
+##########################################
 set(BUILD_DIRECTORY   ${PROJECT_SOURCE_DIR}/cmake-build-libs)
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
 include(cmake-modules/FindGFortran.cmake)
