@@ -177,7 +177,7 @@ endif()
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    target_link_libraries  (${PROJECT_NAME} PRIVATE -lc++fs)                                          ### For experimental::filesystem
+    target_link_libraries  (${PROJECT_NAME} PRIVATE -lc++fs -lc++experimental)                                          ### For experimental::filesystem
 endif()
 
 
@@ -207,7 +207,7 @@ include(CheckIncludeFileCXX)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     set(CMAKE_REQUIRED_FLAGS -std=c++17 -lstdc++fs )
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_REQUIRED_FLAGS -std=c++17  -lc++ -lc++fs )
+    set(CMAKE_REQUIRED_FLAGS -std=c++17  -lc++fs -lc++experimental)
 endif()
 
 check_include_file_cxx(experimental/filesystem    has_experimental_filesystem)
