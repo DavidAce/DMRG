@@ -25,8 +25,8 @@ MPS_Tools::Finite::Opt::internals::guided_optimization(const class_superblock & 
     double energy_new,variance_new,overlap_new;
     Eigen::VectorXd theta_new = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).real();
     Eigen::VectorXd xstart    = theta_new;
-    xstart.conservativeResize(theta.size()+1);
-    xstart.tail(1).setConstant(1.0);
+//    xstart.conservativeResize(theta.size()+1);
+//    xstart.tail(1).setConstant(1.0);
 
 
     double energy_0   = MPS_Tools::Common::Measure::energy_per_site_mpo(superblock);

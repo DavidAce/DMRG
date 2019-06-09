@@ -63,9 +63,9 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
     double energy_func, energy_grad;
     double norm_func,norm_grad;
     Eigen::VectorXd vH, vH2;
-    Eigen::Map<const Eigen::VectorXd> v (v_and_lambdas.data(), v_and_lambdas.size()-1);
-    Eigen::VectorXd lambdas = v_and_lambdas.tail(1);
-//    auto lambdas =    Eigen::VectorXd::Ones(1) ;
+    Eigen::Map<const Eigen::VectorXd> v (v_and_lambdas.data(), v_and_lambdas.size()-0);
+//    Eigen::VectorXd lambdas = v_and_lambdas.tail(1);
+    auto lambdas =    Eigen::VectorXd::Ones(1) ;
 //    auto lambdas =  iteration > 3 ? Eigen::VectorXd::Zero(1) : Eigen::VectorXd::Ones(1);
 //    lambdas.setConstant(toggle);
     #pragma omp parallel
@@ -108,7 +108,7 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
         grad.head(v.size())  = var_1 * (2.0*(vH2*vv_1 - v * vH2v * vv_2) - 4.0 * energy * (vH * vv_1 - v * vHv * vv_2))
                                + lambdas(0) * energy_grad * 2.0 * (vH * vv_1 - v * vHv * vv_2)
                                + norm_grad * 2.0 * v;
-        grad(grad.size()-1)  = energy_func;
+//        grad(grad.size()-1)  = energy_func;
     }
 
 
@@ -137,7 +137,7 @@ double MPS_Tools::Finite::Opt::internals::guided_functor::operator()(const Eigen
         MPS_Tools::log->warn("vEv*vEv/vv/vv   = {}" , vHv*vHv/vv/vv    );
         MPS_Tools::log->warn("var             = {}" , var);
         MPS_Tools::log->warn("lambda 0        = {}" , lambdas(0));
-        MPS_Tools::log->warn("lambda 1        = {}" , lambdas(1));
+//        MPS_Tools::log->warn("lambda 1        = {}" , lambdas(1));
         std::cout << "v: \n" << v << std::endl;
         std::cout << "grad: \n" << grad << std::endl;
         throw std::runtime_error("LBFGS: log10 variance is invalid");
