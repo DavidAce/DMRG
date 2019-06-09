@@ -144,9 +144,9 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     list(APPEND COMPILER_LFLAGS -lstdc++fs)     ### For experimental::filesystem
     list(APPEND COMPILER_LFLAGS -flto)          ### Link time optimization flag
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    list(APPEND COMPILER_LFLAGS  -stdlib=libstdc++)
-    list(APPEND COMPILER_LFLAGS -lstdc++fs)     ### For experimental::filesystem
-    list(APPEND COMPILER_LFLAGS -flto)          ### Link time optimization flag
+    list(APPEND COMPILER_LFLAGS -stdlib=libstdc++)
+    list(APPEND COMPILER_LFLAGS -lstdc++fs)        ### For experimental::filesystem
+    list(APPEND COMPILER_LFLAGS -flto)             ### Link time optimization flag
 endif()
 
 
@@ -214,8 +214,8 @@ include(CheckIncludeFileCXX)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     set(CMAKE_REQUIRED_FLAGS "-std=c++17 -lstdc++fs" )
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_REQUIRED_FLAGS " -std=c++17 -stdlib=libc++" )
-    set(CMAKE_REQUIRED_LIBRARIES "-stdlib=libc++" )
+    set(CMAKE_REQUIRED_FLAGS "-std=c++17 -stdlib=libstdc++" )
+    set(CMAKE_REQUIRED_LIBRARIES "-stdlib=libstdc++ -lstdc++fs")
 endif()
 check_include_file_cxx(experimental/filesystem    has_experimental_filesystem  )
 check_include_file_cxx(experimental/type_traits   has_experimental_type_traits )
