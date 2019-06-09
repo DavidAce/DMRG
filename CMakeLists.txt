@@ -132,7 +132,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     list(APPEND COMMON_OPTIONS -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 #    list(APPEND COMMON_OPTIONS -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
-    list(APPEND COMMON_OPTIONS -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
+    list(APPEND COMMON_OPTIONS -stdlib=libc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
 endif()
 
 
@@ -180,7 +180,7 @@ endif()
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    target_link_libraries  (${PROJECT_NAME} PRIVATE -lc++experimental)                                          ### For experimental::filesystem
+    target_link_libraries  (${PROJECT_NAME} PRIVATE -stdlib=libc++)                                          ### For experimental::filesystem
 endif()
 
 
