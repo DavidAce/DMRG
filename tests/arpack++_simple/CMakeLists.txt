@@ -13,7 +13,6 @@ endif()
 
 target_link_libraries(TEST-arpack++_simple PRIVATE  arpack++)
 target_link_libraries(TEST-arpack++_simple PRIVATE ${COMPILER_LFLAGS})
-target_compile_options(TEST-arpack++_simple PRIVATE ${COMPILER_LFLAGS})
 
 
 add_dependencies(TEST-arpack++_simple arpack++)

@@ -132,7 +132,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     list(APPEND COMMON_OPTIONS -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 #    list(APPEND COMMON_OPTIONS -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
-    list(APPEND COMMON_OPTIONS -stdlib=libc++ -lc++abi -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
+    list(APPEND COMMON_OPTIONS -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
 endif()
 
 
@@ -144,7 +144,9 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     list(APPEND COMPILER_LFLAGS -lstdc++fs)     ### For experimental::filesystem
     list(APPEND COMPILER_LFLAGS -flto)          ### Link time optimization flag
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    list(APPEND COMPILER_LFLAGS  -stdlib=libc++ -lc++abi)          ### Link time optimization flag
+    list(APPEND COMPILER_LFLAGS  -stdlib=libstdc++)
+    list(APPEND COMPILER_LFLAGS -lstdc++fs)     ### For experimental::filesystem
+    list(APPEND COMPILER_LFLAGS -flto)          ### Link time optimization flag
 endif()
 
 
@@ -286,7 +288,6 @@ set(PTHREAD_LIBRARY -Wl,--whole-archive  -lpthread -Wl,--no-whole-archive)      
 add_library(pthread INTERFACE)
 target_link_libraries(pthread INTERFACE -Wl,--whole-archive  -lpthread -Wl,--no-whole-archive)
 target_link_libraries (${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
-target_compile_options(${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
 
 
 ##########################################
