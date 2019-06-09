@@ -25,9 +25,9 @@ target_link_libraries(TEST-arpack++_mps PRIVATE  arpack++ Eigen3::Eigen spdlog::
 ### Compiler-dependent linker flags ###
 #######################################
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
+    target_link_libraries  (TEST-arpack++_mps PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    target_link_libraries  (${PROJECT_NAME} PRIVATE -stdlib=libc++)                                      ### For experimental::filesystem
+    target_link_libraries  (TEST-arpack++_mps PRIVATE -stdlib=libc++)                                      ### For experimental::filesystem
 endif()
 
 
