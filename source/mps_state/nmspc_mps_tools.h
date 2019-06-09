@@ -67,7 +67,7 @@ namespace MPS_Tools{
             extern void rebuild_environments          (class_finite_chain_state &state);
             extern void rebuild_superblock            (const class_finite_chain_state &state, class_superblock & superblock);
             extern double overlap                     (const class_finite_chain_state &state1, const class_finite_chain_state &state2);
-            extern double expectation_value           (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
+            extern double expectation_value           (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, Eigen::Tensor<std::complex<double>,3> Ledge, Eigen::Tensor<std::complex<double>,3> Redge);
         }
 
 
@@ -82,7 +82,7 @@ namespace MPS_Tools{
                 extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> guided_optimization    (const class_superblock & superblock, const class_simulation_state & sim_state);
                 extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> cppoptlib_optimization (const class_superblock & superblock, const class_simulation_state & sim_state);
                 extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> subspace_optimization  (const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace);
-                extern std::vector<int> generate_size_list(const int shape);
+                extern std::vector<int> generate_size_list(size_t shape);
                 class base_functor;
                 class subspace_functor;
                 class direct_functor;
@@ -101,7 +101,7 @@ namespace MPS_Tools{
             extern double energy_variance_mpo                         (const class_finite_chain_state & state);
             extern double energy_variance_per_site_mpo                (const class_finite_chain_state & state);
             extern double midchain_entanglement_entropy               (const class_finite_chain_state & state);
-            extern double spin_component                              (const class_finite_chain_state &state, const Eigen::Matrix2cd paulimatrix);
+            extern double spin_component                              (const class_finite_chain_state &state, Eigen::Matrix2cd paulimatrix);
             extern Eigen::Tensor<std::complex<double>,1> mps_wavefn   (const class_finite_chain_state & state);
             extern std::vector<double> entanglement_entropies         (const class_finite_chain_state & state);
             extern std::vector<double> spin_components                (const class_finite_chain_state & state);
@@ -232,7 +232,7 @@ namespace MPS_Tools{
                 inline class_tic_toc t_temp4  ;
                 extern void print_profiling(class_tic_toc &t_parent);
             }
-            extern void enable_profiling(int precision = 5);
+            extern void init_profiling(bool on, int precision = 5);
 
         }
 

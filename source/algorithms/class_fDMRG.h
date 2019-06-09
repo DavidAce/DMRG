@@ -25,8 +25,8 @@ public:
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_fdmrg;
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_fdmrg_chain;
 
-    int min_saturation_length          = 0;
-    int max_saturation_length          = 0;
+    size_t min_saturation_length          = 0;
+    size_t max_saturation_length          = 0;
 
     void run()                                          override;
     void run_simulation()                               override;
@@ -44,9 +44,9 @@ public:
     void initialize_chain();
 
     long   chi_max()                                    override;
-    int    num_sites()                                  override;
-    int    store_freq()                                 override;
-    int    print_freq()                                 override;
+    size_t num_sites()                                  override;
+    size_t store_freq()                                 override;
+    size_t print_freq()                                 override;
     bool   chi_grow()                                   override;
 
 

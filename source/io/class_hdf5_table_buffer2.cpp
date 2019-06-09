@@ -12,7 +12,7 @@
 
 
 /*! \brief Prints the content of a vector nicely */
-template<typename T, size_t N>
+template<typename T, auto N>
 std::ostream &operator<<(std::ostream &out, const std::array<T,N> &v) {
     if (!v.empty()) {
         out << "[ ";

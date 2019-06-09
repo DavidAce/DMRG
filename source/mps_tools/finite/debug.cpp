@@ -59,7 +59,7 @@ void MPS_Tools::Finite::Debug::check_integrity_of_sim(const class_finite_chain_s
     if(state.get_length()  !=  superblock.environment_size + 2 )
         throw std::runtime_error("Length mismatch in state and superblock env + 2: " + std::to_string(state.get_length()) + " " + std::to_string(superblock.environment_size + 2 ));
 
-    if(state.get_position()  != (int) superblock.Lblock->size )
+    if(state.get_position()  != superblock.Lblock->size )
         throw std::runtime_error("Mismatch in state position and sites in superblock env: " + std::to_string(state.get_position()) + " " + std::to_string(superblock.Lblock->size));
 
 
@@ -93,10 +93,10 @@ void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_s
         if(state.ENV2_L.size() + state.ENV2_R.size() != state.get_length())
             throw std::runtime_error("Mismatch in ENV size: " + std::to_string(state.ENV_L.size() + state.ENV_R.size()) + " " + std::to_string(state.get_length()));
 
-        if((int) state.ENV_L.back().size != state.get_position())
+        if( state.ENV_L.back().size != state.get_position())
             throw std::runtime_error("Mismatch in ENV_L size and position: " + std::to_string(state.ENV_L.back().size) + " " + std::to_string(state.get_position()));
 
-        if((int) state.ENV_R.front().size != (int)(state.get_length() - state.get_position() - 2))
+        if(state.ENV_R.front().size != state.get_length() - state.get_position() - 2)
             throw std::runtime_error("Mismatch in ENV_R size+1 and length-position: " + std::to_string(state.ENV_R.front().size) + " " + std::to_string(state.get_length() - state.get_position()-2));
 
         MPS_Tools::log->trace("\tChecking matrix sizes on the left side");
@@ -165,7 +165,7 @@ void MPS_Tools::Finite::Debug::check_integrity_of_mps(const class_finite_chain_s
         auto env2_it = state.ENV2_R.rbegin();
         auto mpo_it  = state.MPO_R.rbegin();
         std::advance(mps_nx,1);
-        int i = state.get_length()-1;
+        auto i = state.get_length()-1;
         while(
             mps_it  != state.MPS_R.rend() and
             mps_nx  != state.MPS_R.rend() and

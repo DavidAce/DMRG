@@ -143,20 +143,20 @@ public:
 
     //Profiling
     mutable class_tic_toc t_eig;
-    mutable class_tic_toc t_ene_mpo;
-    mutable class_tic_toc t_ene_ham;
-    mutable class_tic_toc t_ene_mom;
-    mutable class_tic_toc t_var_mpo;
-    mutable class_tic_toc t_var_ham;
-    mutable class_tic_toc t_var_mom;
-    mutable class_tic_toc t_entropy;
-    mutable class_tic_toc t_temp1;
-    mutable class_tic_toc t_temp2;
-    mutable class_tic_toc t_temp3;
-    mutable class_tic_toc t_temp4;
+//    mutable class_tic_toc t_ene_mpo;
+//    mutable class_tic_toc t_ene_ham;
+//    mutable class_tic_toc t_ene_mom;
+//    mutable class_tic_toc t_var_mpo;
+//    mutable class_tic_toc t_var_ham;
+//    mutable class_tic_toc t_var_mom;
+//    mutable class_tic_toc t_entropy;
+//    mutable class_tic_toc t_temp1;
+//    mutable class_tic_toc t_temp2;
+//    mutable class_tic_toc t_temp3;
+//    mutable class_tic_toc t_temp4;
 
-    void set_profiling_labels();
-    void print_profiling(class_tic_toc &t_parent);
+//    void set_profiling_labels();
+//    void print_profiling(class_tic_toc &t_parent);
 
 
 

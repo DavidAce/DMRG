@@ -64,7 +64,7 @@ void MPS_Tools::Finite::Opt::internals::cppoptlib_functor::compute_exp_vals(cons
 //    exp_vals_computed = true;
 }
 
-bool MPS_Tools::Finite::Opt::internals::cppoptlib_functor::callback(const cppoptlib::Criteria<double> &state, const Eigen::VectorXd &x0){
+bool MPS_Tools::Finite::Opt::internals::cppoptlib_functor::callback(const cppoptlib::Criteria<double> &state, [[maybe_unused]] const Eigen::VectorXd &x0){
     iteration = state.iterations;
     exp_vals_computed = false;
     std::cout << "CALLBACK" << std::endl;

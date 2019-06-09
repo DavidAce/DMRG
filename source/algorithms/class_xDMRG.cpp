@@ -49,8 +49,8 @@ using namespace Textra;
 
 class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_base(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG) {
-    table_xdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
-    table_xdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5ppFile, sim_name + "/measurements", "simulation_progress_full_chain",sim_name);
+    table_xdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
+    table_xdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5pp_file, sim_name + "/measurements", "simulation_progress_full_chain", sim_name);
     MPS_Tools::Finite::Chain::initialize_state(*state, settings::model::model_type, settings::model::symmetry, settings::xdmrg::num_sites);
     MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
     min_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
@@ -82,15 +82,15 @@ void class_xDMRG::run()
     if (!settings::xdmrg::on) { return; }
     t_tot.tic();
 
-    if (h5ppFile->getCreateMode() == h5pp::CreateMode::OPEN){
+    if (h5pp_file->getCreateMode() == h5pp::CreateMode::OPEN){
         // This is case 1
-        bool finOK_exists = h5ppFile->linkExists("common/finOK");
-        bool simOK_exists = h5ppFile->linkExists(sim_name + "/simOK");
-        bool mps_exists   = h5ppFile->linkExists(sim_name + "/state/mps");
+        bool finOK_exists = h5pp_file->linkExists("common/finOK");
+        bool simOK_exists = h5pp_file->linkExists(sim_name + "/simOK");
+        bool mps_exists   = h5pp_file->linkExists(sim_name + "/state/mps");
         bool finOK = false;
         bool simOK = false;
-        if(finOK_exists) finOK = h5ppFile->readDataset<bool>("common/finOK");
-        if(simOK_exists) simOK = h5ppFile->readDataset<bool>(sim_name + "/simOK");
+        if(finOK_exists) finOK = h5pp_file->readDataset<bool>("common/finOK");
+        if(simOK_exists) simOK = h5pp_file->readDataset<bool>(sim_name + "/simOK");
 
 
         if (not simOK or not finOK){
@@ -107,7 +107,7 @@ void class_xDMRG::run()
             // We can go ahead and load the state from hdf5
             log->trace("Loading MPS from file");
             try{
-                MPS_Tools::Finite::H5pp::load_from_hdf5(*h5ppFile, *state, *superblock, sim_state, sim_name);
+                MPS_Tools::Finite::H5pp::load_from_hdf5(*h5pp_file, *state, *superblock, sim_state, sim_name);
             }
             catch(std::exception &ex){
                 log->error("Failed to load from hdf5: {}", ex.what());
@@ -115,7 +115,7 @@ void class_xDMRG::run()
             }
             catch(...){log->error("Unknown error when trying to resume from file.");}
 
-            bool convergence_was_reached  = h5ppFile->readDataset<bool>(sim_name + "/sim_state/simulation_has_converged");
+            bool convergence_was_reached  = h5pp_file->readDataset<bool>(sim_name + "/sim_state/simulation_has_converged");
             if(not convergence_was_reached){
                 // Case 1 c -- resume simulation, reset the number of sweeps first.
                 log->trace("Case 1c");
@@ -355,8 +355,8 @@ void class_xDMRG::initialize_chain() {
 
 void class_xDMRG::find_energy_range() {
     log->trace("Finding energy range");
-    assert(state->get_length() == (size_t)settings::xdmrg::num_sites);
-    int max_sweeps_during_f_range = 4;
+    assert(state->get_length() == settings::xdmrg::num_sites);
+    size_t max_sweeps_during_f_range = 4;
     sim_state.iteration = state->reset_sweeps();
 
     // Find energy minimum
@@ -437,17 +437,17 @@ void class_xDMRG::store_state_and_measurements_to_file(bool force){
     compute_observables(*state);
     log->trace("Storing all measurements to file");
     t_sto.tic();
-    h5ppFile->writeDataset(false, sim_name + "/simOK");
-    MPS_Tools::Finite::H5pp::write_all_measurements(*state,*h5ppFile,sim_name);
-    MPS_Tools::Finite::H5pp::write_closest_parity_projection(*state, *h5ppFile, sim_name, settings::model::symmetry);
+    h5pp_file->writeDataset(false, sim_name + "/simOK");
+    MPS_Tools::Finite::H5pp::write_all_measurements(*state, *h5pp_file, sim_name);
+    MPS_Tools::Finite::H5pp::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
-        h5ppFile->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/psi");
+        h5pp_file->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/psi");
     }
-    MPS_Tools::Finite::H5pp::write_all_state(*state, *h5ppFile, sim_name);
+    MPS_Tools::Finite::H5pp::write_all_state(*state, *h5pp_file, sim_name);
     t_sto.toc();
     store_algorithm_state_to_file();
-    h5ppFile->writeDataset(true, sim_name + "/simOK");
+    h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
 
@@ -509,9 +509,9 @@ void class_xDMRG::store_table_entry_site_state(bool force){
 
 
 long   class_xDMRG::chi_max()   {return settings::xdmrg::chi_max;}
-int    class_xDMRG::num_sites() {return settings::xdmrg::num_sites;}
-int    class_xDMRG::store_freq(){return settings::xdmrg::store_freq;}
-int    class_xDMRG::print_freq(){return settings::xdmrg::print_freq;}
+size_t class_xDMRG::num_sites() {return settings::xdmrg::num_sites;}
+size_t class_xDMRG::store_freq(){return settings::xdmrg::store_freq;}
+size_t class_xDMRG::print_freq(){return settings::xdmrg::print_freq;}
 bool   class_xDMRG::chi_grow()  {return settings::xdmrg::chi_grow;}
 
 
@@ -526,7 +526,7 @@ void class_xDMRG::print_profiling(){
         t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
         print_profiling_sim(t_sim);
-        superblock->print_profiling(t_obs);
+        MPS_Tools::Common::Prof::Obs::print_profiling(t_obs);
     }
 }
 

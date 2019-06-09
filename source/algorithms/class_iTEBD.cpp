@@ -21,7 +21,7 @@ using namespace Textra;
 class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_base(std::move(h5ppFile_),"iTEBD", SimulationType::iTEBD) {
 //    initialize_constants();
-    table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(h5ppFile, sim_name + "/measurements", "simulation_progress",sim_name);
+    table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
     sim_state.delta_t      = settings::itebd::delta_t0;
 //    initialize_superblock(settings::model::initial_state);
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -103,7 +103,7 @@ void class_iTEBD::store_state_and_measurements_to_file(bool force){
     }
     log->trace("Storing storing mps to file");
     t_sto.tic();
-    MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5ppFile, sim_name);
+    MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5pp_file, sim_name);
     t_sto.toc();
 }
 
@@ -163,9 +163,9 @@ void class_iTEBD::store_table_entry_progress(bool force){
 }
 
 long   class_iTEBD::chi_max()   {return settings::itebd::chi_max;}
-int    class_iTEBD::num_sites() {return 2;}
-int    class_iTEBD::store_freq(){return settings::itebd::store_freq;}
-int    class_iTEBD::print_freq(){return settings::itebd::print_freq;}
+size_t class_iTEBD::num_sites() {return 2u;}
+size_t class_iTEBD::store_freq(){return settings::itebd::store_freq;}
+size_t class_iTEBD::print_freq(){return settings::itebd::print_freq;}
 bool   class_iTEBD::chi_grow()  {return settings::itebd::chi_grow;}
 
 
@@ -177,7 +177,7 @@ void class_iTEBD::print_profiling(){
         t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
         print_profiling_sim(t_sim);
-        superblock->print_profiling(t_obs);
+//        superblock->print_profiling(t_obs);
     }
 }
 

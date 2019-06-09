@@ -41,7 +41,7 @@ public:
 
     //Storage
 //    std::shared_ptr<class_hdf5_file>         hdf5;
-    std::shared_ptr<h5pp::File>              h5ppFile;
+    std::shared_ptr<h5pp::File>              h5pp_file;
     std::unique_ptr<class_hdf5_table<class_table_profiling>>  table_profiling;
 
     std::string             sim_name;
@@ -66,9 +66,9 @@ public:
     virtual void store_table_entry_progress(bool force = false)     = 0;
 
     virtual long   chi_max()    = 0;
-    virtual int    num_sites()  = 0;
-    virtual int    store_freq() = 0;
-    virtual int    print_freq() = 0;
+    virtual size_t num_sites()  = 0;
+    virtual size_t store_freq() = 0;
+    virtual size_t print_freq() = 0;
     virtual bool   chi_grow()   = 0;
 
 
@@ -84,7 +84,7 @@ public:
     void check_convergence_variance_ham(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_variance_mom(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_entg_entropy(double slope_threshold = quietNaN);
-    void update_bond_dimension(int min_saturation_length = 1);
+    void update_bond_dimension(size_t min_saturation_length = 1);
     void clear_saturation_status();
 
     void initialize_superblock(std::string initial_state);
