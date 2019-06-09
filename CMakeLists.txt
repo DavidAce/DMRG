@@ -222,7 +222,10 @@ if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
     message(FATAL_ERROR "\n\
         Missing one or more experimental headers.\n\
         Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
-        or checking the compiler flags.")
+        or checking the compiler flags. If using Clang, pass the variable \n\
+        GCC_TOOLCHAIN=<path> \n\
+        where path is the install directory of a recent GCC installation (version 7+)
+        ")
 endif()
 
 include(CheckCXXSourceCompiles)

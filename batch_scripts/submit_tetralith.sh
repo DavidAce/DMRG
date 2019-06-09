@@ -6,16 +6,14 @@ module load buildenv-gcc/2018a-eb
 module load zlib/1.2.8
 module load gimkl
 module load GCCcore/7.3.0
-#module load clang/6.0.1
+module load clang/6.0.1
 module load CMake/3.12.1
+module load parallel/20181122-nsc1
 source activate dmrg
-export CC=gcc
-export CXX=g++
-#export CC=clang
-#export CXX=clang++
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$($CC -print-file-name=libstdc++.so)
-echo $LD_LIBRARY_PATH
-export LD_LIBRARY_PATH
+#export CC=gcc
+#export CXX=g++
+export CC=clang
+export CXX=clang++
 
 export OMP_NUM_THREADS=1
 
