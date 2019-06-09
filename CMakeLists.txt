@@ -227,6 +227,7 @@ check_cxx_source_compiles("
 
     int main(){
         fs::path testpath;
+        std::optional<int> optint;
         return 0;
     }
     " FS_COMPILES)
