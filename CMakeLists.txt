@@ -136,6 +136,20 @@ elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 endif()
 
 
+#######################################
+### Compiler-dependent linker flags ###
+#######################################
+set(COMPILER_LFLAGS)
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
+    list(APPEND COMPILER_LFLAGS -lstdc++fs)     ### For experimental::filesystem
+    list(APPEND COMPILER_LFLAGS -flto)          ### Link time optimization flag
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    list(APPEND COMPILER_LFLAGS  -stdlib=libc++ -lc++abi)          ### Link time optimization flag
+endif()
+
+
+
+
 ################################
 ### Print current CXX flags  ###
 ################################
@@ -173,16 +187,6 @@ else()
 endif()
 
 
-
-#######################################
-### Compiler-dependent linker flags ###
-#######################################
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
-    target_link_libraries  (${PROJECT_NAME} PRIVATE -flto)                                               ### Link time optimization flag
-elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    target_link_libraries  (${PROJECT_NAME} PRIVATE -stdlib=libc++)                                      ### For experimental::filesystem
-endif()
 
 
 
@@ -264,13 +268,6 @@ if(USE_OpenMP)
             message(WARNING "OpenMP OFF -- Could not be found." )
         endif()
     endif()
-#
-#    get_cmake_property(_variableNames VARIABLES)
-#    foreach (_variableName ${_variableNames})
-#        if("${_variableName}" MATCHES "openmp" OR "${_variableName}" MATCHES "OpenMP" OR "${_variableName}" MATCHES "omp")
-#            message(STATUS "${_variableName}=${${_variableName}}")
-#        endif()
-#    endforeach()
 else()
     list(APPEND COMMON_OPTIONS -Wno-unknown-pragmas)
 endif()
@@ -285,10 +282,10 @@ target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIO
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_OPTIONS}>")           ### Profiling build options
 
-set(PTHREAD_LIBRARY -Wl,--whole-archive  -lpthread -Wl,--no-whole-archive) # This is needed with static linking!
+set(PTHREAD_LIBRARY -Wl,--whole-archive  -lpthread -Wl,--no-whole-archive)                           # This is needed with static linking!
 add_library(pthread INTERFACE)
 target_link_libraries(pthread INTERFACE -Wl,--whole-archive  -lpthread -Wl,--no-whole-archive)
-
+target_link_libraries(${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
 
 ###########################################
 ###  Find or fetch all dependencies   ###

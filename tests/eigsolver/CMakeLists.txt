@@ -17,15 +17,8 @@ if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (TEST-eigsolver PRIVATE -static)                                             ### Static linkage
 endif()
 target_link_libraries(TEST-eigsolver PRIVATE Eigen3::Eigen lapacke h5pp::h5pp  hdf5   spdlog::spdlog)
+target_link_libraries(TEST-eigsolver PRIVATE ${COMPILER_LFLAGS})
 
-#######################################
-### Compiler-dependent linker flags ###
-#######################################
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    target_link_libraries  (TEST-eigsolver PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
-elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    target_link_libraries  (TEST-eigsolver PRIVATE -stdlib=libc++)                                      ### For experimental::filesystem
-endif()
 
 
 set_target_properties  (TEST-eigsolver PROPERTIES CXX_STANDARD_REQUIRED 17)
