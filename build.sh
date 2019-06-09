@@ -17,6 +17,7 @@ Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t 
 -o <ON|OFF>      : OpenMP use      | ON | OFF | (default = OFF)
 -s <ON|OFF>      : Shared libs     | ON | OFF | (default = OFF)
 -t <target>      : DMRG++          | all | hdf5_test_target | arpack++_simple_test_target | arpack++_mps_test_target | (default = all)
+-w <path>        : Path to gcc installation (default = "")
 EOF
   exit 1
 }
@@ -32,6 +33,7 @@ omp="OFF"
 mkl="OFF"
 shared="OFF"
 compiler=""
+gcc_toolchain=""
 
 while getopts a:cg:hi:j:lm:o:s:t: o; do
     case $o in
@@ -42,10 +44,11 @@ while getopts a:cg:hi:j:lm:o:s:t: o; do
         (j) make_threads=$OPTARG;;
         (l) clear_libs="true";;
         (m) mode=$OPTARG;;
-        (t) target=$OPTARG;;
         (o) omp=$OPTARG;;
         (i) mkl=$OPTARG;;
         (s) shared=$OPTARG;;
+        (t) target=$OPTARG;;
+        (w) gcc_toolchain=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
   esac
@@ -110,21 +113,18 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     if [ "$mkl" = "ON" ] ; then
         module load gimkl
     fi
-       module load clang/6.0.1
-       module load GCCcore/7.3.0
-       LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(g++ -print-file-name=libstdc++.a)
-       LIBRARY_PATH=$LIBRARY_PATH:$(g++ -print-file-name=libstdc++.a)
-       echo $LD_LIBRARY_PATH
-       echo $LIBRARY_PATH
-       export LD_LIBRARY_PATH
-       export LIBRARY_PATH
+    if [ -z "$gcc_toolchain" ] ; then
+        gcc_toolchain=/software/sse/easybuild/prefix/software/GCCcore/7.3.0
+    fi
+    module load clang/6.0.1
+    module load GCCcore/7.3.0
+    module load CMake/3.12.1
+    source activate dmrg
+    #export CC=gcc
+    #export CXX=g++
+    export CC=clang
+    export CXX=clang++
 
-       module load CMake/3.12.1
-       source activate dmrg
-       #export CC=gcc
-       #export CXX=g++
-       export CC=clang
-       export CXX=clang++
 
 elif [[ "$HOSTNAME" == *"anderson"* ]];then
     if [ "$mkl" = "ON" ] ; then
@@ -160,11 +160,12 @@ echo "Mode            :   $mode"
 echo "OpenMP          :   $omp"
 echo "Intel MKL       :   $mkl"
 echo "Shared build    :   $shared"
+echo "gcc toolchain   :   $gcc_toolchain"
 
 
 
 
 cmake -E make_directory build/$mode
 cd build/$mode
-cmake -DCMAKE_BUILD_TYPE=$mode -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DBUILD_SHARED_LIBS=$shared  -G "CodeBlocks - Unix Makefiles" ../../
+cmake -DCMAKE_BUILD_TYPE=$mode -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DBUILD_SHARED_LIBS=$shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
 cmake --build . --target $target -- -j $make_threads
