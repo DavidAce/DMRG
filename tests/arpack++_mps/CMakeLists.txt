@@ -21,8 +21,15 @@ endif()
 
 
 target_link_libraries(TEST-arpack++_mps PRIVATE  arpack++ Eigen3::Eigen spdlog::spdlog)
-target_link_libraries(TEST-arpack++_mps PRIVATE -lstdc++fs)
-target_link_libraries(TEST-arpack++_mps PRIVATE -flto)
+#######################################
+### Compiler-dependent linker flags ###
+#######################################
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
+    target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    target_link_libraries  (${PROJECT_NAME} PRIVATE -stdlib=libc++)                                      ### For experimental::filesystem
+endif()
+
 
 set_target_properties  (TEST-arpack++_mps PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(TEST-arpack++_mps PRIVATE cxx_std_17)

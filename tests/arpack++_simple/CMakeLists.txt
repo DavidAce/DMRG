@@ -10,9 +10,19 @@ add_executable(TEST-arpack++_simple arpack++_simple.cpp)
 if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (TEST-arpack++_simple PRIVATE -static)                                             ### Static linkage
 endif()
-target_link_libraries(TEST-arpack++_simple PRIVATE -lstdc++fs)
-target_link_libraries(TEST-arpack++_simple PRIVATE -flto)
+
 target_link_libraries(TEST-arpack++_simple PRIVATE  arpack++)
+
+#######################################
+### Compiler-dependent linker flags ###
+#######################################
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
+    target_link_libraries  (${PROJECT_NAME} PRIVATE -lstdc++fs)                                          ### For experimental::filesystem
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    target_link_libraries  (${PROJECT_NAME} PRIVATE -stdlib=libc++)                                      ### For experimental::filesystem
+endif()
+
+
 add_dependencies(TEST-arpack++_simple arpack++)
 
 
