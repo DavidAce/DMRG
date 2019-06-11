@@ -434,6 +434,7 @@ void class_xDMRG::store_state_and_measurements_to_file(bool force){
         if (settings::xdmrg::store_freq == 0){return;}
         if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
     }
+    state->unset_measurements();
     compute_observables(*state);
     log->trace("Storing all measurements to file");
     t_sto.tic();
