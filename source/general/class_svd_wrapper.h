@@ -198,7 +198,6 @@ class_SVD::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor, long chi_max
     long dR   = tensor.dimension(2);
     long chiR = tensor.dimension(3);
     if (dL*chiL * dR*chiR != tensor.size()){throw std::range_error("schmidt_with_norm error: tensor size does not match given dimensions.");}
-
     Eigen::Map<const MatrixType<Scalar>> mat (tensor.data(), dL*chiL, dR*chiR);
     auto [U,S,V,rank] = do_svd(mat,chi_max);
     return std::make_tuple(Textra::Matrix_to_Tensor(U, dL, chiL, rank),
