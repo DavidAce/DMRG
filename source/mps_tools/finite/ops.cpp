@@ -43,6 +43,12 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
     MPS_Tools::log->trace("Applying MPO's");
+    std::cout << "Norm              (before mpos): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
+    std::cout << "Spin component sx (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
+    std::cout << "Spin component sy (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
+    std::cout << "Spin component sz (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
+
+
     state.unset_measurements();
 
     auto mpo = mpos.begin();
@@ -59,10 +65,8 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
                             .reshape(array3{d, chiL*mpoDimL, chiR*mpoDimR});
 
             Eigen::Tensor<Scalar,1> L_temp = mps.get_L().broadcast(array1{mpoDimL});
-            Scalar Lnorm = 1.0;//Textra::Tensor1_to_Vector(L_temp).norm();
-
             mps.set_G(G_temp);
-            mps.set_L(L_temp/Lnorm);
+            mps.set_L(L_temp);
             mpo++;
         }
     }
@@ -71,8 +75,7 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     {
         long mpoDim = mpo->dimension(0);
         Eigen::Tensor<Scalar, 1> C_temp = state.MPS_C.broadcast(array1{mpoDim});
-        Scalar Cnorm = 1.0;//Textra::Tensor1_to_Vector(C_temp).norm();
-        state.MPS_C = C_temp / Cnorm;
+        state.MPS_C = C_temp;
     }
     {
         for (auto & mps : state.MPS_R){
@@ -86,10 +89,8 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
                             .reshape(array3{d, chiL*mpoDimL, chiR*mpoDimR});
 
             Eigen::Tensor<Scalar,1> L_temp = mps.get_L().broadcast(array1{mpoDimR});
-            Scalar Lnorm = 1.0;//Textra::Tensor1_to_Vector(L_temp).norm();
-
             mps.set_G(G_temp);
-            mps.set_L(L_temp / Lnorm);
+            mps.set_L(L_temp);
             mpo++;
         }
     }
@@ -99,7 +100,6 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     {
         long mpoDimL = mpos.front().dimension(0);
         auto Ldim    = Ledge.dimension(0);
-        Scalar norm  = 1.0;//std::sqrt(Ldim);
         Eigen::Tensor<Scalar, 3> G_temp =
                 Ledge
                         .shuffle(Textra::array3{0,2,1})
@@ -107,12 +107,11 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
                         .contract(state.MPS_L.front().get_A(),Textra::idx({0},{1}))
                         .shuffle(Textra::array3{1,0,2});
         state.MPS_L.front().set_G(G_temp);
-        state.MPS_L.front().set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1.0)/norm);
+        state.MPS_L.front().set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1.0));
     }
     {
         long mpoDimR = mpos.back().dimension(1);
         auto Rdim    = Redge.dimension(0);
-        Scalar norm  = 1.0;//std::sqrt(Rdim);
         Eigen::Tensor<Scalar, 3> G_temp =
                 Redge
                         .shuffle(Textra::array3{0,2,1})
@@ -120,8 +119,13 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
                         .contract(state.MPS_R.back().get_B(),Textra::idx({0},{2}))
                         .shuffle(Textra::array3{1,2,0});
         state.MPS_R.back().set_G(G_temp);
-        state.MPS_R.back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0)/norm);
+        state.MPS_R.back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0));
     }
+
+    std::cout << "Norm              (after mpos): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
+    std::cout << "Spin component sx (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
+    std::cout << "Spin component sy (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
+    std::cout << "Spin component sz (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
 }
 
 
