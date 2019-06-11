@@ -131,10 +131,10 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
     state.unset_measurements();
     auto norm_old = MPS_Tools::Finite::Measure::norm(state);
     if (norm_old == 1){return;}
-//    std::cout << "Norm              (before normalization): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
-//    std::cout << "Spin component sx (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-//    std::cout << "Spin component sy (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-//    std::cout << "Spin component sz (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
+    std::cout << "Norm              (before normalization): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
+    std::cout << "Spin component sx (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
+    std::cout << "Spin component sy (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
+    std::cout << "Spin component sz (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
     // Sweep back and forth once on the chain
 
     class_SVD svd;
@@ -152,7 +152,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
     Eigen::Tensor<Scalar,1> S;
     Eigen::Tensor<Scalar,3> V;
     double norm;
-    while(num_traversals < 2){
+    while(num_traversals < 4){
         Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
         bool isZero = Eigen::Map <Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).isZero();
         if(isZero){MPS_Tools::log->warn("Theta is all zeros at positions: {},{}", pos_A, pos_B );}
@@ -163,7 +163,9 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
             std::cerr << "B:\n" << state.get_B(pos_B) << std::endl;
             throw std::runtime_error("Normalization failed at step " + std::to_string(pos_A) + ": " + std::string(ex.what()) );
         }
-
+        if (pos_LC == 8){
+            std::cout << "S\n: " << S << std::endl;
+        }
         Eigen::Tensor<Scalar,3> LA_U = Textra::asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
         Eigen::Tensor<Scalar,3> V_LB = V.contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0}));
         norm = pos_B == state.get_length()-1 or pos_A == 0 ? 1.0 : norm;
@@ -192,10 +194,10 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
 
     }
-//    std::cout << "Norm              (after normalization): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
-//    std::cout << "Spin component sx (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-//    std::cout << "Spin component sy (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-//    std::cout << "Spin component sz (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
+    std::cout << "Norm              (after normalization): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
+    std::cout << "Spin component sx (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
+    std::cout << "Spin component sy (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
+    std::cout << "Spin component sz (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
 
 
 }
