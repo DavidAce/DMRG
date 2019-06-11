@@ -36,7 +36,6 @@ public:
     class_finite_chain_state()=default;
     explicit class_finite_chain_state(int max_sites_);
 
-
     std::list<class_vidal_mps>                         MPS_L;   /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
     std::list<class_vidal_mps>                         MPS_R;   /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
     Eigen::Tensor<Scalar,1>                            MPS_C;   //Current center bond matrix;

@@ -43,14 +43,11 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
     MPS_Tools::log->trace("Applying MPO's");
+    state.unset_measurements();
     std::cout << "Norm              (before mpos): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
     std::cout << "Spin component sx (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
     std::cout << "Spin component sy (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
     std::cout << "Spin component sz (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
-
-
-    state.unset_measurements();
-
     auto mpo = mpos.begin();
 
     {
@@ -121,7 +118,7 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
         state.MPS_R.back().set_G(G_temp);
         state.MPS_R.back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0));
     }
-
+    state.unset_measurements();
     std::cout << "Norm              (after mpos): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
     std::cout << "Spin component sx (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
     std::cout << "Spin component sy (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
@@ -133,8 +130,6 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
     MPS_Tools::log->trace("Normalizing chain");
     state.unset_measurements();
-    auto norm_old = MPS_Tools::Finite::Measure::norm(state);
-    if (norm_old == 1){return;}
     std::cout << "Norm              (before normalization): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
     std::cout << "Spin component sx (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
     std::cout << "Spin component sy (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
@@ -198,6 +193,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
 
     }
+    state.unset_measurements();
     std::cout << "Norm              (after normalization): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
     std::cout << "Spin component sx (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
     std::cout << "Spin component sy (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
@@ -209,6 +205,8 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 class_finite_chain_state MPS_Tools::Finite::Ops::set_random_product_state(const class_finite_chain_state &state, const std::string parity){
     MPS_Tools::log->trace("Setting a random product state");
     class_finite_chain_state product_state = state;
+    product_state.unset_measurements();
+
     Eigen::MatrixXcd  paulimatrix;
     bool get_parity = true;
     if(parity == "sx"){
@@ -239,7 +237,6 @@ class_finite_chain_state MPS_Tools::Finite::Ops::set_random_product_state(const 
     if(get_parity){
         product_state = get_closest_parity_state(product_state, paulimatrix);
     }
-    product_state.unset_measurements();
     return product_state;
 }
 
@@ -248,6 +245,8 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(cons
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
     MPS_Tools::log->trace("Generating parity projected state");
     class_finite_chain_state state_projected = state;
+    state_projected.unset_measurements();
+
     const auto [mpo,L,R]    = class_mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
     normalize_chain(state_projected);
@@ -273,8 +272,8 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const 
     else if (paulistring == "sz"){return get_closest_parity_state(state,qm::spinOneHalf::sz);}
     else{
         MPS_Tools::log->warn(R"(Wrong pauli string. Expected one of  "sx","sy" or "sz". Got: )" + paulistring);
-        auto spin_components = state.measurements.spin_components;
-        auto max_idx = std::distance(spin_components.value().begin(), std::max_element(spin_components.value().begin(),spin_components.value().end()));
+        auto spin_components = MPS_Tools::Finite::Measure::spin_components(state);
+        auto max_idx = std::distance(spin_components.begin(), std::max_element(spin_components.begin(),spin_components.end()));
         if(max_idx == 0)      {return get_closest_parity_state(state,"sx"); }
         else if(max_idx == 1) {return get_closest_parity_state(state,"sy"); }
         else if(max_idx == 2) {return get_closest_parity_state(state,"sz"); }
