@@ -110,9 +110,6 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     echo "Running on tetralith"
     module load buildenv-gcc/2018a-eb
     module load zlib/1.2.8
-    if [ "$mkl" = "ON" ] ; then
-        module load gimkl
-    fi
     if [ -z "$gcc_toolchain" ] ; then
         gcc_toolchain=/software/sse/easybuild/prefix/software/GCCcore/7.3.0
     fi
