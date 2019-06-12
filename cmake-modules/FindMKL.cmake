@@ -66,6 +66,7 @@ find_path(MKL_ROOT_DIR
         $ENV{MKLDIR}
         $ENV{MKLROOT}
         $ENV{MKL_ROOT}
+        $ENV{HOME}/intel/mkl
         /opt/intel/mkl
         $ENV{BLAS_DIR}
         $ENV{MKL_DIR}

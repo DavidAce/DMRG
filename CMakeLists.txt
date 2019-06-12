@@ -90,6 +90,11 @@ if(MARCH)
 endif()
 
 message("Using microarchitechture: ${CXX_MARCH}")
+set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
+set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
+set(RELEASE_OPTIONS     -DNDEBUG -O3)
+set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g  -ftime-report)
+
 if(ENABLE_CCACHE)
     find_program(CCACHE_FOUND ccache)
     if(CCACHE_FOUND)
@@ -98,10 +103,6 @@ if(ENABLE_CCACHE)
         set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
     endif(CCACHE_FOUND)
 endif()
-set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
-set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0)
-set(RELEASE_OPTIONS     -DNDEBUG -O3)
-set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g  -ftime-report)
 
 #################################
 ### Microarch dependent flags ###
