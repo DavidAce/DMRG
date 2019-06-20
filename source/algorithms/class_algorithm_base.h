@@ -72,7 +72,7 @@ public:
     virtual bool   chi_grow()   = 0;
 
 
-    //Common functions
+    //common functions
     void store_algorithm_state_to_file();
     void print_status_update();
     void print_status_full();
@@ -83,7 +83,7 @@ public:
     void check_convergence_variance_mpo(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_variance_ham(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_variance_mom(double threshold = quietNaN, double slope_threshold = quietNaN);
-    void check_convergence_entg_entropy(double slope_threshold = quietNaN);
+    virtual void check_convergence_entg_entropy(double slope_threshold = quietNaN);
     void update_bond_dimension(size_t min_saturation_length = 1);
     void clear_saturation_status();
 
@@ -124,7 +124,7 @@ public:
     class_tic_toc t_mps;
     class_tic_toc t_con;
 
-private:
+protected:
     void check_saturation_using_slope(std::list<bool> &B_vec,
                                       std::list<double> &Y_vec,
                                       std::list<int> &X_vec,

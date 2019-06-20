@@ -69,7 +69,7 @@ namespace eigutils{
                 if (ritz==Ritz::LA or
                     ritz==Ritz::SA or
                     ritz==Ritz::BE
-                    )
+                        )
                 {
                     std::cerr << "WARNING: Invalid ritz for nonsym problem: " << RitzToString.at(ritz) << std::endl;
                     if (ritz==Ritz::LA){ritz = Ritz::LR;}
@@ -82,7 +82,7 @@ namespace eigutils{
                     ritz==Ritz::SR or
                     ritz==Ritz::LI or
                     ritz==Ritz::SI
-                    )
+                        )
                 {
                     std::cerr << "WARNING: Invalid ritz for nonsym problem: " << RitzToString.at(ritz)<< std::endl;
                     if (ritz==Ritz::LR){ritz = Ritz::LA;}
@@ -117,8 +117,8 @@ namespace eigutils{
 
 
         template<eigutils::eigSetting::Type   type,
-                 eigutils::eigSetting::Form   form,
-                 eigutils::eigSetting::Side   side = eigutils::eigSetting::Side::R >
+                eigutils::eigSetting::Form   form,
+                eigutils::eigSetting::Side   side = eigutils::eigSetting::Side::R >
         auto & get_eigvecs(){
             using namespace eigutils::eigSetting;
             if constexpr(form == Form::SYMMETRIC){

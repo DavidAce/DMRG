@@ -49,6 +49,7 @@ public:
     {
         set_edge_dims(mpsDim,mpoDim);
     }
+    bool isReal () const;
     void enlarge      (const class_mps_2site & MPS, const Eigen::Tensor<Scalar, 4> &MPO);
     void enlarge      (const Eigen::Tensor<Scalar,3> MPS, const Eigen::Tensor<Scalar, 4> &MPO);
     void set_edge_dims(const class_mps_2site & MPS, const Eigen::Tensor<Scalar, 4> &MPO);
@@ -77,6 +78,7 @@ public:
     {
         set_edge_dims(mpsDim,mpoDim);
     }
+    bool isReal () const;
     void enlarge(const class_mps_2site & MPS, const Eigen::Tensor<Scalar,4> &MPO);
     void enlarge(const Eigen::Tensor<Scalar,3> MPS, const Eigen::Tensor<Scalar,4> &MPO);
     void set_edge_dims(const class_mps_2site & MPS, const Eigen::Tensor<Scalar, 4> &MPO);

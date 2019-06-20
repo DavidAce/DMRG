@@ -32,6 +32,7 @@ namespace TypeCheck{
     template<template<typename...> class Ref, typename... Args>
     struct is_specialization<Ref<Args...>, Ref>: std::true_type {};
 
+
     template<typename T> struct is_eigen_tensor : public std::false_type {};
     template<typename Scalar, int rank, int storage, typename IndexType>
     struct is_eigen_tensor<Eigen::Tensor<Scalar, rank, storage,IndexType>> : public std::true_type{};
@@ -54,6 +55,10 @@ namespace TypeCheck{
             return false;
         }
     }
+
+
+
+
 
     template <typename...> struct print_type_and_exit_compile_time;
 

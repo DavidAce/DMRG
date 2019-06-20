@@ -25,16 +25,16 @@ namespace h5pp{
 
 
 
-namespace MPS_Tools{
+namespace mpstools{
     inline std::shared_ptr<spdlog::logger> log;
-    namespace Finite
+    namespace finite
     /*!
      * Functions for finite MPS algorithms like fDMRG and xDMRG
      * These functions require the class_finite_chain_state containing the
      * MPS and environments for all sites of the lattice.
      */
     {
-        namespace Chain {
+        namespace chain {
             extern void initialize_state(class_finite_chain_state &state, std::string model_type, std::string parity, const size_t length);
             extern void randomize_mpos  (class_finite_chain_state &state);
 
@@ -48,7 +48,7 @@ namespace MPS_Tools{
         }
 
 
-        namespace Ops {
+        namespace ops {
             extern std::list<Eigen::Tensor<std::complex<double>,4>>
                         make_mpo_list                 (const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_R);
             extern void apply_mpo                     (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
@@ -71,26 +71,14 @@ namespace MPS_Tools{
         }
 
 
-        namespace Opt{
+        namespace opt{
             enum class OptMode  {OVERLAP, VARIANCE};
-            enum class OptSpace {PARTIAL,FULL,DIRECT,GUIDED,CPPOPTLIB};
-            extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_excited_state(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace);
-
-            namespace internals{
-                extern std::tuple<Eigen::MatrixXd, Eigen::VectorXd>              find_subspace          (const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace);
-                extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> direct_optimization    (const class_superblock & superblock, const class_simulation_state & sim_state);
-                extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> guided_optimization    (const class_superblock & superblock, const class_simulation_state & sim_state);
-                extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> cppoptlib_optimization (const class_superblock & superblock, const class_simulation_state & sim_state);
-                extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> subspace_optimization  (const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace);
-                extern std::vector<int> generate_size_list(size_t shape);
-                class base_functor;
-                class subspace_functor;
-                class direct_functor;
-            }
-
+            enum class OptSpace {PARTIAL,FULL,DIRECT};
+            enum class OptType  {REAL, CPLX};
+            extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_excited_state(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType);
         }
 
-        namespace Measure{
+        namespace measure{
 
 //            extern void do_all_measurements                           (class_finite_chain_state & state);
             extern int length                                         (const class_finite_chain_state & state);
@@ -108,14 +96,14 @@ namespace MPS_Tools{
         }
 
 
-        namespace Print {
+        namespace print {
             extern void print_full_state    (const class_finite_chain_state & state);
             extern void print_state         (const class_finite_chain_state & state);                                                /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
             extern void print_state_compact (const class_finite_chain_state & state);                                                /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
             extern void print_hamiltonians  (const class_finite_chain_state & state);
         }
 
-        namespace H5pp{
+        namespace io{
             extern void write_all_state                    (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
             extern void write_bond_matrices                (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
             extern void write_bond_matrix                  (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
@@ -132,7 +120,7 @@ namespace MPS_Tools{
 
         }
 
-        namespace Debug {
+        namespace debug {
             extern void check_integrity             (const class_finite_chain_state & state, const class_superblock & superblock, const class_simulation_state & sim_state);
             extern void check_integrity_of_sim      (const class_finite_chain_state & state, const class_superblock & superblock, const class_simulation_state & sim_state);
             extern void check_integrity_of_mps      (const class_finite_chain_state & state);
@@ -146,7 +134,7 @@ namespace MPS_Tools{
 
 
 
-    namespace Infinite
+    namespace infinite
     /*!
      * Functions for infinite MPS algorithms like iDMRG and iTEBD.
      * These functions do not require the class_finite_chain_state class, only the
@@ -154,23 +142,23 @@ namespace MPS_Tools{
      */
     {
 
-        namespace Measure{
+        namespace measure{
 
-            namespace Results {
-                extern int length;
-                extern int bond_dimension;
-                extern double norm;
-                extern double truncation_error;
-                extern double energy_mpo;
-                extern double energy_ham;
-                extern double energy_mom;
-                extern double energy_per_site;
-                extern double energy_variance;
-                extern double energy_variance_per_site;
-                extern double mps_wavefn;
-                extern double midchain_entanglement_entropy;
-                extern bool   superblock_measured;
-            }
+//            namespace results {
+//                extern int length;
+//                extern int bond_dimension;
+//                extern double norm;
+//                extern double truncation_error;
+//                extern double energy_mpo;
+//                extern double energy_ham;
+//                extern double energy_mom;
+//                extern double energy_per_site;
+//                extern double energy_variance;
+//                extern double energy_variance_per_site;
+//                extern double mps_wavefn;
+//                extern double midchain_entanglement_entropy;
+//                extern bool   superblock_measured;
+//            }
             extern void   do_all_measurements             (const class_superblock & superblock);
             extern int    length                          (const class_superblock & superblock);
             extern double norm                            (const class_superblock & superblock);
@@ -184,13 +172,13 @@ namespace MPS_Tools{
             extern double midchain_entanglement_entropy   (const class_superblock & superblock);
         }
 
-        namespace Print {
+        namespace print {
             extern void print_state         (const class_superblock & superblock);                                                /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
             extern void print_state_compact (const class_superblock & superblock);                                                /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
             extern void print_hamiltonians  (const class_superblock & superblock);
         }
 
-        namespace H5pp{
+        namespace io{
             extern void write_all_superblock               (const class_superblock & superblock, h5pp::File & h5ppFile, std::string sim_name);
             extern void write_2site_mps                    (const class_superblock & superblock, h5pp::File & h5ppFile, std::string sim_name);
             extern void write_2site_mpo                    (const class_superblock & superblock, h5pp::File & h5ppFile, std::string sim_name);
@@ -210,14 +198,14 @@ namespace MPS_Tools{
 
 
 
-    namespace Common{
+    namespace common{
 
-        namespace Info{
+        namespace info{
 
         }
 
-        namespace Prof{
-            namespace Obs{
+        namespace profiling{
+            namespace obs{
                 inline class_tic_toc t_eig;
                 inline class_tic_toc t_ene_mpo;
                 inline class_tic_toc t_ene_ham;
@@ -236,12 +224,12 @@ namespace MPS_Tools{
 
         }
 
-        namespace H5pp {
+        namespace io {
             extern void write_algorithm_state(const class_simulation_state &sim_state, h5pp::File &h5ppFile,
                                               std::string sim_name);
         }
 
-        namespace Measure {
+        namespace measure {
             extern int    length                          (const class_superblock & superblock);
             extern int    bond_dimension                  (const class_superblock & superblock);
             extern double truncation_error                (const class_superblock & superblock);
@@ -255,8 +243,6 @@ namespace MPS_Tools{
             extern double energy_variance_mpo             (const class_superblock & superblock, const Eigen::Tensor<std::complex<double>,4> &theta);
             extern double energy_variance_mpo             (const class_superblock & superblock);
             extern double energy_variance_per_site_mpo    (const class_superblock & superblock);
-            extern double energy_variance_per_site_mpo    (const class_superblock & superblock);
-            extern double energy_variance_per_site_ham    (const class_superblock & superblock);
             extern double energy_variance_per_site_ham    (const class_superblock & superblock);
             extern double energy_variance_per_site_mom    (const class_superblock & superblock);
             extern double current_entanglement_entropy    (const class_superblock & superblock);
@@ -264,7 +250,7 @@ namespace MPS_Tools{
 
 
 
-        namespace Views {
+        namespace views {
             extern Eigen::Tensor<std::complex<double>,4> theta, theta_evn_normalized, theta_odd_normalized;
             extern Eigen::Tensor<std::complex<double>,4> theta_sw ;
             extern Eigen::Tensor<std::complex<double>,3> LBGA, LAGB;

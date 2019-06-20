@@ -1,72 +1,118 @@
 //
-// Created by david on 2019-03-18.
+// Created by david on 2019-05-25.
 //
+
 
 #include <spdlog/spdlog.h>
 #include <LBFGS.h>
 #include <mps_tools/finite/opt.h>
 #include <general/class_tic_toc.h>
 #include <mps_state/class_superblock.h>
-#include <model/class_hamiltonian_base.h>
 #include <mps_state/class_environment.h>
+#include <algorithms/class_simulation_state.h>
+#include <general/nmspc_random_numbers.h>
+#include <variant>
 
-
-
-
-
-std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
-MPS_Tools::Finite::Opt::internals::direct_optimization(const class_superblock & superblock, const class_simulation_state &sim_state){
-    MPS_Tools::log->trace("Optimizing in DIRECT mode");
-    using Scalar = std::complex<double>;
-    t_opt->tic();
-    double chain_length    = superblock.get_length();
-    double energy_new,variance_new,overlap_new;
-
-    auto theta = superblock.get_theta();
-    Eigen::VectorXd xstart = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).real();
-
-    std::vector<reports::direct_opt_tuple> opt_log;
-    {
-        int iter_0 = 0;
-        double energy_0   = MPS_Tools::Common::Measure::energy_mpo(superblock,theta);
-        double variance_0 = MPS_Tools::Common::Measure::energy_variance_mpo(superblock,theta,energy_0);
-        t_opt->toc();
-        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, std::log10(variance_0/chain_length), 1.0, iter_0 ,0,t_opt->get_last_time_interval());
-        t_opt->tic();
-        using namespace LBFGSpp;
-        MPS_Tools::Finite::Opt::internals::direct_functor functor (superblock,sim_state);
-        LBFGSpp::LBFGSSolver<double> solver(*params); // Create solver and function object
-
-        // x will be overwritten to be the best point found
-        double fx;
-        MPS_Tools::log->trace("Running LBFGS");
-        int niter = solver.minimize(functor, xstart, fx);
-        int counter = functor.get_count();
-        t_opt->toc();
-        xstart.normalize();
-        auto theta_old = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).real();
-
-        energy_new   = functor.get_energy() / chain_length;
-        variance_new = functor.get_variance()/chain_length;
-        overlap_new  = (theta_old.adjoint() * xstart).cwiseAbs().sum();
-        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval());
-        MPS_Tools::log->trace("Finished LBFGS");
+template<typename Scalar, auto rank>
+void warn_if_has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, double threshold = 1e-14) {
+    Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>> vector (tensor.data(),tensor.size());
+    if constexpr (std::is_same<Scalar, std::complex<double>>::value){
+        auto imagSum = vector.imag().cwiseAbs().sum();
+        if (imagSum > threshold){
+            mpstools::log->warn("Has imaginary part. Sum: " + std::to_string(imagSum));
+        }
     }
-    reports::print_report(opt_log);
-
-    reports::print_report(std::make_tuple(
-            MPS_Tools::Finite::Opt::internals::t_vH2v->get_measured_time(),
-            MPS_Tools::Finite::Opt::internals::t_vHv->get_measured_time(),
-            MPS_Tools::Finite::Opt::internals::t_vH2->get_measured_time(),
-            MPS_Tools::Finite::Opt::internals::t_vH->get_measured_time(),
-            MPS_Tools::Finite::Opt::internals::t_op->get_measured_time()
-    ));
-
-    return  std::make_tuple(Textra::Matrix_to_Tensor(xstart.cast<Scalar>(), superblock.dimensions()), energy_new);
 }
 
 
+std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
+mpstools::finite::opt::internals::direct_optimization(const class_superblock &superblock,
+                                                      const class_simulation_state &sim_state, OptType optType){
+    mpstools::log->trace("Optimizing in DIRECT mode");
+    using Scalar = std::complex<double>;
+    auto theta = superblock.get_theta();
 
 
+    t_opt->tic();
+    double chain_length    = superblock.get_length();
+    double energy_new,variance_new,overlap_new;
+    Eigen::VectorXcd theta_start  = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size());
+
+    double energy_0   = mpstools::common::measure::energy_per_site_mpo(superblock);
+    double variance_0 = mpstools::common::measure::energy_variance_per_site_mpo(superblock);
+    int iter_0 = 0;
+
+    t_opt->toc();
+    std::vector<reports::direct_opt_tuple> opt_log;
+    opt_log.emplace_back("Initial",theta.size(), energy_0, std::log10(variance_0), 1.0, iter_0 ,0,t_opt->get_last_time_interval());
+    t_opt->tic();
+    mpstools::log->trace("Running LBFGS");
+    using namespace LBFGSpp;
+    using namespace mpstools::finite::opt::internals;
+    double fx;
+    int niter,counter;
+    LBFGSpp::LBFGSSolver<double> solver(params);
+    switch (optType){
+        case OptType::CPLX:{
+            mpstools::finite::opt::internals::direct_functor <Scalar>  functor (superblock, sim_state);
+            Eigen::VectorXd  theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double*> (theta_start.data()), 2*theta_start.size());
+            niter = solver.minimize(functor, theta_start_cast, fx);
+            theta_start = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
+            counter      = functor.get_count();
+            energy_new   = functor.get_energy() / chain_length;
+            variance_new = functor.get_variance()/chain_length;
+            break;
+        }
+        case OptType::REAL:{
+            mpstools::finite::opt::internals::direct_functor <double> functor (superblock, sim_state);
+            Eigen::VectorXd  theta_start_cast = theta_start.real();
+            niter = solver.minimize(functor, theta_start_cast, fx);
+            theta_start = theta_start_cast.normalized().cast<Scalar>();
+            counter      = functor.get_count();
+            energy_new   = functor.get_energy() / chain_length;
+            variance_new = functor.get_variance()/chain_length;
+            break;
+        }
+    }
+    t_opt->toc();
+
+
+    auto theta_old = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).real();
+
+
+    overlap_new  = std::abs(theta_old.dot(theta_start));
+    opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval());
+    mpstools::log->trace("Finished LBFGS");
+
+    reports::print_report(opt_log);
+    reports::print_report(std::make_tuple(
+            mpstools::finite::opt::internals::t_vH2v->get_measured_time(),
+            mpstools::finite::opt::internals::t_vHv->get_measured_time(),
+            mpstools::finite::opt::internals::t_vH2->get_measured_time(),
+            mpstools::finite::opt::internals::t_vH->get_measured_time(),
+            mpstools::finite::opt::internals::t_op->get_measured_time()
+            ));
+    return  std::make_tuple(Textra::Matrix_to_Tensor(theta_start, superblock.dimensions()), energy_new);
+
+//    bool outside_of_window = energy_new < sim_state.energy_lbound or energy_new > sim_state.energy_ubound;
+//    if (outside_of_window){
+//        if(rn::uniform_double_1() < 0.1){
+//            return  std::make_tuple(theta, energy_0);
+//        }else{
+//            std::cout << "Randomizing" << std::endl;
+//            auto theta_random = Eigen::VectorXcd::Random(theta.size()).normalized();
+//            auto energy_random = mpstools::common::measure::energy_mpo(superblock,theta)/chain_length;
+//            outside_of_window = energy_random < sim_state.energy_lbound or energy_random > sim_state.energy_ubound;
+//            while(outside_of_window){
+//                std::cout << "Randomizing" << std::endl;
+//                theta_random = Eigen::VectorXcd::Random(theta.size()).normalized();
+//                energy_random = mpstools::common::measure::energy_mpo(superblock,theta)/chain_length;
+//                outside_of_window = energy_random < sim_state.energy_lbound or energy_random > sim_state.energy_ubound;
+//            }
+//            return std::make_tuple(Textra::Matrix_to_Tensor(theta_random, superblock.dimensions()), energy_random);
+//        }
+//    }else{
+//    }
+}
 
 

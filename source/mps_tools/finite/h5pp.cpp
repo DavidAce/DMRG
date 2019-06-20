@@ -3,7 +3,7 @@
 //
 
 
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <mps_state/class_finite_chain_state.h>
 #include <mps_state/class_superblock.h>
 #include <model/class_hamiltonian_factory.h>
@@ -19,7 +19,7 @@ using Scalar    = std::complex<double>;
 
 
 
-void MPS_Tools::Finite::H5pp::write_all_state(const class_finite_chain_state &state, h5pp::File & h5ppFile,std::string sim_name) {
+void mpstools::finite::io::write_all_state(const class_finite_chain_state &state, h5pp::File & h5ppFile,std::string sim_name) {
     switch(settings::hdf5::storage_level){
         case StorageLevel::NONE:
             break;
@@ -44,7 +44,7 @@ void MPS_Tools::Finite::H5pp::write_all_state(const class_finite_chain_state &st
 }
 
 
-void MPS_Tools::Finite::H5pp::write_bond_matrices(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)
+void mpstools::finite::io::write_bond_matrices(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)
 /*! Writes down all the "Lambda" bond matrices (singular value matrices), so we can obtain the entanglement spectrum easily.
  */
 {
@@ -59,7 +59,7 @@ void MPS_Tools::Finite::H5pp::write_bond_matrices(const class_finite_chain_state
 }
 
 
-void MPS_Tools::Finite::H5pp::write_bond_matrix(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)
+void mpstools::finite::io::write_bond_matrix(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)
 /*! Writes down all the "Lambda" bond matrices (singular value matrices), so we can obtain the entanglement spectrum easily.
  */
 {
@@ -67,7 +67,7 @@ void MPS_Tools::Finite::H5pp::write_bond_matrix(const class_finite_chain_state &
     h5ppFile.writeDataset(state.get_L(middle),sim_name + "/state/mps/L_C");
 }
 
-void MPS_Tools::Finite::H5pp::write_full_mps(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)
+void mpstools::finite::io::write_full_mps(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)
 /*!
  * Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation.
  *
@@ -82,7 +82,7 @@ void MPS_Tools::Finite::H5pp::write_full_mps(const class_finite_chain_state & st
 
 
 
-void MPS_Tools::Finite::H5pp::write_full_mpo(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name) {
+void mpstools::finite::io::write_full_mpo(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name) {
     // Write all the MPO's
     // Remember to write tensors in row-major state order because that's what hdf5 uses.
     for (auto site = 0ul; site < state.get_length(); site++){
@@ -96,7 +96,7 @@ void MPS_Tools::Finite::H5pp::write_full_mpo(const class_finite_chain_state & st
     }
 }
 
-void MPS_Tools::Finite::H5pp::write_hamiltonian_params(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name){
+void mpstools::finite::io::write_hamiltonian_params(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name){
     // Write down the Hamiltonian metadata as a table
     // Remember to write tensors in row-major state order because that's what hdf5 uses.
     Eigen::MatrixXd hamiltonian_props;
@@ -117,7 +117,7 @@ void MPS_Tools::Finite::H5pp::write_hamiltonian_params(const class_finite_chain_
     }
 }
 
-void MPS_Tools::Finite::H5pp::write_all_measurements(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name){
+void mpstools::finite::io::write_all_measurements(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name){
     state.do_all_measurements();
     h5ppFile.writeDataset(state.measurements.length.value()                      , sim_name + "/measurements/length");
     h5ppFile.writeDataset(state.measurements.norm.value()                        , sim_name + "/measurements/norm");
@@ -133,29 +133,29 @@ void MPS_Tools::Finite::H5pp::write_all_measurements(const class_finite_chain_st
 }
 
 
-void MPS_Tools::Finite::H5pp::write_closest_parity_projection(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name, std::string paulistring){
-    auto state_projected = MPS_Tools::Finite::Ops::get_closest_parity_state(state,paulistring);
+void mpstools::finite::io::write_closest_parity_projection(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name, std::string paulistring){
+    auto state_projected = mpstools::finite::ops::get_closest_parity_state(state,paulistring);
     state_projected.unset_measurements();
     state_projected.do_all_measurements();
-    MPS_Tools::Finite::H5pp::write_all_state(state_projected,h5ppFile, sim_name + "/projections/" + paulistring);
-    MPS_Tools::Finite::H5pp::write_all_measurements(state_projected,h5ppFile, sim_name + "/projections/" + paulistring);
+    mpstools::finite::io::write_all_state(state_projected,h5ppFile, sim_name + "/projections/" + paulistring);
+    mpstools::finite::io::write_all_measurements(state_projected,h5ppFile, sim_name + "/projections/" + paulistring);
 }
 
 
-void MPS_Tools::Finite::H5pp::load_from_hdf5(const h5pp::File & h5ppFile, class_finite_chain_state & state, class_superblock & superblock, class_simulation_state &sim_state, std::string sim_name){
+void mpstools::finite::io::load_from_hdf5(const h5pp::File & h5ppFile, class_finite_chain_state & state, class_superblock & superblock, class_simulation_state &sim_state, std::string sim_name){
     // Load into state
     try{
         load_sim_state_from_hdf5(h5ppFile,sim_state,sim_name);
         load_state_from_hdf5(h5ppFile,state,sim_name);
         state.set_sweeps(sim_state.iteration);
-        MPS_Tools::Finite::Ops::rebuild_superblock(state,superblock);
-        MPS_Tools::Finite::Debug::check_integrity(state,superblock,sim_state);
+        mpstools::finite::ops::rebuild_superblock(state,superblock);
+        mpstools::finite::debug::check_integrity(state,superblock,sim_state);
     }catch(std::exception &ex){
         throw std::runtime_error("Failed to load from hdf5: " + std::string(ex.what()));
     }
 }
 
-void MPS_Tools::Finite::H5pp::load_state_from_hdf5(const h5pp::File & h5ppFile, class_finite_chain_state & state, std::string sim_name){
+void mpstools::finite::io::load_state_from_hdf5(const h5pp::File & h5ppFile, class_finite_chain_state & state, std::string sim_name){
     size_t position = 0;
     size_t sites   = 0;
     Eigen::Tensor<Scalar,3> G;
@@ -205,12 +205,12 @@ void MPS_Tools::Finite::H5pp::load_state_from_hdf5(const h5pp::File & h5ppFile, 
     }catch (std::exception &ex){
         throw std::runtime_error("Could not read MPS/MPO tensors from file: " + std::string(ex.what()));
     }
-    MPS_Tools::Finite::Ops::rebuild_environments(state);
+    mpstools::finite::ops::rebuild_environments(state);
 }
 
-void MPS_Tools::Finite::H5pp::load_sim_state_from_hdf5 (const h5pp::File & h5ppFile, class_simulation_state &sim_state, std::string sim_name){
+void mpstools::finite::io::load_sim_state_from_hdf5 (const h5pp::File & h5ppFile, class_simulation_state &sim_state, std::string sim_name){
     sim_state.clear();
-    // Common variables
+    // common variables
     try{
         h5ppFile.readDataset(sim_state.iteration                      , sim_name + "/sim_state/iteration");
         h5ppFile.readDataset(sim_state.step                           , sim_name + "/sim_state/step");

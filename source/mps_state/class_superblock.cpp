@@ -6,7 +6,7 @@
 #include <mps_state/class_superblock.h>
 #include <mps_state/class_environment.h>
 #include <mps_state/class_mps_2site.h>
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <iomanip>
 #include <general/class_svd_wrapper.h>
 #include <general/class_eigsolver.h>
@@ -179,18 +179,6 @@ void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const
 
 
 
-
-Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_matrix () const{
-    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
-    Eigen::Tensor<Scalar,5>tempL   = Lblock->block.contract(HA->MPO(),Textra::idx({2},{0})).shuffle(Textra::array5{4,1,3,0,2});
-    Eigen::Tensor<Scalar,5>tempR   = Rblock->block.contract(HB->MPO(),Textra::idx({2},{1})).shuffle(Textra::array5{4,1,3,0,2});
-    Eigen::Tensor<Scalar,8>H_local = tempL.contract(tempR, Textra::idx({4},{4})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
-//    tempL.resize(0,0,0,0,0);
-//    tempR.resize(0,0,0,0,0);
-//    tempH = tempH.shuffle(Textra::array8{0,1,4,5,2,3,6,7}).eval();
-    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
-}
-
 template<typename Scalar, auto rank>
 bool has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, double threshold = 1e-14) {
     Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>> vector (tensor.data(),tensor.size());
@@ -200,107 +188,88 @@ bool has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, double thresho
         return false;
     }
 }
-Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_matrix_real ()const{
+
+bool class_superblock::isReal() const {
+    bool MPS_isReal         = MPS->isReal();
+    bool HA_isReal          = HA->isReal();
+    bool HB_isReal          = HB->isReal();
+    bool Lblock_isReal      = Lblock->isReal();
+    bool Rblock_isReal      = Rblock->isReal();
+    bool Lblock2_isReal     = Lblock2->isReal();
+    bool Rblock2_isReal     = Rblock2->isReal();
+
+    return
+        MPS_isReal
+    and HA_isReal
+    and HB_isReal
+    and Lblock_isReal
+    and Rblock_isReal
+    and Lblock2_isReal
+    and Rblock2_isReal;
+}
+
+template<typename T>
+Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_matrix ()const{
+    Eigen::Tensor<T,5>tempL;
+    Eigen::Tensor<T,5>tempR;
+    if constexpr (std::is_same<T,double>::value){
+        if(not Lblock->isReal()){throw std::runtime_error("Discarding imaginary data from Lblock when building H_local");}
+        if(not Rblock->isReal()){throw std::runtime_error("Discarding imaginary data from Rblock when building H_local");}
+        if(not HA->isReal())    {throw std::runtime_error("Discarding imaginary data from MPO A when building H_local");}
+        if(not HB->isReal())    {throw std::runtime_error("Discarding imaginary data from MPO B when building H_local");}
+        tempL   = Lblock->block.contract(HA->MPO(),Textra::idx({2},{0})).real().shuffle(Textra::array5{4,1,3,0,2}).real();
+        tempR   = Rblock->block.contract(HB->MPO(),Textra::idx({2},{1})).real().shuffle(Textra::array5{4,1,3,0,2}).real();
+    }else{
+        tempL   = Lblock->block.contract(HA->MPO(),Textra::idx({2},{0})).shuffle(Textra::array5{4,1,3,0,2});
+        tempR   = Rblock->block.contract(HB->MPO(),Textra::idx({2},{1})).shuffle(Textra::array5{4,1,3,0,2});
+    }
     long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
-    if(has_imaginary_part(Lblock->block)){throw std::runtime_error("Discarding imaginary data from Lblock when building H_local");}
-    if(has_imaginary_part(Rblock->block)){throw std::runtime_error("Discarding imaginary data from Rblock when building H_local");}
-    if(has_imaginary_part(HA->MPO()))      {throw std::runtime_error("Discarding imaginary data from MPO A when building H_local");}
-    if(has_imaginary_part(HB->MPO()))      {throw std::runtime_error("Discarding imaginary data from MPO B when building H_local");}
-
-    Eigen::Tensor<double,5>tempL   = Lblock->block.contract(HA->MPO(),Textra::idx({2},{0})).real().shuffle(Textra::array5{4,1,3,0,2});
-    Eigen::Tensor<double,5>tempR   = Rblock->block.contract(HB->MPO(),Textra::idx({2},{1})).real().shuffle(Textra::array5{4,1,3,0,2});
-    Eigen::Tensor<double,8>H_local = tempL.contract(tempR, Textra::idx({4},{4})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
-    return Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
+    Eigen::Tensor<T,8>H_local = tempL.contract(tempR, Textra::idx({4},{4})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
+    return Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
 }
 
-
-Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_sq_matrix ()const{
-    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
-    Eigen::Tensor<Scalar,6>tempL = Lblock2->block.contract(HA->MPO(),Textra::idx({2},{0}))
-                                                 .contract(HA->MPO(),Textra::idx({2,5},{0,2}))
-                                                 .shuffle(Textra::array6{5,1,3,0,2,4});
-    Eigen::Tensor<Scalar,6>tempR = Rblock2->block.contract(HB->MPO(),Textra::idx({2},{1}))
-                                                 .contract(HB->MPO(),Textra::idx({2,5},{1,2}))
-                                                 .shuffle(Textra::array6{5,1,3,0,2,4});
-
-    Eigen::Tensor<Scalar,8> H_local = tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
-    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
-}
-
-Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_sq_matrix_real ()const{
-    if(has_imaginary_part(Lblock2->block)){throw std::runtime_error("Discarding imaginary data from Lblock when building H_local");}
-    if(has_imaginary_part(Rblock2->block)){throw std::runtime_error("Discarding imaginary data from Rblock when building H_local");}
-    if(has_imaginary_part(HA->MPO()))      {throw std::runtime_error("Discarding imaginary data from MPO A when building H_local");}
-    if(has_imaginary_part(HB->MPO()))      {throw std::runtime_error("Discarding imaginary data from MPO B when building H_local");}
-    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
-    Eigen::Tensor<double,6>tempL = Lblock2->block.contract(HA->MPO(),Textra::idx({2},{0}))
-                                                 .contract(HA->MPO(),Textra::idx({2,5},{0,2}))
-                                                 .real().shuffle(Textra::array6{5,1,3,0,2,4});
-    Eigen::Tensor<double,6>tempR = Rblock2->block.contract(HB->MPO(),Textra::idx({2},{1}))
-                                                 .contract(HB->MPO(),Textra::idx({2,5},{1,2}))
-                                                 .real().shuffle(Textra::array6{5,1,3,0,2,4});
-
-    Eigen::Tensor<double,8>H_local = tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
-    return Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
-}
+template Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic>                class_superblock::get_H_local_matrix<double>() const;
+template Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic>  class_superblock::get_H_local_matrix<std::complex<double>>() const;
 
 
-Textra::SparseMatrixType<Scalar> class_superblock::get_H_local_sparse_matrix (double prune)const{
-    return Textra::Tensor2_to_SparseMatrix(get_H_local_rank2(),prune);
-}
-Textra::SparseMatrixType<Scalar> class_superblock::get_H_local_sq_sparse_matrix (double prune)const{
-    return Textra::Tensor2_to_SparseMatrix(get_H_local_sq_rank2(),prune);
-}
-
-
-Eigen::Tensor<Scalar,2> class_superblock::get_H_local_rank2 ()const{
-    long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
-    Eigen::Tensor<Scalar,6>tempL = Lblock2->block.contract(HA->MPO(),Textra::idx({2},{0}))
-            .contract(HA->MPO(),Textra::idx({2,5},{0,2}))
-            .shuffle(Textra::array6{5,1,3,0,2,4});
-    Eigen::Tensor<Scalar,6>tempR = Rblock2->block.contract(HB->MPO(),Textra::idx({2},{1}))
-            .contract(HB->MPO(),Textra::idx({2,5},{1,2}))
-            .shuffle(Textra::array6{5,1,3,0,2,4});
-
-    return tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7}).reshape(Textra::array2{shape, shape});
-}
-
-Eigen::Tensor<Scalar,8> class_superblock::get_H_local_rank8 ()const{
-    Eigen::Tensor<Scalar,6>tempL = Lblock2->block.contract(HA->MPO(),Textra::idx({2},{0}))
-            .contract(HA->MPO(),Textra::idx({2,5},{0,2}))
-            .shuffle(Textra::array6{5,1,3,0,2,4});
-    Eigen::Tensor<Scalar,6>tempR = Rblock2->block.contract(HB->MPO(),Textra::idx({2},{1}))
-            .contract(HB->MPO(),Textra::idx({2,5},{1,2}))
-            .shuffle(Textra::array6{5,1,3,0,2,4});
-
-    return tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
-}
-
-Eigen::Tensor<Scalar,2> class_superblock::get_H_local_sq_rank2 ()const{
+template<typename T>
+Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic> class_superblock::get_H_local_sq_matrix ()const{
+    Eigen::Tensor<T,6>tempL;
+    Eigen::Tensor<T,6>tempR;
+    if constexpr(std::is_same<T,double>::value){
+        if(not Lblock2->isReal()){throw std::runtime_error("Discarding imaginary data from Lblock2 when building H_local_sq");}
+        if(not Rblock2->isReal()){throw std::runtime_error("Discarding imaginary data from Rblock2 when building H_local_sq");}
+        if(not HA->isReal())     {throw std::runtime_error("Discarding imaginary data from MPO A when building H_local_sq");}
+        if(not HB->isReal())     {throw std::runtime_error("Discarding imaginary data from MPO B when building H_local_sq");}
+        tempL = Lblock2->block
+                .contract(HA->MPO(),Textra::idx({2},{0}))
+                .contract(HA->MPO(),Textra::idx({2,5},{0,2}))
+                .real()
+                .shuffle(Textra::array6{5,1,3,0,2,4});
+        tempR = Rblock2->block
+                .contract(HB->MPO(),Textra::idx({2},{1}))
+                .contract(HB->MPO(),Textra::idx({2,5},{1,2}))
+                .real()
+                .shuffle(Textra::array6{5,1,3,0,2,4});
+    }else{
+        tempL = Lblock2->block
+                .contract(HA->MPO(),Textra::idx({2},{0}))
+                .contract(HA->MPO(),Textra::idx({2,5},{0,2}))
+                .shuffle(Textra::array6{5,1,3,0,2,4});
+        tempR = Rblock2->block
+                .contract(HB->MPO(),Textra::idx({2},{1}))
+                .contract(HB->MPO(),Textra::idx({2,5},{1,2}))
+                .shuffle(Textra::array6{5,1,3,0,2,4});
+    }
 
     long shape = MPS->chiA() * spin_dimension * MPS->chiB() * spin_dimension;
-    Eigen::Tensor<Scalar,6>tempL = Lblock2->block.contract(HA->MPO(),Textra::idx({2},{0}))
-            .contract(HA->MPO(),Textra::idx({2,5},{0,2}))
-            .shuffle(Textra::array6{5,1,3,0,2,4});
-    Eigen::Tensor<Scalar,6>tempR = Rblock2->block.contract(HB->MPO(),Textra::idx({2},{1}))
-            .contract(HB->MPO(),Textra::idx({2,5},{1,2}))
-            .shuffle(Textra::array6{5,1,3,0,2,4});
-
-    return tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7}).reshape(Textra::array2{shape, shape});
-}
-
-Eigen::Tensor<Scalar,8> class_superblock::get_H_local_sq_rank8 ()const{
-    Eigen::Tensor<Scalar,6>tempL = Lblock2->block.contract(HA->MPO(),Textra::idx({2},{0}))
-            .contract(HA->MPO(),Textra::idx({2,5},{0,2}))
-            .shuffle(Textra::array6{5,1,3,0,2,4});
-    Eigen::Tensor<Scalar,6>tempR = Rblock2->block.contract(HB->MPO(),Textra::idx({2},{1}))
-            .contract(HB->MPO(),Textra::idx({2,5},{1,2}))
-            .shuffle(Textra::array6{5,1,3,0,2,4});
-
-    return tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
+    Eigen::Tensor<T,8> H_local = tempL.contract(tempR, Textra::idx({4,5},{4,5})).shuffle(Textra::array8{0,1,4,5,2,3,6,7});
+    return Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
 }
 
 
+template Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic>                class_superblock::get_H_local_sq_matrix<double>() const ;
+template Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic>  class_superblock::get_H_local_sq_matrix<std::complex<double>>() const;
 
 
 
@@ -349,24 +318,24 @@ void class_superblock::set_positions(int position){
 
 void class_superblock::unset_measurements() const {
     measurements = Measurements();
-    MPS_Tools::Common::Views::components_computed = false;
+    mpstools::common::views::components_computed = false;
 }
 
 void class_superblock::do_all_measurements() const {
-    using namespace MPS_Tools::Common;
-    measurements.length                         = Measure::length(*this);
-    measurements.bond_dimension                 = Measure::bond_dimension(*this);
-    measurements.norm                           = Measure::norm(*this);
-    measurements.truncation_error               = Measure::truncation_error(*this);
-    measurements.energy_mpo                     = Measure::energy_mpo(*this);  //This number is needed for variance calculation!
-    measurements.energy_per_site_mpo            = Measure::energy_per_site_mpo(*this);
-    measurements.energy_per_site_ham            = Measure::energy_per_site_ham(*this);
-    measurements.energy_per_site_mom            = Measure::energy_per_site_mom(*this);
-    measurements.energy_variance_mpo            = Measure::energy_variance_mpo(*this);
-    measurements.energy_variance_per_site_mpo   = Measure::energy_variance_per_site_mpo(*this);
-    measurements.energy_variance_per_site_ham   = Measure::energy_variance_per_site_ham(*this);
-    measurements.energy_variance_per_site_mom   = Measure::energy_variance_per_site_mom(*this);
-    measurements.current_entanglement_entropy   = Measure::current_entanglement_entropy(*this);
+    using namespace mpstools::common;
+    measurements.length                         = measure::length(*this);
+    measurements.bond_dimension                 = measure::bond_dimension(*this);
+    measurements.norm                           = measure::norm(*this);
+    measurements.truncation_error               = measure::truncation_error(*this);
+    measurements.energy_mpo                     = measure::energy_mpo(*this);  //This number is needed for variance calculation!
+    measurements.energy_per_site_mpo            = measure::energy_per_site_mpo(*this);
+    measurements.energy_per_site_ham            = measure::energy_per_site_ham(*this);
+    measurements.energy_per_site_mom            = measure::energy_per_site_mom(*this);
+    measurements.energy_variance_mpo            = measure::energy_variance_mpo(*this);
+    measurements.energy_variance_per_site_mpo   = measure::energy_variance_per_site_mpo(*this);
+    measurements.energy_variance_per_site_ham   = measure::energy_variance_per_site_ham(*this);
+    measurements.energy_variance_per_site_mom   = measure::energy_variance_per_site_mom(*this);
+    measurements.current_entanglement_entropy   = measure::current_entanglement_entropy(*this);
 }
 
 

@@ -2,7 +2,7 @@
 // Created by david on 2019-02-01.
 //
 
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <mps_state/class_superblock.h>
 #include <mps_state/class_mps_2site.h>
 #include <mps_state/class_environment.h>
@@ -16,15 +16,15 @@ using namespace Textra;
 
 //
 //
-//void MPS_Tools::Infinite::Measure::do_all_measurements(const class_superblock & superblock)
+//void mpstools::infinite::measure::do_all_measurements(const class_superblock & superblock)
 //{
 //
 //
-//    using namespace MPS_Tools::Infinite::Measure;
-//    Results::length          = length(superblock);
-//    Results::energy          = compute_energy_mpo(superblock);  //This number is needed for variance calculation!
-//    Results::energy_per_site = compute_energy_mpo(superblock);
-//    Results::energy_variance = compute_energy_variance_mpo(superblock, Results::energy);
+//    using namespace mpstools::infinite::measure;
+//    results::length          = length(superblock);
+//    results::energy          = compute_energy_mpo(superblock);  //This number is needed for variance calculation!
+//    results::energy_per_site = compute_energy_mpo(superblock);
+//    results::energy_variance = compute_energy_variance_mpo(superblock, results::energy);
 //}
 //
 //
@@ -60,20 +60,20 @@ using namespace Textra;
 //    long sizeLB = MPS_evolved->chiB() * MPS_evolved->chiB();
 //    //Normalize
 ////    t_temp3.tic();
-//    Eigen::Tensor<Scalar,2> transfer_matrix_theta_evn       = MPS_Tools::Common::Views::get_transfer_matrix_theta_evn(*MPS_evolved).reshape(array2{sizeLB,sizeLB});
+//    Eigen::Tensor<Scalar,2> transfer_matrix_theta_evn       = mpstools::common::views::get_transfer_matrix_theta_evn(*MPS_evolved).reshape(array2{sizeLB,sizeLB});
 ////    t_temp3.toc();
 //    using namespace settings::precision;
 //
 ////    t_temp4.tic();
 //    class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
 //    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
-//    auto new_theta_evn_normalized        = MPS_Tools::Common::Views::get_theta_evn(*MPS_evolved, sqrt(solver.ref_eigvals()[0]));
+//    auto new_theta_evn_normalized        = mpstools::common::views::get_theta_evn(*MPS_evolved, sqrt(solver.ref_eigvals()[0]));
 ////    t_temp4.toc();
 //    long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original.chiA();// theta_evn_normalized.dimension(1);
 //    long sizeR = new_theta_evn_normalized.dimension(3) * MPS_original.chiB();// theta_evn_normalized.dimension(3);
 //
 //    Eigen::Tensor<Scalar,2> transfer_matrix_G =   new_theta_evn_normalized
-//            .contract(MPS_Tools::Common::Views::theta_evn_normalized.conjugate(), idx({0,2},{0,2}))
+//            .contract(mpstools::common::views::theta_evn_normalized.conjugate(), idx({0,2},{0,2}))
 //            .shuffle(array4{0,2,1,3})
 //            .reshape(array2{sizeL,sizeR});
 //    //Compute the characteristic function G(a).
@@ -93,10 +93,10 @@ using namespace Textra;
 //
 //
 //
-//double MPS_Tools::Infinite::Measure::energy_mpo(const class_superblock & superblock){
+//double mpstools::infinite::measure::energy_mpo(const class_superblock & superblock){
 ////    superblock.t_ene_mpo.tic();
-//    double energy = MPS_Tools::Finite::Measure::energy(superblock);
-//    double L      = MPS_Tools::Finite::Measure::length(superblock);
+//    double energy = mpstools::finite::measure::energy(superblock);
+//    double L      = mpstools::finite::measure::length(superblock);
 ////    superblock.t_ene_mpo.toc();
 //    return energy / L;
 //
@@ -104,14 +104,14 @@ using namespace Textra;
 //
 //
 //
-//double MPS_Tools::Infinite::Measure::energy_per_site_ham(const class_superblock & superblock){
+//double mpstools::infinite::measure::energy_per_site_ham(const class_superblock & superblock){
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
 //    auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
 //    auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
 //    auto h_evn = superblock.HA->single_site_hamiltonian(0,2,SX,SY, SZ);
 //    auto h_odd = superblock.HB->single_site_hamiltonian(1,2,SX,SY, SZ);
-//    MPS_Tools::Common::Views::compute_mps_components(superblock);
-//    using namespace MPS_Tools::Common::Views;
+//    mpstools::common::views::compute_mps_components(superblock);
+//    using namespace mpstools::common::views;
 //
 //    Eigen::Tensor<Scalar,0>
 //    E_evn = theta_evn_normalized
@@ -133,7 +133,7 @@ using namespace Textra;
 //}
 //
 //
-//double MPS_Tools::Infinite::Measure::energy_per_site_mom(const class_superblock & superblock){
+//double mpstools::infinite::measure::energy_per_site_mom(const class_superblock & superblock){
 ////    t_var_gen.tic();
 //    Scalar a  = (0.0 + 1.0i) *5e-3;
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -159,23 +159,23 @@ using namespace Textra;
 //}
 //
 //
-//double MPS_Tools::Infinite::Measure::energy_variance_per_site_mpo(const class_superblock &superblock) {
+//double mpstools::infinite::measure::energy_variance_per_site_mpo(const class_superblock &superblock) {
 //
-//    double VarE  = MPS_Tools::Finite::Measure::energy_variance(superblock);
-//    double L     = MPS_Tools::Finite::Measure::length(superblock);
+//    double VarE  = mpstools::finite::measure::energy_variance(superblock);
+//    double L     = mpstools::finite::measure::length(superblock);
 //    return VarE/L;
 //}
 //
-//double MPS_Tools::Infinite::Measure::energy_variance_per_site_ham(const class_superblock &superblock) {
+//double mpstools::infinite::measure::energy_variance_per_site_ham(const class_superblock &superblock) {
 ////    t_var_ham.tic();
-//    using namespace MPS_Tools::Common::Views;
+//    using namespace mpstools::common::views;
 //
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
 //    auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
 //    auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
 //    auto h_evn = superblock.HA->single_site_hamiltonian(0,2,SX,SY, SZ);
 //    auto h_odd = superblock.HB->single_site_hamiltonian(1,2,SX,SY, SZ);
-//    MPS_Tools::Common::Views::compute_mps_components(superblock);
+//    mpstools::common::views::compute_mps_components(superblock);
 //
 //    Eigen::Tensor<Scalar,0>
 //            E_evn = theta_evn_normalized
@@ -310,7 +310,7 @@ using namespace Textra;
 //
 //
 //
-//double MPS_Tools::Infinite::Measure::energy_variance_per_site_mom(const class_superblock &superblock){
+//double mpstools::infinite::measure::energy_variance_per_site_mom(const class_superblock &superblock){
 ////    t_var_gen.tic();
 //    Scalar a  = (0.0 + 1.0i) *5e-3;
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);

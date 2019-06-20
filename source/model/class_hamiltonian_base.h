@@ -25,7 +25,7 @@ public:
     const Eigen::Tensor<Scalar,4> & MPO() const;
     virtual Eigen::Tensor<Scalar,4> MPO_reduced_view()                          const = 0;
     virtual Eigen::Tensor<Scalar,4> MPO_reduced_view(double single_site_energy) const = 0;
-
+    bool isReal()const;
     Eigen::MatrixXcd        MPO_matrix_view();    /*!< Matrix representation of full 2-site Hamiltonian */
     virtual Eigen::MatrixXcd single_site_hamiltonian(int position, int sites, std::vector<Eigen::MatrixXcd> &SX, std::vector<Eigen::MatrixXcd> &SY, std::vector<Eigen::MatrixXcd> &SZ) const = 0;
     virtual void   set_hamiltonian(const Eigen::Tensor<Scalar,4> MPO_, std::vector<double> parameters)  = 0;

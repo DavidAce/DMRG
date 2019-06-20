@@ -8,7 +8,7 @@
 // Created by david on 2018-07-06.
 //
 
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <mps_state/class_superblock.h>
 #include <mps_state/class_finite_chain_state.h>
 #include <mps_state/class_mps_2site.h>
@@ -18,7 +18,7 @@
 
 using namespace Textra;
 
-namespace MPS_Tools::Common::Views{
+namespace mpstools::common::views{
     Eigen::Tensor<std::complex<double>,4> theta                  = Eigen::Tensor<std::complex<double>,4> ();
     Eigen::Tensor<std::complex<double>,4> theta_evn_normalized   = Eigen::Tensor<std::complex<double>,4> ();
     Eigen::Tensor<std::complex<double>,4> theta_odd_normalized   = Eigen::Tensor<std::complex<double>,4> ();
@@ -46,7 +46,7 @@ std::pair<Eigen::VectorXcd, std::complex<double>> dominant_eig(Eigen::Tensor<std
     return std::make_pair(eigvec,eigval);
 }
 
-void MPS_Tools::Common::Views::compute_mps_components(const class_superblock & superblock){
+void mpstools::common::views::compute_mps_components(const class_superblock & superblock){
 //    int chiA2 = (int)(chiA()*chiA());
     if (components_computed)return;
 
@@ -111,7 +111,7 @@ void MPS_Tools::Common::Views::compute_mps_components(const class_superblock & s
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_theta(const class_finite_chain_state & state, std::complex<double> norm)
+mpstools::common::views::get_theta(const class_finite_chain_state & state, std::complex<double> norm)
 /*!
  * Returns a two-site MPS
      @verbatim
@@ -129,7 +129,7 @@ MPS_Tools::Common::Views::get_theta(const class_finite_chain_state & state, std:
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_theta(const class_superblock & superblock, std::complex<double> norm)
+mpstools::common::views::get_theta(const class_superblock & superblock, std::complex<double> norm)
 /*!
  * Returns a two-site MPS
      @verbatim
@@ -147,7 +147,7 @@ MPS_Tools::Common::Views::get_theta(const class_superblock & superblock, std::co
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_theta_swapped(const class_superblock & superblock, std::complex<double> norm)
+mpstools::common::views::get_theta_swapped(const class_superblock & superblock, std::complex<double> norm)
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
@@ -170,7 +170,7 @@ MPS_Tools::Common::Views::get_theta_swapped(const class_superblock & superblock,
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_theta_evn(const class_superblock & superblock, std::complex<double> norm)
+mpstools::common::views::get_theta_evn(const class_superblock & superblock, std::complex<double> norm)
 /*!
  * Returns a right normalized two-site MPS
      @verbatim
@@ -189,7 +189,7 @@ MPS_Tools::Common::Views::get_theta_evn(const class_superblock & superblock, std
 }
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_theta_odd(const class_superblock & superblock, std::complex<double> norm)
+mpstools::common::views::get_theta_odd(const class_superblock & superblock, std::complex<double> norm)
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
@@ -208,7 +208,7 @@ MPS_Tools::Common::Views::get_theta_odd(const class_superblock & superblock, std
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_zero(const class_superblock & superblock) {
+mpstools::common::views::get_transfer_matrix_zero(const class_superblock & superblock) {
     Eigen::Tensor<std::complex<double>,1> I = superblock.MPS->LC;
     I.setConstant(1.0);
     Eigen::array<Eigen::IndexPair<long>,0> pair = {};
@@ -219,7 +219,7 @@ MPS_Tools::Common::Views::get_transfer_matrix_zero(const class_superblock & supe
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_LBGA(const class_superblock & superblock, std::complex<double> norm)  {
+mpstools::common::views::get_transfer_matrix_LBGA(const class_superblock & superblock, std::complex<double> norm)  {
     return superblock.MPS->A().contract( superblock.MPS->A().conjugate() , idx({0},{0}))
                    .shuffle(array4{0,3,1,2})
            /norm;
@@ -227,7 +227,7 @@ MPS_Tools::Common::Views::get_transfer_matrix_LBGA(const class_superblock & supe
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_GALC(const class_superblock & superblock, std::complex<double> norm)  {
+mpstools::common::views::get_transfer_matrix_GALC(const class_superblock & superblock, std::complex<double> norm)  {
     return superblock.MPS->C()
                    .contract(superblock.MPS->MPS_A->get_G(),               idx({2},{0}))
                    .contract(superblock.MPS->MPS_A->get_G().conjugate(),   idx({0},{0}))
@@ -237,7 +237,7 @@ MPS_Tools::Common::Views::get_transfer_matrix_GALC(const class_superblock & supe
 }
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_GBLB(const class_superblock & superblock, std::complex<double> norm)  {
+mpstools::common::views::get_transfer_matrix_GBLB(const class_superblock & superblock, std::complex<double> norm)  {
     return superblock.MPS->B().contract(superblock.MPS->B().conjugate() ,   idx({0},{0}))
                    .shuffle(array4{0,2,1,3})
            /norm;
@@ -245,7 +245,7 @@ MPS_Tools::Common::Views::get_transfer_matrix_GBLB(const class_superblock & supe
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_LCGB(const class_superblock & superblock, std::complex<double> norm)  {
+mpstools::common::views::get_transfer_matrix_LCGB(const class_superblock & superblock, std::complex<double> norm)  {
     return  superblock.MPS->C()
                     .contract(superblock.MPS->MPS_B->get_G(),               idx({1},{1}))
                     .contract(superblock.MPS->MPS_B->get_G().conjugate(),   idx({1},{0}))
@@ -256,19 +256,19 @@ MPS_Tools::Common::Views::get_transfer_matrix_LCGB(const class_superblock & supe
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_theta_evn(const class_superblock & superblock, std::complex<double> norm)  {
-    using namespace MPS_Tools::Common::Views;
+mpstools::common::views::get_transfer_matrix_theta_evn(const class_superblock & superblock, std::complex<double> norm)  {
+    using namespace mpstools::common::views;
     return get_theta_evn(superblock).contract(get_theta_evn(superblock).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
 }
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_theta_odd(const class_superblock & superblock, std::complex<double> norm)  {
+mpstools::common::views::get_transfer_matrix_theta_odd(const class_superblock & superblock, std::complex<double> norm)  {
     return get_theta_odd(superblock).contract(get_theta_odd(superblock).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
 }
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_AB(const class_superblock & superblock, int p) {
+mpstools::common::views::get_transfer_matrix_AB(const class_superblock & superblock, int p) {
     Eigen::Tensor<std::complex<double>,4> temp = get_transfer_matrix_zero(superblock);
     Eigen::Tensor<std::complex<double>,4> temp2;
     for (int i = 0; i < p-2; i++){
@@ -304,7 +304,7 @@ MPS_Tools::Common::Views::get_transfer_matrix_AB(const class_superblock & superb
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_theta(const class_mps_2site  &MPS, std::complex<double> norm)
+mpstools::common::views::get_theta(const class_mps_2site  &MPS, std::complex<double> norm)
 /*!
  * Returns a two-site MPS
      @verbatim
@@ -322,7 +322,7 @@ MPS_Tools::Common::Views::get_theta(const class_mps_2site  &MPS, std::complex<do
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_theta_swapped(const class_mps_2site  &MPS, std::complex<double> norm)
+mpstools::common::views::get_theta_swapped(const class_mps_2site  &MPS, std::complex<double> norm)
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
@@ -345,7 +345,7 @@ MPS_Tools::Common::Views::get_theta_swapped(const class_mps_2site  &MPS, std::co
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_theta_evn(const class_mps_2site  &MPS, std::complex<double> norm)
+mpstools::common::views::get_theta_evn(const class_mps_2site  &MPS, std::complex<double> norm)
 /*!
  * Returns a right normalized two-site MPS
      @verbatim
@@ -364,7 +364,7 @@ MPS_Tools::Common::Views::get_theta_evn(const class_mps_2site  &MPS, std::comple
 }
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_theta_odd(const class_mps_2site  &MPS, std::complex<double> norm)
+mpstools::common::views::get_theta_odd(const class_mps_2site  &MPS, std::complex<double> norm)
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
@@ -383,7 +383,7 @@ MPS_Tools::Common::Views::get_theta_odd(const class_mps_2site  &MPS, std::comple
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_zero(const class_mps_2site  &MPS) {
+mpstools::common::views::get_transfer_matrix_zero(const class_mps_2site  &MPS) {
     Eigen::Tensor<std::complex<double>,1> I = MPS.LC;
     I.setConstant(1.0);
     Eigen::array<Eigen::IndexPair<long>,0> pair = {};
@@ -394,7 +394,7 @@ MPS_Tools::Common::Views::get_transfer_matrix_zero(const class_mps_2site  &MPS) 
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_LBGA(const class_mps_2site  &MPS, std::complex<double> norm)  {
+mpstools::common::views::get_transfer_matrix_LBGA(const class_mps_2site  &MPS, std::complex<double> norm)  {
     return MPS.A().contract(MPS.A().conjugate() , idx({0},{0}))
                    .shuffle(array4{0,3,1,2})
            /norm;
@@ -402,7 +402,7 @@ MPS_Tools::Common::Views::get_transfer_matrix_LBGA(const class_mps_2site  &MPS, 
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_GALC(const class_mps_2site  &MPS, std::complex<double> norm)  {
+mpstools::common::views::get_transfer_matrix_GALC(const class_mps_2site  &MPS, std::complex<double> norm)  {
     return MPS.C()
                    .contract(MPS.MPS_A->get_G(),               idx({2},{0}))
                    .contract(MPS.MPS_A->get_G().conjugate(),   idx({0},{0}))
@@ -412,7 +412,7 @@ MPS_Tools::Common::Views::get_transfer_matrix_GALC(const class_mps_2site  &MPS, 
 }
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_GBLB(const class_mps_2site  &MPS, std::complex<double> norm)  {
+mpstools::common::views::get_transfer_matrix_GBLB(const class_mps_2site  &MPS, std::complex<double> norm)  {
     return MPS.B().contract(MPS.B().conjugate() ,   idx({0},{0}))
                    .shuffle(array4{0,2,1,3})
            /norm;
@@ -420,7 +420,7 @@ MPS_Tools::Common::Views::get_transfer_matrix_GBLB(const class_mps_2site  &MPS, 
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_LCGB(const class_mps_2site  &MPS, std::complex<double> norm)  {
+mpstools::common::views::get_transfer_matrix_LCGB(const class_mps_2site  &MPS, std::complex<double> norm)  {
     return  MPS.C()
                     .contract(MPS.MPS_B->get_G(),               idx({1},{1}))
                     .contract(MPS.MPS_B->get_G().conjugate(),   idx({1},{0}))
@@ -431,19 +431,19 @@ MPS_Tools::Common::Views::get_transfer_matrix_LCGB(const class_mps_2site  &MPS, 
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_theta_evn(const class_mps_2site  &MPS, std::complex<double> norm)  {
-    using namespace MPS_Tools::Common::Views;
+mpstools::common::views::get_transfer_matrix_theta_evn(const class_mps_2site  &MPS, std::complex<double> norm)  {
+    using namespace mpstools::common::views;
     return get_theta_evn(MPS).contract(get_theta_evn(MPS).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
 }
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_theta_odd(const class_mps_2site  &MPS, std::complex<double> norm)  {
+mpstools::common::views::get_transfer_matrix_theta_odd(const class_mps_2site  &MPS, std::complex<double> norm)  {
     return get_theta_odd(MPS).contract(get_theta_odd(MPS).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
 }
 
 
 Eigen::Tensor<std::complex<double>,4>
-MPS_Tools::Common::Views::get_transfer_matrix_AB(const class_mps_2site  &MPS, int p) {
+mpstools::common::views::get_transfer_matrix_AB(const class_mps_2site  &MPS, int p) {
     Eigen::Tensor<std::complex<double>,4> temp = get_transfer_matrix_zero(MPS);
     Eigen::Tensor<std::complex<double>,4> temp2;
     for (int i = 0; i < p-2; i++){

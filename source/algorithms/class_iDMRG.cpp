@@ -7,7 +7,7 @@
 #include <io/class_hdf5_table_buffer2.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_state/class_superblock.h>
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <general/nmspc_math.h>
 #include <spdlog/spdlog.h>
 #include "class_iDMRG.h"
@@ -72,7 +72,7 @@ void class_iDMRG::store_state_and_measurements_to_file(bool force){
     }
     log->trace("Storing storing mps to file");
     t_sto.tic();
-    MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5pp_file, sim_name);
+    mpstools::infinite::io::write_all_superblock(*superblock, *h5pp_file, sim_name);
     t_sto.toc();
 }
 
@@ -81,7 +81,7 @@ void class_iDMRG::store_table_entry_progress(bool force){
         if (Math::mod(sim_state.iteration, settings::idmrg::store_freq) != 0) {return;}
     }
     compute_observables(*superblock);
-    using namespace MPS_Tools::Common::Measure;
+    using namespace mpstools::common::measure;
     t_sto.tic();
     table_idmrg->append_record(
             sim_state.iteration,

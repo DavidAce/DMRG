@@ -3,7 +3,7 @@
 //
 
 
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <mps_state/class_finite_chain_state.h>
 #include <mps_state/class_superblock.h>
 #include <mps_state/class_mps_2site.h>
@@ -15,10 +15,10 @@
 
 using Scalar = std::complex<double>;
 
-
-void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state, std::string model_type, std::string parity, const size_t length){
+void mpstools::finite::chain::initialize_state(class_finite_chain_state &state, std::string model_type, std::string parity, const size_t length){
     state.clear();
     state.set_max_sites(length);
+
 
     //Generate MPO
     while(true){
@@ -27,7 +27,7 @@ void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state,
         state.MPO_R.emplace_front(class_hamiltonian_factory::create_mpo(model_type));
         if(state.MPO_L.size() + state.MPO_R.size() >= length){break;}
     }
-    MPS_Tools::Finite::Chain::randomize_mpos(state);
+    mpstools::finite::chain::randomize_mpos(state);
 
     //Generate MPS
     auto spin_dim = state.MPO_L.back()->get_spin_dimension();
@@ -45,17 +45,17 @@ void MPS_Tools::Finite::Chain::initialize_state(class_finite_chain_state &state,
     }
 
 
-    state = MPS_Tools::Finite::Ops::set_random_product_state(state,parity);
-    MPS_Tools::Finite::Ops::rebuild_environments(state);
-    MPS_Tools::Finite::Debug::check_integrity_of_mps(state);
+    state = mpstools::finite::ops::set_random_product_state(state,parity);
+    mpstools::finite::ops::rebuild_environments(state);
+    mpstools::finite::debug::check_integrity_of_mps(state);
 }
 
 
 
 
 
-void MPS_Tools::Finite::Chain::randomize_mpos(class_finite_chain_state &state) {
-    MPS_Tools::log->info("Setting random fields in chain");
+void mpstools::finite::chain::randomize_mpos(class_finite_chain_state &state) {
+    mpstools::log->info("Setting random fields in chain");
     if (not state.max_sites_is_set) throw std::range_error("System size not set yet");
 
     std::vector<std::vector<double>> all_params;
@@ -78,15 +78,15 @@ void MPS_Tools::Finite::Chain::randomize_mpos(class_finite_chain_state &state) {
 
 
 
-void MPS_Tools::Finite::Chain::copy_superblock_to_state(class_finite_chain_state &state,
+void mpstools::finite::chain::copy_superblock_to_state(class_finite_chain_state &state,
                                                         const class_superblock &superblock) {
-    MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(state, superblock);
-    MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(state, superblock);
-    MPS_Tools::Finite::Chain::copy_superblock_env_to_state(state, superblock);
+    mpstools::finite::chain::copy_superblock_mps_to_state(state, superblock);
+    mpstools::finite::chain::copy_superblock_mpo_to_state(state, superblock);
+    mpstools::finite::chain::copy_superblock_env_to_state(state, superblock);
     state.unset_measurements();
 }
 
-void MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(class_finite_chain_state &state,const class_superblock &superblock) {
+void mpstools::finite::chain::copy_superblock_mps_to_state(class_finite_chain_state &state,const class_superblock &superblock) {
     auto & MPS_L  = state.MPS_L;
     auto & MPS_R  = state.MPS_R;
     auto & MPS_C  = state.MPS_C;
@@ -103,7 +103,7 @@ void MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(class_finite_chain_s
     state.unset_measurements();
 }
 
-void MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(class_finite_chain_state &state,const class_superblock &superblock){
+void mpstools::finite::chain::copy_superblock_mpo_to_state(class_finite_chain_state &state,const class_superblock &superblock){
 //    std::cout << "Current state -- Overwrite: " << std::endl;
 //    std::cout << "HA: " << superblock.HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position() << std::endl;
 //    std::cout << "HB: " << superblock.HB->get_position() << " MPO_R front: " << MPO_R.front()->get_position() << std::endl;
@@ -118,7 +118,7 @@ void MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(class_finite_chain_s
     state.unset_measurements();
 }
 
-void MPS_Tools::Finite::Chain::copy_superblock_env_to_state(class_finite_chain_state &state,const class_superblock &superblock){
+void mpstools::finite::chain::copy_superblock_env_to_state(class_finite_chain_state &state,const class_superblock &superblock){
     auto & ENV_L  = state.ENV_L;
     auto & ENV_R  = state.ENV_R;
     auto & ENV2_L = state.ENV2_L;
@@ -137,7 +137,7 @@ void MPS_Tools::Finite::Chain::copy_superblock_env_to_state(class_finite_chain_s
     state.unset_measurements();
 }
 
-int MPS_Tools::Finite::Chain::insert_superblock_to_state(class_finite_chain_state &state, const class_superblock &superblock){
+int mpstools::finite::chain::insert_superblock_to_state(class_finite_chain_state &state, const class_superblock &superblock){
     auto & MPS_L  = state.MPS_L;
     auto & MPS_R  = state.MPS_R;
     auto & MPS_C  = state.MPS_C;
@@ -181,7 +181,7 @@ int MPS_Tools::Finite::Chain::insert_superblock_to_state(class_finite_chain_stat
     return state.get_position();
 }
 
-int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  state, class_superblock & superblock){
+int mpstools::finite::chain::move_center_point(class_finite_chain_state &  state, class_superblock & superblock){
     //Take current MPS and generate an Lblock one larger and store it in list for later loading
 //    std::cout << "Current state -- Direction: " << direction << std::endl;
 //    std::cout << "HA: " << superblock.HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position() << std::endl;
@@ -315,8 +315,8 @@ int MPS_Tools::Finite::Chain::move_center_point(class_finite_chain_state &  stat
     return state.get_sweeps();
 }
 
-void MPS_Tools::Finite::Chain::copy_state_to_superblock(const class_finite_chain_state & state, class_superblock & superblock){
-    MPS_Tools::log->trace("Copying state to superblock");
+void mpstools::finite::chain::copy_state_to_superblock(const class_finite_chain_state & state, class_superblock & superblock){
+    mpstools::log->trace("Copying state to superblock");
     superblock.clear();
     superblock.MPS->set_mps(
             state.MPS_L.back().get_L(),

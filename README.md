@@ -7,8 +7,8 @@
   quantum systems. It works by optimizing a trial wave function in the form of a [Matrix Product States](https://en.wikipedia.org/wiki/Matrix_product_states) (MPS), to find either the
   groundstate or an eigenstate of a 1D quantum system with high precision. DMRG++ includes 4 different MPS-based algorithms for 1D systems:
 
-  - ***i*DMRG:** *Infinite* DMRG. Finds the groundstate of infinite and translationally invariant systems.
-  - ***f*DMRG:** *Finite* DMRG. Finds the groundstate of finite systems, not necessarily translationally invariant.
+  - ***i*DMRG:** *infinite* DMRG. Finds the groundstate of infinite and translationally invariant systems.
+  - ***f*DMRG:** *finite* DMRG. Finds the groundstate of finite systems, not necessarily translationally invariant.
   - ***x*DMRG:** *Excited state* DMRG. Finds highly excited (mid-spectrum) eigenstates of finite systems.
   - ***i*TEBD:** *Imaginary Time Evolving Block Decimation*. Finds the ground state of infinite and translationally invariant systems using unitary operators that perform imaginary time evolution.
 

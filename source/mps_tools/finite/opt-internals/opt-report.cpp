@@ -4,7 +4,7 @@
 
 #include <mps_tools/finite/opt.h>
 
-void MPS_Tools::Finite::Opt::internals::reports::print_report(const std::vector<direct_opt_tuple> &opt_log){
+void mpstools::finite::opt::internals::reports::print_report(const std::vector<direct_opt_tuple> &opt_log){
     std::stringstream report;
     report    << std::setprecision(16) << '\n'
               <<"    "<< std::setw(24) << std::left << "Algorithm"
@@ -18,7 +18,7 @@ void MPS_Tools::Finite::Opt::internals::reports::print_report(const std::vector<
               <<"    "<< std::setw(20) << std::left << "Time per count [ms]"
               << '\n';
     for(auto &item : opt_log){
-        report << std::setprecision(16)
+        report << std::setprecision(16) << std::fixed
                << "    " << std::setw(24) << std::left << std::fixed << std::get<0>(item)
                << "    " << std::setw(8)  << std::left << std::fixed << std::get<1>(item)
                << "    " << std::setw(24) << std::left << std::fixed << std::get<2>(item)
@@ -31,11 +31,11 @@ void MPS_Tools::Finite::Opt::internals::reports::print_report(const std::vector<
                << '\n';
     }
     report << '\n';
-    MPS_Tools::log->debug(report.str());
+    mpstools::log->debug(report.str());
 }
 
 
-void MPS_Tools::Finite::Opt::internals::reports::print_report(const std::vector<subspc_opt_tuple> &opt_log){
+void mpstools::finite::opt::internals::reports::print_report(const std::vector<subspc_opt_tuple> &opt_log){
     std::stringstream report;
     report    << std::setprecision(16) << '\n'
               <<"    "<< std::setw(24) << std::left << "Algorithm"
@@ -49,7 +49,7 @@ void MPS_Tools::Finite::Opt::internals::reports::print_report(const std::vector<
               <<"    "<< std::setw(20) << std::left << "Time per count [ms]"
               << '\n';
     for(auto &item : opt_log){
-        report << std::setprecision(16)
+        report << std::setprecision(16) << std::fixed
                << "    " << std::setw(24) << std::left << std::fixed << std::get<0>(item)
                << "    " << std::setw(8)  << std::left << std::fixed << std::get<1>(item)
                << "    " << std::setw(24) << std::left << std::fixed << std::get<2>(item)
@@ -61,13 +61,13 @@ void MPS_Tools::Finite::Opt::internals::reports::print_report(const std::vector<
                << "    " << std::setw(20) << std::left << std::fixed << std::get<7>(item) * 1000 / (double)std::get<6>(item)
                << '\n';
     }
-    MPS_Tools::log->debug(report.str());
+    mpstools::log->debug(report.str());
 
 }
 
 
 
-void MPS_Tools::Finite::Opt::internals::reports::print_report(const std::vector<eig_tuple> &eig_log){
+void mpstools::finite::opt::internals::reports::print_report(const std::vector<eig_tuple> &eig_log){
     std::stringstream solver_report;
     solver_report << '\n'
                   << std::setw(12) << std::right << "n eigvecs"
@@ -80,7 +80,7 @@ void MPS_Tools::Finite::Opt::internals::reports::print_report(const std::vector<
                   << '\n';
     for(auto &item : eig_log){
         solver_report
-                << std::setprecision(16)
+                << std::setprecision(16) << std::fixed
                 << std::setw(12) << std::right << std::get<0>(item)
                 << std::setw(24) << std::right << std::get<1>(item)
                 << std::setw(24) << std::right << std::get<2>(item)
@@ -91,14 +91,14 @@ void MPS_Tools::Finite::Opt::internals::reports::print_report(const std::vector<
                 << '\n';
     }
     solver_report << '\n' << std::flush;
-    MPS_Tools::log->debug(solver_report.str());
+    mpstools::log->debug(solver_report.str());
 
 }
 
 
 
 
-void MPS_Tools::Finite::Opt::internals::reports::print_report(const lbfgs_tuple lbfgs_log){
+void mpstools::finite::opt::internals::reports::print_report(const lbfgs_tuple lbfgs_log){
     std::stringstream report;
     report
             << std::setprecision(3) << '\n'
@@ -127,6 +127,6 @@ void MPS_Tools::Finite::Opt::internals::reports::print_report(const lbfgs_tuple 
             << '\n';
 
     report << '\n';
-    MPS_Tools::log->debug(report.str());
+    mpstools::log->debug(report.str());
 
 }

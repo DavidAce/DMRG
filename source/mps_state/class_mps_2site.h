@@ -48,6 +48,7 @@
 class class_vidal_mps {
 public:
     using Scalar = std::complex<double>;
+    bool isReal()const{return Textra::isReal(G,"G");}
     void set_mps(const Eigen::Tensor<Scalar,3> &G_, const Eigen::Tensor<Scalar,1> &L_){G = G_; L = L_;}
     void set_L(const Eigen::Tensor<Scalar,1> &L_){L=L_;}
     void set_G(const Eigen::Tensor<Scalar,3> &G_){G=G_;}
@@ -102,7 +103,7 @@ public:
     std::unique_ptr<class_vidal_mps> MPS_A;
     std::unique_ptr<class_vidal_mps> MPS_B;
     Eigen::Tensor<Scalar,1> LC;
-
+    bool isReal()const {return MPS_A->isReal() and MPS_B->isReal();}
     auto chiA () const {return MPS_A->get_L().dimension(0);}
     auto chiB () const {return MPS_B->get_L().dimension(0);}
     auto chiC () const {return LC.dimension(0);}

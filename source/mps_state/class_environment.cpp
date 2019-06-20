@@ -9,6 +9,15 @@
 using namespace std;
 using namespace Textra;
 using Scalar = class_environment::Scalar;
+
+bool class_environment::isReal() const {
+    return Textra::isReal(block, "env " + side);
+}
+bool class_environment_var::isReal() const {
+    return Textra::isReal(block, "env2" + side);
+}
+
+
 void class_environment::enlarge(const class_mps_2site & MPS, const Eigen::Tensor<Scalar,4> &MPO){
     if (side == "L"){
         enlarge(MPS.A(),MPO);

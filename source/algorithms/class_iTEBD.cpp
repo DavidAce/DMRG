@@ -7,7 +7,7 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_state/class_superblock.h>
 #include <mps_state/class_mps_2site.h>
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <model/class_hamiltonian_base.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_quantum_mechanics.h>
@@ -103,7 +103,7 @@ void class_iTEBD::store_state_and_measurements_to_file(bool force){
     }
     log->trace("Storing storing mps to file");
     t_sto.tic();
-    MPS_Tools::Infinite::H5pp::write_all_superblock(*superblock, *h5pp_file, sim_name);
+    mpstools::infinite::io::write_all_superblock(*superblock, *h5pp_file, sim_name);
     t_sto.toc();
 }
 

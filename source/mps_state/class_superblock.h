@@ -87,17 +87,11 @@ public:
                                                          * \f[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \f]
                                                          * \f[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \f] */
 
+    bool isReal() const;
+    template<typename T>  Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic> get_H_local_matrix()            const;
+    template<typename T>  Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic> get_H_local_sq_matrix ()        const;
 
-    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_H_local_matrix()            const;
-    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> get_H_local_matrix_real()       const;
-    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_H_local_sq_matrix()         const;
-    Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic> get_H_local_sq_matrix_real()    const;
-    Textra::SparseMatrixType<Scalar>                    get_H_local_sparse_matrix(double prune = 1e-15)     const;
-    Textra::SparseMatrixType<Scalar>                    get_H_local_sq_sparse_matrix(double prune = 1e-15)  const;
-    Eigen::Tensor<Scalar,2> get_H_local_rank2 ()        const;
-    Eigen::Tensor<Scalar,8> get_H_local_rank8 ()        const;
-    Eigen::Tensor<Scalar,2> get_H_local_sq_rank2 ()     const;
-    Eigen::Tensor<Scalar,8> get_H_local_sq_rank8 ()     const;
+
 
     void set_superblock(
             const Eigen::Tensor<Scalar,4> &Lblock2_,

@@ -11,20 +11,70 @@
 #include <mps_tools/finite/opt.h>
 #include <mps_state/class_superblock.h>
 #include <LBFGS.h>
+#include <general/nmspc_random_numbers.h>
+
+using namespace mpstools::finite::opt;
+using namespace mpstools::finite::opt::internals;
+
+template<typename T> using MatrixType = Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>;
 
 
 
-std::vector<int> MPS_Tools::Finite::Opt::internals::generate_size_list(size_t shape){
+
+template<typename Scalar>
+std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
+find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,4> &theta, std::vector<reports::eig_tuple> &eig_log){
+    mpstools::log->trace("Finding subspace -- full");
+    using namespace eigutils::eigSetting;
+    t_eig->tic();
+
+    Eigen::VectorXd   eigvals;
+    Eigen::MatrixXcd  eigvecs;
+    class_eigsolver solver;
+
+    if constexpr (!std::is_same<Scalar, double>::value)
+    {
+        solver.eig<Type::CPLX, Form::SYMMETRIC>(H_local, true, false);
+        eigvals = Eigen::Map<const Eigen::VectorXd>(solver.solution.get_eigvals<Form::SYMMETRIC>().data(),
+                                                    solver.solution.meta.cols);
+        eigvecs = Eigen::Map<const Eigen::MatrixXcd>(solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),
+                                                     solver.solution.meta.rows, solver.solution.meta.cols);
+    }
+    else
+    {
+        solver.eig<Type::REAL, Form::SYMMETRIC>(H_local, true, false);
+        eigvals = Eigen::Map<const Eigen::VectorXd>(solver.solution.get_eigvals<Form::SYMMETRIC>().data(),
+                                                    solver.solution.meta.cols);
+        eigvecs = Eigen::Map<const Eigen::MatrixXd>(solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),
+                                                    solver.solution.meta.rows, solver.solution.meta.cols);
+    }
+    t_eig->toc();
+    mpstools::log->debug("Finished eigensolver -- condition: Full diagonalization");
+    Eigen::Map<const Eigen::VectorXcd> theta_vec   (theta.data(),theta.size());
+    Eigen::VectorXd overlaps = (theta_vec.adjoint() * eigvecs).cwiseAbs().real();
+    int idx;
+    double max_overlap       = overlaps.maxCoeff(&idx);
+    double min_overlap       = overlaps.minCoeff();
+    double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
+    double subspace_quality  = 1.0 - sq_sum_overlap;
+    int nev = eigvecs.cols();
+    eig_log.emplace_back(nev, max_overlap, min_overlap, sq_sum_overlap, std::log10(subspace_quality), t_eig->get_last_time_interval(), 0);
+
+    return std::make_tuple(eigvecs,eigvals);
+}
+
+
+std::vector<int> mpstools::finite::opt::internals::generate_size_list(size_t shape){
     std::vector<int> nev_list;
     if (shape <= 512){
         nev_list.push_back(-1);
         return nev_list;
     }
 
-    int min_nev = 1;
-    min_nev =  shape > 1024 ? std::min(8,(int)shape/16) : min_nev;
-    int max_nev = std::max(1,(int)shape/16);
-    max_nev = std::min(max_nev,256);
+    int min_nev = 8;
+    min_nev =  shape > 512 ? std::min(8,(int)shape/16) : min_nev;
+    int max_nev = std::max(1,(int)shape/8);
+    max_nev = std::min(max_nev,512);
     int tmp_nev = min_nev;
     while (tmp_nev <= max_nev){
         nev_list.push_back(tmp_nev);
@@ -37,30 +87,19 @@ std::vector<int> MPS_Tools::Finite::Opt::internals::generate_size_list(size_t sh
     return nev_list;
 }
 
-std::tuple<Eigen::MatrixXd, Eigen::VectorXd>
-MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace){
-    MPS_Tools::log->trace("Finding subspace");
-
+template<typename Scalar>
+std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
+find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,4> &theta, double energy_target, std::vector<reports::eig_tuple> &eig_log){
+    mpstools::log->trace("Finding subspace -- partial");
     using namespace eigutils::eigSetting;
-    t_ham->tic();
-    Eigen::MatrixXd H_local = superblock.get_H_local_matrix_real();
-    t_ham->toc();
+
     t_eig->tic();
-
     // You need to copy the data into StlMatrixProduct, because the PartialPivLU will overwrite the data in H_local otherwise.
-    StlMatrixProduct<double> hamiltonian_sparse (H_local.data(),H_local.rows(),Form::SYMMETRIC,Side::R, true);
+    StlMatrixProduct<Scalar> hamiltonian(H_local.data(),H_local.rows(),Form::SYMMETRIC,Side::R, true);
+    hamiltonian.set_shift(energy_target);
+    hamiltonian.FactorOP();
+    double t_lu = hamiltonian.t_factorOp.get_last_time_interval();
     t_eig->toc();
-    Eigen::VectorXd overlaps;
-    std::vector<reports::eig_tuple> eig_log;
-    const auto theta = superblock.get_theta();
-    Eigen::Map<const Eigen::VectorXcd> theta_old (theta.data(),theta.size());
-    int chain_length = superblock.get_length();
-    double t_lu         = 0;
-
-    long best_state_idx, worst_state_idx;
-    double max_overlap, min_overlap, sq_sum_overlap;
-    double subspace_quality;
-//    double offset;
 
     double prec                       = settings::precision::VarConvergenceThreshold;
     double max_overlap_threshold      = 1 - prec; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
@@ -68,125 +107,263 @@ MPS_Tools::Finite::Opt::internals::find_subspace(const class_superblock & superb
 
     class_eigsolver solver;
     std::string reason = "none";
-    bool has_solution = false;
+    Eigen::VectorXd  eigvals;
+    Eigen::MatrixXcd eigvecs;
+    Eigen::Map<const Eigen::VectorXcd> theta_vec   (theta.data(),theta.size());
     for (auto nev : generate_size_list(theta.size())){
+        if (nev <= 0){
+            if   (theta.size() <= 2*2*16*16) return find_subspace_full(H_local,theta,eig_log);
+            else
+            {reason = "matrix is too big for full diag"; break;}
+        }
         t_eig->tic();
-        if (nev <= 0 and optMode == OptMode::OVERLAP and has_solution){reason = "good enough for overlap mode"; break;}
-        if (nev > 0 and  optSpace == OptSpace::PARTIAL){
-            hamiltonian_sparse.set_shift(sim_state.energy_now*chain_length);
-            hamiltonian_sparse.FactorOP();
-            t_lu = hamiltonian_sparse.t_factorOp.get_last_time_interval();
-            hamiltonian_sparse.t_factorOp.reset();
-            solver.eigs_stl(hamiltonian_sparse,nev,-1, sim_state.energy_now*chain_length,Form::SYMMETRIC,Ritz::LM,Side::R, true,false);
-        }
-        else if (nev <= 0 or optSpace == OptSpace::FULL){
-            optSpace = OptSpace::FULL;
-            nev = theta.size();
-            solver.eig<Type::REAL, Form::SYMMETRIC>(H_local,true,false);
-        }
+        solver.eigs_stl(hamiltonian,nev,-1, energy_target,Form::SYMMETRIC,Ritz::LM,Side::R, true,false);
         t_eig->toc();
-//        auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solver.solution.meta.cols);
-//        auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
-        Eigen::VectorXd eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solver.solution.meta.cols);
-        Eigen::MatrixXd eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
-        Eigen::VectorXcd theta_cplx       = Eigen::Map<const Eigen::VectorXcd>(theta.data(),theta.size());
 
-        overlaps         = (theta_old.adjoint() * eigvecs).cwiseAbs();
-        max_overlap      = overlaps.maxCoeff(&best_state_idx);
-        min_overlap      = overlaps.minCoeff(&worst_state_idx);
-        sq_sum_overlap   = overlaps.cwiseAbs2().sum();
-        subspace_quality = 1.0 - sq_sum_overlap;
-        has_solution     = true;
-//        offset           = sim_state.energy_target - eigvals(best_state_idx)/chain_length;
+        eigvals = Eigen::Map<const Eigen::VectorXd > (solver.solution.get_eigvals<Form::SYMMETRIC>().data()      ,solver.solution.meta.cols);
+        if constexpr (std::is_same<std::complex<double>, Scalar >::value){
+            eigvecs = Eigen::Map<const Eigen::MatrixXcd> (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
+        }else{
+            eigvecs = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
+        }
+
+        Eigen::VectorXd overlaps = (theta_vec.adjoint() * eigvecs).cwiseAbs().real();
+        double max_overlap       = overlaps.maxCoeff();
+        double min_overlap       = overlaps.minCoeff();
+        double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
+        double subspace_quality  = 1.0 - sq_sum_overlap;
         eig_log.emplace_back(nev, max_overlap, min_overlap, sq_sum_overlap, std::log10(subspace_quality), t_eig->get_last_time_interval(), t_lu);
-        if(max_overlap    > 1.0 + 1e-10) throw std::runtime_error("max_overlap larger than one : " + std::to_string(max_overlap));
-        if(sq_sum_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : " + std::to_string(sq_sum_overlap));
+        t_lu = 0;
+        if(max_overlap    > 1.0 + 1e-10) throw std::runtime_error("max_overlap larger than one : "  + std::to_string(max_overlap));
+        if(sq_sum_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : "          + std::to_string(sq_sum_overlap));
         if(min_overlap    < 0.0)         throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
-
-
-        if(optSpace == OptSpace::FULL)                    {reason = "full diag"; break;}
         if(max_overlap >= max_overlap_threshold )         {reason = "overlap is good"; break;}
         if(subspace_quality < subspace_quality_threshold) {reason = "subspace quality is good"; break;}
-
     }
-    H_local.resize(0,0);
-    MPS_Tools::log->debug("Finished eigensolver -- condition: {}",reason);
+    mpstools::log->debug("Finished eigensolver -- condition: {}",reason);
+//    Eigen::Map<const Eigen::VectorXd>  eigvals     (solver.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solver.solution.meta.cols);
+//    Eigen::Map<const Eigen::MatrixXcd> eigvecs     (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
+    return std::make_tuple(eigvecs,eigvals);
+}
 
-    auto eigvals           = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data(),solver.solution.meta.cols);
-    auto eigvecs           = Eigen::Map<const Eigen::MatrixXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
+
+
+
+template<typename Scalar>
+std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
+find_subspace(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace){
+    mpstools::log->trace("Finding subspace");
+
+    using namespace eigutils::eigSetting;
+    t_ham->tic();
+
+    MatrixType<Scalar> H_local = superblock.get_H_local_matrix<Scalar>();
+    if(not H_local.isApprox(H_local.adjoint(), 1e-14)){
+        throw std::runtime_error("H_local is not hermitian!");
+    }
+    t_ham->toc();
+    auto theta = superblock.get_theta();
+
+
+    Eigen::MatrixXcd eigvecs;
+    Eigen::VectorXd  eigvals;
+    std::vector<reports::eig_tuple> eig_log;
+    double energy_target = superblock.get_length() * sim_state.energy_now;
+    switch (optSpace){
+        case OptSpace::FULL    : std::tie(eigvecs,eigvals) = find_subspace_full(H_local,theta,eig_log); break;
+        case OptSpace::PARTIAL : std::tie(eigvecs,eigvals) = find_subspace_part(H_local,theta,energy_target,eig_log); break;
+        default:
+            std::stringstream optspace_sstr;
+            optspace_sstr << optSpace;
+            throw std::runtime_error("Wrong OptSpace for subspace optimization. Expected FULL or PARTIAL. Got: " + optspace_sstr.str() );
+    }
     reports::print_report(eig_log);
 
-    if (optMode == OptMode::OVERLAP){
-        return std::make_tuple(eigvecs.col(best_state_idx),eigvals.row(best_state_idx));
-    }else{
-        return std::make_tuple(eigvecs,eigvals);
+    if constexpr(std::is_same<Scalar,double>::value){
+        Textra::subtract_phase(eigvecs);
+        std::cout << "truncating imag of eigvecs, sum: " << eigvecs.imag().cwiseAbs().sum() << std::endl;
+        eigvecs = eigvecs.real();
+    }
+
+    eigvecs.colwise().normalize();
+
+    switch (optMode){
+        case OptMode::VARIANCE: return std::make_tuple(eigvecs, eigvals);
+        case OptMode::OVERLAP :
+            Eigen::Map<Eigen::VectorXcd> theta_vec(theta.data(),theta.size());
+            Eigen::VectorXd overlaps  = (theta_vec.adjoint() * eigvecs).cwiseAbs().real();
+            int idx;
+            [[maybe_unused]] double max_overlap = overlaps.maxCoeff(&idx);
+            return std::make_tuple(eigvecs.col(idx),eigvals.row(idx));
     }
 }
 
 
-std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
-MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace){
-    MPS_Tools::log->trace("Optimizing in SUBSPACE mode");
-    using Scalar = std::complex<double>;
-    auto [eigvecs,eigvals]  = find_subspace(superblock,sim_state, optMode,optSpace);
 
-    if (optMode == OptMode::OVERLAP and eigvecs.cols() == 1 and eigvals.rows() == 1){
+std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
+mpstools::finite::opt::internals::subspace_optimization(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace, OptType optType){
+    mpstools::log->trace("Optimizing in SUBSPACE mode");
+    using Scalar = std::complex<double>;
+    using namespace eigutils::eigSetting;
+
+    double chain_length    = superblock.get_length();
+    auto theta             = superblock.get_theta();
+    auto theta_old         = Eigen::Map<const Eigen::VectorXcd>  (theta.data(),theta.size());
+    Eigen::MatrixXcd eigvecs;
+    Eigen::VectorXd  eigvals;
+    switch(optType){
+        case OptType::CPLX:     std::tie (eigvecs,eigvals)  = find_subspace<Scalar>(superblock,sim_state, optMode,optSpace); break;
+        case OptType::REAL:     std::tie (eigvecs,eigvals)  = find_subspace<double>(superblock,sim_state, optMode,optSpace); break;
+    }
+
+    if (optMode == OptMode::OVERLAP){
         return std::make_tuple(
-                Textra::Matrix_to_Tensor(eigvecs.cast<Scalar>(), superblock.dimensions()),
+                Textra::Matrix_to_Tensor(eigvecs, superblock.dimensions()),
                 eigvals(0)/superblock.get_length()
         );
+    }else if (optMode == OptMode::VARIANCE){
+        Eigen::VectorXd overlaps = (theta_old.adjoint() * eigvecs).cwiseAbs().real();
+        double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
+        double subspace_quality  = 1.0 - sq_sum_overlap;
+        if(subspace_quality >= settings::precision::VarConvergenceThreshold) {
+            return direct_optimization(superblock, sim_state, optType);
+        }
     }
 
-    using namespace eigutils::eigSetting;
-    double chain_length    = superblock.get_length();
-    auto theta     = superblock.get_theta();
-    auto theta_old = Eigen::Map<const Eigen::VectorXcd> (theta.data(),theta.size());
-    Eigen::VectorXcd theta_new;
 
+    Eigen::VectorXcd theta_new;
     double overlap_new  = 0;
-    double energy_new,variance_new;
-    //Should really use xstart as the projection towards the previous theta, not best overlapping!
+    double energy_new,variance_new,norm;
+    //Should really use theta_start as the projection towards the previous theta, not best overlapping!
     // Note that alpha_i = <theta_old | theta_new_i> is not supposed to be squared! The overlap
-    // Between xstart and theta_old should be
-    Eigen::VectorXd xstart = (theta_old.adjoint() * eigvecs).normalized().real();
+    // Between theta_start and theta_old should be
+    Eigen::VectorXcd theta_start      = (eigvecs.adjoint()  * theta_old)  ;
+
     std::vector<reports::subspc_opt_tuple> opt_log;
 
-    {
-        t_opt->tic();
-        double energy_0   = MPS_Tools::Common::Measure::energy_mpo(superblock,theta);
-        double variance_0 = MPS_Tools::Common::Measure::energy_variance_mpo(superblock,theta,energy_0);
-        t_opt->toc();
-        Eigen::VectorXcd theta_0 = eigvecs * xstart;
-        int iter_0 = 0;
-        double overlap_0 = (theta_old.adjoint() * theta_0).cwiseAbs().sum();
 
-        opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, std::log10(variance_0/chain_length), overlap_0, iter_0,0, t_opt->get_last_time_interval());
-        using namespace LBFGSpp;
-        MPS_Tools::Finite::Opt::internals::subspace_functor
-                functor (
-                superblock,
-                sim_state,
-                eigvecs,
-                eigvals);
+    t_opt->tic();
+    double energy_0   = mpstools::common::measure::energy_mpo(superblock,theta);
+    double variance_0 = mpstools::common::measure::energy_variance_mpo(superblock,theta,energy_0);
+    t_opt->toc();
+    Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
 
-        // Create solver and function object
-        LBFGSpp::LBFGSSolver<double> solver_3(*params);
-        // x will be overwritten to be the best point found
-        double fx;
-        t_opt->tic();
-        MPS_Tools::log->trace("Running LBFGS");
-        int niter = solver_3.minimize(functor, xstart, fx);
-        int counter = functor.get_count();
-        t_opt->toc();
-        xstart.normalize();
-        theta_new    = eigvecs * xstart;
-        energy_new   = functor.get_energy() / chain_length;
-        variance_new = functor.get_variance()/chain_length;
-        overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
-        opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval());
-        MPS_Tools::log->trace("Finished LBFGS");
+    int iter_0 = 0;
+    double overlap_0 = std::abs(theta_old.dot(theta_0));
+
+    opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, std::log10(variance_0/chain_length), overlap_0, iter_0,0, t_opt->get_last_time_interval());
+
+
+
+//    Eigen::VectorXcd theta_old_check = theta_old;
+//    Scalar angle = 3.0;
+//    Scalar exp_random_phase = std::exp(Scalar(0.0,-1.0) * angle);
+//    theta_old_check *= exp_random_phase;
+//    for (int i= 0; i < eigvecs.cols() ; i++){
+//        Scalar angle = 6*rn::uniform_double_1();
+//        Scalar exp_random_phase = std::exp(Scalar(0.0,-1.0) * angle);
+//        eigvecs.col(i) *= exp_random_phase;
+//    }
+
+
+//    auto check_num = (eigvecs.adjoint() * eigvecs).diagonal().sum();
+//    Eigen::VectorXcd theta_start_check     =  (eigvecs.adjoint()  * theta_old_check) ;
+//    theta_start = (eigvecs.adjoint()  * theta_old_check);
+
+//    Eigen::MatrixXcd H  = eigvecs.adjoint() * superblock.get_H_local_matrix() * eigvecs;
+//    Eigen::MatrixXcd H2 = eigvecs.adjoint() * superblock.get_H_local_sq_matrix() * eigvecs;
+//
+//    std::cout << "check_num              : " << check_num << std::endl;
+//    std::cout << "Norm theta_start_check : " << theta_start_check.norm() << std::endl;
+//    std::cout << "Size theta_start_check : " << theta_start_check.rows() << std::endl;
+//    std::cout << "Size eigvals           : " << eigvals.rows()  << std::endl;
+//    std::cout << "Size eigvecs           : " << eigvecs.rows() << " x " << eigvecs.cols() << std::endl;
+//    std::cout << "Size H2                : " << H2.rows() << " x " << H2.cols() << std::endl;
+//
+//    Scalar vHv   = theta_start_check.adjoint() * eigvals.asDiagonal()               * theta_start_check;
+//    Scalar vH2v  = theta_start_check.adjoint() * H2                                 * theta_start_check;
+//
+//    Scalar energy_check   = vHv;
+//    Scalar variance_check = vH2v - vHv * vHv ;
+//
+//    Eigen::VectorXcd vH   = theta_start_check.adjoint() * eigvals.asDiagonal();
+////    Scalar vHv_   =  (vH.transpose() *  theta_start_check).eval()(0);
+//    Scalar vHv_ =  (vH.transpose() *  theta_start_check)(0);
+//    Eigen::VectorXcd vH2  = theta_start_check.adjoint() * H2;
+//    Scalar vH2v_ = (vH2.transpose()*theta_start_check)(0);
+//    Scalar energy_check2   = vHv_;
+//    Scalar variance_check2 = vH2v_ - vHv_ * vHv_ ;
+//
+//    Eigen::VectorXcd theta_check = (eigvecs * theta_start_check.asDiagonal()).rowwise().sum().normalized();
+//
+//    Scalar overlap_check            = theta_old_check.adjoint() * theta_check ;
+//
+//    double energy_init   = mpstools::common::measure::energy_mpo         (superblock,Textra::Matrix_to_Tensor(theta_check, superblock.dimensions()));
+//    double variance_init = mpstools::common::measure::energy_variance_mpo(superblock,Textra::Matrix_to_Tensor(theta_check, superblock.dimensions()),energy_init);
+//
+
+//    opt_log.emplace_back("Sanity check",theta.size(), vHv.real()/chain_length, std::log10(variance_check.real()/ chain_length), std::abs(overlap_check), 0,0, 0);
+
+
+    t_opt->tic();
+    mpstools::log->trace("Running LBFGS");
+    using namespace LBFGSpp;
+    using namespace mpstools::finite::opt::internals;
+    double fx;
+    int niter,counter;
+    LBFGSpp::LBFGSSolver<double> solver(params);
+    switch (optType){
+        case OptType::CPLX:{
+            mpstools::finite::opt::internals::subspace_functor <Scalar>  functor (superblock,sim_state,eigvecs,eigvals);
+            Eigen::VectorXd  theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double*> (theta_start.data()), 2*theta_start.size());
+            niter = solver.minimize(functor, theta_start_cast, fx);
+            theta_start = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
+            counter      = functor.get_count();
+            norm         = functor.get_norm();
+            energy_new   = functor.get_energy() / chain_length;
+            variance_new = functor.get_variance()/chain_length;
+            theta_new    = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
+            break;
+        }
+        case OptType::REAL:{
+            mpstools::finite::opt::internals::subspace_functor <double> functor (superblock,sim_state,eigvecs.real(),eigvals);
+            Eigen::VectorXd  theta_start_cast = theta_start.real();
+            niter = solver.minimize(functor, theta_start_cast, fx);
+            theta_start = theta_start_cast.normalized().cast<Scalar>();
+            counter      = functor.get_count();
+            norm         = functor.get_norm();
+            energy_new   = functor.get_energy() / chain_length;
+            variance_new = functor.get_variance()/chain_length;
+            theta_new    = (eigvecs.real() * theta_start.real().asDiagonal()).rowwise().sum().normalized();
+
+            break;
+        }
     }
+    t_opt->toc();
+
+    overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
+    opt_log.emplace_back("LBFGS++",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval());
+    mpstools::log->trace("Finished LBFGS");
+
     reports::print_report(opt_log);
+//    double energy_tmp   = mpstools::common::measure::energy_mpo(superblock,Textra::Matrix_to_Tensor(theta_new, superblock.dimensions()));
+//    double variance_tmp = mpstools::common::measure::energy_variance_mpo(superblock,Textra::Matrix_to_Tensor(theta_new, superblock.dimensions()),energy_tmp);
+
+//    std::cout << "Energy   check2           : " << energy_check2/chain_length    << std::endl;
+//    std::cout << "Variance check2 (complex) : " << std::log10(variance_check2/chain_length)         << std::endl;
+//    std::cout << "Energy   init             : " << energy_init/chain_length    << std::endl;
+//    std::cout << "Energy   check (complex)  : " << energy_check/chain_length   << std::endl;
+//    std::cout << "Overlap  check (complex)  : " << overlap_check  << std::endl;
+//    std::cout << "Variance check (complex)  : " << std::log10(variance_check/chain_length)         << std::endl;
+//    std::cout << "Variance init             : " << std::log10(variance_init /chain_length)         << "\t \t norm = " << theta_check.norm() << std::endl;
+//    std::cout << "Variance check            : " << std::log10(variance_check.real()/chain_length)  << "\t \t norm = " << theta_check.norm() << std::endl;
+//    std::cout << std::setprecision(16) << std::fixed;
+//    std::cout << "Variance LBFGS            : " << std::log10(variance_new)                        << "\t \t norm = " << norm << std::endl;
+//    std::cout << "Variance after            : " << std::log10(variance_tmp/chain_length)           << "\t \t norm = " << theta_new.norm()   << std::endl;
+
+//    std::cout << "imag sum theta_new        : " << theta_new.imag().cwiseAbs().sum() << std::endl;
+//    std::cout << "imag sum theta_old        : " << theta_old.imag().cwiseAbs().sum() << std::endl;
+//    std::cout << "imag sum eigvecs          : " << eigvecs.imag().cwiseAbs().sum() << std::endl;
 
     return std::make_tuple(
             Textra::Matrix_to_Tensor(theta_new, superblock.dimensions()),
@@ -194,7 +371,6 @@ MPS_Tools::Finite::Opt::internals::subspace_optimization(const class_superblock 
     );
 
 }
-
 
 
 
