@@ -249,7 +249,8 @@ void class_xDMRG::single_xDMRG_step()
     auto optSpace =  OptSpace::FULL;
     optSpace = eigsize >= 2*2*16*16     ? OptSpace::PARTIAL : optSpace;
     optSpace = eigsize >= 2*2*32*32     ? OptSpace::DIRECT  : optSpace;
-    optSpace = sim_state.iteration >= 6 ? OptSpace::DIRECT  : optSpace;
+    optSpace = sim_state.iteration >=
+            settings::xdmrg::min_sweeps ? OptSpace::DIRECT  : optSpace;
 
     auto optType = superblock->isReal() ? OptType::REAL : OptType::CPLX;
 
@@ -282,7 +283,7 @@ void class_xDMRG::check_convergence(){
     check_convergence_entg_entropy();
 
 
-    if (sim_state.iteration <= settings::xdmrg::min_sweeps){
+    if (sim_state.iteration < settings::xdmrg::min_sweeps){
         clear_saturation_status();
     }
 
