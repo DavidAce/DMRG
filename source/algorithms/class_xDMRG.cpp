@@ -71,7 +71,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     min_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
     max_saturation_length = 1 * (int)(2.0 * settings::xdmrg::num_sites);
 
-//    settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(int)(std::log2(chi_max())/2));
+    settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(size_t)(std::log2(chi_max())/2));
 }
 
 
@@ -364,6 +364,7 @@ void class_xDMRG::check_convergence_entg_entropy(double slope_threshold) {
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::EntEntrSaturationThreshold  : slope_threshold;
     double entropysum = 0;
     for(auto &entropy : mpstools::finite::measure::entanglement_entropies(*state)){entropysum += entropy;}
+    entropysum /= state->get_length();
     check_saturation_using_slope(BS_vec,
                                  S_vec,
                                  XS_vec,
