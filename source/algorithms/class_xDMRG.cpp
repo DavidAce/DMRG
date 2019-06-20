@@ -281,12 +281,10 @@ void class_xDMRG::check_convergence(){
     check_convergence_variance_mpo();
     check_convergence_entg_entropy();
 
-//    if(state->position_is_the_middle_any_direction()){
-//    }
 
-//    if (sim_state.iteration <= settings::xdmrg::min_sweeps){
-//        clear_saturation_status();
-//    }
+    if (sim_state.iteration <= settings::xdmrg::min_sweeps){
+        clear_saturation_status();
+    }
 
 
     bool outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  > sim_state.energy_dens_window;
