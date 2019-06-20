@@ -1,8 +1,10 @@
 //
 // Created by david on 2019-05-27.
 //
+#ifdef EIGEN_USE_BLAS
+#undef EIGEN_USE_BLAS
+#endif
 #include <Eigen/SVD>
-
 #include <general/class_svd_wrapper.h>
 
 double class_SVD::get_truncation_error(){

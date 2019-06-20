@@ -9,19 +9,12 @@
 #include <mps_state/class_environment.h>
 #include <model/class_hamiltonian_base.h>
 
-
-MPS_Tools::Finite::Opt::internals::cppoptlib_functor::cppoptlib_functor(const class_superblock &superblock,
-                                                                        const class_simulation_state &sim_state){
+template<typename Scalar>
+mpstools::finite::opt::internals::cppoptlib_functor<Scalar>::cppoptlib_functor(const class_superblock &superblock,
+                                                                        const class_simulation_state &sim_state)
+                                                                        : superComponents(superblock)
+                                                                        {
     reset_timers();
-    superComponents.HA_MPO        = superblock.HA->MPO().real();
-    superComponents.HB_MPO        = superblock.HB->MPO().real();
-    superComponents.Lblock        = superblock.Lblock->block.real();
-    superComponents.Rblock        = superblock.Rblock->block.real();
-    superComponents.Lblock2       = superblock.Lblock2->block.real();
-    superComponents.Rblock2       = superblock.Rblock2->block.real();
-    superComponents.dsizes        = superblock.dimensions();
-    superComponents.HAHB          = superComponents.HA_MPO.contract(superComponents.HB_MPO, Textra::idx({1},{0}));
-    superComponents.HAHB2         = superComponents.HAHB.contract(superComponents.HAHB, Textra::idx({2,5},{1,4}));
     length                        = superblock.get_length();
 
     //All energies in sim_state are per site!
@@ -36,16 +29,8 @@ MPS_Tools::Finite::Opt::internals::cppoptlib_functor::cppoptlib_functor(const cl
     iteration                = sim_state.iteration;
 }
 
-
-double MPS_Tools::Finite::Opt::internals::cppoptlib_functor::get_variance()const{return variance;}
-double MPS_Tools::Finite::Opt::internals::cppoptlib_functor::get_energy  ()const{return energy  ;}
-size_t MPS_Tools::Finite::Opt::internals::cppoptlib_functor::get_count   ()const{return counter;}
-size_t MPS_Tools::Finite::Opt::internals::cppoptlib_functor::get_iter    ()const{return iteration;}
-
-
-
-
-void MPS_Tools::Finite::Opt::internals::cppoptlib_functor::compute_exp_vals(const Eigen::VectorXd &v){
+template<typename Scalar>
+void mpstools::finite::opt::internals::cppoptlib_functor<Scalar>::compute_exp_vals(const VectorType &v){
     if(not exp_vals_computed){
         counter ++;
         #pragma omp parallel
@@ -53,9 +38,9 @@ void MPS_Tools::Finite::Opt::internals::cppoptlib_functor::compute_exp_vals(cons
             #pragma omp sections
             {
                 #pragma omp section
-                { std::tie(vH2, vH2v) = get_vH2_vH2v(v,superComponents); }
+                { std::tie(vH2, vH2v) = get_H2v_vH2v(v, superComponents); }
                 #pragma omp section
-                { std::tie(vH, vHv) = get_vH_vHv(v,superComponents); }
+                { std::tie(vH, vHv) = get_Hv_vHv(v, superComponents); }
                 #pragma omp section
                 { vv = v.squaredNorm(); }
             }
@@ -64,15 +49,16 @@ void MPS_Tools::Finite::Opt::internals::cppoptlib_functor::compute_exp_vals(cons
 //    exp_vals_computed = true;
 }
 
-bool MPS_Tools::Finite::Opt::internals::cppoptlib_functor::callback(const cppoptlib::Criteria<double> &state, [[maybe_unused]] const Eigen::VectorXd &x0){
+template<typename Scalar>
+bool mpstools::finite::opt::internals::cppoptlib_functor<Scalar>::callback(const cppoptlib::Criteria<Scalar> &state, [[maybe_unused]] const VectorType &x0){
     iteration = state.iterations;
     exp_vals_computed = false;
     std::cout << "CALLBACK" << std::endl;
     return true;
 }
 
-
-double MPS_Tools::Finite::Opt::internals::cppoptlib_functor::value(const Eigen::VectorXd &v){
+template<typename Scalar>
+Scalar mpstools::finite::opt::internals::cppoptlib_functor<Scalar>::value(const VectorType &v){
     compute_exp_vals(v);
 //    exp_vals_computed = false;
     std::cout << "VALUE" << std::endl;
@@ -87,7 +73,8 @@ double MPS_Tools::Finite::Opt::internals::cppoptlib_functor::value(const Eigen::
     return log10var  + lambda * std::pow(norm_offset,2);
 }
 
-void MPS_Tools::Finite::Opt::internals::cppoptlib_functor::gradient(const Eigen::VectorXd &v,  Eigen::VectorXd &grad){
+template<typename Scalar>
+void mpstools::finite::opt::internals::cppoptlib_functor<Scalar>::gradient(const VectorType &v,  VectorType &grad){
     compute_exp_vals(v);
     std::cout << "GRADIENT" << std::endl;
     auto lambda         = 1.0;
@@ -103,3 +90,11 @@ void MPS_Tools::Finite::Opt::internals::cppoptlib_functor::gradient(const Eigen:
                            + lambda * 2.0 * norm_offset * 2.0 * v;
 
 }
+
+
+
+
+
+template class mpstools::finite::opt::internals::cppoptlib_functor<double>;
+template class mpstools::finite::opt::internals::cppoptlib_functor<std::complex<double>>;
+

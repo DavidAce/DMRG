@@ -7,63 +7,39 @@
 #include <spdlog/spdlog.h>
 #include <mps_tools/finite/opt.h>
 #include <mps_state/class_superblock.h>
-#include <LBFGS.h>
-
-
+#include <mps_state/class_environment.h>
+#include <model/class_hamiltonian_base.h>
 
 
 std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
-MPS_Tools::Finite::Opt::find_optimal_excited_state(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace){
-    MPS_Tools::log->trace("Finding optimal excited state");
-    using namespace Opt::internals;
+mpstools::finite::opt::find_optimal_excited_state(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType){
+    mpstools::log->trace("Finding optimal excited state");
+    using namespace opt::internals;
     std::stringstream problem_report;
     auto dims = superblock.dimensions();
     problem_report
             << "Starting optimization"
             << std::setprecision(10)
-            << "\t mode [ "    << optSpace << " ]"
-            << "\t position [ "    << superblock.get_position() << " ]"
-            << "\t chi [ "    << superblock.get_chi() << " ]"
+            << "\t mode [ "     << optMode << " ]"
+            << "\t space [ "    << optSpace << " ]"
+            << "\t type [ "     << optType << " ]"
+            << "\t position [ " << superblock.get_position() << " ]"
+            << "\t chi [ "      << superblock.get_chi() << " ]"
             << "\t shape [ "    << dims[0] << " " << dims[1] << " " << dims[2]<< " " <<dims[3]  << " ] = [ " << dims[0]*dims[1]*dims[2]*dims[3] << " ]" << std::flush;
-    MPS_Tools::log->debug(problem_report.str());
+    mpstools::log->debug(problem_report.str());
 
 
 
     switch (optSpace){
-        case OptSpace::DIRECT:      return internals::direct_optimization(superblock,sim_state);
-        case OptSpace::GUIDED:      return internals::guided_optimization(superblock,sim_state);
-        case OptSpace::CPPOPTLIB:   return internals::cppoptlib_optimization(superblock,sim_state);
-        case OptSpace::FULL:        return internals::subspace_optimization(superblock, sim_state , optMode, optSpace);
-        case OptSpace::PARTIAL:     return internals::subspace_optimization(superblock, sim_state , optMode, optSpace);
+        case OptSpace::FULL:        return internals::subspace_optimization(superblock, sim_state , optMode, optSpace, optType);
+        case OptSpace::PARTIAL:     return internals::subspace_optimization(superblock, sim_state , optMode, optSpace, optType);
+        case OptSpace::DIRECT:      return internals::direct_optimization(superblock, sim_state, optType);
     }
 }
 
-namespace MPS_Tools::Finite::Opt::internals{
-    std::shared_ptr<LBFGSpp::LBFGSParam<double>> params = std::make_shared<LBFGSpp::LBFGSParam<double>>();
-}
 
 
-
-void MPS_Tools::Finite::Opt::internals::initialize_params(){
-    using namespace LBFGSpp;
-    // READ HERE http://pages.mtu.edu/~msgocken/ma5630spring2003/lectures/lines/lines/node3.html
-    // I think c1 corresponds to ftol, and c2 corresponds to wolfe
-    params->max_iterations = 1000;
-    params->max_linesearch = 60; // Default is 20. 5 is really bad, 80 seems better.
-    params->m              = 8;     // Default is 6
-    params->past           = 1;     // Or perhaps it was this one that helped.
-    params->epsilon        = 1e-2;  // Default is 1e-5.
-    params->delta          = 1e-6; // Default is 0. Trying this one instead of ftol.
-    params->ftol           = 1e-4;  // Default is 1e-4. this really helped at threshold 1e-8. Perhaps it should be low. Ok..it didn't
-    params->wolfe          = 0.90;   // Default is 0.9
-    params->min_step       = 1e-40;
-    params->max_step       = 1e+40;
-    params->linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_STRONG_WOLFE;
-}
-
-
-
-void MPS_Tools::Finite::Opt::internals::reset_timers(){
+void mpstools::finite::opt::internals::reset_timers(){
     t_opt-> reset();
     t_eig-> reset();
     t_ham-> reset();
@@ -75,61 +51,69 @@ void MPS_Tools::Finite::Opt::internals::reset_timers(){
     t_op  ->reset();
 }
 
+template<typename Scalar>
+mpstools::finite::opt::internals::superblock_components<Scalar>::superblock_components(const class_superblock &superblock){
+    if constexpr (std::is_same<Scalar,double>::value){
+        HA_MPO        = superblock.HA->MPO().real();
+        HB_MPO        = superblock.HB->MPO().real();
+        Lblock        = superblock.Lblock->block.real();
+        Rblock        = superblock.Rblock->block.real();
+        Lblock2       = superblock.Lblock2->block.real();
+        Rblock2       = superblock.Rblock2->block.real();
+    }
 
+    if constexpr (std::is_same<Scalar,std::complex<double>>::value){
+        HA_MPO        = superblock.HA->MPO();
+        HB_MPO        = superblock.HB->MPO();
+        Lblock        = superblock.Lblock->block;
+        Rblock        = superblock.Rblock->block;
+        Lblock2       = superblock.Lblock2->block;
+        Rblock2       = superblock.Rblock2->block;
+    }
+    HAHB          = HA_MPO.contract (HB_MPO, Textra::idx({1},{0}));
+    HAHA          = HA_MPO.contract (HA_MPO, Textra::idx({3},{2}));
+    HBHB          = HB_MPO.contract (HB_MPO, Textra::idx({3},{2}));
+    Lblock2HAHA   = Lblock2.contract(HAHA, Textra::idx({2,3},{0,3})).shuffle(Textra::array6{0,3,2,4,5,1});
+    Rblock2HBHB   = Rblock2.contract(HBHB, Textra::idx({2,3},{1,4})).shuffle(Textra::array6{0,3,2,4,5,1});
+    HAHB2         = HAHB.contract(HAHB, Textra::idx({2,5},{1,4}));
+    dsizes        = superblock.dimensions();
 
-
-std::pair<Eigen::VectorXd,double> MPS_Tools::Finite::Opt::internals::get_vH_vHv(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents){
-    auto vH = MPS_Tools::Finite::Opt::internals::get_vH(v,superComponents);
-    t_vHv->tic();
-    auto vHv = vH.dot(v);
-    t_vHv->toc();
-    return std::make_pair(vH,vHv);
 }
 
-std::pair<Eigen::VectorXd,double> MPS_Tools::Finite::Opt::internals::get_vH2_vH2v(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents){
-    auto vH2 = MPS_Tools::Finite::Opt::internals::get_vH2(v,superComponents);
-    t_vH2v->tic();
-    auto vH2v = vH2.dot(v);
-    t_vH2v->toc();
-    return std::make_pair(vH2,vH2v);
+template struct mpstools::finite::opt::internals::superblock_components<double>;
+template struct mpstools::finite::opt::internals::superblock_components<std::complex<double>>;
+
+
+double mpstools::finite::opt::internals::windowed_func_abs(double x,double window){
+    if (std::abs(x) >= window){
+        return std::abs(x)-window;
+    }else{
+        return 0;
+    }
+}
+double mpstools::finite::opt::internals::windowed_grad_abs(double x,double window){
+    if (std::abs(x) >= window){
+        return sgn(x);
+    }else{
+        return 0.0;
+    }
 }
 
 
-Eigen::VectorXd MPS_Tools::Finite::Opt::internals::get_vH2 (const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents){
-//    auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superComponents.dsizes);
-    Eigen::Tensor<double, 4> theta = Eigen::TensorMap<Eigen::Tensor<const double, 4>>(v.data(), superComponents.dsizes).shuffle(Textra::array4{1,0,3,2});
 
-    t_vH2->tic();
-    Eigen::Tensor<double, 4> vH2 =
-            theta
-            .contract(superComponents.Lblock2, Textra::idx({0}, {0}))
-            .contract(superComponents.HAHB2, Textra::idx({5,4,0,2}, {4, 0, 1, 3}))
-            .contract(superComponents.Rblock2, Textra::idx({0,2,4}, {0, 2, 3}))
-            .shuffle(Textra::array4{1, 0, 2, 3});
-
-    t_vH2->toc();
-////
-//    t_vH2->tic();
-//    Eigen::Tensor<double, 4> vH2 =
-//            theta
-//            .contract(superComponents.Lblock2HAHA,Textra::idx({1,0},{0,1}))
-//            .contract(superComponents.Rblock2HBHB,Textra::idx({1,0,2,3},{0,1,2,3}));
-//    t_vH2->toc();
-
-
-    return Eigen::Map<Eigen::VectorXd>(vH2.data(),vH2.size());
+double mpstools::finite::opt::internals::windowed_func_pow(double x,double window){
+    if (std::abs(x) >= window){
+        return x*x - window*window;
+    }else{
+        return 0.0;
+    }
+}
+double mpstools::finite::opt::internals::windowed_grad_pow(double x,double window){
+    if (std::abs(x) >= window){
+        return 2.0*x;
+    }else{
+        return 0.0;
+    }
 }
 
-Eigen::VectorXd MPS_Tools::Finite::Opt::internals::get_vH (const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents){
-    auto theta = Eigen::TensorMap<const Eigen::Tensor<const double,4>> (v.data(), superComponents.dsizes);
-    t_vH->tic();
-    Eigen::Tensor<double, 4> vH =
-            superComponents.Lblock
-                    .contract(theta,                               Textra::idx({0},{1}))
-                    .contract(superComponents.HAHB,                Textra::idx({1,2,3},{0,1,4}))
-                    .contract(superComponents.Rblock ,             Textra::idx({1,3},{0,2}))
-                    .shuffle(Textra::array4{1,0,2,3});
-    t_vH->toc();
 
-    return Eigen::Map<Eigen::VectorXd>(vH.data(),vH.size());
-}

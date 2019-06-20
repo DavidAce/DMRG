@@ -2,11 +2,11 @@
 // Created by david on 2019-03-09.
 //
 
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <algorithms/class_simulation_state.h>
 #include <h5pp/h5pp.h>
 
-void MPS_Tools::Common::H5pp::write_algorithm_state(const class_simulation_state &sim_state, h5pp::File &h5ppFile,
+void mpstools::common::io::write_algorithm_state(const class_simulation_state &sim_state, h5pp::File &h5ppFile,
                                                     std::string sim_name) {
     h5ppFile.writeDataset(sim_state.iteration                     ,sim_name + "/sim_state/iteration");
     h5ppFile.writeDataset(sim_state.step                          ,sim_name + "/sim_state/step");

@@ -48,8 +48,8 @@ public:
     {
         if constexpr (std::is_same<Scalar, std::complex<double>>::value) {
             if (nev > 0){
-//                using namespace std::complex_literals;
                 for (int i = 0; i < nev; i++) {
+                    if (eigvecs[i*L].imag() == 0.0){continue;}
                     Scalar inv_phase = Scalar(0.0,-1.0) * std::arg(eigvecs[i * L]);
                     auto begin = eigvecs.begin() + i * L;
                     auto end = begin + L;
@@ -57,6 +57,9 @@ public:
                     std::transform(begin, end, begin,
                                    [exp_inv_phase](std::complex<double> num) -> std::complex<double>
                                    { return (num * exp_inv_phase); });
+                    std::transform(begin, end, begin,
+                                   [](std::complex<double> num) -> std::complex<double>
+                                   { return std::abs(num.imag()) > 1e-15 ? num : std::real(num); });
                 }
             }else{
                 eigutils::eigLogger::log->error("Eigenvalues haven't been computed yet. Can't subtract phase.");

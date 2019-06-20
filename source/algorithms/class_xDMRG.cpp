@@ -9,7 +9,7 @@
 #include <mps_state/class_superblock.h>
 #include <mps_state/class_mps_2site.h>
 #include <mps_state/class_finite_chain_state.h>
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <mps_tools/finite/opt.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
@@ -23,7 +23,20 @@
 
 #include "class_xDMRG.h"
 
-//Print xDMRG modes nicely
+template<typename Scalar, auto rank>
+void throw_if_has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, double threshold = 1e-14) {
+    Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>> vector (tensor.data(),tensor.size());
+    if constexpr (std::is_same<Scalar, std::complex<double>>::value){
+        auto imagSum = vector.imag().cwiseAbs().sum();
+        if (imagSum > threshold){
+            std::cout << vector << std::endl;
+            throw std::runtime_error("Has imaginary part. Sum: " + std::to_string(imagSum));
+        }
+    }
+}
+
+
+//print xDMRG modes nicely
 std::ostream& operator<<(std::ostream& str, class_xDMRG::xDMRG_Mode const& mode) {
     switch (mode){
         case class_xDMRG::xDMRG_Mode::KEEP_BEST_OVERLAP :
@@ -51,8 +64,10 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_base(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG) {
     table_xdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
     table_xdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5pp_file, sim_name + "/measurements", "simulation_progress_full_chain", sim_name);
-    MPS_Tools::Finite::Chain::initialize_state(*state, settings::model::model_type, settings::model::symmetry, settings::xdmrg::num_sites);
-    MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
+
+    mpstools::finite::chain::initialize_state(*state, settings::model::model_type, settings::model::symmetry, settings::xdmrg::num_sites);
+    mpstools::finite::chain::copy_state_to_superblock(*state,*superblock);
+
     min_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
     max_saturation_length = 1 * (int)(2.0 * settings::xdmrg::num_sites);
 
@@ -81,7 +96,6 @@ void class_xDMRG::run()
 {
     if (!settings::xdmrg::on) { return; }
     t_tot.tic();
-
     if (h5pp_file->getCreateMode() == h5pp::CreateMode::OPEN){
         // This is case 1
         bool finOK_exists = h5pp_file->linkExists("common/finOK");
@@ -107,7 +121,7 @@ void class_xDMRG::run()
             // We can go ahead and load the state from hdf5
             log->trace("Loading MPS from file");
             try{
-                MPS_Tools::Finite::H5pp::load_from_hdf5(*h5pp_file, *state, *superblock, sim_state, sim_name);
+                mpstools::finite::io::load_from_hdf5(*h5pp_file, *state, *superblock, sim_state, sim_name);
             }
             catch(std::exception &ex){
                 log->error("Failed to load from hdf5: {}", ex.what());
@@ -140,14 +154,16 @@ void class_xDMRG::run()
 }
 
 
+
 void class_xDMRG::run_preprocessing() {
 
     log->info("Starting {} preprocessing", sim_name);
     sim_state.energy_dens_target = settings::xdmrg::energy_density_target;
     sim_state.energy_dens_window = settings::xdmrg::energy_density_window;
 
+
     find_energy_range();
-    MPS_Tools::Finite::Print::print_hamiltonians(*state);
+    mpstools::finite::print::print_hamiltonians(*state);
     log->info("Finished {} preprocessing", sim_name);
 }
 
@@ -155,7 +171,7 @@ void class_xDMRG::run_simulation()    {
     log->info("Starting {} simulation", sim_name);
     while(true) {
         single_xDMRG_step();
-        MPS_Tools::Finite::Chain::copy_superblock_to_state(*state, *superblock);
+        mpstools::finite::chain::copy_superblock_to_state(*state, *superblock);
         store_table_entry_progress();
         store_table_entry_site_state();
         store_profiling_totals();
@@ -182,7 +198,7 @@ void class_xDMRG::run_simulation()    {
         log->trace("Finished step {}, iteration {}",sim_state.step,sim_state.iteration);
     }
     switch(stop_reason){
-        case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
+        case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_ITERS",sim_name) ;break;
         case StopReason::CONVERGED : log->info("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
         case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
         default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
@@ -192,16 +208,15 @@ void class_xDMRG::run_simulation()    {
 
 void class_xDMRG::run_postprocessing(){
     log->info("Running {} postprocessing",sim_name);
-    MPS_Tools::Finite::Debug::check_integrity(*state,*superblock,sim_state);
+    mpstools::finite::debug::check_integrity(*state,*superblock,sim_state);
 
-//    MPS_Tools::Finite::Debug::check_normalization_routine(*state);
+//    mpstools::finite::debug::check_normalization_routine(*state);
 
     state->unset_measurements();
     superblock->unset_measurements();
     log->info("Storing state and measurements to file");
     store_state_and_measurements_to_file(true);
     log->info("Finished {} postprocessing",sim_name);
-
 }
 
 
@@ -216,9 +231,9 @@ void class_xDMRG::single_xDMRG_step()
     log->trace("Starting single xDMRG step");
     Eigen::Tensor<Scalar,4> theta;
     auto dims = superblock->dimensions();
-    auto eigsize = dims[1] * dims[3];
+    auto eigsize = dims[0]*dims[1]*dims[2]*dims[3];
 
-    using namespace  MPS_Tools::Finite::Opt;
+    using namespace  mpstools::finite::opt;
 
     // Table
 
@@ -229,26 +244,18 @@ void class_xDMRG::single_xDMRG_step()
 
 
     auto optMode  =  OptMode::OVERLAP;
-    optMode  = sim_state.iteration   >= settings::xdmrg::min_sweeps             ?  OptMode::VARIANCE : optMode;
-    optMode  = sim_state.iteration   >= 1 and
-               superblock->measurements.energy_variance_per_site_mpo  < 1e-4    ?  OptMode::VARIANCE : optMode;
-
-
+    optMode  = sim_state.iteration   >= 2  ?  OptMode::VARIANCE : optMode;
 
     auto optSpace =  OptSpace::FULL;
-    optSpace = eigsize >  16*16                     ? OptSpace::PARTIAL : optSpace;
-    optSpace = eigsize >= 32*32                     ? OptSpace::DIRECT  : optSpace;
-    optSpace = optMode == OptMode::VARIANCE         ? OptSpace::DIRECT  : optSpace;
+    optSpace = eigsize >= 2*2*16*16     ? OptSpace::PARTIAL : optSpace;
+    optSpace = eigsize >= 2*2*32*32     ? OptSpace::DIRECT  : optSpace;
+    optSpace = sim_state.iteration >= 6 ? OptSpace::DIRECT  : optSpace;
 
+    auto optType = superblock->isReal() ? OptType::REAL : OptType::CPLX;
 
-    optMode   = OptMode::VARIANCE;
-    optSpace  = OptSpace::GUIDED;
-
-
-    std::tie(theta, sim_state.energy_now) = MPS_Tools::Finite::Opt::find_optimal_excited_state(*superblock,sim_state,optMode, optSpace);
+    std::tie(theta, sim_state.energy_now) = mpstools::finite::opt::find_optimal_excited_state(*superblock,sim_state,optMode, optSpace,optType);
     sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
-
-
+//    Textra::subtract_phase(theta);
     t_opt.toc();
     log->trace("Truncating theta");
 
@@ -272,44 +279,54 @@ void class_xDMRG::check_convergence(){
     t_sim.tic();
     t_con.tic();
     check_convergence_variance_mpo();
-    if(state->position_is_the_middle_any_direction()){
-        check_convergence_entg_entropy();
-    }
+    check_convergence_entg_entropy();
 
-    if (sim_state.iteration <= settings::xdmrg::min_sweeps){
-        clear_saturation_status();
-    }
+//    if(state->position_is_the_middle_any_direction()){
+//    }
+
+//    if (sim_state.iteration <= settings::xdmrg::min_sweeps){
+//        clear_saturation_status();
+//    }
 
 
     bool outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  > sim_state.energy_dens_window;
-    if (outside_of_window and (sim_state.variance_mpo_saturated_for > min_saturation_length or sim_state.variance_mpo_has_converged))
+    if (outside_of_window
+        and (   sim_state.iteration >= 2
+                or sim_state.variance_mpo_saturated_for > min_saturation_length
+                or sim_state.variance_mpo_has_converged)
+        )
     {
-        log->info("Resetting to product state -- saturated outside of energy window. Energy density: {}, Energy window: {} --> {}",sim_state.energy_dens, sim_state.energy_dens_window, std::min(1.2*sim_state.energy_dens_window, 0.5) );
+        log->info("Resetting to product state -- saturated outside of energy window. Energy density: {}, Energy window: {} --> {}",sim_state.energy_dens, sim_state.energy_dens_window, std::min(1.05*sim_state.energy_dens_window, 0.5) );
+        sim_state.energy_dens_window = std::min(1.05*sim_state.energy_dens_window, 0.5);
         int counter = 0;
         while(outside_of_window){
             reset_full_mps_to_random_product_state("sx");
-            sim_state.energy_now  = MPS_Tools::Common::Measure::energy_per_site_mpo(*superblock);
+            sim_state.energy_now  = mpstools::common::measure::energy_per_site_mpo(*superblock);
             sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
             outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  >= sim_state.energy_dens_window;
             counter++;
+            if (counter % 10 == 0) {
+                log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}", sim_state.energy_dens_window, std::min(1.05*sim_state.energy_dens_window, 0.5) );
+                sim_state.energy_dens_window = std::min(1.05*sim_state.energy_dens_window, 0.5);
+            }
         }
         log->info("Energy initial (per site) = {} | density = {} | retries = {}", sim_state.energy_now, sim_state.energy_dens,counter );
         clear_saturation_status();
-        projected_during_saturation      = false;
-        sim_state.energy_dens_window = std::min(1.2*sim_state.energy_dens_window, 0.5);
+        projected_during_saturation  = false;
         sim_state.energy_ubound      = sim_state.energy_target + sim_state.energy_dens_window * (sim_state.energy_max-sim_state.energy_min);
         sim_state.energy_lbound      = sim_state.energy_target - sim_state.energy_dens_window * (sim_state.energy_max-sim_state.energy_min);
     }
 
 
 
-    if (sim_state.variance_mpo_has_saturated
+    if (state->position_is_any_edge()
+        and sim_state.variance_mpo_has_saturated
         and not outside_of_window
         and not projected_during_saturation)
     {
         log->info("Projecting to {} due to saturation", settings::model::symmetry);
-        *state = MPS_Tools::Finite::Ops::get_closest_parity_state(*state,settings::model::symmetry);
-        MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+        *state = mpstools::finite::ops::get_closest_parity_state(*state,settings::model::symmetry);
+        mpstools::finite::ops::rebuild_superblock(*state,*superblock);
 //        clear_saturation_status();
         projected_during_saturation = true;
     }
@@ -339,6 +356,28 @@ void class_xDMRG::check_convergence(){
     t_sim.toc();
 }
 
+
+
+void class_xDMRG::check_convergence_entg_entropy(double slope_threshold) {
+    //Based on the the slope of entanglement middle_entanglement_entropy
+    // This one is cheap to compute.
+    log->debug("Checking convergence of entanglement");
+
+    slope_threshold = std::isnan(slope_threshold) ? settings::precision::EntEntrSaturationThreshold  : slope_threshold;
+    double entropysum = 0;
+    for(auto &entropy : mpstools::finite::measure::entanglement_entropies(*state)){entropysum += entropy;}
+    check_saturation_using_slope(BS_vec,
+                                 S_vec,
+                                 XS_vec,
+                                 entropysum,
+                                 sim_state.step,
+                                 1,
+                                 slope_threshold,
+                                 S_slope,
+                                 sim_state.entanglement_has_saturated);
+    sim_state.entanglement_has_converged = sim_state.entanglement_has_saturated;
+
+}
 
 void class_xDMRG::initialize_chain() {
     while(true){
@@ -393,8 +432,8 @@ void class_xDMRG::find_energy_range() {
         sim_state.iteration = state->get_sweeps();
     }
     compute_observables(*superblock);
-    sim_state.energy_max = superblock->measurements.energy_per_site_mpo.value();
-    sim_state.energy_now = superblock->measurements.energy_per_site_mpo.value();
+    sim_state.energy_max         = superblock->measurements.energy_per_site_mpo.value();
+    sim_state.energy_now         = superblock->measurements.energy_per_site_mpo.value();
     sim_state.energy_target      = sim_state.energy_min    + sim_state.energy_dens_target  * (sim_state.energy_max - sim_state.energy_min);
     sim_state.energy_ubound      = sim_state.energy_target + sim_state.energy_dens_window  * (sim_state.energy_max - sim_state.energy_min);
     sim_state.energy_lbound      = sim_state.energy_target - sim_state.energy_dens_window  * (sim_state.energy_max - sim_state.energy_min);
@@ -407,7 +446,7 @@ void class_xDMRG::find_energy_range() {
     bool outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  >= sim_state.energy_dens_window;
     while(outside_of_window){
         reset_full_mps_to_random_product_state("sx");
-        sim_state.energy_now  = MPS_Tools::Finite::Measure::energy_per_site_mpo(*state);
+        sim_state.energy_now  = mpstools::finite::measure::energy_per_site_mpo(*state);
         sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
         outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  >= sim_state.energy_dens_window;
 
@@ -421,6 +460,7 @@ void class_xDMRG::find_energy_range() {
             sim_state.energy_lbound       = sim_state.energy_target -  sim_state.energy_dens_window*(sim_state.energy_max-sim_state.energy_min);
         }
     }
+    superblock->isReal();
     log->info("Energy initial (per site) = {} | density = {} | retries = {}", sim_state.energy_now, sim_state.energy_dens,counterB );
 
 
@@ -439,13 +479,13 @@ void class_xDMRG::store_state_and_measurements_to_file(bool force){
     log->trace("Storing all measurements to file");
     t_sto.tic();
     h5pp_file->writeDataset(false, sim_name + "/simOK");
-    MPS_Tools::Finite::H5pp::write_all_measurements(*state, *h5pp_file, sim_name);
-    MPS_Tools::Finite::H5pp::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
+    mpstools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
+    mpstools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
-        h5pp_file->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/psi");
+        h5pp_file->writeDataset(mpstools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");
     }
-    MPS_Tools::Finite::H5pp::write_all_state(*state, *h5pp_file, sim_name);
+    mpstools::finite::io::write_all_state(*state, *h5pp_file, sim_name);
     t_sto.toc();
     store_algorithm_state_to_file();
     h5pp_file->writeDataset(true, sim_name + "/simOK");
@@ -500,10 +540,10 @@ void class_xDMRG::store_table_entry_site_state(bool force){
             sim_state.iteration,
             state->get_length(),
             state->get_position(),
-            MPS_Tools::Common::Measure::bond_dimension(*superblock),
+            mpstools::common::measure::bond_dimension(*superblock),
             sim_state.energy_now,
-            MPS_Tools::Common::Measure::current_entanglement_entropy(*superblock),
-            MPS_Tools::Common::Measure::truncation_error(*superblock)
+            mpstools::common::measure::current_entanglement_entropy(*superblock),
+            mpstools::common::measure::truncation_error(*superblock)
     );
     t_sto.toc();
 }
@@ -527,7 +567,7 @@ void class_xDMRG::print_profiling(){
         t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
         print_profiling_sim(t_sim);
-        MPS_Tools::Common::Prof::Obs::print_profiling(t_obs);
+        mpstools::common::profiling::obs::print_profiling(t_obs);
     }
 }
 

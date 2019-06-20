@@ -10,6 +10,8 @@
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <iterator>
 #include <iostream>
+#include <iomanip>
+#include <general/nmspc_type_check.h>
 
 
 /*! \brief **Textra** stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/
@@ -267,11 +269,87 @@ namespace Textra {
         return matrowmajor;
     }
 
+
+//******************************************************//
+// Tests for real/complex //
+//******************************************************//
+
+
+
+    template<typename Derived>
+    bool isReal(const Eigen::EigenBase<Derived> &obj,const std::string &name = "", double threshold = 1e-14) {
+        using Scalar = typename Derived::Scalar;
+        if constexpr (TypeCheck::is_specialization<Scalar, std::complex>::value){
+            auto imag_sum = obj.derived().imag().cwiseAbs().sum();
+//            std::cout <<"imag sum " << name << " :" << std::fixed << std::setprecision(16)<< imag_sum << std::endl;
+            return imag_sum < threshold;
+        }else{
+            return true;
+        }
+    }
+
+
+    template<typename Scalar, auto rank>
+    bool isReal(const Eigen::Tensor<Scalar,rank> &tensor, const std::string &name = "", double threshold = 1e-14) {
+        Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>> vector (tensor.data(),tensor.size());
+        return isReal(vector, name, threshold);
+    }
+
+    template <typename Derived>
+    auto subtract_phase(Eigen::MatrixBase<Derived> &v){
+        using Scalar = typename Derived::Scalar;
+        std::vector<double> angles;
+        if constexpr (std::is_same<Scalar, std::complex<double>>::value) {
+            for (int i = 0; i < v.cols(); i++){
+                if (v.col(i)(0).imag() == 0.0){
+                    angles.emplace_back(0.0);
+                    continue;
+                }
+                angles.emplace_back(std::arg(v.col(i)(0)));
+                Scalar inv_phase = Scalar(0.0,-1.0) * angles.back();
+                Scalar exp_inv_phase = std::exp(inv_phase);
+//                    std::cout << std::setprecision(20) << std::fixed << "inv_phase    : " << inv_phase << std::endl;
+//                    std::cout << std::setprecision(20) << std::fixed << "exp_inv_phase: " << exp_inv_phase << std::endl;
+                v.col(i) *= exp_inv_phase;
+                v.col(i) = (v.col(i).array().imag().cwiseAbs() > 1e-15  ).select(v.col(i), v.col(i).real());
+            }
+        }
+        return angles;
+    }
+
+
+
+    template<typename Scalar, auto rank>
+    auto subtract_phase(Eigen::Tensor<Scalar,rank> &tensor){
+        auto map = Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(tensor.data(),tensor.size());
+        return subtract_phase(map);
+    }
+
+
+    template <typename Derived>
+    void add_phase(Eigen::MatrixBase<Derived> &v, std::vector<double> & angles){
+        using Scalar = typename Derived::Scalar;
+        if constexpr (std::is_same<Scalar, std::complex<double>>::value) {
+            if (v.cols() != angles.size() ){throw std::runtime_error("Mismatch in columns and angles supplied");}
+            for (int i = 0; i < v.cols(); i++){
+                Scalar exp_phase = std::exp(Scalar(0.0,1.0) * angles[i]);
+                v.col(i) *= exp_phase;
+                v.col(i) = (v.col(i).array().imag().cwiseAbs() > 1e-15  ).select(v.col(i), v.col(i).real());
+            }
+        }
+    }
+
+
+    template<typename Scalar, auto rank>
+    void add_phase(Eigen::Tensor<Scalar,rank> &tensor, std::vector<double> &angles){
+        auto map = Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(tensor.data(),tensor.size());
+        add_phase(map,angles);
+    }
+
+
 //******************************************************//
 //std::cout overloads for dimension() and array objects //
 //******************************************************//
-
-
 
     template <typename T, int L>
     std::ostream& operator<< (std::ostream& out, const Eigen::DSizes<T,L>& v) {

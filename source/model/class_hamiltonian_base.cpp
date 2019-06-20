@@ -19,6 +19,9 @@ const Eigen::Tensor<Scalar,4> & class_hamiltonian_base::MPO() const{
     }
 }
 
+bool class_hamiltonian_base::isReal()const{
+    return Textra::isReal(MPO(),"MPO");
+}
 
 class_hamiltonian_base::class_hamiltonian_base(std::string logName){
     log = Logger::setLogger(logName);

@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 
 
 
-    //Print all given parameters
+    //print all given parameters
     //Load input and output files from command line. If none were given use defaults.
     //Normally an output filename is given in the input file. But it can also be given from command line.
     std::string inputfile  = "input.cfg";

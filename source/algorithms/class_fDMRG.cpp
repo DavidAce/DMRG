@@ -8,7 +8,7 @@
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <mps_state/class_superblock.h>
 #include <mps_state/class_finite_chain_state.h>
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_random_numbers.h>
@@ -24,8 +24,8 @@ class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 
     table_fdmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
     table_fdmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5pp_file, sim_name + "/measurements", "simulation_progress_full_chain", sim_name);
-    MPS_Tools::Finite::Chain::initialize_state(*state, settings::model::model_type, settings::model::symmetry, settings::fdmrg::num_sites);
-    MPS_Tools::Finite::Chain::copy_state_to_superblock(*state,*superblock);
+    mpstools::finite::chain::initialize_state(*state, settings::model::model_type, settings::model::symmetry, settings::fdmrg::num_sites);
+    mpstools::finite::chain::copy_state_to_superblock(*state,*superblock);
 
     min_saturation_length = 0.5 * settings::fdmrg::num_sites;
     max_saturation_length = 1.0 * settings::fdmrg::num_sites;
@@ -80,7 +80,7 @@ void class_fDMRG::run()
             // We can go ahead and load the state from hdf5
             log->info("Loading MPS from file");
             try{
-                MPS_Tools::Finite::H5pp::load_from_hdf5(*h5pp_file, *state, *superblock, sim_state, sim_name);
+                mpstools::finite::io::load_from_hdf5(*h5pp_file, *state, *superblock, sim_state, sim_name);
             }
             catch(std::exception &ex){
                 log->error("Failed to load from hdf5: {}", ex.what());
@@ -115,7 +115,7 @@ void class_fDMRG::run()
 
 void class_fDMRG::run_preprocessing() {
     log->info("Running {} preprocessing",sim_name);
-    MPS_Tools::Finite::Print::print_hamiltonians(*state);
+    mpstools::finite::print::print_hamiltonians(*state);
     log->info("Finished {} preprocessing", sim_name);
 }
 
@@ -159,18 +159,18 @@ void class_fDMRG::run_simulation(){
 }
 void class_fDMRG::run_postprocessing(){
     log->info("Running {} postprocessing",sim_name);
-    MPS_Tools::Finite::Debug::check_integrity(*state,*superblock,sim_state);
+    mpstools::finite::debug::check_integrity(*state,*superblock,sim_state);
     state->unset_measurements();
     state->do_all_measurements();
-    MPS_Tools::Finite::H5pp::write_all_measurements(*state, *h5pp_file, sim_name);
-    MPS_Tools::Infinite::H5pp::write_all_measurements(*superblock, *h5pp_file, sim_name);
+    mpstools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
+    mpstools::infinite::io::write_all_measurements(*superblock, *h5pp_file, sim_name);
 
-    MPS_Tools::Finite::Debug::print_parity_properties(*state);
-    MPS_Tools::Finite::H5pp::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
+    mpstools::finite::debug::print_parity_properties(*state);
+    mpstools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
 
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::fdmrg::store_wavefn){
-        h5pp_file->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/psi");
+        h5pp_file->writeDataset(mpstools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");
     }
     print_status_full();
     print_profiling();
@@ -242,13 +242,13 @@ void class_fDMRG::store_state_and_measurements_to_file(bool force){
     log->trace("Storing all measurements to file");
     t_sto.tic();
     h5pp_file->writeDataset(false, sim_name + "/simOK");
-    MPS_Tools::Finite::H5pp::write_all_measurements(*state, *h5pp_file, sim_name);
-    MPS_Tools::Finite::H5pp::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
+    mpstools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
+    mpstools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
     //  Write the wavefunction (this is only defined for short enough chain ( L < 14 say)
     if(settings::xdmrg::store_wavefn){
-        h5pp_file->writeDataset(MPS_Tools::Finite::Measure::mps_wavefn(*state), sim_name + "/state/psi");
+        h5pp_file->writeDataset(mpstools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");
     }
-    MPS_Tools::Finite::H5pp::write_all_state(*state, *h5pp_file, sim_name);
+    mpstools::finite::io::write_all_state(*state, *h5pp_file, sim_name);
     t_sto.toc();
     store_algorithm_state_to_file();
     h5pp_file->writeDataset(true, sim_name + "/simOK");
@@ -296,10 +296,10 @@ void class_fDMRG::store_chain_entry_to_file(bool force){
             sim_state.iteration,
             state->get_length(),
             state->get_position(),
-            MPS_Tools::Common::Measure::bond_dimension(*superblock),
-            superblock->E_optimal / MPS_Tools::Common::Measure::length(*superblock) * 2.0,
-            MPS_Tools::Common::Measure::current_entanglement_entropy(*superblock),
-            MPS_Tools::Common::Measure::truncation_error(*superblock)
+            mpstools::common::measure::bond_dimension(*superblock),
+            superblock->E_optimal / mpstools::common::measure::length(*superblock) * 2.0,
+            mpstools::common::measure::current_entanglement_entropy(*superblock),
+            mpstools::common::measure::truncation_error(*superblock)
         );
     t_sto.toc();
 }
@@ -322,7 +322,7 @@ void class_fDMRG::print_profiling(){
         t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
         print_profiling_sim(t_sim);
-        MPS_Tools::Common::Prof::Obs::print_profiling(t_obs);
+        mpstools::common::profiling::obs::print_profiling(t_obs);
     }
 }
 

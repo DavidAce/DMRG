@@ -7,107 +7,124 @@
 #include <model/class_hamiltonian_base.h>
 #include <algorithms/class_simulation_state.h>
 
-MPS_Tools::Finite::Opt::internals::subspace_functor::subspace_functor(
+template<typename Scalar>
+mpstools::finite::opt::internals::subspace_functor<Scalar>::subspace_functor(
         const class_superblock &superblock,
         const class_simulation_state &sim_state,
-        const Eigen::MatrixXd & eigvecs_,
-        const Eigen::VectorXd & eigvals_)
+        const Eigen::MatrixXcd & eigvecs_,
+        const Eigen::VectorXd  & eigvals_)
         :
         base_functor(superblock,sim_state),
         eigvecs(eigvecs_),
         eigvals(eigvals_)
 {
-//    eigvecs = eigvecs_;
-//    eigvals = eigvals_;
-    H2 = (eigvecs.adjoint() * superblock.get_H_local_sq_matrix_real().selfadjointView<Eigen::Upper>() * eigvecs);
+    if constexpr(std::is_same<Scalar,double>::value){
+        H2 = (eigvecs.adjoint().real() * superblock.get_H_local_sq_matrix<Scalar>().template selfadjointView<Eigen::Upper>() * eigvecs.real());
+    }
+    if constexpr(std::is_same<Scalar,std::complex<double>>::value){
+        H2 = (eigvecs.adjoint() * superblock.get_H_local_sq_matrix<Scalar>().template selfadjointView<Eigen::Upper>() * eigvecs);
+    }
 }
 
 
-
-
-
-
-double MPS_Tools::Finite::Opt::internals::subspace_functor::operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) {
-    long double vH2v,vEv,vv,var;
-    double lambda,lambda2,log10var, fx, energy_penalty;
-
-#pragma omp parallel
+template<typename Scalar>
+double mpstools::finite::opt::internals::subspace_functor<Scalar>::operator()(const Eigen::VectorXd &v_double_double, Eigen::VectorXd &grad_double_double) {
+    Scalar vH2v,vHv;
+    Scalar ene,var;
+    double vv,fx,log10var;
+    double norm_func,norm_grad;
+    VectorType Hv, H2v;
+    int vecSize = v_double_double.size();
+    if constexpr (std::is_same<Scalar,std::complex<double>>::value){vecSize = v_double_double.size()/2;}
+    auto v    = Eigen::Map<const VectorType> (reinterpret_cast<const Scalar*>(v_double_double.data())   , vecSize);
+    auto grad = Eigen::Map<      VectorType> (reinterpret_cast<      Scalar*>(grad_double_double.data()), vecSize);
+    vv    = v.squaredNorm();
+    norm = std::sqrt(vv);
+    #pragma omp parallel
     {
-#pragma omp sections
+        #pragma omp sections
         {
-#pragma omp section
-            { vH2v = v.dot(H2.selfadjointView<Eigen::Upper>() * v); }
-#pragma omp section
-            { vEv = v.cwiseAbs2().dot(eigvals); }
-#pragma omp section
-            { vv = v.squaredNorm(); }
-        }
-#pragma omp barrier
-#pragma omp single
-        {
-            lambda          = 1.0;
-            lambda2         = 1.0;
-            var             = std::abs(vH2v * vv - vEv * vEv) / std::pow(vv,2);
-            variance        = var;
-            var             = var == 0  ? std::numeric_limits<double>::epsilon() : var;
-            energy          = vEv / vv;
-            double energy_distance = std::abs(energy - energy_target);
-            energy_penalty = energy_distance > energy_window/2.0 ?  energy - energy_target : 0.0;
-            log10var = std::log10(var);
-        }
-
-
-#pragma omp barrier
-#pragma omp for schedule(static,1)
-        for (int k = 0; k < grad.size(); k++){
-            double vi2H2ik         = 2.0*v.dot(H2.col(k));             // 2 * sum_i x_i H2_ik
-            double vk4EkvEv        = 4.0*v(k)*eigvals(k) * vEv ;       // 4 * x_k * E_k * (sum_i x_i^2 E_i)
-            grad(k) = ((vi2H2ik * vv - vH2v * 2.0*v(k))/(std::pow(vv,2)) - (vk4EkvEv*vv*vv - vEv*vEv*4.0*v(k)*vv)/(std::pow(vv,4)))/var/std::log(10)
-                      + lambda * 4.0 * v(k) * (vv - 1);
-            if (have_bounds_on_energy){
-                grad(k) += lambda2* 4 * v(k) * energy_penalty*(eigvals(k)/vv - energy/vv);
+            #pragma omp section
+            {
+                Hv  = eigvals.asDiagonal() * v;
+                vHv = v.dot(Hv);
             }
-            grad(k) = std::isinf(grad(k)) ? std::numeric_limits<double>::max() * sgn(grad(k)) : grad(k);
-
+            #pragma omp section
+            {
+                H2v = H2.template selfadjointView<Eigen::Upper>()*v;
+                vH2v = v.dot(H2v);
+            }
         }
-
     }
+    ene             = std::abs(vHv/vv);
+    var             = std::abs(vH2v/vv) - std::abs(ene*ene);
+//    double loss_of_precision = std::log10(std::abs(ene*ene));
+//    double expected_error    = std::pow(10, -(14-loss_of_precision));
+//    if (std::imag(ene)      > expected_error) mpstools::log->warn("Energy has imaginary component              : {:.16f} + i {:.16f}" , std::real(ene)    , std::imag(ene));
+//    if (std::imag(vH2v/vv)  > expected_error) mpstools::log->warn("Hamiltonian squared has imaginary component : {:.16f} + i {:.16f}" , std::real(vH2v/vv), std::imag(vH2v/vv));
+//    if (std::imag(var)      > expected_error) mpstools::log->warn("Variance has imaginary component            : {:.16f} + i {:.16f}" , std::real(var)    , std::imag(var));
+    if (std::real(var)      < 0.0           ) mpstools::log->warn("Variance is negative                        : {:.16f} + i {:.16f}" , std::real(var)    , std::imag(var));
+
+    energy         = std::real(ene);
+    variance       = std::abs(var);
+    variance       = variance < 1e-15  ? 1e-15 : variance;
+    norm_offset    = std::abs(vv) - 1.0 ;
+    norm_func      = windowed_func_pow(norm_offset,0.1);
+    norm_grad      = windowed_grad_pow(norm_offset,0.1);
+    log10var       = std::log10(variance);
+
+    fx = log10var
+            +  norm_func;
+
+    auto vv_1  = std::pow(vv,-1);
+    auto var_1 = 1.0/var/std::log(10);
+    grad = var_1 * vv_1 * (H2v  - v  * vH2v - 2.0 * ene * (Hv - v * ene))
+           +  norm_grad * v;
+//    Eigen::VectorXcd grad = var_1 * (2.0*(vH2*vv_1 - v * vH2v * vv_2) - 4.0 * energy * (vH * vv_1 - v * vHv * vv_2));
+//                            + norm_grad * 2.0 * v;
+//    Eigen::VectorXcd grad = var_1 * (2.0*vH2 - 4.0 * vHv * vH);
+//    Eigen::VectorXcd grad = var_1 * (vH2+vH2.conjugate() - 2.0 * vHv * (vH+vH.conjugate()));
+//                            + norm_grad * 2.0 * v;
+
+//    Eigen::VectorXcd
+//            grad = var_1 * (vH2 * vv_1  - v.conjugate() * vv_1 * vH2v - 2.0 * vHv  * vH * vv_2 + 2.0 * v.conjugate() * vHv* vHv * vv_2 * vv_1).conjugate()
+//                   +  norm_grad * v;
+
+//    Eigen::VectorXcd grad = var_1 * (H2v * vv_1  - v * vv_1 * vH2v - 2.0 * vHv  * Hv * vv_2 + 2.0 * v * vHv* vHv * vv_2 * vv_1)
+//                                               +  norm_grad * v;
+//    grad += 0.5*var_1 * (vH2 * vv_1  - v * vv_1 * vH2v - 2.0 * vHv  * vH * vv_2 + 2.0 * v * vHv* vHv * vv_2 * vv_1).conjugate();
+//                            + norm_grad * 2.0 * v;
+//    Eigen::VectorXcd grad = var_1 * (vH2 - 2.0 * vHv  * vH)
+//                            + v;
+
+//    grad_double_double  = Eigen::Map<Eigen::VectorXd> (reinterpret_cast<double*> (grad.data()), 2*grad.size());
+//
+//    std::cout   << std::setprecision(12) << std::fixed
+//            << " Variance: "   << std::setw(18)   << std::log10(var/length)
+//            << " Variance: "   << std::setw(18)   << std::log10((vH2v - vHv * vHv)/(double)length)
+//            << " Variance: "   << std::setw(18)   << std::log10((vH2v/vv - vHv * vHv/vv/vv)/(double)length)
+//            << " Energy : "    << std::setw(18)   << energy/length
+//            << " norm : "      << std::setw(18)   << norm
+//            << " normsq : "    << std::setw(18)   << vv
+//            << " fx : "        << std::setw(18)   << fx
+//            << std::endl;
+
 
     if(std::isnan(log10var) or std::isinf(log10var)){
-        MPS_Tools::log->warn("log10 variance is invalid");
-        MPS_Tools::log->warn("vH2v            = {}" , vH2v );
-        MPS_Tools::log->warn("vEv             = {}" , vEv  );
-        MPS_Tools::log->warn("vv              = {}" , vv   );
-        MPS_Tools::log->warn("vH2v/vv         = {}" , vH2v/vv    );
-        MPS_Tools::log->warn("vEv*vEv/vv/vv   = {}" , vEv*vEv/vv/vv    );
-        MPS_Tools::log->warn("var             = {}" , var);
-        MPS_Tools::log->warn("log10var        = {}" , log10var );
-//                exit(1);
-        log10var    = std::abs(var) ==0  ?  -20.0 : std::log10(std::abs(var));
+        mpstools::log->warn("log10 variance is invalid");
+        mpstools::log->warn("vv              = {:.16f} + i{:.16f}" , std::real(vv)  , std::imag(vv));
+        mpstools::log->warn("vH2v            = {:.16f} + i{:.16f}" , std::real(vH2v) ,std::imag(vH2v) );
+        mpstools::log->warn("vHv             = {:.16f} + i{:.16f}" , std::real(vHv)  ,std::imag(vHv)  );
+        mpstools::log->warn("var             = {:.16f} + i{:.16f}" , std::real(var)  ,std::imag(var));
+        mpstools::log->warn("ene             = {:.16f} + i{:.16f}" , std::real(ene)  ,std::imag(ene));
+        mpstools::log->warn("log10(var/L)    = {:.16f}" , std::log10(variance/length) );
     }
-    fx = log10var  + lambda * std::pow(vv-1.0,2);
-
-    if (have_bounds_on_energy) {
-        fx += lambda2 * std::pow(energy_penalty,2);
-    }
-
-
-//    grad.normalize();
-//    Eigen::VectorXd m_drt;
-//    m_drt.resizeLike(grad);
-//    m_drt.noalias() = -grad;
-//    double step  = 1.0 / grad.norm();
-//    double step2 = 1.0 / m_drt.norm();
-//    double norm  = grad.norm()  ;
-//    double norm2 = m_drt.norm() ;
-//
-//    if(step < 1e-15 or step2 < 1e-15){
-//        throw std::runtime_error("step too small");
-//    }
-//    if(step > 1e15 or step2 > 1e15){
-//        throw std::runtime_error("step too large");
-//    }
 
     counter++;
     return fx;
 }
+
+
+
+template class mpstools::finite::opt::internals::subspace_functor<double>;
+template class mpstools::finite::opt::internals::subspace_functor<std::complex<double>>;

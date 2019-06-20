@@ -5,23 +5,23 @@
 #ifndef MPS_TOOLS_FINITE_OPT_H
 #define MPS_TOOLS_FINITE_OPT_H
 
-#include <mps_state/nmspc_mps_tools.h>
-#include <cppoptlib/problem.h>
-#include <cppoptlib/meta.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <general/class_tic_toc.h>
 #include <iomanip>
+#include <LBFGS.h>
 
 class class_tic_toc;
 class class_superblock;
-namespace LBFGSpp{
-    template <typename T> class LBFGSParam;
-}
-
-namespace MPS_Tools::Finite::Opt{
 
 
-
+namespace mpstools::finite::opt{
     namespace internals{
+        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> subspace_optimization       (const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace, OptType optType);
+        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> direct_optimization(
+                const class_superblock &superblock, const class_simulation_state &sim_state, OptType optType);
+        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> cppoptlib_optimization      (const class_superblock & superblock, const class_simulation_state & sim_state);
+        extern std::vector<int> generate_size_list(size_t shape);
+
 
         inline std::ostream& operator<<(std::ostream& str, OptMode const& mode) {
             switch (mode){
@@ -36,11 +36,23 @@ namespace MPS_Tools::Finite::Opt{
                 case OptSpace::PARTIAL     : str << "PARTIAL";      break;
                 case OptSpace::FULL        : str << "FULL";         break;
                 case OptSpace::DIRECT      : str << "DIRECT";       break;
-                case OptSpace::GUIDED      : str << "GUIDED";       break;
-                case OptSpace::CPPOPTLIB   : str << "CPPOPTLIB";    break;
             }
             return str;
         }
+        inline std::ostream& operator<<(std::ostream& str, OptType const& type) {
+            switch (type){
+                case OptType::REAL        : str << "REAL";         break;
+                case OptType::CPLX        : str << "CPLX";         break;
+            }
+            return str;
+        }
+
+        template <typename T>  int sgn(const T val) {return (T(0) < val) - (val < T(0)); }
+        double windowed_func_abs(double x,double window);
+        double windowed_grad_abs(double x,double window);
+        double windowed_func_pow(double x,double window);
+        double windowed_grad_pow(double x,double window);
+
 
 
         namespace reports{
@@ -55,7 +67,6 @@ namespace MPS_Tools::Finite::Opt{
             void print_report(const lbfgs_tuple lbfgs_log);
         }
 
-
         void reset_timers();
         inline std::shared_ptr<class_tic_toc> t_opt  =  std::make_shared<class_tic_toc>(true,5,"t_opt ");;
         inline std::shared_ptr<class_tic_toc> t_eig  =  std::make_shared<class_tic_toc>(true,5,"t_eig ");;
@@ -68,34 +79,45 @@ namespace MPS_Tools::Finite::Opt{
         inline std::shared_ptr<class_tic_toc> t_op   =  std::make_shared<class_tic_toc>(true,5,"t_op  ");;
 
 
-        void initialize_params();
-        extern std::shared_ptr<LBFGSpp::LBFGSParam<double>> params;
+        inline LBFGSpp::LBFGSParam<double> get_params(){
+            using namespace LBFGSpp;
+            LBFGSpp::LBFGSParam<double> params;
+            // READ HERE http://pages.mtu.edu/~msgocken/ma5630spring2003/lectures/lines/lines/node3.html
+            // I think c1 corresponds to ftol, and c2 corresponds to wolfe
+            params.max_iterations = 1000;
+            params.max_linesearch = 80; // Default is 20.
+            params.m              = 8;     // Default is 6
+            params.past           = 1;     //
+            params.epsilon        = 1e-2;  // Default is 1e-5.
+            params.delta          = 1e-6; // Default is 0. Trying this one instead of ftol.
+            params.ftol           = 1e-4;  // Default is 1e-4. this really helped at threshold 1e-8.
+            params.wolfe          = 0.90;   // Default is 0.9
+            params.min_step       = 1e-40;
+            params.max_step       = 1e+40;
+            params.linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_STRONG_WOLFE;
+            return params;
+        }
 
+        inline auto params = get_params();
 
+        template<typename Scalar>
         struct superblock_components{
-            Eigen::Tensor<double,4> HA_MPO;
-            Eigen::Tensor<double,4> HB_MPO;
-            Eigen::Tensor<double,3> Lblock;
-            Eigen::Tensor<double,3> Rblock;
-            Eigen::Tensor<double,4> Lblock2;
-            Eigen::Tensor<double,4> Rblock2;
-            Eigen::Tensor<double,6> HAHB;
-            Eigen::Tensor<double,6> HAHA;
-            Eigen::Tensor<double,6> HBHB;
-            Eigen::Tensor<double,8> HAHB2;
-            Eigen::Tensor<double,6> Lblock2HAHA;
-            Eigen::Tensor<double,6> Rblock2HBHB;
+            Eigen::Tensor<Scalar,4> HA_MPO;
+            Eigen::Tensor<Scalar,4> HB_MPO;
+            Eigen::Tensor<Scalar,3> Lblock;
+            Eigen::Tensor<Scalar,3> Rblock;
+            Eigen::Tensor<Scalar,4> Lblock2;
+            Eigen::Tensor<Scalar,4> Rblock2;
+            Eigen::Tensor<Scalar,6> HAHB;
+            Eigen::Tensor<Scalar,6> HAHA;
+            Eigen::Tensor<Scalar,6> HBHB;
+            Eigen::Tensor<Scalar,8> HAHB2;
+            Eigen::Tensor<Scalar,6> Lblock2HAHA;
+            Eigen::Tensor<Scalar,6> Rblock2HBHB;
             Eigen::DSizes<long,4>   dsizes;
+            explicit superblock_components(const class_superblock &superblock);
+
         } ;
-
-
-
-        std::pair<Eigen::VectorXd,double>    get_vH_vHv(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents);
-        std::pair<Eigen::VectorXd,double>    get_vH2_vH2v(const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents);
-        Eigen::VectorXd get_vH2 (const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents);
-        Eigen::VectorXd get_vH  (const Eigen::Matrix<double,Eigen::Dynamic,1> &v, const superblock_components &superComponents);
-
-
 
 
         class base_functor{
@@ -112,113 +134,111 @@ namespace MPS_Tools::Finite::Opt{
             double energy_window;
             double energy_offset;
             double norm_offset;
+            double norm;
             size_t length;
             int    iteration;
             int    counter = 0;
             bool   have_bounds_on_energy = false;
-            template <typename T>  int sgn(const T val) {return (T(0) < val) - (val < T(0)); }
-
-            superblock_components superComponents;
-
-
-
-
         public:
             base_functor(const class_superblock & superblock, const class_simulation_state &sim_state);
             double get_variance() const ;
             double get_energy  () const ;
             size_t get_count   () const ;
+            double get_norm    () const ;
             virtual double operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) = 0;
         };
 
 
-
-
-        class direct_functor: public base_functor{
-        private:
-        public:
-            explicit direct_functor(const class_superblock & superblock_, const class_simulation_state &sim_state);
-            double operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) override;
-        };
-
-
-
+        template <typename Scalar>
         class subspace_functor : public base_functor {
         private:
-            Eigen::MatrixXd H2;
-            const Eigen::MatrixXd &eigvecs;
-            const Eigen::VectorXd &eigvals;
-
+            using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
+            using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
+            const Eigen::MatrixXcd &eigvecs;
+            const Eigen::VectorXd  &eigvals;
+            MatrixType             H2;
         public:
 
             explicit subspace_functor(
                     const class_superblock & superblock,
                     const class_simulation_state &sim_state,
-                    const Eigen::MatrixXd &eigvecs_,
-                    const Eigen::VectorXd &eigvals_);
+                    const Eigen::MatrixXcd &eigvecs_,
+                    const Eigen::VectorXd  &eigvals_);
 
-            double operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) override;
+            double operator()(const Eigen::VectorXd &v_double_double, Eigen::VectorXd &grad_double_double) override;
         };
 
 
-
-        class guided_functor: public base_functor{
+        template<typename Scalar>
+        class direct_functor: public base_functor{
         private:
-            double windowed_func_abs(double x,double window);
-            double windowed_grad_abs(double x,double window);
-            double windowed_func_pow(double x,double window);
-            double windowed_grad_pow(double x,double window);
-
+            using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
+            using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
+            superblock_components<Scalar> superComponents;
         public:
-            explicit guided_functor(const class_superblock &superblock, const class_simulation_state & sim_state);
-            double operator()(const Eigen::VectorXd &v, Eigen::VectorXd &grad) override;
+            explicit direct_functor(const class_superblock &superblock, const class_simulation_state & sim_state);
+            double operator()(const Eigen::VectorXd &v_double_double, Eigen::VectorXd &grad_double_double) override;
         };
 
 
 
 
 
+        template<typename Scalar> using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic, 1>;
 
-    class cppoptlib_functor: public cppoptlib::Problem<double>{
-        protected:
-            double variance;
-            double energy  ;
-            double energy_lower_bound;
-            double energy_upper_bound;
-            double energy_target;
-            double energy_min;
-            double energy_max;
-            double energy_dens;
-            double energy_target_dens;
-            double energy_window;
-            double energy_offset;
-            double norm_offset;
-            size_t length;
-            int    iteration;
-            int    counter = 0;
-            bool   have_bounds_on_energy = false;
-            template <typename T>  int sgn(const T val) {return (T(0) < val) - (val < T(0)); }
+        template<typename Derived>
+        VectorType<typename Derived::Scalar> get_vH2 (const Eigen::MatrixBase<Derived> &v, const superblock_components<typename Derived::Scalar> &superComponents){
+            using Scalar = typename Derived::Scalar;
+            Eigen::Tensor<Scalar,4> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,4>>(v.derived().data(), superComponents.dsizes).shuffle(Textra::array4{1,0,3,2});
+            t_vH2->tic();
+            Eigen::Tensor<Scalar,4> vH2 =
+                    theta
+                            .contract(superComponents.Lblock2, Textra::idx({0}, {0}))
+                            .contract(superComponents.HAHB2,   Textra::idx({5,4,0,2}, {4, 0, 1, 3}))
+                            .contract(superComponents.Rblock2, Textra::idx({0,2,4}, {0, 2, 3}))
+                            .shuffle(Textra::array4{1, 0, 2, 3});
+
+            t_vH2->toc();
+            return Eigen::Map<VectorType<Scalar>>(vH2.data(),vH2.size());
+        }
+        template<typename Derived>
+        VectorType<typename Derived::Scalar> get_vH (const Eigen::MatrixBase<Derived> &v, const superblock_components<typename Derived::Scalar> &superComponents){
+            using Scalar = typename Derived::Scalar;
+            auto theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,4>> (v.derived().data(), superComponents.dsizes);
+            t_vH->tic();
+            Eigen::Tensor<Scalar,4> vH =
+                    superComponents.Lblock
+                            .contract(theta,                               Textra::idx({0},{1}))
+                            .contract(superComponents.HAHB,                Textra::idx({1,2,3},{0,1,4}))
+                            .contract(superComponents.Rblock ,             Textra::idx({1,3},{0,2}))
+                            .shuffle(Textra::array4{1,0,2,3});
+            t_vH->toc();
+
+            return Eigen::Map<VectorType<Scalar>>(vH.data(),vH.size());
+        }
+
+        template<typename Derived>
+        std::pair<VectorType<typename Derived::Scalar>,typename Derived::Scalar>
+                get_Hv_vHv(const Eigen::MatrixBase<Derived> &v,
+                           const superblock_components<typename Derived::Scalar> &superComponents){
+            auto Hv = mpstools::finite::opt::internals::get_vH(v,superComponents);
+            t_vHv->tic();
+            auto vHv = v.dot(Hv);
+            t_vHv->toc();
+            return std::make_pair(Hv,vHv);
+        }
 
 
-            superblock_components superComponents;
-
-            double vH2v, vHv, vv,var;
-            Eigen::VectorXd vH2, vH;
-            bool exp_vals_computed = false;
-            void compute_exp_vals (const Eigen::VectorXd &v);
-
-        public:
-            double get_variance() const ;
-            double get_energy  () const ;
-            size_t get_count   () const ;
-            size_t get_iter    () const ;
-
-            explicit cppoptlib_functor(const class_superblock &superblock, const class_simulation_state & sim_state);
-            double value (const Eigen::VectorXd &v);
-            void gradient(const Eigen::VectorXd &v, Eigen::VectorXd &grad);
-            bool callback(const cppoptlib::Criteria<double> &state, const Eigen::VectorXd &x0);
-
-        };
+        template<typename Derived>
+        std::pair<VectorType<typename Derived::Scalar>,typename Derived::Scalar>
+                get_H2v_vH2v(const Eigen::MatrixBase<Derived> &v,
+                             const superblock_components<typename Derived::Scalar> &superComponents){
+            auto H2v = mpstools::finite::opt::internals::get_vH2(v,superComponents);
+            t_vH2v->tic();
+            auto vH2v = v.dot(H2v);
+            t_vH2v->toc();
+            return std::make_pair(H2v,vH2v);
+        }
     }
 }
 

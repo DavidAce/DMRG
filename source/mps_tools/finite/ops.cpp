@@ -3,7 +3,7 @@
 //
 
 
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <mps_state/class_finite_chain_state.h>
 #include <mps_state/class_superblock.h>
 #include <mps_state/class_mpo.h>
@@ -19,7 +19,7 @@
 using Scalar         = std::complex<double>;
 using namespace Textra;
 
-std::list<Eigen::Tensor<Scalar,4>> MPS_Tools::Finite::Ops::make_mpo_list (const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_R){
+std::list<Eigen::Tensor<Scalar,4>> mpstools::finite::ops::make_mpo_list (const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_R){
     std::list<Eigen::Tensor<Scalar,4>> mpos;
     for(auto &mpo_L : mpos_L){
         mpos.push_back(mpo_L->MPO());
@@ -31,23 +31,23 @@ std::list<Eigen::Tensor<Scalar,4>> MPS_Tools::Finite::Ops::make_mpo_list (const 
 }
 
 
-void MPS_Tools::Finite::Ops::apply_mpo(class_finite_chain_state &state,const Eigen::Tensor<Scalar,4> mpo,const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge){
+void mpstools::finite::ops::apply_mpo(class_finite_chain_state &state,const Eigen::Tensor<Scalar,4> mpo,const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge){
     std::list<Eigen::Tensor<Scalar,4>> mpos(state.get_length(), mpo);
     apply_mpos(state,mpos,Ledge,Redge);
 }
 
 
 
-void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const std::list<Eigen::Tensor<Scalar,4>> &mpos,const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge){
+void mpstools::finite::ops::apply_mpos(class_finite_chain_state &state,const std::list<Eigen::Tensor<Scalar,4>> &mpos,const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge){
     if (mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
-    MPS_Tools::log->trace("Applying MPO's");
-    state.unset_measurements();
-    std::cout << "Norm              (before mpos): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
-    std::cout << "Spin component sx (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-    std::cout << "Spin component sy (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-    std::cout << "Spin component sz (before mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
+    mpstools::log->trace("Applying MPO's");
+//    state.unset_measurements();
+//    std::cout << "Norm              (before mpos): " << mpstools::finite::measure::norm(state)  << std::endl;
+//    std::cout << "Spin component sx (before mpos): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
+//    std::cout << "Spin component sy (before mpos): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
+//    std::cout << "Spin component sz (before mpos): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
     auto mpo = mpos.begin();
 
     {
@@ -119,21 +119,21 @@ void MPS_Tools::Finite::Ops::apply_mpos(class_finite_chain_state &state,const st
         state.MPS_R.back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0));
     }
     state.unset_measurements();
-    std::cout << "Norm              (after mpos): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
-    std::cout << "Spin component sx (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-    std::cout << "Spin component sy (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-    std::cout << "Spin component sz (after mpos): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
+//    std::cout << "Norm              (after mpos): " << mpstools::finite::measure::norm(state)  << std::endl;
+//    std::cout << "Spin component sx (after mpos): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
+//    std::cout << "Spin component sy (after mpos): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
+//    std::cout << "Spin component sz (after mpos): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
 }
 
 
-void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
+void mpstools::finite::ops::normalize_chain(class_finite_chain_state & state){
 
-    MPS_Tools::log->trace("Normalizing chain");
+    mpstools::log->trace("Normalizing chain");
     state.unset_measurements();
-    std::cout << "Norm              (before normalization): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
-    std::cout << "Spin component sx (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-    std::cout << "Spin component sy (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-    std::cout << "Spin component sz (before normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
+//    std::cout << "Norm              (before normalization): " << mpstools::finite::measure::norm(state)  << std::endl;
+//    std::cout << "Spin component sx (before normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
+//    std::cout << "Spin component sy (before normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
+//    std::cout << "Spin component sz (before normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
     // Sweep back and forth once on the chain
 
     class_SVD svd;
@@ -154,7 +154,7 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
     while(num_traversals < 4){
         Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
         bool isZero = Eigen::Map <Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).isZero();
-        if(isZero){MPS_Tools::log->warn("Theta is all zeros at positions: {},{}", pos_A, pos_B );}
+        if(isZero){mpstools::log->warn("Theta is all zeros at positions: {},{}", pos_A, pos_B );}
         try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta);}
         catch(std::exception &ex){
             std::cerr << "A:\n" << state.get_A(pos_A) << std::endl;
@@ -162,13 +162,9 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
             std::cerr << "B:\n" << state.get_B(pos_B) << std::endl;
             throw std::runtime_error("Normalization failed at step " + std::to_string(pos_A) + ": " + std::string(ex.what()) );
         }
-        if (pos_LC == 8){
-            std::cout << "S\n: " << S << std::endl;
-        }
         Eigen::Tensor<Scalar,3> LA_U = Textra::asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
         Eigen::Tensor<Scalar,3> V_LB = V.contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0}));
         norm = pos_B == state.get_length()-1 or pos_A == 0 ? 1.0 : norm;
-
         if (direction == 1){
             state.get_G(pos_A)  = LA_U;
             state.get_L(pos_LC) = S;
@@ -194,16 +190,16 @@ void MPS_Tools::Finite::Ops::normalize_chain(class_finite_chain_state & state){
 
     }
     state.unset_measurements();
-    std::cout << "Norm              (after normalization): " << MPS_Tools::Finite::Measure::norm(state)  << std::endl;
-    std::cout << "Spin component sx (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-    std::cout << "Spin component sy (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-    std::cout << "Spin component sz (after normalization): " << MPS_Tools::Finite::Measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
+//    std::cout << "Norm              (after normalization): " << mpstools::finite::measure::norm(state)  << std::endl;
+//    std::cout << "Spin component sx (after normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
+//    std::cout << "Spin component sy (after normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
+//    std::cout << "Spin component sz (after normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
 
 
 }
 
-class_finite_chain_state MPS_Tools::Finite::Ops::set_random_product_state(const class_finite_chain_state &state, const std::string parity){
-    MPS_Tools::log->trace("Setting a random product state");
+class_finite_chain_state mpstools::finite::ops::set_random_product_state(const class_finite_chain_state &state, const std::string parity){
+    mpstools::log->trace("Setting a random product state");
     class_finite_chain_state product_state = state;
     product_state.unset_measurements();
 
@@ -226,11 +222,13 @@ class_finite_chain_state MPS_Tools::Finite::Ops::set_random_product_state(const 
 
     for (auto &mpsL : product_state.MPS_L ){
         auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
+//        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXd::Random(2).cast<Scalar>().normalized(),2,1,1);
         mpsL.set_mps(G,L);
     }
     product_state.MPS_C = L;
     for (auto &mpsR : product_state.MPS_R ){
         auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
+//        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXd::Random(2).cast<Scalar>().normalized(),2,1,1);
         mpsR.set_mps(G,L);
     }
 
@@ -241,9 +239,9 @@ class_finite_chain_state MPS_Tools::Finite::Ops::set_random_product_state(const 
 }
 
 
-class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix, const int sign) {
+class_finite_chain_state mpstools::finite::ops::get_parity_projected_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix, const int sign) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
-    MPS_Tools::log->trace("Generating parity projected state");
+    mpstools::log->trace("Generating parity projected state");
     class_finite_chain_state state_projected = state;
     state_projected.unset_measurements();
 
@@ -251,13 +249,13 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_parity_projected_state(cons
     apply_mpos(state_projected,mpo, L,R);
     normalize_chain(state_projected);
     rebuild_environments(state_projected);
-    MPS_Tools::Finite::Debug::check_integrity_of_mps(state_projected);
+    mpstools::finite::debug::check_integrity_of_mps(state_projected);
     return state_projected;
 }
 
-class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix) {
-    MPS_Tools::log->trace("Finding closest projection");
-    double measured_spin_component = MPS_Tools::Finite::Measure::spin_component(state, paulimatrix);
+class_finite_chain_state mpstools::finite::ops::get_closest_parity_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix) {
+    mpstools::log->trace("Finding closest projection");
+    double measured_spin_component = mpstools::finite::measure::spin_component(state, paulimatrix);
     if (measured_spin_component > 0){
         return get_parity_projected_state(state, paulimatrix, 1);
     }else{
@@ -265,14 +263,14 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const 
     }
 }
 
-class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const class_finite_chain_state &state, const std::string paulistring) {
-    MPS_Tools::log->trace("Finding closest projection");
+class_finite_chain_state mpstools::finite::ops::get_closest_parity_state(const class_finite_chain_state &state, const std::string paulistring) {
+    mpstools::log->trace("Finding closest projection");
     if      (paulistring == "sx"){return get_closest_parity_state(state,qm::spinOneHalf::sx);}
     else if (paulistring == "sy"){return get_closest_parity_state(state,qm::spinOneHalf::sy);}
     else if (paulistring == "sz"){return get_closest_parity_state(state,qm::spinOneHalf::sz);}
     else{
-        MPS_Tools::log->warn(R"(Wrong pauli string. Expected one of  "sx","sy" or "sz". Got: )" + paulistring);
-        auto spin_components = MPS_Tools::Finite::Measure::spin_components(state);
+        mpstools::log->warn(R"(Wrong pauli string. Expected one of  "sx","sy" or "sz". Got: )" + paulistring);
+        auto spin_components = mpstools::finite::measure::spin_components(state);
         auto max_idx = std::distance(spin_components.begin(), std::max_element(spin_components.begin(),spin_components.end()));
         if(max_idx == 0)      {return get_closest_parity_state(state,"sx"); }
         else if(max_idx == 1) {return get_closest_parity_state(state,"sy"); }
@@ -281,13 +279,27 @@ class_finite_chain_state MPS_Tools::Finite::Ops::get_closest_parity_state(const 
     }
 }
 
-void MPS_Tools::Finite::Ops::rebuild_superblock(const class_finite_chain_state &state, class_superblock &superblock) {
-    MPS_Tools::log->trace("Rebuilding superblock");
-    MPS_Tools::Finite::Chain::copy_state_to_superblock(state,superblock);
+void mpstools::finite::ops::rebuild_superblock(const class_finite_chain_state &state, class_superblock &superblock) {
+    mpstools::log->trace("Rebuilding superblock");
+    mpstools::finite::chain::copy_state_to_superblock(state,superblock);
 }
 
-void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &state){
-    MPS_Tools::log->trace("Rebuilding environments");
+
+
+template<typename Scalar, auto rank>
+void throw_if_has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, double threshold = 1e-14) {
+    Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>> vector (tensor.data(),tensor.size());
+    if constexpr (std::is_same<Scalar, std::complex<double>>::value){
+        auto imagSum = vector.imag().cwiseAbs().sum();
+        if (imagSum > threshold){
+            std::cout << vector << std::endl;
+            throw std::runtime_error("Has imaginary part. Sum: " + std::to_string(imagSum));
+        }
+    }
+}
+
+void mpstools::finite::ops::rebuild_environments(class_finite_chain_state &state){
+    mpstools::log->trace("Rebuilding environments");
 
     // Generate new environments
     assert(not state.MPS_L.empty() and "ERROR: The MPS L list is empty:");
@@ -313,6 +325,8 @@ void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &stat
             if (mpsL_it == state.MPS_L.end()) break;
             ENV_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO());
             ENV2_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO());
+//            throw_if_has_imaginary_part(state.ENV_L.back().block);
+
             mpsL_it++;
             mpoL_it++;
         }
@@ -331,6 +345,7 @@ void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &stat
             if (mpsR_it == state.MPS_R.rend()) break;
             ENV_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO());
             ENV2_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO());
+//            throw_if_has_imaginary_part(state.ENV_R.front().block);
             mpsR_it++;
             mpoR_it++;
         }
@@ -341,7 +356,7 @@ void MPS_Tools::Finite::Ops::rebuild_environments(class_finite_chain_state &stat
 }
 
 
-double MPS_Tools::Finite::Ops::overlap(const class_finite_chain_state &state1, const class_finite_chain_state &state2){
+double mpstools::finite::ops::overlap(const class_finite_chain_state &state1, const class_finite_chain_state &state2){
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
@@ -385,7 +400,7 @@ double MPS_Tools::Finite::Ops::overlap(const class_finite_chain_state &state1, c
     return norm_chain;
 }
 
-double MPS_Tools::Finite::Ops::expectation_value(const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>>  &mpos, Eigen::Tensor<std::complex<double>,3> Ledge, Eigen::Tensor<std::complex<double>,3> Redge){
+double mpstools::finite::ops::expectation_value(const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>>  &mpos, Eigen::Tensor<std::complex<double>,3> Ledge, Eigen::Tensor<std::complex<double>,3> Redge){
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
@@ -442,7 +457,7 @@ double MPS_Tools::Finite::Ops::expectation_value(const class_finite_chain_state 
     return energy_chain;
 }
 
-double MPS_Tools::Finite::Ops::exp_sq_value(const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>>  &mpos, const Eigen::Tensor<std::complex<double>,4> Ledge, const Eigen::Tensor<std::complex<double>,4> Redge){
+double mpstools::finite::ops::exp_sq_value(const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>>  &mpos, const Eigen::Tensor<std::complex<double>,4> Ledge, const Eigen::Tensor<std::complex<double>,4> Redge){
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");

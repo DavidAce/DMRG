@@ -54,7 +54,7 @@ void settings::load_from_file(class_settings_reader &indata){
         idmrg::store_freq               = indata.find_parameter<int>    ("idmrg::store_freq" , idmrg::store_freq);
     }
 
-    //Parameters controlling Finite-DMRG
+    //Parameters controlling finite-DMRG
     fdmrg::on                     = indata.find_parameter<bool>   ("fdmrg::on"           , fdmrg::on);
     if(fdmrg::on){
         fdmrg::num_sites          = indata.find_parameter<int>    ("fdmrg::num_sites "   , fdmrg::num_sites);

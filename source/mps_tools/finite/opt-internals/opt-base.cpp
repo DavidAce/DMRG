@@ -5,31 +5,15 @@
 #include <algorithms/class_simulation_state.h>
 #include <mps_tools/finite/opt.h>
 #include <mps_state/class_superblock.h>
-#include <mps_state/class_environment.h>
-#include <model/class_hamiltonian_base.h>
 #include <LBFGS.h>
 
+using namespace mpstools::finite::opt::internals;
 
-
-MPS_Tools::Finite::Opt::internals::base_functor::base_functor(
+base_functor::base_functor(
         const class_superblock & superblock,
         const class_simulation_state & sim_state)
 {
     reset_timers();
-    initialize_params();
-    superComponents.HA_MPO        = superblock.HA->MPO().real();
-    superComponents.HB_MPO        = superblock.HB->MPO().real();
-    superComponents.Lblock        = superblock.Lblock->block.real();
-    superComponents.Rblock        = superblock.Rblock->block.real();
-    superComponents.Lblock2       = superblock.Lblock2->block.real();
-    superComponents.Rblock2       = superblock.Rblock2->block.real();
-    superComponents.dsizes        = superblock.dimensions();
-    superComponents.HAHB          = superComponents.HA_MPO.contract(superComponents.HB_MPO, Textra::idx({1},{0}));
-    superComponents.HAHA          = superComponents.HA_MPO.contract(superComponents.HA_MPO, Textra::idx({3},{2}));
-    superComponents.HBHB          = superComponents.HB_MPO.contract(superComponents.HB_MPO, Textra::idx({3},{2}));
-    superComponents.Lblock2HAHA   = superComponents.Lblock2.contract(superComponents.HAHA, Textra::idx({2,3},{0,3})).shuffle(Textra::array6{0,3,2,4,5,1});
-    superComponents.Rblock2HBHB   = superComponents.Rblock2.contract(superComponents.HBHB, Textra::idx({2,3},{1,4})).shuffle(Textra::array6{0,3,2,4,5,1});
-    superComponents.HAHB2         = superComponents.HAHB.contract(superComponents.HAHB, Textra::idx({2,5},{1,4}));
     length                        = superblock.get_length();
 
     //All energies in sim_state are per site!
@@ -44,10 +28,11 @@ MPS_Tools::Finite::Opt::internals::base_functor::base_functor(
 }
 
 
-double MPS_Tools::Finite::Opt::internals::base_functor::get_variance()const{return variance;}
-double MPS_Tools::Finite::Opt::internals::base_functor::get_energy  ()const{return energy  ;}
-size_t MPS_Tools::Finite::Opt::internals::base_functor::get_count   ()const{return counter;}
 
+double base_functor::get_variance()const{return variance;}
+double base_functor::get_energy  ()const{return energy  ;}
+size_t base_functor::get_count   ()const{return counter;}
+double base_functor::get_norm    ()const{return norm;}
 
 
 

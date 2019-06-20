@@ -54,7 +54,7 @@ class_algorithm_launcher::class_algorithm_launcher()
             h5pp::AccessMode::READWRITE,
             createMode);
 
-    // Print current Git status
+    // print current Git status
     log->info("Git branch      : {}",GIT::BRANCH);
     log->info("    commit hash : {}",GIT::COMMIT_HASH);
     log->info("    revision    : {}",GIT::REVISION);

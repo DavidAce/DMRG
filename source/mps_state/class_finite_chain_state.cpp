@@ -4,7 +4,7 @@
 
 
 #include "class_finite_chain_state.h"
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <general/nmspc_quantum_mechanics.h>
 class_finite_chain_state::class_finite_chain_state(int max_sites_)
         :max_sites(max_sites_)
@@ -19,16 +19,16 @@ void class_finite_chain_state::clear(){
 
 
 void class_finite_chain_state::do_all_measurements(){
-    using namespace MPS_Tools::Finite;
-    measurements.length                         = Measure::length(*this);
-    measurements.bond_dimensions                = Measure::bond_dimensions(*this);
-    measurements.norm                           = Measure::norm(*this);
-    measurements.energy_mpo                     = Measure::energy_mpo(*this);  //This number is needed for variance calculation!
-    measurements.energy_per_site_mpo            = Measure::energy_per_site_mpo(*this);
-    measurements.energy_variance_mpo            = Measure::energy_variance_mpo(*this);
-    measurements.energy_variance_per_site_mpo   = Measure::energy_variance_per_site_mpo(*this);
-    measurements.entanglement_entropies         = Measure::entanglement_entropies(*this);
-    measurements.spin_components                = Measure::spin_components(*this);
+    using namespace mpstools::finite;
+    measurements.length                         = measure::length(*this);
+    measurements.bond_dimensions                = measure::bond_dimensions(*this);
+    measurements.norm                           = measure::norm(*this);
+    measurements.energy_mpo                     = measure::energy_mpo(*this);  //This number is needed for variance calculation!
+    measurements.energy_per_site_mpo            = measure::energy_per_site_mpo(*this);
+    measurements.energy_variance_mpo            = measure::energy_variance_mpo(*this);
+    measurements.energy_variance_per_site_mpo   = measure::energy_variance_per_site_mpo(*this);
+    measurements.entanglement_entropies         = measure::entanglement_entropies(*this);
+    measurements.spin_components                = measure::spin_components(*this);
 }
 
 void class_finite_chain_state::set_max_sites(size_t max_sites_) {
@@ -199,17 +199,17 @@ void class_finite_chain_state::unset_measurements()const {
 }
 
 void class_finite_chain_state::do_all_measurements()const {
-    measurements.length                           = MPS_Tools::Finite::Measure::length                      (*this);
-    measurements.bond_dimensions                  = MPS_Tools::Finite::Measure::bond_dimensions             (*this);
-    measurements.norm                             = MPS_Tools::Finite::Measure::norm                        (*this);
-    measurements.energy_mpo                       = MPS_Tools::Finite::Measure::energy_mpo                  (*this);
-    measurements.energy_per_site_mpo              = MPS_Tools::Finite::Measure::energy_per_site_mpo         (*this);
-    measurements.energy_variance_mpo              = MPS_Tools::Finite::Measure::energy_variance_mpo         (*this);
-    measurements.energy_variance_per_site_mpo     = MPS_Tools::Finite::Measure::energy_variance_per_site_mpo(*this);
-    measurements.spin_component_sx                = MPS_Tools::Finite::Measure::spin_component              (*this,qm::spinOneHalf::sx);
-    measurements.spin_component_sy                = MPS_Tools::Finite::Measure::spin_component              (*this,qm::spinOneHalf::sy);
-    measurements.spin_component_sz                = MPS_Tools::Finite::Measure::spin_component              (*this,qm::spinOneHalf::sz);
-    measurements.spin_components                  = MPS_Tools::Finite::Measure::spin_components             (*this);
-    measurements.entanglement_entropies           = MPS_Tools::Finite::Measure::entanglement_entropies      (*this);
+    measurements.length                           = mpstools::finite::measure::length                      (*this);
+    measurements.bond_dimensions                  = mpstools::finite::measure::bond_dimensions             (*this);
+    measurements.norm                             = mpstools::finite::measure::norm                        (*this);
+    measurements.energy_mpo                       = mpstools::finite::measure::energy_mpo                  (*this);
+    measurements.energy_per_site_mpo              = mpstools::finite::measure::energy_per_site_mpo         (*this);
+    measurements.energy_variance_mpo              = mpstools::finite::measure::energy_variance_mpo         (*this);
+    measurements.energy_variance_per_site_mpo     = mpstools::finite::measure::energy_variance_per_site_mpo(*this);
+    measurements.spin_component_sx                = mpstools::finite::measure::spin_component              (*this,qm::spinOneHalf::sx);
+    measurements.spin_component_sy                = mpstools::finite::measure::spin_component              (*this,qm::spinOneHalf::sy);
+    measurements.spin_component_sz                = mpstools::finite::measure::spin_component              (*this,qm::spinOneHalf::sz);
+    measurements.spin_components                  = mpstools::finite::measure::spin_components             (*this);
+    measurements.entanglement_entropies           = mpstools::finite::measure::entanglement_entropies      (*this);
 }
 

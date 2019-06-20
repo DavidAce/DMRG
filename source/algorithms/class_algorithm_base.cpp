@@ -10,7 +10,7 @@
 #include <mps_state/class_superblock.h>
 #include <mps_state/class_environment.h>
 #include <mps_state/class_finite_chain_state.h>
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <mps_state/class_mps_2site.h>
 #include <general/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
@@ -48,11 +48,11 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
           sim_type       (sim_type_) {
 
     log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
-    MPS_Tools::log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
+    mpstools::log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
     log->trace("Constructing class_algorithm_base");
 //    ccout.set_verbosity(settings::console::verbosity);
     set_profiling_labels();
-    MPS_Tools::Common::Prof::init_profiling(settings::profiling::on,settings::profiling::precision);
+    mpstools::common::profiling::init_profiling(settings::profiling::on,settings::profiling::precision);
     log->trace("Constructing default state");
     state             = std::make_shared<class_finite_chain_state>();
     log->trace("Constructing table_profiling");
@@ -197,7 +197,7 @@ void class_algorithm_base::check_convergence_variance_mpo(double threshold,doubl
     check_saturation_using_slope(B_mpo_vec,
                                  V_mpo_vec,
                                  X_mpo_vec,
-                                 MPS_Tools::Common::Measure::energy_variance_per_site_mpo(*superblock),
+                                 mpstools::common::measure::energy_variance_per_site_mpo(*superblock),
                                  sim_state.step,
                                  1,
                                  slope_threshold,
@@ -207,7 +207,7 @@ void class_algorithm_base::check_convergence_variance_mpo(double threshold,doubl
 //    auto b_it = B_mpo_vec.begin();
 //    std::advance(b_it, -rewind);
     sim_state.variance_mpo_saturated_for = (int) count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
-    sim_state.variance_mpo_has_converged =  MPS_Tools::Common::Measure::energy_variance_per_site_mpo(*superblock) < threshold;
+    sim_state.variance_mpo_has_converged =  mpstools::common::measure::energy_variance_per_site_mpo(*superblock) < threshold;
 
 }
 
@@ -221,13 +221,13 @@ void class_algorithm_base::check_convergence_variance_ham(double threshold,doubl
     check_saturation_using_slope(B_ham_vec,
                                  V_ham_vec,
                                  X_ham_vec,
-                                 MPS_Tools::Common::Measure::energy_variance_per_site_ham(*superblock),
+                                 mpstools::common::measure::energy_variance_per_site_ham(*superblock),
                                  sim_state.step,
                                  1,
                                  slope_threshold,
                                  V_ham_slope,
                                  sim_state.variance_ham_has_saturated);
-    sim_state.variance_ham_has_converged = MPS_Tools::Common::Measure::energy_variance_per_site_ham(*superblock) < threshold;
+    sim_state.variance_ham_has_converged = mpstools::common::measure::energy_variance_per_site_ham(*superblock) < threshold;
 }
 
 void class_algorithm_base::check_convergence_variance_mom(double threshold,double slope_threshold){
@@ -240,13 +240,13 @@ void class_algorithm_base::check_convergence_variance_mom(double threshold,doubl
     check_saturation_using_slope(B_mom_vec,
                                  V_mom_vec,
                                  X_mom_vec,
-                                 MPS_Tools::Common::Measure::energy_variance_per_site_mom(*superblock),
+                                 mpstools::common::measure::energy_variance_per_site_mom(*superblock),
                                  sim_state.step,
                                  1,
                                  slope_threshold,
                                  V_mom_slope,
                                  sim_state.variance_mom_has_saturated);
-    sim_state.variance_mom_has_converged = MPS_Tools::Common::Measure::energy_variance_per_site_mom(*superblock) < threshold;
+    sim_state.variance_mom_has_converged = mpstools::common::measure::energy_variance_per_site_mom(*superblock) < threshold;
 }
 
 void class_algorithm_base::check_convergence_entg_entropy(double slope_threshold) {
@@ -258,7 +258,7 @@ void class_algorithm_base::check_convergence_entg_entropy(double slope_threshold
     check_saturation_using_slope(BS_vec,
                                  S_vec,
                                  XS_vec,
-                                 MPS_Tools::Common::Measure::current_entanglement_entropy(*superblock),
+                                 mpstools::common::measure::current_entanglement_entropy(*superblock),
                                  sim_state.iteration,
                                  1,
                                  slope_threshold,
@@ -329,7 +329,7 @@ void class_algorithm_base::store_algorithm_state_to_file(){
     if (settings::hdf5::storage_level < StorageLevel::LIGHT){return;}
     log->trace("Storing simulation state to file");
     t_sto.tic();
-    MPS_Tools::Common::H5pp::write_algorithm_state(sim_state, *h5pp_file, sim_name);
+    mpstools::common::io::write_algorithm_state(sim_state, *h5pp_file, sim_name);
     t_sto.toc();
 }
 
@@ -547,7 +547,7 @@ void class_algorithm_base::store_profiling_totals(bool force) {
 //
 //
 //    if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
-//        MPS_Tools::Finite::Chain::insert_superblock_to_state(*state, *superblock);
+//        mpstools::finite::chain::insert_superblock_to_state(*state, *superblock);
 //    }else{
 //    }
 //
@@ -565,8 +565,8 @@ void class_algorithm_base::reset_full_mps_to_random_product_state(const std::str
     sim_state.iteration = state->reset_sweeps();
 
     // Randomize chain
-    *state = MPS_Tools::Finite::Ops::set_random_product_state(*state,parity);
-    MPS_Tools::Finite::Ops::rebuild_superblock(*state,*superblock);
+    *state = mpstools::finite::ops::set_random_product_state(*state,parity);
+    mpstools::finite::ops::rebuild_superblock(*state,*superblock);
     clear_saturation_status();
 }
 
@@ -619,7 +619,7 @@ void class_algorithm_base::insert_superblock_to_chain() {
     log->trace("Insert superblock into chain");
     t_sim.tic();
     t_ste.tic();
-    auto new_position = MPS_Tools::Finite::Chain::insert_superblock_to_state(*state, *superblock);
+    auto new_position = mpstools::finite::chain::insert_superblock_to_state(*state, *superblock);
     superblock->set_positions(new_position);
     t_ste.toc();
     t_sim.toc();
@@ -629,7 +629,7 @@ void class_algorithm_base::copy_superblock_mps_to_chain(){
     log->trace("Copy superblock mps to chain");
     t_sim.tic();
     t_ste.tic();
-    MPS_Tools::Finite::Chain::copy_superblock_mps_to_state(*state, *superblock);
+    mpstools::finite::chain::copy_superblock_mps_to_state(*state, *superblock);
     t_ste.toc();
     t_sim.toc();
 }
@@ -638,7 +638,7 @@ void class_algorithm_base::copy_superblock_mpo_to_chain(){
     log->trace("Copy superblock mpo to chain");
     t_sim.tic();
     t_ste.tic();
-    MPS_Tools::Finite::Chain::copy_superblock_mpo_to_state(*state, *superblock);
+    mpstools::finite::chain::copy_superblock_mpo_to_state(*state, *superblock);
     t_ste.toc();
     t_sim.toc();
 }
@@ -647,7 +647,7 @@ void class_algorithm_base::copy_superblock_env_to_chain(){
     log->trace("Copy superblock env to chain");
     t_sim.tic();
     t_ste.tic();
-    MPS_Tools::Finite::Chain::copy_superblock_env_to_state(*state, *superblock);
+    mpstools::finite::chain::copy_superblock_env_to_state(*state, *superblock);
     t_ste.toc();
     t_sim.toc();
 }
@@ -656,7 +656,7 @@ void class_algorithm_base::copy_superblock_to_chain(){
     log->trace("Copy superblock to chain");
     t_sim.tic();
     t_ste.tic();
-    MPS_Tools::Finite::Chain::copy_superblock_to_state(*state, *superblock);
+    mpstools::finite::chain::copy_superblock_to_state(*state, *superblock);
     t_ste.toc();
     t_sim.toc();
 }
@@ -666,7 +666,7 @@ void class_algorithm_base::move_center_point(){
     log->trace("Moving center point ");
     t_sim.tic();
     t_ste.tic();
-    MPS_Tools::Finite::Chain::move_center_point(*state,*superblock);
+    mpstools::finite::chain::move_center_point(*state,*superblock);
     t_ste.toc();
     t_sim.toc();
 }
@@ -810,7 +810,7 @@ void class_algorithm_base::print_status_update() {
 void class_algorithm_base::print_status_full(){
     compute_observables(*superblock);
 
-    using namespace MPS_Tools::Common::Measure;
+    using namespace mpstools::common::measure;
     t_prt.tic();
     log->info("--- Final results  --- {} ---", sim_name);
     log->info("Iterations            = {:<16d}"    , sim_state.iteration);
@@ -853,7 +853,7 @@ void class_algorithm_base::print_status_full(){
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            log->info("Chain length          = {:<16d}"    , superblock->measurements.length.value());
+            log->info("chain length          = {:<16d}"    , superblock->measurements.length.value());
             log->info("Sweep                 = {:<16d}"    , state->get_sweeps());
             break;
         case SimulationType::iTEBD:
@@ -893,7 +893,7 @@ void class_algorithm_base::set_profiling_labels() {
     using namespace settings::profiling;
     t_tot.set_properties(true, precision,"+Total Time              ");
     t_sto.set_properties(on,   precision,"↳ Store to file          ");
-    t_ste.set_properties(on,   precision,"↳ Finite chain storage   ");
+    t_ste.set_properties(on,   precision,"↳ finite chain storage   ");
     t_prt.set_properties(on,   precision,"↳ Printing to console    ");
     t_obs.set_properties(on,   precision,"↳ Computing observables  ");
     t_sim.set_properties(on,   precision,"↳+Simulation             ");

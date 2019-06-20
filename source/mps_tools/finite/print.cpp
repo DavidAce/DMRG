@@ -3,7 +3,7 @@
 //
 
 
-#include <mps_state/nmspc_mps_tools.h>
+#include <mps_tools/nmspc_mps_tools.h>
 #include <mps_state/class_finite_chain_state.h>
 #include <mps_state/class_environment.h>
 #include <general/nmspc_tensor_extra.h>
@@ -13,7 +13,7 @@
 
 using Scalar         = std::complex<double>;
 
-void MPS_Tools::Finite::Print::print_full_state(const class_finite_chain_state &state) {
+void mpstools::finite::print::print_full_state(const class_finite_chain_state &state) {
     
     for (auto & mps : state.MPS_L){
         std::cout << "MPS " << mps.get_position() << "  :\n";
@@ -30,7 +30,7 @@ void MPS_Tools::Finite::Print::print_full_state(const class_finite_chain_state &
 
 
 
-void MPS_Tools::Finite::Print::print_state(const class_finite_chain_state &state){
+void mpstools::finite::print::print_state(const class_finite_chain_state &state){
     using namespace Textra;
     auto & MPS_L  = state.MPS_L;
     auto & MPS_R  = state.MPS_R;
@@ -73,7 +73,7 @@ void MPS_Tools::Finite::Print::print_state(const class_finite_chain_state &state
 }
 
 
-void MPS_Tools::Finite::Print::print_state_compact(const class_finite_chain_state &state){
+void mpstools::finite::print::print_state_compact(const class_finite_chain_state &state){
     using namespace Textra;
     auto & MPS_L  = state.MPS_L;
     auto & MPS_R  = state.MPS_R;
@@ -97,7 +97,7 @@ void MPS_Tools::Finite::Print::print_state_compact(const class_finite_chain_stat
 
 
 
-void MPS_Tools::Finite::Print::print_hamiltonians(const class_finite_chain_state &state) {
+void mpstools::finite::print::print_hamiltonians(const class_finite_chain_state &state) {
     auto & MPO_L  = state.MPO_L;
     auto & MPO_R  = state.MPO_R;
 
