@@ -92,7 +92,13 @@ mpstools::finite::opt::internals::direct_optimization(const class_superblock &su
             mpstools::finite::opt::internals::t_vH->get_measured_time(),
             mpstools::finite::opt::internals::t_op->get_measured_time()
             ));
-    return  std::make_tuple(Textra::Matrix_to_Tensor(theta_start, superblock.dimensions()), energy_new);
+
+    if (variance_new < variance_0){
+        return  std::make_tuple(Textra::Matrix_to_Tensor(theta_start, superblock.dimensions()), energy_new);
+
+    }else{
+        return  std::make_tuple(theta, energy_0);
+    }
 
 //    bool outside_of_window = energy_new < sim_state.energy_lbound or energy_new > sim_state.energy_ubound;
 //    if (outside_of_window){

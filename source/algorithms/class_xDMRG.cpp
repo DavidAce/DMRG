@@ -69,7 +69,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     mpstools::finite::chain::copy_state_to_superblock(*state,*superblock);
 
     min_saturation_length = 1;// * (int)(1.0 * settings::xdmrg::num_sites);
-    max_saturation_length = 4;// * (int)(2.0 * settings::xdmrg::num_sites);
+    max_saturation_length = 2;// * (int)(2.0 * settings::xdmrg::num_sites);
 
     settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(size_t)(std::log2(chi_max())/2));
 }
@@ -280,11 +280,9 @@ void class_xDMRG::check_convergence(){
 
     t_sim.tic();
     t_con.tic();
-    if(state->position_is_any_edge()){
-        check_convergence_variance_mpo();
-        check_convergence_entg_entropy();
-    }
 
+    check_convergence_variance_mpo();
+    check_convergence_entg_entropy();
 
     if (sim_state.iteration < settings::xdmrg::min_sweeps){
         clear_saturation_status();

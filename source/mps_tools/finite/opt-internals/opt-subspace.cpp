@@ -243,15 +243,15 @@ mpstools::finite::opt::internals::subspace_optimization(const class_superblock &
 
 
     t_opt->tic();
-    double energy_0   = mpstools::common::measure::energy_mpo(superblock,theta);
-    double variance_0 = mpstools::common::measure::energy_variance_mpo(superblock,theta,energy_0);
+    double energy_0   = mpstools::common::measure::energy_per_site_mpo(superblock);
+    double variance_0 = mpstools::common::measure::energy_variance_per_site_mpo(superblock);
     t_opt->toc();
     Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
 
     int iter_0 = 0;
     double overlap_0 = std::abs(theta_old.dot(theta_0));
 
-    opt_log.emplace_back("Start (best overlap)",theta.size(), energy_0/chain_length, std::log10(variance_0/chain_length), overlap_0, iter_0,0, t_opt->get_last_time_interval());
+    opt_log.emplace_back("Initial",theta.size(), energy_0, std::log10(variance_0), overlap_0, iter_0,0, t_opt->get_last_time_interval());
 
 
 
@@ -365,10 +365,14 @@ mpstools::finite::opt::internals::subspace_optimization(const class_superblock &
 //    std::cout << "imag sum theta_old        : " << theta_old.imag().cwiseAbs().sum() << std::endl;
 //    std::cout << "imag sum eigvecs          : " << eigvecs.imag().cwiseAbs().sum() << std::endl;
 
-    return std::make_tuple(
-            Textra::Matrix_to_Tensor(theta_new, superblock.dimensions()),
-            energy_new
-    );
+
+    if (variance_new < variance_0){
+        return  std::make_tuple(Textra::Matrix_to_Tensor(theta_new, superblock.dimensions()), energy_new);
+
+    }else{
+        return  std::make_tuple(theta, energy_0);
+    }
+
 
 }
 

@@ -9,7 +9,7 @@ src_directory='input'
 tgt_directory='bunch'
 
 realizations = 10000
-bunch_size = 800
+bunch_size = 200
 bunch_list = []
 seed_counter = 0
 
