@@ -256,6 +256,7 @@ void class_xDMRG::single_xDMRG_step()
 
     std::tie(theta, sim_state.energy_now) = mpstools::finite::opt::find_optimal_excited_state(*superblock,sim_state,optMode, optSpace,optType);
     sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
+
 //    Textra::subtract_phase(theta);
     t_opt.toc();
     log->trace("Truncating theta");
@@ -279,8 +280,10 @@ void class_xDMRG::check_convergence(){
 
     t_sim.tic();
     t_con.tic();
-    check_convergence_variance_mpo();
-    check_convergence_entg_entropy();
+    if(state->position_is_any_edge()){
+        check_convergence_variance_mpo();
+        check_convergence_entg_entropy();
+    }
 
 
     if (sim_state.iteration < settings::xdmrg::min_sweeps){

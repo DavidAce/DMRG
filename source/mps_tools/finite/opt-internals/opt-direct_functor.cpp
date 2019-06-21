@@ -52,8 +52,8 @@ double mpstools::finite::opt::internals::direct_functor<Scalar>::operator()(cons
 
 
 
-    ene             = std::abs(vHv/vv);
-    var             = std::abs(vH2v/vv) - std::abs(ene*ene);
+    ene             = vHv/vv;
+    var             = vH2v/vv - ene*ene;
 //    double loss_of_precision = std::log10(std::abs(ene*ene));
 //    double expected_error    = std::pow(10, -(13-loss_of_precision));
 //    if (std::imag(ene)      > expected_error) mpstools::log->warn("Energy has imaginary component              : {:.16f} + i {:.16f}" , std::real(ene)    , std::imag(ene));
@@ -122,7 +122,7 @@ double mpstools::finite::opt::internals::direct_functor<Scalar>::operator()(cons
         mpstools::log->warn("energy offset   = {:.16f}" , energy_offset );
         mpstools::log->warn("norm   offset   = {:.16f}" , norm_offset );
         mpstools::log->warn("lambda 0        = {:.16f}" , lambdas(0));
-        throw std::runtime_error("LBFGS: log10 variance is invalid");
+        throw std::runtime_error("Direct functor failed at counter = " + std::to_string(counter) );
     }
 
 
