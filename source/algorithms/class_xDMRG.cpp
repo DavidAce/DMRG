@@ -68,8 +68,8 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     mpstools::finite::chain::initialize_state(*state, settings::model::model_type, settings::model::symmetry, settings::xdmrg::num_sites);
     mpstools::finite::chain::copy_state_to_superblock(*state,*superblock);
 
-    min_saturation_length = 1 * (int)(1.0 * settings::xdmrg::num_sites);
-    max_saturation_length = 1 * (int)(2.0 * settings::xdmrg::num_sites);
+    min_saturation_length = 1;// * (int)(1.0 * settings::xdmrg::num_sites);
+    max_saturation_length = 4;// * (int)(2.0 * settings::xdmrg::num_sites);
 
     settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(size_t)(std::log2(chi_max())/2));
 }
