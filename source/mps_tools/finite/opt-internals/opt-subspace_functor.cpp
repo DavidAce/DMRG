@@ -56,8 +56,8 @@ double mpstools::finite::opt::internals::subspace_functor<Scalar>::operator()(co
             }
         }
     }
-    ene             = std::abs(vHv/vv);
-    var             = std::abs(vH2v/vv) - std::abs(ene*ene);
+    ene             = vHv/vv;
+    var             = vH2v/vv - ene*ene;
 //    double loss_of_precision = std::log10(std::abs(ene*ene));
 //    double expected_error    = std::pow(10, -(14-loss_of_precision));
 //    if (std::imag(ene)      > expected_error) mpstools::log->warn("Energy has imaginary component              : {:.16f} + i {:.16f}" , std::real(ene)    , std::imag(ene));
@@ -80,28 +80,14 @@ double mpstools::finite::opt::internals::subspace_functor<Scalar>::operator()(co
     auto var_1 = 1.0/var/std::log(10);
     grad = var_1 * vv_1 * (H2v  - v  * vH2v - 2.0 * ene * (Hv - v * ene))
            +  norm_grad * v;
-//    Eigen::VectorXcd grad = var_1 * (2.0*(vH2*vv_1 - v * vH2v * vv_2) - 4.0 * energy * (vH * vv_1 - v * vHv * vv_2));
-//                            + norm_grad * 2.0 * v;
-//    Eigen::VectorXcd grad = var_1 * (2.0*vH2 - 4.0 * vHv * vH);
-//    Eigen::VectorXcd grad = var_1 * (vH2+vH2.conjugate() - 2.0 * vHv * (vH+vH.conjugate()));
-//                            + norm_grad * 2.0 * v;
 
-//    Eigen::VectorXcd
-//            grad = var_1 * (vH2 * vv_1  - v.conjugate() * vv_1 * vH2v - 2.0 * vHv  * vH * vv_2 + 2.0 * v.conjugate() * vHv* vHv * vv_2 * vv_1).conjugate()
-//                   +  norm_grad * v;
-
-//    Eigen::VectorXcd grad = var_1 * (H2v * vv_1  - v * vv_1 * vH2v - 2.0 * vHv  * Hv * vv_2 + 2.0 * v * vHv* vHv * vv_2 * vv_1)
-//                                               +  norm_grad * v;
-//    grad += 0.5*var_1 * (vH2 * vv_1  - v * vv_1 * vH2v - 2.0 * vHv  * vH * vv_2 + 2.0 * v * vHv* vHv * vv_2 * vv_1).conjugate();
-//                            + norm_grad * 2.0 * v;
-//    Eigen::VectorXcd grad = var_1 * (vH2 - 2.0 * vHv  * vH)
-//                            + v;
-
-//    grad_double_double  = Eigen::Map<Eigen::VectorXd> (reinterpret_cast<double*> (grad.data()), 2*grad.size());
+//    vecSize = grad.size();
+//    if constexpr (std::is_same<Scalar,std::complex<double>>::value){vecSize = 2*grad.size();}
+//    grad_double_double  = Eigen::Map<Eigen::VectorXd> (reinterpret_cast<double*> (grad.data()), vecSize);
 //
+
 //    std::cout   << std::setprecision(12) << std::fixed
-//            << " Variance: "   << std::setw(18)   << std::log10(var/length)
-//            << " Variance: "   << std::setw(18)   << std::log10((vH2v - vHv * vHv)/(double)length)
+//            << " Variance: "   << std::setw(18)   << std::log10(variance/length)
 //            << " Variance: "   << std::setw(18)   << std::log10((vH2v/vv - vHv * vHv/vv/vv)/(double)length)
 //            << " Energy : "    << std::setw(18)   << energy/length
 //            << " norm : "      << std::setw(18)   << norm
@@ -118,6 +104,8 @@ double mpstools::finite::opt::internals::subspace_functor<Scalar>::operator()(co
         mpstools::log->warn("var             = {:.16f} + i{:.16f}" , std::real(var)  ,std::imag(var));
         mpstools::log->warn("ene             = {:.16f} + i{:.16f}" , std::real(ene)  ,std::imag(ene));
         mpstools::log->warn("log10(var/L)    = {:.16f}" , std::log10(variance/length) );
+        std::cout << "v: \n " << v << std::endl;
+        throw std::runtime_error("Subspace functor failed at counter = " + std::to_string(counter) );
     }
 
     counter++;

@@ -87,7 +87,7 @@ namespace mpstools::finite::opt{
             params.max_iterations = 1000;
             params.max_linesearch = 80; // Default is 20.
             params.m              = 8;     // Default is 6
-            params.past           = 2;     //
+            params.past           = 1;     //
             params.epsilon        = 1e-5;  // Default is 1e-5.
             params.delta          = 1e-8; // Default is 0. Trying this one instead of ftol.
             params.ftol           = 1e-4;  // Default is 1e-4. this really helped at threshold 1e-8.
