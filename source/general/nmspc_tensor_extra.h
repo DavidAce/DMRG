@@ -373,6 +373,27 @@ namespace Textra {
     }
 
 
+    /*! \brief Prints the content of a list nicely */
+    template<typename T>
+    std::ostream &operator<<(std::ostream &out, const std::list<T> &v) {
+        if (!v.empty()) {
+            out << "[ ";
+            std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
+            out << "]";
+        }
+        return out;
+    }
+
+    /*! \brief Prints the content of a list nicely */
+    template<typename T>
+    std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
+        if (!v.empty()) {
+            out << "[ ";
+            std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
+            out << "]";
+        }
+        return out;
+    }
 
 }
 

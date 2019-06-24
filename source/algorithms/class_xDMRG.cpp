@@ -253,7 +253,7 @@ void class_xDMRG::single_xDMRG_step()
             settings::xdmrg::min_sweeps ? OptSpace::DIRECT  : optSpace;
 
     auto optType = superblock->isReal() ? OptType::REAL : OptType::CPLX;
-
+    mpstools::finite::multisite::compute_best_jump(*state);
     std::tie(theta, sim_state.energy_now) = mpstools::finite::opt::find_optimal_excited_state(*superblock,sim_state,optMode, optSpace,optType);
     sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
 
