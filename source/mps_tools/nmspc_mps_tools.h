@@ -47,6 +47,10 @@ namespace mpstools{
             extern void copy_state_to_superblock        (const class_finite_chain_state & state , class_superblock & superblock);    /*!< Update the MPS stored at current position.*/
         }
 
+        namespace multisite{
+            extern void compute_best_jump(class_finite_chain_state &state);
+        }
+
 
         namespace ops {
             extern std::list<Eigen::Tensor<std::complex<double>,4>>
@@ -89,7 +93,7 @@ namespace mpstools{
             extern double energy_variance_mpo                         (const class_finite_chain_state & state);
             extern double energy_variance_per_site_mpo                (const class_finite_chain_state & state);
             extern double midchain_entanglement_entropy               (const class_finite_chain_state & state);
-            extern double spin_component                              (const class_finite_chain_state &state, Eigen::Matrix2cd paulimatrix);
+            extern double spin_component                              (const class_finite_chain_state & state, Eigen::Matrix2cd paulimatrix);
             extern Eigen::Tensor<std::complex<double>,1> mps_wavefn   (const class_finite_chain_state & state);
             extern std::vector<double> entanglement_entropies         (const class_finite_chain_state & state);
             extern std::vector<double> spin_components                (const class_finite_chain_state & state);
