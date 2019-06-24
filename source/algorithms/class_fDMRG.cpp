@@ -305,7 +305,7 @@ void class_fDMRG::store_chain_entry_to_file(bool force){
 }
 
 
-
+bool   class_fDMRG::sim_on()    {return settings::fdmrg::on;}
 long   class_fDMRG::chi_max()   {return settings::fdmrg::chi_max;}
 size_t class_fDMRG::num_sites() {return settings::fdmrg::num_sites;}
 size_t class_fDMRG::store_freq(){return settings::fdmrg::store_freq;}

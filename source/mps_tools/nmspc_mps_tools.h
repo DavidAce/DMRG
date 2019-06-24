@@ -47,9 +47,6 @@ namespace mpstools{
             extern void copy_state_to_superblock        (const class_finite_chain_state & state , class_superblock & superblock);    /*!< Update the MPS stored at current position.*/
         }
 
-        namespace multisite{
-            extern void compute_best_jump(class_finite_chain_state &state);
-        }
 
 
         namespace ops {
@@ -81,6 +78,11 @@ namespace mpstools{
             enum class OptType  {REAL, CPLX};
             extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_excited_state(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType);
         }
+
+        namespace multisite{
+            extern std::vector<size_t>  compute_best_jump(class_finite_chain_state &state, mpstools::finite::opt::OptSpace optSpace);
+        }
+
 
         namespace measure{
 

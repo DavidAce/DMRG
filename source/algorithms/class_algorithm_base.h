@@ -48,28 +48,26 @@ public:
     SimulationType          sim_type;
     class_simulation_state  sim_state;
 
-    //MPS
-    std::shared_ptr<class_superblock>            superblock;
-    std::shared_ptr<class_finite_chain_state>    state;
+
 
 
 
     //Virtual Functions
-    virtual void run()                                          = 0;
-    virtual void run_preprocessing()                            = 0;
-    virtual void run_simulation()                               = 0;
-    virtual void run_postprocessing()                           = 0;
-//    virtual void initialize_constants()                         = 0;
-    virtual void print_profiling()                              = 0;
-    virtual void print_profiling_sim(class_tic_toc &t_parent)   = 0;
-    virtual void store_state_and_measurements_to_file(bool force = false)        = 0;
-    virtual void store_table_entry_progress(bool force = false)     = 0;
-
-    virtual long   chi_max()    = 0;
-    virtual size_t num_sites()  = 0;
-    virtual size_t store_freq() = 0;
-    virtual size_t print_freq() = 0;
-    virtual bool   chi_grow()   = 0;
+    virtual void run()                                                      = 0;
+    virtual void run_preprocessing()                                        = 0;
+    virtual void run_simulation()                                           = 0;
+    virtual void run_postprocessing()                                       = 0;
+    virtual void compute_observables()                                      = 0;
+    virtual void print_profiling()                                          = 0;
+    virtual void print_profiling_sim(class_tic_toc &t_parent)               = 0;
+    virtual void store_state_and_measurements_to_file(bool force = false)   = 0;
+    virtual void store_table_entry_progress(bool force = false)             = 0;
+    virtual bool   sim_on()                                                 = 0;
+    virtual long   chi_max()                                                = 0;
+    virtual size_t num_sites()                                              = 0;
+    virtual size_t store_freq()                                             = 0;
+    virtual size_t print_freq()                                             = 0;
+    virtual bool   chi_grow()                                               = 0;
 
 
     //common functions
