@@ -286,10 +286,10 @@ void class_xDMRG::check_convergence(){
 
 
 
-    if (sim_state.iteration < settings::xdmrg::min_sweeps){
-        clear_saturation_status();
-    }
-    else
+//    if (sim_state.iteration < settings::xdmrg::min_sweeps){
+//        clear_saturation_status();
+//    }
+//    else
     if(state->position_is_any_edge()){
         check_convergence_variance_mpo();
         check_convergence_entg_entropy();
@@ -387,11 +387,10 @@ void class_xDMRG::check_convergence_entg_entropy(double slope_threshold) {
                 S_slopes[site]);
 
     }
-//    std::cout << "Slopes: ";
-//    for (auto &s : S_slopes){std::cout  << s << " " ;}
-//    std::cout << '\n';
-
-//    std::cout << "S_mat: \n";
+//    std::cout << "Slopes: \n "<< std::fixed << std::setprecision(16);
+//    for (auto &s : S_slopes){std::cout  << s << '\n' ;}
+//
+//    std::cout << "S_mat: \n" << std::fixed << std::setprecision(16);
 //    for (auto &S : S_mat){std::cout  << S << '\n' ;}
 
 
