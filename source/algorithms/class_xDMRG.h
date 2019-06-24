@@ -5,11 +5,10 @@
 #ifndef DMRG_CLASS_EXITED_DMRG_H
 #define DMRG_CLASS_EXITED_DMRG_H
 
-#include "class_algorithm_base.h"
+#include "class_algorithm_finite.h"
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <Eigen/Core>
-class class_table_finite_chain;
-class class_table_dmrg;
+
 
 
 
@@ -19,43 +18,30 @@ class class_table_dmrg;
  */
 
 class class_finite_chain_state;
-class class_xDMRG : public class_algorithm_base {
+class class_xDMRG : public class_algorithm_finite {
 private:
 
 public:
     //Inherit the constructor of class_algorithm_base
-    using class_algorithm_base::class_algorithm_base;
+    using class_algorithm_finite::class_algorithm_finite;
     explicit class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
-    std::unique_ptr<class_hdf5_table<class_table_dmrg>>         table_xdmrg;
-    std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_xdmrg_chain;
 
-    enum class xDMRG_Mode {KEEP_BEST_OVERLAP,FULL_EIG_OPT,PARTIAL_EIG_OPT, DIRECT_OPT};
-    size_t min_saturation_length;
-    size_t max_saturation_length;
     bool   projected_during_saturation  = false;
 
-    //Energy ranges
 
-
-    void run()                                                              override;
-    void run_simulation()                                                   override;
-    void run_preprocessing()                                                override;
-    void run_postprocessing()                                               override;
-    void check_convergence()                                                override;
-    void check_convergence_entg_entropy(double slope_threshold = quietNaN)  override;
-    void print_profiling()                                                  override;
-    void print_profiling_sim(class_tic_toc &t_parent)                       override;
-    void store_state_and_measurements_to_file(bool force = false)           override;
-    void store_table_entry_progress(bool force = false)                     override;
-    void store_table_entry_site_state(bool force = false);
-    void single_xDMRG_step();
-    void initialize_chain();
+    void run_simulation()                                                   final;
+    void run_preprocessing()                                                final;
+    void single_DMRG_step();                                                final;
     void find_energy_range();
-    long   chi_max()                                    override;
-    size_t num_sites()                                  override;
-    size_t store_freq()                                 override;
-    size_t print_freq()                                 override;
-    bool   chi_grow()                                   override;
+    void check_convergence()                                                final;
+
+    bool   sim_on()                                     final;
+
+    long   chi_max()                                                        final;
+    size_t num_sites()                                                      final;
+    size_t store_freq()                                                     final;
+    size_t print_freq()                                                     final;
+    bool   chi_grow()                                                       final;
 
 };
 

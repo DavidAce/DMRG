@@ -15,6 +15,8 @@ public:
     using class_algorithm_base::class_algorithm_base;
     explicit class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_);
 //    explicit class_iTEBD(std::shared_ptr<class_hdf5_file> hdf5_);
+    //MPS
+    std::shared_ptr<class_superblock>            superblock;
 
     std::unique_ptr<class_hdf5_table<class_table_tebd>> table_itebd;
     std::vector<Eigen::Tensor<Scalar,4>> unitary_time_evolving_operators;

@@ -50,11 +50,8 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
     mpstools::log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
     log->trace("Constructing class_algorithm_base");
-//    ccout.set_verbosity(settings::console::verbosity);
     set_profiling_labels();
     mpstools::common::profiling::init_profiling(settings::profiling::on,settings::profiling::precision);
-    log->trace("Constructing default state");
-    state             = std::make_shared<class_finite_chain_state>();
     log->trace("Constructing table_profiling");
     table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(h5pp_file, sim_name + "/measurements", "profiling", sim_name);
     log->trace("Constructing superblock");
@@ -580,15 +577,7 @@ void class_algorithm_base::compute_observables(const class_superblock & superblo
     t_sim.toc();
 }
 
-void class_algorithm_base::compute_observables(const class_finite_chain_state & state){
-    log->trace("Starting all measurements on current superblock");
-    t_sim.tic();
-    t_obs.tic();
-    state.do_all_measurements();
-    t_obs.toc();
-    t_sim.toc();
 
-}
 
 void class_algorithm_base::enlarge_environment(){
     log->trace("Enlarging environments");

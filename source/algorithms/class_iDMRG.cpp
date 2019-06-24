@@ -61,9 +61,7 @@ void class_iDMRG::run() {
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
-void class_iDMRG::run_simulation()    {}
-void class_iDMRG::run_preprocessing() {}
-void class_iDMRG::run_postprocessing(){}
+
 
 void class_iDMRG::store_state_and_measurements_to_file(bool force){
     if(not force){
