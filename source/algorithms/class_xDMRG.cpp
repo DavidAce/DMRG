@@ -72,6 +72,9 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     max_saturation_length = 2;// * (int)(2.0 * settings::xdmrg::num_sites);
 
     settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(size_t)(std::log2(chi_max())/2));
+    S_mat.resize(state->get_length()+1);
+    BS_mat.resize(state->get_length()+1);
+    XS_mat.resize(state->get_length()+1);
 }
 
 
@@ -253,7 +256,7 @@ void class_xDMRG::single_xDMRG_step()
             settings::xdmrg::min_sweeps ? OptSpace::DIRECT  : optSpace;
 
     auto optType = superblock->isReal() ? OptType::REAL : OptType::CPLX;
-    mpstools::finite::multisite::compute_best_jump(*state);
+//    mpstools::finite::multisite::compute_best_jump(*state);
     std::tie(theta, sim_state.energy_now) = mpstools::finite::opt::find_optimal_excited_state(*superblock,sim_state,optMode, optSpace,optType);
     sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
 
@@ -281,11 +284,15 @@ void class_xDMRG::check_convergence(){
     t_sim.tic();
     t_con.tic();
 
-    check_convergence_variance_mpo();
-    check_convergence_entg_entropy();
+
 
     if (sim_state.iteration < settings::xdmrg::min_sweeps){
         clear_saturation_status();
+    }
+    else
+    if(state->position_is_any_edge()){
+        check_convergence_variance_mpo();
+        check_convergence_entg_entropy();
     }
 
 
@@ -364,18 +371,33 @@ void class_xDMRG::check_convergence_entg_entropy(double slope_threshold) {
     log->debug("Checking convergence of entanglement");
 
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::EntEntrSaturationThreshold  : slope_threshold;
-    double entropysum = 0;
-    for(auto &entropy : mpstools::finite::measure::entanglement_entropies(*state)){entropysum += entropy;}
-    entropysum /= state->get_length();
-    check_saturation_using_slope(BS_vec,
-                                 S_vec,
-                                 XS_vec,
-                                 entropysum,
-                                 sim_state.step,
-                                 1,
-                                 slope_threshold,
-                                 S_slope,
-                                 sim_state.entanglement_has_saturated);
+    auto entropies  = mpstools::finite::measure::entanglement_entropies(*state);
+    std::vector<bool> entanglement_has_saturated(entropies.size());
+    std::vector<double> S_slopes(entropies.size());
+
+    for (int site = 0; site < entropies.size(); site++){
+        entanglement_has_saturated[site] = check_saturation_using_slope(
+                BS_mat[site],
+                S_mat[site],
+                XS_mat[site],
+                entropies[site],
+                sim_state.iteration,
+                1,
+                slope_threshold,
+                S_slopes[site]);
+
+    }
+//    std::cout << "Slopes: ";
+//    for (auto &s : S_slopes){std::cout  << s << " " ;}
+//    std::cout << '\n';
+
+//    std::cout << "S_mat: \n";
+//    for (auto &S : S_mat){std::cout  << S << '\n' ;}
+
+
+    size_t idx = std::distance(S_slopes.begin(), std::max_element(S_slopes.begin(),S_slopes.end()));
+    S_slope = S_slopes[idx];
+    sim_state.entanglement_has_saturated = entanglement_has_saturated[idx];
     sim_state.entanglement_has_converged = sim_state.entanglement_has_saturated;
 
 }
@@ -466,6 +488,14 @@ void class_xDMRG::find_energy_range() {
 
 
 }
+
+void class_xDMRG::clear_saturation_status(){
+    for(auto &mat : S_mat){mat.clear();}
+    for(auto &mat : BS_mat){mat.clear();}
+    for(auto &mat : XS_mat){mat.clear();}
+    class_algorithm_base::clear_saturation_status();
+}
+
 
 void class_xDMRG::store_state_and_measurements_to_file(bool force){
     if(not force){

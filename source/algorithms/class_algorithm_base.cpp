@@ -113,7 +113,7 @@ void class_algorithm_base::check_convergence(){
     t_con.toc();
 }
 
-void class_algorithm_base::check_saturation_using_slope(
+bool class_algorithm_base::check_saturation_using_slope(
         std::list<bool>  & B_vec,
         std::list<double> &Y_vec,
         std::list<int> &X_vec,
@@ -121,8 +121,7 @@ void class_algorithm_base::check_saturation_using_slope(
         int iter,
         int rate,
         double tolerance,
-        double &slope,
-        bool &has_saturated){
+        double &slope){
     //Check convergence based on slope.
     log->trace("Checking saturation using slope");
 
@@ -131,14 +130,14 @@ void class_algorithm_base::check_saturation_using_slope(
     // Get the sim_state.iteration number when you last measured.
     // If the measurement happened less than rate iterations ago, return.
     int last_measurement = X_vec.empty() ? 0 : X_vec.back();
-    if (iter - last_measurement < rate){return;}
+    if (iter - last_measurement < rate){return false;}
 
     // It's time to check. Insert current numbers
     B_vec.push_back(false);
     Y_vec.push_back(new_data);
     X_vec.push_back(iter);
     unsigned long min_data_points = 2;
-    if (Y_vec.size() < min_data_points){return;}
+    if (Y_vec.size() < min_data_points){return false;}
     auto check_from =  (unsigned long)(X_vec.size()*0.75); //Check the last quarter of the measurements in Y_vec.
     while (X_vec.size() - check_from < min_data_points and check_from > 0){
         check_from -=1; //Decrease check from if out of bounds.
@@ -170,7 +169,7 @@ void class_algorithm_base::check_saturation_using_slope(
     slope = std::abs(numerator / denominator);
     //Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
     double relative_slope     = slope / avgY;
-
+    bool has_saturated = false;
     if (relative_slope < tolerance){
         B_vec.back() = true;
         has_saturated = true;
@@ -185,6 +184,7 @@ void class_algorithm_base::check_saturation_using_slope(
     log->debug(" -- avgY            = {} ", avgY);
     log->debug(" -- has saturated   = {} ", has_saturated);
     log->debug(" -- check from      = {}              | {} ", check_from, X_vec.size());
+    return has_saturated;
 }
 
 void class_algorithm_base::check_convergence_variance_mpo(double threshold,double slope_threshold){
@@ -194,15 +194,15 @@ void class_algorithm_base::check_convergence_variance_mpo(double threshold,doubl
     threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
 //    compute_observables();
-    check_saturation_using_slope(B_mpo_vec,
-                                 V_mpo_vec,
-                                 X_mpo_vec,
-                                 mpstools::common::measure::energy_variance_per_site_mpo(*superblock),
-                                 sim_state.iteration,
-                                 1,
-                                 slope_threshold,
-                                 V_mpo_slope,
-                                 sim_state.variance_mpo_has_saturated);
+    sim_state.variance_mpo_has_saturated =  check_saturation_using_slope(
+             B_mpo_vec,
+             V_mpo_vec,
+             X_mpo_vec,
+             mpstools::common::measure::energy_variance_per_site_mpo(*superblock),
+             sim_state.iteration,
+             1,
+             slope_threshold,
+             V_mpo_slope);
 //    int rewind = std::min((int)B_mpo_vec.size(), (int)measurement->get_chain_length()/4 );
 //    auto b_it = B_mpo_vec.begin();
 //    std::advance(b_it, -rewind);
@@ -218,15 +218,15 @@ void class_algorithm_base::check_convergence_variance_ham(double threshold,doubl
 
     threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
-    check_saturation_using_slope(B_ham_vec,
-                                 V_ham_vec,
-                                 X_ham_vec,
-                                 mpstools::common::measure::energy_variance_per_site_ham(*superblock),
-                                 sim_state.iteration,
-                                 1,
-                                 slope_threshold,
-                                 V_ham_slope,
-                                 sim_state.variance_ham_has_saturated);
+    sim_state.variance_ham_has_saturated = check_saturation_using_slope(B_ham_vec,
+             V_ham_vec,
+             X_ham_vec,
+             mpstools::common::measure::energy_variance_per_site_ham(*superblock),
+             sim_state.iteration,
+             1,
+             slope_threshold,
+             V_ham_slope
+             );
     sim_state.variance_ham_has_converged = mpstools::common::measure::energy_variance_per_site_ham(*superblock) < threshold;
 }
 
@@ -237,15 +237,15 @@ void class_algorithm_base::check_convergence_variance_mom(double threshold,doubl
 
     threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
-    check_saturation_using_slope(B_mom_vec,
-                                 V_mom_vec,
-                                 X_mom_vec,
-                                 mpstools::common::measure::energy_variance_per_site_mom(*superblock),
-                                 sim_state.iteration,
-                                 1,
-                                 slope_threshold,
-                                 V_mom_slope,
-                                 sim_state.variance_mom_has_saturated);
+    sim_state.variance_mom_has_saturated = check_saturation_using_slope(B_mom_vec,
+             V_mom_vec,
+             X_mom_vec,
+             mpstools::common::measure::energy_variance_per_site_mom(*superblock),
+             sim_state.iteration,
+             1,
+             slope_threshold,
+             V_mom_slope
+             );
     sim_state.variance_mom_has_converged = mpstools::common::measure::energy_variance_per_site_mom(*superblock) < threshold;
 }
 
@@ -255,15 +255,15 @@ void class_algorithm_base::check_convergence_entg_entropy(double slope_threshold
     log->debug("Checking convergence of entanglement");
 
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::EntEntrSaturationThreshold  : slope_threshold;
-    check_saturation_using_slope(BS_vec,
-                                 S_vec,
-                                 XS_vec,
-                                 mpstools::common::measure::current_entanglement_entropy(*superblock),
-                                 sim_state.iteration,
-                                 1,
-                                 slope_threshold,
-                                 S_slope,
-                                 sim_state.entanglement_has_saturated);
+    sim_state.entanglement_has_saturated = check_saturation_using_slope(BS_vec,
+             S_vec,
+             XS_vec,
+             mpstools::common::measure::current_entanglement_entropy(*superblock),
+             sim_state.iteration,
+             1,
+             slope_threshold,
+             S_slope
+             );
     sim_state.entanglement_has_converged = sim_state.entanglement_has_saturated;
 }
 

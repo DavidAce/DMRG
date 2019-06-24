@@ -57,6 +57,10 @@ public:
     size_t print_freq()                                 override;
     bool   chi_grow()                                   override;
 
+    void clear_saturation_status();
+    std::vector<std::list<bool>  > BS_mat;
+    std::vector<std::list<double>> S_mat;
+    std::vector<std::list<int>>    XS_mat;
 };
 
 
