@@ -27,14 +27,12 @@ class class_finite_chain_state {
 private:
 
 
-    size_t max_sites = 0;                                                 /*!< The maximum length of the chain */
     int num_sweeps   = 0;
     int direction    = -1;
 
 public:
     using Scalar = std::complex<double>;
     class_finite_chain_state()=default;
-    explicit class_finite_chain_state(int max_sites_);
 
     std::list<class_vidal_mps>                         MPS_L;   /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
     std::list<class_vidal_mps>                         MPS_R;   /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
@@ -48,8 +46,6 @@ public:
 
     void clear();
     void do_all_measurements();
-    void set_max_sites(size_t max_sites_);                                        /*!< Sets the maximum length of the chain. */
-    bool max_sites_is_set                      = false;
 
 
 
@@ -70,36 +66,54 @@ public:
     bool position_is_the_right_edge()           const;
     bool position_is_any_edge()                 const;
     bool position_is_at(size_t pos)             const;
+    bool isReal()                               const;
 
 
-
-    std::tuple<long,long,long>  get_dims(size_t pos)   const;
-    const class_hamiltonian_base & get_MPO(size_t pos) const;
-    const Eigen::Tensor<Scalar,3> & get_G(size_t pos)  const;
-    const Eigen::Tensor<Scalar,1> & get_L(size_t pos)  const;
+//    std::tuple<long,long,long>  get_dims(size_t pos)                    const;
+    const class_hamiltonian_base & get_MPO(size_t pos)                  const;
+    const Eigen::Tensor<Scalar,3> & get_G(size_t pos)                   const;
+    const Eigen::Tensor<Scalar,1> & get_L(size_t pos)                   const;
     Eigen::Tensor<Scalar,3> & get_G(size_t pos);
     Eigen::Tensor<Scalar,1> & get_L(size_t pos);
-    Eigen::Tensor<Scalar,3>   get_A()               const;
-    Eigen::Tensor<Scalar,3>   get_B()               const;
-    Eigen::Tensor<Scalar,3>   get_A(size_t pos)     const;
-    Eigen::Tensor<Scalar,3>   get_B(size_t pos)     const;
-    Eigen::Tensor<Scalar,4>   get_theta()           const;
-    Eigen::Tensor<Scalar,4>   get_theta(size_t pos) const;
+    Eigen::Tensor<Scalar,3>   get_A()                                   const;
+    Eigen::Tensor<Scalar,3>   get_B()                                   const;
+    Eigen::Tensor<Scalar,3>   get_A(size_t pos)                         const;
+    Eigen::Tensor<Scalar,3>   get_B(size_t pos)                         const;
+    Eigen::Tensor<Scalar,4>   get_theta()                               const;
+    Eigen::Tensor<Scalar,4>   get_theta(size_t pos)                     const;
 
+    //For multisite
+    std::vector<size_t> active_sites;
+    std::vector<size_t> activate_sites(long threshold);
+    std::vector<size_t> active_dimensions() const;
+
+    Eigen::Tensor<Scalar,4>   get_theta(std::vector<size_t> & sites)    const;
+    Eigen::Tensor<Scalar,6>   get_MPOS (std::vector<size_t> & sites)    const;
+    Eigen::Tensor<Scalar,3>   get_ENVL (std::vector<size_t> & sites)    const;
+    Eigen::Tensor<Scalar,4>   get_ENV2L(std::vector<size_t> & sites)    const;
+    Eigen::Tensor<Scalar,3>   get_ENVR (std::vector<size_t> & sites)    const;
+    Eigen::Tensor<Scalar,4>   get_ENV2R(std::vector<size_t> & sites)    const;
+
+
+
+    std::vector<double>  truncation_error                                           = {};
 
     struct Measurements {
-        std::optional<int>                  length                                  = {};
-        std::optional<std::vector<int>>     bond_dimensions                         = {};
+        std::optional<size_t>               length                                  = {};
+        std::optional<size_t>               bond_dimension_midchain                 = {};
+        std::optional<size_t>               bond_dimension_current                  = {};
+        std::optional<std::vector<size_t>>  bond_dimensions                         = {};
         std::optional<double>               norm                                    = {};
-        std::optional<double>               energy_mpo                              = {};
-        std::optional<double>               energy_per_site_mpo                     = {};
+        std::optional<double>               energy                              = {};
+        std::optional<double>               energy_per_site                         = {};
         std::optional<double>               energy_variance_mpo                     = {};
-        std::optional<double>               energy_variance_per_site_mpo            = {};
-        std::optional<double>               midchain_entanglement_entropy           = {};
+        std::optional<double>               energy_variance_per_site                = {};
         std::optional<double>               spin_component_sx                       = {};
         std::optional<double>               spin_component_sy                       = {};
         std::optional<double>               spin_component_sz                       = {};
         std::optional<std::vector<double>>  spin_components                         = {};
+        std::optional<double>               entanglement_entropy_midchain           = {};
+        std::optional<double>               entanglement_entropy_current            = {};
         std::optional<std::vector<double>>  entanglement_entropies                  = {};
     };
     mutable Measurements measurements;

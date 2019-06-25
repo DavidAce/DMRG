@@ -28,20 +28,20 @@ public:
 
     bool   projected_during_saturation  = false;
 
-
-    void run_simulation()                                                   final;
-    void run_preprocessing()                                                final;
-    void single_DMRG_step();                                                final;
     void find_energy_range();
-    void check_convergence()                                                final;
 
-    bool   sim_on()                                     final;
-
-    long   chi_max()                                                        final;
-    size_t num_sites()                                                      final;
-    size_t store_freq()                                                     final;
-    size_t print_freq()                                                     final;
-    bool   chi_grow()                                                       final;
+    void single_DMRG_step();
+    void run_preprocessing()      final;
+    void run_simulation()         final;
+    void run_postprocessing()     override;
+    void check_convergence()      final;
+    bool   sim_on()               final;
+    long   chi_max()              final;
+    size_t num_sites()            final;
+    size_t store_freq()           final;
+    size_t print_freq()           final;
+    bool   chi_grow()             final;
+    bool   store_wave_function()  final;
 
 };
 

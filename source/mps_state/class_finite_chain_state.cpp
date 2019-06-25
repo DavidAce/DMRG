@@ -6,12 +6,6 @@
 #include "class_finite_chain_state.h"
 #include <mps_tools/nmspc_mps_tools.h>
 #include <general/nmspc_quantum_mechanics.h>
-class_finite_chain_state::class_finite_chain_state(int max_sites_)
-        :max_sites(max_sites_)
-{
-    max_sites_is_set = true;
-}
-
 
 void class_finite_chain_state::clear(){
     *this = class_finite_chain_state();
@@ -21,21 +15,19 @@ void class_finite_chain_state::clear(){
 void class_finite_chain_state::do_all_measurements(){
     using namespace mpstools::finite;
     measurements.length                         = measure::length(*this);
+    measurements.bond_dimension_current         = measure::bond_dimension_current(*this);
+    measurements.bond_dimension_midchain        = measure::bond_dimension_midchain(*this);
     measurements.bond_dimensions                = measure::bond_dimensions(*this);
     measurements.norm                           = measure::norm(*this);
-    measurements.energy_mpo                     = measure::energy_mpo(*this);  //This number is needed for variance calculation!
-    measurements.energy_per_site_mpo            = measure::energy_per_site_mpo(*this);
-    measurements.energy_variance_mpo            = measure::energy_variance_mpo(*this);
-    measurements.energy_variance_per_site_mpo   = measure::energy_variance_per_site_mpo(*this);
+    measurements.energy                     = measure::energy(*this);  //This number is needed for variance calculation!
+    measurements.energy_per_site                = measure::energy_per_site(*this);
+    measurements.energy_variance_mpo            = measure::energy_variance(*this);
+    measurements.energy_variance_per_site       = measure::energy_variance_per_site(*this);
+    measurements.entanglement_entropy_current   = measure::entanglement_entropy_current (*this);
+    measurements.entanglement_entropy_midchain  = measure::entanglement_entropy_midchain(*this);
     measurements.entanglement_entropies         = measure::entanglement_entropies(*this);
     measurements.spin_components                = measure::spin_components(*this);
 }
-
-void class_finite_chain_state::set_max_sites(size_t max_sites_) {
-    max_sites        = max_sites_;
-    max_sites_is_set = true;
-}
-
 
 
 void class_finite_chain_state::set_positions(){
@@ -56,7 +48,7 @@ void class_finite_chain_state::set_positions(){
 }
 
 size_t class_finite_chain_state::get_length()    const {return MPS_L.size() + MPS_R.size();}
-size_t class_finite_chain_state::get_position()  const {return max_sites_is_set ? MPS_L.size() - 1u : 0u ;}
+size_t class_finite_chain_state::get_position()  const {return MPS_L.size() - 1u;}
 
 int class_finite_chain_state::get_sweeps()    const {return num_sweeps;}
 int class_finite_chain_state::reset_sweeps()  {num_sweeps = 0; return num_sweeps;}
@@ -66,10 +58,10 @@ void class_finite_chain_state::flip_direction() {direction *= -1;}
 
 
 bool class_finite_chain_state::position_is_the_middle() const {
-    return max_sites_is_set ? (size_t) get_position() + 1 == (size_t)(max_sites / 2.0) and direction == 1: true ;
+    return (size_t) get_position() + 1 == (size_t)(get_length() / 2.0) and direction == 1 ;
 }
 bool class_finite_chain_state::position_is_the_middle_any_direction() const {
-    return max_sites_is_set ? (size_t) get_position() + 1 == (size_t)(max_sites / 2.0) : true ;
+    return (size_t) get_position() + 1 == (size_t)(get_length() / 2.0);
 }
 
 bool class_finite_chain_state::position_is_the_left_edge() const {
@@ -77,7 +69,7 @@ bool class_finite_chain_state::position_is_the_left_edge() const {
 }
 
 bool class_finite_chain_state::position_is_the_right_edge() const {
-    return get_position() == max_sites - 2;
+    return get_position() == get_length() - 2;
 }
 
 bool class_finite_chain_state::position_is_any_edge() const {
@@ -163,9 +155,9 @@ Eigen::Tensor<class_finite_chain_state::Scalar,3> class_finite_chain_state::get_
 
 
 
-std::tuple<long,long,long> class_finite_chain_state::get_dims(size_t pos) const{
-    return {get_G(pos).dimension(0),get_G(pos).dimension(1),get_G(pos).dimension(2)};
-}
+//std::tuple<long,long,long> class_finite_chain_state::get_dims(size_t pos) const{
+//    return {get_G(pos).dimension(0),get_G(pos).dimension(1),get_G(pos).dimension(2)};
+//}
 
 
 
@@ -193,23 +185,38 @@ Eigen::Tensor<class_finite_chain_state::Scalar,4> class_finite_chain_state::get_
 }
 
 
+std::vector<size_t> class_finite_chain_state::activate_sites(long threshold){
+    return active_sites = mpstools::finite::multisite::generate_site_list(*this,threshold);
+}
+
+std::vector<size_t> class_finite_chain_state::active_dimensions() const{
+    std::vector<size_t> dimensions;
+    dimensions.emplace_back(get_G(active_sites.front()).dimension(1));
+    for (auto & site : active_sites){
+        dimensions.emplace_back(get_G(site).dimension(0));
+    }
+    dimensions.emplace_back(get_G(active_sites.back()).dimension(2));
+    return dimensions;
+}
+
 
 void class_finite_chain_state::unset_measurements()const {
     measurements = Measurements();
 }
 
 void class_finite_chain_state::do_all_measurements()const {
-    measurements.length                           = mpstools::finite::measure::length                      (*this);
-    measurements.bond_dimensions                  = mpstools::finite::measure::bond_dimensions             (*this);
-    measurements.norm                             = mpstools::finite::measure::norm                        (*this);
-    measurements.energy_mpo                       = mpstools::finite::measure::energy_mpo                  (*this);
-    measurements.energy_per_site_mpo              = mpstools::finite::measure::energy_per_site_mpo         (*this);
-    measurements.energy_variance_mpo              = mpstools::finite::measure::energy_variance_mpo         (*this);
-    measurements.energy_variance_per_site_mpo     = mpstools::finite::measure::energy_variance_per_site_mpo(*this);
-    measurements.spin_component_sx                = mpstools::finite::measure::spin_component              (*this,qm::spinOneHalf::sx);
-    measurements.spin_component_sy                = mpstools::finite::measure::spin_component              (*this,qm::spinOneHalf::sy);
-    measurements.spin_component_sz                = mpstools::finite::measure::spin_component              (*this,qm::spinOneHalf::sz);
-    measurements.spin_components                  = mpstools::finite::measure::spin_components             (*this);
-    measurements.entanglement_entropies           = mpstools::finite::measure::entanglement_entropies      (*this);
+    measurements.length                           = mpstools::finite::measure::length                        (*this);
+    measurements.bond_dimension_current           = mpstools::finite::measure::bond_dimension_current        (*this);
+    measurements.bond_dimension_midchain          = mpstools::finite::measure::bond_dimension_midchain       (*this);
+    measurements.bond_dimensions                  = mpstools::finite::measure::bond_dimensions               (*this);
+    measurements.norm                             = mpstools::finite::measure::norm                          (*this);
+    measurements.energy                           = mpstools::finite::measure::energy                        (*this);
+    measurements.energy_per_site                  = mpstools::finite::measure::energy_per_site               (*this);
+    measurements.energy_variance_mpo              = mpstools::finite::measure::energy_variance               (*this);
+    measurements.energy_variance_per_site         = mpstools::finite::measure::energy_variance_per_site      (*this);
+    measurements.spin_components                  = mpstools::finite::measure::spin_components               (*this); // This will automatically measure sx,sy and sz as well
+    measurements.entanglement_entropy_current     = mpstools::finite::measure::entanglement_entropy_current  (*this);
+    measurements.entanglement_entropy_midchain    = mpstools::finite::measure::entanglement_entropy_midchain (*this);
+    measurements.entanglement_entropies           = mpstools::finite::measure::entanglement_entropies        (*this);
 }
 

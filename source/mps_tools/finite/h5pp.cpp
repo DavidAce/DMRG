@@ -122,8 +122,8 @@ void mpstools::finite::io::write_all_measurements(const class_finite_chain_state
     h5ppFile.writeDataset(state.measurements.length.value()                      , sim_name + "/measurements/length");
     h5ppFile.writeDataset(state.measurements.norm.value()                        , sim_name + "/measurements/norm");
     h5ppFile.writeDataset(state.measurements.bond_dimensions.value()             , sim_name + "/measurements/bond_dimensions");
-    h5ppFile.writeDataset(state.measurements.energy_per_site_mpo.value()         , sim_name + "/measurements/energy_per_site_mpo");
-    h5ppFile.writeDataset(state.measurements.energy_variance_per_site_mpo.value(), sim_name + "/measurements/energy_variance_per_site_mpo");
+    h5ppFile.writeDataset(state.measurements.energy_per_site.value()         , sim_name + "/measurements/energy_per_site");
+    h5ppFile.writeDataset(state.measurements.energy_variance_per_site.value(), sim_name + "/measurements/energy_variance_per_site");
     h5ppFile.writeDataset(state.measurements.entanglement_entropies.value()      , sim_name + "/measurements/entanglement_entropies");
     h5ppFile.writeDataset(state.measurements.spin_components.value()             , sim_name + "/measurements/spin_components");
     h5ppFile.writeDataset(state.measurements.spin_component_sx.value()           , sim_name + "/measurements/spin_component_sx");
@@ -142,14 +142,13 @@ void mpstools::finite::io::write_closest_parity_projection(const class_finite_ch
 }
 
 
-void mpstools::finite::io::load_from_hdf5(const h5pp::File & h5ppFile, class_finite_chain_state & state, class_superblock & superblock, class_simulation_state &sim_state, std::string sim_name){
+void mpstools::finite::io::load_from_hdf5(const h5pp::File & h5ppFile, class_finite_chain_state & state, class_simulation_state &sim_state, std::string sim_name){
     // Load into state
     try{
         load_sim_state_from_hdf5(h5ppFile,sim_state,sim_name);
         load_state_from_hdf5(h5ppFile,state,sim_name);
         state.set_sweeps(sim_state.iteration);
-        mpstools::finite::ops::rebuild_superblock(state,superblock);
-        mpstools::finite::debug::check_integrity(state,superblock,sim_state);
+        mpstools::finite::debug::check_integrity(state,sim_state);
     }catch(std::exception &ex){
         throw std::runtime_error("Failed to load from hdf5: " + std::string(ex.what()));
     }

@@ -7,7 +7,7 @@
 #include <LBFGS.h>
 #include <mps_tools/finite/opt.h>
 #include <general/class_tic_toc.h>
-#include <mps_state/class_superblock.h>
+#include <mps_state/class_finite_chain_state.h>
 #include <mps_state/class_environment.h>
 #include <algorithms/class_simulation_state.h>
 #include <general/nmspc_random_numbers.h>
@@ -26,20 +26,19 @@ void warn_if_has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, double
 
 
 std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
-mpstools::finite::opt::internals::direct_optimization(const class_superblock &superblock,
-                                                      const class_simulation_state &sim_state, OptType optType){
+mpstools::finite::opt::internals::direct_optimization(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptType optType){
     mpstools::log->trace("Optimizing in DIRECT mode");
     using Scalar = std::complex<double>;
-    auto theta = superblock.get_theta();
+    auto theta = state.get_theta();
 
 
     t_opt->tic();
-    double chain_length    = superblock.get_length();
+    double chain_length    = state.get_length();
     double energy_new,variance_new,overlap_new;
     Eigen::VectorXcd theta_start  = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size());
 
-    double energy_0   = mpstools::common::measure::energy_per_site_mpo(superblock);
-    double variance_0 = mpstools::common::measure::energy_variance_per_site_mpo(superblock);
+    double energy_0   = mpstools::finite::measure::energy_per_site(state);
+    double variance_0 = mpstools::finite::measure::energy_variance_per_site(state);
     int iter_0 = 0;
 
     t_opt->toc();
@@ -54,7 +53,7 @@ mpstools::finite::opt::internals::direct_optimization(const class_superblock &su
     LBFGSpp::LBFGSSolver<double> solver(params);
     switch (optType){
         case OptType::CPLX:{
-            mpstools::finite::opt::internals::direct_functor <Scalar>  functor (superblock, sim_state);
+            mpstools::finite::opt::internals::direct_functor <Scalar>  functor (state, sim_state);
             Eigen::VectorXd  theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double*> (theta_start.data()), 2*theta_start.size());
             niter = solver.minimize(functor, theta_start_cast, fx);
             theta_start = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
@@ -64,7 +63,7 @@ mpstools::finite::opt::internals::direct_optimization(const class_superblock &su
             break;
         }
         case OptType::REAL:{
-            mpstools::finite::opt::internals::direct_functor <double> functor (superblock, sim_state);
+            mpstools::finite::opt::internals::direct_functor <double> functor (state, sim_state);
             Eigen::VectorXd  theta_start_cast = theta_start.real();
             niter = solver.minimize(functor, theta_start_cast, fx);
             theta_start = theta_start_cast.normalized().cast<Scalar>();
@@ -94,7 +93,7 @@ mpstools::finite::opt::internals::direct_optimization(const class_superblock &su
             ));
 
     if (variance_new < variance_0){
-        return  std::make_tuple(Textra::Matrix_to_Tensor(theta_start, superblock.dimensions()), energy_new);
+        return  std::make_tuple(Textra::Matrix_to_Tensor(theta_start, state.dimensions()), energy_new);
 
     }else{
         return  std::make_tuple(theta, energy_0);
@@ -107,15 +106,15 @@ mpstools::finite::opt::internals::direct_optimization(const class_superblock &su
 //        }else{
 //            std::cout << "Randomizing" << std::endl;
 //            auto theta_random = Eigen::VectorXcd::Random(theta.size()).normalized();
-//            auto energy_random = mpstools::common::measure::energy_mpo(superblock,theta)/chain_length;
+//            auto energy_random = mpstools::common::measure::energy(state,theta)/chain_length;
 //            outside_of_window = energy_random < sim_state.energy_lbound or energy_random > sim_state.energy_ubound;
 //            while(outside_of_window){
 //                std::cout << "Randomizing" << std::endl;
 //                theta_random = Eigen::VectorXcd::Random(theta.size()).normalized();
-//                energy_random = mpstools::common::measure::energy_mpo(superblock,theta)/chain_length;
+//                energy_random = mpstools::common::measure::energy(state,theta)/chain_length;
 //                outside_of_window = energy_random < sim_state.energy_lbound or energy_random > sim_state.energy_ubound;
 //            }
-//            return std::make_tuple(Textra::Matrix_to_Tensor(theta_random, superblock.dimensions()), energy_random);
+//            return std::make_tuple(Textra::Matrix_to_Tensor(theta_random, state.dimensions()), energy_random);
 //        }
 //    }else{
 //    }

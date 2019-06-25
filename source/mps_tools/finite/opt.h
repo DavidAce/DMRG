@@ -11,15 +11,16 @@
 #include <LBFGS.h>
 
 class class_tic_toc;
-class class_superblock;
 
 
 namespace mpstools::finite::opt{
     namespace internals{
-        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> subspace_optimization       (const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace, OptType optType);
-        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> direct_optimization(
-                const class_superblock &superblock, const class_simulation_state &sim_state, OptType optType);
-        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> cppoptlib_optimization      (const class_superblock & superblock, const class_simulation_state & sim_state);
+        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> subspace_optimization       (const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace, OptType optType);
+        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> direct_optimization         (const class_finite_chain_state & state, const class_simulation_state &sim_state, OptType optType);
+        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> cppoptlib_optimization      (const class_finite_chain_state & state, const class_simulation_state & sim_state);
+        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> ground_state_optimization   (const class_finite_chain_state & state, const class_simulation_state & sim_state, std::string ritz = "SR");
+
+
         extern std::vector<int> generate_size_list(size_t shape);
 
 

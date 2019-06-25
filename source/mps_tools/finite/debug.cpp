@@ -7,16 +7,15 @@
 #include <mps_tools/nmspc_mps_tools.h>
 #include <mps_state/class_mpo.h>
 #include <mps_state/class_finite_chain_state.h>
-#include <mps_state/class_superblock.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <spdlog/spdlog.h>
 
 void mpstools::finite::debug::check_integrity(const class_finite_chain_state &state,
-                                               const class_superblock &superblock, const class_simulation_state &sim_state)
+                                              const class_simulation_state &sim_state)
 {
     mpstools::log->info("Checking integrity...");
     try{
-        check_integrity_of_sim(state, superblock, sim_state);
+        check_integrity_of_sim(state, sim_state);
     }catch(std::exception & ex){
         std::cout << sim_state << std::endl;
         throw std::runtime_error("Integrity check of constants failed: " + std::string(ex.what()));
@@ -30,52 +29,14 @@ void mpstools::finite::debug::check_integrity(const class_finite_chain_state &st
     try {
         mpstools::log->info("Checking norms");
         auto norm_chain = mpstools::finite::measure::norm(state);
-        auto norm_block = mpstools::common::measure::norm(superblock);
         if(std::abs(norm_chain - 1.0) > 1e-10) {
-            mpstools::log->warn("Norm of chain far from unity: {}", norm_chain);
-            throw std::runtime_error("Norm of chain too far from unity: " + std::to_string(norm_chain));
-        }
-        if(std::abs(norm_block - 1.0) > 1e-10) {
-            mpstools::log->warn("Norm of superblock far from unity: {}", norm_block);
-            throw std::runtime_error("Norm of superblock too far from unity: " + std::to_string(norm_block));
+            mpstools::log->warn("Norm of state far from unity: {}", norm_chain);
+            throw std::runtime_error("Norm of state too far from unity: " + std::to_string(norm_chain));
         }
     }
     catch(std::exception & ex){
         throw std::runtime_error("Integrity check of norm failed: " + std::string(ex.what()));
     }
-}
-
-
-
-void mpstools::finite::debug::check_integrity_of_sim(const class_finite_chain_state &state,
-                                                      const class_superblock &superblock,
-                                                      const class_simulation_state &sim_state)
-{
-    mpstools::log->info("Checking integrity of simulation");
-
-    if(state.get_length() != superblock.get_length())
-        throw std::runtime_error("Length mismatch in state and superblock: " + std::to_string(state.get_length()) + " " + std::to_string(superblock.get_length()));
-
-    if(state.get_length()  !=  superblock.environment_size + 2 )
-        throw std::runtime_error("Length mismatch in state and superblock env + 2: " + std::to_string(state.get_length()) + " " + std::to_string(superblock.environment_size + 2 ));
-
-    if(state.get_position()  != superblock.Lblock->size )
-        throw std::runtime_error("Mismatch in state position and sites in superblock env: " + std::to_string(state.get_position()) + " " + std::to_string(superblock.Lblock->size));
-
-
-    if(state.get_position() != sim_state.position  )
-        throw std::runtime_error("Mismatch in state and sim_state positions: " + std::to_string(state.get_position()) + " " + std::to_string(sim_state.position ));
-
-
-    auto state_MPO_A      = Eigen::Map<const Eigen::VectorXcd>(state.MPO_L.back()->MPO().data(),state.MPO_L.back()->MPO().size() );
-    auto superblock_MPO_A = Eigen::Map<const Eigen::VectorXcd>(superblock.HA->MPO().data(),superblock.HA->MPO().size() );
-    auto state_MPO_B      = Eigen::Map<const Eigen::VectorXcd>(state.MPO_R.front()->MPO().data(),state.MPO_R.front()->MPO().size() );
-    auto superblock_MPO_B = Eigen::Map<const Eigen::VectorXcd>(superblock.HB->MPO().data(),superblock.HB->MPO().size() );
-    if(state_MPO_A != superblock_MPO_A )
-        throw std::runtime_error("Mismatch in state and superblock MPOS (left side)");
-    if(state_MPO_B != superblock_MPO_B )
-        throw std::runtime_error("Mismatch in state and superblock MPOS (right side)");
-
 }
 
 
@@ -100,7 +61,7 @@ void mpstools::finite::debug::check_integrity_of_mps(const class_finite_chain_st
             throw std::runtime_error("Mismatch in ENV_R size+1 and length-position: " + std::to_string(state.ENV_R.front().size) + " " + std::to_string(state.get_length() - state.get_position()-2));
 
         mpstools::log->trace("\tChecking matrix sizes on the left side");
-        //Check left side of the chain
+        //Check left side of the state
         auto mps_it  = state.MPS_L.begin();
         auto mps_nx  = state.MPS_L.begin();
         auto env_it  = state.ENV_L.begin();
@@ -323,13 +284,13 @@ void mpstools::finite::debug::print_parity_properties(const class_finite_chain_s
     mpstools::log->info("\t<psi_dn_z| (H2-E2)/L |psi_dn_z> = {:0.16f} | log10 = {:0.16f}", variance_dn_z / state.get_length(), std::log10(variance_dn_z / state.get_length()));
 
     mpstools::log->info("\tMidchain entanglement entropies");
-    mpstools::log->info("\tS(L/2) psi                      = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state     ));
-    mpstools::log->info("\tS(L/2) psi_up_x                 = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state_up_x));
-    mpstools::log->info("\tS(L/2) psi_dn_x                 = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state_dn_x));
-    mpstools::log->info("\tS(L/2) psi_up_y                 = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state_up_y));
-    mpstools::log->info("\tS(L/2) psi_dn_y                 = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state_dn_y));
-    mpstools::log->info("\tS(L/2) psi_up_z                 = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state_up_z));
-    mpstools::log->info("\tS(L/2) psi_dn_z                 = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state_dn_z));
+    mpstools::log->info("\tS(L/2) psi                      = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state     ));
+    mpstools::log->info("\tS(L/2) psi_up_x                 = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state_up_x));
+    mpstools::log->info("\tS(L/2) psi_dn_x                 = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state_dn_x));
+    mpstools::log->info("\tS(L/2) psi_up_y                 = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state_up_y));
+    mpstools::log->info("\tS(L/2) psi_dn_y                 = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state_dn_y));
+    mpstools::log->info("\tS(L/2) psi_up_z                 = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state_up_z));
+    mpstools::log->info("\tS(L/2) psi_dn_z                 = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state_dn_z));
 
 
 

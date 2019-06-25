@@ -15,8 +15,8 @@ using namespace std;
 using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
-    : class_algorithm_base(std::move(h5ppFile_),"iDMRG", SimulationType::iDMRG) {
-    table_idmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>(h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
+    : class_algorithm_infinite(std::move(h5ppFile_),"iDMRG", SimulationType::iDMRG) {
+
 //    initialize_superblock(settings::model::initial_state);
 
 }
@@ -24,11 +24,11 @@ class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 
 
 void class_iDMRG::run() {
-    if (!settings::idmrg::on) { return; }
+    if (not settings::idmrg::on) { return; }
     log->info("Starting {} simulation", sim_name);
     t_tot.tic();
     while(true){
-        single_DMRG_step();
+        single_DMRG_step(eigutils::eigSetting::Ritz::SR);
         print_status_update();
         store_table_entry_progress();
         store_profiling_deltas();
@@ -55,56 +55,63 @@ void class_iDMRG::run() {
     }
 
 
-    print_status_full();
-    print_profiling();
-    superblock->t_eig.print_time();
-    h5pp_file->writeDataset(true, sim_name + "/simOK");
+}
+
+
+void class_iDMRG::single_DMRG_step(eigutils::eigSetting::Ritz ritz){
+/*!
+ * \fn void single_DMRG_step(class_superblock &superblock)
+ */
+    log->trace("Starting infinite DMRG step");
+    t_sim.tic();
+    t_opt.tic();
+    Eigen::Tensor<Scalar,4> theta = superblock->get_theta();
+//    superblock->MPS->theta = superblock->get_theta();
+    theta = superblock->optimize_MPS(theta, ritz);
+    t_opt.toc();
+    t_svd.tic();
+    superblock->truncate_MPS(theta, sim_state.chi_temp, settings::precision::SVDThreshold);
+    t_svd.toc();
+    //Reduce the hamiltonians if you are doing infinite systems:
+//    if(sim_type == SimulationType::iDMRG){
+//        superblock->E_optimal /= 2.0;
+//        superblock->HA->set_reduced_energy(superblock->E_optimal);
+//        superblock->HB->set_reduced_energy(superblock->E_optimal);
+//    }
+//    measurement->unset_measurements();
+    superblock->unset_measurements();
+    t_sim.toc();
+    sim_state.wall_time = t_tot.get_age();
+    sim_state.simu_time = t_sim.get_age();
 }
 
 
 
-void class_iDMRG::store_state_and_measurements_to_file(bool force){
-    if(not force){
-        if (Math::mod(sim_state.iteration, settings::idmrg::store_freq) != 0) {return;}
-        if (settings::fdmrg::store_freq == 0){return;}
+void class_iDMRG::check_convergence(){
+    log->trace("Checking convergence");
+    t_con.tic();
+    check_convergence_entg_entropy();
+    check_convergence_variance_mpo();
+    check_convergence_variance_ham();
+    check_convergence_variance_mom();
+    update_bond_dimension();
+    if(sim_state.entanglement_has_converged and
+       sim_state.variance_mpo_has_converged and
+       sim_state.variance_ham_has_converged and
+       sim_state.variance_mom_has_converged and
+       sim_state.bond_dimension_has_reached_max)
+    {
+        sim_state.simulation_has_converged = true;
     }
-    log->trace("Storing storing mps to file");
-    t_sto.tic();
-    mpstools::infinite::io::write_all_superblock(*superblock, *h5pp_file, sim_name);
-    t_sto.toc();
-}
-
-void class_iDMRG::store_table_entry_progress(bool force){
-    if (not force){
-        if (Math::mod(sim_state.iteration, settings::idmrg::store_freq) != 0) {return;}
-    }
-    compute_observables(*superblock);
-    using namespace mpstools::common::measure;
-    t_sto.tic();
-    table_idmrg->append_record(
-            sim_state.iteration,
-            superblock->measurements.length.value(),
-            sim_state.iteration,
-            superblock->measurements.bond_dimension.value(),
-            settings::idmrg::chi_max,
-            superblock->measurements.energy_per_site_mpo.value(),
-            superblock->measurements.energy_per_site_ham.value(),
-            superblock->measurements.energy_per_site_mom.value(),
-            std::numeric_limits<double>::quiet_NaN(),
-            std::numeric_limits<double>::quiet_NaN(),
-            std::numeric_limits<double>::quiet_NaN(),
-            superblock->measurements.energy_variance_per_site_mpo.value(),
-            superblock->measurements.energy_variance_per_site_ham.value(),
-            superblock->measurements.energy_variance_per_site_mom.value(),
-            superblock->measurements.current_entanglement_entropy.value(),
-            superblock->measurements.truncation_error.value(),
-            t_tot.get_age());
-
-
-    t_sto.toc();
+    t_con.toc();
 }
 
 
+
+
+
+
+bool   class_iDMRG::sim_on()   {return settings::idmrg::on;}
 long   class_iDMRG::chi_max()   {return settings::idmrg::chi_max;}
 size_t class_iDMRG::num_sites() {return 2u;}
 size_t class_iDMRG::store_freq(){return settings::idmrg::store_freq;}
@@ -113,26 +120,3 @@ bool   class_iDMRG::chi_grow()  {return settings::idmrg::chi_grow;}
 
 
 
-void class_iDMRG::print_profiling(){
-    if (settings::profiling::on) {
-        t_tot.print_time_w_percent();
-        t_sto.print_time_w_percent(t_tot);
-        t_prt.print_time_w_percent(t_tot);
-        t_obs.print_time_w_percent(t_tot);
-        t_sim.print_time_w_percent(t_tot);
-        print_profiling_sim(t_sim);
-//        superblock->print_profiling(t_obs);
-    }
-}
-
-void class_iDMRG::print_profiling_sim(class_tic_toc &t_parent){
-    if (settings::profiling::on) {
-        std::cout << "\n Simulation breakdown:" << std::endl;
-        std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
-        t_opt.print_time_w_percent(t_parent);
-        t_svd.print_time_w_percent(t_parent);
-        t_env.print_time_w_percent(t_parent);
-        t_mps.print_time_w_percent(t_parent);
-        t_con.print_time_w_percent(t_parent);
-    }
-}

@@ -128,13 +128,13 @@ void mpstools::finite::ops::apply_mpos(class_finite_chain_state &state,const std
 
 void mpstools::finite::ops::normalize_chain(class_finite_chain_state & state){
 
-    mpstools::log->trace("Normalizing chain");
+    mpstools::log->trace("Normalizing state");
     state.unset_measurements();
 //    std::cout << "Norm              (before normalization): " << mpstools::finite::measure::norm(state)  << std::endl;
 //    std::cout << "Spin component sx (before normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
 //    std::cout << "Spin component sy (before normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
 //    std::cout << "Spin component sz (before normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
-    // Sweep back and forth once on the chain
+    // Sweep back and forth once on the state
 
     class_SVD svd;
     svd.setThreshold(settings::precision::SVDThreshold);
@@ -279,10 +279,7 @@ class_finite_chain_state mpstools::finite::ops::get_closest_parity_state(const c
     }
 }
 
-void mpstools::finite::ops::rebuild_superblock(const class_finite_chain_state &state, class_superblock &superblock) {
-    mpstools::log->trace("Rebuilding superblock");
-    mpstools::finite::chain::copy_state_to_superblock(state,superblock);
-}
+
 
 
 
@@ -433,7 +430,7 @@ double mpstools::finite::ops::expectation_value(const class_finite_chain_state &
                 .shuffle(array3{1, 2, 0});
         L = temp;
     }
-    //Contract the right half of the chain
+    //Contract the right half of the state
     Eigen::Tensor<Scalar,3> R = Redge;
     auto mps1_it_R = state1.MPS_R.begin();
     auto mps2_it_R = state2.MPS_R.begin();
@@ -491,7 +488,7 @@ double mpstools::finite::ops::exp_sq_value(const class_finite_chain_state &state
                         .shuffle(array4{2,3,0,1});
         L = temp;
     }
-    //Contract the right half of the chain
+    //Contract the right half of the state
     Eigen::Tensor<Scalar,4> R = Redge;
     auto mps1_it_R = state1.MPS_R.begin();
     auto mps2_it_R = state2.MPS_R.begin();
