@@ -2,27 +2,27 @@
 // Created by david on 2019-05-31.
 //
 #include <mps_tools/finite/opt.h>
-#include <mps_state/class_superblock.h>
+#include <mps_state/class_finite_chain_state.h>
 #include <mps_state/class_environment.h>
 #include <model/class_hamiltonian_base.h>
 #include <algorithms/class_simulation_state.h>
 
 template<typename Scalar>
 mpstools::finite::opt::internals::subspace_functor<Scalar>::subspace_functor(
-        const class_superblock &superblock,
-        const class_simulation_state &sim_state,
+        const class_finite_chain_state & state,
+        const class_simulation_state & sim_state,
         const Eigen::MatrixXcd & eigvecs_,
         const Eigen::VectorXd  & eigvals_)
         :
-        base_functor(superblock,sim_state),
+        base_functor(state,sim_state),
         eigvecs(eigvecs_),
         eigvals(eigvals_)
 {
     if constexpr(std::is_same<Scalar,double>::value){
-        H2 = (eigvecs.adjoint().real() * superblock.get_H_local_sq_matrix<Scalar>().template selfadjointView<Eigen::Upper>() * eigvecs.real());
+        H2 = (eigvecs.adjoint().real() * state.get_multi_hamiltonian2_matrix().real().template selfadjointView<Eigen::Upper>() * eigvecs.real());
     }
     if constexpr(std::is_same<Scalar,std::complex<double>>::value){
-        H2 = (eigvecs.adjoint() * superblock.get_H_local_sq_matrix<Scalar>().template selfadjointView<Eigen::Upper>() * eigvecs);
+        H2 = (eigvecs.adjoint() * state.get_multi_hamiltonian2_matrix().template selfadjointView<Eigen::Upper>() * eigvecs);
     }
 }
 

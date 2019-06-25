@@ -19,7 +19,7 @@ std::tuple<Eigen::Tensor<std::complex<double>,4>, double> mpstools::finite::opt:
     if(ritz == "LR"){ritz_enum = Ritz::LR;}
 
     auto theta = state.get_theta();
-    std::array<long,4> shape_theta4 = theta.dimensions();
+    std::array<long,4> shape_theta4  = theta.dimensions();
     std::array<long,4> shape_mpo4   = state.MPO_L.back()->MPO().dimensions();
 
     t_eig->tic();

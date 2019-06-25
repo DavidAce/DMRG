@@ -11,9 +11,10 @@
 #include <model/class_hamiltonian_base.h>
 #include <general/class_eigsolver.h>
 #include <general/arpack_extra/matrix_product_hamiltonian.h>
+#include <general/class_svd_wrapper.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 
-
-std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
+std::tuple<Eigen::Tensor<std::complex<double>,3>, double>
 mpstools::finite::opt::find_optimal_excited_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType){
     mpstools::log->trace("Finding optimal excited state");
     using namespace opt::internals;
@@ -46,6 +47,26 @@ std::tuple<Eigen::Tensor<std::complex<double>,4>, double> mpstools::finite::opt:
 }
 
 
+void mpstools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,3> theta, class_finite_chain_state & state, long chi_, double SVDThreshold){
+    throw std::runtime_error("You need to implement truncation of theta3");
+
+}
+void mpstools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> theta, class_finite_chain_state & state, long chi_, double SVDThreshold) {
+    class_SVD SVD;
+    SVD.setThreshold(settings::precision::SVDThreshold);
+    auto[U, S, V] = SVD.schmidt(theta, chi_);
+    state.truncation_error[state.get_position()+1] = SVD.get_truncation_error();
+    state.MPS_C  = S;
+    Eigen::Tensor<std::complex<double>,3> L_U = Textra::asDiagonalInversed(state.MPS_L.back().get_L()).contract(U,Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+    Eigen::Tensor<std::complex<double>,3> V_L = V.contract(Textra::asDiagonalInversed(state.MPS_R.front().get_L()), Textra::idx({2},{0}));
+    state.MPS_L.back().set_G(L_U);
+    state.MPS_R.front().set_G(V_L);
+}
+
+
+
+
+
 
 void mpstools::finite::opt::internals::reset_timers(){
     t_opt-> reset();
@@ -60,36 +81,27 @@ void mpstools::finite::opt::internals::reset_timers(){
 }
 
 template<typename Scalar>
-mpstools::finite::opt::internals::superblock_components<Scalar>::superblock_components(const class_superblock &superblock){
+mpstools::finite::opt::internals::MultiComponents<Scalar>::MultiComponents(const class_finite_chain_state & state){
     if constexpr (std::is_same<Scalar,double>::value){
-        HA_MPO        = superblock.HA->MPO().real();
-        HB_MPO        = superblock.HB->MPO().real();
-        Lblock        = superblock.Lblock->block.real();
-        Rblock        = superblock.Rblock->block.real();
-        Lblock2       = superblock.Lblock2->block.real();
-        Rblock2       = superblock.Rblock2->block.real();
+        mpo                          = state.get_multimpo().real();
+        mpo2                         = mpo.contract (mpo, Textra::idx({3},{2}));
+        auto [envL_cplx,envR_cplx]   = state.get_multienv();
+        auto [env2L_cplx,env2R_cplx] = state.get_multienv2();
+        envL  = envL_cplx.real();         envR  = envR_cplx.real();
+        env2L = env2L_cplx.real();        env2R = env2R_cplx.real();
     }
 
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){
-        HA_MPO        = superblock.HA->MPO();
-        HB_MPO        = superblock.HB->MPO();
-        Lblock        = superblock.Lblock->block;
-        Rblock        = superblock.Rblock->block;
-        Lblock2       = superblock.Lblock2->block;
-        Rblock2       = superblock.Rblock2->block;
+        mpo                          = state.get_multimpo();
+        mpo2                         = mpo.contract (mpo, Textra::idx({3},{2}));
+        std::tie (envL,envR)         = state.get_multienv();
+        std::tie (env2L,env2R)       = state.get_multienv2();
     }
-    HAHB          = HA_MPO.contract (HB_MPO, Textra::idx({1},{0}));
-    HAHA          = HA_MPO.contract (HA_MPO, Textra::idx({3},{2}));
-    HBHB          = HB_MPO.contract (HB_MPO, Textra::idx({3},{2}));
-    Lblock2HAHA   = Lblock2.contract(HAHA, Textra::idx({2,3},{0,3})).shuffle(Textra::array6{0,3,2,4,5,1});
-    Rblock2HBHB   = Rblock2.contract(HBHB, Textra::idx({2,3},{1,4})).shuffle(Textra::array6{0,3,2,4,5,1});
-    HAHB2         = HAHB.contract(HAHB, Textra::idx({2,5},{1,4}));
-    dsizes        = superblock.dimensions();
-
+    dsizes        = state.active_dimensions();
 }
 
-template struct mpstools::finite::opt::internals::superblock_components<double>;
-template struct mpstools::finite::opt::internals::superblock_components<std::complex<double>>;
+template struct mpstools::finite::opt::internals::MultiComponents<double>;
+template struct mpstools::finite::opt::internals::MultiComponents<std::complex<double>>;
 
 
 double mpstools::finite::opt::internals::windowed_func_abs(double x,double window){

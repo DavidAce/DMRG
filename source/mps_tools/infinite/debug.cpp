@@ -13,13 +13,7 @@
 void mpstools::infinite::debug::check_integrity(const class_superblock &superblock, const class_simulation_state &sim_state)
 {
     mpstools::log->info("Checking integrity...");
-    try{
-        check_integrity_of_sim(superblock, sim_state);
-    }catch(std::exception & ex){
-        std::cout << sim_state << std::endl;
-        throw std::runtime_error("Integrity check of constants failed: " + std::string(ex.what()));
-    }
-    try{
+   try{
         check_integrity_of_mps(superblock);
     }catch(std::exception & ex){
         mpstools::infinite::print::print_state(superblock) ;

@@ -35,13 +35,17 @@ namespace mpstools{
      */
     {
         namespace mps {
-            extern void initialize_mps                  (class_finite_chain_state & state, std::string parity, const size_t length);
-            extern int  move_center_point               (class_finite_chain_state & state);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
+            extern void initialize                  (class_finite_chain_state & state, const size_t length);
+            extern void randomize                   (class_finite_chain_state & state);
+            extern void normalize                   (class_finite_chain_state & state);
+            extern void rebuild_environments        (class_finite_chain_state & state);
+            extern int  move_center_point           (class_finite_chain_state & state);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
+            extern void project_to_closest_parity   (class_finite_chain_state & state, const std::string paulistring);
         }
 
         namespace mpo {
-            extern void initialize_mpo                 (class_finite_chain_state & state, std::string model_type, const size_t length);
-            extern void randomize_mpo                  (class_finite_chain_state & state);
+            extern void initialize                 (class_finite_chain_state & state, const size_t length, std::string model_type);
+            extern void randomize                  (class_finite_chain_state & state);
         }
 
         namespace ops {
@@ -49,18 +53,15 @@ namespace mpstools{
                         make_mpo_list                 (const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_R);
             extern void apply_mpo                     (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
             extern void apply_mpos                    (class_finite_chain_state &state, const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
-            extern void normalize_chain               (class_finite_chain_state &state);
 
             extern double exp_sq_value                (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,4> Ledge, const Eigen::Tensor<std::complex<double>,4> Redge);
-            extern class_finite_chain_state
-            set_random_product_state                  (const class_finite_chain_state &state, const std::string parity);
+
             extern class_finite_chain_state
             get_parity_projected_state                (const class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix, const int sign);
             extern class_finite_chain_state
             get_closest_parity_state                  (const class_finite_chain_state &state, const Eigen::MatrixXcd paulimatrix);
             extern class_finite_chain_state
             get_closest_parity_state                  (const class_finite_chain_state &state, const std::string paulistring);
-            extern void rebuild_environments          (class_finite_chain_state &state);
             extern double overlap                     (const class_finite_chain_state &state1, const class_finite_chain_state &state2);
             extern double expectation_value           (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, Eigen::Tensor<std::complex<double>,3> Ledge, Eigen::Tensor<std::complex<double>,3> Redge);
         }
@@ -70,9 +71,10 @@ namespace mpstools{
             enum class OptMode  {OVERLAP, VARIANCE};
             enum class OptSpace {PARTIAL,FULL,DIRECT};
             enum class OptType  {REAL, CPLX};
-            extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_excited_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType);
+            extern std::tuple<Eigen::Tensor<std::complex<double>,3>, double> find_optimal_excited_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType);
             extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_ground_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, std::string ritz = "SR");
-            extern void truncate_theta(Eigen::Tensor<std::complex<double>,4> theta, const class_finite_chain_state & state, const class_simulation_state & sim_state);
+            extern void truncate_theta(Eigen::Tensor<std::complex<double>,3> theta, class_finite_chain_state & state, long chi_, double SVDThreshold);
+            extern void truncate_theta(Eigen::Tensor<std::complex<double>,4> theta, class_finite_chain_state & state, long chi_, double SVDThreshold);
         }
 
         namespace multisite{
@@ -119,15 +121,14 @@ namespace mpstools{
             extern void write_all_measurements             (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
             extern void write_closest_parity_projection    (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name, std::string paulistring);
             extern void load_from_hdf5                     (const h5pp::File & h5ppFile, class_finite_chain_state & state    , class_simulation_state & sim_state, std::string sim_name);
-            extern void load_state_from_hdf5               (const h5pp::File & h5ppFile, class_finite_chain_state & state    , std::string sim_name);
-            extern void load_sim_state_from_hdf5           (const h5pp::File & h5ppFile, class_simulation_state   & sim_state, std::string sim_name);
-//            extern void load_sim_state_from_hdf5           (class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
-
+            extern class_finite_chain_state
+            load_state_from_hdf5                           (const h5pp::File & h5ppFile, std::string sim_name);
+            extern class_simulation_state
+            load_sim_state_from_hdf5                       (const h5pp::File & h5ppFile, std::string sim_name);
         }
 
         namespace debug {
             extern void check_integrity             (const class_finite_chain_state & state, const class_simulation_state & sim_state);
-            extern void check_integrity_of_sim      (const class_finite_chain_state & state, const class_simulation_state & sim_state);
             extern void check_integrity_of_mps      (const class_finite_chain_state & state);
             extern void check_normalization_routine (const class_finite_chain_state & state);
             extern void print_parity_properties     (const class_finite_chain_state & state);

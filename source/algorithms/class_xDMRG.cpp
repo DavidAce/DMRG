@@ -23,30 +23,14 @@
 
 #include "class_xDMRG.h"
 
-template<typename Scalar, auto rank>
-void throw_if_has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, double threshold = 1e-14) {
-    Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>> vector (tensor.data(),tensor.size());
-    if constexpr (std::is_same<Scalar, std::complex<double>>::value){
-        auto imagSum = vector.imag().cwiseAbs().sum();
-        if (imagSum > threshold){
-            std::cout << vector << std::endl;
-            throw std::runtime_error("Has imaginary part. Sum: " + std::to_string(imagSum));
-        }
-    }
-}
-
-
 
 
 using namespace std;
 using namespace Textra;
 
 class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
-        : class_algorithm_finite(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG) {
-    mpstools::finite::mpo::initialize_mpo(*state, settings::model::model_type, settings::xdmrg::num_sites);
-    mpstools::finite::mps::initialize_mps(*state, settings::model::symmetry  , settings::xdmrg::num_sites);
-    min_saturation_length = 1;// * (int)(1.0 * settings::xdmrg::num_sites);
-    max_saturation_length = 2;// * (int)(2.0 * settings::xdmrg::num_sites);
+        : class_algorithm_finite(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG, settings::xdmrg::num_sites) {
+    log->trace("Constructing class_xDMRG");
     settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(size_t)(std::log2(chi_max())/2));
 }
 
@@ -69,7 +53,7 @@ void class_xDMRG::run_simulation()    {
     log->info("Starting {} simulation", sim_name);
     while(true) {
         single_DMRG_step();
-        store_table_entry_progress();
+//        store_table_entry_progress();
         store_table_entry_site_state();
         store_profiling_totals();
         store_state_and_measurements_to_file();
@@ -140,7 +124,7 @@ void class_xDMRG::single_DMRG_step()
 
     state->activate_sites(threshold);
     auto optType = state->isReal() ? OptType::REAL : OptType::CPLX;
-    Eigen::Tensor<Scalar,4> theta;
+    Eigen::Tensor<Scalar,3> theta;
     std::tie(theta, sim_state.energy_now) = mpstools::finite::opt::find_optimal_excited_state(*state,sim_state,optMode, optSpace,optType);
     sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
 
@@ -149,7 +133,7 @@ void class_xDMRG::single_DMRG_step()
     log->trace("Truncating theta");
 
     t_svd.tic();
-    mpstools::finite::opt::truncate_theta(theta, *state, sim_state);
+    mpstools::finite::opt::truncate_theta(theta, *state, sim_state.chi_temp, settings::precision::SVDThreshold);
     t_svd.toc();
 
     state->unset_measurements();
@@ -248,14 +232,13 @@ void class_xDMRG::check_convergence(){
 
 void class_xDMRG::find_energy_range() {
     log->trace("Finding energy range");
-    assert(state->get_length() == settings::xdmrg::num_sites);
+    assert(state->get_length() == num_sites());
     size_t max_sweeps_during_f_range = 4;
     sim_state.iteration = state->reset_sweeps();
 
     // Find energy minimum
     while(true) {
         class_algorithm_finite::single_DMRG_step("SR");
-        copy_superblock_to_chain();         //Needs to occurr after update_MPS...
         print_status_update();
         // It's important not to perform the last step.
         // That last state would not get optimized
@@ -273,7 +256,6 @@ void class_xDMRG::find_energy_range() {
     // Find energy maximum
     while(true) {
         class_algorithm_finite::single_DMRG_step("LR");
-        copy_superblock_to_chain();         //Needs to occurr after update_MPS...
         print_status_update();
         // It's important not to perform the last step.
         // That last state would not get optimized

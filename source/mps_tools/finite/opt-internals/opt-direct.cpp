@@ -25,11 +25,11 @@ void warn_if_has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, double
 }
 
 
-std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
+std::tuple<Eigen::Tensor<std::complex<double>,3>, double>
 mpstools::finite::opt::internals::direct_optimization(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptType optType){
     mpstools::log->trace("Optimizing in DIRECT mode");
     using Scalar = std::complex<double>;
-    auto theta = state.get_theta();
+    auto theta = state.get_multitheta();
 
 
     t_opt->tic();
@@ -76,7 +76,7 @@ mpstools::finite::opt::internals::direct_optimization(const class_finite_chain_s
     t_opt->toc();
 
 
-    auto theta_old = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).real();
+    auto theta_old = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size());
 
 
     overlap_new  = std::abs(theta_old.dot(theta_start));
@@ -93,7 +93,7 @@ mpstools::finite::opt::internals::direct_optimization(const class_finite_chain_s
             ));
 
     if (variance_new < variance_0){
-        return  std::make_tuple(Textra::Matrix_to_Tensor(theta_start, state.dimensions()), energy_new);
+        return  std::make_tuple(Textra::Matrix_to_Tensor(theta_start, state.active_dimensions()), energy_new);
 
     }else{
         return  std::make_tuple(theta, energy_0);

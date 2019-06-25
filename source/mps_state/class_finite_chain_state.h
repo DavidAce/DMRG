@@ -44,9 +44,7 @@ public:
     std::list<std::shared_ptr<class_hamiltonian_base>> MPO_L;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
     std::list<std::shared_ptr<class_hamiltonian_base>> MPO_R;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
 
-    void clear();
     void do_all_measurements();
-
 
 
 
@@ -79,21 +77,29 @@ public:
     Eigen::Tensor<Scalar,3>   get_B()                                   const;
     Eigen::Tensor<Scalar,3>   get_A(size_t pos)                         const;
     Eigen::Tensor<Scalar,3>   get_B(size_t pos)                         const;
+    Eigen::Tensor<Scalar,3>   get_ENVL(size_t pos)                      const;
+    Eigen::Tensor<Scalar,3>   get_ENVR(size_t pos)                      const;
+    Eigen::Tensor<Scalar,4>   get_ENV2L(size_t pos)                     const;
+    Eigen::Tensor<Scalar,4>   get_ENV2R(size_t pos)                     const;
     Eigen::Tensor<Scalar,4>   get_theta()                               const;
     Eigen::Tensor<Scalar,4>   get_theta(size_t pos)                     const;
 
     //For multisite
-    std::vector<size_t> active_sites;
-    std::vector<size_t> activate_sites(long threshold);
-    std::vector<size_t> active_dimensions() const;
+    std::vector<size_t>    active_sites;
+    std::vector<size_t>    activate_sites(long threshold);
+    Eigen::DSizes<long,3>  active_dimensions() const;
 
-    Eigen::Tensor<Scalar,4>   get_theta(std::vector<size_t> & sites)    const;
-    Eigen::Tensor<Scalar,6>   get_MPOS (std::vector<size_t> & sites)    const;
-    Eigen::Tensor<Scalar,3>   get_ENVL (std::vector<size_t> & sites)    const;
-    Eigen::Tensor<Scalar,4>   get_ENV2L(std::vector<size_t> & sites)    const;
-    Eigen::Tensor<Scalar,3>   get_ENVR (std::vector<size_t> & sites)    const;
-    Eigen::Tensor<Scalar,4>   get_ENV2R(std::vector<size_t> & sites)    const;
+    Eigen::Tensor<Scalar,3>   get_multitheta()    const;
+    Eigen::Tensor<Scalar,4>   get_multimpo  ()    const;
+    std::pair<Eigen::Tensor<Scalar,3>, Eigen::Tensor<Scalar,3>>
+                              get_multienv ()     const;
+    std::pair<Eigen::Tensor<Scalar,4>, Eigen::Tensor<Scalar,4>>
+                              get_multienv2()     const;
 
+    Eigen::Tensor<Scalar,6>   get_multi_hamiltonian() const;
+    Eigen::Tensor<Scalar,6>   get_multi_hamiltonian2() const;
+    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_matrix() const;
+    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian2_matrix() const;
 
 
     std::vector<double>  truncation_error                                           = {};
@@ -104,7 +110,7 @@ public:
         std::optional<size_t>               bond_dimension_current                  = {};
         std::optional<std::vector<size_t>>  bond_dimensions                         = {};
         std::optional<double>               norm                                    = {};
-        std::optional<double>               energy                              = {};
+        std::optional<double>               energy                                  = {};
         std::optional<double>               energy_per_site                         = {};
         std::optional<double>               energy_variance_mpo                     = {};
         std::optional<double>               energy_variance_per_site                = {};

@@ -7,7 +7,8 @@
 #include <model/class_hamiltonian_factory.h>
 
 
-void mpstools::finite::mpo::initialize_mpo(class_finite_chain_state & state, std::string model_type, const size_t length){
+void mpstools::finite::mpo::initialize(class_finite_chain_state & state, const size_t length, std::string model_type){
+    log->info("Initializing mpo");
     //Generate MPO
     while(true){
         state.MPO_L.emplace_back(class_hamiltonian_factory::create_mpo(model_type));
@@ -15,12 +16,11 @@ void mpstools::finite::mpo::initialize_mpo(class_finite_chain_state & state, std
         state.MPO_R.emplace_front(class_hamiltonian_factory::create_mpo(model_type));
         if(state.MPO_L.size() + state.MPO_R.size() >= length){break;}
     }
-    mpstools::finite::mpo::randomize_mpo(state);
 }
 
 
-void mpstools::finite::mpo::randomize_mpo(class_finite_chain_state &state) {
-    mpstools::log->info("Setting random fields in state");
+void mpstools::finite::mpo::randomize(class_finite_chain_state &state) {
+    log->info("Setting random fields in state");
     std::vector<std::vector<double>> all_params;
     for (auto &mpo : state.MPO_L){
         mpo->randomize_hamiltonian();

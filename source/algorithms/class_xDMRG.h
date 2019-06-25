@@ -33,7 +33,6 @@ public:
     void single_DMRG_step();
     void run_preprocessing()      final;
     void run_simulation()         final;
-    void run_postprocessing()     override;
     void check_convergence()      final;
     bool   sim_on()               final;
     long   chi_max()              final;

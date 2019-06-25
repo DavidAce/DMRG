@@ -50,7 +50,7 @@ public:
     virtual void   compute_observables()                                                                      = 0;
     virtual void   check_convergence()                                                                        = 0;
     virtual void   store_state_and_measurements_to_file(bool force = false)                                   = 0;
-    virtual void   store_table_entry_progress(bool force = false)                                             = 0;
+//    virtual void   store_table_entry_progress(bool force = false)                                             = 0;
     virtual bool   sim_on()                                                                                   = 0;
     virtual long   chi_max()                                                                                  = 0;
     virtual size_t num_sites()                                                                                = 0;
@@ -62,13 +62,13 @@ public:
     virtual void   print_profiling()                                                                          = 0;
     virtual void   print_profiling_sim(class_tic_toc &t_parent)                                               = 0;
     virtual void   reset_to_random_state(const std::string parity)                                            = 0;
+    virtual void   clear_saturation_status()                                                                  = 0;
 
 
     //common functions
     void store_algorithm_state_to_file();
 
     void update_bond_dimension(size_t min_saturation_length = 1);
-    void clear_saturation_status();
 
 
 

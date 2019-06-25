@@ -4,17 +4,17 @@
 #include <general/class_tic_toc.h>
 #include <algorithms/class_simulation_state.h>
 #include <mps_tools/finite/opt.h>
-#include <mps_state/class_superblock.h>
+#include <mps_state/class_finite_chain_state.h>
 #include <LBFGS.h>
 
 using namespace mpstools::finite::opt::internals;
 
 base_functor::base_functor(
-        const class_superblock & superblock,
+        const class_finite_chain_state & state,
         const class_simulation_state & sim_state)
 {
     reset_timers();
-    length                        = superblock.get_length();
+    length                        = state.get_length();
 
     //All energies in sim_state are per site!
     energy_target            = sim_state.energy_target;

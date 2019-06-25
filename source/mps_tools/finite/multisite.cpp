@@ -9,8 +9,8 @@
 
 std::vector<size_t> mpstools::finite::multisite::generate_site_list(class_finite_chain_state &state, long threshold){
     using namespace Textra;
+    int    direction = state.get_direction();
     size_t position  = state.get_position();
-    size_t direction = state.get_direction();
     size_t length    = state.get_length();
     std::vector<long>   costs;
     std::vector<size_t> sites;

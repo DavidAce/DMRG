@@ -18,7 +18,8 @@ public:
     explicit class_algorithm_finite(
             std::shared_ptr<h5pp::File> h5ppFile_,
             std::string sim_name,
-            SimulationType sim_type
+            SimulationType sim_type,
+            size_t num_sites
             );
 
     //MPS
@@ -41,14 +42,15 @@ public:
     void store_table_entry_site_state(bool force = false);
     void store_chain_entry_to_file(bool force = false);
     void initialize_chain();
-    void reset_to_random_state(const std::string parity);
 
 
 
     void run()                                                              final;
     void compute_observables()                                              final;
+    void clear_saturation_status()                                          override;
+    void reset_to_random_state(const std::string parity)                    final;
     void store_state_and_measurements_to_file(bool force = false)           final;
-    void store_table_entry_progress(bool force = false)                     final;
+//    void store_table_entry_progress(bool force = false)                     final;
     void print_status_update()                                              final;
     void print_status_full()                                                final;
     void print_profiling()                                                  final;
@@ -57,7 +59,6 @@ public:
 
     void check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_entg_entropy(double slope_threshold = quietNaN);
-    void clear_saturation_status();
     std::list<bool>   B_mpo_vec; //History of saturation true/false
     std::list<double> V_mpo_vec; //History of variances
     std::list<int>    X_mpo_vec; //History of step numbers
@@ -67,9 +68,6 @@ public:
     std::list<double> S_vec;
     std::list<int>    XS_vec;
     double S_slope = 0;
-
-
-
 };
 
 #endif //DMRG_CLASS_ALGORITHM_FINITE_H

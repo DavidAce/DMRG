@@ -5,15 +5,15 @@
 
 
 #include <mps_tools/finite/opt.h>
-#include <mps_state/class_superblock.h>
+#include <mps_state/class_finite_chain_state.h>
 #include <mps_state/class_environment.h>
 #include <model/class_hamiltonian_base.h>
 #include <algorithms/class_simulation_state.h>
 
 template <typename Scalar>
 mpstools::finite::opt::internals::direct_functor<Scalar>::direct_functor(
-        const class_superblock &superblock, const class_simulation_state &sim_state)
-        : base_functor(superblock,sim_state), superComponents(superblock)
+        const class_finite_chain_state &state, const class_simulation_state &sim_state)
+        : base_functor(state,sim_state), multiComponents(state)
         {}
 
 
@@ -44,9 +44,9 @@ double mpstools::finite::opt::internals::direct_functor<Scalar>::operator()(cons
         #pragma omp sections
         {
             #pragma omp section
-            { std::tie(H2v, vH2v) = get_H2v_vH2v(v, superComponents); }
+            { std::tie(H2v, vH2v) = get_H2v_vH2v(v, multiComponents); }
             #pragma omp section
-            { std::tie(Hv, vHv) = get_Hv_vHv(v, superComponents); }
+            { std::tie(Hv, vHv) = get_Hv_vHv(v, multiComponents); }
         }
     }
 
