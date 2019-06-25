@@ -323,13 +323,13 @@ void mpstools::finite::debug::print_parity_properties(const class_finite_chain_s
     mpstools::log->info("\t<psi_dn_z| (H2-E2)/L |psi_dn_z> = {:0.16f} | log10 = {:0.16f}", variance_dn_z / state.get_length(), std::log10(variance_dn_z / state.get_length()));
 
     mpstools::log->info("\tMidchain entanglement entropies");
-    mpstools::log->info("\tS(L/2) psi                      = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state     ));
-    mpstools::log->info("\tS(L/2) psi_up_x                 = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state_up_x));
-    mpstools::log->info("\tS(L/2) psi_dn_x                 = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state_dn_x));
-    mpstools::log->info("\tS(L/2) psi_up_y                 = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state_up_y));
-    mpstools::log->info("\tS(L/2) psi_dn_y                 = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state_dn_y));
-    mpstools::log->info("\tS(L/2) psi_up_z                 = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state_up_z));
-    mpstools::log->info("\tS(L/2) psi_dn_z                 = {:0.16f}" ,  mpstools::finite::measure::midchain_entanglement_entropy(state_dn_z));
+    mpstools::log->info("\tS(L/2) psi                      = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state     ));
+    mpstools::log->info("\tS(L/2) psi_up_x                 = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state_up_x));
+    mpstools::log->info("\tS(L/2) psi_dn_x                 = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state_dn_x));
+    mpstools::log->info("\tS(L/2) psi_up_y                 = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state_up_y));
+    mpstools::log->info("\tS(L/2) psi_dn_y                 = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state_dn_y));
+    mpstools::log->info("\tS(L/2) psi_up_z                 = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state_up_z));
+    mpstools::log->info("\tS(L/2) psi_dn_z                 = {:0.16f}" ,  mpstools::finite::measure::entanglement_entropy_midchain(state_dn_z));
 
 
 

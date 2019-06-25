@@ -36,24 +36,6 @@ void throw_if_has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, doubl
 }
 
 
-//print xDMRG modes nicely
-std::ostream& operator<<(std::ostream& str, class_xDMRG::xDMRG_Mode const& mode) {
-    switch (mode){
-        case class_xDMRG::xDMRG_Mode::KEEP_BEST_OVERLAP :
-            str << "KEEP BEST OVERLAP";
-            break;
-        case class_xDMRG::xDMRG_Mode::FULL_EIG_OPT :
-            str << "FULL EIG OPT";
-            break;
-        case class_xDMRG::xDMRG_Mode::PARTIAL_EIG_OPT :
-            str << "PARTIAL EIG OPT";
-            break;
-        case class_xDMRG::xDMRG_Mode::DIRECT_OPT :
-            str << "DIRECT OPT";
-            break;
-    }
-    return str;
-}
 
 
 
@@ -248,7 +230,7 @@ void class_xDMRG::single_xDMRG_step()
 
     auto optMode  =  OptMode::OVERLAP;
     optMode  = sim_state.iteration   >= 2  ?  OptMode::VARIANCE : optMode;
-
+    optMode  =  OptMode::VARIANCE;
     auto optSpace =  OptSpace::FULL;
     optSpace = eigsize >= 2*2*16*16     ? OptSpace::PARTIAL : optSpace;
     optSpace = eigsize >= 2*2*32*32     ? OptSpace::DIRECT  : optSpace;
@@ -375,7 +357,7 @@ void class_xDMRG::check_convergence_entg_entropy(double slope_threshold) {
     std::vector<bool> entanglement_has_saturated(entropies.size());
     std::vector<double> S_slopes(entropies.size());
 
-    for (int site = 0; site < entropies.size(); site++){
+    for (size_t site = 0; site < entropies.size(); site++){
         entanglement_has_saturated[site] = check_saturation_using_slope(
                 BS_mat[site],
                 S_mat[site],
