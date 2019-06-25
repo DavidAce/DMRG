@@ -100,6 +100,8 @@ void mpstools::finite::print::print_state_compact(const class_finite_chain_state
 void mpstools::finite::print::print_hamiltonians(const class_finite_chain_state &state) {
     auto & MPO_L  = state.MPO_L;
     auto & MPO_R  = state.MPO_R;
+    if (MPO_L.empty()) throw std::runtime_error("MPO_L is empty. Can't print hamiltonian");
+    if (MPO_R.empty()) throw std::runtime_error("MPO_R is empty. Can't print hamiltonian");
 
     MPO_L.begin()->get()->print_parameter_names();
     for(auto &it : MPO_L){

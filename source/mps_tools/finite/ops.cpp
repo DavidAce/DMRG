@@ -9,7 +9,6 @@
 #include <mps_state/class_mpo.h>
 #include <model/class_hamiltonian_base.h>
 #include <general/nmspc_tensor_extra.h>
-#include <general/class_svd_wrapper.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <iomanip>
 #include <spdlog/spdlog.h>
@@ -126,119 +125,6 @@ void mpstools::finite::ops::apply_mpos(class_finite_chain_state &state,const std
 }
 
 
-void mpstools::finite::ops::normalize_chain(class_finite_chain_state & state){
-
-    mpstools::log->trace("Normalizing state");
-    state.unset_measurements();
-//    std::cout << "Norm              (before normalization): " << mpstools::finite::measure::norm(state)  << std::endl;
-//    std::cout << "Spin component sx (before normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-//    std::cout << "Spin component sy (before normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-//    std::cout << "Spin component sz (before normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
-    // Sweep back and forth once on the state
-
-    class_SVD svd;
-    svd.setThreshold(settings::precision::SVDThreshold);
-
-    size_t pos_LA = 0; // Lambda left of GA
-    size_t pos_LC = 1; //Center Lambda
-    size_t pos_LB = 2; // Lambda right of GB
-    size_t pos_A  = 0; // Lambda * G
-    size_t pos_B  = 1; // G * Lambda
-//    bool finished = false;
-    size_t num_traversals = 0;
-    int direction = 1;
-    Eigen::Tensor<Scalar,3> U;
-    Eigen::Tensor<Scalar,1> S;
-    Eigen::Tensor<Scalar,3> V;
-    double norm;
-    while(num_traversals < 4){
-        Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
-        bool isZero = Eigen::Map <Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).isZero();
-        if(isZero){mpstools::log->warn("Theta is all zeros at positions: {},{}", pos_A, pos_B );}
-        try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta);}
-        catch(std::exception &ex){
-            std::cerr << "A:\n" << state.get_A(pos_A) << std::endl;
-            std::cerr << "L:\n" << state.get_L(pos_LC) << std::endl;
-            std::cerr << "B:\n" << state.get_B(pos_B) << std::endl;
-            throw std::runtime_error("Normalization failed at step " + std::to_string(pos_A) + ": " + std::string(ex.what()) );
-        }
-        Eigen::Tensor<Scalar,3> LA_U = Textra::asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-        Eigen::Tensor<Scalar,3> V_LB = V.contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0}));
-        norm = pos_B == state.get_length()-1 or pos_A == 0 ? 1.0 : norm;
-        if (direction == 1){
-            state.get_G(pos_A)  = LA_U;
-            state.get_L(pos_LC) = S;
-            state.get_G(pos_B)  = Scalar(norm)*V_LB;
-
-        }
-        if (direction == -1){
-            state.get_G(pos_A)  = LA_U * Scalar(norm);
-            state.get_L(pos_LC) = S;
-            state.get_G(pos_B)  = V_LB;
-        }
-
-
-        if (direction ==  1 and pos_B == state.get_length()-1)  {num_traversals++; direction *= -1;}
-        if (direction == -1 and pos_A == 0)                     {num_traversals++; direction *= -1;}
-
-        pos_LA += direction;
-        pos_LC += direction;
-        pos_LB += direction;
-        pos_A  += direction;
-        pos_B  += direction;
-
-
-    }
-    state.unset_measurements();
-//    std::cout << "Norm              (after normalization): " << mpstools::finite::measure::norm(state)  << std::endl;
-//    std::cout << "Spin component sx (after normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-//    std::cout << "Spin component sy (after normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-//    std::cout << "Spin component sz (after normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
-
-
-}
-
-class_finite_chain_state mpstools::finite::ops::set_random_product_state(const class_finite_chain_state &state, const std::string parity){
-    mpstools::log->trace("Setting a random product state");
-    class_finite_chain_state product_state = state;
-    product_state.unset_measurements();
-
-    Eigen::MatrixXcd  paulimatrix;
-    bool get_parity = true;
-    if(parity == "sx"){
-        paulimatrix = qm::spinOneHalf::sx;
-    }else if (parity == "sy"){
-        paulimatrix = qm::spinOneHalf::sy;
-    }else if (parity == "sz"){
-        paulimatrix = qm::spinOneHalf::sz;
-    }else if (parity == "random" or parity == "none"){
-        get_parity = false;
-    }else {
-        throw std::runtime_error("Invalid spin parity name: " + parity);
-    }
-
-    Eigen::Tensor<Scalar,1> L (1);
-    L.setConstant(1);
-
-    for (auto &mpsL : product_state.MPS_L ){
-        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
-//        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXd::Random(2).cast<Scalar>().normalized(),2,1,1);
-        mpsL.set_mps(G,L);
-    }
-    product_state.MPS_C = L;
-    for (auto &mpsR : product_state.MPS_R ){
-        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
-//        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXd::Random(2).cast<Scalar>().normalized(),2,1,1);
-        mpsR.set_mps(G,L);
-    }
-
-    if(get_parity){
-        product_state = get_closest_parity_state(product_state, paulimatrix);
-    }
-    return product_state;
-}
-
-
 class_finite_chain_state mpstools::finite::ops::get_parity_projected_state(const class_finite_chain_state &state, const Eigen::MatrixXcd  paulimatrix, const int sign) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
     mpstools::log->trace("Generating parity projected state");
@@ -247,8 +133,8 @@ class_finite_chain_state mpstools::finite::ops::get_parity_projected_state(const
 
     const auto [mpo,L,R]    = class_mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
-    normalize_chain(state_projected);
-    rebuild_environments(state_projected);
+    mpstools::finite::mps::normalize(state_projected);
+    mpstools::finite::mps::rebuild_environments(state_projected);
     mpstools::finite::debug::check_integrity_of_mps(state_projected);
     return state_projected;
 }
@@ -280,9 +166,6 @@ class_finite_chain_state mpstools::finite::ops::get_closest_parity_state(const c
 }
 
 
-
-
-
 template<typename Scalar, auto rank>
 void throw_if_has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, double threshold = 1e-14) {
     Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>> vector (tensor.data(),tensor.size());
@@ -293,63 +176,6 @@ void throw_if_has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, doubl
             throw std::runtime_error("Has imaginary part. Sum: " + std::to_string(imagSum));
         }
     }
-}
-
-void mpstools::finite::ops::rebuild_environments(class_finite_chain_state &state){
-    mpstools::log->trace("Rebuilding environments");
-
-    // Generate new environments
-    assert(not state.MPS_L.empty() and "ERROR: The MPS L list is empty:");
-    assert(not state.MPS_R.empty() and "ERROR: The MPS R list is empty:");
-    assert(not state.MPO_L.empty() and "ERROR: The MPO L list is empty:");
-    assert(not state.MPO_R.empty() and "ERROR: The MPO R list is empty:");
-
-
-    state.ENV_L.clear();
-    state.ENV2_L.clear();
-    state.ENV_R.clear();
-    state.ENV2_R.clear();
-
-    {
-        auto ENV_L = class_environment("L",state.MPS_L.front().get_chiL(), state.MPO_L.front()->MPO().dimension(0));
-        auto ENV2_L = class_environment_var("L",state.MPS_L.front().get_chiL(), state.MPO_L.front()->MPO().dimension(0));
-        auto mpsL_it   = state.MPS_L.begin();
-        auto mpoL_it   = state.MPO_L.begin();
-
-        while(mpsL_it != state.MPS_L.end() and mpoL_it != state.MPO_L.end()) {
-            state.ENV_L.push_back(ENV_L);
-            state.ENV2_L.push_back(ENV2_L);
-            if (mpsL_it == state.MPS_L.end()) break;
-            ENV_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO());
-            ENV2_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO());
-//            throw_if_has_imaginary_part(state.ENV_L.back().block);
-
-            mpsL_it++;
-            mpoL_it++;
-        }
-    }
-
-
-
-    {
-        auto ENV_R  = class_environment("R",state.MPS_R.back().get_chiR(), state.MPO_L.back()->MPO().dimension(1));
-        auto ENV2_R = class_environment_var("R",state.MPS_R.back().get_chiR(), state.MPO_L.back()->MPO().dimension(1));
-        auto mpsR_it   = state.MPS_R.rbegin();
-        auto mpoR_it   = state.MPO_R.rbegin();
-        while(mpsR_it != state.MPS_R.rend() and mpoR_it != state.MPO_R.rend()){
-            state.ENV_R.push_front(ENV_R);
-            state.ENV2_R.push_front(ENV2_R);
-            if (mpsR_it == state.MPS_R.rend()) break;
-            ENV_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO());
-            ENV2_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO());
-//            throw_if_has_imaginary_part(state.ENV_R.front().block);
-            mpsR_it++;
-            mpoR_it++;
-        }
-    }
-
-
-    state.set_positions();
 }
 
 

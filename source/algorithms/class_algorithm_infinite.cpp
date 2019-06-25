@@ -77,6 +77,29 @@ void class_algorithm_infinite::swap(){
     t_sim.toc();
 }
 
+void class_algorithm_infinite::check_convergence_variance_mpo(double threshold,double slope_threshold){
+    //Based on the the slope of the variance
+    // We want to check every time we can because the variance is expensive to compute.
+    log->debug("Checking convergence of variance mpo");
+    threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
+    slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
+    compute_observables();
+    check_saturation_using_slope(B_mpo_vec,
+                                 V_mpo_vec,
+                                 X_mpo_vec,
+                                 superblock->measurements.energy_variance_per_site_mpo.value(),
+                                 sim_state.iteration,
+                                 1,
+                                 slope_threshold,
+                                 V_mpo_slope,
+                                 sim_state.variance_mpo_has_saturated);
+//    int rewind = std::min((int)B_mpo_vec.size(), (int)measurement->get_chain_length()/4 );
+//    auto b_it = B_mpo_vec.begin();
+//    std::advance(b_it, -rewind);
+    sim_state.variance_mpo_saturated_for = (int) count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
+    sim_state.variance_mpo_has_converged =  superblock->measurements.energy_variance_per_site_mpo.value() < threshold;
+
+}
 
 
 void class_algorithm_infinite::check_convergence_variance_ham(double threshold,double slope_threshold){

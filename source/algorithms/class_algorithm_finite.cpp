@@ -11,21 +11,26 @@
 #include <general/nmspc_math.h>
 #include <iomanip>
 
-class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type)
+class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type, size_t num_sites)
     : class_algorithm_base(std::move(h5ppFile_), sim_name,sim_type)
 
 {
-    log->trace("Constructing default state");
-    state            = std::make_shared<class_finite_chain_state>();
+    log->trace("Constructing class_algorithm_finite");
+    state = std::make_shared<class_finite_chain_state>();
+    mpstools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
+    mpstools::finite::mps::initialize(*state, num_sites);
+    mpstools::finite::mpo::randomize(*state);
+    mpstools::finite::mps::randomize(*state);
+    mpstools::finite::mps::project_to_closest_parity(*state, settings::model::symmetry);
+
     table_dmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
     table_dmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5pp_file, sim_name + "/measurements", "simulation_progress_full_chain", sim_name);
 
-
-    min_saturation_length = 1;// * (int)(1.0 * settings::xdmrg::num_sites);
-    max_saturation_length = 2;// * (int)(2.0 * settings::xdmrg::num_sites);
-
+    min_saturation_length = 1;
+    max_saturation_length = 4;
     mpstools::finite::print::print_hamiltonians(*state);
 }
+
 
 void class_algorithm_finite::run()
 /*!
@@ -44,7 +49,8 @@ void class_algorithm_finite::run()
  *
  */
 {
-    if (!sim_on()) { return; }
+    if (not sim_on()) { return; }
+    log->info("Starting {}",sim_name);
     t_tot.tic();
     if (h5pp_file->getCreateMode() == h5pp::CreateMode::OPEN){
         // This is case 1
@@ -140,10 +146,10 @@ void class_algorithm_finite::single_DMRG_step(std::string ritz){
     t_sim.tic();
     t_opt.tic();
     Eigen::Tensor<Scalar,4> theta;
-    std::tie(theta, sim_state.energy_now) = mpstools::finite::opt::find_optimal_ground_state(*state,sim_state, "SR");
+    std::tie(theta, sim_state.energy_now) = mpstools::finite::opt::find_optimal_ground_state(*state,sim_state, ritz);
     t_opt.toc();
     t_svd.tic();
-    mpstools::finite::opt::truncate_theta(theta,*state, sim_state);
+    mpstools::finite::opt::truncate_theta(theta, *state, sim_state.chi_temp, settings::precision::SVDThreshold);
     t_svd.toc();
     state->unset_measurements();
     t_sim.toc();
@@ -164,11 +170,11 @@ void class_algorithm_finite::move_center_point(){
 void class_algorithm_finite::reset_to_random_state(const std::string parity) {
     log->trace("Resetting MPS to random product state");
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
-    sim_state.iteration = state->reset_sweeps();
-
     // Randomize state
-    *state = mpstools::finite::ops::set_random_product_state(*state,parity);
+    mpstools::finite::mps::randomize(*state);
+    mpstools::finite::mps::project_to_closest_parity(*state,parity);
     clear_saturation_status();
+    sim_state.iteration = state->get_sweeps();
 }
 
 
@@ -301,33 +307,33 @@ void class_algorithm_finite::store_table_entry_site_state(bool force){
     );
     t_sto.toc();
 }
-
-void class_algorithm_finite::store_table_entry_progress(bool force){
-    if(not force) {
-        if (Math::mod(sim_state.step, store_freq()) != 0) { return; }
-        if (store_freq()) { return; }
-        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
-
-    }
-    compute_observables();
-    log->trace("Storing table entry to file");
-    t_sto.tic();
-//    table_dmrg->append_record(
-//            sim_state.step,
-//            state->get_length(),
-//            state->get_position(),
-//            state->measurements.bond_dimension_current.value(),
-//            settings::xdmrg::chi_max,
-//            state->measurements.energy_per_site.value(),
-//            sim_state.energy_min,
-//            sim_state.energy_max,
-//            sim_state.energy_target,
-//            state->measurements.energy_variance_per_site.value(),
-//            state->measurements.entanglement_entropy_midchain.value(),
-//            state->truncation_error[state->get_position()],
-//            t_tot.get_age());
-    t_sto.toc();
-}
+//
+//void class_algorithm_finite::store_table_entry_progress(bool force){
+//    if(not force) {
+//        if (Math::mod(sim_state.step, store_freq()) != 0) { return; }
+//        if (store_freq()) { return; }
+//        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
+//
+//    }
+//    compute_observables();
+//    log->trace("Storing table entry to file");
+//    t_sto.tic();
+////    table_dmrg->append_record(
+////            sim_state.step,
+////            state->get_length(),
+////            state->get_position(),
+////            state->measurements.bond_dimension_current.value(),
+////            settings::xdmrg::chi_max,
+////            state->measurements.energy_per_site.value(),
+////            sim_state.energy_min,
+////            sim_state.energy_max,
+////            sim_state.energy_target,
+////            state->measurements.energy_variance_per_site.value(),
+////            state->measurements.entanglement_entropy_midchain.value(),
+////            state->truncation_error[state->get_position()],
+////            t_tot.get_age());
+//    t_sto.toc();
+//}
 
 
 void class_algorithm_finite::print_profiling(){

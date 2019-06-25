@@ -31,9 +31,10 @@ public:
     void swap();
     void run()                                                          override;
     void compute_observables()                                          final;
+    void clear_saturation_status()                                      override;
     void reset_to_random_state(const std::string parity)                final;
     void store_state_and_measurements_to_file(bool force = false)       final;
-    void store_table_entry_progress(bool force = false)                 final;
+//    void store_table_entry_progress(bool force = false)                 final;
     void print_status_update()                                          final;
     void print_status_full()                                            final;
     void print_profiling()                                              final;
@@ -45,7 +46,6 @@ public:
     void check_convergence_variance_ham(double threshold = quietNaN,double slope_threshold = quietNaN);
     void check_convergence_variance_mom(double threshold = quietNaN,double slope_threshold = quietNaN);
     void check_convergence_entg_entropy(double slope_threshold = quietNaN);
-    void clear_saturation_status();
 
     std::list<bool>   B_mpo_vec; //History of saturation true/false
     std::list<double> V_mpo_vec; //History of variances

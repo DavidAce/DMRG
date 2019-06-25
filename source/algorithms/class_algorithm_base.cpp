@@ -52,10 +52,8 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     log->trace("Constructing class_algorithm_base");
     set_profiling_labels();
     mpstools::common::profiling::init_profiling(settings::profiling::on,settings::profiling::precision);
-    log->trace("Constructing table_profiling");
     table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(h5pp_file, sim_name + "/measurements", "profiling", sim_name);
-    log->trace("Constructing superblock");
-    log->trace("Writing input_file");
+    log->trace("Writing input file");
     h5pp_file->writeDataset(settings::input::input_file, "common/input_file");
     h5pp_file->writeDataset(settings::input::input_filename, "common/input_filename");
 }
@@ -146,9 +144,8 @@ void class_algorithm_base::update_bond_dimension(size_t min_saturation_length){
         sim_state.chi_temp = chi_max();
         sim_state.bond_dimension_has_reached_max = true;
     }
-    if(not sim_state.variance_mpo_has_converged
-       and sim_state.variance_mpo_has_saturated
-       and sim_state.variance_mpo_saturated_for >= min_saturation_length
+    if(not sim_state.simulation_has_converged
+       and sim_state.simulation_has_saturated
        and sim_state.chi_temp < chi_max()){
         log->trace("Updating bond dimension");
         sim_state.chi_temp = std::min(chi_max(), sim_state.chi_temp * 2);

@@ -15,9 +15,9 @@ class class_tic_toc;
 
 namespace mpstools::finite::opt{
     namespace internals{
-        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> subspace_optimization       (const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace, OptType optType);
-        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> direct_optimization         (const class_finite_chain_state & state, const class_simulation_state &sim_state, OptType optType);
-        extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> cppoptlib_optimization      (const class_finite_chain_state & state, const class_simulation_state & sim_state);
+        extern std::tuple<Eigen::Tensor<std::complex<double>,3>, double> subspace_optimization       (const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace, OptType optType);
+        extern std::tuple<Eigen::Tensor<std::complex<double>,3>, double> direct_optimization         (const class_finite_chain_state & state, const class_simulation_state &sim_state, OptType optType);
+        extern std::tuple<Eigen::Tensor<std::complex<double>,3>, double> cppoptlib_optimization      (const class_finite_chain_state & state, const class_simulation_state & sim_state);
         extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> ground_state_optimization   (const class_finite_chain_state & state, const class_simulation_state & sim_state, std::string ritz = "SR");
 
 
@@ -102,22 +102,13 @@ namespace mpstools::finite::opt{
         inline auto params = get_params();
 
         template<typename Scalar>
-        struct superblock_components{
-            Eigen::Tensor<Scalar,4> HA_MPO;
-            Eigen::Tensor<Scalar,4> HB_MPO;
-            Eigen::Tensor<Scalar,3> Lblock;
-            Eigen::Tensor<Scalar,3> Rblock;
-            Eigen::Tensor<Scalar,4> Lblock2;
-            Eigen::Tensor<Scalar,4> Rblock2;
-            Eigen::Tensor<Scalar,6> HAHB;
-            Eigen::Tensor<Scalar,6> HAHA;
-            Eigen::Tensor<Scalar,6> HBHB;
-            Eigen::Tensor<Scalar,8> HAHB2;
-            Eigen::Tensor<Scalar,6> Lblock2HAHA;
-            Eigen::Tensor<Scalar,6> Rblock2HBHB;
-            Eigen::DSizes<long,4>   dsizes;
-            explicit superblock_components(const class_superblock &superblock);
-
+        struct MultiComponents{
+            Eigen::Tensor<Scalar,3> envL, envR;
+            Eigen::Tensor<Scalar,4> env2L, env2R;
+            Eigen::Tensor<Scalar,4> mpo;
+            Eigen::Tensor<Scalar,6> mpo2;
+            Eigen::DSizes<long,3>   dsizes;
+            explicit MultiComponents(const class_finite_chain_state & state);
         } ;
 
 
@@ -141,7 +132,7 @@ namespace mpstools::finite::opt{
             int    counter = 0;
             bool   have_bounds_on_energy = false;
         public:
-            base_functor(const class_superblock & superblock, const class_simulation_state &sim_state);
+            base_functor(const class_finite_chain_state & state, const class_simulation_state &sim_state);
             double get_variance() const ;
             double get_energy  () const ;
             size_t get_count   () const ;
@@ -161,7 +152,7 @@ namespace mpstools::finite::opt{
         public:
 
             explicit subspace_functor(
-                    const class_superblock & superblock,
+                    const class_finite_chain_state & state,
                     const class_simulation_state &sim_state,
                     const Eigen::MatrixXcd &eigvecs_,
                     const Eigen::VectorXd  &eigvals_);
@@ -175,9 +166,9 @@ namespace mpstools::finite::opt{
         private:
             using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
             using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
-            superblock_components<Scalar> superComponents;
+            MultiComponents<Scalar> multiComponents;
         public:
-            explicit direct_functor(const class_superblock &superblock, const class_simulation_state & sim_state);
+            explicit direct_functor(const class_finite_chain_state & state, const class_simulation_state & sim_state);
             double operator()(const Eigen::VectorXd &v_double_double, Eigen::VectorXd &grad_double_double) override;
         };
 
@@ -188,31 +179,31 @@ namespace mpstools::finite::opt{
         template<typename Scalar> using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic, 1>;
 
         template<typename Derived>
-        VectorType<typename Derived::Scalar> get_vH2 (const Eigen::MatrixBase<Derived> &v, const superblock_components<typename Derived::Scalar> &superComponents){
+        VectorType<typename Derived::Scalar> get_vH2 (const Eigen::MatrixBase<Derived> &v, const MultiComponents<typename Derived::Scalar> &multiComponents){
             using Scalar = typename Derived::Scalar;
-            Eigen::Tensor<Scalar,4> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,4>>(v.derived().data(), superComponents.dsizes).shuffle(Textra::array4{1,0,3,2});
+            Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), multiComponents.dsizes).shuffle(Textra::array3{1,0,2});
             t_vH2->tic();
-            Eigen::Tensor<Scalar,4> vH2 =
+            Eigen::Tensor<Scalar,3> vH2 =
                     theta
-                            .contract(superComponents.Lblock2, Textra::idx({0}, {0}))
-                            .contract(superComponents.HAHB2,   Textra::idx({5,4,0,2}, {4, 0, 1, 3}))
-                            .contract(superComponents.Rblock2, Textra::idx({0,2,4}, {0, 2, 3}))
-                            .shuffle(Textra::array4{1, 0, 2, 3});
+                    .contract(multiComponents.env2L, Textra::idx({0}, {0}))
+                    .contract(multiComponents.mpo2 , Textra::idx({0,3,4}, {2,0,3}))
+                    .contract(multiComponents.env2R, Textra::idx({0,2,3}, {0, 2, 3}))
+                    .shuffle(Textra::array3{1, 0, 2});
 
             t_vH2->toc();
             return Eigen::Map<VectorType<Scalar>>(vH2.data(),vH2.size());
         }
         template<typename Derived>
-        VectorType<typename Derived::Scalar> get_vH (const Eigen::MatrixBase<Derived> &v, const superblock_components<typename Derived::Scalar> &superComponents){
+        VectorType<typename Derived::Scalar> get_vH (const Eigen::MatrixBase<Derived> &v, const MultiComponents<typename Derived::Scalar> &multiComponents){
             using Scalar = typename Derived::Scalar;
-            auto theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,4>> (v.derived().data(), superComponents.dsizes);
+            Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), multiComponents.dsizes).shuffle(Textra::array3{1,0,2});
             t_vH->tic();
-            Eigen::Tensor<Scalar,4> vH =
-                    superComponents.Lblock
-                            .contract(theta,                               Textra::idx({0},{1}))
-                            .contract(superComponents.HAHB,                Textra::idx({1,2,3},{0,1,4}))
-                            .contract(superComponents.Rblock ,             Textra::idx({1,3},{0,2}))
-                            .shuffle(Textra::array4{1,0,2,3});
+            Eigen::Tensor<Scalar,3> vH =
+                            theta
+                            .contract(multiComponents.envL, Textra::idx({0}, {0}))
+                            .contract(multiComponents.mpo , Textra::idx({0,3}, {2,0}))
+                            .contract(multiComponents.envR, Textra::idx({0,2}, {0, 2}))
+                            .shuffle(Textra::array3{1, 0, 2});
             t_vH->toc();
 
             return Eigen::Map<VectorType<Scalar>>(vH.data(),vH.size());
@@ -221,8 +212,8 @@ namespace mpstools::finite::opt{
         template<typename Derived>
         std::pair<VectorType<typename Derived::Scalar>,typename Derived::Scalar>
                 get_Hv_vHv(const Eigen::MatrixBase<Derived> &v,
-                           const superblock_components<typename Derived::Scalar> &superComponents){
-            auto Hv = mpstools::finite::opt::internals::get_vH(v,superComponents);
+                           const MultiComponents<typename Derived::Scalar> &multiComponents){
+            auto Hv = mpstools::finite::opt::internals::get_vH(v,multiComponents);
             t_vHv->tic();
             auto vHv = v.dot(Hv);
             t_vHv->toc();
@@ -233,8 +224,8 @@ namespace mpstools::finite::opt{
         template<typename Derived>
         std::pair<VectorType<typename Derived::Scalar>,typename Derived::Scalar>
                 get_H2v_vH2v(const Eigen::MatrixBase<Derived> &v,
-                             const superblock_components<typename Derived::Scalar> &superComponents){
-            auto H2v = mpstools::finite::opt::internals::get_vH2(v,superComponents);
+                             const MultiComponents<typename Derived::Scalar> &multiComponents){
+            auto H2v = mpstools::finite::opt::internals::get_vH2(v,multiComponents);
             t_vH2v->tic();
             auto vH2v = v.dot(H2v);
             t_vH2v->toc();

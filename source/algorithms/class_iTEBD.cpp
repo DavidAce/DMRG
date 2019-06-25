@@ -47,17 +47,16 @@ void class_iTEBD::run_simulation()    {
     while(sim_state.iteration < settings::itebd::max_steps and not sim_state.simulation_has_converged) {
         single_TEBD_step(sim_state.chi_temp);
         sim_state.phys_time += sim_state.delta_t;
-        store_table_entry_progress();
+//        store_table_entry_progress();
         store_profiling_deltas();
         print_status_update();
         check_convergence();
         sim_state.iteration++;
     }
     t_tot.toc();
-
-
-
 }
+
+
 void class_iTEBD::run_postprocessing(){
     print_status_full();
     print_profiling();

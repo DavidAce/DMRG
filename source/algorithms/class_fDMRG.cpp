@@ -20,11 +20,8 @@ using namespace std;
 using namespace Textra;
 
 class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
-        : class_algorithm_finite(std::move(h5ppFile_),"fDMRG", SimulationType::fDMRG) {
-    mpstools::finite::mpo::initialize_mpo(*state, settings::model::model_type, settings::fdmrg::num_sites);
-    mpstools::finite::mps::initialize_mps(*state, settings::model::symmetry,   settings::fdmrg::num_sites);
-    min_saturation_length = 0.5 * settings::fdmrg::num_sites;
-    max_saturation_length = 1.0 * settings::fdmrg::num_sites;
+        : class_algorithm_finite(std::move(h5ppFile_),"fDMRG", SimulationType::fDMRG, settings::fdmrg::num_sites) {
+    log->trace("Constructing class_fDMRG");
     settings::fdmrg::min_sweeps = std::max(settings::fdmrg::min_sweeps, 1+(size_t)(std::log2(chi_max())/2));
 }
 
@@ -34,9 +31,8 @@ void class_fDMRG::run_simulation(){
     log->info("Starting {} simulation", sim_name);
     while(true) {
         single_DMRG_step("SR");
-        copy_superblock_to_chain();         //Needs to occurr after update_MPS...
-        store_table_entry_progress();
-        store_chain_entry_to_file();
+//        store_table_entry_progress();
+//        store_chain_entry_to_file();
         store_profiling_deltas();
         store_state_and_measurements_to_file();
 

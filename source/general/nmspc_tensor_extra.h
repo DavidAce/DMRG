@@ -277,7 +277,7 @@ namespace Textra {
 
 
     template<typename Derived>
-    bool isReal(const Eigen::EigenBase<Derived> &obj,const std::string &name = "", double threshold = 1e-14) {
+    bool isReal(const Eigen::EigenBase<Derived> &obj,[[maybe_unused]]const std::string &name = "", double threshold = 1e-14) {
         using Scalar = typename Derived::Scalar;
         if constexpr (TypeCheck::is_specialization<Scalar, std::complex>::value){
             auto imag_sum = obj.derived().imag().cwiseAbs().sum();

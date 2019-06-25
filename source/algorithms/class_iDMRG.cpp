@@ -23,14 +23,14 @@ class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 
 
 
-void class_iDMRG::run() {
+void class_iDMRG::run_simulation() {
     if (not settings::idmrg::on) { return; }
     log->info("Starting {} simulation", sim_name);
     t_tot.tic();
     while(true){
         single_DMRG_step(eigutils::eigSetting::Ritz::SR);
         print_status_update();
-        store_table_entry_progress();
+//        store_table_entry_progress();
         store_profiling_deltas();
         check_convergence();
 

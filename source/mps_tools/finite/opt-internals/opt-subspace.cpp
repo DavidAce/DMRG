@@ -11,6 +11,7 @@
 #include <mps_tools/finite/opt.h>
 #include <mps_state/class_finite_chain_state.h>
 #include <LBFGS.h>
+#include <sim_parameters/nmspc_sim_settings.h>
 #include <general/nmspc_random_numbers.h>
 
 using namespace mpstools::finite::opt;
@@ -23,7 +24,7 @@ template<typename T> using MatrixType = Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dy
 
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,4> &theta, std::vector<reports::eig_tuple> &eig_log){
+find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,3> &theta, std::vector<reports::eig_tuple> &eig_log){
     mpstools::log->trace("Finding subspace -- full");
     using namespace eigutils::eigSetting;
     t_eig->tic();
@@ -89,7 +90,7 @@ std::vector<int> mpstools::finite::opt::internals::generate_size_list(size_t sha
 
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,4> &theta, double energy_target, std::vector<reports::eig_tuple> &eig_log){
+find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,3> &theta, double energy_target, std::vector<reports::eig_tuple> &eig_log){
     mpstools::log->trace("Finding subspace -- partial");
     using namespace eigutils::eigSetting;
 
@@ -157,12 +158,19 @@ find_subspace(const class_finite_chain_state & state, const class_simulation_sta
     using namespace eigutils::eigSetting;
     t_ham->tic();
 
-    MatrixType<Scalar> H_local = state.get_H_local_matrix<Scalar>();
+    MatrixType<Scalar> H_local;
+    if constexpr(std::is_same<Scalar,double>::value){
+        H_local = state.get_multi_hamiltonian_matrix().real();
+    }
+    if constexpr(std::is_same<Scalar,std::complex<double>>::value){
+        H_local = state.get_multi_hamiltonian_matrix();
+    }
+
     if(not H_local.isApprox(H_local.adjoint(), 1e-14)){
         throw std::runtime_error("H_local is not hermitian!");
     }
     t_ham->toc();
-    auto theta = state.get_theta();
+    auto theta = state.get_multitheta();
 
 
     Eigen::MatrixXcd eigvecs;
@@ -200,14 +208,14 @@ find_subspace(const class_finite_chain_state & state, const class_simulation_sta
 
 
 
-std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
+std::tuple<Eigen::Tensor<std::complex<double>,3>, double>
 mpstools::finite::opt::internals::subspace_optimization(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace, OptType optType){
     mpstools::log->trace("Optimizing in SUBSPACE mode");
     using Scalar = std::complex<double>;
     using namespace eigutils::eigSetting;
 
     double chain_length    = state.get_length();
-    auto theta             = state.get_theta();
+    auto theta             = state.get_multitheta();
     auto theta_old         = Eigen::Map<const Eigen::VectorXcd>  (theta.data(),theta.size());
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
@@ -218,7 +226,7 @@ mpstools::finite::opt::internals::subspace_optimization(const class_finite_chain
 
     if (optMode == OptMode::OVERLAP){
         return std::make_tuple(
-                Textra::Matrix_to_Tensor(eigvecs, state.dimensions()),
+                Textra::Matrix_to_Tensor(eigvecs, state.active_dimensions()),
                 eigvals(0)/state.get_length()
         );
     }else if (optMode == OptMode::VARIANCE){
@@ -367,7 +375,7 @@ mpstools::finite::opt::internals::subspace_optimization(const class_finite_chain
 
 
     if (variance_new < variance_0){
-        return  std::make_tuple(Textra::Matrix_to_Tensor(theta_new, state.dimensions()), energy_new);
+        return  std::make_tuple(Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()), energy_new);
 
     }else{
         return  std::make_tuple(theta, energy_0);

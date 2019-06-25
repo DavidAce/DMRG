@@ -22,7 +22,6 @@ public:
 
 
 
-    void run()                                                            override;
     void run_simulation()                                                 override;
     void run_preprocessing()                                              override;
     void run_postprocessing()                                             override;

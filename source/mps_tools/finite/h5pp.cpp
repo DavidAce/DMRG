@@ -145,8 +145,8 @@ void mpstools::finite::io::write_closest_parity_projection(const class_finite_ch
 void mpstools::finite::io::load_from_hdf5(const h5pp::File & h5ppFile, class_finite_chain_state & state, class_simulation_state &sim_state, std::string sim_name){
     // Load into state
     try{
-        load_sim_state_from_hdf5(h5ppFile,sim_state,sim_name);
-        load_state_from_hdf5(h5ppFile,state,sim_name);
+        sim_state = load_sim_state_from_hdf5(h5ppFile,sim_name);
+        state     = load_state_from_hdf5(h5ppFile,sim_name);
         state.set_sweeps(sim_state.iteration);
         mpstools::finite::debug::check_integrity(state,sim_state);
     }catch(std::exception &ex){
@@ -154,7 +154,8 @@ void mpstools::finite::io::load_from_hdf5(const h5pp::File & h5ppFile, class_fin
     }
 }
 
-void mpstools::finite::io::load_state_from_hdf5(const h5pp::File & h5ppFile, class_finite_chain_state & state, std::string sim_name){
+class_finite_chain_state mpstools::finite::io::load_state_from_hdf5(const h5pp::File & h5ppFile, std::string sim_name){
+    class_finite_chain_state state;
     size_t position = 0;
     size_t sites   = 0;
     Eigen::Tensor<Scalar,3> G;
@@ -170,8 +171,6 @@ void mpstools::finite::io::load_state_from_hdf5(const h5pp::File & h5ppFile, cla
     }catch (std::exception &ex){
         throw std::runtime_error("Couldn't read necessary model parameters: " + std::string(ex.what()));
     }
-    state.clear();
-    state.set_max_sites(sites);
 
     try {
         for(size_t i = 0; i < sites; i++){
@@ -204,11 +203,12 @@ void mpstools::finite::io::load_state_from_hdf5(const h5pp::File & h5ppFile, cla
     }catch (std::exception &ex){
         throw std::runtime_error("Could not read MPS/MPO tensors from file: " + std::string(ex.what()));
     }
-    mpstools::finite::ops::rebuild_environments(state);
+    mpstools::finite::mps::rebuild_environments(state);
+    return state;
 }
 
-void mpstools::finite::io::load_sim_state_from_hdf5 (const h5pp::File & h5ppFile, class_simulation_state &sim_state, std::string sim_name){
-    sim_state.clear();
+class_simulation_state mpstools::finite::io::load_sim_state_from_hdf5 (const h5pp::File & h5ppFile, std::string sim_name){
+    class_simulation_state sim_state;
     // common variables
     try{
         h5ppFile.readDataset(sim_state.iteration                      , sim_name + "/sim_state/iteration");
@@ -232,6 +232,7 @@ void mpstools::finite::io::load_sim_state_from_hdf5 (const h5pp::File & h5ppFile
         h5ppFile.readDataset(sim_state.delta_t                        , sim_name + "/sim_state/delta_t");
         h5ppFile.readDataset(sim_state.time_step_has_converged        , sim_name + "/sim_state/time_step_has_converged");
         h5ppFile.readDataset(sim_state.simulation_has_converged       , sim_name + "/sim_state/simulation_has_converged");
+        h5ppFile.readDataset(sim_state.simulation_has_saturated       , sim_name + "/sim_state/simulation_has_saturated");
         h5ppFile.readDataset(sim_state.simulation_has_to_stop         , sim_name + "/sim_state/simulation_has_to_stop");
         h5ppFile.readDataset(sim_state.bond_dimension_has_reached_max , sim_name + "/sim_state/bond_dimension_has_reached_max");
         h5ppFile.readDataset(sim_state.entanglement_has_converged     , sim_name + "/sim_state/entanglement_has_converged");
@@ -248,4 +249,5 @@ void mpstools::finite::io::load_sim_state_from_hdf5 (const h5pp::File & h5ppFile
     }catch(std::exception &ex){
         throw std::runtime_error("Failed to load sim_state from hdf5: " + std::string(ex.what()));
     }
+    return sim_state;
 }

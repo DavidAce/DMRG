@@ -92,9 +92,9 @@ namespace settings {
     //Parameters controlling fDMRG
     namespace fdmrg {
         inline bool     on           = true;                         /*!< Turns fDMRG simulation on/off. */
-        inline size_t   num_sites    = 30;                           /*!< Number sweeps along the 1D quantum chain. */
-        inline size_t   max_sweeps   = 10;                           /*!< Max number sweeps along the 1D quantum chain. */
-        inline size_t   min_sweeps   = 4;                            /*!< Min number sweeps along the 1D quantum chain. */
+        inline size_t   num_sites    = 16;                           /*!< Number of sites on the chain */
+        inline size_t   max_sweeps   = 10;                           /*!< Max number sweeps along the chain. */
+        inline size_t   min_sweeps   = 4;                            /*!< Min number sweeps along the chain. */
         inline long     chi_max      = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_grow     = true;                         /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         inline size_t   print_freq   = 100;                          /*!< Print frequency for console output. In units of sweeps. (0 = off). */
@@ -104,18 +104,17 @@ namespace settings {
 
     //Parameters controlling xDMRG
     namespace xdmrg {
-        inline bool     on                      = true;                    /*!< Turns xDMRG simulation on/off. */
-        inline size_t   num_sites               = 200;                     /*!< Number sweeps along the 1D quantum chain. */
-        inline size_t   max_sweeps              = 10;                      /*!< Number sweeps along the 1D quantum chain. */
-        inline size_t   min_sweeps              = 4;                       /*!< Min number sweeps along the 1D quantum chain. */
-        inline long     chi_max                 = 8;                       /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline bool     chi_grow                = true;                    /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
-        inline size_t   print_freq              = 100;                     /*!< Print frequency for console output. In units of sweeps. (0 = off). */
-        inline size_t   store_freq              = 100;                     /*!< Store frequency,for output file buffer. In units of sweeps. (0 = off). */
-        inline bool     store_wavefn            = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-        inline double   energy_density_target   = 0.5;                     /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
-        inline double   energy_density_window   = 0.01;                    /*!< Accept states inside of energy_target +- energy_window. */
-
+        inline bool     on                      = true;             /*!< Turns xDMRG simulation on/off. */
+        inline size_t   num_sites               = 16;               /*!< Number of sites on the chain */
+        inline size_t   max_sweeps              = 10;               /*!< Max number sweeps along the chain. */
+        inline size_t   min_sweeps              = 4;                /*!< Min number sweeps along the chain. */
+        inline long     chi_max                 = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline bool     chi_grow                = true;             /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
+        inline size_t   print_freq              = 1;                /*!< Print frequency for console output. In units of sweeps. (0 = off). */
+        inline size_t   store_freq              = 1;                /*!< Store frequency,for output file buffer. In units of sweeps. (0 = off). */
+        inline bool     store_wavefn            = false;            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+        inline double   energy_density_target   = 0.5;              /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
+        inline double   energy_density_window   = 0.05;             /*!< Accept states inside of energy_target +- energy_window. */
     }
 
     //Parameters controlling iTEBD

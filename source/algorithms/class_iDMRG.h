@@ -19,10 +19,10 @@ public:
 //    explicit class_iDMRG(std::shared_ptr<class_hdf5_file> hdf5_);
     explicit class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
 
-    void run()                                          override;
-    void run_simulation()                               override;
-    void run_preprocessing()                            override;
-    void run_postprocessing()                           override;
+    void run_simulation()                                 override;
+//    void run_simulation()                               override;
+//    void run_preprocessing()                            override;
+//    void run_postprocessing()                           override;
 
     void single_DMRG_step(eigutils::eigSetting::Ritz ritz);
 

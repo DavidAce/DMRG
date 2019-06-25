@@ -15,12 +15,6 @@ void mpstools::finite::debug::check_integrity(const class_finite_chain_state &st
 {
     mpstools::log->info("Checking integrity...");
     try{
-        check_integrity_of_sim(state, sim_state);
-    }catch(std::exception & ex){
-        std::cout << sim_state << std::endl;
-        throw std::runtime_error("Integrity check of constants failed: " + std::string(ex.what()));
-    }
-    try{
         check_integrity_of_mps(state);
     }catch(std::exception & ex){
         mpstools::finite::print::print_state(state) ;
@@ -329,7 +323,7 @@ void mpstools::finite::debug::check_normalization_routine(const class_finite_cha
     std::cout << "Overlap 3ID = " << overlap_3ID << std::endl;
     mpstools::log->info("\t Normalizing state");
 
-    mpstools::finite::ops::normalize_chain(state_3ID);
+    mpstools::finite::mps::normalize(state_3ID);
     mpstools::log->info("\t Measuring new norm");
     norm_3ID     = mpstools::finite::measure::norm(state_3ID);
     mpstools::log->info("\t Measuring new overlap");
@@ -375,11 +369,11 @@ void mpstools::finite::debug::check_normalization_routine(const class_finite_cha
     std::cout << "<P- psi   | P-P- psi>      = " << overlap_sx_dn_dn_dn << std::endl;
 
     mpstools::log->info("\t Normalizing states");
-    mpstools::finite::ops::normalize_chain(state_sx_up);
-    mpstools::finite::ops::normalize_chain(state_sx_dn);
-    mpstools::finite::ops::normalize_chain(state_sx_dn_up);
-    mpstools::finite::ops::normalize_chain(state_sx_up_up);
-    mpstools::finite::ops::normalize_chain(state_sx_dn_dn);
+    mpstools::finite::mps::normalize(state_sx_up);
+    mpstools::finite::mps::normalize(state_sx_dn);
+    mpstools::finite::mps::normalize(state_sx_dn_up);
+    mpstools::finite::mps::normalize(state_sx_up_up);
+    mpstools::finite::mps::normalize(state_sx_dn_dn);
     mpstools::log->info("\t Measuring new norms");
     norm_sx_up     = mpstools::finite::measure::norm(state_sx_up);
     norm_sx_dn     = mpstools::finite::measure::norm(state_sx_dn);
