@@ -95,12 +95,13 @@ public:
         std::optional<double>               energy_per_site_mpo                     = {};
         std::optional<double>               energy_variance_mpo                     = {};
         std::optional<double>               energy_variance_per_site_mpo            = {};
-        std::optional<double>               midchain_entanglement_entropy           = {};
         std::optional<double>               spin_component_sx                       = {};
         std::optional<double>               spin_component_sy                       = {};
         std::optional<double>               spin_component_sz                       = {};
         std::optional<std::vector<double>>  spin_components                         = {};
         std::optional<std::vector<double>>  entanglement_entropies                  = {};
+        std::optional<double>               entanglement_entropy_midchain           = {};
+        std::optional<double>               entanglement_entropy_current            = {};
     };
     mutable Measurements measurements;
     void unset_measurements() const;

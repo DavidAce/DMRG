@@ -170,12 +170,24 @@ double mpstools::finite::measure::energy_variance_per_site_mpo(const class_finit
 
 
 
-double mpstools::finite::measure::midchain_entanglement_entropy(const class_finite_chain_state & state){
-    if (state.measurements.midchain_entanglement_entropy){return state.measurements.midchain_entanglement_entropy.value();}
+double mpstools::finite::measure::entanglement_entropy_current(const class_finite_chain_state & state){
+    if (state.measurements.entanglement_entropy_current){return state.measurements.entanglement_entropy_current.value();}
     auto & LC = state.MPS_C;
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
-    return std::real(SA(0));
+    state.measurements.entanglement_entropy_current = std::real(SA(0));
+    return state.measurements.entanglement_entropy_current.value();
+}
+
+
+double mpstools::finite::measure::entanglement_entropy_midchain(const class_finite_chain_state & state){
+    if (state.measurements.entanglement_entropy_midchain){return state.measurements.entanglement_entropy_midchain.value();}
+    size_t middle = state.get_length()/2;
+    auto & LC = state.get_L(middle);
+    Eigen::Tensor<Scalar,0> SA  = -LC.square()
+            .contract(LC.square().log().eval(), idx({0},{0}));
+    state.measurements.entanglement_entropy_midchain = std::real(SA(0));
+    return state.measurements.entanglement_entropy_midchain.value();
 }
 
 
@@ -187,8 +199,8 @@ std::vector<double> mpstools::finite::measure::entanglement_entropies(const clas
         Eigen::Tensor<Scalar, 0> SA_L = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
         SA.emplace_back(std::real(SA_L(0)));
     }
-    state.measurements.midchain_entanglement_entropy = midchain_entanglement_entropy(state);
-    SA.emplace_back(state.measurements.midchain_entanglement_entropy.value());
+    state.measurements.entanglement_entropy_current = entanglement_entropy_current(state);
+    SA.emplace_back(state.measurements.entanglement_entropy_current.value());
     for (auto & mps : state.MPS_R) {
         auto &L = mps.get_L();
         Eigen::Tensor<Scalar, 0> SA_R = -L.square().contract(L.square().log().eval(), idx({0}, {0}));

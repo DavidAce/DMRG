@@ -27,6 +27,8 @@ void class_finite_chain_state::do_all_measurements(){
     measurements.energy_per_site_mpo            = measure::energy_per_site_mpo(*this);
     measurements.energy_variance_mpo            = measure::energy_variance_mpo(*this);
     measurements.energy_variance_per_site_mpo   = measure::energy_variance_per_site_mpo(*this);
+    measurements.entanglement_entropy_current   = measure::entanglement_entropy_current (*this);
+    measurements.entanglement_entropy_midchain  = measure::entanglement_entropy_midchain(*this);
     measurements.entanglement_entropies         = measure::entanglement_entropies(*this);
     measurements.spin_components                = measure::spin_components(*this);
 }
