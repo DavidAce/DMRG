@@ -244,7 +244,7 @@ std::vector<double> class_selfdual_tf_rf_ising::get_parameter_values() const {
 
 
 void class_selfdual_tf_rf_ising::set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters){
-    // Calculate average J_rnd on the whole chain
+    // Calculate average J_rnd on the whole state
     all_mpo_parameters_have_been_set = true;
     std::vector<double> J_rnd_vec;
     std::vector<double> h_rnd_vec;

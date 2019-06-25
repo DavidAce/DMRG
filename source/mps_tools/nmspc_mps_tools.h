@@ -34,20 +34,15 @@ namespace mpstools{
      * MPS and environments for all sites of the lattice.
      */
     {
-        namespace chain {
-            extern void initialize_state(class_finite_chain_state &state, std::string model_type, std::string parity, const size_t length);
-            extern void randomize_mpos  (class_finite_chain_state &state);
-
-            extern void copy_superblock_to_state        (class_finite_chain_state &state, const class_superblock & superblock);    /*!< Update the MPS, MPO and ENV stored at current position.*/
-            extern void copy_superblock_mps_to_state    (class_finite_chain_state &state, const class_superblock & superblock);    /*!< Update the MPS stored at current position.*/
-            extern void copy_superblock_mpo_to_state    (class_finite_chain_state &state, const class_superblock & superblock);    /*!< Update the MPO stored at current position.*/
-            extern void copy_superblock_env_to_state    (class_finite_chain_state &state, const class_superblock & superblock);    /*!< Update the ENV stored at current position.*/
-            extern int  insert_superblock_to_state      (class_finite_chain_state &state, const class_superblock & superblock);          /*!< Store current MPS and environments indexed by their respective positions on the chain. */
-            extern int  move_center_point               (class_finite_chain_state &state, class_superblock & superblock);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
-            extern void copy_state_to_superblock        (const class_finite_chain_state & state , class_superblock & superblock);    /*!< Update the MPS stored at current position.*/
+        namespace mps {
+            extern void initialize_mps                  (class_finite_chain_state & state, std::string parity, const size_t length);
+            extern int  move_center_point               (class_finite_chain_state & state);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
         }
 
-
+        namespace mpo {
+            extern void initialize_mpo                 (class_finite_chain_state & state, std::string model_type, const size_t length);
+            extern void randomize_mpo                  (class_finite_chain_state & state);
+        }
 
         namespace ops {
             extern std::list<Eigen::Tensor<std::complex<double>,4>>
@@ -66,7 +61,6 @@ namespace mpstools{
             extern class_finite_chain_state
             get_closest_parity_state                  (const class_finite_chain_state &state, const std::string paulistring);
             extern void rebuild_environments          (class_finite_chain_state &state);
-            extern void rebuild_superblock            (const class_finite_chain_state &state, class_superblock & superblock);
             extern double overlap                     (const class_finite_chain_state &state1, const class_finite_chain_state &state2);
             extern double expectation_value           (const class_finite_chain_state &state1, const class_finite_chain_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, Eigen::Tensor<std::complex<double>,3> Ledge, Eigen::Tensor<std::complex<double>,3> Redge);
         }
@@ -76,11 +70,13 @@ namespace mpstools{
             enum class OptMode  {OVERLAP, VARIANCE};
             enum class OptSpace {PARTIAL,FULL,DIRECT};
             enum class OptType  {REAL, CPLX};
-            extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_excited_state(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType);
+            extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_excited_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType);
+            extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_ground_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, std::string ritz = "SR");
+            extern void truncate_theta(Eigen::Tensor<std::complex<double>,4> theta, const class_finite_chain_state & state, const class_simulation_state & sim_state);
         }
 
         namespace multisite{
-            extern std::vector<size_t>  compute_best_jump(class_finite_chain_state &state, mpstools::finite::opt::OptSpace optSpace);
+            extern std::vector<size_t>  generate_site_list(class_finite_chain_state &state, long threshold);
         }
 
 
@@ -88,15 +84,18 @@ namespace mpstools{
 
 //            extern void do_all_measurements                           (class_finite_chain_state & state);
             extern int length                                         (const class_finite_chain_state & state);
-            extern std::vector<int> bond_dimensions                   (const class_finite_chain_state & state);
+            extern size_t bond_dimension_current                      (const class_finite_chain_state & state);
+            extern size_t bond_dimension_midchain                     (const class_finite_chain_state & state);
+            extern std::vector<size_t> bond_dimensions                (const class_finite_chain_state & state);
             extern double norm                                        (const class_finite_chain_state & state);
-            extern double energy_mpo                                  (const class_finite_chain_state & state);
-            extern double energy_per_site_mpo                         (const class_finite_chain_state & state);
-            extern double energy_variance_mpo                         (const class_finite_chain_state & state);
-            extern double energy_variance_per_site_mpo                (const class_finite_chain_state & state);
-            extern double midchain_entanglement_entropy               (const class_finite_chain_state & state);
+            extern double energy(const class_finite_chain_state &state);
+            extern double energy_per_site(const class_finite_chain_state &state);
+            extern double energy_variance(const class_finite_chain_state &state);
+            extern double energy_variance_per_site(const class_finite_chain_state &state);
             extern double spin_component                              (const class_finite_chain_state & state, Eigen::Matrix2cd paulimatrix);
             extern Eigen::Tensor<std::complex<double>,1> mps_wavefn   (const class_finite_chain_state & state);
+            extern double entanglement_entropy_current                (const class_finite_chain_state & state);
+            extern double entanglement_entropy_midchain               (const class_finite_chain_state & state);
             extern std::vector<double> entanglement_entropies         (const class_finite_chain_state & state);
             extern std::vector<double> spin_components                (const class_finite_chain_state & state);
         }
@@ -119,7 +118,7 @@ namespace mpstools{
             extern void write_entanglement                 (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
             extern void write_all_measurements             (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name);
             extern void write_closest_parity_projection    (const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name, std::string paulistring);
-            extern void load_from_hdf5                     (const h5pp::File & h5ppFile, class_finite_chain_state & state    , class_superblock & superblock, class_simulation_state & sim_state, std::string sim_name);
+            extern void load_from_hdf5                     (const h5pp::File & h5ppFile, class_finite_chain_state & state    , class_simulation_state & sim_state, std::string sim_name);
             extern void load_state_from_hdf5               (const h5pp::File & h5ppFile, class_finite_chain_state & state    , std::string sim_name);
             extern void load_sim_state_from_hdf5           (const h5pp::File & h5ppFile, class_simulation_state   & sim_state, std::string sim_name);
 //            extern void load_sim_state_from_hdf5           (class_simulation_state &sim_state, class_hdf5_file &hdf5, std::string sim_name);
@@ -127,8 +126,8 @@ namespace mpstools{
         }
 
         namespace debug {
-            extern void check_integrity             (const class_finite_chain_state & state, const class_superblock & superblock, const class_simulation_state & sim_state);
-            extern void check_integrity_of_sim      (const class_finite_chain_state & state, const class_superblock & superblock, const class_simulation_state & sim_state);
+            extern void check_integrity             (const class_finite_chain_state & state, const class_simulation_state & sim_state);
+            extern void check_integrity_of_sim      (const class_finite_chain_state & state, const class_simulation_state & sim_state);
             extern void check_integrity_of_mps      (const class_finite_chain_state & state);
             extern void check_normalization_routine (const class_finite_chain_state & state);
             extern void print_parity_properties     (const class_finite_chain_state & state);
@@ -147,24 +146,11 @@ namespace mpstools{
      * class_superblock containing the local 2-site MPS + ENV representation.
      */
     {
+        namespace mps{
+            extern class_superblock set_random_state(const class_superblock & superblock, std::string parity);
+        }
 
         namespace measure{
-
-//            namespace results {
-//                extern int length;
-//                extern int bond_dimension;
-//                extern double norm;
-//                extern double truncation_error;
-//                extern double energy_mpo;
-//                extern double energy_ham;
-//                extern double energy_mom;
-//                extern double energy_per_site;
-//                extern double energy_variance;
-//                extern double energy_variance_per_site;
-//                extern double mps_wavefn;
-//                extern double midchain_entanglement_entropy;
-//                extern bool   superblock_measured;
-//            }
             extern void   do_all_measurements             (const class_superblock & superblock);
             extern int    length                          (const class_superblock & superblock);
             extern double norm                            (const class_superblock & superblock);
@@ -197,6 +183,14 @@ namespace mpstools{
             extern void load_sim_state_from_hdf5           (const h5pp::File & h5ppFile, class_simulation_state & sim_state, std::string sim_name);
 
         }
+        namespace debug {
+            extern void check_integrity             (const class_superblock & superblock, const class_simulation_state & sim_state);
+            extern void check_integrity_of_sim      (const class_superblock & superblock, const class_simulation_state & sim_state);
+            extern void check_integrity_of_mps      (const class_superblock & superblock);
+            extern void check_normalization_routine (const class_superblock & superblock);
+
+        }
+
 
     }
 

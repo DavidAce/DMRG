@@ -9,7 +9,7 @@
 #include <general/arpack_extra/matrix_product_sparse.h>
 #include <spdlog/spdlog.h>
 #include <mps_tools/finite/opt.h>
-#include <mps_state/class_superblock.h>
+#include <mps_state/class_finite_chain_state.h>
 #include <LBFGS.h>
 #include <general/nmspc_random_numbers.h>
 
@@ -151,24 +151,24 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
 
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-find_subspace(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace){
+find_subspace(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace){
     mpstools::log->trace("Finding subspace");
 
     using namespace eigutils::eigSetting;
     t_ham->tic();
 
-    MatrixType<Scalar> H_local = superblock.get_H_local_matrix<Scalar>();
+    MatrixType<Scalar> H_local = state.get_H_local_matrix<Scalar>();
     if(not H_local.isApprox(H_local.adjoint(), 1e-14)){
         throw std::runtime_error("H_local is not hermitian!");
     }
     t_ham->toc();
-    auto theta = superblock.get_theta();
+    auto theta = state.get_theta();
 
 
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
     std::vector<reports::eig_tuple> eig_log;
-    double energy_target = superblock.get_length() * sim_state.energy_now;
+    double energy_target = state.get_length() * sim_state.energy_now;
     switch (optSpace){
         case OptSpace::FULL    : std::tie(eigvecs,eigvals) = find_subspace_full(H_local,theta,eig_log); break;
         case OptSpace::PARTIAL : std::tie(eigvecs,eigvals) = find_subspace_part(H_local,theta,energy_target,eig_log); break;
@@ -201,32 +201,32 @@ find_subspace(const class_superblock & superblock, const class_simulation_state 
 
 
 std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
-mpstools::finite::opt::internals::subspace_optimization(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace, OptType optType){
+mpstools::finite::opt::internals::subspace_optimization(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace, OptType optType){
     mpstools::log->trace("Optimizing in SUBSPACE mode");
     using Scalar = std::complex<double>;
     using namespace eigutils::eigSetting;
 
-    double chain_length    = superblock.get_length();
-    auto theta             = superblock.get_theta();
+    double chain_length    = state.get_length();
+    auto theta             = state.get_theta();
     auto theta_old         = Eigen::Map<const Eigen::VectorXcd>  (theta.data(),theta.size());
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
     switch(optType){
-        case OptType::CPLX:     std::tie (eigvecs,eigvals)  = find_subspace<Scalar>(superblock,sim_state, optMode,optSpace); break;
-        case OptType::REAL:     std::tie (eigvecs,eigvals)  = find_subspace<double>(superblock,sim_state, optMode,optSpace); break;
+        case OptType::CPLX:     std::tie (eigvecs,eigvals)  = find_subspace<Scalar>(state,sim_state, optMode,optSpace); break;
+        case OptType::REAL:     std::tie (eigvecs,eigvals)  = find_subspace<double>(state,sim_state, optMode,optSpace); break;
     }
 
     if (optMode == OptMode::OVERLAP){
         return std::make_tuple(
-                Textra::Matrix_to_Tensor(eigvecs, superblock.dimensions()),
-                eigvals(0)/superblock.get_length()
+                Textra::Matrix_to_Tensor(eigvecs, state.dimensions()),
+                eigvals(0)/state.get_length()
         );
     }else if (optMode == OptMode::VARIANCE){
         Eigen::VectorXd overlaps = (theta_old.adjoint() * eigvecs).cwiseAbs().real();
         double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
         double subspace_quality  = 1.0 - sq_sum_overlap;
         if(subspace_quality >= settings::precision::VarConvergenceThreshold) {
-            return direct_optimization(superblock, sim_state, optType);
+            return direct_optimization(state, sim_state, optType);
         }
     }
 
@@ -243,8 +243,8 @@ mpstools::finite::opt::internals::subspace_optimization(const class_superblock &
 
 
     t_opt->tic();
-    double energy_0   = mpstools::common::measure::energy_per_site_mpo(superblock);
-    double variance_0 = mpstools::common::measure::energy_variance_per_site_mpo(superblock);
+    double energy_0   = mpstools::finite::measure::energy_per_site(state);
+    double variance_0 = mpstools::finite::measure::energy_variance_per_site(state);
     t_opt->toc();
     Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
 
@@ -270,8 +270,8 @@ mpstools::finite::opt::internals::subspace_optimization(const class_superblock &
 //    Eigen::VectorXcd theta_start_check     =  (eigvecs.adjoint()  * theta_old_check) ;
 //    theta_start = (eigvecs.adjoint()  * theta_old_check);
 
-//    Eigen::MatrixXcd H  = eigvecs.adjoint() * superblock.get_H_local_matrix() * eigvecs;
-//    Eigen::MatrixXcd H2 = eigvecs.adjoint() * superblock.get_H_local_sq_matrix() * eigvecs;
+//    Eigen::MatrixXcd H  = eigvecs.adjoint() * state.get_H_local_matrix() * eigvecs;
+//    Eigen::MatrixXcd H2 = eigvecs.adjoint() * state.get_H_local_sq_matrix() * eigvecs;
 //
 //    std::cout << "check_num              : " << check_num << std::endl;
 //    std::cout << "Norm theta_start_check : " << theta_start_check.norm() << std::endl;
@@ -298,8 +298,8 @@ mpstools::finite::opt::internals::subspace_optimization(const class_superblock &
 //
 //    Scalar overlap_check            = theta_old_check.adjoint() * theta_check ;
 //
-//    double energy_init   = mpstools::common::measure::energy_mpo         (superblock,Textra::Matrix_to_Tensor(theta_check, superblock.dimensions()));
-//    double variance_init = mpstools::common::measure::energy_variance_mpo(superblock,Textra::Matrix_to_Tensor(theta_check, superblock.dimensions()),energy_init);
+//    double energy_init   = mpstools::common::measure::energy         (state,Textra::Matrix_to_Tensor(theta_check, state.dimensions()));
+//    double variance_init = mpstools::common::measure::energy_variance(state,Textra::Matrix_to_Tensor(theta_check, state.dimensions()),energy_init);
 //
 
 //    opt_log.emplace_back("Sanity check",theta.size(), vHv.real()/chain_length, std::log10(variance_check.real()/ chain_length), std::abs(overlap_check), 0,0, 0);
@@ -314,7 +314,7 @@ mpstools::finite::opt::internals::subspace_optimization(const class_superblock &
     LBFGSpp::LBFGSSolver<double> solver(params);
     switch (optType){
         case OptType::CPLX:{
-            mpstools::finite::opt::internals::subspace_functor <Scalar>  functor (superblock,sim_state,eigvecs,eigvals);
+            mpstools::finite::opt::internals::subspace_functor <Scalar>  functor (state,sim_state,eigvecs,eigvals);
             Eigen::VectorXd  theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double*> (theta_start.data()), 2*theta_start.size());
             niter = solver.minimize(functor, theta_start_cast, fx);
             theta_start = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
@@ -326,7 +326,7 @@ mpstools::finite::opt::internals::subspace_optimization(const class_superblock &
             break;
         }
         case OptType::REAL:{
-            mpstools::finite::opt::internals::subspace_functor <double> functor (superblock,sim_state,eigvecs.real(),eigvals);
+            mpstools::finite::opt::internals::subspace_functor <double> functor (state,sim_state,eigvecs.real(),eigvals);
             Eigen::VectorXd  theta_start_cast = theta_start.real();
             niter = solver.minimize(functor, theta_start_cast, fx);
             theta_start = theta_start_cast.normalized().cast<Scalar>();
@@ -346,8 +346,8 @@ mpstools::finite::opt::internals::subspace_optimization(const class_superblock &
     mpstools::log->trace("Finished LBFGS");
 
     reports::print_report(opt_log);
-//    double energy_tmp   = mpstools::common::measure::energy_mpo(superblock,Textra::Matrix_to_Tensor(theta_new, superblock.dimensions()));
-//    double variance_tmp = mpstools::common::measure::energy_variance_mpo(superblock,Textra::Matrix_to_Tensor(theta_new, superblock.dimensions()),energy_tmp);
+//    double energy_tmp   = mpstools::common::measure::energy(state,Textra::Matrix_to_Tensor(theta_new, state.dimensions()));
+//    double variance_tmp = mpstools::common::measure::energy_variance(state,Textra::Matrix_to_Tensor(theta_new, state.dimensions()),energy_tmp);
 
 //    std::cout << "Energy   check2           : " << energy_check2/chain_length    << std::endl;
 //    std::cout << "Variance check2 (complex) : " << std::log10(variance_check2/chain_length)         << std::endl;
@@ -367,7 +367,7 @@ mpstools::finite::opt::internals::subspace_optimization(const class_superblock &
 
 
     if (variance_new < variance_0){
-        return  std::make_tuple(Textra::Matrix_to_Tensor(theta_new, superblock.dimensions()), energy_new);
+        return  std::make_tuple(Textra::Matrix_to_Tensor(theta_new, state.dimensions()), energy_new);
 
     }else{
         return  std::make_tuple(theta, energy_0);

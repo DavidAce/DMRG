@@ -2,11 +2,14 @@
 // Created by david on 2019-06-24.
 //
 
+
 #include "class_algorithm_finite.h"
 #include <h5pp/h5pp.h>
 #include <mps_tools/nmspc_mps_tools.h>
 #include <mps_state/class_finite_chain_state.h>
+#include <io/class_hdf5_table_buffer2.h>
 #include <general/nmspc_math.h>
+#include <iomanip>
 
 class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type)
     : class_algorithm_base(std::move(h5ppFile_), sim_name,sim_type)
@@ -21,14 +24,7 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     min_saturation_length = 1;// * (int)(1.0 * settings::xdmrg::num_sites);
     max_saturation_length = 2;// * (int)(2.0 * settings::xdmrg::num_sites);
 
-    settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(size_t)(std::log2(chi_max())/2));
-
-
-    class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
-    : class_algorithm_finite(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG) {
-
-    }
-
+    mpstools::finite::print::print_hamiltonians(*state);
 }
 
 void class_algorithm_finite::run()
@@ -108,18 +104,98 @@ void class_algorithm_finite::run()
 }
 
 
+void class_algorithm_finite::run_preprocessing(){
 
-void class_algorithm_finite::initialize_chain() {
-    while(true){
-        insert_superblock_to_chain();
-        if (state->get_length()  < (unsigned long) num_sites()) {
-            enlarge_environment();
-            swap();
-        } else {
-            break;
-        }
-    }
+
 }
+
+void class_algorithm_finite::run_postprocessing(){
+    log->info("Running {} postprocessing",sim_name);
+    mpstools::finite::debug::check_integrity(*state,sim_state);
+    state->unset_measurements();
+    state->do_all_measurements();
+    mpstools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
+    mpstools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
+
+    mpstools::finite::debug::print_parity_properties(*state);
+    mpstools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
+
+    //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
+    if(store_wave_function()){
+        h5pp_file->writeDataset(mpstools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");
+    }
+    print_status_full();
+    print_profiling();
+    h5pp_file->writeDataset(true, sim_name + "/simOK");
+    log->info("Finished {} postprocessing",sim_name);
+}
+
+
+
+void class_algorithm_finite::single_DMRG_step(std::string ritz){
+/*!
+ * \fn void single_DMRG_step(class_superblock &superblock)
+ */
+    log->trace("Starting single DMRG step");
+    t_sim.tic();
+    t_opt.tic();
+    Eigen::Tensor<Scalar,4> theta;
+    std::tie(theta, sim_state.energy_now) = mpstools::finite::opt::find_optimal_ground_state(*state,sim_state, "SR");
+    t_opt.toc();
+    t_svd.tic();
+    mpstools::finite::opt::truncate_theta(theta,*state, sim_state);
+    t_svd.toc();
+    state->unset_measurements();
+    t_sim.toc();
+    sim_state.wall_time = t_tot.get_age();
+    sim_state.simu_time = t_sim.get_age();
+}
+
+
+void class_algorithm_finite::move_center_point(){
+    log->trace("Moving center point ");
+    t_sim.tic();
+    t_ste.tic();
+    mpstools::finite::mps::move_center_point(*state);
+    t_ste.toc();
+    t_sim.toc();
+}
+
+void class_algorithm_finite::reset_to_random_state(const std::string parity) {
+    log->trace("Resetting MPS to random product state");
+    if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
+    sim_state.iteration = state->reset_sweeps();
+
+    // Randomize state
+    *state = mpstools::finite::ops::set_random_product_state(*state,parity);
+    clear_saturation_status();
+}
+
+
+void class_algorithm_finite::check_convergence_variance(double threshold,double slope_threshold){
+    //Based on the the slope of the variance
+    // We want to check every time we can because the variance is expensive to compute.
+    log->debug("Checking convergence of variance mpo");
+    threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
+    slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
+    compute_observables();
+    check_saturation_using_slope(B_mpo_vec,
+                                 V_mpo_vec,
+                                 X_mpo_vec,
+                                 state->measurements.energy_variance_per_site.value(),
+                                 sim_state.iteration,
+                                 1,
+                                 slope_threshold,
+                                 V_mpo_slope,
+                                 sim_state.variance_mpo_has_saturated);
+//    int rewind = std::min((int)B_mpo_vec.size(), (int)measurement->get_chain_length()/4 );
+//    auto b_it = B_mpo_vec.begin();
+//    std::advance(b_it, -rewind);
+    sim_state.variance_mpo_saturated_for = (int) count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
+    sim_state.variance_mpo_has_converged =  state->measurements.energy_variance_per_site.value() < threshold;
+
+}
+
 
 void class_algorithm_finite::check_convergence_entg_entropy(double slope_threshold) {
     //Based on the the slope of entanglement middle_entanglement_entropy
@@ -143,17 +219,29 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
 }
 
 
-void class_algorithm_finite::run_postprocessing(){
-    log->info("Running {} postprocessing",sim_name);
-    mpstools::finite::debug::check_integrity(*state,sim_state);
+void class_algorithm_finite::clear_saturation_status(){
+    log->trace("Clearing saturation status");
 
-//    mpstools::finite::debug::check_normalization_routine(*state);
+    BS_vec.clear();
+    S_vec.clear();
+    XS_vec.clear();
 
-    state->unset_measurements();
-    log->info("Storing state and measurements to file");
-    store_state_and_measurements_to_file(true);
-    log->info("Finished {} postprocessing",sim_name);
+    B_mpo_vec.clear();
+    V_mpo_vec.clear();
+    X_mpo_vec.clear();
+
+    sim_state.entanglement_has_saturated      = false;
+    sim_state.variance_mpo_has_saturated      = false;
+
+    sim_state.variance_mpo_saturated_for = 0;
+
+    sim_state.entanglement_has_converged = false;
+    sim_state.variance_mpo_has_converged = false;
+
+    sim_state.bond_dimension_has_reached_max = false;
+    sim_state.simulation_has_to_stop         = false;
 }
+
 
 void class_algorithm_finite::compute_observables(){
     log->trace("Starting all measurements on current superblock");
@@ -165,6 +253,33 @@ void class_algorithm_finite::compute_observables(){
 }
 
 
+void class_algorithm_finite::store_state_and_measurements_to_file(bool force){
+    if(not force){
+        if (not settings::hdf5::save_progress){return;}
+        if (Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
+        if (not state->position_is_any_edge()) {return;}
+        if (settings::xdmrg::store_freq == 0){return;}
+        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
+    }
+    state->unset_measurements();
+    compute_observables();
+    log->trace("Writing all measurements to file");
+    t_sto.tic();
+    h5pp_file->writeDataset(false, sim_name + "/simOK");
+    mpstools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
+    mpstools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
+    //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
+    if(store_wave_function()){
+        h5pp_file->writeDataset(mpstools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");
+    }
+    mpstools::finite::io::write_all_state(*state, *h5pp_file, sim_name);
+    t_sto.toc();
+    store_algorithm_state_to_file();
+    h5pp_file->writeDataset(true, sim_name + "/simOK");
+}
+
+
+
 void class_algorithm_finite::store_table_entry_site_state(bool force){
     if (not force) {
         if (Math::mod(sim_state.iteration, store_freq()) != 0) { return; }
@@ -172,21 +287,47 @@ void class_algorithm_finite::store_table_entry_site_state(bool force){
 //        if (not state->position_is_the_middle()) { return; }
         if (settings::hdf5::storage_level < StorageLevel::FULL){return;}
     }
-
     log->trace("Storing chain_entry to file");
+    compute_observables();
     t_sto.tic();
     table_dmrg_chain->append_record(
             sim_state.iteration,
             state->get_length(),
             state->get_position(),
-            mpstools::common::measure::bond_dimension(*state),
+            state->measurements.bond_dimension_midchain.value(),
             sim_state.energy_now,
-            mpstools::common::measure::current_entanglement_entropy(*superblock),
-            mpstools::common::measure::truncation_error(*superblock)
+            state->measurements.entanglement_entropy_midchain.value(),
+            state->truncation_error[state->get_position()]
     );
     t_sto.toc();
 }
 
+void class_algorithm_finite::store_table_entry_progress(bool force){
+    if(not force) {
+        if (Math::mod(sim_state.step, store_freq()) != 0) { return; }
+        if (store_freq()) { return; }
+        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
+
+    }
+    compute_observables();
+    log->trace("Storing table entry to file");
+    t_sto.tic();
+//    table_dmrg->append_record(
+//            sim_state.step,
+//            state->get_length(),
+//            state->get_position(),
+//            state->measurements.bond_dimension_current.value(),
+//            settings::xdmrg::chi_max,
+//            state->measurements.energy_per_site.value(),
+//            sim_state.energy_min,
+//            sim_state.energy_max,
+//            sim_state.energy_target,
+//            state->measurements.energy_variance_per_site.value(),
+//            state->measurements.entanglement_entropy_midchain.value(),
+//            state->truncation_error[state->get_position()],
+//            t_tot.get_age());
+    t_sto.toc();
+}
 
 
 void class_algorithm_finite::print_profiling(){
@@ -217,3 +358,139 @@ void class_algorithm_finite::print_profiling_sim(class_tic_toc &t_parent){
         t_con.print_time_w_percent(t_parent);
     }
 }
+
+
+void class_algorithm_finite::print_status_update() {
+    if (Math::mod(sim_state.iteration, print_freq()) != 0) {return;}
+//    if (not state->position_is_the_middle()) {return;}
+    if (print_freq() == 0) {return;}
+    using namespace std;
+    compute_observables();
+    t_prt.tic();
+    std::stringstream report;
+    report << setprecision(16) << fixed << left;
+    report << left  << sim_name << " ";
+    report << left  << "Iter: "                       << setw(6) << sim_state.iteration;
+    report << left  << "E: ";
+
+    switch(sim_type) {
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            report << setw(21) << setprecision(16)    << fixed   << state->measurements.energy_per_site.value();
+            break;
+        default: throw std::runtime_error("Wrong simulation type");
+    }
+
+    if (sim_type == SimulationType::xDMRG){
+        report << left  << " ε: "<< setw(8) << setprecision(4) << fixed << sim_state.energy_dens;
+    }
+
+    report << left  << "log₁₀ σ²(E): ";
+    switch(sim_type) {
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            report << setw(14) << setprecision(6)    << fixed   << std::log10(state->measurements.energy_variance_per_site.value());
+            break;
+        default: throw std::runtime_error("Wrong simulation type");
+
+    }
+
+
+    report << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << state->measurements.entanglement_entropy_current.value();
+    report << left  << "χmax: "                       << setw(4)  << setprecision(3)     << fixed   << chi_max();
+    report << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << state->measurements.bond_dimension_current.value();
+    report << left  << "log₁₀ trunc: "                << setw(10) << setprecision(4)     << fixed   << std::log10(state->truncation_error[state->get_position()]);
+    report << left  << "Sites: "                      << setw(6)  << setprecision(1)     << fixed   << state->get_length();
+    switch(sim_type){
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            report << left  << "@ site: "                    << setw(5)  << state->get_position();
+            break;
+        default: throw std::runtime_error("Wrong simulation type");
+
+    }
+
+    report << left  << " Convergence [";
+    switch(sim_type){
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            report << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_converged;
+            report << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_converged;
+            break;
+        default: throw std::runtime_error("Wrong simulation type");
+
+    }
+    report << left  << "]";
+    report << left  << " Saturation [";
+    switch(sim_type){
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            report << left  << " σ²-" << setw(2) << sim_state.variance_mpo_saturated_for << " steps";
+            break;
+        default: throw std::runtime_error("Wrong simulation type");
+
+    }
+    report << left  << "]";
+    report << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << t_tot.get_age() ;
+    report << left << " Memory [";
+    report << left << "Rss: "     << process_memory_in_mb("VmRSS")<< " MB ";
+    report << left << "RssPeak: "  << process_memory_in_mb("VmHWM")<< " MB ";
+    report << left << "VmPeak: "  << process_memory_in_mb("VmPeak")<< " MB";
+    report << left << "]";
+    log->info(report.str());
+    t_prt.toc();
+}
+
+void class_algorithm_finite::print_status_full(){
+    compute_observables();
+
+    using namespace mpstools::common::measure;
+    t_prt.tic();
+    log->info("--- Final results  --- {} ---", sim_name);
+    log->info("Iterations            = {:<16d}"    , sim_state.iteration);
+    switch(sim_type){
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            log->info("Energy MPO            = {:<16.16f}" , state->measurements.energy_per_site.value());
+            break;
+        default: throw std::runtime_error("Wrong simulation type");
+    }
+    switch(sim_type){
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            log->info("log₁₀ σ²(E) MPO       = {:<16.16f}" , log10(state->measurements.energy_variance_per_site.value()));
+            break;
+        default: throw std::runtime_error("Wrong simulation type");
+
+    }
+    log->info("Mid-chain properties");
+    log->info("Entanglement Entropy  = {:<16.16f}" , state->measurements.entanglement_entropy_midchain.value());
+    log->info("χmax                  = {:<16d}"    , chi_max());
+    log->info("χ                     = {:<16d}"    , state->measurements.bond_dimension_midchain.value());
+    log->info("log₁₀ truncation:     = {:<16.16f}" , log10(state->truncation_error[state->get_length()/2]));
+
+    switch(sim_type){
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            log->info("state length          = {:<16d}"    , state->measurements.length.value());
+            log->info("Sweep                 = {:<16d}"    , state->get_sweeps());
+            break;
+        default: throw std::runtime_error("Wrong simulation type");
+
+    }
+
+    log->info("Simulation converged  = {:<}"    , sim_state.simulation_has_converged);
+
+    switch(sim_type){
+        case SimulationType::fDMRG:
+        case SimulationType::xDMRG:
+            log->info("σ² MPO slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_mpo_slope ,sim_state.variance_mpo_has_converged, sim_state.variance_mpo_has_saturated);
+            break;
+        default: throw std::runtime_error("Wrong simulation type");
+    }
+    log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_state.entanglement_has_converged, sim_state.entanglement_has_saturated);
+    log->info("Time                  = {:<16.16f}" , t_tot.get_age());
+    log->info("Peak memory           = {:<6.1f} MB" , process_memory_in_mb("VmPeak"));
+    t_prt.toc();
+}
+

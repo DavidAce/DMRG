@@ -93,7 +93,7 @@ using namespace Textra;
 //
 //
 //
-//double mpstools::infinite::measure::energy_mpo(const class_superblock & superblock){
+//double mpstools::infinite::measure::energy(const class_superblock & superblock){
 ////    superblock.t_ene_mpo.tic();
 //    double energy = mpstools::finite::measure::energy(superblock);
 //    double L      = mpstools::finite::measure::length(superblock);
@@ -159,7 +159,7 @@ using namespace Textra;
 //}
 //
 //
-//double mpstools::infinite::measure::energy_variance_per_site_mpo(const class_superblock &superblock) {
+//double mpstools::infinite::measure::energy_variance_per_site(const class_superblock &superblock) {
 //
 //    double VarE  = mpstools::finite::measure::energy_variance(superblock);
 //    double L     = mpstools::finite::measure::length(superblock);

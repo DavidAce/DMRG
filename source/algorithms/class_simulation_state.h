@@ -12,8 +12,8 @@
 class class_simulation_state{
 public:
     // common variables
-    size_t iteration                      = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
-    size_t step                           = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
+    size_t iteration                      = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the state.
+    size_t step                           = 0; //In fdmrg and xdmrg: how many individual moves along the state.
     size_t position                       = 0;
     long   chi_temp                       = 16;
     long   chi_max                        = 16;

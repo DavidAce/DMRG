@@ -19,9 +19,9 @@ using namespace Textra;
 //using namespace std::complex_literals;
 
 class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
-        : class_algorithm_base(std::move(h5ppFile_),"iTEBD", SimulationType::iTEBD) {
+        : class_algorithm_infinite(std::move(h5ppFile_),"iTEBD", SimulationType::iTEBD) {
 //    initialize_constants();
-    table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
+//    table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
     sim_state.delta_t      = settings::itebd::delta_t0;
 //    initialize_superblock(settings::model::initial_state);
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -32,13 +32,18 @@ class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
 }
 
 
-void class_iTEBD::run() {
-    if (!settings::itebd::on) { return; }
-    log->info("Starting {} simulation", sim_name);
+
+void class_iTEBD::run_preprocessing() {
     t_tot.tic();
     sim_state.delta_t = settings::itebd::delta_t0;
     unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(sim_state.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
-//    superblock->H->update_evolution_step_size(-settings::itebd::delta_t0, settings::itebd::suzuki_order);
+    t_tot.toc();
+}
+
+
+void class_iTEBD::run_simulation()    {
+    log->info("Starting {} simulation", sim_name);
+    t_tot.tic();
     while(sim_state.iteration < settings::itebd::max_steps and not sim_state.simulation_has_converged) {
         single_TEBD_step(sim_state.chi_temp);
         sim_state.phys_time += sim_state.delta_t;
@@ -49,14 +54,14 @@ void class_iTEBD::run() {
         sim_state.iteration++;
     }
     t_tot.toc();
+
+
+
+}
+void class_iTEBD::run_postprocessing(){
     print_status_full();
     print_profiling();
 }
-
-
-void class_iTEBD::run_simulation()    {}
-void class_iTEBD::run_preprocessing() {}
-void class_iTEBD::run_postprocessing(){}
 
 void class_iTEBD::single_TEBD_step(long chi){
 /*!
@@ -96,16 +101,7 @@ void class_iTEBD::single_TEBD_step(long chi){
 //    settings::itebd::store_freq   = itebd::settings::itebd::store_freq  ;
 //}
 
-void class_iTEBD::store_state_and_measurements_to_file(bool force){
-    if(not force){
-        if (Math::mod(sim_state.iteration, settings::itebd::store_freq) != 0) {return;}
-        if (settings::itebd::store_freq == 0){return;}
-    }
-    log->trace("Storing storing mps to file");
-    t_sto.tic();
-    mpstools::infinite::io::write_all_superblock(*superblock, *h5pp_file, sim_name);
-    t_sto.toc();
-}
+
 
 void class_iTEBD::check_convergence_time_step(){
     if(sim_state.delta_t <= settings::itebd::delta_tmin){
@@ -137,58 +133,35 @@ void class_iTEBD::check_convergence(){
 }
 
 
-void class_iTEBD::store_table_entry_progress(bool force){
-    if (not force){
-        if (Math::mod(sim_state.iteration, settings::itebd::store_freq) != 0) {return;}
-    }
-    compute_observables(*superblock);
-    t_sto.tic();
-    table_itebd->append_record(
-            sim_state.iteration,
-            superblock->measurements.bond_dimension.value(),
-            settings::itebd::chi_max,
-            sim_state.delta_t,
-            superblock->measurements.energy_per_site_mpo.value(),
-            superblock->measurements.energy_per_site_ham.value(),
-            superblock->measurements.energy_per_site_mom.value(),
-            superblock->measurements.energy_variance_per_site_mpo.value(),
-            superblock->measurements.energy_variance_per_site_ham.value(),
-            superblock->measurements.energy_variance_per_site_mom.value(),
-            superblock->measurements.current_entanglement_entropy.value(),
-            superblock->measurements.truncation_error.value(),
-            sim_state.phys_time,
-            t_tot.get_age());
+//void class_iTEBD::store_table_entry_progress(bool force){
+//    if (not force){
+//        if (Math::mod(sim_state.iteration, settings::itebd::store_freq) != 0) {return;}
+//    }
+//    compute_observables();
+//    t_sto.tic();
+//    table_itebd->append_record(
+//            sim_state.iteration,
+//            superblock->measurements.bond_dimension.value(),
+//            settings::itebd::chi_max,
+//            sim_state.delta_t,
+//            superblock->measurements.energy_per_site.value(),
+//            superblock->measurements.energy_per_site_ham.value(),
+//            superblock->measurements.energy_per_site_mom.value(),
+//            superblock->measurements.energy_variance_per_site.value(),
+//            superblock->measurements.energy_variance_per_site_ham.value(),
+//            superblock->measurements.energy_variance_per_site_mom.value(),
+//            superblock->measurements.current_entanglement_entropy.value(),
+//            superblock->measurements.truncation_error.value(),
+//            sim_state.phys_time,
+//            t_tot.get_age());
+//
+//    t_sto.toc();
+//}
 
-    t_sto.toc();
-}
-
+bool   class_iTEBD::sim_on()    {return settings::itebd::on;}
 long   class_iTEBD::chi_max()   {return settings::itebd::chi_max;}
 size_t class_iTEBD::num_sites() {return 2u;}
 size_t class_iTEBD::store_freq(){return settings::itebd::store_freq;}
 size_t class_iTEBD::print_freq(){return settings::itebd::print_freq;}
 bool   class_iTEBD::chi_grow()  {return settings::itebd::chi_grow;}
 
-
-void class_iTEBD::print_profiling(){
-    if (settings::profiling::on) {
-        t_tot.print_time_w_percent();
-        t_sto.print_time_w_percent(t_tot);
-        t_prt.print_time_w_percent(t_tot);
-        t_obs.print_time_w_percent(t_tot);
-        t_sim.print_time_w_percent(t_tot);
-        print_profiling_sim(t_sim);
-//        superblock->print_profiling(t_obs);
-    }
-}
-
-void class_iTEBD::print_profiling_sim(class_tic_toc &t_parent){
-    if (settings::profiling::on) {
-        std::cout << "\n Simulation breakdown:" << std::endl;
-        std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
-        t_evo.print_time_w_percent(t_parent);
-        t_svd.print_time_w_percent(t_parent);
-        t_env.print_time_w_percent(t_parent);
-        t_con.print_time_w_percent(t_parent);
-        t_udt.print_time_w_percent(t_parent);
-    }
-}

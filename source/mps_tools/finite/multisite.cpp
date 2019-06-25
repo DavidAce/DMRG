@@ -7,7 +7,7 @@
 #include <mps_state/class_finite_chain_state.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 
-std::vector<size_t> mpstools::finite::multisite::compute_best_jump(class_finite_chain_state &state,  mpstools::finite::opt::OptSpace optSpace){
+std::vector<size_t> mpstools::finite::multisite::generate_site_list(class_finite_chain_state &state, long threshold){
     using namespace Textra;
     size_t position  = state.get_position();
     size_t direction = state.get_direction();
@@ -32,19 +32,13 @@ std::vector<size_t> mpstools::finite::multisite::compute_best_jump(class_finite_
     // Case 1: All costs are equal              -> take all sites
     // Case 2: Costs increase indefinitely      -> take until threshold
     // Case 3: Costs increase and saturate      -> take until threshold
-    long threshold = 0;
-    switch(optSpace){
-        case mpstools::finite::opt::OptSpace::FULL    : threshold = 2 * 2 * 16 * 16; break;
-        case mpstools::finite::opt::OptSpace::PARTIAL : threshold = 2 * 2 * 32 * 16; break;
-        case mpstools::finite::opt::OptSpace::DIRECT  : threshold = 2 * 2 * settings::xdmrg::chi_max *  settings::xdmrg::chi_max; break;
-    }
 
     auto costsmap = Eigen::Map<Eigen::Array<long, Eigen::Dynamic,1>>(costs.data(),costs.size());
     bool allequal = (costsmap == costsmap(0)).all();
     for (auto & c : costs){
         if (allequal){std::cout << "allequal\n"; break;}
         if (sites.size() == 1){break;}
-        if (sites.size() == 0){throw std::logic_error("No sites for a jump");}
+        if (sites.empty()){throw std::logic_error("No sites for a jump");}
         if (c <= threshold){break;}
         else{
             sites.pop_back();

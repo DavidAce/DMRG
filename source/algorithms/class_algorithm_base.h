@@ -14,11 +14,9 @@
 #include <general/class_tic_toc.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 #include <algorithms/class_simulation_state.h>
-class class_superblock;
-class class_finite_chain_state;
 class class_hdf5_file;
-class class_table_profiling;
 template <typename table_type> class class_hdf5_table;
+class class_table_profiling;
 namespace h5pp{class File;}
 namespace spdlog{class logger;}
 
@@ -29,19 +27,13 @@ protected:
 public:
     using Scalar = std::complex<double>;
     class_algorithm_base() = default;
-//    class_algorithm_base(std::shared_ptr<class_hdf5_file> hdf5_,
-//                         std::string sim_name_,
-//                         SimulationType sim_type_);
     class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_,
                          std::string sim_name_,
                          SimulationType sim_type_);
-    enum class StopReason {CONVERGED, SATURATED, MAX_STEPS};
-    StopReason stop_reason;
+    enum class StopReason {CONVERGED, SATURATED, MAX_STEPS} stop_reason;
     void set_profiling_labels ();
 
-    //Storage
-//    std::shared_ptr<class_hdf5_file>         hdf5;
-    std::shared_ptr<h5pp::File>              h5pp_file;
+    std::shared_ptr<h5pp::File>                               h5pp_file;
     std::unique_ptr<class_hdf5_table<class_table_profiling>>  table_profiling;
 
     std::string             sim_name;
@@ -51,47 +43,34 @@ public:
 
 
 
+    static constexpr double quietNaN = std::numeric_limits<double>::quiet_NaN();
 
     //Virtual Functions
-    virtual void run()                                                      = 0;
-    virtual void run_preprocessing()                                        = 0;
-    virtual void run_simulation()                                           = 0;
-    virtual void run_postprocessing()                                       = 0;
-    virtual void compute_observables()                                      = 0;
-    virtual void print_profiling()                                          = 0;
-    virtual void print_profiling_sim(class_tic_toc &t_parent)               = 0;
-    virtual void store_state_and_measurements_to_file(bool force = false)   = 0;
-    virtual void store_table_entry_progress(bool force = false)             = 0;
-    virtual bool   sim_on()                                                 = 0;
-    virtual long   chi_max()                                                = 0;
-    virtual size_t num_sites()                                              = 0;
-    virtual size_t store_freq()                                             = 0;
-    virtual size_t print_freq()                                             = 0;
-    virtual bool   chi_grow()                                               = 0;
+    virtual void   run()                                                                                      = 0;
+    virtual void   compute_observables()                                                                      = 0;
+    virtual void   check_convergence()                                                                        = 0;
+    virtual void   store_state_and_measurements_to_file(bool force = false)                                   = 0;
+    virtual void   store_table_entry_progress(bool force = false)                                             = 0;
+    virtual bool   sim_on()                                                                                   = 0;
+    virtual long   chi_max()                                                                                  = 0;
+    virtual size_t num_sites()                                                                                = 0;
+    virtual size_t store_freq()                                                                               = 0;
+    virtual size_t print_freq()                                                                               = 0;
+    virtual bool   chi_grow()                                                                                 = 0;
+    virtual void   print_status_update()                                                                      = 0;
+    virtual void   print_status_full()                                                                        = 0;
+    virtual void   print_profiling()                                                                          = 0;
+    virtual void   print_profiling_sim(class_tic_toc &t_parent)                                               = 0;
+    virtual void   reset_to_random_state(const std::string parity)                                            = 0;
 
 
     //common functions
     void store_algorithm_state_to_file();
-    void print_status_update();
-    void print_status_full();
-    void single_DMRG_step(eigutils::eigSetting::Ritz ritz = eigutils::eigSetting::Ritz::SR);
 
-    virtual void check_convergence();
-    static constexpr double quietNaN = std::numeric_limits<double>::quiet_NaN();
-    void check_convergence_variance_mpo(double threshold = quietNaN, double slope_threshold = quietNaN);
-    void check_convergence_variance_ham(double threshold = quietNaN, double slope_threshold = quietNaN);
-    void check_convergence_variance_mom(double threshold = quietNaN, double slope_threshold = quietNaN);
-    virtual void check_convergence_entg_entropy(double slope_threshold = quietNaN);
     void update_bond_dimension(size_t min_saturation_length = 1);
     void clear_saturation_status();
 
-    void initialize_superblock(std::string initial_state);
-    void reset_full_mps_to_random_product_state(const std::string parity);
-    void compute_observables(const class_superblock & superblock);
-    void compute_observables(const class_finite_chain_state & state);
-    void enlarge_environment();
-    void enlarge_environment(int direction);
-    void swap();
+
 
     //Functions for finite_chains
     void insert_superblock_to_chain();
@@ -101,6 +80,7 @@ public:
     void copy_superblock_to_chain();
     void move_center_point();
 
+    double process_memory_in_mb(std::string name);
 
     // Profiling
     void store_profiling_deltas(bool force = false);
@@ -133,25 +113,7 @@ protected:
                                       double &slope,
                                       bool &has_saturated);
 
-    std::list<bool>   B_mpo_vec; //History of saturation true/false
-    std::list<double> V_mpo_vec; //History of variances
-    std::list<int>    X_mpo_vec; //History of step numbers
-    double V_mpo_slope = 0;
 
-    std::list<bool>   B_ham_vec; //History of saturation true/false
-    std::list<double> V_ham_vec;
-    std::list<int>    X_ham_vec;
-    double V_ham_slope = 0;
-
-    std::list<bool>   B_mom_vec; //History of saturation true/false
-    std::list<double> V_mom_vec;
-    std::list<int>    X_mom_vec;
-    double V_mom_slope = 0;
-
-    std::list<bool>   BS_vec; //History of saturation true/false
-    std::list<double> S_vec;
-    std::list<int>    XS_vec;
-    double S_slope = 0;
 
 
 };

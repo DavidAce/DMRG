@@ -20,17 +20,15 @@ public:
     explicit class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
     bool   projected_during_saturation  = false;
 
-    void run_simulation()                                                   final;
-    void run_preprocessing()                                                final;
-    void single_DMRG_step();                                                final;
-    void check_convergence()                                                final;
-
-    bool   sim_on()                                     final;
-    long   chi_max()                                                        final;
-    size_t num_sites()                                                      final;
-    size_t store_freq()                                                     final;
-    size_t print_freq()                                                     final;
-    bool   chi_grow()                                                       final;
+    void run_simulation()                                        final;
+    void check_convergence()                                     final;
+    bool   sim_on()                                              final;
+    long   chi_max()                                             final;
+    size_t num_sites()                                           final;
+    size_t store_freq()                                          final;
+    size_t print_freq()                                          final;
+    bool   chi_grow()                                            final;
+    bool   store_wave_function()                                 final;
 
 };
 

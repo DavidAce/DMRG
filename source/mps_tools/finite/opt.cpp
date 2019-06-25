@@ -6,35 +6,43 @@
 #include <sstream>
 #include <spdlog/spdlog.h>
 #include <mps_tools/finite/opt.h>
-#include <mps_state/class_superblock.h>
+#include <mps_state/class_finite_chain_state.h>
 #include <mps_state/class_environment.h>
 #include <model/class_hamiltonian_base.h>
+#include <general/class_eigsolver.h>
+#include <general/arpack_extra/matrix_product_hamiltonian.h>
 
 
 std::tuple<Eigen::Tensor<std::complex<double>,4>, double>
-mpstools::finite::opt::find_optimal_excited_state(const class_superblock & superblock, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType){
+mpstools::finite::opt::find_optimal_excited_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType){
     mpstools::log->trace("Finding optimal excited state");
     using namespace opt::internals;
+    using namespace Textra;
     std::stringstream problem_report;
-    auto dims = superblock.dimensions();
+    auto dims = state.active_dimensions();
+    auto size = std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<size_t>());
     problem_report
             << "Starting optimization"
             << std::setprecision(10)
             << "\t mode [ "     << optMode << " ]"
             << "\t space [ "    << optSpace << " ]"
             << "\t type [ "     << optType << " ]"
-            << "\t position [ " << superblock.get_position() << " ]"
-            << "\t chi [ "      << superblock.get_chi() << " ]"
-            << "\t shape [ "    << dims[0] << " " << dims[1] << " " << dims[2]<< " " <<dims[3]  << " ] = [ " << dims[0]*dims[1]*dims[2]*dims[3] << " ]" << std::flush;
+            << "\t position [ " << state.get_position() << " ]"
+            << "\t shape "      << dims << " = [ " << size << " ]" << std::flush;
     mpstools::log->debug(problem_report.str());
 
 
 
     switch (optSpace){
-        case OptSpace::FULL:        return internals::subspace_optimization(superblock, sim_state , optMode, optSpace, optType);
-        case OptSpace::PARTIAL:     return internals::subspace_optimization(superblock, sim_state , optMode, optSpace, optType);
-        case OptSpace::DIRECT:      return internals::direct_optimization(superblock, sim_state, optType);
+        case OptSpace::FULL:        return internals::subspace_optimization(state, sim_state , optMode, optSpace, optType);
+        case OptSpace::PARTIAL:     return internals::subspace_optimization(state, sim_state , optMode, optSpace, optType);
+        case OptSpace::DIRECT:      return internals::direct_optimization  (state, sim_state, optType);
     }
+}
+
+std::tuple<Eigen::Tensor<std::complex<double>,4>, double> mpstools::finite::opt::find_optimal_ground_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, std::string ritz){
+    return internals::ground_state_optimization(state,sim_state,ritz);
+
 }
 
 

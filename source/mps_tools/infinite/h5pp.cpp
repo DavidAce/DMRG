@@ -86,11 +86,11 @@ void mpstools::infinite::io::write_all_measurements  (const class_superblock & s
     h5ppFile.writeDataset(superblock.measurements.bond_dimension.value()              , sim_name + "/measurements/2site/bond_dimension");
     h5ppFile.writeDataset(superblock.measurements.norm.value()                        , sim_name + "/measurements/2site/norm");
     h5ppFile.writeDataset(superblock.measurements.truncation_error.value()            , sim_name + "/measurements/2site/truncation_error");
-    h5ppFile.writeDataset(superblock.measurements.energy_mpo.value()                  , sim_name + "/measurements/2site/energy_mpo");
-    h5ppFile.writeDataset(superblock.measurements.energy_per_site_mpo.value()         , sim_name + "/measurements/2site/energy_per_site_mpo");
+    h5ppFile.writeDataset(superblock.measurements.energy_mpo.value()                  , sim_name + "/measurements/2site/energy");
+    h5ppFile.writeDataset(superblock.measurements.energy_per_site_mpo.value()         , sim_name + "/measurements/2site/energy_per_site");
     h5ppFile.writeDataset(superblock.measurements.energy_per_site_ham.value()         , sim_name + "/measurements/2site/energy_per_site_mom");
     h5ppFile.writeDataset(superblock.measurements.energy_per_site_mom.value()         , sim_name + "/measurements/2site/energy_per_site_mom");
-    h5ppFile.writeDataset(superblock.measurements.energy_variance_per_site_mpo.value(), sim_name + "/measurements/2site/energy_variance_per_site_mpo");
+    h5ppFile.writeDataset(superblock.measurements.energy_variance_per_site_mpo.value(), sim_name + "/measurements/2site/energy_variance_per_site");
     h5ppFile.writeDataset(superblock.measurements.energy_variance_per_site_ham.value(), sim_name + "/measurements/2site/energy_variance_per_site_ham");
     h5ppFile.writeDataset(superblock.measurements.energy_variance_per_site_mom.value(), sim_name + "/measurements/2site/energy_variance_per_site_mom");
     h5ppFile.writeDataset(superblock.measurements.current_entanglement_entropy.value(), sim_name + "/measurements/2site/middle_entanglement_entropy");
