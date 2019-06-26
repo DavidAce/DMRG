@@ -21,7 +21,9 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     mpstools::finite::mps::initialize(*state, num_sites);
     mpstools::finite::mpo::randomize(*state);
     mpstools::finite::mps::randomize(*state);
+    mpstools::finite::debug::check_integrity(*state, sim_state);
     mpstools::finite::mps::project_to_closest_parity(*state, settings::model::symmetry);
+    mpstools::finite::debug::check_integrity(*state, sim_state);
 
     table_dmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
     table_dmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5pp_file, sim_name + "/measurements", "simulation_progress_full_chain", sim_name);
@@ -29,6 +31,8 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     min_saturation_length = 1;
     max_saturation_length = 4;
     mpstools::finite::print::print_hamiltonians(*state);
+    mpstools::finite::print::print_state(*state);
+
 }
 
 
@@ -143,6 +147,8 @@ void class_algorithm_finite::single_DMRG_step(std::string ritz){
  * \fn void single_DMRG_step(class_superblock &superblock)
  */
     log->trace("Starting single DMRG step");
+    mpstools::finite::print::print_state(*state);
+
     t_sim.tic();
     t_opt.tic();
     Eigen::Tensor<Scalar,4> theta;
@@ -162,7 +168,12 @@ void class_algorithm_finite::move_center_point(){
     log->trace("Moving center point ");
     t_sim.tic();
     t_ste.tic();
-    mpstools::finite::mps::move_center_point(*state);
+    try{
+        mpstools::finite::mps::move_center_point(*state);
+    }catch(std::exception & e){
+        mpstools::finite::print::print_state(*state);
+        throw std::runtime_error("Failed to move center point: " + std::string(e.what()));
+    }
     t_ste.toc();
     t_sim.toc();
 }
@@ -174,7 +185,7 @@ void class_algorithm_finite::reset_to_random_state(const std::string parity) {
     mpstools::finite::mps::randomize(*state);
     mpstools::finite::mps::project_to_closest_parity(*state,parity);
     clear_saturation_status();
-    sim_state.iteration = state->get_sweeps();
+    sim_state.iteration = state->reset_sweeps();
 }
 
 
@@ -250,7 +261,7 @@ void class_algorithm_finite::clear_saturation_status(){
 
 
 void class_algorithm_finite::compute_observables(){
-    log->trace("Starting all measurements on current superblock");
+    log->trace("Starting all measurements on current mps");
     t_sim.tic();
     t_obs.tic();
     state->do_all_measurements();

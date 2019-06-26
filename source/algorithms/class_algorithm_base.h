@@ -68,7 +68,7 @@ public:
     //common functions
     void store_algorithm_state_to_file();
 
-    void update_bond_dimension(size_t min_saturation_length = 1);
+    void update_bond_dimension();
 
 
 

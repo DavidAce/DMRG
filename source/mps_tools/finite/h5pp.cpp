@@ -182,14 +182,14 @@ class_finite_chain_state mpstools::finite::io::load_state_from_hdf5(const h5pp::
                     throw std::runtime_error("Mismatch in adjacent MPS dimensions");
                 }
                 state.MPS_L.emplace_back(G,L,i);
-                state.MPO_L.emplace_back(class_hamiltonian_factory::create_mpo(model_type,Hamiltonian_params.row(i)));
+                state.MPO_L.emplace_back(class_hamiltonian_factory::create_mpo(i,model_type,Hamiltonian_params.row(i)));
             }
             else{
                 if(not state.MPS_R.empty() and state.MPS_R.back().get_chiR() != G.dimension(1)){
                     throw std::runtime_error("Mismatch in adjacent MPS dimensions");
                 }
                 state.MPS_R.emplace_back(G,L,i);
-                state.MPO_R.emplace_back(class_hamiltonian_factory::create_mpo(model_type,Hamiltonian_params.row(i)));
+                state.MPO_R.emplace_back(class_hamiltonian_factory::create_mpo(i,model_type,Hamiltonian_params.row(i)));
             }
         }
         h5ppFile.readDataset(state.MPS_C    , sim_name + "/state/mps/L_C");

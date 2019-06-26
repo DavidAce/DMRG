@@ -28,7 +28,7 @@ void class_environment::enlarge(const class_mps_2site & MPS, const Eigen::Tensor
 
 void class_environment::enlarge(const Eigen::Tensor<Scalar,3> MPS, const Eigen::Tensor<Scalar,4> &MPO){
     /*!< Contracts a site into the block. */
-    if(size == 0){set_edge_dims(MPS,MPO);}
+    if(sites == 0 and not edge_has_been_set){set_edge_dims(MPS,MPO);}
 
     Eigen::Tensor<Scalar,3> block_enlarged;
     if (side == "L"){
@@ -48,11 +48,11 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> MPS, const Eigen::
          * [      ]                      |
          * [      ]--1 0--[LB]--1  1--[GA conj ]--2
          */
-        size++;
-//            position = MPS.MPS_A->get_position();
+        sites++;
+        position = get_position() +1;
         block_enlarged =
                 block.contract(MPS,                  idx({0},{1}))
-                        .contract(MPO,                      idx({1,2},{0,2}))
+                        .contract(MPO,               idx({1,2},{0,2}))
                         .contract(MPS.conjugate(),   idx({0,3},{1,0}))
                         .shuffle(array3{0,2,1});
         block = block_enlarged;
@@ -73,11 +73,11 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> MPS, const Eigen::
          *    1--[  GB   ]--2 0--[LB]--1  1--[      ]
         */
 
-        size++;
-//        position = MPS.MPS_B->get_position();
+        sites++;
+        position = get_position() - 1;
         block_enlarged =
                 block.contract(MPS,                idx({0},{2}))
-                        .contract(MPO,                    idx({1,2},{1,2}))
+                        .contract(MPO,             idx({1,2},{1,2}))
                         .contract(MPS.conjugate(), idx({0,3},{2,0}))
                         .shuffle(array3{0,2,1});
         block = block_enlarged;
@@ -103,13 +103,13 @@ void class_environment::set_edge_dims(const Eigen::Tensor<Scalar,3> MPS, const E
 }
 
 void class_environment::set_edge_dims(const int mpsDim, const int mpoDim) {
+    if(edge_has_been_set) return;
     if (side == "L") {
         block.resize(array3{mpsDim,mpsDim, mpoDim});
         block.setZero();
         for (long i = 0; i < mpsDim; i++){
             block(i,i,mpoDim-1) = 1;
         }
-        position = 0;
     }
     if(side == "R"){
         block.resize(array3{mpsDim,mpsDim, mpoDim});
@@ -117,9 +117,9 @@ void class_environment::set_edge_dims(const int mpsDim, const int mpoDim) {
         for (long i = 0; i < mpsDim; i++){
             block(i,i,0) = 1;
         }
-        position = 1;
     }
-    size = 0;
+    sites = 0;
+    edge_has_been_set = true;
 }
 
 
@@ -135,7 +135,7 @@ void class_environment_var::enlarge(const class_mps_2site & MPS, const Eigen::Te
 
 void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3> MPS, const Eigen::Tensor<Scalar,4> &MPO){
     /*!< Contracts a site into the block. */
-    if(size == 0){set_edge_dims(MPS,MPO);}
+    if(sites == 0 and not edge_has_been_set){set_edge_dims(MPS,MPO);}
     Eigen::Tensor<Scalar,4> block_enlarged;
     if (side == "L"){
 
@@ -160,13 +160,13 @@ void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3> MPS, const Eig
          * [      ]                      |
          * [      ]--1 0--[LB]--1  1--[GA conj ]--2
          */
-        size++;
-//        position = MPS.MPS_A->get_position();
+        sites++;
+        position = get_position() + 1;
         block_enlarged =
                 block.contract(MPS,                    idx({0},{1}))
-                        .contract(MPO,                        idx({1,3},{0,2}))
-                        .contract(MPO,                        idx({1,4},{0,2}))
-                        .contract(MPS.conjugate(),      idx({0,4},{1,0}))
+                        .contract(MPO,                 idx({1,3},{0,2}))
+                        .contract(MPO,                 idx({1,4},{0,2}))
+                        .contract(MPS.conjugate(),     idx({0,4},{1,0}))
                         .shuffle(array4{0,3,1,2});
         block = block_enlarged;
     }
@@ -193,12 +193,12 @@ void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3> MPS, const Eig
          *  1--[ GB conj ]--2 0--[LB]--1  1--[      ]
         */
 
-        size++;
-//        position = MPS.MPS_B->get_position();
+        sites++;
+        position = get_position() - 1;
         block_enlarged =
                 block.contract(MPS,                idx({0},{2}))
-                        .contract(MPO,                    idx({1,3},{1,2}))
-                        .contract(MPO,                    idx({1,4},{1,2}))
+                        .contract(MPO,             idx({1,3},{1,2}))
+                        .contract(MPO,             idx({1,4},{1,2}))
                         .contract(MPS.conjugate(), idx({0,4},{2,0}))
                         .shuffle(array4{0, 3, 1, 2});
         block = block_enlarged;
@@ -224,21 +224,21 @@ void class_environment_var::set_edge_dims(const Eigen::Tensor<Scalar,3> MPS, con
 }
 
 void class_environment_var::set_edge_dims(const int mpsDim, const int mpoDim) {
+    if(edge_has_been_set) return;
     block.resize(array4{mpsDim,mpsDim, mpoDim,mpoDim});
     block.setZero();
     if (side == "L") {
         for (long i = 0; i < mpsDim; i++){
             block(i,i, mpoDim-1, mpoDim-1) = 1;
         }
-        position = 0;
     }
     if(side == "R"){
 
         for (long i = 0; i < mpsDim; i++){
             block(i,i,0,0) = 1;
         }
-        position = 1;
     }
-    size = 0;
+    sites = 0;
+    edge_has_been_set = true;
 }
 

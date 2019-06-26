@@ -9,6 +9,7 @@
 #include <general/class_eigsolver.h>
 
 std::tuple<Eigen::Tensor<std::complex<double>,4>, double> mpstools::finite::opt::internals::ground_state_optimization(const class_finite_chain_state & state, const class_simulation_state & sim_state, std::string ritz){
+    mpstools::log->trace("Starting ground state optimization");
     using Scalar = std::complex<double>;
     using namespace internals;
     using namespace settings::precision;
@@ -41,7 +42,7 @@ std::tuple<Eigen::Tensor<std::complex<double>,4>, double> mpstools::finite::opt:
     auto eigvecs           = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
 
     t_eig->toc();
-    t_eig->print_delta();
+//    t_eig->print_delta();
 
     return std::make_tuple(eigvecs.reshape(theta.dimensions()), std::real(eigvals(0))/state.get_length());
 }

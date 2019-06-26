@@ -45,7 +45,7 @@
 
 
 
-class class_vidal_mps {
+class class_vidal_site {
 public:
     using Scalar = std::complex<double>;
     bool isReal()const{return Textra::isReal(G,"G");}
@@ -62,20 +62,22 @@ public:
     auto ref_B() const  {return G.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));}
     Eigen::Tensor<Scalar,3> get_A()  const  {return Textra::asDiagonal(L).contract(G, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});}
     Eigen::Tensor<Scalar,3> get_B()  const  {return G.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));}
-    void set_position(const long position_){position = position_;}
-    auto get_position() const {return position;}
+    void set_position(const size_t position_){position = position_;}
+    size_t get_position() const {
+        if(position) {return position.value();}
+        else{throw std::runtime_error("Position hasn't been set on vidal site.");}
+    }
 
     long get_spin_dim() const {return G.dimension(0);}
     long get_chiL()     const {return G.dimension(1);}
     long get_chiR()     const {return G.dimension(2);}
     std::tuple<long,long,long> get_dims(){return {get_spin_dim(),get_chiL(),get_chiR()};}
-    class_vidal_mps() = default;
-    class_vidal_mps(const Eigen::Tensor<Scalar,3> &G_, const Eigen::Tensor<Scalar,1> &L_):G(G_),L(L_){};
-    class_vidal_mps(const Eigen::Tensor<Scalar,3> &G_, const Eigen::Tensor<Scalar,1> &L_,long pos):G(G_),L(L_),position(pos){};
+    class_vidal_site() = default;
+    class_vidal_site(const Eigen::Tensor<Scalar,3> &G_, const Eigen::Tensor<Scalar,1> &L_,size_t pos):G(G_),L(L_),position(pos){};
 private:
     Eigen::Tensor<Scalar,3> G;                  /*!< \f$\Gamma \f$*/
     Eigen::Tensor<Scalar,1> L;                  /*!< \f$\Lambda\f$*/
-    size_t position = 0;
+    std::optional<size_t> position;
 
 };
 
@@ -100,8 +102,8 @@ public:
     bool swapped = false;                                  /*!< Tracks the swapped state of A and B positions. */
     double truncation_error = 0;
 
-    std::unique_ptr<class_vidal_mps> MPS_A;
-    std::unique_ptr<class_vidal_mps> MPS_B;
+    std::unique_ptr<class_vidal_site> MPS_A;
+    std::unique_ptr<class_vidal_site> MPS_B;
     Eigen::Tensor<Scalar,1> LC;
     bool isReal()const {return MPS_A->isReal() and MPS_B->isReal();}
     auto chiA () const {return MPS_A->get_L().dimension(0);}

@@ -23,7 +23,7 @@ private:
 
 public:
 
-    class_tf_ising(std::string logName = "ISING");
+    class_tf_ising(size_t position_, std::string logName = "ISING");
     void set_hamiltonian(const Eigen::Tensor<Scalar,4> MPO, std::vector<double> parameters)  override;
     void set_hamiltonian(const std::vector<double> parameters)                               override;
     void set_hamiltonian(const Eigen::MatrixXd all_parameters, int position)                 override;

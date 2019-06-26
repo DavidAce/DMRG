@@ -93,6 +93,8 @@ void class_xDMRG::single_DMRG_step()
  * \fn void single_DMRG_step()
  */
 {
+    mpstools::finite::debug::check_integrity(*state,sim_state);
+    mpstools::finite::print::print_state(*state);
 
     t_sim.tic();
     t_opt.tic();
@@ -127,10 +129,7 @@ void class_xDMRG::single_DMRG_step()
     Eigen::Tensor<Scalar,3> theta;
     std::tie(theta, sim_state.energy_now) = mpstools::finite::opt::find_optimal_excited_state(*state,sim_state,optMode, optSpace,optType);
     sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
-
-//    Textra::subtract_phase(theta);
     t_opt.toc();
-    log->trace("Truncating theta");
 
     t_svd.tic();
     mpstools::finite::opt::truncate_theta(theta, *state, sim_state.chi_temp, settings::precision::SVDThreshold);
@@ -242,9 +241,11 @@ void class_xDMRG::find_energy_range() {
         print_status_update();
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if(sim_state.iteration >= max_sweeps_during_f_range
-            or state->measurements.energy_variance_per_site.value() < 1e-8)
-        {break;}
+        if(state->position_is_any_edge()){
+            if(sim_state.iteration >= max_sweeps_during_f_range
+               or state->measurements.energy_variance_per_site.value() < 1e-8)
+            {break;}
+        }
         move_center_point();
         sim_state.iteration = state->get_sweeps();
 
@@ -259,9 +260,12 @@ void class_xDMRG::find_energy_range() {
         print_status_update();
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if(sim_state.iteration >= max_sweeps_during_f_range
-           or state->measurements.energy_variance_per_site.value() < 1e-8)
-        {break;}
+        if(state->position_is_any_edge()){
+            if(sim_state.iteration >= max_sweeps_during_f_range
+               or state->measurements.energy_variance_per_site.value() < 1e-8)
+            {break;}
+        }
+
         move_center_point();
         sim_state.iteration = state->get_sweeps();
     }

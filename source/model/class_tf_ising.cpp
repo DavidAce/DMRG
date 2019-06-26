@@ -14,7 +14,7 @@ using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
 
-class_tf_ising::class_tf_ising(std::string logName): class_hamiltonian_base(logName){
+class_tf_ising::class_tf_ising(size_t position_, std::string logName): class_hamiltonian_base(position_,logName){
     spin_dim            = settings::model::tf_ising::d;
     J_coupling          = settings::model::tf_ising::J;
     g_mag_field         = settings::model::tf_ising::g;

@@ -28,14 +28,14 @@ private:
 
 
     int num_sweeps   = 0;
-    int direction    = -1;
+    int direction    = 1;
 
 public:
     using Scalar = std::complex<double>;
     class_finite_chain_state()=default;
 
-    std::list<class_vidal_mps>                         MPS_L;   /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
-    std::list<class_vidal_mps>                         MPS_R;   /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
+    std::list<class_vidal_site>                        MPS_L;   /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
+    std::list<class_vidal_site>                        MPS_R;   /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
     Eigen::Tensor<Scalar,1>                            MPS_C;   //Current center bond matrix;
     std::list<class_environment>                       ENV_L;
     std::list<class_environment>                       ENV_R;
@@ -68,7 +68,14 @@ public:
 
 
 //    std::tuple<long,long,long>  get_dims(size_t pos)                    const;
+    const class_vidal_site       & get_MPS(size_t pos)                  const;
+          class_vidal_site       & get_MPS(size_t pos);
     const class_hamiltonian_base & get_MPO(size_t pos)                  const;
+          class_hamiltonian_base & get_MPO(size_t pos);
+    const class_environment      & get_ENVL(size_t pos)                 const;
+    const class_environment      & get_ENVR(size_t pos)                 const;
+    const class_environment_var  & get_ENV2L(size_t pos)                const;
+    const class_environment_var  & get_ENV2R(size_t pos)                const;
     const Eigen::Tensor<Scalar,3> & get_G(size_t pos)                   const;
     const Eigen::Tensor<Scalar,1> & get_L(size_t pos)                   const;
     Eigen::Tensor<Scalar,3> & get_G(size_t pos);
@@ -77,23 +84,19 @@ public:
     Eigen::Tensor<Scalar,3>   get_B()                                   const;
     Eigen::Tensor<Scalar,3>   get_A(size_t pos)                         const;
     Eigen::Tensor<Scalar,3>   get_B(size_t pos)                         const;
-    Eigen::Tensor<Scalar,3>   get_ENVL(size_t pos)                      const;
-    Eigen::Tensor<Scalar,3>   get_ENVR(size_t pos)                      const;
-    Eigen::Tensor<Scalar,4>   get_ENV2L(size_t pos)                     const;
-    Eigen::Tensor<Scalar,4>   get_ENV2R(size_t pos)                     const;
     Eigen::Tensor<Scalar,4>   get_theta()                               const;
     Eigen::Tensor<Scalar,4>   get_theta(size_t pos)                     const;
 
     //For multisite
-    std::vector<size_t>    active_sites;
-    std::vector<size_t>    activate_sites(long threshold);
+    std::list<size_t>      active_sites;
+    std::list<size_t>      activate_sites(long threshold);
     Eigen::DSizes<long,3>  active_dimensions() const;
 
     Eigen::Tensor<Scalar,3>   get_multitheta()    const;
     Eigen::Tensor<Scalar,4>   get_multimpo  ()    const;
-    std::pair<Eigen::Tensor<Scalar,3>, Eigen::Tensor<Scalar,3>>
+    std::pair<const class_environment &, const class_environment &>
                               get_multienv ()     const;
-    std::pair<Eigen::Tensor<Scalar,4>, Eigen::Tensor<Scalar,4>>
+    std::pair<const class_environment_var &, const class_environment_var &>
                               get_multienv2()     const;
 
     Eigen::Tensor<Scalar,6>   get_multi_hamiltonian() const;
@@ -102,7 +105,7 @@ public:
     Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian2_matrix() const;
 
 
-    std::vector<double>  truncation_error                                           = {};
+    std::vector<double>  truncation_error;
 
     struct Measurements {
         std::optional<size_t>               length                                  = {};

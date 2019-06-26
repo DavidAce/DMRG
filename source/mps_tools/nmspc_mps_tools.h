@@ -78,7 +78,7 @@ namespace mpstools{
         }
 
         namespace multisite{
-            extern std::vector<size_t>  generate_site_list(class_finite_chain_state &state, long threshold);
+            extern std::list<size_t>  generate_site_list(class_finite_chain_state &state, long threshold);
         }
 
 
@@ -128,8 +128,9 @@ namespace mpstools{
         }
 
         namespace debug {
-            extern void check_integrity             (const class_finite_chain_state & state, const class_simulation_state & sim_state);
+            extern void check_integrity             (const class_finite_chain_state & state);
             extern void check_integrity_of_mps      (const class_finite_chain_state & state);
+            extern void check_integrity_of_mpo      (const class_finite_chain_state & state);
             extern void check_normalization_routine (const class_finite_chain_state & state);
             extern void print_parity_properties     (const class_finite_chain_state & state);
 

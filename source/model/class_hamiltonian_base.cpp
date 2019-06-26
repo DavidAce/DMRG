@@ -23,7 +23,8 @@ bool class_hamiltonian_base::isReal()const{
     return Textra::isReal(MPO(),"MPO");
 }
 
-class_hamiltonian_base::class_hamiltonian_base(std::string logName){
+class_hamiltonian_base::class_hamiltonian_base(size_t position_, std::string logName){
+    position = position_;
     log = Logger::setLogger(logName);
 }
 
@@ -34,7 +35,8 @@ void class_hamiltonian_base::set_position(size_t position_){
 
 
 size_t class_hamiltonian_base::get_position() const{
-    return position;
+    if (position){return position.value();}
+    else{throw std::runtime_error("Position of MPO has not been set");}
 }
 
 Eigen::MatrixXcd class_hamiltonian_base::MPO_matrix_view(){

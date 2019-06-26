@@ -14,7 +14,7 @@ using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
 
-class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(std::string logName): class_hamiltonian_base(logName){
+class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(size_t position_, std::string logName): class_hamiltonian_base(position_,logName){
 
     spin_dim            = settings::model::selfdual_tf_rf_ising::d;           /*!< Spin dimension */
     J_log_mean          = settings::model::selfdual_tf_rf_ising::J_log_mean;

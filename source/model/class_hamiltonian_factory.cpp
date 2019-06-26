@@ -11,18 +11,18 @@
 #include "class_hamiltonian_h5tables.h"
 #include "class_selfdual_tf_rf_ising.h"
 
-std::unique_ptr<class_hamiltonian_base> class_hamiltonian_factory::create_mpo(std::string model_type_str){
+std::unique_ptr<class_hamiltonian_base> class_hamiltonian_factory::create_mpo(size_t position, std::string model_type_str){
 
     if (model_type_str == std::string("tf_ising")){
-        return std::make_unique<class_tf_ising>();
+        return std::make_unique<class_tf_ising>(position,model_type_str);
     }
     else
     if (model_type_str == std::string("tf_nn_ising")){
-        return std::make_unique<class_tf_ising>();
+        return std::make_unique<class_tf_ising>(position,model_type_str);
     }
     else
     if (model_type_str == std::string("selfdual_tf_rf_ising")){
-        return std::make_unique<class_selfdual_tf_rf_ising>();
+        return std::make_unique<class_selfdual_tf_rf_ising>(position,model_type_str);
     }
     else{
         throw std::runtime_error("Wrong model: [ "  + model_type_str + " ]");

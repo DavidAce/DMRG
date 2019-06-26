@@ -10,10 +10,10 @@
 void mpstools::finite::mpo::initialize(class_finite_chain_state & state, const size_t length, std::string model_type){
     log->info("Initializing mpo");
     //Generate MPO
+    size_t pos = 0;
+    state.MPO_L.emplace_back(class_hamiltonian_factory::create_mpo(pos++,model_type));
     while(true){
-        state.MPO_L.emplace_back(class_hamiltonian_factory::create_mpo(model_type));
-        if(state.MPO_L.size() + state.MPO_R.size() >= length){break;}
-        state.MPO_R.emplace_front(class_hamiltonian_factory::create_mpo(model_type));
+        state.MPO_R.emplace_front(class_hamiltonian_factory::create_mpo(pos++,model_type));
         if(state.MPO_L.size() + state.MPO_R.size() >= length){break;}
     }
 }

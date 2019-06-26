@@ -98,6 +98,7 @@ size_t mpstools::finite::measure::bond_dimension_midchain(const class_finite_cha
 
 std::vector<size_t> mpstools::finite::measure::bond_dimensions(const class_finite_chain_state & state){
     if (state.measurements.bond_dimensions){return state.measurements.bond_dimensions.value();}
+    state.measurements.bond_dimensions = std::vector<size_t>{};
     for (auto &mps : state.MPS_L){
         state.measurements.bond_dimensions.value().emplace_back(mps.get_L().dimension(0));
     }
