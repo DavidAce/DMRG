@@ -23,16 +23,14 @@ class_superblock::class_superblock(SimulationType sim_type_,std::string sim_name
         sim_type(sim_type_),
         sim_name(sim_name_),
         MPS(std::make_shared<class_mps_2site>()),
-        HA (class_hamiltonian_factory::create_mpo(settings::model::model_type)),
-        HB (class_hamiltonian_factory::create_mpo(settings::model::model_type)),
+        HA (class_hamiltonian_factory::create_mpo(0,settings::model::model_type)),
+        HB (class_hamiltonian_factory::create_mpo(1,settings::model::model_type)),
         Lblock(std::make_shared<class_environment>("L")),
         Rblock(std::make_shared<class_environment>("R")),
         Lblock2(std::make_shared<class_environment_var>("L")),
         Rblock2(std::make_shared<class_environment_var>("R"))
 {
     log = Logger::setLogger(sim_name,settings::console::verbosity);
-    HA->set_position(0);
-    HB->set_position(1);
     t_eig.set_properties(profile_optimization, 10,"Time optimizing ");
     spin_dimension = HA->get_spin_dimension();
     MPS->initialize(spin_dimension);
@@ -59,13 +57,13 @@ void class_superblock::clear(){
 
 
 size_t class_superblock::get_length() const {
-    size_t length = Lblock->size + Rblock->size + 2;
+    size_t length = Lblock->sites + Rblock->sites + 2;
     assert(length == environment_size + 2 and "ERROR: System length mismatch!");
     return length;
 
 }
 
-size_t class_superblock::get_position() const { return Lblock->size;}
+size_t class_superblock::get_position() const { return Lblock->sites;}
 
 size_t class_superblock::get_chi() const {return MPS->chiC();}
 
@@ -298,7 +296,7 @@ void class_superblock::enlarge_environment(int direction){
         Rblock->set_position (HB->get_position()+1);
         Lblock2->set_position(HB->get_position());
         Rblock2->set_position(HB->get_position()+1);
-        environment_size = Lblock->size + Rblock->size;
+        environment_size = Lblock->sites + Rblock->sites;
     }
     unset_measurements();
 }

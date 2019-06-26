@@ -7,13 +7,13 @@
 #include <mps_state/class_finite_chain_state.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 
-std::vector<size_t> mpstools::finite::multisite::generate_site_list(class_finite_chain_state &state, long threshold){
+std::list<size_t> mpstools::finite::multisite::generate_site_list(class_finite_chain_state &state, long threshold){
     using namespace Textra;
     int    direction = state.get_direction();
     size_t position  = state.get_position();
     size_t length    = state.get_length();
-    std::vector<long>   costs;
-    std::vector<size_t> sites;
+    std::vector<long> costs;
+    std::list<size_t> sites;
     std::vector<Eigen::DSizes<long,3>> dims;
 
     while(position >= 0 and position < length){

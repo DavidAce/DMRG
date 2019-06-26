@@ -34,18 +34,19 @@ class class_mps_2site;
 
 class class_environment{
 private:
-    size_t position;
+    std::optional<size_t> position;
+    bool edge_has_been_set = false;
 public:
     using Scalar = std::complex<double>;
     std::string side;
-    size_t size = 0;                               /*!< Number of particles that have been contracted into this environment. */
+    size_t sites = 0;                               /*!< Number of particles that have been contracted into this environment. */
     Eigen::Tensor<Scalar,3> block;                 /*!< The environment block. */
-    explicit class_environment(std::string side_):side(std::move(side_)){size = 0;};
+    explicit class_environment(std::string side_):side(std::move(side_)){};
     class_environment(
-            const std::string side_,
-            const int mpsDim,
-            const int mpoDim)
-            :side(std::move(side_))
+            std::string side_,
+            int mpsDim,
+            int mpoDim)
+            :side(side_)
     {
         set_edge_dims(mpsDim,mpoDim);
     }
@@ -56,25 +57,30 @@ public:
     void set_edge_dims(const Eigen::Tensor<Scalar,3> MPS, const Eigen::Tensor<Scalar, 4> &MPO);
     void set_edge_dims(const int mpsDim, const int mpoDim);
     void set_position(const long position_){position = position_;}
-    auto get_position() const {return position;}
+    size_t get_position() const {
+        if(position) {return position.value();}
+        else{throw std::runtime_error("Position hasn't been set on environment " + side);}
+    }
+
 };
 
 
 
 class class_environment_var{
 private:
-    size_t position;
+    std::optional<size_t> position;
+    bool edge_has_been_set = false;
 public:
     using Scalar = std::complex<double>;
-    size_t size = 0;                                      /*!< Number of particles that have been contracted into this left environment. */
+    size_t sites = 0;                                      /*!< Number of particles that have been contracted into this left environment. */
     std::string side;
     Eigen::Tensor<Scalar,4> block;                         /*!< The environment block. */
-    explicit class_environment_var(std::string side_):side(std::move(side_)){size = 0;};
+    explicit class_environment_var(std::string side_):side(std::move(side_)){};
     class_environment_var(
-            const std::string side_,
-            const int mpsDim,
-            const int mpoDim)
-            :side(std::move(side_))
+            std::string side_,
+            int mpsDim,
+            int mpoDim)
+            :side(side_)
     {
         set_edge_dims(mpsDim,mpoDim);
     }
@@ -85,7 +91,9 @@ public:
     void set_edge_dims(const Eigen::Tensor<Scalar,3> MPS, const Eigen::Tensor<Scalar, 4> &MPO);
     void set_edge_dims(const int mpsDim, const int mpoDim);
     void set_position(const long position_){position = position_;}
-    auto get_position() const {return position;}
-};
+    size_t get_position() const {
+        if(position) {return position.value();}
+        else{throw std::runtime_error("Position hasn't been set on environment var " + side);}
+    }};
 
 #endif //DMRG_CLASS_ENVIRONMENT_H

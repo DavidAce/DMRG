@@ -20,12 +20,13 @@ void mpstools::finite::mps::initialize(class_finite_chain_state &state, const si
     Eigen::Tensor<Scalar,3> G;
     Eigen::Tensor<Scalar,1> L;
     state.MPS_C = L;
+    size_t pos = 0;
+    state.MPS_L.emplace_back(class_vidal_site(G,L,pos++));
     while(true){
-        state.MPS_L.emplace_back(class_vidal_mps(G,L));
-        if(state.MPS_L.size() + state.MPS_R.size() >= length){break;}
-        state.MPS_R.emplace_front(class_vidal_mps(G,L));
+        state.MPS_R.emplace_front(class_vidal_site(G,L,pos++));
         if(state.MPS_L.size() + state.MPS_R.size() >= length){break;}
     }
+    state.truncation_error.resize(length+1);
 }
 
 
@@ -65,7 +66,7 @@ void mpstools::finite::mps::normalize(class_finite_chain_state & state){
             std::cerr << "A:\n" << state.get_A(pos_A) << std::endl;
             std::cerr << "L:\n" << state.get_L(pos_LC) << std::endl;
             std::cerr << "B:\n" << state.get_B(pos_B) << std::endl;
-            throw std::runtime_error("Normalization failed at step " + std::to_string(pos_A) + ": " + std::string(ex.what()) );
+            throw std::runtime_error(fmt::format("Normalization failed at step {}: {}", pos_A, ex.what()));
         }
         Eigen::Tensor<Scalar,3> LA_U = Textra::asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
         Eigen::Tensor<Scalar,3> V_LB = V.contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0}));
@@ -122,14 +123,16 @@ void mpstools::finite::mps::randomize(class_finite_chain_state &state){
 //        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXd::Random(2).cast<Scalar>().normalized(),2,1,1);
         mpsR.set_mps(G,L);
     }
-
     mpstools::finite::mps::rebuild_environments(state);
 }
 
 
 void mpstools::finite::mps::rebuild_environments(class_finite_chain_state &state){
     mpstools::log->trace("Rebuilding environments");
-
+    if (state.MPS_L.size() != state.MPO_L.size())
+        throw std::runtime_error(fmt::format("Size mismatch in MPSL and MPOL: {} != {}",state.MPS_L.size(), state.MPO_L.size()));
+    if (state.MPS_R.size() != state.MPO_R.size())
+        throw std::runtime_error(fmt::format("Size mismatch in MPSR and MPOR: {} != {}",state.MPS_R.size(), state.MPO_R.size()));
     // Generate new environments
     state.ENV_L.clear();
     state.ENV2_L.clear();
@@ -139,6 +142,8 @@ void mpstools::finite::mps::rebuild_environments(class_finite_chain_state &state
     {
         auto ENV_L  = class_environment    ("L",state.MPS_L.front().get_chiL(), state.MPO_L.front()->MPO().dimension(0));
         auto ENV2_L = class_environment_var("L",state.MPS_L.front().get_chiL(), state.MPO_L.front()->MPO().dimension(0));
+        ENV_L.set_position(state.MPS_L.back().get_position());
+        ENV2_L.set_position(state.MPS_L.back().get_position());
         auto mpsL_it   = state.MPS_L.begin();
         auto mpoL_it   = state.MPO_L.begin();
 
@@ -156,8 +161,10 @@ void mpstools::finite::mps::rebuild_environments(class_finite_chain_state &state
     }
 
     {
-        auto ENV_R  = class_environment("R",state.MPS_R.back().get_chiR(), state.MPO_L.back()->MPO().dimension(1));
-        auto ENV2_R = class_environment_var("R",state.MPS_R.back().get_chiR(), state.MPO_L.back()->MPO().dimension(1));
+        auto ENV_R  = class_environment("R",state.MPS_R.back().get_chiR(), state.MPO_R.back()->MPO().dimension(1));
+        auto ENV2_R = class_environment_var("R",state.MPS_R.back().get_chiR(), state.MPO_R.back()->MPO().dimension(1));
+        ENV_R.set_position(state.MPS_R.back().get_position());
+        ENV2_R.set_position(state.MPS_R.back().get_position());
         auto mpsR_it   = state.MPS_R.rbegin();
         auto mpoR_it   = state.MPO_R.rbegin();
         while(mpsR_it != state.MPS_R.rend() and mpoR_it != state.MPO_R.rend()){
@@ -189,10 +196,16 @@ int mpstools::finite::mps::move_center_point(class_finite_chain_state &  state){
     auto & ENV_R  = state.ENV_R;
     auto & ENV2_L = state.ENV2_L;
     auto & ENV2_R = state.ENV2_R;
-    assert(!MPS_L.empty() and !MPS_R.empty());
-    assert(MPS_L.size() + MPS_R.size() == state.get_length());
+    if(ENV_L.empty()) throw std::runtime_error("ENVL is empty");
+    if(ENV_R.empty()) throw std::runtime_error("ENVR is empty");
+    if(MPS_L.empty()) throw std::runtime_error("MPSL is empty");
+    if(MPS_R.empty()) throw std::runtime_error("MPSR is empty");
+    if(MPS_L.back().get_position()  != ENV_L.back().get_position())  throw std::runtime_error("MPSL and ENVL have mismatching positions");
+    if(MPS_R.front().get_position() != ENV_R.front().get_position()) throw std::runtime_error("MPSR and ENVR have mismatching positions");
+    if(ENV_L.size() + ENV_R.size() != state.get_length()) throw std::runtime_error("ENVL + ENVR sizes do not add up to chain length");
+    if(MPS_L.size() + MPS_R.size() != state.get_length()) throw std::runtime_error("MPSL + MPSR sizes do not add up to chain length");
     assert(ENV_L.size() + ENV_R.size() == state.get_length());
-    assert(ENV_L.back().size + ENV_R.front().size == state.get_length() - 2);
+    assert(ENV_L.back().sites + ENV_R.front().sites == state.get_length() - 2);
 
     if (state.get_direction() == 1){
         class_environment     L  = ENV_L.back();
@@ -203,7 +216,7 @@ int mpstools::finite::mps::move_center_point(class_finite_chain_state &  state){
         ENV2_L.emplace_back(L2);
 
         //Note that Lblock must just have grown!!
-        state.MPS_L.emplace_back(class_vidal_mps(MPS_R.front().get_G(),MPS_C));
+        state.MPS_L.emplace_back(class_vidal_site(MPS_R.front().get_G(),MPS_C, MPS_R.front().get_position()));
         state.MPS_C = MPS_R.front().get_L();
         state.MPO_L.emplace_back(MPO_R.front()->clone());
         MPS_R.pop_front();
@@ -212,19 +225,22 @@ int mpstools::finite::mps::move_center_point(class_finite_chain_state &  state){
         ENV2_R.pop_front();
     }else{
 
-        class_environment     R  = ENV_R.back();
-        class_environment_var R2 = ENV2_R.back();
-        R.enlarge(MPS_R.front().get_A(), MPO_R.front()->MPO());
-        R2.enlarge(MPS_R.front().get_A(), MPO_R.front()->MPO());
+        class_environment     R  = ENV_R.front();
+        class_environment_var R2 = ENV2_R.front();
+        std::cout << "Before: R pos: " << R.get_position() << std::endl;
+        std::cout << "Before: ENVR pos: " << ENV_R.front().get_position() << std::endl;
+        R.enlarge(MPS_R.front().get_B(), MPO_R.front()->MPO());
+        R2.enlarge(MPS_R.front().get_B(), MPO_R.front()->MPO());
         ENV_R.emplace_front(R);
         ENV2_R.emplace_front(R2);
-
+        std::cout << "After:  R pos: " << R.get_position() << std::endl;
+        std::cout << "After:  ENVR pos: " << ENV_R.front().get_position() << std::endl;
 
         //Note that Rblock must just have grown!!
 
-        state.MPS_R.emplace_front(class_vidal_mps(MPS_L.back().get_G(),MPS_C));
+        state.MPS_R.emplace_front(class_vidal_site(MPS_L.back().get_G(),MPS_C, MPS_L.back().get_position()));
         state.MPS_C = MPS_L.back().get_L();
-        state.MPO_L.emplace_front(MPO_L.back()->clone());
+        state.MPO_R.emplace_front(MPO_L.back()->clone());
 
         MPS_L.pop_back();
         MPO_L.pop_back();
@@ -233,7 +249,14 @@ int mpstools::finite::mps::move_center_point(class_finite_chain_state &  state){
     }
 
     assert(MPO_L.size() + MPO_R.size() == state.get_length());
-
+    if(ENV_L.empty()) throw std::runtime_error("ENVL became empty");
+    if(ENV_R.empty()) throw std::runtime_error("ENVR became empty");
+    if(MPS_L.empty()) throw std::runtime_error("MPSL became empty");
+    if(MPS_R.empty()) throw std::runtime_error("MPSR became empty");
+    if(MPS_L.back().get_position()  != ENV_L.back().get_position())  throw std::runtime_error("MPSL and ENVL got mismatching positions");
+    if(MPS_R.front().get_position() != ENV_R.front().get_position()) throw std::runtime_error("MPSR and ENVR got mismatching positions");
+    if(ENV_L.size() + ENV_R.size() != state.get_length()) throw std::runtime_error("ENVL + ENVR sizes do not add up to chain length anymore");
+    if(MPS_L.size() + MPS_R.size() != state.get_length()) throw std::runtime_error("MPSL + MPSR sizes do not add up to chain length anymore");
 
     //    Check edge
     if (state.position_is_any_edge()){

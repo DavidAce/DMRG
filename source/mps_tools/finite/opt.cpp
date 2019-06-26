@@ -48,12 +48,47 @@ std::tuple<Eigen::Tensor<std::complex<double>,4>, double> mpstools::finite::opt:
 
 
 void mpstools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,3> theta, class_finite_chain_state & state, long chi_, double SVDThreshold){
-    throw std::runtime_error("You need to implement truncation of theta3");
-
-}
-void mpstools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> theta, class_finite_chain_state & state, long chi_, double SVDThreshold) {
+    mpstools::log->trace("Truncating multitheta");
     class_SVD SVD;
-    SVD.setThreshold(settings::precision::SVDThreshold);
+    SVD.setThreshold(SVDThreshold);
+
+    Eigen::Tensor<class_finite_chain_state::Scalar,4> theta4;
+    Eigen::Tensor<class_finite_chain_state::Scalar,3> U = theta;
+    Eigen::Tensor<class_finite_chain_state::Scalar,3> V;
+    Eigen::Tensor<class_finite_chain_state::Scalar,1> S;
+    auto reverse_active_sites = state.active_sites;
+    std::reverse(reverse_active_sites.begin(),reverse_active_sites.end());
+
+    while (reverse_active_sites.size() > 1){
+        size_t site = reverse_active_sites.front();
+        std::cout << "site: "<<  site << std::endl;
+        long dim0 = U.dimension(0) / state.get_G(site).dimension(0);
+        long dim1 = state.get_G(site).dimension(0);
+
+        theta4 = U
+                .reshape(Textra::array4{dim0,dim1, U.dimension(1), U.dimension(2)})
+                .shuffle(Textra::array4{0,2,1,3});
+        std::tie(U, S, V) = SVD.schmidt(theta4, chi_);
+        state.truncation_error[site-1] = SVD.get_truncation_error();
+        Eigen::Tensor<std::complex<double>,3> V_L = V.contract(Textra::asDiagonalInversed(state.get_L(site+1)), Textra::idx({2},{0}));
+        state.get_G(site) = V_L;
+        state.get_L(site) = S;
+        reverse_active_sites.pop_front();
+    }
+    size_t site = reverse_active_sites.front();
+    std::cout << "site: "<<  site << std::endl;
+    Eigen::Tensor<std::complex<double>,3> L_U = Textra::asDiagonalInversed(state.get_L(site)).contract(U,Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+    state.get_G(site) = L_U;
+    mpstools::finite::mps::rebuild_environments(state);
+}
+
+
+
+
+void mpstools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> theta, class_finite_chain_state & state, long chi_, double SVDThreshold) {
+    mpstools::log->trace("Truncating theta");
+    class_SVD SVD;
+    SVD.setThreshold(SVDThreshold);
     auto[U, S, V] = SVD.schmidt(theta, chi_);
     state.truncation_error[state.get_position()+1] = SVD.get_truncation_error();
     state.MPS_C  = S;
@@ -87,15 +122,17 @@ mpstools::finite::opt::internals::MultiComponents<Scalar>::MultiComponents(const
         mpo2                         = mpo.contract (mpo, Textra::idx({3},{2}));
         auto [envL_cplx,envR_cplx]   = state.get_multienv();
         auto [env2L_cplx,env2R_cplx] = state.get_multienv2();
-        envL  = envL_cplx.real();         envR  = envR_cplx.real();
-        env2L = env2L_cplx.real();        env2R = env2R_cplx.real();
+        envL  = envL_cplx.block.real();         envR  = envR_cplx.block.real();
+        env2L = env2L_cplx.block.real();        env2R = env2R_cplx.block.real();
     }
 
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){
         mpo                          = state.get_multimpo();
         mpo2                         = mpo.contract (mpo, Textra::idx({3},{2}));
-        std::tie (envL,envR)         = state.get_multienv();
-        std::tie (env2L,env2R)       = state.get_multienv2();
+        auto [envL_cplx,envR_cplx]   = state.get_multienv();
+        auto [env2L_cplx,env2R_cplx] = state.get_multienv2();
+        envL  = envL_cplx.block;         envR  = envR_cplx.block;
+        env2L = env2L_cplx.block;        env2R = env2R_cplx.block;
     }
     dsizes        = state.active_dimensions();
 }

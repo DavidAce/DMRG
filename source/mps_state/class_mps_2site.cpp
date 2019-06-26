@@ -17,8 +17,8 @@ using Scalar = class_mps_2site::Scalar;
 // Function definitions
 
 class_mps_2site::class_mps_2site(){
-    MPS_A = std::make_unique<class_vidal_mps>();
-    MPS_B = std::make_unique<class_vidal_mps>();
+    MPS_A = std::make_unique<class_vidal_site>();
+    MPS_B = std::make_unique<class_vidal_site>();
 }
 
 class_mps_2site::class_mps_2site(const class_mps_2site &other)

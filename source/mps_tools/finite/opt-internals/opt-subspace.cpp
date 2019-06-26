@@ -167,7 +167,7 @@ find_subspace(const class_finite_chain_state & state, const class_simulation_sta
     }
 
     if(not H_local.isApprox(H_local.adjoint(), 1e-14)){
-        throw std::runtime_error("H_local is not hermitian!");
+        throw std::runtime_error(fmt::format("H_local is not hermitian: {:.16f}", (H_local - H_local.adjoint()).cwiseAbs().sum()));
     }
     t_ham->toc();
     auto theta = state.get_multitheta();

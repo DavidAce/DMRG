@@ -20,7 +20,7 @@ void mpstools::finite::print::print_full_state(const class_finite_chain_state &s
         std::cout << "  L:\n"<< mps.get_L() << '\n';
         std::cout << "  G:\n"<< mps.get_G() << '\n';
     }
-    std::cout << "  LC:\n"<< state.MPS_C;
+    std::cout << "  LC:\n"<< state.MPS_C << '\n';
     for (auto & mps : state.MPS_R){
         std::cout << "MPS " << mps.get_position() << "  :\n";
         std::cout << "  G:\n"<< mps.get_G() << '\n';
@@ -50,7 +50,7 @@ void mpstools::finite::print::print_state(const class_finite_chain_state &state)
     for(auto &it : MPS_L){
         std::cout << "L[" << std::setw(3) << i  <<  "]: " << it.get_L().dimensions()<< std::setw(5) << "   "
                   << "G[" << std::setw(3) << i  <<  "]: " << it.get_G().dimensions()<< std::setw(5) << " pos: " << it.get_position() << "   ";
-        if (envitL != ENV_L.end()){std::cout << " ENV: " << envitL->block.dimensions() << "   " << " env spins: " << envitL++->size << " ";}
+        if (envitL != ENV_L.end()){std::cout << " ENV_" << envitL->side << ": " << envitL->block.dimensions() << " pos: " << envitL->get_position() << "   " << " env spins: " << envitL++->sites << " ";}
         if(&it == &MPS_L.back()){
             std::cout << " <--- Position A";
         }
@@ -62,7 +62,7 @@ void mpstools::finite::print::print_state(const class_finite_chain_state &state)
     for(auto &it : MPS_R){
         std::cout << "G[" << std::setw(3) << i  <<  "]: " << it.get_G().dimensions() << std::setw(5) << "  "
                   << "L[" << std::setw(3) << i  <<  "]: " << it.get_L().dimensions() << std::setw(5) << " pos: " << it.get_position() << "  ";
-        if (envitR != ENV_R.end()){std::cout << " ENV: " << envitR->block.dimensions() << "   "<< " env spins: " << envitR++->size << " ";}
+        if (envitR != ENV_R.end()){std::cout << " ENV:_" << envitL->side << ": " << envitR->block.dimensions() << " pos: " << envitR->get_position()  << "   "<< " env spins: " << envitR++->sites << " ";}
         if(&it == &MPS_R.front()){
             std::cout << " <--- Position B" ;
         }
@@ -87,11 +87,11 @@ void mpstools::finite::print::print_state_compact(const class_finite_chain_state
     std::cout << "State position            : "    << state.get_position() << std::endl;
     std::cout << "Environment L size        : "    << ENV_L.size() << std::endl;
     std::cout << "Environment R size        : "    << ENV_R.size() << std::endl;
-    if(!ENV_L.empty()){std::cout << "ENV_L[" <<std::setw(3) << ENV_L.size()-1 << "]: " << ENV_L.back().block.dimensions() << " Particles: " << ENV_L.back().size << "  <--- Also current environment L" << std::endl;}
+    if(!ENV_L.empty()){std::cout << "ENV_L[" <<std::setw(3) << ENV_L.size()-1 << "]: " << ENV_L.back().block.dimensions() << " Particles: " << ENV_L.back().sites << "  <--- Also current environment L" << std::endl;}
     if(!MPS_L.empty()){std::cout << "MPS_L[" <<std::setw(3) << MPS_L.size()-1 << "]: " << MPS_L.back().get_G().dimensions() <<  "   <--- Also current iteration A" << std::endl;}
     std::cout << "L[" << std::setw(3) << '*'  <<  "]: " << MPS_C.dimensions() << "                    <--- Center" << std::endl;
     if(!MPS_R.empty()){std::cout << "MPS_R[" <<std::setw(3) << MPS_R.size()-1 << "]: " << MPS_R.front().get_G().dimensions() << "   <--- Also current iteration B" << std::endl;}
-    if(!ENV_R.empty()){std::cout << "ENV_R[" <<std::setw(3) << ENV_R.size()-1 << "]: " << ENV_R.front().block.dimensions() << " Particles: " << ENV_R.front().size << " <--- Also current environment R"  << std::endl;}
+    if(!ENV_R.empty()){std::cout << "ENV_R[" <<std::setw(3) << ENV_R.size()-1 << "]: " << ENV_R.front().block.dimensions() << " Particles: " << ENV_R.front().sites << " <--- Also current environment R"  << std::endl;}
 }
 
 

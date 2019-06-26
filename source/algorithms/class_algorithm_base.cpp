@@ -138,7 +138,7 @@ void class_algorithm_base::check_saturation_using_slope(
 }
 
 
-void class_algorithm_base::update_bond_dimension(size_t min_saturation_length){
+void class_algorithm_base::update_bond_dimension(){
     sim_state.chi_max = chi_max();
     if(not chi_grow() or sim_state.bond_dimension_has_reached_max or sim_state.chi_temp == chi_max() ){
         sim_state.chi_temp = chi_max();

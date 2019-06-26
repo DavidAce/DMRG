@@ -14,12 +14,12 @@ class class_hamiltonian_base{
 protected:
     Eigen::array<long, 4> extent4;                           /*!< Extent of pauli matrices in a rank-4 tensor */
     Eigen::array<long, 2> extent2;                           /*!< Extent of pauli matrices in a rank-2 tensor */
-    size_t position = 0;                                     /*!< Position on a finite chain */
+    std::optional<size_t> position;                          /*!< Position on a finite chain */
     std::shared_ptr<spdlog::logger> log;
     Eigen::Tensor<Scalar,4> mpo_internal;
 public:
 
-    class_hamiltonian_base(std::string logName = "MODEL");
+    class_hamiltonian_base(size_t position_, std::string logName = "MODEL");
     virtual ~class_hamiltonian_base() = default;
     virtual std::unique_ptr<class_hamiltonian_base> clone()                     const = 0;
     const Eigen::Tensor<Scalar,4> & MPO() const;

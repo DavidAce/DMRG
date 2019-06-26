@@ -9,27 +9,33 @@
 #include <mps_state/class_finite_chain_state.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <spdlog/spdlog.h>
+#include <spdlog/fmt/fmt.h>
 
-void mpstools::finite::debug::check_integrity(const class_finite_chain_state &state,
-                                              const class_simulation_state &sim_state)
+void mpstools::finite::debug::check_integrity(const class_finite_chain_state &state)
 {
     mpstools::log->info("Checking integrity...");
     try{
         check_integrity_of_mps(state);
     }catch(std::exception & ex){
         mpstools::finite::print::print_state(state) ;
-        throw std::runtime_error("Integrity check of MPS failed: " + std::string(ex.what()));
+        throw std::runtime_error(fmt::format("Integrity check of MPS failed: {}", ex.what()));
+    }
+    try{
+        check_integrity_of_mpo(state);
+    }catch(std::exception & ex){
+        mpstools::finite::print::print_state(state) ;
+        throw std::runtime_error(fmt::format("Integrity check of MPO failed: {}", ex.what()));
     }
     try {
         mpstools::log->info("Checking norms");
         auto norm_chain = mpstools::finite::measure::norm(state);
         if(std::abs(norm_chain - 1.0) > 1e-10) {
             mpstools::log->warn("Norm of state far from unity: {}", norm_chain);
-            throw std::runtime_error("Norm of state too far from unity: " + std::to_string(norm_chain));
+            throw std::runtime_error(fmt::format("Norm of state too far from unity: {}",norm_chain));
         }
     }
     catch(std::exception & ex){
-        throw std::runtime_error("Integrity check of norm failed: " + std::string(ex.what()));
+        throw std::runtime_error(fmt::format("Integrity check of norm failed: {}", ex.what()));
     }
 }
 
@@ -40,62 +46,83 @@ void mpstools::finite::debug::check_integrity_of_mps(const class_finite_chain_st
         mpstools::log->trace("Checking integrity of MPS");
         mpstools::log->trace("\tChecking system sizes");
         if(state.MPS_L.size() + state.MPS_R.size() != state.get_length() )
-            throw std::runtime_error("Mismatch in MPS size: " + std::to_string(state.MPS_L.size() + state.MPS_R.size()) + " " + std::to_string(state.get_length()));
+            throw std::runtime_error(fmt::format("Mismatch in MPS sizes: {} + {} != {}", state.MPS_L.size(), state.MPS_R.size(), state.get_length()));
 
         if(state.ENV_L.size() + state.ENV_R.size() != state.get_length())
-            throw std::runtime_error("Mismatch in ENV size: " + std::to_string(state.ENV_L.size() + state.ENV_R.size()) + " " + std::to_string(state.get_length()));
+            throw std::runtime_error(fmt::format("Mismatch in ENV sizes: {} + {} != {}", state.ENV_L.size(), state.ENV_R.size(),state.get_length()));
 
         if(state.ENV2_L.size() + state.ENV2_R.size() != state.get_length())
-            throw std::runtime_error("Mismatch in ENV size: " + std::to_string(state.ENV_L.size() + state.ENV_R.size()) + " " + std::to_string(state.get_length()));
+            throw std::runtime_error(fmt::format("Mismatch in ENV2 sizes: {} + {} != {}", state.ENV2_L.size(), state.ENV2_R.size(),state.get_length()));
 
-        if( state.ENV_L.back().size != state.get_position())
-            throw std::runtime_error("Mismatch in ENV_L size and position: " + std::to_string(state.ENV_L.back().size) + " " + std::to_string(state.get_position()));
+        if( state.ENV_L.back().sites != state.get_position())
+            throw std::runtime_error(fmt::format("Mismatch in ENV_L sites and position: {} != {}", state.ENV_L.back().sites, state.get_position()));
 
-        if(state.ENV_R.front().size != state.get_length() - state.get_position() - 2)
-            throw std::runtime_error("Mismatch in ENV_R size+1 and length-position: " + std::to_string(state.ENV_R.front().size) + " " + std::to_string(state.get_length() - state.get_position()-2));
+        if(state.ENV_R.front().sites != state.get_length() - state.get_position() - 2)
+            throw std::runtime_error(fmt::format("Mismatch in ENV_R size+1 and length-position: {} != {}", state.ENV_R.front().sites, state.get_length() - state.get_position() - 2));
 
         mpstools::log->trace("\tChecking matrix sizes on the left side");
         //Check left side of the state
         auto mps_it  = state.MPS_L.begin();
         auto mps_nx  = state.MPS_L.begin();
         auto env_it  = state.ENV_L.begin();
+        auto env_nx  = state.ENV_L.begin();
         auto env2_it = state.ENV2_L.begin();
         auto mpo_it  = state.MPO_L.begin();
         std::advance(mps_nx,1);
+        std::advance(env_nx,1);
         int i = 0;
         while(
             mps_it  != state.MPS_L.end() and
             mps_nx  != state.MPS_L.end() and
             env_it  != state.ENV_L.end() and
+            env_nx  != state.ENV_L.end() and
             env2_it != state.ENV2_L.end() and
             mpo_it  != state.MPO_L.end()
             )
         {
+            mpstools::log->trace("\tChecking site {}", i);
+
             if(mps_it->get_chiR() != mps_nx->get_chiL())
-                throw std::runtime_error("Mismatch in adjacent MPS dimensions (left side) @ site " + std::to_string(i) + ": " + std::to_string(mps_it->get_chiR()) + " " + std::to_string(mps_nx->get_chiL()));
+                throw std::runtime_error(fmt::format("Mismatch in adjacent MPS dimensions (left side) @ site {}: {} != {}", i, mps_it->get_chiR(), mps_nx->get_chiL()));
+
+            if(mps_nx->get_position() - mps_it->get_position() != 1 )
+                throw std::runtime_error(fmt::format("Mismatch in adjacent MPS positions (left side) @ site {}: {} - {} != 1", i, mps_nx->get_position(), mps_it->get_position()));
+
 
             if(mps_it->get_position() != env_it->get_position())
-                throw std::runtime_error("Mismatch in MPS and ENV positions (left side) @ site " + std::to_string(i) + ": " + std::to_string(mps_it->get_position()) + " " + std::to_string(env_it->get_position()));
+                throw std::runtime_error(fmt::format("Mismatch in MPS and ENV positions (left side) @ site {}: {} != {}", i, mps_it->get_position(), env_it->get_position()));
 
-            if(mps_it->get_position() != env_it->size)
-                throw std::runtime_error("Mismatch in MPS position and ENV size (left side) @ site " + std::to_string(i) + ": " + std::to_string(mps_it->get_position()) + " " + std::to_string(env_it->size));
+            if(mps_it->get_position() != env_it->sites)
+                throw std::runtime_error(fmt::format("Mismatch in MPS position and ENV size (left side) @ site {}: {} != {}", i, mps_it->get_position(), env_it->sites));
+
+            if(mps_it->get_position() != env_it->get_position())
+                throw std::runtime_error(fmt::format("Mismatch in MPS position and ENV position (left side) @ site {}: {} != {}", i, mps_it->get_position(), env_it->get_position()));
 
             if(mps_it->get_chiL() != env_it->block.dimension(0))
-                throw std::runtime_error("Mismatch in MPS and ENV dimensions (left side) @ site " + std::to_string(i) + ": " +  std::to_string(mps_it->get_chiL()) + " " + std::to_string(env_it->block.dimension(0)));
+                throw std::runtime_error(fmt::format("Mismatch in MPS and ENV dimensions (left side) @ site {}: {} != {}", i,mps_it->get_chiL() , env_it->block.dimension(0)));
+
+            if(env_nx->get_position() - env_it->get_position() != 1)
+                throw std::runtime_error(fmt::format("Mismatch in adjacent ENV positions (left side) @ site {}: {} - {} != 1", i, env_nx->get_position(), env_it->get_position()));
 
             if(env_it->block.dimension(2) != mpo_it->get()->MPO().dimension(0))
-                throw std::runtime_error("Mismatch in ENV and MPO dimensions (left side) @ site " + std::to_string(i) + ": " + std::to_string(env_it->block.dimension(2)) + " " + std::to_string(mpo_it->get()->MPO().dimension(0)));
+                throw std::runtime_error(fmt::format("Mismatch in ENV and MPO dimensions (left side) @ site {}: {} != {}", i,env_it->block.dimension(2), mpo_it->get()->MPO().dimension(0)));
+
+            if(env_it->sites != env2_it->sites)
+                throw std::runtime_error(fmt::format("Mismatch in ENV position and ENV2 sites (left side) @ site {}: {} != {}", i,env_it->sites != env2_it->sites));
+
+            if(env_it->get_position() != env2_it->get_position())
+                throw std::runtime_error(fmt::format("Mismatch in ENV position and ENV2 positions (left side) @ site {}: {} != {}", i,env_it->get_position(), env2_it->get_position()));
 
             if(env2_it->block.dimension(2) != mpo_it->get()->MPO().dimension(0))
-                throw std::runtime_error("Mismatch in ENV2 and MPO dimensions (left side) @ site " + std::to_string(i) + ": "+ std::to_string(env2_it->block.dimension(2)) + " " + std::to_string(mpo_it->get()->MPO().dimension(0)));
+                throw std::runtime_error(fmt::format("Mismatch in ENV2 and MPO dimensions (left side) @ site {}: {} != {}", i,env2_it->block.dimension(2), mpo_it->get()->MPO().dimension(0)));
 
             if(env2_it->block.dimension(3) != mpo_it->get()->MPO().dimension(0))
-                throw std::runtime_error("Mismatch in ENV2 and MPO dimensions (left side) @ site " + std::to_string(i) + ": " + std::to_string(env2_it->block.dimension(3)) + " " + std::to_string(mpo_it->get()->MPO().dimension(0)));
-
+                throw std::runtime_error(fmt::format("Mismatch in ENV2 and MPO dimensions (left side) @ site {}: {} != {}", i,env2_it->block.dimension(3) ,mpo_it->get()->MPO().dimension(0)));
 
             mps_it++;
             mps_nx++;
             env_it++;
+            env_nx++;
             env2_it++;
             mpo_it++;
             i++;
@@ -106,10 +133,9 @@ void mpstools::finite::debug::check_integrity_of_mps(const class_finite_chain_st
         mpstools::log->trace("\tChecking matrix sizes on the center");
         //Check center
         if(state.MPS_C.dimension(0) != state.MPS_L.back().get_chiR())
-            throw std::runtime_error("Mismatch in center bond matrix dimension: " + std::to_string(state.MPS_C.dimension(0)) + " " + std::to_string(state.MPS_L.back().get_chiR()));
+            throw std::runtime_error(fmt::format("Mismatch in center bond matrix dimension: {} != {}",state.MPS_C.dimension(0) , state.MPS_L.back().get_chiR()));
         if(state.MPS_C.dimension(0) != state.MPS_R.front().get_chiL())
-            throw std::runtime_error("Mismatch in center bond matrix dimension: " + std::to_string(state.MPS_C.dimension(0)) + " " + std::to_string(state.MPS_R.front().get_chiL()));
-
+            throw std::runtime_error(fmt::format("Mismatch in center bond matrix dimension: {} != {}",state.MPS_C.dimension(0) , state.MPS_R.front().get_chiL()));
     }
 
     {
@@ -117,42 +143,63 @@ void mpstools::finite::debug::check_integrity_of_mps(const class_finite_chain_st
         auto mps_it  = state.MPS_R.rbegin();
         auto mps_nx  = state.MPS_R.rbegin();
         auto env_it  = state.ENV_R.rbegin();
+        auto env_nx  = state.ENV_R.rbegin();
         auto env2_it = state.ENV2_R.rbegin();
         auto mpo_it  = state.MPO_R.rbegin();
         std::advance(mps_nx,1);
+        std::advance(env_nx,1);
         auto i = state.get_length()-1;
         while(
             mps_it  != state.MPS_R.rend() and
             mps_nx  != state.MPS_R.rend() and
             env_it  != state.ENV_R.rend() and
+            env_nx  != state.ENV_R.rend() and
             env2_it != state.ENV2_R.rend() and
             mpo_it  != state.MPO_R.rend())
         {
+            mpstools::log->trace("\tChecking site {}", i);
             if(mps_it->get_chiL() != mps_nx->get_chiR())
-                throw std::runtime_error("Mismatch in adjacent MPS dimensions (right side) @ site " + std::to_string(i) + ": "+ std::to_string(mps_nx->get_chiR()) + " " + std::to_string(mps_it->get_chiL()));
+                throw std::runtime_error(fmt::format("Mismatch in adjacent MPS dimensions (right side) @ site {}: {} != {}", i,  mps_nx->get_chiR(), mps_it->get_chiL()));
+
+            if(mps_it->get_position() - mps_nx->get_position() != 1 )
+                throw std::runtime_error(fmt::format("Mismatch in adjacent MPS positions (right side) @ site {}: {} - {} != 1", i, mps_it->get_position(), mps_nx->get_position()));
 
             if(mps_it->get_position() != env_it->get_position())
-                throw std::runtime_error("Mismatch in MPS and ENV positions (right side) @ site " + std::to_string(i) + ": " + std::to_string(mps_it->get_position()) + " " + std::to_string(env_it->get_position()));
+                throw std::runtime_error(fmt::format("Mismatch in MPS and ENV positions (right side) @ site {}: {} != {}", i,  mps_it->get_position(), env_it->get_position()));
 
-            if(mps_it->get_position() != state.get_length() - (env_it->size + 1))
-                throw std::runtime_error("Mismatch in MPS position and ENV size + 1 (right side) @ site " + std::to_string(i) + ": " + std::to_string(mps_it->get_position()) + " " + std::to_string(state.get_length() - (env_it->size + 1)));
+            if(mps_it->get_position() != state.get_length() - (env_it->sites + 1))
+                throw std::runtime_error(fmt::format("Mismatch in MPS position and ENV size + 1 (right side) @ site {}: {} != {}", i,  mps_it->get_position(), state.get_length() - (env_it->sites + 1)));
+
+            if(mps_it->get_position() != env_it->get_position())
+                throw std::runtime_error(fmt::format("Mismatch in MPS position and ENV position (right side) @ site {}: {} != {}", i,  mps_it->get_position(), env_it->get_position()));
 
             if(mps_it->get_chiR() != env_it->block.dimension(0))
-                throw std::runtime_error("Mismatch in MPS and ENV dimensions (right side) @ site " + std::to_string(i) + ": " + std::to_string(mps_it->get_chiR()) + " " + std::to_string(env_it->block.dimension(0)));
+                throw std::runtime_error(fmt::format("Mismatch in MPS and ENV dimensions (right side) @ site {}: {} != {}", i,  mps_it->get_chiR(), env_it->block.dimension(0)));
+
+            if(env_it->get_position() - env_nx->get_position() != 1)
+                throw std::runtime_error(fmt::format("Mismatch in adjacent ENV positions (right side) @ site {}: {} - {} != 1", i, env_it->get_position(), env_nx->get_position()));
+
+            if(env_it->sites != env2_it->sites)
+                throw std::runtime_error(fmt::format("Mismatch in ENV position and ENV2 sites (right side) @ site {}: {} != {}", i,  env_it->sites, env2_it->sites));
+
+            if(env_it->get_position() != env2_it->get_position())
+                throw std::runtime_error(fmt::format("Mismatch in ENV position and ENV2 positions (right side) @ site {}: {} != {}", i,  env_it->get_position(), env2_it->get_position()));
+
 
             if(env_it->block.dimension(2) != mpo_it->get()->MPO().dimension(1))
-                throw std::runtime_error("Mismatch in ENV and MPO dimensions (right side) @ site " + std::to_string(i) + ": " + std::to_string(env_it->block.dimension(2)) + " " + std::to_string(mpo_it->get()->MPO().dimension(1)));
+                throw std::runtime_error(fmt::format("Mismatch in ENV and MPO dimensions (right side) @ site {}: {} != {}", i,  env_it->block.dimension(2), mpo_it->get()->MPO().dimension(1)));
 
             if(env2_it->block.dimension(2) != mpo_it->get()->MPO().dimension(1))
-                throw std::runtime_error("Mismatch in ENV2 and MPO dimensions (right side) @ site " + std::to_string(i) + ": " + std::to_string(env2_it->block.dimension(2)) + " " + std::to_string(mpo_it->get()->MPO().dimension(1)));
+                throw std::runtime_error(fmt::format("Mismatch in ENV2 and MPO dimensions (right side) @ site {}: {} != {}", i,  env2_it->block.dimension(2), mpo_it->get()->MPO().dimension(1)));
 
             if(env2_it->block.dimension(3) != mpo_it->get()->MPO().dimension(1))
-                throw std::runtime_error("Mismatch in ENV2 and MPO dimensions (right side) @ site " + std::to_string(i) + ": " + std::to_string(env2_it->block.dimension(3)) + " " + std::to_string(mpo_it->get()->MPO().dimension(1)));
+                throw std::runtime_error(fmt::format("Mismatch in ENV2 and MPO dimensions (right side) @ site {}: {} != {}", i,  env2_it->block.dimension(3), mpo_it->get()->MPO().dimension(1)));
 
 
             mps_it++;
             mps_nx++;
             env_it++;
+            env_nx++;
             env2_it++;
             mpo_it++;
             i--;
@@ -162,7 +209,17 @@ void mpstools::finite::debug::check_integrity_of_mps(const class_finite_chain_st
 }
 
 
+void mpstools::finite::debug::check_integrity_of_mpo(const class_finite_chain_state &state) {
 
+    for (auto &mpo : state.MPO_L){
+        auto site = mpo->get_position();
+        if (not mpo->all_mpo_parameters_have_been_set){throw std::runtime_error(fmt::format("All parameters have not been set on MPO_L site: {}" ,site));}
+    }
+    for (auto &mpo : state.MPO_R){
+        auto site = mpo->get_position();
+        if (not mpo->all_mpo_parameters_have_been_set){throw std::runtime_error(fmt::format("All parameters have not been set on MPO_R site: {}" ,site));}
+    }
+}
 
 
 void mpstools::finite::debug::print_parity_properties(const class_finite_chain_state &state) {
