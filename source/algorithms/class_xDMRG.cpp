@@ -70,7 +70,7 @@ void class_xDMRG::run_simulation()    {
             if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
 
-        update_bond_dimension(min_saturation_length);
+        update_bond_dimension();
         move_center_point();
         sim_state.iteration = state->get_sweeps();
         sim_state.step++;
@@ -93,8 +93,24 @@ void class_xDMRG::single_DMRG_step()
  * \fn void single_DMRG_step()
  */
 {
-    mpstools::finite::debug::check_integrity(*state,sim_state);
-    mpstools::finite::print::print_state(*state);
+    mpstools::finite::debug::check_integrity(*state);
+    for(size_t pos = 0 ; pos < state->get_length()-1; pos++){
+        using VT = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
+        state->active_sites     = {pos, pos+1};
+        auto theta_test         =  state->get_theta(pos);
+        Eigen::Tensor<Scalar,3> theta_test_reshape = theta_test
+                .shuffle(Textra::array4{0,2,1,3})
+                .reshape(Textra::array3{theta_test.dimension(0)*theta_test.dimension(1),theta_test.dimension(2),theta_test.dimension(3)});
+        auto multi_theta_test   = state->get_multitheta();
+        auto theta_map = Eigen::Map<VT>(theta_test_reshape.data(),theta_test_reshape.size());
+        auto mtheta_map = Eigen::Map<VT>(multi_theta_test.data(),multi_theta_test.size());
+        if(not theta_map.isApprox(mtheta_map,1e-14)){
+            std::cerr << "Theta \n"         << theta_test_reshape << std::endl;
+            std::cerr << "MultiTheta \n"    << multi_theta_test << std::endl;
+            throw std::runtime_error("Theta's don't agree!");
+        }
+
+    }
 
     t_sim.tic();
     t_opt.tic();
@@ -111,7 +127,7 @@ void class_xDMRG::single_DMRG_step()
 
     auto optMode  =  OptMode::OVERLAP;
     optMode  = sim_state.iteration   >= 2  ?  OptMode::VARIANCE : optMode;
-
+    optMode  =  OptMode::VARIANCE;
     auto optSpace =  OptSpace::FULL;
     optSpace = sim_state.iteration >=  2                           ? OptSpace::PARTIAL : optSpace;
     optSpace = sim_state.iteration >=  settings::xdmrg::min_sweeps ? OptSpace::DIRECT  : optSpace;
@@ -119,13 +135,32 @@ void class_xDMRG::single_DMRG_step()
 
     long threshold = 0;
     switch(optSpace){
-        case mpstools::finite::opt::OptSpace::FULL    : threshold = 2 * 2 * 16 * 16; break;
-        case mpstools::finite::opt::OptSpace::PARTIAL : threshold = 2 * 2 * 32 * 16; break;
-        case mpstools::finite::opt::OptSpace::DIRECT  : threshold = 2 * 2 * settings::xdmrg::chi_max *  settings::xdmrg::chi_max; break;
+        case mpstools::finite::opt::OptSpace::FULL    : threshold = 1 * 2 * 16 * 16; break;
+        case mpstools::finite::opt::OptSpace::PARTIAL : threshold = 1 * 2 * 32 * 16; break;
+        case mpstools::finite::opt::OptSpace::DIRECT  : threshold = 1 * 2 * settings::xdmrg::chi_max *  settings::xdmrg::chi_max; break;
     }
 
     state->activate_sites(threshold);
     auto optType = state->isReal() ? OptType::REAL : OptType::CPLX;
+
+    {
+        std::cout << "Testing truncation of theta" << std::endl;
+        using VT = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
+        Eigen::Tensor<Scalar,3> theta_before = state->get_multitheta();
+        mpstools::finite::opt::truncate_theta(theta_before, *state, sim_state.chi_temp, settings::precision::SVDThreshold);
+        Eigen::Tensor<Scalar,3> theta_after = state->get_multitheta();
+        auto theta_b = Eigen::Map<VT>(theta_before.data(),theta_before.size());
+        auto theta_a = Eigen::Map<VT>(theta_after.data(),theta_after.size());
+        auto overlap  = std::abs(theta_a.dot(theta_b));
+        if( std::abs(overlap - 1.0) > 1e-5  ){
+            std::cerr << "overlap = "<< overlap << std::endl;
+//            throw std::runtime_error("Truncation is not working!");
+        }
+    }
+
+
+
+
     Eigen::Tensor<Scalar,3> theta;
     std::tie(theta, sim_state.energy_now) = mpstools::finite::opt::find_optimal_excited_state(*state,sim_state,optMode, optSpace,optType);
     sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
@@ -134,8 +169,9 @@ void class_xDMRG::single_DMRG_step()
     t_svd.tic();
     mpstools::finite::opt::truncate_theta(theta, *state, sim_state.chi_temp, settings::precision::SVDThreshold);
     t_svd.toc();
-
     state->unset_measurements();
+
+    mpstools::finite::debug::check_integrity(*state);
 
     t_sim.toc();
 

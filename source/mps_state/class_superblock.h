@@ -39,13 +39,13 @@ public:
     void clear();
 
 
-    std::shared_ptr<class_mps_2site>         MPS;        /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
-    std::shared_ptr<class_hamiltonian_base>  HA;
-    std::shared_ptr<class_hamiltonian_base>  HB;
-    std::shared_ptr<class_environment>       Lblock;     /*!< Left  environment block. */
-    std::shared_ptr<class_environment>       Rblock;     /*!< Right environment block. */
-    std::shared_ptr<class_environment_var>   Lblock2;    /*!< Left  environment block used for variance calculation */
-    std::shared_ptr<class_environment_var>   Rblock2;    /*!< Right environment block used for variance calculation */
+    std::unique_ptr<class_mps_2site>         MPS;        /*!< Matrix product states for two sites, A and B, in Vidal Canonical Form \f$\Gamma^A\Lambda^A\Gamma^B\Lambda^B\f$. */
+    std::unique_ptr<class_hamiltonian_base>  HA;
+    std::unique_ptr<class_hamiltonian_base>  HB;
+    std::unique_ptr<class_environment>       Lblock;     /*!< Left  environment block. */
+    std::unique_ptr<class_environment>       Rblock;     /*!< Right environment block. */
+    std::unique_ptr<class_environment_var>   Lblock2;    /*!< Left  environment block used for variance calculation */
+    std::unique_ptr<class_environment_var>   Rblock2;    /*!< Right environment block used for variance calculation */
 
 
     double E_optimal;                                    /*!< Stores the energy obtained in the eigenvalue solver. This energy corresponds to non-truncated MPS, so it will differ a tiny bit from what you see in final resuls. */
@@ -76,7 +76,7 @@ public:
 
     void truncate_MPS(
             const Eigen::Tensor<Scalar, 4> &theta,        /*!< The 2-site MPS to truncate */
-            const std::shared_ptr<class_mps_2site> &MPS_out,
+            const class_mps_2site &MPS_out,
             long chi_,                                      /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
             double SVDThreshold                            /*!< Minimum threshold value for keeping singular values. */
     )             __attribute((hot));                      /*!< Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps \f$\chi\f$ (`chi`) singular values. */

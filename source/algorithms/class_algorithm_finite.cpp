@@ -16,14 +16,14 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 
 {
     log->trace("Constructing class_algorithm_finite");
-    state = std::make_shared<class_finite_chain_state>();
+    state = std::make_unique<class_finite_chain_state>();
     mpstools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
     mpstools::finite::mps::initialize(*state, num_sites);
     mpstools::finite::mpo::randomize(*state);
     mpstools::finite::mps::randomize(*state);
-    mpstools::finite::debug::check_integrity(*state, sim_state);
+    mpstools::finite::debug::check_integrity(*state);
     mpstools::finite::mps::project_to_closest_parity(*state, settings::model::symmetry);
-    mpstools::finite::debug::check_integrity(*state, sim_state);
+    mpstools::finite::debug::check_integrity(*state);
 
     table_dmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
     table_dmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5pp_file, sim_name + "/measurements", "simulation_progress_full_chain", sim_name);
@@ -121,7 +121,7 @@ void class_algorithm_finite::run_preprocessing(){
 
 void class_algorithm_finite::run_postprocessing(){
     log->info("Running {} postprocessing",sim_name);
-    mpstools::finite::debug::check_integrity(*state,sim_state);
+    mpstools::finite::debug::check_integrity(*state);
     state->unset_measurements();
     state->do_all_measurements();
     mpstools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
@@ -147,8 +147,6 @@ void class_algorithm_finite::single_DMRG_step(std::string ritz){
  * \fn void single_DMRG_step(class_superblock &superblock)
  */
     log->trace("Starting single DMRG step");
-    mpstools::finite::print::print_state(*state);
-
     t_sim.tic();
     t_opt.tic();
     Eigen::Tensor<Scalar,4> theta;
@@ -168,8 +166,11 @@ void class_algorithm_finite::move_center_point(){
     log->trace("Moving center point ");
     t_sim.tic();
     t_ste.tic();
+    size_t move_steps = state->active_sites.empty() ? 1 : state->active_sites.size()-1;
     try{
-        mpstools::finite::mps::move_center_point(*state);
+        for(size_t i = 0; i < move_steps;i++){
+            mpstools::finite::mps::move_center_point(*state);
+        }
     }catch(std::exception & e){
         mpstools::finite::print::print_state(*state);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));

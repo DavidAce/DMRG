@@ -50,7 +50,7 @@ namespace mpstools{
 
         namespace ops {
             extern std::list<Eigen::Tensor<std::complex<double>,4>>
-                        make_mpo_list                 (const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_R);
+                        make_mpo_list                 (const std::list<std::unique_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::unique_ptr<class_hamiltonian_base>> &mpos_R);
             extern void apply_mpo                     (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
             extern void apply_mpos                    (class_finite_chain_state &state, const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
 
@@ -74,6 +74,7 @@ namespace mpstools{
             extern std::tuple<Eigen::Tensor<std::complex<double>,3>, double> find_optimal_excited_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType);
             extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_ground_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, std::string ritz = "SR");
             extern void truncate_theta(Eigen::Tensor<std::complex<double>,3> theta, class_finite_chain_state & state, long chi_, double SVDThreshold);
+            extern void truncate_theta2(Eigen::Tensor<std::complex<double>,3> theta, class_finite_chain_state & state, long chi_, double SVDThreshold);
             extern void truncate_theta(Eigen::Tensor<std::complex<double>,4> theta, class_finite_chain_state & state, long chi_, double SVDThreshold);
         }
 

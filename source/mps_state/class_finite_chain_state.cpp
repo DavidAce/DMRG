@@ -104,12 +104,13 @@ Eigen::Tensor<class_finite_chain_state::Scalar,4> class_finite_chain_state::get_
 
 const class_vidal_site & class_finite_chain_state::get_MPS(size_t pos) const {
     if (pos >= get_length())                 throw std::range_error(fmt::format("get_MPS(pos) pos out of range: {}", pos));
-    if(pos < MPS_L.size()){
+    if(pos <= MPS_L.back().get_position()){
         auto mps_it = std::next(MPS_L.begin(),pos);
         if (mps_it->get_position() != pos)   throw std::range_error(fmt::format("get_MPS(pos): Mismatch in mps L position and pos: {} != {}", mps_it->get_position(), pos));
         return *mps_it;
     }else{
-        auto mps_it = std::next(MPS_R.rbegin(), get_length()-pos-1);
+        if(pos < MPS_R.front().get_position()) throw std::range_error(fmt::format("get_MPS(pos): Mismatch in pos and MPSR front position: {} < {}", pos,  MPS_R.front().get_position()));
+        auto mps_it = std::next(MPS_R.begin(), pos - MPS_R.front().get_position());
         if (mps_it->get_position() != pos)   throw std::range_error(fmt::format("get_MPS(pos): Mismatch in mps R position and pos: {} != {}", mps_it->get_position(), pos));
         return *mps_it;
     }
@@ -122,12 +123,13 @@ class_vidal_site & class_finite_chain_state::get_MPS(size_t pos){
 
 const class_hamiltonian_base & class_finite_chain_state::get_MPO(size_t pos) const{
     if (pos >= get_length())throw std::range_error(fmt::format("get_MPO(pos) pos out of range: {}", pos));
-    if(pos < MPO_L.size()){
+    if(pos <= MPO_L.back()->get_position()){
         auto mpo_it = std::next(MPO_L.begin(),pos)->get();
         if (mpo_it->get_position() != pos)throw std::range_error(fmt::format("get_MPO(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
         return *mpo_it;
     }else{
-        auto mpo_it = std::next(MPO_R.rbegin(), get_length()-pos-1)->get();
+        if(pos < MPO_R.front()->get_position()) throw std::range_error(fmt::format("get_MPS(pos): Mismatch in pos and MPOR front position: {} < {}", pos,  MPO_R.front()->get_position()));
+        auto mpo_it = std::next(MPO_R.begin(), pos - MPO_R.front()->get_position())->get();
         if (mpo_it->get_position() != pos)throw std::range_error(fmt::format("get_MPO(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
         return *mpo_it;
     }
@@ -276,18 +278,21 @@ Eigen::Tensor<class_finite_chain_state::Scalar,4>   class_finite_chain_state::ge
 }
 
 
-std::pair<const class_environment &, const class_environment &>
+std::pair<std::reference_wrapper<const class_environment> , std::reference_wrapper<const class_environment>>
 class_finite_chain_state::get_multienv ()     const{
     return std::make_pair(get_ENVL(active_sites.front()), get_ENVR(active_sites.back()));
 }
-std::pair<const class_environment_var &, const class_environment_var &>
+
+std::pair<std::reference_wrapper<const class_environment_var> , std::reference_wrapper<const class_environment_var>>
 class_finite_chain_state::get_multienv2()     const{
     return std::make_pair(get_ENV2L(active_sites.front()), get_ENV2R(active_sites.back()));
 }
 
 
 Eigen::Tensor<class_finite_chain_state::Scalar,6>   class_finite_chain_state::get_multi_hamiltonian() const{
-    auto [envL,envR] = get_multienv();
+//    auto [envL,envR] = get_multienv();
+    auto & envL = get_ENVL(active_sites.front());
+    auto & envR = get_ENVR(active_sites.back());
     if (envL.get_position() != active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", envL.get_position() , active_sites.front()));
     if (envR.get_position() != active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", envR.get_position() , active_sites.back()));
     return envL.block
@@ -297,7 +302,9 @@ Eigen::Tensor<class_finite_chain_state::Scalar,6>   class_finite_chain_state::ge
 }
 
 Eigen::Tensor<class_finite_chain_state::Scalar,6>   class_finite_chain_state::get_multi_hamiltonian2() const{
-    auto [env2L,env2R] = get_multienv2();
+//    auto [env2L,env2R] = get_multienv2();
+    auto & env2L = get_ENV2L(active_sites.front());
+    auto & env2R = get_ENV2R(active_sites.back());
     if (env2L.get_position() != active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", env2L.get_position() , active_sites.front()));
     if (env2R.get_position() != active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", env2R.get_position() , active_sites.back()));
     auto mpo = get_multimpo();

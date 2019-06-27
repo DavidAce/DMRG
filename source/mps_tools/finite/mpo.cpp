@@ -13,7 +13,7 @@ void mpstools::finite::mpo::initialize(class_finite_chain_state & state, const s
     size_t pos = 0;
     state.MPO_L.emplace_back(class_hamiltonian_factory::create_mpo(pos++,model_type));
     while(true){
-        state.MPO_R.emplace_front(class_hamiltonian_factory::create_mpo(pos++,model_type));
+        state.MPO_R.emplace_back(class_hamiltonian_factory::create_mpo(pos++,model_type));
         if(state.MPO_L.size() + state.MPO_R.size() >= length){break;}
     }
 }

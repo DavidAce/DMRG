@@ -18,7 +18,7 @@ class_algorithm_infinite::class_algorithm_infinite(
     : class_algorithm_base(std::move(h5ppFile_),sim_name, sim_type)
 {
     table_dmrg     = std::make_unique<class_hdf5_table<class_table_dmrg>>(h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
-    superblock     = std::make_shared<class_superblock>(sim_type,sim_name);
+    superblock     = std::make_unique<class_superblock>(sim_type,sim_name);
 }
 
 

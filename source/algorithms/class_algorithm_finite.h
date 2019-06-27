@@ -23,7 +23,7 @@ public:
             );
 
     //MPS
-    std::shared_ptr<class_finite_chain_state>    state;
+    std::unique_ptr<class_finite_chain_state>    state;
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_dmrg;
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_dmrg_chain;
 

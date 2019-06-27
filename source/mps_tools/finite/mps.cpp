@@ -23,7 +23,7 @@ void mpstools::finite::mps::initialize(class_finite_chain_state &state, const si
     size_t pos = 0;
     state.MPS_L.emplace_back(class_vidal_site(G,L,pos++));
     while(true){
-        state.MPS_R.emplace_front(class_vidal_site(G,L,pos++));
+        state.MPS_R.emplace_back(class_vidal_site(G,L,pos++));
         if(state.MPS_L.size() + state.MPS_R.size() >= length){break;}
     }
     state.truncation_error.resize(length+1);
@@ -52,6 +52,7 @@ void mpstools::finite::mps::normalize(class_finite_chain_state & state){
     size_t pos_B  = 1; // G * Lambda
 //    bool finished = false;
     size_t num_traversals = 0;
+    size_t step = 0;
     int direction = 1;
     Eigen::Tensor<Scalar,3> U;
     Eigen::Tensor<Scalar,1> S;
@@ -59,14 +60,13 @@ void mpstools::finite::mps::normalize(class_finite_chain_state & state){
     double norm;
     while(num_traversals < 4){
         Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
-        bool isZero = Eigen::Map <Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size()).isZero();
-        if(isZero){mpstools::log->warn("Theta is all zeros at positions: {},{}", pos_A, pos_B );}
         try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta);}
         catch(std::exception &ex){
-            std::cerr << "A:\n" << state.get_A(pos_A) << std::endl;
-            std::cerr << "L:\n" << state.get_L(pos_LC) << std::endl;
-            std::cerr << "B:\n" << state.get_B(pos_B) << std::endl;
-            throw std::runtime_error(fmt::format("Normalization failed at step {}: {}", pos_A, ex.what()));
+            std::cerr << "A " << pos_A  << ":\n" << state.get_A(pos_A) << std::endl;
+            std::cerr << "L " << pos_LC << ":\n" << state.get_L(pos_LC) << std::endl;
+            std::cerr << "B " << pos_B  << ":\n" << state.get_B(pos_B) << std::endl;
+            std::cerr << "theta:\n" << theta << std::endl;
+            throw std::runtime_error(fmt::format("Normalization failed at positions A:{} C:{} B:{} , step {}: {}", pos_A, pos_LC, pos_B, step, ex.what()));
         }
         Eigen::Tensor<Scalar,3> LA_U = Textra::asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
         Eigen::Tensor<Scalar,3> V_LB = V.contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0}));
@@ -92,6 +92,7 @@ void mpstools::finite::mps::normalize(class_finite_chain_state & state){
         pos_LB += direction;
         pos_A  += direction;
         pos_B  += direction;
+        step   ++;
 
 
     }
@@ -138,30 +139,31 @@ void mpstools::finite::mps::rebuild_environments(class_finite_chain_state &state
     state.ENV2_L.clear();
     state.ENV_R.clear();
     state.ENV2_R.clear();
-
+    size_t position = 0;
     {
         auto ENV_L  = class_environment    ("L",state.MPS_L.front().get_chiL(), state.MPO_L.front()->MPO().dimension(0));
         auto ENV2_L = class_environment_var("L",state.MPS_L.front().get_chiL(), state.MPO_L.front()->MPO().dimension(0));
-        ENV_L.set_position(state.MPS_L.back().get_position());
-        ENV2_L.set_position(state.MPS_L.back().get_position());
+        ENV_L.set_position(state.MPS_L.front().get_position());
+        ENV2_L.set_position(state.MPS_L.front().get_position());
         auto mpsL_it   = state.MPS_L.begin();
         auto mpoL_it   = state.MPO_L.begin();
-
         while(mpsL_it != state.MPS_L.end() and mpoL_it != state.MPO_L.end()) {
             state.ENV_L.push_back(ENV_L);
             state.ENV2_L.push_back(ENV2_L);
-            if (mpsL_it == state.MPS_L.end()) break;
-            ENV_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO());
-            ENV2_L.enlarge(mpsL_it->get_A(), mpoL_it->get()->MPO());
-//            throw_if_has_imaginary_part(state.ENV_L.back().block);
+            ENV_L.enlarge(*mpsL_it, mpoL_it->get()->MPO());
+            ENV2_L.enlarge(*mpsL_it, mpoL_it->get()->MPO());
+            if (mpsL_it->get_position() != state.ENV_L.back().get_position())
+                throw std::runtime_error(fmt::format("Size mismatch in MPSL and ENVL: {} != {}",mpsL_it->get_position(), state.ENV_L.back().get_position()));
 
+            position ++;
             mpsL_it++;
             mpoL_it++;
         }
     }
 
     {
-        auto ENV_R  = class_environment("R",state.MPS_R.back().get_chiR(), state.MPO_R.back()->MPO().dimension(1));
+        position = state.MPS_R.back().get_position();
+        auto ENV_R  = class_environment    ("R",state.MPS_R.back().get_chiR(), state.MPO_R.back()->MPO().dimension(1));
         auto ENV2_R = class_environment_var("R",state.MPS_R.back().get_chiR(), state.MPO_R.back()->MPO().dimension(1));
         ENV_R.set_position(state.MPS_R.back().get_position());
         ENV2_R.set_position(state.MPS_R.back().get_position());
@@ -170,14 +172,18 @@ void mpstools::finite::mps::rebuild_environments(class_finite_chain_state &state
         while(mpsR_it != state.MPS_R.rend() and mpoR_it != state.MPO_R.rend()){
             state.ENV_R.push_front(ENV_R);
             state.ENV2_R.push_front(ENV2_R);
-            if (mpsR_it == state.MPS_R.rend()) break;
-            ENV_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO());
-            ENV2_R.enlarge(mpsR_it->get_B(), mpoR_it->get()->MPO());
+            ENV_R.enlarge(*mpsR_it, mpoR_it->get()->MPO());
+            ENV2_R.enlarge(*mpsR_it, mpoR_it->get()->MPO());
+            if (mpsR_it->get_position() != state.ENV_R.front().get_position())
+                throw std::runtime_error(fmt::format("Size mismatch in MPSR and ENVR: {} != {}",mpsR_it->get_position(), state.ENV_R.front().get_position()));
+            position --;
             mpsR_it++;
             mpoR_it++;
+
+
         }
     }
-    state.set_positions();
+//    state.set_positions();
 }
 
 
@@ -210,8 +216,8 @@ int mpstools::finite::mps::move_center_point(class_finite_chain_state &  state){
     if (state.get_direction() == 1){
         class_environment     L  = ENV_L.back();
         class_environment_var L2 = ENV2_L.back();
-        L.enlarge(MPS_L.back().get_A(), MPO_L.back()->MPO());
-        L2.enlarge(MPS_L.back().get_A(), MPO_L.back()->MPO());
+        L.enlarge(MPS_L.back(), MPO_L.back()->MPO());
+        L2.enlarge(MPS_L.back(), MPO_L.back()->MPO());
         ENV_L.emplace_back(L);
         ENV2_L.emplace_back(L2);
 
@@ -229,8 +235,8 @@ int mpstools::finite::mps::move_center_point(class_finite_chain_state &  state){
         class_environment_var R2 = ENV2_R.front();
         std::cout << "Before: R pos: " << R.get_position() << std::endl;
         std::cout << "Before: ENVR pos: " << ENV_R.front().get_position() << std::endl;
-        R.enlarge(MPS_R.front().get_B(), MPO_R.front()->MPO());
-        R2.enlarge(MPS_R.front().get_B(), MPO_R.front()->MPO());
+        R.enlarge(MPS_R.front(), MPO_R.front()->MPO());
+        R2.enlarge(MPS_R.front(), MPO_R.front()->MPO());
         ENV_R.emplace_front(R);
         ENV2_R.emplace_front(R2);
         std::cout << "After:  R pos: " << R.get_position() << std::endl;
