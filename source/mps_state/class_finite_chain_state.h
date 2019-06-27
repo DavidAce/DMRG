@@ -41,8 +41,8 @@ public:
     std::list<class_environment>                       ENV_R;
     std::list<class_environment_var>                   ENV2_L;
     std::list<class_environment_var>                   ENV2_R;
-    std::list<std::shared_ptr<class_hamiltonian_base>> MPO_L;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
-    std::list<std::shared_ptr<class_hamiltonian_base>> MPO_R;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<std::unique_ptr<class_hamiltonian_base>> MPO_L;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<std::unique_ptr<class_hamiltonian_base>> MPO_R;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
 
     void do_all_measurements();
 
@@ -94,10 +94,8 @@ public:
 
     Eigen::Tensor<Scalar,3>   get_multitheta()    const;
     Eigen::Tensor<Scalar,4>   get_multimpo  ()    const;
-    std::pair<const class_environment &, const class_environment &>
-                              get_multienv ()     const;
-    std::pair<const class_environment_var &, const class_environment_var &>
-                              get_multienv2()     const;
+    std::pair<std::reference_wrapper<const class_environment>     , std::reference_wrapper<const class_environment>>      get_multienv ()     const;
+    std::pair<std::reference_wrapper<const class_environment_var> , std::reference_wrapper<const class_environment_var>>  get_multienv2()     const;
 
     Eigen::Tensor<Scalar,6>   get_multi_hamiltonian() const;
     Eigen::Tensor<Scalar,6>   get_multi_hamiltonian2() const;

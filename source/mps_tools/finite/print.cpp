@@ -62,7 +62,7 @@ void mpstools::finite::print::print_state(const class_finite_chain_state &state)
     for(auto &it : MPS_R){
         std::cout << "G[" << std::setw(3) << i  <<  "]: " << it.get_G().dimensions() << std::setw(5) << "  "
                   << "L[" << std::setw(3) << i  <<  "]: " << it.get_L().dimensions() << std::setw(5) << " pos: " << it.get_position() << "  ";
-        if (envitR != ENV_R.end()){std::cout << " ENV:_" << envitL->side << ": " << envitR->block.dimensions() << " pos: " << envitR->get_position()  << "   "<< " env spins: " << envitR++->sites << " ";}
+        if (envitR != ENV_R.end()){std::cout << " ENV_" << envitR->side << ": " << envitR->block.dimensions() << " pos: " << envitR->get_position()  << "   "<< " env spins: " << envitR++->sites << " ";}
         if(&it == &MPS_R.front()){
             std::cout << " <--- Position B" ;
         }

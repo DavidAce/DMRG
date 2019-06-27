@@ -15,7 +15,7 @@ std::list<size_t> mpstools::finite::multisite::generate_site_list(class_finite_c
     std::vector<long> costs;
     std::list<size_t> sites;
     std::vector<Eigen::DSizes<long,3>> dims;
-
+    if (direction == -1)position++;
     while(position >= 0 and position < length){
         dims.emplace_back(state.get_G(position).dimensions());
         long cost = direction > 1 ? dims.back()[1]*dims.front()[2] : dims.front()[1]*dims.back()[2]  ;
@@ -37,7 +37,7 @@ std::list<size_t> mpstools::finite::multisite::generate_site_list(class_finite_c
     bool allequal = (costsmap == costsmap(0)).all();
     for (auto & c : costs){
         if (allequal){std::cout << "allequal\n"; break;}
-        if (sites.size() == 1){break;}
+        if (sites.size() <= 2){break;}
         if (sites.empty()){throw std::logic_error("No sites for a jump");}
         if (c <= threshold){break;}
         else{

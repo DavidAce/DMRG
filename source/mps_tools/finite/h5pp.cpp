@@ -148,7 +148,7 @@ void mpstools::finite::io::load_from_hdf5(const h5pp::File & h5ppFile, class_fin
         sim_state = load_sim_state_from_hdf5(h5ppFile,sim_name);
         state     = load_state_from_hdf5(h5ppFile,sim_name);
         state.set_sweeps(sim_state.iteration);
-        mpstools::finite::debug::check_integrity(state,sim_state);
+        mpstools::finite::debug::check_integrity(state);
     }catch(std::exception &ex){
         throw std::runtime_error("Failed to load from hdf5: " + std::string(ex.what()));
     }

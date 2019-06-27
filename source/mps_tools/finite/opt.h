@@ -69,15 +69,15 @@ namespace mpstools::finite::opt{
         }
 
         void reset_timers();
-        inline std::shared_ptr<class_tic_toc> t_opt  =  std::make_shared<class_tic_toc>(true,5,"t_opt ");;
-        inline std::shared_ptr<class_tic_toc> t_eig  =  std::make_shared<class_tic_toc>(true,5,"t_eig ");;
-        inline std::shared_ptr<class_tic_toc> t_ham  =  std::make_shared<class_tic_toc>(true,5,"t_ham ");;
-        inline std::shared_ptr<class_tic_toc> t_tot  =  std::make_shared<class_tic_toc>(true,5,"t_tot ");;
-        inline std::shared_ptr<class_tic_toc> t_vH2v =  std::make_shared<class_tic_toc>(true,5,"t_vH2v");;
-        inline std::shared_ptr<class_tic_toc> t_vHv  =  std::make_shared<class_tic_toc>(true,5,"t_vHv ");;
-        inline std::shared_ptr<class_tic_toc> t_vH2  =  std::make_shared<class_tic_toc>(true,5,"t_vH2 ");;
-        inline std::shared_ptr<class_tic_toc> t_vH   =  std::make_shared<class_tic_toc>(true,5,"t_vH  ");;
-        inline std::shared_ptr<class_tic_toc> t_op   =  std::make_shared<class_tic_toc>(true,5,"t_op  ");;
+        inline std::unique_ptr<class_tic_toc> t_opt  =  std::make_unique<class_tic_toc>(true,5,"t_opt ");;
+        inline std::unique_ptr<class_tic_toc> t_eig  =  std::make_unique<class_tic_toc>(true,5,"t_eig ");;
+        inline std::unique_ptr<class_tic_toc> t_ham  =  std::make_unique<class_tic_toc>(true,5,"t_ham ");;
+        inline std::unique_ptr<class_tic_toc> t_tot  =  std::make_unique<class_tic_toc>(true,5,"t_tot ");;
+        inline std::unique_ptr<class_tic_toc> t_vH2v =  std::make_unique<class_tic_toc>(true,5,"t_vH2v");;
+        inline std::unique_ptr<class_tic_toc> t_vHv  =  std::make_unique<class_tic_toc>(true,5,"t_vHv ");;
+        inline std::unique_ptr<class_tic_toc> t_vH2  =  std::make_unique<class_tic_toc>(true,5,"t_vH2 ");;
+        inline std::unique_ptr<class_tic_toc> t_vH   =  std::make_unique<class_tic_toc>(true,5,"t_vH  ");;
+        inline std::unique_ptr<class_tic_toc> t_op   =  std::make_unique<class_tic_toc>(true,5,"t_op  ");;
 
 
         inline LBFGSpp::LBFGSParam<double> get_params(){

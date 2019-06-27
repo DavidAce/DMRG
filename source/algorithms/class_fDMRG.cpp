@@ -47,7 +47,7 @@ void class_fDMRG::run_simulation(){
             if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
             if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
-        update_bond_dimension(min_saturation_length);
+        update_bond_dimension();
         move_center_point();
         sim_state.iteration = state->get_sweeps();
         sim_state.position  = state->get_position();

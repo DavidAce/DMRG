@@ -22,13 +22,13 @@ using Scalar = class_superblock::Scalar;
 class_superblock::class_superblock(SimulationType sim_type_,std::string sim_name_):
         sim_type(sim_type_),
         sim_name(sim_name_),
-        MPS(std::make_shared<class_mps_2site>()),
+        MPS(std::make_unique<class_mps_2site>()),
         HA (class_hamiltonian_factory::create_mpo(0,settings::model::model_type)),
         HB (class_hamiltonian_factory::create_mpo(1,settings::model::model_type)),
-        Lblock(std::make_shared<class_environment>("L")),
-        Rblock(std::make_shared<class_environment>("R")),
-        Lblock2(std::make_shared<class_environment_var>("L")),
-        Rblock2(std::make_shared<class_environment_var>("R"))
+        Lblock(std::make_unique<class_environment>("L")),
+        Rblock(std::make_unique<class_environment>("R")),
+        Lblock2(std::make_unique<class_environment_var>("L")),
+        Rblock2(std::make_unique<class_environment_var>("R"))
 {
     log = Logger::setLogger(sim_name,settings::console::verbosity);
     t_eig.set_properties(profile_optimization, 10,"Time optimizing ");
@@ -162,7 +162,7 @@ Eigen::Tensor<Scalar,4> class_superblock::truncate_MPS(const Eigen::Tensor<Scala
     return get_theta();
 }
 
-void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const std::shared_ptr<class_mps_2site> &MPS_out,long chi_, double SVDThreshold){
+void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const class_mps_2site &MPS_out,long chi_, double SVDThreshold){
     class_SVD SVD;
     SVD.setThreshold(SVDThreshold);
     auto[U, S, V] = SVD.schmidt(theta, chi_);
@@ -275,22 +275,22 @@ void class_superblock::enlarge_environment(int direction){
     if (direction == 1){
         assert(Lblock->get_position()  == HA->get_position());
         assert(Lblock2->get_position() == HA->get_position());
-        Lblock->enlarge(*MPS,  HA->MPO_reduced_view());
-        Lblock2->enlarge(*MPS, HA->MPO_reduced_view());
+        Lblock->enlarge(*MPS->MPS_A,  HA->MPO_reduced_view());
+        Lblock2->enlarge(*MPS->MPS_A, HA->MPO_reduced_view());
         Lblock->set_position (HB->get_position());
         Lblock2->set_position(HB->get_position());
     }else if (direction == -1){
         assert(Rblock->get_position()  == HB->get_position());
         assert(Rblock2->get_position() == HB->get_position());
-        Rblock->enlarge(*MPS,  HB->MPO_reduced_view());
-        Rblock2->enlarge(*MPS, HB->MPO_reduced_view());
+        Rblock->enlarge(*MPS->MPS_B,  HB->MPO_reduced_view());
+        Rblock2->enlarge(*MPS->MPS_B, HB->MPO_reduced_view());
         Rblock->set_position (HA->get_position());
         Rblock2->set_position(HA->get_position());
     }else if(direction == 0){
-        Lblock->enlarge(*MPS,  HA->MPO_reduced_view());
-        Rblock->enlarge(*MPS,  HB->MPO_reduced_view());
-        Lblock2->enlarge(*MPS, HA->MPO_reduced_view());
-        Rblock2->enlarge(*MPS, HB->MPO_reduced_view());
+        Lblock->enlarge (*MPS->MPS_A,  HA->MPO_reduced_view());
+        Rblock->enlarge (*MPS->MPS_B,  HB->MPO_reduced_view());
+        Lblock2->enlarge(*MPS->MPS_A, HA->MPO_reduced_view());
+        Rblock2->enlarge(*MPS->MPS_B, HB->MPO_reduced_view());
 
         Lblock->set_position (HB->get_position());
         Rblock->set_position (HB->get_position()+1);
