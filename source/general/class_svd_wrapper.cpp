@@ -2,6 +2,8 @@
 // Created by david on 2019-05-27.
 //
 
+#include <complex.h>
+#undef I
 
 #ifdef EIGEN_USE_BLAS
 #undef EIGEN_USE_BLAS

@@ -18,7 +18,7 @@
 using Scalar         = std::complex<double>;
 using namespace Textra;
 
-std::list<Eigen::Tensor<Scalar,4>> mpstools::finite::ops::make_mpo_list (const std::list<std::unique_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::unique_ptr<class_hamiltonian_base>> &mpos_R){
+std::list<Eigen::Tensor<Scalar,4>> mpstools::finite::ops::make_mpo_list (const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_R){
     std::list<Eigen::Tensor<Scalar,4>> mpos;
     for(auto &mpo_L : mpos_L){
         mpos.push_back(mpo_L->MPO());

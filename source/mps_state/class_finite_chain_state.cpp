@@ -185,7 +185,9 @@ const class_environment & class_finite_chain_state::get_ENVL(size_t pos) const {
 const class_environment & class_finite_chain_state::get_ENVR(size_t pos) const {
     if (pos < ENV_R.front().get_position() ){throw std::range_error(fmt::format("get_ENVR(pos):  pos is not in right side: {}" , pos));}
     if (pos >= get_length() )               {throw std::range_error(fmt::format("get_ENVR(pos):  pos out of range: {}" , pos));}
-    auto env_it = std::next(ENV_R.rbegin(), get_length() - pos - 1);
+
+    if(pos < ENV_R.front().get_position()) throw std::range_error(fmt::format("get_ENVR(pos): Mismatch in pos and ENVR front position: {} < {}", pos,  ENV_R.front().get_position()));
+    auto env_it = std::next(ENV_R.begin(), pos - ENV_R.front().get_position());
     if (env_it->get_position() != pos)      throw std::range_error(fmt::format("get_ENVR(pos): Mismatch in env position and pos: {} != {}", env_it->get_position(), pos));
     return *env_it;
 }
@@ -200,9 +202,12 @@ const class_environment_var & class_finite_chain_state::get_ENV2L(size_t pos) co
 
 const class_environment_var & class_finite_chain_state::get_ENV2R(size_t pos) const {
     if (pos < ENV2_R.front().get_position() )throw std::range_error(fmt::format("get_ENV2R(pos):  pos is not in right side: {}" , pos));
+    if (pos > ENV2_R.back().get_position() ) throw std::range_error(fmt::format("get_ENV2R(pos):  pos is not in right side: {}" , pos));
     if (pos >= get_length() )                throw std::range_error(fmt::format("get_ENV2R(pos):  pos out of range: {}" , pos));
-    auto env2_it = std::next(ENV2_R.rbegin(), get_length() - pos - 1);
-    if (env2_it->get_position() != pos)      throw std::range_error(fmt::format("get_ENVR(pos): Mismatch in env position and pos: {} != {}", env2_it->get_position(), pos));
+
+    if(pos < ENV2_R.front().get_position()) throw std::range_error(fmt::format("get_ENV2R(pos): Mismatch in pos and ENV2R front position: {} < {}", pos,  ENV2_R.front().get_position()));
+    auto env2_it = std::next(ENV2_R.begin(), pos - ENV2_R.front().get_position());
+    if (env2_it->get_position() != pos)      throw std::range_error(fmt::format("get_ENV2R(pos): Mismatch in env2 position and pos: {} != {}", env2_it->get_position(), pos));
     return *env2_it;
 }
 

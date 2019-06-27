@@ -50,7 +50,7 @@ namespace mpstools{
 
         namespace ops {
             extern std::list<Eigen::Tensor<std::complex<double>,4>>
-                        make_mpo_list                 (const std::list<std::unique_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::unique_ptr<class_hamiltonian_base>> &mpos_R);
+                        make_mpo_list                 (const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_L, const std::list<std::shared_ptr<class_hamiltonian_base>> &mpos_R);
             extern void apply_mpo                     (class_finite_chain_state &state,const Eigen::Tensor<std::complex<double>,4> mpo, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
             extern void apply_mpos                    (class_finite_chain_state &state, const std::list<Eigen::Tensor<std::complex<double>,4>> &mpos, const Eigen::Tensor<std::complex<double>,3> Ledge, const Eigen::Tensor<std::complex<double>,3> Redge);
 
