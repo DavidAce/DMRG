@@ -32,11 +32,10 @@ void class_environment::enlarge(const class_vidal_site & MPS, const Eigen::Tenso
 
 
 
-void class_environment::enlarge(const Eigen::Tensor<Scalar,3> & MPS, const Eigen::Tensor<Scalar,4> &MPO){
+void class_environment::enlarge(const Eigen::Tensor<Scalar,3> MPS, const Eigen::Tensor<Scalar,4> &MPO){
     /*!< Contracts a site into the block. */
     if(sites == 0 and not edge_has_been_set){set_edge_dims(MPS,MPO);}
 
-    Eigen::Tensor<Scalar,3> block_enlarged;
     if (side == "L"){
 
         /*! # Left environment contraction
@@ -55,11 +54,12 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> & MPS, const Eigen
          * [      ]--1 0--[LB]--1  1--[GA conj ]--2
          */
         sites++;
-        block_enlarged =
-                block.contract(MPS,                  idx({0},{1}))
-                        .contract(MPO,               idx({1,2},{0,2}))
-                        .contract(MPS.conjugate(),   idx({0,3},{1,0}))
-                        .shuffle(array3{0,2,1});
+        Eigen::Tensor<Scalar,3>
+                block_enlarged =
+                block.contract(MPS,               idx({0},{1}))
+                     .contract(MPO,               idx({1,2},{0,2}))
+                     .contract(MPS.conjugate(),   idx({0,3},{1,0}))
+                     .shuffle(array3{0,2,1});
         block = block_enlarged;
     }else if (side== "R"){
         /*! # Right environment contraction
@@ -79,11 +79,12 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> & MPS, const Eigen
         */
 
         sites++;
-        block_enlarged =
+        Eigen::Tensor<Scalar,3>
+                block_enlarged =
                 block.contract(MPS,                idx({0},{2}))
-                        .contract(MPO,             idx({1,2},{1,2}))
-                        .contract(MPS.conjugate(), idx({0,3},{2,0}))
-                        .shuffle(array3{0,2,1});
+                     .contract(MPO,             idx({1,2},{1,2}))
+                     .contract(MPS.conjugate(), idx({0,3},{2,0}))
+                     .shuffle(array3{0,2,1});
         block = block_enlarged;
     }
 }
@@ -139,7 +140,7 @@ void class_environment_var::enlarge(const class_vidal_site & MPS, const Eigen::T
     }
 }
 
-void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3> & MPS, const Eigen::Tensor<Scalar,4> &MPO){
+void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  MPS, const Eigen::Tensor<Scalar,4> &MPO){
     /*!< Contracts a site into the block. */
     if(sites == 0 and not edge_has_been_set){set_edge_dims(MPS,MPO);}
     Eigen::Tensor<Scalar,4> block_enlarged;

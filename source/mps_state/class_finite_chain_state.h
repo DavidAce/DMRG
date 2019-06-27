@@ -41,8 +41,8 @@ public:
     std::list<class_environment>                       ENV_R;
     std::list<class_environment_var>                   ENV2_L;
     std::list<class_environment_var>                   ENV2_R;
-    std::list<std::unique_ptr<class_hamiltonian_base>> MPO_L;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
-    std::list<std::unique_ptr<class_hamiltonian_base>> MPO_R;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<std::shared_ptr<class_hamiltonian_base>> MPO_L;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<std::shared_ptr<class_hamiltonian_base>> MPO_R;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
 
     void do_all_measurements();
 

@@ -162,16 +162,16 @@ Eigen::Tensor<Scalar,4> class_superblock::truncate_MPS(const Eigen::Tensor<Scala
     return get_theta();
 }
 
-void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, const class_mps_2site &MPS_out,long chi_, double SVDThreshold){
+void class_superblock::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, class_mps_2site &MPS_out,long chi_, double SVDThreshold){
     class_SVD SVD;
     SVD.setThreshold(SVDThreshold);
     auto[U, S, V] = SVD.schmidt(theta, chi_);
-    MPS_out->truncation_error = SVD.get_truncation_error();
-    MPS_out->LC  = S;
-    Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(MPS_out->MPS_A->get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-    Eigen::Tensor<Scalar,3> V_L = V.contract(asDiagonalInversed(MPS_out->MPS_B->get_L()), idx({2},{0}));
-    MPS_out->MPS_A->set_G(L_U);
-    MPS_out->MPS_B->set_G(V_L);
+    MPS_out.truncation_error = SVD.get_truncation_error();
+    MPS_out.LC  = S;
+    Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(MPS_out.MPS_A->get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
+    Eigen::Tensor<Scalar,3> V_L = V.contract(asDiagonalInversed(MPS_out.MPS_B->get_L()), idx({2},{0}));
+    MPS_out.MPS_A->set_G(L_U);
+    MPS_out.MPS_B->set_G(V_L);
 }
 
 
