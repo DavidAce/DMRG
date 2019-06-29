@@ -39,7 +39,7 @@ std::list<size_t> mpstools::finite::multisite::generate_site_list(class_finite_c
 //        if (allequal){std::cout << "allequal\n"; break;}
         if (sites.size() <= 2){std::cout << "at least two sites kept \n"; break;}
         if (sites.empty()){throw std::logic_error("No sites for a jump");}
-        if (c <= threshold and sites.size() <= 8){std::cout << "good threshold found: " << c << '\n';break;}
+        if (c <= threshold and sites.size() <= 12){std::cout << "good threshold found: " << c << '\n';break;}
         else{
             sites.pop_back();
         }

@@ -251,6 +251,7 @@ mpstools::finite::opt::internals::subspace_optimization(const class_finite_chain
 
 
     t_opt->tic();
+    state.unset_measurements();
     double energy_0   = mpstools::finite::measure::energy_per_site(state);
     double variance_0 = mpstools::finite::measure::energy_variance_per_site(state);
     t_opt->toc();
@@ -354,8 +355,9 @@ mpstools::finite::opt::internals::subspace_optimization(const class_finite_chain
     mpstools::log->trace("Finished LBFGS");
 
     reports::print_report(opt_log);
-//    double energy_tmp   = mpstools::common::measure::energy(state,Textra::Matrix_to_Tensor(theta_new, state.dimensions()));
-//    double variance_tmp = mpstools::common::measure::energy_variance(state,Textra::Matrix_to_Tensor(theta_new, state.dimensions()),energy_tmp);
+    state.unset_measurements();
+//    double energy_tmp   = mpstools::finite::measure::energy(state,Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()));
+//    double variance_tmp = mpstools::finite::measure::energy_variance(state,Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()),energy_tmp);
 
 //    std::cout << "Energy   check2           : " << energy_check2/chain_length    << std::endl;
 //    std::cout << "Variance check2 (complex) : " << std::log10(variance_check2/chain_length)         << std::endl;
@@ -375,9 +377,11 @@ mpstools::finite::opt::internals::subspace_optimization(const class_finite_chain
 
 
     if (variance_new < variance_0){
+        mpstools::log->info("Returning new theta");
         return  std::make_tuple(Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()), energy_new);
 
     }else{
+        mpstools::log->info("Returning old theta");
         return  std::make_tuple(theta, energy_0);
     }
 

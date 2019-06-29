@@ -325,6 +325,7 @@ Eigen::Tensor<class_finite_chain_state::Scalar,6>   class_finite_chain_state::ge
             .contract(env2R.block     , Textra::idx({2,4},{2,3}))
             .shuffle(Textra::array6{2,0,4,3,1,5});
 }
+
 Eigen::Matrix<class_finite_chain_state::Scalar,Eigen::Dynamic,Eigen::Dynamic> class_finite_chain_state::get_multi_hamiltonian_matrix() const{
     auto dims = active_dimensions();
     long shape = dims[0] * dims[1] * dims[2];

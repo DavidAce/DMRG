@@ -126,8 +126,6 @@ void class_algorithm_finite::run_postprocessing(){
     state->do_all_measurements();
     mpstools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
     mpstools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
-
-    mpstools::finite::debug::print_parity_properties(*state);
     mpstools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
 
     //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)

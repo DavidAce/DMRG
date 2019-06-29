@@ -92,10 +92,10 @@ namespace mpstools{
             extern size_t bond_dimension_midchain                     (const class_finite_chain_state & state);
             extern std::vector<size_t> bond_dimensions                (const class_finite_chain_state & state);
             extern double norm                                        (const class_finite_chain_state & state);
-            extern double energy(const class_finite_chain_state &state);
-            extern double energy_per_site(const class_finite_chain_state &state);
-            extern double energy_variance(const class_finite_chain_state &state);
-            extern double energy_variance_per_site(const class_finite_chain_state &state);
+            extern double energy                                      (const class_finite_chain_state &state);
+            extern double energy_per_site                             (const class_finite_chain_state &state);
+            extern double energy_variance                             (const class_finite_chain_state &state);
+            extern double energy_variance_per_site                    (const class_finite_chain_state &state);
             extern double spin_component                              (const class_finite_chain_state & state, Eigen::Matrix2cd paulimatrix);
             extern Eigen::Tensor<std::complex<double>,1> mps_wavefn   (const class_finite_chain_state & state);
             extern double entanglement_entropy_current                (const class_finite_chain_state & state);

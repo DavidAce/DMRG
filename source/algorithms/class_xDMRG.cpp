@@ -74,7 +74,7 @@ void class_xDMRG::run_simulation()    {
         move_center_point();
         sim_state.iteration = state->get_sweeps();
         sim_state.position = state->get_position();
-        log->trace("Finished step {}, iteration {}",sim_state.step,sim_state.iteration);
+        log->trace("Finished step {}, iteration {}, direction {}",sim_state.step,sim_state.iteration,state->get_direction());
     }
     switch(stop_reason){
         case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_ITERS",sim_name) ;break;
@@ -92,7 +92,6 @@ void class_xDMRG::single_DMRG_step()
  * \fn void single_DMRG_step()
  */
 {
-    state->unset_measurements();
     mpstools::finite::debug::check_integrity(*state);
 
 
@@ -115,33 +114,33 @@ void class_xDMRG::single_DMRG_step()
     auto optSpace =  OptSpace::FULL;
     optSpace = sim_state.iteration >=  2                           ? OptSpace::PARTIAL : optSpace;
     optSpace = sim_state.iteration >=  settings::xdmrg::min_sweeps ? OptSpace::DIRECT  : optSpace;
+    optSpace = optMode == OptMode::VARIANCE                        ? OptSpace::DIRECT  : optSpace;
 //    optSpace = OptSpace::DIRECT;
 
     long threshold = 0;
     switch(optSpace){
         case OptSpace::FULL    : threshold = 2 * 2 * 16 * 16; break;
-        case OptSpace::PARTIAL : threshold = 2 * 2 * 32 * 16; break;
+        case OptSpace::PARTIAL : threshold = 2 * 2 * 32 * 32; break;
         case OptSpace::DIRECT  : threshold = 2 * 2 * 64 * 64; break;
     }
-    state->unset_measurements();
     state->activate_sites(threshold);
     auto optType = state->isReal() ? OptType::REAL : OptType::CPLX;
-
-
-
-    state->unset_measurements();
 
     Eigen::Tensor<Scalar,3> theta;
     std::tie(theta, sim_state.energy_now) = mpstools::finite::opt::find_optimal_excited_state(*state,sim_state,optMode, optSpace,optType);
     sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
     t_opt.toc();
-    state->unset_measurements();
 
     t_svd.tic();
     mpstools::finite::opt::truncate_theta(theta, *state, sim_state.chi_temp, settings::precision::SVDThreshold);
     t_svd.toc();
-    state->unset_measurements();
 
+    state->unset_measurements();
+    auto fullnorm = mpstools::finite::measure::norm(*state);
+    if(std::abs(fullnorm - 1.0) > 1e-12) {
+        throw std::runtime_error(fmt::format("Norm before rebuild of env too far from unity: {}",fullnorm));
+    }
+    mpstools::finite::mps::rebuild_environments(*state);
     mpstools::finite::debug::check_integrity(*state);
     state->unset_measurements();
 
