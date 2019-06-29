@@ -200,8 +200,14 @@ class_SVD::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor, long chi_max
     if (dL*chiL * dR*chiR != tensor.size()){throw std::range_error("schmidt_with_norm error: tensor size does not match given dimensions.");}
     Eigen::Map<const MatrixType<Scalar>> mat (tensor.data(), dL*chiL, dR*chiR);
     auto [U,S,V,rank] = do_svd(mat,chi_max);
+//    auto norm = S.norm();
+//    auto Snormalized = S/norm;
+//    std::cout << std::fixed << std::setprecision(16) << "regular norm: " << norm;
+//    std::cout << std::fixed << std::setprecision(16) << "squared norm: " << S.squaredNorm();
+
+
     return std::make_tuple(Textra::Matrix_to_Tensor(U, dL, chiL, rank),
-                           Textra::Matrix_to_Tensor(S.normalized().template cast<Scalar>(), rank),
+                           Textra::Matrix_to_Tensor((S.normalized()).template cast<Scalar>(), rank),
                            Textra::Matrix_to_Tensor(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 }),
                            S.norm()
     );

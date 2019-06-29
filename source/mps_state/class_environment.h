@@ -39,7 +39,7 @@ public:
 private:
     std::optional<size_t> position;
     bool edge_has_been_set = false;
-    void enlarge      (const Eigen::Tensor<Scalar,3>  MPS, const Eigen::Tensor<Scalar, 4> &MPO);
+    void enlarge      (const Eigen::Tensor<Scalar,3>  & MPS, const Eigen::Tensor<Scalar, 4> &MPO);
 public:
     std::string side;
     size_t sites = 0;                               /*!< Number of particles that have been contracted into this environment. */
@@ -74,7 +74,7 @@ public:
 private:
     std::optional<size_t> position;
     bool edge_has_been_set = false;
-    void enlarge(const Eigen::Tensor<Scalar,3>  MPS, const Eigen::Tensor<Scalar,4> &MPO);
+    void enlarge(const Eigen::Tensor<Scalar,3>  & MPS, const Eigen::Tensor<Scalar,4> &MPO);
 public:
     size_t sites = 0;                                      /*!< Number of particles that have been contracted into this left environment. */
     std::string side;

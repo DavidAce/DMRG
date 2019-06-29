@@ -346,7 +346,6 @@ namespace Textra {
         add_phase(map,angles);
     }
 
-
 //******************************************************//
 //std::cout overloads for dimension() and array objects //
 //******************************************************//
@@ -373,7 +372,7 @@ namespace Textra {
     }
 
 
-    /*! \brief Prints the content of a list nicely */
+/*! \brief Prints the content of a list nicely */
     template<typename T>
     std::ostream &operator<<(std::ostream &out, const std::list<T> &v) {
         if (!v.empty()) {
@@ -384,7 +383,7 @@ namespace Textra {
         return out;
     }
 
-    /*! \brief Prints the content of a list nicely */
+/*! \brief Prints the content of a list nicely */
     template<typename T>
     std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
         if (!v.empty()) {
@@ -396,7 +395,6 @@ namespace Textra {
     }
 
 }
-
 
 
 

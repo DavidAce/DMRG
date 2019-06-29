@@ -69,15 +69,15 @@ namespace mpstools::finite::opt{
         }
 
         void reset_timers();
-        inline std::unique_ptr<class_tic_toc> t_opt  =  std::make_unique<class_tic_toc>(true,5,"t_opt ");;
-        inline std::unique_ptr<class_tic_toc> t_eig  =  std::make_unique<class_tic_toc>(true,5,"t_eig ");;
-        inline std::unique_ptr<class_tic_toc> t_ham  =  std::make_unique<class_tic_toc>(true,5,"t_ham ");;
-        inline std::unique_ptr<class_tic_toc> t_tot  =  std::make_unique<class_tic_toc>(true,5,"t_tot ");;
-        inline std::unique_ptr<class_tic_toc> t_vH2v =  std::make_unique<class_tic_toc>(true,5,"t_vH2v");;
-        inline std::unique_ptr<class_tic_toc> t_vHv  =  std::make_unique<class_tic_toc>(true,5,"t_vHv ");;
-        inline std::unique_ptr<class_tic_toc> t_vH2  =  std::make_unique<class_tic_toc>(true,5,"t_vH2 ");;
-        inline std::unique_ptr<class_tic_toc> t_vH   =  std::make_unique<class_tic_toc>(true,5,"t_vH  ");;
-        inline std::unique_ptr<class_tic_toc> t_op   =  std::make_unique<class_tic_toc>(true,5,"t_op  ");;
+        inline std::unique_ptr<class_tic_toc> t_opt  =  std::make_unique<class_tic_toc>(true,5,"t_opt ");
+        inline std::unique_ptr<class_tic_toc> t_eig  =  std::make_unique<class_tic_toc>(true,5,"t_eig ");
+        inline std::unique_ptr<class_tic_toc> t_ham  =  std::make_unique<class_tic_toc>(true,5,"t_ham ");
+        inline std::unique_ptr<class_tic_toc> t_tot  =  std::make_unique<class_tic_toc>(true,5,"t_tot ");
+        inline std::unique_ptr<class_tic_toc> t_vH2v =  std::make_unique<class_tic_toc>(true,5,"t_vH2v");
+        inline std::unique_ptr<class_tic_toc> t_vHv  =  std::make_unique<class_tic_toc>(true,5,"t_vHv ");
+        inline std::unique_ptr<class_tic_toc> t_vH2  =  std::make_unique<class_tic_toc>(true,5,"t_vH2 ");
+        inline std::unique_ptr<class_tic_toc> t_vH   =  std::make_unique<class_tic_toc>(true,5,"t_vH  ");
+        inline std::unique_ptr<class_tic_toc> t_op   =  std::make_unique<class_tic_toc>(true,5,"t_op  ");
 
 
         inline LBFGSpp::LBFGSParam<double> get_params(){
@@ -87,15 +87,15 @@ namespace mpstools::finite::opt{
             // I think c1 corresponds to ftol, and c2 corresponds to wolfe
             params.max_iterations = 1000;
             params.max_linesearch = 400; // Default is 20.
-            params.m              = 8;     // Default is 6
+            params.m              = 6;     // Default is 6
             params.past           = 1;     //
-            params.epsilon        = 1e-3;  // Default is 1e-5.
+            params.epsilon        = 1e-2;  // Default is 1e-5.
             params.delta          = 1e-6; // Default is 0.
             params.ftol           = 1e-4;  // Default is 1e-4.
             params.wolfe          = 0.90;   // Default is 0.9
             params.min_step       = 1e-40;
             params.max_step       = 1e+40;
-            params.linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_ARMIJO;
+            params.linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_WOLFE;
             return params;
         }
 
@@ -183,13 +183,28 @@ namespace mpstools::finite::opt{
             using Scalar = typename Derived::Scalar;
             Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), multiComponents.dsizes).shuffle(Textra::array3{1,0,2});
             t_vH2->tic();
-            Eigen::Tensor<Scalar,3> vH2 =
+            size_t log2chiL  = std::log2(multiComponents.dsizes[1]);
+            size_t log2chiR  = std::log2(multiComponents.dsizes[2]);
+            size_t log2spin  = std::log2(multiComponents.dsizes[0]);
+            Eigen::Tensor<Scalar,3> vH2;
+            if (log2spin > log2chiL + log2chiR){
+                vH2 =
                     theta
                     .contract(multiComponents.env2L, Textra::idx({0}, {0}))
-                    .contract(multiComponents.mpo2 , Textra::idx({0,3,4}, {2,0,3}))
-                    .contract(multiComponents.env2R, Textra::idx({0,2,3}, {0, 2, 3}))
-                    .shuffle(Textra::array3{1, 0, 2});
+                    .contract(multiComponents.mpo  , Textra::idx({0,3}, {2,0}))
+                    .contract(multiComponents.env2R, Textra::idx({0,3}, {0,2}))
+                    .contract(multiComponents.mpo  , Textra::idx({2,1,4}, {2,0,1}))
+                    .shuffle(Textra::array3{2,0,1});
 
+            }else{
+                vH2 =
+                    theta
+                    .contract(multiComponents.env2L, Textra::idx({0}, {0}))
+                    .contract(multiComponents.mpo  , Textra::idx({0,3}, {2,0}))
+                    .contract(multiComponents.mpo  , Textra::idx({4,2}, {2,0}))
+                    .contract(multiComponents.env2R, Textra::idx({0,2,3}, {0,2,3}))
+                    .shuffle(Textra::array3{1, 0, 2});
+            }
             t_vH2->toc();
             return Eigen::Map<VectorType<Scalar>>(vH2.data(),vH2.size());
         }
@@ -197,8 +212,9 @@ namespace mpstools::finite::opt{
         VectorType<typename Derived::Scalar> get_vH (const Eigen::MatrixBase<Derived> &v, const MultiComponents<typename Derived::Scalar> &multiComponents){
             using Scalar = typename Derived::Scalar;
             Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), multiComponents.dsizes).shuffle(Textra::array3{1,0,2});
+            Eigen::Tensor<Scalar,3> vH;
             t_vH->tic();
-            Eigen::Tensor<Scalar,3> vH =
+            vH =
                             theta
                             .contract(multiComponents.envL, Textra::idx({0}, {0}))
                             .contract(multiComponents.mpo , Textra::idx({0,3}, {2,0}))

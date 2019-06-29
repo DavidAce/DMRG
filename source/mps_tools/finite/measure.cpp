@@ -71,10 +71,10 @@ double mpstools::finite::measure::norm(const class_finite_chain_state & state){
         mpsR++;
     }
     double norm_chain = std::abs(Textra::Tensor2_to_Matrix(chain).trace());
-//    if(std::abs(norm_chain - 1.0) > 1e-10){
-//        mpstools::log->warn("Norm far from unity: {}", norm_chain);
+    if(std::abs(norm_chain - 1.0) > 1e-14){
+        mpstools::log->warn("Measure: Norm far from unity: {}", norm_chain);
 //        throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
-//    }
+    }
     state.measurements.norm = norm_chain;
     return state.measurements.norm.value();
 }

@@ -166,10 +166,11 @@ void class_algorithm_finite::move_center_point(){
     log->trace("Moving center point ");
     t_sim.tic();
     t_ste.tic();
-    size_t move_steps = state->active_sites.empty() ? 1 : state->active_sites.size()-1;
+    size_t move_steps = state->active_sites.empty() ? 1 : std::max(1ul,state->active_sites.size()-2ul);
     try{
         for(size_t i = 0; i < move_steps;i++){
             mpstools::finite::mps::move_center_point(*state);
+            sim_state.step += move_steps;
         }
     }catch(std::exception & e){
         mpstools::finite::print::print_state(*state);

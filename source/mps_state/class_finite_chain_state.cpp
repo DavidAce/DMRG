@@ -241,6 +241,7 @@ Eigen::DSizes<long,3> class_finite_chain_state::active_dimensions() const{
 
 
 Eigen::Tensor<class_finite_chain_state::Scalar,3>   class_finite_chain_state::get_multitheta()    const{
+    mpstools::log->trace("Generating multitheta");
     if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multitheta");}
     Eigen::Tensor<Scalar,3> multitheta;
     Eigen::Tensor<Scalar,3> temp;
@@ -262,7 +263,8 @@ Eigen::Tensor<class_finite_chain_state::Scalar,3>   class_finite_chain_state::ge
 }
 
 Eigen::Tensor<class_finite_chain_state::Scalar,4>   class_finite_chain_state::get_multimpo()    const{
-    if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multitheta");}
+    mpstools::log->trace("Generating multimpo");
+    if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multimpo");}
     Eigen::Tensor<Scalar,4> multimpo;
     Eigen::Tensor<Scalar,4> temp;
     bool first = true;
@@ -279,6 +281,7 @@ Eigen::Tensor<class_finite_chain_state::Scalar,4>   class_finite_chain_state::ge
                 .reshape(Textra::array4{dim0,dim1,dim2,dim3});
         multimpo = temp;
     }
+    mpstools::log->trace("Finished multimpo");
     return multimpo;
 }
 
@@ -295,6 +298,8 @@ class_finite_chain_state::get_multienv2()     const{
 
 
 Eigen::Tensor<class_finite_chain_state::Scalar,6>   class_finite_chain_state::get_multi_hamiltonian() const{
+    mpstools::log->trace("Generating multi hamiltonian");
+
 //    auto [envL,envR] = get_multienv();
     auto & envL = get_ENVL(active_sites.front());
     auto & envR = get_ENVR(active_sites.back());
@@ -307,6 +312,7 @@ Eigen::Tensor<class_finite_chain_state::Scalar,6>   class_finite_chain_state::ge
 }
 
 Eigen::Tensor<class_finite_chain_state::Scalar,6>   class_finite_chain_state::get_multi_hamiltonian2() const{
+    mpstools::log->trace("Generating multi hamiltonian squared");
 //    auto [env2L,env2R] = get_multienv2();
     auto & env2L = get_ENV2L(active_sites.front());
     auto & env2R = get_ENV2R(active_sites.back());
