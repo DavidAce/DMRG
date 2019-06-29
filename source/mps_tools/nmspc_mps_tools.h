@@ -73,9 +73,10 @@ namespace mpstools{
             enum class OptType  {REAL, CPLX};
             extern std::tuple<Eigen::Tensor<std::complex<double>,3>, double> find_optimal_excited_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType);
             extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_ground_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, std::string ritz = "SR");
-            extern void truncate_theta(Eigen::Tensor<std::complex<double>,3> theta, class_finite_chain_state & state, long chi_, double SVDThreshold);
-            extern void truncate_theta2(Eigen::Tensor<std::complex<double>,3> theta, class_finite_chain_state & state, long chi_, double SVDThreshold);
-            extern void truncate_theta(Eigen::Tensor<std::complex<double>,4> theta, class_finite_chain_state & state, long chi_, double SVDThreshold);
+            extern void truncate_theta(Eigen::Tensor<std::complex<double>,3> &theta, class_finite_chain_state & state, long chi_, double SVDThreshold);
+            extern void truncate_left(Eigen::Tensor<std::complex<double>,3> &theta, class_finite_chain_state & state, long chi_, double SVDThreshold);
+            extern void truncate_right(Eigen::Tensor<std::complex<double>,3> &theta, class_finite_chain_state & state, long chi_, double SVDThreshold);
+            extern void truncate_theta(Eigen::Tensor<std::complex<double>,4> &theta, class_finite_chain_state & state, long chi_, double SVDThreshold);
         }
 
         namespace multisite{

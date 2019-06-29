@@ -32,7 +32,7 @@ void class_environment::enlarge(const class_vidal_site & MPS, const Eigen::Tenso
 
 
 
-void class_environment::enlarge(const Eigen::Tensor<Scalar,3> MPS, const Eigen::Tensor<Scalar,4> &MPO){
+void class_environment::enlarge(const Eigen::Tensor<Scalar,3> &MPS, const Eigen::Tensor<Scalar,4> &MPO){
     /*!< Contracts a site into the block. */
     if(sites == 0 and not edge_has_been_set){set_edge_dims(MPS,MPO);}
 
@@ -140,7 +140,7 @@ void class_environment_var::enlarge(const class_vidal_site & MPS, const Eigen::T
     }
 }
 
-void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  MPS, const Eigen::Tensor<Scalar,4> &MPO){
+void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  &MPS, const Eigen::Tensor<Scalar,4> &MPO){
     /*!< Contracts a site into the block. */
     if(sites == 0 and not edge_has_been_set){set_edge_dims(MPS,MPO);}
     Eigen::Tensor<Scalar,4> block_enlarged;

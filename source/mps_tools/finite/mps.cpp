@@ -8,14 +8,14 @@
 #include <mps_state/class_mps_2site.h>
 #include <mps_state/class_environment.h>
 #include <general/nmspc_random_numbers.h>
-#include <general/class_svd_wrapper.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <sim_parameters/nmspc_sim_settings.h>
 
-using Scalar = std::complex<double>;
 
 void mpstools::finite::mps::initialize(class_finite_chain_state &state, const size_t length){
     log->info("Initializing mps");
+    using Scalar = class_finite_chain_state::Scalar;
+
     //Generate MPS
     Eigen::Tensor<Scalar,3> G;
     Eigen::Tensor<Scalar,1> L;
@@ -31,84 +31,12 @@ void mpstools::finite::mps::initialize(class_finite_chain_state &state, const si
 
 
 
-void mpstools::finite::mps::normalize(class_finite_chain_state & state){
-
-    mpstools::log->trace("Normalizing state");
-    using namespace Textra;
-    state.unset_measurements();
-//    std::cout << "Norm              (before normalization): " << mpstools::finite::measure::norm(state)  << std::endl;
-//    std::cout << "Spin component sx (before normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-//    std::cout << "Spin component sy (before normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-//    std::cout << "Spin component sz (before normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
-    // Sweep back and forth once on the state
-
-    class_SVD svd;
-    svd.setThreshold(settings::precision::SVDThreshold);
-
-    size_t pos_LA = 0; // Lambda left of GA
-    size_t pos_LC = 1; //Center Lambda
-    size_t pos_LB = 2; // Lambda right of GB
-    size_t pos_A  = 0; // Lambda * G
-    size_t pos_B  = 1; // G * Lambda
-//    bool finished = false;
-    size_t num_traversals = 0;
-    size_t step = 0;
-    int direction = 1;
-    Eigen::Tensor<Scalar,3> U;
-    Eigen::Tensor<Scalar,1> S;
-    Eigen::Tensor<Scalar,3> V;
-    double norm;
-    while(num_traversals < 4){
-        Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
-        try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta);}
-        catch(std::exception &ex){
-            std::cerr << "A " << pos_A  << ":\n" << state.get_A(pos_A) << std::endl;
-            std::cerr << "L " << pos_LC << ":\n" << state.get_L(pos_LC) << std::endl;
-            std::cerr << "B " << pos_B  << ":\n" << state.get_B(pos_B) << std::endl;
-            std::cerr << "theta:\n" << theta << std::endl;
-            throw std::runtime_error(fmt::format("Normalization failed at positions A:{} C:{} B:{} , step {}: {}", pos_A, pos_LC, pos_B, step, ex.what()));
-        }
-        Eigen::Tensor<Scalar,3> LA_U = Textra::asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-        Eigen::Tensor<Scalar,3> V_LB = V.contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0}));
-        norm = pos_B == state.get_length()-1 or pos_A == 0 ? 1.0 : norm;
-        if (direction == 1){
-            state.get_G(pos_A)  = LA_U;
-            state.get_L(pos_LC) = S;
-            state.get_G(pos_B)  = Scalar(norm)*V_LB;
-
-        }
-        if (direction == -1){
-            state.get_G(pos_A)  = LA_U * Scalar(norm);
-            state.get_L(pos_LC) = S;
-            state.get_G(pos_B)  = V_LB;
-        }
-
-
-        if (direction ==  1 and pos_B == state.get_length()-1)  {num_traversals++; direction *= -1;}
-        if (direction == -1 and pos_A == 0)                     {num_traversals++; direction *= -1;}
-
-        pos_LA += direction;
-        pos_LC += direction;
-        pos_LB += direction;
-        pos_A  += direction;
-        pos_B  += direction;
-        step   ++;
-
-
-    }
-    state.unset_measurements();
-//    std::cout << "Norm              (after normalization): " << mpstools::finite::measure::norm(state)  << std::endl;
-//    std::cout << "Spin component sx (after normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-//    std::cout << "Spin component sy (after normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-//    std::cout << "Spin component sz (after normalization): " << mpstools::finite::measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
-
-
-}
 
 
 
 void mpstools::finite::mps::randomize(class_finite_chain_state &state){
     mpstools::log->trace("Randomizing mps");
+    using Scalar = class_finite_chain_state::Scalar;
     state.unset_measurements();
     Eigen::Tensor<Scalar,1> L (1);
     L.setConstant(1);
@@ -135,7 +63,6 @@ void mpstools::finite::mps::rebuild_environments(class_finite_chain_state &state
     if (state.MPS_R.size() != state.MPO_R.size())
         throw std::runtime_error(fmt::format("Size mismatch in MPSR and MPOR: {} != {}",state.MPS_R.size(), state.MPO_R.size()));
     // Generate new environments
-    mpstools::finite::print::print_state(state);
     state.ENV_L.clear();
     state.ENV_R.clear();
 
@@ -240,14 +167,10 @@ int mpstools::finite::mps::move_center_point(class_finite_chain_state &  state){
 
         class_environment     R  = ENV_R.front();
         class_environment_var R2 = ENV2_R.front();
-        std::cout << "Before: R pos: " << R.get_position() << std::endl;
-        std::cout << "Before: ENVR pos: " << ENV_R.front().get_position() << std::endl;
         R.enlarge(MPS_R.front(), MPO_R.front()->MPO());
         R2.enlarge(MPS_R.front(), MPO_R.front()->MPO());
         ENV_R.emplace_front(R);
         ENV2_R.emplace_front(R2);
-        std::cout << "After:  R pos: " << R.get_position() << std::endl;
-        std::cout << "After:  ENVR pos: " << ENV_R.front().get_position() << std::endl;
 
         //Note that Rblock must just have grown!!
 

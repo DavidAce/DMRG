@@ -45,7 +45,6 @@ mpstools::finite::opt::internals::direct_optimization(const class_finite_chain_s
     std::vector<reports::direct_opt_tuple> opt_log;
     opt_log.emplace_back("Initial",theta.size(), energy_0, std::log10(variance_0), 1.0, iter_0 ,0,t_opt->get_last_time_interval());
     t_opt->tic();
-    mpstools::log->trace("Running LBFGS");
     using namespace LBFGSpp;
     using namespace mpstools::finite::opt::internals;
     double fx;
@@ -55,6 +54,7 @@ mpstools::finite::opt::internals::direct_optimization(const class_finite_chain_s
         case OptType::CPLX:{
             mpstools::finite::opt::internals::direct_functor <Scalar>  functor (state, sim_state);
             Eigen::VectorXd  theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double*> (theta_start.data()), 2*theta_start.size());
+            mpstools::log->trace("Running LBFGS");
             niter = solver.minimize(functor, theta_start_cast, fx);
             theta_start = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
             counter      = functor.get_count();
@@ -65,6 +65,7 @@ mpstools::finite::opt::internals::direct_optimization(const class_finite_chain_s
         case OptType::REAL:{
             mpstools::finite::opt::internals::direct_functor <double> functor (state, sim_state);
             Eigen::VectorXd  theta_start_cast = theta_start.real();
+            mpstools::log->trace("Running LBFGS");
             niter = solver.minimize(functor, theta_start_cast, fx);
             theta_start = theta_start_cast.normalized().cast<Scalar>();
             counter      = functor.get_count();
