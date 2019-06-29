@@ -87,7 +87,7 @@ namespace mpstools::finite::opt{
             // I think c1 corresponds to ftol, and c2 corresponds to wolfe
             params.max_iterations = 1000;
             params.max_linesearch = 400; // Default is 20.
-            params.m              = 6;     // Default is 6
+            params.m              = 8;     // Default is 6
             params.past           = 1;     //
             params.epsilon        = 1e-2;  // Default is 1e-5.
             params.delta          = 1e-6; // Default is 0.
@@ -95,7 +95,7 @@ namespace mpstools::finite::opt{
             params.wolfe          = 0.90;   // Default is 0.9
             params.min_step       = 1e-40;
             params.max_step       = 1e+40;
-            params.linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_WOLFE;
+            params.linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_ARMIJO;
             return params;
         }
 

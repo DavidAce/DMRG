@@ -102,7 +102,7 @@ void mpstools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3>
     auto theta_map = Eigen::Map<VectorType>(theta.data(),theta.size());
     auto fullnorm  = mpstools::finite::measure::norm(state);
     auto thetanorm = std::abs(theta_map.norm());
-    if(std::abs(fullnorm - 1.0) > 1e-14) {
+    if(std::abs(fullnorm - 1.0) > 1e-12) {
         throw std::runtime_error(fmt::format("Norm before truncation too far from unity: {}",fullnorm));
     }
     if( std::abs(thetanorm - 1.0) > 1e-14) {
@@ -178,18 +178,7 @@ void mpstools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3>
     }
 
 
-
-    state.unset_measurements();
-    fullnorm = mpstools::finite::measure::norm(state);
-    if(std::abs(fullnorm - 1.0) > 1e-14) {
-        throw std::runtime_error(fmt::format("Norm before rebuild of env too far from unity: {}",fullnorm));
-    }
-    state.unset_measurements();
-    mpstools::finite::mps::rebuild_environments(state);
-
 }
-
-
 
 
 void mpstools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &theta, class_finite_chain_state & state, long chi_, double SVDThreshold){
@@ -202,7 +191,7 @@ void mpstools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> 
     auto theta_map = Eigen::Map<VectorType>(theta.data(),theta.size());
     auto fullnorm  = mpstools::finite::measure::norm(state);
     auto thetanorm = std::abs(theta_map.norm());
-    if(std::abs(fullnorm - 1.0) > 1e-14) {
+    if(std::abs(fullnorm - 1.0) > 1e-12) {
         throw std::runtime_error(fmt::format("Norm before truncation too far from unity: {:.16f}",fullnorm));
     }
     if( std::abs(thetanorm - 1.0) > 1e-14) {
@@ -282,15 +271,6 @@ void mpstools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> 
     auto leftIDmap = Textra::Tensor2_to_Matrix(leftID);
     if(not leftIDmap.isIdentity(1e-14)) throw std::runtime_error(fmt::format("Not left normalized at site {}", site));
 
-
-
-    state.unset_measurements();
-    fullnorm = mpstools::finite::measure::norm(state);
-    if(std::abs(fullnorm - 1.0) > 1e-14) {
-        throw std::runtime_error(fmt::format("Norm before rebuild of env too far from unity: {:.16f}",fullnorm));
-    }
-    state.unset_measurements();
-    mpstools::finite::mps::rebuild_environments(state);
 }
 
 

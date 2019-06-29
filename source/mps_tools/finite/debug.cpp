@@ -30,7 +30,7 @@ void mpstools::finite::debug::check_integrity(const class_finite_chain_state &st
     try {
         mpstools::log->debug("Checking norms");
         auto norm_chain = mpstools::finite::measure::norm(state);
-        if(std::abs(norm_chain - 1.0) > 1e-14) {
+        if(std::abs(norm_chain - 1.0) > 1e-12) {
             throw std::runtime_error(fmt::format("Norm of state too far from unity: {}",norm_chain));
         }
     }
