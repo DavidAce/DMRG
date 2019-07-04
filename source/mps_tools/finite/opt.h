@@ -86,7 +86,7 @@ namespace mpstools::finite::opt{
             // READ HERE http://pages.mtu.edu/~msgocken/ma5630spring2003/lectures/lines/lines/node3.html
             // I think c1 corresponds to ftol, and c2 corresponds to wolfe
             params.max_iterations = 1000;
-            params.max_linesearch = 400; // Default is 20.
+            params.max_linesearch = 80; // Default is 20.
             params.m              = 8;     // Default is 6
             params.past           = 1;     //
             params.epsilon        = 1e-2;  // Default is 1e-5.
@@ -181,22 +181,36 @@ namespace mpstools::finite::opt{
         template<typename Derived>
         VectorType<typename Derived::Scalar> get_vH2 (const Eigen::MatrixBase<Derived> &v, const MultiComponents<typename Derived::Scalar> &multiComponents){
             using Scalar = typename Derived::Scalar;
-            Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), multiComponents.dsizes).shuffle(Textra::array3{1,0,2});
             t_vH2->tic();
             size_t log2chiL  = std::log2(multiComponents.dsizes[1]);
             size_t log2chiR  = std::log2(multiComponents.dsizes[2]);
             size_t log2spin  = std::log2(multiComponents.dsizes[0]);
             Eigen::Tensor<Scalar,3> vH2;
             if (log2spin > log2chiL + log2chiR){
-                vH2 =
-                    theta
-                    .contract(multiComponents.env2L, Textra::idx({0}, {0}))
-                    .contract(multiComponents.mpo  , Textra::idx({0,3}, {2,0}))
-                    .contract(multiComponents.env2R, Textra::idx({0,3}, {0,2}))
-                    .contract(multiComponents.mpo  , Textra::idx({2,1,4}, {2,0,1}))
-                    .shuffle(Textra::array3{2,0,1});
+                if (log2chiL > log2chiR){
+                    Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), multiComponents.dsizes).shuffle(Textra::array3{1,0,2});
+                    vH2 =
+                            theta
+                            .contract(multiComponents.env2L, Textra::idx({0}, {0}))
+                            .contract(multiComponents.mpo  , Textra::idx({0,3}, {2,0}))
+                            .contract(multiComponents.env2R, Textra::idx({0,3}, {0,2}))
+                            .contract(multiComponents.mpo  , Textra::idx({2,1,4}, {2,0,1}))
+                            .shuffle(Textra::array3{2,0,1});
+                }
+
+                else{
+                    Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), multiComponents.dsizes).shuffle(Textra::array3{2,0,1});
+                    vH2 =
+                            theta
+                            .contract(multiComponents.env2R, Textra::idx({0}, {0}))
+                            .contract(multiComponents.mpo  , Textra::idx({0,3}, {2,1}))
+                            .contract(multiComponents.env2L, Textra::idx({0,3}, {0,2}))
+                            .contract(multiComponents.mpo  , Textra::idx({2,4,1}, {2,0,1}))
+                            .shuffle(Textra::array3{2,1,0});
+                }
 
             }else{
+                Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), multiComponents.dsizes).shuffle(Textra::array3{1,0,2});
                 vH2 =
                     theta
                     .contract(multiComponents.env2L, Textra::idx({0}, {0}))
@@ -211,15 +225,29 @@ namespace mpstools::finite::opt{
         template<typename Derived>
         VectorType<typename Derived::Scalar> get_vH (const Eigen::MatrixBase<Derived> &v, const MultiComponents<typename Derived::Scalar> &multiComponents){
             using Scalar = typename Derived::Scalar;
-            Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), multiComponents.dsizes).shuffle(Textra::array3{1,0,2});
             Eigen::Tensor<Scalar,3> vH;
             t_vH->tic();
-            vH =
-                            theta
-                            .contract(multiComponents.envL, Textra::idx({0}, {0}))
-                            .contract(multiComponents.mpo , Textra::idx({0,3}, {2,0}))
-                            .contract(multiComponents.envR, Textra::idx({0,2}, {0, 2}))
-                            .shuffle(Textra::array3{1, 0, 2});
+            size_t log2chiL  = std::log2(multiComponents.dsizes[1]);
+            size_t log2chiR  = std::log2(multiComponents.dsizes[2]);
+//            size_t log2spin  = std::log2(multiComponents.dsizes[0]);
+            if (log2chiL > log2chiR){
+                Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), multiComponents.dsizes).shuffle(Textra::array3{1,0,2});
+                vH =
+                        theta
+                        .contract(multiComponents.envL, Textra::idx({0}, {0}))
+                        .contract(multiComponents.mpo , Textra::idx({0,3}, {2,0}))
+                        .contract(multiComponents.envR, Textra::idx({0,2}, {0, 2}))
+                        .shuffle(Textra::array3{1, 0, 2});
+            }else{
+                Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), multiComponents.dsizes).shuffle(Textra::array3{2,0,1});
+                vH =
+                        theta
+                        .contract(multiComponents.envR, Textra::idx({0}, {0}))
+                        .contract(multiComponents.mpo , Textra::idx({0,3}, {2,1}))
+                        .contract(multiComponents.envL, Textra::idx({0,2}, {0,2}))
+                        .shuffle(Textra::array3{1, 2, 0});
+            }
+
             t_vH->toc();
 
             return Eigen::Map<VectorType<Scalar>>(vH.data(),vH.size());

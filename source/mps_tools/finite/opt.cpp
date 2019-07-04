@@ -27,8 +27,8 @@ mpstools::finite::opt::find_optimal_excited_state(const class_finite_chain_state
             << "\t mode [ "     << optMode << " ]"
             << "\t space [ "    << optSpace << " ]"
             << "\t type [ "     << optType << " ]"
-            << "\t position [ " << state.get_position() << " ]";
-//            << "\t shape "      << dims << " = [ " << size << " ]" << std::flush;
+            << "\t position [ " << state.get_position() << " ]"
+            << "\t shape "      << "[ " << dims[0] << " " << dims[1]<< " " << dims[2] << " ] = [ " << size << " ]" << std::flush;
     mpstools::log->debug(problem_report.str());
 
 

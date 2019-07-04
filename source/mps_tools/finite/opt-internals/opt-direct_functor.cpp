@@ -59,7 +59,7 @@ double mpstools::finite::opt::internals::direct_functor<Scalar>::operator()(cons
 //    if (std::imag(ene)      > expected_error) mpstools::log->warn("Energy has imaginary component              : {:.16f} + i {:.16f}" , std::real(ene)    , std::imag(ene));
 //    if (std::imag(vH2v/vv)  > expected_error) mpstools::log->warn("Hamiltonian squared has imaginary component : {:.16f} + i {:.16f}" , std::real(vH2v/vv), std::imag(vH2v/vv));
 //    if (std::imag(var)      > expected_error) mpstools::log->warn("Variance has imaginary component            : {:.16f} + i {:.16f}" , std::real(var)    , std::imag(var));
-    if (std::real(var)      < 0.0           ) mpstools::log->warn("Variance is negative                        : {:.16f} + i {:.16f}" , std::real(var)    , std::imag(var));
+    if (std::real(var)      < 0.0           ) mpstools::log->warn("Counter = {}. Variance is negative:  {:.16f} + i {:.16f}" , counter, std::real(var)    , std::imag(var));
 
     energy         = std::real(ene);
     energy_dens    = (energy/length - energy_min ) / (energy_max - energy_min);
@@ -71,24 +71,20 @@ double mpstools::finite::opt::internals::direct_functor<Scalar>::operator()(cons
     variance       = variance < 1e-15  ? 1e-15 : variance;
 
     norm_offset    = std::abs(vv) - 1.0 ;
-    norm_func      = windowed_func_pow(norm_offset,1e-1);
-    norm_grad      = windowed_grad_pow(norm_offset,1e-1);
+    norm_func      = windowed_func_pow(norm_offset,0.0);
+    norm_grad      = windowed_grad_pow(norm_offset,0.0);
 
     log10var       = std::log10(variance);
 
 
     fx = log10var
-//         + energy_func * lambdas(0)
+         + energy_func * lambdas(0)
          + norm_func;
     auto vv_1  = std::pow(vv,-1);
     auto var_1 = 1.0/variance/std::log(10);
-//    Eigen::VectorXcd grad  = var_1 * (2.0*(vH2*vv_1 - v * vH2v * vv_2) - 4.0 * energy * (vH * vv_1 - v * vHv * vv_2))
-//                             + lambdas(0) * energy_grad * 2.0 * (vH * vv_1 - v * vHv * vv_2)
-//                             + norm_grad * 2.0 * v;
-
 
     grad = var_1 * vv_1 * (H2v  - v  * vH2v - 2.0 * ene * (Hv - v * ene))
-//           + lambdas(0) * energy_grad * vv_1 * (Hv - v * ene)
+           + lambdas(0) * energy_grad * vv_1 * (Hv - v * ene)
            +  norm_grad * v;
 
 //        grad(grad.size()-1)  = energy_func;

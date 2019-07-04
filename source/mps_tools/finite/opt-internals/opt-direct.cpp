@@ -11,6 +11,8 @@
 #include <mps_state/class_environment.h>
 #include <algorithms/class_simulation_state.h>
 #include <general/nmspc_random_numbers.h>
+#include <sim_parameters/nmspc_sim_settings.h>
+
 #include <variant>
 
 template<typename Scalar, auto rank>
@@ -49,7 +51,10 @@ mpstools::finite::opt::internals::direct_optimization(const class_finite_chain_s
     using namespace mpstools::finite::opt::internals;
     double fx;
     int niter,counter;
+//    if (sim_state.variance_mpo_has_converged or variance_0 < settings::precision::VarConvergenceThreshold){params.max_iterations = 10; params.max_linesearch = 20;}
+//    else{ params = get_params();}
     LBFGSpp::LBFGSSolver<double> solver(params);
+
     switch (optType){
         case OptType::CPLX:{
             mpstools::finite::opt::internals::direct_functor <Scalar>  functor (state, sim_state);
