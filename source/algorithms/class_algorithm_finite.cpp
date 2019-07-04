@@ -107,10 +107,8 @@ void class_algorithm_finite::run()
         run_preprocessing();
         run_simulation();
     }
-    run_postprocessing();
-    print_status_full();
     t_tot.toc();
-    print_profiling();
+    run_postprocessing();
 }
 
 
@@ -125,7 +123,7 @@ void class_algorithm_finite::run_postprocessing(){
     state->unset_measurements();
     state->do_all_measurements();
     mpstools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
-    mpstools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
+    mpstools::finite::io::write_all_state(*state,*h5pp_file, sim_name);
     mpstools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
 
     //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)

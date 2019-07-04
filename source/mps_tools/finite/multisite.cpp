@@ -15,11 +15,16 @@ std::list<size_t> mpstools::finite::multisite::generate_site_list(class_finite_c
     std::vector<long> costs;
     std::list<size_t> sites;
     std::vector<Eigen::DSizes<long,3>> dims;
-    if (direction == -1)position++;
+    if (direction == -1)position++; // If going to the right, take position to be the site on the right of the center bond.
     while(position >= 0 and position < length){
         dims.emplace_back(state.get_G(position).dimensions());
-        long cost = direction > 1 ? dims.back()[1]*dims.front()[2] : dims.front()[1]*dims.back()[2]  ;
-        for (auto &d : dims ){cost *= d[0];}
+        long chiL = direction == 1 ? dims.front()[1] : dims.back() [1];
+        long chiR = direction == 1 ? dims.back() [2] : dims.front()[2];
+        long cost = chiL * chiR;
+        long spindim = 1;
+        for (auto &d : dims ){spindim *= d[0];}
+        cost *= spindim;
+        std::cout << "position: " << position << " total dims: [ " << spindim << " " << chiL << " " << chiR << " ] dims: " << dims.back() << " cost: " << cost << std::endl;
         costs.push_back(cost);
         sites.push_back(position);
         position += direction;
@@ -34,12 +39,11 @@ std::list<size_t> mpstools::finite::multisite::generate_site_list(class_finite_c
     // Case 3: Costs increase and saturate      -> take until threshold
 
     auto costsmap = Eigen::Map<Eigen::Array<long, Eigen::Dynamic,1>>(costs.data(),costs.size());
-    bool allequal = (costsmap == costsmap(0)).all();
     for (auto & c : costs){
 //        if (allequal){std::cout << "allequal\n"; break;}
         if (sites.size() <= 2){std::cout << "at least two sites kept \n"; break;}
-        if (sites.empty()){throw std::logic_error("No sites for a jump");}
-        if (c <= threshold and sites.size() <= 12){std::cout << "good threshold found: " << c << '\n';break;}
+        else if (sites.empty()){throw std::logic_error("No sites for a jump");}
+        else if (c <= threshold and sites.size() <= 8){std::cout << "good threshold found: " << c << '\n';break;}
         else{
             sites.pop_back();
         }

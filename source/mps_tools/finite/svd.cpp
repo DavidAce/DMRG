@@ -103,10 +103,10 @@ void mpstools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3>
     auto fullnorm  = mpstools::finite::measure::norm(state);
     auto thetanorm = std::abs(theta_map.norm());
     if(std::abs(fullnorm - 1.0) > 1e-12) {
-        throw std::runtime_error(fmt::format("Norm before truncation too far from unity: {}",fullnorm));
+        throw std::runtime_error(fmt::format("Norm before truncation too far from unity: {:.16f}",fullnorm));
     }
-    if( std::abs(thetanorm - 1.0) > 1e-14) {
-        throw std::runtime_error(fmt::format("Norm of theta too far from unity: {}",thetanorm));
+    if( std::abs(thetanorm - 1.0) > 1e-12) {
+        throw std::runtime_error(fmt::format("Norm of theta too far from unity: {:.16f}",thetanorm));
     }
 
 
@@ -194,7 +194,7 @@ void mpstools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> 
     if(std::abs(fullnorm - 1.0) > 1e-12) {
         throw std::runtime_error(fmt::format("Norm before truncation too far from unity: {:.16f}",fullnorm));
     }
-    if( std::abs(thetanorm - 1.0) > 1e-14) {
+    if( std::abs(thetanorm - 1.0) > 1e-12) {
         throw std::runtime_error(fmt::format("Norm of theta too far from unity: {:.16f}",thetanorm));
     }
 

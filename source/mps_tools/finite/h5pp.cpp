@@ -56,6 +56,7 @@ void mpstools::finite::io::write_bond_matrices(const class_finite_chain_state & 
             h5ppFile.writeDataset(state.get_L(i),sim_name + "/state/mps/L_" + std::to_string(i));
         }
     }
+    h5ppFile.writeDataset(state.truncation_error, sim_name + "/state/mps/truncation_error");
 }
 
 
@@ -65,6 +66,7 @@ void mpstools::finite::io::write_bond_matrix(const class_finite_chain_state & st
 {
     auto middle = (size_t) (state.get_length() / 2);
     h5ppFile.writeDataset(state.get_L(middle),sim_name + "/state/mps/L_C");
+    h5ppFile.writeDataset(state.truncation_error[middle], sim_name + "/state/mps/truncation_error");
 }
 
 void mpstools::finite::io::write_full_mps(const class_finite_chain_state & state, h5pp::File & h5ppFile, std::string sim_name)

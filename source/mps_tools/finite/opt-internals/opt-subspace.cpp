@@ -67,23 +67,15 @@ find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
 
 std::vector<int> mpstools::finite::opt::internals::generate_size_list(size_t shape){
     std::vector<int> nev_list;
-    if (shape <= 512){
-        nev_list.push_back(-1);
-        return nev_list;
-    }
+    int max_nev = std::max(std::min(8,(int)shape),(int)shape/8);
+    max_nev = std::min(max_nev,256);
 
-    int min_nev = 8;
-    min_nev =  shape > 512 ? std::min(8,(int)shape/16) : min_nev;
-    int max_nev = std::max(1,(int)shape/8);
-    max_nev = std::min(max_nev,512);
+    int min_nev = std::min(std::min(8,(int)shape),max_nev);
+
     int tmp_nev = min_nev;
     while (tmp_nev <= max_nev){
         nev_list.push_back(tmp_nev);
         tmp_nev *= 4;
-    }
-
-    if (shape <= settings::precision::MaxSizeFullDiag or settings::precision::MaxSizeFullDiag <= 0){ // Only do this for small enough matrices
-        nev_list.push_back(-1); // "-1" means doing a full diagonalization with lapack instead of arpack.
     }
     return nev_list;
 }
@@ -91,8 +83,9 @@ std::vector<int> mpstools::finite::opt::internals::generate_size_list(size_t sha
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
 find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,3> &theta, double energy_target, std::vector<reports::eig_tuple> &eig_log){
-    mpstools::log->trace("Finding subspace -- partial");
     using namespace eigutils::eigSetting;
+    mpstools::log->trace("Finding subspace -- partial");
+
 
     t_eig->tic();
     // You need to copy the data into StlMatrixProduct, because the PartialPivLU will overwrite the data in H_local otherwise.
@@ -107,16 +100,11 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
     double subspace_quality_threshold = prec;
 
     class_eigsolver solver;
-    std::string reason = "none";
+    std::string reason = "exhausted";
     Eigen::VectorXd  eigvals;
     Eigen::MatrixXcd eigvecs;
     Eigen::Map<const Eigen::VectorXcd> theta_vec   (theta.data(),theta.size());
     for (auto nev : generate_size_list(theta.size())){
-        if (nev <= 0){
-            if   (theta.size() <= 2*2*16*16) return find_subspace_full(H_local,theta,eig_log);
-            else
-            {reason = "matrix is too big for full diag"; break;}
-        }
         t_eig->tic();
         solver.eigs_stl(hamiltonian,nev,-1, energy_target,Form::SYMMETRIC,Ritz::LM,Side::R, true,false);
         t_eig->toc();
@@ -138,15 +126,28 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
         if(max_overlap    > 1.0 + 1e-10) throw std::runtime_error("max_overlap larger than one : "  + std::to_string(max_overlap));
         if(sq_sum_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : "          + std::to_string(sq_sum_overlap));
         if(min_overlap    < 0.0)         throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
-        if(max_overlap >= max_overlap_threshold )         {reason = "overlap is good"; break;}
-        if(subspace_quality < subspace_quality_threshold) {reason = "subspace quality is good"; break;}
+        if(max_overlap >= max_overlap_threshold )         {reason = "overlap is good enough"; break;}
+        if(subspace_quality < subspace_quality_threshold) {reason = "subspace quality is good enough"; break;}
     }
-    mpstools::log->debug("Finished eigensolver -- condition: {}",reason);
-//    Eigen::Map<const Eigen::VectorXd>  eigvals     (solver.solution.get_eigvals<Form::SYMMETRIC>().data()            ,solver.solution.meta.cols);
-//    Eigen::Map<const Eigen::MatrixXcd> eigvecs     (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows,solver.solution.meta.cols);
+    mpstools::log->debug("Finished partial eigensolver -- condition: {}",reason);
     return std::make_tuple(eigvecs,eigvals);
 }
 
+
+int idx_best_overlap_in_window(const Eigen::VectorXd &overlaps, const Eigen::VectorXd & eigvals, double lbound, double ubound){
+    assert(overlaps.size() == eigvals.size() and "idx_best_overlap_in_window: Mismatch in overlaps and eigvals sizes");
+    Eigen::VectorXd overlaps_in_window = overlaps;
+    for (int i = 0; i < overlaps.size(); i++){
+        if (eigvals(i) > ubound) overlaps_in_window(i) = 0.0;
+        if (eigvals(i) < lbound) overlaps_in_window(i) = 0.0;
+    }
+    if (overlaps_in_window.isZero(0.0)){overlaps_in_window = overlaps;}
+
+    int idx;
+    [[maybe_unused]] double max_overlap = overlaps_in_window.maxCoeff(&idx);
+    return idx;
+
+}
 
 
 
@@ -177,6 +178,9 @@ find_subspace(const class_finite_chain_state & state, const class_simulation_sta
     Eigen::VectorXd  eigvals;
     std::vector<reports::eig_tuple> eig_log;
     double energy_target = state.get_length() * sim_state.energy_now;
+
+    // If theta is small enough, do FULL even if it asked for PARTIAL.
+    if   (theta.size() <= settings::precision::MaxSizeFullDiag) optSpace = OptSpace::FULL;
     switch (optSpace){
         case OptSpace::FULL    : std::tie(eigvecs,eigvals) = find_subspace_full(H_local,theta,eig_log); break;
         case OptSpace::PARTIAL : std::tie(eigvecs,eigvals) = find_subspace_part(H_local,theta,energy_target,eig_log); break;
@@ -200,8 +204,7 @@ find_subspace(const class_finite_chain_state & state, const class_simulation_sta
         case OptMode::OVERLAP :
             Eigen::Map<Eigen::VectorXcd> theta_vec(theta.data(),theta.size());
             Eigen::VectorXd overlaps  = (theta_vec.adjoint() * eigvecs).cwiseAbs().real();
-            int idx;
-            [[maybe_unused]] double max_overlap = overlaps.maxCoeff(&idx);
+            int idx = idx_best_overlap_in_window(overlaps,eigvals,sim_state.energy_lbound,sim_state.energy_ubound);
             return std::make_tuple(eigvecs.col(idx),eigvals.row(idx));
     }
 }
@@ -320,6 +323,8 @@ mpstools::finite::opt::internals::subspace_optimization(const class_finite_chain
     using namespace mpstools::finite::opt::internals;
     double fx;
     int niter,counter;
+    if (sim_state.variance_mpo_has_converged or variance_0 < settings::precision::VarConvergenceThreshold){params.max_iterations = 10; params.max_linesearch = 20;}
+    else{ params = get_params();}
     LBFGSpp::LBFGSSolver<double> solver(params);
     switch (optType){
         case OptType::CPLX:{

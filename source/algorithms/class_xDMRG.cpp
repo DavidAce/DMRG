@@ -99,6 +99,7 @@ void class_xDMRG::single_DMRG_step()
     t_opt.tic();
     log->trace("Starting single xDMRG step");
     using namespace  mpstools::finite::opt;
+    using namespace  mpstools::finite::measure;
 
     // Table
 
@@ -109,13 +110,18 @@ void class_xDMRG::single_DMRG_step()
 
 
     auto optMode  =  OptMode::OVERLAP;
-    optMode  = sim_state.iteration   >= 2  ?  OptMode::VARIANCE : optMode;
-//    optMode  =  OptMode::VARIANCE;
-    auto optSpace =  OptSpace::FULL;
-    optSpace = sim_state.iteration >=  2                           ? OptSpace::PARTIAL : optSpace;
-    optSpace = sim_state.iteration >=  settings::xdmrg::min_sweeps ? OptSpace::DIRECT  : optSpace;
-    optSpace = optMode == OptMode::VARIANCE                        ? OptSpace::DIRECT  : optSpace;
-//    optSpace = OptSpace::DIRECT;
+    optMode  = sim_state.iteration              >= 2     ?  OptMode::VARIANCE : optMode;
+    optMode  = energy_variance_per_site(*state) < 1e-6   ?  OptMode::VARIANCE : optMode;
+
+
+
+    auto optSpace =  OptSpace::PARTIAL;
+//    optSpace = sim_state.iteration              >= 2                            ? OptSpace::PARTIAL : optSpace;
+//    optSpace = energy_variance_per_site(*state) <  1e-6                         ? OptSpace::DIRECT  : optSpace;
+//    optSpace = sim_state.iteration              >= settings::xdmrg::min_sweeps  ? OptSpace::DIRECT  : optSpace;
+
+
+
 
     long threshold = 0;
     switch(optSpace){
@@ -168,12 +174,14 @@ void class_xDMRG::check_convergence(){
     bool outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  > sim_state.energy_dens_window;
     if (outside_of_window
         and (   sim_state.iteration >= 2
+                or mpstools::finite::measure::energy_variance_per_site(*state) < 1e-4
                 or sim_state.variance_mpo_saturated_for > min_saturation_length
                 or sim_state.variance_mpo_has_converged)
         )
     {
-        log->info("Resetting to product state -- saturated outside of energy window. Energy density: {}, Energy window: {} --> {}",sim_state.energy_dens, sim_state.energy_dens_window, std::min(1.05*sim_state.energy_dens_window, 0.5) );
-        sim_state.energy_dens_window = std::min(1.05*sim_state.energy_dens_window, 0.5);
+        double growth_factor = 1.10;
+        log->info("Resetting to product state -- saturated outside of energy window. Energy density: {}, Energy window: {} --> {}",sim_state.energy_dens, sim_state.energy_dens_window, std::min(growth_factor*sim_state.energy_dens_window, 0.5) );
+        sim_state.energy_dens_window = std::min(growth_factor*sim_state.energy_dens_window, 0.5);
         int counter = 0;
         while(outside_of_window){
             reset_to_random_state(settings::model::symmetry);
@@ -182,8 +190,8 @@ void class_xDMRG::check_convergence(){
             outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  >= sim_state.energy_dens_window;
             counter++;
             if (counter % 10 == 0) {
-                log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}", sim_state.energy_dens_window, std::min(1.05*sim_state.energy_dens_window, 0.5) );
-                sim_state.energy_dens_window = std::min(1.05*sim_state.energy_dens_window, 0.5);
+                log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}", sim_state.energy_dens_window, std::min(growth_factor*sim_state.energy_dens_window, 0.5) );
+                sim_state.energy_dens_window = std::min(growth_factor*sim_state.energy_dens_window, 0.5);
             }
         }
         log->info("Energy initial (per site) = {} | density = {} | retries = {}", sim_state.energy_now, sim_state.energy_dens,counter );
