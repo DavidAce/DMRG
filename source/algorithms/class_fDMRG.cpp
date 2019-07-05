@@ -36,8 +36,8 @@ void class_fDMRG::run_simulation(){
         store_profiling_deltas();
         store_state_and_measurements_to_file();
 
-        check_convergence();
         print_status_update();
+        check_convergence();
 
         // It's important not to perform the last step.
         // That last state would not get optimized

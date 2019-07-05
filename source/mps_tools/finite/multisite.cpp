@@ -21,10 +21,8 @@ std::list<size_t> mpstools::finite::multisite::generate_site_list(class_finite_c
         long chiL = direction == 1 ? dims.front()[1] : dims.back() [1];
         long chiR = direction == 1 ? dims.back() [2] : dims.front()[2];
         long cost = chiL * chiR;
-        long spindim = 1;
-        for (auto &d : dims ){spindim *= d[0];}
-        cost *= spindim;
-        std::cout << "position: " << position << " total dims: [ " << spindim << " " << chiL << " " << chiR << " ] dims: " << dims.back() << " cost: " << cost << std::endl;
+        for (auto &d : dims ){cost *= d[0];}
+//        std::cout << "position: " << position << " total dims: [ " << spindim << " " << chiL << " " << chiR << " ] dims: " << dims.back() << " cost: " << cost << std::endl;
         costs.push_back(cost);
         sites.push_back(position);
         position += direction;
@@ -53,3 +51,53 @@ std::list<size_t> mpstools::finite::multisite::generate_site_list(class_finite_c
     return sites;
 
 }
+
+
+using namespace Textra;
+using Scalar = class_finite_chain_state::Scalar;
+
+
+double mpstools::finite::measure::multidmrg::energy(const class_finite_chain_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+    auto multimpo   = state.get_multimpo();
+    auto & envL     = state.get_ENVL(state.active_sites.front()).block;
+    auto & envR     = state.get_ENVR(state.active_sites.back()).block;
+    Eigen::Tensor<Scalar, 0>  E =
+            envL
+            .contract(multitheta,                               idx({0},{1}))
+            .contract(multimpo,                                 idx({2,1},{2,0}))
+            .contract(multitheta.conjugate(),                   idx({3,0},{0,1}))
+            .contract(envR,                                     idx({0,2,1},{0,1,2}));
+    if(abs(imag(E(0))) > 1e-10 ){
+        throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
+    }
+    assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
+    return std::real(E(0));
+}
+
+
+double mpstools::finite::measure::multidmrg::energy_per_site(const class_finite_chain_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+        return multidmrg::energy(state,multitheta)/state.get_length();
+}
+
+
+double mpstools::finite::measure::multidmrg::energy_variance(const class_finite_chain_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+    double energy = mpstools::finite::measure::multidmrg::energy(state, multitheta);
+    auto multimpo   = state.get_multimpo();
+    auto & env2L    = state.get_ENV2L(state.active_sites.front()).block;
+    auto & env2R    = state.get_ENV2R(state.active_sites.back()).block;
+    Eigen::Tensor<Scalar, 0> H2 =
+            env2L
+            .contract(multitheta                 , idx({0}  ,{1}))
+            .contract(multimpo                   , idx({3,1},{2,0}))
+            .contract(multimpo                   , idx({4,1},{2,0}))
+            .contract(multitheta.conjugate()     , idx({4,0},{0,1}))
+            .contract(env2R                      , idx({0,3,1,2},{0,1,2,3}));
+    return std::abs(H2(0) - energy*energy);
+}
+
+
+double mpstools::finite::measure::multidmrg::energy_variance_per_site(const class_finite_chain_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+        return multidmrg::energy_variance(state,multitheta)/state.get_length();
+}
+
+

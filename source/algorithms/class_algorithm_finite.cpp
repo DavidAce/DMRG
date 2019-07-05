@@ -380,6 +380,7 @@ void class_algorithm_finite::print_status_update() {
 //    if (not state->position_is_the_middle()) {return;}
     if (print_freq() == 0) {return;}
     using namespace std;
+    using namespace mpstools::finite::measure;
     compute_observables();
     t_prt.tic();
     std::stringstream report;
@@ -391,7 +392,7 @@ void class_algorithm_finite::print_status_update() {
     switch(sim_type) {
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            report << setw(21) << setprecision(16)    << fixed   << state->measurements.energy_per_site.value();
+            report << setw(21) << setprecision(16)    << fixed   << energy_per_site(*state);
             break;
         default: throw std::runtime_error("Wrong simulation type");
     }
@@ -404,16 +405,16 @@ void class_algorithm_finite::print_status_update() {
     switch(sim_type) {
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            report << setw(14) << setprecision(6)    << fixed   << std::log10(state->measurements.energy_variance_per_site.value());
+            report << setw(18) << setprecision(10)    << fixed   << std::log10(energy_variance_per_site(*state));
             break;
         default: throw std::runtime_error("Wrong simulation type");
 
     }
 
 
-    report << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << state->measurements.entanglement_entropy_current.value();
+    report << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << entanglement_entropy_current(*state);
     report << left  << "χmax: "                       << setw(4)  << setprecision(3)     << fixed   << chi_max();
-    report << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << state->measurements.bond_dimension_current.value();
+    report << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << bond_dimension_current(*state);
     report << left  << "log₁₀ trunc: "                << setw(10) << setprecision(4)     << fixed   << std::log10(state->truncation_error[state->get_position()]);
     report << left  << "Sites: "                      << setw(6)  << setprecision(1)     << fixed   << state->get_length();
     switch(sim_type){

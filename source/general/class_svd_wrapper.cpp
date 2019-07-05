@@ -42,26 +42,24 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
         std::cerr << "rank: " << rank << std::endl;
         throw std::runtime_error("SVD error:  Erroneous results");
     }
-    auto schmidt_values = SVD.singularValues().normalized();
-    size_t my_rank = (schmidt_values.array() > SVDThreshold).count();
-    truncation_error = schmidt_values.tail(schmidt_values.size()-my_rank).squaredNorm();
+//    auto schmidt_values = SVD.singularValues().normalized();
+//    size_t my_rank = (schmidt_values.array() > SVDThreshold).count();
+//    truncation_error = schmidt_values.tail(schmidt_values.size()-my_rank).squaredNorm();
 
-    schmidt_values.conservativeResize(my_rank);
-//    schmidt_values.normalize();
-    return std::make_tuple(
-            SVD.matrixU().leftCols(my_rank),
-            schmidt_values,
-//            SVD.singularValues().normalized(),
-//            SVD.singularValues().head(rank),
-            SVD.matrixV().leftCols(my_rank).adjoint(),
-            my_rank
-    );
 //    return std::make_tuple(
-//            SVD.matrixU().leftCols(rank),
-//            SVD.singularValues().head(rank),
-//            SVD.matrixV().leftCols(rank).adjoint(),
-//            rank
-//            );
+//            SVD.matrixU().leftCols(my_rank),
+//            schmidt_values.conservativeResize(my_rank).normalized(),
+//            SVD.matrixV().leftCols(my_rank).adjoint(),
+//            my_rank
+//    );
+    truncation_error = SVD.singularValues().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();
+
+    return std::make_tuple(
+            SVD.matrixU().leftCols(rank),
+            SVD.singularValues().head(rank),
+            SVD.matrixV().leftCols(rank).adjoint(),
+            rank
+            );
 }
 
 template std::tuple<class_SVD::MatrixType<double>, class_SVD::VectorType<double>,class_SVD::MatrixType<double> , long>

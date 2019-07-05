@@ -15,8 +15,8 @@ class class_tic_toc;
 
 namespace mpstools::finite::opt{
     namespace internals{
-        extern std::tuple<Eigen::Tensor<std::complex<double>,3>, double> subspace_optimization       (const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace, OptType optType);
-        extern std::tuple<Eigen::Tensor<std::complex<double>,3>, double> direct_optimization         (const class_finite_chain_state & state, const class_simulation_state &sim_state, OptType optType);
+        extern std::tuple<Eigen::Tensor<std::complex<double>,3>, double> subspace_optimization       (const class_finite_chain_state & state, const class_simulation_state & sim_state, OptType optType, OptMode optMode);
+        extern std::tuple<Eigen::Tensor<std::complex<double>,3>, double> direct_optimization         (const class_finite_chain_state & state, const class_simulation_state & sim_state, OptType optType);
         extern std::tuple<Eigen::Tensor<std::complex<double>,3>, double> cppoptlib_optimization      (const class_finite_chain_state & state, const class_simulation_state & sim_state);
         extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> ground_state_optimization   (const class_finite_chain_state & state, const class_simulation_state & sim_state, std::string ritz = "SR");
 
@@ -34,8 +34,7 @@ namespace mpstools::finite::opt{
 
         inline std::ostream& operator<<(std::ostream& str, OptSpace const& space) {
             switch (space){
-                case OptSpace::PARTIAL     : str << "PARTIAL";      break;
-                case OptSpace::FULL        : str << "FULL";         break;
+                case OptSpace::SUBSPACE    : str << "SUBSPACE";      break;
                 case OptSpace::DIRECT      : str << "DIRECT";       break;
             }
             return str;

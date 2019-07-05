@@ -32,10 +32,8 @@ mpstools::finite::opt::find_optimal_excited_state(const class_finite_chain_state
     mpstools::log->debug(problem_report.str());
 
 
-
     switch (optSpace){
-        case OptSpace::FULL:        return internals::subspace_optimization(state, sim_state , optMode, optSpace, optType);
-        case OptSpace::PARTIAL:     return internals::subspace_optimization(state, sim_state , optMode, optSpace, optType);
+        case OptSpace::SUBSPACE:    return internals::subspace_optimization(state, sim_state, optType, optMode);
         case OptSpace::DIRECT:      return internals::direct_optimization  (state, sim_state, optType);
     }
 }

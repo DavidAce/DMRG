@@ -24,7 +24,7 @@
 
 using namespace std;
 using namespace Textra;
-using Scalar = std::complex<double>;
+using Scalar = class_finite_chain_state::Scalar;
 
 
 
