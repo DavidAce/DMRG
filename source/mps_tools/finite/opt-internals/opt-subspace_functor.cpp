@@ -31,15 +31,17 @@ template<typename Scalar>
 double mpstools::finite::opt::internals::subspace_functor<Scalar>::operator()(const Eigen::VectorXd &v_double_double, Eigen::VectorXd &grad_double_double) {
     Scalar vH2v,vHv;
     Scalar ene,var;
-    double vv,fx,log10var;
+    double fx,log10var;
     double norm_func,norm_grad;
     VectorType Hv, H2v;
     int vecSize = v_double_double.size();
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){vecSize = v_double_double.size()/2;}
     auto v    = Eigen::Map<const VectorType> (reinterpret_cast<const Scalar*>(v_double_double.data())   , vecSize);
-    auto grad = Eigen::Map<      VectorType> (reinterpret_cast<      Scalar*>(grad_double_double.data()), vecSize);
-    vv    = v.squaredNorm();
+    double vv = v.squaredNorm();
+
     norm = std::sqrt(vv);
+
+    auto grad = Eigen::Map<      VectorType> (reinterpret_cast<      Scalar*>(grad_double_double.data()), vecSize);
     #pragma omp parallel
     {
         #pragma omp sections
@@ -56,8 +58,8 @@ double mpstools::finite::opt::internals::subspace_functor<Scalar>::operator()(co
             }
         }
     }
-    ene             = vHv;
-    var             = vH2v - ene*ene;
+    ene             = vHv/vv;
+    var             = vH2v/vv - ene*ene;
 //    double loss_of_precision = std::log10(std::abs(ene*ene));
 //    double expected_error    = std::pow(10, -(14-loss_of_precision));
 //    if (std::imag(ene)      > expected_error) mpstools::log->warn("Energy has imaginary component              : {:.16f} + i {:.16f}" , std::real(ene)    , std::imag(ene));
@@ -69,8 +71,8 @@ double mpstools::finite::opt::internals::subspace_functor<Scalar>::operator()(co
     variance       = std::abs(var);
     variance       = variance < 1e-15  ? 1e-15 : variance;
     norm_offset    = std::abs(vv) - 1.0 ;
-    norm_func      = windowed_func_pow(norm_offset,0.1);
-    norm_grad      = windowed_grad_pow(norm_offset,0.1);
+    norm_func      = windowed_func_pow(norm_offset,0.0);
+    norm_grad      = windowed_grad_pow(norm_offset,0.0);
     log10var       = std::log10(variance);
 
     fx = log10var
@@ -80,7 +82,8 @@ double mpstools::finite::opt::internals::subspace_functor<Scalar>::operator()(co
     auto var_1 = 1.0/var/std::log(10);
     grad = var_1 * vv_1 * (H2v  - v  * vH2v - 2.0 * ene * (Hv - v * ene))
            +  norm_grad * v;
-
+//    grad = var_1 * (H2v  - 2.0 * ene * Hv )
+//           +  norm_grad * v;
 //    vecSize = grad.size();
 //    if constexpr (std::is_same<Scalar,std::complex<double>>::value){vecSize = 2*grad.size();}
 //    grad_double_double  = Eigen::Map<Eigen::VectorXd> (reinterpret_cast<double*> (grad.data()), vecSize);

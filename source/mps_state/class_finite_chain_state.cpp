@@ -237,7 +237,11 @@ Eigen::DSizes<long,3> class_finite_chain_state::active_dimensions() const{
     return dimensions;
 }
 
-
+size_t class_finite_chain_state::active_size() const {
+    if (active_dimensions().empty()) return 0;
+    auto dims = active_dimensions();
+    return dims[0]*dims[1]*dims[2];
+}
 
 
 Eigen::Tensor<class_finite_chain_state::Scalar,3>   class_finite_chain_state::get_multitheta()    const{

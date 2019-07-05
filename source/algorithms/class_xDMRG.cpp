@@ -97,16 +97,16 @@ void class_xDMRG::single_DMRG_step()
 
     t_sim.tic();
     t_opt.tic();
-    log->trace("Starting single xDMRG step");
+    log->trace("Starting single xDMRG step {}", sim_state.step);
     using namespace  mpstools::finite::opt;
     using namespace  mpstools::finite::measure;
 
 
     auto optMode  = sim_state.iteration  >= 2     ?  OptMode::VARIANCE : OptMode::OVERLAP;
+    optMode  =   OptMode::VARIANCE;
 
     auto optSpace =  OptSpace::SUBSPACE;
-//    optSpace = sim_state.iteration              >= 2                            ? OptSpace::SUBSPACE : optSpace;
-//    optSpace = energy_variance_per_site(*state) <  1e-6                         ? OptSpace::DIRECT  : optSpace;
+    optSpace = energy_variance_per_site(*state) <  1e-6                         ? OptSpace::DIRECT  : optSpace;
     optSpace = sim_state.iteration              >= settings::xdmrg::min_sweeps  ? OptSpace::DIRECT  : optSpace;
 
 
@@ -118,6 +118,10 @@ void class_xDMRG::single_DMRG_step()
         case OptSpace::DIRECT  : threshold = 2 * 2 * 64 * 64; break;
     }
     state->activate_sites(threshold);
+    if (state->active_size() > 4096) optSpace = OptSpace::DIRECT;
+
+
+
     auto optType = state->isReal() ? OptType::REAL : OptType::CPLX;
 
     Eigen::Tensor<Scalar,3> theta;

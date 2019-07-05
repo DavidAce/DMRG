@@ -48,8 +48,8 @@ std::list<size_t> mpstools::finite::multisite::generate_site_list(class_finite_c
     }
     if (direction == -1){std::reverse(sites.begin(),sites.end());}
     std::cout << "SITES \n" << sites << std::endl;
+    state.active_sites = sites;
     return sites;
-
 }
 
 
