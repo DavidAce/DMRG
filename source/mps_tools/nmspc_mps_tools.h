@@ -69,7 +69,7 @@ namespace mpstools{
 
         namespace opt{
             enum class OptMode  {OVERLAP, VARIANCE};
-            enum class OptSpace {PARTIAL,FULL,DIRECT};
+            enum class OptSpace {SUBSPACE,DIRECT};
             enum class OptType  {REAL, CPLX};
             extern std::tuple<Eigen::Tensor<std::complex<double>,3>, double> find_optimal_excited_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, OptMode optMode, OptSpace optSpace,OptType optType);
             extern std::tuple<Eigen::Tensor<std::complex<double>,4>, double> find_optimal_ground_state(const class_finite_chain_state & state, const class_simulation_state & sim_state, std::string ritz = "SR");
@@ -102,6 +102,14 @@ namespace mpstools{
             extern double entanglement_entropy_midchain               (const class_finite_chain_state & state);
             extern std::vector<double> entanglement_entropies         (const class_finite_chain_state & state);
             extern std::vector<double> spin_components                (const class_finite_chain_state & state);
+
+            namespace multidmrg{
+                extern double energy                                  (const class_finite_chain_state &state, const Eigen::Tensor<std::complex<double>,3> & multitheta);
+                extern double energy_per_site                         (const class_finite_chain_state &state, const Eigen::Tensor<std::complex<double>,3> & multitheta);
+                extern double energy_variance                         (const class_finite_chain_state &state, const Eigen::Tensor<std::complex<double>,3> & multitheta);
+                extern double energy_variance_per_site                (const class_finite_chain_state &state, const Eigen::Tensor<std::complex<double>,3> & multitheta);
+            }
+
         }
 
 

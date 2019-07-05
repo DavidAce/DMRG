@@ -83,11 +83,17 @@ void mpstools::finite::mps::normalize(class_finite_chain_state & state){
 
 
 void mpstools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,3> &theta, class_finite_chain_state & state, long chi_, double SVDThreshold){
+    auto variance_test = mpstools::finite::measure::multidmrg::energy_variance_per_site(state,theta);
+    std::cout << "Variance before svd: " << std::log10(variance_test) << std::endl;
     if (state.get_direction() == 1){
         mpstools::finite::opt::truncate_right(theta,state,chi_,SVDThreshold);
     }else{
         mpstools::finite::opt::truncate_left(theta,state,chi_,SVDThreshold);
     }
+    variance_test = mpstools::finite::measure::multidmrg::energy_variance_per_site(state,state.get_multitheta());
+
+    std::cout << "Variance after  svd: " << std::log10(variance_test) << std::endl;
+
 }
 
 
@@ -132,10 +138,6 @@ void mpstools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3>
 
         state.get_G(site)   = L_U;
         state.get_L(site+1) = S;
-        auto Snorm2_left  = Textra::Tensor1_to_Vector(state.get_L(site)).squaredNorm();
-        auto Snorm2_right = Textra::Tensor1_to_Vector(state.get_L(site+1)).squaredNorm();
-        mpstools::log->trace("svd multitheta site {} chi {} norm {:.16f} S norm2 left {:.16f} S norm2 right  {:.16f} trunc {:.16f}",
-                             site,S.dimension(0), norm,Snorm2_left, Snorm2_right,SVD.get_truncation_error());
 
         if(active_sites.size() > 2){
             Eigen::Tensor<Scalar,3> temp = Textra::asDiagonal(S).contract(V, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
@@ -231,11 +233,6 @@ void mpstools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> 
 
         state.get_G(site) = V_L;
         state.get_L(site) = S;
-        auto Snorm2_left  = Textra::Tensor1_to_Vector(state.get_L(site)).squaredNorm();
-        auto Snorm2_right = Textra::Tensor1_to_Vector(state.get_L(site+1)).squaredNorm();
-//        mpstools::log->trace("svd multitheta site {} chi {} norm {:.16f} S norm2 {:.16f} trunc {:.16f}", site,S.dimension(0), norm, Snorm2,SVD.get_truncation_error());
-        mpstools::log->trace("svd multitheta site {} chi {} norm {:.16f} S norm2 left {:.16f} S norm2 right  {:.16f} trunc {:.16f}",
-                             site,S.dimension(0), norm,Snorm2_left, Snorm2_right,SVD.get_truncation_error());
 
         if(reverse_active_sites.size() > 2){
             Eigen::Tensor<Scalar,3> temp =  U.contract(Textra::asDiagonal(S), Textra::idx({2},{0}));
@@ -256,12 +253,6 @@ void mpstools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> 
     size_t site = reverse_active_sites.front();
     Eigen::Tensor<Scalar,3> L_U = Textra::asDiagonalInversed(state.get_L(site)).contract(U,Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
     state.get_G(site) = L_U;
-    auto Snorm2_left  = Textra::Tensor1_to_Vector(state.get_L(site)).squaredNorm();
-    auto Snorm2_right = Textra::Tensor1_to_Vector(state.get_L(site+1)).squaredNorm();
-//        mpstools::log->trace("svd multitheta site {} chi {} norm {:.16f} S norm2 {:.16f} trunc {:.16f}", site,S.dimension(0), norm, Snorm2,SVD.get_truncation_error());
-    mpstools::log->trace("svd multitheta site {} chi {} norm {:.16f} S norm2 left {:.16f} S norm2 right  {:.16f} trunc {:.16f}",
-                         site,S.dimension(0), norm,Snorm2_left, Snorm2_right,SVD.get_truncation_error());
-
 
     if (not Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,1 >>(L_U.data(),L_U.size()).allFinite() )
         throw std::runtime_error("L_U has nan's or inf's");

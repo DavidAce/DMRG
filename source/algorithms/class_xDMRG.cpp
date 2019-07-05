@@ -58,8 +58,8 @@ void class_xDMRG::run_simulation()    {
         store_profiling_totals();
         store_state_and_measurements_to_file();
 
-        check_convergence();
         print_status_update();
+        check_convergence();
 
         // It's important not to perform the last step.
         // That last state would not get optimized
@@ -101,32 +101,20 @@ void class_xDMRG::single_DMRG_step()
     using namespace  mpstools::finite::opt;
     using namespace  mpstools::finite::measure;
 
-    // Table
 
-    // Mode / Space |   FULL        PARTIAL     DIRECT
-    // ---------------------------------------------------
-    // OVERLAP      |   FO          FP          DV
-    // VARIANCE     |   FV          FV          DV
+    auto optMode  = sim_state.iteration  >= 2     ?  OptMode::VARIANCE : OptMode::OVERLAP;
 
-
-    auto optMode  =  OptMode::OVERLAP;
-    optMode  = sim_state.iteration              >= 2     ?  OptMode::VARIANCE : optMode;
-    optMode  = energy_variance_per_site(*state) < 1e-6   ?  OptMode::VARIANCE : optMode;
-
-
-
-    auto optSpace =  OptSpace::PARTIAL;
-//    optSpace = sim_state.iteration              >= 2                            ? OptSpace::PARTIAL : optSpace;
+    auto optSpace =  OptSpace::SUBSPACE;
+//    optSpace = sim_state.iteration              >= 2                            ? OptSpace::SUBSPACE : optSpace;
 //    optSpace = energy_variance_per_site(*state) <  1e-6                         ? OptSpace::DIRECT  : optSpace;
-//    optSpace = sim_state.iteration              >= settings::xdmrg::min_sweeps  ? OptSpace::DIRECT  : optSpace;
+    optSpace = sim_state.iteration              >= settings::xdmrg::min_sweeps  ? OptSpace::DIRECT  : optSpace;
 
 
 
 
     long threshold = 0;
     switch(optSpace){
-        case OptSpace::FULL    : threshold = 2 * 2 * 16 * 16; break;
-        case OptSpace::PARTIAL : threshold = 2 * 2 * 32 * 32; break;
+        case OptSpace::SUBSPACE : threshold = 2 * 2 * 16 * 32; break;
         case OptSpace::DIRECT  : threshold = 2 * 2 * 64 * 64; break;
     }
     state->activate_sites(threshold);

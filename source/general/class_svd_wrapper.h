@@ -207,7 +207,7 @@ class_SVD::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor, long chi_max
 
 
     return std::make_tuple(Textra::Matrix_to_Tensor(U, dL, chiL, rank),
-                           Textra::Matrix_to_Tensor((S.normalized()).template cast<Scalar>(), rank),
+                           Textra::Matrix_to_Tensor(S.normalized().template cast<Scalar>(), rank),
                            Textra::Matrix_to_Tensor(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 }),
                            S.norm()
     );

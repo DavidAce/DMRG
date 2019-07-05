@@ -56,8 +56,8 @@ double mpstools::finite::opt::internals::subspace_functor<Scalar>::operator()(co
             }
         }
     }
-    ene             = vHv/vv;
-    var             = vH2v/vv - ene*ene;
+    ene             = vHv;
+    var             = vH2v - ene*ene;
 //    double loss_of_precision = std::log10(std::abs(ene*ene));
 //    double expected_error    = std::pow(10, -(14-loss_of_precision));
 //    if (std::imag(ene)      > expected_error) mpstools::log->warn("Energy has imaginary component              : {:.16f} + i {:.16f}" , std::real(ene)    , std::imag(ene));

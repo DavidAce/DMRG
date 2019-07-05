@@ -61,7 +61,7 @@ mpstools::finite::opt::internals::direct_optimization(const class_finite_chain_s
             Eigen::VectorXd  theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double*> (theta_start.data()), 2*theta_start.size());
             mpstools::log->trace("Running LBFGS");
             niter = solver.minimize(functor, theta_start_cast, fx);
-            theta_start = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
+            theta_start  = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
             counter      = functor.get_count();
             energy_new   = functor.get_energy() / chain_length;
             variance_new = functor.get_variance()/chain_length;
@@ -72,7 +72,7 @@ mpstools::finite::opt::internals::direct_optimization(const class_finite_chain_s
             Eigen::VectorXd  theta_start_cast = theta_start.real();
             mpstools::log->trace("Running LBFGS");
             niter = solver.minimize(functor, theta_start_cast, fx);
-            theta_start = theta_start_cast.normalized().cast<Scalar>();
+            theta_start  = theta_start_cast.normalized().cast<Scalar>();
             counter      = functor.get_count();
             energy_new   = functor.get_energy() / chain_length;
             variance_new = functor.get_variance()/chain_length;
@@ -98,10 +98,13 @@ mpstools::finite::opt::internals::direct_optimization(const class_finite_chain_s
             mpstools::finite::opt::internals::t_op->get_measured_time()
             ));
 
+    state.unset_measurements();
     if (variance_new < variance_0){
+        mpstools::log->info("Returning new theta");
         return  std::make_tuple(Textra::Matrix_to_Tensor(theta_start, state.active_dimensions()), energy_new);
 
     }else{
+        mpstools::log->info("Returning old theta");
         return  std::make_tuple(theta, energy_0);
     }
 

@@ -281,7 +281,7 @@ Eigen::Tensor<class_finite_chain_state::Scalar,4>   class_finite_chain_state::ge
                 .reshape(Textra::array4{dim0,dim1,dim2,dim3});
         multimpo = temp;
     }
-    mpstools::log->trace("Finished multimpo");
+//    mpstools::log->trace("Finished multimpo");
     return multimpo;
 }
 
@@ -329,12 +329,12 @@ Eigen::Tensor<class_finite_chain_state::Scalar,6>   class_finite_chain_state::ge
 Eigen::Matrix<class_finite_chain_state::Scalar,Eigen::Dynamic,Eigen::Dynamic> class_finite_chain_state::get_multi_hamiltonian_matrix() const{
     auto dims = active_dimensions();
     long shape = dims[0] * dims[1] * dims[2];
-    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(get_multi_hamiltonian().data(),shape,shape);
+    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(get_multi_hamiltonian().data(),shape,shape).transpose();
 }
 Eigen::Matrix<class_finite_chain_state::Scalar,Eigen::Dynamic,Eigen::Dynamic> class_finite_chain_state::get_multi_hamiltonian2_matrix() const{
     auto dims = active_dimensions();
     long shape = dims[0] * dims[1] * dims[2];
-    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(get_multi_hamiltonian2().data(),shape,shape);
+    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(get_multi_hamiltonian2().data(),shape,shape).transpose();
 }
 
 
