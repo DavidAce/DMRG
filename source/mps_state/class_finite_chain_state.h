@@ -91,6 +91,7 @@ public:
     std::list<size_t>      active_sites;
     std::list<size_t>      activate_sites(long threshold);
     Eigen::DSizes<long,3>  active_dimensions() const;
+    size_t                 active_size() const;
 
     Eigen::Tensor<Scalar,3>   get_multitheta()    const;
     Eigen::Tensor<Scalar,4>   get_multimpo  ()    const;

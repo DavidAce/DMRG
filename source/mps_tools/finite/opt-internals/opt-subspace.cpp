@@ -109,7 +109,7 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
     double t_lu = hamiltonian.t_factorOp.get_last_time_interval();
     t_eig->toc();
 
-    double prec                       = 1e-4;//settings::precision::VarConvergenceThreshold;
+    double prec                       = settings::precision::VarConvergenceThreshold;
     double max_overlap_threshold      = 1 - prec; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
     double subspace_quality_threshold = prec;
 
@@ -231,10 +231,10 @@ mpstools::finite::opt::internals::subspace_optimization(const class_finite_chain
         {
             double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
             double subspace_quality  = 1.0 - sq_sum_overlap;
-//            if(subspace_quality >= settings::precision::VarConvergenceThreshold) {
-//                mpstools::log->debug("Subspace quality too low. Switching to direct mode.");
-//                return direct_optimization(state, sim_state, optType);
-//            }
+            if(subspace_quality >= settings::precision::VarConvergenceThreshold) {
+                mpstools::log->debug("Subspace quality too low. Switching to direct mode.");
+                return direct_optimization(state, sim_state, optType);
+            }
         }
 
         }
@@ -246,7 +246,7 @@ mpstools::finite::opt::internals::subspace_optimization(const class_finite_chain
     //Should really use theta_start as the projection towards the previous theta, not best overlapping!
     // Note that alpha_i = <theta_old | theta_new_i> is not supposed to be squared! The overlap
     // Between theta_start and theta_old should be
-    Eigen::VectorXcd theta_start      = (eigvecs.adjoint()  * theta_old)  ;
+    Eigen::VectorXcd theta_start      = (eigvecs.adjoint()  * theta_old).normalized()  ;
 
     std::vector<reports::subspc_opt_tuple> opt_log;
 
@@ -262,35 +262,6 @@ mpstools::finite::opt::internals::subspace_optimization(const class_finite_chain
     double overlap_0 = std::abs(theta_old.dot(theta_0));
 
     opt_log.emplace_back("Initial",theta.size(), energy_0, std::log10(variance_0), overlap_0, iter_0,0, t_opt->get_last_time_interval());
-
-
-
-//    Eigen::MatrixXcd H  = (eigvecs.adjoint() * eigvals.asDiagonal() * eigvecs);
-    Eigen::MatrixXcd H2 = (eigvecs.adjoint() * state.get_multi_hamiltonian2_matrix().template selfadjointView<Eigen::Upper>() * eigvecs);
-    Scalar vHv  = theta_start.adjoint() * eigvals.asDiagonal()  * theta_start;
-    Scalar vH2v = theta_start.adjoint() * H2.template selfadjointView<Eigen::Upper>() * theta_start;
-    auto vv = theta_start.squaredNorm();
-    auto variance_subspace  = (vH2v/vv - vHv*vHv/vv/vv) / (double)state.get_length();
-    auto variance_subspace1 = (vH2v - vHv*vHv) / (double)state.get_length();
-    std::cout << "Variance in subspace  : " << std::log10(variance_subspace) << std::endl;
-    std::cout << "Variance in subspace1 : " << std::log10(variance_subspace1) << std::endl;
-
-    Eigen::VectorXcd theta_new_full     = (eigvecs * theta_start.asDiagonal()).rowwise().sum();
-    Eigen::VectorXcd theta_new_full1    = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
-    Eigen::VectorXcd theta_new_full2    = (eigvecs * theta_start.normalized().asDiagonal()).rowwise().sum().normalized();
-
-    auto variance_new_full              = mpstools::finite::measure::multidmrg::energy_variance_per_site(state,Textra::Matrix_to_Tensor(theta_new_full, state.active_dimensions()));
-    auto variance_new_full1             = mpstools::finite::measure::multidmrg::energy_variance_per_site(state,Textra::Matrix_to_Tensor(theta_new_full1, state.active_dimensions()));
-    auto variance_new_full2             = mpstools::finite::measure::multidmrg::energy_variance_per_site(state,Textra::Matrix_to_Tensor(theta_new_full2, state.active_dimensions()));
-
-    std::cout << "Variance in fullspace : " << std::log10(variance_new_full) << std::endl;
-    std::cout << "Variance in fullspace1: " << std::log10(variance_new_full1) << std::endl;
-    std::cout << "Variance in fullspace2: " << std::log10(variance_new_full2) << std::endl;
-
-
-
-
-
 
 
 
@@ -321,38 +292,15 @@ mpstools::finite::opt::internals::subspace_optimization(const class_finite_chain
 
             mpstools::log->trace("Running LBFGS");
             niter = solver.minimize(functor, theta_start_cast, fx);
-            opt_log.emplace_back("LBFGS++ step " + std::to_string(niter),
-                                 theta.size(),
-                                 functor.get_energy()/chain_length,
-                                 std::log10(functor.get_variance()/chain_length),
-                                 overlap_0, iter_0,0, 0);
-
-            theta_start  = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2);
+            theta_start  = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
             counter      = functor.get_count();
             norm         = functor.get_norm();
             energy_new   = functor.get_energy() / chain_length;
             variance_new = functor.get_variance()/chain_length;
             theta_new    = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
 
-            Eigen::VectorXcd theta_new1    = (eigvecs * theta_start.normalized().asDiagonal()).rowwise().sum();
-            Eigen::VectorXcd theta_new2    = (eigvecs * theta_start.normalized().asDiagonal()).rowwise().sum().normalized();
-            Eigen::VectorXcd theta_new3    = (eigvecs * theta_start.asDiagonal()).rowwise().sum();
-            Eigen::VectorXcd theta_new4    = (eigvecs * theta_start.normalized().asDiagonal()).rowwise().sum().normalized();
-            Eigen::VectorXcd theta_new5    = (eigvecs.conjugate() * theta_start.asDiagonal()).rowwise().sum();
-            Eigen::VectorXcd theta_new6    = (eigvecs * theta_start.conjugate().asDiagonal()).rowwise().sum();
-            Eigen::VectorXcd theta_new7    = (eigvecs.conjugate() * theta_start.conjugate().asDiagonal()).rowwise().sum();
-            Eigen::VectorXcd theta_new8    = (eigvecs * theta_start.asDiagonal()).conjugate().rowwise().sum();
-
-
             auto variance_test  = mpstools::finite::measure::multidmrg::energy_variance_per_site(state,Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()));
-            auto variance_test1 = mpstools::finite::measure::multidmrg::energy_variance_per_site(state,Textra::Matrix_to_Tensor(theta_new1, state.active_dimensions()));
-            auto variance_test2 = mpstools::finite::measure::multidmrg::energy_variance_per_site(state,Textra::Matrix_to_Tensor(theta_new2, state.active_dimensions()));
-            auto variance_test3 = mpstools::finite::measure::multidmrg::energy_variance_per_site(state,Textra::Matrix_to_Tensor(theta_new3, state.active_dimensions()));
-
-            std::cout << "Variance after bfgs  : " << std::log10(variance_test) << std::endl;
-            std::cout << "Variance after bfgs1 : " << std::log10(variance_test1) << std::endl;
-            std::cout << "Variance after bfgs2 : " << std::log10(variance_test2) << std::endl;
-            std::cout << "Variance after bfgs3 : " << std::log10(variance_test3) << std::endl;
+            std::cout << "Variance after bfgs  : " << std::log10(variance_test)  << " norm: " << std::fixed << std::setprecision(16) << theta_new.norm() << std::endl;
 
             break;
         }
