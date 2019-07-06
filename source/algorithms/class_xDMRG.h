@@ -17,7 +17,7 @@
  * \brief Class that runs the excited-state DMRG algorithm.
  */
 
-class class_finite_chain_state;
+class class_finite_state;
 class class_xDMRG : public class_algorithm_finite {
 private:
 

@@ -5,11 +5,11 @@
 
 #include <iomanip>
 #include <io/class_hdf5_table_buffer2.h>
-#include <sim_parameters/nmspc_sim_settings.h>
-#include <mps_state/class_superblock.h>
-#include <mps_state/class_finite_chain_state.h>
-#include <mps_tools/nmspc_mps_tools.h>
-#include <general/nmspc_math.h>
+#include <simulation/nmspc_settings.h>
+#include <state/class_infinite_state.h>
+#include <state/class_finite_state.h>
+#include <state/tools/nmspc_tools.h>
+#include <math/nmspc_math.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_random_numbers.h>
 #include <h5pp/h5pp.h>
@@ -41,18 +41,18 @@ void class_fDMRG::run_simulation(){
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if (sim_state.iteration >= settings::fdmrg::min_sweeps and state->position_is_the_middle_any_direction())
+        if (sim_status.iteration >= settings::fdmrg::min_sweeps and state->position_is_the_middle_any_direction())
         {
-            if (sim_state.iteration >= settings::fdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
-            if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
-            if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
+            if (sim_status.iteration >= settings::fdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
+            if (sim_status.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
+            if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
         update_bond_dimension();
         move_center_point();
-        sim_state.iteration = state->get_sweeps();
-        sim_state.position  = state->get_position();
-        sim_state.step++;
-        log->trace("Finished step {}, iteration {}",sim_state.step,sim_state.iteration);
+        sim_status.iteration = state->get_sweeps();
+        sim_status.position  = state->get_position();
+        sim_status.step++;
+        log->trace("Finished step {}, iteration {}",sim_status.step,sim_status.iteration);
     }
     switch(stop_reason){
         case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
@@ -73,25 +73,25 @@ void class_fDMRG::check_convergence(){
         check_convergence_entg_entropy();
     }
 
-    if (sim_state.iteration <= settings::xdmrg::min_sweeps){
+    if (sim_status.iteration <= settings::xdmrg::min_sweeps){
         clear_saturation_status();
     }
 
 
-    if(     sim_state.variance_mpo_has_converged
-            and sim_state.entanglement_has_converged)
+    if(     sim_status.variance_mpo_has_converged
+            and sim_status.entanglement_has_converged)
     {
         log->debug("Simulation has converged");
-        sim_state.simulation_has_converged = true;
+        sim_status.simulation_has_converged = true;
     }
 
-    if (        sim_state.variance_mpo_has_saturated
-                and sim_state.entanglement_has_saturated
-                and sim_state.bond_dimension_has_reached_max
-                and sim_state.variance_mpo_saturated_for > max_saturation_length)
+    if (        sim_status.variance_mpo_has_saturated
+                and sim_status.entanglement_has_saturated
+                and sim_status.bond_dimension_has_reached_max
+                and sim_status.variance_mpo_saturated_for > max_saturation_length)
     {
         log->debug("Simulation has to stop");
-        sim_state.simulation_has_to_stop = true;
+        sim_status.simulation_has_to_stop = true;
     }
 
 

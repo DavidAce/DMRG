@@ -10,10 +10,10 @@
 #include <vector>
 #include <complex>
 #include <list>
-#include <general/nmspc_eigutils.h>
+#include <math/nmspc_eigutils.h>
 #include <general/class_tic_toc.h>
-#include <sim_parameters/nmspc_sim_settings.h>
-#include <algorithms/class_simulation_state.h>
+#include <simulation/nmspc_settings.h>
+#include <simulation/class_simulation_status.h>
 class class_hdf5_file;
 template <typename table_type> class class_hdf5_table;
 class class_table_profiling;
@@ -38,7 +38,7 @@ public:
 
     std::string             sim_name;
     SimulationType          sim_type;
-    class_simulation_state  sim_state;
+    class_simulation_status  sim_status;
 
 
 

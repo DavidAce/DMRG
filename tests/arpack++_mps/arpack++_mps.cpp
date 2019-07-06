@@ -1,6 +1,6 @@
 
-#include <general/class_eigsolver.h>
-#include <general/arpack_extra/matrix_product_hamiltonian.h>
+#include <math/class_eigsolver.h>
+#include <math/arpack_extra/matrix_product_hamiltonian.h>
 #include <general/nmspc_tensor_extra.h>
 #include <iomanip>
 using namespace eigutils::eigSetting;

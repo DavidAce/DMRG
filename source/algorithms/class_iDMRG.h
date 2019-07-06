@@ -24,7 +24,7 @@ public:
 //    void run_preprocessing()                            override;
 //    void run_postprocessing()                           override;
 
-    void single_DMRG_step(eigutils::eigSetting::Ritz ritz);
+    void single_DMRG_step(std::string ritz);
 
     void check_convergence()                             override;
     bool    sim_on ()                                    override;

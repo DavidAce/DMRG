@@ -8,9 +8,9 @@
 #include <iostream>
 #include <general/nmspc_tensor_extra.h>
 #include <iomanip>
-#include "class_hamiltonian_base.h"
+#include "class_model_base.h"
 
-class class_tf_ising : public class_hamiltonian_base {
+class class_tf_ising : public class_model_base {
     using Scalar = std::complex<double>;
 private:
     int    spin_dim            = 0;           /*!< Spin dimension */
@@ -38,7 +38,7 @@ public:
             std::vector<Eigen::MatrixXcd> &SX,
             std::vector<Eigen::MatrixXcd> &SY,
             std::vector<Eigen::MatrixXcd> &SZ)                                          const override;
-    std::unique_ptr<class_hamiltonian_base> clone()                                     const override;
+    std::shared_ptr<class_model_base> clone()                                     const override;
     void   set_reduced_energy(double site_energy)                                             override;
     size_t get_spin_dimension()                                                         const override;
     void   print_parameter_names ()                                                     const override;

@@ -7,14 +7,14 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_random_numbers.h>
 #include <iomanip>
-#include <general/nmspc_math.h>
-#include <sim_parameters/nmspc_sim_settings.h>
+#include <math/nmspc_math.h>
+#include <simulation/nmspc_settings.h>
 
 using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
 
-class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(size_t position_, std::string logName): class_hamiltonian_base(position_,logName){
+class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(size_t position_, std::string logName): class_model_base(position_,logName){
 
     spin_dim            = settings::model::selfdual_tf_rf_ising::d;           /*!< Spin dimension */
     J_log_mean          = settings::model::selfdual_tf_rf_ising::J_log_mean;
@@ -150,14 +150,14 @@ Eigen::MatrixXcd class_selfdual_tf_rf_ising::single_site_hamiltonian(
         std::vector<Eigen::MatrixXcd> &SZ)
         const
 {
-    int i = Math::mod(position,     sites);
-    int j = Math::mod(position + 1, sites);
-    int k = Math::mod(position + 2, sites);
+    int i = math::mod(position,     sites);
+    int j = math::mod(position + 1, sites);
+    int k = math::mod(position + 2, sites);
     return - (J_rnd * SZ[i]*SZ[j] + h_rnd*0.5*(SX[i]+SX[j]) + lambda*(h_avg * SX[i]*SX[j] + J_avg*SZ[i]*SZ[k]));
 }
 
 
-std::unique_ptr<class_hamiltonian_base> class_selfdual_tf_rf_ising::clone() const {return std::make_unique<class_selfdual_tf_rf_ising>(*this);}
+std::shared_ptr<class_model_base> class_selfdual_tf_rf_ising::clone() const {return std::make_unique<class_selfdual_tf_rf_ising>(*this);}
 
 
 void   class_selfdual_tf_rf_ising::set_reduced_energy(double site_energy)         {e_reduced = site_energy;}
