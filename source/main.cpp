@@ -1,8 +1,7 @@
 /*! \file */
 
 
-#include <sim_parameters/nmspc_sim_settings.h>
-#include <sim_parameters/nmspc_model.h>
+#include <simulation/nmspc_settings.h>
 #include <general/nmspc_random_numbers.h>
 #include <algorithms/class_algorithm_launcher.h>
 #include <io/class_settings_reader.h>

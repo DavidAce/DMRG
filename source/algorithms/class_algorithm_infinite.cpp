@@ -3,10 +3,10 @@
 //
 
 #include "class_algorithm_infinite.h"
-#include <mps_state/class_superblock.h>
-#include <mps_tools/nmspc_mps_tools.h>
+#include <state/class_infinite_state.h>
+#include <state/tools/nmspc_tools.h>
 #include <io/class_hdf5_table_buffer2.h>
-#include <general/nmspc_math.h>
+#include <math/nmspc_math.h>
 #include <h5pp/h5pp.h>
 
 
@@ -17,8 +17,11 @@ class_algorithm_infinite::class_algorithm_infinite(
         )
     : class_algorithm_base(std::move(h5ppFile_),sim_name, sim_type)
 {
-    table_dmrg     = std::make_unique<class_hdf5_table<class_table_dmrg>>(h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
-    superblock     = std::make_unique<class_superblock>(sim_type,sim_name);
+    tools::infinite::profile::init_profiling();
+    table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(h5pp_file, sim_name + "/profiling", "profiling", sim_name);
+
+    table_dmrg      = std::make_unique<class_hdf5_table<class_table_dmrg>>(h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
+    state      = std::make_unique<class_infinite_state>(sim_type,sim_name);
 }
 
 
@@ -42,10 +45,10 @@ void class_algorithm_infinite::run_postprocessing(){
 }
 
 void class_algorithm_infinite::compute_observables(){
-    log->trace("Starting all measurements on current superblock");
+    log->trace("Starting all measurements on current state");
     t_sim.tic();
     t_obs.tic();
-    superblock->do_all_measurements();
+    state->do_all_measurements();
     t_obs.toc();
     t_sim.toc();
 }
@@ -53,10 +56,10 @@ void class_algorithm_infinite::compute_observables(){
 
 void class_algorithm_infinite::reset_to_random_state(const std::string parity) {
     log->trace("Resetting MPS to random product state");
-    sim_state.iteration = 0;
+    sim_status.iteration = 0;
 
     // Randomize state
-    *superblock = mpstools::infinite::mps::set_random_state(*superblock,parity);
+    *state = tools::infinite::mps::set_random_state(*state,parity);
     clear_saturation_status();
 }
 
@@ -65,15 +68,15 @@ void class_algorithm_infinite::enlarge_environment(){
     log->trace("Enlarging environment" );
     t_sim.tic();
     t_env.tic();
-    superblock->enlarge_environment(0);
+    state->enlarge_environment(0);
     t_env.toc();
     t_sim.toc();
 }
 
 void class_algorithm_infinite::swap(){
-    log->trace("Swap AB sites on superblock");
+    log->trace("Swap AB sites on state");
     t_sim.tic();
-    superblock->swap_AB();
+    state->swap_AB();
     t_sim.toc();
 }
 
@@ -87,17 +90,17 @@ void class_algorithm_infinite::check_convergence_variance_mpo(double threshold,d
     check_saturation_using_slope(B_mpo_vec,
                                  V_mpo_vec,
                                  X_mpo_vec,
-                                 superblock->measurements.energy_variance_per_site_mpo.value(),
-                                 sim_state.iteration,
+                                 state->measurements.energy_variance_per_site_mpo.value(),
+                                 sim_status.iteration,
                                  1,
                                  slope_threshold,
                                  V_mpo_slope,
-                                 sim_state.variance_mpo_has_saturated);
+                                 sim_status.variance_mpo_has_saturated);
 //    int rewind = std::min((int)B_mpo_vec.size(), (int)measurement->get_chain_length()/4 );
 //    auto b_it = B_mpo_vec.begin();
 //    std::advance(b_it, -rewind);
-    sim_state.variance_mpo_saturated_for = (int) count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
-    sim_state.variance_mpo_has_converged =  superblock->measurements.energy_variance_per_site_mpo.value() < threshold;
+    sim_status.variance_mpo_saturated_for = (int) count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
+    sim_status.variance_mpo_has_converged =  state->measurements.energy_variance_per_site_mpo.value() < threshold;
 
 }
 
@@ -112,13 +115,13 @@ void class_algorithm_infinite::check_convergence_variance_ham(double threshold,d
     check_saturation_using_slope(B_ham_vec,
                                  V_ham_vec,
                                  X_ham_vec,
-                                 mpstools::common::measure::energy_variance_per_site_ham(*superblock),
-                                 sim_state.iteration,
+                                 tools::infinite::measure::energy_variance_per_site_ham(*state),
+                                 sim_status.iteration,
                                  1,
                                  slope_threshold,
                                  V_ham_slope,
-                                 sim_state.variance_ham_has_saturated);
-    sim_state.variance_ham_has_converged = mpstools::common::measure::energy_variance_per_site_ham(*superblock) < threshold;
+                                 sim_status.variance_ham_has_saturated);
+    sim_status.variance_ham_has_converged = tools::infinite::measure::energy_variance_per_site_ham(*state) < threshold;
 }
 
 void class_algorithm_infinite::check_convergence_variance_mom(double threshold,double slope_threshold){
@@ -131,13 +134,13 @@ void class_algorithm_infinite::check_convergence_variance_mom(double threshold,d
     check_saturation_using_slope(B_mom_vec,
                                  V_mom_vec,
                                  X_mom_vec,
-                                 mpstools::common::measure::energy_variance_per_site_mom(*superblock),
-                                 sim_state.iteration,
+                                 tools::infinite::measure::energy_variance_per_site_mom(*state),
+                                 sim_status.iteration,
                                  1,
                                  slope_threshold,
                                  V_mom_slope,
-                                 sim_state.variance_mom_has_saturated);
-    sim_state.variance_mom_has_converged = mpstools::common::measure::energy_variance_per_site_mom(*superblock) < threshold;
+                                 sim_status.variance_mom_has_saturated);
+    sim_status.variance_mom_has_converged = tools::infinite::measure::energy_variance_per_site_mom(*state) < threshold;
 }
 
 void class_algorithm_infinite::check_convergence_entg_entropy(double slope_threshold) {
@@ -149,25 +152,25 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
     check_saturation_using_slope(BS_vec,
                                  S_vec,
                                  XS_vec,
-                                 mpstools::common::measure::current_entanglement_entropy(*superblock),
-                                 sim_state.iteration,
+                                 tools::infinite::measure::current_entanglement_entropy(*state),
+                                 sim_status.iteration,
                                  1,
                                  slope_threshold,
                                  S_slope,
-                                 sim_state.entanglement_has_saturated);
-    sim_state.entanglement_has_converged = sim_state.entanglement_has_saturated;
+                                 sim_status.entanglement_has_saturated);
+    sim_status.entanglement_has_converged = sim_status.entanglement_has_saturated;
 }
 
 
 
 void class_algorithm_infinite::store_state_and_measurements_to_file(bool force){
     if(not force){
-        if (Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
+        if (math::mod(sim_status.iteration, store_freq()) != 0) {return;}
         if (store_freq() == 0){return;}
     }
     log->trace("Storing storing mps to file");
     t_sto.tic();
-    mpstools::infinite::io::write_all_superblock(*superblock, *h5pp_file, sim_name);
+    tools::infinite::io::write_all_superblock(*state, *h5pp_file, sim_name);
     t_sto.toc();
 }
 
@@ -176,28 +179,28 @@ void class_algorithm_infinite::store_state_and_measurements_to_file(bool force){
 
 //void class_algorithm_infinite::store_table_entry_progress(bool force){
 //    if (not force){
-//        if (Math::mod(sim_state.iteration, settings::idmrg::store_freq) != 0) {return;}
+//        if (math::mod(sim_status.iteration, settings::idmrg::store_freq) != 0) {return;}
 //    }
 //    compute_observables();
-//    using namespace mpstools::common::measure;
+//    using namespace tools::infinite::measure;
 //    t_sto.tic();
 //    table_dmrg->append_record(
-//            sim_state.iteration,
-//            superblock->measurements.length.value(),
-//            sim_state.iteration,
-//            superblock->measurements.bond_dimension.value(),
+//            sim_status.iteration,
+//            state->measurements.length.value(),
+//            sim_status.iteration,
+//            state->measurements.bond_dimension.value(),
 //            settings::idmrg::chi_max,
-//            superblock->measurements.energy_per_site.value(),
-//            superblock->measurements.energy_per_site_ham.value(),
-//            superblock->measurements.energy_per_site_mom.value(),
+//            state->measurements.energy_per_site.value(),
+//            state->measurements.energy_per_site_ham.value(),
+//            state->measurements.energy_per_site_mom.value(),
 //            std::numeric_limits<double>::quiet_NaN(),
 //            std::numeric_limits<double>::quiet_NaN(),
 //            std::numeric_limits<double>::quiet_NaN(),
-//            superblock->measurements.energy_variance_per_site.value(),
-//            superblock->measurements.energy_variance_per_site_ham.value(),
-//            superblock->measurements.energy_variance_per_site_mom.value(),
-//            superblock->measurements.current_entanglement_entropy.value(),
-//            superblock->measurements.truncation_error.value(),
+//            state->measurements.energy_variance_per_site.value(),
+//            state->measurements.energy_variance_per_site_ham.value(),
+//            state->measurements.energy_variance_per_site_mom.value(),
+//            state->measurements.current_entanglement_entropy.value(),
+//            state->measurements.truncation_error.value(),
 //            t_tot.get_age());
 //
 //
@@ -222,24 +225,24 @@ void class_algorithm_infinite::clear_saturation_status(){
     V_mom_vec.clear();
     X_mom_vec.clear();
 
-    sim_state.entanglement_has_saturated      = false;
-    sim_state.variance_mpo_has_saturated      = false;
-    sim_state.variance_ham_has_saturated      = false;
-    sim_state.variance_mom_has_saturated      = false;
+    sim_status.entanglement_has_saturated      = false;
+    sim_status.variance_mpo_has_saturated      = false;
+    sim_status.variance_ham_has_saturated      = false;
+    sim_status.variance_mom_has_saturated      = false;
 
-    sim_state.variance_mpo_saturated_for = 0;
-    sim_state.variance_ham_saturated_for = 0;
-    sim_state.variance_mom_saturated_for = 0;
+    sim_status.variance_mpo_saturated_for = 0;
+    sim_status.variance_ham_saturated_for = 0;
+    sim_status.variance_mom_saturated_for = 0;
 
 
 
-    sim_state.entanglement_has_converged = false;
-    sim_state.variance_mpo_has_converged = false;
-    sim_state.variance_ham_has_converged = false;
-    sim_state.variance_mom_has_converged = false;
+    sim_status.entanglement_has_converged = false;
+    sim_status.variance_mpo_has_converged = false;
+    sim_status.variance_ham_has_converged = false;
+    sim_status.variance_mom_has_converged = false;
 
-    sim_state.bond_dimension_has_reached_max = false;
-    sim_state.simulation_has_to_stop         = false;
+    sim_status.bond_dimension_has_reached_max = false;
+    sim_status.simulation_has_to_stop         = false;
 }
 
 
@@ -274,7 +277,7 @@ void class_algorithm_infinite::print_profiling_sim(class_tic_toc &t_parent){
 
 
 void class_algorithm_infinite::print_status_update() {
-    if (Math::mod(sim_state.iteration, print_freq()) != 0) {return;}
+    if (math::mod(sim_status.iteration, print_freq()) != 0) {return;}
 //    if (not state->position_is_the_middle()) {return;}
     if (print_freq() == 0) {return;}
     compute_observables();
@@ -283,18 +286,18 @@ void class_algorithm_infinite::print_status_update() {
     std::stringstream report;
     report << setprecision(16) << fixed << left;
     report << left  << sim_name << " ";
-    report << left  << "Iter: "                       << setw(6) << sim_state.iteration;
+    report << left  << "Iter: "                       << setw(6) << sim_status.iteration;
     report << left  << "E: ";
 
     switch(sim_type) {
         case SimulationType::iDMRG:
-            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mpo.value();
-            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_ham.value();
-            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mom.value();
+            report << setw(21) << setprecision(16)    << fixed   << state->measurements.energy_per_site_mpo.value();
+            report << setw(21) << setprecision(16)    << fixed   << state->measurements.energy_per_site_ham.value();
+            report << setw(21) << setprecision(16)    << fixed   << state->measurements.energy_per_site_mom.value();
             break;
         case SimulationType::iTEBD:
-            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_ham.value();
-            report << setw(21) << setprecision(16)    << fixed   << superblock->measurements.energy_per_site_mom.value();
+            report << setw(21) << setprecision(16)    << fixed   << state->measurements.energy_per_site_ham.value();
+            report << setw(21) << setprecision(16)    << fixed   << state->measurements.energy_per_site_mom.value();
             break;
         default: throw std::runtime_error("Wrong simulation type");
 
@@ -303,23 +306,23 @@ void class_algorithm_infinite::print_status_update() {
     report << left  << "log₁₀ σ²(E): ";
     switch(sim_type) {
         case SimulationType::iDMRG:
-            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mpo.value());
-            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_ham.value());
-            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mom.value());
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(state->measurements.energy_variance_per_site_mpo.value());
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(state->measurements.energy_variance_per_site_ham.value());
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(state->measurements.energy_variance_per_site_mom.value());
             break;
         case SimulationType::iTEBD:
-            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_ham.value());
-            report << setw(12) << setprecision(4)    << fixed   << std::log10(superblock->measurements.energy_variance_per_site_mom.value());
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(state->measurements.energy_variance_per_site_ham.value());
+            report << setw(12) << setprecision(4)    << fixed   << std::log10(state->measurements.energy_variance_per_site_mom.value());
             break;
         default: throw std::runtime_error("Wrong simulation type");
     }
 
 
-    report << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << superblock->measurements.current_entanglement_entropy.value();
+    report << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << state->measurements.current_entanglement_entropy.value();
     report << left  << "χmax: "                       << setw(4)  << setprecision(3)     << fixed   << chi_max();
-    report << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << superblock->measurements.bond_dimension.value();
-    report << left  << "log₁₀ trunc: "                << setw(10) << setprecision(4)     << fixed   << std::log10(superblock->measurements.truncation_error.value());
-    report << left  << "Sites: "                      << setw(6)  << setprecision(1)     << fixed   << superblock->measurements.length.value();
+    report << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << state->measurements.bond_dimension.value();
+    report << left  << "log₁₀ trunc: "                << setw(10) << setprecision(4)     << fixed   << std::log10(state->measurements.truncation_error.value());
+    report << left  << "Sites: "                      << setw(6)  << setprecision(1)     << fixed   << state->measurements.length.value();
     switch(sim_type){
         case SimulationType::iTEBD:
             break;
@@ -328,11 +331,11 @@ void class_algorithm_infinite::print_status_update() {
     report << left  << " Convergence [";
     switch(sim_type){
         case SimulationType::iDMRG:
-            report << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_converged;
-            report << left  << " σ²-"  << std::boolalpha << setw(6) << sim_state.variance_mpo_has_converged;
+            report << left  << " S-"   << std::boolalpha << setw(6) << sim_status.entanglement_has_converged;
+            report << left  << " σ²-"  << std::boolalpha << setw(6) << sim_status.variance_mpo_has_converged;
             break;
         case SimulationType::iTEBD:
-            report << left  << " S-"  << std::boolalpha << setw(6) << sim_state.entanglement_has_converged;
+            report << left  << " S-"  << std::boolalpha << setw(6) << sim_status.entanglement_has_converged;
             break;
         default: throw std::runtime_error("Wrong simulation type");
 
@@ -341,11 +344,11 @@ void class_algorithm_infinite::print_status_update() {
     report << left  << " Saturation [";
     switch(sim_type){
         case SimulationType::iDMRG:
-            report << left  << " σ²- " << setw(2) << sim_state.variance_mpo_saturated_for << " steps";
-            report << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_saturated;
+            report << left  << " σ²- " << setw(2) << sim_status.variance_mpo_saturated_for << " steps";
+            report << left  << " S-"   << std::boolalpha << setw(6) << sim_status.entanglement_has_saturated;
             break;
         case SimulationType::iTEBD:
-            report << left  << " S-"   << std::boolalpha << setw(6) << sim_state.entanglement_has_saturated;
+            report << left  << " S-"   << std::boolalpha << setw(6) << sim_status.entanglement_has_saturated;
             break;
         default: throw std::runtime_error("Wrong simulation type");
     }
@@ -363,65 +366,65 @@ void class_algorithm_infinite::print_status_update() {
 void class_algorithm_infinite::print_status_full(){
     compute_observables();
     using namespace std;
-    using namespace mpstools::common::measure;
+    using namespace tools::infinite::measure;
     t_prt.tic();
     log->info("--- Final results  --- {} ---", sim_name);
-    log->info("Iterations            = {:<16d}"    , sim_state.iteration);
+    log->info("Iterations            = {:<16d}"    , sim_status.iteration);
     switch(sim_type){
         case SimulationType::iDMRG:
-            log->info("Energy MPO            = {:<16.16f}" , superblock->measurements.energy_per_site_mpo.value());
-            log->info("Energy HAM            = {:<16.16f}" , superblock->measurements.energy_per_site_ham.value());
-            log->info("Energy MOM            = {:<16.16f}" , superblock->measurements.energy_per_site_mom.value());
+            log->info("Energy MPO            = {:<16.16f}" , state->measurements.energy_per_site_mpo.value());
+            log->info("Energy HAM            = {:<16.16f}" , state->measurements.energy_per_site_ham.value());
+            log->info("Energy MOM            = {:<16.16f}" , state->measurements.energy_per_site_mom.value());
             break;
         case SimulationType::iTEBD:
-            log->info("Energy HAM            = {:<16.16f}" , superblock->measurements.energy_per_site_ham.value());
-            log->info("Energy MOM            = {:<16.16f}" , superblock->measurements.energy_per_site_mom.value());
+            log->info("Energy HAM            = {:<16.16f}" , state->measurements.energy_per_site_ham.value());
+            log->info("Energy MOM            = {:<16.16f}" , state->measurements.energy_per_site_mom.value());
             break;
         default: throw std::runtime_error("Wrong simulation type");
     }
     switch(sim_type){
         case SimulationType::iDMRG:
-            log->info("log₁₀ σ²(E) MPO       = {:<16.16f}" , superblock->measurements.energy_per_site_mpo.value());
-            log->info("log₁₀ σ²(E) HAM       = {:<16.16f}" , superblock->measurements.energy_per_site_ham.value());
-            log->info("log₁₀ σ²(E) MOM       = {:<16.16f}" , superblock->measurements.energy_per_site_mom.value());
+            log->info("log₁₀ σ²(E) MPO       = {:<16.16f}" , state->measurements.energy_per_site_mpo.value());
+            log->info("log₁₀ σ²(E) HAM       = {:<16.16f}" , state->measurements.energy_per_site_ham.value());
+            log->info("log₁₀ σ²(E) MOM       = {:<16.16f}" , state->measurements.energy_per_site_mom.value());
             break;
         case SimulationType::iTEBD:
-            log->info("log₁₀ σ²(E) HAM       = {:<16.16f}" , superblock->measurements.energy_per_site_ham.value());
-            log->info("log₁₀ σ²(E) MOM       = {:<16.16f}" , superblock->measurements.energy_per_site_mom.value());
+            log->info("log₁₀ σ²(E) HAM       = {:<16.16f}" , state->measurements.energy_per_site_ham.value());
+            log->info("log₁₀ σ²(E) MOM       = {:<16.16f}" , state->measurements.energy_per_site_mom.value());
             break;
         default: throw std::runtime_error("Wrong simulation type");
     }
 
-    log->info("Entanglement Entropy  = {:<16.16f}" , superblock->measurements.current_entanglement_entropy.value());
+    log->info("Entanglement Entropy  = {:<16.16f}" , state->measurements.current_entanglement_entropy.value());
     log->info("χmax                  = {:<16d}"    , chi_max()                                            );
-    log->info("χ                     = {:<16d}"    , superblock->measurements.bond_dimension.value()      );
-    log->info("log₁₀ truncation:     = {:<16.16f}" , log10(superblock->measurements.truncation_error.value()));
+    log->info("χ                     = {:<16d}"    , state->measurements.bond_dimension.value()      );
+    log->info("log₁₀ truncation:     = {:<16.16f}" , log10(state->measurements.truncation_error.value()));
 
     switch(sim_type){
         case SimulationType::iTEBD:
-            log->info("δt                    = {:<16.16f}" , sim_state.delta_t);
+            log->info("δt                    = {:<16.16f}" , sim_status.delta_t);
             break;
 
         default: throw std::runtime_error("Wrong simulation type");
     }
 
-    log->info("Simulation converged  = {:<}"    , sim_state.simulation_has_converged);
+    log->info("Simulation converged  = {:<}"    , sim_status.simulation_has_converged);
 
     switch(sim_type){
         case SimulationType::iDMRG:
-            log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_state.entanglement_has_converged, sim_state.entanglement_has_saturated);
-            log->info("σ² MPO slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_mpo_slope ,sim_state.variance_mpo_has_converged, sim_state.variance_mpo_has_saturated);
-            log->info("σ² HAM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_ham_slope ,sim_state.variance_ham_has_converged, sim_state.variance_ham_has_saturated);
-            log->info("σ² MOM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_mom_slope ,sim_state.variance_mom_has_converged, sim_state.variance_mom_has_saturated);
+            log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);
+            log->info("σ² MPO slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_mpo_slope ,sim_status.variance_mpo_has_converged, sim_status.variance_mpo_has_saturated);
+            log->info("σ² HAM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_ham_slope ,sim_status.variance_ham_has_converged, sim_status.variance_ham_has_saturated);
+            log->info("σ² MOM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_mom_slope ,sim_status.variance_mom_has_converged, sim_status.variance_mom_has_saturated);
             break;
         case SimulationType::iTEBD:
-            log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_state.entanglement_has_converged, sim_state.entanglement_has_saturated);
-            log->info("σ² HAM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_ham_slope ,sim_state.variance_ham_has_converged, sim_state.variance_ham_has_saturated);
-            log->info("σ² MOM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_mom_slope ,sim_state.variance_mom_has_converged, sim_state.variance_mom_has_saturated);
+            log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);
+            log->info("σ² HAM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_ham_slope ,sim_status.variance_ham_has_converged, sim_status.variance_ham_has_saturated);
+            log->info("σ² MOM slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_mom_slope ,sim_status.variance_mom_has_converged, sim_status.variance_mom_has_saturated);
             break;
         default: throw std::runtime_error("Wrong simulation type");
     }
-    log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_state.entanglement_has_converged, sim_state.entanglement_has_saturated);
+    log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);
     log->info("Time                  = {:<16.16f}" , t_tot.get_age());
     log->info("Peak memory           = {:<6.1f} MB" , process_memory_in_mb("VmPeak"));
     t_prt.toc();

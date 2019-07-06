@@ -7,14 +7,14 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_random_numbers.h>
 #include <iomanip>
-#include <general/nmspc_math.h>
-#include <sim_parameters/nmspc_sim_settings.h>
+#include <math/nmspc_math.h>
+#include <simulation/nmspc_settings.h>
 
 using namespace qm::spinOneHalf;
 using Scalar = std::complex<double>;
 
 
-class_tf_ising::class_tf_ising(size_t position_, std::string logName): class_hamiltonian_base(position_,logName){
+class_tf_ising::class_tf_ising(size_t position_, std::string logName): class_model_base(position_,logName){
     spin_dim            = settings::model::tf_ising::d;
     J_coupling          = settings::model::tf_ising::J;
     g_mag_field         = settings::model::tf_ising::g;
@@ -124,13 +124,13 @@ Eigen::MatrixXcd class_tf_ising::single_site_hamiltonian(
         std::vector<Eigen::MatrixXcd> &SZ)
         const
 {
-    int i = Math::mod(position,     sites);
-    int j = Math::mod(position + 1, sites);
+    int i = math::mod(position,     sites);
+    int j = math::mod(position + 1, sites);
     return -(J_coupling * SZ[i] * SZ[j] + g_mag_field * 0.5*(SX[i]+SX[j])) ;
 }
 
 
-std::unique_ptr<class_hamiltonian_base> class_tf_ising::clone() const {return std::make_unique<class_tf_ising>(*this);}
+std::shared_ptr<class_model_base> class_tf_ising::clone() const {return std::make_unique<class_tf_ising>(*this);}
 void   class_tf_ising::set_reduced_energy(double site_energy)             {e_reduced = site_energy;}
 size_t class_tf_ising::get_spin_dimension()                         const {return spin_dim;}
 //double class_tf_ising::get_energy_reduced()                         const {return e_reduced;}

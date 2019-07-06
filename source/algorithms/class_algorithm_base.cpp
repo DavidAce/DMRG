@@ -7,12 +7,12 @@
 #include "class_algorithm_base.h"
 #include <io/class_hdf5_table_buffer2.h>
 #include <io/nmspc_logger.h>
-#include <mps_state/class_superblock.h>
-#include <mps_state/class_environment.h>
-#include <mps_state/class_finite_chain_state.h>
-#include <mps_tools/nmspc_mps_tools.h>
-#include <mps_state/class_mps_2site.h>
-#include <general/nmspc_math.h>
+#include <state/class_infinite_state.h>
+#include <state/class_environment.h>
+#include <state/class_finite_state.h>
+#include <state/tools/nmspc_tools.h>
+#include <state/class_mps_2site.h>
+#include <math/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <algorithms/table_types.h>
@@ -48,11 +48,10 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
           sim_type       (sim_type_) {
 
     log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
-    mpstools::log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
+    tools::log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
     log->trace("Constructing class_algorithm_base");
     set_profiling_labels();
-    mpstools::common::profiling::init_profiling(settings::profiling::on,settings::profiling::precision);
-    table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(h5pp_file, sim_name + "/measurements", "profiling", sim_name);
+
     log->trace("Writing input file");
     h5pp_file->writeDataset(settings::input::input_file, "common/input_file");
     h5pp_file->writeDataset(settings::input::input_filename, "common/input_filename");
@@ -72,13 +71,13 @@ void class_algorithm_base::check_saturation_using_slope(
         int rate,
         double tolerance,
         double &slope,
-        bool &has_saturated){
+        bool   &has_saturated){
     //Check convergence based on slope.
     log->trace("Checking saturation using slope");
 
 
     // We want to check once every "rate" steps
-    // Get the sim_state.iteration number when you last measured.
+    // Get the sim_status.iteration number when you last measured.
     // If the measurement happened less than rate iterations ago, return.
     int last_measurement = X_vec.empty() ? 0 : X_vec.back();
     if (iter - last_measurement < rate){return;}
@@ -139,21 +138,21 @@ void class_algorithm_base::check_saturation_using_slope(
 
 
 void class_algorithm_base::update_bond_dimension(){
-    sim_state.chi_max = chi_max();
-    if(not chi_grow() or sim_state.bond_dimension_has_reached_max or sim_state.chi_temp == chi_max() ){
-        sim_state.chi_temp = chi_max();
-        sim_state.bond_dimension_has_reached_max = true;
+    sim_status.chi_max = chi_max();
+    if(not chi_grow() or sim_status.bond_dimension_has_reached_max or sim_status.chi_temp == chi_max() ){
+        sim_status.chi_temp = chi_max();
+        sim_status.bond_dimension_has_reached_max = true;
     }
-    if(not sim_state.simulation_has_converged
-       and sim_state.simulation_has_saturated
-       and sim_state.chi_temp < chi_max()){
+    if(not sim_status.simulation_has_converged
+       and sim_status.simulation_has_saturated
+       and sim_status.chi_temp < chi_max()){
         log->trace("Updating bond dimension");
-        sim_state.chi_temp = std::min(chi_max(), sim_state.chi_temp * 2);
-        log->info("New chi = {}", sim_state.chi_temp);
+        sim_status.chi_temp = std::min(chi_max(), sim_status.chi_temp * 2);
+        log->info("New chi = {}", sim_status.chi_temp);
         clear_saturation_status();
     }
-    if(sim_state.chi_temp == chi_max()){
-        sim_state.bond_dimension_has_reached_max = true;
+    if(sim_status.chi_temp == chi_max()){
+        sim_status.bond_dimension_has_reached_max = true;
     }
 }
 
@@ -164,14 +163,14 @@ void class_algorithm_base::store_algorithm_state_to_file(){
     if (settings::hdf5::storage_level < StorageLevel::LIGHT){return;}
     log->trace("Storing simulation state to file");
     t_sto.tic();
-    mpstools::common::io::write_algorithm_state(sim_state, *h5pp_file, sim_name);
+    tools::common::io::write_algorithm_state(sim_status, *h5pp_file, sim_name);
     t_sto.toc();
 }
 
 
 void class_algorithm_base::store_profiling_deltas(bool force) {
     if(not force){
-        if (Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
+        if (math::mod(sim_status.iteration, store_freq()) != 0) {return;}
         if (not settings::profiling::on or not settings::hdf5::store_profiling){return;}
         if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
     }
@@ -179,7 +178,7 @@ void class_algorithm_base::store_profiling_deltas(bool force) {
     log->trace("Storing profiling deltas");
     t_sto.tic();
     table_profiling->append_record(
-            sim_state.iteration,
+            sim_status.iteration,
             t_tot.get_last_time_interval(),
             t_opt.get_last_time_interval(),
             t_sim.get_last_time_interval(),
@@ -199,14 +198,14 @@ void class_algorithm_base::store_profiling_deltas(bool force) {
 
 void class_algorithm_base::store_profiling_totals(bool force) {
     if(not force){
-        if (Math::mod(sim_state.iteration, store_freq()) != 0) {return;}
+        if (math::mod(sim_status.iteration, store_freq()) != 0) {return;}
         if (not settings::profiling::on or not settings::hdf5::store_profiling){return;}
         if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
     }
 
     log->trace("Storing profiling totals");
     table_profiling->append_record(
-            sim_state.iteration,
+            sim_status.iteration,
             t_tot.get_measured_time(),
             t_opt.get_measured_time(),
             t_sim.get_measured_time(),
@@ -228,9 +227,9 @@ void class_algorithm_base::store_profiling_totals(bool force) {
 //    log->trace("Initializing state: {}", initial_state);
 //    //Set the size and initial values for the MPS and environments
 //    //Choose between GHZ, W, Random, Product state (up, down, etc), None, etc...
-//    long d    = superblock->HA->get_spin_dimension();
-//    long chiA = superblock->MPS->chiA();
-//    long chiB = superblock->MPS->chiB();
+//    long d    = state->HA->get_spin_dimension();
+//    long chiA = state->MPS->chiA();
+//    long chiB = state->MPS->chiB();
 //    Eigen::Tensor<Scalar,1> LA;
 //    Eigen::Tensor<Scalar,3> GA;
 //    Eigen::Tensor<Scalar,1> LC;
@@ -253,9 +252,9 @@ void class_algorithm_base::store_profiling_totals(bool force) {
 //        LC.setConstant(1.0);
 //        GA(0, 0, 0) = 1;
 //        GB(0, 0, 0) = 1;
-//        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-//        theta = superblock->get_theta();
-//        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
+//        state->MPS->set_mps(LA,GA,LC,GB,LB);
+//        theta = state->get_theta();
+//        state->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
 //    }else if(initial_state == "updown"){
 //        log->info("Initializing Up down -state  |up,down>");
 //        GA.resize(array3{d,1,1});
@@ -268,9 +267,9 @@ void class_algorithm_base::store_profiling_totals(bool force) {
 //        LC.setConstant(1.0);
 //        GA(0  , 0, 0) = 1;
 //        GB(d-1, 0, 0) = 1;
-//        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-//        theta = superblock->get_theta();
-//        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
+//        state->MPS->set_mps(LA,GA,LC,GB,LB);
+//        theta = state->get_theta();
+//        state->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
 //    }else if(initial_state == "ghz"){
 //        log->info("Initializing GHZ-statee");
 //        // GHZ state (|up,up> + |down, down > ) /sqrt(2)
@@ -295,9 +294,9 @@ void class_algorithm_base::store_profiling_totals(bool force) {
 //        GB(0, 1, 0) = 0;
 //        GB(1, 0, 0) = 0;
 //        GB(1, 1, 0) = 1;
-//        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-//        theta = superblock->get_theta();
-//        superblock->truncate_MPS(theta, 2, settings::precision::SVDThreshold);
+//        state->MPS->set_mps(LA,GA,LC,GB,LB);
+//        theta = state->get_theta();
+//        state->truncate_MPS(theta, 2, settings::precision::SVDThreshold);
 //    }else if(initial_state == "lambda"){
 //        log->info("Initializing W-state");
 //        // W state (|up,down> + |down, up > ) /sqrt(2)
@@ -321,9 +320,9 @@ void class_algorithm_base::store_profiling_totals(bool force) {
 //        GB(0, 1, 0) = 1;
 //        GB(1, 0, 0) = 1;
 //        GB(1, 1, 0) = 0;
-//        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
-//        theta = superblock->get_theta();
-//        superblock->truncate_MPS(theta, 2, settings::precision::SVDThreshold);
+//        state->MPS->set_mps(LA,GA,LC,GB,LB);
+//        theta = state->get_theta();
+//        state->truncate_MPS(theta, 2, settings::precision::SVDThreshold);
 //    }
 //
 //    else if (initial_state == "rps"){
@@ -332,12 +331,12 @@ void class_algorithm_base::store_profiling_totals(bool force) {
 //
 //        //Initialize as spinors
 //        theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chiA,d*chiB),d,chiA,d,chiB);
-//        superblock->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
+//        state->truncate_MPS(theta, 1, settings::precision::SVDThreshold);
 //
 //    }else if (initial_state == "random_chi" ){
 //        // Random state
 //        log->info("Initializing random state with bond dimension chi = {}", chi_max());
-//        sim_state.chi_temp = chi_max();
+//        sim_status.chi_temp = chi_max();
 //        GA.resize(array3{d,chi_max(),chi_max()});
 //        GB.resize(array3{d,chi_max(),chi_max()});
 //        LA.resize(array1{chi_max()});
@@ -346,9 +345,9 @@ void class_algorithm_base::store_profiling_totals(bool force) {
 //        LA.setConstant(1.0/sqrt(chi_max()));
 //        LB.setConstant(1.0/sqrt(chi_max()));
 //        LC.setConstant(1.0/sqrt(chi_max()));
-//        superblock->MPS->set_mps(LA,GA,LC,GB,LB);
+//        state->MPS->set_mps(LA,GA,LC,GB,LB);
 //        theta = Textra::Matrix_to_Tensor(Eigen::MatrixXcd::Random(d*chi_max(),d*chi_max()),d,chi_max(),d,chi_max());
-//        superblock->truncate_MPS(theta, chi_max(), settings::precision::SVDThreshold);
+//        state->truncate_MPS(theta, chi_max(), settings::precision::SVDThreshold);
 //
 //    }else{
 //        std::cerr << "Invalid state given for initialization. Check 'model::initial_state' your input file. Please choose one of: " << std::endl;
@@ -365,27 +364,27 @@ void class_algorithm_base::store_profiling_totals(bool force) {
 //
 //
 //    //Reset the environment blocks to the correct dimensions
-//    superblock->Lblock->set_edge_dims(*superblock->MPS, superblock->HA->MPO());
-//    superblock->Rblock->set_edge_dims(*superblock->MPS, superblock->HB->MPO());
-//    superblock->Lblock2->set_edge_dims(*superblock->MPS, superblock->HA->MPO());
-//    superblock->Rblock2->set_edge_dims(*superblock->MPS, superblock->HB->MPO());
+//    state->Lblock->set_edge_dims(*state->MPS, state->HA->MPO());
+//    state->Rblock->set_edge_dims(*state->MPS, state->HB->MPO());
+//    state->Lblock2->set_edge_dims(*state->MPS, state->HA->MPO());
+//    state->Rblock2->set_edge_dims(*state->MPS, state->HB->MPO());
 //
-//    superblock->environment_size = superblock->Lblock->size + superblock->Rblock->size;
+//    state->environment_size = state->Lblock->size + state->Rblock->size;
 //
-//    assert(superblock->Lblock->block.dimension(0) == superblock->MPS->chiA());
-//    assert(superblock->Rblock->block.dimension(0) == superblock->MPS->chiB());
+//    assert(state->Lblock->block.dimension(0) == state->MPS->chiA());
+//    assert(state->Rblock->block.dimension(0) == state->MPS->chiB());
 //
 //
 //
 //    if(sim_type == SimulationType::fDMRG or sim_type == SimulationType::xDMRG ){
-//        mpstools::finite::state::insert_superblock_to_state(*state, *superblock);
+//        tools::finite::state::insert_superblock_to_state(*state, *state);
 //    }else{
 //    }
 //
 //    enlarge_environment();
 //
 //    if (sim_type == SimulationType::iDMRG){
-//        sim_state.iteration = (int)superblock->Lblock->size;
+//        sim_status.iteration = (int)state->Lblock->size;
 //    }
 //    swap();
 //}
@@ -396,47 +395,47 @@ void class_algorithm_base::store_profiling_totals(bool force) {
 //
 //
 //void class_algorithm_base::insert_superblock_to_chain() {
-//    log->trace("Insert superblock into state");
+//    log->trace("Insert state into state");
 //    t_sim.tic();
 //    t_ste.tic();
-//    auto new_position = mpstools::finite::state::insert_superblock_to_state(*state, *superblock);
-//    superblock->set_positions(new_position);
+//    auto new_position = tools::finite::state::insert_superblock_to_state(*state, *state);
+//    state->set_positions(new_position);
 //    t_ste.toc();
 //    t_sim.toc();
 //}
 //
 //void class_algorithm_base::copy_superblock_mps_to_chain(){
-//    log->trace("Copy superblock mps to state");
+//    log->trace("Copy state mps to state");
 //    t_sim.tic();
 //    t_ste.tic();
-//    mpstools::finite::state::copy_superblock_mps_to_state(*state, *superblock);
+//    tools::finite::state::copy_superblock_mps_to_state(*state, *state);
 //    t_ste.toc();
 //    t_sim.toc();
 //}
 //
 //void class_algorithm_base::copy_superblock_mpo_to_chain(){
-//    log->trace("Copy superblock mpo to state");
+//    log->trace("Copy state mpo to state");
 //    t_sim.tic();
 //    t_ste.tic();
-//    mpstools::finite::state::copy_superblock_mpo_to_state(*state, *superblock);
+//    tools::finite::state::copy_superblock_mpo_to_state(*state, *state);
 //    t_ste.toc();
 //    t_sim.toc();
 //}
 //
 //void class_algorithm_base::copy_superblock_env_to_chain(){
-//    log->trace("Copy superblock env to state");
+//    log->trace("Copy state env to state");
 //    t_sim.tic();
 //    t_ste.tic();
-//    mpstools::finite::state::copy_superblock_env_to_state(*state, *superblock);
+//    tools::finite::state::copy_superblock_env_to_state(*state, *state);
 //    t_ste.toc();
 //    t_sim.toc();
 //}
 //
 //void class_algorithm_base::copy_superblock_to_chain(){
-//    log->trace("Copy superblock to state");
+//    log->trace("Copy state to state");
 //    t_sim.tic();
 //    t_ste.tic();
-//    mpstools::finite::state::copy_superblock_to_state(*state, *superblock);
+//    tools::finite::state::copy_superblock_to_state(*state, *state);
 //    t_ste.toc();
 //    t_sim.toc();
 //}

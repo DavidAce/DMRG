@@ -45,7 +45,32 @@ namespace qm{
         extern std::vector<Eigen::Tensor<std::complex<double>,4>> compute_G(const std::complex<double> a, const int susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
     }
 
+    namespace mpo{
+        using Scalar = std::complex<double>;
+        extern std::tuple<
+                Eigen::Tensor<Scalar,4>,
+                Eigen::Tensor<Scalar,3>,
+                Eigen::Tensor<Scalar,3>>
+        pauli_mpo(const Eigen::MatrixXcd paulimatrix);
 
+
+        extern std::tuple<
+                Eigen::Tensor<Scalar,4>,
+                Eigen::Tensor<Scalar,3>,
+                Eigen::Tensor<Scalar,3>>
+        parity_selector_mpo(const Eigen::MatrixXcd paulimatrix, const int sector = 1);
+
+
+        extern std::tuple<
+                std::list<Eigen::Tensor<Scalar,4>>,
+                Eigen::Tensor<Scalar,3>,
+                Eigen::Tensor<Scalar,3>>
+        parity_projector_mpos(const Eigen::MatrixXcd paulimatrix, const size_t sites, const int sector = 1);
+
+
+
+
+    }
 
 
 

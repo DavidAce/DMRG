@@ -4,7 +4,7 @@
 
 #include <Eigen/Core>
 #include <h5pp/h5pp.h>
-#include <general/class_eigsolver.h>
+#include <math/class_eigsolver.h>
 
 
 

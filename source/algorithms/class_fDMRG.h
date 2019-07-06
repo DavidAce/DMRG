@@ -12,7 +12,7 @@
 // * \brief Class that runs the finite DMRG algorithm.
  */
 
-class class_finite_chain_state;
+class class_finite_state;
 class class_fDMRG : public class_algorithm_finite {
 public:
     //Inherit the constructor of class_algorithm_base

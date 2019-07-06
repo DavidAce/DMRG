@@ -7,7 +7,7 @@
 #include <algorithms/class_algorithm_base.h>
 
 class class_table_dmrg;
-class class_superblock;
+class class_infinite_state;
 
 class class_algorithm_infinite: public class_algorithm_base {
 public:
@@ -19,7 +19,7 @@ public:
             SimulationType sim_type
     );
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_dmrg;
-    std::shared_ptr<class_superblock> superblock;
+    std::shared_ptr<class_infinite_state> state;
 
 
     virtual void run_simulation()         = 0;

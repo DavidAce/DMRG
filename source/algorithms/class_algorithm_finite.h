@@ -6,7 +6,7 @@
 #define DMRG_CLASS_ALGORITHM_FINITE_H
 
 #include <algorithms/class_algorithm_base.h>
-class class_finite_chain_state;
+class class_finite_state;
 class class_table_finite_chain;
 class class_table_dmrg;
 
@@ -23,7 +23,7 @@ public:
             );
 
     //MPS
-    std::unique_ptr<class_finite_chain_state>    state;
+    std::unique_ptr<class_finite_state>    state;
     std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_dmrg;
     std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_dmrg_chain;
 

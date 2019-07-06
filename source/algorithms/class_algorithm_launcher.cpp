@@ -1,10 +1,10 @@
 //
 // Created by david on 7/30/17.
 //
-#include <sim_parameters/nmspc_sim_settings.h>
+#include <simulation/nmspc_settings.h>
 #include <algorithms/class_algorithm_launcher.h>
-#include <mps_state/class_superblock.h>
-#include <mps_state/class_finite_chain_state.h>
+#include <state/class_infinite_state.h>
+#include <state/class_finite_state.h>
 #include <io/class_hdf5_table_buffer2.h>
 #include <algorithms/class_iDMRG.h>
 #include <algorithms/class_fDMRG.h>

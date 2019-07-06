@@ -5,10 +5,10 @@
 #include <iomanip>
 #include <h5pp/h5pp.h>
 #include <io/class_hdf5_table_buffer2.h>
-#include <sim_parameters/nmspc_sim_settings.h>
-#include <mps_state/class_superblock.h>
-#include <mps_tools/nmspc_mps_tools.h>
-#include <general/nmspc_math.h>
+#include <simulation/nmspc_settings.h>
+#include <state/class_infinite_state.h>
+#include <state/tools/nmspc_tools.h>
+#include <math/nmspc_math.h>
 #include <spdlog/spdlog.h>
 #include "class_iDMRG.h"
 using namespace std;
@@ -28,7 +28,7 @@ void class_iDMRG::run_simulation() {
     log->info("Starting {} simulation", sim_name);
     t_tot.tic();
     while(true){
-        single_DMRG_step(eigutils::eigSetting::Ritz::SR);
+        single_DMRG_step("SR");
         print_status_update();
 //        store_table_entry_progress();
         store_profiling_deltas();
@@ -37,14 +37,14 @@ void class_iDMRG::run_simulation() {
         // It's important not to perform the last swap.
         // That last state would not get optimized
 
-        if (sim_state.iteration >= settings::idmrg::max_steps)  {stop_reason = StopReason::MAX_STEPS; break;}
-        if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
-        if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
+        if (sim_status.iteration >= settings::idmrg::max_steps)  {stop_reason = StopReason::MAX_STEPS; break;}
+        if (sim_status.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
+        if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
 
 
         enlarge_environment();
         swap();
-        sim_state.iteration++;
+        sim_status.iteration++;
     }
     t_tot.toc();
     switch(stop_reason){
@@ -58,31 +58,22 @@ void class_iDMRG::run_simulation() {
 }
 
 
-void class_iDMRG::single_DMRG_step(eigutils::eigSetting::Ritz ritz){
+void class_iDMRG::single_DMRG_step(std::string ritz){
 /*!
- * \fn void single_DMRG_step(class_superblock &superblock)
+ * \fn void single_DMRG_step(class_superblock &state)
  */
     log->trace("Starting infinite DMRG step");
     t_sim.tic();
     t_opt.tic();
-    Eigen::Tensor<Scalar,4> theta = superblock->get_theta();
-//    superblock->MPS->theta = superblock->get_theta();
-    theta = superblock->optimize_MPS(theta, ritz);
+    Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::find_ground_state(*state,ritz);
     t_opt.toc();
     t_svd.tic();
-    superblock->truncate_MPS(theta, sim_state.chi_temp, settings::precision::SVDThreshold);
+    tools::infinite::opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     t_svd.toc();
-    //Reduce the hamiltonians if you are doing infinite systems:
-//    if(sim_type == SimulationType::iDMRG){
-//        superblock->E_optimal /= 2.0;
-//        superblock->HA->set_reduced_energy(superblock->E_optimal);
-//        superblock->HB->set_reduced_energy(superblock->E_optimal);
-//    }
-//    measurement->unset_measurements();
-    superblock->unset_measurements();
+    state->unset_measurements();
     t_sim.toc();
-    sim_state.wall_time = t_tot.get_age();
-    sim_state.simu_time = t_sim.get_age();
+    sim_status.wall_time = t_tot.get_age();
+    sim_status.simu_time = t_sim.get_age();
 }
 
 
@@ -95,13 +86,13 @@ void class_iDMRG::check_convergence(){
     check_convergence_variance_ham();
     check_convergence_variance_mom();
     update_bond_dimension();
-    if(sim_state.entanglement_has_converged and
-       sim_state.variance_mpo_has_converged and
-       sim_state.variance_ham_has_converged and
-       sim_state.variance_mom_has_converged and
-       sim_state.bond_dimension_has_reached_max)
+    if(sim_status.entanglement_has_converged and
+       sim_status.variance_mpo_has_converged and
+       sim_status.variance_ham_has_converged and
+       sim_status.variance_mom_has_converged and
+       sim_status.bond_dimension_has_reached_max)
     {
-        sim_state.simulation_has_converged = true;
+        sim_status.simulation_has_converged = true;
     }
     t_con.toc();
 }

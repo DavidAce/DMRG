@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.10)
 #project(eigsolver)
 add_executable(TEST-eigsolver eigsolver.cpp
-        ${PROJECT_SOURCE_DIR}/source/general/class_eigsolver.cpp
+        ${PROJECT_SOURCE_DIR}/source/math/class_eigsolver.cpp
         ${PROJECT_SOURCE_DIR}/source/general/class_tic_toc.cpp)
 
 

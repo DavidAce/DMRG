@@ -5,13 +5,13 @@
 
 #include <iomanip>
 #include <io/class_hdf5_table_buffer2.h>
-#include <sim_parameters/nmspc_sim_settings.h>
-#include <mps_state/class_superblock.h>
-#include <mps_state/class_mps_2site.h>
-#include <mps_state/class_finite_chain_state.h>
-#include <mps_tools/nmspc_mps_tools.h>
-#include <mps_tools/finite/opt.h>
-#include <general/nmspc_math.h>
+#include <simulation/nmspc_settings.h>
+#include <state/class_infinite_state.h>
+#include <state/class_mps_2site.h>
+#include <state/class_finite_state.h>
+#include <state/tools/nmspc_tools.h>
+#include <state/tools/finite/opt.h>
+#include <math/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <Eigen/Core>
@@ -43,8 +43,8 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 void class_xDMRG::run_preprocessing() {
 
     log->info("Starting {} preprocessing", sim_name);
-    sim_state.energy_dens_target = settings::xdmrg::energy_density_target;
-    sim_state.energy_dens_window = settings::xdmrg::energy_density_window;
+    sim_status.energy_dens_target = settings::xdmrg::energy_density_target;
+    sim_status.energy_dens_window = settings::xdmrg::energy_density_window;
     find_energy_range();
     log->info("Finished {} preprocessing", sim_name);
 }
@@ -65,16 +65,16 @@ void class_xDMRG::run_simulation()    {
         // That last state would not get optimized
         if (state->position_is_any_edge())
         {
-            if (sim_state.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
-            if (sim_state.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
-            if (sim_state.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
+            if (sim_status.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
+            if (sim_status.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
+            if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
 
         update_bond_dimension();
         move_center_point();
-        sim_state.iteration = state->get_sweeps();
-        sim_state.position = state->get_position();
-        log->trace("Finished step {}, iteration {}, direction {}",sim_state.step,sim_state.iteration,state->get_direction());
+        sim_status.iteration = state->get_sweeps();
+        sim_status.position = state->get_position();
+        log->trace("Finished step {}, iteration {}, direction {}",sim_status.step,sim_status.iteration,state->get_direction());
     }
     switch(stop_reason){
         case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_ITERS",sim_name) ;break;
@@ -92,60 +92,58 @@ void class_xDMRG::single_DMRG_step()
  * \fn void single_DMRG_step()
  */
 {
-    mpstools::finite::debug::check_integrity(*state);
+    tools::finite::debug::check_integrity(*state);
 
 
     t_sim.tic();
     t_opt.tic();
-    log->trace("Starting single xDMRG step {}", sim_state.step);
-    using namespace  mpstools::finite::opt;
-    using namespace  mpstools::finite::measure;
+    log->trace("Starting single xDMRG step {}", sim_status.step);
+    using namespace  tools::finite::opt;
+    using namespace  tools::finite::measure;
 
 
-    auto optMode  = sim_state.iteration  >= 2     ?  OptMode::VARIANCE : OptMode::OVERLAP;
-    optMode  =   OptMode::VARIANCE;
+    auto optMode  = sim_status.iteration  >= 2     ?  OptMode::VARIANCE : OptMode::OVERLAP;
 
     auto optSpace =  OptSpace::SUBSPACE;
     optSpace = energy_variance_per_site(*state) <  1e-6                         ? OptSpace::DIRECT  : optSpace;
-    optSpace = sim_state.iteration              >= settings::xdmrg::min_sweeps  ? OptSpace::DIRECT  : optSpace;
+    optSpace = sim_status.iteration              >= settings::xdmrg::min_sweeps  ? OptSpace::DIRECT  : optSpace;
 
 
 
 
     long threshold = 0;
     switch(optSpace){
-        case OptSpace::SUBSPACE : threshold = 2 * 2 * 16 * 32; break;
-        case OptSpace::DIRECT  : threshold = 2 * 2 * 64 * 64; break;
+        case OptSpace::SUBSPACE : threshold = settings::precision::MaxSizePartDiag; break;
+        case OptSpace::DIRECT   : threshold = 2 * 2 * 64 * 128; break;
     }
     state->activate_sites(threshold);
-    if (state->active_size() > 4096) optSpace = OptSpace::DIRECT;
+    if (state->active_size() > settings::precision::MaxSizePartDiag) optSpace = OptSpace::DIRECT;
 
 
 
     auto optType = state->isReal() ? OptType::REAL : OptType::CPLX;
 
-    Eigen::Tensor<Scalar,3> theta;
-    std::tie(theta, sim_state.energy_now) = mpstools::finite::opt::find_optimal_excited_state(*state,sim_state,optMode, optSpace,optType);
-    sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
+
+    Eigen::Tensor<Scalar,3> theta = tools::finite::opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
     t_opt.toc();
 
     t_svd.tic();
-    mpstools::finite::opt::truncate_theta(theta, *state, sim_state.chi_temp, settings::precision::SVDThreshold);
+    tools::finite::opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     t_svd.toc();
 
     state->unset_measurements();
-    auto fullnorm = mpstools::finite::measure::norm(*state);
+    auto fullnorm = tools::finite::measure::norm(*state);
     if(std::abs(fullnorm - 1.0) > 1e-12) {
         throw std::runtime_error(fmt::format("Norm before rebuild of env too far from unity: {}",fullnorm));
     }
-    mpstools::finite::mps::rebuild_environments(*state);
-    mpstools::finite::debug::check_integrity(*state);
+    tools::finite::mps::rebuild_environments(*state);
+    tools::finite::debug::check_integrity(*state);
     state->unset_measurements();
 
     t_sim.toc();
 
-    sim_state.wall_time = t_tot.get_age();
-    sim_state.simu_time = t_sim.get_age();
+    sim_status.wall_time = t_tot.get_age();
+    sim_status.simu_time = t_sim.get_age();
 
 }
 
@@ -158,72 +156,72 @@ void class_xDMRG::check_convergence(){
     check_convergence_variance();
     check_convergence_entg_entropy();
 
-    if (sim_state.iteration < settings::xdmrg::min_sweeps){
+    if (sim_status.iteration < settings::xdmrg::min_sweeps){
         clear_saturation_status();
     }
 
 
-    bool outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  > sim_state.energy_dens_window;
+    sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
+    bool outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  > sim_status.energy_dens_window;
     if (outside_of_window
-        and (   sim_state.iteration >= 2
-                or mpstools::finite::measure::energy_variance_per_site(*state) < 1e-4
-                or sim_state.variance_mpo_saturated_for > min_saturation_length
-                or sim_state.variance_mpo_has_converged)
+        and (   sim_status.iteration >= 2
+                or tools::finite::measure::energy_variance_per_site(*state) < 1e-4
+                or sim_status.variance_mpo_saturated_for > min_saturation_length
+                or sim_status.variance_mpo_has_converged)
         )
     {
         double growth_factor = 1.10;
-        log->info("Resetting to product state -- saturated outside of energy window. Energy density: {}, Energy window: {} --> {}",sim_state.energy_dens, sim_state.energy_dens_window, std::min(growth_factor*sim_state.energy_dens_window, 0.5) );
-        sim_state.energy_dens_window = std::min(growth_factor*sim_state.energy_dens_window, 0.5);
+        log->info("Resetting to product state -- saturated outside of energy window. Energy density: {}, Energy window: {} --> {}",sim_status.energy_dens, sim_status.energy_dens_window, std::min(growth_factor*sim_status.energy_dens_window, 0.5) );
+        sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
         int counter = 0;
         while(outside_of_window){
             reset_to_random_state(settings::model::symmetry);
-            sim_state.energy_now  = mpstools::finite::measure::energy_per_site(*state);
-            sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
-            outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  >= sim_state.energy_dens_window;
+            sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
+            outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
             counter++;
             if (counter % 10 == 0) {
-                log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}", sim_state.energy_dens_window, std::min(growth_factor*sim_state.energy_dens_window, 0.5) );
-                sim_state.energy_dens_window = std::min(growth_factor*sim_state.energy_dens_window, 0.5);
+                log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}", sim_status.energy_dens_window, std::min(growth_factor*sim_status.energy_dens_window, 0.5) );
+                sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
             }
         }
-        log->info("Energy initial (per site) = {} | density = {} | retries = {}", sim_state.energy_now, sim_state.energy_dens,counter );
+        log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
         clear_saturation_status();
         projected_during_saturation  = false;
-        sim_state.energy_ubound      = sim_state.energy_target + sim_state.energy_dens_window * (sim_state.energy_max-sim_state.energy_min);
-        sim_state.energy_lbound      = sim_state.energy_target - sim_state.energy_dens_window * (sim_state.energy_max-sim_state.energy_min);
+        sim_status.energy_ubound      = sim_status.energy_target + sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
+        sim_status.energy_lbound      = sim_status.energy_target - sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
     }
 
 
 
 
 
-    if(    sim_state.variance_mpo_has_converged
-       and sim_state.entanglement_has_converged)
+    if(    sim_status.variance_mpo_has_converged
+       and sim_status.entanglement_has_converged)
     {
         log->debug("Simulation has converged");
-        sim_state.simulation_has_converged = true;
+        sim_status.simulation_has_converged = true;
     }
 
-    if (    sim_state.variance_mpo_has_saturated
-        and sim_state.entanglement_has_saturated
-        and sim_state.bond_dimension_has_reached_max
-        and sim_state.variance_mpo_saturated_for > max_saturation_length)
+    if (    sim_status.variance_mpo_has_saturated
+        and sim_status.entanglement_has_saturated
+        and sim_status.bond_dimension_has_reached_max
+        and sim_status.variance_mpo_saturated_for > max_saturation_length)
     {
         log->debug("Simulation has to stop");
-        sim_state.simulation_has_to_stop = true;
+        sim_status.simulation_has_to_stop = true;
     }
 
 
 
 
     if (state->position_is_any_edge()
-        and sim_state.variance_mpo_has_saturated
-        and not sim_state.simulation_has_converged
+        and sim_status.variance_mpo_has_saturated
+        and not sim_status.simulation_has_converged
         and not outside_of_window
         and not projected_during_saturation)
     {
         log->info("Projecting to {} due to saturation", settings::model::symmetry);
-        *state = mpstools::finite::ops::get_closest_parity_state(*state,settings::model::symmetry);
+        *state = tools::finite::ops::get_closest_parity_state(*state,settings::model::symmetry);
         projected_during_saturation = true;
     }
 
@@ -240,7 +238,7 @@ void class_xDMRG::find_energy_range() {
     log->trace("Finding energy range");
     assert(state->get_length() == num_sites());
     size_t max_sweeps_during_f_range = 4;
-    sim_state.iteration = state->reset_sweeps();
+    sim_status.iteration = state->reset_sweeps();
 
     // Find energy minimum
     while(true) {
@@ -249,16 +247,16 @@ void class_xDMRG::find_energy_range() {
         // It's important not to perform the last step.
         // That last state would not get optimized
         if(state->position_is_any_edge()){
-            if(sim_state.iteration >= max_sweeps_during_f_range
+            if(sim_status.iteration >= max_sweeps_during_f_range
                or state->measurements.energy_variance_per_site.value() < 1e-8)
             {break;}
         }
         move_center_point();
-        sim_state.iteration = state->get_sweeps();
+        sim_status.iteration = state->get_sweeps();
 
     }
     compute_observables();
-    sim_state.energy_min = state->measurements.energy_per_site.value();
+    sim_status.energy_min = state->measurements.energy_per_site.value();
 
     reset_to_random_state("sx");
     // Find energy maximum
@@ -268,44 +266,41 @@ void class_xDMRG::find_energy_range() {
         // It's important not to perform the last step.
         // That last state would not get optimized
         if(state->position_is_any_edge()){
-            if(sim_state.iteration >= max_sweeps_during_f_range
+            if(sim_status.iteration >= max_sweeps_during_f_range
                or state->measurements.energy_variance_per_site.value() < 1e-8)
             {break;}
         }
 
         move_center_point();
-        sim_state.iteration = state->get_sweeps();
+        sim_status.iteration = state->get_sweeps();
     }
-    compute_observables();
-    sim_state.energy_max         = state->measurements.energy_per_site.value();
-    sim_state.energy_now         = state->measurements.energy_per_site.value();
-    sim_state.energy_target      = sim_state.energy_min    + sim_state.energy_dens_target  * (sim_state.energy_max - sim_state.energy_min);
-    sim_state.energy_ubound      = sim_state.energy_target + sim_state.energy_dens_window  * (sim_state.energy_max - sim_state.energy_min);
-    sim_state.energy_lbound      = sim_state.energy_target - sim_state.energy_dens_window  * (sim_state.energy_max - sim_state.energy_min);
-    sim_state.energy_dens        = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
-    log->info("Energy minimum (per site) = {}", sim_state.energy_min);
-    log->info("Energy maximum (per site) = {}", sim_state.energy_max);
-    log->info("Energy target  (per site) = {}", sim_state.energy_target);
+    sim_status.energy_max         = tools::finite::measure::energy_per_site(*state);
+    sim_status.energy_target      = sim_status.energy_min    + sim_status.energy_dens_target  * (sim_status.energy_max - sim_status.energy_min);
+    sim_status.energy_ubound      = sim_status.energy_target + sim_status.energy_dens_window  * (sim_status.energy_max - sim_status.energy_min);
+    sim_status.energy_lbound      = sim_status.energy_target - sim_status.energy_dens_window  * (sim_status.energy_max - sim_status.energy_min);
+    sim_status.energy_dens        = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
+    log->info("Energy minimum (per site) = {}", sim_status.energy_min);
+    log->info("Energy maximum (per site) = {}", sim_status.energy_max);
+    log->info("Energy target  (per site) = {}", sim_status.energy_target);
     int counterA = 0;
     int counterB = 0;
-    bool outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  >= sim_state.energy_dens_window;
+    bool outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
     while(outside_of_window){
         reset_to_random_state("sx");
-        sim_state.energy_now  = mpstools::finite::measure::energy_per_site(*state);
-        sim_state.energy_dens = (sim_state.energy_now - sim_state.energy_min ) / (sim_state.energy_max - sim_state.energy_min);
-        outside_of_window = std::abs(sim_state.energy_dens - sim_state.energy_dens_target)  >= sim_state.energy_dens_window;
+        sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
+        outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
 
         counterA++;
         counterB++;
         if(counterA >= 100){
             counterA = 0;
-            if(sim_state.energy_dens_window >= 0.5){break;}
-            sim_state.energy_dens_window = std::min(1.2*sim_state.energy_dens_window, 0.5);
-            sim_state.energy_ubound       = sim_state.energy_target +  sim_state.energy_dens_window*(sim_state.energy_max-sim_state.energy_min);
-            sim_state.energy_lbound       = sim_state.energy_target -  sim_state.energy_dens_window*(sim_state.energy_max-sim_state.energy_min);
+            if(sim_status.energy_dens_window >= 0.5){break;}
+            sim_status.energy_dens_window = std::min(1.2*sim_status.energy_dens_window, 0.5);
+            sim_status.energy_ubound       = sim_status.energy_target +  sim_status.energy_dens_window*(sim_status.energy_max-sim_status.energy_min);
+            sim_status.energy_lbound       = sim_status.energy_target -  sim_status.energy_dens_window*(sim_status.energy_max-sim_status.energy_min);
         }
     }
-    log->info("Energy initial (per site) = {} | density = {} | retries = {}", sim_state.energy_now, sim_state.energy_dens,counterB );
+    log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counterB );
 }
 
 

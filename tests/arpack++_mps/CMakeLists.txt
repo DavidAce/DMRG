@@ -5,9 +5,9 @@ cmake_minimum_required(VERSION 3.10)
 enable_language(Fortran)
 
 add_executable(TEST-arpack++_mps arpack++_mps.cpp
-                            ../../source/general/class_eigsolver.cpp
-                            ../../source/general/arpack_extra/arpackpp_solver.cpp
-                            ../../source/general/arpack_extra/matrix_product_stl.cpp
+                            ../../source/math/class_eigsolver.cpp
+                            ../../source/math/arpack_extra/arpackpp_solver.cpp
+                            ../../source/math/arpack_extra/matrix_product_stl.cpp
                             ../../source/general/class_tic_toc.cpp)
 target_include_directories(TEST-arpack++_mps PUBLIC ${PROJECT_SOURCE_DIR}/source)
 target_include_directories(TEST-arpack++_mps PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
