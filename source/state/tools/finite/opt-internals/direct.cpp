@@ -31,9 +31,11 @@ Eigen::Tensor<std::complex<double>,3>
 tools::finite::opt::internals::direct_optimization(const class_finite_state & state, const class_simulation_status & sim_status, OptType optType){
     tools::log->trace("Optimizing in DIRECT mode");
     using Scalar = std::complex<double>;
+    t_opt->tic();
     auto theta = state.get_multitheta();
     double energy_0   = tools::finite::measure::multidmrg::energy_per_site(state,theta);
     double variance_0 = tools::finite::measure::multidmrg::energy_variance_per_site(state,theta);
+    t_opt->toc();
     std::vector<reports::direct_opt_tuple> opt_log;
     opt_log.emplace_back("Initial",theta.size(), energy_0, std::log10(variance_0), 1.0, 0 ,0,t_opt->get_last_time_interval());
 
@@ -47,8 +49,8 @@ tools::finite::opt::internals::direct_optimization(const class_finite_state & st
     double fx;
     int niter,counter;
     LBFGSpp::LBFGSSolver<double> solver(params);
-    t_opt->tic();
 
+    t_opt->tic();
     switch (optType){
         case OptType::CPLX:{
             tools::finite::opt::internals::direct_functor <Scalar>  functor (state, sim_status);

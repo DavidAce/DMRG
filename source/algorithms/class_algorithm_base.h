@@ -103,18 +103,14 @@ public:
     class_tic_toc t_con;
 
 protected:
-    void check_saturation_using_slope(std::list<bool> &B_vec,
+    bool check_saturation_using_slope(std::list<bool> &B_vec,
                                       std::list<double> &Y_vec,
                                       std::list<int> &X_vec,
                                       double new_data,
                                       int iter,
                                       int rate,
                                       double tolerance,
-                                      double &slope,
-                                      bool &has_saturated);
-
-
-
+                                      double &slope);
 
 };
 
