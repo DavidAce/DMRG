@@ -64,10 +64,16 @@ public:
     std::list<int>    X_mpo_vec; //History of step numbers
     double V_mpo_slope = 0;
 
-    std::list<bool>   BS_vec; //History of saturation true/false
-    std::list<double> S_vec;
-    std::list<int>    XS_vec;
+//    std::list<bool>   BS_vec; //History of saturation true/false
+//    std::list<double> S_vec;
+//    std::list<int>    XS_vec;
+//    double S_slope = 0;
+
+    std::vector<std::list<bool>  > BS_mat;
+    std::vector<std::list<double>> S_mat;
+    std::vector<std::list<int>>    XS_mat;
     double S_slope = 0;
+
 };
 
 #endif //DMRG_CLASS_ALGORITHM_FINITE_H

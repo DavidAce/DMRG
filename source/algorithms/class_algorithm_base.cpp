@@ -62,7 +62,7 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
 
 
 
-void class_algorithm_base::check_saturation_using_slope(
+bool class_algorithm_base::check_saturation_using_slope(
         std::list<bool>  & B_vec,
         std::list<double> &Y_vec,
         std::list<int> &X_vec,
@@ -70,24 +70,23 @@ void class_algorithm_base::check_saturation_using_slope(
         int iter,
         int rate,
         double tolerance,
-        double &slope,
-        bool   &has_saturated){
+        double &slope){
     //Check convergence based on slope.
     log->trace("Checking saturation using slope");
 
 
     // We want to check once every "rate" steps
-    // Get the sim_status.iteration number when you last measured.
+    // Get the sim_state.iteration number when you last measured.
     // If the measurement happened less than rate iterations ago, return.
     int last_measurement = X_vec.empty() ? 0 : X_vec.back();
-    if (iter - last_measurement < rate){return;}
+    if (iter - last_measurement < rate){return false;}
 
     // It's time to check. Insert current numbers
     B_vec.push_back(false);
     Y_vec.push_back(new_data);
     X_vec.push_back(iter);
     unsigned long min_data_points = 2;
-    if (Y_vec.size() < min_data_points){return;}
+    if (Y_vec.size() < min_data_points){return false;}
     auto check_from =  (unsigned long)(X_vec.size()*0.75); //Check the last quarter of the measurements in Y_vec.
     while (X_vec.size() - check_from < min_data_points and check_from > 0){
         check_from -=1; //Decrease check from if out of bounds.
@@ -119,7 +118,7 @@ void class_algorithm_base::check_saturation_using_slope(
     slope = std::abs(numerator / denominator);
     //Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
     double relative_slope     = slope / avgY;
-
+    bool has_saturated = false;
     if (relative_slope < tolerance){
         B_vec.back() = true;
         has_saturated = true;
@@ -134,7 +133,9 @@ void class_algorithm_base::check_saturation_using_slope(
     log->debug(" -- avgY            = {} ", avgY);
     log->debug(" -- has saturated   = {} ", has_saturated);
     log->debug(" -- check from      = {}              | {} ", check_from, X_vec.size());
+    return has_saturated;
 }
+
 
 
 void class_algorithm_base::update_bond_dimension(){

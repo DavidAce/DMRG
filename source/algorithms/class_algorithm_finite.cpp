@@ -34,6 +34,11 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 
     min_saturation_length = 1;
     max_saturation_length = 4;
+
+    S_mat.resize(state->get_length()+1);
+    BS_mat.resize(state->get_length()+1);
+    XS_mat.resize(state->get_length()+1);
+
     tools::finite::print::print_hamiltonians(*state);
     tools::finite::print::print_state(*state);
 
@@ -126,6 +131,7 @@ void class_algorithm_finite::run_postprocessing(){
     tools::finite::debug::check_integrity(*state);
     state->unset_measurements();
     state->do_all_measurements();
+    print_status_update();
     tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
     tools::finite::io::write_all_state(*state,*h5pp_file, sim_name);
     tools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
@@ -196,19 +202,15 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
     log->debug("Checking convergence of variance mpo");
     threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
-    compute_observables();
-    check_saturation_using_slope(B_mpo_vec,
-                                 V_mpo_vec,
-                                 X_mpo_vec,
-                                 state->measurements.energy_variance_per_site.value(),
-                                 sim_status.iteration,
-                                 1,
-                                 slope_threshold,
-                                 V_mpo_slope,
-                                 sim_status.variance_mpo_has_saturated);
-//    int rewind = std::min((int)B_mpo_vec.size(), (int)measurement->get_chain_length()/4 );
-//    auto b_it = B_mpo_vec.begin();
-//    std::advance(b_it, -rewind);
+    sim_status.variance_mpo_has_saturated = check_saturation_using_slope(
+                    B_mpo_vec,
+                    V_mpo_vec,
+                    X_mpo_vec,
+                    tools::finite::measure::energy_variance_per_site(*state),
+                    sim_status.iteration,
+                    1,
+                    slope_threshold,
+                    V_mpo_slope);
     sim_status.variance_mpo_saturated_for = (int) count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
     sim_status.variance_mpo_has_converged =  state->measurements.energy_variance_per_site.value() < threshold;
 
@@ -221,28 +223,36 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
     log->debug("Checking convergence of entanglement");
 
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::EntEntrSaturationThreshold  : slope_threshold;
-    double entropysum = 0;
-    for(auto &entropy : tools::finite::measure::entanglement_entropies(*state)){entropysum += entropy;}
-    entropysum /= state->get_length();
-    check_saturation_using_slope(BS_vec,
-                                 S_vec,
-                                 XS_vec,
-                                 entropysum,
-                                 sim_status.step,
-                                 1,
-                                 slope_threshold,
-                                 S_slope,
-                                 sim_status.entanglement_has_saturated);
+    auto entropies  = tools::finite::measure::entanglement_entropies(*state);
+    std::vector<bool> entanglement_has_saturated(entropies.size());
+    std::vector<double> S_slopes(entropies.size());
+
+    for (size_t site = 0; site < entropies.size(); site++){
+        entanglement_has_saturated[site] = check_saturation_using_slope(
+                BS_mat[site],
+                S_mat[site],
+                XS_mat[site],
+                entropies[site],
+                sim_status.iteration,
+                1,
+                slope_threshold,
+                S_slopes[site]);
+
+    }
+    size_t idx = std::distance(S_slopes.begin(), std::max_element(S_slopes.begin(),S_slopes.end()));
+    S_slope = S_slopes[idx];
+    sim_status.entanglement_has_saturated = entanglement_has_saturated[idx];
     sim_status.entanglement_has_converged = sim_status.entanglement_has_saturated;
+
 }
 
 
 void class_algorithm_finite::clear_saturation_status(){
     log->trace("Clearing saturation status");
 
-    BS_vec.clear();
-    S_vec.clear();
-    XS_vec.clear();
+    BS_mat.clear();
+    S_mat.clear();
+    XS_mat.clear();
 
     B_mpo_vec.clear();
     V_mpo_vec.clear();
@@ -250,11 +260,10 @@ void class_algorithm_finite::clear_saturation_status(){
 
     sim_status.entanglement_has_saturated      = false;
     sim_status.variance_mpo_has_saturated      = false;
+    sim_status.variance_mpo_saturated_for      = 0;
 
-    sim_status.variance_mpo_saturated_for = 0;
-
-    sim_status.entanglement_has_converged = false;
-    sim_status.variance_mpo_has_converged = false;
+    sim_status.entanglement_has_converged     = false;
+    sim_status.variance_mpo_has_converged     = false;
 
     sim_status.bond_dimension_has_reached_max = false;
     sim_status.simulation_has_to_stop         = false;
