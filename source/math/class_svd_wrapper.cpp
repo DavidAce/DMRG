@@ -30,7 +30,7 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
     if (not mat.allFinite())    throw std::runtime_error("SVD error: matrix has inf's or nan's");
     if (mat.isZero(0))          throw std::runtime_error("SVD error: matrix is all zeros");
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
-    SVD.setThreshold(1e-16);
+    SVD.setThreshold(SVDThreshold);
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long rank = std::min(SVD.rank(),rank_max);
 
@@ -44,6 +44,12 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
     }
 
     truncation_error = SVD.singularValues().normalized().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();
+
+//    std::cout << "Singular values           : " << SVD.singularValues().transpose() << std::endl;
+//    std::cout << "Singular values after norm: " << SVD.singularValues().head(rank).normalized().transpose() << std::endl;
+//    std::cout << "Rank                      : " << rank << std::endl;
+//    std::cout << "Threshold                 : " << SVDThreshold << std::endl;
+//    std::cout << "Truncation error          : " << truncation_error << std::endl;
 
     return std::make_tuple(
             SVD.matrixU().leftCols(rank),

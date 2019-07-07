@@ -92,56 +92,35 @@ void class_xDMRG::single_DMRG_step()
  * \fn void single_DMRG_step()
  */
 {
-    tools::finite::debug::check_integrity(*state);
-
+    using namespace tools::finite;
 
     t_sim.tic();
-    t_opt.tic();
     log->trace("Starting single xDMRG step {}", sim_status.step);
-    using namespace  tools::finite::opt;
-    using namespace  tools::finite::measure;
+    tools::log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
 
-
-    auto optMode  = sim_status.iteration  >= 2     ?  OptMode::VARIANCE : OptMode::OVERLAP;
-
-    auto optSpace =  OptSpace::SUBSPACE;
-    optSpace = energy_variance_per_site(*state) <  1e-6                         ? OptSpace::DIRECT  : optSpace;
-    optSpace = sim_status.iteration              >= settings::xdmrg::min_sweeps  ? OptSpace::DIRECT  : optSpace;
-
-
-
-
+    auto optMode  = sim_status.iteration  >= 2     ?   opt::OptMode::VARIANCE :  opt::OptMode::OVERLAP;
+    auto optSpace = opt::OptSpace::SUBSPACE;
+    optSpace =  tools::finite::measure::energy_variance_per_site(*state) <  1e-8 ?  opt::OptSpace::DIRECT  : optSpace;
+    optSpace = sim_status.iteration              >= settings::xdmrg::min_sweeps  ?  opt::OptSpace::DIRECT  : optSpace;
     long threshold = 0;
     switch(optSpace){
-        case OptSpace::SUBSPACE : threshold = settings::precision::MaxSizePartDiag; break;
-        case OptSpace::DIRECT   : threshold = 2 * 2 * 64 * 128; break;
+        case  opt::OptSpace::SUBSPACE : threshold = settings::precision::MaxSizePartDiag; break;
+        case  opt::OptSpace::DIRECT   : threshold = 2 * 2 * 64 * 128; break;
     }
     state->activate_sites(threshold);
-    if (state->active_size() > settings::precision::MaxSizePartDiag) optSpace = OptSpace::DIRECT;
+    if (state->active_size() > settings::precision::MaxSizePartDiag) optSpace =  opt::OptSpace::DIRECT;
 
+    auto optType = state->isReal() ?  opt::OptType::REAL :  opt::OptType::CPLX;
 
+    Eigen::Tensor<Scalar,3> theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
+    opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
+    mps::rebuild_environments(*state);
+    debug::check_integrity(*state);
+    tools::log->debug("Variance accurate check after  xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
 
-    auto optType = state->isReal() ? OptType::REAL : OptType::CPLX;
-
-
-    Eigen::Tensor<Scalar,3> theta = tools::finite::opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
-    t_opt.toc();
-
-    t_svd.tic();
-    tools::finite::opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
-    t_svd.toc();
-
-    state->unset_measurements();
-    auto fullnorm = tools::finite::measure::norm(*state);
-    if(std::abs(fullnorm - 1.0) > 1e-12) {
-        throw std::runtime_error(fmt::format("Norm before rebuild of env too far from unity: {}",fullnorm));
-    }
-    tools::finite::mps::rebuild_environments(*state);
-    tools::finite::debug::check_integrity(*state);
     state->unset_measurements();
 
     t_sim.toc();
-
     sim_status.wall_time = t_tot.get_age();
     sim_status.simu_time = t_sim.get_age();
 
@@ -192,9 +171,6 @@ void class_xDMRG::check_convergence(){
     }
 
 
-
-
-
     if(    sim_status.variance_mpo_has_converged
        and sim_status.entanglement_has_converged)
     {
@@ -236,7 +212,7 @@ void class_xDMRG::check_convergence(){
 
 void class_xDMRG::find_energy_range() {
     log->trace("Finding energy range");
-    assert(state->get_length() == num_sites());
+    if (state->get_length() != num_sites()) throw std::runtime_error("find_energy_range: state lenght mismatch");
     size_t max_sweeps_during_f_range = 4;
     sim_status.iteration = state->reset_sweeps();
 
@@ -302,12 +278,6 @@ void class_xDMRG::find_energy_range() {
     }
     log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counterB );
 }
-
-
-
-
-
-
 
 
 

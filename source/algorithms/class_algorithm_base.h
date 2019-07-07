@@ -66,20 +66,8 @@ public:
 
 
     //common functions
-    void store_algorithm_state_to_file();
-
+    void store_simulation_status_to_file();
     void update_bond_dimension();
-
-
-
-    //Functions for finite_chains
-    void insert_superblock_to_chain();
-    void copy_superblock_mps_to_chain();
-    void copy_superblock_mpo_to_chain();
-    void copy_superblock_env_to_chain();
-    void copy_superblock_to_chain();
-    void move_center_point();
-
     double process_memory_in_mb(std::string name);
 
     // Profiling
@@ -87,19 +75,8 @@ public:
     void store_profiling_totals(bool force = false);
 
     class_tic_toc t_tot;
-    class_tic_toc t_opt;
-    class_tic_toc t_eig;
-    class_tic_toc t_ham;
     class_tic_toc t_sim;
-    class_tic_toc t_svd;
-    class_tic_toc t_env;
-    class_tic_toc t_evo;
-    class_tic_toc t_udt;
-    class_tic_toc t_sto;
-    class_tic_toc t_ste;
     class_tic_toc t_prt;
-    class_tic_toc t_obs;
-    class_tic_toc t_mps;
     class_tic_toc t_con;
 
 protected:

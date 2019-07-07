@@ -17,7 +17,7 @@
 using Scalar         = std::complex<double>;
 using namespace Textra;
 
-std::list<Eigen::Tensor<Scalar,4>> tools::finite::ops::make_mpo_list (const std::list<std::shared_ptr<class_model_base>> &mpos_L, const std::list<std::shared_ptr<class_model_base>> &mpos_R){
+std::list<Eigen::Tensor<Scalar,4>> tools::finite::ops::make_mpo_list (const std::list<std::shared_ptr<class_model_base>> & mpos_L, const std::list<std::shared_ptr<class_model_base>> & mpos_R){
     std::list<Eigen::Tensor<Scalar,4>> mpos;
     for(auto &mpo_L : mpos_L){
         mpos.push_back(mpo_L->MPO());
@@ -29,14 +29,14 @@ std::list<Eigen::Tensor<Scalar,4>> tools::finite::ops::make_mpo_list (const std:
 }
 
 
-void tools::finite::ops::apply_mpo(class_finite_state &state,const Eigen::Tensor<Scalar,4> mpo,const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge){
+void tools::finite::ops::apply_mpo(class_finite_state & state,const Eigen::Tensor<Scalar,4> &mpo,const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge){
     std::list<Eigen::Tensor<Scalar,4>> mpos(state.get_length(), mpo);
     apply_mpos(state,mpos,Ledge,Redge);
 }
 
 
 
-void tools::finite::ops::apply_mpos(class_finite_state &state,const std::list<Eigen::Tensor<Scalar,4>> &mpos,const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge){
+void tools::finite::ops::apply_mpos(class_finite_state & state,const std::list<Eigen::Tensor<Scalar,4>> & mpos,const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge){
     if (mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
@@ -124,7 +124,7 @@ void tools::finite::ops::apply_mpos(class_finite_state &state,const std::list<Ei
 }
 
 
-class_finite_state tools::finite::ops::get_parity_projected_state(const class_finite_state &state, const Eigen::MatrixXcd  paulimatrix, const int sign) {
+class_finite_state tools::finite::ops::get_parity_projected_state(const class_finite_state & state, const Eigen::MatrixXcd  & paulimatrix, int sign) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
     tools::log->trace("Generating parity projected state");
     class_finite_state state_projected = state;
@@ -138,7 +138,7 @@ class_finite_state tools::finite::ops::get_parity_projected_state(const class_fi
     return state_projected;
 }
 
-class_finite_state tools::finite::ops::get_closest_parity_state(const class_finite_state &state, const Eigen::MatrixXcd  paulimatrix) {
+class_finite_state tools::finite::ops::get_closest_parity_state(const class_finite_state &state, const Eigen::MatrixXcd & paulimatrix) {
     tools::log->trace("Finding closest projection");
     double measured_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
     if (measured_spin_component > 0){
@@ -148,7 +148,7 @@ class_finite_state tools::finite::ops::get_closest_parity_state(const class_fini
     }
 }
 
-class_finite_state tools::finite::ops::get_closest_parity_state(const class_finite_state &state, const std::string paulistring) {
+class_finite_state tools::finite::ops::get_closest_parity_state(const class_finite_state &state, std::string paulistring) {
     tools::log->trace("Finding closest projection");
     if      (paulistring == "sx"){return get_closest_parity_state(state,qm::spinOneHalf::sx);}
     else if (paulistring == "sy"){return get_closest_parity_state(state,qm::spinOneHalf::sy);}
@@ -165,20 +165,7 @@ class_finite_state tools::finite::ops::get_closest_parity_state(const class_fini
 }
 
 
-template<typename Scalar, auto rank>
-void throw_if_has_imaginary_part(const Eigen::Tensor<Scalar,rank> &tensor, double threshold = 1e-14) {
-    Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>> vector (tensor.data(),tensor.size());
-    if constexpr (std::is_same<Scalar, std::complex<double>>::value){
-        auto imagSum = vector.imag().cwiseAbs().sum();
-        if (imagSum > threshold){
-            std::cout << vector << std::endl;
-            throw std::runtime_error("Has imaginary part. Sum: " + std::to_string(imagSum));
-        }
-    }
-}
-
-
-double tools::finite::ops::overlap(const class_finite_state &state1, const class_finite_state &state2){
+double tools::finite::ops::overlap(const class_finite_state & state1, const class_finite_state & state2){
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
@@ -222,7 +209,7 @@ double tools::finite::ops::overlap(const class_finite_state &state1, const class
     return norm_chain;
 }
 
-double tools::finite::ops::expectation_value(const class_finite_state &state1, const class_finite_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>>  &mpos, Eigen::Tensor<std::complex<double>,3> Ledge, Eigen::Tensor<std::complex<double>,3> Redge){
+double tools::finite::ops::expectation_value(const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<std::complex<double>,4>>  & mpos, const Eigen::Tensor<std::complex<double>,3> & Ledge, const Eigen::Tensor<std::complex<double>,3> & Redge){
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
@@ -279,7 +266,7 @@ double tools::finite::ops::expectation_value(const class_finite_state &state1, c
     return energy_chain;
 }
 
-double tools::finite::ops::exp_sq_value(const class_finite_state &state1, const class_finite_state &state2,const std::list<Eigen::Tensor<std::complex<double>,4>>  &mpos, const Eigen::Tensor<std::complex<double>,4> Ledge, const Eigen::Tensor<std::complex<double>,4> Redge){
+double tools::finite::ops::exp_sq_value     (const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<std::complex<double>,4>>  & mpos, const Eigen::Tensor<std::complex<double>,4> & Ledge, const Eigen::Tensor<std::complex<double>,4> & Redge){
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");

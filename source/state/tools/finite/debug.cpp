@@ -12,29 +12,17 @@
 
 void tools::finite::debug::check_integrity(const class_finite_state &state)
 {
-    tools::log->info("Checking integrity of state");
+    tools::log->debug("Checking integrity of state");
     state.unset_measurements();
+
     try{
         check_integrity_of_mps(state);
-    }catch(std::exception & ex){
-        tools::finite::print::print_state(state) ;
-        throw std::runtime_error(fmt::format("Integrity check of MPS failed: {}", ex.what()));
-    }
-    try{
         check_integrity_of_mpo(state);
-    }catch(std::exception & ex){
-        tools::finite::print::print_state(state) ;
-        throw std::runtime_error(fmt::format("Integrity check of MPO failed: {}", ex.what()));
-    }
-    try {
-        tools::log->debug("Checking norms");
-        auto norm_chain = tools::finite::measure::norm(state);
-        if(std::abs(norm_chain - 1.0) > 1e-12) {
-            throw std::runtime_error(fmt::format("Norm of state too far from unity: {}",norm_chain));
-        }
     }
     catch(std::exception & ex){
-        throw std::runtime_error(fmt::format("Integrity check of norm failed: {}", ex.what()));
+        tools::finite::print::print_state(state) ;
+        tools::finite::debug::print_parity_properties(state) ;
+        throw std::runtime_error(fmt::format("Check failed: {}", ex.what()));
     }
     state.unset_measurements();
 }
@@ -42,7 +30,8 @@ void tools::finite::debug::check_integrity(const class_finite_state &state)
 
 
 void tools::finite::debug::check_integrity_of_mps(const class_finite_state &state){
-    {
+    try{
+
         tools::log->trace("Checking integrity of MPS");
         if(state.MPS_L.size() + state.MPS_R.size() != state.get_length() )
             throw std::runtime_error(fmt::format("Mismatch in MPS sizes: {} + {} != {}", state.MPS_L.size(), state.MPS_R.size(), state.get_length()));
@@ -94,156 +83,168 @@ void tools::finite::debug::check_integrity_of_mps(const class_finite_state &stat
 
             if(mps_here.get_spin_dim() != mpo_here.MPO().dimension(2))
                 throw std::runtime_error(fmt::format("Mismatch in MPS and MPO spin dimensions @ pos {}: {} != {}", pos, mps_here.get_spin_dim() , mpo_here.MPO().dimension(2)));
+        }
+
+        {
+            //Check left side of the state
+            auto mps_it  = state.MPS_L.begin();
+            auto mps_nx  = state.MPS_L.begin();
+            auto env_it  = state.ENV_L.begin();
+            auto env_nx  = state.ENV_L.begin();
+            auto env2_it = state.ENV2_L.begin();
+            auto mpo_it  = state.MPO_L.begin();
+            std::advance(mps_nx,1);
+            std::advance(env_nx,1);
+            int i = 0;
+            while(
+                mps_it  != state.MPS_L.end() and
+                mps_nx  != state.MPS_L.end() and
+                env_it  != state.ENV_L.end() and
+                env_nx  != state.ENV_L.end() and
+                env2_it != state.ENV2_L.end() and
+                mpo_it  != state.MPO_L.end()
+                )
+            {
+                if(mps_it->get_position() != env_it->get_position())
+                    throw std::runtime_error(fmt::format("Mismatch in MPS and ENV positions (left side) @ site {}: {} != {}", i, mps_it->get_position(), env_it->get_position()));
+
+                if(mps_it->get_position() != env_it->sites)
+                    throw std::runtime_error(fmt::format("Mismatch in MPS position and ENV size (left side) @ site {}: {} != {}", i, mps_it->get_position(), env_it->sites));
+
+                if(mps_it->get_chiL() != env_it->block.dimension(0))
+                    throw std::runtime_error(fmt::format("Mismatch in MPS and ENV dimensions (left side) @ site {}: {} != {}", i,mps_it->get_chiL() , env_it->block.dimension(0)));
+
+                if(env_nx->get_position() - env_it->get_position() != 1)
+                    throw std::runtime_error(fmt::format("Mismatch in adjacent ENV positions (left side) @ site {}: {} - {} != 1", i, env_nx->get_position(), env_it->get_position()));
+
+                if(env_it->block.dimension(2) != mpo_it->get()->MPO().dimension(0))
+                    throw std::runtime_error(fmt::format("Mismatch in ENV and MPO dimensions (left side) @ site {}: {} != {}", i,env_it->block.dimension(2), mpo_it->get()->MPO().dimension(0)));
 
 
+                if(env2_it->block.dimension(2) != mpo_it->get()->MPO().dimension(0))
+                    throw std::runtime_error(fmt::format("Mismatch in ENV2 and MPO dimensions (left side) @ site {}: {} != {}", i,env2_it->block.dimension(2), mpo_it->get()->MPO().dimension(0)));
 
+                if(env2_it->block.dimension(3) != mpo_it->get()->MPO().dimension(0))
+                    throw std::runtime_error(fmt::format("Mismatch in ENV2 and MPO dimensions (left side) @ site {}: {} != {}", i,env2_it->block.dimension(3) ,mpo_it->get()->MPO().dimension(0)));
+
+
+                if(env2_it->sites != env_it->sites)
+                    throw std::runtime_error(fmt::format("Mismatch in ENV2 position and ENV sites (left side) @ site {}: {} != {}", i,env2_it->sites != env_it->sites));
+
+                if(env2_it->get_position() != env_it->get_position())
+                    throw std::runtime_error(fmt::format("Mismatch in ENV2 position and ENV positions (left side) @ site {}: {} != {}", i,env2_it->get_position(), env_it->get_position()));
+
+                mps_it++;
+                mps_nx++;
+                env_it++;
+                env_nx++;
+                env2_it++;
+                mpo_it++;
+                i++;
+            }
+        }
+
+        {
+            //Check center
+            if(state.MPS_C.dimension(0) != state.MPS_L.back().get_chiR())
+                throw std::runtime_error(fmt::format("Mismatch in center bond matrix dimension: {} != {}",state.MPS_C.dimension(0) , state.MPS_L.back().get_chiR()));
+            if(state.MPS_C.dimension(0) != state.MPS_R.front().get_chiL())
+                throw std::runtime_error(fmt::format("Mismatch in center bond matrix dimension: {} != {}",state.MPS_C.dimension(0) , state.MPS_R.front().get_chiL()));
+        }
+
+        {
+            auto mps_it  = state.MPS_R.rbegin();
+            auto mps_nx  = state.MPS_R.rbegin();
+            auto env_it  = state.ENV_R.rbegin();
+            auto env_nx  = state.ENV_R.rbegin();
+            auto env2_it = state.ENV2_R.rbegin();
+            auto mpo_it  = state.MPO_R.rbegin();
+            std::advance(mps_nx,1);
+            std::advance(env_nx,1);
+            auto i = state.get_length()-1;
+            while(
+                mps_it  != state.MPS_R.rend() and
+                mps_nx  != state.MPS_R.rend() and
+                env_it  != state.ENV_R.rend() and
+                env_nx  != state.ENV_R.rend() and
+                env2_it != state.ENV2_R.rend() and
+                mpo_it  != state.MPO_R.rend())
+            {
+                if(mps_it->get_chiL() != mps_nx->get_chiR())
+                    throw std::runtime_error(fmt::format("Mismatch in adjacent MPS dimensions (right side) @ site {}: {} != {}", i,  mps_nx->get_chiR(), mps_it->get_chiL()));
+
+                if(mps_it->get_position() - mps_nx->get_position() != 1 )
+                    throw std::runtime_error(fmt::format("Mismatch in adjacent MPS positions (right side) @ site {}: {} - {} != 1", i, mps_it->get_position(), mps_nx->get_position()));
+
+                if(mps_it->get_position() != env_it->get_position())
+                    throw std::runtime_error(fmt::format("Mismatch in MPS and ENV positions (right side) @ site {}: {} != {}", i,  mps_it->get_position(), env_it->get_position()));
+
+                if(mps_it->get_position() != state.get_length() - (env_it->sites + 1))
+                    throw std::runtime_error(fmt::format("Mismatch in MPS position and ENV size + 1 (right side) @ site {}: {} != {}", i,  mps_it->get_position(), state.get_length() - (env_it->sites + 1)));
+
+                if(mps_it->get_position() != env_it->get_position())
+                    throw std::runtime_error(fmt::format("Mismatch in MPS position and ENV position (right side) @ site {}: {} != {}", i,  mps_it->get_position(), env_it->get_position()));
+
+                if(mps_it->get_chiR() != env_it->block.dimension(0))
+                    throw std::runtime_error(fmt::format("Mismatch in MPS and ENV dimensions (right side) @ site {}: {} != {}", i,  mps_it->get_chiR(), env_it->block.dimension(0)));
+
+                if(env_it->get_position() - env_nx->get_position() != 1)
+                    throw std::runtime_error(fmt::format("Mismatch in adjacent ENV positions (right side) @ site {}: {} - {} != 1", i, env_it->get_position(), env_nx->get_position()));
+
+                if(env2_it->sites != env_it->sites)
+                    throw std::runtime_error(fmt::format("Mismatch in ENV2 position and ENV sites (right side) @ site {}: {} != {}", i,  env2_it->sites, env_it->sites));
+
+                if(env2_it->get_position() != env_it->get_position())
+                    throw std::runtime_error(fmt::format("Mismatch in ENV2 position and ENV positions (right side) @ site {}: {} != {}", i,  env2_it->get_position(), env_it->get_position()));
+
+
+                if(env_it->block.dimension(2) != mpo_it->get()->MPO().dimension(1))
+                    throw std::runtime_error(fmt::format("Mismatch in ENV and MPO dimensions (right side) @ site {}: {} != {}", i,  env_it->block.dimension(2), mpo_it->get()->MPO().dimension(1)));
+
+                if(env2_it->block.dimension(2) != mpo_it->get()->MPO().dimension(1))
+                    throw std::runtime_error(fmt::format("Mismatch in ENV2 and MPO dimensions (right side) @ site {}: {} != {}", i,  env2_it->block.dimension(2), mpo_it->get()->MPO().dimension(1)));
+
+                if(env2_it->block.dimension(3) != mpo_it->get()->MPO().dimension(1))
+                    throw std::runtime_error(fmt::format("Mismatch in ENV2 and MPO dimensions (right side) @ site {}: {} != {}", i,  env2_it->block.dimension(3), mpo_it->get()->MPO().dimension(1)));
+
+
+                mps_it++;
+                mps_nx++;
+                env_it++;
+                env_nx++;
+                env2_it++;
+                mpo_it++;
+                i--;
+            }
         }
 
 
-        //Check left side of the state
-        auto mps_it  = state.MPS_L.begin();
-        auto mps_nx  = state.MPS_L.begin();
-        auto env_it  = state.ENV_L.begin();
-        auto env_nx  = state.ENV_L.begin();
-        auto env2_it = state.ENV2_L.begin();
-        auto mpo_it  = state.MPO_L.begin();
-        std::advance(mps_nx,1);
-        std::advance(env_nx,1);
-        int i = 0;
-        while(
-            mps_it  != state.MPS_L.end() and
-            mps_nx  != state.MPS_L.end() and
-            env_it  != state.ENV_L.end() and
-            env_nx  != state.ENV_L.end() and
-            env2_it != state.ENV2_L.end() and
-            mpo_it  != state.MPO_L.end()
-            )
-        {
-            if(mps_it->get_position() != env_it->get_position())
-                throw std::runtime_error(fmt::format("Mismatch in MPS and ENV positions (left side) @ site {}: {} != {}", i, mps_it->get_position(), env_it->get_position()));
-
-            if(mps_it->get_position() != env_it->sites)
-                throw std::runtime_error(fmt::format("Mismatch in MPS position and ENV size (left side) @ site {}: {} != {}", i, mps_it->get_position(), env_it->sites));
-
-            if(mps_it->get_chiL() != env_it->block.dimension(0))
-                throw std::runtime_error(fmt::format("Mismatch in MPS and ENV dimensions (left side) @ site {}: {} != {}", i,mps_it->get_chiL() , env_it->block.dimension(0)));
-
-            if(env_nx->get_position() - env_it->get_position() != 1)
-                throw std::runtime_error(fmt::format("Mismatch in adjacent ENV positions (left side) @ site {}: {} - {} != 1", i, env_nx->get_position(), env_it->get_position()));
-
-            if(env_it->block.dimension(2) != mpo_it->get()->MPO().dimension(0))
-                throw std::runtime_error(fmt::format("Mismatch in ENV and MPO dimensions (left side) @ site {}: {} != {}", i,env_it->block.dimension(2), mpo_it->get()->MPO().dimension(0)));
-
-
-            if(env2_it->block.dimension(2) != mpo_it->get()->MPO().dimension(0))
-                throw std::runtime_error(fmt::format("Mismatch in ENV2 and MPO dimensions (left side) @ site {}: {} != {}", i,env2_it->block.dimension(2), mpo_it->get()->MPO().dimension(0)));
-
-            if(env2_it->block.dimension(3) != mpo_it->get()->MPO().dimension(0))
-                throw std::runtime_error(fmt::format("Mismatch in ENV2 and MPO dimensions (left side) @ site {}: {} != {}", i,env2_it->block.dimension(3) ,mpo_it->get()->MPO().dimension(0)));
-
-
-            if(env2_it->sites != env_it->sites)
-                throw std::runtime_error(fmt::format("Mismatch in ENV2 position and ENV sites (left side) @ site {}: {} != {}", i,env2_it->sites != env_it->sites));
-
-            if(env2_it->get_position() != env_it->get_position())
-                throw std::runtime_error(fmt::format("Mismatch in ENV2 position and ENV positions (left side) @ site {}: {} != {}", i,env2_it->get_position(), env_it->get_position()));
-
-            mps_it++;
-            mps_nx++;
-            env_it++;
-            env_nx++;
-            env2_it++;
-            mpo_it++;
-            i++;
+        tools::log->trace("Checking norms");
+        auto norm_chain = tools::finite::measure::norm(state);
+        if(std::abs(norm_chain - 1.0) > 1e-12) {
+            throw std::runtime_error(fmt::format("Norm of state too far from unity: {}",norm_chain));
         }
     }
-
-    {
-        //Check center
-        if(state.MPS_C.dimension(0) != state.MPS_L.back().get_chiR())
-            throw std::runtime_error(fmt::format("Mismatch in center bond matrix dimension: {} != {}",state.MPS_C.dimension(0) , state.MPS_L.back().get_chiR()));
-        if(state.MPS_C.dimension(0) != state.MPS_R.front().get_chiL())
-            throw std::runtime_error(fmt::format("Mismatch in center bond matrix dimension: {} != {}",state.MPS_C.dimension(0) , state.MPS_R.front().get_chiL()));
-    }
-
-    {
-        auto mps_it  = state.MPS_R.rbegin();
-        auto mps_nx  = state.MPS_R.rbegin();
-        auto env_it  = state.ENV_R.rbegin();
-        auto env_nx  = state.ENV_R.rbegin();
-        auto env2_it = state.ENV2_R.rbegin();
-        auto mpo_it  = state.MPO_R.rbegin();
-        std::advance(mps_nx,1);
-        std::advance(env_nx,1);
-        auto i = state.get_length()-1;
-        while(
-            mps_it  != state.MPS_R.rend() and
-            mps_nx  != state.MPS_R.rend() and
-            env_it  != state.ENV_R.rend() and
-            env_nx  != state.ENV_R.rend() and
-            env2_it != state.ENV2_R.rend() and
-            mpo_it  != state.MPO_R.rend())
-        {
-            if(mps_it->get_chiL() != mps_nx->get_chiR())
-                throw std::runtime_error(fmt::format("Mismatch in adjacent MPS dimensions (right side) @ site {}: {} != {}", i,  mps_nx->get_chiR(), mps_it->get_chiL()));
-
-            if(mps_it->get_position() - mps_nx->get_position() != 1 )
-                throw std::runtime_error(fmt::format("Mismatch in adjacent MPS positions (right side) @ site {}: {} - {} != 1", i, mps_it->get_position(), mps_nx->get_position()));
-
-            if(mps_it->get_position() != env_it->get_position())
-                throw std::runtime_error(fmt::format("Mismatch in MPS and ENV positions (right side) @ site {}: {} != {}", i,  mps_it->get_position(), env_it->get_position()));
-
-            if(mps_it->get_position() != state.get_length() - (env_it->sites + 1))
-                throw std::runtime_error(fmt::format("Mismatch in MPS position and ENV size + 1 (right side) @ site {}: {} != {}", i,  mps_it->get_position(), state.get_length() - (env_it->sites + 1)));
-
-            if(mps_it->get_position() != env_it->get_position())
-                throw std::runtime_error(fmt::format("Mismatch in MPS position and ENV position (right side) @ site {}: {} != {}", i,  mps_it->get_position(), env_it->get_position()));
-
-            if(mps_it->get_chiR() != env_it->block.dimension(0))
-                throw std::runtime_error(fmt::format("Mismatch in MPS and ENV dimensions (right side) @ site {}: {} != {}", i,  mps_it->get_chiR(), env_it->block.dimension(0)));
-
-            if(env_it->get_position() - env_nx->get_position() != 1)
-                throw std::runtime_error(fmt::format("Mismatch in adjacent ENV positions (right side) @ site {}: {} - {} != 1", i, env_it->get_position(), env_nx->get_position()));
-
-            if(env2_it->sites != env_it->sites)
-                throw std::runtime_error(fmt::format("Mismatch in ENV2 position and ENV sites (right side) @ site {}: {} != {}", i,  env2_it->sites, env_it->sites));
-
-            if(env2_it->get_position() != env_it->get_position())
-                throw std::runtime_error(fmt::format("Mismatch in ENV2 position and ENV positions (right side) @ site {}: {} != {}", i,  env2_it->get_position(), env_it->get_position()));
-
-
-            if(env_it->block.dimension(2) != mpo_it->get()->MPO().dimension(1))
-                throw std::runtime_error(fmt::format("Mismatch in ENV and MPO dimensions (right side) @ site {}: {} != {}", i,  env_it->block.dimension(2), mpo_it->get()->MPO().dimension(1)));
-
-            if(env2_it->block.dimension(2) != mpo_it->get()->MPO().dimension(1))
-                throw std::runtime_error(fmt::format("Mismatch in ENV2 and MPO dimensions (right side) @ site {}: {} != {}", i,  env2_it->block.dimension(2), mpo_it->get()->MPO().dimension(1)));
-
-            if(env2_it->block.dimension(3) != mpo_it->get()->MPO().dimension(1))
-                throw std::runtime_error(fmt::format("Mismatch in ENV2 and MPO dimensions (right side) @ site {}: {} != {}", i,  env2_it->block.dimension(3), mpo_it->get()->MPO().dimension(1)));
-
-
-            mps_it++;
-            mps_nx++;
-            env_it++;
-            env_nx++;
-            env2_it++;
-            mpo_it++;
-            i--;
-        }
+    catch(std::exception &ex){
+        throw std::runtime_error(fmt::format("Integrity check of MPS failed: {}", ex.what()));
     }
     tools::log->trace("MPS OK");
 }
 
 
 void tools::finite::debug::check_integrity_of_mpo(const class_finite_state &state) {
-
-    for (auto &mpo : state.MPO_L){
-        auto site = mpo->get_position();
-        if (not mpo->all_mpo_parameters_have_been_set){throw std::runtime_error(fmt::format("All parameters have not been set on MPO_L site: {}" ,site));}
+    try{
+        for (auto &mpo : state.MPO_L){
+            auto site = mpo->get_position();
+            if (not mpo->all_mpo_parameters_have_been_set){throw std::runtime_error(fmt::format("All parameters have not been set on MPO_L site: {}" ,site));}
+        }
+        for (auto &mpo : state.MPO_R){
+            auto site = mpo->get_position();
+            if (not mpo->all_mpo_parameters_have_been_set){throw std::runtime_error(fmt::format("All parameters have not been set on MPO_R site: {}" ,site));}
+        }
     }
-    for (auto &mpo : state.MPO_R){
-        auto site = mpo->get_position();
-        if (not mpo->all_mpo_parameters_have_been_set){throw std::runtime_error(fmt::format("All parameters have not been set on MPO_R site: {}" ,site));}
+    catch(std::exception &ex){
+        throw std::runtime_error(fmt::format("Integrity check of MPO failed: {}", ex.what()));
     }
 }
 
@@ -260,122 +261,35 @@ void tools::finite::debug::print_parity_properties(const class_finite_state &sta
     tools::log->debug("\t<psi | sz | psi>                = {:0.16f}", sz);
 
     tools::log->debug("\tComputing parity projected states");
-    auto state_up_x = tools::finite::ops::get_parity_projected_state(state,qm::spinOneHalf::sx, 1);
-    auto state_dn_x = tools::finite::ops::get_parity_projected_state(state,qm::spinOneHalf::sx, -1);
-    auto state_up_y = tools::finite::ops::get_parity_projected_state(state,qm::spinOneHalf::sy, 1);
-    auto state_dn_y = tools::finite::ops::get_parity_projected_state(state,qm::spinOneHalf::sy, -1);
-    auto state_up_z = tools::finite::ops::get_parity_projected_state(state,qm::spinOneHalf::sz, 1);
-    auto state_dn_z = tools::finite::ops::get_parity_projected_state(state,qm::spinOneHalf::sz, -1);
+    auto state_sx = tools::finite::ops::get_closest_parity_state(state,"sx");
+    auto state_sy = tools::finite::ops::get_closest_parity_state(state,"sx");
+    auto state_sz = tools::finite::ops::get_closest_parity_state(state,"sx");
+
 
 
     tools::log->debug("\tMore spin components");
-    tools::log->debug("\t<psi_up_x | sx | psi_up_x>      = {:0.16f}", tools::finite::measure::spin_component(state_up_x,qm::spinOneHalf::sx));
-    tools::log->debug("\t<psi_up_x | sy | psi_up_x>      = {:0.16f}", tools::finite::measure::spin_component(state_up_x,qm::spinOneHalf::sy));
-    tools::log->debug("\t<psi_up_x | sz | psi_up_x>      = {:0.16f}", tools::finite::measure::spin_component(state_up_x,qm::spinOneHalf::sz));
-    tools::log->debug("\t<psi_dn_x | sx | psi_dn_x>      = {:0.16f}", tools::finite::measure::spin_component(state_dn_x,qm::spinOneHalf::sx));
-    tools::log->debug("\t<psi_dn_x | sy | psi_dn_x>      = {:0.16f}", tools::finite::measure::spin_component(state_dn_x,qm::spinOneHalf::sy));
-    tools::log->debug("\t<psi_dn_x | sz | psi_dn_x>      = {:0.16f}", tools::finite::measure::spin_component(state_dn_x,qm::spinOneHalf::sz));
-    tools::log->debug("\t<psi_up_y | sx | psi_up_y>      = {:0.16f}", tools::finite::measure::spin_component(state_up_y,qm::spinOneHalf::sx));
-    tools::log->debug("\t<psi_up_y | sy | psi_up_y>      = {:0.16f}", tools::finite::measure::spin_component(state_up_y,qm::spinOneHalf::sy));
-    tools::log->debug("\t<psi_up_y | sz | psi_up_y>      = {:0.16f}", tools::finite::measure::spin_component(state_up_y,qm::spinOneHalf::sz));
-    tools::log->debug("\t<psi_dn_y | sx | psi_dn_y>      = {:0.16f}", tools::finite::measure::spin_component(state_dn_y,qm::spinOneHalf::sx));
-    tools::log->debug("\t<psi_dn_y | sy | psi_dn_y>      = {:0.16f}", tools::finite::measure::spin_component(state_dn_y,qm::spinOneHalf::sy));
-    tools::log->debug("\t<psi_dn_y | sz | psi_dn_y>      = {:0.16f}", tools::finite::measure::spin_component(state_dn_y,qm::spinOneHalf::sz));
-    tools::log->debug("\t<psi_up_z | sx | psi_up_z>      = {:0.16f}", tools::finite::measure::spin_component(state_up_z,qm::spinOneHalf::sx));
-    tools::log->debug("\t<psi_up_z | sy | psi_up_z>      = {:0.16f}", tools::finite::measure::spin_component(state_up_z,qm::spinOneHalf::sy));
-    tools::log->debug("\t<psi_up_z | sz | psi_up_z>      = {:0.16f}", tools::finite::measure::spin_component(state_up_z,qm::spinOneHalf::sz));
-    tools::log->debug("\t<psi_dn_z | sx | psi_dn_z>      = {:0.16f}", tools::finite::measure::spin_component(state_dn_z,qm::spinOneHalf::sx));
-    tools::log->debug("\t<psi_dn_z | sy | psi_dn_z>      = {:0.16f}", tools::finite::measure::spin_component(state_dn_z,qm::spinOneHalf::sy));
-    tools::log->debug("\t<psi_dn_z | sz | psi_dn_z>      = {:0.16f}", tools::finite::measure::spin_component(state_dn_z,qm::spinOneHalf::sz));
+    tools::log->debug("\t<psi_sx | sx | psi_sx>      = {:0.16f}", tools::finite::measure::spin_component(state_sx,qm::spinOneHalf::sx));
+    tools::log->debug("\t<psi_sy | sy | psi_sy>      = {:0.16f}", tools::finite::measure::spin_component(state_sy,qm::spinOneHalf::sy));
+    tools::log->debug("\t<psi_sz | sz | psi_sz>      = {:0.16f}", tools::finite::measure::spin_component(state_sz,qm::spinOneHalf::sz));
+
 
 
     tools::log->debug("\tNormalization check");
     tools::log->debug("\tComputing overlaps");
-    tools::log->debug("\t<psi_up_x|psi_up_x>             = {:0.16f}", tools::finite::ops::overlap(state_up_x,state_up_x));
-    tools::log->debug("\t<psi_dn_x|psi_dn_x>             = {:0.16f}", tools::finite::ops::overlap(state_dn_x,state_dn_x));
-    tools::log->debug("\t<psi_up_y|psi_up_y>             = {:0.16f}", tools::finite::ops::overlap(state_up_y,state_up_y));
-    tools::log->debug("\t<psi_dn_y|psi_dn_y>             = {:0.16f}", tools::finite::ops::overlap(state_dn_y,state_dn_y));
-    tools::log->debug("\t<psi_up_z|psi_up_z>             = {:0.16f}", tools::finite::ops::overlap(state_up_z,state_up_z));
-    tools::log->debug("\t<psi_dn_z|psi_dn_z>             = {:0.16f}", tools::finite::ops::overlap(state_dn_z,state_dn_z));
+    tools::log->debug("\t<psi_sx|psi_sx>             = {:0.16f}", tools::finite::ops::overlap(state_sx,state_sx));
+    tools::log->debug("\t<psi_sy|psi_sy>             = {:0.16f}", tools::finite::ops::overlap(state_sy,state_sy));
+    tools::log->debug("\t<psi_sz|psi_sz>             = {:0.16f}", tools::finite::ops::overlap(state_sz,state_sz));
+
 
     tools::log->debug("\tOverlaps with original state");
-    tools::log->debug("\t<psi|psi_up_x>                  = {:0.16f}", tools::finite::ops::overlap(state,state_up_x));
-    tools::log->debug("\t<psi|psi_dn_x>                  = {:0.16f}", tools::finite::ops::overlap(state,state_dn_x));
-    tools::log->debug("\t<psi|psi_up_y>                  = {:0.16f}", tools::finite::ops::overlap(state,state_up_y));
-    tools::log->debug("\t<psi|psi_dn_y>                  = {:0.16f}", tools::finite::ops::overlap(state,state_dn_y));
-    tools::log->debug("\t<psi|psi_up_z>                  = {:0.16f}", tools::finite::ops::overlap(state,state_up_z));
-    tools::log->debug("\t<psi|psi_dn_z>                  = {:0.16f}", tools::finite::ops::overlap(state,state_dn_z));
+    tools::log->debug("\t<psi|psi_sx>                  = {:0.16f}", tools::finite::ops::overlap(state,state_sx));
+    tools::log->debug("\t<psi|psi_sy>                  = {:0.16f}", tools::finite::ops::overlap(state,state_sy));
+    tools::log->debug("\t<psi|psi_sz>                  = {:0.16f}", tools::finite::ops::overlap(state,state_sz));
 
-    tools::log->debug("\tOverlaps between up/down sectors");
-    tools::log->debug("\t<psi_dn_x|psi_up_x>             ={:0.16f}", tools::finite::ops::overlap(state_dn_x,state_up_x));
-    tools::log->debug("\t<psi_dn_y|psi_up_y>             ={:0.16f}", tools::finite::ops::overlap(state_dn_y,state_up_y));
-    tools::log->debug("\t<psi_dn_z|psi_up_z>             ={:0.16f}", tools::finite::ops::overlap(state_dn_z,state_up_z));
+
     tools::log->debug("\tOverlaps between different direction sectors");
-    tools::log->debug("\t<psi_up_x|psi_up_y>             = {:0.16f}" ,tools::finite::ops::overlap(state_up_x,state_up_y));
-    tools::log->debug("\t<psi_up_x|psi_up_z>             = {:0.16f}" ,tools::finite::ops::overlap(state_up_x,state_up_z));
-    tools::log->debug("\tGenerating single hamiltonian MPO list");
-
-    auto & Ledge = state.ENV_L.front().block;
-    auto & Redge = state.ENV_R.back().block ;
-    auto & Ledge2 = state.ENV2_L.front().block;
-    auto & Redge2 = state.ENV2_R.back().block ;
-
-    auto hamiltonian_mpos = tools::finite::ops::make_mpo_list(state.MPO_L,state.MPO_R);
-    tools::log->debug("Computing expectation values");
-    double energy      = tools::finite::ops::expectation_value(state     ,state     ,hamiltonian_mpos, Ledge,Redge);
-    double energy_up_x = tools::finite::ops::expectation_value(state_up_x,state_up_x,hamiltonian_mpos, Ledge,Redge);
-    double energy_dn_x = tools::finite::ops::expectation_value(state_dn_x,state_dn_x,hamiltonian_mpos, Ledge,Redge);
-    double energy_up_y = tools::finite::ops::expectation_value(state_up_y,state_up_y,hamiltonian_mpos, Ledge,Redge);
-    double energy_dn_y = tools::finite::ops::expectation_value(state_dn_y,state_dn_y,hamiltonian_mpos, Ledge,Redge);
-    double energy_up_z = tools::finite::ops::expectation_value(state_up_z,state_up_z,hamiltonian_mpos, Ledge,Redge);
-    double energy_dn_z = tools::finite::ops::expectation_value(state_dn_z,state_dn_z,hamiltonian_mpos, Ledge,Redge);
-    tools::log->debug("Computing variances");
-    double variance      = tools::finite::ops::exp_sq_value(state     ,state     ,hamiltonian_mpos, Ledge2,Redge2) - energy      * energy ;
-    double variance_up_x = tools::finite::ops::exp_sq_value(state_up_x,state_up_x,hamiltonian_mpos, Ledge2,Redge2) - energy_up_x * energy_up_x;
-    double variance_dn_x = tools::finite::ops::exp_sq_value(state_dn_x,state_dn_x,hamiltonian_mpos, Ledge2,Redge2) - energy_dn_x * energy_dn_x;
-    double variance_up_y = tools::finite::ops::exp_sq_value(state_up_y,state_up_y,hamiltonian_mpos, Ledge2,Redge2) - energy_up_y * energy_up_y;
-    double variance_dn_y = tools::finite::ops::exp_sq_value(state_dn_y,state_dn_y,hamiltonian_mpos, Ledge2,Redge2) - energy_dn_y * energy_dn_y;
-    double variance_up_z = tools::finite::ops::exp_sq_value(state_up_z,state_up_z,hamiltonian_mpos, Ledge2,Redge2) - energy_up_z * energy_up_z;
-    double variance_dn_z = tools::finite::ops::exp_sq_value(state_dn_z,state_dn_z,hamiltonian_mpos, Ledge2,Redge2) - energy_dn_z * energy_dn_z;
-
-    auto state_copy2 = state;
-    tools::finite::ops::apply_mpos(state_copy2,hamiltonian_mpos,Ledge,Redge);
-    double overlap_H = tools::finite::ops::overlap(state_copy2,state);
-    tools::log->debug("\tEnergy per site");
-    tools::log->debug("\t<psi     | H/L |psi     >       = {:0.16f}" ,  energy    /state.get_length());
-    tools::log->debug("\t<psi     | H/L  psi     >       = {:0.16f}" ,  overlap_H /state.get_length() );
-    tools::log->debug("\t<psi_up_x| H/L |psi_up_x>       = {:0.16f}" ,  energy_up_x / state.get_length());
-    tools::log->debug("\t<psi_dn_x| H/L |psi_dn_x>       = {:0.16f}" ,  energy_dn_x / state.get_length());
-    tools::log->debug("\t<psi_up_y| H/L |psi_up_y>       = {:0.16f}" ,  energy_up_y / state.get_length());
-    tools::log->debug("\t<psi_dn_y| H/L |psi_dn_y>       = {:0.16f}" ,  energy_dn_y / state.get_length());
-    tools::log->debug("\t<psi_up_z| H/L |psi_up_z>       = {:0.16f}" ,  energy_up_z / state.get_length());
-    tools::log->debug("\t<psi_dn_z| H/L |psi_dn_z>       = {:0.16f}" ,  energy_dn_z / state.get_length());
-
-    tools::log->debug("\tVariance per site");
-    tools::log->debug("\t<psi     | (H2-E2)/L |psi     > = {:0.16f} | log10 = {:0.16f}", variance / state.get_length()     , std::log10(variance / state.get_length())     );
-    tools::log->debug("\t<psi_up_x| (H2-E2)/L |psi_up_x> = {:0.16f} | log10 = {:0.16f}", variance_up_x / state.get_length(), std::log10(variance_up_x / state.get_length()));
-    tools::log->debug("\t<psi_dn_x| (H2-E2)/L |psi_dn_x> = {:0.16f} | log10 = {:0.16f}", variance_dn_x / state.get_length(), std::log10(variance_dn_x / state.get_length()));
-    tools::log->debug("\t<psi_up_y| (H2-E2)/L |psi_up_y> = {:0.16f} | log10 = {:0.16f}", variance_up_y / state.get_length(), std::log10(variance_up_y / state.get_length()));
-    tools::log->debug("\t<psi_dn_y| (H2-E2)/L |psi_dn_y> = {:0.16f} | log10 = {:0.16f}", variance_dn_y / state.get_length(), std::log10(variance_dn_y / state.get_length()));
-    tools::log->debug("\t<psi_up_z| (H2-E2)/L |psi_up_z> = {:0.16f} | log10 = {:0.16f}", variance_up_z / state.get_length(), std::log10(variance_up_z / state.get_length()));
-    tools::log->debug("\t<psi_dn_z| (H2-E2)/L |psi_dn_z> = {:0.16f} | log10 = {:0.16f}", variance_dn_z / state.get_length(), std::log10(variance_dn_z / state.get_length()));
-
-    tools::log->debug("\tMidchain entanglement entropies");
-    tools::log->debug("\tS(L/2) psi                      = {:0.16f}" ,  tools::finite::measure::entanglement_entropy_midchain(state     ));
-    tools::log->debug("\tS(L/2) psi_up_x                 = {:0.16f}" ,  tools::finite::measure::entanglement_entropy_midchain(state_up_x));
-    tools::log->debug("\tS(L/2) psi_dn_x                 = {:0.16f}" ,  tools::finite::measure::entanglement_entropy_midchain(state_dn_x));
-    tools::log->debug("\tS(L/2) psi_up_y                 = {:0.16f}" ,  tools::finite::measure::entanglement_entropy_midchain(state_up_y));
-    tools::log->debug("\tS(L/2) psi_dn_y                 = {:0.16f}" ,  tools::finite::measure::entanglement_entropy_midchain(state_dn_y));
-    tools::log->debug("\tS(L/2) psi_up_z                 = {:0.16f}" ,  tools::finite::measure::entanglement_entropy_midchain(state_up_z));
-    tools::log->debug("\tS(L/2) psi_dn_z                 = {:0.16f}" ,  tools::finite::measure::entanglement_entropy_midchain(state_dn_z));
-
-
-
-//    rebuild_environments(state_copy);
-//
-//    rebuild_superblock(state_copy, state);
-
-
+    tools::log->debug("\t<psi_sx|psi_sy>             = {:0.16f}" ,tools::finite::ops::overlap(state_sx,state_sy));
+    tools::log->debug("\t<psi_sx|psi_sz>             = {:0.16f}" ,tools::finite::ops::overlap(state_sx,state_sz));
 }
 
 

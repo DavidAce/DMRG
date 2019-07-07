@@ -13,6 +13,7 @@
 #include <LBFGS.h>
 #include <simulation/nmspc_settings.h>
 #include <general/nmspc_random_numbers.h>
+#include <spdlog/fmt/bundled/ranges.h>
 
 using namespace tools::finite::opt;
 using namespace tools::finite::opt::internals;
@@ -21,16 +22,21 @@ template<typename T> using MatrixType = Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dy
 
 
 std::vector<int> tools::finite::opt::internals::generate_size_list(size_t shape){
-    std::vector<int> nev_list;
-    int max_nev = std::max(std::min(8,(int)shape),(int)shape/8);
-    max_nev = std::min(max_nev,256);
+    int max_nev ;
+    if      (shape <= 512)  {max_nev = shape/4;}
+    else if (shape > 512  and shape <= 1024) {max_nev = 128;}
+    else if (shape > 1024 and shape <= 2048) {max_nev = 64;}
+    else if (shape > 2048 and shape <= 4096) {max_nev = 32;}
+    else if (shape > 4096 and shape <= 8192) {max_nev = 16;}
+    else                                     {max_nev = 8;}
 
     int min_nev = std::min(std::min(8,(int)shape),max_nev);
 
+    std::vector<int> nev_list = {min_nev};
     int tmp_nev = min_nev;
-    while (tmp_nev <= max_nev){
+    while (tmp_nev < max_nev){
+        tmp_nev = std::min(4*tmp_nev, max_nev);
         nev_list.push_back(tmp_nev);
-        tmp_nev *= 4;
     }
     return nev_list;
 }
@@ -177,7 +183,7 @@ find_subspace(const class_finite_state & state){
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
     std::vector<reports::eig_tuple> eig_log;
-    double energy_target = tools::finite::measure::multidmrg::energy(state,theta);
+    double energy_target = tools::finite::measure::multisite::energy(state,theta);
 
     // If theta is small enough you can afford full diag.
     if   ((size_t)theta.size() <= settings::precision::MaxSizeFullDiag) {

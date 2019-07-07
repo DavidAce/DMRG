@@ -91,7 +91,8 @@ endif()
 
 message("Using microarchitechture: ${CXX_MARCH}")
 set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
-set(DEBUG_OPTIONS       -Wpedantic -Wextra -O0 -g3 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
+set(DEBUG_OPTIONS            -Wpedantic -Wextra -O0 -g3 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
+set(RELWITHDEBINFO_OPTIONS   -Wpedantic -Wextra -O3 -g3 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
 set(RELEASE_OPTIONS     -DNDEBUG -O3)
 set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g  -ftime-report)
 
@@ -158,6 +159,8 @@ endif()
 message(STATUS "COMMON CXX flags:  ${COMMON_OPTIONS} ${CMAKE_CXX_FLAGS}")
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     message(STATUS "RELEASE CXX flags: ${RELEASE_OPTIONS}")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "RELWITHDEBINFO CXX flags: ${RELWITHDEBINFO_OPTIONS}")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "DEBUG CXX flags: ${DEBUG_OPTIONS}")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Profile")
@@ -282,10 +285,11 @@ endif()
 ###########################################
 ###  Apply RELEASE/DEBUG compile flags  ###
 ###########################################
-target_compile_options (${PROJECT_NAME} PRIVATE ${COMMON_OPTIONS})                                   ### common options
-target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### debug build options
-target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
-target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_OPTIONS}>")           ### Profiling build options
+target_compile_options (${PROJECT_NAME} PRIVATE ${COMMON_OPTIONS})                                          ### common options
+target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")                      ### debug build options
+target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")                  ### Release build options
+target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_OPTIONS}>")    ### Release build with debug info options
+target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_OPTIONS}>")                  ### Profiling build options
 
 set(PTHREAD_LIBRARY "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive")                           # This is needed with static linking!
 add_library(pthread INTERFACE)

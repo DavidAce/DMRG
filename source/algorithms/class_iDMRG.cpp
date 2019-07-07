@@ -64,12 +64,8 @@ void class_iDMRG::single_DMRG_step(std::string ritz){
  */
     log->trace("Starting infinite DMRG step");
     t_sim.tic();
-    t_opt.tic();
     Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::find_ground_state(*state,ritz);
-    t_opt.toc();
-    t_svd.tic();
     tools::infinite::opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
-    t_svd.toc();
     state->unset_measurements();
     t_sim.toc();
     sim_status.wall_time = t_tot.get_age();

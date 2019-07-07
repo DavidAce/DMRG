@@ -117,7 +117,7 @@ void tools::finite::mps::rebuild_environments(class_finite_state &state){
 
         }
     }
-//    state.set_positions();
+
 }
 
 

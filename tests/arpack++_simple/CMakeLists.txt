@@ -20,8 +20,10 @@ add_dependencies(TEST-arpack++_simple arpack++)
 
 set_target_properties  (TEST-arpack++_simple PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(TEST-arpack++_simple PRIVATE cxx_std_17)
-target_compile_options (TEST-arpack++_simple PRIVATE ${COMMON_OPTIONS})                                   ### Common options
-target_compile_options (TEST-arpack++_simple PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
-target_compile_options (TEST-arpack++_simple PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
+target_compile_options (TEST-arpack++_simple PRIVATE ${COMMON_OPTIONS})                                          ### Common options
+target_compile_options (TEST-arpack++_simple PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")                      ### Debug build options
+target_compile_options (TEST-arpack++_simple PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")                  ### Release build options
+target_compile_options (TEST-arpack++_simple PRIVATE "$<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_OPTIONS}>")    ### Release build with debug info options
+
 add_test(NAME arpack++_simple_test COMMAND TEST-arpack++_simple)
 

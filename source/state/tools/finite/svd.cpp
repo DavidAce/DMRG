@@ -82,8 +82,17 @@ void tools::finite::mps::normalize(class_finite_state & state){
 }
 
 
-void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,3> &theta, class_finite_state & state, long chi_, double SVDThreshold){
+void tools::finite::opt::truncate_theta(Eigen::Tensor<class_finite_state::Scalar,3> &theta, class_finite_state & state, long chi_, double SVDThreshold){
     state.unset_measurements();
+    if (state.active_sites.empty())throw std::runtime_error("truncate_theta: No active sites to truncate");
+    if (theta.size() == 0)throw std::runtime_error("truncate_theta: Theta is empty");
+    auto fullnorm  = tools::finite::measure::norm(state);
+    auto thetanorm = std::abs(Eigen::Map<Eigen::VectorXcd>(theta.data(),theta.size()).norm());
+    if(std::abs(fullnorm  - 1.0) > 1e-12) throw std::runtime_error(fmt::format("Norm before truncation too far from unity: {:.16f}",fullnorm));
+    if(std::abs(thetanorm - 1.0) > 1e-12) throw std::runtime_error(fmt::format("Norm of theta too far from unity: {:.16f}",thetanorm));
+
+
+
     if (state.get_direction() == 1){
         tools::finite::opt::truncate_right(theta,state,chi_,SVDThreshold);
     }else{
@@ -100,17 +109,6 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
     SVD.setThreshold(SVDThreshold);
     using Scalar = class_finite_state::Scalar;
     using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
-    auto theta_map = Eigen::Map<VectorType>(theta.data(),theta.size());
-    auto fullnorm  = tools::finite::measure::norm(state);
-    auto thetanorm = std::abs(theta_map.norm());
-    if(std::abs(fullnorm - 1.0) > 1e-12) {
-        throw std::runtime_error(fmt::format("Norm before truncation too far from unity: {:.16f}",fullnorm));
-    }
-    if( std::abs(thetanorm - 1.0) > 1e-12) {
-        throw std::runtime_error(fmt::format("Norm of theta too far from unity: {:.16f}",thetanorm));
-    }
-
-
     Eigen::Tensor<Scalar,4> theta4;
     Eigen::Tensor<Scalar,3> U;
     Eigen::Tensor<Scalar,3> V = theta;
@@ -137,8 +135,6 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
         if(active_sites.size() > 2){
             Eigen::Tensor<Scalar,3> temp = Textra::asDiagonal(S).contract(V, Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
             V = temp;
-//            V = temp * Scalar(norm);
-
         }
         active_sites.pop_front();
 
@@ -184,17 +180,6 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
     SVD.setThreshold(SVDThreshold);
     using Scalar = class_finite_state::Scalar;
     using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
-    auto theta_map = Eigen::Map<VectorType>(theta.data(),theta.size());
-    auto fullnorm  = tools::finite::measure::norm(state);
-    auto thetanorm = std::abs(theta_map.norm());
-    if(std::abs(fullnorm - 1.0) > 1e-12) {
-        throw std::runtime_error(fmt::format("Norm before truncation too far from unity: {:.16f}",fullnorm));
-    }
-    if( std::abs(thetanorm - 1.0) > 1e-12) {
-        throw std::runtime_error(fmt::format("Norm of theta too far from unity: {:.16f}",thetanorm));
-    }
-
-
     Eigen::Tensor<Scalar,4> theta4;
     Eigen::Tensor<Scalar,3> U = theta;
     Eigen::Tensor<Scalar,3> V;

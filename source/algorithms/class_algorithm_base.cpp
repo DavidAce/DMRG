@@ -16,19 +16,7 @@
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <algorithms/table_types.h>
-
 #include <h5pp/h5pp.h>
-/*! \brief Prints the content of a vector nicely */
-template<typename T>
-std::ostream &operator<<(std::ostream &out, const std::list<T> &v) {
-    if (!v.empty()) {
-        out << "[ ";
-        std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, " "));
-        out << "]";
-    }
-    return out;
-}
-
 
 namespace s = settings;
 using namespace std;
@@ -70,14 +58,16 @@ bool class_algorithm_base::check_saturation_using_slope(
         int iter,
         int rate,
         double tolerance,
-        double &slope){
-    //Check convergence based on slope.
-    log->trace("Checking saturation using slope");
+        double &slope)
+/*! \brief Checks convergence based on slope.
+ * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.
+ * If the measurement happened less than rate iterations ago, return.
+ * Otherwise, compute the slope of the last 25% of the measurements that have been made.
+ * The slope here is defined as the relative slope, i.e. 1/<y> * dy/dx.
+ */
 
+{
 
-    // We want to check once every "rate" steps
-    // Get the sim_state.iteration number when you last measured.
-    // If the measurement happened less than rate iterations ago, return.
     int last_measurement = X_vec.empty() ? 0 : X_vec.back();
     if (iter - last_measurement < rate){return false;}
 
@@ -115,11 +105,11 @@ bool class_algorithm_base::check_saturation_using_slope(
 
     }
 
-    slope = std::abs(numerator / denominator);
+    slope = std::abs(numerator / denominator) / avgY;
+    slope = std::isnan(slope) ? 0.0 : slope;
     //Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
-    double relative_slope     = slope / avgY;
-    bool has_saturated = false;
-    if (relative_slope < tolerance){
+    bool has_saturated;
+    if (slope < tolerance){
         B_vec.back() = true;
         has_saturated = true;
     }else{
@@ -127,12 +117,11 @@ bool class_algorithm_base::check_saturation_using_slope(
         has_saturated = false;
     }
     log->debug("Slope details:");
-    log->debug(" -- change per step = {}              | log₁₀ = {}", slope, std::log10(slope));
-    log->debug(" -- relative_slope  = {} ", relative_slope);
+    log->debug(" -- relative slope  = {} %", slope);
     log->debug(" -- tolerance       = {} ", tolerance);
     log->debug(" -- avgY            = {} ", avgY);
     log->debug(" -- has saturated   = {} ", has_saturated);
-    log->debug(" -- check from      = {}              | {} ", check_from, X_vec.size());
+    log->debug(" -- check from      = {} of {}", check_from, X_vec.size());
     return has_saturated;
 }
 
@@ -160,12 +149,10 @@ void class_algorithm_base::update_bond_dimension(){
 
 
 
-void class_algorithm_base::store_algorithm_state_to_file(){
+void class_algorithm_base::store_simulation_status_to_file(){
     if (settings::hdf5::storage_level < StorageLevel::LIGHT){return;}
     log->trace("Storing simulation state to file");
-    t_sto.tic();
     tools::common::io::write_algorithm_state(sim_status, *h5pp_file, sim_name);
-    t_sto.toc();
 }
 
 
@@ -177,24 +164,13 @@ void class_algorithm_base::store_profiling_deltas(bool force) {
     }
 
     log->trace("Storing profiling deltas");
-    t_sto.tic();
-    table_profiling->append_record(
-            sim_status.iteration,
-            t_tot.get_last_time_interval(),
-            t_opt.get_last_time_interval(),
-            t_sim.get_last_time_interval(),
-            t_svd.get_last_time_interval(),
-            t_env.get_last_time_interval(),
-            t_evo.get_last_time_interval(),
-            t_udt.get_last_time_interval(),
-            t_sto.get_last_time_interval(),
-            t_ste.get_last_time_interval(),
-            t_prt.get_last_time_interval(),
-            t_obs.get_last_time_interval(),
-            t_mps.get_last_time_interval(),
-            t_con.get_last_time_interval()
-    );
-    t_sto.toc();
+//    table_profiling->append_record(
+//            sim_status.iteration,
+//            t_tot.get_last_time_interval(),
+//            t_sim.get_last_time_interval(),
+//            t_prt.get_last_time_interval(),
+//            t_con.get_last_time_interval()
+//    );
 }
 
 void class_algorithm_base::store_profiling_totals(bool force) {
@@ -205,22 +181,13 @@ void class_algorithm_base::store_profiling_totals(bool force) {
     }
 
     log->trace("Storing profiling totals");
-    table_profiling->append_record(
-            sim_status.iteration,
-            t_tot.get_measured_time(),
-            t_opt.get_measured_time(),
-            t_sim.get_measured_time(),
-            t_svd.get_measured_time(),
-            t_env.get_measured_time(),
-            t_evo.get_measured_time(),
-            t_udt.get_measured_time(),
-            t_sto.get_measured_time(),
-            t_ste.get_measured_time(),
-            t_prt.get_measured_time(),
-            t_obs.get_measured_time(),
-            t_mps.get_measured_time(),
-            t_con.get_measured_time()
-    );
+//    table_profiling->append_record(
+//            sim_status.iteration,
+//            t_tot.get_measured_time(),
+//            t_sim.get_measured_time(),
+//            t_prt.get_measured_time(),
+//            t_con.get_measured_time()
+//    );
 
 }
 
@@ -473,17 +440,19 @@ double class_algorithm_base::process_memory_in_mb(std::string name){
 void class_algorithm_base::set_profiling_labels() {
     using namespace settings::profiling;
     t_tot.set_properties(true, precision,"+Total Time              ");
-    t_sto.set_properties(on,   precision,"↳ Store to file          ");
-    t_ste.set_properties(on,   precision,"↳ finite state storage   ");
     t_prt.set_properties(on,   precision,"↳ Printing to console    ");
-    t_obs.set_properties(on,   precision,"↳ Computing observables  ");
+    t_con.set_properties(on,   precision,"↳ Convergence checks     ");
     t_sim.set_properties(on,   precision,"↳+Simulation             ");
-    t_evo.set_properties(on,   precision,"↳ Time Evolution         ");
-    t_opt.set_properties(on,   precision,"↳+Optimize MPS           ");
-    t_eig.set_properties(on,   precision," ↳ Eigenvalue solver     ");
-    t_ham.set_properties(on,   precision," ↳ Build Hamiltonian     ");
-    t_svd.set_properties(on,   precision,"↳ SVD Truncation         ");
-    t_udt.set_properties(on,   precision,"↳ Update Timestep        ");
-    t_env.set_properties(on,   precision,"↳ Update Environments    ");
-    t_con.set_properties(on,   precision,"↳ Check Convergence      ");
+//    t_obs.set_properties(on,   precision,"↳ Computing observables  ");
+
+//    t_sto.set_properties(on,   precision,"↳ Store to file          ");
+//    t_ste.set_properties(on,   precision,"↳ finite state storage   ");
+
+//    t_evo.set_properties(on,   precision,"↳ Time Evolution         ");
+//    t_opt.set_properties(on,   precision,"↳+Optimize MPS           ");
+//    t_eig.set_properties(on,   precision," ↳ Eigenvalue solver     ");
+//    t_ham.set_properties(on,   precision," ↳ Build Hamiltonian     ");
+//    t_svd.set_properties(on,   precision,"↳ SVD Truncation         ");
+//    t_udt.set_properties(on,   precision,"↳ Update Timestep        ");
+//    t_env.set_properties(on,   precision,"↳ Update Environments    ");
 }
