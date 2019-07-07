@@ -5,7 +5,7 @@
 #include <algorithms/class_algorithm_launcher.h>
 #include <state/class_infinite_state.h>
 #include <state/class_finite_state.h>
-#include <io/class_hdf5_table_buffer2.h>
+#include <io/class_hdf5_log_buffer.h>
 #include <algorithms/class_iDMRG.h>
 #include <algorithms/class_fDMRG.h>
 #include <algorithms/class_xDMRG.h>

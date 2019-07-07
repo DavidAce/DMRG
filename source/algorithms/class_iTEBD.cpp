@@ -3,7 +3,7 @@
 //
 
 #include <iomanip>
-#include <io/class_hdf5_table_buffer2.h>
+#include <io/class_hdf5_log_buffer.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_infinite_state.h>
 #include <state/class_mps_2site.h>
@@ -21,7 +21,7 @@ using namespace Textra;
 class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_infinite(std::move(h5ppFile_),"iTEBD", SimulationType::iTEBD) {
 //    initialize_constants();
-//    table_itebd = std::make_unique<class_hdf5_table<class_table_tebd>>(h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
+    log_tebd = std::make_unique<class_hdf5_log<class_log_tebd>>(h5pp_file, sim_name + "/logs", "measurements", sim_name);
     sim_status.delta_t      = settings::itebd::delta_t0;
 //    initialize_superblock(settings::model::initial_state);
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -47,8 +47,10 @@ void class_iTEBD::run_simulation()    {
     while(sim_status.iteration < settings::itebd::max_steps and not sim_status.simulation_has_converged) {
         single_TEBD_step(sim_status.chi_temp);
         sim_status.phys_time += sim_status.delta_t;
-//        store_table_entry_progress();
-        store_profiling_deltas();
+        write_measurements();
+        write_state();
+        write_status();
+        write_logs();
         print_status_update();
         check_convergence();
         sim_status.iteration++;
@@ -111,13 +113,13 @@ void class_iTEBD::check_convergence(){
 }
 
 
-//void class_iTEBD::store_table_entry_progress(bool force){
+//void class_iTEBD::store_log_entry_progress(bool force){
 //    if (not force){
-//        if (math::mod(sim_status.iteration, settings::itebd::store_freq) != 0) {return;}
+//        if (math::mod(sim_status.iteration, settings::itebd::write_freq) != 0) {return;}
 //    }
 //    compute_observables();
 //    t_sto.tic();
-//    table_itebd->append_record(
+//    log_itebd->append_record(
 //            sim_status.iteration,
 //            state->measurements.bond_dimension.value(),
 //            settings::itebd::chi_max,
@@ -136,10 +138,22 @@ void class_iTEBD::check_convergence(){
 //    t_sto.toc();
 //}
 
+void class_iTEBD::write_logs(bool force){
+    if(not force){
+        if (not settings::hdf5::save_logs){return;}
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
+    }
+    log_sim_status->append_record(sim_status);
+//    log_profiling->append_record();
+//    log_tebd->append_record();
+}
+
+
 bool   class_iTEBD::sim_on()    {return settings::itebd::on;}
 long   class_iTEBD::chi_max()   {return settings::itebd::chi_max;}
 size_t class_iTEBD::num_sites() {return 2u;}
-size_t class_iTEBD::store_freq(){return settings::itebd::store_freq;}
+size_t class_iTEBD::write_freq(){return settings::itebd::write_freq;}
 size_t class_iTEBD::print_freq(){return settings::itebd::print_freq;}
 bool   class_iTEBD::chi_grow()  {return settings::itebd::chi_grow;}
 

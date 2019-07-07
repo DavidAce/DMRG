@@ -5,7 +5,7 @@
 #include "class_algorithm_infinite.h"
 #include <state/class_infinite_state.h>
 #include <state/tools/nmspc_tools.h>
-#include <io/class_hdf5_table_buffer2.h>
+#include <io/class_hdf5_log_buffer.h>
 #include <math/nmspc_math.h>
 #include <h5pp/h5pp.h>
 
@@ -17,10 +17,6 @@ class_algorithm_infinite::class_algorithm_infinite(
         )
     : class_algorithm_base(std::move(h5ppFile_),sim_name, sim_type)
 {
-    tools::infinite::profile::init_profiling();
-    table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(h5pp_file, sim_name + "/profiling", "profiling", sim_name);
-
-    table_dmrg      = std::make_unique<class_hdf5_table<class_table_dmrg>>(h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
     state      = std::make_unique<class_infinite_state>(sim_type,sim_name);
 }
 
@@ -137,7 +133,7 @@ void class_algorithm_infinite::check_convergence_variance_mom(double threshold,d
 }
 
 void class_algorithm_infinite::check_convergence_entg_entropy(double slope_threshold) {
-    //Based on the the slope of entanglement middle_entanglement_entropy
+    //Based on the the slope of entanglement entanglement_entropy_midchain
     // This one is cheap to compute.
     log->debug("Checking convergence of entanglement");
 
@@ -154,26 +150,41 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
     sim_status.entanglement_has_converged = sim_status.entanglement_has_saturated;
 }
 
-void class_algorithm_infinite::store_state_and_measurements_to_file(bool force){
+void class_algorithm_infinite::write_measurements(bool force){
     if(not force){
-        if (math::mod(sim_status.iteration, store_freq()) != 0) {return;}
-        if (store_freq() == 0){return;}
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (write_freq() == 0){return;}
     }
-    log->trace("Storing storing mps to file");
-    tools::infinite::io::write_all_superblock(*state, *h5pp_file, sim_name);
+    log->trace("Writing all measurements to file");
+    state->unset_measurements();
+    compute_observables();
+    h5pp_file->writeDataset(false, sim_name + "/simOK");
+    tools::infinite::io::write_all_measurements(*state, *h5pp_file, sim_name);
+    h5pp_file->writeDataset(true, sim_name + "/simOK");
+}
+
+void class_algorithm_infinite::write_state(bool force){
+    if(not force){
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (write_freq() == 0){return;}
+        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
+    }
+    log->trace("Writing state to file");
+    h5pp_file->writeDataset(false, sim_name + "/simOK");
+    tools::infinite::io::write_all_state(*state, *h5pp_file, sim_name);
+    h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
 
 
-
-//void class_algorithm_infinite::store_table_entry_progress(bool force){
+//void class_algorithm_infinite::store_log_entry_progress(bool force){
 //    if (not force){
-//        if (math::mod(sim_status.iteration, settings::idmrg::store_freq) != 0) {return;}
+//        if (math::mod(sim_status.iteration, settings::idmrg::write_freq) != 0) {return;}
 //    }
 //    compute_observables();
 //    using namespace tools::infinite::measure;
 //    t_sto.tic();
-//    table_dmrg->append_record(
+//    log_dmrg->append_record(
 //            sim_status.iteration,
 //            state->measurements.length.value(),
 //            sim_status.iteration,

@@ -7,8 +7,6 @@
 
 #include <algorithms/class_algorithm_base.h>
 class class_finite_state;
-class class_table_finite_chain;
-class class_table_dmrg;
 
 
 class class_algorithm_finite: public class_algorithm_base {
@@ -24,8 +22,6 @@ public:
 
     //MPS
     std::unique_ptr<class_finite_state>    state;
-    std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_dmrg;
-    std::unique_ptr<class_hdf5_table<class_table_finite_chain>> table_dmrg_chain;
 
 
     size_t min_saturation_length          = 0;
@@ -39,18 +35,12 @@ public:
     virtual bool store_wave_function()               = 0;
 
     void move_center_point();
-    void store_table_entry_site_state(bool force = false);
-    void store_chain_entry_to_file(bool force = false);
-    void initialize_chain();
-
-
-
     void run()                                                              final;
     void compute_observables()                                              final;
     void clear_saturation_status()                                          override;
     void reset_to_random_state(const std::string parity)                    final;
-    void store_state_and_measurements_to_file(bool force = false)           final;
-//    void store_table_entry_progress(bool force = false)                     final;
+    void write_measurements(bool force = false)                             final;
+    void write_state(bool force = false)                                    final;
     void print_status_update()                                              final;
     void print_status_full()                                                final;
     void print_profiling()                                                  final;

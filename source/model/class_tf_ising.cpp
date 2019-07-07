@@ -145,7 +145,7 @@ void class_tf_ising::print_parameter_names() const {
             << std::setw(16) << std::left << "J"
             << std::setw(16) << std::left << "g"
             << std::setw(16) << std::left << "r"
-            << std::setw(16) << std::left << "lambda"
+            << std::setw(16) << std::left << "w"
             << std::setw(16) << std::left << "e"
             << std::setw(16) << std::left << "d"
             << std::endl;

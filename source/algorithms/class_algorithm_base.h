@@ -14,9 +14,11 @@
 #include <general/class_tic_toc.h>
 #include <simulation/nmspc_settings.h>
 #include <simulation/class_simulation_status.h>
-class class_hdf5_file;
-template <typename table_type> class class_hdf5_table;
-class class_table_profiling;
+
+
+template <typename log_type> class class_hdf5_log;
+class class_log_profiling;
+class class_log_simulation_status;
 namespace h5pp{class File;}
 namespace spdlog{class logger;}
 
@@ -33,8 +35,9 @@ public:
     enum class StopReason {CONVERGED, SATURATED, MAX_STEPS} stop_reason;
     void set_profiling_labels ();
 
-    std::shared_ptr<h5pp::File>                               h5pp_file;
-    std::unique_ptr<class_hdf5_table<class_table_profiling>>  table_profiling;
+    std::shared_ptr<h5pp::File>                                  h5pp_file;
+    std::unique_ptr<class_hdf5_log<class_log_profiling>>          log_profiling;
+    std::unique_ptr<class_hdf5_log<class_log_simulation_status>>  log_sim_status;
 
     std::string             sim_name;
     SimulationType          sim_type;
@@ -49,12 +52,13 @@ public:
     virtual void   run()                                                                                      = 0;
     virtual void   compute_observables()                                                                      = 0;
     virtual void   check_convergence()                                                                        = 0;
-    virtual void   store_state_and_measurements_to_file(bool force = false)                                   = 0;
-//    virtual void   store_table_entry_progress(bool force = false)                                             = 0;
+    virtual void   write_measurements(bool force = false)                                                     = 0;
+    virtual void   write_state       (bool force = false)                                                     = 0;
+    virtual void   write_logs        (bool force = false)                                                     = 0;
     virtual bool   sim_on()                                                                                   = 0;
     virtual long   chi_max()                                                                                  = 0;
     virtual size_t num_sites()                                                                                = 0;
-    virtual size_t store_freq()                                                                               = 0;
+    virtual size_t write_freq()                                                                               = 0;
     virtual size_t print_freq()                                                                               = 0;
     virtual bool   chi_grow()                                                                                 = 0;
     virtual void   print_status_update()                                                                      = 0;
@@ -66,13 +70,13 @@ public:
 
 
     //common functions
-    void store_simulation_status_to_file();
+    void write_status(bool force = false);
     void update_bond_dimension();
     double process_memory_in_mb(std::string name);
 
     // Profiling
-    void store_profiling_deltas(bool force = false);
-    void store_profiling_totals(bool force = false);
+//    void store_profiling_deltas(bool force = false);
+//    void store_profiling_totals(bool force = false);
 
     class_tic_toc t_tot;
     class_tic_toc t_sim;

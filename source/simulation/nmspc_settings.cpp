@@ -17,9 +17,8 @@ void settings::load_from_file(class_settings_reader &indata){
     input::input_filename                    = indata.get_input_filename();
     input::input_file                        = indata.get_input_file();
     model::model_type                        = indata.find_parameter<std::string>("model::model_type"                          , model::model_type);
-    model::initial_state                     = indata.find_parameter<std::string>("model::initial_state"                       , model::initial_state);
     model::seed_init                         = indata.find_parameter<int>        ("model::seed_init"                           , model::seed_init);
-    model::symmetry                          = indata.find_parameter<std::string>("model::symmetry"                            , model::symmetry);
+    model::initial_sector                    = indata.find_parameter<std::string>("model::initial_sector"                      , model::initial_sector);
     model::tf_ising::J                       = indata.find_parameter<double>     ("model::tf_ising::J"                         , model::tf_ising::J);
     model::tf_ising::g                       = indata.find_parameter<double>     ("model::tf_ising::g"                         , model::tf_ising::g);
     model::tf_ising::w                       = indata.find_parameter<double>     ("model::tf_ising::w"                         , model::tf_ising::w);
@@ -52,7 +51,7 @@ void settings::load_from_file(class_settings_reader &indata){
         idmrg::chi_max                  = indata.find_parameter<long>   ("idmrg::chi_max"    , idmrg::chi_max);
         idmrg::chi_grow                 = indata.find_parameter<bool>   ("idmrg::chi_grow"   , idmrg::chi_grow);
         idmrg::print_freq               = indata.find_parameter<int>    ("idmrg::print_freq" , idmrg::print_freq);
-        idmrg::store_freq               = indata.find_parameter<int>    ("idmrg::store_freq" , idmrg::store_freq);
+        idmrg::write_freq               = indata.find_parameter<int>    ("idmrg::write_freq" , idmrg::write_freq);
     }
 
     //Parameters controlling finite-DMRG
@@ -64,7 +63,7 @@ void settings::load_from_file(class_settings_reader &indata){
         fdmrg::chi_max            = indata.find_parameter<int>    ("fdmrg::chi_max"      , 8);
         fdmrg::chi_grow           = indata.find_parameter<bool>   ("fdmrg::chi_grow"     , fdmrg::chi_grow);
         fdmrg::print_freq         = indata.find_parameter<int>    ("fdmrg::print_freq "  , fdmrg::print_freq);
-        fdmrg::store_freq         = indata.find_parameter<int>    ("fdmrg::store_freq "  , fdmrg::store_freq);
+        fdmrg::write_freq         = indata.find_parameter<int>    ("fdmrg::write_freq "  , fdmrg::write_freq);
         fdmrg::store_wavefn       = indata.find_parameter<bool>   ("fdmrg::store_wavefn" , fdmrg::store_wavefn);
 
     }
@@ -78,7 +77,7 @@ void settings::load_from_file(class_settings_reader &indata){
         xdmrg::chi_max                  = indata.find_parameter<int>    ("xdmrg::chi_max"                , xdmrg::chi_max);
         xdmrg::chi_grow                 = indata.find_parameter<bool>   ("xdmrg::chi_grow"               , xdmrg::chi_grow);
         xdmrg::print_freq               = indata.find_parameter<int>    ("xdmrg::print_freq "            , xdmrg::print_freq);
-        xdmrg::store_freq               = indata.find_parameter<int>    ("xdmrg::store_freq "            , xdmrg::store_freq);
+        xdmrg::write_freq               = indata.find_parameter<int>    ("xdmrg::write_freq "            , xdmrg::write_freq);
         xdmrg::store_wavefn             = indata.find_parameter<bool>   ("xdmrg::store_wavefn"           , xdmrg::store_wavefn);
         xdmrg::energy_density_target    = indata.find_parameter<double> ("xdmrg::energy_density_target"  , xdmrg::energy_density_target);
         xdmrg::energy_density_window    = indata.find_parameter<double> ("xdmrg::energy_density_window"  , xdmrg::energy_density_window);
@@ -95,19 +94,17 @@ void settings::load_from_file(class_settings_reader &indata){
         itebd::chi_max            = indata.find_parameter<long>   ("itebd::chi_max"     , itebd::chi_max  );
         itebd::chi_grow           = indata.find_parameter<bool>   ("itebd::chi_grow"    , itebd::chi_grow);
         itebd::print_freq         = indata.find_parameter<int>    ("itebd::print_freq"  , itebd::print_freq);
-        itebd::store_freq         = indata.find_parameter<int>    ("itebd::store_freq"  , itebd::store_freq);
+        itebd::write_freq         = indata.find_parameter<int>    ("itebd::write_freq"  , itebd::write_freq);
     }
 
     //Save data_struct to hdf5
-//    hdf5::save_to_file             = indata.find_parameter<bool>   ("hdf5::save_to_file"            , hdf5::save_to_file           );
-    hdf5::save_progress            = indata.find_parameter<bool>   ("hdf5::save_progress"           , hdf5::save_progress          );
+    hdf5::save_logs                = indata.find_parameter<bool>   ("hdf5::save_logs"               , hdf5::save_logs          );
+    hdf5::save_profiling           = indata.find_parameter<bool>   ("hdf5::save_profiling"          , hdf5::save_profiling        );
     hdf5::output_filename          = indata.find_parameter<string> ("hdf5::output_filename"         , hdf5::output_filename);
     hdf5::access_mode              = indata.find_parameter<string> ("hdf5::access_mode"             , hdf5::access_mode);
     hdf5::create_mode              = indata.find_parameter<string> ("hdf5::create_mode"             , hdf5::create_mode);
-//    hdf5::full_storage             = indata.find_parameter<bool>   ("hdf5::full_storage"            , hdf5::full_storage           );
     int storageLevelRead           = indata.find_parameter<int>    ("hdf5::storage_level"           , 2       );
     hdf5::storage_level            = static_cast<StorageLevel>     (storageLevelRead );
-    hdf5::store_profiling          = indata.find_parameter<bool>   ("hdf5::store_profiling"         , hdf5::store_profiling        );
 
     //Profiling
     profiling::on                  = indata.find_parameter<bool>   ("profiling::on"        , profiling::on        );

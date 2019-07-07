@@ -6,7 +6,7 @@
 #define DMRG_CLASS_ALGORITHM_INFINITE_H
 #include <algorithms/class_algorithm_base.h>
 
-class class_table_dmrg;
+class class_log_dmrg;
 class class_infinite_state;
 
 class class_algorithm_infinite: public class_algorithm_base {
@@ -18,7 +18,6 @@ public:
             std::string sim_name,
             SimulationType sim_type
     );
-    std::unique_ptr<class_hdf5_table<class_table_dmrg>> table_dmrg;
     std::shared_ptr<class_infinite_state> state;
 
 
@@ -33,8 +32,8 @@ public:
     void compute_observables()                                          final;
     void clear_saturation_status()                                      override;
     void reset_to_random_state(const std::string parity)                final;
-    void store_state_and_measurements_to_file(bool force = false)       final;
-//    void store_table_entry_progress(bool force = false)                 final;
+    void write_measurements(bool force = false)                        final;
+    void write_state(bool force = false)                        final;
     void print_status_update()                                          final;
     void print_status_full()                                            final;
     void print_profiling()                                              final;

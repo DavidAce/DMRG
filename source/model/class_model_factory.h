@@ -20,7 +20,7 @@ public:
         mpo->set_hamiltonian(args...);
         return mpo;
     }
-//    static std::unique_ptr<class_hamiltonian_h5table_base> create_table(std::string model_type_str);
+//    static std::unique_ptr<class_hamiltonian_h5log_base> create_table(std::string model_type_str);
     static std::shared_ptr<class_model_base>         clone(std::shared_ptr<class_model_base> other);
 };
 
