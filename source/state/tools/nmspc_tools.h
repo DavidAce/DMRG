@@ -213,7 +213,7 @@ namespace tools{
         }
 
         namespace io{
-            extern void write_all_superblock               (const class_infinite_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_all_state(const class_infinite_state &state, h5pp::File &h5ppFile, std::string sim_name);
             extern void write_2site_mps                    (const class_infinite_state & state, h5pp::File & h5ppFile, std::string sim_name);
             extern void write_2site_mpo                    (const class_infinite_state & state, h5pp::File & h5ppFile, std::string sim_name);
             extern void write_2site_env                    (const class_infinite_state & state, h5pp::File & h5ppFile, std::string sim_name);
@@ -259,7 +259,8 @@ namespace tools{
 
         namespace io {
             extern void
-            write_algorithm_state(const class_simulation_status &sim_status, h5pp::File &h5ppFile, std::string sim_name);
+            write_simulation_status(const class_simulation_status &sim_status, h5pp::File &h5ppFile,
+                                    std::string sim_name);
             extern class_simulation_status
             load_sim_status_from_hdf5(const h5pp::File &h5ppFile, std::string sim_name);
 

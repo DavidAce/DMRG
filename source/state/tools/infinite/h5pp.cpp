@@ -10,8 +10,8 @@
 #include <model/class_model_base.h>
 #include <h5pp/h5pp.h>
 
-void tools::infinite::io::write_all_superblock(const class_infinite_state &state, h5pp::File & h5ppFile,
-                                                     std::string sim_name){
+void tools::infinite::io::write_all_state(const class_infinite_state &state, h5pp::File &h5ppFile,
+                                          std::string sim_name){
     if(state.has_been_written){return;}
 
 
@@ -32,8 +32,7 @@ void tools::infinite::io::write_all_superblock(const class_infinite_state &state
     if (settings::hdf5::storage_level >= StorageLevel::FULL) {
     }
 
-
-        state.has_been_written = true;
+    state.has_been_written = true;
 }
 
 
@@ -94,7 +93,7 @@ void tools::infinite::io::write_all_measurements  (const class_infinite_state & 
     h5ppFile.writeDataset(state.measurements.energy_variance_per_site_mpo.value(), sim_name + "/measurements/2site/energy_variance_per_site");
     h5ppFile.writeDataset(state.measurements.energy_variance_per_site_ham.value(), sim_name + "/measurements/2site/energy_variance_per_site_ham");
     h5ppFile.writeDataset(state.measurements.energy_variance_per_site_mom.value(), sim_name + "/measurements/2site/energy_variance_per_site_mom");
-    h5ppFile.writeDataset(state.measurements.current_entanglement_entropy.value(), sim_name + "/measurements/2site/middle_entanglement_entropy");
+    h5ppFile.writeDataset(state.measurements.current_entanglement_entropy.value(), sim_name + "/measurements/2site/entanglement_entropy_midchain");
 }
 
 void tools::infinite::io::load_from_hdf5    ([[maybe_unused]] const h5pp::File & h5ppFile, [[maybe_unused]] class_infinite_state & state,[[maybe_unused]] class_simulation_status &sim_status,[[maybe_unused]] std::string sim_name){

@@ -4,7 +4,7 @@
 
 #include <iomanip>
 #include <h5pp/h5pp.h>
-#include <io/class_hdf5_table_buffer2.h>
+#include <io/class_hdf5_log_buffer.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_infinite_state.h>
 #include <state/tools/nmspc_tools.h>
@@ -16,9 +16,7 @@ using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     : class_algorithm_infinite(std::move(h5ppFile_),"iDMRG", SimulationType::iDMRG) {
-
-//    initialize_superblock(settings::model::initial_state);
-
+    log_dmrg       = std::make_unique<class_hdf5_log<class_log_dmrg>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
 }
 
 
@@ -29,9 +27,11 @@ void class_iDMRG::run_simulation() {
     t_tot.tic();
     while(true){
         single_DMRG_step("SR");
+        write_measurements();
+        write_state();
+        write_status();
+        write_logs();
         print_status_update();
-//        store_table_entry_progress();
-        store_profiling_deltas();
         check_convergence();
 
         // It's important not to perform the last swap.
@@ -96,12 +96,22 @@ void class_iDMRG::check_convergence(){
 
 
 
+void class_iDMRG::write_logs(bool force){
+    if(not force){
+        if (not settings::hdf5::save_logs){return;}
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
+    }
+    log_sim_status->append_record(sim_status);
+//    log_profiling->append_record();
+//    log_dmrg->append_record();
 
+}
 
 bool   class_iDMRG::sim_on()   {return settings::idmrg::on;}
 long   class_iDMRG::chi_max()   {return settings::idmrg::chi_max;}
 size_t class_iDMRG::num_sites() {return 2u;}
-size_t class_iDMRG::store_freq(){return settings::idmrg::store_freq;}
+size_t class_iDMRG::write_freq(){return settings::idmrg::write_freq;}
 size_t class_iDMRG::print_freq(){return settings::idmrg::print_freq;}
 bool   class_iDMRG::chi_grow()  {return settings::idmrg::chi_grow;}
 

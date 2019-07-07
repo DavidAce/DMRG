@@ -7,6 +7,13 @@
 
 void class_simulation_status::clear(){*this = class_simulation_status();}
 
+//void class_simulation_status::get_all() {
+//
+//    return std::array
+//
+//
+//}
+
 
 std::ostream & operator << (std::ostream& os, const class_simulation_status & sim_status){
     return os

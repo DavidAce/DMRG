@@ -11,7 +11,7 @@
 #include <iomanip>
 #include "class_model_base.h"
 
-template<typename table_type> class class_hdf5_table;
+template<typename log_type> class class_hdf5_log;
 class class_selfdual_tf_rf_ising_table;
 
 class class_selfdual_tf_rf_ising : public class_model_base {

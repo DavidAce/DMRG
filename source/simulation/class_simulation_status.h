@@ -8,9 +8,12 @@
 #include <memory>
 #include <string>
 #include <iostream>
+#include <vector>
+#include <array>
+#include <hdf5.h>
+#include <hdf5_hl.h>
 
-class class_simulation_status{
-public:
+struct status_data{
     // common variables
     size_t iteration                      = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the state.
     size_t step                           = 0; //In fdmrg and xdmrg: how many individual moves along the state.
@@ -46,9 +49,13 @@ public:
     size_t variance_mpo_saturated_for     = 0;
     size_t variance_ham_saturated_for     = 0;
     size_t variance_mom_saturated_for     = 0;
+};
 
+class class_simulation_status : public status_data{
+public:
 
     void clear();
+//    void get_all();
     friend std::ostream& operator <<(std::ostream& os, const class_simulation_status & sim_status);
 
 };

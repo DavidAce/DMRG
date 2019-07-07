@@ -32,10 +32,9 @@ namespace settings {
     }
     //Parameters for the model Hamiltonian
     namespace model {
-        inline std::string  initial_state  = "tf_ising";        /*!< Choose initial state of the MPS: {upup, updown, GHZ(upup+downdown), W(updown+downup), rps (random product state), random_chi (random state with bond dimension chi, only for iDMRG!)} "cat" or "random". Default "rps". */
-        inline std::string  model_type     = "rps";             /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising} above*/
+        inline std::string  model_type     = "tf_ising";        /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising} above*/
         inline int          seed_init      = 1;                 /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
-        inline std::string  symmetry       = "sx";              /*!< Initialize in parity symmetry sector: {sx,sy,sz,random,none} */
+        inline std::string  initial_sector = "sx";              /*!< Initialize in parity symmetry sector: {sx,sy,sz,random,none} */
 
 
         //Parameters for the transverse-field Ising model
@@ -86,7 +85,7 @@ namespace settings {
         inline long chi_max      = 8;                              /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool chi_grow     = true;                           /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         inline size_t print_freq = 1000;                           /*!< Print frequency for console output. (0 = off). */
-        inline size_t store_freq = 100;                            /*!< Store frequency,for output file buffer. (0 = off). */
+        inline size_t write_freq = 100;                            /*!< Write frequency,for output file buffer. (0 = off). */
 
     }
     //Parameters controlling fDMRG
@@ -98,7 +97,7 @@ namespace settings {
         inline long     chi_max      = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_grow     = true;                         /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         inline size_t   print_freq   = 100;                          /*!< Print frequency for console output. In units of sweeps. (0 = off). */
-        inline size_t   store_freq   = 100;                          /*!< Store frequency,for output file buffer. In units of sweeps. (0 = off). */
+        inline size_t   write_freq   = 100;                          /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
         inline bool     store_wavefn = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
     }
 
@@ -111,7 +110,7 @@ namespace settings {
         inline long     chi_max                 = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_grow                = true;             /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         inline size_t   print_freq              = 1;                /*!< Print frequency for console output. In units of sweeps. (0 = off). */
-        inline size_t   store_freq              = 1;                /*!< Store frequency,for output file buffer. In units of sweeps. (0 = off). */
+        inline size_t   write_freq              = 1;                /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
         inline bool     store_wavefn            = false;            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
         inline double   energy_density_target   = 0.5;              /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
         inline double   energy_density_window   = 0.05;             /*!< Accept states inside of energy_target +- energy_window. */
@@ -127,17 +126,17 @@ namespace settings {
         inline long     chi_max      = 8;                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_grow     = true;                     /*!< Whether to increase chi slowly up to chi_max or go up to chi_max directly. */
         inline size_t   print_freq   = 5000;                     /*!< Print frequency for console output. (0 = off).*/
-        inline size_t   store_freq   = 100;                      /*!< Store frequency,for output file buffer. (0 = off). */
+        inline size_t   write_freq   = 100;                      /*!< Write frequency,for output file buffer. (0 = off). */
 
     }
 
     namespace hdf5 {
-        inline bool         save_progress        = true;                         /*!< If true, saves the simulation data periodically */
-        inline std::string  access_mode          = "output/default.h5";          /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
-        inline std::string  create_mode          = "READWRITE";                  /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
-        inline std::string  output_filename      = "RENAME" ;                    /*!< Name of the output HDF5 file relative to the execution point  */
+        inline bool         save_logs            = true;                         /*!< If true, saves the history of the simulation in log files, not just the end results  (only enabled on storage level NORMAL and FULL.) */
+        inline bool         save_profiling       = true;                         /*!< Whether to save profiling information to file. (only enabled on storage level NORMAL and FULL.) */
+        inline std::string  access_mode          = "READWRITE" ;                 /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
+        inline std::string  create_mode          = "RENAME";                     /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
+        inline std::string  output_filename      = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
         inline StorageLevel storage_level        = StorageLevel::NORMAL;         /*!< Sets the storage level: choose "0=NONE,1=LIGHT,2=NORMAL,3=FULL */
-        inline bool         store_profiling      = true;                         /*!< Whether to store profiling information to file. */
     }
     //Profiling
     namespace profiling {

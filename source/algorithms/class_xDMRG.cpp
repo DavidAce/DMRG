@@ -4,7 +4,7 @@
 
 
 #include <iomanip>
-#include <io/class_hdf5_table_buffer2.h>
+#include <io/class_hdf5_log_buffer.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_infinite_state.h>
 #include <state/class_mps_2site.h>
@@ -32,6 +32,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_finite(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG, settings::xdmrg::num_sites) {
     log->trace("Constructing class_xDMRG");
     settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(size_t)(std::log2(chi_max())/2));
+    log_dmrg       = std::make_unique<class_hdf5_log<class_log_dmrg>>        (h5pp_file, sim_name + "/logs", "measurements", sim_name);
 }
 
 
@@ -53,11 +54,10 @@ void class_xDMRG::run_simulation()    {
     log->info("Starting {} simulation", sim_name);
     while(true) {
         single_DMRG_step();
-//        store_table_entry_progress();
-        store_table_entry_site_state();
-        store_profiling_totals();
-        store_state_and_measurements_to_file();
-
+        write_measurements();
+        write_state();
+        write_status();
+        write_logs();
         print_status_update();
         check_convergence();
 
@@ -117,9 +117,8 @@ void class_xDMRG::single_DMRG_step()
     mps::rebuild_environments(*state);
     debug::check_integrity(*state);
     tools::log->debug("Variance accurate check after  xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
-
+    sim_status.energy_dens        = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     state->unset_measurements();
-
     t_sim.toc();
     sim_status.wall_time = t_tot.get_age();
     sim_status.simu_time = t_sim.get_age();
@@ -154,7 +153,7 @@ void class_xDMRG::check_convergence(){
         sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
         int counter = 0;
         while(outside_of_window){
-            reset_to_random_state(settings::model::symmetry);
+            reset_to_random_state(settings::model::initial_sector);
             sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
             outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
             counter++;
@@ -196,8 +195,8 @@ void class_xDMRG::check_convergence(){
         and not outside_of_window
         and not projected_during_saturation)
     {
-        log->info("Projecting to {} due to saturation", settings::model::symmetry);
-        *state = tools::finite::ops::get_closest_parity_state(*state,settings::model::symmetry);
+        log->info("Projecting to {} due to saturation", settings::model::initial_sector);
+        *state = tools::finite::ops::get_closest_parity_state(*state,settings::model::initial_sector);
         projected_during_saturation = true;
     }
 
@@ -206,9 +205,6 @@ void class_xDMRG::check_convergence(){
     t_con.toc();
     t_sim.toc();
 }
-
-
-
 
 void class_xDMRG::find_energy_range() {
     log->trace("Finding energy range");
@@ -231,8 +227,7 @@ void class_xDMRG::find_energy_range() {
         sim_status.iteration = state->get_sweeps();
 
     }
-    compute_observables();
-    sim_status.energy_min = state->measurements.energy_per_site.value();
+    sim_status.energy_min = tools::finite::measure::energy_per_site(*state);
 
     reset_to_random_state("sx");
     // Find energy maximum
@@ -279,12 +274,21 @@ void class_xDMRG::find_energy_range() {
     log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counterB );
 }
 
-
+void class_xDMRG::write_logs(bool force){
+    if(not force){
+        if (not settings::hdf5::save_logs){return;}
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
+    }
+    log_sim_status->append_record(sim_status);
+//    log_profiling->append_record();
+//    log_dmrg->append_record();
+}
 
 bool   class_xDMRG::sim_on()    {return settings::xdmrg::on;}
 long   class_xDMRG::chi_max()   {return settings::xdmrg::chi_max;}
 size_t class_xDMRG::num_sites() {return settings::xdmrg::num_sites;}
-size_t class_xDMRG::store_freq(){return settings::xdmrg::store_freq;}
+size_t class_xDMRG::write_freq(){return settings::xdmrg::write_freq;}
 size_t class_xDMRG::print_freq(){return settings::xdmrg::print_freq;}
 bool   class_xDMRG::chi_grow()  {return settings::xdmrg::chi_grow;}
 bool   class_xDMRG::store_wave_function()  {return settings::fdmrg::store_wavefn;}

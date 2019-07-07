@@ -7,7 +7,7 @@
 #include <h5pp/h5pp.h>
 #include <state/tools/nmspc_tools.h>
 #include <state/class_finite_state.h>
-#include <io/class_hdf5_table_buffer2.h>
+#include <io/class_hdf5_log_buffer.h>
 #include <math/nmspc_math.h>
 #include <iomanip>
 #include <spdlog/fmt/bundled/ranges.h>
@@ -17,20 +17,14 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 
 {
     log->trace("Constructing class_algorithm_finite");
-    tools::finite::profile::init_profiling();
-    table_profiling = std::make_unique<class_hdf5_table<class_table_profiling>>(h5pp_file, sim_name + "/measurements", "profiling", sim_name);
-
-
     state = std::make_unique<class_finite_state>();
     tools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
     tools::finite::mps::initialize(*state, num_sites);
     tools::finite::mpo::randomize(*state);
     tools::finite::mps::randomize(*state);
-    tools::finite::mps::project_to_closest_parity(*state, settings::model::symmetry);
+    tools::finite::mps::project_to_closest_parity(*state, settings::model::initial_sector);
     tools::finite::debug::check_integrity(*state);
 
-    table_dmrg       = std::make_unique<class_hdf5_table<class_table_dmrg>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
-    table_dmrg_chain = std::make_unique<class_hdf5_table<class_table_finite_chain>>(h5pp_file, sim_name + "/measurements", "simulation_progress_full_chain", sim_name);
 
     min_saturation_length = 1;
     max_saturation_length = 4;
@@ -126,25 +120,6 @@ void class_algorithm_finite::run_preprocessing(){
 
 }
 
-void class_algorithm_finite::run_postprocessing(){
-    log->info("Running {} postprocessing",sim_name);
-    tools::finite::debug::check_integrity(*state);
-    state->unset_measurements();
-    state->do_all_measurements();
-    print_status_update();
-    tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
-    tools::finite::io::write_all_state(*state,*h5pp_file, sim_name);
-    tools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
-
-    //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
-    if(store_wave_function()){
-        h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");
-    }
-    print_status_full();
-    print_profiling();
-    h5pp_file->writeDataset(true, sim_name + "/simOK");
-    log->info("Finished {} postprocessing",sim_name);
-}
 
 
 
@@ -160,6 +135,26 @@ void class_algorithm_finite::single_DMRG_step(std::string ritz){
     t_sim.toc();
     sim_status.wall_time = t_tot.get_age();
     sim_status.simu_time = t_sim.get_age();
+}
+
+void class_algorithm_finite::run_postprocessing(){
+    log->info("Running {} postprocessing",sim_name);
+    tools::finite::debug::check_integrity(*state);
+    state->unset_measurements();
+    state->do_all_measurements();
+    print_status_update();
+    tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
+    tools::finite::io::write_all_state(*state,*h5pp_file, sim_name);
+    tools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::initial_sector);
+
+    //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
+    if(store_wave_function()){
+        h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");
+    }
+    print_status_full();
+    print_profiling();
+    h5pp_file->writeDataset(true, sim_name + "/simOK");
+    log->info("Finished {} postprocessing",sim_name);
 }
 
 
@@ -215,7 +210,7 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
 
 
 void class_algorithm_finite::check_convergence_entg_entropy(double slope_threshold) {
-    //Based on the the slope of entanglement middle_entanglement_entropy
+    //Based on the the slope of entanglement entanglement_entropy_midchain
     // This one is cheap to compute.
     if (not state->position_is_any_edge()){return;}
     log->debug("Checking convergence of entanglement");
@@ -272,85 +267,42 @@ void class_algorithm_finite::compute_observables(){
     log->trace("Starting all measurements on current mps");
     t_sim.tic();
     state->do_all_measurements();
-    sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     t_sim.toc();
 }
 
 
-void class_algorithm_finite::store_state_and_measurements_to_file(bool force){
+void class_algorithm_finite::write_measurements(bool force){
     if(not force){
-        if (not settings::hdf5::save_progress){return;}
-        if (math::mod(sim_status.iteration, store_freq()) != 0) {return;}
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (not state->position_is_any_edge()) {return;}
-        if (settings::xdmrg::store_freq == 0){return;}
+        if (write_freq() == 0){return;}
         if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
     }
+    log->trace("Writing all measurements to file");
     state->unset_measurements();
     compute_observables();
-    log->trace("Writing all measurements to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");
     tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
-    tools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
+    h5pp_file->writeDataset(true, sim_name + "/simOK");
+}
+
+void class_algorithm_finite::write_state(bool force){
+    if(not force){
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (not state->position_is_any_edge()) {return;}
+        if (write_freq() == 0){return;}
+        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
+    }
+    log->trace("Writing state to file");
+    h5pp_file->writeDataset(false, sim_name + "/simOK");
+    tools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::initial_sector);
     //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
     if(store_wave_function()){
         h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");
     }
     tools::finite::io::write_all_state(*state, *h5pp_file, sim_name);
-    store_simulation_status_to_file();
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
-
-
-
-void class_algorithm_finite::store_table_entry_site_state(bool force){
-    if (not force) {
-        if (math::mod(sim_status.iteration, store_freq()) != 0) { return; }
-        if (store_freq() == 0) { return; }
-//        if (not state->position_is_the_middle()) { return; }
-        if (settings::hdf5::storage_level < StorageLevel::FULL){return;}
-    }
-    log->trace("Storing chain_entry to file");
-    compute_observables();
-    table_dmrg_chain->append_record(
-            sim_status.iteration,
-            state->get_length(),
-            state->get_position(),
-            state->measurements.bond_dimension_midchain.value(),
-            state->measurements.energy_per_site.value(),
-            state->measurements.entanglement_entropy_midchain.value(),
-            state->truncation_error[state->get_position()]
-    );
-}
-
-
-//
-//void class_algorithm_finite::store_table_entry_progress(bool force){
-//    if(not force) {
-//        if (math::mod(sim_status.step, store_freq()) != 0) { return; }
-//        if (store_freq()) { return; }
-//        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
-//
-//    }
-//    compute_observables();
-//    log->trace("Storing table entry to file");
-//    t_sto.tic();
-////    table_dmrg->append_record(
-////            sim_status.step,
-////            state->get_length(),
-////            state->get_position(),
-////            state->measurements.bond_dimension_current.value(),
-////            settings::xdmrg::chi_max,
-////            state->measurements.energy_per_site.value(),
-////            sim_status.energy_min,
-////            sim_status.energy_max,
-////            sim_status.energy_target,
-////            state->measurements.energy_variance_per_site.value(),
-////            state->measurements.entanglement_entropy_midchain.value(),
-////            state->truncation_error[state->get_position()],
-////            t_tot.get_age());
-//    t_sto.toc();
-//}
-
 
 void class_algorithm_finite::print_profiling(){
     if (settings::profiling::on) {
@@ -370,7 +322,6 @@ void class_algorithm_finite::print_profiling_sim(class_tic_toc &t_parent){
         t_con.print_time_w_percent(t_parent);
     }
 }
-
 
 void class_algorithm_finite::print_status_update() {
     if (math::mod(sim_status.iteration, print_freq()) != 0) {return;}

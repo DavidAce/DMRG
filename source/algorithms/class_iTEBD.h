@@ -5,7 +5,7 @@
 #ifndef DMRG_CLASS_IMAGINARY_TEBD_H
 #define DMRG_CLASS_IMAGINARY_TEBD_H
 #include "class_algorithm_infinite.h"
-class class_table_tebd;
+class class_log_tebd;
 
 /*!
  * \brief Class that runs the imaginary TEBD algorithm.
@@ -15,25 +15,26 @@ public:
     using class_algorithm_infinite::class_algorithm_infinite;
     explicit class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_);
 
-//    std::unique_ptr<class_hdf5_table<class_table_tebd>> table_itebd;
+    std::unique_ptr<class_hdf5_log<class_log_tebd>> log_tebd;
     std::vector<Eigen::Tensor<Scalar,4>> unitary_time_evolving_operators;
     Eigen::MatrixXcd h_evn;
     Eigen::MatrixXcd h_odd;
 
 
 
-    void run_simulation()                                                 override;
-    void run_preprocessing()                                              override;
-    void run_postprocessing()                                             override;
+    void run_simulation()                                   final;
+    void run_preprocessing()                                final;
+    void run_postprocessing()                               final;
     void single_TEBD_step(long chi_max);
     void check_convergence_time_step();
-    void check_convergence()                                              override;
-    bool   sim_on ()                                                      override;
-    long   chi_max()                                                      override;
-    size_t num_sites()                                                    override;
-    size_t store_freq()                                                   override;
-    size_t print_freq()                                                   override;
-    bool   chi_grow()                                                     override;
+    void check_convergence()                                final;
+    void write_logs(bool force = false)                     final;
+    bool   sim_on ()                                        final;
+    long   chi_max()                                        final;
+    size_t num_sites()                                      final;
+    size_t write_freq()                                     final;
+    size_t print_freq()                                     final;
+    bool   chi_grow()                                       final;
 };
 
 

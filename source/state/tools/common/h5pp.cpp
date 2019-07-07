@@ -6,8 +6,8 @@
 #include <simulation/class_simulation_status.h>
 #include <h5pp/h5pp.h>
 
-void tools::common::io::write_algorithm_state(const class_simulation_status &sim_status, h5pp::File &h5ppFile,
-                                                    std::string sim_name) {
+void tools::common::io::write_simulation_status(const class_simulation_status &sim_status, h5pp::File &h5ppFile,
+                                                std::string sim_name) {
     h5ppFile.writeDataset(sim_status.iteration                     ,sim_name + "/sim_status/iteration");
     h5ppFile.writeDataset(sim_status.step                          ,sim_name + "/sim_status/step");
     h5ppFile.writeDataset(sim_status.position                      ,sim_name + "/sim_status/position");
