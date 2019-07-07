@@ -10,6 +10,7 @@
 #include <io/class_hdf5_table_buffer2.h>
 #include <math/nmspc_math.h>
 #include <iomanip>
+#include <spdlog/fmt/bundled/ranges.h>
 
 class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type, size_t num_sites)
     : class_algorithm_base(std::move(h5ppFile_), sim_name,sim_type)
@@ -25,7 +26,6 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     tools::finite::mps::initialize(*state, num_sites);
     tools::finite::mpo::randomize(*state);
     tools::finite::mps::randomize(*state);
-    tools::finite::debug::check_integrity(*state);
     tools::finite::mps::project_to_closest_parity(*state, settings::model::symmetry);
     tools::finite::debug::check_integrity(*state);
 
@@ -154,23 +154,18 @@ void class_algorithm_finite::single_DMRG_step(std::string ritz){
  */
     log->trace("Starting single DMRG step");
     t_sim.tic();
-    t_opt.tic();
     Eigen::Tensor<Scalar,4> theta = tools::finite::opt::find_ground_state(*state, ritz);
-    t_opt.toc();
-    t_svd.tic();
     tools::finite::opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
-    t_svd.toc();
+    state->unset_measurements();
     t_sim.toc();
     sim_status.wall_time = t_tot.get_age();
     sim_status.simu_time = t_sim.get_age();
-    state->unset_measurements();
 }
 
 
 void class_algorithm_finite::move_center_point(){
     log->trace("Moving center point ");
     t_sim.tic();
-    t_ste.tic();
     size_t move_steps = state->active_sites.empty() ? 1 : std::max(1ul,state->active_sites.size()-2ul);
     try{
         for(size_t i = 0; i < move_steps;i++){
@@ -181,7 +176,6 @@ void class_algorithm_finite::move_center_point(){
         tools::finite::print::print_state(*state);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));
     }
-    t_ste.toc();
     t_sim.toc();
 }
 
@@ -189,16 +183,19 @@ void class_algorithm_finite::reset_to_random_state(const std::string parity) {
     log->trace("Resetting MPS to random product state");
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     // Randomize state
+    t_sim.tic();
     tools::finite::mps::randomize(*state);
     tools::finite::mps::project_to_closest_parity(*state,parity);
     clear_saturation_status();
     sim_status.iteration = state->reset_sweeps();
+    t_sim.toc();
 }
 
 
 void class_algorithm_finite::check_convergence_variance(double threshold,double slope_threshold){
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
+    if (not state->position_is_any_edge()){return;}
     log->debug("Checking convergence of variance mpo");
     threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
@@ -220,6 +217,7 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
 void class_algorithm_finite::check_convergence_entg_entropy(double slope_threshold) {
     //Based on the the slope of entanglement middle_entanglement_entropy
     // This one is cheap to compute.
+    if (not state->position_is_any_edge()){return;}
     log->debug("Checking convergence of entanglement");
 
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::EntEntrSaturationThreshold  : slope_threshold;
@@ -241,6 +239,7 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
     }
     size_t idx = std::distance(S_slopes.begin(), std::max_element(S_slopes.begin(),S_slopes.end()));
     S_slope = S_slopes[idx];
+    tools::log->debug("Max slope of entanglement entropy: {:.8f} %", S_slope);
     sim_status.entanglement_has_saturated = entanglement_has_saturated[idx];
     sim_status.entanglement_has_converged = sim_status.entanglement_has_saturated;
 
@@ -249,10 +248,9 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
 
 void class_algorithm_finite::clear_saturation_status(){
     log->trace("Clearing saturation status");
-
-    BS_mat.clear();
-    S_mat.clear();
-    XS_mat.clear();
+    for(auto &mat : S_mat){mat.clear();}
+    for(auto &mat : BS_mat){mat.clear();}
+    for(auto &mat : XS_mat){mat.clear();}
 
     B_mpo_vec.clear();
     V_mpo_vec.clear();
@@ -273,10 +271,8 @@ void class_algorithm_finite::clear_saturation_status(){
 void class_algorithm_finite::compute_observables(){
     log->trace("Starting all measurements on current mps");
     t_sim.tic();
-    t_obs.tic();
     state->do_all_measurements();
     sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
-    t_obs.toc();
     t_sim.toc();
 }
 
@@ -292,7 +288,6 @@ void class_algorithm_finite::store_state_and_measurements_to_file(bool force){
     state->unset_measurements();
     compute_observables();
     log->trace("Writing all measurements to file");
-    t_sto.tic();
     h5pp_file->writeDataset(false, sim_name + "/simOK");
     tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
     tools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::symmetry);
@@ -301,8 +296,7 @@ void class_algorithm_finite::store_state_and_measurements_to_file(bool force){
         h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");
     }
     tools::finite::io::write_all_state(*state, *h5pp_file, sim_name);
-    t_sto.toc();
-    store_algorithm_state_to_file();
+    store_simulation_status_to_file();
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
@@ -317,7 +311,6 @@ void class_algorithm_finite::store_table_entry_site_state(bool force){
     }
     log->trace("Storing chain_entry to file");
     compute_observables();
-    t_sto.tic();
     table_dmrg_chain->append_record(
             sim_status.iteration,
             state->get_length(),
@@ -327,8 +320,9 @@ void class_algorithm_finite::store_table_entry_site_state(bool force){
             state->measurements.entanglement_entropy_midchain.value(),
             state->truncation_error[state->get_position()]
     );
-    t_sto.toc();
 }
+
+
 //
 //void class_algorithm_finite::store_table_entry_progress(bool force){
 //    if(not force) {
@@ -362,13 +356,9 @@ void class_algorithm_finite::print_profiling(){
     if (settings::profiling::on) {
         log->trace("Printing profiling information (tot)");
         t_tot.print_time_w_percent();
-        t_sto.print_time_w_percent(t_tot);
-        t_ste.print_time_w_percent(t_tot);
         t_prt.print_time_w_percent(t_tot);
-        t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
         print_profiling_sim(t_sim);
-        tools::finite::profile::print_profiling(t_obs);
     }
 }
 
@@ -377,12 +367,6 @@ void class_algorithm_finite::print_profiling_sim(class_tic_toc &t_parent){
         log->trace("Printing profiling information (sim)");
         std::cout << "\n Simulation breakdown:" << std::endl;
         std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
-        t_opt.print_time_w_percent(t_parent);
-        t_eig.print_time_w_percent(t_parent);
-        t_ham.print_time_w_percent(t_parent);
-        t_svd.print_time_w_percent(t_parent);
-        t_env.print_time_w_percent(t_parent);
-        t_mps.print_time_w_percent(t_parent);
         t_con.print_time_w_percent(t_parent);
     }
 }
@@ -490,11 +474,10 @@ void class_algorithm_finite::print_status_full(){
         default: throw std::runtime_error("Wrong simulation type");
 
     }
-    log->info("Mid-chain properties");
-    log->info("Entanglement Entropy  = {:<16.16f}" , state->measurements.entanglement_entropy_midchain.value());
-    log->info("χmax                  = {:<16d}"    , chi_max());
-    log->info("χ                     = {:<16d}"    , state->measurements.bond_dimension_midchain.value());
-    log->info("log₁₀ truncation:     = {:<16.16f}" , log10(state->truncation_error[state->get_length()/2]));
+    log->info("χmax                    = {:<16d}"    , chi_max());
+    log->info("χ                       = {:<16d}"    , state->measurements.bond_dimensions.value());
+    log->info("Entanglement Entropies  = {:<10.16f}" , state->measurements.entanglement_entropies.value());
+    log->info("log₁₀ truncation:       = {:<10.16f}" , state->truncation_error);
 
     switch(sim_type){
         case SimulationType::fDMRG:

@@ -7,7 +7,6 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
-/*! \brief General settings like max iterations, time-step, precision, etc.*/
 
 /*!
  *  \namespace settings

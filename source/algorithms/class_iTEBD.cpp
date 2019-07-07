@@ -64,20 +64,13 @@ void class_iTEBD::run_postprocessing(){
 
 void class_iTEBD::single_TEBD_step(long chi){
 /*!
- * \fn single_iTEBD_step(class_superblock &state)
+ * \fn single_TEBD_step(class_superblock &state)
  * \brief infinite Time evolving block decimation.
- * \param state A class containing MPS, environment and Hamiltonian MPO objects.
  */
     t_sim.tic();
     for (auto &U: unitary_time_evolving_operators){
-        t_evo.tic();
         Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::time_evolve_theta(*state ,U);
-        t_evo.toc();
-
-        t_svd.tic();
         tools::infinite::opt::truncate_theta(theta, *state, chi, settings::precision::SVDThreshold);
-        t_svd.toc();
-
         if (&U != &unitary_time_evolving_operators.back()) {
             state->swap_AB();        }
     }
@@ -86,20 +79,6 @@ void class_iTEBD::single_TEBD_step(long chi){
     sim_status.wall_time = t_tot.get_age();
     sim_status.simu_time = t_sim.get_age();
 }
-
-
-//void class_iTEBD::initialize_constants(){
-//    using namespace settings;
-//    max_steps    = itebd::max_steps   ;
-//    settings::itebd::delta_t0     = itebd::settings::itebd::delta_t0    ;
-//    settings::itebd::delta_tmin   = itebd::settings::itebd::delta_tmin  ;
-//    settings::itebd::suzuki_order = itebd::settings::itebd::suzuki_order;
-//    settings::itebd::chi_max      = itebd::settings::itebd::chi_max     ;
-//    chi_grow     = itebd::chi_grow    ;
-//    print_freq   = itebd::print_freq  ;
-//    settings::itebd::store_freq   = itebd::settings::itebd::store_freq  ;
-//}
-
 
 
 void class_iTEBD::check_convergence_time_step(){

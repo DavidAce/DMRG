@@ -47,9 +47,7 @@ void class_algorithm_infinite::run_postprocessing(){
 void class_algorithm_infinite::compute_observables(){
     log->trace("Starting all measurements on current state");
     t_sim.tic();
-    t_obs.tic();
     state->do_all_measurements();
-    t_obs.toc();
     t_sim.toc();
 }
 
@@ -67,9 +65,7 @@ void class_algorithm_infinite::reset_to_random_state(const std::string parity) {
 void class_algorithm_infinite::enlarge_environment(){
     log->trace("Enlarging environment" );
     t_sim.tic();
-    t_env.tic();
     state->enlarge_environment(0);
-    t_env.toc();
     t_sim.toc();
 }
 
@@ -102,7 +98,6 @@ void class_algorithm_infinite::check_convergence_variance_mpo(double threshold,d
     sim_status.variance_mpo_has_converged =  state->measurements.energy_variance_per_site_mpo.value() < threshold;
 
 }
-
 
 void class_algorithm_infinite::check_convergence_variance_ham(double threshold,double slope_threshold){
     //Based on the the slope of the variance
@@ -159,17 +154,13 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
     sim_status.entanglement_has_converged = sim_status.entanglement_has_saturated;
 }
 
-
-
 void class_algorithm_infinite::store_state_and_measurements_to_file(bool force){
     if(not force){
         if (math::mod(sim_status.iteration, store_freq()) != 0) {return;}
         if (store_freq() == 0){return;}
     }
     log->trace("Storing storing mps to file");
-    t_sto.tic();
     tools::infinite::io::write_all_superblock(*state, *h5pp_file, sim_name);
-    t_sto.toc();
 }
 
 
@@ -243,14 +234,10 @@ void class_algorithm_infinite::clear_saturation_status(){
     sim_status.simulation_has_to_stop         = false;
 }
 
-
-
 void class_algorithm_infinite::print_profiling(){
     if (settings::profiling::on) {
         t_tot.print_time_w_percent();
-        t_sto.print_time_w_percent(t_tot);
         t_prt.print_time_w_percent(t_tot);
-        t_obs.print_time_w_percent(t_tot);
         t_sim.print_time_w_percent(t_tot);
         print_profiling_sim(t_sim);
    }
@@ -260,19 +247,9 @@ void class_algorithm_infinite::print_profiling_sim(class_tic_toc &t_parent){
     if (settings::profiling::on) {
         std::cout << "\n Simulation breakdown:" << std::endl;
         std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
-        t_opt.print_time_w_percent(t_parent);
-        t_evo.print_time_w_percent(t_parent);
-        t_svd.print_time_w_percent(t_parent);
-        t_env.print_time_w_percent(t_parent);
-        t_mps.print_time_w_percent(t_parent);
         t_con.print_time_w_percent(t_parent);
-        t_udt.print_time_w_percent(t_parent);
     }
 }
-
-
-
-
 
 void class_algorithm_infinite::print_status_update() {
     if (math::mod(sim_status.iteration, print_freq()) != 0) {return;}

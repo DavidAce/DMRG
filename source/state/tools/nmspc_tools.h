@@ -36,33 +36,33 @@ namespace tools{
     {
         using Scalar = std::complex<double>;
         namespace mps {
-            extern void initialize                  (class_finite_state & state, const size_t length);
+            extern void initialize                  (class_finite_state & state, size_t length);
             extern void randomize                   (class_finite_state & state);
             extern void normalize                   (class_finite_state & state);
             extern void rebuild_environments        (class_finite_state & state);
             extern int  move_center_point           (class_finite_state & state);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
-            extern void project_to_closest_parity   (class_finite_state & state, const std::string paulistring);
+            extern void project_to_closest_parity   (class_finite_state & state, std::string paulistring);
         }
 
         namespace mpo {
-            extern void initialize                 (class_finite_state & state, const size_t length, std::string model_type);
+            extern void initialize                 (class_finite_state & state, size_t length, std::string model_type);
             extern void randomize                  (class_finite_state & state);
         }
 
         namespace ops {
             extern std::list<Eigen::Tensor<Scalar,4>>
                         make_mpo_list                 (const std::list<std::shared_ptr<class_model_base>> & mpos_L, const std::list<std::shared_ptr<class_model_base>> & mpos_R);
-            extern void apply_mpo                     (class_finite_state & state, const Eigen::Tensor<Scalar,4> mpo, const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge);
-            extern void apply_mpos                    (class_finite_state & state, const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> Ledge, const Eigen::Tensor<Scalar,3> Redge);
-            extern double exp_sq_value                (const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,4> Ledge, const Eigen::Tensor<Scalar,4> Redge);
+            extern void apply_mpo                     (class_finite_state & state, const Eigen::Tensor<Scalar,4> & mpo, const Eigen::Tensor<Scalar,3> &Ledge, const Eigen::Tensor<Scalar,3> & Redge);
+            extern void apply_mpos                    (class_finite_state & state, const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
             extern class_finite_state
-            get_parity_projected_state                (const class_finite_state & state, const Eigen::MatrixXcd paulimatrix, const int sign);
+            get_parity_projected_state                (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix, int sign);
             extern class_finite_state
-            get_closest_parity_state                  (const class_finite_state & state, const Eigen::MatrixXcd paulimatrix);
+            get_closest_parity_state                  (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix);
             extern class_finite_state
-            get_closest_parity_state                  (const class_finite_state & state, const std::string paulistring);
+            get_closest_parity_state                  (const class_finite_state & state, std::string paulistring);
             extern double overlap                     (const class_finite_state & state1, const class_finite_state & state2);
-            extern double expectation_value           (const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<Scalar,4>> & mpos, Eigen::Tensor<Scalar,3> Ledge, Eigen::Tensor<Scalar,3> Redge);
+            extern double expectation_value           (const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
+            extern double exp_sq_value                (const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,4> & Ledge, const Eigen::Tensor<Scalar,4> & Redge);
         }
 
 
@@ -102,7 +102,13 @@ namespace tools{
             extern std::vector<double> entanglement_entropies         (const class_finite_state & state);
             extern std::vector<double> spin_components                (const class_finite_state & state);
 
-            namespace multidmrg{
+            namespace accurate{
+                extern double energy                                    (const class_finite_state & state);
+                extern double energy_per_site                           (const class_finite_state & state);
+                extern double energy_variance                           (const class_finite_state & state);
+                extern double energy_variance_per_site                  (const class_finite_state & state);
+            }
+            namespace multisite{
                 extern double energy                                  (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
                 extern double energy_per_site                         (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
                 extern double energy_variance                         (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
@@ -136,9 +142,13 @@ namespace tools{
 
         namespace profile{
             inline class_tic_toc t_eig;
+            inline class_tic_toc t_svd;
             inline class_tic_toc t_ene;
             inline class_tic_toc t_var;
             inline class_tic_toc t_ent;
+            inline class_tic_toc t_hdf;
+            inline class_tic_toc t_prj;
+            inline class_tic_toc t_dbg;
             extern void print_profiling(class_tic_toc &t_parent);
             extern void init_profiling();
         }

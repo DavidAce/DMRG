@@ -26,9 +26,10 @@ target_link_libraries(TEST-arpack++_mps PRIVATE ${COMPILER_LFLAGS})
 
 set_target_properties  (TEST-arpack++_mps PROPERTIES CXX_STANDARD_REQUIRED 17)
 target_compile_features(TEST-arpack++_mps PRIVATE cxx_std_17)
-target_compile_options (TEST-arpack++_mps PRIVATE "${COMMON_OPTIONS}")                                 ### Common options
-target_compile_options (TEST-arpack++_mps PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
-target_compile_options (TEST-arpack++_mps PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
+target_compile_options (TEST-arpack++_mps PRIVATE "${COMMON_OPTIONS}")                                        ### Common options
+target_compile_options (TEST-arpack++_mps PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")                      ### Debug build options
+target_compile_options (TEST-arpack++_mps PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")                  ### Release build options
+target_compile_options (TEST-arpack++_mps PRIVATE "$<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_OPTIONS}>")    ### Release build with debug info options
 
 add_test(NAME arpack++_mps_test COMMAND TEST-arpack++_mps)
 add_dependencies(TEST-arpack++_mps arpack++ Eigen3::Eigen spdlog::spdlog)

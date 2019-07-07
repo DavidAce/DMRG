@@ -13,9 +13,8 @@
 #include <math/arpack_extra/matrix_product_hamiltonian.h>
 #include <simulation/nmspc_settings.h>
 
-Eigen::Tensor<std::complex<double>,3>
-tools::finite::opt::find_excited_state(const class_finite_state &state, const class_simulation_status &sim_status,
-                                       OptMode optMode, OptSpace optSpace, OptType optType){
+Eigen::Tensor<class_finite_state::Scalar,3>
+tools::finite::opt::find_excited_state(const class_finite_state &state, const class_simulation_status &sim_status, OptMode optMode, OptSpace optSpace, OptType optType){
     tools::log->trace("Finding optimal excited state");
     using namespace opt::internals;
     using namespace Textra;

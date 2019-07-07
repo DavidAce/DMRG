@@ -33,8 +33,8 @@ tools::finite::opt::internals::direct_optimization(const class_finite_state & st
     using Scalar = std::complex<double>;
     t_opt->tic();
     auto theta = state.get_multitheta();
-    double energy_0   = tools::finite::measure::multidmrg::energy_per_site(state,theta);
-    double variance_0 = tools::finite::measure::multidmrg::energy_variance_per_site(state,theta);
+    double energy_0   = tools::finite::measure::multisite::energy_per_site(state,theta);
+    double variance_0 = tools::finite::measure::multisite::energy_variance_per_site(state,theta);
     t_opt->toc();
     std::vector<reports::direct_opt_tuple> opt_log;
     opt_log.emplace_back("Initial",theta.size(), energy_0, std::log10(variance_0), 1.0, 0 ,0,t_opt->get_last_time_interval());
@@ -96,11 +96,11 @@ tools::finite::opt::internals::direct_optimization(const class_finite_state & st
 
     state.unset_measurements();
     if (variance_new < variance_0){
-        tools::log->info("Returning new theta");
+        tools::log->debug("Returning new theta");
         return  Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
 
     }else{
-        tools::log->info("Returning old theta");
+        tools::log->debug("Returning old theta");
         return  theta;
     }
 

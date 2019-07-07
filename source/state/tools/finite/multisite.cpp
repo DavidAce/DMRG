@@ -58,7 +58,7 @@ using namespace Textra;
 using Scalar = class_finite_state::Scalar;
 
 
-double tools::finite::measure::multidmrg::energy(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+double tools::finite::measure::multisite::energy(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
     auto multimpo   = state.get_multimpo();
     auto & envL     = state.get_ENVL(state.active_sites.front()).block;
     auto & envR     = state.get_ENVR(state.active_sites.back()).block;
@@ -76,13 +76,13 @@ double tools::finite::measure::multidmrg::energy(const class_finite_state &state
 }
 
 
-double tools::finite::measure::multidmrg::energy_per_site(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
-        return multidmrg::energy(state,multitheta)/state.get_length();
+double tools::finite::measure::multisite::energy_per_site(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+        return multisite::energy(state,multitheta)/state.get_length();
 }
 
 
-double tools::finite::measure::multidmrg::energy_variance(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
-    double energy = tools::finite::measure::multidmrg::energy(state, multitheta);
+double tools::finite::measure::multisite::energy_variance(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+    double energy = tools::finite::measure::multisite::energy(state, multitheta);
     auto multimpo   = state.get_multimpo();
     auto & env2L    = state.get_ENV2L(state.active_sites.front()).block;
     auto & env2R    = state.get_ENV2R(state.active_sites.back()).block;
@@ -97,8 +97,8 @@ double tools::finite::measure::multidmrg::energy_variance(const class_finite_sta
 }
 
 
-double tools::finite::measure::multidmrg::energy_variance_per_site(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
-        return multidmrg::energy_variance(state,multitheta)/state.get_length();
+double tools::finite::measure::multisite::energy_variance_per_site(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+        return multisite::energy_variance(state,multitheta)/state.get_length();
 }
 
 

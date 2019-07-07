@@ -26,6 +26,7 @@ target_compile_features(TEST-eigsolver PRIVATE cxx_std_17)
 target_compile_options (TEST-eigsolver PRIVATE ${COMMON_OPTIONS})                                   ### Common options
 target_compile_options (TEST-eigsolver PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
 target_compile_options (TEST-eigsolver PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
+target_compile_options (TEST-eigsolver PRIVATE "$<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_OPTIONS}>")    ### Release build with debug info options
 add_test(NAME eigsolver_test COMMAND TEST-eigsolver)
 
 add_dependencies(TEST-eigsolver h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog gfortran )
