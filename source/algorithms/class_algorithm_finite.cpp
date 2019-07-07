@@ -475,9 +475,9 @@ void class_algorithm_finite::print_status_full(){
 
     }
     log->info("χmax                    = {:<16d}"    , chi_max());
-    log->info("χ                       = {:<16d}"    , state->measurements.bond_dimensions.value());
-    log->info("Entanglement Entropies  = {:<10.16f}" , state->measurements.entanglement_entropies.value());
-    log->info("log₁₀ truncation:       = {:<10.16f}" , state->truncation_error);
+    log->info("χ                       = {}"         , state->measurements.bond_dimensions.value());
+    log->info("Entanglement Entropies  = {}"         , state->measurements.entanglement_entropies.value());
+    log->info("Truncation Errors       = {}"         , state->truncation_error);
 
     switch(sim_type){
         case SimulationType::fDMRG:
