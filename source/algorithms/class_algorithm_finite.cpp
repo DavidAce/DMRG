@@ -125,7 +125,7 @@ void class_algorithm_finite::run_preprocessing(){
 
 void class_algorithm_finite::single_DMRG_step(std::string ritz){
 /*!
- * \fn void single_DMRG_step(class_superblock &state)
+ * \fn void single_DMRG_step(std::string ritz)
  */
     log->trace("Starting single DMRG step");
     t_sim.tic();
