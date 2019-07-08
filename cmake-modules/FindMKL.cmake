@@ -77,8 +77,6 @@ find_path(MKL_ROOT_DIR
         "Program Files (x86)/Intel/ComposerXE-2011/mkl"
         )
 
-message("MKL_ROOT_DIR : ${MKL_ROOT_DIR}") # for debug
-
 find_path(MKL_INCLUDE_DIR
         mkl.h
         PATHS

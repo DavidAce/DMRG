@@ -91,7 +91,7 @@ if (MKL_FOUND)
     include(FindLAPACKE)
 
     message("")
-    message("======MKL SUMMARY ======")
+    message("============================ MKL SUMMARY ===================================")
     message("MKL_LIBRARIES                             : ${MKL_LIBRARIES}" )
     message("MKL_RT_LIBRARY                            : ${MKL_RT_LIBRARY}" )
     message("MKL_INCLUDE_DIR                           : ${MKL_INCLUDE_DIR}" )
@@ -101,7 +101,7 @@ if (MKL_FOUND)
     message("BLAS_LIBRARIES                            : ${BLAS_LIBRARIES}" )
     message("LAPACK_LIBRARIES                          : ${LAPACK_LIBRARIES}" )
     message("LAPACKE                                   : ${LAPACKE_INCLUDE_DIRS}" )
-    message("========================")
+    message("=============================================================================")
     message("")
 
 
