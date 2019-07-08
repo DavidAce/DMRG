@@ -17,7 +17,7 @@ else()
             UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DENABLE_TESTS:BOOL=ON
+            -DENABLE_TESTS:BOOL=OFF
             -DDOWNLOAD_ALL:BOOL=OFF
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
             -DHDF5_DIR:PATH=${HDF5_DIR}
