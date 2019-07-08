@@ -143,12 +143,17 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ad322c080214d3af95e19d611c077ea76"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="namespace_textra.html#ac4ea1d05edf6f909513a8ec4af87880a">idxlistpair</a>&lt; long, 0 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_textra.html#ad322c080214d3af95e19d611c077ea76">idx</a> ()</td></tr>
+<tr class="separator:ad322c080214d3af95e19d611c077ea76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb41dcaa749176a53d57268d96efdcc3"><td class="memTemplParams" colspan="2">template&lt;typename T , std::size_t N&gt; </td></tr>
 <tr class="memitem:adb41dcaa749176a53d57268d96efdcc3"><td class="memTemplItemLeft" align="right" valign="top">constexpr <a class="el" href="namespace_textra.html#ac4ea1d05edf6f909513a8ec4af87880a">idxlistpair</a>&lt; long, N &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#adb41dcaa749176a53d57268d96efdcc3">idx</a> (const T(&amp;list1)[N], const T(&amp;list2)[N])</td></tr>
 <tr class="separator:adb41dcaa749176a53d57268d96efdcc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac89cfa77d023247aabe950ce829f9513"><td class="memTemplParams" colspan="2">template&lt;std::size_t NB, std::size_t N&gt; </td></tr>
 <tr class="memitem:ac89cfa77d023247aabe950ce829f9513"><td class="memTemplItemLeft" align="right" valign="top">constexpr <a class="el" href="namespace_textra.html#ac4ea1d05edf6f909513a8ec4af87880a">idxlistpair</a>&lt; long, N &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#ac89cfa77d023247aabe950ce829f9513">sortIdx</a> (const Eigen::array&lt; long, NB &gt; &amp;dimensions, const long(&amp;idx_ctrct_A)[N], const long(&amp;idx_ctrct_B)[N])</td></tr>
 <tr class="separator:ac89cfa77d023247aabe950ce829f9513"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65a7adf70ca3f05a3635830bd91c5787"><td class="memTemplParams" colspan="2">template&lt;typename Scalar &gt; </td></tr>
+<tr class="memitem:a65a7adf70ca3f05a3635830bd91c5787"><td class="memTemplItemLeft" align="right" valign="top">constexpr Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, 1 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a65a7adf70ca3f05a3635830bd91c5787">extractDiagonal</a> (const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, 2 &gt; &amp;tensor)</td></tr>
+<tr class="separator:a65a7adf70ca3f05a3635830bd91c5787"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42b2f8b0c5883c74c9fb806db83762da"><td class="memTemplParams" colspan="2">template&lt;typename Scalar &gt; </td></tr>
 <tr class="memitem:a42b2f8b0c5883c74c9fb806db83762da"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a42b2f8b0c5883c74c9fb806db83762da">asDiagonal</a> (const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, 1 &gt; &amp;tensor)</td></tr>
 <tr class="separator:a42b2f8b0c5883c74c9fb806db83762da"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -158,17 +163,20 @@ Functions</h2></td></tr>
 <tr class="memitem:a0943a701e495e3c6c3211a7407e7a312"><td class="memTemplParams" colspan="2">template&lt;typename Scalar &gt; </td></tr>
 <tr class="memitem:a0943a701e495e3c6c3211a7407e7a312"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a0943a701e495e3c6c3211a7407e7a312">asDiagonalInversed</a> (const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, 1 &gt; &amp;tensor)</td></tr>
 <tr class="separator:a0943a701e495e3c6c3211a7407e7a312"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1eda47ce18fd5ba41628b44b32b6366c"><td class="memTemplParams" colspan="2">template&lt;typename Scalar &gt; </td></tr>
+<tr class="memitem:a1eda47ce18fd5ba41628b44b32b6366c"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a1eda47ce18fd5ba41628b44b32b6366c">asDiagonalInversed</a> (const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, 2 &gt; &amp;tensor)</td></tr>
+<tr class="separator:a1eda47ce18fd5ba41628b44b32b6366c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7cd3712f032a50ee9320fc68312c7c20"><td class="memTemplParams" colspan="2">template&lt;typename Scalar &gt; </td></tr>
 <tr class="memitem:a7cd3712f032a50ee9320fc68312c7c20"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a7cd3712f032a50ee9320fc68312c7c20">asNormalized</a> (const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, 1 &gt; &amp;tensor)</td></tr>
 <tr class="separator:a7cd3712f032a50ee9320fc68312c7c20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90452304e6be4b7fd6c520f59be431f7"><td class="memTemplParams" colspan="2">template&lt;typename Derived , auto rank&gt; </td></tr>
-<tr class="memitem:a90452304e6be4b7fd6c520f59be431f7"><td class="memTemplItemLeft" align="right" valign="top">constexpr Eigen::Tensor&lt; typename <a class="el" href="class__superblock_8cpp.html#a94376fd90cb2400e351e619d477d85a4">Derived::Scalar</a>, rank &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a90452304e6be4b7fd6c520f59be431f7">Matrix_to_Tensor</a> (const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Eigen::array&lt; long, rank &gt; &amp;dims)</td></tr>
+<tr class="memitem:a90452304e6be4b7fd6c520f59be431f7"><td class="memTemplItemLeft" align="right" valign="top">constexpr Eigen::Tensor&lt; typename <a class="el" href="infinite_2measure_8cpp.html#a131d20d737c4fa1cb2d53d136f8c57ea">Derived::Scalar</a>, rank &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a90452304e6be4b7fd6c520f59be431f7">Matrix_to_Tensor</a> (const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Eigen::array&lt; long, rank &gt; &amp;dims)</td></tr>
 <tr class="separator:a90452304e6be4b7fd6c520f59be431f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9207bc24390fafec44eee851bf9fdee2"><td class="memTemplParams" colspan="2">template&lt;typename Derived , typename... Dims&gt; </td></tr>
-<tr class="memitem:a9207bc24390fafec44eee851bf9fdee2"><td class="memTemplItemLeft" align="right" valign="top">constexpr Eigen::Tensor&lt; typename <a class="el" href="class__superblock_8cpp.html#a94376fd90cb2400e351e619d477d85a4">Derived::Scalar</a>, sizeof...(Dims)&gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a9207bc24390fafec44eee851bf9fdee2">Matrix_to_Tensor</a> (const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Dims... dims)</td></tr>
+<tr class="memitem:a9207bc24390fafec44eee851bf9fdee2"><td class="memTemplItemLeft" align="right" valign="top">constexpr Eigen::Tensor&lt; typename <a class="el" href="infinite_2measure_8cpp.html#a131d20d737c4fa1cb2d53d136f8c57ea">Derived::Scalar</a>, sizeof...(Dims)&gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a9207bc24390fafec44eee851bf9fdee2">Matrix_to_Tensor</a> (const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Dims... dims)</td></tr>
 <tr class="separator:a9207bc24390fafec44eee851bf9fdee2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a713f14010c8216f87e9f33dcf9ca64"><td class="memTemplParams" colspan="2">template&lt;typename Derived , auto rank&gt; </td></tr>
-<tr class="memitem:a1a713f14010c8216f87e9f33dcf9ca64"><td class="memTemplItemLeft" align="right" valign="top">constexpr Eigen::Tensor&lt; typename <a class="el" href="class__superblock_8cpp.html#a94376fd90cb2400e351e619d477d85a4">Derived::Scalar</a>, rank &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a1a713f14010c8216f87e9f33dcf9ca64">Matrix_to_Tensor</a> (const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Eigen::DSizes&lt; long, rank &gt; &amp;dims)</td></tr>
+<tr class="memitem:a1a713f14010c8216f87e9f33dcf9ca64"><td class="memTemplItemLeft" align="right" valign="top">constexpr Eigen::Tensor&lt; typename <a class="el" href="infinite_2measure_8cpp.html#a131d20d737c4fa1cb2d53d136f8c57ea">Derived::Scalar</a>, rank &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a1a713f14010c8216f87e9f33dcf9ca64">Matrix_to_Tensor</a> (const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Eigen::DSizes&lt; long, rank &gt; &amp;dims)</td></tr>
 <tr class="separator:a1a713f14010c8216f87e9f33dcf9ca64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac457f29be7f94d9d773b47592c65eef3"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
 <tr class="memitem:ac457f29be7f94d9d773b47592c65eef3"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#ac457f29be7f94d9d773b47592c65eef3">Matrix_to_Tensor1</a> (const Eigen::EigenBase&lt; Derived &gt; &amp;matrix)</td></tr>
@@ -192,14 +200,46 @@ Functions</h2></td></tr>
 <tr class="memitem:a404c21a4f4844edba87cffd8e06536c4"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, rank, Eigen::RowMajor &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a404c21a4f4844edba87cffd8e06536c4">to_RowMajor</a> (const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, rank, Eigen::ColMajor &gt; tensor)</td></tr>
 <tr class="separator:a404c21a4f4844edba87cffd8e06536c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ccbf9014eef4fc7fab8e2163d721e89"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
-<tr class="memitem:a7ccbf9014eef4fc7fab8e2163d721e89"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Matrix&lt; typename <a class="el" href="class__superblock_8cpp.html#a94376fd90cb2400e351e619d477d85a4">Derived::Scalar</a>, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a7ccbf9014eef4fc7fab8e2163d721e89">to_RowMajor</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;matrix)</td></tr>
+<tr class="memitem:a7ccbf9014eef4fc7fab8e2163d721e89"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Matrix&lt; typename <a class="el" href="infinite_2measure_8cpp.html#a131d20d737c4fa1cb2d53d136f8c57ea">Derived::Scalar</a>, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a7ccbf9014eef4fc7fab8e2163d721e89">to_RowMajor</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;matrix)</td></tr>
 <tr class="separator:a7ccbf9014eef4fc7fab8e2163d721e89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ce185ef869dc59048058546aedeb24e"><td class="memTemplParams" colspan="2">template&lt;typename Scalar , auto rank&gt; </td></tr>
+<tr class="memitem:a6ce185ef869dc59048058546aedeb24e"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, rank, Eigen::ColMajor &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a6ce185ef869dc59048058546aedeb24e">to_ColMajor</a> (const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, rank, Eigen::RowMajor &gt; tensor)</td></tr>
+<tr class="separator:a6ce185ef869dc59048058546aedeb24e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab92f06daa8fdd15320f38aa89bfa7894"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:ab92f06daa8fdd15320f38aa89bfa7894"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Matrix&lt; typename <a class="el" href="infinite_2measure_8cpp.html#a131d20d737c4fa1cb2d53d136f8c57ea">Derived::Scalar</a>, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#ab92f06daa8fdd15320f38aa89bfa7894">to_ColMajor</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;matrix)</td></tr>
+<tr class="separator:ab92f06daa8fdd15320f38aa89bfa7894"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a134cee5e3300feee66018395aa0ffa05"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:a134cee5e3300feee66018395aa0ffa05"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a134cee5e3300feee66018395aa0ffa05">isReal</a> (const Eigen::EigenBase&lt; Derived &gt; &amp;obj, [[maybe_unused]]const std::string &amp;name=&quot;&quot;, double threshold=1e-14)</td></tr>
+<tr class="separator:a134cee5e3300feee66018395aa0ffa05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7794bc6f089ffe1c7121692c28c7592"><td class="memTemplParams" colspan="2">template&lt;typename Scalar , auto rank&gt; </td></tr>
+<tr class="memitem:ae7794bc6f089ffe1c7121692c28c7592"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#ae7794bc6f089ffe1c7121692c28c7592">isReal</a> (const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, rank &gt; &amp;tensor, const std::string &amp;name=&quot;&quot;, double threshold=1e-14)</td></tr>
+<tr class="separator:ae7794bc6f089ffe1c7121692c28c7592"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34123857104ed8a9c77ce2f6365bda74"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:a34123857104ed8a9c77ce2f6365bda74"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a34123857104ed8a9c77ce2f6365bda74">subtract_phase</a> (Eigen::MatrixBase&lt; Derived &gt; &amp;v)</td></tr>
+<tr class="separator:a34123857104ed8a9c77ce2f6365bda74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf0b0f09052c2cb60ff713691d9f28ba"><td class="memTemplParams" colspan="2">template&lt;typename Scalar , auto rank&gt; </td></tr>
+<tr class="memitem:adf0b0f09052c2cb60ff713691d9f28ba"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#adf0b0f09052c2cb60ff713691d9f28ba">subtract_phase</a> (Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, rank &gt; &amp;tensor)</td></tr>
+<tr class="separator:adf0b0f09052c2cb60ff713691d9f28ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6755d93497c739f4cab661892897c46"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:af6755d93497c739f4cab661892897c46"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#af6755d93497c739f4cab661892897c46">add_phase</a> (Eigen::MatrixBase&lt; Derived &gt; &amp;v, std::vector&lt; double &gt; &amp;angles)</td></tr>
+<tr class="separator:af6755d93497c739f4cab661892897c46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8de771b63d94ce09bc102d204eed693"><td class="memTemplParams" colspan="2">template&lt;typename Scalar , auto rank&gt; </td></tr>
+<tr class="memitem:ae8de771b63d94ce09bc102d204eed693"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#ae8de771b63d94ce09bc102d204eed693">add_phase</a> (Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, rank &gt; &amp;tensor, std::vector&lt; double &gt; &amp;angles)</td></tr>
+<tr class="separator:ae8de771b63d94ce09bc102d204eed693"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83480b3f75b0a29f652feb8b2152b475"><td class="memTemplParams" colspan="2">template&lt;typename T , int L&gt; </td></tr>
 <tr class="memitem:a83480b3f75b0a29f652feb8b2152b475"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a83480b3f75b0a29f652feb8b2152b475">operator&lt;&lt;</a> (std::ostream &amp;out, const Eigen::DSizes&lt; T, L &gt; &amp;v)</td></tr>
 <tr class="separator:a83480b3f75b0a29f652feb8b2152b475"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47079abeb81c780b562da5b9a8d1ff19"><td class="memTemplParams" colspan="2">template&lt;typename T , int L&gt; </td></tr>
 <tr class="memitem:a47079abeb81c780b562da5b9a8d1ff19"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a47079abeb81c780b562da5b9a8d1ff19">operator&lt;&lt;</a> (std::ostream &amp;out, const Eigen::array&lt; T, L &gt; &amp;v)</td></tr>
 <tr class="separator:a47079abeb81c780b562da5b9a8d1ff19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f5d2eac44ffb07d9b83baeb71ed0dda"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a9f5d2eac44ffb07d9b83baeb71ed0dda"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#a9f5d2eac44ffb07d9b83baeb71ed0dda">operator&lt;&lt;</a> (std::ostream &amp;out, const std::list&lt; T &gt; &amp;v)</td></tr>
+<tr class="memdesc:a9f5d2eac44ffb07d9b83baeb71ed0dda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints the content of a list nicely.  <a href="#a9f5d2eac44ffb07d9b83baeb71ed0dda">More...</a><br /></td></tr>
+<tr class="separator:a9f5d2eac44ffb07d9b83baeb71ed0dda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf8b82a75b1ea346a094d67ff78330ed"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:adf8b82a75b1ea346a094d67ff78330ed"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespace_textra.html#adf8b82a75b1ea346a094d67ff78330ed">operator&lt;&lt;</a> (std::ostream &amp;out, const std::vector&lt; T &gt; &amp;v)</td></tr>
+<tr class="memdesc:adf8b82a75b1ea346a094d67ff78330ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints the content of a list nicely.  <a href="#adf8b82a75b1ea346a094d67ff78330ed">More...</a><br /></td></tr>
+<tr class="separator:adf8b82a75b1ea346a094d67ff78330ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="ac05ac79c4e225739a3c4b44fb5b577df"></a>
@@ -425,6 +465,66 @@ template&lt;typename Scalar &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="af6755d93497c739f4cab661892897c46"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6755d93497c739f4cab661892897c46">&#9670;&nbsp;</a></span>add_phase() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Textra::add_phase </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::MatrixBase&lt; Derived &gt; &amp;&#160;</td>
+          <td class="paramname"><em>v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>angles</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae8de771b63d94ce09bc102d204eed693"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8de771b63d94ce09bc102d204eed693">&#9670;&nbsp;</a></span>add_phase() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar , auto rank&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Textra::add_phase </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, rank &gt; &amp;&#160;</td>
+          <td class="paramname"><em>tensor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>angles</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a42b2f8b0c5883c74c9fb806db83762da"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a42b2f8b0c5883c74c9fb806db83762da">&#9670;&nbsp;</a></span>asDiagonal()</h2>
 
@@ -446,7 +546,7 @@ template&lt;typename Scalar &gt; </div>
 </div>
 </div>
 <a id="a0943a701e495e3c6c3211a7407e7a312"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0943a701e495e3c6c3211a7407e7a312">&#9670;&nbsp;</a></span>asDiagonalInversed()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0943a701e495e3c6c3211a7407e7a312">&#9670;&nbsp;</a></span>asDiagonalInversed() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -457,6 +557,26 @@ template&lt;typename Scalar &gt; </div>
           <td class="memname">constexpr auto Textra::asDiagonalInversed </td>
           <td>(</td>
           <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, 1 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>tensor</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1eda47ce18fd5ba41628b44b32b6366c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1eda47ce18fd5ba41628b44b32b6366c">&#9670;&nbsp;</a></span>asDiagonalInversed() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr auto Textra::asDiagonalInversed </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, 2 &gt; &amp;&#160;</td>
           <td class="paramname"><em>tensor</em></td><td>)</td>
           <td></td>
         </tr>
@@ -505,8 +625,45 @@ template&lt;typename Scalar &gt; </div>
 
 </div>
 </div>
+<a id="a65a7adf70ca3f05a3635830bd91c5787"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65a7adf70ca3f05a3635830bd91c5787">&#9670;&nbsp;</a></span>extractDiagonal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr Eigen::Tensor&lt;<a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>,1&gt; Textra::extractDiagonal </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, 2 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>tensor</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad322c080214d3af95e19d611c077ea76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad322c080214d3af95e19d611c077ea76">&#9670;&nbsp;</a></span>idx() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr <a class="el" href="namespace_textra.html#ac4ea1d05edf6f909513a8ec4af87880a">idxlistpair</a>&lt;long,0&gt; Textra::idx </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="adb41dcaa749176a53d57268d96efdcc3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb41dcaa749176a53d57268d96efdcc3">&#9670;&nbsp;</a></span>idx()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#adb41dcaa749176a53d57268d96efdcc3">&#9670;&nbsp;</a></span>idx() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -535,6 +692,78 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 </div>
 </div>
+<a id="a134cee5e3300feee66018395aa0ffa05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a134cee5e3300feee66018395aa0ffa05">&#9670;&nbsp;</a></span>isReal() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Textra::isReal </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::EigenBase&lt; Derived &gt; &amp;&#160;</td>
+          <td class="paramname"><em>obj</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[[maybe_unused] ]const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>threshold</em> = <code>1e-14</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae7794bc6f089ffe1c7121692c28c7592"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7794bc6f089ffe1c7121692c28c7592">&#9670;&nbsp;</a></span>isReal() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar , auto rank&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Textra::isReal </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, rank &gt; &amp;&#160;</td>
+          <td class="paramname"><em>tensor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>threshold</em> = <code>1e-14</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a90452304e6be4b7fd6c520f59be431f7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a90452304e6be4b7fd6c520f59be431f7">&#9670;&nbsp;</a></span>Matrix_to_Tensor() <span class="overload">[1/3]</span></h2>
 
@@ -544,7 +773,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 template&lt;typename Derived , auto rank&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">constexpr Eigen::Tensor&lt;typename <a class="el" href="class__superblock_8cpp.html#a94376fd90cb2400e351e619d477d85a4">Derived::Scalar</a>, rank&gt; Textra::Matrix_to_Tensor </td>
+          <td class="memname">constexpr Eigen::Tensor&lt;typename <a class="el" href="infinite_2measure_8cpp.html#a131d20d737c4fa1cb2d53d136f8c57ea">Derived::Scalar</a>, rank&gt; Textra::Matrix_to_Tensor </td>
           <td>(</td>
           <td class="paramtype">const Eigen::EigenBase&lt; Derived &gt; &amp;&#160;</td>
           <td class="paramname"><em>matrix</em>, </td>
@@ -574,7 +803,7 @@ template&lt;typename Derived , auto rank&gt; </div>
 template&lt;typename Derived , typename... Dims&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">constexpr Eigen::Tensor&lt;typename <a class="el" href="class__superblock_8cpp.html#a94376fd90cb2400e351e619d477d85a4">Derived::Scalar</a>, sizeof... (Dims)&gt; Textra::Matrix_to_Tensor </td>
+          <td class="memname">constexpr Eigen::Tensor&lt;typename <a class="el" href="infinite_2measure_8cpp.html#a131d20d737c4fa1cb2d53d136f8c57ea">Derived::Scalar</a>, sizeof... (Dims)&gt; Textra::Matrix_to_Tensor </td>
           <td>(</td>
           <td class="paramtype">const Eigen::EigenBase&lt; Derived &gt; &amp;&#160;</td>
           <td class="paramname"><em>matrix</em>, </td>
@@ -604,7 +833,7 @@ template&lt;typename Derived , typename... Dims&gt; </div>
 template&lt;typename Derived , auto rank&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">constexpr Eigen::Tensor&lt;typename <a class="el" href="class__superblock_8cpp.html#a94376fd90cb2400e351e619d477d85a4">Derived::Scalar</a>, rank&gt; Textra::Matrix_to_Tensor </td>
+          <td class="memname">constexpr Eigen::Tensor&lt;typename <a class="el" href="infinite_2measure_8cpp.html#a131d20d737c4fa1cb2d53d136f8c57ea">Derived::Scalar</a>, rank&gt; Textra::Matrix_to_Tensor </td>
           <td>(</td>
           <td class="paramtype">const Eigen::EigenBase&lt; Derived &gt; &amp;&#160;</td>
           <td class="paramname"><em>matrix</em>, </td>
@@ -666,7 +895,7 @@ template&lt;typename Derived &gt; </div>
 </div>
 </div>
 <a id="a83480b3f75b0a29f652feb8b2152b475"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83480b3f75b0a29f652feb8b2152b475">&#9670;&nbsp;</a></span>operator<<() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a83480b3f75b0a29f652feb8b2152b475">&#9670;&nbsp;</a></span>operator<<() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -696,7 +925,7 @@ template&lt;typename T , int L&gt; </div>
 </div>
 </div>
 <a id="a47079abeb81c780b562da5b9a8d1ff19"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47079abeb81c780b562da5b9a8d1ff19">&#9670;&nbsp;</a></span>operator<<() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a47079abeb81c780b562da5b9a8d1ff19">&#9670;&nbsp;</a></span>operator<<() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -722,6 +951,70 @@ template&lt;typename T , int L&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9f5d2eac44ffb07d9b83baeb71ed0dda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f5d2eac44ffb07d9b83baeb71ed0dda">&#9670;&nbsp;</a></span>operator<<() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream&amp; Textra::operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;&#160;</td>
+          <td class="paramname"><em>out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::list&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>v</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Prints the content of a list nicely. </p>
+
+</div>
+</div>
+<a id="adf8b82a75b1ea346a094d67ff78330ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf8b82a75b1ea346a094d67ff78330ed">&#9670;&nbsp;</a></span>operator<<() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream&amp; Textra::operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;&#160;</td>
+          <td class="paramname"><em>out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>v</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Prints the content of a list nicely. </p>
 
 </div>
 </div>
@@ -755,6 +1048,46 @@ template&lt;std::size_t NB, std::size_t N&gt; </div>
           <td></td>
           <td>)</td>
           <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a34123857104ed8a9c77ce2f6365bda74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34123857104ed8a9c77ce2f6365bda74">&#9670;&nbsp;</a></span>subtract_phase() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Textra::subtract_phase </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::MatrixBase&lt; Derived &gt; &amp;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="adf0b0f09052c2cb60ff713691d9f28ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf0b0f09052c2cb60ff713691d9f28ba">&#9670;&nbsp;</a></span>subtract_phase() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar , auto rank&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto Textra::subtract_phase </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, rank &gt; &amp;&#160;</td>
+          <td class="paramname"><em>tensor</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -867,6 +1200,46 @@ template&lt;typename Scalar , auto rank, typename sizeType &gt; </div>
 
 </div>
 </div>
+<a id="a6ce185ef869dc59048058546aedeb24e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ce185ef869dc59048058546aedeb24e">&#9670;&nbsp;</a></span>to_ColMajor() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar , auto rank&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Tensor&lt;<a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>,rank, Eigen::ColMajor&gt; Textra::to_ColMajor </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a>, rank, Eigen::RowMajor &gt;&#160;</td>
+          <td class="paramname"><em>tensor</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab92f06daa8fdd15320f38aa89bfa7894"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab92f06daa8fdd15320f38aa89bfa7894">&#9670;&nbsp;</a></span>to_ColMajor() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Matrix&lt;typename <a class="el" href="infinite_2measure_8cpp.html#a131d20d737c4fa1cb2d53d136f8c57ea">Derived::Scalar</a>,Eigen::Dynamic,Eigen::Dynamic, Eigen::ColMajor&gt; Textra::to_ColMajor </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;&#160;</td>
+          <td class="paramname"><em>matrix</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a404c21a4f4844edba87cffd8e06536c4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a404c21a4f4844edba87cffd8e06536c4">&#9670;&nbsp;</a></span>to_RowMajor() <span class="overload">[1/2]</span></h2>
 
@@ -896,7 +1269,7 @@ template&lt;typename Scalar , auto rank&gt; </div>
 template&lt;typename Derived &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Matrix&lt;typename <a class="el" href="class__superblock_8cpp.html#a94376fd90cb2400e351e619d477d85a4">Derived::Scalar</a>,Eigen::Dynamic,Eigen::Dynamic, Eigen::RowMajor&gt; Textra::to_RowMajor </td>
+          <td class="memname">Eigen::Matrix&lt;typename <a class="el" href="infinite_2measure_8cpp.html#a131d20d737c4fa1cb2d53d136f8c57ea">Derived::Scalar</a>,Eigen::Dynamic,Eigen::Dynamic, Eigen::RowMajor&gt; Textra::to_RowMajor </td>
           <td>(</td>
           <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;&#160;</td>
           <td class="paramname"><em>matrix</em></td><td>)</td>

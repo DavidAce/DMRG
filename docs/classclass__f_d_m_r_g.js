@@ -1,16 +1,16 @@
 var classclass__f_d_m_r_g =
 [
-    [ "class_fDMRG", "classclass__f_d_m_r_g.html#aa1c1ab78cb994ae5baf559e56a3eecd4", null ],
-    [ "check_convergence", "classclass__f_d_m_r_g.html#a03b605605f8b429ff44855ab4d3c0f29", null ],
-    [ "initialize_chain", "classclass__f_d_m_r_g.html#acce7da213ddfb61a2fefc4bf5131d141", null ],
-    [ "initialize_constants", "classclass__f_d_m_r_g.html#a51dcb8d463fc92f46298df1d1ef89a1c", null ],
-    [ "print_profiling", "classclass__f_d_m_r_g.html#a03c240547e71eac74b51ea56f3798b3f", null ],
-    [ "print_profiling_sim", "classclass__f_d_m_r_g.html#ae41667950f80687ebcb3229b671dae36", null ],
-    [ "run", "classclass__f_d_m_r_g.html#acbd839591beb94d6c1b561b44816ac2b", null ],
-    [ "store_chain_entry_to_file", "classclass__f_d_m_r_g.html#a3571652b3f3722732c35a4221ca67681", null ],
-    [ "store_table_entry_to_file", "classclass__f_d_m_r_g.html#a0866520954cc2157a671f2407affc42b", null ],
-    [ "max_length", "classclass__f_d_m_r_g.html#a6f137bacb4f28bfc3efbdebe53aa6f4e", null ],
-    [ "max_sweeps", "classclass__f_d_m_r_g.html#a6f977ba38a5254e840da9c1124dae77a", null ],
-    [ "table_fdmrg", "classclass__f_d_m_r_g.html#afd398f259538cefc6ffbf66022354a2e", null ],
-    [ "table_fdmrg_chain", "classclass__f_d_m_r_g.html#a3437c594153bca7666722ef78958f955", null ]
+    [ "class_fDMRG", "classclass__f_d_m_r_g.html#a8ad33fc90e97bfd0e1bd81ade8d7ef02", null ],
+    [ "check_convergence", "classclass__f_d_m_r_g.html#aac645a52a00193e6a8d15543117e455f", null ],
+    [ "chi_grow", "classclass__f_d_m_r_g.html#a36bc398c7f73f56386d4d048a5b38df4", null ],
+    [ "chi_max", "classclass__f_d_m_r_g.html#aac4be7a4fa0dd0dc7a2b15509fb2f485", null ],
+    [ "num_sites", "classclass__f_d_m_r_g.html#a8a544d36345f8a75addcb271391b0783", null ],
+    [ "print_freq", "classclass__f_d_m_r_g.html#acf56cd65b80cad2317d6a6fd13d6cab2", null ],
+    [ "run_simulation", "classclass__f_d_m_r_g.html#a08fe1cb78f4ba42593dac8d1ca7c73c9", null ],
+    [ "sim_on", "classclass__f_d_m_r_g.html#af6173971aac8a926019069605ffbe012", null ],
+    [ "store_wave_function", "classclass__f_d_m_r_g.html#a1494c07358752254c4dd739c160698f4", null ],
+    [ "write_freq", "classclass__f_d_m_r_g.html#a496158a75304ab88926f7389d3994108", null ],
+    [ "write_logs", "classclass__f_d_m_r_g.html#a4654f5d47acaecd8317f090899fb9afd", null ],
+    [ "log_dmrg", "classclass__f_d_m_r_g.html#a436b9c8a53fcd8b148976317f7d4140f", null ],
+    [ "projected_during_saturation", "classclass__f_d_m_r_g.html#ac719179f6fa2f471afdba895b0a8026d", null ]
 ];

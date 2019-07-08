@@ -1,30 +1,31 @@
 var NAVTREE =
 [
   [ "DMRG++", "index.html", [
-    [ "DMRG++", "index.html#intro", [
+    [ "DMRG++ (documentation in progress)", "index.html#intro", [
       [ "Notes (in construction)", "index.html#notes", null ]
     ] ],
     [ "Installation", "index.html#installation", [
       [ "Quick start", "index.html#quickstart", null ],
-      [ "Requirements", "index.html#requirements", [
-        [ "Optional Requirements", "index.html#optional-requirements", null ]
-      ] ],
       [ "Build", "index.html#build", null ],
       [ "Execution", "index.html#execution", null ],
       [ "Configuration file", "index.html#configuration-file", null ],
-      [ "Output file", "index.html#output-file", null ]
+      [ "Output file", "index.html#output-file", null ],
+      [ "Minimum Requirements", "index.html#requirements", [
+        [ "Optional Requirements", "index.html#optional-requirements", null ]
+      ] ]
     ] ],
     [ "Notation", "index.html#notation", [
       [ "Tensor index order convention.", "index.html#convention", [
         [ "Example:", "index.html#example", null ]
-      ] ]
+      ] ],
+      [ "Reference", "index.html#reference", null ]
     ] ],
     [ "Details", "index.html#details", null ],
     [ "Namespaces", null, [
       [ "Namespace List", "namespaces.html", "namespaces" ],
       [ "Namespace Members", "namespacemembers.html", [
-        [ "All", "namespacemembers.html", null ],
-        [ "Functions", "namespacemembers_func.html", null ],
+        [ "All", "namespacemembers.html", "namespacemembers_dup" ],
+        [ "Functions", "namespacemembers_func.html", "namespacemembers_func" ],
         [ "Variables", "namespacemembers_vars.html", null ],
         [ "Typedefs", "namespacemembers_type.html", null ],
         [ "Enumerations", "namespacemembers_enum.html", null ]
@@ -58,14 +59,14 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"annotated.html",
-"class_stl_matrix_product.html#a89163543d448d6852c458eaeda139fcd",
-"classclass__environment__var.html",
-"classclass__hdf5__table.html#ac33d1e1e4da4c4778f36413be81858b6",
-"classclass__table__profiling.html#ae3463ddd598d585aa099b783f441d595",
-"functions_h.html",
-"nmspc__sim__settings_8h.html#a1e1c647aee60057b23aa93aed6e0771c",
-"structclass__table__tebd_1_1data__struct.html#abe6dbd7529723132dcceb5f2f3b48e1b"
+"accurate_8cpp.html",
+"classclass___s_v_d.html#a7568da355eba7526e68a51faf9545059",
+"classclass__i_t_e_b_d.html#a4b9d274c6d8b0f4874e3034a168daeb5",
+"classclass__vidal__site.html#aba2f8b6e1ae1dabadf621679711aca8b",
+"log__types_8h.html",
+"nmspc__random__numbers_8h.html#a4f2745fb1b4e2243d0adccf9c324b447",
+"nmspc__tools_8h.html#a9790abf794f1914ac585a6ec1a87cfcf",
+"structclass__selfdual__tf__rf__ising__h5table_1_1data__struct.html#ad4de01f41f242cb733f68d0f933a103a"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

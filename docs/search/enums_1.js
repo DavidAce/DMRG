@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['ritz',['Ritz',['../namespaceeigsolver__properties.html#a508bb36ac47be33fe53e03a5e53cd044',1,'eigsolver_properties::Ritz()'],['../namespaceeigutils_1_1eig_setting.html#a03696695037235bbb52d88102d75b69d',1,'eigutils::eigSetting::Ritz()']]]
+  ['optmode',['OptMode',['../namespacetools_1_1finite_1_1opt.html#afe78a5dc46145a3a7d8f51168226e0f6',1,'tools::finite::opt']]],
+  ['optspace',['OptSpace',['../namespacetools_1_1finite_1_1opt.html#a04ca8f4b4cd4ea8fb0700927cbae11b6',1,'tools::finite::opt']]],
+  ['opttype',['OptType',['../namespacetools_1_1finite_1_1opt.html#ad30f78663f0e38d32ba7964276f33d4e',1,'tools::finite::opt']]]
 ];

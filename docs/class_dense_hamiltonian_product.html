@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DMRG++: DenseHamiltonianProduct&lt; T &gt; Class Template Reference</title>
+<title>DMRG++: DenseHamiltonianProduct&lt; Scalar_ &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -86,170 +86,131 @@ $(document).ready(function(){initNavTree('class_dense_hamiltonian_product.html',
 
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_dense_hamiltonian_product-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">DenseHamiltonianProduct&lt; T &gt; Class Template Reference</div>  </div>
+<div class="title">DenseHamiltonianProduct&lt; Scalar_ &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="matrix__product__hamiltonian_8h_source.html">matrix_product_hamiltonian.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a5899b1e4cd30d2ef3dae989d289be07f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a5899b1e4cd30d2ef3dae989d289be07f">Scalar</a> = Scalar_</td></tr>
+<tr class="separator:a5899b1e4cd30d2ef3dae989d289be07f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2dc0ddcd4021bfe23489b87b0673f7f0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a2dc0ddcd4021bfe23489b87b0673f7f0">rows</a> () const</td></tr>
-<tr class="separator:a2dc0ddcd4021bfe23489b87b0673f7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96f27231346b08f0dbf94f3b370597b8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a96f27231346b08f0dbf94f3b370597b8">cols</a> () const</td></tr>
-<tr class="separator:a96f27231346b08f0dbf94f3b370597b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7cb003a0fa7f1af73511dadec0a6a8e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a7cb003a0fa7f1af73511dadec0a6a8e5">MultMv</a> (T *theta_in_, T *theta_out_)</td></tr>
-<tr class="separator:a7cb003a0fa7f1af73511dadec0a6a8e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b9b6883067cd1634abb53fc420ddf78"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a8b9b6883067cd1634abb53fc420ddf78">DenseHamiltonianProduct</a> (const T *Lblock_, const T *Rblock_, const T *HA_, const T *HB_, const std::array&lt; long, 4 &gt; shape_theta4_, const std::array&lt; long, 4 &gt; shape_mpo4_)</td></tr>
-<tr class="separator:a8b9b6883067cd1634abb53fc420ddf78"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2dc0ddcd4021bfe23489b87b0673f7f0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a2dc0ddcd4021bfe23489b87b0673f7f0">rows</a> () const</td></tr>
-<tr class="separator:a2dc0ddcd4021bfe23489b87b0673f7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96f27231346b08f0dbf94f3b370597b8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a96f27231346b08f0dbf94f3b370597b8">cols</a> () const</td></tr>
-<tr class="separator:a96f27231346b08f0dbf94f3b370597b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7cb003a0fa7f1af73511dadec0a6a8e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a7cb003a0fa7f1af73511dadec0a6a8e5">MultMv</a> (T *theta_in_, T *theta_out_)</td></tr>
-<tr class="separator:a7cb003a0fa7f1af73511dadec0a6a8e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b9b6883067cd1634abb53fc420ddf78"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a8b9b6883067cd1634abb53fc420ddf78">DenseHamiltonianProduct</a> (const T *Lblock_, const T *Rblock_, const T *HA_, const T *HB_, const std::array&lt; long, 4 &gt; shape_theta4_, const std::array&lt; long, 4 &gt; shape_mpo4_)</td></tr>
-<tr class="separator:a8b9b6883067cd1634abb53fc420ddf78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf8b47352edf585031603816c47dceab"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#abf8b47352edf585031603816c47dceab">DenseHamiltonianProduct</a> (const Scalar_ *Lblock_, const Scalar_ *Rblock_, const Scalar_ *HA_, const Scalar_ *HB_, const std::array&lt; long, 4 &gt; shape_theta4_, const std::array&lt; long, 4 &gt; shape_mpo4_)</td></tr>
+<tr class="separator:abf8b47352edf585031603816c47dceab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecec01d77a30db2fd058a8b505ab1d42"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#aecec01d77a30db2fd058a8b505ab1d42">rows</a> () const</td></tr>
+<tr class="separator:aecec01d77a30db2fd058a8b505ab1d42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a871b7edb9d3c0ddec8df8be12fb6dc9f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a871b7edb9d3c0ddec8df8be12fb6dc9f">cols</a> () const</td></tr>
+<tr class="separator:a871b7edb9d3c0ddec8df8be12fb6dc9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af356d539695d81a15b3aeedecaa500d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#af356d539695d81a15b3aeedecaa500d5">MultAx</a> (Scalar_ *theta_in_, Scalar_ *theta_out_)</td></tr>
+<tr class="separator:af356d539695d81a15b3aeedecaa500d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e0b89f2fc806189437ba8d2311130e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a6e0b89f2fc806189437ba8d2311130e5">print</a> () const</td></tr>
+<tr class="separator:a6e0b89f2fc806189437ba8d2311130e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af90c840023a99e77c005f5de1e831fe0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#af90c840023a99e77c005f5de1e831fe0">set_mode</a> (const <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a> form_)</td></tr>
+<tr class="separator:af90c840023a99e77c005f5de1e831fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c7a4f5d54d18446920ec4de1af842e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a9c7a4f5d54d18446920ec4de1af842e2">set_side</a> (const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a> side_)</td></tr>
+<tr class="separator:a9c7a4f5d54d18446920ec4de1af842e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbd102471d7b6a8826d4e306892a0dc3"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#abbd102471d7b6a8826d4e306892a0dc3">get_form</a> () const</td></tr>
+<tr class="separator:abbd102471d7b6a8826d4e306892a0dc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a610501eaf540a6e372d7d3b71a67a248"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a610501eaf540a6e372d7d3b71a67a248">get_side</a> () const</td></tr>
+<tr class="separator:a610501eaf540a6e372d7d3b71a67a248"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:aeb087f54ef3f5fbfa9b98f460a456530"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#aeb087f54ef3f5fbfa9b98f460a456530">counter</a> = 0</td></tr>
-<tr class="separator:aeb087f54ef3f5fbfa9b98f460a456530"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4106b9522e4ae89748abec44c1be2607"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a4106b9522e4ae89748abec44c1be2607">t_mul</a></td></tr>
-<tr class="separator:a4106b9522e4ae89748abec44c1be2607"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9a15bc851bf9c5371fdbe0c4e765bba"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#ae9a15bc851bf9c5371fdbe0c4e765bba">counter</a> = 0</td></tr>
+<tr class="separator:ae9a15bc851bf9c5371fdbe0c4e765bba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12c2de64713899de7c719f5dc23d6e5e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a12c2de64713899de7c719f5dc23d6e5e">t_mul</a></td></tr>
+<tr class="separator:a12c2de64713899de7c719f5dc23d6e5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a33401eeb9e82ff5cd67d6d0e2420cd37"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a33401eeb9e82ff5cd67d6d0e2420cd37">can_shift</a> = false</td></tr>
+<tr class="separator:a33401eeb9e82ff5cd67d6d0e2420cd37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a8a524bd5405868a3b86d538acacd9041"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a8a524bd5405868a3b86d538acacd9041">Lblock</a></td></tr>
-<tr class="separator:a8a524bd5405868a3b86d538acacd9041"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a12214b743c3e121e934401f681b8c8"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a3a12214b743c3e121e934401f681b8c8">Rblock</a></td></tr>
-<tr class="separator:a3a12214b743c3e121e934401f681b8c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6bef9205f9e2482c07658545595ad69"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#ad6bef9205f9e2482c07658545595ad69">HA</a></td></tr>
-<tr class="separator:ad6bef9205f9e2482c07658545595ad69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae71432c0f231e0c9b721a0af2b595093"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#ae71432c0f231e0c9b721a0af2b595093">HB</a></td></tr>
-<tr class="separator:ae71432c0f231e0c9b721a0af2b595093"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60d09b4fb3dfaa664c2ca054f5348e35"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a60d09b4fb3dfaa664c2ca054f5348e35">shape_theta4</a></td></tr>
-<tr class="separator:a60d09b4fb3dfaa664c2ca054f5348e35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a75ce252d826b94e4c6b765a7fcbecd"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a5a75ce252d826b94e4c6b765a7fcbecd">shape_theta2</a></td></tr>
-<tr class="separator:a5a75ce252d826b94e4c6b765a7fcbecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2691900323213c25edf22d838b7eabd5"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a2691900323213c25edf22d838b7eabd5">shape_theta1</a></td></tr>
-<tr class="separator:a2691900323213c25edf22d838b7eabd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39d2eae68884a3982bef3710cb85b401"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a39d2eae68884a3982bef3710cb85b401">shape_mpo4</a></td></tr>
-<tr class="separator:a39d2eae68884a3982bef3710cb85b401"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2115ff08771990813813e39f158c0d91"><td class="memItemLeft" align="right" valign="top">const Scalar_ *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a2115ff08771990813813e39f158c0d91">Lblock</a></td></tr>
+<tr class="separator:a2115ff08771990813813e39f158c0d91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a125e8c79aa2e426886853fa9a1797b92"><td class="memItemLeft" align="right" valign="top">const Scalar_ *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a125e8c79aa2e426886853fa9a1797b92">Rblock</a></td></tr>
+<tr class="separator:a125e8c79aa2e426886853fa9a1797b92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68273ca080c90d1ea3b904ebe8454b2e"><td class="memItemLeft" align="right" valign="top">const Scalar_ *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a68273ca080c90d1ea3b904ebe8454b2e">HA</a></td></tr>
+<tr class="separator:a68273ca080c90d1ea3b904ebe8454b2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab118ff027ab372eb9bc77045a708b35f"><td class="memItemLeft" align="right" valign="top">const Scalar_ *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#ab118ff027ab372eb9bc77045a708b35f">HB</a></td></tr>
+<tr class="separator:ab118ff027ab372eb9bc77045a708b35f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a854646ea703b88e2b03557a51954cc63"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a854646ea703b88e2b03557a51954cc63">shape_theta4</a></td></tr>
+<tr class="separator:a854646ea703b88e2b03557a51954cc63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a712206df161dbc7123ce017a9be099f3"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a712206df161dbc7123ce017a9be099f3">shape_theta2</a></td></tr>
+<tr class="separator:a712206df161dbc7123ce017a9be099f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a118cf397c1ef655e11aa6f4672e1faa1"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a118cf397c1ef655e11aa6f4672e1faa1">shape_theta1</a></td></tr>
+<tr class="separator:a118cf397c1ef655e11aa6f4672e1faa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a900a243819adf2833c6b31e3edfaeea2"><td class="memItemLeft" align="right" valign="top">std::array&lt; long, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a900a243819adf2833c6b31e3edfaeea2">shape_mpo4</a></td></tr>
+<tr class="separator:a900a243819adf2833c6b31e3edfaeea2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b0880e07d2ae340fd6e062b0a8fcbda"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a6b0880e07d2ae340fd6e062b0a8fcbda">form</a> = <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::Form::SYMMETRIC</a></td></tr>
+<tr class="separator:a6b0880e07d2ae340fd6e062b0a8fcbda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8539eabd5897f742e86d14ba670c81fe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dense_hamiltonian_product.html#a8539eabd5897f742e86d14ba670c81fe">side</a> = <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::Side::R</a></td></tr>
+<tr class="separator:a8539eabd5897f742e86d14ba670c81fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a8b9b6883067cd1634abb53fc420ddf78"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b9b6883067cd1634abb53fc420ddf78">&#9670;&nbsp;</a></span>DenseHamiltonianProduct() <span class="overload">[1/2]</span></h2>
+<h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a5899b1e4cd30d2ef3dae989d289be07f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5899b1e4cd30d2ef3dae989d289be07f">&#9670;&nbsp;</a></span>Scalar</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
+template&lt;class Scalar_&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::<a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a> </td>
-          <td>(</td>
-          <td class="paramtype">const T *&#160;</td>
-          <td class="paramname"><em>Lblock_</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const T *&#160;</td>
-          <td class="paramname"><em>Rblock_</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const T *&#160;</td>
-          <td class="paramname"><em>HA_</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const T *&#160;</td>
-          <td class="paramname"><em>HB_</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::array&lt; long, 4 &gt;&#160;</td>
-          <td class="paramname"><em>shape_theta4_</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::array&lt; long, 4 &gt;&#160;</td>
-          <td class="paramname"><em>shape_mpo4_</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
+          <td class="memname">using <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::<a class="el" href="class_dense_hamiltonian_product.html#a5899b1e4cd30d2ef3dae989d289be07f">Scalar</a> =  Scalar_</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
-<p>&lt; Initializes the custom contraction. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Lblock_</td><td>The left block tensor. </td></tr>
-    <tr><td class="paramname">Rblock_</td><td>The right block tensor. </td></tr>
-    <tr><td class="paramname">HA_</td><td>The left Hamiltonian MPO's </td></tr>
-    <tr><td class="paramname">HB_</td><td>The right Hamiltonian MPO's </td></tr>
-    <tr><td class="paramname">shape_theta4_</td><td>An array containing the shapes of theta </td></tr>
-    <tr><td class="paramname">shape_mpo4_</td><td>An array containing the shapes of the MPO </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
-<a id="a8b9b6883067cd1634abb53fc420ddf78"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b9b6883067cd1634abb53fc420ddf78">&#9670;&nbsp;</a></span>DenseHamiltonianProduct() <span class="overload">[2/2]</span></h2>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="abf8b47352edf585031603816c47dceab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf8b47352edf585031603816c47dceab">&#9670;&nbsp;</a></span>DenseHamiltonianProduct()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::<a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a> </td>
+          <td class="memname"><a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::<a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a> </td>
           <td>(</td>
-          <td class="paramtype">const T *&#160;</td>
+          <td class="paramtype">const Scalar_ *&#160;</td>
           <td class="paramname"><em>Lblock_</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const T *&#160;</td>
+          <td class="paramtype">const Scalar_ *&#160;</td>
           <td class="paramname"><em>Rblock_</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const T *&#160;</td>
+          <td class="paramtype">const Scalar_ *&#160;</td>
           <td class="paramname"><em>HA_</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const T *&#160;</td>
+          <td class="paramtype">const Scalar_ *&#160;</td>
           <td class="paramname"><em>HB_</em>, </td>
         </tr>
         <tr>
@@ -292,19 +253,19 @@ template&lt;class T&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a96f27231346b08f0dbf94f3b370597b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96f27231346b08f0dbf94f3b370597b8">&#9670;&nbsp;</a></span>cols() <span class="overload">[1/2]</span></h2>
+<a id="a871b7edb9d3c0ddec8df8be12fb6dc9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a871b7edb9d3c0ddec8df8be12fb6dc9f">&#9670;&nbsp;</a></span>cols()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::cols </td>
+          <td class="memname">int <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::cols </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -320,19 +281,19 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a96f27231346b08f0dbf94f3b370597b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96f27231346b08f0dbf94f3b370597b8">&#9670;&nbsp;</a></span>cols() <span class="overload">[2/2]</span></h2>
+<a id="abbd102471d7b6a8826d4e306892a0dc3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abbd102471d7b6a8826d4e306892a0dc3">&#9670;&nbsp;</a></span>get_form()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::cols </td>
+          <td class="memname">const <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a>&amp; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::get_form </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -343,86 +304,81 @@ template&lt;class T&gt; </div>
 <span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a610501eaf540a6e372d7d3b71a67a248"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a610501eaf540a6e372d7d3b71a67a248">&#9670;&nbsp;</a></span>get_side()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar_&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a>&amp; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::get_side </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af356d539695d81a15b3aeedecaa500d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af356d539695d81a15b3aeedecaa500d5">&#9670;&nbsp;</a></span>MultAx()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar_&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::MultAx </td>
+          <td>(</td>
+          <td class="paramtype">Scalar_ *&#160;</td>
+          <td class="paramname"><em>theta_in_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Scalar_ *&#160;</td>
+          <td class="paramname"><em>theta_out_</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
 </div><div class="memdoc">
 <p>The "matrix" \( H \) a has rows = columns = \(d^2 \times \chi_L \times \chi_R \) </p>
 
 </div>
 </div>
-<a id="a7cb003a0fa7f1af73511dadec0a6a8e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cb003a0fa7f1af73511dadec0a6a8e5">&#9670;&nbsp;</a></span>MultMv() <span class="overload">[1/2]</span></h2>
+<a id="a6e0b89f2fc806189437ba8d2311130e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e0b89f2fc806189437ba8d2311130e5">&#9670;&nbsp;</a></span>print()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::MultMv </td>
-          <td>(</td>
-          <td class="paramtype">T *&#160;</td>
-          <td class="paramname"><em>theta_in_</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">T *&#160;</td>
-          <td class="paramname"><em>theta_out_</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>The "matrix" \( H \) a has rows = columns = \(d^2 \times \chi_L \times \chi_R \) The function that contracts. </p>
-
-</div>
-</div>
-<a id="a7cb003a0fa7f1af73511dadec0a6a8e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cb003a0fa7f1af73511dadec0a6a8e5">&#9670;&nbsp;</a></span>MultMv() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class T&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::MultMv </td>
-          <td>(</td>
-          <td class="paramtype">T *&#160;</td>
-          <td class="paramname"><em>theta_in_</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">T *&#160;</td>
-          <td class="paramname"><em>theta_out_</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>The "matrix" \( H \) a has rows = columns = \(d^2 \times \chi_L \times \chi_R \) The function that contracts. </p>
-
-</div>
-</div>
-<a id="a2dc0ddcd4021bfe23489b87b0673f7f0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2dc0ddcd4021bfe23489b87b0673f7f0">&#9670;&nbsp;</a></span>rows() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::rows </td>
+          <td class="memname">void <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::print </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -437,22 +393,78 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a2dc0ddcd4021bfe23489b87b0673f7f0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2dc0ddcd4021bfe23489b87b0673f7f0">&#9670;&nbsp;</a></span>rows() <span class="overload">[2/2]</span></h2>
+<a id="aecec01d77a30db2fd058a8b505ab1d42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aecec01d77a30db2fd058a8b505ab1d42">&#9670;&nbsp;</a></span>rows()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::rows </td>
+          <td class="memname">int <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::rows </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af90c840023a99e77c005f5de1e831fe0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af90c840023a99e77c005f5de1e831fe0">&#9670;&nbsp;</a></span>set_mode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar_&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::set_mode </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a>&#160;</td>
+          <td class="paramname"><em>form_</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9c7a4f5d54d18446920ec4de1af842e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c7a4f5d54d18446920ec4de1af842e2">&#9670;&nbsp;</a></span>set_side()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar_&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::set_side </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a>&#160;</td>
+          <td class="paramname"><em>side_</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
   </td>
@@ -465,35 +477,59 @@ template&lt;class T&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="aeb087f54ef3f5fbfa9b98f460a456530"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb087f54ef3f5fbfa9b98f460a456530">&#9670;&nbsp;</a></span>counter</h2>
+<a id="a33401eeb9e82ff5cd67d6d0e2420cd37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33401eeb9e82ff5cd67d6d0e2420cd37">&#9670;&nbsp;</a></span>can_shift</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::counter = 0</td>
+          <td class="memname">constexpr bool <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::can_shift = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae9a15bc851bf9c5371fdbe0c4e765bba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9a15bc851bf9c5371fdbe0c4e765bba">&#9670;&nbsp;</a></span>counter</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar_&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::counter = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ad6bef9205f9e2482c07658545595ad69"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad6bef9205f9e2482c07658545595ad69">&#9670;&nbsp;</a></span>HA</h2>
+<a id="a6b0880e07d2ae340fd6e062b0a8fcbda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b0880e07d2ae340fd6e062b0a8fcbda">&#9670;&nbsp;</a></span>form</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const T * <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::HA</td>
+          <td class="memname"><a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a> <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::form = <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::Form::SYMMETRIC</a></td>
         </tr>
       </table>
   </td>
@@ -505,19 +541,19 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="ae71432c0f231e0c9b721a0af2b595093"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae71432c0f231e0c9b721a0af2b595093">&#9670;&nbsp;</a></span>HB</h2>
+<a id="a68273ca080c90d1ea3b904ebe8454b2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68273ca080c90d1ea3b904ebe8454b2e">&#9670;&nbsp;</a></span>HA</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const T * <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::HB</td>
+          <td class="memname">const Scalar_* <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::HA</td>
         </tr>
       </table>
   </td>
@@ -529,19 +565,19 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a8a524bd5405868a3b86d538acacd9041"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a524bd5405868a3b86d538acacd9041">&#9670;&nbsp;</a></span>Lblock</h2>
+<a id="ab118ff027ab372eb9bc77045a708b35f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab118ff027ab372eb9bc77045a708b35f">&#9670;&nbsp;</a></span>HB</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const T * <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::Lblock</td>
+          <td class="memname">const Scalar_* <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::HB</td>
         </tr>
       </table>
   </td>
@@ -553,19 +589,19 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a3a12214b743c3e121e934401f681b8c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a12214b743c3e121e934401f681b8c8">&#9670;&nbsp;</a></span>Rblock</h2>
+<a id="a2115ff08771990813813e39f158c0d91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2115ff08771990813813e39f158c0d91">&#9670;&nbsp;</a></span>Lblock</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const T * <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::Rblock</td>
+          <td class="memname">const Scalar_* <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::Lblock</td>
         </tr>
       </table>
   </td>
@@ -577,19 +613,19 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a39d2eae68884a3982bef3710cb85b401"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a39d2eae68884a3982bef3710cb85b401">&#9670;&nbsp;</a></span>shape_mpo4</h2>
+<a id="a125e8c79aa2e426886853fa9a1797b92"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a125e8c79aa2e426886853fa9a1797b92">&#9670;&nbsp;</a></span>Rblock</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::array&lt; long, 4 &gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::shape_mpo4</td>
+          <td class="memname">const Scalar_* <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::Rblock</td>
         </tr>
       </table>
   </td>
@@ -601,19 +637,19 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a2691900323213c25edf22d838b7eabd5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2691900323213c25edf22d838b7eabd5">&#9670;&nbsp;</a></span>shape_theta1</h2>
+<a id="a900a243819adf2833c6b31e3edfaeea2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a900a243819adf2833c6b31e3edfaeea2">&#9670;&nbsp;</a></span>shape_mpo4</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::array&lt; long, 1 &gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::shape_theta1</td>
+          <td class="memname">std::array&lt;long,4&gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::shape_mpo4</td>
         </tr>
       </table>
   </td>
@@ -625,19 +661,19 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a5a75ce252d826b94e4c6b765a7fcbecd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a75ce252d826b94e4c6b765a7fcbecd">&#9670;&nbsp;</a></span>shape_theta2</h2>
+<a id="a118cf397c1ef655e11aa6f4672e1faa1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a118cf397c1ef655e11aa6f4672e1faa1">&#9670;&nbsp;</a></span>shape_theta1</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::array&lt; long, 2 &gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::shape_theta2</td>
+          <td class="memname">std::array&lt;long,1&gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::shape_theta1</td>
         </tr>
       </table>
   </td>
@@ -649,19 +685,19 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a60d09b4fb3dfaa664c2ca054f5348e35"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a60d09b4fb3dfaa664c2ca054f5348e35">&#9670;&nbsp;</a></span>shape_theta4</h2>
+<a id="a712206df161dbc7123ce017a9be099f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a712206df161dbc7123ce017a9be099f3">&#9670;&nbsp;</a></span>shape_theta2</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::array&lt; long, 4 &gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::shape_theta4</td>
+          <td class="memname">std::array&lt;long,2&gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::shape_theta2</td>
         </tr>
       </table>
   </td>
@@ -673,27 +709,72 @@ template&lt;class T&gt; </div>
 
 </div>
 </div>
-<a id="a4106b9522e4ae89748abec44c1be2607"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4106b9522e4ae89748abec44c1be2607">&#9670;&nbsp;</a></span>t_mul</h2>
+<a id="a854646ea703b88e2b03557a51954cc63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a854646ea703b88e2b03557a51954cc63">&#9670;&nbsp;</a></span>shape_theta4</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class T&gt; </div>
+template&lt;class Scalar_&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a> <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; T &gt;::t_mul</td>
+          <td class="memname">std::array&lt;long,4&gt; <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::shape_theta4</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8539eabd5897f742e86d14ba670c81fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8539eabd5897f742e86d14ba670c81fe">&#9670;&nbsp;</a></span>side</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar_&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a> <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::side = <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::Side::R</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a12c2de64713899de7c719f5dc23d6e5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12c2de64713899de7c719f5dc23d6e5e">&#9670;&nbsp;</a></span>t_mul</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar_&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classclass__tic__toc.html">class_tic_toc</a> <a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; Scalar_ &gt;::t_mul</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>source/general/arpack_extra/<a class="el" href="matrix__product__hamiltonian_8h_source.html">matrix_product_hamiltonian.h</a></li>
-<li>source/general/<a class="el" href="class__eigsolver__arpack__custom__products_8h_source.html">class_eigsolver_arpack_custom_products.h</a></li>
-<li>source/general/arpack_extra/<a class="el" href="matrix__product__hamiltonian_8cpp.html">matrix_product_hamiltonian.cpp</a></li>
-<li>source/general/<a class="el" href="class__eigsolver__arpack__custom__products_8cpp.html">class_eigsolver_arpack_custom_products.cpp</a></li>
+<hr/>The documentation for this class was generated from the following file:<ul>
+<li>source/math/arpack_extra/<a class="el" href="matrix__product__hamiltonian_8h_source.html">matrix_product_hamiltonian.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

@@ -96,16 +96,16 @@ $(document).ready(function(){initNavTree('namespacesettings_1_1idmrg.html','');}
 Variables</h2></td></tr>
 <tr class="memitem:ac5b947fd1c6fd076ebbe1d3d5cf20a1f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1idmrg.html#ac5b947fd1c6fd076ebbe1d3d5cf20a1f">on</a> = true</td></tr>
 <tr class="separator:ac5b947fd1c6fd076ebbe1d3d5cf20a1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbbc0d9cdf5b767e0d9051b955f8fd3e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1idmrg.html#afbbc0d9cdf5b767e0d9051b955f8fd3e">max_steps</a> = 5000</td></tr>
-<tr class="separator:afbbc0d9cdf5b767e0d9051b955f8fd3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b0d73c9584cf669c3b6ef2c148698cd"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1idmrg.html#a0b0d73c9584cf669c3b6ef2c148698cd">max_steps</a> = 5000</td></tr>
+<tr class="separator:a0b0d73c9584cf669c3b6ef2c148698cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88a9f3be8ff1dcc89152591410c447d6"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1idmrg.html#a88a9f3be8ff1dcc89152591410c447d6">chi_max</a> = 8</td></tr>
 <tr class="separator:a88a9f3be8ff1dcc89152591410c447d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8fbed186f5dc10147472f92cb11cd6f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1idmrg.html#aa8fbed186f5dc10147472f92cb11cd6f">chi_grow</a> = true</td></tr>
 <tr class="separator:aa8fbed186f5dc10147472f92cb11cd6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55074bedfc07bbdb9b60c91194a5d25d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1idmrg.html#a55074bedfc07bbdb9b60c91194a5d25d">print_freq</a> = 1000</td></tr>
-<tr class="separator:a55074bedfc07bbdb9b60c91194a5d25d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59c5a0a7cdacb77123c35e67c7e236e1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1idmrg.html#a59c5a0a7cdacb77123c35e67c7e236e1">store_freq</a> = 100</td></tr>
-<tr class="separator:a59c5a0a7cdacb77123c35e67c7e236e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8fb290c6eac82f9e33a94e71d26a29d"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1idmrg.html#af8fb290c6eac82f9e33a94e71d26a29d">print_freq</a> = 1000</td></tr>
+<tr class="separator:af8fb290c6eac82f9e33a94e71d26a29d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a045e93c114bea3cce9b57146f2a7f176"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1idmrg.html#a045e93c114bea3cce9b57146f2a7f176">write_freq</a> = 100</td></tr>
+<tr class="separator:a045e93c114bea3cce9b57146f2a7f176"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="aa8fbed186f5dc10147472f92cb11cd6f"></a>
@@ -113,11 +113,19 @@ Variables</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool settings::idmrg::chi_grow = true</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Whether to increase chi slowly up to chi_max or go up to chi_max directly. </p>
 
@@ -128,26 +136,42 @@ Variables</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">long settings::idmrg::chi_max = 8</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Bond dimension of the current position (maximum number of singular values to keep in SVD). </p>
 
 </div>
 </div>
-<a id="afbbc0d9cdf5b767e0d9051b955f8fd3e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afbbc0d9cdf5b767e0d9051b955f8fd3e">&#9670;&nbsp;</a></span>max_steps</h2>
+<a id="a0b0d73c9584cf669c3b6ef2c148698cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b0d73c9584cf669c3b6ef2c148698cd">&#9670;&nbsp;</a></span>max_steps</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int settings::idmrg::max_steps = 5000</td>
+          <td class="memname">size_t settings::idmrg::max_steps = 5000</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Final length of 1D quantum chain. </p>
 
@@ -158,43 +182,67 @@ Variables</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool settings::idmrg::on = true</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Turns iDMRG simulation on/off. </p>
 
 </div>
 </div>
-<a id="a55074bedfc07bbdb9b60c91194a5d25d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a55074bedfc07bbdb9b60c91194a5d25d">&#9670;&nbsp;</a></span>print_freq</h2>
+<a id="af8fb290c6eac82f9e33a94e71d26a29d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8fb290c6eac82f9e33a94e71d26a29d">&#9670;&nbsp;</a></span>print_freq</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int settings::idmrg::print_freq = 1000</td>
+          <td class="memname">size_t settings::idmrg::print_freq = 1000</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Print frequency for console output. (0 = off). </p>
 
 </div>
 </div>
-<a id="a59c5a0a7cdacb77123c35e67c7e236e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a59c5a0a7cdacb77123c35e67c7e236e1">&#9670;&nbsp;</a></span>store_freq</h2>
+<a id="a045e93c114bea3cce9b57146f2a7f176"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a045e93c114bea3cce9b57146f2a7f176">&#9670;&nbsp;</a></span>write_freq</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int settings::idmrg::store_freq = 100</td>
+          <td class="memname">size_t settings::idmrg::write_freq = 100</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
-<p>Store frequency,for output file buffer. (0 = off). </p>
+<p>Write frequency,for output file buffer. (0 = off). </p>
 
 </div>
 </div>

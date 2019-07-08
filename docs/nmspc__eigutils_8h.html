@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>DMRG++: source/general/nmspc_eigutils.h File Reference</title>
+<title>DMRG++: source/math/nmspc_eigutils.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -88,7 +88,9 @@ $(document).ready(function(){initNavTree('nmspc__eigutils_8h.html','');});
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">nmspc_eigutils.h File Reference</div>  </div>
 </div><!--header-->
@@ -98,6 +100,8 @@ $(document).ready(function(){initNavTree('nmspc__eigutils_8h.html','');});
 <code>#include &lt;map&gt;</code><br />
 <code>#include &lt;complex&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
+<code>#include &lt;spdlog/sinks/stdout_color_sinks.h&gt;</code><br />
+<code>#include &lt;spdlog/spdlog.h&gt;</code><br />
 </div>
 <p><a href="nmspc__eigutils_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -115,6 +119,8 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespaceeigutils"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceeigutils.html">eigutils</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceeigutils_1_1eig_setting"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceeigutils_1_1eig_setting.html">eigutils::eigSetting</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespaceeigutils_1_1eig_logger"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceeigutils_1_1eig_logger.html">eigutils::eigLogger</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
@@ -155,13 +161,31 @@ Enumerations</h2></td></tr>
 <a class="el" href="namespaceeigutils_1_1eig_setting.html#a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::Type::CPLX</a>
  }</td></tr>
 <tr class="separator:a9ac877abbc395683ef9e2b49cce8507c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a4958e75ebe95c52b7432f57a058acf2c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceeigutils_1_1eig_setting.html#a03696695037235bbb52d88102d75b69d">Ritz</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceeigutils_1_1eig_setting.html#a4958e75ebe95c52b7432f57a058acf2c">eigutils::eigSetting::stringToRitz</a> (std::string ritzstring)</td></tr>
+<tr class="separator:a4958e75ebe95c52b7432f57a058acf2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab424a1ce754abbd02e0f70ee216386ce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceeigutils_1_1eig_logger.html#ab424a1ce754abbd02e0f70ee216386ce">eigutils::eigLogger::enableTimeStamp</a> (std::shared_ptr&lt; spdlog::logger &gt; &amp;log)</td></tr>
+<tr class="separator:ab424a1ce754abbd02e0f70ee216386ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a283e8a93ceaaec1515e70a46abe33994"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceeigutils_1_1eig_logger.html#a283e8a93ceaaec1515e70a46abe33994">eigutils::eigLogger::disableTimeStamp</a> (std::shared_ptr&lt; spdlog::logger &gt; &amp;log)</td></tr>
+<tr class="separator:a283e8a93ceaaec1515e70a46abe33994"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1738e90923c7cc7b006457fb5e672ce8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceeigutils_1_1eig_logger.html#a1738e90923c7cc7b006457fb5e672ce8">eigutils::eigLogger::setLogLevel</a> (size_t levelZeroToSix)</td></tr>
+<tr class="separator:a1738e90923c7cc7b006457fb5e672ce8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82c0e82fa7b658057257b2f08ba028f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceeigutils_1_1eig_logger.html#a82c0e82fa7b658057257b2f08ba028f5">eigutils::eigLogger::setLogger</a> (std::string name, size_t levelZeroToSix=2, bool timestamp=true)</td></tr>
+<tr class="separator:a82c0e82fa7b658057257b2f08ba028f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:aa81c1034622db3922ad65b5278492ad9"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; spdlog::logger &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceeigutils_1_1eig_logger.html#aa81c1034622db3922ad65b5278492ad9">eigutils::eigLogger::log</a></td></tr>
+<tr class="separator:aa81c1034622db3922ad65b5278492ad9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_b2f33c71d4aa5e7af42a1ca61ff5af1b.html">source</a></li><li class="navelem"><a class="el" href="dir_9cdd153f0f1b41b116eb8c6c3efd2239.html">general</a></li><li class="navelem"><a class="el" href="nmspc__eigutils_8h.html">nmspc_eigutils.h</a></li>
+    <li class="navelem"><a class="el" href="dir_b2f33c71d4aa5e7af42a1ca61ff5af1b.html">source</a></li><li class="navelem"><a class="el" href="dir_5a2bb10aa94e3e78e9f9f2d4a3256a0b.html">math</a></li><li class="navelem"><a class="el" href="nmspc__eigutils_8h.html">nmspc_eigutils.h</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>

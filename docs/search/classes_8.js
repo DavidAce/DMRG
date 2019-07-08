@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['print_5ftype_5fand_5fexit_5fcompile_5ftime',['print_type_and_exit_compile_time',['../struct_type_check_1_1print__type__and__exit__compile__time.html',1,'TypeCheck']]]
+  ['sparsematrixproduct',['SparseMatrixProduct',['../class_sparse_matrix_product.html',1,'']]],
+  ['status_5fdata',['status_data',['../structstatus__data.html',1,'']]],
+  ['stlmatrixproduct',['StlMatrixProduct',['../class_stl_matrix_product.html',1,'']]],
+  ['subspace_5ffunctor',['subspace_functor',['../classtools_1_1finite_1_1opt_1_1internals_1_1subspace__functor.html',1,'tools::finite::opt::internals']]]
 ];
