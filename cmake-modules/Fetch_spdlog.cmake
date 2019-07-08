@@ -1,6 +1,7 @@
 
-
-find_package(spdlog 1.3 NO_DEFAULT_PATH HINTS ${INSTALL_DIRECTORY}/spdlog/lib/cmake/spdlog ${spdlog_DIR} )
+include(GNUInstallDirs)
+message(STATUS "Fetch spdlog given directory spdlog_DIR: ${spdlog_DIR}")
+find_package(spdlog 1.3 NO_DEFAULT_PATH HINTS ${INSTALL_DIRECTORY}/spdlog/${CMAKE_INSTALL_LIBDIR}/cmake/spdlog ${spdlog_DIR} )
 
 if(spdlog_FOUND)
     get_target_property(SPDLOG_INCLUDE_DIR spdlog::spdlog INTERFACE_INCLUDE_DIRECTORIES)
@@ -28,9 +29,9 @@ elseif (DOWNLOAD_SPDLOG OR DOWNLOAD_ALL)
     ExternalProject_Get_Property(external_SPDLOG INSTALL_DIR)
     add_library(spdlog INTERFACE)
     add_library(spdlog::spdlog ALIAS spdlog)
-    set(spdlog_DIR ${INSTALL_DIR}/lib/cmake/spdlog)
+    set(spdlog_DIR ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/spdlog)
     add_dependencies(spdlog external_SPDLOG)
-    target_include_directories(spdlog INTERFACE ${INSTALL_DIR}/include)
+    target_include_directories(spdlog INTERFACE ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
 else()
     message("WARNING: Dependency spdlog not found and DOWNLOAD_SPDLOG is OFF. Build will fail.")
 
