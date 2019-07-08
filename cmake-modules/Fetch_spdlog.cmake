@@ -1,8 +1,11 @@
 include(GNUInstallDirs)
 find_package(spdlog 1.3 NO_DEFAULT_PATH PATHS ${INSTALL_DIRECTORY}/spdlog/${CMAKE_INSTALL_LIBDIR}/spdlog/cmake ${spdlog_DIR} )
 if(spdlog_FOUND)
-    get_target_property(spdlog_lib     spdlog::spdlog   INTERFACE_LINK_LIBRARIES)
-    message(STATUS "SPDLOG FOUND IN SYSTEM: ${spdlog_lib}")
+    get_target_property(spdlog_LIBRARIES spdlog::spdlog   IMPORTED_LOCATION_RELEASE)
+    set_target_properties(spdlog::spdlog PROPERTIES INTERFACE_LINK_LIBRARIES "${spdlog_LIBRARIES}")
+    message(STATUS "SPDLOG FOUND IN SYSTEM: ${spdlog_LIBRARIES}")
+
+
 elseif (DOWNLOAD_SPDLOG OR DOWNLOAD_ALL)
     message(STATUS "Spdlog will be installed into ${INSTALL_DIRECTORY}/spdlog on first build.")
     include(ExternalProject)
