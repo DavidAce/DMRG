@@ -67,6 +67,7 @@ else()
             BUILD_IN_SOURCE 1
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DCMAKE_INSTALL_LIBDIR:PATH=lib
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
             -DCMAKE_C_FLAGS=-w -m64
             -DCMAKE_Fortran_FLAGS=-w -m64
