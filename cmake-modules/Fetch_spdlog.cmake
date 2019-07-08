@@ -31,13 +31,7 @@ elseif (DOWNLOAD_SPDLOG OR DOWNLOAD_ALL)
     add_library(spdlog::spdlog ALIAS spdlog)
     set(spdlog_DIR ${INSTALL_DIR}/lib/cmake/spdlog)
     add_dependencies(spdlog external_SPDLOG)
-
-    target_include_directories(
-            spdlog
-            INTERFACE
-            $<BUILD_INTERFACE:${INSTALL_DIR}/include>
-            $<INSTALL_INTERFACE:third-party/spdlog/include>
-    )
+    target_include_directories(spdlog INTERFACE ${INSTALL_DIR}/include)
 else()
     message("WARNING: Dependency spdlog not found and DOWNLOAD_SPDLOG is OFF. Build will fail.")
 
