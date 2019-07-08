@@ -56,12 +56,7 @@ elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
     set(Eigen3_DIR ${INSTALL_DIR}/share/eigen3/cmake)
     add_dependencies(Eigen3 external_EIGEN3)
     target_compile_options(Eigen3 INTERFACE ${EIGEN3_COMPILER_FLAGS})
-    target_include_directories(
-            Eigen3
-            INTERFACE
-            $<BUILD_INTERFACE:${INSTALL_DIR}/include/eigen3>
-            $<INSTALL_INTERFACE:third-party/Eigen3/include/eigen3>
-    )
+    target_include_directories(Eigen3 INTERFACE ${EIGEN3_INCLUDE_DIR})
     if(TARGET blas)
         target_link_libraries(Eigen3 INTERFACE blas)
     endif()
