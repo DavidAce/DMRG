@@ -34,9 +34,9 @@ void tools::finite::mps::normalize(class_finite_state & state){
     Eigen::Tensor<Scalar,1> S;
     Eigen::Tensor<Scalar,3> V;
     double norm;
-    while(num_traversals < 4){
+    while(num_traversals <= 1){
         Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
-        try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta);}
+        try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta,state.get_chi_max());}
         catch(std::exception &ex){
             throw std::runtime_error(fmt::format("Normalization failed at positions A:{} C:{} B:{} , step {}: {}", pos_A, pos_LC, pos_B, step, ex.what()));
         }

@@ -314,11 +314,11 @@ tools::finite::opt::internals::subspace_optimization(const class_finite_state & 
 
 
     if (variance_new < variance_0){
-        tools::log->info("Returning new theta");
+        tools::log->debug("Returning new theta");
         return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
 
     }else{
-        tools::log->info("Returning old theta");
+        tools::log->debug("Returning old theta");
         return  theta;
     }
 

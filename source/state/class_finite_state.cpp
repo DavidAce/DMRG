@@ -47,7 +47,8 @@ size_t class_finite_state::get_position()  const {return MPS_L.size() - 1u;}
 
 int class_finite_state::get_sweeps()    const {return num_sweeps;}
 int class_finite_state::reset_sweeps()  {num_sweeps = 0; return num_sweeps;}
-
+long class_finite_state::get_chi_max()  const {return chi_max;}
+void class_finite_state::set_chi_max(long chi_max_){ chi_max = chi_max_;}
 int  class_finite_state::get_direction() const {return direction;}
 void class_finite_state::flip_direction() {direction *= -1;}
 

@@ -18,6 +18,7 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 {
     log->trace("Constructing class_algorithm_finite");
     state = std::make_unique<class_finite_state>();
+    state->set_chi_max(sim_status.chi_max);
     tools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
     tools::finite::mps::initialize(*state, num_sites);
     tools::finite::mpo::randomize(*state);
@@ -116,7 +117,8 @@ void class_algorithm_finite::run()
 
 
 void class_algorithm_finite::run_preprocessing(){
-
+    sim_status.chi_max = chi_max();
+    state->set_chi_max(sim_status.chi_max);
 
 }
 
@@ -179,6 +181,7 @@ void class_algorithm_finite::reset_to_random_state(const std::string parity) {
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     // Randomize state
     t_sim.tic();
+    state->set_chi_max(chi_max());
     tools::finite::mps::randomize(*state);
     tools::finite::mps::project_to_closest_parity(*state,parity);
     clear_saturation_status();
