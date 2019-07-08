@@ -2,12 +2,22 @@
 // Created by david on 2019-05-27.
 //
 
-#include <complex.h>
-#undef I
+
 
 #ifdef EIGEN_USE_BLAS
 #undef EIGEN_USE_BLAS
 #endif
+
+#ifdef EIGEN_USE_MKL_ALL
+#undef EIGEN_USE_MKL_ALL
+#undef EIGEN_USE_BLAS
+#undef EIGEN_USE_LAPACKE_STRICT
+#endif
+
+
+#include <complex.h>
+#undef I
+
 
 #include <Eigen/SVD>
 #include <math/class_svd_wrapper.h>
