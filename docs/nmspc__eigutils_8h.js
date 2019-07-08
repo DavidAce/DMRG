@@ -34,5 +34,11 @@ var nmspc__eigutils_8h =
     [ "Type", "nmspc__eigutils_8h.html#a9ac877abbc395683ef9e2b49cce8507c", [
       [ "REAL", "nmspc__eigutils_8h.html#a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554", null ],
       [ "CPLX", "nmspc__eigutils_8h.html#a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1", null ]
-    ] ]
+    ] ],
+    [ "disableTimeStamp", "nmspc__eigutils_8h.html#a283e8a93ceaaec1515e70a46abe33994", null ],
+    [ "enableTimeStamp", "nmspc__eigutils_8h.html#ab424a1ce754abbd02e0f70ee216386ce", null ],
+    [ "setLogger", "nmspc__eigutils_8h.html#a82c0e82fa7b658057257b2f08ba028f5", null ],
+    [ "setLogLevel", "nmspc__eigutils_8h.html#a1738e90923c7cc7b006457fb5e672ce8", null ],
+    [ "stringToRitz", "nmspc__eigutils_8h.html#a4958e75ebe95c52b7432f57a058acf2c", null ],
+    [ "log", "nmspc__eigutils_8h.html#aa81c1034622db3922ad65b5278492ad9", null ]
 ];

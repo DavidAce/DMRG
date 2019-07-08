@@ -94,8 +94,8 @@ $(document).ready(function(){initNavTree('namespacesettings_1_1console.html','')
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a02a9fb6a3fdd5b0f91efffb35fb537fb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1console.html#a02a9fb6a3fdd5b0f91efffb35fb537fb">verbosity</a> = 2</td></tr>
-<tr class="separator:a02a9fb6a3fdd5b0f91efffb35fb537fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5a0b931a18f3b2c1f12db4768c02aa9"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1console.html#af5a0b931a18f3b2c1f12db4768c02aa9">verbosity</a> = 2</td></tr>
+<tr class="separator:af5a0b931a18f3b2c1f12db4768c02aa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82c11e45aadd82f57643ef3624d2e7be"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacesettings_1_1console.html#a82c11e45aadd82f57643ef3624d2e7be">timestamp</a> = false</td></tr>
 <tr class="separator:a82c11e45aadd82f57643ef3624d2e7be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -105,28 +105,44 @@ Variables</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool settings::console::timestamp = false</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Whether to put a timestamp on console outputs </p>
 
 </div>
 </div>
-<a id="a02a9fb6a3fdd5b0f91efffb35fb537fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02a9fb6a3fdd5b0f91efffb35fb537fb">&#9670;&nbsp;</a></span>verbosity</h2>
+<a id="af5a0b931a18f3b2c1f12db4768c02aa9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5a0b931a18f3b2c1f12db4768c02aa9">&#9670;&nbsp;</a></span>verbosity</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int settings::console::verbosity = 2</td>
+          <td class="memname">size_t settings::console::verbosity = 2</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
-<p>Level of verbosity desired [0-2]. Level 0 prints almost nothing, level 2 prints everything </p>
+<p>Level of verbosity desired [0-6]. Level 0 prints everything, 6 nothing. Level 2 or 3 is recommended for normal use </p>
 
 </div>
 </div>

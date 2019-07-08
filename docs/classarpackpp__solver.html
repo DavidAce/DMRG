@@ -111,12 +111,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a22e2d88177882c0f5fc7bc2bf4765b05"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
 <tr class="memitem:a22e2d88177882c0f5fc7bc2bf4765b05"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classarpackpp__solver.html#a22e2d88177882c0f5fc7bc2bf4765b05">find_solution</a> (Derived &amp;solver, int nev)</td></tr>
 <tr class="separator:a22e2d88177882c0f5fc7bc2bf4765b05"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf046ca191c1116b3bf51e1de9db594e"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
-<tr class="memitem:adf046ca191c1116b3bf51e1de9db594e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classarpackpp__solver.html#adf046ca191c1116b3bf51e1de9db594e">copy_solution_symm</a> (Derived &amp;solver)</td></tr>
-<tr class="separator:adf046ca191c1116b3bf51e1de9db594e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab094c497905a36364784f26617329cc1"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
-<tr class="memitem:ab094c497905a36364784f26617329cc1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classarpackpp__solver.html#ab094c497905a36364784f26617329cc1">copy_solution_nsym</a> (Derived &amp;solver)</td></tr>
-<tr class="separator:ab094c497905a36364784f26617329cc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4cdcbf740e5f16a4f9da8e8c3f86d0b0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarpackpp__solver.html#a4cdcbf740e5f16a4f9da8e8c3f86d0b0">arpackpp_solver</a> (<a class="el" href="matrix__product__stl_8cpp.html#ad214610a757107160682e44efc97fbed">MatrixType</a> &amp;matrix_, <a class="el" href="classeigutils_1_1eig_config.html">eigutils::eigConfig</a> &amp;solverConf_, <a class="el" href="classeigutils_1_1eig_solution.html">eigutils::eigSolution</a> &amp;solution_, <a class="el" href="classarpackpp__solver.html#a635fa6cfb46b16d83c57633e92d28e5b">Scalar</a> *residual_)</td></tr>
 <tr class="separator:a4cdcbf740e5f16a4f9da8e8c3f86d0b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60d42e85971bdf646ad5c769b8593aab"><td class="memTemplParams" colspan="2">template&lt;typename Scalar &gt; </td></tr>
@@ -248,50 +242,6 @@ template&lt;eigutils::eigSetting::Type type, eigutils::eigSetting::Form form, ei
 <span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ab094c497905a36364784f26617329cc1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab094c497905a36364784f26617329cc1">&#9670;&nbsp;</a></span>copy_solution_nsym()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename MatrixType &gt; </div>
-<div class="memtemplate">
-template&lt;typename Derived &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classarpackpp__solver.html">arpackpp_solver</a>&lt; <a class="el" href="matrix__product__stl_8cpp.html#ad214610a757107160682e44efc97fbed">MatrixType</a> &gt;::copy_solution_nsym </td>
-          <td>(</td>
-          <td class="paramtype">Derived &amp;&#160;</td>
-          <td class="paramname"><em>solver</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="adf046ca191c1116b3bf51e1de9db594e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf046ca191c1116b3bf51e1de9db594e">&#9670;&nbsp;</a></span>copy_solution_symm()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename MatrixType &gt; </div>
-<div class="memtemplate">
-template&lt;typename Derived &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classarpackpp__solver.html">arpackpp_solver</a>&lt; <a class="el" href="matrix__product__stl_8cpp.html#ad214610a757107160682e44efc97fbed">MatrixType</a> &gt;::copy_solution_symm </td>
-          <td>(</td>
-          <td class="paramtype">Derived &amp;&#160;</td>
-          <td class="paramname"><em>solver</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
 </div><div class="memdoc">
 
 </div>
@@ -652,8 +602,8 @@ template&lt;typename MatrixType&gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>source/general/arpack_extra/<a class="el" href="arpackpp__solver_8h_source.html">arpackpp_solver.h</a></li>
-<li>source/general/arpack_extra/<a class="el" href="arpackpp__solver_8cpp.html">arpackpp_solver.cpp</a></li>
+<li>source/math/arpack_extra/<a class="el" href="arpackpp__solver_8h_source.html">arpackpp_solver.h</a></li>
+<li>source/math/arpack_extra/<a class="el" href="arpackpp__solver_8cpp.html">arpackpp_solver.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

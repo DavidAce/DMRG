@@ -88,6 +88,8 @@ $(document).ready(function(){initNavTree('classclass__algorithm__launcher.html',
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classclass__algorithm__launcher-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">class_algorithm_launcher Class Reference</div>  </div>
@@ -98,8 +100,8 @@ $(document).ready(function(){initNavTree('classclass__algorithm__launcher.html',
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3f6c72c0ee6ea641fbf7306864ac3181"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__launcher.html#a3f6c72c0ee6ea641fbf7306864ac3181">class_algorithm_launcher</a> (std::shared_ptr&lt; <a class="el" href="classclass__hdf5__file.html">class_hdf5_file</a> &gt; hdf5_)</td></tr>
-<tr class="separator:a3f6c72c0ee6ea641fbf7306864ac3181"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea0ae01e042e1117991c4fbc1f7b0a93"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__launcher.html#aea0ae01e042e1117991c4fbc1f7b0a93">class_algorithm_launcher</a> (std::shared_ptr&lt; h5pp::File &gt; h5ppFile_)</td></tr>
+<tr class="separator:aea0ae01e042e1117991c4fbc1f7b0a93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a678082a3fafad0bf7c4b0019e5ed3eff"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__launcher.html#a678082a3fafad0bf7c4b0019e5ed3eff">class_algorithm_launcher</a> ()</td></tr>
 <tr class="separator:a678082a3fafad0bf7c4b0019e5ed3eff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04e4a7a48a2233154f3ad2afed0ad432"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__launcher.html#a04e4a7a48a2233154f3ad2afed0ad432">run_algorithms</a> ()</td></tr>
@@ -115,14 +117,24 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a799b7155708a55096bb87780c6c8af40"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classclass__hdf5__file.html">class_hdf5_file</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__launcher.html#a799b7155708a55096bb87780c6c8af40">hdf5</a></td></tr>
-<tr class="separator:a799b7155708a55096bb87780c6c8af40"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57cebb5d8dd684420ab0b05e0be2e341"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classclass__custom__cout.html">class_custom_cout</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__launcher.html#a57cebb5d8dd684420ab0b05e0be2e341">ccout</a></td></tr>
-<tr class="separator:a57cebb5d8dd684420ab0b05e0be2e341"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83dd97c9ada35c9ec72a0a90d8c72a4c"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; h5pp::File &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__launcher.html#a83dd97c9ada35c9ec72a0a90d8c72a4c">h5ppFile</a></td></tr>
+<tr class="separator:a83dd97c9ada35c9ec72a0a90d8c72a4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac61f1ac1f2836bdd3bdcef6901d7fbba"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__launcher.html#ac61f1ac1f2836bdd3bdcef6901d7fbba">hdf5_path</a></td></tr>
+<tr class="separator:ac61f1ac1f2836bdd3bdcef6901d7fbba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:a1fbb0f3e1aa74910993e5924130dce71"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__launcher.html#a1fbb0f3e1aa74910993e5924130dce71">setLogger</a> (std::string name)</td></tr>
+<tr class="separator:a1fbb0f3e1aa74910993e5924130dce71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:a27f61da659a07fdd1f14c4b0dd2c9b7c"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; spdlog::logger &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__algorithm__launcher.html#a27f61da659a07fdd1f14c4b0dd2c9b7c">log</a></td></tr>
+<tr class="separator:a27f61da659a07fdd1f14c4b0dd2c9b7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3f6c72c0ee6ea641fbf7306864ac3181"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3f6c72c0ee6ea641fbf7306864ac3181">&#9670;&nbsp;</a></span>class_algorithm_launcher() <span class="overload">[1/2]</span></h2>
+<a id="aea0ae01e042e1117991c4fbc1f7b0a93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea0ae01e042e1117991c4fbc1f7b0a93">&#9670;&nbsp;</a></span>class_algorithm_launcher() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -130,8 +142,8 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">class_algorithm_launcher::class_algorithm_launcher </td>
           <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classclass__hdf5__file.html">class_hdf5_file</a> &gt;&#160;</td>
-          <td class="paramname"><em>hdf5_</em></td><td>)</td>
+          <td class="paramtype">std::shared_ptr&lt; h5pp::File &gt;&#160;</td>
+          <td class="paramname"><em>h5ppFile_</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -162,9 +174,6 @@ Public Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void class_algorithm_launcher::run_algorithms </td>
@@ -173,11 +182,6 @@ Public Attributes</h2></td></tr>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
@@ -250,31 +254,79 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a1fbb0f3e1aa74910993e5924130dce71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fbb0f3e1aa74910993e5924130dce71">&#9670;&nbsp;</a></span>setLogger()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_algorithm_launcher::setLogger </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a57cebb5d8dd684420ab0b05e0be2e341"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a57cebb5d8dd684420ab0b05e0be2e341">&#9670;&nbsp;</a></span>ccout</h2>
+<a id="a83dd97c9ada35c9ec72a0a90d8c72a4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83dd97c9ada35c9ec72a0a90d8c72a4c">&#9670;&nbsp;</a></span>h5ppFile</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classclass__custom__cout.html">class_custom_cout</a> class_algorithm_launcher::ccout</td>
+          <td class="memname">std::shared_ptr&lt;h5pp::File&gt; class_algorithm_launcher::h5ppFile</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a799b7155708a55096bb87780c6c8af40"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a799b7155708a55096bb87780c6c8af40">&#9670;&nbsp;</a></span>hdf5</h2>
+<a id="ac61f1ac1f2836bdd3bdcef6901d7fbba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac61f1ac1f2836bdd3bdcef6901d7fbba">&#9670;&nbsp;</a></span>hdf5_path</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classclass__hdf5__file.html">class_hdf5_file</a>&gt; class_algorithm_launcher::hdf5</td>
+          <td class="memname">std::string class_algorithm_launcher::hdf5_path</td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a27f61da659a07fdd1f14c4b0dd2c9b7c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27f61da659a07fdd1f14c4b0dd2c9b7c">&#9670;&nbsp;</a></span>log</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;spdlog::logger&gt; class_algorithm_launcher::log</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>

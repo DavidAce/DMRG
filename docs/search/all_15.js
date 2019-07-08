@@ -1,7 +1,29 @@
 var searchData=
 [
-  ['uniform_5funit_5fn_5fsphere',['uniform_unit_n_sphere',['../namespacern.html#afa9a8b7b6becd55be568fcf68b56e3dd',1,'rn']]],
-  ['unitary_5ftime_5fevolving_5foperators',['unitary_time_evolving_operators',['../classclass__i_t_e_b_d.html#aaca1dfa05e0bea3b69265fd09713817f',1,'class_iTEBD']]],
-  ['update_5fbond_5fdimension',['update_bond_dimension',['../classclass__algorithm__base.html#a8703eb90ad57df91ea4353d2cf6625f4',1,'class_algorithm_base']]],
-  ['update_5fcurrent_5flength',['update_current_length',['../classclass__finite__chain.html#abe7a4c7d68cbd5859697280890722e05',1,'class_finite_chain']]]
+  ['v_5fham_5fslope',['V_ham_slope',['../classclass__algorithm__infinite.html#a837927e924e553f5801a33c2458d51eb',1,'class_algorithm_infinite']]],
+  ['v_5fham_5fvec',['V_ham_vec',['../classclass__algorithm__infinite.html#a81480a03144424bad518d25dd212a560',1,'class_algorithm_infinite']]],
+  ['v_5fmom_5fslope',['V_mom_slope',['../classclass__algorithm__infinite.html#a3bcd397840d92500383d124e4cef5333',1,'class_algorithm_infinite']]],
+  ['v_5fmom_5fvec',['V_mom_vec',['../classclass__algorithm__infinite.html#a26fed56d782f59eb8fbcb4e35fd3a196',1,'class_algorithm_infinite']]],
+  ['v_5fmpo_5fslope',['V_mpo_slope',['../classclass__algorithm__finite.html#a03da91fd5944da76bc1645de305c078b',1,'class_algorithm_finite::V_mpo_slope()'],['../classclass__algorithm__infinite.html#a2b3decefbdbd9f2e4e7ab1871cbbdff3',1,'class_algorithm_infinite::V_mpo_slope()']]],
+  ['v_5fmpo_5fvec',['V_mpo_vec',['../classclass__algorithm__finite.html#a924c4a4f29db461ca496470cc93fc157',1,'class_algorithm_finite::V_mpo_vec()'],['../classclass__algorithm__infinite.html#a7bbb22b08660d9a233d2b9cd96cabd58',1,'class_algorithm_infinite::V_mpo_vec()']]],
+  ['valt_5ft',['Valt_t',['../namespace_type_check.html#af7c6e5e9d9492ac1f52808cc0cf82847',1,'TypeCheck']]],
+  ['varconvergencethreshold',['VarConvergenceThreshold',['../namespacesettings_1_1precision.html#a8144c8c79b510717f340fff464e9a493',1,'settings::precision']]],
+  ['variance',['variance',['../classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a28999fddbeb73a42cc56c9d65726d5c0',1,'tools::finite::opt::internals::base_functor::variance()'],['../namespacetools_1_1finite_1_1opt.html#afe78a5dc46145a3a7d8f51168226e0f6ace18bb9a2b22515d0cd36bca6b998bde',1,'tools::finite::opt::VARIANCE()']]],
+  ['variance_5fham',['variance_ham',['../structclass__log__dmrg_1_1data__struct.html#af02f49015c498e07111991a7b8f56cf6',1,'class_log_dmrg::data_struct::variance_ham()'],['../structclass__log__tebd_1_1data__struct.html#a4d4978dedacea6cb89abc16653919e10',1,'class_log_tebd::data_struct::variance_ham()']]],
+  ['variance_5fham_5fhas_5fconverged',['variance_ham_has_converged',['../structstatus__data.html#a443249c1ffd4e1d2a3d1c1c34b9f2999',1,'status_data']]],
+  ['variance_5fham_5fhas_5fsaturated',['variance_ham_has_saturated',['../structstatus__data.html#a64f89df0e715685ce0a894dc3c618760',1,'status_data']]],
+  ['variance_5fham_5fsaturated_5ffor',['variance_ham_saturated_for',['../structstatus__data.html#aca462206692cefd191733b5987b27887',1,'status_data']]],
+  ['variance_5fmom',['variance_mom',['../structclass__log__dmrg_1_1data__struct.html#ae4d02f0e1799c5922e983dfc0d442a1b',1,'class_log_dmrg::data_struct::variance_mom()'],['../structclass__log__tebd_1_1data__struct.html#a1c8280643a0495706aa15aca84b15e8a',1,'class_log_tebd::data_struct::variance_mom()']]],
+  ['variance_5fmom_5fhas_5fconverged',['variance_mom_has_converged',['../structstatus__data.html#a515061b82a5375b8c8a502c8d452974f',1,'status_data']]],
+  ['variance_5fmom_5fhas_5fsaturated',['variance_mom_has_saturated',['../structstatus__data.html#ab5ab15b8c025f30a6d4c6e750ea38f8f',1,'status_data']]],
+  ['variance_5fmom_5fsaturated_5ffor',['variance_mom_saturated_for',['../structstatus__data.html#ab12472ca8a5c1819ae6edb5f21b5a9b9',1,'status_data']]],
+  ['variance_5fmpo',['variance_mpo',['../structclass__log__dmrg_1_1data__struct.html#a7e88b5506e23f75f34216b25388a18ef',1,'class_log_dmrg::data_struct::variance_mpo()'],['../structclass__log__tebd_1_1data__struct.html#ae6de75c6a20e7056cc4fd8f46f0b472e',1,'class_log_tebd::data_struct::variance_mpo()']]],
+  ['variance_5fmpo_5fhas_5fconverged',['variance_mpo_has_converged',['../structstatus__data.html#a04f287ba8285d95324bdb568f5e60057',1,'status_data']]],
+  ['variance_5fmpo_5fhas_5fsaturated',['variance_mpo_has_saturated',['../structstatus__data.html#addb896a29a85c3a50a6a4a6ed8f8472e',1,'status_data']]],
+  ['variance_5fmpo_5fsaturated_5ffor',['variance_mpo_saturated_for',['../structstatus__data.html#a756b1a37d89d85dd571232acdc7e9131',1,'status_data']]],
+  ['varsaturationthreshold',['VarSaturationThreshold',['../namespacesettings_1_1precision.html#a2d9e7cad0354e0b3b98f9c7acb391d23',1,'settings::precision']]],
+  ['vectortype',['VectorType',['../class_dense_matrix_product.html#ab908741a713be6b2ae160961b1adede6',1,'DenseMatrixProduct::VectorType()'],['../class_sparse_matrix_product.html#a9da6adf07136ea94821a59f5c854f4c6',1,'SparseMatrixProduct::VectorType()'],['../classclass___s_v_d.html#a0866973f8d051b9d1047753046e6ec44',1,'class_SVD::VectorType()'],['../classtools_1_1finite_1_1opt_1_1internals_1_1subspace__functor.html#af55fde08e2576f41a26cb39341a49e52',1,'tools::finite::opt::internals::subspace_functor::VectorType()'],['../classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor.html#a27c194d8ed42190c4884658e4bbdfbe8',1,'tools::finite::opt::internals::direct_functor::VectorType()'],['../namespace_textra.html#a358a270e8b355388963a513bd6617131',1,'Textra::VectorType()'],['../matrix__product__stl_8cpp.html#ae540df73919c79857b4a05d37f1034b7',1,'VectorType():&#160;matrix_product_stl.cpp'],['../namespacetools_1_1finite_1_1opt_1_1internals.html#ad66627a992ba69e6c014c6850e2c08fd',1,'tools::finite::opt::internals::VectorType()']]],
+  ['vectortypet',['VectorTypeT',['../class_dense_matrix_product.html#ab9af4e49816fd5a2a2c67c115938b3eb',1,'DenseMatrixProduct::VectorTypeT()'],['../class_sparse_matrix_product.html#aad748f1d63f18075602b64a9a2aeba3b',1,'SparseMatrixProduct::VectorTypeT()'],['../matrix__product__stl_8cpp.html#a175a6d4c943c94b79203623839dfbd7b',1,'VectorTypeT():&#160;matrix_product_stl.cpp']]],
+  ['verbosity',['verbosity',['../namespacesettings_1_1console.html#af5a0b931a18f3b2c1f12db4768c02aa9',1,'settings::console']]],
+  ['views_2ecpp',['views.cpp',['../views_8cpp.html',1,'']]]
 ];

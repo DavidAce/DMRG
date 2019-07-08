@@ -3,8 +3,6 @@ var classarpackpp__solver =
     [ "Scalar", "classarpackpp__solver.html#a635fa6cfb46b16d83c57633e92d28e5b", null ],
     [ "arpackpp_solver", "classarpackpp__solver.html#a4cdcbf740e5f16a4f9da8e8c3f86d0b0", null ],
     [ "copy_solution", "classarpackpp__solver.html#a4e4113c4cad99d2a1e236b2e2485cb10", null ],
-    [ "copy_solution_nsym", "classarpackpp__solver.html#ab094c497905a36364784f26617329cc1", null ],
-    [ "copy_solution_symm", "classarpackpp__solver.html#adf046ca191c1116b3bf51e1de9db594e", null ],
     [ "eigs", "classarpackpp__solver.html#a92aa17bf228c308fbd9211bbe95a512b", null ],
     [ "eigs_comp", "classarpackpp__solver.html#adb0f7c699775ac4218b9b6e51ffd1729", null ],
     [ "eigs_nsym", "classarpackpp__solver.html#a60dbd5270412446a65535676157777b6", null ],

@@ -88,6 +88,7 @@ $(document).ready(function(){initNavTree('classclass__eigsolver.html','');});
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classclass__eigsolver-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">class_eigsolver Class Reference</div>  </div>
@@ -98,6 +99,10 @@ $(document).ready(function(){initNavTree('classclass__eigsolver.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a7606b470e00affdbeae96729f4d72efa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#a7606b470e00affdbeae96729f4d72efa">class_eigsolver</a> (size_t logLevel_=5)</td></tr>
+<tr class="separator:a7606b470e00affdbeae96729f4d72efa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43a1bb3e4ae651d3f09220f37ebe3f4c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#a43a1bb3e4ae651d3f09220f37ebe3f4c">setLogLevel</a> (size_t logLevelZeroToSix)</td></tr>
+<tr class="separator:a43a1bb3e4ae651d3f09220f37ebe3f4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acafe1f6f1266723e7bf5bde1f62d7fc4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#acafe1f6f1266723e7bf5bde1f62d7fc4">eig_dsyevd</a> (const double *matrix, int L)</td></tr>
 <tr class="separator:acafe1f6f1266723e7bf5bde1f62d7fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac947544c9e71d87d20414d8d7f8c99bf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#ac947544c9e71d87d20414d8d7f8c99bf">eig_dsyevd</a> (double *matrix2eigvecs, double *eigvals, int L)</td></tr>
@@ -119,8 +124,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aeca3b296dd964ad831ce6ef2dba5ae0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5869c02b60250431d52c2f386cc84d10"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#a5869c02b60250431d52c2f386cc84d10">eigs_init</a> (const int L, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a9ac877abbc395683ef9e2b49cce8507c">eigutils::eigSetting::Type</a> type=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::Type::REAL</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a> form=<a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::Form::SYMMETRIC</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a03696695037235bbb52d88102d75b69d">eigutils::eigSetting::Ritz</a> ritz=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4">eigutils::eigSetting::Ritz::LM</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a> side=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::Side::R</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a86f4e9edf946d68c9e5c0f1c99bdaadf">eigutils::eigSetting::Storage</a> storage=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a86f4e9edf946d68c9e5c0f1c99bdaadfa0706fbbd929bd8abc4de386c53d439ff">eigutils::eigSetting::Storage::DENSE</a>, const bool compute_eigvecs_=true, const bool remove_phase_=false)</td></tr>
 <tr class="separator:a5869c02b60250431d52c2f386cc84d10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adedfc945e8746bf60894275e8430c24f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#adedfc945e8746bf60894275e8430c24f">eig_init</a> (const int L, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a9ac877abbc395683ef9e2b49cce8507c">eigutils::eigSetting::Type</a> type=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::Type::REAL</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a> form=<a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::Form::SYMMETRIC</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a> side=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::Side::R</a>, const bool compute_eigvecs_=true, const bool remove_phase_=false)</td></tr>
-<tr class="separator:adedfc945e8746bf60894275e8430c24f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accad92a9cfa34658feba66be21ba8dfe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#accad92a9cfa34658feba66be21ba8dfe">eig_init</a> (const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a9ac877abbc395683ef9e2b49cce8507c">eigutils::eigSetting::Type</a> type=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::Type::REAL</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a> form=<a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::Form::SYMMETRIC</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a> side=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::Side::R</a>, const bool compute_eigvecs_=true, const bool remove_phase_=false)</td></tr>
+<tr class="separator:accad92a9cfa34658feba66be21ba8dfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2280aa087a50f16d16ea30f11d1a7d3"><td class="memTemplParams" colspan="2">template&lt;eigutils::eigSetting::Type type = eigutils::eigSetting::Type::REAL, eigutils::eigSetting::Form form = eigutils::eigSetting::Form::SYMMETRIC, eigutils::eigSetting::Side side = eigutils::eigSetting::Side::R, typename Derived &gt; </td></tr>
 <tr class="memitem:aa2280aa087a50f16d16ea30f11d1a7d3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#aa2280aa087a50f16d16ea30f11d1a7d3">eig</a> (const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const bool compute_eigvecs_=true, const bool remove_phase_=false)</td></tr>
 <tr class="separator:aa2280aa087a50f16d16ea30f11d1a7d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,6 +144,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a638606b797d7c61ae5ee7e7618eb2cd8"><td class="memTemplParams" colspan="2">template&lt;typename Scalar &gt; </td></tr>
 <tr class="memitem:a638606b797d7c61ae5ee7e7618eb2cd8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#a638606b797d7c61ae5ee7e7618eb2cd8">eigs_dense</a> (<a class="el" href="class_dense_matrix_product.html">DenseMatrixProduct</a>&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> &gt; &amp;matrix, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a> form=<a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::Form::SYMMETRIC</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a03696695037235bbb52d88102d75b69d">eigutils::eigSetting::Ritz</a> ritz=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4">eigutils::eigSetting::Ritz::LM</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a> side=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::Side::R</a>, const bool compute_eigvecs_=false, const bool remove_phase_=false, <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *residual_=nullptr)</td></tr>
 <tr class="separator:a638606b797d7c61ae5ee7e7618eb2cd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5612e0c1b83a9dd761c697b88a98fd1"><td class="memTemplParams" colspan="2">template&lt;typename Scalar &gt; </td></tr>
+<tr class="memitem:ac5612e0c1b83a9dd761c697b88a98fd1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#ac5612e0c1b83a9dd761c697b88a98fd1">eigs_dense</a> (<a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> &gt; &amp;matrix, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a> form=<a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::Form::SYMMETRIC</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a03696695037235bbb52d88102d75b69d">eigutils::eigSetting::Ritz</a> ritz=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4">eigutils::eigSetting::Ritz::LM</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a> side=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::Side::R</a>, const bool compute_eigvecs_=false, const bool remove_phase_=false, <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *residual_=nullptr)</td></tr>
+<tr class="separator:ac5612e0c1b83a9dd761c697b88a98fd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:addd905f8d89f107a69162874038bc938"><td class="memTemplParams" colspan="2">template&lt;typename Scalar &gt; </td></tr>
 <tr class="memitem:addd905f8d89f107a69162874038bc938"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#addd905f8d89f107a69162874038bc938">eigs_sparse</a> (const <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *matrix, const int L, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a> form=<a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::Form::SYMMETRIC</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a03696695037235bbb52d88102d75b69d">eigutils::eigSetting::Ritz</a> ritz=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4">eigutils::eigSetting::Ritz::LM</a>, const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a> side=<a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::Side::R</a>, const bool compute_eigvecs_=false, const bool remove_phase_=false, <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *residual_=nullptr)</td></tr>
 <tr class="separator:addd905f8d89f107a69162874038bc938"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -158,7 +166,31 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a919a47b6fd75d48e821eb46f8fac085c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7718d4fdd0cb874caa750043c1b55fa2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classeigutils_1_1eig_solution.html">eigutils::eigSolution</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#a7718d4fdd0cb874caa750043c1b55fa2">solution</a></td></tr>
 <tr class="separator:a7718d4fdd0cb874caa750043c1b55fa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:af0d2e6550c857a0d2cd4dcfaedb8adcb"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__eigsolver.html#af0d2e6550c857a0d2cd4dcfaedb8adcb">logLevel</a> = 5</td></tr>
+<tr class="separator:af0d2e6550c857a0d2cd4dcfaedb8adcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a7606b470e00affdbeae96729f4d72efa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7606b470e00affdbeae96729f4d72efa">&#9670;&nbsp;</a></span>class_eigsolver()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">class_eigsolver::class_eigsolver </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>logLevel_</em> = <code>5</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="aa2280aa087a50f16d16ea30f11d1a7d3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa2280aa087a50f16d16ea30f11d1a7d3">&#9670;&nbsp;</a></span>eig() <span class="overload">[1/2]</span></h2>
@@ -374,8 +406,8 @@ template&lt;eigutils::eigSetting::Type type, eigutils::eigSetting::Form form, ei
 
 </div>
 </div>
-<a id="adedfc945e8746bf60894275e8430c24f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adedfc945e8746bf60894275e8430c24f">&#9670;&nbsp;</a></span>eig_init()</h2>
+<a id="accad92a9cfa34658feba66be21ba8dfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accad92a9cfa34658feba66be21ba8dfe">&#9670;&nbsp;</a></span>eig_init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -383,12 +415,6 @@ template&lt;eigutils::eigSetting::Type type, eigutils::eigSetting::Form form, ei
         <tr>
           <td class="memname">void class_eigsolver::eig_init </td>
           <td>(</td>
-          <td class="paramtype">const int&#160;</td>
-          <td class="paramname"><em>L</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a9ac877abbc395683ef9e2b49cce8507c">eigutils::eigSetting::Type</a>&#160;</td>
           <td class="paramname"><em>type</em> = <code><a class="el" href="namespaceeigutils_1_1eig_setting.html#a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::Type::REAL</a></code>, </td>
         </tr>
@@ -713,7 +739,7 @@ template&lt;typename Scalar &gt; </div>
 </div>
 </div>
 <a id="a642877749caa5c31678971dbb302b29f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a642877749caa5c31678971dbb302b29f">&#9670;&nbsp;</a></span>eigs_dense() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a642877749caa5c31678971dbb302b29f">&#9670;&nbsp;</a></span>eigs_dense() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -797,7 +823,7 @@ template&lt;typename Scalar &gt; </div>
 </div>
 </div>
 <a id="a638606b797d7c61ae5ee7e7618eb2cd8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a638606b797d7c61ae5ee7e7618eb2cd8">&#9670;&nbsp;</a></span>eigs_dense() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a638606b797d7c61ae5ee7e7618eb2cd8">&#9670;&nbsp;</a></span>eigs_dense() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -808,6 +834,84 @@ template&lt;typename Scalar &gt; </div>
           <td class="memname">void class_eigsolver::eigs_dense </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_dense_matrix_product.html">DenseMatrixProduct</a>&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>matrix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>nev</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>ncv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::complex&lt; double &gt;&#160;</td>
+          <td class="paramname"><em>sigma</em> = <code>std::numeric_limits&lt;std::complex&lt;double&gt;&gt;::quiet_NaN()</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306">eigutils::eigSetting::Form</a>&#160;</td>
+          <td class="paramname"><em>form</em> = <code><a class="el" href="namespaceeigutils_1_1eig_setting.html#ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::Form::SYMMETRIC</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a03696695037235bbb52d88102d75b69d">eigutils::eigSetting::Ritz</a>&#160;</td>
+          <td class="paramname"><em>ritz</em> = <code><a class="el" href="namespaceeigutils_1_1eig_setting.html#a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4">eigutils::eigSetting::Ritz::LM</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74">eigutils::eigSetting::Side</a>&#160;</td>
+          <td class="paramname"><em>side</em> = <code><a class="el" href="namespaceeigutils_1_1eig_setting.html#a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::Side::R</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>compute_eigvecs_</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>remove_phase_</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> *&#160;</td>
+          <td class="paramname"><em>residual_</em> = <code>nullptr</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac5612e0c1b83a9dd761c697b88a98fd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5612e0c1b83a9dd761c697b88a98fd1">&#9670;&nbsp;</a></span>eigs_dense() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_eigsolver::eigs_dense </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_dense_hamiltonian_product.html">DenseHamiltonianProduct</a>&lt; <a class="el" href="class__algorithm__base_8cpp.html#a528e55cc6b435f7efe6750d6faa36cd6">Scalar</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>matrix</em>, </td>
         </tr>
         <tr>
@@ -1280,6 +1384,24 @@ template&lt;typename Scalar &gt; </div>
 
 </div>
 </div>
+<a id="a43a1bb3e4ae651d3f09220f37ebe3f4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43a1bb3e4ae651d3f09220f37ebe3f4c">&#9670;&nbsp;</a></span>setLogLevel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_eigsolver::setLogLevel </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>logLevelZeroToSix</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aeca3b296dd964ad831ce6ef2dba5ae0a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeca3b296dd964ad831ce6ef2dba5ae0a">&#9670;&nbsp;</a></span>subtract_phase()</h2>
 
@@ -1325,6 +1447,28 @@ template&lt;typename Scalar &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="af0d2e6550c857a0d2cd4dcfaedb8adcb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0d2e6550c857a0d2cd4dcfaedb8adcb">&#9670;&nbsp;</a></span>logLevel</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t class_eigsolver::logLevel = 5</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a7718d4fdd0cb874caa750043c1b55fa2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7718d4fdd0cb874caa750043c1b55fa2">&#9670;&nbsp;</a></span>solution</h2>
 
@@ -1354,8 +1498,8 @@ template&lt;typename Scalar &gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>source/general/<a class="el" href="class__eigsolver_8h_source.html">class_eigsolver.h</a></li>
-<li>source/general/<a class="el" href="class__eigsolver_8cpp.html">class_eigsolver.cpp</a></li>
+<li>source/math/<a class="el" href="class__eigsolver_8h_source.html">class_eigsolver.h</a></li>
+<li>source/math/<a class="el" href="class__eigsolver_8cpp.html">class_eigsolver.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

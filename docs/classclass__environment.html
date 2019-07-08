@@ -89,6 +89,7 @@ $(document).ready(function(){initNavTree('classclass__environment.html','');});
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classclass__environment-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -107,28 +108,43 @@ Public Types</h2></td></tr>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1c6d0b9de4f3e88af6e75ffb0890d29c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a1c6d0b9de4f3e88af6e75ffb0890d29c">class_environment</a> (std::string side_)</td></tr>
 <tr class="separator:a1c6d0b9de4f3e88af6e75ffb0890d29c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a855398c199fb1ed20d5e7bfcd3eb1a2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a855398c199fb1ed20d5e7bfcd3eb1a2e">enlarge</a> (const std::unique_ptr&lt; <a class="el" href="classclass__mps__2site.html">class_mps_2site</a> &gt; &amp;MPS, const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 4 &gt; &amp;M)</td></tr>
-<tr class="separator:a855398c199fb1ed20d5e7bfcd3eb1a2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a181fba1c3b0caecad70a9d0ea258888c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a181fba1c3b0caecad70a9d0ea258888c">set_edge_dims</a> (const std::unique_ptr&lt; <a class="el" href="classclass__mps__2site.html">class_mps_2site</a> &gt; &amp;MPS, const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 4 &gt; &amp;M)</td></tr>
-<tr class="separator:a181fba1c3b0caecad70a9d0ea258888c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abba0547eb83225ff086b59d302700c65"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#abba0547eb83225ff086b59d302700c65">set_position</a> (const long position_)</td></tr>
-<tr class="separator:abba0547eb83225ff086b59d302700c65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af18cb173989bac607604b909a333bfbb"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#af18cb173989bac607604b909a333bfbb">get_position</a> () const</td></tr>
-<tr class="separator:af18cb173989bac607604b909a333bfbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9ab0876f86f9f3cc64c22a5ea7ebe94"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#ac9ab0876f86f9f3cc64c22a5ea7ebe94">class_environment</a> (std::string side_, int mpsDim, int mpoDim)</td></tr>
+<tr class="separator:ac9ab0876f86f9f3cc64c22a5ea7ebe94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43b3c6f5b47361dc747252a84ab9a0fb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a43b3c6f5b47361dc747252a84ab9a0fb">isReal</a> () const</td></tr>
+<tr class="separator:a43b3c6f5b47361dc747252a84ab9a0fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acef2c531bcfe796f126dd712aca57ef0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#acef2c531bcfe796f126dd712aca57ef0">enlarge</a> (const <a class="el" href="classclass__vidal__site.html">class_vidal_site</a> &amp;MPS, const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 4 &gt; &amp;MPO)</td></tr>
+<tr class="separator:acef2c531bcfe796f126dd712aca57ef0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a336dbeb10ff5a3982fb65d7571d7e19d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a336dbeb10ff5a3982fb65d7571d7e19d">set_edge_dims</a> (const <a class="el" href="classclass__vidal__site.html">class_vidal_site</a> &amp;MPS, const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 4 &gt; &amp;MPO)</td></tr>
+<tr class="separator:a336dbeb10ff5a3982fb65d7571d7e19d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b4955f143dc67cf0e68c2a5227552e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a5b4955f143dc67cf0e68c2a5227552e5">set_edge_dims</a> (const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 3 &gt; &amp;MPS, const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 4 &gt; &amp;MPO)</td></tr>
+<tr class="separator:a5b4955f143dc67cf0e68c2a5227552e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff7db6e36396f74969184d658ba0d5ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#aff7db6e36396f74969184d658ba0d5ab">set_edge_dims</a> (const int mpsDim, const int mpoDim)</td></tr>
+<tr class="separator:aff7db6e36396f74969184d658ba0d5ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3f06ae154ab3d2919c6d8bab92048c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#ae3f06ae154ab3d2919c6d8bab92048c0">set_position</a> (const size_t position_)</td></tr>
+<tr class="separator:ae3f06ae154ab3d2919c6d8bab92048c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03977a3c06d86183f55b26af2c05509b"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a03977a3c06d86183f55b26af2c05509b">get_position</a> () const</td></tr>
+<tr class="separator:a03977a3c06d86183f55b26af2c05509b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:aa04ac64fd8b1983b7dd1216befbfbece"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#aa04ac64fd8b1983b7dd1216befbfbece">side</a></td></tr>
 <tr class="separator:aa04ac64fd8b1983b7dd1216befbfbece"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad65a186e2a9e22a73c82ba98faa93752"><td class="memItemLeft" align="right" valign="top">unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#ad65a186e2a9e22a73c82ba98faa93752">size</a> = 0</td></tr>
-<tr class="separator:ad65a186e2a9e22a73c82ba98faa93752"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07a78fc055d953768e686ef522bb6d0c"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a07a78fc055d953768e686ef522bb6d0c">sites</a> = 0</td></tr>
+<tr class="separator:a07a78fc055d953768e686ef522bb6d0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b3e96fea0bbdd34c2e01e9427649fa4"><td class="memItemLeft" align="right" valign="top">Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a1b3e96fea0bbdd34c2e01e9427649fa4">block</a></td></tr>
 <tr class="separator:a1b3e96fea0bbdd34c2e01e9427649fa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:a43703a851ebd1aab014c596889b4207a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a43703a851ebd1aab014c596889b4207a">enlarge</a> (const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 3 &gt; &amp;MPS, const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 4 &gt; &amp;MPO)</td></tr>
+<tr class="separator:a43703a851ebd1aab014c596889b4207a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a665815f4e830c9d3c0e7e938b3785965"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#a665815f4e830c9d3c0e7e938b3785965">position</a></td></tr>
-<tr class="separator:a665815f4e830c9d3c0e7e938b3785965"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea094f20c48033f8e638e397352bc6c1"><td class="memItemLeft" align="right" valign="top">std::optional&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#aea094f20c48033f8e638e397352bc6c1">position</a></td></tr>
+<tr class="separator:aea094f20c48033f8e638e397352bc6c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcff9fdad16c923c107ff530c39d4030"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classclass__environment.html#adcff9fdad16c923c107ff530c39d4030">edge_has_been_set</a> = false</td></tr>
+<tr class="separator:adcff9fdad16c923c107ff530c39d4030"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="ae0f57bc95b0ee042993844e83b0c053a"></a>
@@ -147,7 +163,7 @@ Private Attributes</h2></td></tr>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a1c6d0b9de4f3e88af6e75ffb0890d29c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c6d0b9de4f3e88af6e75ffb0890d29c">&#9670;&nbsp;</a></span>class_environment()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c6d0b9de4f3e88af6e75ffb0890d29c">&#9670;&nbsp;</a></span>class_environment() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,24 +188,32 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a855398c199fb1ed20d5e7bfcd3eb1a2e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a855398c199fb1ed20d5e7bfcd3eb1a2e">&#9670;&nbsp;</a></span>enlarge()</h2>
+<a id="ac9ab0876f86f9f3cc64c22a5ea7ebe94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9ab0876f86f9f3cc64c22a5ea7ebe94">&#9670;&nbsp;</a></span>class_environment() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void class_environment::enlarge </td>
+          <td class="memname">class_environment::class_environment </td>
           <td>(</td>
-          <td class="paramtype">const std::unique_ptr&lt; <a class="el" href="classclass__mps__2site.html">class_mps_2site</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>MPS</em>, </td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>side_</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 4 &gt; &amp;&#160;</td>
-          <td class="paramname"><em>M</em>&#160;</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>mpsDim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>mpoDim</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -197,6 +221,48 @@ Private Attributes</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a43703a851ebd1aab014c596889b4207a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43703a851ebd1aab014c596889b4207a">&#9670;&nbsp;</a></span>enlarge() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_environment::enlarge </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>MPS</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 4 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>MPO</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>&lt; Contracts a site into the block.</p>
 <h1>Left environment contraction</h1>
@@ -206,8 +272,36 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="af18cb173989bac607604b909a333bfbb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af18cb173989bac607604b909a333bfbb">&#9670;&nbsp;</a></span>get_position()</h2>
+<a id="acef2c531bcfe796f126dd712aca57ef0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acef2c531bcfe796f126dd712aca57ef0">&#9670;&nbsp;</a></span>enlarge() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_environment::enlarge </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classclass__vidal__site.html">class_vidal_site</a> &amp;&#160;</td>
+          <td class="paramname"><em>MPS</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 4 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>MPO</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a03977a3c06d86183f55b26af2c05509b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03977a3c06d86183f55b26af2c05509b">&#9670;&nbsp;</a></span>get_position()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -216,7 +310,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">auto class_environment::get_position </td>
+          <td class="memname">size_t class_environment::get_position </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -231,8 +325,25 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a181fba1c3b0caecad70a9d0ea258888c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a181fba1c3b0caecad70a9d0ea258888c">&#9670;&nbsp;</a></span>set_edge_dims()</h2>
+<a id="a43b3c6f5b47361dc747252a84ab9a0fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43b3c6f5b47361dc747252a84ab9a0fb">&#9670;&nbsp;</a></span>isReal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool class_environment::isReal </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a336dbeb10ff5a3982fb65d7571d7e19d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a336dbeb10ff5a3982fb65d7571d7e19d">&#9670;&nbsp;</a></span>set_edge_dims() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -240,14 +351,14 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">void class_environment::set_edge_dims </td>
           <td>(</td>
-          <td class="paramtype">const std::unique_ptr&lt; <a class="el" href="classclass__mps__2site.html">class_mps_2site</a> &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classclass__vidal__site.html">class_vidal_site</a> &amp;&#160;</td>
           <td class="paramname"><em>MPS</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 4 &gt; &amp;&#160;</td>
-          <td class="paramname"><em>M</em>&#160;</td>
+          <td class="paramname"><em>MPO</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -259,8 +370,64 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="abba0547eb83225ff086b59d302700c65"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abba0547eb83225ff086b59d302700c65">&#9670;&nbsp;</a></span>set_position()</h2>
+<a id="a5b4955f143dc67cf0e68c2a5227552e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b4955f143dc67cf0e68c2a5227552e5">&#9670;&nbsp;</a></span>set_edge_dims() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_environment::set_edge_dims </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>MPS</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Eigen::Tensor&lt; <a class="el" href="classclass__environment.html#ae0f57bc95b0ee042993844e83b0c053a">Scalar</a>, 4 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>MPO</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aff7db6e36396f74969184d658ba0d5ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff7db6e36396f74969184d658ba0d5ab">&#9670;&nbsp;</a></span>set_edge_dims() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void class_environment::set_edge_dims </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>mpsDim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>mpoDim</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae3f06ae154ab3d2919c6d8bab92048c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3f06ae154ab3d2919c6d8bab92048c0">&#9670;&nbsp;</a></span>set_position()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -271,7 +438,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">void class_environment::set_position </td>
           <td>(</td>
-          <td class="paramtype">const long&#160;</td>
+          <td class="paramtype">const size_t&#160;</td>
           <td class="paramname"><em>position_</em></td><td>)</td>
           <td></td>
         </tr>
@@ -301,8 +468,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a665815f4e830c9d3c0e7e938b3785965"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a665815f4e830c9d3c0e7e938b3785965">&#9670;&nbsp;</a></span>position</h2>
+<a id="adcff9fdad16c923c107ff530c39d4030"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adcff9fdad16c923c107ff530c39d4030">&#9670;&nbsp;</a></span>edge_has_been_set</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -311,7 +478,29 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t class_environment::position</td>
+          <td class="memname">bool class_environment::edge_has_been_set = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aea094f20c48033f8e638e397352bc6c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea094f20c48033f8e638e397352bc6c1">&#9670;&nbsp;</a></span>position</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;size_t&gt; class_environment::position</td>
         </tr>
       </table>
   </td>
@@ -337,24 +526,24 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ad65a186e2a9e22a73c82ba98faa93752"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad65a186e2a9e22a73c82ba98faa93752">&#9670;&nbsp;</a></span>size</h2>
+<a id="a07a78fc055d953768e686ef522bb6d0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07a78fc055d953768e686ef522bb6d0c">&#9670;&nbsp;</a></span>sites</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned long class_environment::size = 0</td>
+          <td class="memname">size_t class_environment::sites = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of particles that have been contracted into this left environment. </p>
+<p>Number of particles that have been contracted into this environment. </p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>source/mps_routines/<a class="el" href="class__environment_8h_source.html">class_environment.h</a></li>
-<li>source/mps_routines/<a class="el" href="class__environment_8cpp.html">class_environment.cpp</a></li>
+<li>source/state/<a class="el" href="class__environment_8h_source.html">class_environment.h</a></li>
+<li>source/state/<a class="el" href="class__environment_8cpp.html">class_environment.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

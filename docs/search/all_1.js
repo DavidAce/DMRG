@@ -1,10 +1,16 @@
 var searchData=
 [
-  ['a',['A',['../class_dense_matrix_product.html#a2085b113fd54cdcbd0d748ff5fa1fcd0',1,'DenseMatrixProduct::A()'],['../classclass__mps__2site.html#a388bf758a43a12d1aff8ed0dc3e79ecc',1,'class_mps_2site::A()'],['../classclass__measurement.html#a5c4019856df70beb5d541ba3028d1e97',1,'class_measurement::a()']]],
+  ['a',['A',['../classclass__mps__2site.html#a236a159e7c4145df81e3fe69bb5eb460',1,'class_mps_2site']]],
   ['a_5fmatrix',['A_matrix',['../class_dense_matrix_product.html#a7c69bf9fef6a4ceac88d37141c9f1bca',1,'DenseMatrixProduct::A_matrix()'],['../class_sparse_matrix_product.html#a138312f077cf49984d2062f68656a427',1,'SparseMatrixProduct::A_matrix()']]],
   ['a_5fptr',['A_ptr',['../class_stl_matrix_product.html#a42e15800d20b2f825a24c4404ee51bf6',1,'StlMatrixProduct']]],
   ['a_5fstl',['A_stl',['../class_stl_matrix_product.html#a5e33d520e1c62efd4c36af977776d712',1,'StlMatrixProduct']]],
-  ['append_5frecord',['append_record',['../classclass__hdf5__table.html#a6f5272e3d55b1f1b807d9676c18db573',1,'class_hdf5_table']]],
+  ['access_5fmode',['access_mode',['../namespacesettings_1_1hdf5.html#aa01b10679e0560f95c08147606f59d39',1,'settings::hdf5']]],
+  ['accurate_2ecpp',['accurate.cpp',['../accurate_8cpp.html',1,'']]],
+  ['add_5fphase',['add_phase',['../namespace_textra.html#af6755d93497c739f4cab661892897c46',1,'Textra::add_phase(Eigen::MatrixBase&lt; Derived &gt; &amp;v, std::vector&lt; double &gt; &amp;angles)'],['../namespace_textra.html#ae8de771b63d94ce09bc102d204eed693',1,'Textra::add_phase(Eigen::Tensor&lt; Scalar, rank &gt; &amp;tensor, std::vector&lt; double &gt; &amp;angles)']]],
+  ['all_5fmpo_5fparameters_5fhave_5fbeen_5fset',['all_mpo_parameters_have_been_set',['../classclass__model__base.html#abaa56fa72f7d7c1019e1cf3bd74772b7',1,'class_model_base']]],
+  ['append_5frecord',['append_record',['../classclass__hdf5__log.html#a4a1b1b3bed4de69fea4dd6f5d906810a',1,'class_hdf5_log']]],
+  ['apply_5fmpo',['apply_mpo',['../namespacetools_1_1finite_1_1ops.html#ad8aed06310e3d183e78b4a198a6dc259',1,'tools::finite::ops']]],
+  ['apply_5fmpos',['apply_mpos',['../namespacetools_1_1finite_1_1ops.html#af56c79ae1daf4237e672debdb3de29c4',1,'tools::finite::ops']]],
   ['arpackpp_5fsolver',['arpackpp_solver',['../classarpackpp__solver.html',1,'arpackpp_solver&lt; MatrixType &gt;'],['../classarpackpp__solver.html#a4cdcbf740e5f16a4f9da8e8c3f86d0b0',1,'arpackpp_solver::arpackpp_solver()']]],
   ['arpackpp_5fsolver_2ecpp',['arpackpp_solver.cpp',['../arpackpp__solver_8cpp.html',1,'']]],
   ['arpackpp_5fsolver_2eh',['arpackpp_solver.h',['../arpackpp__solver_8h.html',1,'']]],
@@ -18,12 +24,7 @@ var searchData=
   ['array7',['array7',['../namespace_textra.html#afa2db9c81f29f8e4324e79340e4ab96a',1,'Textra']]],
   ['array8',['array8',['../namespace_textra.html#a40142e97da00e9a6470ec0637da532e3',1,'Textra']]],
   ['asdiagonal',['asDiagonal',['../namespace_textra.html#a42b2f8b0c5883c74c9fb806db83762da',1,'Textra']]],
-  ['asdiagonalinversed',['asDiagonalInversed',['../namespace_textra.html#a0943a701e495e3c6c3211a7407e7a312',1,'Textra']]],
+  ['asdiagonalinversed',['asDiagonalInversed',['../namespace_textra.html#a0943a701e495e3c6c3211a7407e7a312',1,'Textra::asDiagonalInversed(const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;tensor)'],['../namespace_textra.html#a1eda47ce18fd5ba41628b44b32b6366c',1,'Textra::asDiagonalInversed(const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;tensor)']]],
   ['asdiagonalsquared',['asDiagonalSquared',['../namespace_textra.html#a145b649a880d716e15ad11d43c1d1ce8',1,'Textra']]],
-  ['asnormalized',['asNormalized',['../namespace_textra.html#a7cd3712f032a50ee9320fc68312c7c20',1,'Textra']]],
-  ['attr_5fname',['attr_name',['../classclass__hdf5__file_1_1_attribute_properties.html#a8ab7bfdde671d763dbc72e1809eaa88e',1,'class_hdf5_file::AttributeProperties']]],
-  ['attribute',['attribute',['../classclass__hdf5__dataset__buffer.html#a1e1b5972126997fe987b078be4ce48a5',1,'class_hdf5_dataset_buffer']]],
-  ['attribute_5fname',['attribute_name',['../classclass__hdf5__dataset__buffer.html#ae79986300cba7d49bb57c57995e6407d',1,'class_hdf5_dataset_buffer']]],
-  ['attribute_5fset',['attribute_set',['../classclass__hdf5__dataset__buffer.html#a210aab15a2f0d5b406f71c8cd2ccec6c',1,'class_hdf5_dataset_buffer']]],
-  ['attributeproperties',['AttributeProperties',['../classclass__hdf5__file_1_1_attribute_properties.html',1,'class_hdf5_file']]]
+  ['asnormalized',['asNormalized',['../namespace_textra.html#a7cd3712f032a50ee9320fc68312c7c20',1,'Textra']]]
 ];

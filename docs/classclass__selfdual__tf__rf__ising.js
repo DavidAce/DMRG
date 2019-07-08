@@ -1,9 +1,9 @@
 var classclass__selfdual__tf__rf__ising =
 [
     [ "Scalar", "classclass__selfdual__tf__rf__ising.html#a9c43841fadcde29d6bd854cdb1e7ab01", null ],
-    [ "class_selfdual_tf_rf_ising", "classclass__selfdual__tf__rf__ising.html#a405ad1e398feec210a063c7c3fc1895e", null ],
+    [ "class_selfdual_tf_rf_ising", "classclass__selfdual__tf__rf__ising.html#a370e7550390a594f09fa6ac79a9dc7fa", null ],
     [ "build_mpo", "classclass__selfdual__tf__rf__ising.html#ae6383e554e3b872bce0543999732223a", null ],
-    [ "clone", "classclass__selfdual__tf__rf__ising.html#a82d596943ca4686b589cf113baf9f642", null ],
+    [ "clone", "classclass__selfdual__tf__rf__ising.html#a8702c9531914daf6baafff126489bb42", null ],
     [ "get_h_rnd", "classclass__selfdual__tf__rf__ising.html#a814a6f9eb80922a6b45f69c93d2c5c2f", null ],
     [ "get_J_rnd", "classclass__selfdual__tf__rf__ising.html#a8274d69b61f5313fa7165520fa870d41", null ],
     [ "get_parameter_names", "classclass__selfdual__tf__rf__ising.html#ac631c6f220a8b20144f8ec5b3261e896", null ],
@@ -14,7 +14,11 @@ var classclass__selfdual__tf__rf__ising =
     [ "print_parameter_names", "classclass__selfdual__tf__rf__ising.html#a54e408f494ed9b3fc1d574aedf40f229", null ],
     [ "print_parameter_values", "classclass__selfdual__tf__rf__ising.html#a9a689d1f6edfb04ae22b17c961df6643", null ],
     [ "randomize_hamiltonian", "classclass__selfdual__tf__rf__ising.html#aa8e3fcac305f5e7c110f49dafbfc5b57", null ],
-    [ "set_non_local_parameters", "classclass__selfdual__tf__rf__ising.html#a56eac0182dfea209c02a2ffbbcf4c012", null ],
+    [ "set_full_lattice_parameters", "classclass__selfdual__tf__rf__ising.html#a614f69a0c3584740cf06f90af0ac1d2c", null ],
+    [ "set_hamiltonian", "classclass__selfdual__tf__rf__ising.html#a8595f437222481ad8e4933dbae3e3b7d", null ],
+    [ "set_hamiltonian", "classclass__selfdual__tf__rf__ising.html#ad294c10cf4e8fb9b8bc32a16f106d11d", null ],
+    [ "set_hamiltonian", "classclass__selfdual__tf__rf__ising.html#aaf49d0f62bc6c16fc78f9fadae453bfe", null ],
+    [ "set_hamiltonian", "classclass__selfdual__tf__rf__ising.html#a020833d780211578f36e5f36edb7684f", null ],
     [ "set_realization_averages", "classclass__selfdual__tf__rf__ising.html#a1332645c8b209715ebafa132515d54d1", null ],
     [ "set_reduced_energy", "classclass__selfdual__tf__rf__ising.html#a6868f04c65fe0c5da49b412a7418b7cc", null ],
     [ "single_site_hamiltonian", "classclass__selfdual__tf__rf__ising.html#a6bc4544f0c87e2c604b4288659d489a2", null ],
@@ -29,5 +33,6 @@ var classclass__selfdual__tf__rf__ising =
     [ "J_rnd", "classclass__selfdual__tf__rf__ising.html#a09f7f8d7ab73279fe2c24954baf6aca8", null ],
     [ "J_sigma", "classclass__selfdual__tf__rf__ising.html#a5e5417f1e68ba5b5e493bb26f6bfa056", null ],
     [ "lambda", "classclass__selfdual__tf__rf__ising.html#af1cca72df878fd54d738fe7b0ae80dda", null ],
+    [ "num_params", "classclass__selfdual__tf__rf__ising.html#ad23f715526278459b655f6fc0cfe3011", null ],
     [ "spin_dim", "classclass__selfdual__tf__rf__ising.html#a06d254d5f749d5e0eacc7445e68c916b", null ]
 ];
