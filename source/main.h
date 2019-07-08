@@ -11,7 +11,6 @@
   \tableofcontents
 
   \section intro DMRG++ (documentation in progress)
- [![Build Status](https://travis-ci.org/DavidAce/DMRG.svg?branch=master)](https://travis-ci.org/DavidAce/DMRG)
 
   [Density matrix renormalization group](https://en.wikipedia.org/wiki/Density_matrix_renormalization_group) (DMRG) is a variational numerical technique used to study many-body
   quantum systems. It works by optimizing a trial wave function in the form of a [Matrix Product States](https://en.wikipedia.org/wiki/Matrix_product_states) (MPS), to find either the
