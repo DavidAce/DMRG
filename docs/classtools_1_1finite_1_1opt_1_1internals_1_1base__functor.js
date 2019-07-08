@@ -1,0 +1,26 @@
+var classtools_1_1finite_1_1opt_1_1internals_1_1base__functor =
+[
+    [ "base_functor", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a8b115c530f8e955f5d2b6b5a4501ddc9", null ],
+    [ "get_count", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#ad43c5e4b4bcebfc3a54342698303b59c", null ],
+    [ "get_energy", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#aa311753c4b3fb64be9ad3a87cff3fca4", null ],
+    [ "get_norm", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#adfa14c82de8ef8b7df58442f5ab1bd6d", null ],
+    [ "get_variance", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#ae3e9e38c9e198f2d6fd47f3458c4445b", null ],
+    [ "operator()", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#ab3b5cf3de51455fbb8128d95bfc1822e", null ],
+    [ "counter", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a24759640b86779153116a589d3a5109c", null ],
+    [ "energy", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a51957f739ef112398674dc44e08b6b68", null ],
+    [ "energy_dens", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a5df94a80e95c1158404026900e8f1b1a", null ],
+    [ "energy_lower_bound", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a1eb84b0e97ec13c08284240ba58fae4b", null ],
+    [ "energy_max", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a821bb923c7abfe818cff2b7e3cef49f2", null ],
+    [ "energy_min", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a2298318957b8820a7fc57e203c964f63", null ],
+    [ "energy_offset", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#af7f5f52bbb14be6ebff9a633f58c0376", null ],
+    [ "energy_target", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a440466ad24dbfab009a15d3482e71ef5", null ],
+    [ "energy_target_dens", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#acc954f67c99b28164aafdcd108d54a0f", null ],
+    [ "energy_upper_bound", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a889cb1f9f1f94f9116f2b07f7afad8b8", null ],
+    [ "energy_window", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a8ff842d78db61b7b486fd1f88b9add42", null ],
+    [ "have_bounds_on_energy", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#acbe0050365b5aa00441a04d6b09af005", null ],
+    [ "iteration", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a12f6aa68a3ff3b5ce4080c85f5c9ca06", null ],
+    [ "length", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a10db15e8473f14d9c5a51e61b28d6f04", null ],
+    [ "norm", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a95b852d7a06c1fc5e69c4695e7b3de45", null ],
+    [ "norm_offset", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#abe03a260b9462d303c6974357b19a2f1", null ],
+    [ "variance", "classtools_1_1finite_1_1opt_1_1internals_1_1base__functor.html#a28999fddbeb73a42cc56c9d65726d5c0", null ]
+];
