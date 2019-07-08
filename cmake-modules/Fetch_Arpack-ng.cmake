@@ -67,7 +67,6 @@ else()
             BUILD_IN_SOURCE 1
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DCMAKE_INSTALL_LIBDIR:PATH=lib
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
             -DCMAKE_C_FLAGS=-w -m64
             -DCMAKE_Fortran_FLAGS=-w -m64
@@ -82,14 +81,9 @@ else()
             DEPENDS blas lapack gfortran
             )
     ExternalProject_Get_Property(external_ARPACK INSTALL_DIR)
-    find_library(ARPACK_LIBRARIES
-            NAMES libarpack${ARPACK_LIBRARY_SUFFIX}
-            PATHS  ${INSTALL_DIR}/lib  ${INSTALL_DIR}/lib64
-            )
-    if(NOT ARPACK_LIBRARIES)
-        set(ARPACK_LIBRARIES ${INSTALL_DIR}/lib/libarpack${ARPACK_LIBRARY_SUFFIX})
-    endif()
-    set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/include)
+    include(GNUInstallDirs)
+    set(ARPACK_LIBRARIES ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/libarpack${ARPACK_LIBRARY_SUFFIX})
+    set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
     add_library(arpack INTERFACE)
     add_dependencies(arpack external_ARPACK)
     add_dependencies(arpack blas lapack gfortran)
