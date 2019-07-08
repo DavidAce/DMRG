@@ -6,13 +6,17 @@
 
 #ifdef  EIGEN_USE_BLAS
 #undef  EIGEN_USE_BLAS
+#ifndef EIGEN_USE_LAPACKE_STRICT
 #define EIGEN_USE_LAPACKE_STRICT
+#endif
 #endif
 
 #ifdef  EIGEN_USE_MKL_ALL
 #undef  EIGEN_USE_MKL_ALL
 #undef  EIGEN_USE_BLAS
+#ifndef EIGEN_USE_LAPACKE_STRICT
 #define EIGEN_USE_LAPACKE_STRICT
+#endif
 #endif
 
 
