@@ -46,6 +46,8 @@ void class_xDMRG::run_preprocessing() {
     log->info("Starting {} preprocessing", sim_name);
     sim_status.energy_dens_target = settings::xdmrg::energy_density_target;
     sim_status.energy_dens_window = settings::xdmrg::energy_density_window;
+    sim_status.chi_max = chi_max();
+    state->set_chi_max(sim_status.chi_max);
     find_energy_range();
     log->info("Finished {} preprocessing", sim_name);
 }

@@ -39,7 +39,7 @@ private:
 
     int num_sweeps   = 0;
     int direction    = 1;
-
+    long chi_max     = 0;
 public:
     using Scalar = std::complex<double>;
     class_finite_state()=default;
@@ -62,7 +62,8 @@ public:
     void   set_sweeps(int num_sweeps_) {num_sweeps = num_sweeps_;}
     void   increment_sweeps() {num_sweeps++;}
     int    reset_sweeps();
-
+    long   get_chi_max()                        const;
+    void   set_chi_max(long chi_max_);
     void set_positions();
     size_t get_length()                         const;
     size_t get_position()                       const;
@@ -80,8 +81,8 @@ public:
 //    std::tuple<long,long,long>  get_dims(size_t pos)                    const;
     const class_vidal_site       & get_MPS(size_t pos)                  const;
           class_vidal_site       & get_MPS(size_t pos);
-    const class_model_base & get_MPO(size_t pos)                  const;
-          class_model_base & get_MPO(size_t pos);
+    const class_model_base       & get_MPO(size_t pos)                  const;
+          class_model_base       & get_MPO(size_t pos);
     const class_environment      & get_ENVL(size_t pos)                 const;
     const class_environment      & get_ENVR(size_t pos)                 const;
     const class_environment_var  & get_ENV2L(size_t pos)                const;
