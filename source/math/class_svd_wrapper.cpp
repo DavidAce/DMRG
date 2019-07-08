@@ -6,12 +6,13 @@
 
 #ifdef EIGEN_USE_BLAS
 #undef EIGEN_USE_BLAS
+#def   EIGEN_USE_LAPACKE_STRICT
 #endif
 
 #ifdef EIGEN_USE_MKL_ALL
 #undef EIGEN_USE_MKL_ALL
 #undef EIGEN_USE_BLAS
-#undef EIGEN_USE_LAPACKE_STRICT
+#def   EIGEN_USE_LAPACKE_STRICT
 #endif
 
 
@@ -45,7 +46,11 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
     long rank = std::min(SVD.rank(),rank_max);
     truncation_error = SVD.singularValues().normalized().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();
 
-    if (SVD.rank() <= 0 or not SVD.matrixU().leftCols(rank).allFinite() or not SVD.singularValues().head(rank).allFinite() or not SVD.matrixV().leftCols(rank).allFinite() ){
+    if (SVD.rank() <= 0
+    or not SVD.matrixU().leftCols(rank).allFinite()
+    or not SVD.singularValues().head(rank).allFinite()
+    or not SVD.matrixV().leftCols(rank).allFinite() )
+    {
         std::cerr   << "SVD error \n"
                     << "  SVDThreshold     = " << SVDThreshold << '\n'
                     << "  Truncation Error = " << truncation_error << '\n'
