@@ -38,10 +38,6 @@ void tools::finite::mps::normalize(class_finite_state & state){
         Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
         try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta);}
         catch(std::exception &ex){
-            std::cerr << "A " << pos_A  << ":\n" << state.get_A(pos_A) << std::endl;
-            std::cerr << "L " << pos_LC << ":\n" << state.get_L(pos_LC) << std::endl;
-            std::cerr << "B " << pos_B  << ":\n" << state.get_B(pos_B) << std::endl;
-            std::cerr << "theta:\n" << theta << std::endl;
             throw std::runtime_error(fmt::format("Normalization failed at positions A:{} C:{} B:{} , step {}: {}", pos_A, pos_LC, pos_B, step, ex.what()));
         }
         Eigen::Tensor<Scalar,3> LA_U = Textra::asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});

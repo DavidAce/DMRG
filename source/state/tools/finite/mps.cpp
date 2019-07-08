@@ -31,9 +31,6 @@ void tools::finite::mps::initialize(class_finite_state &state, const size_t leng
 
 
 
-
-
-
 void tools::finite::mps::randomize(class_finite_state &state){
     tools::log->trace("Randomizing mps");
     using Scalar = class_finite_state::Scalar;

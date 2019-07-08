@@ -43,17 +43,19 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
     SVD.setThreshold(SVDThreshold);
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     long rank = std::min(SVD.rank(),rank_max);
+    truncation_error = SVD.singularValues().normalized().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();
 
-    if (SVD.rank() <= 0 or not SVD.matrixU().allFinite() or not SVD.matrixV().allFinite() ){
-        std::cerr << "M: \n" << mat << std::endl;
-        std::cerr << "U: \n" << SVD.matrixU() << std::endl;
-        std::cerr << "S: \n" << SVD.singularValues() << std::endl;
-        std::cerr << "V: \n" << SVD.matrixV() << std::endl;
-        std::cerr << "rank: " << rank << std::endl;
+    if (SVD.rank() <= 0 or not SVD.matrixU().leftCols(rank).allFinite() or not SVD.singularValues().head(rank).allFinite() or not SVD.matrixV().leftCols(rank).allFinite() ){
+        std::cerr   << "SVD error \n"
+                    << "  SVDThreshold     = " << SVDThreshold << '\n'
+                    << "  Truncation Error = " << truncation_error << '\n'
+                    << "  Rank             = " << rank << '\n'
+                    << "  U all finite     : " << std::boolalpha << SVD.matrixU().leftCols(rank).allFinite() << '\n'
+                    << "  S all finite     : " << std::boolalpha << SVD.singularValues().head(rank).allFinite() << '\n'
+                    << "  V all finite     : " << std::boolalpha << SVD.matrixV().leftCols(rank).allFinite() << '\n';
         throw std::runtime_error("SVD error:  Erroneous results");
     }
 
-    truncation_error = SVD.singularValues().normalized().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();
 
 //    std::cout << "Singular values           : " << SVD.singularValues().transpose() << std::endl;
 //    std::cout << "Singular values after norm: " << SVD.singularValues().head(rank).normalized().transpose() << std::endl;
