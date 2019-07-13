@@ -38,9 +38,11 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_finite_stat
     bool allequal = (costsmap == costsmap(0)).all();
     std::string reason;
     for (auto & c : costs){
+        using namespace settings::precision;
         if (allequal)                                   {reason = "equal costs: " + std::to_string(c); break;}
         else if (sites.size() <= 2)                     {reason = "at least two sites were kept"; break;}
-        else if (c <= threshold and sites.size() <= 8)  {reason = "good threshold found: " + std::to_string(c) ;break;}
+        else if (c <= threshold
+                and sites.size() <= MaxSitesMultiDmrg)  {reason = "good threshold found: " + std::to_string(c) ;break;}
         else if (sites.empty())                         {throw std::logic_error("No sites for a jump");}
         else{
             sites.pop_back();

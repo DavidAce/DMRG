@@ -96,6 +96,3 @@ void tools::infinite::io::write_all_measurements  (const class_infinite_state & 
     h5ppFile.writeDataset(state.measurements.current_entanglement_entropy.value(), sim_name + "/measurements/2site/entanglement_entropy_midchain");
 }
 
-void tools::infinite::io::load_from_hdf5    ([[maybe_unused]] const h5pp::File & h5ppFile, [[maybe_unused]] class_infinite_state & state,[[maybe_unused]] class_simulation_status &sim_status,[[maybe_unused]] std::string sim_name){
-
-}

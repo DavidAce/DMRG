@@ -68,7 +68,7 @@ bool class_algorithm_base::check_saturation_using_slope(
  * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.
  * If the measurement happened less than rate iterations ago, return.
  * Otherwise, compute the slope of the last 25% of the measurements that have been made.
- * The slope here is defined as the relative slope, i.e. 1/<y> * dy/dx.
+ * The slope here is defined as the relative slope, i.e. \f$ \frac{1}{ \langle y\rangle} * \frac{dy}{dx} \f$.
  */
 
 {

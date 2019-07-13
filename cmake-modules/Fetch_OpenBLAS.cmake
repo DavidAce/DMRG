@@ -1,6 +1,6 @@
 
 # If the INTEL MKL library has already been loaded, skip the rest.
-if(MKL_FOUND)
+if(TARGET mkl)
     return()
 endif()
 
@@ -119,7 +119,8 @@ else()
     else()
         set(OpenBLAS_USE_OPENMP 0) # Openmp doesnt work on clang it seems
     endif()
-
+    set(LDFLAGS "-L${GFORTRAN_PATH} -l${GFORTRAN_LIB} -l${QUADMATH_LIB}")
+    set(FFLAGS  "-O3 -Wno-maybe-uninitialized -Wno-conversion -Wno-unused-but-set-variable -Wno-unused-variable")
     include(ExternalProject)
     ExternalProject_Add(external_OpenBLAS
             GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
@@ -130,48 +131,47 @@ else()
             TEST_COMMAND ""
             CONFIGURE_COMMAND ""
 
-#            CMAKE_ARGS
-#            -DTARGET=${OPENBLAS_MARCH}
-#            -DDYNAMIC_ARCH:BOOL=OFF
-#            -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
-#            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-#            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-#            -DBINARY=64
-#            -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
-#            -DCMAKE_C_FLAGS=-w
-#            -DCMAKE_CXX_FLAGS=-w
-#            -DCMAKE_FORTRAN_FLAGS=-w
+            #            CMAKE_ARGS
+            #            -DTARGET=${OPENBLAS_MARCH}
+            #            -DDYNAMIC_ARCH:BOOL=OFF
+            #            -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+            #            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            #            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            #            -DBINARY=64
+            #            -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
+            #            -DCMAKE_C_FLAGS=-w
+            #            -DCMAKE_CXX_FLAGS=-w
+            #            -DCMAKE_FORTRAN_FLAGS=-w
 
 
 
-#            BUILD_COMMAND export LD_LIBRARY_PATH=${GFORTRAN_PATH}:$LD_LIBRARY_PATH &&
-#            export LDFLAGS="-L${GFORTRAN_PATH} $LDFLAGS" &&
+            #            BUILD_COMMAND export LD_LIBRARY_PATH=${GFORTRAN_PATH}:$LD_LIBRARY_PATH &&
+            #            export LDFLAGS="-L${GFORTRAN_PATH} $LDFLAGS" &&
             BUILD_IN_SOURCE 1
             BUILD_COMMAND
-                        export LD_LIBRARY_PATH=${GFORTRAN_PATH} &&
-#                        export LDFLAGS=-L${GFORTRAN_PATH} -l${GFORTRAN_LIB} -l${QUADMATH_LIB} &&
-                        $(MAKE) TARGET=SANDYBRIDGE
-                        DYNAMIC_ARCH=1
-                        USE_THREAD=${OpenBLAS_MULTITHREADED}
-                        USE_OPENMP=${OpenBLAS_USE_OPENMP}
-                        NO_AFFINITY=1
-                        NO_WARMUP=1
-                        QUIET_MAKE=0
-                        NUM_THREADS=128
-                        DEBUG=0
-                        FFLAGS=-frecursive
-                        BINARY64=64
-                        GEMM_MULTITHREAD_THRESHOLD=16
-                        LDFLAGS=-L${GFORTRAN_PATH} -l${GFORTRAN_LIB} -l${QUADMATH_LIB}
-                        FFLAGS=-O3 -Wno-maybe-uninitialized -Wno-conversion -Wno-unused-but-set-variable -Wno-unused-variable
+            export LD_LIBRARY_PATH=${GFORTRAN_PATH} &&
+            #                        export LDFLAGS=-L${GFORTRAN_PATH} -l${GFORTRAN_LIB} -l${QUADMATH_LIB} &&
+            $(MAKE) TARGET=SANDYBRIDGE
+            DYNAMIC_ARCH=1
+            USE_THREAD=${OpenBLAS_MULTITHREADED}
+            USE_OPENMP=${OpenBLAS_USE_OPENMP}
+            NO_AFFINITY=1
+            NO_WARMUP=1
+            QUIET_MAKE=0
+            NUM_THREADS=128
+            DEBUG=0
+            FFLAGS=-frecursive
+            BINARY64=64
+            GEMM_MULTITHREAD_THRESHOLD=16
+            LDFLAGS=${LDFLAGS}
+            FFLAGS=${FFLAGS}
             INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
             DEPENDS gfortran
             )
 
-ExternalProject_Get_Property(external_OpenBLAS INSTALL_DIR)
+    ExternalProject_Get_Property(external_OpenBLAS INSTALL_DIR)
     add_library(blas   INTERFACE)
     add_library(lapack ALIAS blas)
-    add_library(OpenBLAS::lapacke ALIAS blas)
     add_dependencies(blas         external_OpenBLAS)
 
     set(OpenBLAS_LIBRARY           ${INSTALL_DIR}/lib/libopenblas${CUSTOM_SUFFIX})
@@ -183,9 +183,9 @@ endif()
 
 
 
-target_link_libraries(blas INTERFACE ${OpenBLAS_LIBRARY} pthread gfortran)
+target_link_libraries(blas INTERFACE ${OpenBLAS_LIBRARY}   -lm -ldl -fPIC Threads::Threads  gfortran)
 target_include_directories(blas INTERFACE ${OpenBLAS_INCLUDE_DIRS})
-set(FC_LDLAGS ${PTHREAD_LIBRARY} ${GFORTRAN_LIB})
+set(FC_LDLAGS Threads::Threads ${GFORTRAN_LIB})
 
 if(OpenBLAS_USE_OPENMP AND OpenMP_FOUND)
     target_link_libraries(blas INTERFACE ${OpenMP_LIBRARIES})
@@ -196,8 +196,4 @@ endif()
 if (TARGET blas)
     set(BLAS_LIBRARIES   ${OpenBLAS_LIBRARY})
     set(LAPACK_LIBRARIES ${OpenBLAS_LIBRARY})
-    include(cmake-modules/FindLAPACKE.cmake)
-    if(TARGET lapacke)
-        target_link_libraries(blas   INTERFACE lapacke)
-    endif()
 endif()

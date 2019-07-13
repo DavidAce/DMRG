@@ -13,27 +13,28 @@
 #include <model/class_model_base.h>
 
 
-/*!
- \class class_finite_state
- \brief Stores the finite mps state and components to operate on it, such as environments and model mpo's.
- \section layout Layout
- The finite state mps is always partitioned into two lists, corresponding to the two sides left and right of the current position.
- Each site contains a "Vidal" site, i.e., a bond matrix \f$ \Lambda \f$ and an mps tensor \f$\Gamma \f$ in Vidal's notation.
- In the left side the sites are left normalized, with the bond matrix on the left \f$ \Lambda \Gamma \ = Af$.
- In the right side the sites are right normalized, with the bond matrix on the right \f$ \Gamma \Lambda = B\f$.
- At the center is the center bond matrix MPS_C, a.k.a. \f$ \Lambda^C \f$. For a state with 10 sites the layout is seen below
-
-   @verbatim
-
-   |Finite state> =  ---MPS_L(0)--- ... MPS_L(4)---MPS_L(5)---MPS_C---MPS_R(6)---MPS_R(7)---...---MPS_R(9)
-
-  @endverbatim
-
- The numbers in parentheses denote the position in the chain, note that this isn't the same as the position in the corresponding containers.
-*/
 
 
-class class_finite_state {
+/**
+ * \class class_finite_state
+ *
+ * \brief Stores the finite mps state and components to operate on it, such as environments and model mpo's.
+ *
+ * The finite state mps is always partitioned into two lists, corresponding to the two sides left and right of the current position.
+ * Each site contains a "Vidal" site, i.e., a bond matrix \f$ \Lambda \f$ and an mps tensor \f$\Gamma \f$ in Vidal's notation.
+ * In the left side the sites are left normalized, with the bond matrix on the left \f$ \Lambda \Gamma \ = A\f$.
+ * In the right side the sites are right normalized, with the bond matrix on the right \f$ \Gamma \Lambda = B\f$.
+ * At the center is the center bond matrix MPS_C, a.k.a. \f$ \Lambda^C \f$. For a state with 10 sites the layout is seen below
+ *
+ * \code
+ * |Finite state> =  ---MPS_L(0)--- ... MPS_L(4)---MPS_L(5)---MPS_C---MPS_R(6)---MPS_R(7)---...---MPS_R(9)
+ * \endcode
+ *
+ *  The numbers in parentheses denote the position in the chain, note that this isn't the same as the position in the corresponding containers.
+ */
+
+class class_finite_state
+{
 private:
 
 
@@ -46,7 +47,7 @@ public:
 
     std::list<class_vidal_site>                        MPS_L;   /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
     std::list<class_vidal_site>                        MPS_R;   /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
-    Eigen::Tensor<Scalar,1>                            MPS_C;   //Current center bond matrix;
+    Eigen::Tensor<Scalar,1>                            MPS_C;   /*!< Current center bond matrix. */
     std::list<class_environment>                       ENV_L;
     std::list<class_environment>                       ENV_R;
     std::list<class_environment_var>                   ENV2_L;
@@ -69,6 +70,10 @@ public:
     size_t get_position()                       const;
     void flip_direction();
     int  get_direction()                        const;
+    Eigen::DSizes<long,3>  dimensions_2site()   const;
+    size_t size_2site()                         const;
+
+
     bool position_is_the_middle()               const;
     bool position_is_the_middle_any_direction() const;
     bool position_is_the_left_edge()            const;
@@ -78,7 +83,6 @@ public:
     bool isReal()                               const;
 
 
-//    std::tuple<long,long,long>  get_dims(size_t pos)                    const;
     const class_vidal_site       & get_MPS(size_t pos)                  const;
           class_vidal_site       & get_MPS(size_t pos);
     const class_model_base       & get_MPO(size_t pos)                  const;

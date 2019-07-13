@@ -24,6 +24,8 @@ tools::finite::opt::internals::subspace_functor<Scalar>::subspace_functor(
     if constexpr(std::is_same<Scalar,std::complex<double>>::value){
         H2 = (eigvecs.adjoint() * state.get_multi_hamiltonian2_matrix().template selfadjointView<Eigen::Upper>() * eigvecs);
     }
+    double sparcity = (H2.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
+    tools::log->debug("H_local2 nonzeros: {:.8f} %", sparcity*100);
 }
 
 

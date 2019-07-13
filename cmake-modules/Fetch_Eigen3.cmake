@@ -9,14 +9,14 @@ if(TARGET blas)
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
         list(APPEND EIGEN3_COMPILER_FLAGS -Wno-unused-but-set-variable)
     endif()
-    if(MKL_FOUND)
-        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_MKL_ALL)
-        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_LAPACKE_STRICT)
+    if(TARGET mkl)
+#        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_MKL_ALL)
+#        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_LAPACKE_STRICT)
         list(APPEND EIGEN3_INCLUDE_DIR ${MKL_INCLUDE_DIR})
         message(STATUS "Eigen3 will use MKL")
-    elseif (BLAS_FOUND)
-        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_BLAS)
-        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_LAPACKE)
+    else ()
+#        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_BLAS)
+#        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_LAPACKE_STRICT)
         message(STATUS "Eigen3 will use BLAS and LAPACKE")
     endif()
 endif()
@@ -41,6 +41,7 @@ elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
             INSTALL_DIR ${INSTALL_DIRECTORY}/Eigen3
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DCMAKE_INSTALL_MESSAGE=NEVERS #Avoid unnecessary output to console, like up-to-date and installing
             UPDATE_COMMAND ""
             TEST_COMMAND ""
 #            INSTALL_COMMAND ""

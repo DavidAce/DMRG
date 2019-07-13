@@ -11,7 +11,7 @@ location    = "../input"
 os.makedirs(location, exist_ok=True)
 
 
-sites        = np.linspace(20,40,6, dtype=int)
+sites        = np.linspace(20,36,5, dtype=int)
 lambdas      = [0] # np.linspace(0,0.2,3)
 deltas       = [0] # np.linspace(-1.0,1.0,5)
 J_log_mean   = np.array([1])

@@ -31,10 +31,9 @@ tools::finite::opt::find_excited_state(const class_finite_state &state, const cl
             << "\t shape "      << "[ " << dims[0] << " " << dims[1]<< " " << dims[2] << " ] = [ " << size << " ]" << std::flush;
     tools::log->debug(problem_report.str());
 
-
     switch (optSpace){
         case OptSpace::SUBSPACE:    return internals::subspace_optimization(state, sim_status, optType, optMode);
-        case OptSpace::DIRECT:      return internals::direct_optimization  (state, sim_status, optType);
+        case OptSpace::DIRECT:      return internals::ceres_optimization   (state, sim_status, optType);
     }
 }
 
@@ -65,9 +64,6 @@ tools::finite::opt::internals::MultiComponents<Scalar>::MultiComponents(const cl
     tools::log->trace("Generating multi components");
     if constexpr (std::is_same<Scalar,double>::value){
         mpo                          = state.get_multimpo().real();
-//        mpo2                         = mpo.contract (mpo, Textra::idx({3},{2}));
-//        auto [envL_cplx,envR_cplx]   = state.get_multienv();
-//        auto [env2L_cplx,env2R_cplx] = state.get_multienv2();
         auto & envL_cplx  = state.get_ENVL(state.active_sites.front());
         auto & envR_cplx  = state.get_ENVR(state.active_sites.back());
         auto & env2L_cplx = state.get_ENV2L(state.active_sites.front());
@@ -79,19 +75,15 @@ tools::finite::opt::internals::MultiComponents<Scalar>::MultiComponents(const cl
 
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){
         mpo                          = state.get_multimpo();
-//        mpo2                         = mpo.contract (mpo, Textra::idx({3},{2}));
-//        auto [envL_cplx,envR_cplx]   = state.get_multienv();
-//        auto [env2L_cplx,env2R_cplx] = state.get_multienv2();
         auto & envL_cplx  = state.get_ENVL(state.active_sites.front());
         auto & envR_cplx  = state.get_ENVR(state.active_sites.back());
         auto & env2L_cplx = state.get_ENV2L(state.active_sites.front());
         auto & env2R_cplx = state.get_ENV2R(state.active_sites.back());
-
-
         envL  = envL_cplx.block;         envR  = envR_cplx.block;
         env2L = env2L_cplx.block;        env2R = env2R_cplx.block;
     }
     dsizes        = state.active_dimensions();
+    tools::log->trace("Finished building multicomponents");
 }
 
 template struct tools::finite::opt::internals::MultiComponents<double>;
