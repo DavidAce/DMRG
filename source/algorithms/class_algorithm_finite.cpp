@@ -27,8 +27,8 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     tools::finite::debug::check_integrity(*state);
 
 
-    min_saturation_length = 1;
-    max_saturation_length = 4;
+    min_saturation_iters = 1;
+    max_saturation_iters = 4;
 
     S_mat.resize(state->get_length()+1);
     BS_mat.resize(state->get_length()+1);
@@ -392,7 +392,7 @@ void class_algorithm_finite::print_status_update() {
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            report << left  << " σ²-" << setw(2) << sim_status.variance_mpo_saturated_for << " steps";
+            report << left  << " σ²-" << setw(2) << sim_status.variance_mpo_saturated_for << " iters";
             break;
         default: throw std::runtime_error("Wrong simulation type");
 

@@ -24,8 +24,8 @@ public:
     std::unique_ptr<class_finite_state>    state;
 
 
-    size_t min_saturation_length          = 0;
-    size_t max_saturation_length          = 0;
+    size_t min_saturation_iters          = 0;
+    size_t max_saturation_iters          = 0;
 
 
     virtual void run_simulation()           = 0;

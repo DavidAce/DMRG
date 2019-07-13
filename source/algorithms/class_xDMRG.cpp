@@ -20,7 +20,7 @@
 #include <general/nmspc_tensor_extra.h>
 #include <h5pp/h5pp.h>
 #include <spdlog/spdlog.h>
-
+#include <spdlog/fmt/bundled/ranges.h>
 #include "class_xDMRG.h"
 
 
@@ -62,7 +62,7 @@ void class_xDMRG::run_simulation()    {
         write_logs();
         print_status_update();
         check_convergence();
-
+        tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*state));
         // It's important not to perform the last step.
         // That last state would not get optimized
         if (state->position_is_any_edge())
@@ -90,35 +90,34 @@ void class_xDMRG::run_simulation()    {
 
 
 void class_xDMRG::single_DMRG_step()
-/*!
- * \fn void single_DMRG_step()
- */
 {
     using namespace tools::finite;
 
     t_sim.tic();
     log->trace("Starting single xDMRG step {}", sim_status.step);
-    tools::log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
+//    tools::log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
 
     auto optMode  = sim_status.iteration  >= 2     ?   opt::OptMode::VARIANCE :  opt::OptMode::OVERLAP;
     auto optSpace = opt::OptSpace::SUBSPACE;
-    optSpace =  tools::finite::measure::energy_variance_per_site(*state) <  1e-8 ?  opt::OptSpace::DIRECT  : optSpace;
-    optSpace = sim_status.iteration              >= settings::xdmrg::min_sweeps  ?  opt::OptSpace::DIRECT  : optSpace;
+    optSpace      = measure::energy_variance_per_site(*state) <  1e-8               ?  opt::OptSpace::DIRECT  : optSpace;
+    optSpace      = sim_status.iteration >= settings::xdmrg::min_sweeps             ?  opt::OptSpace::DIRECT  : optSpace;
+    optSpace      = state->size_2site()  > settings::precision::MaxSizePartDiag     ?  opt::OptSpace::DIRECT  : optSpace;
+//    optSpace      = opt::OptSpace::DIRECT ;
+
     long threshold = 0;
     switch(optSpace){
         case  opt::OptSpace::SUBSPACE : threshold = settings::precision::MaxSizePartDiag; break;
-        case  opt::OptSpace::DIRECT   : threshold = 2 * 2 * 64 * 128; break;
+        case  opt::OptSpace::DIRECT   : threshold = settings::precision::MaxSizeDirect  ; break;
     }
     state->activate_sites(threshold);
-    if (state->active_size() > settings::precision::MaxSizePartDiag) optSpace =  opt::OptSpace::DIRECT;
-
+    optSpace =  state->active_size() > settings::precision::MaxSizePartDiag ? opt::OptSpace::DIRECT : optSpace;
     auto optType = state->isReal() ?  opt::OptType::REAL :  opt::OptType::CPLX;
 
     Eigen::Tensor<Scalar,3> theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     mps::rebuild_environments(*state);
     debug::check_integrity(*state);
-    tools::log->debug("Variance accurate check after  xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
+//    tools::log->debug("Variance accurate check after  xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
     sim_status.energy_dens        = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     state->unset_measurements();
     t_sim.toc();
@@ -133,12 +132,11 @@ void class_xDMRG::check_convergence(){
     t_sim.tic();
     t_con.tic();
 
-    check_convergence_variance();
-    check_convergence_entg_entropy();
-
-    if (sim_status.iteration < settings::xdmrg::min_sweeps){
-        clear_saturation_status();
+    if(state->position_is_any_edge()){
+        check_convergence_variance();
+        check_convergence_entg_entropy();
     }
+
 
 
     sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
@@ -146,7 +144,7 @@ void class_xDMRG::check_convergence(){
     if (outside_of_window
         and (   sim_status.iteration >= 2
                 or tools::finite::measure::energy_variance_per_site(*state) < 1e-4
-                or sim_status.variance_mpo_saturated_for > min_saturation_length
+                or sim_status.variance_mpo_saturated_for > min_saturation_iters
                 or sim_status.variance_mpo_has_converged)
         )
     {
@@ -182,7 +180,7 @@ void class_xDMRG::check_convergence(){
     if (    sim_status.variance_mpo_has_saturated
         and sim_status.entanglement_has_saturated
         and sim_status.bond_dimension_has_reached_max
-        and sim_status.variance_mpo_saturated_for > max_saturation_length)
+        and sim_status.variance_mpo_saturated_for >= max_saturation_iters)
     {
         log->debug("Simulation has to stop");
         sim_status.simulation_has_to_stop = true;

@@ -62,7 +62,7 @@ if(HDF5_FOUND)
             ${HDF5_C_LIBRARY}
             ${HDF5_C_LIBRARY_hdf5}
             $<LINK_ONLY:-ldl -lm -lz>
-            pthread
+            Threads::Threads
             )
     target_include_directories(hdf5 INTERFACE  ${HDF5_INCLUDE_DIR})
 #    if(HDF5_ENABLE_Z_LIB_SUPPORT)

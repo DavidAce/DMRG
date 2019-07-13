@@ -30,7 +30,7 @@ else()
     set(HDF5_C_HL_LIBRARY      ${HDF5_CXX_LIBRARY_hdf5_hl})
     set(HDF5_CXX_LIBRARY       ${HDF5_CXX_LIBRARY_hdf5_cpp})
     set(HDF5_CXX_HL_LIBRARY    ${HDF5_CXX_LIBRARY_hdf5_hl_cpp})
-    set(HDF5_LINKER_FLAGS       -Wl,--no-as-needed -ldl -lm -lz -Wl,--as-needed ${PTHREAD_LIBRARY})
+    set(HDF5_LINKER_FLAGS       -Wl,--no-as-needed -ldl -lm -lz -Wl,--as-needed Threads::Threads)
     set(HDF5_EXTRA_LIBS        ${HDF5_CXX_LIBRARY_iomp5} ${HDF5_CXX_LIBRARY_sz})
 
 endif()
@@ -85,6 +85,7 @@ else()
             TEST_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DCMAKE_BUILD_TYPE=Release
             -DBUILD_STATIC_LIBS:BOOL=ON
             -DBUILD_SHARED_LIBS:BOOL=ON
             -DCMAKE_ANSI_CFLAGS:STRING=-fPIC
@@ -123,7 +124,7 @@ set(HDF5_LIBRARIES  ${HDF5_CXX_HL_LIBRARY} ${HDF5_CXX_LIBRARY} ${HDF5_C_HL_LIBRA
 set_target_properties(hdf5 PROPERTIES
         INTERFACE_LINK_LIBRARIES        "${HDF5_LIBRARIES};${HDF5_EXTRA_LIBS};${HDF5_LINKER_FLAGS}"
         INTERFACE_INCLUDE_DIRECTORIES   "${HDF5_INCLUDE_DIR}"
-        INTERFACE_LINK_OPTIONS          "${PTHREAD_LIBRARY}"
+        INTERFACE_LINK_OPTIONS          Threads::Threads
         )
 
 #target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)

@@ -16,7 +16,7 @@ else()
             INSTALL_DIR ${INSTALL_DIRECTORY}/h5pp
             UPDATE_COMMAND ""
             CMAKE_ARGS
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DCMAKE_BUILD_TYPE=Release
             -DENABLE_TESTS:BOOL=OFF
             -DDOWNLOAD_ALL:BOOL=OFF
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}

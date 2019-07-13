@@ -176,6 +176,9 @@ find_subspace(const class_finite_state & state){
     if(not H_local.isApprox(H_local.adjoint(), 1e-14)){
         throw std::runtime_error(fmt::format("H_local is not hermitian: {:.16f}", (H_local - H_local.adjoint()).cwiseAbs().sum()));
     }
+    double sparcity = (H_local.array().cwiseAbs2() != 0.0).count()/(double)H_local.size();
+    tools::log->debug("H_local nonzeros: {:.8f} %", sparcity*100);
+
     t_ham->toc();
     auto theta = state.get_multitheta();
 
@@ -235,9 +238,19 @@ tools::finite::opt::internals::subspace_optimization(const class_finite_state & 
         {
             double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
             double subspace_quality  = 1.0 - sq_sum_overlap;
+            int idx                  = idx_best_overlap_in_window(overlaps,eigvals,sim_status.energy_lbound,sim_status.energy_ubound);
+            double max_overlap       = overlaps(idx);
+
             if(subspace_quality >= settings::precision::VarConvergenceThreshold) {
-                tools::log->debug("Subspace quality too low. Switching to direct mode.");
-                return direct_optimization(state, sim_status, optType);
+                tools::log->debug("Subspace quality too low: {}", subspace_quality);
+                if(max_overlap >= 0.9){
+                    tools::log->debug("... but max overlap is good enough to keep: {} >= 0.9", max_overlap);
+                    return Textra::Matrix_to_Tensor(eigvecs.col(idx), state.active_dimensions());
+                }else{
+                    tools::log->debug("... and max overlap too low: {} < 0.9. Switching to ceres optimization", max_overlap);
+                    return ceres_optimization(state, sim_status, optType);
+                }
+
             }
         }
 

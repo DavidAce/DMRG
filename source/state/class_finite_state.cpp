@@ -53,6 +53,20 @@ int  class_finite_state::get_direction() const {return direction;}
 void class_finite_state::flip_direction() {direction *= -1;}
 
 
+Eigen::DSizes<long,3>
+        class_finite_state::dimensions_2site()  const{
+    Eigen::DSizes<long,3> dimensions;
+    dimensions[1] = MPS_L.back().get_chiL();
+    dimensions[2] = MPS_R.front().get_chiR();
+    dimensions[0] = MPS_L.back().get_spin_dim() *  MPS_R.front().get_spin_dim();
+    return dimensions;
+
+}
+size_t  class_finite_state::size_2site() const{
+    auto dims = dimensions_2site();
+    return dims[0]*dims[1]*dims[2];
+}
+
 bool class_finite_state::position_is_the_middle() const {
     return (size_t) get_position() + 1 == (size_t)(get_length() / 2.0) and direction == 1 ;
 }

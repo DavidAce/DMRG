@@ -5,8 +5,13 @@
 #include "general/nmspc_tensor_extra.h"
 
 
+
+
+
+class class_vidal_site;
+
 /*!
- \class class_mps
+ \class class_mps_2site
  \brief Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites \f$n\f$ and \f$n+1\f$, respectively.
 
  \section description Description
@@ -41,13 +46,8 @@
  Tensor index order convention: See the <a href="index.html">Home page</a>.
 */
 
-
-
-
-class class_vidal_site;
-
-
-class class_mps_2site {
+class class_mps_2site
+{
 public:
     using Scalar = std::complex<double>;
 private:

@@ -88,7 +88,7 @@ void class_fDMRG::check_convergence(){
     if (        sim_status.variance_mpo_has_saturated
                 and sim_status.entanglement_has_saturated
                 and sim_status.bond_dimension_has_reached_max
-                and sim_status.variance_mpo_saturated_for > max_saturation_length)
+                and sim_status.variance_mpo_saturated_for > max_saturation_iters)
     {
         log->debug("Simulation has to stop");
         sim_status.simulation_has_to_stop = true;

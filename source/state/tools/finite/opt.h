@@ -9,7 +9,8 @@
 #include <general/class_tic_toc.h>
 #include <iomanip>
 #include <LBFGS.h>
-
+#include <ceres/ceres.h>
+#include <glog/logging.h>
 class class_tic_toc;
 
 
@@ -17,6 +18,7 @@ namespace tools::finite::opt{
     namespace internals{
         extern Eigen::Tensor<std::complex<double>,3> subspace_optimization       (const class_finite_state & state, const class_simulation_status & sim_status, OptType optType, OptMode optMode);
         extern Eigen::Tensor<std::complex<double>,3> direct_optimization         (const class_finite_state & state, const class_simulation_status & sim_status, OptType optType);
+        extern Eigen::Tensor<std::complex<double>,3> ceres_optimization          (const class_finite_state & state, const class_simulation_status & sim_status, OptType optType);
         extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_finite_state & state, const class_simulation_status & sim_status);
         extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_finite_state & state, std::string ritzstring = "SR");
 
@@ -105,7 +107,6 @@ namespace tools::finite::opt{
             Eigen::Tensor<Scalar,3> envL, envR;
             Eigen::Tensor<Scalar,4> env2L, env2R;
             Eigen::Tensor<Scalar,4> mpo;
-            Eigen::Tensor<Scalar,6> mpo2;
             Eigen::DSizes<long,3>   dsizes;
             explicit MultiComponents(const class_finite_state & state);
         } ;
@@ -171,6 +172,46 @@ namespace tools::finite::opt{
             double operator()(const Eigen::VectorXd &v_double_double, Eigen::VectorXd &grad_double_double) override;
         };
 
+
+
+    template<typename Scalar>
+    class ceres_functor : public ceres::FirstOrderFunction{
+        public:
+            using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
+            using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
+        protected:
+            mutable double variance;
+            mutable double energy  ;
+            mutable double energy_lower_bound;
+            mutable double energy_upper_bound;
+            mutable double energy_target;
+            mutable double energy_min;
+            mutable double energy_max;
+            mutable double energy_dens;
+            mutable double energy_target_dens;
+            mutable double energy_window;
+            mutable double energy_offset;
+            mutable double norm_offset;
+            mutable double norm;
+            mutable int    counter = 0;
+            size_t length;
+            int    iteration;
+            bool   have_bounds_on_energy = false;
+            MultiComponents<Scalar> multiComponents;
+
+    public:
+            ceres_functor(const class_finite_state & state, const class_simulation_status &sim_status);
+//            ~ceres_functor(){}
+
+            bool Evaluate(const double* v_double_double,
+                                  double* fx,
+                                  double* grad_double_double) const;
+            int NumParameters() const;
+            double get_variance() const ;
+            double get_energy  () const ;
+            size_t get_count   () const ;
+            double get_norm    () const ;
+        };
 
 
 

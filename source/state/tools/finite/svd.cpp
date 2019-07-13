@@ -28,33 +28,40 @@ void tools::finite::mps::normalize(class_finite_state & state){
     size_t pos_B  = 1; // G * Lambda
 //    bool finished = false;
     size_t num_traversals = 0;
+    size_t end_traversals = 1;
+    size_t max_traversals = 10;
     size_t step = 0;
     int direction = 1;
     Eigen::Tensor<Scalar,3> U;
     Eigen::Tensor<Scalar,1> S;
     Eigen::Tensor<Scalar,3> V;
     double norm;
-    while(num_traversals <= 1){
+    bool svd_success = true;
+
+    while(num_traversals <= end_traversals){
         Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
-        try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta,state.get_chi_max());}
+        try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta,state.get_chi_max()); svd_success = true;}
         catch(std::exception &ex){
-            throw std::runtime_error(fmt::format("Normalization failed at positions A:{} C:{} B:{} , step {}: {}", pos_A, pos_LC, pos_B, step, ex.what()));
+            tools::log->error("Skipping normalization step.\n\t SVD failed at positions A:{} C:{} B:{} , step {}:\n\t{}", pos_A, pos_LC, pos_B, step, ex.what());
+            svd_success = false;
+            end_traversals = std::min(end_traversals+1, max_traversals);
         }
-        Eigen::Tensor<Scalar,3> LA_U = Textra::asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-        Eigen::Tensor<Scalar,3> V_LB = V.contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0}));
-        norm = pos_B == state.get_length()-1 or pos_A == 0 ? 1.0 : norm;
-        if (direction == 1){
-            state.get_G(pos_A)  = LA_U;
-            state.get_L(pos_LC) = S;
-            state.get_G(pos_B)  = Scalar(norm)*V_LB;
+        if(svd_success){
+            Eigen::Tensor<Scalar,3> LA_U = Textra::asDiagonalInversed(state.get_L(pos_LA)).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
+            Eigen::Tensor<Scalar,3> V_LB = V.contract(asDiagonalInversed(state.get_L(pos_LB)), idx({2},{0}));
+            norm = pos_B == state.get_length()-1 or pos_A == 0 ? 1.0 : norm;
+            if (direction == 1){
+                state.get_G(pos_A)  = LA_U;
+                state.get_L(pos_LC) = S;
+                state.get_G(pos_B)  = Scalar(norm)*V_LB;
 
+            }
+            if (direction == -1){
+                state.get_G(pos_A)  = LA_U * Scalar(norm);
+                state.get_L(pos_LC) = S;
+                state.get_G(pos_B)  = V_LB;
+            }
         }
-        if (direction == -1){
-            state.get_G(pos_A)  = LA_U * Scalar(norm);
-            state.get_L(pos_LC) = S;
-            state.get_G(pos_B)  = V_LB;
-        }
-
 
         if (direction ==  1 and pos_B == state.get_length()-1)  {num_traversals++; direction *= -1;}
         if (direction == -1 and pos_A == 0)                     {num_traversals++; direction *= -1;}
@@ -65,8 +72,6 @@ void tools::finite::mps::normalize(class_finite_state & state){
         pos_A  += direction;
         pos_B  += direction;
         step   ++;
-
-
     }
     state.unset_measurements();
 //    std::cout << "Norm              (after normalization): " << tools::finite::measure::norm(state)  << std::endl;
@@ -78,7 +83,7 @@ void tools::finite::mps::normalize(class_finite_state & state){
 }
 
 
-void tools::finite::opt::truncate_theta(Eigen::Tensor<class_finite_state::Scalar,3> &theta, class_finite_state & state, long chi_, double SVDThreshold){
+void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_finite_state & state, long chi_, double SVDThreshold){
     state.unset_measurements();
     if (state.active_sites.empty())throw std::runtime_error("truncate_theta: No active sites to truncate");
     if (theta.size() == 0)throw std::runtime_error("truncate_theta: Theta is empty");

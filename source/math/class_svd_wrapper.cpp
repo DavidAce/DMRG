@@ -35,7 +35,15 @@ void class_SVD::setThreshold(double newThreshold) {
     SVDThreshold = newThreshold;
 }
 
-
+/*! \brief Performs SVD on a matrix
+ *  This function is defined in cpp to avoid long compilation times when having Eigen::BDCSVD included everywhere in headers.
+ *  Performs rigorous checks to ensure stability of DMRG.
+*   \param mat_ptr Pointer to the matrix. Supported are double * and std::complex<double> *
+*   \param rows Rows of the matrix
+*   \param cols Columns of the matrix
+*   \param rank_max Maximum number of singular values
+*   \return The U, S, and V matrices (with S as a vector) extracted from the Eigen::BCDSVD SVD object.
+*/
 template<typename Scalar>
 std::tuple<class_SVD::MatrixType<Scalar>, class_SVD::VectorType<Scalar>,class_SVD::MatrixType<Scalar> , long>
 class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
@@ -80,10 +88,17 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
             );
 }
 
+//! \relates class_SVD
+//! \brief force instantiation of do_svd for type 'double'
 template std::tuple<class_SVD::MatrixType<double>, class_SVD::VectorType<double>,class_SVD::MatrixType<double> , long>
 class_SVD::do_svd(const double *, long, long, long);
 
+
+
+
 using cplx = std::complex<double>;
+//! \relates class_SVD
+//! \brief force instantiation of do_svd for type 'std::complex<double>'
 template std::tuple<class_SVD::MatrixType<cplx>, class_SVD::VectorType<cplx>,class_SVD::MatrixType<cplx> , long>
 class_SVD::do_svd(const cplx *, long, long, long);
 

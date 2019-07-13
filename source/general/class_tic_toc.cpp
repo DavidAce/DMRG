@@ -5,10 +5,8 @@
 #include "class_tic_toc.h"
 #include <iomanip>
 
-using namespace std;
-using namespace chrono;
 
-class_tic_toc::class_tic_toc(bool on_off, int prec, string output_text)
+class_tic_toc::class_tic_toc(bool on_off, int prec, std::string output_text)
         : profiling(on_off),
           print_precision(prec),
           name(output_text)
@@ -21,67 +19,67 @@ class_tic_toc::class_tic_toc(bool on_off, int prec, string output_text)
     }
 }
 
-void class_tic_toc::set_properties(bool on_off,int prec, string output_text){
+void class_tic_toc::set_properties(bool on_off,int prec, std::string output_text){
     *this = class_tic_toc(on_off, prec, output_text);
 }
 
-void class_tic_toc::set_label(string output_text){
+void class_tic_toc::set_label(std::string output_text){
     *this = class_tic_toc(profiling, print_precision, output_text);
 }
-std::string class_tic_toc::class_tic_toc::get_name(){
+std::string class_tic_toc::get_name(){
     return name;
 }
 
 double class_tic_toc::get_measured_time(){
-    return duration_cast<duration<double>>(measured_time).count();
+    return std::chrono::duration_cast<std::chrono::duration<double>>(measured_time).count();
 }
 
 void class_tic_toc::tic(){
     if (profiling) {
-        tic_timepoint = high_resolution_clock::now();
+        tic_timepoint = std::chrono::high_resolution_clock::now();
     }
 }
 
 void class_tic_toc::toc(){
     if (profiling) {
-        delta_time       = high_resolution_clock::now() - tic_timepoint;
+        delta_time       = std::chrono::high_resolution_clock::now() - tic_timepoint;
         measured_time   += delta_time;
     }
 }
 
 void class_tic_toc::print_delta(){
     if (profiling) {
-        cout << setprecision(print_precision) << fixed << setw(print_precision + padding)
+        std::cout << std::setprecision(print_precision) << std::fixed << std::setw(print_precision + padding)
              << name
-             << duration_cast<duration<double>>(delta_time).count();
+             << std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count();
     }
 }
 
 void class_tic_toc::print_time(){
     if (profiling) {
-        cout << name
-             << fixed << setprecision(print_precision) << setw(print_precision + padding) << left
-             << duration_cast<duration<double>>(measured_time).count()<< " s\n";
+        std::cout << name
+             << std::fixed << std::setprecision(print_precision) << std::setw(print_precision + padding) << std::left
+             << std::chrono::duration_cast<std::chrono::duration<double>>(measured_time).count()<< " s\n";
     }
 }
 
 
 void class_tic_toc::print_time_w_percent(){
     if (profiling) {
-        cout << name
-             << fixed << setprecision(print_precision) << setw(print_precision + padding) << left
-             << duration_cast<duration<double>>(measured_time).count() << " s |"
-             << fixed << setprecision(print_precision) << setw(print_precision + padding) << right
+        std::cout << name
+             << std::fixed << std::setprecision(print_precision) << std::setw(print_precision + padding) << std::left
+             << std::chrono::duration_cast<std::chrono::duration<double>>(measured_time).count() << " s |"
+             << std::fixed << std::setprecision(print_precision) << std::setw(print_precision + padding) << std::right
              << 100.0 << " %\n";
     }
 }
 
 void class_tic_toc::print_time_w_percent(class_tic_toc &parent){
     if (profiling) {
-        cout << name
-             << fixed << setprecision(print_precision) << setw(print_precision + padding) << left
-             << duration_cast<duration<double>>(measured_time).count() << " s |"
-             << fixed << setprecision(print_precision) << setw(print_precision + padding) << right
+        std::cout << name
+             << std::fixed << std::setprecision(print_precision) << std::setw(print_precision + padding) << std::left
+             << std::chrono::duration_cast<std::chrono::duration<double>>(measured_time).count() << " s |"
+             << std::fixed << std::setprecision(print_precision) << std::setw(print_precision + padding) << std::right
              << 100.0*measured_time.count() / parent.measured_time.count() << " % \n";
     }
 }
@@ -89,33 +87,33 @@ void class_tic_toc::print_time_w_percent(class_tic_toc &parent){
 
 void class_tic_toc::print_total_reset(){
     if (profiling) {
-        cout << setprecision(print_precision)  << fixed << setw(print_precision + padding)
+        std::cout << std::setprecision(print_precision)  << std::fixed << std::setw(print_precision + padding)
              << name
-             << duration_cast<duration<double>>(measured_time).count() << " s\n";
+             << std::chrono::duration_cast<std::chrono::duration<double>>(measured_time).count() << " s\n";
         reset();
     }
 }
 
 double class_tic_toc::get_age() {
-    return duration_cast<duration<double>> (high_resolution_clock::now() - start_timepoint).count();
+    return std::chrono::duration_cast<std::chrono::duration<double>> (std::chrono::high_resolution_clock::now() - start_timepoint).count();
 }
 
 double class_tic_toc::get_last_time_interval() {
-    return duration_cast<duration<double>> (delta_time).count();
+    return std::chrono::duration_cast<std::chrono::duration<double>> (delta_time).count();
 }
 
 void class_tic_toc::reset() {
     if (profiling) {
-        measured_time   = high_resolution_clock::duration::zero();
-        delta_time      = high_resolution_clock::duration::zero();
-        start_timepoint = high_resolution_clock::now();
+        measured_time   = std::chrono::high_resolution_clock::duration::zero();
+        delta_time      = std::chrono::high_resolution_clock::duration::zero();
+        start_timepoint = std::chrono::high_resolution_clock::now();
     }
 }
 
 
 std::ostream &operator<<(std::ostream &os, const class_tic_toc &t) {
     if (t.profiling) {
-        os  << setprecision(t.print_precision)  << fixed << setw(t.print_precision + t.padding)
+        os  << std::setprecision(t.print_precision)  << std::fixed << std::setw(t.print_precision + t.padding)
             << t.name
             << t.measured_time.count();
     }

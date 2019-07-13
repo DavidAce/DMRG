@@ -1,6 +1,5 @@
 
 include(GNUInstallDirs)
-message(STATUS "Fetch spdlog given directory spdlog_DIR: ${spdlog_DIR}")
 find_package(spdlog 1.3 NO_DEFAULT_PATH HINTS ${INSTALL_DIRECTORY}/spdlog/${CMAKE_INSTALL_LIBDIR}/cmake/spdlog ${spdlog_DIR} )
 
 if(spdlog_FOUND)
@@ -20,6 +19,7 @@ elseif (DOWNLOAD_SPDLOG OR DOWNLOAD_ALL)
             INSTALL_DIR ${INSTALL_DIRECTORY}/spdlog
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DCMAKE_BUILD_TYPE=Release
             -DSPDLOG_BUILD_EXAMPLES:BOOL=OFF
             -DSPDLOG_BUILD_BENCH:BOOL=OFF
             -DSPDLOG_BUILD_TESTS:BOOL=OFF

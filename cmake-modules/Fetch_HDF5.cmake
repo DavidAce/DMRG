@@ -22,6 +22,7 @@ elseif (DOWNLOAD_HDF5 OR DOWNLOAD_ALL)
             TEST_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DCMAKE_BUILD_TYPE=Release
             -DCMAKE_ANSI_CFLAGS:STRING=-fPIC
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
             -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF
@@ -53,7 +54,7 @@ elseif (DOWNLOAD_HDF5 OR DOWNLOAD_ALL)
             ${INSTALL_DIR}/lib/libhdf5_hl${HDF5_LIBRARY_SUFFIX}
             ${INSTALL_DIR}/lib/libhdf5${HDF5_LIBRARY_SUFFIX}
             $<LINK_ONLY:-ldl -lm -lz>
-            pthread
+            Threads::Threads
             )
     target_include_directories(
             hdf5

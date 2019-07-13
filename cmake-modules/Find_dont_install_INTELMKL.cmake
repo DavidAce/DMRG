@@ -21,7 +21,7 @@
 #########################
 
 if (USE_MKL)
-#    set(MKL_USE_STATIC_LIBS ON)
+    #    set(MKL_USE_STATIC_LIBS ON)
     set(MKL_MULTI_THREADED ${USE_OpenMP})
     set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF) # This doesn't work for some reason... You need to use the mkl_set_interface_layer(int) to select at runtime, which is not good when building dependencies!
     if (MKL_USE_SINGLE_DYNAMIC_LIBRARY AND NOT BUILD_SHARED_LIBS)
@@ -51,7 +51,7 @@ if (MKL_FOUND)
         set(MKL_LIBRARIES  -Wl,--no-as-needed ${MKL_BLAS_LP_LIBRARY} ${MKL_LAPACK_LP_LIBRARY}   -Wl,--start-group  ${MKL_GF_LP_LIBRARY})
 
         if(MKL_MULTI_THREADED)
-            list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group)
+            list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group )
             if(BUILD_SHARED_LIBS)
                 list(APPEND MKL_LIBRARIES ${MKL_IOMP5_LIBRARY})
             else()
@@ -68,39 +68,35 @@ if (MKL_FOUND)
     endif()
 
     add_definitions(-DMKL_AVAILABLE)
-#    add_definitions(-DMKL_VERBOSE -DMKL_Complex8=std::complex<float> -DMKL_Complex16=std::complex<double>)
+    #    add_definitions(-DMKL_VERBOSE -DMKL_Complex8=std::complex<float> -DMKL_Complex16=std::complex<double>)
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
-    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  -ldl -lm pthread gfortran)
+    list(APPEND MKL_LIBRARIES Threads::Threads)
+    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  -ldl -lm gfortran)
     target_include_directories(mkl INTERFACE ${MKL_INCLUDE_DIR})
     target_compile_options(mkl INTERFACE ${MKL_FLAGS})
     set_target_properties(mkl PROPERTIES INTERFACE_LINK_DIRECTORIES  "${MKL_ROOT_DIR}/lib/intel64")
-     # BLAS and LAPACK are included in the MKL.
+    # BLAS and LAPACK are included in the MKL.
     set(BLAS_LIBRARIES   ${MKL_LIBRARIES})
     set(LAPACK_LIBRARIES ${MKL_LIBRARIES})
-    set(FC_LDLAGS -lm -ldl ${PTHREAD_LIBRARY} ${GFORTRAN_LIB}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
-#    set(FC_LDLAGS -lm -ldl  -fPIC ${PTHREAD_LIBRARY}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
+    set(FC_LDLAGS -lm -ldl ${GFORTRAN_LIB}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
+    #    set(FC_LDLAGS -lm -ldl  -fPIC ${PTHREAD_LIBRARY}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
 
 
     # Make the rest of the build structure aware of blas and lapack included in MKL.
-    add_library(mkl::lapacke ALIAS mkl)
     add_library(blas ALIAS mkl)
     add_library(lapack ALIAS mkl)
-
-    include(FindLAPACKE)
+    #    add_library(lapacke ALIAS mkl)
 
     message("")
     message("============================ MKL SUMMARY ===================================")
-    message("MKL_LIBRARIES                             : ${MKL_LIBRARIES}" )
-    message("MKL_RT_LIBRARY                            : ${MKL_RT_LIBRARY}" )
-    message("MKL_INCLUDE_DIR                           : ${MKL_INCLUDE_DIR}" )
-    message("MKL_FLAGS                                 : ${MKL_FLAGS}" )
-    message("MKLROOT                                   : $ENV{MKLROOT}" )
-    message("MKL_USE_SINGLE_DYNAMIC_LIBRARY            : ${MKL_USE_SINGLE_DYNAMIC_LIBRARY}" )
-    message("BLAS_LIBRARIES                            : ${BLAS_LIBRARIES}" )
-    message("LAPACK_LIBRARIES                          : ${LAPACK_LIBRARIES}" )
-    message("LAPACKE                                   : ${LAPACKE_INCLUDE_DIRS}" )
+    message("MKL_LIBRARIES                  : ${MKL_LIBRARIES}" )
+    message("MKL_RT_LIBRARY                 : ${MKL_RT_LIBRARY}" )
+    message("MKL_INCLUDE_DIR                : ${MKL_INCLUDE_DIR}" )
+    message("MKL_FLAGS                      : ${MKL_FLAGS}" )
+    message("MKLROOT                        : $ENV{MKLROOT}" )
+    message("MKL_USE_SINGLE_DYNAMIC_LIBRARY : ${MKL_USE_SINGLE_DYNAMIC_LIBRARY}" )
     message("=============================================================================")
     message("")
 

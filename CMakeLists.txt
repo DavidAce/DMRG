@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
-project(DMRG++)
-
+project(DMRG++ )
+#enable_language()
 
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
@@ -131,7 +131,7 @@ endif()
 ### Compiler-dependent flags ###
 ################################
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    list(APPEND COMMON_OPTIONS -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare)
+    list(APPEND COMMON_OPTIONS -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare -Wno-unused-local-typedefs)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     list(APPEND COMMON_OPTIONS --gcc-toolchain=${GCC_TOOLCHAIN})
     list(APPEND COMMON_OPTIONS -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
@@ -210,44 +210,20 @@ set_target_properties(${PROJECT_NAME}
 
 
 ######################################
-###  Require experimental headers  ###
+###  Check  experimental headers  ###
 ######################################
-
-include(CheckIncludeFileCXX)
+include(cmake-modules/CheckExperimentalHeaders.cmake)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    set(CMAKE_REQUIRED_FLAGS "-std=c++17 -lstdc++fs" )
+    set(TEST_REQUIRED_FLAGS     "-std=c++17 -lstdc++fs" )
+    set(TEST_REQUIRED_LIBRARIES "")
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_REQUIRED_FLAGS     "-stdlib=libstdc++ -lstdc++fs -std=c++17 --gcc-toolchain=${GCC_TOOLCHAIN}" )
-    set(CMAKE_REQUIRED_LIBRARIES "-stdlib=libstdc++ -lstdc++fs -std=c++17")
+    set(TEST_REQUIRED_FLAGS     "-stdlib=libstdc++ -lstdc++fs -std=c++17 --gcc-toolchain=${GCC_TOOLCHAIN}" )
+    set(TEST_REQUIRED_LIBRARIES "-stdlib=libstdc++ -lstdc++fs -std=c++17")
 endif()
-check_include_file_cxx(experimental/filesystem    has_experimental_filesystem  )
-check_include_file_cxx(experimental/type_traits   has_experimental_type_traits )
-if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
-    message(FATAL_ERROR "\n\
-        Missing one or more experimental headers.\n\
-        Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
-        or checking the compiler flags. If using Clang, pass the variable \n\
-        GCC_TOOLCHAIN=<path> \n\
-        where path is the install directory of a recent GCC installation (version 7+)
-        ")
-endif()
+CheckExperimentalHeaders("${TEST_REQUIRED_FLAGS}" "${TEST_REQUIRED_LIBRARIES}")
 
-include(CheckCXXSourceCompiles)
-check_cxx_source_compiles("
-    #include <experimental/filesystem>
-    #include <experimental/type_traits>
-    #include <optional>
-    namespace fs = std::experimental::filesystem;
 
-    int main(){
-        fs::path testpath;
-        std::optional<int> optint;
-        return 0;
-    }
-    " FS_COMPILES)
-if(NOT FS_COMPILES)
-    message(FATAL_ERROR "Unable to compile with experimental/filesystem headers")
-endif()
+
 
 ##############################################
 ###  Optional OpenMP support               ###
@@ -290,11 +266,11 @@ target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIO
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")                  ### Release build options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_OPTIONS}>")    ### Release build with debug info options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_OPTIONS}>")                  ### Profiling build options
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG FALSE)
+find_package(Threads REQUIRED)
+set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "-Wl,--whole-archive ${CMAKE_THREAD_LIBS_INIT} -Wl,--no-whole-archive")
 
-set(PTHREAD_LIBRARY "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive")                           # This is needed with static linking!
-add_library(pthread INTERFACE)
-target_link_libraries(pthread INTERFACE ${PTHREAD_LIBRARY})
-target_link_libraries (${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
 
 ##########################################
 ###  Find or fetch all dependencies   ###
@@ -302,10 +278,12 @@ target_link_libraries (${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
 set(BUILD_DIRECTORY   ${PROJECT_SOURCE_DIR}/cmake-build-libs)
 set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
 include(cmake-modules/FindGFortran.cmake)
+
 if(USE_MKL)
     include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 endif()
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
+include(cmake-modules/FindLAPACKE.cmake)                    # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
 include(cmake-modules/Fetch_spdlog.cmake)                   # spdlog library
 include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
@@ -313,45 +291,83 @@ include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenval
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
 include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
+include(cmake-modules/Fetch_Glog.cmake)
+include(cmake-modules/Fetch_Ceres.cmake)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
+target_link_libraries(${PROJECT_NAME} PRIVATE lapacke)
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
 target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp)
+target_link_libraries(${PROJECT_NAME} PRIVATE glog::glog)
+target_link_libraries(${PROJECT_NAME} PRIVATE ceres)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
 
-get_target_property(BLAS_INFO       blas             INTERFACE_LINK_LIBRARIES)
-get_target_property(LAPACK_INFO     lapack           INTERFACE_LINK_LIBRARIES)
-get_target_property(LAPACKE_INFO    lapacke          INTERFACE_LINK_LIBRARIES)
-get_target_property(ARPACK_INFO     arpack           INTERFACE_LINK_LIBRARIES)
-get_target_property(ARPACKPP_INFO   arpack++         INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(EIGEN_INFO      Eigen3::Eigen    INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(LBFGS_INFO      LBFGSpp          INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(SPDLOG_INFO     spdlog::spdlog   INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(HDF5_INFO       hdf5             INTERFACE_LINK_LIBRARIES)
-get_target_property(FORTRAN_INFO    gfortran         INTERFACE_LINK_LIBRARIES)
-get_target_property(H5PP_INFO       h5pp::h5pp       INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(BLAS_INFO_LIB       blas             INTERFACE_LINK_LIBRARIES)
+get_target_property(BLAS_INFO_INC       blas             INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(LAPACK_INFO_LIB     lapack           INTERFACE_LINK_LIBRARIES)
+get_target_property(LAPACK_INFO_INC     lapack           INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(LAPACKE_INFO_LIB    lapacke          INTERFACE_LINK_LIBRARIES)
+get_target_property(LAPACKE_INFO_INC    lapacke          INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(ARPACK_INFO_LIB     arpack           INTERFACE_LINK_LIBRARIES)
+get_target_property(ARPACK_INFO_INC     arpack           INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(ARPACKPP_INFO_LIB   arpack++         INTERFACE_LINK_LIBRARIES)
+get_target_property(ARPACKPP_INFO_INC   arpack++         INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(EIGEN_INFO          Eigen3::Eigen    INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(LBFGS_INFO          LBFGSpp          INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(SPDLOG_INFO         spdlog::spdlog   INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(HDF5_INFO_LIB       hdf5             INTERFACE_LINK_LIBRARIES)
+get_target_property(HDF5_INFO_INC       hdf5             INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(H5PP_INFO           h5pp::h5pp       INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(GFORTRAN_INFO       gfortran         INTERFACE_LINK_LIBRARIES)
+get_target_property(GLOG_INFO_LIB       glog::glog       INTERFACE_LINK_LIBRARIES)
+get_target_property(GLOG_INFO_INC       glog::glog       INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(CERES_INFO_LIB      ceres            INTERFACE_LINK_LIBRARIES)
+get_target_property(CERES_INFO_INC      ceres            INTERFACE_INCLUDE_DIRECTORIES)
+
 
 
 
 message("=============================================================================")
 message("=== SUMMARY OF CMAKE CONFIGURATION:  THE FOLLOWING LIBRARIES WILL BE USED ===")
 message("=============================================================================")
-message("    BLAS           :   ${BLAS_INFO}")
-message("    LAPACK         :   ${LAPACK_INFO}")
-message("    LAPACKE        :   ${LAPACKE_INCLUDE_DIRS} ${LAPACKE_INFO}")
-message("    EIGEN3         :   ${EIGEN_INFO}")
-message("    LBFGS++        :   ${LBFGS_INFO}")
-message("    SPDLOG         :   ${SPDLOG_INFO}")
-message("    HDF5           :   ${HDF5_INFO}")
-message("    ARPACK         :   ${ARPACK_INFO}")
-message("    ARPACKPP       :   ${ARPACKPP_INFO}")
-message("    h5pp           :   ${H5PP_INFO}")
-message("    GFORTRAN       :   ${FORTRAN_INFO}")
+message("    BLAS           LIB:  ${BLAS_INFO_LIB}")
+message("                   INC:  ${BLAS_INFO_INC}")
+message("-----------------------------------------------------------------------------")
+message("    LAPACK         LIB:  ${LAPACK_INFO_LIB}")
+message("                   INC:  ${LAPACK_INFO_INC}")
+message("-----------------------------------------------------------------------------")
+message("    LAPACKE        LIB:  ${LAPACKE_INFO_LIB}")
+message("                   INC:  ${LAPACKE_INFO_INC}")
+message("-----------------------------------------------------------------------------")
+message("    ARPACK         LIB:  ${ARPACK_INFO_LIB}")
+message("                   INC:  ${ARPACK_INFO_INC}")
+message("-----------------------------------------------------------------------------")
+message("    ARPACK++       LIB:  ${ARPACKPP_INFO_LIB}")
+message("                   INC:  ${ARPACKPP_INFO_INC}")
+message("-----------------------------------------------------------------------------")
+message("    EIGEN3         INC:  ${EIGEN_INFO}")
+message("-----------------------------------------------------------------------------")
+message("    SPDLOG         INC:  ${SPDLOG_INFO}")
+message("-----------------------------------------------------------------------------")
+message("    LBFGS++        INC:  ${LBFGS_INFO}")
+message("-----------------------------------------------------------------------------")
+message("    HDF5           LIB:  ${HDF5_INFO_LIB}")
+message("                   INC:  ${HDF5_INFO_INC}")
+message("-----------------------------------------------------------------------------")
+message("    H5PP           INC:  ${H5PP_INFO}")
+message("-----------------------------------------------------------------------------")
+message("    GFORTRAN       LIB:  ${GFORTRAN_INFO}")
+message("-----------------------------------------------------------------------------")
+message("    GLOG           LIB:  ${GLOG_INFO_LIB}")
+message("                   INC:  ${GLOG_INFO_INC}")
+message("-----------------------------------------------------------------------------")
+message("    CERES          LIB:  ${CERES_INFO_LIB}")
+message("                   INC:  ${CERES_INFO_INC}")
 message("=============================================================================")
 message("")
-
 
 
 ###########################################
