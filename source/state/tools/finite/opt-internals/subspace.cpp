@@ -238,19 +238,9 @@ tools::finite::opt::internals::subspace_optimization(const class_finite_state & 
         {
             double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
             double subspace_quality  = 1.0 - sq_sum_overlap;
-            int idx                  = idx_best_overlap_in_window(overlaps,eigvals,sim_status.energy_lbound,sim_status.energy_ubound);
-            double max_overlap       = overlaps(idx);
-
-            if(subspace_quality >= settings::precision::VarConvergenceThreshold) {
-                tools::log->debug("Subspace quality too low: {}", subspace_quality);
-                if(max_overlap >= 0.9){
-                    tools::log->debug("... but max overlap is good enough to keep: {} >= 0.9", max_overlap);
-                    return Textra::Matrix_to_Tensor(eigvecs.col(idx), state.active_dimensions());
-                }else{
-                    tools::log->debug("... and max overlap too low: {} < 0.9. Switching to ceres optimization", max_overlap);
-                    return ceres_optimization(state, sim_status, optType);
-                }
-
+            if(subspace_quality >= 1e-4) {
+                tools::log->debug("Subspace quality too low: {}. Switching to direct mode", subspace_quality);
+                return ceres_optimization(state, sim_status, optType);
             }
         }
 
