@@ -1,0 +1,789 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__selfdual__tf__rf__ising" kind="class" language="C++" prot="public">
+    <compoundname>class_selfdual_tf_rf_ising</compoundname>
+    <basecompoundref refid="classclass__model__base" prot="public" virt="non-virtual">class_model_base</basecompoundref>
+    <includes refid="class__selfdual__tf__rf__ising_8h" local="no">class_selfdual_tf_rf_ising.h</includes>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classclass__selfdual__tf__rf__ising_1a9c43841fadcde29d6bd854cdb1e7ab01" prot="private" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using class_selfdual_tf_rf_ising::Scalar =  std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_selfdual_tf_rf_ising::spin_dim</definition>
+        <argsstring></argsstring>
+        <name>spin_dim</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Spin dimension </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising::J_rnd</definition>
+        <argsstring></argsstring>
+        <name>J_rnd</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising::h_rnd</definition>
+        <argsstring></argsstring>
+        <name>h_rnd</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1a8eda3a230c98113f7eba3a26c2014153" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising::J_log_mean</definition>
+        <argsstring></argsstring>
+        <name>J_log_mean</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1affec0fd6074a7d5b42b56dc6b96c5208" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising::h_log_mean</definition>
+        <argsstring></argsstring>
+        <name>h_log_mean</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising::J_avg</definition>
+        <argsstring></argsstring>
+        <name>J_avg</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising::h_avg</definition>
+        <argsstring></argsstring>
+        <name>h_avg</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1a5e5417f1e68ba5b5e493bb26f6bfa056" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising::J_sigma</definition>
+        <argsstring></argsstring>
+        <name>J_sigma</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising::h_sigma</definition>
+        <argsstring></argsstring>
+        <name>h_sigma</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising::lambda</definition>
+        <argsstring></argsstring>
+        <name>lambda</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1a81cc26af03e873d7429706e7bf93b255" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising::delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1a83fba52f1f02bd39af1cb47635b67eb9" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising::e_reduced</definition>
+        <argsstring></argsstring>
+        <name>e_reduced</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Energy offset for this mpo (to make &quot;reduced&quot; MPO views) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__selfdual__tf__rf__ising_1ad23f715526278459b655f6fc0cfe3011" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_selfdual_tf_rf_ising::num_params</definition>
+        <argsstring></argsstring>
+        <name>num_params</name>
+        <initializer>= 13</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a370e7550390a594f09fa6ac79a9dc7fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising</definition>
+        <argsstring>(size_t position_, std::string logName=&quot;SDUAL-ISING&quot;)</argsstring>
+        <name>class_selfdual_tf_rf_ising</name>
+        <param>
+          <type>size_t</type>
+          <declname>position_</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>logName</declname>
+          <defval>&quot;SDUAL-ISING&quot;</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>&lt; Spin dimension </para>        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="17" bodyend="36"/>
+        <references refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" compoundref="class__selfdual__tf__rf__ising_8h" startline="20">spin_dim</references>
+        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a6a8a8d6fa29d9d802a184390079d1668" compoundref="nmspc__settings_8h" startline="64">settings::model::selfdual_tf_rf_ising::d</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a8eda3a230c98113f7eba3a26c2014153" compoundref="class__selfdual__tf__rf__ising_8h" startline="23">J_log_mean</references>
+        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1aac7c5c9f33d713f561f47e74c033ad34" compoundref="nmspc__settings_8h" startline="59">settings::model::selfdual_tf_rf_ising::J_log_mean</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1affec0fd6074a7d5b42b56dc6b96c5208" compoundref="class__selfdual__tf__rf__ising_8h" startline="24">h_log_mean</references>
+        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1ac0a60a6a1426c1401c63438ce971aeb7" compoundref="nmspc__settings_8h" startline="60">settings::model::selfdual_tf_rf_ising::h_log_mean</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a5e5417f1e68ba5b5e493bb26f6bfa056" compoundref="class__selfdual__tf__rf__ising_8h" startline="27">J_sigma</references>
+        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a585356bf92b2413b1cb430de265b0e8e" compoundref="nmspc__settings_8h" startline="61">settings::model::selfdual_tf_rf_ising::J_sigma</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" compoundref="class__selfdual__tf__rf__ising_8h" startline="28">h_sigma</references>
+        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a7fbb5db78fbde435ede8a26d946ad2c8" compoundref="nmspc__settings_8h" startline="62">settings::model::selfdual_tf_rf_ising::h_sigma</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" compoundref="class__selfdual__tf__rf__ising_8h" startline="29">lambda</references>
+        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1af8e672e8d9eb0861b3c5419103906a9e" compoundref="nmspc__settings_8h" startline="63">settings::model::selfdual_tf_rf_ising::lambda</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a83fba52f1f02bd39af1cb47635b67eb9" compoundref="class__selfdual__tf__rf__ising_8h" startline="31">e_reduced</references>
+        <references refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" compoundref="class__model__base_8h" startline="15">class_model_base::extent4</references>
+        <references refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" compoundref="class__model__base_8h" startline="16">class_model_base::extent2</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" compoundref="class__selfdual__tf__rf__ising_8h" startline="21">J_rnd</references>
+        <references refid="namespacern_1aa64669e6a44143d9262c955f80fe79b8" compoundref="nmspc__random__numbers_8cpp" startline="44" endline="47">rn::log_normal</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" compoundref="class__selfdual__tf__rf__ising_8h" startline="22">h_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a81cc26af03e873d7429706e7bf93b255" compoundref="class__selfdual__tf__rf__ising_8h" startline="30">delta</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a1332645c8b209715ebafa132515d54d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_selfdual_tf_rf_ising::set_realization_averages</definition>
+        <argsstring>(double J_avg_, double h_avg_)</argsstring>
+        <name>set_realization_averages</name>
+        <param>
+          <type>double</type>
+          <declname>J_avg_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>h_avg_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="81" bodyend="86"/>
+        <references refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" compoundref="class__selfdual__tf__rf__ising_8h" startline="25">J_avg</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" compoundref="class__selfdual__tf__rf__ising_8h" startline="26">h_avg</references>
+        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="51">class_model_base::all_mpo_parameters_have_been_set</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1ae6383e554e3b872bce0543999732223a" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="89" endline="120">build_mpo</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a8274d69b61f5313fa7165520fa870d41" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>auto class_selfdual_tf_rf_ising::get_J_rnd</definition>
+        <argsstring>()</argsstring>
+        <name>get_J_rnd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="42" bodyend="42"/>
+        <references refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" compoundref="class__selfdual__tf__rf__ising_8h" startline="21">J_rnd</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a814a6f9eb80922a6b45f69c93d2c5c2f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>auto class_selfdual_tf_rf_ising::get_h_rnd</definition>
+        <argsstring>()</argsstring>
+        <name>get_h_rnd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="43" bodyend="43"/>
+        <references refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" compoundref="class__selfdual__tf__rf__ising_8h" startline="22">h_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a8595f437222481ad8e4933dbae3e3b7d" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="39" endline="46">set_hamiltonian</references>
+        <references refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" compoundref="class__model__base_8h" startline="17">class_model_base::position</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1ae6383e554e3b872bce0543999732223a" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="89" endline="120">build_mpo</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1aa8e3fcac305f5e7c110f49dafbfc5b57" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="122" endline="130">randomize_hamiltonian</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="133" endline="136">MPO_reduced_view</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a6bc4544f0c87e2c604b4288659d489a2" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="145" endline="157">single_site_hamiltonian</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" compoundref="nmspc__quantum__mechanics_8cpp" startline="57">qm::spinOneHalf::SX</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" compoundref="nmspc__quantum__mechanics_8cpp" startline="58">qm::spinOneHalf::SY</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" compoundref="nmspc__quantum__mechanics_8cpp" startline="59">qm::spinOneHalf::SZ</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a8702c9531914daf6baafff126489bb42" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="160" endline="160">clone</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a6868f04c65fe0c5da49b412a7418b7cc" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="163" endline="163">set_reduced_energy</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a424375457f3be4647fb66f5985ae8adf" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="164" endline="164">get_spin_dimension</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a54e408f494ed9b3fc1d574aedf40f229" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="170" endline="187">print_parameter_names</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a9a689d1f6edfb04ae22b17c961df6643" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="189" endline="206">print_parameter_values</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1ac631c6f220a8b20144f8ec5b3261e896" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="208" endline="223">get_parameter_names</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a338763add94ac64aa6a13fc169f609fb" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="227" endline="242">get_parameter_values</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a614f69a0c3584740cf06f90af0ac1d2c" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="246" endline="258">set_full_lattice_parameters</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a8595f437222481ad8e4933dbae3e3b7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void class_selfdual_tf_rf_ising::set_hamiltonian</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 4 &gt; MPO_, std::vector&lt; double &gt; parameters) override</argsstring>
+        <name>set_hamiltonian</name>
+        <reimplements refid="classclass__model__base_1a1b6b26cfcbefcd218cdeb1a3a0f705ca">set_hamiltonian</reimplements>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" kindref="member">Scalar</ref>, 4 &gt;</type>
+          <declname>MPO_</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; double &gt;</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="39" bodyend="46"/>
+        <references refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" compoundref="class__model__base_8h" startline="19">class_model_base::mpo_internal</references>
+        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1ad294c10cf4e8fb9b8bc32a16f106d11d" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void class_selfdual_tf_rf_ising::set_hamiltonian</definition>
+        <argsstring>(const std::vector&lt; double &gt; parameters) override</argsstring>
+        <name>set_hamiltonian</name>
+        <reimplements refid="classclass__model__base_1a9ac1de6c0bf3c3f5506de0a3ffa29252">set_hamiltonian</reimplements>
+        <param>
+          <type>const std::vector&lt; double &gt;</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="48" bodyend="51"/>
+        <references refid="classclass__selfdual__tf__rf__ising_1a8595f437222481ad8e4933dbae3e3b7d" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="39" endline="46">set_hamiltonian</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1aaf49d0f62bc6c16fc78f9fadae453bfe" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void class_selfdual_tf_rf_ising::set_hamiltonian</definition>
+        <argsstring>(const Eigen::MatrixXd all_parameters, int position) override</argsstring>
+        <name>set_hamiltonian</name>
+        <reimplements refid="classclass__model__base_1a421e080c5d133b32282237a42f4d2048">set_hamiltonian</reimplements>
+        <param>
+          <type>const Eigen::MatrixXd</type>
+          <declname>all_parameters</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>position</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="54" bodyend="56"/>
+        <references refid="classclass__selfdual__tf__rf__ising_1a8595f437222481ad8e4933dbae3e3b7d" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="39" endline="46">set_hamiltonian</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a020833d780211578f36e5f36edb7684f" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void class_selfdual_tf_rf_ising::set_hamiltonian</definition>
+        <argsstring>(const Eigen::VectorXd parameters) override</argsstring>
+        <name>set_hamiltonian</name>
+        <reimplements refid="classclass__model__base_1adb18b27cd043452cafe7a4bafe217412">set_hamiltonian</reimplements>
+        <param>
+          <type>const Eigen::VectorXd</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="59" bodyend="77"/>
+        <references refid="classclass__selfdual__tf__rf__ising_1ad23f715526278459b655f6fc0cfe3011" compoundref="class__selfdual__tf__rf__ising_8h" startline="33">num_params</references>
+        <references refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" compoundref="class__model__base_8h" startline="17">class_model_base::position</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" compoundref="class__selfdual__tf__rf__ising_8h" startline="21">J_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" compoundref="class__selfdual__tf__rf__ising_8h" startline="22">h_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a8eda3a230c98113f7eba3a26c2014153" compoundref="class__selfdual__tf__rf__ising_8h" startline="23">J_log_mean</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1affec0fd6074a7d5b42b56dc6b96c5208" compoundref="class__selfdual__tf__rf__ising_8h" startline="24">h_log_mean</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" compoundref="class__selfdual__tf__rf__ising_8h" startline="25">J_avg</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" compoundref="class__selfdual__tf__rf__ising_8h" startline="26">h_avg</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a5e5417f1e68ba5b5e493bb26f6bfa056" compoundref="class__selfdual__tf__rf__ising_8h" startline="27">J_sigma</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" compoundref="class__selfdual__tf__rf__ising_8h" startline="28">h_sigma</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" compoundref="class__selfdual__tf__rf__ising_8h" startline="29">lambda</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a81cc26af03e873d7429706e7bf93b255" compoundref="class__selfdual__tf__rf__ising_8h" startline="30">delta</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a83fba52f1f02bd39af1cb47635b67eb9" compoundref="class__selfdual__tf__rf__ising_8h" startline="31">e_reduced</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" compoundref="class__selfdual__tf__rf__ising_8h" startline="20">spin_dim</references>
+        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="51">class_model_base::all_mpo_parameters_have_been_set</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1ae6383e554e3b872bce0543999732223a" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="89" endline="120">build_mpo</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1ae6383e554e3b872bce0543999732223a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void class_selfdual_tf_rf_ising::build_mpo</definition>
+        <argsstring>() override</argsstring>
+        <name>build_mpo</name>
+        <reimplements refid="classclass__model__base_1a9aef4688065a93324826893011ef8c14">build_mpo</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)</para><para>H = - Σ J_{i} sz_{i} sz_{i+1} + h_{i} sx_{i} + l*(h sx_i sx_{i+1} + J sz_{i} sz_{i+2})</para><para>| I 0 0 0 0 | | sz 0 0 0 0 | | sx 0 0 0 0 | | 0 I 0 0 0 | | -(h_rnd)*sx -J_rnd*sz -l*h_mean*sx -l*J_mean*sz I | <verbatim>  2
+  |
+</verbatim> 0<mdash/>H<mdash/>1 | 3 </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="53" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="89" bodyend="120"/>
+        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="51">class_model_base::all_mpo_parameters_have_been_set</references>
+        <references refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" compoundref="class__model__base_8h" startline="19">class_model_base::mpo_internal</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" compoundref="class__selfdual__tf__rf__ising_8h" startline="20">spin_dim</references>
+        <references refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" compoundref="class__model__base_8h" startline="15">class_model_base::extent4</references>
+        <references refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" compoundref="class__model__base_8h" startline="16">class_model_base::extent2</references>
+        <references refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" compoundref="nmspc__tensor__extra_8h" startline="200" endline="202">Textra::Matrix_to_Tensor2</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a09b3ac70f50c2cb92e9aa12baf229404" compoundref="nmspc__quantum__mechanics_8cpp" startline="45">qm::spinOneHalf::Id</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a6f58116f2a00a0ee5e00f64e66813b74" compoundref="nmspc__quantum__mechanics_8cpp" startline="42">qm::spinOneHalf::sz</references>
+        <references refid="namespaceqm_1_1spin_one_half_1ae795b267734a773efcfbc6b238078299" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" compoundref="class__selfdual__tf__rf__ising_8h" startline="22">h_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" compoundref="class__selfdual__tf__rf__ising_8h" startline="21">J_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" compoundref="class__selfdual__tf__rf__ising_8h" startline="29">lambda</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" compoundref="class__selfdual__tf__rf__ising_8h" startline="26">h_avg</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" compoundref="class__selfdual__tf__rf__ising_8h" startline="25">J_avg</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1aa8e3fcac305f5e7c110f49dafbfc5b57" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void class_selfdual_tf_rf_ising::randomize_hamiltonian</definition>
+        <argsstring>() override</argsstring>
+        <name>randomize_hamiltonian</name>
+        <reimplements refid="classclass__model__base_1ad774bf318ecff3bf13f8e7821aacdf4a">randomize_hamiltonian</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="122" bodyend="130"/>
+        <references refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" compoundref="class__selfdual__tf__rf__ising_8h" startline="21">J_rnd</references>
+        <references refid="namespacern_1aa64669e6a44143d9262c955f80fe79b8" compoundref="nmspc__random__numbers_8cpp" startline="44" endline="47">rn::log_normal</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a8eda3a230c98113f7eba3a26c2014153" compoundref="class__selfdual__tf__rf__ising_8h" startline="23">J_log_mean</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a5e5417f1e68ba5b5e493bb26f6bfa056" compoundref="class__selfdual__tf__rf__ising_8h" startline="27">J_sigma</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" compoundref="class__selfdual__tf__rf__ising_8h" startline="22">h_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1affec0fd6074a7d5b42b56dc6b96c5208" compoundref="class__selfdual__tf__rf__ising_8h" startline="24">h_log_mean</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" compoundref="class__selfdual__tf__rf__ising_8h" startline="28">h_sigma</references>
+        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="51">class_model_base::all_mpo_parameters_have_been_set</references>
+        <references refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" compoundref="class__model__base_8h" startline="19">class_model_base::mpo_internal</references>
+        <references refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" compoundref="class__model__base_8h" startline="15">class_model_base::extent4</references>
+        <references refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" compoundref="class__model__base_8h" startline="16">class_model_base::extent2</references>
+        <references refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" compoundref="nmspc__tensor__extra_8h" startline="200" endline="202">Textra::Matrix_to_Tensor2</references>
+        <references refid="namespaceqm_1_1spin_one_half_1ae795b267734a773efcfbc6b238078299" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a6f58116f2a00a0ee5e00f64e66813b74" compoundref="nmspc__quantum__mechanics_8cpp" startline="42">qm::spinOneHalf::sz</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 4 &gt; class_selfdual_tf_rf_ising::MPO_reduced_view</definition>
+        <argsstring>() const override</argsstring>
+        <name>MPO_reduced_view</name>
+        <reimplements refid="classclass__model__base_1a230141d80f84b200729e74fa114bd3e8">MPO_reduced_view</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="133" bodyend="136"/>
+        <references refid="classclass__selfdual__tf__rf__ising_1a83fba52f1f02bd39af1cb47635b67eb9" compoundref="class__selfdual__tf__rf__ising_8h" startline="31">e_reduced</references>
+        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a6bd63cd4470f37e082715dbf8238ad1c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 4 &gt; class_selfdual_tf_rf_ising::MPO_reduced_view</definition>
+        <argsstring>(double site_energy) const override</argsstring>
+        <name>MPO_reduced_view</name>
+        <reimplements refid="classclass__model__base_1aa497c5b51ccea581b9caf8b7d9c1b7a5">MPO_reduced_view</reimplements>
+        <param>
+          <type>double</type>
+          <declname>site_energy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="138" bodyend="143"/>
+        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
+        <references refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" compoundref="class__model__base_8h" startline="15">class_model_base::extent4</references>
+        <references refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" compoundref="class__model__base_8h" startline="16">class_model_base::extent2</references>
+        <references refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" compoundref="nmspc__tensor__extra_8h" startline="200" endline="202">Textra::Matrix_to_Tensor2</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" compoundref="class__selfdual__tf__rf__ising_8h" startline="22">h_rnd</references>
+        <references refid="namespaceqm_1_1spin_one_half_1ae795b267734a773efcfbc6b238078299" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a09b3ac70f50c2cb92e9aa12baf229404" compoundref="nmspc__quantum__mechanics_8cpp" startline="45">qm::spinOneHalf::Id</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a6bc4544f0c87e2c604b4288659d489a2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Eigen::MatrixXcd</type>
+        <definition>Eigen::MatrixXcd class_selfdual_tf_rf_ising::single_site_hamiltonian</definition>
+        <argsstring>(int position, int sites, std::vector&lt; Eigen::MatrixXcd &gt; &amp;SX, std::vector&lt; Eigen::MatrixXcd &gt; &amp;SY, std::vector&lt; Eigen::MatrixXcd &gt; &amp;SZ) const override</argsstring>
+        <name>single_site_hamiltonian</name>
+        <reimplements refid="classclass__model__base_1a6c6d9ef43a65fbdb4fba2d01676dd3b3">single_site_hamiltonian</reimplements>
+        <param>
+          <type>int</type>
+          <declname>position</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sites</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; Eigen::MatrixXcd &gt; &amp;</type>
+          <declname>SX</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; Eigen::MatrixXcd &gt; &amp;</type>
+          <declname>SY</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; Eigen::MatrixXcd &gt; &amp;</type>
+          <declname>SZ</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="145" bodyend="157"/>
+        <references refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" compoundref="nmspc__math_8h" startline="33" endline="36">math::mod</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" compoundref="class__selfdual__tf__rf__ising_8h" startline="21">J_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" compoundref="class__selfdual__tf__rf__ising_8h" startline="22">h_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" compoundref="class__selfdual__tf__rf__ising_8h" startline="29">lambda</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" compoundref="class__selfdual__tf__rf__ising_8h" startline="26">h_avg</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" compoundref="class__selfdual__tf__rf__ising_8h" startline="25">J_avg</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a8702c9531914daf6baafff126489bb42" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>std::shared_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
+        <definition>std::shared_ptr&lt; class_model_base &gt; class_selfdual_tf_rf_ising::clone</definition>
+        <argsstring>() const override</argsstring>
+        <name>clone</name>
+        <reimplements refid="classclass__model__base_1a82f3f6a04b59e10b8abbe1cbbafd88bc">clone</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="160" bodyend="160"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a6868f04c65fe0c5da49b412a7418b7cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void class_selfdual_tf_rf_ising::set_reduced_energy</definition>
+        <argsstring>(double site_energy) override</argsstring>
+        <name>set_reduced_energy</name>
+        <reimplements refid="classclass__model__base_1a1c967e4189131a7ae8f8566e51484ef2">set_reduced_energy</reimplements>
+        <param>
+          <type>double</type>
+          <declname>site_energy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="163" bodyend="163"/>
+        <references refid="classclass__selfdual__tf__rf__ising_1a83fba52f1f02bd39af1cb47635b67eb9" compoundref="class__selfdual__tf__rf__ising_8h" startline="31">e_reduced</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a424375457f3be4647fb66f5985ae8adf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>size_t</type>
+        <definition>size_t class_selfdual_tf_rf_ising::get_spin_dimension</definition>
+        <argsstring>() const override</argsstring>
+        <name>get_spin_dimension</name>
+        <reimplements refid="classclass__model__base_1a7c8050ed2641e8145fdf30860435986a">get_spin_dimension</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="164" bodyend="164"/>
+        <references refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" compoundref="class__selfdual__tf__rf__ising_8h" startline="20">spin_dim</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a54e408f494ed9b3fc1d574aedf40f229" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void class_selfdual_tf_rf_ising::print_parameter_names</definition>
+        <argsstring>() const override</argsstring>
+        <name>print_parameter_names</name>
+        <reimplements refid="classclass__model__base_1ade62bca0b950914a94c72c72d6c2cc3c">print_parameter_names</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="70" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="170" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a9a689d1f6edfb04ae22b17c961df6643" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void class_selfdual_tf_rf_ising::print_parameter_values</definition>
+        <argsstring>() const override</argsstring>
+        <name>print_parameter_values</name>
+        <reimplements refid="classclass__model__base_1a8ed38e3cb48bacc3103be07284b20831">print_parameter_values</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="189" bodyend="206"/>
+        <references refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" compoundref="class__model__base_8cpp" startline="37" endline="40">class_model_base::get_position</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" compoundref="class__selfdual__tf__rf__ising_8h" startline="21">J_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" compoundref="class__selfdual__tf__rf__ising_8h" startline="22">h_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a8eda3a230c98113f7eba3a26c2014153" compoundref="class__selfdual__tf__rf__ising_8h" startline="23">J_log_mean</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1affec0fd6074a7d5b42b56dc6b96c5208" compoundref="class__selfdual__tf__rf__ising_8h" startline="24">h_log_mean</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" compoundref="class__selfdual__tf__rf__ising_8h" startline="25">J_avg</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" compoundref="class__selfdual__tf__rf__ising_8h" startline="26">h_avg</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a5e5417f1e68ba5b5e493bb26f6bfa056" compoundref="class__selfdual__tf__rf__ising_8h" startline="27">J_sigma</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" compoundref="class__selfdual__tf__rf__ising_8h" startline="28">h_sigma</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" compoundref="class__selfdual__tf__rf__ising_8h" startline="29">lambda</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a81cc26af03e873d7429706e7bf93b255" compoundref="class__selfdual__tf__rf__ising_8h" startline="30">delta</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a83fba52f1f02bd39af1cb47635b67eb9" compoundref="class__selfdual__tf__rf__ising_8h" startline="31">e_reduced</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" compoundref="class__selfdual__tf__rf__ising_8h" startline="20">spin_dim</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1ac631c6f220a8b20144f8ec5b3261e896" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>std::vector&lt; std::string &gt;</type>
+        <definition>std::vector&lt; std::string &gt; class_selfdual_tf_rf_ising::get_parameter_names</definition>
+        <argsstring>() const override</argsstring>
+        <name>get_parameter_names</name>
+        <reimplements refid="classclass__model__base_1a2c8ca66dc1a83c1ddb5ea91aec7fe1ed">get_parameter_names</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="208" bodyend="223"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a338763add94ac64aa6a13fc169f609fb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>std::vector&lt; double &gt;</type>
+        <definition>std::vector&lt; double &gt; class_selfdual_tf_rf_ising::get_parameter_values</definition>
+        <argsstring>() const override</argsstring>
+        <name>get_parameter_values</name>
+        <reimplements refid="classclass__model__base_1aed5208f88cae90c68966c58c1b42526b">get_parameter_values</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="227" bodyend="242"/>
+        <references refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" compoundref="class__model__base_8cpp" startline="37" endline="40">class_model_base::get_position</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" compoundref="class__selfdual__tf__rf__ising_8h" startline="21">J_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" compoundref="class__selfdual__tf__rf__ising_8h" startline="22">h_rnd</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a8eda3a230c98113f7eba3a26c2014153" compoundref="class__selfdual__tf__rf__ising_8h" startline="23">J_log_mean</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1affec0fd6074a7d5b42b56dc6b96c5208" compoundref="class__selfdual__tf__rf__ising_8h" startline="24">h_log_mean</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" compoundref="class__selfdual__tf__rf__ising_8h" startline="25">J_avg</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" compoundref="class__selfdual__tf__rf__ising_8h" startline="26">h_avg</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a5e5417f1e68ba5b5e493bb26f6bfa056" compoundref="class__selfdual__tf__rf__ising_8h" startline="27">J_sigma</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" compoundref="class__selfdual__tf__rf__ising_8h" startline="28">h_sigma</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" compoundref="class__selfdual__tf__rf__ising_8h" startline="29">lambda</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a81cc26af03e873d7429706e7bf93b255" compoundref="class__selfdual__tf__rf__ising_8h" startline="30">delta</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a83fba52f1f02bd39af1cb47635b67eb9" compoundref="class__selfdual__tf__rf__ising_8h" startline="31">e_reduced</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" compoundref="class__selfdual__tf__rf__ising_8h" startline="20">spin_dim</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising_1a614f69a0c3584740cf06f90af0ac1d2c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void class_selfdual_tf_rf_ising::set_full_lattice_parameters</definition>
+        <argsstring>(const std::vector&lt; std::vector&lt; double &gt;&gt; chain_parameters) override</argsstring>
+        <name>set_full_lattice_parameters</name>
+        <reimplements refid="classclass__model__base_1a204f973d0539307696fcd06762aba48d">set_full_lattice_parameters</reimplements>
+        <param>
+          <type>const std::vector&lt; std::vector&lt; double &gt;&gt;</type>
+          <declname>chain_parameters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp" bodystart="246" bodyend="258"/>
+        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="51">class_model_base::all_mpo_parameters_have_been_set</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" compoundref="opt_8h" startline="103">tools::finite::opt::internals::params</references>
+        <references refid="classclass__selfdual__tf__rf__ising_1a1332645c8b209715ebafa132515d54d1" compoundref="class__selfdual__tf__rf__ising_8cpp" startline="81" endline="86">set_realization_averages</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="110">
+        <label>class_model_base</label>
+        <link refid="classclass__model__base"/>
+      </node>
+      <node id="109">
+        <label>class_selfdual_tf_rf_ising</label>
+        <link refid="classclass__selfdual__tf__rf__ising"/>
+        <childnode refid="110" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="112">
+        <label>class_model_base</label>
+        <link refid="classclass__model__base"/>
+      </node>
+      <node id="111">
+        <label>class_selfdual_tf_rf_ising</label>
+        <link refid="classclass__selfdual__tf__rf__ising"/>
+        <childnode refid="112" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h" bodystart="17" bodyend="83"/>
+    <listofallmembers>
+      <member refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>all_mpo_parameters_have_been_set</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1ae6383e554e3b872bce0543999732223a" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>build_mpo</name></member>
+      <member refid="classclass__model__base_1a6a2f96984fa4ce3efec11a5acd2c4fd0" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>class_model_base</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a370e7550390a594f09fa6ac79a9dc7fa" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>class_selfdual_tf_rf_ising</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a8702c9531914daf6baafff126489bb42" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>clone</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a81cc26af03e873d7429706e7bf93b255" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>delta</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a83fba52f1f02bd39af1cb47635b67eb9" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>e_reduced</name></member>
+      <member refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" prot="protected" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>extent2</name></member>
+      <member refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" prot="protected" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>extent4</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a814a6f9eb80922a6b45f69c93d2c5c2f" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>get_h_rnd</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a8274d69b61f5313fa7165520fa870d41" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>get_J_rnd</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1ac631c6f220a8b20144f8ec5b3261e896" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>get_parameter_names</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a338763add94ac64aa6a13fc169f609fb" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>get_parameter_values</name></member>
+      <member refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>get_position</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a424375457f3be4647fb66f5985ae8adf" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>get_spin_dimension</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>h_avg</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1affec0fd6074a7d5b42b56dc6b96c5208" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>h_log_mean</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>h_rnd</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>h_sigma</name></member>
+      <member refid="classclass__model__base_1ab9f4036f02d2349a1ebf40fbc03fa68c" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>isReal</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>J_avg</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a8eda3a230c98113f7eba3a26c2014153" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>J_log_mean</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>J_rnd</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a5e5417f1e68ba5b5e493bb26f6bfa056" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>J_sigma</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>lambda</name></member>
+      <member refid="classclass__model__base_1a33433f14a50c45b0aa52873e01076b84" prot="protected" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>log</name></member>
+      <member refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>MPO</name></member>
+      <member refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" prot="protected" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>mpo_internal</name></member>
+      <member refid="classclass__model__base_1a22d74bafe839007a10f75ac03585fd25" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>MPO_matrix_view</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>MPO_reduced_view</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a6bd63cd4470f37e082715dbf8238ad1c" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>MPO_reduced_view</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1ad23f715526278459b655f6fc0cfe3011" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>num_params</name></member>
+      <member refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" prot="protected" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>position</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a54e408f494ed9b3fc1d574aedf40f229" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>print_parameter_names</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a9a689d1f6edfb04ae22b17c961df6643" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>print_parameter_values</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1aa8e3fcac305f5e7c110f49dafbfc5b57" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>randomize_hamiltonian</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a9c43841fadcde29d6bd854cdb1e7ab01" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>Scalar</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a614f69a0c3584740cf06f90af0ac1d2c" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>set_full_lattice_parameters</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a8595f437222481ad8e4933dbae3e3b7d" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>set_hamiltonian</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1ad294c10cf4e8fb9b8bc32a16f106d11d" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>set_hamiltonian</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1aaf49d0f62bc6c16fc78f9fadae453bfe" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>set_hamiltonian</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a020833d780211578f36e5f36edb7684f" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>set_hamiltonian</name></member>
+      <member refid="classclass__model__base_1abcce2b2aa2f4680afcb8e92a72c1a992" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>set_position</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a1332645c8b209715ebafa132515d54d1" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>set_realization_averages</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a6868f04c65fe0c5da49b412a7418b7cc" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>set_reduced_energy</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a6bc4544f0c87e2c604b4288659d489a2" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>single_site_hamiltonian</name></member>
+      <member refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" prot="private" virt="non-virtual"><scope>class_selfdual_tf_rf_ising</scope><name>spin_dim</name></member>
+      <member refid="classclass__model__base_1ac281b65a3ef25fe526e43eebec5d0051" prot="public" virt="virtual"><scope>class_selfdual_tf_rf_ising</scope><name>~class_model_base</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

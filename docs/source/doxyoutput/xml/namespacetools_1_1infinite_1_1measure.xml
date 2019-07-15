@@ -1,0 +1,468 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1infinite_1_1measure" kind="namespace" language="C++">
+    <compoundname>tools::infinite::measure</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a618bca9f2d238e215aa4485374193c49" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int tools::infinite::measure::length</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>length</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="191" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="401" bodyend="403"/>
+        <references refid="classclass__infinite__state_1a1a853fa57f66f794e31d2ca36f1a68b9" compoundref="class__infinite__state_8cpp" startline="68" endline="71">class_infinite_state::get_length</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a9d35818149671013c1b706c60ca9eaf5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int tools::infinite::measure::bond_dimension</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>bond_dimension</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="192" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="415" bodyend="418"/>
+        <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1ae1d6cc66ebf206b7190f4e5721b4b050" compoundref="class__infinite__state_8h" startline="120">class_infinite_state::Measurements::bond_dimension</references>
+        <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a8de1894431d9e237fb6e43f059c3613a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::truncation_error</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>truncation_error</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="193" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="420" bodyend="423"/>
+        <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1a70605a3fe5dd1102a8b61f689427036f" compoundref="class__infinite__state_8h" startline="122">class_infinite_state::Measurements::truncation_error</references>
+        <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a601facbe89d868ffadaafdb9a1a7d6f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::norm</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>norm</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="194" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="406" bodyend="412"/>
+        <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1a1f2a444d44e30c9eb7f95721d4cee3f5" compoundref="class__infinite__state_8h" startline="121">class_infinite_state::Measurements::norm</references>
+        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
+        <references refid="classclass__infinite__state_1a9191239e8e3f068c113645c78a449c10" compoundref="class__infinite__state_8cpp" startline="79" endline="79">class_infinite_state::get_theta</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
+        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1ac736ff68fedd12b059b6a0a1140a1ae3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_mpo</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>energy_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="195" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="458" bodyend="464"/>
+        <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1ad6fab97094657246644246250a1a9e65" compoundref="class__infinite__state_8h" startline="123">class_infinite_state::Measurements::energy_mpo</references>
+        <references refid="classclass__infinite__state_1ac6e7b8a73cc94d67562d8c06e5762e0b" compoundref="class__infinite__state_8h" startline="29">class_infinite_state::sim_type</references>
+        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f">iTEBD</references>
+        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
+        <references refid="namespacetools_1_1common_1_1views_1a60dea76b09d3d21e908e3fd3bbacd844" compoundref="views_8cpp" startline="114" endline="127">tools::common::views::get_theta</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1adde7cf7af079dca203595967fff5bf46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_mpo</definition>
+        <argsstring>(const class_infinite_state &amp;state, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;theta)</argsstring>
+        <name>energy_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="196" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="439" bodyend="455"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="namespacetools_1_1infinite_1_1profile_1a6482d083d5852c0c1320642603b96a2b" compoundref="nmspc__tools_8h" startline="232">tools::infinite::profile::t_ene_mpo</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" compoundref="class__infinite__state_8h" startline="51">class_infinite_state::Lblock</references>
+        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">class_infinite_state::HA</references>
+        <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">class_infinite_state::HB</references>
+        <references refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" compoundref="class__infinite__state_8h" startline="52">class_infinite_state::Rblock</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a83e5c7230844049762ad79a2a0844925" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_per_site_mpo</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>energy_per_site_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="197" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="467" bodyend="471"/>
+        <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1a48a75dcab59e3c28ab0a54b10933c013" compoundref="class__infinite__state_8h" startline="124">class_infinite_state::Measurements::energy_per_site_mpo</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a618bca9f2d238e215aa4485374193c49" compoundref="infinite_2measure_8cpp" startline="401" endline="403">length</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1ac736ff68fedd12b059b6a0a1140a1ae3" compoundref="infinite_2measure_8cpp" startline="458" endline="464">energy_mpo</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a0517648c6c38dd3333a7098d6d64748d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_per_site_ham</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>energy_per_site_ham</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="198" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="474" bodyend="506"/>
+        <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1ab4ad82ec660b0ab01209d569db40394a" compoundref="class__infinite__state_8h" startline="126">class_infinite_state::Measurements::energy_per_site_ham</references>
+        <references refid="classclass__infinite__state_1ac6e7b8a73cc94d67562d8c06e5762e0b" compoundref="class__infinite__state_8h" startline="29">class_infinite_state::sim_type</references>
+        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9379cfd2380ced1835394b9fb513ccdb">fDMRG</references>
+        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab5612e395f07bd6a022360eb707e73ae">xDMRG</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1ae1d6cc66ebf206b7190f4e5721b4b050" compoundref="class__infinite__state_8h" startline="120">class_infinite_state::Measurements::bond_dimension</references>
+        <references refid="namespacetools_1_1infinite_1_1profile_1a57614dcac79ddf8d4da0a9990963cb23" compoundref="nmspc__tools_8h" startline="233">tools::infinite::profile::t_ene_ham</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" compoundref="nmspc__quantum__mechanics_8cpp" startline="57">qm::spinOneHalf::SX</references>
+        <references refid="namespaceqm_1aa34a66facd046cb861f0d3e8f242cf48" compoundref="nmspc__quantum__mechanics_8cpp" startline="17" endline="29">qm::gen_manybody_spin</references>
+        <references refid="namespaceqm_1_1spin_one_half_1ae795b267734a773efcfbc6b238078299" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" compoundref="nmspc__quantum__mechanics_8cpp" startline="58">qm::spinOneHalf::SY</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a777bca15b9c80a4c91d1cc8e49536559" compoundref="nmspc__quantum__mechanics_8cpp" startline="39">qm::spinOneHalf::sy</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" compoundref="nmspc__quantum__mechanics_8cpp" startline="59">qm::spinOneHalf::SZ</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a6f58116f2a00a0ee5e00f64e66813b74" compoundref="nmspc__quantum__mechanics_8cpp" startline="42">qm::spinOneHalf::sz</references>
+        <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">class_infinite_state::HA</references>
+        <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">class_infinite_state::HB</references>
+        <references refid="namespacetools_1_1common_1_1views_1a9dd4897dd844609d0d574825a3988592" compoundref="views_8cpp" startline="49" endline="109">tools::common::views::compute_mps_components</references>
+        <references refid="namespacetools_1_1common_1_1views_1aaa218965233de49476f1a1c3385ab221" compoundref="views_8cpp" startline="23">tools::common::views::theta_evn_normalized</references>
+        <references refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" compoundref="nmspc__tensor__extra_8h" startline="166" endline="176">Textra::Matrix_to_Tensor</references>
+        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="namespacetools_1_1common_1_1views_1a4dced59ada339f64abc147a4105ffb48" compoundref="views_8cpp" startline="28">tools::common::views::l_evn</references>
+        <references refid="namespacetools_1_1common_1_1views_1aa8e0a0a8e32576ecaf5441895638d323" compoundref="views_8cpp" startline="29">tools::common::views::r_evn</references>
+        <references refid="namespacetools_1_1common_1_1views_1a1b31321ec58943f91583ab72b4bb7add" compoundref="views_8cpp" startline="24">tools::common::views::theta_odd_normalized</references>
+        <references refid="namespacetools_1_1common_1_1views_1a0ad3e4e5e90a1003fe66a27583066f3e" compoundref="views_8cpp" startline="30">tools::common::views::l_odd</references>
+        <references refid="namespacetools_1_1common_1_1views_1add7d5b1e2b83dae13a52db4e9484ed85" compoundref="views_8cpp" startline="31">tools::common::views::r_odd</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a6f97590e1445ec3c3a0408e80fc45ae4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_per_site_mom</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>energy_per_site_mom</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="199" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="509" bodyend="536"/>
+        <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1a8411689069de4f6ef17a847258c40622" compoundref="class__infinite__state_8h" startline="127">class_infinite_state::Measurements::energy_per_site_mom</references>
+        <references refid="classclass__infinite__state_1ac6e7b8a73cc94d67562d8c06e5762e0b" compoundref="class__infinite__state_8h" startline="29">class_infinite_state::sim_type</references>
+        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9379cfd2380ced1835394b9fb513ccdb">fDMRG</references>
+        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab5612e395f07bd6a022360eb707e73ae">xDMRG</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1ae1d6cc66ebf206b7190f4e5721b4b050" compoundref="class__infinite__state_8h" startline="120">class_infinite_state::Measurements::bond_dimension</references>
+        <references refid="namespacetools_1_1infinite_1_1profile_1add80f0b45b15b9716b500bb5ba7c816b" compoundref="nmspc__tools_8h" startline="234">tools::infinite::profile::t_ene_mom</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" compoundref="nmspc__quantum__mechanics_8cpp" startline="57">qm::spinOneHalf::SX</references>
+        <references refid="namespaceqm_1aa34a66facd046cb861f0d3e8f242cf48" compoundref="nmspc__quantum__mechanics_8cpp" startline="17" endline="29">qm::gen_manybody_spin</references>
+        <references refid="namespaceqm_1_1spin_one_half_1ae795b267734a773efcfbc6b238078299" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" compoundref="nmspc__quantum__mechanics_8cpp" startline="58">qm::spinOneHalf::SY</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a777bca15b9c80a4c91d1cc8e49536559" compoundref="nmspc__quantum__mechanics_8cpp" startline="39">qm::spinOneHalf::sy</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" compoundref="nmspc__quantum__mechanics_8cpp" startline="59">qm::spinOneHalf::SZ</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a6f58116f2a00a0ee5e00f64e66813b74" compoundref="nmspc__quantum__mechanics_8cpp" startline="42">qm::spinOneHalf::sz</references>
+        <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">class_infinite_state::HA</references>
+        <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">class_infinite_state::HB</references>
+        <references refid="namespaceqm_1_1time_evolution_1ac04e5bd4da8ae4c7181588285e4da170" compoundref="nmspc__quantum__mechanics_8cpp" startline="160" endline="175">qm::timeEvolution::compute_G</references>
+        <references refid="infinite_2measure_8cpp_1a6c96897a55cc8855514b56382f147676" compoundref="infinite_2measure_8cpp" startline="344" endline="398">moment_generating_function</references>
+        <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1af8e29c502ecb558e707a2872cd3a147c" compoundref="class__infinite__state_8h" startline="130">class_infinite_state::Measurements::energy_variance_per_site_mom</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a52cc87e7a9b5a69e875a33e480733ecd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_mpo</definition>
+        <argsstring>(const class_infinite_state &amp;state, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;theta, double &amp;energy_mpo)</argsstring>
+        <name>energy_variance_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>energy_mpo</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="200" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="539" bodyend="557"/>
+        <references refid="classclass__infinite__state_1ac6e7b8a73cc94d67562d8c06e5762e0b" compoundref="class__infinite__state_8h" startline="29">class_infinite_state::sim_type</references>
+        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f">iTEBD</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="namespacetools_1_1infinite_1_1profile_1a66594817dd2a3d6adca894a1b8cfd32e" compoundref="nmspc__tools_8h" startline="235">tools::infinite::profile::t_var_mpo</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" compoundref="class__infinite__state_8h" startline="53">class_infinite_state::Lblock2</references>
+        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
+        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">class_infinite_state::HA</references>
+        <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">class_infinite_state::HB</references>
+        <references refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" compoundref="class__infinite__state_8h" startline="54">class_infinite_state::Rblock2</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a24f9e11dce4529aa3f69d9f23ecd20d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_mpo</definition>
+        <argsstring>(const class_infinite_state &amp;state, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;theta)</argsstring>
+        <name>energy_variance_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="201" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="561" bodyend="566"/>
+        <references refid="classclass__infinite__state_1ac6e7b8a73cc94d67562d8c06e5762e0b" compoundref="class__infinite__state_8h" startline="29">class_infinite_state::sim_type</references>
+        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f">iTEBD</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1ac736ff68fedd12b059b6a0a1140a1ae3" compoundref="infinite_2measure_8cpp" startline="458" endline="464">energy_mpo</references>
+        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a52cc87e7a9b5a69e875a33e480733ecd" compoundref="infinite_2measure_8cpp" startline="539" endline="557">energy_variance_mpo</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a6e0aca8766d46be42b6b95bd5f22ff66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_mpo</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>energy_variance_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="202" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="568" bodyend="574"/>
+        <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1a0e76d76f02b3b21bd6723eb0ee40aa8d" compoundref="class__infinite__state_8h" startline="125">class_infinite_state::Measurements::energy_variance_mpo</references>
+        <references refid="classclass__infinite__state_1ac6e7b8a73cc94d67562d8c06e5762e0b" compoundref="class__infinite__state_8h" startline="29">class_infinite_state::sim_type</references>
+        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f">iTEBD</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1ac736ff68fedd12b059b6a0a1140a1ae3" compoundref="infinite_2measure_8cpp" startline="458" endline="464">energy_mpo</references>
+        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
+        <references refid="namespacetools_1_1common_1_1views_1a60dea76b09d3d21e908e3fd3bbacd844" compoundref="views_8cpp" startline="114" endline="127">tools::common::views::get_theta</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a52cc87e7a9b5a69e875a33e480733ecd" compoundref="infinite_2measure_8cpp" startline="539" endline="557">energy_variance_mpo</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a56c0ea2d4d6d328e02508c7435ce3c8c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_per_site_mpo</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>energy_variance_per_site_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="203" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="577" bodyend="581"/>
+        <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1abaa4f94d2c3acb3baf0e6fee1a11dcf2" compoundref="class__infinite__state_8h" startline="128">class_infinite_state::Measurements::energy_variance_per_site_mpo</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a618bca9f2d238e215aa4485374193c49" compoundref="infinite_2measure_8cpp" startline="401" endline="403">length</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a52cc87e7a9b5a69e875a33e480733ecd" compoundref="infinite_2measure_8cpp" startline="539" endline="557">energy_variance_mpo</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1a9217c1dad663b6343ca3b103a31ce49a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_per_site_ham</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>energy_variance_per_site_ham</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="204" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="586" bodyend="735"/>
+        <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1a82cfde3912dd27c1a41ef389d4d614a2" compoundref="class__infinite__state_8h" startline="129">class_infinite_state::Measurements::energy_variance_per_site_ham</references>
+        <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
+        <references refid="classclass__infinite__state_1ac6e7b8a73cc94d67562d8c06e5762e0b" compoundref="class__infinite__state_8h" startline="29">class_infinite_state::sim_type</references>
+        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9379cfd2380ced1835394b9fb513ccdb">fDMRG</references>
+        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab5612e395f07bd6a022360eb707e73ae">xDMRG</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1ae1d6cc66ebf206b7190f4e5721b4b050" compoundref="class__infinite__state_8h" startline="120">class_infinite_state::Measurements::bond_dimension</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="namespacetools_1_1infinite_1_1profile_1ad4684f09228f81deec6af4a40df8019b" compoundref="nmspc__tools_8h" startline="236">tools::infinite::profile::t_var_ham</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" compoundref="nmspc__quantum__mechanics_8cpp" startline="57">qm::spinOneHalf::SX</references>
+        <references refid="namespaceqm_1aa34a66facd046cb861f0d3e8f242cf48" compoundref="nmspc__quantum__mechanics_8cpp" startline="17" endline="29">qm::gen_manybody_spin</references>
+        <references refid="namespaceqm_1_1spin_one_half_1ae795b267734a773efcfbc6b238078299" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" compoundref="nmspc__quantum__mechanics_8cpp" startline="58">qm::spinOneHalf::SY</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a777bca15b9c80a4c91d1cc8e49536559" compoundref="nmspc__quantum__mechanics_8cpp" startline="39">qm::spinOneHalf::sy</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" compoundref="nmspc__quantum__mechanics_8cpp" startline="59">qm::spinOneHalf::SZ</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a6f58116f2a00a0ee5e00f64e66813b74" compoundref="nmspc__quantum__mechanics_8cpp" startline="42">qm::spinOneHalf::sz</references>
+        <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">class_infinite_state::HA</references>
+        <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">class_infinite_state::HB</references>
+        <references refid="namespacetools_1_1common_1_1views_1a9dd4897dd844609d0d574825a3988592" compoundref="views_8cpp" startline="49" endline="109">tools::common::views::compute_mps_components</references>
+        <references refid="namespacetools_1_1common_1_1views_1aaa218965233de49476f1a1c3385ab221" compoundref="views_8cpp" startline="23">tools::common::views::theta_evn_normalized</references>
+        <references refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" compoundref="nmspc__tensor__extra_8h" startline="166" endline="176">Textra::Matrix_to_Tensor</references>
+        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="namespacetools_1_1common_1_1views_1a4dced59ada339f64abc147a4105ffb48" compoundref="views_8cpp" startline="28">tools::common::views::l_evn</references>
+        <references refid="namespacetools_1_1common_1_1views_1aa8e0a0a8e32576ecaf5441895638d323" compoundref="views_8cpp" startline="29">tools::common::views::r_evn</references>
+        <references refid="namespacetools_1_1common_1_1views_1a1b31321ec58943f91583ab72b4bb7add" compoundref="views_8cpp" startline="24">tools::common::views::theta_odd_normalized</references>
+        <references refid="namespacetools_1_1common_1_1views_1a0ad3e4e5e90a1003fe66a27583066f3e" compoundref="views_8cpp" startline="30">tools::common::views::l_odd</references>
+        <references refid="namespacetools_1_1common_1_1views_1add7d5b1e2b83dae13a52db4e9484ed85" compoundref="views_8cpp" startline="31">tools::common::views::r_odd</references>
+        <references refid="namespacetools_1_1common_1_1views_1a9a9182bb578c2adf5a152015c35d0232" compoundref="views_8cpp" startline="26">tools::common::views::LBGA</references>
+        <references refid="namespacetools_1_1common_1_1views_1ab94641d1eeeaca3ee2c0b62d40c67585" compoundref="views_8cpp" startline="27">tools::common::views::LAGB</references>
+        <references refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" compoundref="nmspc__tensor__extra_8h" startline="200" endline="202">Textra::Matrix_to_Tensor2</references>
+        <references refid="namespacetools_1_1common_1_1views_1a8ca6ab75ea4a9e71ef45a0a0e675f185" compoundref="views_8cpp" startline="34">tools::common::views::transfer_matrix_evn</references>
+        <references refid="namespacetools_1_1common_1_1views_1a2ef7dec8a4db01e3667a71942c40feb5" compoundref="views_8cpp" startline="35">tools::common::views::transfer_matrix_odd</references>
+        <references refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" compoundref="class__svd__wrapper_8cpp" startline="34" endline="36">class_SVD::setThreshold</references>
+        <references refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" compoundref="nmspc__settings_8h" startline="73">settings::precision::SVDThreshold</references>
+        <references refid="classclass___s_v_d_1a5dd93aeb8e55813f0fbb896ac2887033" compoundref="class__svd__wrapper_8h" startline="103" endline="108">class_SVD::pseudo_inverse</references>
+        <references refid="namespacetools_1_1common_1_1views_1a37826c75be840ac1b3e5cc9bcc96df4c" compoundref="views_8cpp" startline="32">tools::common::views::transfer_matrix_LBGA</references>
+        <references refid="namespacetools_1_1common_1_1views_1a4737ab9e1c7be58e16ef3ebf0c4dedbd" compoundref="views_8cpp" startline="33">tools::common::views::transfer_matrix_LAGB</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1aeafca3091f2799190b63d2439a3f918e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::energy_variance_per_site_mom</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>energy_variance_per_site_mom</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="205" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="738" bodyend="744"/>
+        <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1af8e29c502ecb558e707a2872cd3a147c" compoundref="class__infinite__state_8h" startline="130">class_infinite_state::Measurements::energy_variance_per_site_mom</references>
+        <references refid="classclass__infinite__state_1ac6e7b8a73cc94d67562d8c06e5762e0b" compoundref="class__infinite__state_8h" startline="29">class_infinite_state::sim_type</references>
+        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9379cfd2380ced1835394b9fb513ccdb">fDMRG</references>
+        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab5612e395f07bd6a022360eb707e73ae">xDMRG</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a6f97590e1445ec3c3a0408e80fc45ae4" compoundref="infinite_2measure_8cpp" startline="509" endline="536">energy_per_site_mom</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1measure_1afe31f99ecec4043193ac621906b30925" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::infinite::measure::current_entanglement_entropy</definition>
+        <argsstring>(const class_infinite_state &amp;state)</argsstring>
+        <name>current_entanglement_entropy</name>
+        <param>
+          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="206" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp" bodystart="427" bodyend="436"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="namespacetools_1_1infinite_1_1profile_1a57f615f4957de3b1be9f4453248d9722" compoundref="nmspc__tools_8h" startline="231">tools::infinite::profile::t_ent</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
+        <references refid="structclass__infinite__state_1_1_measurements_1ae5c987b0312d34266f3fe3bafad9d203" compoundref="class__infinite__state_8h" startline="131">class_infinite_state::Measurements::current_entanglement_entropy</references>
+        <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da3dd6b9265ff18f31dc30df59304b0ca7">eigutils::eigSetting::SA</references>
+        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="190" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,13 @@
+.. _exhale_function_nmspc__tools_8h_1a043151253c73c92e56d07ffc15060418:
+
+Function tools::infinite::io::write_2site_mpo
+=============================================
+
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_nmspc_tools.h`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: tools::infinite::io::write_2site_mpo(const class_infinite_state&, h5pp::File&, std::string)

@@ -1,0 +1,312 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="main_8cpp" kind="file" language="C++">
+    <compoundname>main.cpp</compoundname>
+    <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
+    <includes refid="nmspc__random__numbers_8h" local="no">general/nmspc_random_numbers.h</includes>
+    <includes refid="class__algorithm__launcher_8h" local="no">algorithms/class_algorithm_launcher.h</includes>
+    <includes refid="class__settings__reader_8h" local="no">io/class_settings_reader.h</includes>
+    <includes refid="nmspc__logger_8h" local="no">io/nmspc_logger.h</includes>
+    <includes local="no">iostream</includes>
+    <includes local="no">h5pp/h5pp.h</includes>
+    <includes local="no">experimental/filesystem</includes>
+    <incdepgraph>
+      <node id="1021">
+        <label>general/nmspc_random_numbers.h</label>
+        <link refid="nmspc__random__numbers_8h"/>
+        <childnode refid="1022" relation="include">
+        </childnode>
+        <childnode refid="1023" relation="include">
+        </childnode>
+        <childnode refid="1024" relation="include">
+        </childnode>
+        <childnode refid="1025" relation="include">
+        </childnode>
+      </node>
+      <node id="1031">
+        <label>iomanip</label>
+      </node>
+      <node id="1029">
+        <label>io/class_settings_reader.h</label>
+        <link refid="class__settings__reader_8h"/>
+        <childnode refid="1023" relation="include">
+        </childnode>
+        <childnode refid="1030" relation="include">
+        </childnode>
+        <childnode refid="1018" relation="include">
+        </childnode>
+        <childnode refid="1031" relation="include">
+        </childnode>
+        <childnode refid="1032" relation="include">
+        </childnode>
+        <childnode refid="1033" relation="include">
+        </childnode>
+        <childnode refid="1034" relation="include">
+        </childnode>
+        <childnode refid="1035" relation="include">
+        </childnode>
+      </node>
+      <node id="1025">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="1018">
+        <label>string</label>
+      </node>
+      <node id="1035">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="1028" relation="include">
+        </childnode>
+        <childnode refid="1036" relation="include">
+        </childnode>
+        <childnode refid="1037" relation="include">
+        </childnode>
+      </node>
+      <node id="1019">
+        <label>unordered_set</label>
+      </node>
+      <node id="1026">
+        <label>algorithms/class_algorithm_launcher.h</label>
+        <link refid="class__algorithm__launcher_8h"/>
+        <childnode refid="1027" relation="include">
+        </childnode>
+        <childnode refid="1028" relation="include">
+        </childnode>
+      </node>
+      <node id="1030">
+        <label>fstream</label>
+      </node>
+      <node id="1028">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1022">
+        <label>random</label>
+      </node>
+      <node id="1016">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/main.cpp</label>
+        <link refid="main_8cpp"/>
+        <childnode refid="1017" relation="include">
+        </childnode>
+        <childnode refid="1021" relation="include">
+        </childnode>
+        <childnode refid="1026" relation="include">
+        </childnode>
+        <childnode refid="1029" relation="include">
+        </childnode>
+        <childnode refid="1035" relation="include">
+        </childnode>
+        <childnode refid="1023" relation="include">
+        </childnode>
+        <childnode refid="1038" relation="include">
+        </childnode>
+        <childnode refid="1033" relation="include">
+        </childnode>
+      </node>
+      <node id="1020">
+        <label>vector</label>
+      </node>
+      <node id="1036">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1038">
+        <label>h5pp/h5pp.h</label>
+      </node>
+      <node id="1032">
+        <label>cctype</label>
+      </node>
+      <node id="1023">
+        <label>iostream</label>
+      </node>
+      <node id="1024">
+        <label>complex</label>
+      </node>
+      <node id="1017">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="1018" relation="include">
+        </childnode>
+        <childnode refid="1019" relation="include">
+        </childnode>
+        <childnode refid="1020" relation="include">
+        </childnode>
+      </node>
+      <node id="1034">
+        <label>algorithm</label>
+      </node>
+      <node id="1037">
+        <label>spdlog/sinks/stdout_sinks.h</label>
+      </node>
+      <node id="1027">
+        <label>memory</label>
+      </node>
+      <node id="1033">
+        <label>experimental/filesystem</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int main</definition>
+        <argsstring>(int argc, char *argv[])</argsstring>
+        <name>main</name>
+        <param>
+          <type>int</type>
+          <declname>argc</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>argv</declname>
+          <array>[]</array>
+        </param>
+        <briefdescription>
+<para>Main function. Sets simulation parameters and excecutes the desired algorithms. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>an integer 0 upon exit success </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/main.cpp" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/main.cpp" bodystart="38" bodyend="128"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" compoundref="nmspc__logger_8h" startline="33" endline="44">Logger::setLogger</references>
+        <references refid="namespacesettings_1_1model_1ac7afc4aa61cd2be6625e10af42716284" compoundref="nmspc__settings_8h" startline="36">settings::model::seed_init</references>
+        <references refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" compoundref="class__settings__reader_8h" startline="34">class_settings_reader::found_file</references>
+        <references refid="namespacesettings_1a3226e7390ab51155684058cf52f17736" compoundref="nmspc__settings_8cpp" startline="16" endline="115">settings::load_from_file</references>
+        <references refid="namespacesettings_1ae10b3dbe65fa73db62a97a8c06c153b9" compoundref="nmspc__settings_8cpp" startline="117" endline="129">settings::load_from_hdf5</references>
+        <references refid="namespacesettings_1_1hdf5_1af00daf6da416145f2f995b66bbdc078d" compoundref="nmspc__settings_8h" startline="138">settings::hdf5::output_filename</references>
+        <references refid="namespacern_1a79f3f437463ac68b3889fd1b6f5b8967" compoundref="nmspc__random__numbers_8cpp" startline="11" endline="14">rn::seed</references>
+        <references refid="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" compoundref="class__algorithm__launcher_8cpp" startline="73" endline="81">class_algorithm_launcher::run_algorithms</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="4"><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__random__numbers_8h" kindref="compound">general/nmspc_random_numbers.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__algorithm__launcher_8h" kindref="compound">algorithms/class_algorithm_launcher.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__settings__reader_8h" kindref="compound">io/class_settings_reader.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__logger_8h" kindref="compound">io/nmspc_logger.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;h5pp/h5pp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;experimental/filesystem&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>OpenBLAS_AVAILABLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cblas.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;openblas_config.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>OpenMP_AVAILABLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;omp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>MKL_AVAILABLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MKL_Complex8<sp/>std::complex&lt;float&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MKL_Complex16<sp/>std::complex&lt;double&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;mkl_service.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;mkl.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" refkind="member"><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" kindref="member">main</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>argv[])<sp/>{</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(</highlight><highlight class="stringliteral">&quot;DMRG&quot;</highlight><highlight class="normal">,0);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>num_threads<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#ifdef<sp/>OpenBLAS_AVAILABLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>openblas_set_num_threads(num_threads);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>OPENBLAS_VERSION</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>compiled<sp/>with<sp/>parallel<sp/>mode<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>openblas_get_parallel()</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>for<sp/>target<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>openblas_get_corename()</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>with<sp/>config<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>openblas_get_config()</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>with<sp/>multithread<sp/>threshold<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>OPENBLAS_GEMM_MULTITHREAD_THRESHOLD</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;.<sp/>Running<sp/>with<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>openblas_get_num_threads()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>thread(s)&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#ifdef<sp/>OpenMP_AVAILABLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::initParallel();</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>omp_set_num_threads(num_threads);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>omp_set_dynamic(0);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::setNbThreads(num_threads);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::setNbThreads(0);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Using<sp/>Eigen<sp/><sp/>with<sp/>{}<sp/>threads&quot;</highlight><highlight class="normal">,Eigen::nbThreads(<sp/>)<sp/><sp/>);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Using<sp/>OpenMP<sp/>with<sp/>{}<sp/>threads&quot;</highlight><highlight class="normal">,omp_get_max_threads());</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#ifdef<sp/>MKL_AVAILABLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mkl_set_num_threads(num_threads);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Using<sp/>Intel<sp/>MKL<sp/>with<sp/>{}<sp/>threads&quot;</highlight><highlight class="normal">,<sp/>mkl_get_max_threads());</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//print<sp/>all<sp/>given<sp/>parameters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Load<sp/>input<sp/>and<sp/>output<sp/>files<sp/>from<sp/>command<sp/>line.<sp/>If<sp/>none<sp/>were<sp/>given<sp/>use<sp/>defaults.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Normally<sp/>an<sp/>output<sp/>filename<sp/>is<sp/>given<sp/>in<sp/>the<sp/>input<sp/>file.<sp/>But<sp/>it<sp/>can<sp/>also<sp/>be<sp/>given<sp/>from<sp/>command<sp/>line.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>inputfile<sp/><sp/>=<sp/></highlight><highlight class="stringliteral">&quot;input.cfg&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>outputfile<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;output.h5&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1model_1ac7afc4aa61cd2be6625e10af42716284" kindref="member">seed_init</ref><sp/>=<sp/>-1;<sp/></highlight><highlight class="comment">//Only<sp/>accept<sp/>non-negative<sp/>seeds</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/>allArgs(argv+1,<sp/>argv<sp/>+<sp/>argc);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;arg_word<sp/>:<sp/>allArgs){</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::istringstream<sp/>iss(arg_word);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>arg;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal">(iss<sp/>&gt;&gt;<sp/>arg){</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Input<sp/>argument<sp/>{}<sp/>:<sp/>{}&quot;</highlight><highlight class="normal">,i++,arg);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arg.find(</highlight><highlight class="stringliteral">&quot;.cfg&quot;</highlight><highlight class="normal">)<sp/>!=<sp/>std::string::npos)<sp/>{inputfile<sp/><sp/>=<sp/>arg;</highlight><highlight class="keywordflow">continue</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arg.find(</highlight><highlight class="stringliteral">&quot;.h5&quot;</highlight><highlight class="normal">)<sp/><sp/>!=<sp/>std::string::npos)<sp/>{outputfile<sp/>=<sp/>arg;</highlight><highlight class="keywordflow">continue</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arg.find_first_not_of(<sp/></highlight><highlight class="stringliteral">&quot;0123456789&quot;</highlight><highlight class="normal"><sp/>)<sp/>==<sp/>std::string::npos<sp/>and<sp/>seed_init<sp/>&lt;<sp/>0){seed_init<sp/>=<sp/>std::stoi(arg);<sp/></highlight><highlight class="keywordflow">continue</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader" kindref="compound">class_settings_reader</ref><sp/>indata(inputfile);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(indata.<ref refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" kindref="member">found_file</ref>){</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacesettings_1a3226e7390ab51155684058cf52f17736" kindref="member">settings::load_from_file</ref>(indata);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>h5ppFile<sp/>=<sp/>std::make_shared&lt;h5pp::File&gt;<sp/>(outputfile,h5pp::AccessMode::READONLY,h5pp::CreateMode::OPEN);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Loading<sp/>settings<sp/>from<sp/>existing<sp/>file<sp/>[{}]&quot;</highlight><highlight class="normal">,<sp/>h5ppFile-&gt;getFilePath());</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacesettings_1ae10b3dbe65fa73db62a97a8c06c153b9" kindref="member">settings::load_from_hdf5</ref>(*h5ppFile);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">catch</highlight><highlight class="normal">(std::exception<sp/>&amp;ex){</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Couldn&apos;t<sp/>find<sp/>an<sp/>inputfile<sp/>or<sp/>previous<sp/>outputfile<sp/>to<sp/>load<sp/>settings:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>outputfile,ex.what()<sp/>);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Running<sp/>defaults&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(outputfile<sp/>!=<sp/></highlight><highlight class="stringliteral">&quot;output.h5&quot;</highlight><highlight class="normal">){</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Replacing<sp/>output<sp/>filename<sp/>{}<sp/>--&gt;<sp/>{}&quot;</highlight><highlight class="normal">,<ref refid="namespacesettings_1_1hdf5_1af00daf6da416145f2f995b66bbdc078d" kindref="member">settings::hdf5::output_filename</ref>,<sp/>outputfile);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacesettings_1_1hdf5_1af00daf6da416145f2f995b66bbdc078d" kindref="member">settings::hdf5::output_filename</ref><sp/>=<sp/>outputfile;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(seed_init<sp/>&gt;=<sp/>0){</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Replacing<sp/>seed_init<sp/>{}<sp/>--&gt;<sp/>{}&quot;</highlight><highlight class="normal">,<sp/><ref refid="namespacesettings_1_1model_1ac7afc4aa61cd2be6625e10af42716284" kindref="member">settings::model::seed_init</ref>,<sp/>seed_init);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacesettings_1_1model_1ac7afc4aa61cd2be6625e10af42716284" kindref="member">settings::model::seed_init</ref><sp/>=<sp/><ref refid="namespacesettings_1_1model_1ac7afc4aa61cd2be6625e10af42716284" kindref="member">seed_init</ref>;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Append<sp/>the<sp/>seed_init<sp/>to<sp/>the<sp/>output<sp/>filename</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">fs<sp/>=<sp/>std::experimental::filesystem;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fs::path<sp/>oldFileName<sp/>=<sp/><ref refid="namespacesettings_1_1hdf5_1af00daf6da416145f2f995b66bbdc078d" kindref="member">settings::hdf5::output_filename</ref>;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fs::path<sp/>newFileName<sp/>=<sp/><ref refid="namespacesettings_1_1hdf5_1af00daf6da416145f2f995b66bbdc078d" kindref="member">settings::hdf5::output_filename</ref>;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>newFileName.replace_filename(oldFileName.stem().string()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;_&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(seed_init)<sp/>+<sp/>oldFileName.extension().string()<sp/>);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacesettings_1_1hdf5_1af00daf6da416145f2f995b66bbdc078d" kindref="member">settings::hdf5::output_filename</ref><sp/>=<sp/>newFileName.string();</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Appending<sp/>seed_init<sp/>to<sp/>output<sp/>filename:<sp/>[{}]<sp/>--&gt;<sp/>[{}]&quot;</highlight><highlight class="normal">,oldFileName.string(),<sp/>newFileName.string());</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Seed<sp/>only<sp/>this<sp/>once<sp/>(This<sp/>also<sp/>takes<sp/>care<sp/>of<sp/>srand<sp/>used<sp/>by<sp/>Eigen</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacern_1a79f3f437463ac68b3889fd1b6f5b8967" kindref="member">rn::seed</ref>(<ref refid="namespacesettings_1_1model_1ac7afc4aa61cd2be6625e10af42716284" kindref="member">settings::model::seed_init</ref>);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Initialize<sp/>the<sp/>algorithm<sp/>class</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//This<sp/>class<sp/>stores<sp/>simulation<sp/>data<sp/>automatically<sp/>to<sp/>a<sp/>file<sp/>specified<sp/>in<sp/>the<sp/>input<sp/>file</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher" kindref="compound">class_algorithm_launcher</ref><sp/>launcher;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Run<sp/>the<sp/>algorithms</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>launcher.<ref refid="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" kindref="member">run_algorithms</ref>();</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/main.cpp"/>
+  </compounddef>
+</doxygen>

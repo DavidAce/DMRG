@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacesettings_1_1profiling" kind="namespace" language="C++">
+    <compoundname>settings::profiling</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool settings::profiling::on</definition>
+        <argsstring></argsstring>
+        <name>on</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If true, turns on profiling and timings will be shown on console. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="143" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::profiling::precision</definition>
+        <argsstring></argsstring>
+        <name>precision</name>
+        <initializer>= 5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets precision (number of decimals) of time output. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="144" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="142" column="1"/>
+  </compounddef>
+</doxygen>

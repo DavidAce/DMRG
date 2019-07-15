@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespace_logger" kind="namespace" language="C++">
+    <compoundname>Logger</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespace_logger_1ac4c5d1383c7ef00641b0dd8d197bb399" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Logger::enableTimeStamp</definition>
+        <argsstring>(std::shared_ptr&lt; spdlog::logger &gt; &amp;log)</argsstring>
+        <name>enableTimeStamp</name>
+        <param>
+          <type>std::shared_ptr&lt; spdlog::logger &gt; &amp;</type>
+          <declname>log</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="12" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" bodystart="12" bodyend="16"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_logger_1aee41265da88547f0a0d0e7ce3f753140" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Logger::disableTimeStamp</definition>
+        <argsstring>(std::shared_ptr&lt; spdlog::logger &gt; &amp;log)</argsstring>
+        <name>disableTimeStamp</name>
+        <param>
+          <type>std::shared_ptr&lt; spdlog::logger &gt; &amp;</type>
+          <declname>log</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" bodystart="17" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_logger_1ac8adfc900b8255517d9bf3939c9e2a09" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Logger::setLogLevel</definition>
+        <argsstring>(std::shared_ptr&lt; spdlog::logger &gt; &amp;log, size_t levelZeroToSix)</argsstring>
+        <name>setLogLevel</name>
+        <param>
+          <type>std::shared_ptr&lt; spdlog::logger &gt; &amp;</type>
+          <declname>log</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>levelZeroToSix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" bodystart="23" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Logger::setLogger</definition>
+        <argsstring>(std::shared_ptr&lt; spdlog::logger &gt; &amp;log, std::string name, size_t levelZeroToSix=2, bool timestamp=true)</argsstring>
+        <name>setLogger</name>
+        <param>
+          <type>std::shared_ptr&lt; spdlog::logger &gt; &amp;</type>
+          <declname>log</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>levelZeroToSix</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>timestamp</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" bodystart="33" bodyend="44"/>
+        <references refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" compoundref="nmspc__settings_8h" startline="149">settings::console::timestamp</references>
+        <references refid="namespace_logger_1ac4c5d1383c7ef00641b0dd8d197bb399" compoundref="nmspc__logger_8h" startline="12" endline="16">enableTimeStamp</references>
+        <references refid="namespace_logger_1aee41265da88547f0a0d0e7ce3f753140" compoundref="nmspc__logger_8h" startline="17" endline="21">disableTimeStamp</references>
+        <references refid="namespace_logger_1ac8adfc900b8255517d9bf3939c9e2a09" compoundref="nmspc__logger_8h" startline="23" endline="31">setLogLevel</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_logger_1a540e0412286255a5eb899ee37171f39d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::shared_ptr&lt; spdlog::logger &gt;</type>
+        <definition>std::shared_ptr&lt;spdlog::logger&gt; Logger::setLogger</definition>
+        <argsstring>(std::string name, size_t levelZeroToSix=2, bool timestamp=true)</argsstring>
+        <name>setLogger</name>
+        <param>
+          <type>std::string</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>levelZeroToSix</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>timestamp</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" bodystart="46" bodyend="58"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" compoundref="nmspc__settings_8h" startline="149">settings::console::timestamp</references>
+        <references refid="namespace_logger_1ac4c5d1383c7ef00641b0dd8d197bb399" compoundref="nmspc__logger_8h" startline="12" endline="16">enableTimeStamp</references>
+        <references refid="namespace_logger_1aee41265da88547f0a0d0e7ce3f753140" compoundref="nmspc__logger_8h" startline="17" endline="21">disableTimeStamp</references>
+        <references refid="namespace_logger_1ac8adfc900b8255517d9bf3939c9e2a09" compoundref="nmspc__logger_8h" startline="23" endline="31">setLogLevel</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="11" column="1"/>
+  </compounddef>
+</doxygen>

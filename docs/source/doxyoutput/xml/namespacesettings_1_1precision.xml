@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacesettings_1_1precision" kind="namespace" language="C++">
+    <compoundname>settings::precision</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1a538b01f0a7fe27f48d7980bd7630bd0e" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::precision::eigMaxIter</definition>
+        <argsstring></argsstring>
+        <name>eigMaxIter</name>
+        <initializer>= 1000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of steps for eigenvalue solver. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="70" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1a83177d10f491bd1482cdca3132e4dfde" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double settings::precision::eigThreshold</definition>
+        <argsstring></argsstring>
+        <name>eigThreshold</name>
+        <initializer>= 1e-12</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimum threshold for halting eigenvalue solver. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1a664ffd3ce1a107600bf23892ef519373" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::precision::eigMaxNcv</definition>
+        <argsstring></argsstring>
+        <name>eigMaxNcv</name>
+        <initializer>= 16</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Parameter controlling the column space? of the Lanczos solver. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double settings::precision::SVDThreshold</definition>
+        <argsstring></argsstring>
+        <name>SVDThreshold</name>
+        <initializer>= 1e-8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimum threshold value for keeping singular values. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1a8144c8c79b510717f340fff464e9a493" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double settings::precision::VarConvergenceThreshold</definition>
+        <argsstring></argsstring>
+        <name>VarConvergenceThreshold</name>
+        <initializer>= 1e-8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1a2d9e7cad0354e0b3b98f9c7acb391d23" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double settings::precision::VarSaturationThreshold</definition>
+        <argsstring></argsstring>
+        <name>VarSaturationThreshold</name>
+        <initializer>= 1e-4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Variance saturation threshold. The variance has saturated when its (absolute) slope reaches below this value </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1aefd3107716333590498c58a6ae754f5d" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double settings::precision::EntEntrSaturationThreshold</definition>
+        <argsstring></argsstring>
+        <name>EntEntrSaturationThreshold</name>
+        <initializer>= 1e-4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Entanglement Entropy saturation threshold. The entanglement entropy has saturated when its (absolute) slope reaches below this value </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="76" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1a8161050773e553d9b1e4e416a0289508" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::precision::MaxSizeFullDiag</definition>
+        <argsstring></argsstring>
+        <name>MaxSizeFullDiag</name>
+        <initializer>= 2048</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1a6d460e3e89da7786ddef877703a4ff54" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::precision::MaxSizePartDiag</definition>
+        <argsstring></argsstring>
+        <name>MaxSizePartDiag</name>
+        <initializer>= 4096</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="69" column="1"/>
+  </compounddef>
+</doxygen>

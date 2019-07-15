@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_1f1e02da0ed68619c8cd86756bb8077c" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms</compoundname>
+    <innerfile refid="class__algorithm__base_8cpp">class_algorithm_base.cpp</innerfile>
+    <innerfile refid="class__algorithm__base_8h">class_algorithm_base.h</innerfile>
+    <innerfile refid="class__algorithm__finite_8cpp">class_algorithm_finite.cpp</innerfile>
+    <innerfile refid="class__algorithm__finite_8h">class_algorithm_finite.h</innerfile>
+    <innerfile refid="class__algorithm__infinite_8cpp">class_algorithm_infinite.cpp</innerfile>
+    <innerfile refid="class__algorithm__infinite_8h">class_algorithm_infinite.h</innerfile>
+    <innerfile refid="class__algorithm__launcher_8cpp">class_algorithm_launcher.cpp</innerfile>
+    <innerfile refid="class__algorithm__launcher_8h">class_algorithm_launcher.h</innerfile>
+    <innerfile refid="class__f_d_m_r_g_8cpp">class_fDMRG.cpp</innerfile>
+    <innerfile refid="class__f_d_m_r_g_8h">class_fDMRG.h</innerfile>
+    <innerfile refid="class__i_d_m_r_g_8cpp">class_iDMRG.cpp</innerfile>
+    <innerfile refid="class__i_d_m_r_g_8h">class_iDMRG.h</innerfile>
+    <innerfile refid="class__i_t_e_b_d_8cpp">class_iTEBD.cpp</innerfile>
+    <innerfile refid="class__i_t_e_b_d_8h">class_iTEBD.h</innerfile>
+    <innerfile refid="class__x_d_m_r_g_8cpp">class_xDMRG.cpp</innerfile>
+    <innerfile refid="class__x_d_m_r_g_8h">class_xDMRG.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/"/>
+  </compounddef>
+</doxygen>

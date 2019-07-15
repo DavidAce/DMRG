@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structclass__log__simulation__status_1_1meta__struct" kind="struct" language="C++" prot="private">
+    <compoundname>class_log_simulation_status::meta_struct</compoundname>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1aa6fa9f21149be0558c646c8fd6313636" prot="public" static="yes" mutable="no">
+        <type>constexpr hsize_t</type>
+        <definition>constexpr hsize_t class_log_simulation_status::meta_struct::NFIELDS</definition>
+        <argsstring></argsstring>
+        <name>NFIELDS</name>
+        <initializer>= 34</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="294" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="294" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1a8fce95473bcbba0fd598cb92672c700f" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_log_simulation_status::meta_struct::dst_size</definition>
+        <argsstring></argsstring>
+        <name>dst_size</name>
+        <initializer>= sizeof (<ref refid="structstatus__data" kindref="compound">status_data</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="295" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="295" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1a3abaa4fcc93d1b50ec3b636b18babeaa" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__log__simulation__status_1_1meta__struct_1aa6fa9f21149be0558c646c8fd6313636" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t,NFIELDS&gt; class_log_simulation_status::meta_struct::dst_offsets</definition>
+        <argsstring></argsstring>
+        <name>dst_offsets</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="296" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="296" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1aa03c9a7c4426acf89becf9530baf3e49" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__log__simulation__status_1_1meta__struct_1aa6fa9f21149be0558c646c8fd6313636" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t,NFIELDS&gt; class_log_simulation_status::meta_struct::dst_sizes</definition>
+        <argsstring></argsstring>
+        <name>dst_sizes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="333" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="333" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1ab213d62143cc24744c64ba335dbaff23" prot="public" static="no" mutable="no">
+        <type>std::array&lt; const char *, <ref refid="structclass__log__simulation__status_1_1meta__struct_1aa6fa9f21149be0558c646c8fd6313636" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;const char*,NFIELDS&gt; class_log_simulation_status::meta_struct::field_names</definition>
+        <argsstring></argsstring>
+        <name>field_names</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="370" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="370" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1a67d573a61864e1a0375b466440a53ea2" prot="public" static="no" mutable="no">
+        <type>std::array&lt; hid_t, <ref refid="structclass__log__simulation__status_1_1meta__struct_1aa6fa9f21149be0558c646c8fd6313636" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;hid_t,NFIELDS&gt; class_log_simulation_status::meta_struct::field_types</definition>
+        <argsstring></argsstring>
+        <name>field_types</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="408" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="408" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1a4602cdfd4451d4f7ae7b9604a3af23b1" prot="public" static="no" mutable="no">
+        <type>hsize_t</type>
+        <definition>hsize_t class_log_simulation_status::meta_struct::chunk_size</definition>
+        <argsstring></argsstring>
+        <name>chunk_size</name>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="446" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="446" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1a8be7b527c6953cb0fa1ba7b8292e08c3" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* class_log_simulation_status::meta_struct::fill_data</definition>
+        <argsstring></argsstring>
+        <name>fill_data</name>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="447" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="447" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1afc097efda8b7ce9833624402202525ec" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_log_simulation_status::meta_struct::compress</definition>
+        <argsstring></argsstring>
+        <name>compress</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="448" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="448" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="293" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="293" bodyend="449"/>
+    <listofallmembers>
+      <member refid="structclass__log__simulation__status_1_1meta__struct_1a4602cdfd4451d4f7ae7b9604a3af23b1" prot="public" virt="non-virtual"><scope>class_log_simulation_status::meta_struct</scope><name>chunk_size</name></member>
+      <member refid="structclass__log__simulation__status_1_1meta__struct_1afc097efda8b7ce9833624402202525ec" prot="public" virt="non-virtual"><scope>class_log_simulation_status::meta_struct</scope><name>compress</name></member>
+      <member refid="structclass__log__simulation__status_1_1meta__struct_1a3abaa4fcc93d1b50ec3b636b18babeaa" prot="public" virt="non-virtual"><scope>class_log_simulation_status::meta_struct</scope><name>dst_offsets</name></member>
+      <member refid="structclass__log__simulation__status_1_1meta__struct_1a8fce95473bcbba0fd598cb92672c700f" prot="public" virt="non-virtual"><scope>class_log_simulation_status::meta_struct</scope><name>dst_size</name></member>
+      <member refid="structclass__log__simulation__status_1_1meta__struct_1aa03c9a7c4426acf89becf9530baf3e49" prot="public" virt="non-virtual"><scope>class_log_simulation_status::meta_struct</scope><name>dst_sizes</name></member>
+      <member refid="structclass__log__simulation__status_1_1meta__struct_1ab213d62143cc24744c64ba335dbaff23" prot="public" virt="non-virtual"><scope>class_log_simulation_status::meta_struct</scope><name>field_names</name></member>
+      <member refid="structclass__log__simulation__status_1_1meta__struct_1a67d573a61864e1a0375b466440a53ea2" prot="public" virt="non-virtual"><scope>class_log_simulation_status::meta_struct</scope><name>field_types</name></member>
+      <member refid="structclass__log__simulation__status_1_1meta__struct_1a8be7b527c6953cb0fa1ba7b8292e08c3" prot="public" virt="non-virtual"><scope>class_log_simulation_status::meta_struct</scope><name>fill_data</name></member>
+      <member refid="structclass__log__simulation__status_1_1meta__struct_1aa6fa9f21149be0558c646c8fd6313636" prot="public" virt="non-virtual"><scope>class_log_simulation_status::meta_struct</scope><name>NFIELDS</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

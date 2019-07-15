@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespaceqm" kind="namespace" language="C++">
+    <compoundname>qm</compoundname>
+    <innernamespace refid="namespaceqm_1_1mpo">qm::mpo</innernamespace>
+    <innernamespace refid="namespaceqm_1_1spin_one">qm::spinOne</innernamespace>
+    <innernamespace refid="namespaceqm_1_1_spin_one">qm::SpinOne</innernamespace>
+    <innernamespace refid="namespaceqm_1_1spin_one_half">qm::spinOneHalf</innernamespace>
+    <innernamespace refid="namespaceqm_1_1time_evolution">qm::timeEvolution</innernamespace>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespaceqm_1aa34a66facd046cb861f0d3e8f242cf48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
+        <definition>std::vector&lt; Eigen::MatrixXcd &gt; qm::gen_manybody_spin</definition>
+        <argsstring>(const Eigen::MatrixXcd &amp;s, int sites)</argsstring>
+        <name>gen_manybody_spin</name>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sites</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="17" bodyend="29"/>
+        <references refid="namespaceqm_1_1_spin_one_1a17e0039df14d4cf49c6d7a75d19a5912" compoundref="nmspc__quantum__mechanics_8cpp" startline="77">qm::SpinOne::Id</references>
+        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="[generated]" line="1" column="1"/>
+  </compounddef>
+</doxygen>

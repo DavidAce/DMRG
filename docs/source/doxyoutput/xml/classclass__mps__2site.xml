@@ -1,0 +1,468 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__mps__2site" kind="class" language="C++" prot="public">
+    <compoundname>class_mps_2site</compoundname>
+    <includes refid="class__mps__2site_8h" local="no">class_mps_2site.h</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using class_mps_2site::Scalar =  std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="52" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classclass__mps__2site_1a1c4436fc3ae05e1ac132a20876caf36f" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long class_mps_2site::spin_dimension</definition>
+        <argsstring></argsstring>
+        <name>spin_dimension</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Local (or physical) spin or qubit dimension, usually denoted <formula id="13">$d$</formula> elsewhere. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps__2site_1a7dcb28b60150622842e5b547b2e42a61" prot="private" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,3&gt; class_mps_2site::tmp3</definition>
+        <argsstring></argsstring>
+        <name>tmp3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Temporary holder for swapping </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps__2site_1a5c9348f91e6a98e3751cb92c42ce40aa" prot="private" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref>, 1 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,1&gt; class_mps_2site::tmp1</definition>
+        <argsstring></argsstring>
+        <name>tmp1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Temporary holder for swapping </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass__mps__2site_1aa0f1e5118a91600e9f75bb67852d61c1" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_mps_2site::swapped</definition>
+        <argsstring></argsstring>
+        <name>swapped</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Tracks the swapped state of A and B positions. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="69" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps__2site_1a37e5a9c9d4623910c058c446a556be8d" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_mps_2site::truncation_error</definition>
+        <argsstring></argsstring>
+        <name>truncation_error</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="70" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" prot="public" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="classclass__vidal__site" kindref="compound">class_vidal_site</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;class_vidal_site&gt; class_mps_2site::MPS_A</definition>
+        <argsstring></argsstring>
+        <name>MPS_A</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" prot="public" static="no" mutable="no">
+        <type>std::unique_ptr&lt; <ref refid="classclass__vidal__site" kindref="compound">class_vidal_site</ref> &gt;</type>
+        <definition>std::unique_ptr&lt;class_vidal_site&gt; class_mps_2site::MPS_B</definition>
+        <argsstring></argsstring>
+        <name>MPS_B</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps__2site_1a6b006218dc82ec4b80a17903a37cc881" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref>, 1 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,1&gt; class_mps_2site::LC</definition>
+        <argsstring></argsstring>
+        <name>LC</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classclass__mps__2site_1abd6f337b818b923a69a846f92c3ce509" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>std::unique_ptr&lt; T &gt;</type>
+        <definition>std::unique_ptr&lt;T&gt; class_mps_2site::copy_unique</definition>
+        <argsstring>(const std::unique_ptr&lt; T &gt; &amp;source)</argsstring>
+        <name>copy_unique</name>
+        <param>
+          <type>const std::unique_ptr&lt; T &gt; &amp;</type>
+          <declname>source</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" bodystart="60" bodyend="63"/>
+        <references refid="classclass__mps__2site_1a969cca96c0ba04b90df9b1aeae0c2187" compoundref="class__mps__2site_8cpp" startline="20" endline="23">class_mps_2site</references>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__mps__2site_1a969cca96c0ba04b90df9b1aeae0c2187" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_mps_2site::class_mps_2site</definition>
+        <argsstring>()</argsstring>
+        <name>class_mps_2site</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="20" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1abf90b0beba90c5e96fb474ba96824cd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_mps_2site::class_mps_2site</definition>
+        <argsstring>(const class_mps_2site &amp;other)</argsstring>
+        <name>class_mps_2site</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="66" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="25" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1a507f41fbcfe8f005618099c14994d551" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool class_mps_2site::isReal</definition>
+        <argsstring>() const</argsstring>
+        <name>isReal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="31" bodyend="31"/>
+        <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">MPS_A</references>
+        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">MPS_B</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1a9d1733cd39da713d91468733108f5ffa" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long class_mps_2site::chiA</definition>
+        <argsstring>() const</argsstring>
+        <name>chiA</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="76" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="32" bodyend="32"/>
+        <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">MPS_A</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1a059201f883f470b57ce70ebf97d33994" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long class_mps_2site::chiB</definition>
+        <argsstring>() const</argsstring>
+        <name>chiB</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="33" bodyend="33"/>
+        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">MPS_B</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1a13f73f78154af08d937d0c21abbc50ac" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long class_mps_2site::chiC</definition>
+        <argsstring>() const</argsstring>
+        <name>chiC</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="34" bodyend="34"/>
+        <references refid="classclass__mps__2site_1a6b006218dc82ec4b80a17903a37cc881" compoundref="class__mps__2site_8h" startline="74">LC</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1a29e06366c2edc97ea5ac4aed0fc9ce4e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long class_mps_2site::spindim</definition>
+        <argsstring>() const</argsstring>
+        <name>spindim</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="35" bodyend="35"/>
+        <references refid="classclass__mps__2site_1a1c4436fc3ae05e1ac132a20876caf36f" compoundref="class__mps__2site_8h" startline="55">spin_dimension</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1a236a159e7c4145df81e3fe69bb5eb460" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; class_mps_2site::A</definition>
+        <argsstring>() const</argsstring>
+        <name>A</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="36" bodyend="36"/>
+        <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">MPS_A</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1a7157e32ca4d70f34425202eb1cef88b9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; class_mps_2site::B</definition>
+        <argsstring>() const</argsstring>
+        <name>B</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="37" bodyend="37"/>
+        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">MPS_B</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref>, 2 &gt;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 2 &gt; class_mps_2site::C</definition>
+        <argsstring>() const</argsstring>
+        <name>C</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="38" bodyend="38"/>
+        <references refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" compoundref="nmspc__tensor__extra_8h" startline="121" endline="123">Textra::asDiagonal</references>
+        <references refid="classclass__mps__2site_1a6b006218dc82ec4b80a17903a37cc881" compoundref="class__mps__2site_8h" startline="74">LC</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1a60f8466f453a5868370eeacefd4be195" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps_2site::set_mps</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;LA, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;GA, const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;LC_, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;GB, const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;LB)</argsstring>
+        <name>set_mps</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+          <declname>LA</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>GA</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+          <declname>LC_</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>GB</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+          <declname>LB</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="84" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="39" bodyend="48"/>
+        <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">MPS_A</references>
+        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">MPS_B</references>
+        <references refid="classclass__mps__2site_1a6b006218dc82ec4b80a17903a37cc881" compoundref="class__mps__2site_8h" startline="74">LC</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1aeb415f0e981cb5707f48627585b2eff5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::DSizes&lt; long, 4 &gt;</type>
+        <definition>Eigen::DSizes&lt; long, 4 &gt; class_mps_2site::dimensions</definition>
+        <argsstring>() const</argsstring>
+        <name>dimensions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="90" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="50" bodyend="50"/>
+        <references refid="classclass__mps__2site_1a1c4436fc3ae05e1ac132a20876caf36f" compoundref="class__mps__2site_8h" startline="55">spin_dimension</references>
+        <references refid="classclass__mps__2site_1a9d1733cd39da713d91468733108f5ffa" compoundref="class__mps__2site_8cpp" startline="32" endline="32">chiA</references>
+        <references refid="classclass__mps__2site_1a059201f883f470b57ce70ebf97d33994" compoundref="class__mps__2site_8cpp" startline="33" endline="33">chiB</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1a383049daa4c1ce54abe3da82c174d30e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps_2site::initialize</definition>
+        <argsstring>(int spin_dim)</argsstring>
+        <name>initialize</name>
+        <param>
+          <type>int</type>
+          <declname>spin_dim</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initializes the MPS </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="92" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="54" bodyend="75"/>
+        <references refid="classclass__mps__2site_1a1c4436fc3ae05e1ac132a20876caf36f" compoundref="class__mps__2site_8h" startline="55">spin_dimension</references>
+        <references refid="classclass__mps__2site_1a6b006218dc82ec4b80a17903a37cc881" compoundref="class__mps__2site_8h" startline="74">LC</references>
+        <references refid="classclass__mps__2site_1a60f8466f453a5868370eeacefd4be195" compoundref="class__mps__2site_8cpp" startline="39" endline="48">set_mps</references>
+        <references refid="classclass__mps__2site_1aa0f1e5118a91600e9f75bb67852d61c1" compoundref="class__mps__2site_8h" startline="69">swapped</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1a14265c98c54e12037449786ac6941e94" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps_2site::swap_AB</definition>
+        <argsstring>()</argsstring>
+        <name>swap_AB</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Swaps the roles of A and B. Used in infinite DMRG. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="78" bodyend="91"/>
+        <references refid="classclass__mps__2site_1aa0f1e5118a91600e9f75bb67852d61c1" compoundref="class__mps__2site_8h" startline="69">swapped</references>
+        <references refid="classclass__mps__2site_1a7dcb28b60150622842e5b547b2e42a61" compoundref="class__mps__2site_8h" startline="56">tmp3</references>
+        <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">MPS_A</references>
+        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">MPS_B</references>
+        <references refid="classclass__mps__2site_1a5c9348f91e6a98e3751cb92c42ce40aa" compoundref="class__mps__2site_8h" startline="57">tmp1</references>
+        <references refid="classclass__mps__2site_1a6b006218dc82ec4b80a17903a37cc881" compoundref="class__mps__2site_8h" startline="74">LC</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__2site_1a246ef4d1f0d577fee574e76cbd4a4ce8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; class_mps_2site::Scalar, 4 &gt; class_mps_2site::get_theta</definition>
+        <argsstring>(Scalar norm=1.0) const</argsstring>
+        <name>get_theta</name>
+        <param>
+          <type><ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref></type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns rank 4 tensor <formula id="35">$\Theta$</formula>.</para><para>Returns a two-site MPS <verbatim>     1--[ LB ]--[ GA ]--[ LA ]-- [ GB ] -- [ LB ]--3
+                  |                 |
+                  0                 2</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="93" bodyend="106"/>
+        <references refid="classclass__mps__2site_1a236a159e7c4145df81e3fe69bb5eb460" compoundref="class__mps__2site_8cpp" startline="36" endline="36">A</references>
+        <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">C</references>
+        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__mps__2site_1a7157e32ca4d70f34425202eb1cef88b9" compoundref="class__mps__2site_8cpp" startline="37" endline="37">B</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites <formula id="10">$n$</formula> and <formula id="34">$n+1$</formula>, respectively. </para>    </briefdescription>
+    <detaileddescription>
+<sect1 id="classclass__mps__2site_1description">
+<title>Description</title>
+<para>During the initial infinite-DMRG stage, sites A and B are swapped in each iteration to mimic the movement between even and odd positions in a translationally invariant chain.</para><sect2 id="classclass__mps__2site_1background">
+<title>Background</title>
+<para>In both the infinite and finite DMRG algorithms, the MPS in this class will be used to construct <formula id="35">$\Theta$</formula>, a two-site MPS tensor of rank 4:</para><para><formula id="36">\[ \Theta = \Lambda^B_{n-1} \Gamma^A_{n} \Lambda^A_{n} \Gamma^B_{n+1} \Lambda^B_{n+1}. \]</formula></para><para><blockquote><para>Note that the first <formula id="37">$ \Lambda^B_{n-1} $</formula> is special:<itemizedlist>
+<listitem><para>During infinite-DMRG <formula id="38">$ \Lambda^B_{n-1} = \Lambda^B_{n+1} $</formula> because we expect the MPS to be symmetric about <formula id="10">$n$</formula>.</para></listitem><listitem><para>During finite-DMRG it is simply the bond directly to the left of <formula id="10">$n$</formula>. </para></listitem></itemizedlist>
+</para></blockquote></para></sect2>
+<sect2 id="classclass__mps__2site_1diagram">
+<title>Diagram</title>
+<para>In diagrammatic tensor notation the two-site MPS is: <verbatim>                              [d]    [d]
+       Theta     =  [chia]__.__|__.__|__.__[chib]
+
+                           LB  GA LA GB LB</verbatim> where the values in [ ] denote the dimension of each leg of the full tensor:<itemizedlist>
+<listitem><para><formula id="13">$d$</formula> = local (or physical) dimension. Default is 2 for spin-1/2, Ising spins or qubits.</para></listitem><listitem><para><formula id="39">$\chi_a$</formula> = Left dimension equivalent to bond dimension of <formula id="40">$\Lambda^B_{n-1}$</formula></para></listitem><listitem><para><formula id="41">$\chi_b$</formula> = Right dimension equivalent to bond dimension of <formula id="42">$\Lambda^B_{n+1}$</formula></para></listitem></itemizedlist>
+</para><para>Tensor index order convention: See the <ulink url="index.html">Home page</ulink>. </para></sect2>
+</sect1>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h" bodystart="49" bodyend="97"/>
+    <listofallmembers>
+      <member refid="classclass__mps__2site_1a236a159e7c4145df81e3fe69bb5eb460" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>A</name></member>
+      <member refid="classclass__mps__2site_1a7157e32ca4d70f34425202eb1cef88b9" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>B</name></member>
+      <member refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>C</name></member>
+      <member refid="classclass__mps__2site_1a9d1733cd39da713d91468733108f5ffa" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>chiA</name></member>
+      <member refid="classclass__mps__2site_1a059201f883f470b57ce70ebf97d33994" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>chiB</name></member>
+      <member refid="classclass__mps__2site_1a13f73f78154af08d937d0c21abbc50ac" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>chiC</name></member>
+      <member refid="classclass__mps__2site_1a969cca96c0ba04b90df9b1aeae0c2187" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>class_mps_2site</name></member>
+      <member refid="classclass__mps__2site_1abf90b0beba90c5e96fb474ba96824cd0" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>class_mps_2site</name></member>
+      <member refid="classclass__mps__2site_1abd6f337b818b923a69a846f92c3ce509" prot="private" virt="non-virtual"><scope>class_mps_2site</scope><name>copy_unique</name></member>
+      <member refid="classclass__mps__2site_1aeb415f0e981cb5707f48627585b2eff5" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>dimensions</name></member>
+      <member refid="classclass__mps__2site_1a246ef4d1f0d577fee574e76cbd4a4ce8" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>get_theta</name></member>
+      <member refid="classclass__mps__2site_1a383049daa4c1ce54abe3da82c174d30e" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>initialize</name></member>
+      <member refid="classclass__mps__2site_1a507f41fbcfe8f005618099c14994d551" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>isReal</name></member>
+      <member refid="classclass__mps__2site_1a6b006218dc82ec4b80a17903a37cc881" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>LC</name></member>
+      <member refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>MPS_A</name></member>
+      <member refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>MPS_B</name></member>
+      <member refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>Scalar</name></member>
+      <member refid="classclass__mps__2site_1a60f8466f453a5868370eeacefd4be195" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>set_mps</name></member>
+      <member refid="classclass__mps__2site_1a1c4436fc3ae05e1ac132a20876caf36f" prot="private" virt="non-virtual"><scope>class_mps_2site</scope><name>spin_dimension</name></member>
+      <member refid="classclass__mps__2site_1a29e06366c2edc97ea5ac4aed0fc9ce4e" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>spindim</name></member>
+      <member refid="classclass__mps__2site_1a14265c98c54e12037449786ac6941e94" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>swap_AB</name></member>
+      <member refid="classclass__mps__2site_1aa0f1e5118a91600e9f75bb67852d61c1" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>swapped</name></member>
+      <member refid="classclass__mps__2site_1a5c9348f91e6a98e3751cb92c42ce40aa" prot="private" virt="non-virtual"><scope>class_mps_2site</scope><name>tmp1</name></member>
+      <member refid="classclass__mps__2site_1a7dcb28b60150622842e5b547b2e42a61" prot="private" virt="non-virtual"><scope>class_mps_2site</scope><name>tmp3</name></member>
+      <member refid="classclass__mps__2site_1a37e5a9c9d4623910c058c446a556be8d" prot="public" virt="non-virtual"><scope>class_mps_2site</scope><name>truncation_error</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__log__simulation__status" kind="class" language="C++" prot="public">
+    <compoundname>class_log_simulation_status</compoundname>
+    <includes refid="log__types_8h" local="no">log_types.h</includes>
+    <innerclass refid="structclass__log__simulation__status_1_1meta__struct" prot="private">class_log_simulation_status::meta_struct</innerclass>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass__log__simulation__status_1ac830f75771c76df73acb46987d28343d" prot="public" static="no" mutable="no">
+        <type><ref refid="structclass__log__simulation__status_1_1meta__struct" kindref="compound">meta_struct</ref></type>
+        <definition>meta_struct class_log_simulation_status::meta</definition>
+        <argsstring></argsstring>
+        <name>meta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="452" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="452" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__log__simulation__status_1ab66f9dbfb953a29a445093668187cc83" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structstatus__data" kindref="compound">status_data</ref> &gt;</type>
+        <definition>std::vector&lt;status_data&gt; class_log_simulation_status::buffer</definition>
+        <argsstring></argsstring>
+        <name>buffer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="453" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="453" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__log__simulation__status_1ae79193b82292caf9d30683a2400f33e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_log_simulation_status::class_log_simulation_status</definition>
+        <argsstring>()=default</argsstring>
+        <name>class_log_simulation_status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="451" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="97">
+        <label>class_log_simulation_status::meta_struct</label>
+        <link refid="structclass__log__simulation__status_1_1meta__struct"/>
+      </node>
+      <node id="96">
+        <label>class_log_simulation_status</label>
+        <link refid="classclass__log__simulation__status"/>
+        <childnode refid="97" relation="usage">
+          <edgelabel>meta</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="291" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="291" bodyend="454"/>
+    <listofallmembers>
+      <member refid="classclass__log__simulation__status_1ab66f9dbfb953a29a445093668187cc83" prot="public" virt="non-virtual"><scope>class_log_simulation_status</scope><name>buffer</name></member>
+      <member refid="classclass__log__simulation__status_1ae79193b82292caf9d30683a2400f33e6" prot="public" virt="non-virtual"><scope>class_log_simulation_status</scope><name>class_log_simulation_status</name></member>
+      <member refid="classclass__log__simulation__status_1ac830f75771c76df73acb46987d28343d" prot="public" virt="non-virtual"><scope>class_log_simulation_status</scope><name>meta</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

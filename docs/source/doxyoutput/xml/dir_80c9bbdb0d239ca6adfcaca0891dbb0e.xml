@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_80c9bbdb0d239ca6adfcaca0891dbb0e" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io</compoundname>
+    <innerfile refid="class__hdf5__log__buffer_8cpp">class_hdf5_log_buffer.cpp</innerfile>
+    <innerfile refid="class__hdf5__log__buffer_8h">class_hdf5_log_buffer.h</innerfile>
+    <innerfile refid="class__settings__reader_8cpp">class_settings_reader.cpp</innerfile>
+    <innerfile refid="class__settings__reader_8h">class_settings_reader.h</innerfile>
+    <innerfile refid="log__types_8h">log_types.h</innerfile>
+    <innerfile refid="nmspc__logger_8h">nmspc_logger.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/"/>
+  </compounddef>
+</doxygen>

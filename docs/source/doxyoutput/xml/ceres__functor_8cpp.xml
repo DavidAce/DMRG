@@ -1,0 +1,391 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="ceres__functor_8cpp" kind="file" language="C++">
+    <compoundname>ceres_functor.cpp</compoundname>
+    <includes refid="class__tic__toc_8h" local="no">general/class_tic_toc.h</includes>
+    <includes refid="class__simulation__status_8h" local="no">simulation/class_simulation_status.h</includes>
+    <includes refid="opt_8h" local="no">state/tools/finite/opt.h</includes>
+    <includes refid="class__finite__state_8h" local="no">state/class_finite_state.h</includes>
+    <includes local="no">ceres/ceres.h</includes>
+    <incdepgraph>
+      <node id="2718">
+        <label>iomanip</label>
+      </node>
+      <node id="2717">
+        <label>iterator</label>
+      </node>
+      <node id="2727">
+        <label>glog/logging.h</label>
+      </node>
+      <node id="2725">
+        <label>LBFGS.h</label>
+      </node>
+      <node id="2726">
+        <label>ceres/ceres.h</label>
+      </node>
+      <node id="2719">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="2720" relation="include">
+        </childnode>
+        <childnode refid="2714" relation="include">
+        </childnode>
+        <childnode refid="2716" relation="include">
+        </childnode>
+      </node>
+      <node id="2714">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="2706">
+        <label>string</label>
+      </node>
+      <node id="2710">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="2701">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="2702" relation="include">
+        </childnode>
+        <childnode refid="2703" relation="include">
+        </childnode>
+      </node>
+      <node id="2721">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="2722" relation="include">
+        </childnode>
+        <childnode refid="2723" relation="include">
+        </childnode>
+        <childnode refid="2724" relation="include">
+        </childnode>
+      </node>
+      <node id="2704">
+        <label>simulation/class_simulation_status.h</label>
+        <link refid="class__simulation__status_8h"/>
+        <childnode refid="2705" relation="include">
+        </childnode>
+        <childnode refid="2706" relation="include">
+        </childnode>
+        <childnode refid="2703" relation="include">
+        </childnode>
+        <childnode refid="2707" relation="include">
+        </childnode>
+        <childnode refid="2708" relation="include">
+        </childnode>
+        <childnode refid="2709" relation="include">
+        </childnode>
+        <childnode refid="2710" relation="include">
+        </childnode>
+      </node>
+      <node id="2720">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="2716">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="2731">
+        <label>state/class_environment.h</label>
+        <link refid="class__environment_8h"/>
+        <childnode refid="2705" relation="include">
+        </childnode>
+        <childnode refid="2713" relation="include">
+        </childnode>
+        <childnode refid="2732" relation="include">
+        </childnode>
+      </node>
+      <node id="2734">
+        <label>model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="2705" relation="include">
+        </childnode>
+        <childnode refid="2716" relation="include">
+        </childnode>
+        <childnode refid="2721" relation="include">
+        </childnode>
+      </node>
+      <node id="2722">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="2715">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="2700">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/ceres_functor.cpp</label>
+        <link refid="ceres__functor_8cpp"/>
+        <childnode refid="2701" relation="include">
+        </childnode>
+        <childnode refid="2704" relation="include">
+        </childnode>
+        <childnode refid="2711" relation="include">
+        </childnode>
+        <childnode refid="2728" relation="include">
+        </childnode>
+        <childnode refid="2726" relation="include">
+        </childnode>
+      </node>
+      <node id="2728">
+        <label>state/class_finite_state.h</label>
+        <link refid="class__finite__state_8h"/>
+        <childnode refid="2705" relation="include">
+        </childnode>
+        <childnode refid="2729" relation="include">
+        </childnode>
+        <childnode refid="2730" relation="include">
+        </childnode>
+        <childnode refid="2713" relation="include">
+        </childnode>
+        <childnode refid="2731" relation="include">
+        </childnode>
+        <childnode refid="2733" relation="include">
+        </childnode>
+        <childnode refid="2734" relation="include">
+        </childnode>
+      </node>
+      <node id="2730">
+        <label>optional</label>
+      </node>
+      <node id="2707">
+        <label>vector</label>
+      </node>
+      <node id="2732">
+        <label>spdlog/fmt/fmt.h</label>
+      </node>
+      <node id="2723">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="2708">
+        <label>array</label>
+      </node>
+      <node id="2709">
+        <label>hdf5.h</label>
+      </node>
+      <node id="2703">
+        <label>iostream</label>
+      </node>
+      <node id="2702">
+        <label>chrono</label>
+      </node>
+      <node id="2711">
+        <label>state/tools/finite/opt.h</label>
+        <link refid="opt_8h"/>
+        <childnode refid="2712" relation="include">
+        </childnode>
+        <childnode refid="2701" relation="include">
+        </childnode>
+        <childnode refid="2718" relation="include">
+        </childnode>
+        <childnode refid="2725" relation="include">
+        </childnode>
+        <childnode refid="2726" relation="include">
+        </childnode>
+        <childnode refid="2727" relation="include">
+        </childnode>
+      </node>
+      <node id="2729">
+        <label>complex</label>
+      </node>
+      <node id="2713">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="2714" relation="include">
+        </childnode>
+        <childnode refid="2715" relation="include">
+        </childnode>
+        <childnode refid="2716" relation="include">
+        </childnode>
+        <childnode refid="2717" relation="include">
+        </childnode>
+        <childnode refid="2703" relation="include">
+        </childnode>
+        <childnode refid="2718" relation="include">
+        </childnode>
+        <childnode refid="2719" relation="include">
+        </childnode>
+      </node>
+      <node id="2712">
+        <label>state/tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2705" relation="include">
+        </childnode>
+        <childnode refid="2706" relation="include">
+        </childnode>
+        <childnode refid="2713" relation="include">
+        </childnode>
+        <childnode refid="2721" relation="include">
+        </childnode>
+        <childnode refid="2701" relation="include">
+        </childnode>
+      </node>
+      <node id="2724">
+        <label>spdlog/sinks/stdout_sinks.h</label>
+      </node>
+      <node id="2705">
+        <label>memory</label>
+      </node>
+      <node id="2733">
+        <label>state/class_vidal_site.h</label>
+        <link refid="class__vidal__site_8h"/>
+        <childnode refid="2713" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-07-09.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__tic__toc_8h" kindref="compound">general/class_tic_toc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__simulation__status_8h" kindref="compound">simulation/class_simulation_status.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt_8h" kindref="compound">state/tools/finite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__finite__state_8h" kindref="compound">state/class_finite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ceres/ceres.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacetools_1_1finite_1_1opt_1_1internals" kindref="compound">tools::finite::opt::internals</ref>;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a4caaae84c5c2dbb4c1662a8f754533b5" refkind="member"><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a4caaae84c5c2dbb4c1662a8f754533b5" kindref="member">ceres_functor::ceres_functor</ref>(</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;<sp/>sim_status)</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>multiComponents(state)</highlight></codeline>
+<codeline lineno="17"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a9e8c07dd960d644a8ca197fbbfb0a2bc" kindref="member">reset_timers</ref>();</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a1907174058278e3f0bf83d4ae6e546e0" kindref="member">length</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" kindref="member">get_length</ref>();</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//All<sp/>energies<sp/>in<sp/>sim_status<sp/>are<sp/>per<sp/>site!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a8133b199b3cf6e68197bdeac4fe80f74" kindref="member">energy_target</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1aea612cb23f91a8022ef470fd345a1d28" kindref="member">energy_target</ref>;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1ada5318365163b56fd685c44c89d1095c" kindref="member">energy_max</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a19fb251d3174bdfae7034104d9af50b2" kindref="member">energy_max</ref>;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a886250beea8ebdf9e49ae658c6cffd1d" kindref="member">energy_min</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a2ec9feac7517c68c1a47f7271330c7f0" kindref="member">energy_min</ref>;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a48c7ff8c533762668203c516d500bf8c" kindref="member">energy_lower_bound</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a88e3d7f6106d61e25e4e7f10cbcac62b" kindref="member">energy_lbound</ref>;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1acd7a2b5828965d348d7336b525a13298" kindref="member">energy_upper_bound</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1af9acc1683b59d2fe405745c31550653b" kindref="member">energy_ubound</ref>;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a8fe222b26fd60c5ad4c9e73b76bf0329" kindref="member">energy_target_dens</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a2c524bc2f5bfbf998be901287c1a0f19" kindref="member">energy_dens_target</ref>;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a95ecd3675e60b3329e366824a551b686" kindref="member">energy_window</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1ae5c85bbfcf2c1a593b4201bd1c11d36b" kindref="member">energy_dens_window</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a4d82cc66bfbe95934014a8ae5b1a7838" kindref="member">iteration</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a25cfe20804dd9b86474b4ceca2e0ad68" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a25cfe20804dd9b86474b4ceca2e0ad68" kindref="member">ceres_functor::get_variance</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a059be6d56c6b691620d35077e2b743c0" kindref="member">variance</ref>;}</highlight></codeline>
+<codeline lineno="33" refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a33afb0e88cb24772387d9c5b57c197d2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a33afb0e88cb24772387d9c5b57c197d2" kindref="member">ceres_functor::get_energy</ref><sp/><sp/>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a85967d834ab4eea5c4457706afa2baa0" kindref="member">energy</ref><sp/><sp/>;}</highlight></codeline>
+<codeline lineno="34" refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1ad261ccc4f3bf9e58cbdbbb990d26381e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1ad261ccc4f3bf9e58cbdbbb990d26381e" kindref="member">ceres_functor::get_count</ref><sp/><sp/><sp/>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a4e21c33ee21b25389f21b7ad3a8dfe3a" kindref="member">counter</ref>;}</highlight></codeline>
+<codeline lineno="35" refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a5254301aa44d61982e268f521d63e285" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a5254301aa44d61982e268f521d63e285" kindref="member">ceres_functor::get_norm</ref><sp/><sp/><sp/><sp/>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a80a4c0eae1727f8e2f8e6aa9a5fb6d25" kindref="member">norm</ref>;}</highlight></codeline>
+<codeline lineno="36" refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1ac82632799229d9bdf36d40371ce640db" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1ac82632799229d9bdf36d40371ce640db" kindref="member">ceres_functor::NumParameters</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1adb03a3c7205a5d8930ec08b58040d974" kindref="member">multiComponents</ref>.num_parameters;}</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a208ec9ef456810f20ea686f5c6b38a50" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a208ec9ef456810f20ea686f5c6b38a50" kindref="member">tools::finite::opt::internals::ceres_functor::Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>v_double_double,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>fx,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>grad_double_double)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ae856cf10304d5ce8449925dd9872e077" kindref="member">t_op</ref>-&gt;tic();</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a98df5dc33fc3a9063a2f7b392cbee9da" kindref="member">Scalar</ref><sp/>vH2v,vHv;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a98df5dc33fc3a9063a2f7b392cbee9da" kindref="member">Scalar</ref><sp/>ene,var;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>vv,log10var;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>energy_func,<sp/>energy_grad;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>norm_func,norm_grad;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a24bf9fbff21745556b96d21a4afe6633" kindref="member">VectorType</ref><sp/>Hv,<sp/>H2v;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>vecSize<sp/>=<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1ac82632799229d9bdf36d40371ce640db" kindref="member">NumParameters</ref>();</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>constexpr<sp/>(std::is_same&lt;Scalar,std::complex&lt;double&gt;&gt;::value){vecSize<sp/>=<sp/>v_double_double.size()/2;}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>v<sp/><sp/><sp/><sp/>=<sp/>Eigen::Map&lt;const<sp/>VectorType&gt;<sp/>(</highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="keyword">const<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a98df5dc33fc3a9063a2f7b392cbee9da" kindref="member">Scalar</ref>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(v_double_double)<sp/><sp/><sp/>,<sp/>vecSize);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>grad<sp/>=<sp/>Eigen::Map&lt;<sp/><sp/><sp/><sp/><sp/><sp/>VectorType&gt;<sp/>(</highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a98df5dc33fc3a9063a2f7b392cbee9da" kindref="member">Scalar</ref>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(grad_double_double),<sp/>vecSize);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>lambdas<sp/>=<sp/><sp/><sp/><sp/>Eigen::VectorXd::Ones(1)<sp/>;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>vv<sp/><sp/><sp/><sp/>=<sp/>v.squaredNorm();</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a80a4c0eae1727f8e2f8e6aa9a5fb6d25" kindref="member">norm</ref><sp/><sp/>=<sp/>std::sqrt(vv);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#pragma<sp/>omp<sp/>parallel</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#pragma<sp/>omp<sp/>sections</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#pragma<sp/>omp<sp/>section</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>std::tie(H2v,<sp/>vH2v)<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a89cc203be6152c9aaca3a5fc5f1a2a8d" kindref="member">get_H2v_vH2v</ref>(v,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1adb03a3c7205a5d8930ec08b58040d974" kindref="member">multiComponents</ref>);<sp/>}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#pragma<sp/>omp<sp/>section</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>std::tie(Hv,<sp/>vHv)<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a60312ffa8738bc2d1f9da4a2aafb2172" kindref="member">get_Hv_vHv</ref>(v,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1adb03a3c7205a5d8930ec08b58040d974" kindref="member">multiComponents</ref>);<sp/>}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>ene<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>vHv/vv;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>var<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>vH2v/vv<sp/>-<sp/>ene*ene;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>double<sp/>loss_of_precision<sp/>=<sp/>std::log10(std::abs(ene*ene));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>double<sp/>expected_error<sp/><sp/><sp/><sp/>=<sp/>std::pow(10,<sp/>-(13-loss_of_precision));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>(std::imag(ene)<sp/><sp/><sp/><sp/><sp/><sp/>&gt;<sp/>expected_error)<sp/>tools::log-&gt;warn(&quot;Energy<sp/>has<sp/>imaginary<sp/>component<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>{:.16f}<sp/>+<sp/>i<sp/>{:.16f}&quot;<sp/>,<sp/>std::real(ene)<sp/><sp/><sp/><sp/>,<sp/>std::imag(ene));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>(std::imag(vH2v/vv)<sp/><sp/>&gt;<sp/>expected_error)<sp/>tools::log-&gt;warn(&quot;Hamiltonian<sp/>squared<sp/>has<sp/>imaginary<sp/>component<sp/>:<sp/>{:.16f}<sp/>+<sp/>i<sp/>{:.16f}&quot;<sp/>,<sp/>std::real(vH2v/vv),<sp/>std::imag(vH2v/vv));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>(std::imag(var)<sp/><sp/><sp/><sp/><sp/><sp/>&gt;<sp/>expected_error)<sp/>tools::log-&gt;warn(&quot;Variance<sp/>has<sp/>imaginary<sp/>component<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>{:.16f}<sp/>+<sp/>i<sp/>{:.16f}&quot;<sp/>,<sp/>std::real(var)<sp/><sp/><sp/><sp/>,<sp/>std::imag(var));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::real(var)<sp/><sp/><sp/><sp/><sp/><sp/>&lt;<sp/>0.0<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)<sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;Counter<sp/>=<sp/>{}.<sp/>Variance<sp/>is<sp/>negative:<sp/><sp/>{:.16f}<sp/>+<sp/>i<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a4e21c33ee21b25389f21b7ad3a8dfe3a" kindref="member">counter</ref>,<sp/>std::real(var)<sp/><sp/><sp/><sp/>,<sp/>std::imag(var));</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a85967d834ab4eea5c4457706afa2baa0" kindref="member">energy</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::real(ene);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a0e14746b30939c3cdff707b380dadcae" kindref="member">energy_dens</ref><sp/><sp/><sp/><sp/>=<sp/>(<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a85967d834ab4eea5c4457706afa2baa0" kindref="member">energy</ref>/<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a1907174058278e3f0bf83d4ae6e546e0" kindref="member">length</ref><sp/>-<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a886250beea8ebdf9e49ae658c6cffd1d" kindref="member">energy_min</ref><sp/>)<sp/>/<sp/>(<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1ada5318365163b56fd685c44c89d1095c" kindref="member">energy_max</ref><sp/>-<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a886250beea8ebdf9e49ae658c6cffd1d" kindref="member">energy_min</ref>);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a75ef766761b75647a861d0424310176e" kindref="member">energy_offset</ref><sp/><sp/>=<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a0e14746b30939c3cdff707b380dadcae" kindref="member">energy_dens</ref><sp/>-<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a8fe222b26fd60c5ad4c9e73b76bf0329" kindref="member">energy_target_dens</ref>;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>energy_func<sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1abbfb87cc2b3227f29ccc1fb097672dba" kindref="member">windowed_func_pow</ref>(<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a75ef766761b75647a861d0424310176e" kindref="member">energy_offset</ref>,<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a95ecd3675e60b3329e366824a551b686" kindref="member">energy_window</ref>);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>energy_grad<sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ab89afabb25e65e320b0f548ed17bed3e" kindref="member">windowed_grad_pow</ref>(<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a75ef766761b75647a861d0424310176e" kindref="member">energy_offset</ref>,<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a95ecd3675e60b3329e366824a551b686" kindref="member">energy_window</ref>);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a059be6d56c6b691620d35077e2b743c0" kindref="member">variance</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::abs(var);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a059be6d56c6b691620d35077e2b743c0" kindref="member">variance</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a059be6d56c6b691620d35077e2b743c0" kindref="member">variance</ref><sp/>&lt;<sp/>1e-15<sp/><sp/>?<sp/>1e-15<sp/>:<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a059be6d56c6b691620d35077e2b743c0" kindref="member">variance</ref>;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1ab4871f50d64bd2a2c99ddb3041b774e3" kindref="member">norm_offset</ref><sp/><sp/><sp/><sp/>=<sp/>std::abs(vv)<sp/>-<sp/>1.0<sp/>;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>norm_func<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1abbfb87cc2b3227f29ccc1fb097672dba" kindref="member">windowed_func_pow</ref>(<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1ab4871f50d64bd2a2c99ddb3041b774e3" kindref="member">norm_offset</ref>,0.0);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>norm_grad<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ab89afabb25e65e320b0f548ed17bed3e" kindref="member">windowed_grad_pow</ref>(<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1ab4871f50d64bd2a2c99ddb3041b774e3" kindref="member">norm_offset</ref>,0.0);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>log10var<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::log10(<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a059be6d56c6b691620d35077e2b743c0" kindref="member">variance</ref>);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>fx[0]<sp/>=<sp/>log10var</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>energy_func<sp/>*<sp/>lambdas(0)</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>norm_func;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>vv_1<sp/><sp/>=<sp/>std::pow(vv,-1);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>var_1<sp/>=<sp/>1.0/<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a059be6d56c6b691620d35077e2b743c0" kindref="member">variance</ref>/<ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">std::log</ref>(10);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(grad_double_double){</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad<sp/>=<sp/>var_1<sp/>*<sp/>vv_1<sp/>*<sp/>(H2v<sp/><sp/>-<sp/>v<sp/><sp/>*<sp/>vH2v<sp/>-<sp/>2.0<sp/>*<sp/>ene<sp/>*<sp/>(Hv<sp/>-<sp/>v<sp/>*<sp/>ene))</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>lambdas(0)<sp/>*<sp/>energy_grad<sp/>*<sp/>vv_1<sp/>*<sp/>(Hv<sp/>-<sp/>v<sp/>*<sp/>ene)</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/><sp/>norm_grad<sp/>*<sp/>v;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad(grad.size()-1)<sp/><sp/>=<sp/>energy_func;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>constexpr<sp/>(std::is_same&lt;Scalar,std::complex&lt;double&gt;&gt;::value){grad*=2;<sp/>vecSize<sp/>=<sp/>grad.size()*2;}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>grad_double_double<sp/><sp/>=<sp/>Eigen::Map&lt;Eigen::VectorXd&gt;<sp/>(reinterpret_cast&lt;double*&gt;<sp/>(grad.data()),<sp/>vecSize);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(12)<sp/>&lt;&lt;<sp/>std::fixed</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;<sp/>Variance:<sp/>&quot;<sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/><sp/><sp/>&lt;&lt;<sp/>log10var</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;<sp/>Energy<sp/>:<sp/>&quot;<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/><sp/><sp/>&lt;&lt;<sp/>energy</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;<sp/>Energy<sp/>t<sp/>:<sp/>&quot;<sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/><sp/><sp/>&lt;&lt;<sp/>energy_target</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;<sp/>Energy<sp/>w<sp/>:<sp/>&quot;<sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/><sp/><sp/>&lt;&lt;<sp/>energy_density_window</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;<sp/>Energy<sp/>d<sp/>:<sp/>&quot;<sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/><sp/><sp/>&lt;&lt;<sp/>energy_dens</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;<sp/>Energy<sp/>td<sp/>:<sp/>&quot;<sp/>&lt;&lt;<sp/>std::setw(18)<sp/><sp/><sp/>&lt;&lt;<sp/>energy_target_dens</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;<sp/>Energy<sp/>o<sp/>:<sp/>&quot;<sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/><sp/><sp/>&lt;&lt;<sp/>energy_offset</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;<sp/>norm<sp/>o<sp/>:<sp/>&quot;<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/><sp/><sp/>&lt;&lt;<sp/>norm_offset</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;<sp/>lambda<sp/>0:<sp/>&quot;<sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/><sp/><sp/>&lt;&lt;<sp/>lambdas(0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;<sp/>fx<sp/>:<sp/>&quot;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/><sp/><sp/>&lt;&lt;<sp/>fx</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::isnan(log10var)<sp/>or<sp/>std::isinf(log10var)){</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;log10<sp/>variance<sp/>is<sp/>invalid&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;vv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(vv)<sp/><sp/>,<sp/>std::imag(vv));</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;vH2v<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(vH2v)<sp/>,std::imag(vH2v)<sp/>);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;vHv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(vHv)<sp/><sp/>,std::imag(vHv)<sp/><sp/>);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;var<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(var)<sp/><sp/>,std::imag(var));</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;ene<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(ene)<sp/><sp/>,std::imag(ene));</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;log10(var/L)<sp/><sp/><sp/><sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::log10(<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a059be6d56c6b691620d35077e2b743c0" kindref="member">variance</ref>/<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a1907174058278e3f0bf83d4ae6e546e0" kindref="member">length</ref>)<sp/>);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;energy<sp/>offset<sp/><sp/><sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a75ef766761b75647a861d0424310176e" kindref="member">energy_offset</ref><sp/>);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;norm<sp/><sp/><sp/>offset<sp/><sp/><sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1ab4871f50d64bd2a2c99ddb3041b774e3" kindref="member">norm_offset</ref><sp/>);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;lambda<sp/>0<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>lambdas(0));</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Direct<sp/>functor<sp/>failed<sp/>at<sp/>counter<sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(<ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a4e21c33ee21b25389f21b7ad3a8dfe3a" kindref="member">counter</ref>)<sp/>);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor_1a4e21c33ee21b25389f21b7ad3a8dfe3a" kindref="member">counter</ref>++;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ae856cf10304d5ce8449925dd9872e077" kindref="member">t_op</ref>-&gt;toc();</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/ceres_functor.cpp"/>
+  </compounddef>
+</doxygen>

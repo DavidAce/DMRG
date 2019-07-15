@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__selfdual__tf__rf__ising__h5table" kind="class" language="C++" prot="public">
+    <compoundname>class_selfdual_tf_rf_ising_h5table</compoundname>
+    <includes refid="class__hamiltonian__h5tables_8h" local="no">class_hamiltonian_h5tables.h</includes>
+    <innerclass refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct" prot="private">class_selfdual_tf_rf_ising_h5table::data_struct</innerclass>
+    <innerclass refid="structclass__selfdual__tf__rf__ising__h5table_1_1meta__struct" prot="private">class_selfdual_tf_rf_ising_h5table::meta_struct</innerclass>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__selfdual__tf__rf__ising__h5table_1ae1db2efca2c7d8d9781c0c8c1520a607" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_selfdual_tf_rf_ising_h5table::class_selfdual_tf_rf_ising_h5table</definition>
+        <argsstring>()=default</argsstring>
+        <name>class_selfdual_tf_rf_ising_h5table</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="84" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="17" bodyend="85"/>
+    <listofallmembers>
+      <member refid="classclass__selfdual__tf__rf__ising__h5table_1ae1db2efca2c7d8d9781c0c8c1520a607" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table</scope><name>class_selfdual_tf_rf_ising_h5table</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

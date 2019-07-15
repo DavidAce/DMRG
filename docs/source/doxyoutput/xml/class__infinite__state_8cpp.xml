@@ -1,0 +1,766 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__infinite__state_8cpp" kind="file" language="C++">
+    <compoundname>class_infinite_state.cpp</compoundname>
+    <includes refid="class__infinite__state_8h" local="no">state/class_infinite_state.h</includes>
+    <includes refid="class__environment_8h" local="no">state/class_environment.h</includes>
+    <includes refid="class__vidal__site_8h" local="no">state/class_vidal_site.h</includes>
+    <includes refid="class__mps__2site_8h" local="no">state/class_mps_2site.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">state/tools/nmspc_tools.h</includes>
+    <includes local="no">iomanip</includes>
+    <includes refid="class__eigsolver_8h" local="no">math/class_eigsolver.h</includes>
+    <includes refid="matrix__product__hamiltonian_8h" local="no">math/arpack_extra/matrix_product_hamiltonian.h</includes>
+    <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
+    <includes refid="class__model__factory_8h" local="no">model/class_model_factory.h</includes>
+    <incdepgraph>
+      <node id="1951">
+        <label>Eigen/SparseLU</label>
+      </node>
+      <node id="1922">
+        <label>iomanip</label>
+      </node>
+      <node id="1949">
+        <label>Eigen/LU</label>
+      </node>
+      <node id="1920">
+        <label>iterator</label>
+      </node>
+      <node id="1912">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</label>
+        <link refid="class__infinite__state_8cpp"/>
+        <childnode refid="1913" relation="include">
+        </childnode>
+        <childnode refid="1939" relation="include">
+        </childnode>
+        <childnode refid="1941" relation="include">
+        </childnode>
+        <childnode refid="1942" relation="include">
+        </childnode>
+        <childnode refid="1943" relation="include">
+        </childnode>
+        <childnode refid="1922" relation="include">
+        </childnode>
+        <childnode refid="1944" relation="include">
+        </childnode>
+        <childnode refid="1952" relation="include">
+        </childnode>
+        <childnode refid="1934" relation="include">
+        </childnode>
+        <childnode refid="1953" relation="include">
+        </childnode>
+      </node>
+      <node id="1923">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="1924" relation="include">
+        </childnode>
+        <childnode refid="1917" relation="include">
+        </childnode>
+        <childnode refid="1919" relation="include">
+        </childnode>
+      </node>
+      <node id="1917">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="1935">
+        <label>string</label>
+      </node>
+      <node id="1957">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="1925">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="1926" relation="include">
+        </childnode>
+        <childnode refid="1921" relation="include">
+        </childnode>
+      </node>
+      <node id="1955">
+        <label>class_hamiltonian_h5tables.h</label>
+        <link refid="class__hamiltonian__h5tables_8h"/>
+        <childnode refid="1931" relation="include">
+        </childnode>
+        <childnode refid="1928" relation="include">
+        </childnode>
+        <childnode refid="1956" relation="include">
+        </childnode>
+        <childnode refid="1957" relation="include">
+        </childnode>
+      </node>
+      <node id="1937">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="1933" relation="include">
+        </childnode>
+        <childnode refid="1932" relation="include">
+        </childnode>
+        <childnode refid="1938" relation="include">
+        </childnode>
+      </node>
+      <node id="1929">
+        <label>map</label>
+      </node>
+      <node id="1924">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="1936">
+        <label>unordered_set</label>
+      </node>
+      <node id="1919">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="1953">
+        <label>model/class_model_factory.h</label>
+        <link refid="class__model__factory_8h"/>
+        <childnode refid="1921" relation="include">
+        </childnode>
+        <childnode refid="1914" relation="include">
+        </childnode>
+        <childnode refid="1954" relation="include">
+        </childnode>
+        <childnode refid="1955" relation="include">
+        </childnode>
+      </node>
+      <node id="1945">
+        <label>math/arpack_extra/arpackpp_solver.h</label>
+        <link refid="arpackpp__solver_8h"/>
+        <childnode refid="1931" relation="include">
+        </childnode>
+        <childnode refid="1925" relation="include">
+        </childnode>
+        <childnode refid="1927" relation="include">
+        </childnode>
+        <childnode refid="1930" relation="include">
+        </childnode>
+      </node>
+      <node id="1947">
+        <label>matrix_product_dense.h</label>
+        <link refid="matrix__product__dense_8h"/>
+        <childnode refid="1927" relation="include">
+        </childnode>
+        <childnode refid="1925" relation="include">
+        </childnode>
+        <childnode refid="1921" relation="include">
+        </childnode>
+        <childnode refid="1922" relation="include">
+        </childnode>
+        <childnode refid="1917" relation="include">
+        </childnode>
+        <childnode refid="1948" relation="include">
+        </childnode>
+        <childnode refid="1949" relation="include">
+        </childnode>
+      </node>
+      <node id="1939">
+        <label>state/class_environment.h</label>
+        <link refid="class__environment_8h"/>
+        <childnode refid="1914" relation="include">
+        </childnode>
+        <childnode refid="1916" relation="include">
+        </childnode>
+        <childnode refid="1940" relation="include">
+        </childnode>
+      </node>
+      <node id="1952">
+        <label>math/arpack_extra/matrix_product_hamiltonian.h</label>
+        <link refid="matrix__product__hamiltonian_8h"/>
+        <childnode refid="1925" relation="include">
+        </childnode>
+        <childnode refid="1928" relation="include">
+        </childnode>
+        <childnode refid="1931" relation="include">
+        </childnode>
+        <childnode refid="1927" relation="include">
+        </childnode>
+        <childnode refid="1916" relation="include">
+        </childnode>
+      </node>
+      <node id="1954">
+        <label>class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="1914" relation="include">
+        </childnode>
+        <childnode refid="1919" relation="include">
+        </childnode>
+        <childnode refid="1937" relation="include">
+        </childnode>
+      </node>
+      <node id="1933">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1918">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1915">
+        <label>optional</label>
+      </node>
+      <node id="1931">
+        <label>vector</label>
+      </node>
+      <node id="1940">
+        <label>spdlog/fmt/fmt.h</label>
+      </node>
+      <node id="1948">
+        <label>complex.h</label>
+      </node>
+      <node id="1932">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1928">
+        <label>array</label>
+      </node>
+      <node id="1950">
+        <label>matrix_product_sparse.h</label>
+        <link refid="matrix__product__sparse_8h"/>
+        <childnode refid="1927" relation="include">
+        </childnode>
+        <childnode refid="1925" relation="include">
+        </childnode>
+        <childnode refid="1921" relation="include">
+        </childnode>
+        <childnode refid="1922" relation="include">
+        </childnode>
+        <childnode refid="1917" relation="include">
+        </childnode>
+        <childnode refid="1918" relation="include">
+        </childnode>
+        <childnode refid="1951" relation="include">
+        </childnode>
+      </node>
+      <node id="1942">
+        <label>state/class_mps_2site.h</label>
+        <link refid="class__mps__2site_8h"/>
+        <childnode refid="1914" relation="include">
+        </childnode>
+        <childnode refid="1916" relation="include">
+        </childnode>
+      </node>
+      <node id="1956">
+        <label>hdf5.h</label>
+      </node>
+      <node id="1946">
+        <label>math/arpack_extra/matrix_recast.h</label>
+        <link refid="matrix__recast_8h"/>
+        <childnode refid="1930" relation="include">
+        </childnode>
+        <childnode refid="1931" relation="include">
+        </childnode>
+        <childnode refid="1927" relation="include">
+        </childnode>
+        <childnode refid="1947" relation="include">
+        </childnode>
+        <childnode refid="1950" relation="include">
+        </childnode>
+      </node>
+      <node id="1921">
+        <label>iostream</label>
+      </node>
+      <node id="1927">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1921" relation="include">
+        </childnode>
+        <childnode refid="1928" relation="include">
+        </childnode>
+        <childnode refid="1929" relation="include">
+        </childnode>
+        <childnode refid="1930" relation="include">
+        </childnode>
+        <childnode refid="1931" relation="include">
+        </childnode>
+        <childnode refid="1932" relation="include">
+        </childnode>
+        <childnode refid="1933" relation="include">
+        </childnode>
+      </node>
+      <node id="1926">
+        <label>chrono</label>
+      </node>
+      <node id="1944">
+        <label>math/class_eigsolver.h</label>
+        <link refid="class__eigsolver_8h"/>
+        <childnode refid="1945" relation="include">
+        </childnode>
+        <childnode refid="1946" relation="include">
+        </childnode>
+        <childnode refid="1927" relation="include">
+        </childnode>
+      </node>
+      <node id="1930">
+        <label>complex</label>
+      </node>
+      <node id="1913">
+        <label>state/class_infinite_state.h</label>
+        <link refid="class__infinite__state_8h"/>
+        <childnode refid="1914" relation="include">
+        </childnode>
+        <childnode refid="1915" relation="include">
+        </childnode>
+        <childnode refid="1916" relation="include">
+        </childnode>
+        <childnode refid="1925" relation="include">
+        </childnode>
+        <childnode refid="1927" relation="include">
+        </childnode>
+        <childnode refid="1934" relation="include">
+        </childnode>
+        <childnode refid="1937" relation="include">
+        </childnode>
+      </node>
+      <node id="1934">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="1935" relation="include">
+        </childnode>
+        <childnode refid="1936" relation="include">
+        </childnode>
+        <childnode refid="1931" relation="include">
+        </childnode>
+      </node>
+      <node id="1916">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="1917" relation="include">
+        </childnode>
+        <childnode refid="1918" relation="include">
+        </childnode>
+        <childnode refid="1919" relation="include">
+        </childnode>
+        <childnode refid="1920" relation="include">
+        </childnode>
+        <childnode refid="1921" relation="include">
+        </childnode>
+        <childnode refid="1922" relation="include">
+        </childnode>
+        <childnode refid="1923" relation="include">
+        </childnode>
+      </node>
+      <node id="1943">
+        <label>state/tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="1914" relation="include">
+        </childnode>
+        <childnode refid="1935" relation="include">
+        </childnode>
+        <childnode refid="1916" relation="include">
+        </childnode>
+        <childnode refid="1937" relation="include">
+        </childnode>
+        <childnode refid="1925" relation="include">
+        </childnode>
+      </node>
+      <node id="1938">
+        <label>spdlog/sinks/stdout_sinks.h</label>
+      </node>
+      <node id="1914">
+        <label>memory</label>
+      </node>
+      <node id="1941">
+        <label>state/class_vidal_site.h</label>
+        <link refid="class__vidal__site_8h"/>
+        <childnode refid="1916" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="class__infinite__state_8cpp_1a76660a2ad4f3465eef2b784da674d4c9" prot="public" static="no">
+        <name>profile_optimization</name>
+        <initializer>0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" line="16" column="19" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="class__infinite__state_8cpp_1a9e72f7d76a4fff22fb5d0fc89ad2c31d" prot="public" static="no">
+        <type><ref refid="classclass__infinite__state_1a3c02b3e1b7b2653ca2ab5117eb7d09c2" kindref="member">class_infinite_state::Scalar</ref></type>
+        <definition>using Scalar =  class_infinite_state::Scalar</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="class__infinite__state_8cpp_1a923f32564d3db8afe978f299cd773edb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>template Eigen::Matrix&lt; std::complex&lt; double &gt;, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
+        <definition>template Eigen::Matrix&lt;std::complex&lt;double&gt;,Eigen::Dynamic, Eigen::Dynamic&gt; class_infinite_state::get_H_local_matrix&lt; std::complex&lt; double &gt; &gt;</definition>
+        <argsstring>() const</argsstring>
+        <name>class_infinite_state::get_H_local_matrix&lt; std::complex&lt; double &gt; &gt;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" line="227" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="class__infinite__state_8cpp_1ae7c5d12cc3ef3d21791a9fc7c90cce74" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>template Eigen::Matrix&lt; std::complex&lt; double &gt;, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
+        <definition>template Eigen::Matrix&lt;std::complex&lt;double&gt;,Eigen::Dynamic, Eigen::Dynamic&gt; class_infinite_state::get_H_local_sq_matrix&lt; std::complex&lt; double &gt; &gt;</definition>
+        <argsstring>() const</argsstring>
+        <name>class_infinite_state::get_H_local_sq_matrix&lt; std::complex&lt; double &gt; &gt;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" line="267" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>7/22/17.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="comment">//#include<sp/>&lt;state/class_optimize_mps.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__infinite__state_8h" kindref="compound">state/class_infinite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__environment_8h" kindref="compound">state/class_environment.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__vidal__site_8h" kindref="compound">state/class_vidal_site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__2site_8h" kindref="compound">state/class_mps_2site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">state/tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__eigsolver_8h" kindref="compound">math/class_eigsolver.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="matrix__product__hamiltonian_8h" kindref="compound">math/arpack_extra/matrix_product_hamiltonian.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__model__factory_8h" kindref="compound">model/class_model_factory.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="class__infinite__state_8cpp_1a76660a2ad4f3465eef2b784da674d4c9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>profile_optimization<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacestd" kindref="compound">std</ref>;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_textra" kindref="compound">Textra</ref>;</highlight></codeline>
+<codeline lineno="20" refid="class__infinite__state_8cpp_1a9e72f7d76a4fff22fb5d0fc89ad2c31d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/><ref refid="classclass__infinite__state_1a3c02b3e1b7b2653ca2ab5117eb7d09c2" kindref="member">class_infinite_state::Scalar</ref>;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="classclass__infinite__state_1ad247c5cd4602b81b045f8e765fc81d52" refkind="member"><highlight class="normal"><ref refid="classclass__infinite__state_1ad247c5cd4602b81b045f8e765fc81d52" kindref="member">class_infinite_state::class_infinite_state</ref>(<ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921" kindref="member">SimulationType</ref><sp/>sim_type_,std::string<sp/>sim_name_):</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim_type(sim_type_),</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim_name(sim_name_),</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MPS(<ref refid="namespacestd" kindref="compound">std</ref>::make_unique&lt;<ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref>&gt;()),</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>HA<sp/>(<ref refid="classclass__model__factory" kindref="compound">class_model_factory</ref>::create_mpo(0,<ref refid="namespacesettings" kindref="compound">settings</ref>::model::<ref refid="namespacesettings_1_1model_1a47bbe476211c0ae22d348e80df47193b" kindref="member">model_type</ref>)),</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>HB<sp/>(<ref refid="classclass__model__factory" kindref="compound">class_model_factory</ref>::create_mpo(1,<ref refid="namespacesettings" kindref="compound">settings</ref>::model::<ref refid="namespacesettings_1_1model_1a47bbe476211c0ae22d348e80df47193b" kindref="member">model_type</ref>)),</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Lblock(<ref refid="namespacestd" kindref="compound">std</ref>::make_unique&lt;<ref refid="classclass__environment" kindref="compound">class_environment</ref>&gt;(</highlight><highlight class="stringliteral">&quot;L&quot;</highlight><highlight class="normal">)),</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Rblock(<ref refid="namespacestd" kindref="compound">std</ref>::make_unique&lt;<ref refid="classclass__environment" kindref="compound">class_environment</ref>&gt;(</highlight><highlight class="stringliteral">&quot;R&quot;</highlight><highlight class="normal">)),</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Lblock2(<ref refid="namespacestd" kindref="compound">std</ref>::make_unique&lt;<ref refid="classclass__environment__var" kindref="compound">class_environment_var</ref>&gt;(</highlight><highlight class="stringliteral">&quot;L&quot;</highlight><highlight class="normal">)),</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Rblock2(<ref refid="namespacestd" kindref="compound">std</ref>::make_unique&lt;<ref refid="classclass__environment__var" kindref="compound">class_environment_var</ref>&gt;(</highlight><highlight class="stringliteral">&quot;R&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1abacb807a6f6c997dac4bb45654ba8223" kindref="member">log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(<ref refid="classclass__infinite__state_1abdff0f034bc7eba1b566665e5673d251" kindref="member">sim_name</ref>,<ref refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" kindref="member">settings::console::verbosity</ref>);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_eig.set_properties(profile_optimization,<sp/>10,&quot;Time<sp/>optimizing<sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;initialize(<ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;get_spin_dimension());</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//<sp/>We<sp/>need<sp/>to<sp/>make<sp/>a<sp/>destructor<sp/>manually<sp/>for<sp/>the<sp/>enclosing<sp/>class<sp/>&quot;class_infinite_state&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="comment">//<sp/>that<sp/>encloses<sp/>&quot;class_model_base&quot;.<sp/>Otherwise<sp/>unique_ptr<sp/>will<sp/>forcibly<sp/>inline<sp/>its</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="comment">//<sp/>own<sp/>default<sp/>deleter.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>allows<sp/>us<sp/>to<sp/>forward<sp/>declare<sp/>the<sp/>abstract<sp/>base<sp/>class<sp/>&quot;class_model_base&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Read<sp/>more:<sp/>https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="comment">//<sp/>And<sp/>here:<sp/><sp/>https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="comment">//class_infinite_state::~class_infinite_state()=default;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="comment">//<sp/>we<sp/>could<sp/>the<sp/>default<sp/>move<sp/>constructor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="comment">//class_infinite_state::class_infinite_state(class_infinite_state&amp;&amp;)<sp/><sp/>=<sp/>default;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="comment">//<sp/>we<sp/>could<sp/>use<sp/>the<sp/>default<sp/>move<sp/>assignment<sp/>operator</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="comment">//class_infinite_state<sp/>&amp;<sp/>class_infinite_state::operator=(class_infinite_state&amp;&amp;)<sp/>=<sp/>default;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//<sp/>...but<sp/>we<sp/>would<sp/>have<sp/>to<sp/>provide<sp/>a<sp/>deep<sp/>copying<sp/>assignment<sp/>operator</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//class_infinite_state<sp/>&amp;<sp/>class_infinite_state::operator=(class_infinite_state<sp/>const&amp;<sp/>source)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>HA<sp/>=<sp/>source.HA-&gt;clone();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>HB<sp/>=<sp/>source.HB-&gt;clone();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>*this;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="classclass__infinite__state_1a927dbf6b1591913677199e2e7ee63164" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1a927dbf6b1591913677199e2e7ee63164" kindref="member">class_infinite_state::clear</ref>(){</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1abacb807a6f6c997dac4bb45654ba8223" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Copying<sp/>state<sp/>to<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>=<sp/><ref refid="classclass__infinite__state_1ad247c5cd4602b81b045f8e765fc81d52" kindref="member">class_infinite_state</ref>(<ref refid="classclass__infinite__state_1ac6e7b8a73cc94d67562d8c06e5762e0b" kindref="member">sim_type</ref>,<ref refid="classclass__infinite__state_1abdff0f034bc7eba1b566665e5673d251" kindref="member">sim_name</ref>);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="classclass__infinite__state_1a1a853fa57f66f794e31d2ca36f1a68b9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1a1a853fa57f66f794e31d2ca36f1a68b9" kindref="member">class_infinite_state::get_length</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a7ea586a94abc0dc2941e01d1c6ceebc5" kindref="member">length</ref><sp/>=<sp/><ref refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" kindref="member">Lblock</ref>-&gt;sites<sp/>+<sp/><ref refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" kindref="member">Rblock</ref>-&gt;sites<sp/>+<sp/>2;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a7ea586a94abc0dc2941e01d1c6ceebc5" kindref="member">length</ref>;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="classclass__infinite__state_1a499daac3b087b07993f32077adc175e0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1a499daac3b087b07993f32077adc175e0" kindref="member">class_infinite_state::get_position</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" kindref="member">Lblock</ref>-&gt;sites;}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="classclass__infinite__state_1a1c5495f2fe53fc618aa00ddd8e9d054f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1a1c5495f2fe53fc618aa00ddd8e9d054f" kindref="member">class_infinite_state::get_chi</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiC();}</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="classclass__infinite__state_1a2304b5989f160b8600a1344c1b7900fe" refkind="member"><highlight class="normal">Eigen::DSizes&lt;long,4&gt;<sp/><ref refid="classclass__infinite__state_1a2304b5989f160b8600a1344c1b7900fe" kindref="member">class_infinite_state::dimensions</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;dimensions();}</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="classclass__infinite__state_1a9191239e8e3f068c113645c78a449c10" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,<sp/>4&gt;<sp/><ref refid="classclass__infinite__state_1a9191239e8e3f068c113645c78a449c10" kindref="member">class_infinite_state::get_theta</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;get_theta();}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="comment">//============================================================================//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Find<sp/>smallest<sp/>eigenvalue<sp/>using<sp/>Arpack.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="comment">//============================================================================//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="comment">//Eigen::Tensor&lt;Scalar,4&gt;<sp/>class_infinite_state::optimize_MPS(Eigen::Tensor&lt;Scalar,<sp/>4&gt;<sp/>&amp;theta,<sp/>eigutils::eigSetting::Ritz<sp/>ritz){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::array&lt;long,4&gt;<sp/>shape_theta4<sp/>=<sp/>theta.dimensions();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::array&lt;long,4&gt;<sp/>shape_mpo4<sp/><sp/><sp/>=<sp/>HA-&gt;MPO().dimensions();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_eig.tic();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>int<sp/>nev<sp/>=<sp/>1;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>using<sp/>namespace<sp/>settings::precision;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>using<sp/>namespace<sp/>eigutils::eigSetting;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>DenseHamiltonianProduct&lt;Scalar&gt;<sp/><sp/>matrix<sp/>(Lblock-&gt;block.data(),<sp/>Rblock-&gt;block.data(),<sp/>HA-&gt;MPO().data(),<sp/>HB-&gt;MPO().data(),<sp/>shape_theta4,<sp/>shape_mpo4);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>class_eigsolver<sp/>solver;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>solver.eigs_dense(matrix,nev,eigMaxNcv,NAN,Form::SYMMETRIC,ritz,Side::R,true,true);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>eigvals<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;double,1&gt;&gt;<sp/><sp/>(solver.solution.get_eigvals&lt;Form::SYMMETRIC&gt;().data()<sp/>,solver.solution.meta.cols);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>eigvecs<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;Scalar,1&gt;&gt;<sp/><sp/>(solver.solution.get_eigvecs&lt;Type::CPLX,<sp/>Form::SYMMETRIC&gt;().data(),solver.solution.meta.rows);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_eig.toc();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_eig.print_delta();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>E_optimal<sp/>=<sp/>std::real(eigvals(0));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>eigvecs.reshape(theta.dimensions());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="comment">//============================================================================//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Do<sp/>unitary<sp/>evolution<sp/>on<sp/>an<sp/>MPS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="comment">//============================================================================//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="comment">//Eigen::Tensor&lt;Scalar,<sp/>4&gt;<sp/>class_infinite_state::evolve_MPS(const<sp/>Eigen::Tensor&lt;Scalar,<sp/>4&gt;<sp/>&amp;U)</highlight></codeline>
+<codeline lineno="119"><highlight class="comment"></highlight><highlight class="comment">//@verbatim</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>1--[<sp/>Θ<sp/>]--3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>|<sp/><sp/><sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>0<sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1--[<sp/>Θ<sp/>]--3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>0<sp/><sp/><sp/>1<sp/><sp/><sp/>---&gt;<sp/><sp/><sp/><sp/><sp/>|<sp/><sp/><sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>|<sp/><sp/><sp/>|<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0<sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>[<sp/>U<sp/>]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>|<sp/><sp/><sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>2<sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="comment">//@endverbatim</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="comment">//*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="comment">//{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>U.contract(MPS-&gt;get_theta(),<sp/>idx({0,1},{0,2}))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(array4{0,2,1,3});</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="comment">//Eigen::Tensor&lt;Scalar,<sp/>4&gt;<sp/>class_infinite_state::evolve_MPS(const<sp/>Eigen::Tensor&lt;Scalar,<sp/>4&gt;<sp/>&amp;theta,<sp/>const<sp/>Eigen::Tensor&lt;Scalar,<sp/>4&gt;<sp/>&amp;U)</highlight></codeline>
+<codeline lineno="139"><highlight class="comment"></highlight><highlight class="comment">//@verbatim</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/>1--[<sp/>Θ<sp/>]--3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>|<sp/><sp/><sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>0<sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1--[<sp/>Θ<sp/>]--3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>0<sp/><sp/><sp/>1<sp/><sp/><sp/>---&gt;<sp/><sp/><sp/><sp/><sp/>|<sp/><sp/><sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>|<sp/><sp/><sp/>|<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0<sp/><sp/><sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>[<sp/>U<sp/>]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>|<sp/><sp/><sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>2<sp/><sp/><sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight><highlight class="comment">//@endverbatim</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="comment">//*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="comment">//{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>U.contract(theta,<sp/>idx({0,1},{0,2}))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(array4{0,2,1,3});</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight><highlight class="comment">//============================================================================//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Do<sp/>SVD<sp/>decomposition,<sp/>truncation<sp/>and<sp/>normalization<sp/>of<sp/>the<sp/>MPS-&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight><highlight class="comment">//============================================================================//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight><highlight class="comment">//Eigen::Tensor&lt;Scalar,4&gt;<sp/>class_infinite_state::truncate_MPS(const<sp/>Eigen::Tensor&lt;Scalar,<sp/>4&gt;<sp/>&amp;theta,long<sp/>chi_,<sp/>double<sp/>SVDThreshold){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>class_SVD<sp/>SVD;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>SVD.setThreshold(SVDThreshold);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto[U,<sp/>S,<sp/>V]<sp/>=<sp/>SVD.schmidt(theta,chi_);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>MPS-&gt;truncation_error<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>SVD.get_truncation_error();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>MPS-&gt;LC<sp/><sp/>=<sp/>S;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>L_U<sp/>=<sp/>asDiagonalInversed(MPS-&gt;MPS_A-&gt;get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V_L<sp/>=<sp/>V.contract(asDiagonalInversed(MPS-&gt;MPS_B-&gt;get_L()),<sp/>idx({2},{0}));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>MPS-&gt;MPS_A-&gt;set_G(L_U);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>MPS-&gt;MPS_B-&gt;set_G(V_L);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>get_theta();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>class_infinite_state::truncate_MPS(const<sp/>Eigen::Tensor&lt;Scalar,<sp/>4&gt;<sp/>&amp;theta,<sp/>class_mps_2site<sp/>&amp;MPS_out,long<sp/>chi_,<sp/>double<sp/>SVDThreshold){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>class_SVD<sp/>SVD;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>SVD.setThreshold(SVDThreshold);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto[U,<sp/>S,<sp/>V]<sp/>=<sp/>SVD.schmidt(theta,<sp/>chi_);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>MPS_out.truncation_error<sp/>=<sp/>SVD.get_truncation_error();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>MPS_out.LC<sp/><sp/>=<sp/>S;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>L_U<sp/>=<sp/>asDiagonalInversed(MPS_out.MPS_A-&gt;get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V_L<sp/>=<sp/>V.contract(asDiagonalInversed(MPS_out.MPS_B-&gt;get_L()),<sp/>idx({2},{0}));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>MPS_out.MPS_A-&gt;set_G(L_U);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>MPS_out.MPS_B-&gt;set_G(V_L);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="classclass__infinite__state_1a0ff5483224e311a4a9555b3cb6f21cc6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1a0ff5483224e311a4a9555b3cb6f21cc6" kindref="member">class_infinite_state::isReal</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>MPS_isReal<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;isReal();</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>HA_isReal<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;isReal();</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>HB_isReal<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;isReal();</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Lblock_isReal<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" kindref="member">Lblock</ref>-&gt;isReal();</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Rblock_isReal<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" kindref="member">Rblock</ref>-&gt;isReal();</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Lblock2_isReal<sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" kindref="member">Lblock2</ref>-&gt;isReal();</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Rblock2_isReal<sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" kindref="member">Rblock2</ref>-&gt;isReal();</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MPS_isReal</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/>and<sp/>HA_isReal</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>and<sp/>HB_isReal</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/>and<sp/>Lblock_isReal</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/>and<sp/>Rblock_isReal</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/>and<sp/>Lblock2_isReal</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/>and<sp/>Rblock2_isReal;</highlight></codeline>
+<codeline lineno="204"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="207" refid="classclass__infinite__state_1ab880bb4ab8733d5d04df4e87a4ada980" refkind="member"><highlight class="normal">Eigen::Matrix&lt;T,Eigen::Dynamic,<sp/>Eigen::Dynamic&gt;<sp/><ref refid="classclass__infinite__state_1ab880bb4ab8733d5d04df4e87a4ada980" kindref="member">class_infinite_state::get_H_local_matrix</ref><sp/>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;T,5&gt;tempL;</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;T,5&gt;tempR;</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;T,double&gt;::value){</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" kindref="member">Lblock</ref>-&gt;isReal()){</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Discarding<sp/>imaginary<sp/>data<sp/>from<sp/>Lblock<sp/>when<sp/>building<sp/>H_local&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" kindref="member">Rblock</ref>-&gt;isReal()){</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Discarding<sp/>imaginary<sp/>data<sp/>from<sp/>Rblock<sp/>when<sp/>building<sp/>H_local&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;isReal())<sp/><sp/><sp/><sp/>{</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Discarding<sp/>imaginary<sp/>data<sp/>from<sp/>MPO<sp/>A<sp/>when<sp/>building<sp/>H_local&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;isReal())<sp/><sp/><sp/><sp/>{</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Discarding<sp/>imaginary<sp/>data<sp/>from<sp/>MPO<sp/>B<sp/>when<sp/>building<sp/>H_local&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tempL<sp/><sp/><sp/>=<sp/><ref refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" kindref="member">Lblock</ref>-&gt;block.contract(<ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;MPO(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0})).real().shuffle(<ref refid="namespace_textra_1ad77b0c4ddf727b47bd5283b159db860e" kindref="member">Textra::array5</ref>{4,1,3,0,2}).real();</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tempR<sp/><sp/><sp/>=<sp/><ref refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" kindref="member">Rblock</ref>-&gt;block.contract(<ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;MPO(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{1})).real().shuffle(<ref refid="namespace_textra_1ad77b0c4ddf727b47bd5283b159db860e" kindref="member">Textra::array5</ref>{4,1,3,0,2}).real();</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tempL<sp/><sp/><sp/>=<sp/><ref refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" kindref="member">Lblock</ref>-&gt;block.contract(<ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;MPO(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0})).shuffle(<ref refid="namespace_textra_1ad77b0c4ddf727b47bd5283b159db860e" kindref="member">Textra::array5</ref>{4,1,3,0,2});</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tempR<sp/><sp/><sp/>=<sp/><ref refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" kindref="member">Rblock</ref>-&gt;block.contract(<ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;MPO(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{1})).shuffle(<ref refid="namespace_textra_1ad77b0c4ddf727b47bd5283b159db860e" kindref="member">Textra::array5</ref>{4,1,3,0,2});</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>shape<sp/>=<sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiA()<sp/>*<sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;spindim()<sp/>*<sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiB()<sp/>*<sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;spindim();</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;T,8&gt;H_local<sp/>=<sp/>tempL.contract(tempR,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({4},{4})).shuffle(<ref refid="namespace_textra_1a40142e97da00e9a6470ec0637da532e3" kindref="member">Textra::array8</ref>{0,1,4,5,2,3,6,7});</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Eigen::Map&lt;Eigen::Matrix&lt;T,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;(H_local.data(),shape,shape);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>Eigen::Matrix&lt;double,Eigen::Dynamic,<sp/>Eigen::Dynamic&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>class_infinite_state::get_H_local_matrix&lt;double&gt;()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>Eigen::Matrix&lt;std::complex&lt;double&gt;,Eigen::Dynamic,<sp/>Eigen::Dynamic&gt;<sp/><sp/>class_infinite_state::get_H_local_matrix&lt;std::complex&lt;double&gt;&gt;()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="231" refid="classclass__infinite__state_1aecd6c5063e3329774fee0291b4c8925b" refkind="member"><highlight class="normal">Eigen::Matrix&lt;T,Eigen::Dynamic,<sp/>Eigen::Dynamic&gt;<sp/><ref refid="classclass__infinite__state_1aecd6c5063e3329774fee0291b4c8925b" kindref="member">class_infinite_state::get_H_local_sq_matrix</ref><sp/>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;T,6&gt;tempL;</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;T,6&gt;tempR;</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(std::is_same&lt;T,double&gt;::value){</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" kindref="member">Lblock2</ref>-&gt;isReal()){</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Discarding<sp/>imaginary<sp/>data<sp/>from<sp/>Lblock2<sp/>when<sp/>building<sp/>H_local_sq&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" kindref="member">Rblock2</ref>-&gt;isReal()){</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Discarding<sp/>imaginary<sp/>data<sp/>from<sp/>Rblock2<sp/>when<sp/>building<sp/>H_local_sq&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;isReal())<sp/><sp/><sp/><sp/><sp/>{</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Discarding<sp/>imaginary<sp/>data<sp/>from<sp/>MPO<sp/>A<sp/>when<sp/>building<sp/>H_local_sq&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;isReal())<sp/><sp/><sp/><sp/><sp/>{</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Discarding<sp/>imaginary<sp/>data<sp/>from<sp/>MPO<sp/>B<sp/>when<sp/>building<sp/>H_local_sq&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tempL<sp/>=<sp/><ref refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" kindref="member">Lblock2</ref>-&gt;block</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;MPO(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0}))</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;MPO(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2,5},{0,2}))</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.real()</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a3d45de3aad22e5851745e69630523d49" kindref="member">Textra::array6</ref>{5,1,3,0,2,4});</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tempR<sp/>=<sp/><ref refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" kindref="member">Rblock2</ref>-&gt;block</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;MPO(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{1}))</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;MPO(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2,5},{1,2}))</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.real()</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a3d45de3aad22e5851745e69630523d49" kindref="member">Textra::array6</ref>{5,1,3,0,2,4});</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tempL<sp/>=<sp/><ref refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" kindref="member">Lblock2</ref>-&gt;block</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;MPO(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0}))</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;MPO(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2,5},{0,2}))</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a3d45de3aad22e5851745e69630523d49" kindref="member">Textra::array6</ref>{5,1,3,0,2,4});</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tempR<sp/>=<sp/><ref refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" kindref="member">Rblock2</ref>-&gt;block</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;MPO(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{1}))</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;MPO(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2,5},{1,2}))</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a3d45de3aad22e5851745e69630523d49" kindref="member">Textra::array6</ref>{5,1,3,0,2,4});</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>shape<sp/>=<sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiA()<sp/>*<sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;spindim()<sp/>*<sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiB()<sp/>*<sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;spindim();</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;T,8&gt;<sp/>H_local<sp/>=<sp/>tempL.contract(tempR,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({4,5},{4,5})).shuffle(<ref refid="namespace_textra_1a40142e97da00e9a6470ec0637da532e3" kindref="member">Textra::array8</ref>{0,1,4,5,2,3,6,7});</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Eigen::Map&lt;Eigen::Matrix&lt;T,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;(H_local.data(),shape,shape);</highlight></codeline>
+<codeline lineno="263"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>Eigen::Matrix&lt;double,Eigen::Dynamic,<sp/>Eigen::Dynamic&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>class_infinite_state::get_H_local_sq_matrix&lt;double&gt;()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>;</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>Eigen::Matrix&lt;std::complex&lt;double&gt;,Eigen::Dynamic,<sp/>Eigen::Dynamic&gt;<sp/><sp/>class_infinite_state::get_H_local_sq_matrix&lt;std::complex&lt;double&gt;&gt;()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"></highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight></codeline>
+<codeline lineno="271" refid="classclass__infinite__state_1ae7ee8d12104ad16db454939af2c51d8d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1ae7ee8d12104ad16db454939af2c51d8d" kindref="member">class_infinite_state::enlarge_environment</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>direction){</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(direction<sp/>==<sp/>1){</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>assert(<ref refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" kindref="member">Lblock</ref>-&gt;get_position()<sp/><sp/>==<sp/><ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;get_position());</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>assert(<ref refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" kindref="member">Lblock2</ref>-&gt;get_position()<sp/>==<sp/><ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;get_position());</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" kindref="member">Lblock</ref>-&gt;enlarge(*<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_A,<sp/><sp/><ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;MPO_reduced_view());</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" kindref="member">Lblock2</ref>-&gt;enlarge(*<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_A,<sp/><ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;MPO_reduced_view());</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" kindref="member">Lblock</ref>-&gt;set_position<sp/>(<ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;get_position());</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" kindref="member">Lblock2</ref>-&gt;set_position(<ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;get_position());</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(direction<sp/>==<sp/>-1){</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>assert(<ref refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" kindref="member">Rblock</ref>-&gt;get_position()<sp/><sp/>==<sp/><ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;get_position());</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>assert(<ref refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" kindref="member">Rblock2</ref>-&gt;get_position()<sp/>==<sp/><ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;get_position());</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" kindref="member">Rblock</ref>-&gt;enlarge(*<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_B,<sp/><sp/><ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;MPO_reduced_view());</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" kindref="member">Rblock2</ref>-&gt;enlarge(*<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_B,<sp/><ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;MPO_reduced_view());</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" kindref="member">Rblock</ref>-&gt;set_position<sp/>(<ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;get_position());</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" kindref="member">Rblock2</ref>-&gt;set_position(<ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;get_position());</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(direction<sp/>==<sp/>0){</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" kindref="member">Lblock</ref>-&gt;enlarge<sp/>(*<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_A,<sp/><sp/><ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;MPO_reduced_view());</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" kindref="member">Rblock</ref>-&gt;enlarge<sp/>(*<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_B,<sp/><sp/><ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;MPO_reduced_view());</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" kindref="member">Lblock2</ref>-&gt;enlarge(*<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_A,<sp/><ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;MPO_reduced_view());</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" kindref="member">Rblock2</ref>-&gt;enlarge(*<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_B,<sp/><ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;MPO_reduced_view());</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" kindref="member">Lblock</ref>-&gt;set_position<sp/>(<ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;get_position());</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" kindref="member">Rblock</ref>-&gt;set_position<sp/>(<ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;get_position()+1);</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" kindref="member">Lblock2</ref>-&gt;set_position(<ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;get_position());</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" kindref="member">Rblock2</ref>-&gt;set_position(<ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;get_position()+1);</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a476ee3b752731ebb1ce99126a230a0fa" kindref="member">unset_measurements</ref>();</highlight></codeline>
+<codeline lineno="298"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight></codeline>
+<codeline lineno="301" refid="classclass__infinite__state_1ad10fa55aeaae9b4721e256afbc03ea5a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1ad10fa55aeaae9b4721e256afbc03ea5a" kindref="member">class_infinite_state::set_positions</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>position){</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_A-&gt;set_position(position);</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_B-&gt;set_position(position+1);</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" kindref="member">Lblock</ref>-&gt;set_position(position);</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" kindref="member">Rblock</ref>-&gt;set_position(position+1);</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" kindref="member">Lblock2</ref>-&gt;set_position(position);</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" kindref="member">Rblock2</ref>-&gt;set_position(position+1);</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;set_position(position);</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" kindref="member">HB</ref>-&gt;set_position(position+1);</highlight></codeline>
+<codeline lineno="310"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight></codeline>
+<codeline lineno="313" refid="classclass__infinite__state_1a476ee3b752731ebb1ce99126a230a0fa" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1a476ee3b752731ebb1ce99126a230a0fa" kindref="member">class_infinite_state::unset_measurements</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref><sp/>=<sp/><ref refid="structclass__infinite__state_1_1_measurements" kindref="compound">Measurements</ref>();</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a9639d785b811f258c4687f49a2aeb7e5" kindref="member">tools::common::views::components_computed</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="316"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"></highlight></codeline>
+<codeline lineno="318" refid="classclass__infinite__state_1ac1018d37be59d6b612a47f91407d2ad1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state_1ac1018d37be59d6b612a47f91407d2ad1" kindref="member">class_infinite_state::do_all_measurements</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1ab33a8b3053700998a3f86b792dda397f" kindref="member">length</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a618bca9f2d238e215aa4485374193c49" kindref="member">tools::infinite::measure::length</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1ae1d6cc66ebf206b7190f4e5721b4b050" kindref="member">bond_dimension</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a9d35818149671013c1b706c60ca9eaf5" kindref="member">tools::infinite::measure::bond_dimension</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1a1f2a444d44e30c9eb7f95721d4cee3f5" kindref="member">norm</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a601facbe89d868ffadaafdb9a1a7d6f5" kindref="member">tools::infinite::measure::norm</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1a70605a3fe5dd1102a8b61f689427036f" kindref="member">truncation_error</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a8de1894431d9e237fb6e43f059c3613a" kindref="member">tools::infinite::measure::truncation_error</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1ad6fab97094657246644246250a1a9e65" kindref="member">energy_mpo</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1ac736ff68fedd12b059b6a0a1140a1ae3" kindref="member">tools::infinite::measure::energy_mpo</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);<sp/><sp/></highlight><highlight class="comment">//This<sp/>number<sp/>is<sp/>needed<sp/>for<sp/>variance<sp/>calculation!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1a48a75dcab59e3c28ab0a54b10933c013" kindref="member">energy_per_site_mpo</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a83e5c7230844049762ad79a2a0844925" kindref="member">tools::infinite::measure::energy_per_site_mpo</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1ab4ad82ec660b0ab01209d569db40394a" kindref="member">energy_per_site_ham</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a0517648c6c38dd3333a7098d6d64748d" kindref="member">tools::infinite::measure::energy_per_site_ham</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1a8411689069de4f6ef17a847258c40622" kindref="member">energy_per_site_mom</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a6f97590e1445ec3c3a0408e80fc45ae4" kindref="member">tools::infinite::measure::energy_per_site_mom</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1a0e76d76f02b3b21bd6723eb0ee40aa8d" kindref="member">energy_variance_mpo</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a52cc87e7a9b5a69e875a33e480733ecd" kindref="member">tools::infinite::measure::energy_variance_mpo</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1abaa4f94d2c3acb3baf0e6fee1a11dcf2" kindref="member">energy_variance_per_site_mpo</ref><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a56c0ea2d4d6d328e02508c7435ce3c8c" kindref="member">tools::infinite::measure::energy_variance_per_site_mpo</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1a82cfde3912dd27c1a41ef389d4d614a2" kindref="member">energy_variance_per_site_ham</ref><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a9217c1dad663b6343ca3b103a31ce49a" kindref="member">tools::infinite::measure::energy_variance_per_site_ham</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1af8e29c502ecb558e707a2872cd3a147c" kindref="member">energy_variance_per_site_mom</ref><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1aeafca3091f2799190b63d2439a3f918e" kindref="member">tools::infinite::measure::energy_variance_per_site_mom</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" kindref="member">measurements</ref>.<ref refid="structclass__infinite__state_1_1_measurements_1ae5c987b0312d34266f3fe3bafad9d203" kindref="member">current_entanglement_entropy</ref><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1afe31f99ecec4043193ac621906b30925" kindref="member">tools::infinite::measure::current_entanglement_entropy</ref>(*</highlight><highlight class="keyword">this</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="332"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"></highlight></codeline>
+<codeline lineno="334"><highlight class="normal"></highlight></codeline>
+<codeline lineno="335"><highlight class="normal"></highlight></codeline>
+<codeline lineno="336" refid="classclass__infinite__state_1a5f401d9832c9520bcd532eee3f198b97" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><ref refid="classclass__infinite__state_1a5f401d9832c9520bcd532eee3f198b97" kindref="member">class_infinite_state::swap_AB</ref>(){</highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;swap_AB();</highlight></codeline>
+<codeline lineno="338"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp"/>
+  </compounddef>
+</doxygen>

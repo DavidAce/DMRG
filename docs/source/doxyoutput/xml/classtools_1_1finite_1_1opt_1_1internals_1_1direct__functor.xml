@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor" kind="class" language="C++" prot="public">
+    <compoundname>tools::finite::opt::internals::direct_functor</compoundname>
+    <basecompoundref refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor" prot="public" virt="non-virtual">tools::finite::opt::internals::base_functor</basecompoundref>
+    <includes refid="opt_8h" local="no">opt.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>Scalar</declname>
+        <defname>Scalar</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor_1a45c29d3f5854a5a4b51f28e1631c6896" prot="private" static="no">
+        <type>Eigen::Matrix&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
+        <definition>using tools::finite::opt::internals::direct_functor&lt; Scalar &gt;::MatrixType =  Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;</definition>
+        <argsstring></argsstring>
+        <name>MatrixType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="169" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="169" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor_1a27c194d8ed42190c4884658e4bbdfbe8" prot="private" static="no">
+        <type>Eigen::Matrix&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, Eigen::Dynamic, 1 &gt;</type>
+        <definition>using tools::finite::opt::internals::direct_functor&lt; Scalar &gt;::VectorType =  Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;</definition>
+        <argsstring></argsstring>
+        <name>VectorType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="170" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor_1a9ba1ac5fc19806c415e5c63bfcc31b86" prot="private" static="no" mutable="no">
+        <type><ref refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components" kindref="compound">MultiComponents</ref>&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref> &gt;</type>
+        <definition>MultiComponents&lt;Scalar&gt; tools::finite::opt::internals::direct_functor&lt; Scalar &gt;::multiComponents</definition>
+        <argsstring></argsstring>
+        <name>multiComponents</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="171" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="171" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor_1a15118d78649c98f7eefee76fe891a761" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>tools::finite::opt::internals::direct_functor&lt; Scalar &gt;::direct_functor</definition>
+        <argsstring>(const class_finite_state &amp;state, const class_simulation_status &amp;sim_status)</argsstring>
+        <name>direct_functor</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="173" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/direct_functor.cpp" bodystart="14" bodyend="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor_1ad7c1e0c43aecbe355335ad02c72ec065" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>double</type>
+        <definition>double tools::finite::opt::internals::direct_functor&lt; Scalar &gt;::operator()</definition>
+        <argsstring>(const Eigen::VectorXd &amp;v_double_double, Eigen::VectorXd &amp;grad_double_double) override</argsstring>
+        <name>operator()</name>
+        <reimplements refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1ab3b5cf3de51455fbb8128d95bfc1822e">operator()</reimplements>
+        <param>
+          <type>const Eigen::VectorXd &amp;</type>
+          <declname>v_double_double</declname>
+        </param>
+        <param>
+          <type>Eigen::VectorXd &amp;</type>
+          <declname>grad_double_double</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="174" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/direct_functor.cpp" bodystart="25" bodyend="129"/>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ae856cf10304d5ce8449925dd9872e077" compoundref="opt_8h" startline="81">tools::finite::opt::internals::t_op</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a95b852d7a06c1fc5e69c4695e7b3de45" compoundref="opt_8h" startline="131">tools::finite::opt::internals::base_functor::norm</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a89cc203be6152c9aaca3a5fc5f1a2a8d" compoundref="opt_8h" startline="313" endline="320">tools::finite::opt::internals::get_H2v_vH2v</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor_1a9ba1ac5fc19806c415e5c63bfcc31b86" compoundref="opt_8h" startline="171">tools::finite::opt::internals::direct_functor&lt; Scalar &gt;::multiComponents</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a60312ffa8738bc2d1f9da4a2aafb2172" compoundref="opt_8h" startline="301" endline="308">tools::finite::opt::internals::get_Hv_vHv</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a24759640b86779153116a589d3a5109c" compoundref="opt_8h" startline="134">tools::finite::opt::internals::base_functor::counter</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a51957f739ef112398674dc44e08b6b68" compoundref="opt_8h" startline="120">tools::finite::opt::internals::base_functor::energy</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a5df94a80e95c1158404026900e8f1b1a" compoundref="opt_8h" startline="126">tools::finite::opt::internals::base_functor::energy_dens</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a10db15e8473f14d9c5a51e61b28d6f04" compoundref="opt_8h" startline="132">tools::finite::opt::internals::base_functor::length</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a2298318957b8820a7fc57e203c964f63" compoundref="opt_8h" startline="124">tools::finite::opt::internals::base_functor::energy_min</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a821bb923c7abfe818cff2b7e3cef49f2" compoundref="opt_8h" startline="125">tools::finite::opt::internals::base_functor::energy_max</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1af7f5f52bbb14be6ebff9a633f58c0376" compoundref="opt_8h" startline="129">tools::finite::opt::internals::base_functor::energy_offset</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1acc954f67c99b28164aafdcd108d54a0f" compoundref="opt_8h" startline="127">tools::finite::opt::internals::base_functor::energy_target_dens</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1abbfb87cc2b3227f29ccc1fb097672dba" compoundref="finite_2opt_8cpp" startline="112" endline="118">tools::finite::opt::internals::windowed_func_pow</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a8ff842d78db61b7b486fd1f88b9add42" compoundref="opt_8h" startline="128">tools::finite::opt::internals::base_functor::energy_window</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ab89afabb25e65e320b0f548ed17bed3e" compoundref="finite_2opt_8cpp" startline="119" endline="125">tools::finite::opt::internals::windowed_grad_pow</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a28999fddbeb73a42cc56c9d65726d5c0" compoundref="opt_8h" startline="119">tools::finite::opt::internals::base_functor::variance</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1abe03a260b9462d303c6974357b19a2f1" compoundref="opt_8h" startline="130">tools::finite::opt::internals::base_functor::norm_offset</references>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="155">
+        <label>tools::finite::opt::internals::base_functor</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor"/>
+      </node>
+      <node id="154">
+        <label>tools::finite::opt::internals::direct_functor&lt; Scalar &gt;</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor"/>
+        <childnode refid="155" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="157">
+        <label>tools::finite::opt::internals::base_functor</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor"/>
+      </node>
+      <node id="156">
+        <label>tools::finite::opt::internals::direct_functor&lt; Scalar &gt;</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor"/>
+        <childnode refid="157" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="167" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="167" bodyend="175"/>
+    <listofallmembers>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a8b115c530f8e955f5d2b6b5a4501ddc9" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>base_functor</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a24759640b86779153116a589d3a5109c" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>counter</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor_1a15118d78649c98f7eefee76fe891a761" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>direct_functor</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a51957f739ef112398674dc44e08b6b68" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>energy</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a5df94a80e95c1158404026900e8f1b1a" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>energy_dens</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a1eb84b0e97ec13c08284240ba58fae4b" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>energy_lower_bound</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a821bb923c7abfe818cff2b7e3cef49f2" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>energy_max</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a2298318957b8820a7fc57e203c964f63" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>energy_min</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1af7f5f52bbb14be6ebff9a633f58c0376" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>energy_offset</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a440466ad24dbfab009a15d3482e71ef5" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>energy_target</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1acc954f67c99b28164aafdcd108d54a0f" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>energy_target_dens</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a889cb1f9f1f94f9116f2b07f7afad8b8" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>energy_upper_bound</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a8ff842d78db61b7b486fd1f88b9add42" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>energy_window</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1ad43c5e4b4bcebfc3a54342698303b59c" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>get_count</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1aa311753c4b3fb64be9ad3a87cff3fca4" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>get_energy</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1adfa14c82de8ef8b7df58442f5ab1bd6d" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>get_norm</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1ae3e9e38c9e198f2d6fd47f3458c4445b" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>get_variance</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1acbe0050365b5aa00441a04d6b09af005" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>have_bounds_on_energy</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a12f6aa68a3ff3b5ce4080c85f5c9ca06" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>iteration</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a10db15e8473f14d9c5a51e61b28d6f04" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>length</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor_1a45c29d3f5854a5a4b51f28e1631c6896" prot="private" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>MatrixType</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor_1a9ba1ac5fc19806c415e5c63bfcc31b86" prot="private" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>multiComponents</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a95b852d7a06c1fc5e69c4695e7b3de45" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>norm</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1abe03a260b9462d303c6974357b19a2f1" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>norm_offset</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor_1ad7c1e0c43aecbe355335ad02c72ec065" prot="public" virt="virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>operator()</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1a28999fddbeb73a42cc56c9d65726d5c0" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>variance</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor_1a27c194d8ed42190c4884658e4bbdfbe8" prot="private" virt="non-virtual"><scope>tools::finite::opt::internals::direct_functor</scope><name>VectorType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

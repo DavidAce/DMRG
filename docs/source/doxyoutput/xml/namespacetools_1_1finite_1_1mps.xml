@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1mps" kind="namespace" language="C++">
+    <compoundname>tools::finite::mps</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1a6772016cdb75ffe01117a3145dff973f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::initialize</definition>
+        <argsstring>(class_finite_state &amp;state, size_t length)</argsstring>
+        <name>initialize</name>
+        <param>
+          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="39" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mps.cpp" bodystart="15" bodyend="30"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" compoundref="class__finite__state_8h" startline="51">class_finite_state::MPS_C</references>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a7ea586a94abc0dc2941e01d1c6ceebc5" compoundref="finite_2measure_8cpp" startline="30" endline="32">tools::finite::measure::length</references>
+        <references refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" compoundref="class__finite__state_8h" startline="119">class_finite_state::truncation_error</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1aa0a748883eb3fa52978c6303c18a4688" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::randomize</definition>
+        <argsstring>(class_finite_state &amp;state)</argsstring>
+        <name>randomize</name>
+        <param>
+          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mps.cpp" bodystart="34" bodyend="53"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="346" endline="348">class_finite_state::unset_measurements</references>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
+        <references refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" compoundref="nmspc__tensor__extra_8h" startline="166" endline="176">Textra::Matrix_to_Tensor</references>
+        <references refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" compoundref="class__finite__state_8h" startline="51">class_finite_state::MPS_C</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
+        <references refid="namespacetools_1_1finite_1_1mps_1a39333dfe4f63e99d175302ff77155464" compoundref="finite_2mps_8cpp" startline="56" endline="118">rebuild_environments</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1a87270670ae7c150d7d115c9bf8327278" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::normalize</definition>
+        <argsstring>(class_finite_state &amp;state)</argsstring>
+        <name>normalize</name>
+        <param>
+          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/svd.cpp" bodystart="9" bodyend="78"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="346" endline="348">class_finite_state::unset_measurements</references>
+        <references refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" compoundref="class__svd__wrapper_8cpp" startline="34" endline="36">class_SVD::setThreshold</references>
+        <references refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" compoundref="nmspc__settings_8h" startline="73">settings::precision::SVDThreshold</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
+        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
+        <references refid="classclass__finite__state_1a9b5d49eca3ca64dae7bbd8e1d2b1d03d" compoundref="class__finite__state_8cpp" startline="99" endline="103">class_finite_state::get_theta</references>
+        <references refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" compoundref="class__svd__wrapper_8h" startline="184" endline="191">class_SVD::schmidt_with_norm</references>
+        <references refid="classclass__finite__state_1af48976dedeb43c8d4b62526ef275c239" compoundref="class__finite__state_8cpp" startline="50" endline="50">class_finite_state::get_chi_max</references>
+        <references refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" compoundref="nmspc__tensor__extra_8h" startline="131" endline="133">Textra::asDiagonalInversed</references>
+        <references refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" compoundref="class__finite__state_8cpp" startline="154" endline="159">class_finite_state::get_L</references>
+        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
+        <references refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" compoundref="class__finite__state_8cpp" startline="146" endline="148">class_finite_state::get_G</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1a39333dfe4f63e99d175302ff77155464" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::rebuild_environments</definition>
+        <argsstring>(class_finite_state &amp;state)</argsstring>
+        <name>rebuild_environments</name>
+        <param>
+          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mps.cpp" bodystart="56" bodyend="118"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
+        <references refid="classclass__finite__state_1ad41b34016714e6b3d3aa67368aacbe64" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPO_L</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
+        <references refid="classclass__finite__state_1a0610c0cf4d336c15374c37c646138ab2" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPO_R</references>
+        <references refid="classclass__finite__state_1a4cdeeeffc013c85f8cd657b2fd06fe0e" compoundref="class__finite__state_8h" startline="52">class_finite_state::ENV_L</references>
+        <references refid="classclass__finite__state_1ae95fa8eba5c5f26a8945c5152a9356f5" compoundref="class__finite__state_8h" startline="53">class_finite_state::ENV_R</references>
+        <references refid="classclass__finite__state_1a4a6f7da1f22176f584726f3132ca01c9" compoundref="class__finite__state_8h" startline="54">class_finite_state::ENV2_L</references>
+        <references refid="classclass__finite__state_1ad5960e27ead5a41ac0ecbcd9f8643728" compoundref="class__finite__state_8h" startline="55">class_finite_state::ENV2_R</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1a2a24aa54dee0ba344b2e182b748e2ffb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int tools::finite::mps::move_center_point</definition>
+        <argsstring>(class_finite_state &amp;state)</argsstring>
+        <name>move_center_point</name>
+        <param>
+          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Move current position to the left (<computeroutput>direction=1</computeroutput>) or right (<computeroutput>direction=-1</computeroutput>), and store the <bold>newly enlarged</bold> environment. Turn direction around if the edge is reached. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mps.cpp" bodystart="121" bodyend="202"/>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
+        <references refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" compoundref="class__finite__state_8h" startline="51">class_finite_state::MPS_C</references>
+        <references refid="classclass__finite__state_1ad41b34016714e6b3d3aa67368aacbe64" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPO_L</references>
+        <references refid="classclass__finite__state_1a0610c0cf4d336c15374c37c646138ab2" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPO_R</references>
+        <references refid="classclass__finite__state_1a4cdeeeffc013c85f8cd657b2fd06fe0e" compoundref="class__finite__state_8h" startline="52">class_finite_state::ENV_L</references>
+        <references refid="classclass__finite__state_1ae95fa8eba5c5f26a8945c5152a9356f5" compoundref="class__finite__state_8h" startline="53">class_finite_state::ENV_R</references>
+        <references refid="classclass__finite__state_1a4a6f7da1f22176f584726f3132ca01c9" compoundref="class__finite__state_8h" startline="54">class_finite_state::ENV2_L</references>
+        <references refid="classclass__finite__state_1ad5960e27ead5a41ac0ecbcd9f8643728" compoundref="class__finite__state_8h" startline="55">class_finite_state::ENV2_R</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
+        <references refid="classclass__finite__state_1a304474ccfccd73c3371441ab4b1c2e0e" compoundref="class__finite__state_8cpp" startline="52" endline="52">class_finite_state::get_direction</references>
+        <references refid="classclass__environment_1a43703a851ebd1aab014c596889b4207a" compoundref="class__environment_8cpp" startline="35" endline="90">class_environment::enlarge</references>
+        <references refid="classclass__environment__var_1a6a76e7fd1532df3b5873cb8cc315aa53" compoundref="class__environment_8cpp" startline="143" endline="211">class_environment_var::enlarge</references>
+        <references refid="classclass__finite__state_1ac0b9060bf116f0d50211ad754b1d503b" compoundref="class__finite__state_8cpp" startline="71" endline="73">class_finite_state::position_is_any_edge</references>
+        <references refid="classclass__finite__state_1add3d724c6d0ed8dec3e9f6c3f0dd4a5a" compoundref="class__finite__state_8cpp" startline="53" endline="53">class_finite_state::flip_direction</references>
+        <references refid="classclass__finite__state_1a2b8226a4c67eb4fbe693aa84d6e070aa" compoundref="class__finite__state_8h" startline="65" endline="65">class_finite_state::increment_sweeps</references>
+        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="346" endline="348">class_finite_state::unset_measurements</references>
+        <references refid="classclass__finite__state_1a8cde46f744a1652d4415f8026f803a32" compoundref="class__finite__state_8cpp" startline="48" endline="48">class_finite_state::get_sweeps</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1a58bc6d622772a04d5020807d1f963178" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::project_to_closest_parity</definition>
+        <argsstring>(class_finite_state &amp;state, std::string paulistring)</argsstring>
+        <name>project_to_closest_parity</name>
+        <param>
+          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>paulistring</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mps.cpp" bodystart="206" bodyend="208"/>
+        <references refid="namespacetools_1_1finite_1_1ops_1a92dc2122fa719b004025f43bec82e154" compoundref="ops_8cpp" startline="141" endline="149">tools::finite::ops::get_closest_parity_state</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="38" column="1"/>
+  </compounddef>
+</doxygen>

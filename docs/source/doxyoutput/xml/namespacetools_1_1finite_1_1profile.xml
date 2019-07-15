@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1profile" kind="namespace" language="C++">
+    <compoundname>tools::finite::profile</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1profile_1a10389e432996a594215be44786d3b430" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc tools::finite::profile::t_eig</definition>
+        <argsstring></argsstring>
+        <name>t_eig</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="144" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1profile_1a0afa82632c7de536735ab03f14aa986f" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc tools::finite::profile::t_svd</definition>
+        <argsstring></argsstring>
+        <name>t_svd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="145" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1profile_1ab732e8adcea7d05bcffca8f10d63efff" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc tools::finite::profile::t_ene</definition>
+        <argsstring></argsstring>
+        <name>t_ene</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="146" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1profile_1a89668ffdcfba2ff23af0764616e00ed6" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc tools::finite::profile::t_var</definition>
+        <argsstring></argsstring>
+        <name>t_var</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="147" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1profile_1a14a29e5b2092fffc2e2318307e5b9586" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc tools::finite::profile::t_ent</definition>
+        <argsstring></argsstring>
+        <name>t_ent</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="148" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1profile_1a799d470cfd321cd6a7602bd0266b3075" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc tools::finite::profile::t_hdf</definition>
+        <argsstring></argsstring>
+        <name>t_hdf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="149" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1profile_1afc34820fbb845a32980eb5eb2dda79d2" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc tools::finite::profile::t_prj</definition>
+        <argsstring></argsstring>
+        <name>t_prj</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="150" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1profile_1a69cefc9f572848bd8c4c9170073459b4" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc tools::finite::profile::t_dbg</definition>
+        <argsstring></argsstring>
+        <name>t_dbg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="151" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1profile_1ae9818c3841bd3f96376dc58c2f814c41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::profile::print_profiling</definition>
+        <argsstring>(class_tic_toc &amp;t_parent)</argsstring>
+        <name>print_profiling</name>
+        <param>
+          <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &amp;</type>
+          <declname>t_parent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="152" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/profile.cpp" bodystart="9" bodyend="18"/>
+        <references refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" compoundref="nmspc__settings_8h" startline="143">settings::profiling::on</references>
+        <references refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" compoundref="class__tic__toc_8cpp" startline="33" endline="35">class_tic_toc::get_measured_time</references>
+        <references refid="namespacetools_1_1finite_1_1profile_1ab732e8adcea7d05bcffca8f10d63efff" compoundref="nmspc__tools_8h" startline="146">t_ene</references>
+        <references refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" compoundref="class__tic__toc_8cpp" startline="67" endline="75">class_tic_toc::print_time_w_percent</references>
+        <references refid="namespacetools_1_1finite_1_1profile_1a89668ffdcfba2ff23af0764616e00ed6" compoundref="nmspc__tools_8h" startline="147">t_var</references>
+        <references refid="namespacetools_1_1finite_1_1profile_1a14a29e5b2092fffc2e2318307e5b9586" compoundref="nmspc__tools_8h" startline="148">t_ent</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1profile_1a03758f528f727a4b09a678e6b9cdcd8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::profile::init_profiling</definition>
+        <argsstring>()</argsstring>
+        <name>init_profiling</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="153" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/profile.cpp" bodystart="21" bodyend="30"/>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aa9deb22061716db29d06214ea8e191f2" compoundref="opt_8h" startline="74">tools::finite::opt::internals::t_eig</references>
+        <references refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" compoundref="nmspc__settings_8h" startline="143">settings::profiling::on</references>
+        <references refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" compoundref="nmspc__settings_8h" startline="144">settings::profiling::precision</references>
+        <references refid="namespacetools_1_1finite_1_1profile_1a0afa82632c7de536735ab03f14aa986f" compoundref="nmspc__tools_8h" startline="145">t_svd</references>
+        <references refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" compoundref="class__tic__toc_8cpp" startline="22" endline="24">class_tic_toc::set_properties</references>
+        <references refid="namespacetools_1_1finite_1_1profile_1ab732e8adcea7d05bcffca8f10d63efff" compoundref="nmspc__tools_8h" startline="146">t_ene</references>
+        <references refid="namespacetools_1_1finite_1_1profile_1a89668ffdcfba2ff23af0764616e00ed6" compoundref="nmspc__tools_8h" startline="147">t_var</references>
+        <references refid="namespacetools_1_1finite_1_1profile_1a14a29e5b2092fffc2e2318307e5b9586" compoundref="nmspc__tools_8h" startline="148">t_ent</references>
+        <references refid="namespacetools_1_1finite_1_1profile_1a799d470cfd321cd6a7602bd0266b3075" compoundref="nmspc__tools_8h" startline="149">t_hdf</references>
+        <references refid="namespacetools_1_1finite_1_1profile_1afc34820fbb845a32980eb5eb2dda79d2" compoundref="nmspc__tools_8h" startline="150">t_prj</references>
+        <references refid="namespacetools_1_1finite_1_1profile_1a69cefc9f572848bd8c4c9170073459b4" compoundref="nmspc__tools_8h" startline="151">t_dbg</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="143" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,738 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__algorithm__infinite_8cpp" kind="file" language="C++">
+    <compoundname>class_algorithm_infinite.cpp</compoundname>
+    <includes refid="class__algorithm__infinite_8h" local="yes">class_algorithm_infinite.h</includes>
+    <includes refid="class__infinite__state_8h" local="no">state/class_infinite_state.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">state/tools/nmspc_tools.h</includes>
+    <includes refid="class__hdf5__log__buffer_8h" local="no">io/class_hdf5_log_buffer.h</includes>
+    <includes refid="nmspc__math_8h" local="no">math/nmspc_math.h</includes>
+    <includes local="no">h5pp/h5pp.h</includes>
+    <incdepgraph>
+      <node id="168">
+        <label>list</label>
+      </node>
+      <node id="199">
+        <label>functional</label>
+      </node>
+      <node id="189">
+        <label>iomanip</label>
+      </node>
+      <node id="161">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp</label>
+        <link refid="class__algorithm__infinite_8cpp"/>
+        <childnode refid="162" relation="include">
+        </childnode>
+        <childnode refid="182" relation="include">
+        </childnode>
+        <childnode refid="194" relation="include">
+        </childnode>
+        <childnode refid="195" relation="include">
+        </childnode>
+        <childnode refid="197" relation="include">
+        </childnode>
+        <childnode refid="202" relation="include">
+        </childnode>
+      </node>
+      <node id="188">
+        <label>iterator</label>
+      </node>
+      <node id="195">
+        <label>io/class_hdf5_log_buffer.h</label>
+        <link refid="class__hdf5__log__buffer_8h"/>
+        <childnode refid="180" relation="include">
+        </childnode>
+        <childnode refid="181" relation="include">
+        </childnode>
+        <childnode refid="164" relation="include">
+        </childnode>
+        <childnode refid="173" relation="include">
+        </childnode>
+        <childnode refid="196" relation="include">
+        </childnode>
+      </node>
+      <node id="198">
+        <label>cmath</label>
+      </node>
+      <node id="190">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="191" relation="include">
+        </childnode>
+        <childnode refid="185" relation="include">
+        </childnode>
+        <childnode refid="187" relation="include">
+        </childnode>
+      </node>
+      <node id="201">
+        <label>numeric</label>
+      </node>
+      <node id="185">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="177">
+        <label>string</label>
+      </node>
+      <node id="181">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="174">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="175" relation="include">
+        </childnode>
+        <childnode refid="170" relation="include">
+        </childnode>
+      </node>
+      <node id="192">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="173" relation="include">
+        </childnode>
+        <childnode refid="172" relation="include">
+        </childnode>
+        <childnode refid="193" relation="include">
+        </childnode>
+      </node>
+      <node id="165">
+        <label>map</label>
+      </node>
+      <node id="179">
+        <label>simulation/class_simulation_status.h</label>
+        <link refid="class__simulation__status_8h"/>
+        <childnode refid="164" relation="include">
+        </childnode>
+        <childnode refid="177" relation="include">
+        </childnode>
+        <childnode refid="170" relation="include">
+        </childnode>
+        <childnode refid="166" relation="include">
+        </childnode>
+        <childnode refid="171" relation="include">
+        </childnode>
+        <childnode refid="180" relation="include">
+        </childnode>
+        <childnode refid="181" relation="include">
+        </childnode>
+      </node>
+      <node id="191">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="178">
+        <label>unordered_set</label>
+      </node>
+      <node id="187">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="173">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="186">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="197">
+        <label>math/nmspc_math.h</label>
+        <link refid="nmspc__math_8h"/>
+        <childnode refid="170" relation="include">
+        </childnode>
+        <childnode refid="188" relation="include">
+        </childnode>
+        <childnode refid="166" relation="include">
+        </childnode>
+        <childnode refid="198" relation="include">
+        </childnode>
+        <childnode refid="199" relation="include">
+        </childnode>
+        <childnode refid="164" relation="include">
+        </childnode>
+        <childnode refid="200" relation="include">
+        </childnode>
+        <childnode refid="201" relation="include">
+        </childnode>
+        <childnode refid="185" relation="include">
+        </childnode>
+      </node>
+      <node id="162">
+        <label>class_algorithm_infinite.h</label>
+        <link refid="class__algorithm__infinite_8h"/>
+        <childnode refid="163" relation="include">
+        </childnode>
+      </node>
+      <node id="183">
+        <label>optional</label>
+      </node>
+      <node id="166">
+        <label>vector</label>
+      </node>
+      <node id="163">
+        <label>algorithms/class_algorithm_base.h</label>
+        <link refid="class__algorithm__base_8h"/>
+        <childnode refid="164" relation="include">
+        </childnode>
+        <childnode refid="165" relation="include">
+        </childnode>
+        <childnode refid="166" relation="include">
+        </childnode>
+        <childnode refid="167" relation="include">
+        </childnode>
+        <childnode refid="168" relation="include">
+        </childnode>
+        <childnode refid="169" relation="include">
+        </childnode>
+        <childnode refid="174" relation="include">
+        </childnode>
+        <childnode refid="176" relation="include">
+        </childnode>
+        <childnode refid="179" relation="include">
+        </childnode>
+      </node>
+      <node id="172">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="200">
+        <label>utility</label>
+      </node>
+      <node id="171">
+        <label>array</label>
+      </node>
+      <node id="196">
+        <label>io/log_types.h</label>
+        <link refid="log__types_8h"/>
+        <childnode refid="166" relation="include">
+        </childnode>
+        <childnode refid="171" relation="include">
+        </childnode>
+        <childnode refid="180" relation="include">
+        </childnode>
+        <childnode refid="181" relation="include">
+        </childnode>
+        <childnode refid="179" relation="include">
+        </childnode>
+      </node>
+      <node id="180">
+        <label>hdf5.h</label>
+      </node>
+      <node id="202">
+        <label>h5pp/h5pp.h</label>
+      </node>
+      <node id="170">
+        <label>iostream</label>
+      </node>
+      <node id="169">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="170" relation="include">
+        </childnode>
+        <childnode refid="171" relation="include">
+        </childnode>
+        <childnode refid="165" relation="include">
+        </childnode>
+        <childnode refid="167" relation="include">
+        </childnode>
+        <childnode refid="166" relation="include">
+        </childnode>
+        <childnode refid="172" relation="include">
+        </childnode>
+        <childnode refid="173" relation="include">
+        </childnode>
+      </node>
+      <node id="175">
+        <label>chrono</label>
+      </node>
+      <node id="167">
+        <label>complex</label>
+      </node>
+      <node id="182">
+        <label>state/class_infinite_state.h</label>
+        <link refid="class__infinite__state_8h"/>
+        <childnode refid="164" relation="include">
+        </childnode>
+        <childnode refid="183" relation="include">
+        </childnode>
+        <childnode refid="184" relation="include">
+        </childnode>
+        <childnode refid="174" relation="include">
+        </childnode>
+        <childnode refid="169" relation="include">
+        </childnode>
+        <childnode refid="176" relation="include">
+        </childnode>
+        <childnode refid="192" relation="include">
+        </childnode>
+      </node>
+      <node id="176">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="177" relation="include">
+        </childnode>
+        <childnode refid="178" relation="include">
+        </childnode>
+        <childnode refid="166" relation="include">
+        </childnode>
+      </node>
+      <node id="184">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="185" relation="include">
+        </childnode>
+        <childnode refid="186" relation="include">
+        </childnode>
+        <childnode refid="187" relation="include">
+        </childnode>
+        <childnode refid="188" relation="include">
+        </childnode>
+        <childnode refid="170" relation="include">
+        </childnode>
+        <childnode refid="189" relation="include">
+        </childnode>
+        <childnode refid="190" relation="include">
+        </childnode>
+      </node>
+      <node id="194">
+        <label>state/tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="164" relation="include">
+        </childnode>
+        <childnode refid="177" relation="include">
+        </childnode>
+        <childnode refid="184" relation="include">
+        </childnode>
+        <childnode refid="192" relation="include">
+        </childnode>
+        <childnode refid="174" relation="include">
+        </childnode>
+      </node>
+      <node id="193">
+        <label>spdlog/sinks/stdout_sinks.h</label>
+      </node>
+      <node id="164">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-06-24.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__algorithm__infinite_8h" kindref="compound">class_algorithm_infinite.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__infinite__state_8h" kindref="compound">state/class_infinite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">state/tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__hdf5__log__buffer_8h" kindref="compound">io/class_hdf5_log_buffer.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__math_8h" kindref="compound">math/nmspc_math.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;h5pp/h5pp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="classclass__algorithm__infinite_1a6ffb1d089cf2ad92d95d11dae4f2beef" refkind="member"><highlight class="normal"><ref refid="classclass__algorithm__infinite_1a6ffb1d089cf2ad92d95d11dae4f2beef" kindref="member">class_algorithm_infinite::class_algorithm_infinite</ref>(</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_,</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>sim_name,</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921" kindref="member">SimulationType</ref><sp/>sim_type</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/><ref refid="classclass__algorithm__base" kindref="compound">class_algorithm_base</ref>(<ref refid="namespacestd" kindref="compound">std</ref>::move(h5ppFile_),sim_name,<sp/>sim_type)</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::make_unique&lt;class_infinite_state&gt;(<ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref>,<ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" kindref="member">class_algorithm_infinite::run</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/><ref refid="classclass__algorithm__base_1ae08aa4b8e9bbd286c9ec76f15553a037" kindref="member">sim_on</ref>())<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a2cabf133e43683569ef43b9639476dab" kindref="member">run_preprocessing</ref>();</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1abdf68a4ae64f7302ad9e82a48d468e8a" kindref="member">run_simulation</ref>();</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1aa7176e26e0dd793557a649fc6c0b75f1" kindref="member">run_postprocessing</ref>();</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="classclass__algorithm__infinite_1a2cabf133e43683569ef43b9639476dab" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a2cabf133e43683569ef43b9639476dab" kindref="member">class_algorithm_infinite::run_preprocessing</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="classclass__algorithm__infinite_1aa7176e26e0dd793557a649fc6c0b75f1" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aa7176e26e0dd793557a649fc6c0b75f1" kindref="member">class_algorithm_infinite::run_postprocessing</ref>(){</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a993724b938167db865be9b23f291b5d9" kindref="member">print_status_full</ref>();</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a2f87c10d5c9c76ba1cf13becd4a3e786" kindref="member">print_profiling</ref>();</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>-&gt;writeDataset(</highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/simOK&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="classclass__algorithm__infinite_1aafc806c6b29040a7273b4e1f163748d7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aafc806c6b29040a7273b4e1f163748d7" kindref="member">class_algorithm_infinite::compute_observables</ref>(){</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Starting<sp/>all<sp/>measurements<sp/>on<sp/>current<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" kindref="member">t_sim</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;do_all_measurements();</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" kindref="member">t_sim</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="classclass__algorithm__infinite_1ae1fa5306f4179791aad85be014532787" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1ae1fa5306f4179791aad85be014532787" kindref="member">class_algorithm_infinite::reset_to_random_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>parity)<sp/>{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Resetting<sp/>MPS<sp/>to<sp/>random<sp/>product<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Randomize<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>*<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1mps_1aa96458ac5225cf6b0213e433355cc928" kindref="member">tools::infinite::mps::set_random_state</ref>(*<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>,parity);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a7cfa931e8444f5aba7bfee278f4a6b58" kindref="member">clear_saturation_status</ref>();</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="classclass__algorithm__infinite_1a677af8697d8ab608b039313309b38956" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a677af8697d8ab608b039313309b38956" kindref="member">class_algorithm_infinite::enlarge_environment</ref>(){</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Enlarging<sp/>environment&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" kindref="member">t_sim</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;enlarge_environment(0);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" kindref="member">t_sim</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="classclass__algorithm__infinite_1a3b3bd13802b17fe5cb9600e4dcaabded" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a3b3bd13802b17fe5cb9600e4dcaabded" kindref="member">class_algorithm_infinite::swap</ref>(){</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Swap<sp/>AB<sp/>sites<sp/>on<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" kindref="member">t_sim</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;swap_AB();</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" kindref="member">t_sim</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="73"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="classclass__algorithm__infinite_1ad35ded89a86cc7815ebae568eae20e2e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1ad35ded89a86cc7815ebae568eae20e2e" kindref="member">class_algorithm_infinite::check_convergence_variance_mpo</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>threshold,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold){</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Based<sp/>on<sp/>the<sp/>the<sp/>slope<sp/>of<sp/>the<sp/>variance</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>want<sp/>to<sp/>check<sp/>every<sp/>time<sp/>we<sp/>can<sp/>because<sp/>the<sp/>variance<sp/>is<sp/>expensive<sp/>to<sp/>compute.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Checking<sp/>convergence<sp/>of<sp/>variance<sp/>mpo&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>threshold<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::isnan(threshold)<sp/><sp/><sp/><sp/><sp/><sp/><sp/>?<sp/><ref refid="namespacesettings_1_1precision_1a8144c8c79b510717f340fff464e9a493" kindref="member">settings::precision::VarConvergenceThreshold</ref><sp/>:<sp/>threshold;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>slope_threshold<sp/>=<sp/>std::isnan(slope_threshold)<sp/>?<sp/><ref refid="namespacesettings_1_1precision_1a2d9e7cad0354e0b3b98f9c7acb391d23" kindref="member">settings::precision::VarSaturationThreshold</ref><sp/><sp/>:<sp/>slope_threshold;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1aafc806c6b29040a7273b4e1f163748d7" kindref="member">compute_observables</ref>();</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1addb896a29a85c3a50a6a4a6ed8f8472e" kindref="member">variance_mpo_has_saturated</ref><sp/>=</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a9d6b4c72b6f2e026a446ced69309e3ee" kindref="member">check_saturation_using_slope</ref>(</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ac3b2e97f7691df778ba334d85997389b" kindref="member">B_mpo_vec</ref>,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a7bbb22b08660d9a233d2b9cd96cabd58" kindref="member">V_mpo_vec</ref>,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8895c39f0050aecc51f56f0b3d650306" kindref="member">X_mpo_vec</ref>,</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a56c0ea2d4d6d328e02508c7435ce3c8c" kindref="member">tools::infinite::measure::energy_variance_per_site_mpo</ref>(*<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>),</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>,</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>slope_threshold,</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a2b3decefbdbd9f2e4e7ab1871cbbdff3" kindref="member">V_mpo_slope</ref>);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" kindref="member">variance_mpo_saturated_for</ref><sp/>=<sp/>(int)<sp/>count(<ref refid="classclass__algorithm__infinite_1ac3b2e97f7691df778ba334d85997389b" kindref="member">B_mpo_vec</ref>.begin(),<sp/><ref refid="classclass__algorithm__infinite_1ac3b2e97f7691df778ba334d85997389b" kindref="member">B_mpo_vec</ref>.end(),<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" kindref="member">variance_mpo_has_converged</ref><sp/>=<sp/><sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_variance_per_site_mpo.value()<sp/>&lt;<sp/>threshold;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="classclass__algorithm__infinite_1ac3374fa48c9c4c2f6b09b9e5b4fd1a8d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1ac3374fa48c9c4c2f6b09b9e5b4fd1a8d" kindref="member">class_algorithm_infinite::check_convergence_variance_ham</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>threshold,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold){</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Based<sp/>on<sp/>the<sp/>the<sp/>slope<sp/>of<sp/>the<sp/>variance</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>want<sp/>to<sp/>check<sp/>every<sp/>time<sp/>we<sp/>can<sp/>because<sp/>the<sp/>variance<sp/>is<sp/>expensive<sp/>to<sp/>compute.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Checking<sp/>convergence<sp/>of<sp/>variance<sp/>ham&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>threshold<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::isnan(threshold)<sp/><sp/><sp/><sp/><sp/><sp/><sp/>?<sp/><ref refid="namespacesettings_1_1precision_1a8144c8c79b510717f340fff464e9a493" kindref="member">settings::precision::VarConvergenceThreshold</ref><sp/>:<sp/>threshold;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>slope_threshold<sp/>=<sp/>std::isnan(slope_threshold)<sp/>?<sp/><ref refid="namespacesettings_1_1precision_1a2d9e7cad0354e0b3b98f9c7acb391d23" kindref="member">settings::precision::VarSaturationThreshold</ref><sp/><sp/>:<sp/>slope_threshold;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a64f89df0e715685ce0a894dc3c618760" kindref="member">variance_ham_has_saturated</ref><sp/>=<sp/><ref refid="classclass__algorithm__base_1a9d6b4c72b6f2e026a446ced69309e3ee" kindref="member">check_saturation_using_slope</ref>(</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1acc84655600d7e4028a28ae96bceb6f29" kindref="member">B_ham_vec</ref>,</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a81480a03144424bad518d25dd212a560" kindref="member">V_ham_vec</ref>,</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8c0ed712a983752bcecc2d645cfd8401" kindref="member">X_ham_vec</ref>,</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a9217c1dad663b6343ca3b103a31ce49a" kindref="member">tools::infinite::measure::energy_variance_per_site_ham</ref>(*<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>),</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>slope_threshold,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a837927e924e553f5801a33c2458d51eb" kindref="member">V_ham_slope</ref>);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" kindref="member">variance_ham_has_converged</ref><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a9217c1dad663b6343ca3b103a31ce49a" kindref="member">tools::infinite::measure::energy_variance_per_site_ham</ref>(*<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>)<sp/>&lt;<sp/>threshold;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117" refid="classclass__algorithm__infinite_1aa7c274874ad3e3d0258b2d7850f7867a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aa7c274874ad3e3d0258b2d7850f7867a" kindref="member">class_algorithm_infinite::check_convergence_variance_mom</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>threshold,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold){</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Based<sp/>on<sp/>the<sp/>the<sp/>slope<sp/>of<sp/>the<sp/>variance</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>want<sp/>to<sp/>check<sp/>every<sp/>time<sp/>we<sp/>can<sp/>because<sp/>the<sp/>variance<sp/>is<sp/>expensive<sp/>to<sp/>compute.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Checking<sp/>convergence<sp/>of<sp/>variance<sp/>mom&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>threshold<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::isnan(threshold)<sp/><sp/><sp/><sp/><sp/><sp/><sp/>?<sp/><ref refid="namespacesettings_1_1precision_1a8144c8c79b510717f340fff464e9a493" kindref="member">settings::precision::VarConvergenceThreshold</ref><sp/>:<sp/>threshold;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>slope_threshold<sp/>=<sp/>std::isnan(slope_threshold)<sp/>?<sp/><ref refid="namespacesettings_1_1precision_1a2d9e7cad0354e0b3b98f9c7acb391d23" kindref="member">settings::precision::VarSaturationThreshold</ref><sp/><sp/>:<sp/>slope_threshold;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1ab5ab15b8c025f30a6d4c6e750ea38f8f" kindref="member">variance_mom_has_saturated</ref><sp/>=<sp/><ref refid="classclass__algorithm__base_1a9d6b4c72b6f2e026a446ced69309e3ee" kindref="member">check_saturation_using_slope</ref>(<ref refid="classclass__algorithm__infinite_1a8ec9eca947b8dc09ac496535fc3a0909" kindref="member">B_mom_vec</ref>,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a26fed56d782f59eb8fbcb4e35fd3a196" kindref="member">V_mom_vec</ref>,</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a17c4fcff55d7b01560a835ee91ac6d84" kindref="member">X_mom_vec</ref>,</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1measure_1aeafca3091f2799190b63d2439a3f918e" kindref="member">tools::infinite::measure::energy_variance_per_site_mom</ref>(*<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>),</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>slope_threshold,</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a3bcd397840d92500383d124e4cef5333" kindref="member">V_mom_slope</ref>);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" kindref="member">variance_mom_has_converged</ref><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1aeafca3091f2799190b63d2439a3f918e" kindref="member">tools::infinite::measure::energy_variance_per_site_mom</ref>(*<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>)<sp/>&lt;<sp/>threshold;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135" refid="classclass__algorithm__infinite_1ad5ddf1d7d7b1184f4874e9db5fed23d9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1ad5ddf1d7d7b1184f4874e9db5fed23d9" kindref="member">class_algorithm_infinite::check_convergence_entg_entropy</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold)<sp/>{</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Based<sp/>on<sp/>the<sp/>the<sp/>slope<sp/>of<sp/>entanglement<sp/>entanglement_entropy_midchain</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>one<sp/>is<sp/>cheap<sp/>to<sp/>compute.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Checking<sp/>convergence<sp/>of<sp/>entanglement&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>slope_threshold<sp/>=<sp/>std::isnan(slope_threshold)<sp/>?<sp/><ref refid="namespacesettings_1_1precision_1aefd3107716333590498c58a6ae754f5d" kindref="member">settings::precision::EntEntrSaturationThreshold</ref><sp/><sp/>:<sp/>slope_threshold;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" kindref="member">entanglement_has_saturated</ref><sp/><sp/>=<sp/><ref refid="classclass__algorithm__base_1a9d6b4c72b6f2e026a446ced69309e3ee" kindref="member">check_saturation_using_slope</ref>(</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8dcfd195113c804ef7d91e68b9175e88" kindref="member">BS_vec</ref>,</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ad91e5fe135e2d0779ce15032908b925f" kindref="member">S_vec</ref>,</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a9c4ec6ab37bc9fd8b90cb9ad587a40bc" kindref="member">XS_vec</ref>,</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1measure_1afe31f99ecec4043193ac621906b30925" kindref="member">tools::infinite::measure::current_entanglement_entropy</ref>(*<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>),</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>,</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1,</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>slope_threshold,</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a4a62d84b92e36ed7079bc114f9b40728" kindref="member">S_slope</ref>);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" kindref="member">entanglement_has_converged</ref><sp/>=<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" kindref="member">entanglement_has_saturated</ref>;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153" refid="classclass__algorithm__infinite_1a89dd9b352a0d683981bdbd3e8410225a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a89dd9b352a0d683981bdbd3e8410225a" kindref="member">class_algorithm_infinite::write_measurements</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>force){</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/>force){</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>,<sp/><ref refid="classclass__algorithm__base_1a14c1cf2ee0f07ec3d4d3acd55ac213a7" kindref="member">write_freq</ref>())<sp/>!=<sp/>0)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__algorithm__base_1a14c1cf2ee0f07ec3d4d3acd55ac213a7" kindref="member">write_freq</ref>()<sp/>==<sp/>0){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Writing<sp/>all<sp/>measurements<sp/>to<sp/>file&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;unset_measurements();</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1aafc806c6b29040a7273b4e1f163748d7" kindref="member">compute_observables</ref>();</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>-&gt;writeDataset(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/simOK&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1io_1aff574a3ae4b577ed7cc5bd65f492a342" kindref="member">tools::infinite::io::write_all_measurements</ref>(*<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>,<sp/>*<ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>-&gt;writeDataset(</highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/simOK&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166" refid="classclass__algorithm__infinite_1a2410f9a94f5e90c9124643dc32412dbf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a2410f9a94f5e90c9124643dc32412dbf" kindref="member">class_algorithm_infinite::write_state</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>force){</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/>force){</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>,<sp/><ref refid="classclass__algorithm__base_1a14c1cf2ee0f07ec3d4d3acd55ac213a7" kindref="member">write_freq</ref>())<sp/>!=<sp/>0)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__algorithm__base_1a14c1cf2ee0f07ec3d4d3acd55ac213a7" kindref="member">write_freq</ref>()<sp/>==<sp/>0){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1hdf5_1ad844524c5a813073cc1cd8aed6e07537" kindref="member">settings::hdf5::storage_level</ref><sp/>&lt;=<sp/><ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693" kindref="member">StorageLevel::NONE</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Writing<sp/>state<sp/>to<sp/>file&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>-&gt;writeDataset(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/simOK&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1io_1ab06c3634b6607e36b2f8a60b4401f3bd" kindref="member">tools::infinite::io::write_all_state</ref>(*<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>,<sp/>*<ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>);</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>-&gt;writeDataset(</highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/simOK&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>class_algorithm_infinite::store_log_entry_progress(bool<sp/>force){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>(not<sp/>force){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(math::mod(sim_status.iteration,<sp/>settings::idmrg::write_freq)<sp/>!=<sp/>0)<sp/>{return;}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>compute_observables();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>using<sp/>namespace<sp/>tools::infinite::measure;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_sto.tic();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>log_dmrg-&gt;append_record(</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim_status.iteration,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state-&gt;measurements.length.value(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim_status.iteration,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state-&gt;measurements.bond_dimension.value(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>settings::idmrg::chi_max,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state-&gt;measurements.energy_per_site.value(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state-&gt;measurements.energy_per_site_ham.value(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state-&gt;measurements.energy_per_site_mom.value(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::numeric_limits&lt;double&gt;::quiet_NaN(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::numeric_limits&lt;double&gt;::quiet_NaN(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::numeric_limits&lt;double&gt;::quiet_NaN(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state-&gt;measurements.energy_variance_per_site.value(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state-&gt;measurements.energy_variance_per_site_ham.value(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state-&gt;measurements.energy_variance_per_site_mom.value(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state-&gt;measurements.current_entanglement_entropy.value(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state-&gt;measurements.truncation_error.value(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>t_tot.get_age());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_sto.toc();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211" refid="classclass__algorithm__infinite_1a7cfa931e8444f5aba7bfee278f4a6b58" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a7cfa931e8444f5aba7bfee278f4a6b58" kindref="member">class_algorithm_infinite::clear_saturation_status</ref>(){</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Clearing<sp/>saturation<sp/>status&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8dcfd195113c804ef7d91e68b9175e88" kindref="member">BS_vec</ref>.clear();</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ad91e5fe135e2d0779ce15032908b925f" kindref="member">S_vec</ref>.clear();</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a9c4ec6ab37bc9fd8b90cb9ad587a40bc" kindref="member">XS_vec</ref>.clear();</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ac3b2e97f7691df778ba334d85997389b" kindref="member">B_mpo_vec</ref>.clear();</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a7bbb22b08660d9a233d2b9cd96cabd58" kindref="member">V_mpo_vec</ref>.clear();</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8895c39f0050aecc51f56f0b3d650306" kindref="member">X_mpo_vec</ref>.clear();</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1acc84655600d7e4028a28ae96bceb6f29" kindref="member">B_ham_vec</ref>.clear();</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a81480a03144424bad518d25dd212a560" kindref="member">V_ham_vec</ref>.clear();</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8c0ed712a983752bcecc2d645cfd8401" kindref="member">X_ham_vec</ref>.clear();</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8ec9eca947b8dc09ac496535fc3a0909" kindref="member">B_mom_vec</ref>.clear();</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a26fed56d782f59eb8fbcb4e35fd3a196" kindref="member">V_mom_vec</ref>.clear();</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a17c4fcff55d7b01560a835ee91ac6d84" kindref="member">X_mom_vec</ref>.clear();</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" kindref="member">entanglement_has_saturated</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1addb896a29a85c3a50a6a4a6ed8f8472e" kindref="member">variance_mpo_has_saturated</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a64f89df0e715685ce0a894dc3c618760" kindref="member">variance_ham_has_saturated</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1ab5ab15b8c025f30a6d4c6e750ea38f8f" kindref="member">variance_mom_has_saturated</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" kindref="member">variance_mpo_saturated_for</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1aca462206692cefd191733b5987b27887" kindref="member">variance_ham_saturated_for</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1ab12472ca8a5c1819ae6edb5f21b5a9b9" kindref="member">variance_mom_saturated_for</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" kindref="member">entanglement_has_converged</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" kindref="member">variance_mpo_has_converged</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" kindref="member">variance_ham_has_converged</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" kindref="member">variance_mom_has_converged</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" kindref="member">bond_dimension_has_reached_max</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" kindref="member">simulation_has_to_stop</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="246"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight></codeline>
+<codeline lineno="248" refid="classclass__algorithm__infinite_1a2f87c10d5c9c76ba1cf13becd4a3e786" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a2f87c10d5c9c76ba1cf13becd4a3e786" kindref="member">class_algorithm_infinite::print_profiling</ref>(){</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>();</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" kindref="member">t_prt</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(<ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>);</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" kindref="member">t_sim</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(<ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>);</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a58411e4adb7dba48f3ba2c150e4ce392" kindref="member">print_profiling_sim</ref>(<ref refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" kindref="member">t_sim</ref>);</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="255"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257" refid="classclass__algorithm__infinite_1a58411e4adb7dba48f3ba2c150e4ce392" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a58411e4adb7dba48f3ba2c150e4ce392" kindref="member">class_algorithm_infinite::print_profiling_sim</ref>(<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/>&amp;t_parent){</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\n<sp/>Simulation<sp/>breakdown:&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;+Total<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>t_parent.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>s&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" kindref="member">t_con</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(t_parent);</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="263"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="265" refid="classclass__algorithm__infinite_1af232e6d037549f0aae338b402aa9c722" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1af232e6d037549f0aae338b402aa9c722" kindref="member">class_algorithm_infinite::print_status_update</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>,<sp/><ref refid="classclass__algorithm__base_1a5d6af987e476e9a93a2bab9261ac16bb" kindref="member">print_freq</ref>())<sp/>!=<sp/>0)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>(not<sp/>state-&gt;position_is_the_middle())<sp/>{return;}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__algorithm__base_1a5d6af987e476e9a93a2bab9261ac16bb" kindref="member">print_freq</ref>()<sp/>==<sp/>0)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1aafc806c6b29040a7273b4e1f163748d7" kindref="member">compute_observables</ref>();</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacestd" kindref="compound">std</ref>;</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" kindref="member">t_prt</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>report;</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>setprecision(16)<sp/>&lt;&lt;<sp/>fixed<sp/>&lt;&lt;<sp/>left;</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Iter:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>setw(6)<sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>;</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;E:<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" kindref="member">SimulationType::iDMRG</ref>:</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>setw(21)<sp/>&lt;&lt;<sp/>setprecision(16)<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_mpo.value();</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>setw(21)<sp/>&lt;&lt;<sp/>setprecision(16)<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_ham.value();</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>setw(21)<sp/>&lt;&lt;<sp/>setprecision(16)<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_mom.value();</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kindref="member">SimulationType::iTEBD</ref>:</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>setw(21)<sp/>&lt;&lt;<sp/>setprecision(16)<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_ham.value();</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>setw(21)<sp/>&lt;&lt;<sp/>setprecision(16)<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_mom.value();</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">:<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>simulation<sp/>type&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"></highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;log₁₀<sp/>σ²(E):<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" kindref="member">SimulationType::iDMRG</ref>:</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>setw(12)<sp/>&lt;&lt;<sp/>setprecision(4)<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/>std::log10(<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_variance_per_site_mpo.value());</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>setw(12)<sp/>&lt;&lt;<sp/>setprecision(4)<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/>std::log10(<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_variance_per_site_ham.value());</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>setw(12)<sp/>&lt;&lt;<sp/>setprecision(4)<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/>std::log10(<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_variance_per_site_mom.value());</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kindref="member">SimulationType::iTEBD</ref>:</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>setw(12)<sp/>&lt;&lt;<sp/>setprecision(4)<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/>std::log10(<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_variance_per_site_ham.value());</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>setw(12)<sp/>&lt;&lt;<sp/>setprecision(4)<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/>std::log10(<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_variance_per_site_mom.value());</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">:<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>simulation<sp/>type&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;S:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>setw(21)<sp/>&lt;&lt;<sp/>setprecision(16)<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.current_entanglement_entropy.value();</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;χmax:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>setw(4)<sp/><sp/>&lt;&lt;<sp/>setprecision(3)<sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>();</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;χ:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>setw(4)<sp/><sp/>&lt;&lt;<sp/>setprecision(3)<sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.bond_dimension.value();</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;log₁₀<sp/>trunc:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>setw(10)<sp/>&lt;&lt;<sp/>setprecision(4)<sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/>std::log10(<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.truncation_error.value());</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Sites:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>setw(6)<sp/><sp/>&lt;&lt;<sp/>setprecision(1)<sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.length.value();</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref>){</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kindref="member">SimulationType::iTEBD</ref>:</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">:<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>simulation<sp/>type&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>Convergence<sp/>[&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref>){</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" kindref="member">SimulationType::iDMRG</ref>:</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>S-&quot;</highlight><highlight class="normal"><sp/><sp/><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>setw(6)<sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" kindref="member">entanglement_has_converged</ref>;</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>σ²-&quot;</highlight><highlight class="normal"><sp/><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>setw(6)<sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" kindref="member">variance_mpo_has_converged</ref>;</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kindref="member">SimulationType::iTEBD</ref>:</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>S-&quot;</highlight><highlight class="normal"><sp/><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>setw(6)<sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" kindref="member">entanglement_has_converged</ref>;</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">:<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>simulation<sp/>type&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"></highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;]&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>Saturation<sp/>[&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref>){</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" kindref="member">SimulationType::iDMRG</ref>:</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>σ²-<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>setw(2)<sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" kindref="member">variance_mpo_saturated_for</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>steps&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>S-&quot;</highlight><highlight class="normal"><sp/><sp/><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>setw(6)<sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" kindref="member">entanglement_has_saturated</ref>;</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kindref="member">SimulationType::iTEBD</ref>:</highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>S-&quot;</highlight><highlight class="normal"><sp/><sp/><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>setw(6)<sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" kindref="member">entanglement_has_saturated</ref>;</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="339"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">:<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>simulation<sp/>type&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;]&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>Time:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>setw(10)<sp/>&lt;&lt;<sp/>setprecision(2)<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>fixed<sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>.<ref refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" kindref="member">get_age</ref>()<sp/>;</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>Memory<sp/>[&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Rss:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" kindref="member">process_memory_in_mb</ref>(</highlight><highlight class="stringliteral">&quot;VmRSS&quot;</highlight><highlight class="normal">)&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>MB<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="345"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;RssPeak:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" kindref="member">process_memory_in_mb</ref>(</highlight><highlight class="stringliteral">&quot;VmHWM&quot;</highlight><highlight class="normal">)&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>MB<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="346"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;VmPeak:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" kindref="member">process_memory_in_mb</ref>(</highlight><highlight class="stringliteral">&quot;VmPeak&quot;</highlight><highlight class="normal">)&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>MB&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;]&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(report.str());</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" kindref="member">t_prt</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="350"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="351"><highlight class="normal"></highlight></codeline>
+<codeline lineno="352" refid="classclass__algorithm__infinite_1a993724b938167db865be9b23f291b5d9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a993724b938167db865be9b23f291b5d9" kindref="member">class_algorithm_infinite::print_status_full</ref>(){</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1aafc806c6b29040a7273b4e1f163748d7" kindref="member">compute_observables</ref>();</highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacestd" kindref="compound">std</ref>;</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacetools_1_1infinite_1_1measure" kindref="compound">tools::infinite::measure</ref>;</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" kindref="member">t_prt</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;---<sp/>Final<sp/>results<sp/><sp/>---<sp/>{}<sp/>---&quot;</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>);</highlight></codeline>
+<codeline lineno="358"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Iterations<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16d}&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>);</highlight></codeline>
+<codeline lineno="359"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref>){</highlight></codeline>
+<codeline lineno="360"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" kindref="member">SimulationType::iDMRG</ref>:</highlight></codeline>
+<codeline lineno="361"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Energy<sp/>MPO<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_mpo.value());</highlight></codeline>
+<codeline lineno="362"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Energy<sp/>HAM<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_ham.value());</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Energy<sp/>MOM<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_mom.value());</highlight></codeline>
+<codeline lineno="364"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="365"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kindref="member">SimulationType::iTEBD</ref>:</highlight></codeline>
+<codeline lineno="366"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Energy<sp/>HAM<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_ham.value());</highlight></codeline>
+<codeline lineno="367"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Energy<sp/>MOM<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_mom.value());</highlight></codeline>
+<codeline lineno="368"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="369"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">:<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>simulation<sp/>type&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref>){</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" kindref="member">SimulationType::iDMRG</ref>:</highlight></codeline>
+<codeline lineno="373"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;log₁₀<sp/>σ²(E)<sp/>MPO<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_mpo.value());</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;log₁₀<sp/>σ²(E)<sp/>HAM<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_ham.value());</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;log₁₀<sp/>σ²(E)<sp/>MOM<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_mom.value());</highlight></codeline>
+<codeline lineno="376"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="377"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kindref="member">SimulationType::iTEBD</ref>:</highlight></codeline>
+<codeline lineno="378"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;log₁₀<sp/>σ²(E)<sp/>HAM<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_ham.value());</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;log₁₀<sp/>σ²(E)<sp/>MOM<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.energy_per_site_mom.value());</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">:<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>simulation<sp/>type&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"></highlight></codeline>
+<codeline lineno="384"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Entanglement<sp/>Entropy<sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.current_entanglement_entropy.value());</highlight></codeline>
+<codeline lineno="385"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;χmax<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16d}&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="386"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;χ<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16d}&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.bond_dimension.value()<sp/><sp/><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="387"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;log₁₀<sp/>truncation:<sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>log10(<ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>-&gt;measurements.truncation_error.value()));</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"></highlight></codeline>
+<codeline lineno="389"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref>){</highlight></codeline>
+<codeline lineno="390"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kindref="member">SimulationType::iTEBD</ref>:</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;δt<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" kindref="member">delta_t</ref>);</highlight></codeline>
+<codeline lineno="392"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="393"><highlight class="normal"></highlight></codeline>
+<codeline lineno="394"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">:<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>simulation<sp/>type&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="395"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="396"><highlight class="normal"></highlight></codeline>
+<codeline lineno="397"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Simulation<sp/>converged<sp/><sp/>=<sp/>{:&lt;}&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" kindref="member">simulation_has_converged</ref>);</highlight></codeline>
+<codeline lineno="398"><highlight class="normal"></highlight></codeline>
+<codeline lineno="399"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref>){</highlight></codeline>
+<codeline lineno="400"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" kindref="member">SimulationType::iDMRG</ref>:</highlight></codeline>
+<codeline lineno="401"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;S<sp/>slope<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}<sp/>|<sp/>Converged<sp/>:<sp/>{}<sp/>\t\t<sp/>Saturated:<sp/>{}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1a4a62d84b92e36ed7079bc114f9b40728" kindref="member">S_slope</ref>,<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" kindref="member">entanglement_has_converged</ref>,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" kindref="member">entanglement_has_saturated</ref>);</highlight></codeline>
+<codeline lineno="402"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;σ²<sp/>MPO<sp/>slope<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}<sp/>|<sp/>Converged<sp/>:<sp/>{}<sp/>\t\t<sp/>Saturated:<sp/>{}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1a2b3decefbdbd9f2e4e7ab1871cbbdff3" kindref="member">V_mpo_slope</ref><sp/>,<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" kindref="member">variance_mpo_has_converged</ref>,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1addb896a29a85c3a50a6a4a6ed8f8472e" kindref="member">variance_mpo_has_saturated</ref>);</highlight></codeline>
+<codeline lineno="403"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;σ²<sp/>HAM<sp/>slope<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}<sp/>|<sp/>Converged<sp/>:<sp/>{}<sp/>\t\t<sp/>Saturated:<sp/>{}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1a837927e924e553f5801a33c2458d51eb" kindref="member">V_ham_slope</ref><sp/>,<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" kindref="member">variance_ham_has_converged</ref>,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a64f89df0e715685ce0a894dc3c618760" kindref="member">variance_ham_has_saturated</ref>);</highlight></codeline>
+<codeline lineno="404"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;σ²<sp/>MOM<sp/>slope<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}<sp/>|<sp/>Converged<sp/>:<sp/>{}<sp/>\t\t<sp/>Saturated:<sp/>{}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1a3bcd397840d92500383d124e4cef5333" kindref="member">V_mom_slope</ref><sp/>,<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" kindref="member">variance_mom_has_converged</ref>,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1ab5ab15b8c025f30a6d4c6e750ea38f8f" kindref="member">variance_mom_has_saturated</ref>);</highlight></codeline>
+<codeline lineno="405"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="406"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kindref="member">SimulationType::iTEBD</ref>:</highlight></codeline>
+<codeline lineno="407"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;S<sp/>slope<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}<sp/>|<sp/>Converged<sp/>:<sp/>{}<sp/>\t\t<sp/>Saturated:<sp/>{}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1a4a62d84b92e36ed7079bc114f9b40728" kindref="member">S_slope</ref>,<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" kindref="member">entanglement_has_converged</ref>,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" kindref="member">entanglement_has_saturated</ref>);</highlight></codeline>
+<codeline lineno="408"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;σ²<sp/>HAM<sp/>slope<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}<sp/>|<sp/>Converged<sp/>:<sp/>{}<sp/>\t\t<sp/>Saturated:<sp/>{}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1a837927e924e553f5801a33c2458d51eb" kindref="member">V_ham_slope</ref><sp/>,<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" kindref="member">variance_ham_has_converged</ref>,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a64f89df0e715685ce0a894dc3c618760" kindref="member">variance_ham_has_saturated</ref>);</highlight></codeline>
+<codeline lineno="409"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;σ²<sp/>MOM<sp/>slope<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}<sp/>|<sp/>Converged<sp/>:<sp/>{}<sp/>\t\t<sp/>Saturated:<sp/>{}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1a3bcd397840d92500383d124e4cef5333" kindref="member">V_mom_slope</ref><sp/>,<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" kindref="member">variance_mom_has_converged</ref>,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1ab5ab15b8c025f30a6d4c6e750ea38f8f" kindref="member">variance_mom_has_saturated</ref>);</highlight></codeline>
+<codeline lineno="410"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="411"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">:<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>simulation<sp/>type&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="412"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="413"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;S<sp/>slope<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}<sp/>|<sp/>Converged<sp/>:<sp/>{}<sp/>\t\t<sp/>Saturated:<sp/>{}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__infinite_1a4a62d84b92e36ed7079bc114f9b40728" kindref="member">S_slope</ref>,<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" kindref="member">entanglement_has_converged</ref>,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" kindref="member">entanglement_has_saturated</ref>);</highlight></codeline>
+<codeline lineno="414"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Time<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;16.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>.<ref refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" kindref="member">get_age</ref>());</highlight></codeline>
+<codeline lineno="415"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Peak<sp/>memory<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:&lt;6.1f}<sp/>MB&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" kindref="member">process_memory_in_mb</ref>(</highlight><highlight class="stringliteral">&quot;VmPeak&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="416"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" kindref="member">t_prt</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="417"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="418"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp"/>
+  </compounddef>
+</doxygen>
