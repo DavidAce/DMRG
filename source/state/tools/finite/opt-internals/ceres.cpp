@@ -43,24 +43,25 @@ tools::finite::opt::internals::ceres_optimization(const class_finite_state & sta
     ceres::GradientProblemSolver::Options options;
     options.line_search_type = ceres::LineSearchType::WOLFE;
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
-    options.line_search_direction_type = ceres::LineSearchDirectionType::NONLINEAR_CONJUGATE_GRADIENT;
+    options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
 
-    options.minimizer_progress_to_stdout = false;
-    options.max_num_iterations = 1000;
-    options.max_lbfgs_rank     = 8;
+    options.minimizer_progress_to_stdout = true;
+    options.max_num_iterations = 150;
+    options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = true;
-    options.min_line_search_step_size = 1e-14;
-    options.max_line_search_step_contraction = 1e-3; // "ftol"
-    options.min_line_search_step_contraction = 0.6;  // "wolfe"
+    options.max_line_search_step_expansion = 100.0;
+    options.min_line_search_step_size = 1e-8;
+    options.max_line_search_step_contraction = 1e-3;
+    options.min_line_search_step_contraction = 0.6;
     options.max_num_line_search_step_size_iterations  = 20;
-    options.max_num_line_search_direction_restarts    = 5;
-    options.line_search_sufficient_function_decrease  = 1e-4;
-    options.line_search_sufficient_curvature_decrease = 0.9;
-    options.max_solver_time_in_seconds = 60*4;
-    options.function_tolerance = 1e-8;
-    options.gradient_tolerance = 1e-10;
-    options.parameter_tolerance = 1e-8;
+    options.max_num_line_search_direction_restarts    = 2;
+    options.line_search_sufficient_function_decrease  = 1e-3;
+    options.line_search_sufficient_curvature_decrease = 0.8;
+    options.max_solver_time_in_seconds = 60*2;
+    options.function_tolerance = 1e-4;
+    options.gradient_tolerance = 1e-8;
+    options.parameter_tolerance = 1e-6;
     ceres::GradientProblemSolver::Summary summary;
     int counter,niter;
     t_opt->tic();
@@ -74,8 +75,8 @@ tools::finite::opt::internals::ceres_optimization(const class_finite_state & sta
 
             niter        = (int)summary.iterations.size();
             counter      = functor->get_count();
-            energy_new   = functor->get_energy() / chain_length;
-            variance_new = functor->get_variance()/chain_length;
+            energy_new   = functor->get_energy() ;
+            variance_new = functor->get_variance();
             theta_start  = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
             break;
         }
@@ -87,8 +88,8 @@ tools::finite::opt::internals::ceres_optimization(const class_finite_state & sta
             ceres::Solve(options, problem, theta_start_cast.data(), &summary);
             niter        = (int)summary.iterations.size();
             counter      = functor->get_count();
-            energy_new   = functor->get_energy() / chain_length;
-            variance_new = functor->get_variance()/chain_length;
+            energy_new   = functor->get_energy();
+            variance_new = functor->get_variance();
             theta_start  = theta_start_cast.normalized().cast<Scalar>();
             break;
         }
@@ -98,6 +99,7 @@ tools::finite::opt::internals::ceres_optimization(const class_finite_state & sta
     overlap_new  = std::abs(theta_old.dot(theta_start));
     opt_log.emplace_back("Ceres",theta.size(), energy_new, std::log10(variance_new), overlap_new, niter,counter, t_opt->get_last_time_interval());
     tools::log->trace("Finished Ceres. Exit status: {}. Message: {}", ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
+//    std::cout << summary.FullReport() << "\n";
     reports::print_report(opt_log);
     reports::print_report(std::make_tuple(
             tools::finite::opt::internals::t_vH2v->get_measured_time(),
@@ -108,7 +110,7 @@ tools::finite::opt::internals::ceres_optimization(const class_finite_state & sta
     ));
 
 
-    if (variance_new < variance_0){
+    if (variance_new < variance_0 * 2.0){
         state.unset_measurements();
         tools::log->debug("Returning new theta");
         return  Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());

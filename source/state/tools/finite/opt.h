@@ -177,6 +177,7 @@ namespace tools::finite::opt{
     template<typename Scalar>
     class ceres_functor : public ceres::FirstOrderFunction{
         public:
+            EIGEN_MAKE_ALIGNED_OPERATOR_NEW
             using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
             using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
         protected:
@@ -217,6 +218,9 @@ namespace tools::finite::opt{
 
 
         template<typename Scalar> using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic, 1>;
+
+
+
 
         template<typename Derived>
         VectorType<typename Derived::Scalar> get_vH2 (const Eigen::MatrixBase<Derived> &v, const MultiComponents<typename Derived::Scalar> &multiComponents){

@@ -59,6 +59,48 @@ void tools::finite::opt::internals::reset_timers(){
     t_op  ->reset();
 }
 
+
+
+
+template<typename T>
+Eigen::Tensor<T,4> get_mpo_light(const  Eigen::Tensor<T,4> &mpo){
+    long dim0 = 1;
+    long dim1 = 1;
+    long dim2 = mpo.dimension(2);
+    long dim3 = mpo.dimension(3);
+    Eigen::array<long, 4> offset = {0, 0, 4, 0};
+    Eigen::array<long, 4> extent = {dim0,dim1,dim2,dim3};
+    return mpo.slice(offset, extent);
+}
+
+template<typename T>
+Eigen::Tensor<T,3> get_env_light( const Eigen::Tensor<T,3> &env,std::string side){
+    long dim0 = env.dimension(0);
+    long dim1 = env.dimension(1);
+    long dim2 = 1;
+    Eigen::array<long, 3> extent = {dim0,dim1,dim2};
+    Eigen::array<long, 3> offset;
+    if(side == "L"){offset = {0,0,4};}
+    if(side == "R"){offset = {0,0,0};}
+
+    return env.slice(offset, extent);
+}
+
+template<typename T>
+Eigen::Tensor<T,4> get_env2_light( const Eigen::Tensor<T,4> &env,std::string side){
+    long dim0 = env.dimension(0);
+    long dim1 = env.dimension(1);
+    long dim2 = 1;
+    long dim3 = 1;
+    Eigen::array<long, 4> extent = {dim0,dim1,dim2,dim3};
+    Eigen::array<long, 4> offset;
+    if(side == "L"){offset = {0,0,4,4};}
+    if(side == "R"){offset = {0,0,0,0};}
+
+    return env.slice(offset, extent);
+}
+
+
 template<typename Scalar>
 tools::finite::opt::internals::MultiComponents<Scalar>::MultiComponents(const class_finite_state & state){
     tools::log->trace("Generating multi components");
@@ -82,6 +124,9 @@ tools::finite::opt::internals::MultiComponents<Scalar>::MultiComponents(const cl
         envL  = envL_cplx.block;         envR  = envR_cplx.block;
         env2L = env2L_cplx.block;        env2R = env2R_cplx.block;
     }
+
+
+
     dsizes        = state.active_dimensions();
     tools::log->trace("Finished building multicomponents");
 }

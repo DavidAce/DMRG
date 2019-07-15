@@ -78,7 +78,6 @@ bool tools::finite::opt::internals::ceres_functor<Scalar>::Evaluate(const double
     }
 
 
-
     ene             = vHv/vv;
     var             = vH2v/vv - ene*ene;
 //    double loss_of_precision = std::log10(std::abs(ene*ene));
@@ -88,18 +87,18 @@ bool tools::finite::opt::internals::ceres_functor<Scalar>::Evaluate(const double
 //    if (std::imag(var)      > expected_error) tools::log->warn("Variance has imaginary component            : {:.16f} + i {:.16f}" , std::real(var)    , std::imag(var));
     if (std::real(var)      < 0.0           ) tools::log->warn("Counter = {}. Variance is negative:  {:.16f} + i {:.16f}" , counter, std::real(var)    , std::imag(var));
 
-    energy         = std::real(ene);
-    energy_dens    = (energy/length - energy_min ) / (energy_max - energy_min);
+    energy         = std::real(ene)/length;
+    energy_dens    = (energy - energy_min ) / (energy_max - energy_min);
     energy_offset  = energy_dens - energy_target_dens;
     energy_func    = windowed_func_pow(energy_offset,energy_window);
     energy_grad    = windowed_grad_pow(energy_offset,energy_window);
 
-    variance       = std::abs(var);
+    variance       = std::abs(var)/length;
     variance       = variance < 1e-15  ? 1e-15 : variance;
 
     norm_offset    = std::abs(vv) - 1.0 ;
-    norm_func      = windowed_func_pow(norm_offset,0.0);
-    norm_grad      = windowed_grad_pow(norm_offset,0.0);
+    norm_func      = windowed_func_pow(norm_offset,0.1);
+    norm_grad      = windowed_grad_pow(norm_offset,0.1);
 
     log10var       = std::log10(variance);
 
@@ -110,7 +109,7 @@ bool tools::finite::opt::internals::ceres_functor<Scalar>::Evaluate(const double
     }
 
     auto vv_1  = std::pow(vv,-1);
-    auto var_1 = 1.0/variance/std::log(10);
+    auto var_1 = 1.0/std::abs(var)/std::log(10);
     if (grad_double_double != nullptr){
         Eigen::Map<VectorType>  grad (reinterpret_cast<      Scalar*>(grad_double_double), vecSize);
         grad = var_1 * vv_1 * (H2v  - v  * vH2v - 2.0 * ene * (Hv - v * ene))

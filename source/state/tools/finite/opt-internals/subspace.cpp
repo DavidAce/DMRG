@@ -115,9 +115,8 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
     double t_lu = hamiltonian.t_factorOp.get_last_time_interval();
     t_eig->toc();
 
-    double prec                       = settings::precision::VarConvergenceThreshold;
-    double max_overlap_threshold      = 1 - prec; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
-    double subspace_quality_threshold = prec;
+    double max_overlap_threshold      = 1 - 1e-1; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
+    double subspace_quality_threshold = settings::precision::MinSubspaceQuality;
 
     class_eigsolver solver;
     std::string reason = "exhausted";
@@ -143,11 +142,11 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
         double subspace_quality  = 1.0 - sq_sum_overlap;
         eig_log.emplace_back(nev, max_overlap, min_overlap, sq_sum_overlap, std::log10(subspace_quality), t_eig->get_last_time_interval(), t_lu);
         t_lu = 0;
-        if(max_overlap    > 1.0 + 1e-10) throw std::runtime_error("max_overlap larger than one : "  + std::to_string(max_overlap));
-        if(sq_sum_overlap > 1.0 + 1e-10) throw std::runtime_error("eps larger than one : "          + std::to_string(sq_sum_overlap));
-        if(min_overlap    < 0.0)         throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
-        if(max_overlap >= max_overlap_threshold )         {reason = "overlap is good enough"; break;}
-        if(subspace_quality < subspace_quality_threshold) {reason = "subspace quality is good enough"; break;}
+        if(max_overlap            > 1.0 + 1e-10)                 throw std::runtime_error("max_overlap larger than one : "  + std::to_string(max_overlap));
+        if(sq_sum_overlap         > 1.0 + 1e-10)                 throw std::runtime_error("eps larger than one : "          + std::to_string(sq_sum_overlap));
+        if(min_overlap            < 0.0)                         throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
+        if(max_overlap            >= max_overlap_threshold )    {reason = "overlap is good enough"; break;}
+        if(subspace_quality       < subspace_quality_threshold) {reason = "subspace quality is good enough"; break;}
     }
     tools::log->debug("Finished partial eigensolver -- condition: {}",reason);
     return std::make_tuple(eigvecs,eigvals);
@@ -238,8 +237,8 @@ tools::finite::opt::internals::subspace_optimization(const class_finite_state & 
         {
             double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
             double subspace_quality  = 1.0 - sq_sum_overlap;
-            if(subspace_quality >= 1e-4) {
-                tools::log->debug("Subspace quality too low: {}. Switching to direct mode", subspace_quality);
+            if(subspace_quality > settings::precision::MinSubspaceQuality) {
+                tools::log->debug("Subspace quality is poor: {} > {}. Switching to direct mode", subspace_quality, settings::precision::MinSubspaceQuality);
                 return ceres_optimization(state, sim_status, optType);
             }
         }

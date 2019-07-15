@@ -74,6 +74,7 @@ namespace settings {
         inline double   VarConvergenceThreshold      = 1e-8  ;   /*!< Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value */
         inline double   VarSaturationThreshold       = 1e-4  ;   /*!< Variance saturation  threshold. The variance has saturated when its (absolute) slope reaches below this value */
         inline double   EntEntrSaturationThreshold   = 1e-4  ;   /*!< Entanglement Entropy saturation threshold. The entanglement entropy has saturated when its (absolute) slope reaches below this value*/
+        inline double   MinSubspaceQuality           = 1e-6  ;   /*!< Minimum quality of subspace for going ahead in variance optimization. If the quality is too bad, direct optimization is done instead */
         inline size_t   MaxSitesMultiDmrg            = 10    ;   /*!< Maximum number of sites in multi-site dmrg. Too many sites (>12 or so) makes the contractions slow. */
         inline size_t   MaxSizeFullDiag              = 2048  ;   /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
         inline size_t   MaxSizePartDiag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */
