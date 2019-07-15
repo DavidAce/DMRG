@@ -28,7 +28,7 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 
 
     min_saturation_iters = 1;
-    max_saturation_iters = 4;
+    max_saturation_iters = 2;
 
     S_mat.resize(state->get_length()+1);
     BS_mat.resize(state->get_length()+1);
@@ -167,8 +167,8 @@ void class_algorithm_finite::move_center_point(){
     try{
         for(size_t i = 0; i < move_steps;i++){
             tools::finite::mps::move_center_point(*state);
-            sim_status.step += move_steps;
         }
+        sim_status.step += state->get_steps();
     }catch(std::exception & e){
         tools::finite::print::print_state(*state);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));

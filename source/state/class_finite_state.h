@@ -39,6 +39,7 @@ private:
 
 
     int num_sweeps   = 0;
+    int num_steps    = 0;
     int direction    = 1;
     long chi_max     = 0;
 public:
@@ -59,10 +60,18 @@ public:
 
 
 
-    int    get_sweeps()                         const ;
-    void   set_sweeps(int num_sweeps_) {num_sweeps = num_sweeps_;}
-    void   increment_sweeps() {num_sweeps++;}
+    int    get_sweeps() const ;
     int    reset_sweeps();
+    void   set_sweeps(int num_sweeps_);
+    void   increment_sweeps();
+
+    int    get_steps() const ;
+    int    reset_steps();
+    void   set_steps(int num_steps_);
+    void   increment_steps();
+
+
+
     long   get_chi_max()                        const;
     void   set_chi_max(long chi_max_);
     void set_positions();

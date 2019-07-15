@@ -190,12 +190,12 @@ int tools::finite::mps::move_center_point(class_finite_state &  state){
     if(MPS_R.front().get_position() != ENV_R.front().get_position()) throw std::runtime_error("MPSR and ENVR got mismatching positions");
     if(ENV_L.size() + ENV_R.size() != state.get_length()) throw std::runtime_error("ENVL + ENVR sizes do not add up to chain length anymore");
     if(MPS_L.size() + MPS_R.size() != state.get_length()) throw std::runtime_error("MPSL + MPSR sizes do not add up to chain length anymore");
-
     //    Check edge
     if (state.position_is_any_edge()){
         state.flip_direction();
         state.increment_sweeps();
     }
+    state.increment_steps();
 
     state.unset_measurements();
     return state.get_sweeps();

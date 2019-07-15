@@ -17,7 +17,8 @@ else()
     string (REPLACE ";" "$<SEMICOLON>" LAPACK_LIBRARIES_GENERATOR   "${LAPACK_LIBRARIES}")
 
     include(ExternalProject)
-    set(FLAGS "-g -DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -Wpedantic -Wextra -O3 -fno-omit-frame-pointer -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_DEBUG -D_FORTIFY_SOURCE=2")
+#    set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -DNDEBUG -O3 -fstack-protector  -g -fno-omit-frame-pointer -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_DEBUG -D_FORTIFY_SOURCE=2")
+    set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -DNDEBUG -O3 -fstack-protector  -g -fno-omit-frame-pointer -D_FORTIFY_SOURCE=2")
     ExternalProject_Add(external_CERES
             GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
             GIT_TAG master
