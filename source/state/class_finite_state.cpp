@@ -4,7 +4,7 @@
 
 
 #include "class_finite_state.h"
-#include <state/tools/nmspc_tools.h>
+#include <tools/nmspc_tools.h>
 #include <general/nmspc_quantum_mechanics.h>
 
 

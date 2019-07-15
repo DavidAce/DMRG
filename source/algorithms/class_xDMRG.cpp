@@ -9,8 +9,8 @@
 #include <state/class_infinite_state.h>
 #include <state/class_mps_2site.h>
 #include <state/class_finite_state.h>
-#include <state/tools/nmspc_tools.h>
-#include <state/tools/finite/opt.h>
+#include <tools/nmspc_tools.h>
+#include <tools/finite/opt.h>
 #include <math/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_quantum_mechanics.h>
@@ -97,12 +97,13 @@ void class_xDMRG::single_DMRG_step()
     log->trace("Starting single xDMRG step {}", sim_status.step);
 //    tools::log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
 
-    auto optMode  = sim_status.iteration  < 4  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
+    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
     auto optSpace = opt::OptSpace::SUBSPACE;
     optSpace      = measure::energy_variance_per_site(*state) <  1e-8               ?  opt::OptSpace::DIRECT  : optSpace;
     optSpace      = sim_status.iteration >= settings::xdmrg::min_sweeps             ?  opt::OptSpace::DIRECT  : optSpace;
     optSpace      = state->size_2site()  > settings::precision::MaxSizePartDiag     ?  opt::OptSpace::DIRECT  : optSpace;
-    optSpace      = opt::OptSpace::DIRECT;
+//    optSpace      = opt::OptSpace::DIRECT;
+//    optMode      = opt::OptMode::VARIANCE;
     long threshold = 0;
     switch(optSpace){
         case  opt::OptSpace::SUBSPACE : threshold = settings::precision::MaxSizePartDiag; break;
@@ -111,7 +112,10 @@ void class_xDMRG::single_DMRG_step()
     state->activate_sites(threshold);
     optSpace =  state->active_size() > settings::precision::MaxSizePartDiag ? opt::OptSpace::DIRECT : optSpace;
     auto optType = state->isReal() ?  opt::OptType::REAL :  opt::OptType::CPLX;
-    sim_status.chi_temp = sim_status.iteration  < 4 ? 8 : sim_status.chi_temp;
+    sim_status.chi_temp = sim_status.iteration  < 4 ? 16 : sim_status.chi_temp;
+    sim_status.chi_temp = sim_status.iteration  < 2 ? 8  : sim_status.chi_temp;
+    sim_status.chi_temp = sim_status.iteration  < 1 ? 4  : sim_status.chi_temp;
+
     Eigen::Tensor<Scalar,3> theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     mps::rebuild_environments(*state);
@@ -120,7 +124,6 @@ void class_xDMRG::single_DMRG_step()
 //    tools::log->debug("Variance accurate check after  xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
     sim_status.energy_dens        = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     state->unset_measurements();
-//    if (optSpace == opt::OptSpace::DIRECT and state->position_is_any_edge()){*state = tools::finite::ops::get_closest_parity_state(*state,settings::model::initial_sector);}
 
     t_sim.toc();
     sim_status.wall_time = t_tot.get_age();

@@ -96,6 +96,9 @@ set(RELWITHDEBINFO_OPTIONS   -Wpedantic -Wextra -O3 -g3 -fstack-protector -D_GLI
 set(RELEASE_OPTIONS          -DNDEBUG -O3 )
 set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g  -ftime-report)
 
+
+
+
 if(ENABLE_CCACHE)
     find_program(CCACHE_FOUND ccache)
     if(CCACHE_FOUND)
@@ -233,13 +236,27 @@ CheckExperimentalHeaders("${TEST_REQUIRED_FLAGS}" "${TEST_REQUIRED_LIBRARIES}")
 ###  for shared linking.                   ###
 ##############################################
 if(USE_OpenMP)
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND STATIC_BUILD)
-        message(WARNING "Disabling OpenMP
-        Clang cannot link \"libomp\" statically.
-        Please use GNU C++ instead to link \"libgomp.a\" statically, or turn off OpenMP
-        by passing \"-DUSE_OpenMP:BOOL=OFF\" to CMake to avoid this warning.")
-        message(STATUS "OpenMP OFF")
-        set(USE_OpenMP OFF)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT ${BUILD_SHARED_LIBS})
+        message(STATUS "Clang cannot link \"libomp\" statically. Attempting to link with libiomp")
+        find_library(OpenMP_LIBRARIES libiomp5.a
+                PATHS
+                $ENV{MKLROOT}/../compilers_and_libraries/linux/lib/intel64/
+            )
+        if(OpenMP_LIBRARIES)
+            message(STATUS "OpenMP ON" )
+            set(OpenMP_FOUND ON)
+            target_compile_options    (${PROJECT_NAME} PRIVATE -fopenmp=libiomp5)
+            target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_LIBRARIES})
+        else()
+            message(WARNING "
+            Could not find libiomp.a
+            Please use GNU C++ instead to link \"libgomp.a\" statically, or turn off OpenMP
+            by passing \"-DUSE_OpenMP:BOOL=OFF\" to CMake to avoid this warning.
+            Turning off OpenMP.")
+            message(STATUS "OpenMP OFF")
+            set(USE_OpenMP OFF)
+            unset(OpenMP_LIBRARIES)
+        endif()
     else()
         find_package(OpenMP)
         if (OpenMP_FOUND)
@@ -247,7 +264,6 @@ if(USE_OpenMP)
             set(OpenMP_LIBRARIES  ${OpenMP_gomp_LIBRARY} ${OpenMP_omp_LIBRARY} ${OpenMP_iomp_LIBRARY})
             target_compile_options    (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
             target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_LIBRARIES})
-            target_compile_definitions(${PROJECT_NAME} PRIVATE OpenMP_AVAILABLE)
         else()
             message(WARNING "OpenMP OFF -- Could not be found." )
         endif()

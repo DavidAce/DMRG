@@ -4,7 +4,7 @@
 
 #include "class_algorithm_infinite.h"
 #include <state/class_infinite_state.h>
-#include <state/tools/nmspc_tools.h>
+#include <tools/nmspc_tools.h>
 #include <io/class_hdf5_log_buffer.h>
 #include <math/nmspc_math.h>
 #include <h5pp/h5pp.h>

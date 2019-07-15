@@ -7,7 +7,7 @@
 #include <io/class_hdf5_log_buffer.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_infinite_state.h>
-#include <state/tools/nmspc_tools.h>
+#include <tools/nmspc_tools.h>
 #include <math/nmspc_math.h>
 #include <spdlog/spdlog.h>
 #include "class_iDMRG.h"

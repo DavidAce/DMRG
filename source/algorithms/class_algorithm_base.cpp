@@ -10,7 +10,7 @@
 #include <state/class_infinite_state.h>
 #include <state/class_environment.h>
 #include <state/class_finite_state.h>
-#include <state/tools/nmspc_tools.h>
+#include <tools/nmspc_tools.h>
 #include <state/class_mps_2site.h>
 #include <math/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>

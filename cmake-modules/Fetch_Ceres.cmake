@@ -41,7 +41,7 @@ else()
             -DEIGEN_INCLUDE_DIR_HINTS:PATH=${EIGEN3_INCLUDE_DIR}
             -DEIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION:BOOL=OFF
             -DLAPACK:BOOL=OFF
-            -DEIGENSPARSE:BOOL=OFF
+            -DEIGENSPARSE:BOOL=ON
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
             DEPENDS Eigen3::Eigen glog::glog

@@ -8,7 +8,7 @@
 #include <simulation/nmspc_settings.h>
 #include <state/class_infinite_state.h>
 #include <state/class_finite_state.h>
-#include <state/tools/nmspc_tools.h>
+#include <tools/nmspc_tools.h>
 #include <math/nmspc_math.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_random_numbers.h>
