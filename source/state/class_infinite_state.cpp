@@ -7,7 +7,7 @@
 #include <state/class_environment.h>
 #include <state/class_vidal_site.h>
 #include <state/class_mps_2site.h>
-#include <state/tools/nmspc_tools.h>
+#include <tools/nmspc_tools.h>
 #include <iomanip>
 #include <math/class_eigsolver.h>
 #include <math/arpack_extra/matrix_product_hamiltonian.h>

@@ -26,10 +26,26 @@ namespace settings {
     extern void load_from_file(class_settings_reader &indata);
     extern void load_from_hdf5(h5pp::File &h5ppFile);
 
+    namespace threading{
+        inline int num_threads_eigen  = 0;                                                        /*!< Number of threads for Eigen operations. num_threads <= 0 will try to use as many as possible */
+        inline int num_threads_omp    = 0;                                                        /*!< Number of threads for OpenMP operations. num_threads <= 0 will try to use as many as possible */
+        inline int num_threads_blas   = 1;                                                        /*!< Number of threads for BLAS operations. num_threads <= 0 will try to use as many as possible */
+    }
+
     namespace input{
         inline std::string input_file = "input/input.cfg";
         inline std::string input_filename = "input.cfg";
     }
+
+    namespace hdf5 {
+        inline bool         save_logs            = true;                         /*!< If true, saves the history of the simulation in log files, not just the end results  (only enabled on storage level NORMAL and FULL.) */
+        inline bool         save_profiling       = true;                         /*!< Whether to save profiling information to file. (only enabled on storage level NORMAL and FULL.) */
+        inline std::string  access_mode          = "READWRITE" ;                 /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
+        inline std::string  create_mode          = "RENAME";                     /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
+        inline std::string  output_filename      = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
+        inline StorageLevel storage_level        = StorageLevel::NORMAL;         /*!< Sets the storage level: choose "0=NONE,1=LIGHT,2=NORMAL,3=FULL */
+    }
+
     //Parameters for the model Hamiltonian
     namespace model {
         inline std::string  model_type     = "tf_ising";        /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising} above*/
@@ -75,7 +91,7 @@ namespace settings {
         inline double   VarSaturationThreshold       = 1e-4  ;   /*!< Variance saturation  threshold. The variance has saturated when its (absolute) slope reaches below this value */
         inline double   EntEntrSaturationThreshold   = 1e-4  ;   /*!< Entanglement Entropy saturation threshold. The entanglement entropy has saturated when its (absolute) slope reaches below this value*/
         inline double   MinSubspaceQuality           = 1e-6  ;   /*!< Minimum quality of subspace for going ahead in variance optimization. If the quality is too bad, direct optimization is done instead */
-        inline size_t   MaxSitesMultiDmrg            = 10    ;   /*!< Maximum number of sites in multi-site dmrg. Too many sites (>12 or so) makes the contractions slow. */
+        inline size_t   MaxSitesMultiDmrg            = 2     ;   /*!< Maximum number of sites in multi-site dmrg. Too many sites (>12 or so) makes the contractions slow. */
         inline size_t   MaxSizeFullDiag              = 2048  ;   /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
         inline size_t   MaxSizePartDiag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */
         inline size_t   MaxSizeDirect                = 131072;   /*!< Maximum linear size for direct multisite dmrg. If the linear size is larger than this, the algorithm prefers 2-site dmrg. */
@@ -133,14 +149,7 @@ namespace settings {
 
     }
 
-    namespace hdf5 {
-        inline bool         save_logs            = true;                         /*!< If true, saves the history of the simulation in log files, not just the end results  (only enabled on storage level NORMAL and FULL.) */
-        inline bool         save_profiling       = true;                         /*!< Whether to save profiling information to file. (only enabled on storage level NORMAL and FULL.) */
-        inline std::string  access_mode          = "READWRITE" ;                 /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
-        inline std::string  create_mode          = "RENAME";                     /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
-        inline std::string  output_filename      = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
-        inline StorageLevel storage_level        = StorageLevel::NORMAL;         /*!< Sets the storage level: choose "0=NONE,1=LIGHT,2=NORMAL,3=FULL */
-    }
+
     //Profiling
     namespace profiling {
         inline bool     on        = false;             /*!< If true, turns on profiling and timings will be shown on console. */
