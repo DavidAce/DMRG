@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1measure_1_1multisite" kind="namespace" language="C++">
+    <compoundname>tools::finite::measure::multisite</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1ad9a7cbe28a97e920a0a9a2a548d219c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::multisite::energy</definition>
+        <argsstring>(const class_finite_state &amp;state, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;multitheta)</argsstring>
+        <name>energy</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>multitheta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="112" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/multisite.cpp" bodystart="61" bodyend="76"/>
+        <references refid="classclass__finite__state_1a1e0d4d3cb509385ecd6acda4f4f5fcc0" compoundref="class__finite__state_8cpp" startline="270" endline="291">class_finite_state::get_multimpo</references>
+        <references refid="classclass__finite__state_1a7aedc2c9a2f2f33bf376431395a499d1" compoundref="class__finite__state_8cpp" startline="178" endline="184">class_finite_state::get_ENVL</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="103">class_finite_state::active_sites</references>
+        <references refid="classclass__finite__state_1a4573393d6b6d20bd80ece83113f9c442" compoundref="class__finite__state_8cpp" startline="186" endline="194">class_finite_state::get_ENVR</references>
+        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1a3ca2e5084269a08210015d32d3846407" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::multisite::energy_per_site</definition>
+        <argsstring>(const class_finite_state &amp;state, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;multitheta)</argsstring>
+        <name>energy_per_site</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>multitheta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="113" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/multisite.cpp" bodystart="79" bodyend="81"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1ad0bf82691db6ea773183f4f38c245636" compoundref="finite_2measure_8cpp" startline="139" endline="157">tools::finite::measure::energy</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1a1f013bbadfd297761a42a0f1ea874d90" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::multisite::energy_variance</definition>
+        <argsstring>(const class_finite_state &amp;state, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;multitheta)</argsstring>
+        <name>energy_variance</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>multitheta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="114" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/multisite.cpp" bodystart="84" bodyend="97"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1ad0bf82691db6ea773183f4f38c245636" compoundref="finite_2measure_8cpp" startline="139" endline="157">tools::finite::measure::energy</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1ad9a7cbe28a97e920a0a9a2a548d219c2" compoundref="multisite_8cpp" startline="61" endline="76">energy</references>
+        <references refid="classclass__finite__state_1a1e0d4d3cb509385ecd6acda4f4f5fcc0" compoundref="class__finite__state_8cpp" startline="270" endline="291">class_finite_state::get_multimpo</references>
+        <references refid="classclass__finite__state_1accbbf1266e0015b4693aefa54a3614b9" compoundref="class__finite__state_8cpp" startline="196" endline="202">class_finite_state::get_ENV2L</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="103">class_finite_state::active_sites</references>
+        <references refid="classclass__finite__state_1aa221609ca29e4f80632b6d9b5fd078de" compoundref="class__finite__state_8cpp" startline="204" endline="213">class_finite_state::get_ENV2R</references>
+        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1a04c5c28b2a39351e57ef347780876bec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::multisite::energy_variance_per_site</definition>
+        <argsstring>(const class_finite_state &amp;state, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;multitheta)</argsstring>
+        <name>energy_variance_per_site</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>multitheta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="115" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/multisite.cpp" bodystart="100" bodyend="102"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1a5a593749b940023e4150387fb657fcd6" compoundref="finite_2measure_8cpp" startline="169" endline="186">tools::finite::measure::energy_variance</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="111" column="1"/>
+  </compounddef>
+</doxygen>

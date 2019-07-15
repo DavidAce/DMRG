@@ -1,0 +1,1359 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__eigsolver" kind="class" language="C++" prot="public">
+    <compoundname>class_eigsolver</compoundname>
+    <includes refid="class__eigsolver_8h" local="no">class_eigsolver.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classclass__eigsolver_1af0d2e6550c857a0d2cd4dcfaedb8adcb" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_eigsolver::logLevel</definition>
+        <argsstring></argsstring>
+        <name>logLevel</name>
+        <initializer>= 5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" prot="public" static="no" mutable="no">
+        <type><ref refid="classeigutils_1_1eig_config" kindref="compound">eigutils::eigConfig</ref></type>
+        <definition>eigutils::eigConfig class_eigsolver::solverConf</definition>
+        <argsstring></argsstring>
+        <name>solverConf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" prot="public" static="no" mutable="no">
+        <type><ref refid="classeigutils_1_1eig_solution" kindref="compound">eigutils::eigSolution</ref></type>
+        <definition>eigutils::eigSolution class_eigsolver::solution</definition>
+        <argsstring></argsstring>
+        <name>solution</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__eigsolver_1a7606b470e00affdbeae96729f4d72efa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_eigsolver::class_eigsolver</definition>
+        <argsstring>(size_t logLevel_=5)</argsstring>
+        <name>class_eigsolver</name>
+        <param>
+          <type>size_t</type>
+          <declname>logLevel_</declname>
+          <defval>5</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="36" bodyend="38"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1a82c0e82fa7b658057257b2f08ba028f5" compoundref="nmspc__eigutils_8h" startline="227" endline="236">eigutils::eigLogger::setLogger</references>
+        <references refid="classclass__eigsolver_1af0d2e6550c857a0d2cd4dcfaedb8adcb" compoundref="class__eigsolver_8h" startline="20">logLevel</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1a43a1bb3e4ae651d3f09220f37ebe3f4c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_eigsolver::setLogLevel</definition>
+        <argsstring>(size_t logLevelZeroToSix)</argsstring>
+        <name>setLogLevel</name>
+        <param>
+          <type>size_t</type>
+          <declname>logLevelZeroToSix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="41" bodyend="44"/>
+        <references refid="classclass__eigsolver_1af0d2e6550c857a0d2cd4dcfaedb8adcb" compoundref="class__eigsolver_8h" startline="20">logLevel</references>
+        <references refid="namespaceeigutils_1_1eig_logger_1a1738e90923c7cc7b006457fb5e672ce8" compoundref="nmspc__eigutils_8h" startline="217" endline="225">eigutils::eigLogger::setLogLevel</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1acafe1f6f1266723e7bf5bde1f62d7fc4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_eigsolver::eig_dsyevd</definition>
+        <argsstring>(const double *matrix, int L)</argsstring>
+        <name>eig_dsyevd</name>
+        <param>
+          <type>const double *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="131" bodyend="153"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" compoundref="nmspc__eigutils_8h" startline="163" endline="167">eigutils::eigSolution::get_eigvals</references>
+        <references refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" compoundref="nmspc__eigutils_8h" startline="135" endline="147">eigutils::eigSolution::get_eigvecs</references>
+        <references refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1">eigutils::eigSolution::meta</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a2dd829066e3d193e9d8c2e39b28c3cf1" compoundref="nmspc__eigutils_8h" startline="180">eigutils::eigSolution::Meta::eigvecs_found</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" compoundref="nmspc__eigutils_8h" startline="179">eigutils::eigSolution::Meta::eigvals_found</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" compoundref="nmspc__eigutils_8h" startline="171">eigutils::eigSolution::Meta::rows</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a476004608edc4da74ec138898d6ceddd" compoundref="nmspc__eigutils_8h" startline="172">eigutils::eigSolution::Meta::cols</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" compoundref="nmspc__eigutils_8h" startline="174">eigutils::eigSolution::Meta::nev</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" compoundref="nmspc__eigutils_8h" startline="176">eigutils::eigSolution::Meta::n</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" compoundref="nmspc__eigutils_8h" startline="183">eigutils::eigSolution::Meta::form</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" compoundref="nmspc__eigutils_8h" startline="185">eigutils::eigSolution::Meta::type</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1ac947544c9e71d87d20414d8d7f8c99bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_eigsolver::eig_dsyevd</definition>
+        <argsstring>(double *matrix2eigvecs, double *eigvals, int L)</argsstring>
+        <name>eig_dsyevd</name>
+        <param>
+          <type>double *</type>
+          <declname>matrix2eigvecs</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>eigvals</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="155" bodyend="194"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1afc0929e1929d7bb6d39d2fe800970f5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_eigsolver::eig_zheevd</definition>
+        <argsstring>(const std::complex&lt; double &gt; *matrix, int L)</argsstring>
+        <name>eig_zheevd</name>
+        <param>
+          <type>const std::complex&lt; double &gt; *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="198" bodyend="220"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" compoundref="nmspc__eigutils_8h" startline="163" endline="167">eigutils::eigSolution::get_eigvals</references>
+        <references refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" compoundref="nmspc__eigutils_8h" startline="135" endline="147">eigutils::eigSolution::get_eigvecs</references>
+        <references refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1">eigutils::eigSolution::meta</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a2dd829066e3d193e9d8c2e39b28c3cf1" compoundref="nmspc__eigutils_8h" startline="180">eigutils::eigSolution::Meta::eigvecs_found</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" compoundref="nmspc__eigutils_8h" startline="179">eigutils::eigSolution::Meta::eigvals_found</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" compoundref="nmspc__eigutils_8h" startline="171">eigutils::eigSolution::Meta::rows</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a476004608edc4da74ec138898d6ceddd" compoundref="nmspc__eigutils_8h" startline="172">eigutils::eigSolution::Meta::cols</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" compoundref="nmspc__eigutils_8h" startline="174">eigutils::eigSolution::Meta::nev</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" compoundref="nmspc__eigutils_8h" startline="176">eigutils::eigSolution::Meta::n</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" compoundref="nmspc__eigutils_8h" startline="183">eigutils::eigSolution::Meta::form</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" compoundref="nmspc__eigutils_8h" startline="185">eigutils::eigSolution::Meta::type</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1a9afbe8ac403ac5223bfb38884714d994" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_eigsolver::eig_zheevd</definition>
+        <argsstring>(std::complex&lt; double &gt; *matrix2eigvecs, double *eigvals, int L)</argsstring>
+        <name>eig_zheevd</name>
+        <param>
+          <type>std::complex&lt; double &gt; *</type>
+          <declname>matrix2eigvecs</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>eigvals</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="222" bodyend="245"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1a5ec545dca8a27f62e7f4e0f60ed31bd9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_eigsolver::eig_dgeev</definition>
+        <argsstring>(const double *matrix, int L)</argsstring>
+        <name>eig_dgeev</name>
+        <param>
+          <type>const double *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="248" bodyend="274"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" compoundref="nmspc__eigutils_8h" startline="163" endline="167">eigutils::eigSolution::get_eigvals</references>
+        <references refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" compoundref="nmspc__eigutils_8h" startline="135" endline="147">eigutils::eigSolution::get_eigvecs</references>
+        <references refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1">eigutils::eigSolution::meta</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a960196b7474cf46ebd6cc5a4a6534a9d" compoundref="nmspc__eigutils_8h" startline="181">eigutils::eigSolution::Meta::eigvecsR_found</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a93bc1042860e2ce9cbf1f2a4f72e2b36" compoundref="nmspc__eigutils_8h" startline="182">eigutils::eigSolution::Meta::eigvecsL_found</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" compoundref="nmspc__eigutils_8h" startline="179">eigutils::eigSolution::Meta::eigvals_found</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" compoundref="nmspc__eigutils_8h" startline="171">eigutils::eigSolution::Meta::rows</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a476004608edc4da74ec138898d6ceddd" compoundref="nmspc__eigutils_8h" startline="172">eigutils::eigSolution::Meta::cols</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" compoundref="nmspc__eigutils_8h" startline="174">eigutils::eigSolution::Meta::nev</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" compoundref="nmspc__eigutils_8h" startline="176">eigutils::eigSolution::Meta::n</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" compoundref="nmspc__eigutils_8h" startline="183">eigutils::eigSolution::Meta::form</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" compoundref="nmspc__eigutils_8h" startline="185">eigutils::eigSolution::Meta::type</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1afd09e2dd48b88512fe618e1e85739ef3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_eigsolver::eig_dgeev</definition>
+        <argsstring>(const double *matrix, std::complex&lt; double &gt; *eigvecsR, std::complex&lt; double &gt; *eigvecsL, std::complex&lt; double &gt; *eigvals, int L)</argsstring>
+        <name>eig_dgeev</name>
+        <param>
+          <type>const double *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt; *</type>
+          <declname>eigvecsR</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt; *</type>
+          <declname>eigvecsL</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt; *</type>
+          <declname>eigvals</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="277" bodyend="340"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1a319c6451b3f0523c472815f486c4c13c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_eigsolver::eig_zgeev</definition>
+        <argsstring>(const std::complex&lt; double &gt; *matrix, int L)</argsstring>
+        <name>eig_zgeev</name>
+        <param>
+          <type>const std::complex&lt; double &gt; *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="344" bodyend="368"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" compoundref="nmspc__eigutils_8h" startline="163" endline="167">eigutils::eigSolution::get_eigvals</references>
+        <references refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" compoundref="nmspc__eigutils_8h" startline="135" endline="147">eigutils::eigSolution::get_eigvecs</references>
+        <references refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1">eigutils::eigSolution::meta</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a960196b7474cf46ebd6cc5a4a6534a9d" compoundref="nmspc__eigutils_8h" startline="181">eigutils::eigSolution::Meta::eigvecsR_found</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a93bc1042860e2ce9cbf1f2a4f72e2b36" compoundref="nmspc__eigutils_8h" startline="182">eigutils::eigSolution::Meta::eigvecsL_found</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" compoundref="nmspc__eigutils_8h" startline="179">eigutils::eigSolution::Meta::eigvals_found</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" compoundref="nmspc__eigutils_8h" startline="171">eigutils::eigSolution::Meta::rows</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a476004608edc4da74ec138898d6ceddd" compoundref="nmspc__eigutils_8h" startline="172">eigutils::eigSolution::Meta::cols</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" compoundref="nmspc__eigutils_8h" startline="174">eigutils::eigSolution::Meta::nev</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" compoundref="nmspc__eigutils_8h" startline="176">eigutils::eigSolution::Meta::n</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" compoundref="nmspc__eigutils_8h" startline="183">eigutils::eigSolution::Meta::form</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" compoundref="nmspc__eigutils_8h" startline="185">eigutils::eigSolution::Meta::type</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1ab6f77c16948940ab50b0fc5244696020" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int class_eigsolver::eig_zgeev</definition>
+        <argsstring>(const std::complex&lt; double &gt; *matrix, std::complex&lt; double &gt; *eigvecsR, std::complex&lt; double &gt; *eigvecsL, std::complex&lt; double &gt; *eigvals, int L)</argsstring>
+        <name>eig_zgeev</name>
+        <param>
+          <type>const std::complex&lt; double &gt; *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt; *</type>
+          <declname>eigvecsR</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt; *</type>
+          <declname>eigvecsL</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt; *</type>
+          <declname>eigvals</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="39" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="373" bodyend="409"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1aeca3b296dd964ad831ce6ef2dba5ae0a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_eigsolver::subtract_phase</definition>
+        <argsstring>(std::vector&lt; Scalar &gt; &amp;eigvecs, int L, int nev)</argsstring>
+        <name>subtract_phase</name>
+        <param>
+          <type>std::vector&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt; &amp;</type>
+          <declname>eigvecs</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nev</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="44" bodyend="69"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4">eigutils::eigSetting::LM</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0706fbbd929bd8abc4de386c53d439ff">eigutils::eigSetting::DENSE</references>
+        <references refid="classclass__eigsolver_1accad92a9cfa34658feba66be21ba8dfe" compoundref="class__eigsolver_8cpp" startline="103" endline="126">eig_init</references>
+        <references refid="classclass__eigsolver_1aa2280aa087a50f16d16ea30f11d1a7d3" compoundref="class__eigsolver_8h" startline="242" endline="247">eig</references>
+        <references refid="classclass__eigsolver_1ab65d1da0bec23a586edd7c1c2cced3ab" compoundref="class__eigsolver_8h" startline="303" endline="345">eigs_auto</references>
+        <references refid="classclass__eigsolver_1a05d0c7c938a1c72636b4e6b01bf4d77f" compoundref="class__eigsolver_8h" startline="352" endline="382">eigs</references>
+        <references refid="classclass__eigsolver_1a642877749caa5c31678971dbb302b29f" compoundref="class__eigsolver_8h" startline="387" endline="407">eigs_dense</references>
+        <references refid="classclass__eigsolver_1addd905f8d89f107a69162874038bc938" compoundref="class__eigsolver_8h" startline="455" endline="475">eigs_sparse</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da8cb2010d27e13509d364436256e972c0">eigutils::eigSetting::SR</references>
+        <references refid="classclass__eigsolver_1aa09d98b6edc6986cf4e905cf2527165f" compoundref="class__eigsolver_8h" startline="504" endline="524">eigs_stl</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_eigsolver::eigs_init</definition>
+        <argsstring>(const int L, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const eigutils::eigSetting::Type type=eigutils::eigSetting::Type::REAL, const eigutils::eigSetting::Form form=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Ritz ritz=eigutils::eigSetting::Ritz::LM, const eigutils::eigSetting::Side side=eigutils::eigSetting::Side::R, const eigutils::eigSetting::Storage storage=eigutils::eigSetting::Storage::DENSE, const bool compute_eigvecs_=true, const bool remove_phase_=false)</argsstring>
+        <name>eigs_init</name>
+        <param>
+          <type>const int</type>
+          <declname>L</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nev</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>ncv</declname>
+        </param>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>sigma</declname>
+          <defval>std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" kindref="member">eigutils::eigSetting::Type</ref></type>
+          <declname>type</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554" kindref="member">eigutils::eigSetting::Type::REAL</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigutils::eigSetting::Ritz</ref></type>
+          <declname>ritz</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">eigutils::eigSetting::Ritz::LM</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadf" kindref="member">eigutils::eigSetting::Storage</ref></type>
+          <declname>storage</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0706fbbd929bd8abc4de386c53d439ff" kindref="member">eigutils::eigSetting::Storage::DENSE</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="47" bodyend="100"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classeigutils_1_1eig_solution_1a4c2a1f73d7bfcc2677f7557118c34e91" compoundref="nmspc__eigutils_8h" startline="188" endline="198">eigutils::eigSolution::reset</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
+        <references refid="classeigutils_1_1eig_config_1a74ac323d3c7c6073daa0c59a05eb9c8f" compoundref="nmspc__eigutils_8h" startline="55">eigutils::eigConfig::remove_phase</references>
+        <references refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" compoundref="nmspc__eigutils_8h" startline="58">eigutils::eigConfig::eigMaxNev</references>
+        <references refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" compoundref="nmspc__eigutils_8h" startline="59">eigutils::eigConfig::eigMaxNcv</references>
+        <references refid="classeigutils_1_1eig_config_1a3a3ef6fe7784796c4d5f75c7f90c85ab" compoundref="nmspc__eigutils_8h" startline="50">eigutils::eigConfig::shift</references>
+        <references refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" compoundref="nmspc__eigutils_8h" startline="60">eigutils::eigConfig::sigma</references>
+        <references refid="classeigutils_1_1eig_config_1abd0743c40a9b0e27b48f780f76cbaf7c" compoundref="nmspc__eigutils_8h" startline="53">eigutils::eigConfig::type</references>
+        <references refid="classeigutils_1_1eig_config_1a8c46d95a9a277098df96883a230943b1" compoundref="nmspc__eigutils_8h" startline="48">eigutils::eigConfig::form</references>
+        <references refid="classeigutils_1_1eig_config_1a9bd11ee439377055620359f00043f109" compoundref="nmspc__eigutils_8h" startline="52">eigutils::eigConfig::ritz</references>
+        <references refid="classeigutils_1_1eig_config_1acd7e00b8286436d66c14bc1b041e5e61" compoundref="nmspc__eigutils_8h" startline="51">eigutils::eigConfig::side</references>
+        <references refid="classeigutils_1_1eig_config_1a4684ac07f1047c4ae3962d0480699623" compoundref="nmspc__eigutils_8h" startline="49">eigutils::eigConfig::storage</references>
+        <references refid="classeigutils_1_1eig_config_1a677ba446c2a6b77078bdbf4d5bec2986" compoundref="nmspc__eigutils_8h" startline="42">eigutils::eigConfig::confOK</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1accad92a9cfa34658feba66be21ba8dfe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_eigsolver::eig_init</definition>
+        <argsstring>(const eigutils::eigSetting::Type type=eigutils::eigSetting::Type::REAL, const eigutils::eigSetting::Form form=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Side side=eigutils::eigSetting::Side::R, const bool compute_eigvecs_=true, const bool remove_phase_=false)</argsstring>
+        <name>eig_init</name>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" kindref="member">eigutils::eigSetting::Type</ref></type>
+          <declname>type</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554" kindref="member">eigutils::eigSetting::Type::REAL</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="84" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="103" bodyend="126"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classeigutils_1_1eig_solution_1a4c2a1f73d7bfcc2677f7557118c34e91" compoundref="nmspc__eigutils_8h" startline="188" endline="198">eigutils::eigSolution::reset</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
+        <references refid="classeigutils_1_1eig_config_1a74ac323d3c7c6073daa0c59a05eb9c8f" compoundref="nmspc__eigutils_8h" startline="55">eigutils::eigConfig::remove_phase</references>
+        <references refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" compoundref="nmspc__eigutils_8h" startline="58">eigutils::eigConfig::eigMaxNev</references>
+        <references refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" compoundref="nmspc__eigutils_8h" startline="59">eigutils::eigConfig::eigMaxNcv</references>
+        <references refid="classeigutils_1_1eig_config_1a3a3ef6fe7784796c4d5f75c7f90c85ab" compoundref="nmspc__eigutils_8h" startline="50">eigutils::eigConfig::shift</references>
+        <references refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" compoundref="nmspc__eigutils_8h" startline="60">eigutils::eigConfig::sigma</references>
+        <references refid="classeigutils_1_1eig_config_1abd0743c40a9b0e27b48f780f76cbaf7c" compoundref="nmspc__eigutils_8h" startline="53">eigutils::eigConfig::type</references>
+        <references refid="classeigutils_1_1eig_config_1a8c46d95a9a277098df96883a230943b1" compoundref="nmspc__eigutils_8h" startline="48">eigutils::eigConfig::form</references>
+        <references refid="classeigutils_1_1eig_config_1a9bd11ee439377055620359f00043f109" compoundref="nmspc__eigutils_8h" startline="52">eigutils::eigConfig::ritz</references>
+        <references refid="classeigutils_1_1eig_config_1acd7e00b8286436d66c14bc1b041e5e61" compoundref="nmspc__eigutils_8h" startline="51">eigutils::eigConfig::side</references>
+        <references refid="classeigutils_1_1eig_config_1a4684ac07f1047c4ae3962d0480699623" compoundref="nmspc__eigutils_8h" startline="49">eigutils::eigConfig::storage</references>
+        <references refid="classeigutils_1_1eig_config_1a677ba446c2a6b77078bdbf4d5bec2986" compoundref="nmspc__eigutils_8h" startline="42">eigutils::eigConfig::confOK</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1aa2280aa087a50f16d16ea30f11d1a7d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" kindref="member">eigutils::eigSetting::Type</ref></type>
+            <declname>type</declname>
+            <defname>type</defname>
+            <defval><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554" kindref="member">eigutils::eigSetting::Type::REAL</ref></defval>
+          </param>
+          <param>
+            <type><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+            <declname>form</declname>
+            <defname>form</defname>
+            <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+          </param>
+          <param>
+            <type><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+            <declname>side</declname>
+            <defname>side</defname>
+            <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+          </param>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_eigsolver::eig</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const bool compute_eigvecs_=true, const bool remove_phase_=false)</argsstring>
+        <name>eig</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="96" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="242" bodyend="247"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1a6ab91202b2b4243b3006f3809999b30f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" kindref="member">eigutils::eigSetting::Type</ref></type>
+            <declname>type</declname>
+            <defname>type</defname>
+            <defval><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554" kindref="member">eigutils::eigSetting::Type::REAL</ref></defval>
+          </param>
+          <param>
+            <type><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+            <declname>form</declname>
+            <defname>form</defname>
+            <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+          </param>
+          <param>
+            <type><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+            <declname>side</declname>
+            <defname>side</defname>
+            <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+          </param>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_eigsolver::eig</definition>
+        <argsstring>(const Scalar *matrix, const int L, const bool compute_eigvecs_=true, const bool remove_phase_=false)</argsstring>
+        <name>eig</name>
+        <param>
+          <type>const <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>L</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="104" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="257" bodyend="297"/>
+        <references refid="classclass__eigsolver_1accad92a9cfa34658feba66be21ba8dfe" compoundref="class__eigsolver_8cpp" startline="103" endline="126">eig_init</references>
+        <references refid="classclass__eigsolver_1acafe1f6f1266723e7bf5bde1f62d7fc4" compoundref="class__eigsolver_8cpp" startline="131" endline="153">eig_dsyevd</references>
+        <references refid="classclass__eigsolver_1afc0929e1929d7bb6d39d2fe800970f5b" compoundref="class__eigsolver_8cpp" startline="198" endline="220">eig_zheevd</references>
+        <references refid="classclass__eigsolver_1a5ec545dca8a27f62e7f4e0f60ed31bd9" compoundref="class__eigsolver_8cpp" startline="248" endline="274">eig_dgeev</references>
+        <references refid="classclass__eigsolver_1a319c6451b3f0523c472815f486c4c13c" compoundref="class__eigsolver_8cpp" startline="344" endline="368">eig_zgeev</references>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classeigutils_1_1eig_config_1a74ac323d3c7c6073daa0c59a05eb9c8f" compoundref="nmspc__eigutils_8h" startline="55">eigutils::eigConfig::remove_phase</references>
+        <references refid="classclass__eigsolver_1aeca3b296dd964ad831ce6ef2dba5ae0a" compoundref="class__eigsolver_8h" startline="44" endline="69">subtract_phase</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" compoundref="nmspc__eigutils_8h" startline="135" endline="147">eigutils::eigSolution::get_eigvecs</references>
+        <references refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1">eigutils::eigSolution::meta</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" compoundref="nmspc__eigutils_8h" startline="174">eigutils::eigSolution::Meta::nev</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1ab65d1da0bec23a586edd7c1c2cced3ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_eigsolver::eigs_auto</definition>
+        <argsstring>(const Scalar *matrix_data, const int L, const int nev, const bool compute_eigvecs_=false, const eigutils::eigSetting::Ritz ritz=eigutils::eigSetting::Ritz::LM, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const eigutils::eigSetting::Side side=eigutils::eigSetting::Side::R, const bool remove_phase_=false)</argsstring>
+        <name>eigs_auto</name>
+        <param>
+          <type>const <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>matrix_data</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>L</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nev</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigutils::eigSetting::Ritz</ref></type>
+          <declname>ritz</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">eigutils::eigSetting::Ritz::LM</ref></defval>
+        </param>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>sigma</declname>
+          <defval>std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="113" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="303" bodyend="345"/>
+        <references refid="classmatrix__recast_1a0a0fc13cc62492d829396301481c593f" compoundref="matrix__recast_8h" startline="59" endline="59">matrix_recast&lt; Scalar &gt;::is_sparse</references>
+        <references refid="classmatrix__recast_1a63a628ed485d94f97aa1c28ff782dff1" compoundref="matrix__recast_8h" startline="60" endline="60">matrix_recast&lt; Scalar &gt;::is_real</references>
+        <references refid="classmatrix__recast_1af683ac62b5601b539131115d6863c446" compoundref="matrix__recast_8h" startline="61" endline="61">matrix_recast&lt; Scalar &gt;::is_symmetric</references>
+        <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
+        <references refid="classmatrix__recast_1adddee01efa8b8bcf650ba4a84493d384" compoundref="matrix__recast_8cpp" startline="103" endline="116">matrix_recast&lt; Scalar &gt;::get_as_real_sparse</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classarpackpp__solver_1a92aa17bf228c308fbd9211bbe95a512b" compoundref="arpackpp__solver_8cpp" startline="44" endline="75">arpackpp_solver&lt; MatrixType &gt;::eigs</references>
+        <references refid="classmatrix__recast_1af48d6747ecb23c658a21e62849579a43" compoundref="matrix__recast_8cpp" startline="71" endline="87">matrix_recast&lt; Scalar &gt;::get_as_real_dense</references>
+        <references refid="classmatrix__recast_1ab315dce9843630b5d03b97fa419a44af" compoundref="matrix__recast_8cpp" startline="119" endline="130">matrix_recast&lt; Scalar &gt;::get_as_cplx_sparse</references>
+        <references refid="classmatrix__recast_1ac3af362d62b9f9c968be7b7d5d7893d2" compoundref="matrix__recast_8cpp" startline="90" endline="100">matrix_recast&lt; Scalar &gt;::get_as_cplx_dense</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1a05d0c7c938a1c72636b4e6b01bf4d77f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadf" kindref="member">eigutils::eigSetting::Storage</ref></type>
+            <declname>storage</declname>
+            <defname>storage</defname>
+          </param>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_eigsolver::eigs</definition>
+        <argsstring>(const Scalar *matrix, const int L, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const eigutils::eigSetting::Form form=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Ritz ritz=eigutils::eigSetting::Ritz::LM, const eigutils::eigSetting::Side side=eigutils::eigSetting::Side::R, const bool compute_eigvecs_=false, const bool remove_phase_=false, Scalar *residual_=nullptr)</argsstring>
+        <name>eigs</name>
+        <param>
+          <type>const <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>L</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nev</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>ncv</declname>
+        </param>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>sigma</declname>
+          <defval>std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigutils::eigSetting::Ritz</ref></type>
+          <declname>ritz</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">eigutils::eigSetting::Ritz::LM</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>residual_</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="124" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="352" bodyend="382"/>
+        <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1a642877749caa5c31678971dbb302b29f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_eigsolver::eigs_dense</definition>
+        <argsstring>(const Scalar *matrix, const int L, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const eigutils::eigSetting::Form form=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Ritz ritz=eigutils::eigSetting::Ritz::LM, const eigutils::eigSetting::Side side=eigutils::eigSetting::Side::R, const bool compute_eigvecs_=false, const bool remove_phase_=false, Scalar *residual_=nullptr)</argsstring>
+        <name>eigs_dense</name>
+        <param>
+          <type>const <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>L</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nev</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>ncv</declname>
+        </param>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>sigma</declname>
+          <defval>std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigutils::eigSetting::Ritz</ref></type>
+          <declname>ritz</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">eigutils::eigSetting::Ritz::LM</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>residual_</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="138" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="387" bodyend="407"/>
+        <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1a638606b797d7c61ae5ee7e7618eb2cd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_eigsolver::eigs_dense</definition>
+        <argsstring>(DenseMatrixProduct&lt; Scalar &gt; &amp;matrix, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const eigutils::eigSetting::Form form=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Ritz ritz=eigutils::eigSetting::Ritz::LM, const eigutils::eigSetting::Side side=eigutils::eigSetting::Side::R, const bool compute_eigvecs_=false, const bool remove_phase_=false, Scalar *residual_=nullptr)</argsstring>
+        <name>eigs_dense</name>
+        <param>
+          <type><ref refid="class_dense_matrix_product" kindref="compound">DenseMatrixProduct</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nev</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>ncv</declname>
+        </param>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>sigma</declname>
+          <defval>std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigutils::eigSetting::Ritz</ref></type>
+          <declname>ritz</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">eigutils::eigSetting::Ritz::LM</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>residual_</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="152" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="411" bodyend="430"/>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="class_dense_matrix_product_1a1e4b8ba24d25fe97cf0b907f522fd0fa" compoundref="matrix__product__dense_8h" startline="77" endline="77">DenseMatrixProduct&lt; Scalar_ &gt;::rows</references>
+        <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classarpackpp__solver_1a92aa17bf228c308fbd9211bbe95a512b" compoundref="arpackpp__solver_8cpp" startline="44" endline="75">arpackpp_solver&lt; MatrixType &gt;::eigs</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1ac5612e0c1b83a9dd761c697b88a98fd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_eigsolver::eigs_dense</definition>
+        <argsstring>(DenseHamiltonianProduct&lt; Scalar &gt; &amp;matrix, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const eigutils::eigSetting::Form form=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Ritz ritz=eigutils::eigSetting::Ritz::LM, const eigutils::eigSetting::Side side=eigutils::eigSetting::Side::R, const bool compute_eigvecs_=false, const bool remove_phase_=false, Scalar *residual_=nullptr)</argsstring>
+        <name>eigs_dense</name>
+        <param>
+          <type><ref refid="class_dense_hamiltonian_product" kindref="compound">DenseHamiltonianProduct</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nev</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>ncv</declname>
+        </param>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>sigma</declname>
+          <defval>std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigutils::eigSetting::Ritz</ref></type>
+          <declname>ritz</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">eigutils::eigSetting::Ritz::LM</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>residual_</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="164" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="433" bodyend="452"/>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="class_dense_hamiltonian_product_1aecec01d77a30db2fd058a8b505ab1d42" compoundref="matrix__product__hamiltonian_8h" startline="58" endline="58">DenseHamiltonianProduct&lt; Scalar_ &gt;::rows</references>
+        <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classarpackpp__solver_1a92aa17bf228c308fbd9211bbe95a512b" compoundref="arpackpp__solver_8cpp" startline="44" endline="75">arpackpp_solver&lt; MatrixType &gt;::eigs</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1addd905f8d89f107a69162874038bc938" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_eigsolver::eigs_sparse</definition>
+        <argsstring>(const Scalar *matrix, const int L, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const eigutils::eigSetting::Form form=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Ritz ritz=eigutils::eigSetting::Ritz::LM, const eigutils::eigSetting::Side side=eigutils::eigSetting::Side::R, const bool compute_eigvecs_=false, const bool remove_phase_=false, Scalar *residual_=nullptr)</argsstring>
+        <name>eigs_sparse</name>
+        <param>
+          <type>const <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>L</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nev</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>ncv</declname>
+        </param>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>sigma</declname>
+          <defval>std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigutils::eigSetting::Ritz</ref></type>
+          <declname>ritz</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">eigutils::eigSetting::Ritz::LM</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>residual_</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="177" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="455" bodyend="475"/>
+        <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1a3c9525f57b6ed293ae8ab6ba8ead2b27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_eigsolver::eigs_sparse</definition>
+        <argsstring>(SparseMatrixProduct&lt; Scalar &gt; &amp;matrix, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const eigutils::eigSetting::Form form=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Ritz ritz=eigutils::eigSetting::Ritz::SR, const eigutils::eigSetting::Side side=eigutils::eigSetting::Side::R, const bool compute_eigvecs_=false, const bool remove_phase_=false, Scalar *residual_=nullptr)</argsstring>
+        <name>eigs_sparse</name>
+        <param>
+          <type><ref refid="class_sparse_matrix_product" kindref="compound">SparseMatrixProduct</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nev</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>ncv</declname>
+        </param>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>sigma</declname>
+          <defval>std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigutils::eigSetting::Ritz</ref></type>
+          <declname>ritz</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da8cb2010d27e13509d364436256e972c0" kindref="member">eigutils::eigSetting::Ritz::SR</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>residual_</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="191" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="481" bodyend="500"/>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="class_sparse_matrix_product_1a2d412d6e726ea6420c9fb66fcbbdb61d" compoundref="matrix__product__sparse_8h" startline="79" endline="79">SparseMatrixProduct&lt; Scalar_ &gt;::rows</references>
+        <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classarpackpp__solver_1a92aa17bf228c308fbd9211bbe95a512b" compoundref="arpackpp__solver_8cpp" startline="44" endline="75">arpackpp_solver&lt; MatrixType &gt;::eigs</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1aa09d98b6edc6986cf4e905cf2527165f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_eigsolver::eigs_stl</definition>
+        <argsstring>(const Scalar *matrix, const int L, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const eigutils::eigSetting::Form form=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Ritz ritz=eigutils::eigSetting::Ritz::LM, const eigutils::eigSetting::Side side=eigutils::eigSetting::Side::R, const bool compute_eigvecs_=false, const bool remove_phase_=false, Scalar *residual_=nullptr)</argsstring>
+        <name>eigs_stl</name>
+        <param>
+          <type>const <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>L</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nev</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>ncv</declname>
+        </param>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>sigma</declname>
+          <defval>std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigutils::eigSetting::Ritz</ref></type>
+          <declname>ritz</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">eigutils::eigSetting::Ritz::LM</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>residual_</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="204" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="504" bodyend="524"/>
+        <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__eigsolver_1acefaac774195095f33e1604f04518b22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_eigsolver::eigs_stl</definition>
+        <argsstring>(StlMatrixProduct&lt; Scalar &gt; &amp;matrix, const int nev, const int ncv, const std::complex&lt; double &gt; sigma=std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN(), const eigutils::eigSetting::Form form=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Ritz ritz=eigutils::eigSetting::Ritz::LM, const eigutils::eigSetting::Side side=eigutils::eigSetting::Side::R, const bool compute_eigvecs_=false, const bool remove_phase_=false, Scalar *residual_=nullptr)</argsstring>
+        <name>eigs_stl</name>
+        <param>
+          <type><ref refid="class_stl_matrix_product" kindref="compound">StlMatrixProduct</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nev</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>ncv</declname>
+        </param>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>sigma</declname>
+          <defval>std::numeric_limits&lt; std::complex&lt; double &gt;&gt;::quiet_NaN()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigutils::eigSetting::Ritz</ref></type>
+          <declname>ritz</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">eigutils::eigSetting::Ritz::LM</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>compute_eigvecs_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>remove_phase_</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>residual_</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="218" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="530" bodyend="549"/>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="class_stl_matrix_product_1a8fa9f6e3fc682948446bc13b10c903b5" compoundref="matrix__product__stl_8h" startline="61" endline="61">StlMatrixProduct&lt; Scalar_ &gt;::rows</references>
+        <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classarpackpp__solver_1a92aa17bf228c308fbd9211bbe95a512b" compoundref="arpackpp__solver_8cpp" startline="44" endline="75">arpackpp_solver&lt; MatrixType &gt;::eigs</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="47">
+        <label>eigutils::eigConfig</label>
+        <link refid="classeigutils_1_1eig_config"/>
+      </node>
+      <node id="48">
+        <label>eigutils::eigSolution</label>
+        <link refid="classeigutils_1_1eig_solution"/>
+        <childnode refid="49" relation="usage">
+          <edgelabel>meta</edgelabel>
+        </childnode>
+      </node>
+      <node id="49">
+        <label>eigutils::eigSolution::Meta</label>
+        <link refid="structeigutils_1_1eig_solution_1_1_meta"/>
+      </node>
+      <node id="46">
+        <label>class_eigsolver</label>
+        <link refid="classclass__eigsolver"/>
+        <childnode refid="47" relation="usage">
+          <edgelabel>solverConf</edgelabel>
+        </childnode>
+        <childnode refid="48" relation="usage">
+          <edgelabel>solution</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="18" bodyend="231"/>
+    <listofallmembers>
+      <member refid="classclass__eigsolver_1a7606b470e00affdbeae96729f4d72efa" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>class_eigsolver</name></member>
+      <member refid="classclass__eigsolver_1aa2280aa087a50f16d16ea30f11d1a7d3" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eig</name></member>
+      <member refid="classclass__eigsolver_1a6ab91202b2b4243b3006f3809999b30f" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eig</name></member>
+      <member refid="classclass__eigsolver_1a5ec545dca8a27f62e7f4e0f60ed31bd9" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eig_dgeev</name></member>
+      <member refid="classclass__eigsolver_1afd09e2dd48b88512fe618e1e85739ef3" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eig_dgeev</name></member>
+      <member refid="classclass__eigsolver_1acafe1f6f1266723e7bf5bde1f62d7fc4" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eig_dsyevd</name></member>
+      <member refid="classclass__eigsolver_1ac947544c9e71d87d20414d8d7f8c99bf" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eig_dsyevd</name></member>
+      <member refid="classclass__eigsolver_1accad92a9cfa34658feba66be21ba8dfe" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eig_init</name></member>
+      <member refid="classclass__eigsolver_1a319c6451b3f0523c472815f486c4c13c" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eig_zgeev</name></member>
+      <member refid="classclass__eigsolver_1ab6f77c16948940ab50b0fc5244696020" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eig_zgeev</name></member>
+      <member refid="classclass__eigsolver_1afc0929e1929d7bb6d39d2fe800970f5b" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eig_zheevd</name></member>
+      <member refid="classclass__eigsolver_1a9afbe8ac403ac5223bfb38884714d994" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eig_zheevd</name></member>
+      <member refid="classclass__eigsolver_1a05d0c7c938a1c72636b4e6b01bf4d77f" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eigs</name></member>
+      <member refid="classclass__eigsolver_1ab65d1da0bec23a586edd7c1c2cced3ab" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eigs_auto</name></member>
+      <member refid="classclass__eigsolver_1a642877749caa5c31678971dbb302b29f" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eigs_dense</name></member>
+      <member refid="classclass__eigsolver_1a638606b797d7c61ae5ee7e7618eb2cd8" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eigs_dense</name></member>
+      <member refid="classclass__eigsolver_1ac5612e0c1b83a9dd761c697b88a98fd1" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eigs_dense</name></member>
+      <member refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eigs_init</name></member>
+      <member refid="classclass__eigsolver_1addd905f8d89f107a69162874038bc938" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eigs_sparse</name></member>
+      <member refid="classclass__eigsolver_1a3c9525f57b6ed293ae8ab6ba8ead2b27" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eigs_sparse</name></member>
+      <member refid="classclass__eigsolver_1aa09d98b6edc6986cf4e905cf2527165f" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eigs_stl</name></member>
+      <member refid="classclass__eigsolver_1acefaac774195095f33e1604f04518b22" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eigs_stl</name></member>
+      <member refid="classclass__eigsolver_1af0d2e6550c857a0d2cd4dcfaedb8adcb" prot="private" virt="non-virtual"><scope>class_eigsolver</scope><name>logLevel</name></member>
+      <member refid="classclass__eigsolver_1a43a1bb3e4ae651d3f09220f37ebe3f4c" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>setLogLevel</name></member>
+      <member refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>solution</name></member>
+      <member refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>solverConf</name></member>
+      <member refid="classclass__eigsolver_1aeca3b296dd964ad831ce6ef2dba5ae0a" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>subtract_phase</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="infinite_2mps_8cpp" kind="file" language="C++">
+    <compoundname>mps.cpp</compoundname>
+    <includes refid="nmspc__tools_8h" local="no">state/tools/nmspc_tools.h</includes>
+    <includes refid="class__infinite__state_8h" local="no">state/class_infinite_state.h</includes>
+    <incdepgraph>
+      <node id="2536">
+        <label>iomanip</label>
+      </node>
+      <node id="2534">
+        <label>iterator</label>
+      </node>
+      <node id="2537">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="2538" relation="include">
+        </childnode>
+        <childnode refid="2531" relation="include">
+        </childnode>
+        <childnode refid="2533" relation="include">
+        </childnode>
+      </node>
+      <node id="2531">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="2529">
+        <label>string</label>
+      </node>
+      <node id="2543">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="2544" relation="include">
+        </childnode>
+        <childnode refid="2535" relation="include">
+        </childnode>
+      </node>
+      <node id="2539">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="2540" relation="include">
+        </childnode>
+        <childnode refid="2541" relation="include">
+        </childnode>
+        <childnode refid="2542" relation="include">
+        </childnode>
+      </node>
+      <node id="2549">
+        <label>map</label>
+      </node>
+      <node id="2538">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="2553">
+        <label>unordered_set</label>
+      </node>
+      <node id="2533">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="2540">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="2532">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="2546">
+        <label>optional</label>
+      </node>
+      <node id="2551">
+        <label>vector</label>
+      </node>
+      <node id="2541">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="2548">
+        <label>array</label>
+      </node>
+      <node id="2526">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/mps.cpp</label>
+        <link refid="infinite_2mps_8cpp"/>
+        <childnode refid="2527" relation="include">
+        </childnode>
+        <childnode refid="2545" relation="include">
+        </childnode>
+      </node>
+      <node id="2535">
+        <label>iostream</label>
+      </node>
+      <node id="2547">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="2535" relation="include">
+        </childnode>
+        <childnode refid="2548" relation="include">
+        </childnode>
+        <childnode refid="2549" relation="include">
+        </childnode>
+        <childnode refid="2550" relation="include">
+        </childnode>
+        <childnode refid="2551" relation="include">
+        </childnode>
+        <childnode refid="2541" relation="include">
+        </childnode>
+        <childnode refid="2540" relation="include">
+        </childnode>
+      </node>
+      <node id="2544">
+        <label>chrono</label>
+      </node>
+      <node id="2550">
+        <label>complex</label>
+      </node>
+      <node id="2545">
+        <label>state/class_infinite_state.h</label>
+        <link refid="class__infinite__state_8h"/>
+        <childnode refid="2528" relation="include">
+        </childnode>
+        <childnode refid="2546" relation="include">
+        </childnode>
+        <childnode refid="2530" relation="include">
+        </childnode>
+        <childnode refid="2543" relation="include">
+        </childnode>
+        <childnode refid="2547" relation="include">
+        </childnode>
+        <childnode refid="2552" relation="include">
+        </childnode>
+        <childnode refid="2539" relation="include">
+        </childnode>
+      </node>
+      <node id="2552">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="2529" relation="include">
+        </childnode>
+        <childnode refid="2553" relation="include">
+        </childnode>
+        <childnode refid="2551" relation="include">
+        </childnode>
+      </node>
+      <node id="2530">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="2531" relation="include">
+        </childnode>
+        <childnode refid="2532" relation="include">
+        </childnode>
+        <childnode refid="2533" relation="include">
+        </childnode>
+        <childnode refid="2534" relation="include">
+        </childnode>
+        <childnode refid="2535" relation="include">
+        </childnode>
+        <childnode refid="2536" relation="include">
+        </childnode>
+        <childnode refid="2537" relation="include">
+        </childnode>
+      </node>
+      <node id="2527">
+        <label>state/tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2528" relation="include">
+        </childnode>
+        <childnode refid="2529" relation="include">
+        </childnode>
+        <childnode refid="2530" relation="include">
+        </childnode>
+        <childnode refid="2539" relation="include">
+        </childnode>
+        <childnode refid="2543" relation="include">
+        </childnode>
+      </node>
+      <node id="2542">
+        <label>spdlog/sinks/stdout_sinks.h</label>
+      </node>
+      <node id="2528">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-06-25.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">state/tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__infinite__state_8h" kindref="compound">state/class_infinite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9" refid="namespacetools_1_1infinite_1_1mps_1aa96458ac5225cf6b0213e433355cc928" refkind="member"><highlight class="normal"><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref><sp/><ref refid="namespacetools_1_1infinite_1_1mps_1aa96458ac5225cf6b0213e433355cc928" kindref="member">tools::infinite::mps::set_random_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref><sp/>&amp;<sp/>state,<sp/>std::string<sp/>parity){</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;You<sp/>need<sp/>to<sp/>implement<sp/>set<sp/>random<sp/>state<sp/>for<sp/>infinite<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/mps.cpp"/>
+  </compounddef>
+</doxygen>

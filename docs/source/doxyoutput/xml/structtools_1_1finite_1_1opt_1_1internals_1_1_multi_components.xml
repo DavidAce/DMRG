@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components" kind="struct" language="C++" prot="public">
+    <compoundname>tools::finite::opt::internals::MultiComponents</compoundname>
+    <includes refid="opt_8h" local="no">opt.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>Scalar</declname>
+        <defname>Scalar</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a390c2a3a18f3194642e1a203e27455b0" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,3&gt; tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::envL</definition>
+        <argsstring></argsstring>
+        <name>envL</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="107" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1ab1fb6e8deffe8b6ba5f4d592fb20e239" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,3&gt; tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::envR</definition>
+        <argsstring></argsstring>
+        <name>envR</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="107" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1ac1e96d0596b19a21ddbe883836b624ea" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,4&gt; tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::env2L</definition>
+        <argsstring></argsstring>
+        <name>env2L</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="108" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a2857d2be439ec426b2ed4e34be94777c" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,4&gt; tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::env2R</definition>
+        <argsstring></argsstring>
+        <name>env2R</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="108" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a7f436abe186210b65d24d4755b6f4a33" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,4&gt; tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::mpo</definition>
+        <argsstring></argsstring>
+        <name>mpo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="109" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a2aa9a43bd390565b0e3ae5d32d189e37" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 6 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,6&gt; tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::mpo2</definition>
+        <argsstring></argsstring>
+        <name>mpo2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="110" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a4a1112f2186abd1ea9518afead98bbb1" prot="public" static="no" mutable="no">
+        <type>Eigen::DSizes&lt; long, 3 &gt;</type>
+        <definition>Eigen::DSizes&lt;long,3&gt; tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::dsizes</definition>
+        <argsstring></argsstring>
+        <name>dsizes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="111" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a1c0655bfeb6e4578328d5713a9728e0e" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::num_parameters</definition>
+        <argsstring></argsstring>
+        <name>num_parameters</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="112" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1aa5e3ce93f921910366431e94215b1a03" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::MultiComponents</definition>
+        <argsstring>(const class_finite_state &amp;state)</argsstring>
+        <name>MultiComponents</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="113" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp" bodystart="64" bodyend="89"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="classclass__finite__state_1a1e0d4d3cb509385ecd6acda4f4f5fcc0" compoundref="class__finite__state_8cpp" startline="270" endline="291">class_finite_state::get_multimpo</references>
+        <references refid="classclass__finite__state_1a7aedc2c9a2f2f33bf376431395a499d1" compoundref="class__finite__state_8cpp" startline="178" endline="184">class_finite_state::get_ENVL</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="103">class_finite_state::active_sites</references>
+        <references refid="classclass__finite__state_1a4573393d6b6d20bd80ece83113f9c442" compoundref="class__finite__state_8cpp" startline="186" endline="194">class_finite_state::get_ENVR</references>
+        <references refid="classclass__finite__state_1accbbf1266e0015b4693aefa54a3614b9" compoundref="class__finite__state_8cpp" startline="196" endline="202">class_finite_state::get_ENV2L</references>
+        <references refid="classclass__finite__state_1aa221609ca29e4f80632b6d9b5fd078de" compoundref="class__finite__state_8cpp" startline="204" endline="213">class_finite_state::get_ENV2R</references>
+        <references refid="classclass__environment__var_1abf95de609b4a669c32ae3258001d4e40" compoundref="class__environment_8h" startline="81">class_environment_var::block</references>
+        <references refid="classclass__finite__state_1af815d761506be3a8e1aa9845cc41d1b5" compoundref="class__finite__state_8cpp" startline="230" endline="239">class_finite_state::active_dimensions</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="106" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="106" bodyend="114"/>
+    <listofallmembers>
+      <member refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a4a1112f2186abd1ea9518afead98bbb1" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::MultiComponents</scope><name>dsizes</name></member>
+      <member refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1ac1e96d0596b19a21ddbe883836b624ea" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::MultiComponents</scope><name>env2L</name></member>
+      <member refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a2857d2be439ec426b2ed4e34be94777c" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::MultiComponents</scope><name>env2R</name></member>
+      <member refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a390c2a3a18f3194642e1a203e27455b0" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::MultiComponents</scope><name>envL</name></member>
+      <member refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1ab1fb6e8deffe8b6ba5f4d592fb20e239" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::MultiComponents</scope><name>envR</name></member>
+      <member refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a7f436abe186210b65d24d4755b6f4a33" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::MultiComponents</scope><name>mpo</name></member>
+      <member refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a2aa9a43bd390565b0e3ae5d32d189e37" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::MultiComponents</scope><name>mpo2</name></member>
+      <member refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1aa5e3ce93f921910366431e94215b1a03" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::MultiComponents</scope><name>MultiComponents</name></member>
+      <member refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a1c0655bfeb6e4578328d5713a9728e0e" prot="public" virt="non-virtual"><scope>tools::finite::opt::internals::MultiComponents</scope><name>num_parameters</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

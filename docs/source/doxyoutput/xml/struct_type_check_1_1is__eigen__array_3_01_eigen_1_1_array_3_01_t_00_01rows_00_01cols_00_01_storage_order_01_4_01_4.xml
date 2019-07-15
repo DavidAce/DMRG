@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="struct_type_check_1_1is__eigen__array_3_01_eigen_1_1_array_3_01_t_00_01rows_00_01cols_00_01_storage_order_01_4_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>TypeCheck::is_eigen_array&lt; Eigen::Array&lt; T, rows, cols, StorageOrder &gt; &gt;</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">true_type</basecompoundref>
+    <includes refid="nmspc__type__check_8h" local="no">nmspc_type_check.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+      <param>
+        <type>int</type>
+        <declname>rows</declname>
+        <defname>rows</defname>
+      </param>
+      <param>
+        <type>int</type>
+        <declname>cols</declname>
+        <defname>cols</defname>
+      </param>
+      <param>
+        <type>int</type>
+        <declname>StorageOrder</declname>
+        <defname>StorageOrder</defname>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="170">
+        <label>true_type</label>
+      </node>
+      <node id="169">
+        <label>TypeCheck::is_eigen_array&lt; Eigen::Array&lt; T, rows, cols, StorageOrder &gt; &gt;</label>
+        <link refid="struct_type_check_1_1is__eigen__array_3_01_eigen_1_1_array_3_01_t_00_01rows_00_01cols_00_01_storage_order_01_4_01_4"/>
+        <childnode refid="170" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="172">
+        <label>true_type</label>
+      </node>
+      <node id="171">
+        <label>TypeCheck::is_eigen_array&lt; Eigen::Array&lt; T, rows, cols, StorageOrder &gt; &gt;</label>
+        <link refid="struct_type_check_1_1is__eigen__array_3_01_eigen_1_1_array_3_01_t_00_01rows_00_01cols_00_01_storage_order_01_4_01_4"/>
+        <childnode refid="172" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_type_check.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_type_check.h" bodystart="47" bodyend="47"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

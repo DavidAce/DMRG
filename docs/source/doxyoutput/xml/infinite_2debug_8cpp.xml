@@ -1,0 +1,403 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="infinite_2debug_8cpp" kind="file" language="C++">
+    <compoundname>debug.cpp</compoundname>
+    <includes local="no">iostream</includes>
+    <includes local="no">iomanip</includes>
+    <includes refid="class__simulation__status_8h" local="no">simulation/class_simulation_status.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">state/tools/nmspc_tools.h</includes>
+    <includes refid="class__infinite__state_8h" local="no">state/class_infinite_state.h</includes>
+    <includes refid="nmspc__quantum__mechanics_8h" local="no">general/nmspc_quantum_mechanics.h</includes>
+    <includes local="no">spdlog/spdlog.h</includes>
+    <incdepgraph>
+      <node id="2347">
+        <label>iomanip</label>
+      </node>
+      <node id="2360">
+        <label>iterator</label>
+      </node>
+      <node id="2361">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="2362" relation="include">
+        </childnode>
+        <childnode refid="2357" relation="include">
+        </childnode>
+        <childnode refid="2359" relation="include">
+        </childnode>
+      </node>
+      <node id="2357">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="2350">
+        <label>string</label>
+      </node>
+      <node id="2354">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="2367">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="2368" relation="include">
+        </childnode>
+        <childnode refid="2346" relation="include">
+        </childnode>
+      </node>
+      <node id="2363">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="2364" relation="include">
+        </childnode>
+        <childnode refid="2365" relation="include">
+        </childnode>
+        <childnode refid="2366" relation="include">
+        </childnode>
+      </node>
+      <node id="2372">
+        <label>map</label>
+      </node>
+      <node id="2348">
+        <label>simulation/class_simulation_status.h</label>
+        <link refid="class__simulation__status_8h"/>
+        <childnode refid="2349" relation="include">
+        </childnode>
+        <childnode refid="2350" relation="include">
+        </childnode>
+        <childnode refid="2346" relation="include">
+        </childnode>
+        <childnode refid="2351" relation="include">
+        </childnode>
+        <childnode refid="2352" relation="include">
+        </childnode>
+        <childnode refid="2353" relation="include">
+        </childnode>
+        <childnode refid="2354" relation="include">
+        </childnode>
+      </node>
+      <node id="2362">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="2375">
+        <label>unordered_set</label>
+      </node>
+      <node id="2359">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="2364">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="2358">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="2345">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/debug.cpp</label>
+        <link refid="infinite_2debug_8cpp"/>
+        <childnode refid="2346" relation="include">
+        </childnode>
+        <childnode refid="2347" relation="include">
+        </childnode>
+        <childnode refid="2348" relation="include">
+        </childnode>
+        <childnode refid="2355" relation="include">
+        </childnode>
+        <childnode refid="2369" relation="include">
+        </childnode>
+        <childnode refid="2376" relation="include">
+        </childnode>
+        <childnode refid="2364" relation="include">
+        </childnode>
+      </node>
+      <node id="2370">
+        <label>optional</label>
+      </node>
+      <node id="2351">
+        <label>vector</label>
+      </node>
+      <node id="2365">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="2352">
+        <label>array</label>
+      </node>
+      <node id="2353">
+        <label>hdf5.h</label>
+      </node>
+      <node id="2346">
+        <label>iostream</label>
+      </node>
+      <node id="2371">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="2346" relation="include">
+        </childnode>
+        <childnode refid="2352" relation="include">
+        </childnode>
+        <childnode refid="2372" relation="include">
+        </childnode>
+        <childnode refid="2373" relation="include">
+        </childnode>
+        <childnode refid="2351" relation="include">
+        </childnode>
+        <childnode refid="2365" relation="include">
+        </childnode>
+        <childnode refid="2364" relation="include">
+        </childnode>
+      </node>
+      <node id="2368">
+        <label>chrono</label>
+      </node>
+      <node id="2376">
+        <label>general/nmspc_quantum_mechanics.h</label>
+        <link refid="nmspc__quantum__mechanics_8h"/>
+        <childnode refid="2357" relation="include">
+        </childnode>
+        <childnode refid="2359" relation="include">
+        </childnode>
+        <childnode refid="2373" relation="include">
+        </childnode>
+        <childnode refid="2351" relation="include">
+        </childnode>
+      </node>
+      <node id="2373">
+        <label>complex</label>
+      </node>
+      <node id="2369">
+        <label>state/class_infinite_state.h</label>
+        <link refid="class__infinite__state_8h"/>
+        <childnode refid="2349" relation="include">
+        </childnode>
+        <childnode refid="2370" relation="include">
+        </childnode>
+        <childnode refid="2356" relation="include">
+        </childnode>
+        <childnode refid="2367" relation="include">
+        </childnode>
+        <childnode refid="2371" relation="include">
+        </childnode>
+        <childnode refid="2374" relation="include">
+        </childnode>
+        <childnode refid="2363" relation="include">
+        </childnode>
+      </node>
+      <node id="2374">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="2350" relation="include">
+        </childnode>
+        <childnode refid="2375" relation="include">
+        </childnode>
+        <childnode refid="2351" relation="include">
+        </childnode>
+      </node>
+      <node id="2356">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="2357" relation="include">
+        </childnode>
+        <childnode refid="2358" relation="include">
+        </childnode>
+        <childnode refid="2359" relation="include">
+        </childnode>
+        <childnode refid="2360" relation="include">
+        </childnode>
+        <childnode refid="2346" relation="include">
+        </childnode>
+        <childnode refid="2347" relation="include">
+        </childnode>
+        <childnode refid="2361" relation="include">
+        </childnode>
+      </node>
+      <node id="2355">
+        <label>state/tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2349" relation="include">
+        </childnode>
+        <childnode refid="2350" relation="include">
+        </childnode>
+        <childnode refid="2356" relation="include">
+        </childnode>
+        <childnode refid="2363" relation="include">
+        </childnode>
+        <childnode refid="2367" relation="include">
+        </childnode>
+      </node>
+      <node id="2366">
+        <label>spdlog/sinks/stdout_sinks.h</label>
+      </node>
+      <node id="2349">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-06-24.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__simulation__status_8h" kindref="compound">simulation/class_simulation_status.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">state/tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__infinite__state_8h" kindref="compound">state/class_infinite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__quantum__mechanics_8h" kindref="compound">general/nmspc_quantum_mechanics.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;spdlog/spdlog.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="namespacetools_1_1infinite_1_1debug_1aad8fbe251a7e3a2c7a26faa61d61e44c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1debug_1aad8fbe251a7e3a2c7a26faa61d61e44c" kindref="member">tools::infinite::debug::check_integrity</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;sim_status)</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Checking<sp/>integrity...&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1debug_1ac04a2c7103eb4e428175e373c3b0100c" kindref="member">check_integrity_of_mps</ref>(state);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">catch</highlight><highlight class="normal">(std::exception<sp/>&amp;<sp/>ex){</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1print_1aa1baae33590d40df78cccb68d0f19ddb" kindref="member">tools::infinite::print::print_state</ref>(state)<sp/>;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Integrity<sp/>check<sp/>of<sp/>MPS<sp/>failed:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(ex.what()));</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Checking<sp/>norms&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>norm_block<sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a601facbe89d868ffadaafdb9a1a7d6f5" kindref="member">tools::infinite::measure::norm</ref>(state);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::abs(norm_block<sp/>-<sp/>1.0)<sp/>&gt;<sp/>1e-10)<sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;Norm<sp/>of<sp/>state<sp/>far<sp/>from<sp/>unity:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>norm_block);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Norm<sp/>of<sp/>state<sp/>too<sp/>far<sp/>from<sp/>unity:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(norm_block));</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal">(std::exception<sp/>&amp;<sp/>ex){</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Integrity<sp/>check<sp/>of<sp/>norm<sp/>failed:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(ex.what()));</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="namespacetools_1_1infinite_1_1debug_1a9e95eb2e81af56102b05c1995c972b8a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1debug_1a9e95eb2e81af56102b05c1995c972b8a" kindref="member">tools::infinite::debug::check_integrity_of_mps</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref><sp/>&amp;state){</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tools::log-&gt;trace(&quot;Checking<sp/>integrity<sp/>of<sp/>MPS&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tools::log-&gt;trace(&quot;\tChecking<sp/>system<sp/>sizes&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(state.MPS_L.size()<sp/>+<sp/>state.MPS_R.size()<sp/>!=<sp/>state.get_length()<sp/>)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>MPS<sp/>size:<sp/>&quot;<sp/>+<sp/>std::to_string(state.MPS_L.size()<sp/>+<sp/>state.MPS_R.size())<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(state.get_length()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(state.ENV_L.size()<sp/>+<sp/>state.ENV_R.size()<sp/>!=<sp/>state.get_length())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>ENV<sp/>size:<sp/>&quot;<sp/>+<sp/>std::to_string(state.ENV_L.size()<sp/>+<sp/>state.ENV_R.size())<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(state.get_length()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(state.ENV2_L.size()<sp/>+<sp/>state.ENV2_R.size()<sp/>!=<sp/>state.get_length())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>ENV<sp/>size:<sp/>&quot;<sp/>+<sp/>std::to_string(state.ENV_L.size()<sp/>+<sp/>state.ENV_R.size())<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(state.get_length()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(<sp/>state.ENV_L.back().size<sp/>!=<sp/>state.get_position())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>ENV_L<sp/>size<sp/>and<sp/>position:<sp/>&quot;<sp/>+<sp/>std::to_string(state.ENV_L.back().size)<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(state.get_position()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(state.ENV_R.front().size<sp/>!=<sp/>state.get_length()<sp/>-<sp/>state.get_position()<sp/>-<sp/>2)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>ENV_R<sp/>size+1<sp/>and<sp/>length-position:<sp/>&quot;<sp/>+<sp/>std::to_string(state.ENV_R.front().size)<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(state.get_length()<sp/>-<sp/>state.get_position()-2));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tools::log-&gt;trace(&quot;\tChecking<sp/>matrix<sp/>sizes<sp/>on<sp/>the<sp/>left<sp/>side&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//Check<sp/>left<sp/>side<sp/>of<sp/>the<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>mps_it<sp/><sp/>=<sp/>state.MPS_L.begin();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>mps_nx<sp/><sp/>=<sp/>state.MPS_L.begin();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>env_it<sp/><sp/>=<sp/>state.ENV_L.begin();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>env2_it<sp/>=<sp/>state.ENV2_L.begin();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>mpo_it<sp/><sp/>=<sp/>state.MPO_L.begin();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::advance(mps_nx,1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/>i<sp/>=<sp/>0;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>while(</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mps_it<sp/><sp/>!=<sp/>state.MPS_L.end()<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mps_nx<sp/><sp/>!=<sp/>state.MPS_L.end()<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env_it<sp/><sp/>!=<sp/>state.ENV_L.end()<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env2_it<sp/>!=<sp/>state.ENV2_L.end()<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo_it<sp/><sp/>!=<sp/>state.MPO_L.end()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(mps_it-&gt;get_chiR()<sp/>!=<sp/>mps_nx-&gt;get_chiL())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>adjacent<sp/>MPS<sp/>dimensions<sp/>(left<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;<sp/>+<sp/>std::to_string(mps_it-&gt;get_chiR())<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(mps_nx-&gt;get_chiL()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(mps_it-&gt;get_position()<sp/>!=<sp/>env_it-&gt;get_position())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>MPS<sp/>and<sp/>ENV<sp/>positions<sp/>(left<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;<sp/>+<sp/>std::to_string(mps_it-&gt;get_position())<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(env_it-&gt;get_position()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(mps_it-&gt;get_position()<sp/>!=<sp/>env_it-&gt;size)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>MPS<sp/>position<sp/>and<sp/>ENV<sp/>size<sp/>(left<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;<sp/>+<sp/>std::to_string(mps_it-&gt;get_position())<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(env_it-&gt;size));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(mps_it-&gt;get_chiL()<sp/>!=<sp/>env_it-&gt;block.dimension(0))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>MPS<sp/>and<sp/>ENV<sp/>dimensions<sp/>(left<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;<sp/>+<sp/><sp/>std::to_string(mps_it-&gt;get_chiL())<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(env_it-&gt;block.dimension(0)));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(env_it-&gt;block.dimension(2)<sp/>!=<sp/>mpo_it-&gt;get()-&gt;MPO().dimension(0))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>ENV<sp/>and<sp/>MPO<sp/>dimensions<sp/>(left<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;<sp/>+<sp/>std::to_string(env_it-&gt;block.dimension(2))<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(mpo_it-&gt;get()-&gt;MPO().dimension(0)));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(env2_it-&gt;block.dimension(2)<sp/>!=<sp/>mpo_it-&gt;get()-&gt;MPO().dimension(0))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>ENV2<sp/>and<sp/>MPO<sp/>dimensions<sp/>(left<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;+<sp/>std::to_string(env2_it-&gt;block.dimension(2))<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(mpo_it-&gt;get()-&gt;MPO().dimension(0)));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(env2_it-&gt;block.dimension(3)<sp/>!=<sp/>mpo_it-&gt;get()-&gt;MPO().dimension(0))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>ENV2<sp/>and<sp/>MPO<sp/>dimensions<sp/>(left<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;<sp/>+<sp/>std::to_string(env2_it-&gt;block.dimension(3))<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(mpo_it-&gt;get()-&gt;MPO().dimension(0)));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mps_it++;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mps_nx++;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env_it++;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env2_it++;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo_it++;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>i++;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tools::log-&gt;trace(&quot;\tChecking<sp/>matrix<sp/>sizes<sp/>on<sp/>the<sp/>center&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//Check<sp/>center</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(state.MPS_C.dimension(0)<sp/>!=<sp/>state.MPS_L.back().get_chiR())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>center<sp/>bond<sp/>matrix<sp/>dimension:<sp/>&quot;<sp/>+<sp/>std::to_string(state.MPS_C.dimension(0))<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(state.MPS_L.back().get_chiR()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(state.MPS_C.dimension(0)<sp/>!=<sp/>state.MPS_R.front().get_chiL())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>center<sp/>bond<sp/>matrix<sp/>dimension:<sp/>&quot;<sp/>+<sp/>std::to_string(state.MPS_C.dimension(0))<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(state.MPS_R.front().get_chiL()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tools::log-&gt;trace(&quot;\tChecking<sp/>matrix<sp/>sizes<sp/>on<sp/>the<sp/>right<sp/>side&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>mps_it<sp/><sp/>=<sp/>state.MPS_R.rbegin();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>mps_nx<sp/><sp/>=<sp/>state.MPS_R.rbegin();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>env_it<sp/><sp/>=<sp/>state.ENV_R.rbegin();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>env2_it<sp/>=<sp/>state.ENV2_R.rbegin();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>mpo_it<sp/><sp/>=<sp/>state.MPO_R.rbegin();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::advance(mps_nx,1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>i<sp/>=<sp/>state.get_length()-1;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>while(</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mps_it<sp/><sp/>!=<sp/>state.MPS_R.rend()<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mps_nx<sp/><sp/>!=<sp/>state.MPS_R.rend()<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env_it<sp/><sp/>!=<sp/>state.ENV_R.rend()<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env2_it<sp/>!=<sp/>state.ENV2_R.rend()<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo_it<sp/><sp/>!=<sp/>state.MPO_R.rend())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(mps_it-&gt;get_chiL()<sp/>!=<sp/>mps_nx-&gt;get_chiR())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>adjacent<sp/>MPS<sp/>dimensions<sp/>(right<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;+<sp/>std::to_string(mps_nx-&gt;get_chiR())<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(mps_it-&gt;get_chiL()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(mps_it-&gt;get_position()<sp/>!=<sp/>env_it-&gt;get_position())</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>MPS<sp/>and<sp/>ENV<sp/>positions<sp/>(right<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;<sp/>+<sp/>std::to_string(mps_it-&gt;get_position())<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(env_it-&gt;get_position()));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(mps_it-&gt;get_position()<sp/>!=<sp/>state.get_length()<sp/>-<sp/>(env_it-&gt;size<sp/>+<sp/>1))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>MPS<sp/>position<sp/>and<sp/>ENV<sp/>size<sp/>+<sp/>1<sp/>(right<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;<sp/>+<sp/>std::to_string(mps_it-&gt;get_position())<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(state.get_length()<sp/>-<sp/>(env_it-&gt;size<sp/>+<sp/>1)));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(mps_it-&gt;get_chiR()<sp/>!=<sp/>env_it-&gt;block.dimension(0))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>MPS<sp/>and<sp/>ENV<sp/>dimensions<sp/>(right<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;<sp/>+<sp/>std::to_string(mps_it-&gt;get_chiR())<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(env_it-&gt;block.dimension(0)));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(env_it-&gt;block.dimension(2)<sp/>!=<sp/>mpo_it-&gt;get()-&gt;MPO().dimension(1))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>ENV<sp/>and<sp/>MPO<sp/>dimensions<sp/>(right<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;<sp/>+<sp/>std::to_string(env_it-&gt;block.dimension(2))<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(mpo_it-&gt;get()-&gt;MPO().dimension(1)));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(env2_it-&gt;block.dimension(2)<sp/>!=<sp/>mpo_it-&gt;get()-&gt;MPO().dimension(1))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>ENV2<sp/>and<sp/>MPO<sp/>dimensions<sp/>(right<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;<sp/>+<sp/>std::to_string(env2_it-&gt;block.dimension(2))<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(mpo_it-&gt;get()-&gt;MPO().dimension(1)));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(env2_it-&gt;block.dimension(3)<sp/>!=<sp/>mpo_it-&gt;get()-&gt;MPO().dimension(1))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Mismatch<sp/>in<sp/>ENV2<sp/>and<sp/>MPO<sp/>dimensions<sp/>(right<sp/>side)<sp/>@<sp/>site<sp/>&quot;<sp/>+<sp/>std::to_string(i)<sp/>+<sp/>&quot;:<sp/>&quot;<sp/>+<sp/>std::to_string(env2_it-&gt;block.dimension(3))<sp/>+<sp/>&quot;<sp/>&quot;<sp/>+<sp/>std::to_string(mpo_it-&gt;get()-&gt;MPO().dimension(1)));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mps_it++;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mps_nx++;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env_it++;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env2_it++;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo_it++;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>i--;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;MPS<sp/>OK&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/debug.cpp"/>
+  </compounddef>
+</doxygen>

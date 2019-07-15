@@ -1,0 +1,412 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="matrix__product__sparse_8h" kind="file" language="C++">
+    <compoundname>matrix_product_sparse.h</compoundname>
+    <includes refid="nmspc__eigutils_8h" local="no">math/nmspc_eigutils.h</includes>
+    <includes refid="class__tic__toc_8h" local="no">general/class_tic_toc.h</includes>
+    <includes local="no">iostream</includes>
+    <includes local="no">iomanip</includes>
+    <includes local="no">Eigen/Core</includes>
+    <includes local="no">Eigen/Sparse</includes>
+    <includes local="no">Eigen/SparseLU</includes>
+    <includedby refid="arpackpp__solver_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</includedby>
+    <includedby refid="matrix__recast_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h</includedby>
+    <includedby refid="subspace_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/subspace.cpp</includedby>
+    <incdepgraph>
+      <node id="1163">
+        <label>Eigen/SparseLU</label>
+      </node>
+      <node id="1160">
+        <label>iomanip</label>
+      </node>
+      <node id="1161">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="1158">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="1159" relation="include">
+        </childnode>
+        <childnode refid="1151" relation="include">
+        </childnode>
+      </node>
+      <node id="1153">
+        <label>map</label>
+      </node>
+      <node id="1157">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1162">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1155">
+        <label>vector</label>
+      </node>
+      <node id="1156">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1152">
+        <label>array</label>
+      </node>
+      <node id="1149">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h</label>
+        <link refid="matrix__product__sparse_8h"/>
+        <childnode refid="1150" relation="include">
+        </childnode>
+        <childnode refid="1158" relation="include">
+        </childnode>
+        <childnode refid="1151" relation="include">
+        </childnode>
+        <childnode refid="1160" relation="include">
+        </childnode>
+        <childnode refid="1161" relation="include">
+        </childnode>
+        <childnode refid="1162" relation="include">
+        </childnode>
+        <childnode refid="1163" relation="include">
+        </childnode>
+      </node>
+      <node id="1151">
+        <label>iostream</label>
+      </node>
+      <node id="1150">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1151" relation="include">
+        </childnode>
+        <childnode refid="1152" relation="include">
+        </childnode>
+        <childnode refid="1153" relation="include">
+        </childnode>
+        <childnode refid="1154" relation="include">
+        </childnode>
+        <childnode refid="1155" relation="include">
+        </childnode>
+        <childnode refid="1156" relation="include">
+        </childnode>
+        <childnode refid="1157" relation="include">
+        </childnode>
+      </node>
+      <node id="1159">
+        <label>chrono</label>
+      </node>
+      <node id="1154">
+        <label>complex</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1172">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/ground_state.cpp</label>
+        <link refid="ground__state_8cpp"/>
+      </node>
+      <node id="1170">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</label>
+        <link refid="class__infinite__state_8cpp"/>
+      </node>
+      <node id="1165">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</label>
+        <link refid="arpackpp__solver_8cpp"/>
+      </node>
+      <node id="1176">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/opt.cpp</label>
+        <link refid="infinite_2opt_8cpp"/>
+      </node>
+      <node id="1171">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp</label>
+        <link refid="views_8cpp"/>
+      </node>
+      <node id="1174">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp</label>
+        <link refid="finite_2opt_8cpp"/>
+      </node>
+      <node id="1175">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="1164">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h</label>
+        <link refid="matrix__product__sparse_8h"/>
+        <childnode refid="1165" relation="include">
+        </childnode>
+        <childnode refid="1166" relation="include">
+        </childnode>
+        <childnode refid="1173" relation="include">
+        </childnode>
+      </node>
+      <node id="1166">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h</label>
+        <link refid="matrix__recast_8h"/>
+        <childnode refid="1167" relation="include">
+        </childnode>
+        <childnode refid="1168" relation="include">
+        </childnode>
+      </node>
+      <node id="1167">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.cpp</label>
+        <link refid="matrix__recast_8cpp"/>
+      </node>
+      <node id="1173">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/subspace.cpp</label>
+        <link refid="subspace_8cpp"/>
+      </node>
+      <node id="1169">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp</label>
+        <link refid="class__eigsolver_8cpp"/>
+      </node>
+      <node id="1168">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</label>
+        <link refid="class__eigsolver_8h"/>
+        <childnode refid="1169" relation="include">
+        </childnode>
+        <childnode refid="1170" relation="include">
+        </childnode>
+        <childnode refid="1171" relation="include">
+        </childnode>
+        <childnode refid="1172" relation="include">
+        </childnode>
+        <childnode refid="1173" relation="include">
+        </childnode>
+        <childnode refid="1174" relation="include">
+        </childnode>
+        <childnode refid="1175" relation="include">
+        </childnode>
+        <childnode refid="1176" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="class_sparse_matrix_product" prot="public">SparseMatrixProduct</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="matrix__product__sparse_8h_1a1bc608613f1641ccedbefd36d7073005" prot="public" static="no">
+        <name>profile_matrix_product_sparse</name>
+        <initializer>1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="21" column="9" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-05-08.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MATRIX_PRODUCT_SPARSE_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATRIX_PRODUCT_SPARSE_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>EIGEN_USE_BLAS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EIGEN_USE_BLAS_SUSPEND</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>EIGEN_USE_BLAS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__eigutils_8h" kindref="compound">math/nmspc_eigutils.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__tic__toc_8h" kindref="compound">general/class_tic_toc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/Core&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/Sparse&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/SparseLU&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="comment">//#include<sp/>&lt;Eigen/SuperLUSupport&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="matrix__product__sparse_8h_1a1bc608613f1641ccedbefd36d7073005" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>profile_matrix_product_sparse<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar_&gt;</highlight></codeline>
+<codeline lineno="25" refid="class_sparse_matrix_product" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_sparse_matrix_product" kindref="compound">SparseMatrixProduct</ref><sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="27" refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Scalar_;</highlight></codeline>
+<codeline lineno="28" refid="class_sparse_matrix_product_1ae9551871db6dcc9a59b707df0d731479" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>constexpr<sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><ref refid="class_sparse_matrix_product_1ae9551871db6dcc9a59b707df0d731479" kindref="member">can_shift</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="30" refid="class_sparse_matrix_product_1a595d1e99d509613aad671450492857b6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a595d1e99d509613aad671450492857b6" kindref="member">MatrixType</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::SparseMatrix&lt;Scalar&gt;;</highlight></codeline>
+<codeline lineno="31" refid="class_sparse_matrix_product_1ac2634ed76e2e930c1929932f08d5807d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1ac2634ed76e2e930c1929932f08d5807d" kindref="member">DenseMatrixType</ref><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;;</highlight></codeline>
+<codeline lineno="32" refid="class_sparse_matrix_product_1a9da6adf07136ea94821a59f5c854f4c6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a9da6adf07136ea94821a59f5c854f4c6" kindref="member">VectorType</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;;</highlight></codeline>
+<codeline lineno="33" refid="class_sparse_matrix_product_1aad748f1d63f18075602b64a9a2aeba3b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1aad748f1d63f18075602b64a9a2aeba3b" kindref="member">VectorTypeT</ref><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Matrix&lt;Scalar,1,Eigen::Dynamic&gt;;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="class_sparse_matrix_product_1a138312f077cf49984d2062f68656a427" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1a595d1e99d509613aad671450492857b6" kindref="member">MatrixType</ref><sp/><ref refid="class_sparse_matrix_product_1a138312f077cf49984d2062f68656a427" kindref="member">A_matrix</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>actual<sp/>matrix.<sp/>Given<sp/>matrices<sp/>will<sp/>be<sp/>copied<sp/>into<sp/>this<sp/>one.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>linear<sp/>matrix<sp/>dimension</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="class_sparse_matrix_product_1ae2996ed9a77ebf56c5137c804b65a792" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/><ref refid="class_sparse_matrix_product_1ae2996ed9a77ebf56c5137c804b65a792" kindref="member">form</ref>;<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Chooses<sp/>SYMMETRIC<sp/>/<sp/>NONSYMMETRIC<sp/>mode</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/><ref refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" kindref="member">side</ref>;<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Chooses<sp/>whether<sp/>to<sp/>find<sp/>(R)ight<sp/>or<sp/>(L)eft<sp/>eigenvectors</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Shift-invert<sp/>mode<sp/>stuff</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>MatrixType<sp/>A_shift;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::SuperLU&lt;MatrixType&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lu_dense;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="class_sparse_matrix_product_1adae9765c597c39bd15f923a18bf176d3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::SparseLU&lt;MatrixType&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1adae9765c597c39bd15f923a18bf176d3" kindref="member">lu_sparse</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Object<sp/>for<sp/>sparse<sp/>LU<sp/>decomposition<sp/>used<sp/>in<sp/>shift-invert<sp/>mode</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="class_sparse_matrix_product_1a3be7ff83047f996c21968079d9924dc2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::PartialPivLU&lt;DenseMatrixType&gt;<sp/><ref refid="class_sparse_matrix_product_1a3be7ff83047f996c21968079d9924dc2" kindref="member">lu_dense</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Object<sp/>for<sp/>dense<sp/>LU<sp/>decomposition<sp/>used<sp/>in<sp/>shift-invert<sp/>mode</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::SparseLU&lt;Eigen::SparseMatrix&lt;Scalar,<sp/>Eigen::ColMajor,<sp/>Eigen::Index&gt;,<sp/>Eigen::COLAMDOrdering&lt;Eigen::Index&gt;<sp/>&gt;<sp/>lu_sparse;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="class_sparse_matrix_product_1a882ba29a26bc52d21fab5b077b0d66cc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a882ba29a26bc52d21fab5b077b0d66cc" kindref="member">sigmaR</ref><sp/>=<sp/>std::numeric_limits&lt;double&gt;::quiet_NaN();<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>real<sp/>part<sp/>of<sp/>the<sp/>shift</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="class_sparse_matrix_product_1a66347693d67796aac1f132ef3b2c386f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a66347693d67796aac1f132ef3b2c386f" kindref="member">sigmaI</ref><sp/>=<sp/>std::numeric_limits&lt;double&gt;::quiet_NaN();<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>imag<sp/>part<sp/>of<sp/>the<sp/>shift</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="class_sparse_matrix_product_1a437970e485ea90bdb5fc1b23400ba4a3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a437970e485ea90bdb5fc1b23400ba4a3" kindref="member">sparseLU</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="50" refid="class_sparse_matrix_product_1ada02754ded2ab5ce1efdbdbdb49e4071" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1ada02754ded2ab5ce1efdbdbdb49e4071" kindref="member">readyFactorOp</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Flag<sp/>to<sp/>make<sp/>sure<sp/>LU<sp/>factorization<sp/>has<sp/>occurred</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="class_sparse_matrix_product_1a92ac5fb0a7b9714730befb2e2e60eb36" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a92ac5fb0a7b9714730befb2e2e60eb36" kindref="member">readyShift</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Pointer<sp/>to<sp/>data<sp/>constructor,<sp/>copies<sp/>the<sp/>matrix<sp/>into<sp/>an<sp/>internal<sp/>Eigen<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="class_sparse_matrix_product_1a7d37335e8603f4a0f4bdb3b052d61536" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1a7d37335e8603f4a0f4bdb3b052d61536" kindref="member">SparseMatrixProduct</ref>(</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref><sp/>*<sp/>A_,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L_,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>form_<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref>,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>side_<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref>)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>A_matrix(<ref refid="namespace_eigen" kindref="compound">Eigen</ref>::Map&lt;const<sp/><ref refid="class_sparse_matrix_product_1ac2634ed76e2e930c1929932f08d5807d" kindref="member">DenseMatrixType</ref>&gt;(A_,L_,L_).sparseView()),<sp/>L(L_),<sp/>form(form_),<sp/>side(side_)</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>A_matrix.makeCompressed();</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1a7c5804c63058ddab34ea0eed467c3267" kindref="member">init_profiling</ref>();</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Eigen<sp/>type<sp/>constructor.<sp/>Pass<sp/>any<sp/>copy-assignable<sp/>eigen<sp/>type<sp/>into<sp/>an<sp/>internal<sp/>Eigen<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Derived&gt;</highlight></codeline>
+<codeline lineno="68" refid="class_sparse_matrix_product_1a1e5fe77ad52e4c23eba23a96f19847ae" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a1e5fe77ad52e4c23eba23a96f19847ae" kindref="member">SparseMatrixProduct</ref>(</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::EigenBase&lt;Derived&gt;<sp/>&amp;matrix_,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>form_<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref>,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>side_<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref>)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>A_matrix(matrix_.derived().sparseView()),<sp/>L(A_matrix.<ref refid="class_sparse_matrix_product_1a2d412d6e726ea6420c9fb66fcbbdb61d" kindref="member">rows</ref>()),<sp/>form(form_),<sp/>side(side_)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>A_matrix.makeCompressed();</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1a7c5804c63058ddab34ea0eed467c3267" kindref="member">init_profiling</ref>();</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Functions<sp/>used<sp/>in<sp/>in<sp/>Arpack++<sp/>solver</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="class_sparse_matrix_product_1a2d412d6e726ea6420c9fb66fcbbdb61d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a2d412d6e726ea6420c9fb66fcbbdb61d" kindref="member">rows</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>;};</highlight></codeline>
+<codeline lineno="80" refid="class_sparse_matrix_product_1a0a2b9189175c82101ebe709da39a2aa7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a0a2b9189175c82101ebe709da39a2aa7" kindref="member">cols</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>;};</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1aa7ae159dcfd84989991fc24e7723363d" kindref="member">FactorOP</ref>();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>Factors<sp/>(A-sigma*I)<sp/>into<sp/>PLU</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1ac1dc35a95f7aeba3bf19bc03c09f67a0" kindref="member">MultOPv</ref>(<ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref>*<sp/>x_in_ptr,<sp/><ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref>*<sp/>x_out_ptr);<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Computes<sp/>the<sp/>matrix-vector<sp/>product<sp/>x_out<sp/>&lt;-<sp/>inv(A-sigma*I)*x_in.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a4b87bf6fd51487a21fb46cbfc0cbb353" kindref="member">MultAx</ref><sp/>(<ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref>*<sp/>x_in_ptr,<sp/><ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref>*<sp/>x_out_ptr);<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Computes<sp/>the<sp/>matrix-vector<sp/>multiplication<sp/>x_out<sp/>&lt;-<sp/>A*x_in.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Various<sp/>utility<sp/>functions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="class_sparse_matrix_product_1af45a041ff9fa23f64f49b5513b920040" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1af45a041ff9fa23f64f49b5513b920040" kindref="member">counter</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1ab9f10631ce1b599064a56c568da3f8b8" kindref="member">print</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="88" refid="class_sparse_matrix_product_1acc105fde44dd7a78b13cf179d13112f4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1acc105fde44dd7a78b13cf179d13112f4" kindref="member">set_shift</ref>(std::complex&lt;double&gt;<sp/>sigma_)<sp/><sp/><sp/>{</highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(readyShift){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}<sp/>sigmaR=std::real(sigma_);sigmaI=std::imag(sigma_)<sp/>;readyShift<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="89" refid="class_sparse_matrix_product_1aae36727a663205058abd7ecbf8767e6c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1aae36727a663205058abd7ecbf8767e6c" kindref="member">set_shift</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigma_)<sp/><sp/><sp/>{</highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(readyShift){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}<sp/>sigmaR=sigma_,<sp/>sigmaI<sp/>=<sp/>0.0;readyShift<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="90" refid="class_sparse_matrix_product_1a4828df37ede2938e95b2c9788165fe1b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a4828df37ede2938e95b2c9788165fe1b" kindref="member">set_shift</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sigmaR_,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sigmaI_){</highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(readyShift){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}<sp/>sigmaR=sigmaR_;sigmaI<sp/>=<sp/>sigmaI_<sp/>;readyShift<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="91" refid="class_sparse_matrix_product_1a382f07c3e9f519c2a51de54083167c14" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a382f07c3e9f519c2a51de54083167c14" kindref="member">set_mode</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>form_){form<sp/>=<sp/>form_;}</highlight></codeline>
+<codeline lineno="92" refid="class_sparse_matrix_product_1aab3e9b44b4e7425a3054b9453bd38bbf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1aab3e9b44b4e7425a3054b9453bd38bbf" kindref="member">set_side</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>side_){side<sp/>=<sp/>side_;}</highlight></codeline>
+<codeline lineno="93" refid="class_sparse_matrix_product_1ae935ca7b176a65c8a6a00ec358b98236" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a595d1e99d509613aad671450492857b6" kindref="member">MatrixType</ref><sp/>&amp;<sp/><ref refid="class_sparse_matrix_product_1ae935ca7b176a65c8a6a00ec358b98236" kindref="member">get_matrix</ref>()</highlight><highlight class="keyword">const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a138312f077cf49984d2062f68656a427" kindref="member">A_matrix</ref>;}</highlight></codeline>
+<codeline lineno="94" refid="class_sparse_matrix_product_1a536af3fc4b6aa3f8e719f72cd1d5d01e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>&amp;<ref refid="class_sparse_matrix_product_1a536af3fc4b6aa3f8e719f72cd1d5d01e" kindref="member">get_form</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1ae2996ed9a77ebf56c5137c804b65a792" kindref="member">form</ref>;}</highlight></codeline>
+<codeline lineno="95" refid="class_sparse_matrix_product_1a25d8ed02b9383b2480c23480d324c215" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>&amp;<ref refid="class_sparse_matrix_product_1a25d8ed02b9383b2480c23480d324c215" kindref="member">get_side</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" kindref="member">side</ref>;}</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Profiling</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="class_sparse_matrix_product_1a7c5804c63058ddab34ea0eed467c3267" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a7c5804c63058ddab34ea0eed467c3267" kindref="member">init_profiling</ref>(){</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1a86054653f415274f3bdfd4ac6315a2be" kindref="member">t_factorOp</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="matrix__product__sparse_8h_1a1bc608613f1641ccedbefd36d7073005" kindref="member">profile_matrix_product_sparse</ref>,<sp/>5,</highlight><highlight class="stringliteral">&quot;Time<sp/>FactorOp&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1ac77d1e444518fd1537fa2e20e8e21451" kindref="member">t_multOpv</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="matrix__product__sparse_8h_1a1bc608613f1641ccedbefd36d7073005" kindref="member">profile_matrix_product_sparse</ref>,<sp/>5,</highlight><highlight class="stringliteral">&quot;Time<sp/>MultOpv&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1a9aa2e4e213bd6e656e8b196ab40abc73" kindref="member">t_multax</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="matrix__product__sparse_8h_1a1bc608613f1641ccedbefd36d7073005" kindref="member">profile_matrix_product_sparse</ref>,<sp/>5,</highlight><highlight class="stringliteral">&quot;Time<sp/>MultAx&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="103" refid="class_sparse_matrix_product_1a86054653f415274f3bdfd4ac6315a2be" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/><ref refid="class_sparse_matrix_product_1a86054653f415274f3bdfd4ac6315a2be" kindref="member">t_factorOp</ref>;</highlight></codeline>
+<codeline lineno="104" refid="class_sparse_matrix_product_1ac77d1e444518fd1537fa2e20e8e21451" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/><ref refid="class_sparse_matrix_product_1ac77d1e444518fd1537fa2e20e8e21451" kindref="member">t_multOpv</ref>;</highlight></codeline>
+<codeline lineno="105" refid="class_sparse_matrix_product_1a9aa2e4e213bd6e656e8b196ab40abc73" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/><ref refid="class_sparse_matrix_product_1a9aa2e4e213bd6e656e8b196ab40abc73" kindref="member">t_multax</ref>;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Function<sp/>definitions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="117" refid="class_sparse_matrix_product_1ab9f10631ce1b599064a56c568da3f8b8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1ab9f10631ce1b599064a56c568da3f8b8" kindref="member">SparseMatrixProduct&lt;Scalar&gt;::print</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;A_matrix:<sp/>\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="class_sparse_matrix_product_1a138312f077cf49984d2062f68656a427" kindref="member">A_matrix</ref><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="123" refid="class_sparse_matrix_product_1aa7ae159dcfd84989991fc24e7723363d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1aa7ae159dcfd84989991fc24e7723363d" kindref="member">SparseMatrixProduct&lt;Scalar&gt;::FactorOP</ref>()</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="comment">/*<sp/><sp/>Sparse<sp/>decomposition</highlight></codeline>
+<codeline lineno="126"><highlight class="comment"><sp/>*<sp/><sp/>Factors<sp/>P(A-sigma*I)<sp/>=<sp/>LU</highlight></codeline>
+<codeline lineno="127"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal">{<sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="class_sparse_matrix_product_1ada02754ded2ab5ce1efdbdbdb49e4071" kindref="member">readyFactorOp</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<ref refid="class_sparse_matrix_product_1a92ac5fb0a7b9714730befb2e2e60eb36" kindref="member">readyShift</ref><sp/>and<sp/></highlight><highlight class="stringliteral">&quot;Shift<sp/>value<sp/>sigma<sp/>has<sp/>not<sp/>been<sp/>set.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref><sp/>sigma;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1a86054653f415274f3bdfd4ac6315a2be" kindref="member">t_factorOp</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(std::is_same&lt;Scalar,double&gt;::value)</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigma<sp/>=<sp/><ref refid="class_sparse_matrix_product_1a882ba29a26bc52d21fab5b077b0d66cc" kindref="member">sigmaR</ref>;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1a3be7ff83047f996c21968079d9924dc2" kindref="member">lu_dense</ref>.compute(<ref refid="class_sparse_matrix_product_1a138312f077cf49984d2062f68656a427" kindref="member">A_matrix</ref><sp/>-<sp/><ref refid="class_sparse_matrix_product_1a882ba29a26bc52d21fab5b077b0d66cc" kindref="member">sigmaR</ref><sp/>*<sp/>Eigen::MatrixXd::Identity(<ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>,<ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>));</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigma<sp/>=<sp/>std::complex&lt;double&gt;(<ref refid="class_sparse_matrix_product_1a882ba29a26bc52d21fab5b077b0d66cc" kindref="member">sigmaR</ref>,<ref refid="class_sparse_matrix_product_1a66347693d67796aac1f132ef3b2c386f" kindref="member">sigmaI</ref>);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1a3be7ff83047f996c21968079d9924dc2" kindref="member">lu_dense</ref>.compute(<ref refid="class_sparse_matrix_product_1a138312f077cf49984d2062f68656a427" kindref="member">A_matrix</ref><sp/>-<sp/>sigma<sp/>*<sp/>Eigen::MatrixXd::Identity(<ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>,<ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>));</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1a437970e485ea90bdb5fc1b23400ba4a3" kindref="member">sparseLU</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1a86054653f415274f3bdfd4ac6315a2be" kindref="member">t_factorOp</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1ada02754ded2ab5ce1efdbdbdb49e4071" kindref="member">readyFactorOp</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>Factor<sp/>Op<sp/>[ms]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::setprecision(3)<sp/>&lt;&lt;<sp/><ref refid="class_sparse_matrix_product_1a86054653f415274f3bdfd4ac6315a2be" kindref="member">t_factorOp</ref>.<ref refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" kindref="member">get_last_time_interval</ref>()<sp/>*<sp/>1000<sp/>&lt;&lt;</highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="151" refid="class_sparse_matrix_product_1ac1dc35a95f7aeba3bf19bc03c09f67a0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1ac1dc35a95f7aeba3bf19bc03c09f67a0" kindref="member">SparseMatrixProduct&lt;Scalar&gt;::MultOPv</ref>(<ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref>*<sp/>x_in_ptr,<sp/><ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref>*<sp/>x_out_ptr)<sp/>{</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<ref refid="class_sparse_matrix_product_1ada02754ded2ab5ce1efdbdbdb49e4071" kindref="member">readyFactorOp</ref><sp/>and<sp/></highlight><highlight class="stringliteral">&quot;FactorOp()<sp/>has<sp/>not<sp/>been<sp/>run<sp/>yet.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a9da6adf07136ea94821a59f5c854f4c6" kindref="member">VectorType</ref><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_in<sp/><sp/><sp/><sp/>(x_in_ptr,<ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_out<sp/><sp/><sp/>(x_out_ptr,<ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(<ref refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" kindref="member">side</ref>){</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Side::R:<sp/>{</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="class_sparse_matrix_product_1a437970e485ea90bdb5fc1b23400ba4a3" kindref="member">sparseLU</ref>){x_out.noalias()<sp/>=<sp/><ref refid="class_sparse_matrix_product_1adae9765c597c39bd15f923a18bf176d3" kindref="member">lu_sparse</ref>.solve(x_in);}</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{x_out.noalias()<sp/>=<sp/><ref refid="class_sparse_matrix_product_1a3be7ff83047f996c21968079d9924dc2" kindref="member">lu_dense</ref>.solve(x_in);}</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Side::L:<sp/>{</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Left<sp/>sided<sp/>sparse<sp/>shift<sp/>invert<sp/>hasn&apos;t<sp/>been<sp/>implemented<sp/>yet...&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>exit(1);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1af45a041ff9fa23f64f49b5513b920040" kindref="member">counter</ref>++;</highlight></codeline>
+<codeline lineno="170"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="173" refid="class_sparse_matrix_product_1a4b87bf6fd51487a21fb46cbfc0cbb353" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product_1a4b87bf6fd51487a21fb46cbfc0cbb353" kindref="member">SparseMatrixProduct&lt;Scalar&gt;::MultAx</ref>(<ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref>*<sp/>x_in,<sp/><ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref>*<sp/>x_out)<sp/>{</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(<ref refid="class_sparse_matrix_product_1ae2996ed9a77ebf56c5137c804b65a792" kindref="member">form</ref>){</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Form::NONSYMMETRIC:</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(<ref refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" kindref="member">side</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Side::R:<sp/>{</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/>x_vec_in<sp/>(x_in,<sp/><sp/><ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/>x_vec_out(x_out,<sp/><ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_vec_out.noalias()<sp/>=<sp/><ref refid="class_sparse_matrix_product_1a138312f077cf49984d2062f68656a427" kindref="member">A_matrix</ref><sp/>*<sp/>x_vec_in<sp/>;</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Side::L:<sp/>{</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorTypeT&gt;<sp/>x_vec_in(x_in,<sp/><ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorTypeT&gt;<sp/>x_vec_out(x_out,<sp/><ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_vec_out.noalias()<sp/>=<sp/>x_vec_in<sp/>*<sp/><ref refid="class_sparse_matrix_product_1a138312f077cf49984d2062f68656a427" kindref="member">A_matrix</ref>;</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Form::SYMMETRIC:<sp/>{</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/>x_vec_in<sp/>(x_in,<sp/><sp/><ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/>x_vec_out(x_out,<sp/><ref refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_vec_out.noalias()<sp/>=<sp/><ref refid="class_sparse_matrix_product_1a138312f077cf49984d2062f68656a427" kindref="member">A_matrix</ref>.template<sp/>selfadjointView&lt;Eigen::Upper&gt;()<sp/>*<sp/>x_vec_in;</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_sparse_matrix_product_1af45a041ff9fa23f64f49b5513b920040" kindref="member">counter</ref>++;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>EIGEN_USE_BLAS_SUSPEND</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EIGEN_USE_BLAS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>EIGEN_USE_BLAS_SUSPEND</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h"/>
+  </compounddef>
+</doxygen>

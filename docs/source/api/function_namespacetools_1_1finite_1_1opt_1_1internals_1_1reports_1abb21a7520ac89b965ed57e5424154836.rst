@@ -1,0 +1,13 @@
+.. _exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1abb21a7520ac89b965ed57e5424154836:
+
+Function tools::finite::opt::internals::reports::print_report(const lbfgs_tuple)
+================================================================================
+
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt.h`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: tools::finite::opt::internals::reports::print_report(const lbfgs_tuple)

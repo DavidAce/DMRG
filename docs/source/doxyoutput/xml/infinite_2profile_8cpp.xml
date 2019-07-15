@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="infinite_2profile_8cpp" kind="file" language="C++">
+    <compoundname>profile.cpp</compoundname>
+    <includes refid="nmspc__tools_8h" local="no">state/tools/nmspc_tools.h</includes>
+    <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
+    <incdepgraph>
+      <node id="3189">
+        <label>iomanip</label>
+      </node>
+      <node id="3187">
+        <label>iterator</label>
+      </node>
+      <node id="3190">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="3191" relation="include">
+        </childnode>
+        <childnode refid="3184" relation="include">
+        </childnode>
+        <childnode refid="3186" relation="include">
+        </childnode>
+      </node>
+      <node id="3184">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="3182">
+        <label>string</label>
+      </node>
+      <node id="3196">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="3197" relation="include">
+        </childnode>
+        <childnode refid="3188" relation="include">
+        </childnode>
+      </node>
+      <node id="3192">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="3193" relation="include">
+        </childnode>
+        <childnode refid="3194" relation="include">
+        </childnode>
+        <childnode refid="3195" relation="include">
+        </childnode>
+      </node>
+      <node id="3191">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="3199">
+        <label>unordered_set</label>
+      </node>
+      <node id="3186">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="3193">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="3185">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="3200">
+        <label>vector</label>
+      </node>
+      <node id="3194">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="3188">
+        <label>iostream</label>
+      </node>
+      <node id="3197">
+        <label>chrono</label>
+      </node>
+      <node id="3179">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/profile.cpp</label>
+        <link refid="infinite_2profile_8cpp"/>
+        <childnode refid="3180" relation="include">
+        </childnode>
+        <childnode refid="3198" relation="include">
+        </childnode>
+      </node>
+      <node id="3198">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="3182" relation="include">
+        </childnode>
+        <childnode refid="3199" relation="include">
+        </childnode>
+        <childnode refid="3200" relation="include">
+        </childnode>
+      </node>
+      <node id="3183">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="3184" relation="include">
+        </childnode>
+        <childnode refid="3185" relation="include">
+        </childnode>
+        <childnode refid="3186" relation="include">
+        </childnode>
+        <childnode refid="3187" relation="include">
+        </childnode>
+        <childnode refid="3188" relation="include">
+        </childnode>
+        <childnode refid="3189" relation="include">
+        </childnode>
+        <childnode refid="3190" relation="include">
+        </childnode>
+      </node>
+      <node id="3180">
+        <label>state/tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="3181" relation="include">
+        </childnode>
+        <childnode refid="3182" relation="include">
+        </childnode>
+        <childnode refid="3183" relation="include">
+        </childnode>
+        <childnode refid="3192" relation="include">
+        </childnode>
+        <childnode refid="3196" relation="include">
+        </childnode>
+      </node>
+      <node id="3195">
+        <label>spdlog/sinks/stdout_sinks.h</label>
+      </node>
+      <node id="3181">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-07-05.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">state/tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9" refid="namespacetools_1_1infinite_1_1profile_1a7d72435e6a8d6813b05c271de08a9483" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1a7d72435e6a8d6813b05c271de08a9483" kindref="member">tools::infinite::profile::print_profiling</ref>(<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/>&amp;t_parent){</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\nComputing<sp/>observables<sp/>breakdown:&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;+Total<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>t_parent.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>s&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1profile_1a14a29e5b2092fffc2e2318307e5b9586" kindref="member">t_ent</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(t_parent);</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1a6482d083d5852c0c1320642603b96a2b" kindref="member">t_ene_mpo</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(t_parent);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1a57614dcac79ddf8d4da0a9990963cb23" kindref="member">t_ene_ham</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(t_parent);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1add80f0b45b15b9716b500bb5ba7c816b" kindref="member">t_ene_mom</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(t_parent);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1a66594817dd2a3d6adca894a1b8cfd32e" kindref="member">t_var_mpo</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(t_parent);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1ad4684f09228f81deec6af4a40df8019b" kindref="member">t_var_ham</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(t_parent);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1ad10572c18b3b1c6cf128515546675f70" kindref="member">t_var_mom</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(t_parent);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="namespacetools_1_1infinite_1_1profile_1a50ac9243390db017655440e70c36c1ac" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1a50ac9243390db017655440e70c36c1ac" kindref="member">tools::infinite::profile::init_profiling</ref>(){</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1aa9deb22061716db29d06214ea8e191f2" kindref="member">t_eig</ref>.set_properties<sp/><sp/><sp/><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Eig.<sp/>decomp.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1profile_1a14a29e5b2092fffc2e2318307e5b9586" kindref="member">t_ent</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref><sp/><sp/><sp/><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Ent.<sp/>Entropy<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1a6482d083d5852c0c1320642603b96a2b" kindref="member">t_ene_mpo</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Energy<sp/>(MPO)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1a57614dcac79ddf8d4da0a9990963cb23" kindref="member">t_ene_ham</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Energy<sp/>(HAM)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1add80f0b45b15b9716b500bb5ba7c816b" kindref="member">t_ene_mom</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Energy<sp/>(MOM)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1a66594817dd2a3d6adca894a1b8cfd32e" kindref="member">t_var_mpo</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Variance<sp/>(MPO)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1ad4684f09228f81deec6af4a40df8019b" kindref="member">t_var_ham</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Variance<sp/>(HAM)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1profile_1ad10572c18b3b1c6cf128515546675f70" kindref="member">t_var_mom</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Variance<sp/>(MOM)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/profile.cpp"/>
+  </compounddef>
+</doxygen>

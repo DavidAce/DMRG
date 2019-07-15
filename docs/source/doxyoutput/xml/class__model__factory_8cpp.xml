@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__model__factory_8cpp" kind="file" language="C++">
+    <compoundname>class_model_factory.cpp</compoundname>
+    <includes refid="nmspc__math_8h" local="no">math/nmspc_math.h</includes>
+    <includes refid="class__model__factory_8h" local="yes">class_model_factory.h</includes>
+    <includes refid="class__tf__ising_8h" local="yes">class_tf_ising.h</includes>
+    <includes refid="class__model__base_8h" local="yes">class_model_base.h</includes>
+    <includes refid="class__hamiltonian__h5tables_8h" local="yes">class_hamiltonian_h5tables.h</includes>
+    <includes refid="class__selfdual__tf__rf__ising_8h" local="yes">class_selfdual_tf_rf_ising.h</includes>
+    <incdepgraph>
+      <node id="1527">
+        <label>iomanip</label>
+      </node>
+      <node id="1508">
+        <label>functional</label>
+      </node>
+      <node id="1505">
+        <label>iterator</label>
+      </node>
+      <node id="1524">
+        <label>class_tf_ising.h</label>
+        <link refid="class__tf__ising_8h"/>
+        <childnode refid="1504" relation="include">
+        </childnode>
+        <childnode refid="1525" relation="include">
+        </childnode>
+        <childnode refid="1527" relation="include">
+        </childnode>
+        <childnode refid="1514" relation="include">
+        </childnode>
+      </node>
+      <node id="1507">
+        <label>cmath</label>
+      </node>
+      <node id="1528">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="1529" relation="include">
+        </childnode>
+        <childnode refid="1512" relation="include">
+        </childnode>
+        <childnode refid="1515" relation="include">
+        </childnode>
+      </node>
+      <node id="1511">
+        <label>numeric</label>
+      </node>
+      <node id="1512">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="1532">
+        <label>string</label>
+      </node>
+      <node id="1523">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="1520">
+        <label>class_hamiltonian_h5tables.h</label>
+        <link refid="class__hamiltonian__h5tables_8h"/>
+        <childnode refid="1506" relation="include">
+        </childnode>
+        <childnode refid="1521" relation="include">
+        </childnode>
+        <childnode refid="1522" relation="include">
+        </childnode>
+        <childnode refid="1523" relation="include">
+        </childnode>
+      </node>
+      <node id="1516">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="1517" relation="include">
+        </childnode>
+        <childnode refid="1518" relation="include">
+        </childnode>
+        <childnode refid="1519" relation="include">
+        </childnode>
+      </node>
+      <node id="1529">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="1533">
+        <label>unordered_set</label>
+      </node>
+      <node id="1515">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="1513">
+        <label>class_model_factory.h</label>
+        <link refid="class__model__factory_8h"/>
+        <childnode refid="1504" relation="include">
+        </childnode>
+        <childnode refid="1509" relation="include">
+        </childnode>
+        <childnode refid="1514" relation="include">
+        </childnode>
+        <childnode refid="1520" relation="include">
+        </childnode>
+      </node>
+      <node id="1530">
+        <label>class_selfdual_tf_rf_ising.h</label>
+        <link refid="class__selfdual__tf__rf__ising_8h"/>
+        <childnode refid="1504" relation="include">
+        </childnode>
+        <childnode refid="1525" relation="include">
+        </childnode>
+        <childnode refid="1531" relation="include">
+        </childnode>
+        <childnode refid="1527" relation="include">
+        </childnode>
+        <childnode refid="1514" relation="include">
+        </childnode>
+      </node>
+      <node id="1514">
+        <label>class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="1509" relation="include">
+        </childnode>
+        <childnode refid="1515" relation="include">
+        </childnode>
+        <childnode refid="1516" relation="include">
+        </childnode>
+      </node>
+      <node id="1517">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1526">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1503">
+        <label>math/nmspc_math.h</label>
+        <link refid="nmspc__math_8h"/>
+        <childnode refid="1504" relation="include">
+        </childnode>
+        <childnode refid="1505" relation="include">
+        </childnode>
+        <childnode refid="1506" relation="include">
+        </childnode>
+        <childnode refid="1507" relation="include">
+        </childnode>
+        <childnode refid="1508" relation="include">
+        </childnode>
+        <childnode refid="1509" relation="include">
+        </childnode>
+        <childnode refid="1510" relation="include">
+        </childnode>
+        <childnode refid="1511" relation="include">
+        </childnode>
+        <childnode refid="1512" relation="include">
+        </childnode>
+      </node>
+      <node id="1506">
+        <label>vector</label>
+      </node>
+      <node id="1502">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp</label>
+        <link refid="class__model__factory_8cpp"/>
+        <childnode refid="1503" relation="include">
+        </childnode>
+        <childnode refid="1513" relation="include">
+        </childnode>
+        <childnode refid="1524" relation="include">
+        </childnode>
+        <childnode refid="1514" relation="include">
+        </childnode>
+        <childnode refid="1520" relation="include">
+        </childnode>
+        <childnode refid="1530" relation="include">
+        </childnode>
+      </node>
+      <node id="1518">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1510">
+        <label>utility</label>
+      </node>
+      <node id="1521">
+        <label>array</label>
+      </node>
+      <node id="1522">
+        <label>hdf5.h</label>
+      </node>
+      <node id="1504">
+        <label>iostream</label>
+      </node>
+      <node id="1531">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="1532" relation="include">
+        </childnode>
+        <childnode refid="1533" relation="include">
+        </childnode>
+        <childnode refid="1506" relation="include">
+        </childnode>
+      </node>
+      <node id="1525">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="1512" relation="include">
+        </childnode>
+        <childnode refid="1526" relation="include">
+        </childnode>
+        <childnode refid="1515" relation="include">
+        </childnode>
+        <childnode refid="1505" relation="include">
+        </childnode>
+        <childnode refid="1504" relation="include">
+        </childnode>
+        <childnode refid="1527" relation="include">
+        </childnode>
+        <childnode refid="1528" relation="include">
+        </childnode>
+      </node>
+      <node id="1519">
+        <label>spdlog/sinks/stdout_sinks.h</label>
+      </node>
+      <node id="1509">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-07-04.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__math_8h" kindref="compound">math/nmspc_math.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__model__factory_8h" kindref="compound">class_model_factory.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__tf__ising_8h" kindref="compound">class_tf_ising.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__model__base_8h" kindref="compound">class_model_base.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__hamiltonian__h5tables_8h" kindref="compound">class_hamiltonian_h5tables.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__selfdual__tf__rf__ising_8h" kindref="compound">class_selfdual_tf_rf_ising.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="classclass__model__factory_1abcf6ff6ee79d5ef9af4a219d2ade32d3" refkind="member"><highlight class="normal">std::shared_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__model__factory_1abcf6ff6ee79d5ef9af4a219d2ade32d3" kindref="member">class_model_factory::create_mpo</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>position,<sp/>std::string<sp/>model_type_str){</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(model_type_str<sp/>==<sp/>std::string(</highlight><highlight class="stringliteral">&quot;tf_ising&quot;</highlight><highlight class="normal">)){</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_tf_ising&gt;(position,model_type_str);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(model_type_str<sp/>==<sp/>std::string(</highlight><highlight class="stringliteral">&quot;tf_nn_ising&quot;</highlight><highlight class="normal">)){</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_tf_ising&gt;(position,model_type_str);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(model_type_str<sp/>==<sp/>std::string(</highlight><highlight class="stringliteral">&quot;selfdual_tf_rf_ising&quot;</highlight><highlight class="normal">)){</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_selfdual_tf_rf_ising&gt;(position,model_type_str);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>model:<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/>+<sp/>model_type_str<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="classclass__model__factory_1a9715c828aa0ede548f52d530e11f4929" refkind="member"><highlight class="normal">std::shared_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__model__factory_1a9715c828aa0ede548f52d530e11f4929" kindref="member">class_model_factory::clone</ref>(std::shared_ptr&lt;class_model_base&gt;<sp/>other){</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>other-&gt;clone();</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp"/>
+  </compounddef>
+</doxygen>

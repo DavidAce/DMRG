@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacesettings_1_1model" kind="namespace" language="C++">
+    <compoundname>settings::model</compoundname>
+    <innernamespace refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising">settings::model::selfdual_tf_rf_ising</innernamespace>
+    <innernamespace refid="namespacesettings_1_1model_1_1tf__ising">settings::model::tf_ising</innernamespace>
+    <innernamespace refid="namespacesettings_1_1model_1_1tf__nn__ising">settings::model::tf_nn_ising</innernamespace>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacesettings_1_1model_1a47bbe476211c0ae22d348e80df47193b" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string settings::model::model_type</definition>
+        <argsstring></argsstring>
+        <name>model_type</name>
+        <initializer>= &quot;tf_ising&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Choice of model type: {<ref refid="namespacesettings_1_1model_1_1tf__ising" kindref="compound">tf_ising</ref>, <ref refid="namespacesettings_1_1model_1_1tf__nn__ising" kindref="compound">tf_nn_ising</ref>, <ref refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising" kindref="compound">selfdual_tf_rf_ising</ref>} above </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1model_1ac7afc4aa61cd2be6625e10af42716284" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int settings::model::seed_init</definition>
+        <argsstring></argsstring>
+        <name>seed_init</name>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Seed for the random number generator if you use random fields in the Hamiltonian. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1model_1a42d6b88cb00f9824b3ee1a24eca7dbbc" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string settings::model::initial_sector</definition>
+        <argsstring></argsstring>
+        <name>initial_sector</name>
+        <initializer>= &quot;sx&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialize in parity symmetry sector: {sx,sy,sz,random,none} </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="34" column="1"/>
+  </compounddef>
+</doxygen>

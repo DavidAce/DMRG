@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_5a2bb10aa94e3e78e9f9f2d4a3256a0b" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math</compoundname>
+    <innerdir refid="dir_d784051653639276ed21206bae8ce1be">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra</innerdir>
+    <innerfile refid="class__eigsolver_8cpp">class_eigsolver.cpp</innerfile>
+    <innerfile refid="class__eigsolver_8h">class_eigsolver.h</innerfile>
+    <innerfile refid="class__svd__wrapper_8cpp">class_svd_wrapper.cpp</innerfile>
+    <innerfile refid="class__svd__wrapper_8h">class_svd_wrapper.h</innerfile>
+    <innerfile refid="nmspc__eigutils_8h">nmspc_eigutils.h</innerfile>
+    <innerfile refid="nmspc__math_8h">nmspc_math.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/"/>
+  </compounddef>
+</doxygen>

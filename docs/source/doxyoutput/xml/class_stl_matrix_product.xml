@@ -1,0 +1,585 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class_stl_matrix_product" kind="class" language="C++" prot="public">
+    <compoundname>StlMatrixProduct</compoundname>
+    <includes refid="matrix__product__stl_8h" local="no">matrix_product_stl.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename</type>
+        <declname>Scalar_</declname>
+        <defname>Scalar_</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_stl_matrix_product_1a76ab9cc7da91d13ffa17e3e4bf0d5f34" prot="public" static="no">
+        <type>Scalar_</type>
+        <definition>using StlMatrixProduct&lt; Scalar_ &gt;::Scalar =  Scalar_</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_stl_matrix_product_1ac2438101eca4772ce8e979ab8270e722" prot="public" static="yes" mutable="no">
+        <type>constexpr bool</type>
+        <definition>constexpr bool StlMatrixProduct&lt; Scalar_ &gt;::can_shift</definition>
+        <argsstring></argsstring>
+        <name>can_shift</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_stl_matrix_product_1a5e33d520e1c62efd4c36af977776d712" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="class_stl_matrix_product_1a76ab9cc7da91d13ffa17e3e4bf0d5f34" kindref="member">Scalar</ref> &gt;</type>
+        <definition>std::vector&lt;Scalar&gt; StlMatrixProduct&lt; Scalar_ &gt;::A_stl</definition>
+        <argsstring></argsstring>
+        <name>A_stl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_stl_matrix_product_1a42e15800d20b2f825a24c4404ee51bf6" prot="private" static="no" mutable="no">
+        <type>const <ref refid="class_stl_matrix_product_1a76ab9cc7da91d13ffa17e3e4bf0d5f34" kindref="member">Scalar</ref> *</type>
+        <definition>const Scalar* StlMatrixProduct&lt; Scalar_ &gt;::A_ptr</definition>
+        <argsstring></argsstring>
+        <name>A_ptr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_stl_matrix_product_1aaa88495509aa660cd6ca840a8bbf22fa" prot="private" static="no" mutable="no">
+        <type>const int</type>
+        <definition>const int StlMatrixProduct&lt; Scalar_ &gt;::L</definition>
+        <argsstring></argsstring>
+        <name>L</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_stl_matrix_product_1a22eeead3b123a946a2c298b1afe31260" prot="private" static="no" mutable="no">
+        <type><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+        <definition>eigutils::eigSetting::Form StlMatrixProduct&lt; Scalar_ &gt;::form</definition>
+        <argsstring></argsstring>
+        <name>form</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_stl_matrix_product_1add7f8456eb6a5f560f8c492860c427ae" prot="private" static="no" mutable="no">
+        <type><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+        <definition>eigutils::eigSetting::Side StlMatrixProduct&lt; Scalar_ &gt;::side</definition>
+        <argsstring></argsstring>
+        <name>side</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_stl_matrix_product_1a355cc77be4cb62ef5895b7fcdd219e8c" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double StlMatrixProduct&lt; Scalar_ &gt;::sigmaR</definition>
+        <argsstring></argsstring>
+        <name>sigmaR</name>
+        <initializer>= 0.0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_stl_matrix_product_1a877daca2fe32ba08d4e5bdbf19f60e6e" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double StlMatrixProduct&lt; Scalar_ &gt;::sigmaI</definition>
+        <argsstring></argsstring>
+        <name>sigmaI</name>
+        <initializer>= 0.0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_stl_matrix_product_1a77fb74248a56296a3f6fbe592029a061" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool StlMatrixProduct&lt; Scalar_ &gt;::readyFactorOp</definition>
+        <argsstring></argsstring>
+        <name>readyFactorOp</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_stl_matrix_product_1ac028d93fec8df6157d25dc9753441876" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool StlMatrixProduct&lt; Scalar_ &gt;::readyShift</definition>
+        <argsstring></argsstring>
+        <name>readyShift</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_stl_matrix_product_1a8c6bddeab36cbdf2df7ffd7d39bf034a" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int StlMatrixProduct&lt; Scalar_ &gt;::counter</definition>
+        <argsstring></argsstring>
+        <name>counter</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="68" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_stl_matrix_product_1a6219be75e20d74386189487579c4b6c7" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc StlMatrixProduct&lt; Scalar_ &gt;::t_factorOp</definition>
+        <argsstring></argsstring>
+        <name>t_factorOp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="85" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_stl_matrix_product_1af370a6db867ce36ca09b2953239b013b" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc StlMatrixProduct&lt; Scalar_ &gt;::t_multOpv</definition>
+        <argsstring></argsstring>
+        <name>t_multOpv</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="86" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_stl_matrix_product_1afd02aa86cc9ec8e94cffff6e33c659aa" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc StlMatrixProduct&lt; Scalar_ &gt;::t_multax</definition>
+        <argsstring></argsstring>
+        <name>t_multax</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="87" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_stl_matrix_product_1a89163543d448d6852c458eaeda139fcd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>StlMatrixProduct&lt; Scalar_ &gt;::StlMatrixProduct</definition>
+        <argsstring>(const Scalar *const A_, const int L_, const eigutils::eigSetting::Form form_=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Side side_=eigutils::eigSetting::Side::R, const bool copy_data=false)</argsstring>
+        <name>StlMatrixProduct</name>
+        <param>
+          <type>const <ref refid="class_stl_matrix_product_1a76ab9cc7da91d13ffa17e3e4bf0d5f34" kindref="member">Scalar</ref> *const</type>
+          <declname>A_</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>L_</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form_</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side_</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>copy_data</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="40" bodyend="55"/>
+        <references refid="class_stl_matrix_product_1a0107c3412a6714e441b4d71b36116598" compoundref="matrix__product__stl_8h" startline="80" endline="84">StlMatrixProduct&lt; Scalar_ &gt;::init_profiling</references>
+        <references refid="class_stl_matrix_product_1a3d12eaf4c87fa24c74ed65e86b0b860e" compoundref="matrix__product__stl_8cpp" startline="27" endline="31">StlMatrixProduct&lt; Scalar_ &gt;::~StlMatrixProduct</references>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1a3d12eaf4c87fa24c74ed65e86b0b860e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>StlMatrixProduct&lt; Scalar &gt;::~StlMatrixProduct</definition>
+        <argsstring>()</argsstring>
+        <name>~StlMatrixProduct</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="27" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1a8fa9f6e3fc682948446bc13b10c903b5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int StlMatrixProduct&lt; Scalar_ &gt;::rows</definition>
+        <argsstring>() const</argsstring>
+        <name>rows</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="61" bodyend="61"/>
+        <references refid="class_stl_matrix_product_1aaa88495509aa660cd6ca840a8bbf22fa" compoundref="matrix__product__stl_8h" startline="28">StlMatrixProduct&lt; Scalar_ &gt;::L</references>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1ad8bb923ac624a4ec7431995aa478ef80" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int StlMatrixProduct&lt; Scalar_ &gt;::cols</definition>
+        <argsstring>() const</argsstring>
+        <name>cols</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="62" bodyend="62"/>
+        <references refid="class_stl_matrix_product_1aaa88495509aa660cd6ca840a8bbf22fa" compoundref="matrix__product__stl_8h" startline="28">StlMatrixProduct&lt; Scalar_ &gt;::L</references>
+        <references refid="class_stl_matrix_product_1a9c648b3a4c73d93511dd3d7a8bec2630" compoundref="matrix__product__stl_8cpp" startline="43" endline="69">StlMatrixProduct&lt; Scalar_ &gt;::FactorOP</references>
+        <references refid="class_stl_matrix_product_1a44e185122b14fe0603ae8c1a00a9886c" compoundref="matrix__product__stl_8cpp" startline="75" endline="101">StlMatrixProduct&lt; Scalar_ &gt;::MultOPv</references>
+        <references refid="class_stl_matrix_product_1a5e01ae791681e6383cad617a87d2e9e8" compoundref="matrix__product__stl_8cpp" startline="107" endline="135">StlMatrixProduct&lt; Scalar_ &gt;::MultAx</references>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1a9c648b3a4c73d93511dd3d7a8bec2630" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StlMatrixProduct&lt; Scalar &gt;::FactorOP</definition>
+        <argsstring>()</argsstring>
+        <name>FactorOP</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="43" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1a44e185122b14fe0603ae8c1a00a9886c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StlMatrixProduct&lt; Scalar &gt;::MultOPv</definition>
+        <argsstring>(Scalar *x_in_ptr, Scalar *x_out_ptr)</argsstring>
+        <name>MultOPv</name>
+        <param>
+          <type><ref refid="class_stl_matrix_product_1a76ab9cc7da91d13ffa17e3e4bf0d5f34" kindref="member">Scalar</ref> *</type>
+          <declname>x_in_ptr</declname>
+        </param>
+        <param>
+          <type><ref refid="class_stl_matrix_product_1a76ab9cc7da91d13ffa17e3e4bf0d5f34" kindref="member">Scalar</ref> *</type>
+          <declname>x_out_ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="75" bodyend="101"/>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1a5e01ae791681e6383cad617a87d2e9e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StlMatrixProduct&lt; Scalar &gt;::MultAx</definition>
+        <argsstring>(Scalar *x_in_ptr, Scalar *x_out_ptr)</argsstring>
+        <name>MultAx</name>
+        <param>
+          <type><ref refid="class_stl_matrix_product_1a76ab9cc7da91d13ffa17e3e4bf0d5f34" kindref="member">Scalar</ref> *</type>
+          <declname>x_in_ptr</declname>
+        </param>
+        <param>
+          <type><ref refid="class_stl_matrix_product_1a76ab9cc7da91d13ffa17e3e4bf0d5f34" kindref="member">Scalar</ref> *</type>
+          <declname>x_out_ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="107" bodyend="135"/>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1af9f79876cd02cafe4e2badecfa1de022" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void StlMatrixProduct&lt; Scalar &gt;::print</definition>
+        <argsstring>() const</argsstring>
+        <name>print</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="69" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="36" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1a9e4bb7514f7e50cef962ce232cf3728d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StlMatrixProduct&lt; Scalar_ &gt;::set_shift</definition>
+        <argsstring>(std::complex&lt; double &gt; sigma_)</argsstring>
+        <name>set_shift</name>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>sigma_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="70" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="70" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1abd57f95f23f637833fe0b640f847e19b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StlMatrixProduct&lt; Scalar_ &gt;::set_shift</definition>
+        <argsstring>(double sigma_)</argsstring>
+        <name>set_shift</name>
+        <param>
+          <type>double</type>
+          <declname>sigma_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="71" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1a04718b5133a8823a3768225ed06b6410" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StlMatrixProduct&lt; Scalar_ &gt;::set_shift</definition>
+        <argsstring>(double sigmaR_, double sigmaI_)</argsstring>
+        <name>set_shift</name>
+        <param>
+          <type>double</type>
+          <declname>sigmaR_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>sigmaI_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="72" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1a551193db01e23ecb2a3e89c69f186534" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StlMatrixProduct&lt; Scalar_ &gt;::set_mode</definition>
+        <argsstring>(const eigutils::eigSetting::Form form_)</argsstring>
+        <name>set_mode</name>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="73" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1a921d8d3238fc8967c5030dd5a2282f9c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StlMatrixProduct&lt; Scalar_ &gt;::set_side</definition>
+        <argsstring>(const eigutils::eigSetting::Side side_)</argsstring>
+        <name>set_side</name>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="74" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1a36df1fcd4ceb2fe4a15d341f680043b1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::vector&lt; <ref refid="class_stl_matrix_product_1a76ab9cc7da91d13ffa17e3e4bf0d5f34" kindref="member">Scalar</ref> &gt;</type>
+        <definition>const std::vector&lt;Scalar&gt; StlMatrixProduct&lt; Scalar_ &gt;::get_matrix</definition>
+        <argsstring>() const</argsstring>
+        <name>get_matrix</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="75" bodyend="75"/>
+        <references refid="class_stl_matrix_product_1a42e15800d20b2f825a24c4404ee51bf6" compoundref="matrix__product__stl_8h" startline="27">StlMatrixProduct&lt; Scalar_ &gt;::A_ptr</references>
+        <references refid="class_stl_matrix_product_1aaa88495509aa660cd6ca840a8bbf22fa" compoundref="matrix__product__stl_8h" startline="28">StlMatrixProduct&lt; Scalar_ &gt;::L</references>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1a41b8578a26ceeb57efec55eb02b28c2e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref> &amp;</type>
+        <definition>const eigutils::eigSetting::Form&amp; StlMatrixProduct&lt; Scalar_ &gt;::get_form</definition>
+        <argsstring>() const</argsstring>
+        <name>get_form</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="76" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="76" bodyend="76"/>
+        <references refid="class_stl_matrix_product_1a22eeead3b123a946a2c298b1afe31260" compoundref="matrix__product__stl_8h" startline="29">StlMatrixProduct&lt; Scalar_ &gt;::form</references>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1aa6f773c8cee584d46d6c2fd01755e6e7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref> &amp;</type>
+        <definition>const eigutils::eigSetting::Side&amp; StlMatrixProduct&lt; Scalar_ &gt;::get_side</definition>
+        <argsstring>() const</argsstring>
+        <name>get_side</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="77" bodyend="77"/>
+        <references refid="class_stl_matrix_product_1add7f8456eb6a5f560f8c492860c427ae" compoundref="matrix__product__stl_8h" startline="30">StlMatrixProduct&lt; Scalar_ &gt;::side</references>
+      </memberdef>
+      <memberdef kind="function" id="class_stl_matrix_product_1a0107c3412a6714e441b4d71b36116598" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void StlMatrixProduct&lt; Scalar_ &gt;::init_profiling</definition>
+        <argsstring>()</argsstring>
+        <name>init_profiling</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="80" bodyend="84"/>
+        <references refid="class_stl_matrix_product_1a6219be75e20d74386189487579c4b6c7" compoundref="matrix__product__stl_8h" startline="85">StlMatrixProduct&lt; Scalar_ &gt;::t_factorOp</references>
+        <references refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" compoundref="class__tic__toc_8cpp" startline="22" endline="24">class_tic_toc::set_properties</references>
+        <references refid="matrix__product__stl_8h_1afb69439b6c29dc85f40f2df36cf15d68" compoundref="matrix__product__stl_8h" startline="16">profile_matrix_product_dense</references>
+        <references refid="class_stl_matrix_product_1af370a6db867ce36ca09b2953239b013b" compoundref="matrix__product__stl_8h" startline="86">StlMatrixProduct&lt; Scalar_ &gt;::t_multOpv</references>
+        <references refid="class_stl_matrix_product_1afd02aa86cc9ec8e94cffff6e33c659aa" compoundref="matrix__product__stl_8h" startline="87">StlMatrixProduct&lt; Scalar_ &gt;::t_multax</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="235">
+        <label>class_tic_toc</label>
+        <link refid="classclass__tic__toc"/>
+      </node>
+      <node id="234">
+        <label>StlMatrixProduct&lt; Scalar_ &gt;</label>
+        <link refid="class_stl_matrix_product"/>
+        <childnode refid="235" relation="usage">
+          <edgelabel>t_factorOp</edgelabel>
+          <edgelabel>t_multax</edgelabel>
+          <edgelabel>t_multOpv</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="20" bodyend="88"/>
+    <listofallmembers>
+      <member refid="class_stl_matrix_product_1a42e15800d20b2f825a24c4404ee51bf6" prot="private" virt="non-virtual"><scope>StlMatrixProduct</scope><name>A_ptr</name></member>
+      <member refid="class_stl_matrix_product_1a5e33d520e1c62efd4c36af977776d712" prot="private" virt="non-virtual"><scope>StlMatrixProduct</scope><name>A_stl</name></member>
+      <member refid="class_stl_matrix_product_1ac2438101eca4772ce8e979ab8270e722" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>can_shift</name></member>
+      <member refid="class_stl_matrix_product_1ad8bb923ac624a4ec7431995aa478ef80" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>cols</name></member>
+      <member refid="class_stl_matrix_product_1a8c6bddeab36cbdf2df7ffd7d39bf034a" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>counter</name></member>
+      <member refid="class_stl_matrix_product_1a9c648b3a4c73d93511dd3d7a8bec2630" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>FactorOP</name></member>
+      <member refid="class_stl_matrix_product_1a22eeead3b123a946a2c298b1afe31260" prot="private" virt="non-virtual"><scope>StlMatrixProduct</scope><name>form</name></member>
+      <member refid="class_stl_matrix_product_1a41b8578a26ceeb57efec55eb02b28c2e" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>get_form</name></member>
+      <member refid="class_stl_matrix_product_1a36df1fcd4ceb2fe4a15d341f680043b1" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>get_matrix</name></member>
+      <member refid="class_stl_matrix_product_1aa6f773c8cee584d46d6c2fd01755e6e7" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>get_side</name></member>
+      <member refid="class_stl_matrix_product_1a0107c3412a6714e441b4d71b36116598" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>init_profiling</name></member>
+      <member refid="class_stl_matrix_product_1aaa88495509aa660cd6ca840a8bbf22fa" prot="private" virt="non-virtual"><scope>StlMatrixProduct</scope><name>L</name></member>
+      <member refid="class_stl_matrix_product_1a5e01ae791681e6383cad617a87d2e9e8" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>MultAx</name></member>
+      <member refid="class_stl_matrix_product_1a44e185122b14fe0603ae8c1a00a9886c" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>MultOPv</name></member>
+      <member refid="class_stl_matrix_product_1af9f79876cd02cafe4e2badecfa1de022" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>print</name></member>
+      <member refid="class_stl_matrix_product_1a77fb74248a56296a3f6fbe592029a061" prot="private" virt="non-virtual"><scope>StlMatrixProduct</scope><name>readyFactorOp</name></member>
+      <member refid="class_stl_matrix_product_1ac028d93fec8df6157d25dc9753441876" prot="private" virt="non-virtual"><scope>StlMatrixProduct</scope><name>readyShift</name></member>
+      <member refid="class_stl_matrix_product_1a8fa9f6e3fc682948446bc13b10c903b5" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>rows</name></member>
+      <member refid="class_stl_matrix_product_1a76ab9cc7da91d13ffa17e3e4bf0d5f34" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>Scalar</name></member>
+      <member refid="class_stl_matrix_product_1a551193db01e23ecb2a3e89c69f186534" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>set_mode</name></member>
+      <member refid="class_stl_matrix_product_1a9e4bb7514f7e50cef962ce232cf3728d" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>set_shift</name></member>
+      <member refid="class_stl_matrix_product_1abd57f95f23f637833fe0b640f847e19b" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>set_shift</name></member>
+      <member refid="class_stl_matrix_product_1a04718b5133a8823a3768225ed06b6410" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>set_shift</name></member>
+      <member refid="class_stl_matrix_product_1a921d8d3238fc8967c5030dd5a2282f9c" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>set_side</name></member>
+      <member refid="class_stl_matrix_product_1add7f8456eb6a5f560f8c492860c427ae" prot="private" virt="non-virtual"><scope>StlMatrixProduct</scope><name>side</name></member>
+      <member refid="class_stl_matrix_product_1a877daca2fe32ba08d4e5bdbf19f60e6e" prot="private" virt="non-virtual"><scope>StlMatrixProduct</scope><name>sigmaI</name></member>
+      <member refid="class_stl_matrix_product_1a355cc77be4cb62ef5895b7fcdd219e8c" prot="private" virt="non-virtual"><scope>StlMatrixProduct</scope><name>sigmaR</name></member>
+      <member refid="class_stl_matrix_product_1a89163543d448d6852c458eaeda139fcd" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>StlMatrixProduct</name></member>
+      <member refid="class_stl_matrix_product_1a6219be75e20d74386189487579c4b6c7" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>t_factorOp</name></member>
+      <member refid="class_stl_matrix_product_1afd02aa86cc9ec8e94cffff6e33c659aa" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>t_multax</name></member>
+      <member refid="class_stl_matrix_product_1af370a6db867ce36ca09b2953239b013b" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>t_multOpv</name></member>
+      <member refid="class_stl_matrix_product_1a3d12eaf4c87fa24c74ed65e86b0b860e" prot="public" virt="non-virtual"><scope>StlMatrixProduct</scope><name>~StlMatrixProduct</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
