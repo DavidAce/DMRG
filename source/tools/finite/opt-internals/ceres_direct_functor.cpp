@@ -9,6 +9,7 @@
 Eigen::ThreadPool       tp (Eigen::nbThreads());
 Eigen::ThreadPoolDevice dev(&tp,Eigen::nbThreads());
 #else
+#include <unsupported/Eigen/CXX11/Tensor>
 Eigen::DefaultDevice dev;
 #endif
 
