@@ -197,14 +197,14 @@ void class_xDMRG::check_convergence(){
 
 
     if (state->position_is_any_edge()
-        and sim_status.variance_mpo_has_saturated
+//        and sim_status.variance_mpo_has_saturated
         and not sim_status.simulation_has_converged
         and not outside_of_window
         and not projected_during_saturation)
     {
         log->info("Projecting to {} due to saturation", settings::model::initial_sector);
         *state = tools::finite::ops::get_closest_parity_state(*state,settings::model::initial_sector);
-        projected_during_saturation = true;
+//        projected_during_saturation = true;
     }
 
 
