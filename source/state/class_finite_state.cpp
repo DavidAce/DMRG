@@ -309,7 +309,7 @@ Eigen::Tensor<class_finite_state::Scalar,4>   class_finite_state::get_multimpo()
                 .reshape(Textra::array4{dim0,dim1,dim2,dim3});
         multimpo = temp;
     }
-//    tools::log->trace("Finished multimpo");
+    tools::log->trace("Finished multimpo");
     return multimpo;
 }
 
@@ -325,7 +325,7 @@ class_finite_state::get_multienv2()     const{
 }
 
 
-Eigen::Tensor<class_finite_state::Scalar,6>   class_finite_state::get_multi_hamiltonian() const{
+class_finite_state::TType<6> class_finite_state::get_multi_hamiltonian() const{
     tools::log->trace("Generating multi hamiltonian");
 
 //    auto [envL,envR] = get_multienv();
@@ -339,7 +339,7 @@ Eigen::Tensor<class_finite_state::Scalar,6>   class_finite_state::get_multi_hami
             .shuffle(Textra::array6{2,0,4,3,1,5});
 }
 
-Eigen::Tensor<class_finite_state::Scalar,6>   class_finite_state::get_multi_hamiltonian2() const{
+class_finite_state::TType<6>   class_finite_state::get_multi_hamiltonian2() const{
     tools::log->trace("Generating multi hamiltonian squared");
 //    auto [env2L,env2R] = get_multienv2();
     auto & env2L = get_ENV2L(active_sites.front());
@@ -347,6 +347,7 @@ Eigen::Tensor<class_finite_state::Scalar,6>   class_finite_state::get_multi_hami
     if (env2L.get_position() != active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", env2L.get_position() , active_sites.front()));
     if (env2R.get_position() != active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", env2R.get_position() , active_sites.back()));
     auto mpo = get_multimpo();
+    tools::log->trace("Starting contraction of multi hamiltonian squared");
     return env2L.block
             .contract(mpo             , Textra::idx({2},{0}))
             .contract(mpo             , Textra::idx({5,2},{2,0}))
@@ -354,15 +355,72 @@ Eigen::Tensor<class_finite_state::Scalar,6>   class_finite_state::get_multi_hami
             .shuffle(Textra::array6{2,0,4,3,1,5});
 }
 
-Eigen::Matrix<class_finite_state::Scalar,Eigen::Dynamic,Eigen::Dynamic> class_finite_state::get_multi_hamiltonian_matrix() const{
+class_finite_state::MType class_finite_state::get_multi_hamiltonian_matrix() const{
     auto dims = active_dimensions();
     long shape = dims[0] * dims[1] * dims[2];
     return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(get_multi_hamiltonian().data(),shape,shape).transpose();
 }
-Eigen::Matrix<class_finite_state::Scalar,Eigen::Dynamic,Eigen::Dynamic> class_finite_state::get_multi_hamiltonian2_matrix() const{
+class_finite_state::MType class_finite_state::get_multi_hamiltonian2_matrix() const{
     auto dims = active_dimensions();
     long shape = dims[0] * dims[1] * dims[2];
-    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(get_multi_hamiltonian2().data(),shape,shape).transpose();
+    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> ham_squared = Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(get_multi_hamiltonian2().data(),shape,shape);
+    tools::log->trace("Finished contraction of multi hamiltonian squared");
+    return ham_squared.transpose();
+}
+
+class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_matrix(const MType & eigvecs ) const{
+    tools::log->trace("Generating multi hamiltonian squared");
+
+    auto dims = active_dimensions();
+    Eigen::DSizes<long,4> eigvecs_dims {dims[0],dims[1],dims[2],eigvecs.cols()};
+    auto eigvecs_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar,4>>(eigvecs.data(), eigvecs_dims );
+    auto & env2L = get_ENV2L(active_sites.front());
+    auto & env2R = get_ENV2R(active_sites.back());
+    if (env2L.get_position() != active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", env2L.get_position() , active_sites.front()));
+    if (env2R.get_position() != active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", env2R.get_position() , active_sites.back()));
+    auto mpo = get_multimpo();
+    tools::log->trace("Starting contraction of hamiltonian subspace matrix squared");
+    size_t log2chiL  = std::log2(dims[1]);
+    size_t log2chiR  = std::log2(dims[2]);
+    size_t log2spin  = std::log2(dims[0]);
+    Eigen::Tensor<Scalar,2> H2;
+    if(log2spin > log2chiL + log2chiR){
+        if (log2chiL >= log2chiR)
+            H2 =
+                    eigvecs_tensor
+                            .contract(env2L.block,                Textra::idx({1},{0}))
+                            .contract(mpo  ,                      Textra::idx({0,4},{2,0}))
+                            .contract(env2R.block,                Textra::idx({0,4},{0,2}))
+                            .contract(mpo  ,                      Textra::idx({3,2,5},{2,0,1}))
+                            .contract(eigvecs_tensor.conjugate(), Textra::idx({3,1,2},{0,1,2}));
+        else{
+            H2 =
+                    eigvecs_tensor
+                            .contract(env2R.block,                Textra::idx({2},{0}))
+                            .contract(mpo  ,                      Textra::idx({0,4},{2,1}))
+                            .contract(env2L.block,                Textra::idx({0,4},{0,2}))
+                            .contract(mpo  ,                      Textra::idx({3,2,5},{2,1,0}))
+                            .contract(eigvecs_tensor.conjugate(), Textra::idx({3,2,1},{0,1,2}));
+        }
+    }else{
+        H2 =
+                eigvecs_tensor
+                        .contract(env2L.block,                Textra::idx({1},{0}))
+                        .contract(mpo  ,                      Textra::idx({0,4},{2,0}))
+                        .contract(mpo  ,                      Textra::idx({5,3},{2,0}))
+                        .contract(eigvecs_tensor.conjugate(), Textra::idx({5,2},{0,1}))
+                        .contract(env2R.block,                Textra::idx({0,4,2,3},{0,1,2,3}));
+    }
+//    H2 =
+//            eigvecs_tensor
+//                    .contract(env2L.block,                Textra::idx({1},{0}))
+//                    .contract(mpo  ,                      Textra::idx({0,4},{2,0}))
+//                    .contract(mpo  ,                      Textra::idx({5,3},{2,0}))
+//                    .contract(eigvecs_tensor.conjugate(), Textra::idx({5,2},{0,1}))
+//                    .contract(env2R.block,                Textra::idx({0,4,2,3},{0,1,2,3}));
+    tools::log->trace("Finished contraction of hamiltonian subspace matrix squared");
+    return Eigen::Map<MType>(H2.data(),H2.dimension(0),H2.dimension(1));
+
 }
 
 

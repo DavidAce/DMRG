@@ -26,6 +26,8 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(
         const class_simulation_status & sim_status)
         : ceres_base_functor(state,sim_status)
 {
+    tools::log->trace("Constructing subspace functor");
+
     #ifdef _OPENMP
         tools::log->trace("Parallelizing with {} threads", omp_get_max_threads());
     #endif
@@ -220,7 +222,7 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
                         .shuffle(Textra::array3{1, 0, 2});
     }
 
-    t_vH2v->toc();
+    t_vH2->toc();
 }
 
 

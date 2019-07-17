@@ -41,7 +41,7 @@ elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
             INSTALL_DIR ${INSTALL_DIRECTORY}/Eigen3
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DCMAKE_INSTALL_MESSAGE=NEVERS #Avoid unnecessary output to console, like up-to-date and installing
+            -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console, like up-to-date and installing
             UPDATE_COMMAND ""
             TEST_COMMAND ""
 #            INSTALL_COMMAND ""

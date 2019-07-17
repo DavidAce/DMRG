@@ -85,12 +85,13 @@ void tools::finite::mps::normalize(class_finite_state & state){
 
 void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_finite_state & state, long chi_, double SVDThreshold){
     state.unset_measurements();
-    if (state.active_sites.empty())throw std::runtime_error("truncate_theta: No active sites to truncate");
-    if (theta.size() == 0)throw std::runtime_error("truncate_theta: Theta is empty");
+    if (state.active_sites.empty()) throw std::runtime_error("truncate_theta: No active sites to truncate");
+    if (theta.size() == 0)          throw std::runtime_error("truncate_theta: Theta is empty");
+    auto theta_map = Eigen::Map<Eigen::VectorXcd>(theta.data(),theta.size());
     auto fullnorm  = tools::finite::measure::norm(state);
-    auto thetanorm = std::abs(Eigen::Map<Eigen::VectorXcd>(theta.data(),theta.size()).norm());
-    if(std::abs(fullnorm  - 1.0) > 1e-12) throw std::runtime_error(fmt::format("Norm before truncation too far from unity: {:.16f}",fullnorm));
-    if(std::abs(thetanorm - 1.0) > 1e-12) throw std::runtime_error(fmt::format("Norm of theta too far from unity: {:.16f}",thetanorm));
+    auto thetanorm = theta_map.norm();
+    if(std::abs(fullnorm  - 1.0) > 1e-10){ tools::log->error("Norm before truncation too far from unity: {:.16f}",fullnorm);}
+    if(std::abs(thetanorm - 1.0) > 1e-10){ tools::log->error("Norm of theta too far from unity: {:.16f}",thetanorm); theta_map.normalize();}
 
 
 
@@ -102,7 +103,7 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_fi
     state.unset_measurements();
     fullnorm  = tools::finite::measure::norm(state);
     if(std::abs(fullnorm  - 1.0) > 1e-10){
-        tools::log->warn("Norm after truncation too far from unity: {:.16f}",fullnorm);
+        tools::log->error("Norm after truncation too far from unity: {:.16f}",fullnorm);
         tools::finite::mps::normalize(state);
     }
 

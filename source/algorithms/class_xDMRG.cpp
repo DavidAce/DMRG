@@ -14,9 +14,6 @@
 #include <math/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <Eigen/Core>
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
 #include <general/nmspc_tensor_extra.h>
 #include <h5pp/h5pp.h>
 #include <spdlog/spdlog.h>
@@ -62,7 +59,8 @@ void class_xDMRG::run_simulation()    {
         write_logs();
         print_status_update();
         check_convergence();
-        tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*state));
+        tools::log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
+        tools::log->debug("Truncation errors: {}", state->truncation_error);
         // It's important not to perform the last step.
         // That last state would not get optimized
         if (state->position_is_any_edge())
@@ -73,7 +71,7 @@ void class_xDMRG::run_simulation()    {
         }
 
         update_bond_dimension();
-        move_center_point();
+//        move_center_point();
         sim_status.iteration = state->get_sweeps();
         sim_status.position = state->get_position();
         log->trace("Finished step {}, iteration {}, direction {}",sim_status.step,sim_status.iteration,state->get_direction());
@@ -99,26 +97,30 @@ void class_xDMRG::single_DMRG_step()
 
     auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
     auto optSpace = opt::OptSpace::SUBSPACE;
-    optSpace      = measure::energy_variance_per_site(*state) <  1e-8               ?  opt::OptSpace::DIRECT  : optSpace;
-    optSpace      = sim_status.iteration >= settings::xdmrg::min_sweeps             ?  opt::OptSpace::DIRECT  : optSpace;
-    optSpace      = state->size_2site()  > settings::precision::MaxSizePartDiag     ?  opt::OptSpace::DIRECT  : optSpace;
-//    optSpace      = opt::OptSpace::DIRECT;
-//    optMode      = opt::OptMode::VARIANCE;
+    optSpace      = measure::energy_variance_per_site(*state) < settings::precision::VarConvergenceThreshold         ?  opt::OptSpace::DIRECT  : optSpace;
+    optSpace      = state->size_2site()  > settings::precision::MaxSizePartDiag                                      ?  opt::OptSpace::DIRECT  : optSpace;
+    optSpace      = sim_status.iteration >= settings::xdmrg::min_sweeps                                              ?  opt::OptSpace::DIRECT  : optSpace;
+    auto optType  = state->isReal() ?  opt::OptType::REAL :  opt::OptType::CPLX;
+
+
     long threshold = 0;
     switch(optSpace){
         case  opt::OptSpace::SUBSPACE : threshold = settings::precision::MaxSizePartDiag; break;
         case  opt::OptSpace::DIRECT   : threshold = settings::precision::MaxSizeDirect  ; break;
     }
     state->activate_sites(threshold);
-    optSpace =  state->active_size() > settings::precision::MaxSizePartDiag ? opt::OptSpace::DIRECT : optSpace;
-    auto optType = state->isReal() ?  opt::OptType::REAL :  opt::OptType::CPLX;
-    sim_status.chi_temp = sim_status.iteration  < 4 ? 16 : sim_status.chi_temp;
-    sim_status.chi_temp = sim_status.iteration  < 2 ? 8  : sim_status.chi_temp;
-    sim_status.chi_temp = sim_status.iteration  < 1 ? 4  : sim_status.chi_temp;
+//    sim_status.chi_temp = sim_status.iteration  < 4 ? 32 : sim_status.chi_temp;
+//    sim_status.chi_temp = sim_status.iteration  < 2 ? 16 : sim_status.chi_temp;
+//    sim_status.chi_temp = sim_status.iteration  < 1 ? 8  : sim_status.chi_temp;
 
     Eigen::Tensor<Scalar,3> theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
-    mps::rebuild_environments(*state);
+    move_center_point();
+    if(tools::finite::measure::norm(*state) > 1e-10){
+        tools::finite::mps::normalize(*state);
+        mps::rebuild_environments(*state);
+    }
+//    mps::rebuild_environments(*state);
     debug::check_integrity(*state);
 
 //    tools::log->debug("Variance accurate check after  xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));

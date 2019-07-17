@@ -35,7 +35,12 @@
 
 class class_finite_state
 {
+public:
+    using Scalar = std::complex<double>;
 private:
+    using MType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
+    using VType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
+    template<auto rank> using TType = Eigen::Tensor<Scalar,rank>;
 
 
     int num_sweeps   = 0;
@@ -43,12 +48,11 @@ private:
     int direction    = 1;
     long chi_max     = 0;
 public:
-    using Scalar = std::complex<double>;
     class_finite_state()=default;
 
     std::list<class_vidal_site>                        MPS_L;   /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
     std::list<class_vidal_site>                        MPS_R;   /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
-    Eigen::Tensor<Scalar,1>                            MPS_C;   /*!< Current center bond matrix. */
+    TType<1>                                           MPS_C;   /*!< Current center bond matrix. */
     std::list<class_environment>                       ENV_L;
     std::list<class_environment>                       ENV_R;
     std::list<class_environment_var>                   ENV2_L;
@@ -102,14 +106,14 @@ public:
     const class_environment_var  & get_ENV2R(size_t pos)                const;
     const Eigen::Tensor<Scalar,3> & get_G(size_t pos)                   const;
     const Eigen::Tensor<Scalar,1> & get_L(size_t pos)                   const;
-    Eigen::Tensor<Scalar,3> & get_G(size_t pos);
-    Eigen::Tensor<Scalar,1> & get_L(size_t pos);
-    Eigen::Tensor<Scalar,3>   get_A()                                   const;
-    Eigen::Tensor<Scalar,3>   get_B()                                   const;
-    Eigen::Tensor<Scalar,3>   get_A(size_t pos)                         const;
-    Eigen::Tensor<Scalar,3>   get_B(size_t pos)                         const;
-    Eigen::Tensor<Scalar,4>   get_theta()                               const;
-    Eigen::Tensor<Scalar,4>   get_theta(size_t pos)                     const;
+    TType<3> & get_G(size_t pos);
+    TType<1> & get_L(size_t pos);
+    TType<3>   get_A()                                   const;
+    TType<3>   get_B()                                   const;
+    TType<3>   get_A(size_t pos)                         const;
+    TType<3>   get_B(size_t pos)                         const;
+    TType<4>   get_theta()                               const;
+    TType<4>   get_theta(size_t pos)                     const;
 
     //For multisite
     std::list<size_t>      active_sites;
@@ -117,15 +121,16 @@ public:
     Eigen::DSizes<long,3>  active_dimensions() const;
     size_t                 active_size() const;
 
-    Eigen::Tensor<Scalar,3>   get_multitheta()    const;
-    Eigen::Tensor<Scalar,4>   get_multimpo  ()    const;
+    TType<3>   get_multitheta()    const;
+    TType<4>   get_multimpo  ()    const;
     std::pair<std::reference_wrapper<const class_environment>     , std::reference_wrapper<const class_environment>>      get_multienv ()     const;
     std::pair<std::reference_wrapper<const class_environment_var> , std::reference_wrapper<const class_environment_var>>  get_multienv2()     const;
 
-    Eigen::Tensor<Scalar,6>   get_multi_hamiltonian() const;
-    Eigen::Tensor<Scalar,6>   get_multi_hamiltonian2() const;
-    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_matrix() const;
-    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian2_matrix() const;
+    TType<6>   get_multi_hamiltonian() const;
+    TType<6>   get_multi_hamiltonian2() const;
+    MType get_multi_hamiltonian_matrix() const;
+    MType get_multi_hamiltonian2_matrix() const;
+    MType get_multi_hamiltonian2_subspace_matrix(const MType & eigvecs ) const;
 
 
     std::vector<double>  truncation_error;
