@@ -12,13 +12,17 @@ else()
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     list (GET EIGEN3_INCLUDE_DIR 0 EIGEN3_INCLUDE_DIR)
 
-    get_target_property(LAPACK_LIBRARIES lapack INTERFACE_LINK_LIBRARIES)
-    string (REPLACE ";" "$<SEMICOLON>" BLAS_LIBRARIES_GENERATOR     "${BLAS_LIBRARIES}")
-    string (REPLACE ";" "$<SEMICOLON>" LAPACK_LIBRARIES_GENERATOR   "${LAPACK_LIBRARIES}")
-
-    include(ExternalProject)
 #    set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -DNDEBUG -O3 -fstack-protector  -g -fno-omit-frame-pointer -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_DEBUG -D_FORTIFY_SOURCE=2")
-    set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -DNDEBUG -O3 -fstack-protector  -g -fno-omit-frame-pointer -D_FORTIFY_SOURCE=2")
+#    set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -DNDEBUG -O3 -fstack-protector  -g -fno-omit-frame-pointer -D_FORTIFY_SOURCE=2")
+    if(CMAKE_BUILD_TYPE MATCHES Release)
+        set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -O3 -g -D_FORTIFY_SOURCE=2  -DNDEBUG")
+    elseif(CMAKE_BUILD_TYPE MATCHES Debug)
+        set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -O0 -g -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_DEBUG -D_FORTIFY_SOURCE=2")
+    elseif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
+        set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -O3 -g -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_DEBUG -D_FORTIFY_SOURCE=2")
+    endif()
+    message(STATUS "ceres flags: ${FLAGS}")
+    include(ExternalProject)
     ExternalProject_Add(external_CERES
             GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
             GIT_TAG master
@@ -27,7 +31,7 @@ else()
             INSTALL_DIR ${INSTALL_DIRECTORY}/ceres
             UPDATE_COMMAND ""
             CMAKE_ARGS
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
             -DCMAKE_CXX_FLAGS:STRING=${FLAGS}
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
@@ -36,7 +40,6 @@ else()
             -DCXSPARSE:BOOL=OFF
             -DSCHUR_SPECIALIZATIONS:BOOL=OFF
             -DCUSTOM_BLAS:BOOL=OFF
-
             -DEIGEN_INCLUDE_DIR:PATH=${EIGEN3_INCLUDE_DIR}
             -DEIGEN_INCLUDE_DIR_HINTS:PATH=${EIGEN3_INCLUDE_DIR}
             -DEIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION:BOOL=OFF

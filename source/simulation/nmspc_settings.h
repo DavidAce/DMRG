@@ -29,7 +29,7 @@ namespace settings {
     namespace threading{
         inline int num_threads_eigen  = 0;                                                        /*!< Number of threads for Eigen operations. num_threads <= 0 will try to use as many as possible */
         inline int num_threads_omp    = 0;                                                        /*!< Number of threads for OpenMP operations. num_threads <= 0 will try to use as many as possible */
-        inline int num_threads_blas   = 1;                                                        /*!< Number of threads for BLAS operations. num_threads <= 0 will try to use as many as possible */
+        inline int num_threads_blas   = 0;                                                        /*!< Number of threads for BLAS operations. num_threads <= 0 will try to use as many as possible */
     }
 
     namespace input{

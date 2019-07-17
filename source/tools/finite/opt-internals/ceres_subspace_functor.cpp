@@ -18,11 +18,14 @@ tools::finite::opt::internals::ceres_subspace_functor<Scalar>::ceres_subspace_fu
         eigvecs(eigvecs_),
         eigvals(eigvals_)
 {
+    tools::log->trace("Constructing subspace functor");
     if constexpr(std::is_same<Scalar,double>::value){
-        H2 = (eigvecs.adjoint().real() * state.get_multi_hamiltonian2_matrix().real().template selfadjointView<Eigen::Upper>() * eigvecs.real());
+        H2 = state.get_multi_hamiltonian2_subspace_matrix(eigvecs).real();
+//        H2 = (eigvecs.adjoint().real() * state.get_multi_hamiltonian2_matrix().real().template selfadjointView<Eigen::Upper>() * eigvecs.real());
     }
     if constexpr(std::is_same<Scalar,std::complex<double>>::value){
-        H2 = (eigvecs.adjoint() * state.get_multi_hamiltonian2_matrix().template selfadjointView<Eigen::Upper>() * eigvecs);
+        H2 = state.get_multi_hamiltonian2_subspace_matrix(eigvecs);
+//        H2 = (eigvecs.adjoint() * state.get_multi_hamiltonian2_matrix().template selfadjointView<Eigen::Upper>() * eigvecs);
     }
     double sparcity = (H2.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
     tools::log->debug("H_local2 nonzeros: {:.8f} %", sparcity*100);

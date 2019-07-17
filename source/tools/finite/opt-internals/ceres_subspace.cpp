@@ -43,6 +43,47 @@ std::vector<int> tools::finite::opt::internals::generate_size_list(size_t shape)
     return nev_list;
 }
 
+
+std::tuple<Eigen::MatrixXcd,Eigen::VectorXd,double> filter_states(const Eigen::MatrixXcd &eigvecs,const Eigen::VectorXd& eigvals, Eigen::VectorXd &overlaps, double quality_threshold, size_t max_accept){
+
+    size_t min_accept = std::min(8ul,(size_t)eigvals.size());
+    max_accept        = std::min(max_accept,(size_t)eigvals.size());
+    if(min_accept == max_accept) return std::make_tuple(eigvecs,eigvals,1.0 - overlaps.cwiseAbs2().sum());
+    tools::log->debug("Filtering states, keeping {} to {}", min_accept,max_accept);
+    double subspace_quality  = 1.0;
+    Eigen::VectorXd overlaps_filtered = overlaps;
+    std::vector<int>    overlaps_accepted_idx;
+    std::vector<double> overlaps_accepted;
+
+    while(true){
+        int idx;
+        double overlap = overlaps_filtered.maxCoeff(&idx);
+        overlaps_accepted_idx.push_back(idx);
+        overlaps_accepted    .push_back(overlap);
+        Eigen::Map<Eigen::VectorXd> overlaps_map(overlaps_accepted.data(),overlaps_accepted.size());
+        subspace_quality  = 1.0 - overlaps_map.cwiseAbs2().sum();
+        if(overlaps_accepted.size() >= min_accept){
+            if(subspace_quality < quality_threshold) break;
+            if(overlaps_accepted.size() >= max_accept) break;
+        }
+        overlaps_filtered(idx) = 0;
+        if(overlaps_filtered.sum() == 0) break;
+    }
+
+    Eigen::MatrixXcd eigvecs_filtered(eigvecs.rows(),overlaps_accepted.size());
+    Eigen::VectorXd  eigvals_filtered(overlaps_accepted.size());
+
+    int col_num = 0;
+    for (auto &idx : overlaps_accepted_idx){
+        eigvecs_filtered.col(col_num) = eigvecs.col(idx);
+        eigvals_filtered    (col_num) = eigvals(idx);
+        col_num++;
+    }
+    tools::log->debug("Filtered from {} down to {} states", eigvals.size(),eigvals_filtered.size());
+    tools::log->debug("Filtered quality: log10(1-eps) = {}", std::log10(subspace_quality));
+    return std::make_tuple(eigvecs_filtered,eigvals_filtered, subspace_quality);
+}
+
 int idx_best_overlap_in_window(const Eigen::VectorXd &overlaps, const Eigen::VectorXd & eigvals, double lbound, double ubound){
     assert(overlaps.size() == eigvals.size() and "idx_best_overlap_in_window: Mismatch in overlaps and eigvals sizes");
     Eigen::VectorXd overlaps_in_window = overlaps;
@@ -104,7 +145,7 @@ find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
 
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,3> &theta, double energy_target, std::vector<reports::eig_tuple> &eig_log){
+find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,3> &theta, double energy_target, std::vector<reports::eig_tuple> &eig_log,OptMode optMode){
     using namespace eigutils::eigSetting;
     tools::log->trace("Finding subspace -- partial");
 
@@ -117,7 +158,7 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
     double t_lu = hamiltonian.t_factorOp.get_last_time_interval();
     t_eig->toc();
 
-    double max_overlap_threshold      = 1 - 1e-1; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
+    double max_overlap_threshold      = optMode == OptMode::OVERLAP ? 0.9 : 1; //1.0/std::sqrt(2); //Slightly less than 1/sqrt(2), in case that the choice is between cat states.
     double subspace_quality_threshold = settings::precision::MinSubspaceQuality;
 
     class_eigsolver solver;
@@ -160,7 +201,7 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
 
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-find_subspace(const class_finite_state & state){
+find_subspace(const class_finite_state & state,OptMode optMode){
     tools::log->trace("Finding subspace");
 
     using namespace eigutils::eigSetting;
@@ -193,7 +234,7 @@ find_subspace(const class_finite_state & state){
     if   ((size_t)theta.size() <= settings::precision::MaxSizeFullDiag) {
         std::tie(eigvecs, eigvals) = find_subspace_full(H_local, theta, eig_log);
     }else{
-        std::tie(eigvecs, eigvals) = find_subspace_part(H_local,theta,energy_target,eig_log);
+        std::tie(eigvecs, eigvals) = find_subspace_part(H_local,theta,energy_target,eig_log,optMode);
     }
     reports::print_report(eig_log);
 
@@ -222,9 +263,10 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
     switch(optType){
-        case OptType::CPLX:     std::tie (eigvecs,eigvals)  = find_subspace<Scalar>(state); break;
-        case OptType::REAL:     std::tie (eigvecs,eigvals)  = find_subspace<double>(state); break;
+        case OptType::CPLX:     std::tie (eigvecs,eigvals)  = find_subspace<Scalar>(state,optMode); break;
+        case OptType::REAL:     std::tie (eigvecs,eigvals)  = find_subspace<double>(state,optMode); break;
     }
+    tools::log->trace("Subspace found with {} eigenvectors", eigvecs.cols());
     Eigen::VectorXd overlaps = (theta_old.adjoint() * eigvecs).cwiseAbs().real();
 
 
@@ -243,6 +285,8 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
             if(subspace_quality > settings::precision::MinSubspaceQuality) {
                 tools::log->debug("Subspace quality is poor: {} > {}. Switching to direct mode", subspace_quality, settings::precision::MinSubspaceQuality);
                 return ceres_direct_optimization(state, sim_status, optType);
+            }else{
+                std::tie(eigvecs,eigvals,subspace_quality) = filter_states(eigvecs,eigvals,overlaps,settings::precision::MinSubspaceQuality, 128);
             }
         }
 

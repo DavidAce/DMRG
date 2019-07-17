@@ -97,8 +97,6 @@ set(RELEASE_OPTIONS          -DNDEBUG -O3 )
 set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g  -ftime-report)
 
 
-
-
 if(ENABLE_CCACHE)
     find_program(CCACHE_FOUND ccache)
     if(CCACHE_FOUND)
