@@ -7,29 +7,33 @@ else()
     set(ARPACK_LIBRARY_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
 endif()
 
-message(STATUS "SEARCHING FOR ARPACK IN SYSTEM")
+if (NOT ARPACK_LIBRARIES)
+message(STATUS "Searching for Arpack-ng in system")
 find_library(ARPACK_LIBRARIES
         NAMES libarpack${ARPACK_LIBRARY_SUFFIX}
+        PATH_SUFFIXES lib lib32 lib64
         PATHS
-            /usr/lib/x86_64-linux-gnu/
+            /usr/lib/x86_64-linux-gnu
             /usr/lib
+            /usr
         NO_DEFAULT_PATH
     )
+    if(NOT ARPACK_LIBRARIES)
+    message(STATUS "Searching for Arpack-ng in system -- failed")
+    endif()
+endif()
 
 if (NOT ARPACK_LIBRARIES)
     # Try finding arpack as module library
-    message(STATUS "ARPACK NOT FOUND IN SYSTEM. SEARCH RETURNED:  ${ARPACK_LIBRARIES}")
-    message(STATUS "SEARCHING FOR ARPACK IN LOADED MODULES")
+    message(STATUS "Searching for Arpack-ng in module paths")
     find_library(ARPACK_LIBRARIES
             NAMES libarpack${ARPACK_LIBRARY_SUFFIX} arpack
+            PATH_SUFFIXES lib lib32 lib64
             PATHS
             $ENV{EBROOTARPACKMINNG}
-            $ENV{ARPACK_DIR}/lib
-            $ENV{ARPACK_DIR}/lib64
+            $ENV{ARPACK_DIR}
             NO_DEFAULT_PATH
             )
-else()
-    set(ARPACK_INCLUDE_DIRS TRUE)
 endif()
 
 
