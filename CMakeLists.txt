@@ -9,7 +9,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 ################################################################
 ### Set options for compilation                              ###
 ################################################################
-option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          OFF)
+option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          ON)
 option(BUILD_EXAMPLES     "Build examples"                                      OFF)
 option(ENABLE_TESTS       "Enable testing"                                      ON )
 option(DOWNLOAD_HDF5      "Download and install HDF5 if not found"              OFF)
@@ -97,7 +97,7 @@ set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
 set(DEBUG_OPTIONS            -Wpedantic -Wextra -O0 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
 set(RELWITHDEBINFO_OPTIONS   -Wpedantic -Wextra -O3 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -DNDEBUG)
 set(RELEASE_OPTIONS          -DNDEBUG -O3 )
-set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g  -ftime-report)
+set(PROFILE_OPTIONS          -DNDEBUG -O3 -lprofiler -g  -ftime-report)
 
 
 if(ENABLE_CCACHE)
@@ -311,8 +311,8 @@ include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenval
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
 include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
-include(cmake-modules/Fetch_Glog.cmake)
 include(cmake-modules/Fetch_Gflags.cmake)
+include(cmake-modules/Fetch_Glog.cmake)
 include(cmake-modules/Fetch_Ceres.cmake)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
