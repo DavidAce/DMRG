@@ -20,6 +20,8 @@ find_library(ARPACK_LIBRARIES
     )
     if(NOT ARPACK_LIBRARIES)
     message(STATUS "Searching for Arpack-ng in system -- failed")
+    else()
+    message(STATUS "Searching for Arpack-ng in system -- success: ${ARPACK_LIBRARIES}")
     endif()
 endif()
 
@@ -34,15 +36,18 @@ if (NOT ARPACK_LIBRARIES)
             $ENV{ARPACK_DIR}
             NO_DEFAULT_PATH
             )
+    if(NOT ARPACK_LIBRARIES)
+        message(STATUS "Searching for Arpack-ng in module paths -- failed")
+    else()
+        message(STATUS "Searching for Arpack-ng in module paths -- success: ${ARPACK_LIBRARIES}")
+    endif()
 endif()
 
 
 
 if(ARPACK_LIBRARIES)
-    message(STATUS "ARPACK found in system:   ${ARPACK_LIBRARIES}")
     add_library(arpack INTERFACE)
     target_link_libraries(arpack INTERFACE ${ARPACK_LIBRARIES} blas lapack gfortran)
-    target_include_directories(arpack INTERFACE ${ARPACK_INCLUDE_DIRS})
     add_dependencies(arpack blas lapack gfortran)
 else()
     message(STATUS "Arpack-ng will be installed into ${INSTALL_DIRECTORY}/arpack-ng on first build.")
