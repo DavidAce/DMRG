@@ -2,9 +2,8 @@ message(STATUS "Searching for gflags ")
 find_package(gflags PATHS ${INSTALL_DIRECTORY}/gflags $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR} NO_DEFAULT_PATH)
 include(cmake-modules/PrintTargetProperties.cmake)
 print_target_properties(gflags)
-print_target_properties(gflags::gflags)
 
-if(TARGET gflags::gflags)
+if(TARGET gflags)
     # For some reason gflags imports libunwind.so even though we asked for static libraries.
     # In addition, libgflags.a hides in the property "LOCATION" instead of its rightful
     # place "INTERFACE_LINK_LIBRARIES".
@@ -15,7 +14,7 @@ if(TARGET gflags::gflags)
     get_filename_component(gflags_dir ${GFLAGS_LIBRARIES} DIRECTORY)
     get_filename_component(gflags_we  ${GFLAGS_LIBRARIES} NAME_WE)
     set(GFLAGS_LIBRARIES "${gflags_dir}/${gflags_we}${CUSTOM_SUFFIX}")
-
+    add_library(gflags::gflags ALIAS gflags)
     set_target_properties(gflags::gflags PROPERTIES INTERFACE_LINK_LIBRARIES "${GFLAGS_LIBRARIES}")
     set_target_properties(gflags::gflags PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${GFLAGS_INCLUDE_DIR}")
     message(STATUS "Searching for gflags - Success: LIB: ${GFLAGS_LIBRARIES}")
