@@ -136,6 +136,7 @@ elif [[ "$HOSTNAME" == *"anderson"* ]];then
     module load ARPACK++
     module load HDF5/1.10.5-GCCcore-8.2.0
     module load Eigen
+    module load gflags
     module load glog
 
     if [ "$compiler" = "GNU" ] ; then

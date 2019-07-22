@@ -2,7 +2,7 @@ message(STATUS "Searching for gflags ")
 find_package(gflags PATHS ${INSTALL_DIRECTORY}/gflags $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR} NO_DEFAULT_PATH)
 include(cmake-modules/PrintTargetProperties.cmake)
 print_target_properties(gflags)
-print_target_properties(gflags::gflags   )
+print_target_properties(gflags::gflags)
 
 if(TARGET gflags::gflags)
     # For some reason gflags imports libunwind.so even though we asked for static libraries.
