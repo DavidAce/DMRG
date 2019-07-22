@@ -1,13 +1,13 @@
 
 #include <complex>
 #ifdef ARPACKPP_ALTDIR
-#include <arpackpp/arssym.h>
-#include <arpackpp/arsnsym.h>
-#include <arpackpp/arscomp.h>
+#include <arpackpp/arcomp.h>
+#include <arpackpp/ardscomp.h>
+#include <arpackpp/ardnsmat.h>
 #else
-#include <arpack++/arssym.h>
-#include <arpack++/arsnsym.h>
-#include <arpack++/arscomp.h>
+#include <arpack++/arcomp.h>
+#include <arpack++/ardscomp.h>
+#include <arpack++/ardnsmat.h>
 #endif
 
 
