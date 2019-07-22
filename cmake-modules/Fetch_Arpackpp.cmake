@@ -6,6 +6,7 @@ message(STATUS "SEARCHING FOR ARPACK++ IN SYSTEM...")
 find_library(ARPACKPP_LIBRARIES
         NAMES arpackpp arpack++ libarpack2++ libarpack++ libarpackpp
         PATH_SUFFIXES lib lib32 lib64
+        PATHS /usr/include/arpack++ /usr/include /usr/local/
         )
 find_path(ARPACKPP_INCLUDE_DIR
         NAMES ardsnsym.h
@@ -18,7 +19,9 @@ if (NOT ARPACKPP_LIBRARIES OR NOT ARPACKPP_INCLUDE_DIR)
     message(STATUS "SEARCHING FOR ARPACK IN LOADED MODULES")
     find_path(ARPACKPP_INCLUDE_DIR
             NAMES ardsnsym.h arpack++
-            PATHS $ENV{ARPACKPP_DIR}/include
+            PATHS
+            $ENV{EBROOTARPACKPLUSPLUS}/include
+            $ENV{ARPACKPP_DIR}/include
             NO_DEFAULT_PATH
             )
 endif()

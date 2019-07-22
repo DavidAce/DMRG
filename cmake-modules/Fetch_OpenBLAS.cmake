@@ -22,6 +22,7 @@ if(NOT BLAS_FOUND)
     find_package(OpenBLAS 0.3
             PATHS
             ${INSTALL_DIRECTORY}/OpenBLAS
+            $ENV{EBROOTOPENBLAS}
             $ENV{BLAS_DIR}/lib
             $ENV{HOME}/.conda/lib
             $ENV{HOME}/.conda
@@ -53,6 +54,7 @@ if(NOT OpenBLAS_FOUND)
             NAMES libopenblas${CUSTOM_SUFFIX}
             PATHS
             ${INSTALL_DIRECTORY}/OpenBLAS
+            $ENV{EBROOTOPENBLAS}/lib
             $ENV{BLAS_DIR}/lib
             $ENV{HOME}/.conda/lib
             $ENV{HOME}/anaconda3/lib
@@ -63,6 +65,7 @@ if(NOT OpenBLAS_FOUND)
             NAMES openblas_config.h
             PATHS
             ${INSTALL_DIRECTORY}/OpenBLAS
+            $ENV{EBROOTOPENBLAS}/include
             $ENV{BLAS_DIR}/include
             $ENV{HOME}/.conda/include
             $ENV{HOME}/anaconda3/include

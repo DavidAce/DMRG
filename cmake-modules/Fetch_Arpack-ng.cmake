@@ -22,12 +22,10 @@ if (NOT ARPACK_LIBRARIES)
     message(STATUS "SEARCHING FOR ARPACK IN LOADED MODULES")
     find_library(ARPACK_LIBRARIES
             NAMES libarpack${ARPACK_LIBRARY_SUFFIX} arpack
-            PATHS "$ENV{ARPACK_DIR}/lib" "$ENV{ARPACK_DIR}/lib64"
-            NO_DEFAULT_PATH
-            )
-    find_path(ARPACK_INCLUDE_DIRS
-            NAMES arpack
-            PATHS "$ENV{ARPACK_DIR}/include"
+            PATHS
+            $ENV{EBROOTARPACKMINNG}
+            $ENV{ARPACK_DIR}/lib
+            $ENV{ARPACK_DIR}/lib64
             NO_DEFAULT_PATH
             )
 else()
@@ -36,7 +34,7 @@ endif()
 
 
 
-if(ARPACK_LIBRARIES AND ARPACK_INCLUDE_DIRS)
+if(ARPACK_LIBRARIES)
     message(STATUS "ARPACK found in system:   ${ARPACK_LIBRARIES}")
     add_library(arpack INTERFACE)
     target_link_libraries(arpack INTERFACE ${ARPACK_LIBRARIES} blas lapack gfortran)
