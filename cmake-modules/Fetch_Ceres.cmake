@@ -11,6 +11,7 @@ else()
     message(STATUS "ceres will be installed into ${INSTALL_DIRECTORY}/ceres on first build.")
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     get_target_property(GLOG_INCLUDE_DIR   glog::glog    INTERFACE_INCLUDE_DIRECTORIES)
+    get_target_property(GLOG_LIBRARY       glog::glog    INTERFACE_INCLUDE_DIRECTORIES)
 
     list (GET EIGEN3_INCLUDE_DIR 0 EIGEN3_INCLUDE_DIR)
 
@@ -46,6 +47,7 @@ else()
             -DEIGEN_INCLUDE_DIR_HINTS:PATH=${EIGEN3_INCLUDE_DIR}
             -DEIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION:BOOL=OFF
             -DGLOG_INCLUDE_DIR:PATH=${GLOG_INCLUDE_DIR}
+            -DGLOG_LIBRARY:PATH=${GLOG_LIBRARY}
             -DLAPACK:BOOL=OFF
             -DEIGENSPARSE:BOOL=ON
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
