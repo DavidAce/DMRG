@@ -36,6 +36,7 @@ else()
             -DCMAKE_BUILD_TYPE=Release
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            DEPENDS gflags::gflags
             )
 
     ExternalProject_Get_Property(external_GLOG INSTALL_DIR)
@@ -43,7 +44,7 @@ else()
     add_library(glog::glog ALIAS glog)
     set(GLOG_INCLUDE_DIR ${INSTALL_DIR}/include)
     set(glog_DIR ${INSTALL_DIR}/lib/cmake/glog)
-    add_dependencies(glog external_GLOG)
-    target_link_libraries(glog INTERFACE ${INSTALL_DIR}/lib/libglog${CUSTOM_SUFFIX})
+    add_dependencies(glog external_GLOG gflags::gflags)
+    target_link_libraries(glog INTERFACE ${INSTALL_DIR}/lib/libglog${CUSTOM_SUFFIX} gflags::gflags)
     target_include_directories(glog INTERFACE ${GLOG_INCLUDE_DIR})
 endif()

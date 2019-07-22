@@ -53,7 +53,7 @@ else()
             -DEIGENSPARSE:BOOL=ON
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
-            DEPENDS Eigen3::Eigen glog::glog
+            DEPENDS Eigen3::Eigen gflags::gflags glog::glog
             )
 
     ExternalProject_Get_Property(external_CERES INSTALL_DIR)
@@ -61,7 +61,7 @@ else()
     set(CERES_LIBRARY ${INSTALL_DIR}/lib/libceres${CUSTOM_SUFFIX})
     set(CERES_INCLUDE_DIR ${INSTALL_DIR}/include)
     add_dependencies(ceres external_CERES)
-    add_dependencies(ceres glog::glog Eigen3::Eigen blas lapack lapacke)
-    target_link_libraries(ceres INTERFACE Threads::Threads glog::glog Eigen3::Eigen ${CERES_LIBRARY} )
+    add_dependencies(ceres glog::glog gflags::gflags Eigen3::Eigen blas lapack lapacke)
+    target_link_libraries(ceres INTERFACE Threads::Threads gflags::gflags glog::glog Eigen3::Eigen ${CERES_LIBRARY} )
     target_include_directories(ceres INTERFACE ${CERES_INCLUDE_DIR})
 endif()
