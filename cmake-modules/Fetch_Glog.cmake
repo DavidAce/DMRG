@@ -1,15 +1,21 @@
 
+
+
 message(STATUS "Searching for glog 0.4.x")
 find_package(glog 0.4 PATHS ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} NO_DEFAULT_PATH)
 
 
 if(TARGET glog::glog)
+    # For some reason glog imports libunwind.so even though we asked for static libraries.
+    # In addition, libglog.a hides in the property "LOCATION" instead of its rightful
+    # place "INTERFACE_LINK_LIBRARIES".
+
     get_target_property(GLOG_INCLUDE_DIR glog::glog INTERFACE_INCLUDE_DIRECTORIES)
-    get_target_property(GLOG_LIBRARIES   glog::glog INTERFACE_LINK_LIBRARIES)
+    get_target_property(GLOG_LIBRARIES   glog::glog LOCATION)
+    set_target_properties(glog::glog PROPERTIES INTERFACE_LINK_LIBRARIES "${GLOG_LIBRARIES}")
+    set_target_properties(glog::glog PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${GLOG_INCLUDE_DIR}")
     message(STATUS "Searching for glog 0.4.x - Success: LIB: ${GLOG_LIBRARIES}")
     message(STATUS "Searching for glog 0.4.x - Success: INC: ${GLOG_INCLUDE_DIR}")
-    set_target_properties(glog::glog PROPERTIES INTERFACE_LINK_LIBRARIES "${INSTALL_DIRECTORY}/glog/lib/libglog${CUSTOM_SUFFIX}")
-    set_target_properties(glog::glog PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${GLOG_INCLUDE_DIR}")
 else()
     message(STATUS "Searching for glog 0.4.x - failed")
     message(STATUS "glog will be installed into ${INSTALL_DIRECTORY}/glog on first build.")
