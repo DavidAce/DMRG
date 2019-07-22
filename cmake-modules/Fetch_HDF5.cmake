@@ -1,15 +1,10 @@
 
 
-if(NOT HDF5_ROOT)
-    set(HDF5_ROOT ${INSTALL_DIRECTORY}/hdf5)
-endif()
-if(NOT HDF5_DIR)
-    set(HDF5_DIR ${INSTALL_DIRECTORY}/share/cmake/hdf5)
-endif()
 include(cmake-modules/FindPackageHDF5.cmake)
 
 if(HDF5_FOUND AND TARGET hdf5)
-        message(STATUS "HDF5 FOUND IN SYSTEM: ${HDF5_BUILD_DIR} ${HDF5_CXX_INCLUDE_DIRS} ${HDF5_hdf5_LIBRARY}")
+    message(STATUS "HDF5 FOUND IN SYSTEM: ${HDF5_BUILD_DIR} ${HDF5_CXX_INCLUDE_DIRS} ${HDF5_hdf5_LIBRARY}")
+    return()
 elseif (DOWNLOAD_HDF5 OR DOWNLOAD_ALL)
     message(STATUS "HDF5 will be installed into ${INSTALL_DIRECTORY}/hdf5 on first build.")
     include(ExternalProject)
