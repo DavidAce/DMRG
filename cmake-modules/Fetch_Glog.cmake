@@ -1,21 +1,17 @@
 
-if(NOT TARGET glog::glog)
-    message(STATUS "Searching for glog 0.4.x")
-    find_package(glog 0.4 PATHS ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} NO_DEFAULT_PATH)
-    if(TARGET glog::glog)
-        get_target_property(GLOG_LIBRARIES   glog::glog INTERFACE_LINK_LIBRARIES)
-        message(STATUS "Searching for glog 0.4.x - Success: ${GLOG_LIBRARIES}")
-    else()
-        message(STATUS "Searching for glog 0.4.x - failed")
-    endif()
-endif()
+message(STATUS "Searching for glog 0.4.x")
+find_package(glog 0.4 PATHS ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} NO_DEFAULT_PATH)
+
+
 if(TARGET glog::glog)
+    message(STATUS "Searching for glog 0.4.x - Success: ${GLOG_LIBRARIES}")
     get_target_property(GLOG_INCLUDE_DIR glog::glog INTERFACE_INCLUDE_DIRECTORIES)
     get_target_property(GLOG_LIBRARIES   glog::glog INTERFACE_LINK_LIBRARIES)
     set_target_properties(glog::glog PROPERTIES INTERFACE_LINK_LIBRARIES "${INSTALL_DIRECTORY}/glog/lib/libglog${CUSTOM_SUFFIX}")
     set_target_properties(glog::glog PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${GLOG_INCLUDE_DIR}")
     message(STATUS "glog FOUND IN SYSTEM: ${GLOG_INCLUDE_DIR}")
 else()
+    message(STATUS "Searching for glog 0.4.x - failed")
     message(STATUS "glog will be installed into ${INSTALL_DIRECTORY}/glog on first build.")
 
     include(ExternalProject)
