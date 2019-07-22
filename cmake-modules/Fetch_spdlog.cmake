@@ -23,6 +23,7 @@ elseif (DOWNLOAD_SPDLOG OR DOWNLOAD_ALL)
             -DSPDLOG_BUILD_EXAMPLES:BOOL=OFF
             -DSPDLOG_BUILD_BENCH:BOOL=OFF
             -DSPDLOG_BUILD_TESTS:BOOL=OFF
+            -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
             )
 
 

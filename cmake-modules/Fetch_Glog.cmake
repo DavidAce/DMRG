@@ -1,6 +1,14 @@
 
-find_package(glog 0.4 PATHS ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} NO_DEFAULT_PATH)
-
+if(NOT TARGET glog::glog)
+    message(STATUS "Searching for glog 0.4.x")
+    find_package(glog 0.4 PATHS ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} NO_DEFAULT_PATH)
+    if(TARGET glog::glog)
+        get_target_property(GLOG_LIBRARIES   glog::glog INTERFACE_LINK_LIBRARIES)
+        message(STATUS "Searching for glog 0.4.x - Success: ${GLOG_LIBRARIES}")
+    else()
+        message(STATUS "Searching for glog 0.4.x - failed")
+    endif()
+endif()
 if(TARGET glog::glog)
     get_target_property(GLOG_INCLUDE_DIR glog::glog INTERFACE_INCLUDE_DIRECTORIES)
     get_target_property(GLOG_LIBRARIES   glog::glog INTERFACE_LINK_LIBRARIES)
