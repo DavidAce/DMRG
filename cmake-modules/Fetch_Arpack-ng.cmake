@@ -19,15 +19,15 @@ find_library(ARPACK_LIBRARIES
         NO_DEFAULT_PATH
     )
     if(NOT ARPACK_LIBRARIES)
-    message(STATUS "Searching for Arpack-ng in system -- failed")
+    message(STATUS "Searching for Arpack-ng in system - failed")
     else()
-    message(STATUS "Searching for Arpack-ng in system -- success: ${ARPACK_LIBRARIES}")
+    message(STATUS "Searching for Arpack-ng in system - Success: ${ARPACK_LIBRARIES}")
     endif()
 endif()
 
 if (NOT ARPACK_LIBRARIES)
     # Try finding arpack as module library
-    message(STATUS "Searching for Arpack-ng in module paths")
+    message(STATUS "Searching for Arpack-ng in module")
     find_library(ARPACK_LIBRARIES
             NAMES libarpack${ARPACK_LIBRARY_SUFFIX} arpack
             PATH_SUFFIXES lib lib32 lib64
@@ -37,9 +37,9 @@ if (NOT ARPACK_LIBRARIES)
             NO_DEFAULT_PATH
             )
     if(NOT ARPACK_LIBRARIES)
-        message(STATUS "Searching for Arpack-ng in module paths -- failed")
+        message(STATUS "Searching for Arpack-ng in module - failed")
     else()
-        message(STATUS "Searching for Arpack-ng in module paths -- success: ${ARPACK_LIBRARIES}")
+        message(STATUS "Searching for Arpack-ng in module - Success: ${ARPACK_LIBRARIES}")
     endif()
 endif()
 

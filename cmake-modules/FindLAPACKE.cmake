@@ -32,7 +32,7 @@ function(CheckLapackeCompiles REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_LIBRA
         }
         " LAPACKE_COMPILES)
     if(LAPACKE_COMPILES)
-        message(STATUS "Checking for working lapacke headers - success")
+        message(STATUS "Checking for working lapacke headers - Success")
         set(LAPACKE_COMPILES TRUE PARENT_SCOPE)
     else()
         message(STATUS "Lapacke does not work with the following parameters:")
