@@ -9,7 +9,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 ################################################################
 ### Set options for compilation                              ###
 ################################################################
-option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          ON)
+option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          OFF)
 option(BUILD_EXAMPLES     "Build examples"                                      OFF)
 option(ENABLE_TESTS       "Enable testing"                                      ON )
 option(DOWNLOAD_HDF5      "Download and install HDF5 if not found"              OFF)
@@ -323,7 +323,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
 target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp)
 target_link_libraries(${PROJECT_NAME} PRIVATE gflags)
-target_link_libraries(${PROJECT_NAME} PRIVATE glog::glog)
+target_link_libraries(${PROJECT_NAME} PRIVATE glog)
 target_link_libraries(${PROJECT_NAME} PRIVATE ceres)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
 
@@ -344,8 +344,8 @@ get_target_property(HDF5_INFO_LIB       hdf5             INTERFACE_LINK_LIBRARIE
 get_target_property(HDF5_INFO_INC       hdf5             INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(H5PP_INFO           h5pp::h5pp       INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(GFORTRAN_INFO       gfortran         INTERFACE_LINK_LIBRARIES)
-get_target_property(GLOG_INFO_LIB       glog::glog       INTERFACE_LINK_LIBRARIES)
-get_target_property(GLOG_INFO_INC       glog::glog       INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(GLOG_INFO_LIB       glog             INTERFACE_LINK_LIBRARIES)
+get_target_property(GLOG_INFO_INC       glog             INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(GFLAGS_INFO_LIB     gflags           INTERFACE_LINK_LIBRARIES)
 get_target_property(GFLAGS_INFO_INC     gflags           INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(CERES_INFO_LIB      ceres            INTERFACE_LINK_LIBRARIES)
