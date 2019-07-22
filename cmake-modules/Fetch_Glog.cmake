@@ -15,7 +15,7 @@ if(TARGET glog::glog)
     # In addition, the library may be .so
     get_filename_component(glog_dir ${GLOG_LIBRARIES} DIRECTORY)
     get_filename_component(glog_we  ${GLOG_LIBRARIES} NAME_WE)
-    set(GLOG_LIBRARIES "${glog_dir}/glog_we${CUSTOM_SUFFIX}")
+    set(GLOG_LIBRARIES "${glog_dir}/${glog_we}${CUSTOM_SUFFIX}")
 
     set_target_properties(glog::glog PROPERTIES INTERFACE_LINK_LIBRARIES "${GLOG_LIBRARIES}")
     set_target_properties(glog::glog PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${GLOG_INCLUDE_DIR}")
