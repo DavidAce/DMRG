@@ -24,9 +24,9 @@ endif()
 
 
 if(EIGEN3_FOUND AND TARGET Eigen3::Eigen)
+    get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     message(STATUS "EIGEN VERSION ${EIGEN3_VERSION} FOUND IN SYSTEM: ${EIGEN3_INCLUDE_DIR}")
     target_compile_options(Eigen3::Eigen INTERFACE ${EIGEN3_COMPILER_FLAGS})
-    target_include_directories(Eigen3::Eigen INTERFACE ${EIGEN3_INCLUDE_DIR})
     add_library(Eigen3 INTERFACE)
     target_link_libraries(Eigen3 INTERFACE Eigen3::Eigen)
 
