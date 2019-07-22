@@ -1,5 +1,5 @@
 
-find_package(glog PATHS ${INSTALL_DIRECTORY}/glog $ENV{GLOG_DIR} NO_DEFAULT_PATH)
+find_package(glog 0.4 PATHS ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} NO_DEFAULT_PATH)
 
 if(TARGET glog::glog)
     get_target_property(GLOG_INCLUDE_DIR glog::glog INTERFACE_INCLUDE_DIRECTORIES)

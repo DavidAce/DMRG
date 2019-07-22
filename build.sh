@@ -1,6 +1,7 @@
 #!/bin/bash
 PROGNAME=$0
 
+
 usage() {
   cat << EOF >&2
 
@@ -123,23 +124,22 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     export CXX=clang++
 
 
+
 elif [[ "$HOSTNAME" == *"anderson"* ]];then
     if [ "$mkl" = "ON" ] ; then
-        module load intel-mkl-2019.1
-        module load arpack-ng_3.7.0_mkl
+        module load imkl
     else
-        module load openblas_v0.3.5
-        module load arpack-ng_3.7.0_openblas
+        module load OpenBLAS
     fi
-    module load arpack++
-    module load hdf5_1.10.3
-    module load gsl_2.4
-    module load eigen3_3.3.7
+    module load arpack-ng
+    module load ARPACK++
+    module load HDF5
+    module load Eigen
 
     if [ "$compiler" = "GNU" ] ; then
-        module load GNU_8.x.x
+        module load GCCcore
     elif [ "$compiler" = "Clang" ] ; then
-        module load CLANG_7
+        module load Clang
     fi
 fi
 
