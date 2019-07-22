@@ -12,11 +12,11 @@ message(STATUS "Searching for Arpack++ in system")
         NAMES ardsnsym.h
         PATHS /usr/include/arpack++ /usr/include /usr/local/
         )
-    if(NOT ARPACKPP_LIBRARIES OR NOT ARPACKPP_INCLUDE_DIR)
-        message(STATUS "Searching for Arpack++ in system - failed")
-    else()
+    if(ARPACKPP_LIBRARIES AND ARPACKPP_INCLUDE_DIR)
         message(STATUS "Searching for Arpack++ in system - Success: ${ARPACKPP_LIBRARIES}")
         message(STATUS "Note that old versions of Arpack++ (e.g. the default in Ubuntu Trusty 14.04 LTS) may fail to compile, they require '-fpermissive'.")
+    else()
+        message(STATUS "Searching for Arpack++ in system - failed")
     endif()
 endif()
 
@@ -33,10 +33,18 @@ if (NOT ARPACKPP_LIBRARIES OR NOT ARPACKPP_INCLUDE_DIR)
             $ENV{ARPACKPP_DIR}
             NO_DEFAULT_PATH
             )
-    if(NOT ARPACKPP_INCLUDE_DIR)
-        message(STATUS "Searching for Arpack++ in module - failed")
+    if(ARPACKPP_INCLUDE_DIR)
+        get_filename_component(DIRNAME ${ARPACKPP_INCLUDE_DIR} NAME)
+        if("${DIRNAME}" MATCHES "arpack++")
+            get_filename_component(ARPACKPP_INCLUDE_DIR ${ARPACKPP_INCLUDE_DIR} DIRECTORY)
+        elseif("${DIRNAME}" MATCHES "arpackpp")
+            add_definitions(-DARPACKPP_ALTDIR)
+            get_filename_component(ARPACKPP_INCLUDE_DIR ${ARPACKPP_INCLUDE_DIR} DIRECTORY)
+        endif()
+        message(STATUS "Searching for Arpack++ in module - Success: ${ARPACKPP_INCLUDE_DIR}")
+
     else()
-        message(STATUS "Searching for Arpack++ in module - Success: ${ARPACKPP_LIBRARIES}")
+        message(STATUS "Searching for Arpack++ in module - failed")
     endif()
 endif()
 
