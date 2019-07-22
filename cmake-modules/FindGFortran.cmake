@@ -1,5 +1,5 @@
 
-#enable_language(Fortran)
+enable_language(Fortran)
 
 if(CMAKE_Fortran_COMPILER)
     if(BUILD_SHARED_LIBS)
