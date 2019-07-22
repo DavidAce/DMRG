@@ -11,12 +11,7 @@ target_include_directories(TEST-file_io PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 ################################################
 ###  Force cmake to find .a library suffixes ###
 ################################################
-if(BUILD_SHARED_LIBS)
-    set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
-else()
-    set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (TEST-file_io PRIVATE -static)                                             ### Static linkage
 endif()
 
