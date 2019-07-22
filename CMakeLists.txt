@@ -312,6 +312,7 @@ include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for a
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
 include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
 include(cmake-modules/Fetch_Glog.cmake)
+include(cmake-modules/Fetch_Gflags.cmake)
 include(cmake-modules/Fetch_Ceres.cmake)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
@@ -321,6 +322,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
 target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp)
+target_link_libraries(${PROJECT_NAME} PRIVATE gflags::gflags)
 target_link_libraries(${PROJECT_NAME} PRIVATE glog::glog)
 target_link_libraries(${PROJECT_NAME} PRIVATE ceres)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
@@ -344,6 +346,8 @@ get_target_property(H5PP_INFO           h5pp::h5pp       INTERFACE_INCLUDE_DIREC
 get_target_property(GFORTRAN_INFO       gfortran         INTERFACE_LINK_LIBRARIES)
 get_target_property(GLOG_INFO_LIB       glog::glog       INTERFACE_LINK_LIBRARIES)
 get_target_property(GLOG_INFO_INC       glog::glog       INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(GFLAGS_INFO_LIB     gflags::gflags   INTERFACE_LINK_LIBRARIES)
+get_target_property(GFLAGS_INFO_INC     gflags::gflags   INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(CERES_INFO_LIB      ceres            INTERFACE_LINK_LIBRARIES)
 get_target_property(CERES_INFO_INC      ceres            INTERFACE_INCLUDE_DIRECTORIES)
 
@@ -380,6 +384,9 @@ message("-----------------------------------------------------------------------
 message("    H5PP           INC:  ${H5PP_INFO}")
 message("-----------------------------------------------------------------------------")
 message("    GFORTRAN       LIB:  ${GFORTRAN_INFO}")
+message("-----------------------------------------------------------------------------")
+message("    GFLAGS         LIB:  ${GFLAGS_INFO_LIB}")
+message("                   INC:  ${GFLAGS_INFO_INC}")
 message("-----------------------------------------------------------------------------")
 message("    GLOG           LIB:  ${GLOG_INFO_LIB}")
 message("                   INC:  ${GLOG_INFO_INC}")
