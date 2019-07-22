@@ -2,8 +2,7 @@
 
 
 message(STATUS "Searching for glog 0.4.x")
-find_package(glog 0.4 PATHS ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} NO_DEFAULT_PATH)
-
+find_package(glog 0.4 PATHS ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR} NO_DEFAULT_PATH)
 
 if(TARGET glog::glog)
     # For some reason glog imports libunwind.so even though we asked for static libraries.
@@ -43,6 +42,7 @@ else()
     add_library(glog INTERFACE)
     add_library(glog::glog ALIAS glog)
     set(GLOG_INCLUDE_DIR ${INSTALL_DIR}/include)
+    set(glog_DIR ${INSTALL_DIR}/lib/cmake/glog)
     add_dependencies(glog external_GLOG)
     target_link_libraries(glog INTERFACE ${INSTALL_DIR}/lib/libglog${CUSTOM_SUFFIX})
     target_include_directories(glog INTERFACE ${GLOG_INCLUDE_DIR})
