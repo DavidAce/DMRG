@@ -10,8 +10,11 @@ if(Ceres_FOUND)
 else()
     message(STATUS "ceres will be installed into ${INSTALL_DIRECTORY}/ceres on first build.")
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
-    get_target_property(GLOG_INCLUDE_DIR   glog::glog    INTERFACE_INCLUDE_DIRECTORIES)
-    get_target_property(GLOG_LIBRARY       glog::glog    INTERFACE_INCLUDE_DIRECTORIES)
+    get_target_property(GFLAGS_INCLUDE_DIR   gflags    INTERFACE_INCLUDE_DIRECTORIES)
+    get_target_property(GFLAGS_LIBRARIES     gflags    INTERFACE_LINK_LIBRARIES)
+
+    get_target_property(GLOG_INCLUDE_DIR   glog    INTERFACE_INCLUDE_DIRECTORIES)
+    get_target_property(GLOG_LIBRARIES     glog    INTERFACE_LINK_LIBRARIES)
 
     list (GET EIGEN3_INCLUDE_DIR 0 EIGEN3_INCLUDE_DIR)
 
@@ -38,7 +41,7 @@ else()
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
             -DCMAKE_CXX_FLAGS:STRING=${FLAGS}
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
-            -DGFLAGS:BOOL=OFF
+            -DGFLAGS:BOOL=ON
             -DSUITESPARSE:BOOL=OFF
             -DCXSPARSE:BOOL=OFF
             -DSCHUR_SPECIALIZATIONS:BOOL=OFF
@@ -46,14 +49,15 @@ else()
             -DEIGEN_INCLUDE_DIR:PATH=${EIGEN3_INCLUDE_DIR}
             -DEIGEN_INCLUDE_DIR_HINTS:PATH=${EIGEN3_INCLUDE_DIR}
             -DEIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION:BOOL=OFF
-            #-Dglog_DIR:PATH=${glog_DIR}
+            -DGFLAGS_INCLUDE_DIR:PATH=${GFLAGS_INCLUDE_DIR}
+            -DGFLAGS_LIBRARY:PATH=${GFLAGS_LIBRARIES}
             -DGLOG_INCLUDE_DIR:PATH=${GLOG_INCLUDE_DIR}
-            -DGLOG_LIBRARY:PATH=${GLOG_LIBRARY}
+            -DGLOG_LIBRARY:PATH=${GLOG_LIBRARIES}
             -DLAPACK:BOOL=OFF
             -DEIGENSPARSE:BOOL=ON
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
-            DEPENDS Eigen3::Eigen gflags glog::glog
+            DEPENDS Eigen3::Eigen gflags glog
             )
 
     ExternalProject_Get_Property(external_CERES INSTALL_DIR)
@@ -61,7 +65,7 @@ else()
     set(CERES_LIBRARY ${INSTALL_DIR}/lib/libceres${CUSTOM_SUFFIX})
     set(CERES_INCLUDE_DIR ${INSTALL_DIR}/include)
     add_dependencies(ceres external_CERES)
-    add_dependencies(ceres glog::glog gflags Eigen3::Eigen blas lapack lapacke)
-    target_link_libraries(ceres INTERFACE Threads::Threads gflags glog::glog Eigen3::Eigen ${CERES_LIBRARY} )
+    add_dependencies(ceres glog gflags Eigen3::Eigen blas lapack lapacke)
+    target_link_libraries(ceres INTERFACE Threads::Threads gflags glog Eigen3::Eigen ${CERES_LIBRARY} )
     target_include_directories(ceres INTERFACE ${CERES_INCLUDE_DIR})
 endif()
