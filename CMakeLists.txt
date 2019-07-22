@@ -55,6 +55,8 @@ include(cmake-modules/gitversion.cmake)
 ##################################################################
 ### Get operating system properties into a variable            ###
 ##################################################################
+cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
+
 set(GET_OS_INFO_CMD lsb_release -a)
 if(${CMAKE_HOST_APPLE})
     set(GET_OS_INFO_CMD "sw_vers")
@@ -63,6 +65,7 @@ execute_process(COMMAND ${GET_OS_INFO_CMD}
         OUTPUT_VARIABLE OS_PROPERTIES
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 message("========= DETECTED OS =========")
+message("Hostname: " ${_host_name})
 message("${OS_PROPERTIES}")
 message("===============================")
 
@@ -284,6 +287,8 @@ set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG FALSE)
 find_package(Threads REQUIRED)
 set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "-Wl,--whole-archive ${CMAKE_THREAD_LIBS_INIT} -Wl,--no-whole-archive")
+
+
 
 
 ##########################################
