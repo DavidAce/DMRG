@@ -40,7 +40,6 @@ else()
 
     ExternalProject_Get_Property(external_GFLAGS INSTALL_DIR)
     add_library(gflags INTERFACE)
-    add_library(gflags::gflags ALIAS gflags)
     set(GFLAGS_INCLUDE_DIR ${INSTALL_DIR}/include)
     set(gflags_DIR ${INSTALL_DIR}/lib/cmake/gflags)
     add_dependencies(gflags external_GFLAGS)
