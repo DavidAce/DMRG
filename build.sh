@@ -126,6 +126,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
 
 
 elif [[ "$HOSTNAME" == *"anderson"* ]];then
+    module load CMake
     if [ "$mkl" = "ON" ] ; then
         module load imkl
     else
@@ -159,7 +160,7 @@ echo "OpenMP          :   $omp"
 echo "Intel MKL       :   $mkl"
 echo "Shared build    :   $shared"
 echo "gcc toolchain   :   $gcc_toolchain"
-
+echo "CMake version   :   $(cmake --version) at $(which cmake)"
 
 
 
