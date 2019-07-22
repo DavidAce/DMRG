@@ -11,11 +11,8 @@ if (NOT ARPACK_LIBRARIES)
 message(STATUS "Searching for Arpack-ng in system")
 find_library(ARPACK_LIBRARIES
         NAMES libarpack${ARPACK_LIBRARY_SUFFIX}
-        PATH_SUFFIXES lib lib32 lib64
-        PATHS
-            /usr/lib/x86_64-linux-gnu
-            /usr/lib
-            /usr
+        PATH_SUFFIXES lib lib32 lib64 x86_64-linux-gnu lib/x86_64-linux-gnu
+        PATHS /usr /usr/local
         NO_DEFAULT_PATH
     )
     if(NOT ARPACK_LIBRARIES)

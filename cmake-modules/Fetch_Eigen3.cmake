@@ -1,8 +1,18 @@
 
-find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_DEFAULT_PATH NO_MODULE)
-find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_CMAKE_PACKAGE_REGISTRY NO_MODULE)
-find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3)
 
+if(NOT TARGET Eigen3::Eigen)
+    message(STATUS "Searching for Eigen3")
+    find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_DEFAULT_PATH NO_MODULE)
+    find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_CMAKE_PACKAGE_REGISTRY NO_MODULE)
+    find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3)
+    if(TARGET Eigen3::Eigen)
+        get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
+        message(STATUS "Searching for Eigen3 - Success - | Version ${EIGEN3_VERSION} | ${EIGEN3_INCLUDE_DIR}")
+    else()
+        message(STATUS "Searching for Eigen3 - failed")
+    endif()
+
+endif()
 
 if(TARGET blas)
     set(EIGEN3_COMPILER_FLAGS  -Wno-parentheses) # -Wno-parentheses
@@ -22,10 +32,8 @@ if(TARGET blas)
     endif()
 endif()
 
-
 if(EIGEN3_FOUND AND TARGET Eigen3::Eigen)
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
-    message(STATUS "EIGEN VERSION ${EIGEN3_VERSION} FOUND IN SYSTEM: ${EIGEN3_INCLUDE_DIR}")
     target_compile_options(Eigen3::Eigen INTERFACE ${EIGEN3_COMPILER_FLAGS})
     add_library(Eigen3 INTERFACE)
     target_link_libraries(Eigen3 INTERFACE Eigen3::Eigen)
@@ -65,6 +73,7 @@ elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
 else()
     message("WARNING: Dependency Eigen3 not found and DOWNLOAD_EIGEN3 is OFF. Build will fail.")
 endif()
+
 
 
 
