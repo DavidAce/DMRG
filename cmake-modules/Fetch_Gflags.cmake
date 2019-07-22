@@ -7,7 +7,7 @@ if(TARGET gflags)
     # For some reason gflags imports libunwind.so even though we asked for static libraries.
     # In addition, libgflags.a hides in the property "LOCATION" instead of its rightful
     # place "INTERFACE_LINK_LIBRARIES".
-    add_library(gflags::gflags ALIAS gflags)
+#    add_library(gflags::gflags ALIAS gflags)
 
     get_target_property(GFLAGS_INCLUDE_DIR gflags INTERFACE_INCLUDE_DIRECTORIES)
     get_target_property(GFLAGS_LIBRARIES   gflags LOCATION)
