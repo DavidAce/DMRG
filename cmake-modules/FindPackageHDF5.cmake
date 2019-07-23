@@ -36,12 +36,12 @@ function(find_package_hdf5 hdf5_roots HDF5_MODULES HDF5_ATLEAST_VERSION HDF5_USE
             set(HDF5_NO_FIND_PACKAGE_CONFIG_FILE ON)
             find_package(HDF5 ${HDF5_ATLEAST_VERSION} COMPONENTS ${HDF5_MODULES})
 
-            get_cmake_property(_variableNames VARIABLES)
-            foreach (_variableName ${_variableNames})
-                if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5" OR "${_variableName}" MATCHES "h5")
-                    message(STATUS "${_variableName}=${${_variableName}}")
-                endif()
-            endforeach()
+#            get_cmake_property(_variableNames VARIABLES)
+#            foreach (_variableName ${_variableNames})
+#                if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5" OR "${_variableName}" MATCHES "h5")
+#                    message(STATUS "${_variableName}=${${_variableName}}")
+#                endif()
+#            endforeach()
             if(HDF5_FOUND)
                 set(ACCEPT_PACKAGE FALSE)
                 if(HDF5_PREFER_PARALLEL AND HDF5_IS_PARALLEL)
@@ -55,7 +55,10 @@ function(find_package_hdf5 hdf5_roots HDF5_MODULES HDF5_ATLEAST_VERSION HDF5_USE
                 endif()
 
                 if(ACCEPT_PACKAGE)
-                    get_filename_component(hdf5_root "${HDF5_INCLUDE_DIR}" DIRECTORY)
+                    get_filename_component(hdf5_root "${HDF5_CXX_COMPILER_EXECUTABLE}/../.." ABSOLUTE)
+                    if(NOT hdf5_root)
+                        get_filename_component(hdf5_root "${HDF5_C_COMPILER_EXECUTABLE}/../.." ABSOLUTE)
+                    endif()
                     set(HDF5_FOUND                  ${HDF5_FOUND}               PARENT_SCOPE)
                     set(HDF5_ROOT                   ${hdf5_root}                PARENT_SCOPE)
                     set(HDF5_DIR                    ${HDF5_DIR}                 PARENT_SCOPE)
@@ -129,12 +132,12 @@ find_package_hdf5("${HDF5_ROOT}" "${HDF5_MODULES}" "${HDF5_ATLEAST_VERSION}" "${
 
 # To print all variables, use the code below:
 ##
-#get_cmake_property(_variableNames VARIABLES)
-#foreach (_variableName ${_variableNames})
-#    if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5" OR "${_variableName}" MATCHES "h5")
-#        message(STATUS "${_variableName}=${${_variableName}}")
-#    endif()
-#endforeach()
+get_cmake_property(_variableNames VARIABLES)
+foreach (_variableName ${_variableNames})
+    if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5" OR "${_variableName}" MATCHES "h5")
+        message(STATUS "${_variableName}=${${_variableName}}")
+    endif()
+endforeach()
 
 
 if(HDF5_FOUND)
