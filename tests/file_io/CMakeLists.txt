@@ -12,7 +12,6 @@ target_include_directories(TEST-file_io PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 ###  Force cmake to find .a library suffixes ###
 ################################################
 if(NOT BUILD_SHARED_LIBS)
-    message(STATUS "SETTING STATIC FLAG!")
     target_link_libraries  (TEST-file_io PRIVATE -static)                                             ### Static linkage
 endif()
 
