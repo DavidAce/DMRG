@@ -227,6 +227,17 @@ endif()
 CheckExperimentalHeaders("${TEST_REQUIRED_FLAGS}" "${TEST_REQUIRED_LIBRARIES}")
 
 
+##################################################
+###  Adapt pthread linking for static/dynamic  ###
+##################################################
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG FALSE)
+find_package(Threads REQUIRED)
+if(NOT BUILD_SHARED_LIBS)
+    set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "-Wl,--whole-archive ${CMAKE_THREAD_LIBS_INIT} -Wl,--no-whole-archive")
+endif()
+
+
 
 
 ##############################################
@@ -236,43 +247,13 @@ CheckExperimentalHeaders("${TEST_REQUIRED_FLAGS}" "${TEST_REQUIRED_LIBRARIES}")
 ###  Also, installing libiomp5 might help  ###
 ###  for shared linking.                   ###
 ##############################################
+include(cmake-modules/CheckOMPCompiles.cmake)
 if(USE_OpenMP)
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT ${BUILD_SHARED_LIBS})
-        message(STATUS "Clang cannot link \"libomp\" statically. Attempting to link with libiomp")
-        find_library(OpenMP_LIBRARIES libiomp5.a
-                PATHS
-                $ENV{MKLROOT}/../compilers_and_libraries/linux/lib/intel64/
-            )
-        if(OpenMP_LIBRARIES)
-            message(STATUS "OpenMP ON" )
-            set(OpenMP_FOUND ON)
-            target_compile_options    (${PROJECT_NAME} PRIVATE -fopenmp=libiomp5)
-            target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_LIBRARIES})
-        else()
-            message(WARNING "
-            Could not find libiomp.a
-            Please use GNU C++ instead to link \"libgomp.a\" statically, or turn off OpenMP
-            by passing \"-DUSE_OpenMP:BOOL=OFF\" to CMake to avoid this warning.
-            Turning off OpenMP.")
-            message(STATUS "OpenMP OFF")
-            set(USE_OpenMP OFF)
-            unset(OpenMP_LIBRARIES)
-        endif()
-    else()
-        find_package(OpenMP)
-        if (OpenMP_FOUND)
-            message(STATUS "OpenMP ON" )
-            set(OpenMP_LIBRARIES  ${OpenMP_gomp_LIBRARY} ${OpenMP_omp_LIBRARY} ${OpenMP_iomp_LIBRARY})
-            target_compile_options    (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
-            target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_LIBRARIES})
-        else()
-            message(WARNING "OpenMP OFF -- Could not be found." )
-        endif()
-    endif()
+        target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenMP_LIBRARIES})
+        target_compile_options(${PROJECT_NAME} PRIVATE ${OpenMP_FLAGS})
 else()
     list(APPEND COMMON_OPTIONS -Wno-unknown-pragmas)
 endif()
-
 
 
 ###########################################
@@ -283,13 +264,6 @@ target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIO
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")                  ### Release build options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_OPTIONS}>")    ### Release build with debug info options
 target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_OPTIONS}>")                  ### Profiling build options
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG FALSE)
-find_package(Threads REQUIRED)
-if(NOT BUILD_SHARED_LIBS)
-    set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "-Wl,--whole-archive ${CMAKE_THREAD_LIBS_INIT} -Wl,--no-whole-archive")
-endif()
-
 
 
 ##########################################
