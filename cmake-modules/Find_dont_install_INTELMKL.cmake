@@ -44,6 +44,8 @@ if (MKL_FOUND)
 
     #The order of these libraries is important when doing static linking!
     #To find out the order, check the Intel link line advisor.
+    set(MKL_FLAGS -m64 -I${MKL_ROOT_DIR}/lib/intel64/lp64 )
+
     if(BUILD_SHARED_LIBS AND MKL_USE_SINGLE_DYNAMIC_LIBRARY)
         #This doesn't seem to work,  The gnu fortran GF_LP library doesn't get enabled --> arpack++ complains!
         set(MKL_LIBRARIES -Wl,--no-as-needed ${MKL_RT_LIBRARY} -Wl,--as-needed  )
@@ -52,6 +54,7 @@ if (MKL_FOUND)
 
         if(MKL_MULTI_THREADED)
             list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group )
+            list(APPEND MKL_FLAGS ${OpenMP_FLAGS})
             if(BUILD_SHARED_LIBS)
                 list(APPEND MKL_LIBRARIES ${MKL_IOMP5_LIBRARY})
             else()
@@ -62,7 +65,6 @@ if (MKL_FOUND)
         endif()
     endif()
 
-    set(MKL_FLAGS -m64 -I${MKL_ROOT_DIR}/lib/intel64/lp64 )
     if(BUILD_SHARED_LIBS)
         list(APPEND MKL_FLAGS -fPIC)
     endif()
@@ -93,6 +95,7 @@ if (MKL_FOUND)
     message("============================ MKL SUMMARY ===================================")
     message("MKL_LIBRARIES                  : ${MKL_LIBRARIES}" )
     message("MKL_RT_LIBRARY                 : ${MKL_RT_LIBRARY}" )
+    message("MKL_IOMP5_LIBRARY              : ${MKL_IOMP5_LIBRARY}" )
     message("MKL_INCLUDE_DIR                : ${MKL_INCLUDE_DIR}" )
     message("MKL_FLAGS                      : ${MKL_FLAGS}" )
     message("MKLROOT                        : $ENV{MKLROOT}" )
@@ -102,43 +105,56 @@ if (MKL_FOUND)
 
 
     #   Test features
-    include(CheckCXXSourceCompiles)
-    set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES}  ${FC_LDLAGS})
-    set(CMAKE_REQUIRED_INCLUDES  ${MKL_INCLUDE_DIR})
-    set(CMAKE_REQUIRED_FLAGS     ${MKL_FLAGS})
-    check_cxx_source_compiles("
-        #include <mkl.h>
-        int main() {
-            const MKL_INT nx = 10, incx = 1, incy = 1;
-            double x[10], y[10];
-            for(int i = 0; i < 10; i++) x[i] = double(i);
-            dcopy(&nx, x, &incx, y, &incy);
-            return 0;
-        }
-        " MKL_COMPILES)
-
-    if(NOT MKL_COMPILES)
-        message(FATAL_ERROR "Unable to compile a simple MKL program")
-    endif()
-
-    if(MKL_MULTI_THREADED)
+    function(check_mkl_compiles MKL_LIBRARIES MKL_INCLUDE_DIR MKL_FLAGS MKL_MULTI_THREADED)
+        include(CheckCXXSourceCompiles)
+        set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES}  ${FC_LDLAGS})
+        set(CMAKE_REQUIRED_INCLUDES  ${MKL_INCLUDE_DIR})
+        set(CMAKE_REQUIRED_FLAGS     ${MKL_FLAGS})
         check_cxx_source_compiles("
-            #include <omp.h>
             #include <mkl.h>
             int main() {
-                mkl_set_num_threads(2);
                 const MKL_INT nx = 10, incx = 1, incy = 1;
                 double x[10], y[10];
                 for(int i = 0; i < 10; i++) x[i] = double(i);
                 dcopy(&nx, x, &incx, y, &incy);
                 return 0;
             }
-            " MKL_OMP_COMPILES)
+            " MKL_COMPILES)
 
-        if(NOT MKL_OMP_COMPILES)
-            message(FATAL_ERROR "Unable to compile a simple MKL program with OMP")
+        if(NOT MKL_COMPILES)
+            message(FATAL_ERROR "Unable to compile a simple MKL program")
         endif()
-    endif()
+
+
+
+        if(MKL_MULTI_THREADED)
+            check_cxx_source_compiles("
+                #include <omp.h>
+                #include <mkl.h>
+                int main() {
+                    mkl_set_num_threads(2);
+                    const MKL_INT nx = 10, incx = 1, incy = 1;
+                    double x[10], y[10];
+                    for(int i = 0; i < 10; i++) x[i] = double(i);
+                    dcopy(&nx, x, &incx, y, &incy);
+                    return 0;
+                }
+                " MKL_OMP_COMPILES)
+
+            if(NOT MKL_OMP_COMPILES)
+                message(FATAL_ERROR "Unable to compile a simple MKL program with OMP")
+            endif()
+        endif()
+    endfunction()
+
+
+    check_mkl_compiles(
+            "${MKL_LIBRARIES}"
+            "${MKL_INCLUDE_DIR}"
+            "${MKL_FLAGS}"
+            "${MKL_MULTI_THREADED}"
+
+    )
 
 endif()
 
