@@ -27,6 +27,20 @@ else()
     elseif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
         set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -O3 -g -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_DEBUG -D_FORTIFY_SOURCE=2")
     endif()
+
+
+    ################################
+    ### Compiler-dependent flags ###
+    ################################
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
+        set(FLAGS "${FLAGS} -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare -Wno-unused-local-typedefs")
+    elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        set(FLAGS "${FLAGS}  --gcc-toolchain=${GCC_TOOLCHAIN}")
+        set(FLAGS "${FLAGS}  -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized")
+    endif()
+
+
+
     message(STATUS "ceres flags: ${FLAGS}")
     include(ExternalProject)
     ExternalProject_Add(external_CERES

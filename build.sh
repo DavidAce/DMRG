@@ -132,13 +132,15 @@ elif [[ "$HOSTNAME" == *"anderson"* ]];then
     else
         module load OpenBLAS
     fi
+    module load XZ/5.2.4-GCCcore-8.2.0 
     module load arpack-ng
     module load ARPACK++
     module load HDF5/1.10.5-GCCcore-8.2.0
     module load Eigen
     module load gflags
     module load glog
-
+    module load CMake
+    module list
     if [ "$compiler" = "GNU" ] ; then
         module load GCCcore
         export CC=gcc
