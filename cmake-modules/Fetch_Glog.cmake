@@ -33,7 +33,10 @@ if(GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
 else()
     message(STATUS "Searching for glog - failed")
     message(STATUS "glog will be installed into ${INSTALL_DIRECTORY}/glog on first build.")
-
+    unset(FLAGS CACHE)
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        set(FLAGS "${FLAGS} -static --gcc-toolchain=${GCC_TOOLCHAIN} -stdlib=libstdc++")
+    endif()
     include(ExternalProject)
     ExternalProject_Add(external_GLOG
             GIT_REPOSITORY https://github.com/google/glog.git
@@ -44,6 +47,7 @@ else()
             UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_CXX_FLAGS:STRING=
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             DEPENDS gflags
