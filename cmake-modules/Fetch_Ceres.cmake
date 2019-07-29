@@ -33,7 +33,7 @@ else()
     ### Compiler-dependent flags ###
     ################################
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        set(FLAGS "${FLAGS}  -v --gcc-toolchain=${GCC_TOOLCHAIN} -stdlib=libstdc++")
+        set(FLAGS "${FLAGS} -static -v --gcc-toolchain=${GCC_TOOLCHAIN} -stdlib=libstdc++")
     endif()
     set(FLAGS "${FLAGS} -I${GLOG_INCLUDE_DIR} -L${GLOG_LIBRARY_DIR} -I${GFLAGS_INCLUDE_DIR}  -L${GFLAGS_LIBRARY_DIR}")
 
