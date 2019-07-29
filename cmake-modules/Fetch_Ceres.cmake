@@ -35,7 +35,7 @@ else()
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
         set(FLAGS "${FLAGS} -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare -Wno-unused-local-typedefs")
     elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        set(FLAGS "${FLAGS} --gcc-toolchain=${GCC_TOOLCHAIN}")
+        set(FLAGS "${FLAGS} -v --gcc-toolchain=${GCC_TOOLCHAIN}")
         set(FLAGS "${FLAGS} -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized")
     endif()
 
@@ -63,13 +63,12 @@ else()
             -DCUSTOM_BLAS:BOOL=OFF
             -DEIGEN_INCLUDE_DIR:PATH=${EIGEN3_INCLUDE_DIR}
             -DEIGEN_INCLUDE_DIR_HINTS:PATH=${EIGEN3_INCLUDE_DIR}
-            -DEIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION:BOOL=OFF
+            -DEIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION:BOOL=FALSE
+            -DGFLAGS_PREFER_EXPORTED_GFLAGS_CMAKE_CONFIGURATION:BOOL=FALSE
             -DGFLAGS_INCLUDE_DIR:PATH=${GFLAGS_INCLUDE_DIR}
             -DGFLAGS_LIBRARY:PATH=${GFLAGS_LIBRARIES}
             -DGLOG_INCLUDE_DIR:PATH=${GLOG_INCLUDE_DIR}
             -DGLOG_LIBRARY:PATH=${GLOG_LIBRARIES}
-#            -DGLOG_LIBRARY_DIR_HINTS:PATH=${GLOG_LIBRARIES}
-#            -DGLOG_INCLUDE_DIR_HINTS:PATH=${GLOG_INCLUDE_DIR}
             -DGLOG_PREFER_EXPORTED_GLOG_CMAKE_CONFIGURATION:BOOL=FALSE
             -DLAPACK:BOOL=OFF
             -DEIGENSPARSE:BOOL=ON

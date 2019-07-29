@@ -55,7 +55,7 @@ else()
     set(GLOG_LIBRARIES   ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/libglog${CUSTOM_SUFFIX})
     set(glog_DIR ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/glog)
     add_dependencies(glog external_GLOG gflags)
-    target_link_libraries(glog INTERFACE ${GLOG_LIBRARIES} gflags   Threads::Threads)
+    target_link_libraries(glog INTERFACE ${GLOG_LIBRARIES} gflags Threads::Threads)
     target_include_directories(glog INTERFACE ${GLOG_INCLUDE_DIR})
 endif()
 
