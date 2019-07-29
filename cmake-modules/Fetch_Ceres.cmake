@@ -33,7 +33,7 @@ else()
     ### Compiler-dependent flags ###
     ################################
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        set(FLAGS "${FLAGS} -static -v --gcc-toolchain=${GCC_TOOLCHAIN} -stdlib=libstdc++")
+        set(FLAGS "${FLAGS} -static --gcc-toolchain=${GCC_TOOLCHAIN} -stdlib=libstdc++")
     endif()
     set(FLAGS "${FLAGS} -I${GLOG_INCLUDE_DIR} -L${GLOG_LIBRARY_DIR} -I${GFLAGS_INCLUDE_DIR}  -L${GFLAGS_LIBRARY_DIR}")
 
@@ -56,8 +56,8 @@ else()
             CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
-            -DBUILD_TESTING:BOOL=ON
-            -DBUILD_EXAMPLES:BOOL=ON
+            -DBUILD_TESTING:BOOL=OFF
+            -DBUILD_EXAMPLES:BOOL=OFF
             -DCMAKE_CXX_FLAGS:STRING=${FLAGS}
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
             -DCMAKE_FIND_LIBRARY_SUFFIXES:STRING=${CUSTOM_SUFFIX}
