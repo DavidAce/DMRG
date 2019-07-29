@@ -32,13 +32,10 @@ else()
     ################################
     ### Compiler-dependent flags ###
     ################################
-    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-        set(FLAGS "${FLAGS} -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare -Wno-unused-local-typedefs")
-    elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        set(FLAGS "${FLAGS} -v --gcc-toolchain=${GCC_TOOLCHAIN}")
-        set(FLAGS "${FLAGS} -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized")
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        set(FLAGS "${FLAGS}  -v --gcc-toolchain=${GCC_TOOLCHAIN} -stdlib=libstdc++")
     endif()
-
+    set(FLAGS "${FLAGS} -I${GLOG_INCLUDE_DIR} -L${GLOG_LIBRARY_DIR} -I${GFLAGS_INCLUDE_DIR}  -L${GFLAGS_LIBRARY_DIR}")
 
 
 
@@ -70,10 +67,10 @@ else()
             -DEIGEN_INCLUDE_DIR_HINTS:PATH=${EIGEN3_INCLUDE_DIR}
             -DEIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION:BOOL=FALSE
             -DGFLAGS_PREFER_EXPORTED_GFLAGS_CMAKE_CONFIGURATION:BOOL=FALSE
-            -DGFLAGS_INCLUDE_DIR_HINTS:PATH=${GFLAGS_INCLUDE_DIR} ${GLOG_INCLUDE_DIR}
+            -DGFLAGS_INCLUDE_DIR_HINTS:PATH=${GFLAGS_INCLUDE_DIR}
             -DGFLAGS_LIBRARY_DIR_HINTS:PATH=${GFLAGS_LIBRARY_DIR}
             -DGLOG_PREFER_EXPORTED_GLOG_CMAKE_CONFIGURATION:BOOL=FALSE
-            -DGLOG_INCLUDE_DIR_HINTS:PATH=${GLOG_INCLUDE_DIR} ${GFLAGS_INCLUDE_DIR}
+            -DGLOG_INCLUDE_DIR_HINTS:PATH=${GLOG_INCLUDE_DIR}
             -DGLOG_LIBRARY_DIR_HINTS:PATH=${GLOG_LIBRARY_DIR}
             -DLAPACK:BOOL=OFF
             -DEIGENSPARSE:BOOL=ON
