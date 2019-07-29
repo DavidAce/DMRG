@@ -26,7 +26,10 @@ if(GFLAGS_LIBRARIES AND GFLAGS_INCLUDE_DIR)
 else()
     message(STATUS "Searching for gflags - failed")
     message(STATUS "gflags will be installed into ${INSTALL_DIRECTORY}/gflags on first build.")
-
+    unset(FLAGS CACHE)
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        set(FLAGS "${FLAGS} -static --gcc-toolchain=${GCC_TOOLCHAIN} -stdlib=libstdc++")
+    endif()
     include(ExternalProject)
     ExternalProject_Add(external_GFLAGS
             GIT_REPOSITORY https://github.com/gflags/gflags.git

@@ -20,6 +20,7 @@ else()
 
 #    set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -DNDEBUG -O3 -fstack-protector  -g -fno-omit-frame-pointer -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_DEBUG -D_FORTIFY_SOURCE=2")
 #    set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -DNDEBUG -O3 -fstack-protector  -g -fno-omit-frame-pointer -D_FORTIFY_SOURCE=2")
+    unset(FLAGS CACHE)
     if(CMAKE_BUILD_TYPE MATCHES Release)
         set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -O3 -g -D_FORTIFY_SOURCE=2  -DNDEBUG")
     elseif(CMAKE_BUILD_TYPE MATCHES Debug)
@@ -32,6 +33,7 @@ else()
     ################################
     ### Compiler-dependent flags ###
     ################################
+
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
         set(FLAGS "${FLAGS} -static --gcc-toolchain=${GCC_TOOLCHAIN} -stdlib=libstdc++")
     endif()
