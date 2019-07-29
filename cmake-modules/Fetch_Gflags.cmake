@@ -15,6 +15,7 @@ find_path(
 
 if(GFLAGS_LIBRARIES AND GFLAGS_INCLUDE_DIR)
     add_library(gflags INTERFACE)
+    get_filename_component(GFLAGS_LIBRARY_DIR ${GFLAGS_LIBRARIES} DIRECTORY)
     target_link_libraries(gflags INTERFACE ${GFLAGS_LIBRARIES})
     target_include_directories(gflags INTERFACE ${GFLAGS_INCLUDE_DIR})
     target_compile_definitions(gflags  INTERFACE "GFLAGS_IS_A_DLL=0")

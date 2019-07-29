@@ -22,6 +22,7 @@ if(GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
     # place "INTERFACE_LINK_LIBRARIES"... so we do this manually
     add_library(glog INTERFACE)
     add_dependencies(glog gflags)
+    get_filename_component(GLOG_LIBRARY_DIR ${GLOG_LIBRARIES} DIRECTORY)
     set_target_properties(glog PROPERTIES INTERFACE_LINK_LIBRARIES ${GLOG_LIBRARIES})
     set_target_properties(glog PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${GLOG_INCLUDE_DIR})
     target_link_libraries(glog INTERFACE gflags Threads::Threads)
