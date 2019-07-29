@@ -43,6 +43,11 @@ else()
 
 
     message(STATUS "ceres flags: ${FLAGS}")
+    message(STATUS "GFLAGS_LIBRARIES    : ${GFLAGS_LIBRARIES}")
+    message(STATUS "GFLAGS_INCLUDE_DIR  : ${GFLAGS_INCLUDE_DIR}")
+    message(STATUS "GLOG_LIBRARIES      : ${GLOG_LIBRARIES}")
+    message(STATUS "GLOG_INCLUDE_DIR    : ${GLOG_INCLUDE_DIR}")
+
     include(ExternalProject)
     ExternalProject_Add(external_CERES
             GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
