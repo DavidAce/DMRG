@@ -57,7 +57,7 @@ else()
             UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
+            -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
             -DBUILD_TESTING:BOOL=OFF
             -DBUILD_EXAMPLES:BOOL=OFF
             -DCMAKE_CXX_FLAGS:STRING=${FLAGS}
@@ -92,6 +92,6 @@ else()
     set(CERES_LIBRARY     ${CERES_LIBRARY_DIR}/libceres${CUSTOM_SUFFIX})
     add_dependencies(ceres external_CERES)
     add_dependencies(ceres glog gflags Eigen3::Eigen blas lapack lapacke)
-    target_link_libraries(ceres INTERFACE  ${CERES_LIBRARY} glog gflags glog Eigen3::Eigen blas lapack lapacke Threads::Threads )
+    target_link_libraries(ceres INTERFACE  ${CERES_LIBRARY} glog gflags Eigen3::Eigen blas lapack lapacke Threads::Threads )
     target_include_directories(ceres INTERFACE ${CERES_INCLUDE_DIR})
 endif()
