@@ -30,6 +30,11 @@ namespace Logger{
         log->set_level(lvlEnum);
     }
 
+
+    inline size_t getLogLevel(std::shared_ptr<spdlog::logger> &log){
+        return static_cast<size_t>(log->level());
+    }
+
     inline void setLogger(std::shared_ptr<spdlog::logger> &log, std::string name, size_t levelZeroToSix = 2, bool timestamp = true){
         if(spdlog::get(name) == nullptr){
             log = spdlog::stdout_logger_mt(name);

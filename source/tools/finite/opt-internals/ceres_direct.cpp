@@ -39,7 +39,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    options.minimizer_progress_to_stdout = true;
+    options.minimizer_progress_to_stdout = Logger::getLogLevel(tools::log) < 2 ? true : false;
     options.max_num_iterations = 150;
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = true;
