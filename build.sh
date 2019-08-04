@@ -118,10 +118,15 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     module load GCCcore/7.3.0
     module load CMake/3.12.1
     source activate dmrg
-    #export CC=gcc
-    #export CXX=g++
-    export CC=clang
-    export CXX=clang++
+    if [ "$compiler" = "GNU" ] ; then
+        module load GCCcore
+        export CC=gcc
+        export CXX=g++
+    elif [ "$compiler" = "Clang" ] ; then
+        module load Clang
+        export CC=clang
+        export CXX=clang++
+    fi
 
 
 
