@@ -2,7 +2,7 @@
 # Run this file on tetralith with sbatch submit_slurm.sh
 # This file will submit one job per file in ../input/
 
-read -p 'Number of realizations: ' -i 100 -e nsims
+read -p 'Number of realizations: ' -i 20 -e nsims
 echo "Running $nsims realizations for each inputfile"
 
 

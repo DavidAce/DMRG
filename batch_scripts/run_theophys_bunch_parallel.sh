@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=DMRG
 #SBATCH --time=0-2:00:00
-#SBATCH --mem-per-cpu=2000
+#SBATCH --mem-per-cpu=4000
 #SBATCH --kill-on-invalid-dep=yes
 #SBATCH --output=logs/DMRG-%A_%a.out
 #SBATCH --error=logs/DMRG-%A_%a.err
