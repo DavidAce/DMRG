@@ -10,7 +10,7 @@
 //#undef  EIGEN_USE_LAPACKE_STRICT
 #define EIGEN_DONT_VECTORIZE
 #define EIGEN_DONT_ALIGN_STATICALLY
-#define EIGEN_MAX_ALIGN_BYTES=32
+#define EIGEN_MAX_ALIGN_BYTES 32
 
 //#include <complex.h>
 //#undef I
