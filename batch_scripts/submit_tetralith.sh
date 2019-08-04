@@ -2,8 +2,8 @@
 # Run this file on tetralith with sbatch submit_slurm.sh
 # This file will submit one job per file in ../input/
 
-read -p 'Number of realizations [100]: ' -e -i 100 nsims
-echo 'Running $nsims realizations for each inputfile'
+read -p 'Number of realizations [100]: ' -i 100 -e nsims
+echo "Running $nsims realizations for each inputfile"
 
 
 module load buildenv-gcc/2018a-eb
