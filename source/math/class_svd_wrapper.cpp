@@ -4,13 +4,15 @@
 
 
 #undef  EIGEN_USE_MKL_ALL
+#undef  EIGEN_USE_MKL_VML
 #undef  EIGEN_USE_BLAS
 #undef  EIGEN_USE_LAPACKE
 #undef  EIGEN_USE_LAPACKE_STRICT
-#undef  EIGEN_USE_MKL_VML
-
-#include <complex.h>
-#undef I
+#define EIGEN_DONT_VECTORIZE
+#define EIGEN_DONT_ALIGN_STATICALLY
+#define EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
+//#include <complex.h>
+//#undef I
 
 
 #include <Eigen/SVD>
