@@ -2,6 +2,9 @@
 # Run this file on tetralith with sbatch submit_slurm.sh
 # This file will submit one job per file in ../input/
 
+read -p 'Number of realizations [100]: ' -e -i 100 nsims
+echo 'Running $nsims realizations for each inputfile'
+
 
 module load buildenv-gcc/2018a-eb
 module load zlib/1.2.8
@@ -13,11 +16,12 @@ module load clang/6.0.1
 module load CMake/3.12.1
 
 
-export OMP_NUM_THREADS=1
 
+
+
+export OMP_NUM_THREADS=1
 exec=../build/Release/DMRG++
 inputfiles=$(find -L input -type f -name '*.cfg')
-nsims=100
 count=0
 nmax=$((nmin+nsims))
 for inputfile in $inputfiles; do
