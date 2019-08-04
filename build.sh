@@ -114,16 +114,14 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     if [ -z "$gcc_toolchain" ] ; then
         gcc_toolchain=/software/sse/easybuild/prefix/software/GCCcore/7.3.0
     fi
-    module load clang/6.0.1
-    module load GCCcore/7.3.0
     module load CMake/3.12.1
     source activate dmrg
     if [ "$compiler" = "GNU" ] ; then
-        module load GCCcore
+    module load GCCcore/7.3.0
         export CC=gcc
         export CXX=g++
     elif [ "$compiler" = "Clang" ] ; then
-        module load Clang
+        module load clang/6.0.1
         export CC=clang
         export CXX=clang++
     fi
