@@ -95,7 +95,7 @@ endif()
 message("Using microarchitechture: ${CXX_MARCH}")
 set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
 set(DEBUG_OPTIONS            -Wpedantic -Wextra -O0 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
-set(RELWITHDEBINFO_OPTIONS   -Wpedantic -Wextra -O3 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -DNDEBUG)
+set(RELWITHDEBINFO_OPTIONS   -Wpedantic -Wextra -O1 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
 set(RELEASE_OPTIONS          -DNDEBUG -O3 )
 set(PROFILE_OPTIONS          -DNDEBUG -O3 -lprofiler -g  -ftime-report)
 
