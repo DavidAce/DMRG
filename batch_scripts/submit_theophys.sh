@@ -18,7 +18,15 @@ module list
 
 export OMP_NUM_THREADS=1
 
+
 exec=../build/Release/DMRG++
+if test -f "$exec"; then
+    echo "Found exec: $exec"
+else
+    echo "exec does not exist: $exec"
+    exit 1
+fi
+
 inputfiles=$(find -L input -type f -name '*.cfg')
 count=0
 nmax=$((nmin+nsims))
