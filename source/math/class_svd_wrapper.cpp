@@ -21,6 +21,7 @@
 
 
 #include <Eigen/SVD>
+#include <Eigen/QR>
 #include <math/class_svd_wrapper.h>
 
 double class_SVD::get_truncation_error(){
@@ -100,3 +101,22 @@ class_SVD::do_svd(const cplx *, long, long, long);
 
 
 
+
+
+template<typename Scalar>
+Eigen::Tensor<Scalar, 2>
+class_SVD::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor){
+    if (tensor.dimension(0) <= 0)  {throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(0)");}
+    if (tensor.dimension(1) <= 0)  {throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(1)");}
+    Eigen::Map<const MatrixType<Scalar>> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
+    return Textra::Matrix_to_Tensor2(mat.completeOrthogonalDecomposition().pseudoInverse() );
+}
+
+
+
+//! \relates class_SVD
+//! \brief force instantiation of pseudo_inverse for type 'double'
+template Eigen::Tensor<double, 2> class_SVD::pseudo_inverse(const Eigen::Tensor<double, 2> &tensor);
+//! \relates class_SVD
+//! \brief force instantiation of pseudo_inverse for type 'std::complex<double>'
+template Eigen::Tensor<cplx, 2>   class_SVD::pseudo_inverse(const Eigen::Tensor<cplx  , 2> &tensor);
