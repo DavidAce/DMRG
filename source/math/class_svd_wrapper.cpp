@@ -3,24 +3,20 @@
 //
 
 
-#undef  EIGEN_USE_MKL_ALL
-#undef  EIGEN_USE_MKL_VML
-#undef  EIGEN_USE_BLAS
-#undef  EIGEN_USE_LAPACKE
-#undef  EIGEN_USE_LAPACKE_STRICT
 
 #define EIGEN_USE_MKL_ALL
 #define EIGEN_USE_BLAS
 #define EIGEN_USE_LAPACKE_STRICT
 
-#define EIGEN_DONT_VECTORIZE
-#define EIGEN_DONT_ALIGN_STATICALLY
-#define EIGEN_DONT_ALIGN
+//#define EIGEN_DONT_VECTORIZE
+//#define EIGEN_DONT_ALIGN_STATICALLY
+//#define EIGEN_DONT_ALIGN
+
 //#define EIGEN_MAX_ALIGN_BYTES 0
 //#define EIGEN_ENABLE_AVX512
 //#define EIGEN_UNALIGNED_VECTORIZE 0
-//#include <complex.h>
-//#undef I
+#include <complex.h>
+#undef I
 
 
 

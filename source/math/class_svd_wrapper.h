@@ -7,11 +7,11 @@
 
 #include "general/nmspc_tensor_extra.h"
 #include <iomanip>
-#include <Eigen/QR>
 
 
-//template<typename Scalar>
 class class_SVD{
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 private:
     double SVDThreshold         = 1e-12;
     double truncation_error     = 0;
