@@ -109,23 +109,22 @@ fi
 
 if [[ "$HOSTNAME" == *"tetralith"* ]];then
     echo "Running on tetralith"
+    conda activate dmrg
     module load buildenv-gcc/2018a-eb
     module load zlib
-    if [ -z "$gcc_toolchain" ] ; then
-        gcc_toolchain=/software/sse/easybuild/prefix/software/GCCcore/7.3.0
-    fi
     module load CMake/3.12.1
-    conda activate dmrg
+    module load GCCcore
     if [ "$compiler" = "GNU" ] ; then
-    module load GCCcore/7.3.0
         export CC=gcc
         export CXX=g++
     elif [ "$compiler" = "Clang" ] ; then
-        module load clang/6.0.1
+        module load Clang
+        if [ -z "$gcc_toolchain" ] ; then
+            gcc_toolchain=$EBROOTGCCCORE
+        fi
         export CC=clang
         export CXX=clang++
     fi
-
 
 
 
@@ -144,13 +143,16 @@ elif [[ "$HOSTNAME" == *"anderson"* ]];then
     module load gflags
     module load glog
     module load CMake
+    module load GCCcore
     module list
     if [ "$compiler" = "GNU" ] ; then
-        module load GCCcore
         export CC=gcc
         export CXX=g++
     elif [ "$compiler" = "Clang" ] ; then
         module load Clang
+        if [ -z "$gcc_toolchain" ] ; then
+            gcc_toolchain=$EBROOTGCCCORE
+        fi
         export CC=clang
         export CXX=clang++
     fi
