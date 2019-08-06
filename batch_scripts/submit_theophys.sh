@@ -1,20 +1,33 @@
 #!/bin/bash
+# Run this file on a slurm cluster, ./submit_slurm.sh
 
-read -p 'Number of realizations: ' -i 20 -e nsims
+
+PROGNAME=$0
+usage() {
+  cat << EOF >&2
+
+Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t <target>] [-a <march>]
+-h               : Help. Shows this text.
+-m <mode>        : Release | RelWithDebInfo | Debug | Profile |  (default = Release)
+-n <sims>        : Number of simulations (default 10)
+EOF
+  exit 1
+}
+
+mode="Release"
+nsims=10
+while getopts hm:n: o; do
+    case $o in
+        (h) usage ;;
+        (m) mode=$OPTARG;;
+        (n) nsims=$OPTARG;;
+        (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
+        (*) usage ;;
+  esac
+done
+
+
 echo "Running $nsims realizations for each inputfile"
-
-module load CMake
-module load imkl
-module load OpenBLAS
-module load XZ/5.2.4-GCCcore-8.2.0
-module load arpack-ng
-module load ARPACK++
-module load HDF5/1.10.5-GCCcore-8.2.0
-module load Eigen
-module load gflags
-module load glog
-module load CMake
-module list
 
 export OMP_NUM_THREADS=1
 
