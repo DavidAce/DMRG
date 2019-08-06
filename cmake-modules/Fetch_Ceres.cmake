@@ -21,13 +21,12 @@ else()
 #    set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -DNDEBUG -O3 -fstack-protector  -g -fno-omit-frame-pointer -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_DEBUG -D_FORTIFY_SOURCE=2")
 #    set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -DNDEBUG -O3 -fstack-protector  -g -fno-omit-frame-pointer -D_FORTIFY_SOURCE=2")
     unset(FLAGS CACHE)
-    set(FLAGS "${COMMON_OPTIONS}")
     if(CMAKE_BUILD_TYPE MATCHES Debug)
-        set(FLAGS "${FLAGS} ${DEBUG_OPTIONS}")
+        set(FLAGS "${COMMON_OPTIONS} ${DEBUG_OPTIONS}")
     elseif(CMAKE_BUILD_TYPE MATCHES Release)
-        set(FLAGS "${FLAGS} ${RELEASE_OPTIONS}")
+        set(FLAGS "${COMMON_OPTIONS} ${RELEASE_OPTIONS}")
     elseif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
-        set(FLAGS "${FLAGS} ${RELWITHDEBINFO_OPTIONS}")
+        set(FLAGS "${COMMON_OPTIONS} ${RELWITHDEBINFO_OPTIONS}")
     endif()
 
 
@@ -39,6 +38,7 @@ else()
 #        set(FLAGS "${FLAGS} -static --gcc-toolchain=${GCC_TOOLCHAIN} -stdlib=libstdc++")
 #    endif()
     set(FLAGS "${FLAGS} -I${GLOG_INCLUDE_DIR} -L${GLOG_LIBRARY_DIR} -I${GFLAGS_INCLUDE_DIR}  -L${GFLAGS_LIBRARY_DIR}")
+    string (REPLACE ";" " " FLAGS "${FLAGS}")
 
 
 
