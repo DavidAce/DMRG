@@ -48,7 +48,7 @@ elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
     ExternalProject_Add(external_EIGEN3
             GIT_REPOSITORY https://github.com/DavidAce/eigen-git-mirror.git
             #GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
-            GIT_TAG master
+            GIT_TAG 3.3.7-fix-svd-segfault
             GIT_PROGRESS 1
             PREFIX      ${BUILD_DIRECTORY}/Eigen3
             INSTALL_DIR ${INSTALL_DIRECTORY}/Eigen3
