@@ -1,19 +1,19 @@
 
 #find_package(glog 0.4 PATHS ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR} NO_DEFAULT_PATH)
 message(STATUS "Searching for glog")
-find_library(
-        GLOG_LIBRARIES
-        NAMES libglog${CUSTOM_SUFFIX}
-        PATH_SUFFIXES lib lib64
-        PATHS  ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR}
-        NO_DEFAULT_PATH)
-
-find_path(
-        GLOG_INCLUDE_DIR
-        NAMES glog/logging.h
-        PATH_SUFFIXES include glog/include
-        PATHS  ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR}
-        NO_DEFAULT_PATH)
+#find_library(
+#        GLOG_LIBRARIES
+#        NAMES libglog${CUSTOM_SUFFIX}
+#        PATH_SUFFIXES lib lib64
+#        PATHS  ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR}
+#        NO_DEFAULT_PATH)
+#
+#find_path(
+#        GLOG_INCLUDE_DIR
+#        NAMES glog/logging.h
+#        PATH_SUFFIXES include glog/include
+#        PATHS  ${INSTALL_DIRECTORY}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR}
+#        NO_DEFAULT_PATH)
 
 
 if(GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
@@ -41,7 +41,8 @@ else()
     ExternalProject_Add(external_GLOG
             GIT_REPOSITORY https://github.com/google/glog.git
             GIT_TAG master
-            GIT_PROGRESS 1
+            GIT_PROGRESS false
+            GIT_SHALLOW true
             PREFIX      ${BUILD_DIRECTORY}/glog
             INSTALL_DIR ${INSTALL_DIRECTORY}/glog
             UPDATE_COMMAND ""

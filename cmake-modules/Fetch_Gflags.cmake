@@ -1,17 +1,17 @@
 message(STATUS "Searching for gflags ")
-find_library(
-        GFLAGS_LIBRARIES
-        NAMES libgflags${CUSTOM_SUFFIX}
-        PATH_SUFFIXES lib lib64
-        PATHS  ${INSTALL_DIRECTORY}/gflags $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR}
-        NO_DEFAULT_PATH)
-
-find_path(
-        GFLAGS_INCLUDE_DIR
-        NAMES gflags/gflags.h
-        PATH_SUFFIXES include gflags/include
-        PATHS  ${INSTALL_DIRECTORY}/gflags $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR}
-        NO_DEFAULT_PATH)
+#find_library(
+#        GFLAGS_LIBRARIES
+#        NAMES libgflags${CUSTOM_SUFFIX}
+#        PATH_SUFFIXES lib lib64
+#        PATHS  ${INSTALL_DIRECTORY}/gflags $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR}
+#        NO_DEFAULT_PATH)
+#
+#find_path(
+#        GFLAGS_INCLUDE_DIR
+#        NAMES gflags/gflags.h
+#        PATH_SUFFIXES include gflags/include
+#        PATHS  ${INSTALL_DIRECTORY}/gflags $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR}
+#        NO_DEFAULT_PATH)
 
 if(GFLAGS_LIBRARIES AND GFLAGS_INCLUDE_DIR)
     add_library(gflags INTERFACE)
@@ -34,7 +34,8 @@ else()
     ExternalProject_Add(external_GFLAGS
             GIT_REPOSITORY https://github.com/gflags/gflags.git
             GIT_TAG v2.2.2
-            GIT_PROGRESS 1
+            GIT_PROGRESS false
+            GIT_SHALLOW true
             PREFIX      ${BUILD_DIRECTORY}/gflags
             INSTALL_DIR ${INSTALL_DIRECTORY}/gflags
             UPDATE_COMMAND ""
