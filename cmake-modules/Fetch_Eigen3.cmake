@@ -2,9 +2,9 @@
 
 if(NOT TARGET Eigen3::Eigen)
     message(STATUS "Searching for Eigen3")
-    find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_DEFAULT_PATH NO_MODULE)
-    find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_CMAKE_PACKAGE_REGISTRY NO_MODULE)
-    find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3)
+    #find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_DEFAULT_PATH NO_MODULE)
+    #find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_CMAKE_PACKAGE_REGISTRY NO_MODULE)
+    #find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3)
     if(TARGET Eigen3::Eigen)
         get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
         message(STATUS "Searching for Eigen3 - Success - | Version ${EIGEN3_VERSION} | ${EIGEN3_INCLUDE_DIR}")
@@ -46,8 +46,9 @@ elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
 
     include(ExternalProject)
     ExternalProject_Add(external_EIGEN3
-            GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
-            GIT_TAG 3.3.7
+            GIT_REPOSITORY https://github.com/DavidAce/eigen-git-mirror.git
+            #GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
+            GIT_TAG master
             GIT_PROGRESS 1
             PREFIX      ${BUILD_DIRECTORY}/Eigen3
             INSTALL_DIR ${INSTALL_DIRECTORY}/Eigen3
