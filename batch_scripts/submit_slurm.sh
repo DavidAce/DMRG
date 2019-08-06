@@ -6,10 +6,10 @@ PROGNAME=$0
 usage() {
   cat << EOF >&2
 
-Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t <target>] [-a <march>]
+Usage            : $PROGNAME  [-h ] [-m <mode>] [-n <num sims>] [-p <partition>] [-t <time>]
 -h               : Help. Shows this text.
 -m <mode>        : Release | RelWithDebInfo | Debug | Profile |  (default = Release)
--n <sims>        : Number of simulations (default 10)
+-n <num sims>    : Number of simulations (default 10)
 -p <partition>   : Partition name (default = )
 -t <time>        : Time for each run (default = 4:00:00)
 EOF
