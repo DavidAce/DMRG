@@ -10,15 +10,16 @@
 
 //#define EIGEN_DONT_VECTORIZE
 //#define EIGEN_DONT_ALIGN_STATICALLY
-//#define EIGEN_DONT_ALIGN
 
 //#define EIGEN_MAX_ALIGN_BYTES 0
 //#define EIGEN_ENABLE_AVX512
-//#define EIGEN_UNALIGNED_VECTORIZE 0
-#include <complex.h>
-#undef I
+#define EIGEN_UNALIGNED_VECTORIZE 0
+#define EIGEN_DONT_ALIGN
+#define EIGEN_MALLOC_ALREADY_ALIGNED 0
 
 
+//#include <complex.h>
+//#undef I
 
 #include <Eigen/SVD>
 #include <Eigen/QR>
