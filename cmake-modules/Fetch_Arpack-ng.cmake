@@ -66,6 +66,8 @@ else()
             GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
 #            GIT_TAG             master
             GIT_TAG             3.7.0
+            GIT_PROGRESS false
+            GIT_SHALLOW true
             PREFIX      ${BUILD_DIRECTORY}/arpack-ng
             INSTALL_DIR ${INSTALL_DIRECTORY}/arpack-ng
             UPDATE_COMMAND ""

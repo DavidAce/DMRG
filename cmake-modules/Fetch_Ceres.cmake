@@ -51,7 +51,8 @@ else()
     ExternalProject_Add(external_CERES
             GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
             GIT_TAG master
-            GIT_PROGRESS 1
+            GIT_PROGRESS false
+            GIT_SHALLOW true
             PREFIX      ${BUILD_DIRECTORY}/ceres
             INSTALL_DIR ${INSTALL_DIRECTORY}/ceres
             UPDATE_COMMAND ""
