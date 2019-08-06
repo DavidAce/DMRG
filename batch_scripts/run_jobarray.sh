@@ -6,7 +6,9 @@
 #SBATCH --output=logs/DMRG-%A_%a.out
 #SBATCH --error=logs/DMRG-%A_%a.err
 #SBATCH --requeue
-
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --oversubscribe
 
 exec=${1}
 inputfile=${2}
