@@ -13,13 +13,18 @@
 
 //#define EIGEN_MAX_ALIGN_BYTES 0
 //#define EIGEN_ENABLE_AVX512
-#define EIGEN_UNALIGNED_VECTORIZE 0
-#define EIGEN_DONT_ALIGN
-#define EIGEN_MALLOC_ALREADY_ALIGNED 0
+//#define EIGEN_UNALIGNED_VECTORIZE 0
+//#define EIGEN_DONT_ALIGN
+//#define EIGEN_MALLOC_ALREADY_ALIGNED 0
 
 
 //#include <complex.h>
 //#undef I
+
+//For svd debugging
+#include <h5pp/h5pp.h>
+#include <simulation/nmspc_settings.h>
+
 
 #include <Eigen/SVD>
 #include <Eigen/QR>
@@ -50,6 +55,14 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
     if (cols <= 0)              throw std::runtime_error("SVD error: cols() == 0");
     if (not mat.allFinite())    throw std::runtime_error("SVD error: matrix has inf's or nan's");
     if (mat.isZero(0))          throw std::runtime_error("SVD error: matrix is all zeros");
+
+    //Debugging, save matrix into h5 file
+    std::string outputFilename      = "svdmatrix_" + std::to_string(settings::model::seed_init) + ".h5";
+    size_t      logLevel  = 2;
+    h5pp::File file(outputFilename,h5pp::AccessMode::READWRITE, h5pp::CreateMode::TRUNCATE,logLevel);
+
+
+
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
     SVD.setThreshold(SVDThreshold);
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
