@@ -6,6 +6,7 @@
 #SBATCH --output=logs/DMRG-%A_%a.out
 #SBATCH --error=logs/DMRG-%A_%a.err
 #SBATCH --requeue
+#SBATCH --partition=all
 
 exec=${1}
 inputfile=${2}
