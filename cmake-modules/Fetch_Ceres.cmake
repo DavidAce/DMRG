@@ -35,9 +35,7 @@ else()
     ### Compiler-dependent flags ###
     ################################
 
-    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        set(FLAGS "${FLAGS} -Wno-unused-local-typedef -Wno-unused-parameter -Wno-ignored-qualifiers")
-    endif()
+
     set(FLAGS "${FLAGS} -I${GLOG_INCLUDE_DIR} -L${GLOG_LIBRARY_DIR} -I${GFLAGS_INCLUDE_DIR}  -L${GFLAGS_LIBRARY_DIR}")
     string (REPLACE ";" " " FLAGS "${FLAGS}")
 
