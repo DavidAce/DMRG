@@ -128,6 +128,8 @@ else()
     ExternalProject_Add(external_OpenBLAS
             GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
             GIT_TAG             v0.3.5
+            GIT_PROGRESS false
+            GIT_SHALLOW true
             PREFIX      ${BUILD_DIRECTORY}/OpenBLAS
             INSTALL_DIR ${INSTALL_DIRECTORY}/OpenBLAS
             UPDATE_COMMAND ""

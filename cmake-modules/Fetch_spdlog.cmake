@@ -12,7 +12,8 @@ elseif (DOWNLOAD_SPDLOG OR DOWNLOAD_ALL)
     ExternalProject_Add(external_SPDLOG
             GIT_REPOSITORY https://github.com/gabime/spdlog.git
             GIT_TAG v1.3.1
-            GIT_PROGRESS 1
+            GIT_PROGRESS false
+            GIT_SHALLOW true
             UPDATE_COMMAND ""
             TEST_COMMAND ""
             PREFIX      ${BUILD_DIRECTORY}/spdlog
