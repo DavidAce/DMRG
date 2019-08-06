@@ -140,7 +140,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     list(APPEND COMMON_OPTIONS --gcc-toolchain=${GCC_TOOLCHAIN})
     list(APPEND COMMON_OPTIONS -stdlib=libstdc++
-            -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces
+            -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-unused-parameter
             -Wno-overloaded-virtual -Wno-uninitialized -Wno-unused-local-typedef -Wno-unused-parameter -Wno-ignored-qualifiers -Wno-format-pedantic)
 endif()
 
