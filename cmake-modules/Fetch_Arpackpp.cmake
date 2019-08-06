@@ -63,6 +63,8 @@ else()
     ExternalProject_Add(external_ARPACK++
             GIT_REPOSITORY      https://github.com/m-reuter/arpackpp.git
             GIT_TAG             master
+            GIT_PROGRESS false
+            GIT_SHALLOW true
             PREFIX      ${BUILD_DIRECTORY}/arpack++
             INSTALL_DIR ${INSTALL_DIRECTORY}/arpack++
 #            CMAKE_ARGS
