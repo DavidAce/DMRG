@@ -28,7 +28,7 @@ nsimu=%32
 jobname=DMRG
 mem=4000
 time=--time=0-1:00:00
-while getopts hb:ej:m:n:o:p:rt: o; do
+while getopts hb:ej:m:n:o:p:rs:t: o; do
     case $o in
         (h) usage ;;
         (b) build=$OPTARG;;
