@@ -26,9 +26,9 @@ EOF
 
 build=Release
 nsims=10
-maxtasks=%32
+maxtasks=32
 jobname=DMRG
-stepsize=:32
+stepsize=32
 mem=4000
 time=--time=0-1:00:00
 while getopts hb:egj:k:m:n:o:p:rs:t: o; do
@@ -38,13 +38,13 @@ while getopts hb:egj:k:m:n:o:p:rs:t: o; do
         (e) exclusive=--exclusive;;
         (g) gnuparallel=true;;
         (j) jobname=$OPTARG;;
-        (k) stepsize=:$OPTARG;;
+        (k) stepsize=$OPTARG;;
         (m) mem=$OPTARG;;
         (n) nsims=$OPTARG;;
         (o) other=$OPTARG;;
         (p) partition=--partition=$OPTARG;;
         (r) requeue=--requeue;;
-        (s) maxtasks=%$OPTARG;;
+        (s) maxtasks=$OPTARG;;
         (t) time=--time=0-$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
@@ -89,7 +89,7 @@ for inputfile in $inputfiles; do
     else
         sbatch $partition $requeue $exclusive $time $other \
             --mem-per-cpu=$mem \
-            --array=$seedmin-$seedmax$maxtasks --job-name=$jobname \
+            --array=$seedmin-$seedmax%$maxtasks --job-name=$jobname \
             run_jobarray.sh $exec $inputfile
         count=$((count+1))
     fi
