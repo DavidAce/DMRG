@@ -10,7 +10,7 @@
 exec=${1}
 inputfile=${2}
 inputbase=$(basename $inputfile .cfg)
-nmin=$SLURM_ARRAY_TASK_MIN
+nmin=$SLURM_ARRAY_TASK_ID
 nmax=$((nmin + SLURM_ARRAY_TASK_STEP - 1))
 outdir=logs/jobarray_$SLURM_ARRAY_JOB_ID
 mkdir -p $outdir
