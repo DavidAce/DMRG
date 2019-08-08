@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#SBATCH --exclusive
 #SBATCH --nodes=1
 #SBATCH --kill-on-invalid-dep=yes
 #SBATCH --output=logs/DMRG-%A_%a.out
