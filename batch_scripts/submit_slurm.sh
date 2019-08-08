@@ -78,14 +78,14 @@ for inputfile in $inputfiles; do
         stepsize=$(( stepsize < nsims ? stepsize : nsims ))
         while [[ $seedcount -lt $seedmax ]]; do
             arraymin=$seedcount
-            arraymax=$(($arraymin+stepsize-1))
-            arraymax=$(( arraymax < seedmax ? arraymax : seedmax))
+            arraymax=$((arraymin+stepsize-1))
+            arraymax=$((arraymax < seedmax ? arraymax : seedmax))
             echo "Submitting array=[$arraymin - $arraymax]"
             sbatch $partition $requeue $exclusive $time $other \
                 --mem-per-cpu=$mem \
                 --array=$arraymin-$arraymax --job-name=$jobname \
                 run_jobarray_parallel.sh $exec $inputfile
-            $seedcount=$(($seedcount+stepsize))
+            $seedcount=$((seedcount+stepsize))
         done
 
     else
