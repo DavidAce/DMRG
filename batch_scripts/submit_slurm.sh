@@ -71,7 +71,7 @@ for inputfile in $inputfiles; do
     [ -e "$inputfile" ] || continue
     seedmin=$((count*nsims))
     seedmax=$((count*nsims+nsims-1))
-    #echo "Submitting array=[$nmin - $nmax]"
+    echo "Submitting jobs=[$nmin - $nmax]"
 
     if [ "$gnuparallel" = true ]; then
         stepsize=$(( stepsize < nsims ? stepsize : nsims ))
@@ -79,6 +79,7 @@ for inputfile in $inputfiles; do
             arraymin=$count
             arraymax=$((count+stepsize-1))
             arraymax=$(( arraymax < seedmax ? arraymax : seedmax))
+            echo "Submitting array=[$arraymin - $arraymax]"
             sbatch $partition $requeue $exclusive $time $other \
                 --mem-per-cpu=$mem \
                 --array=$arraymin-$arraymax --job-name=$jobname \
