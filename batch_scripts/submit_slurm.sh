@@ -6,24 +6,31 @@ PROGNAME=$0
 usage() {
   cat << EOF >&2
 
-Usage            : $PROGNAME  [-h ] [-m <mode>] [-n <num sims>] [-p <partition>] [-t <time>]
+Usage            : $PROGNAME  [-h ] [-m <mode>] [-n <num sims>] [-p <partition>] [-t <time>] [-o <other>]
 -h               : Help. Shows this text.
--m <mode>        : Release | RelWithDebInfo | Debug | Profile |  (default = Release)
+-b <build type>  : Release | RelWithDebInfo | Debug | Profile |  (default = Release)
+-e               : Enable --exclusive mode. (default off)
+-m <memory (MB)> : Reserved amount of ram for each task in MB. (default = 4000)
 -n <num sims>    : Number of simulations (default 10)
 -p <partition>   : Partition name (default = )
 -t <time>        : Time for each run (default = 4:00:00)
+-o <other>       : Other options passed to sbatch
 EOF
   exit 1
 }
 
-mode=Release
+build=Release
 nsims=10
 partition=all
 time=0-4:00:00
-while getopts hm:n:p:t: o; do
+exclusive=""
+mem=4000
+while getopts hb:em:n:p:t: o; do
     case $o in
         (h) usage ;;
-        (m) mode=$OPTARG;;
+        (b) mode=$OPTARG;;
+        (e) exclusive=--exclusive;;
+        (m) mem=$OPTARG;;
         (n) nsims=$OPTARG;;
         (p) partition=$OPTARG;;
         (t) time=0-$OPTARG;;
@@ -54,6 +61,6 @@ for inputfile in $inputfiles; do
     nmin=$((count*nsims))
     nmax=$((count*nsims+nsims-1))
     echo "Submitting array=[$nmin - $nmax]"
-    sbatch --partition=$partition --time=$time --array=$nmin-$nmax run_jobarray.sh $exec $inputfile
+    sbatch --partition=$partition --time=$time --array=$nmin-$nmax $exclusive run_jobarray.sh $exec $inputfile
     count=$((count+1))
 done
