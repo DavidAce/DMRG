@@ -4,7 +4,8 @@
 #SBATCH --error=logs/DMRG-%A_%a.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --oversubscribe
+#SBATCH --ntasks-per-core=1
+
 
 exec=${1}
 inputfile=${2}
