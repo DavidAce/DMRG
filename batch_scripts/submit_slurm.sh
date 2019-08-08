@@ -67,7 +67,7 @@ fi
 
 while [ $((stepsize % nsims)) != 0  ]; do
     stepsize=$((stepsize-1))
-    echo "adjusted stepsize = $stepsize"
+    echo "adjusted stepsize = $stepsize , mod= $((stepsize % nsims))"
 done
 
 inputfiles=$(find -L input -type f -name '*.cfg')
