@@ -67,7 +67,6 @@ fi
 
 inputfiles=$(find -L input -type f -name '*.cfg')
 filecount=0
-seedcount=0
 for inputfile in $inputfiles; do
     [ -e "$inputfile" ] || continue
     seedmin=$((filecount*nsims))
@@ -78,18 +77,10 @@ for inputfile in $inputfiles; do
         module load parallel
         module load parallel/20181122-nsc1
         stepsize=$(( stepsize < nsims ? stepsize : nsims ))
-        while [[ $seedcount -lt $seedmax ]]; do
-            arraymin=$seedcount
-            arraymax=$((arraymin+stepsize-1))
-            arraymax=$((arraymax < seedmax ? arraymax : seedmax))
-            echo "Submitting array=[$arraymin - $arraymax]"
-            sbatch $partition $requeue $exclusive $time $other \
-                --mem-per-cpu=$mem \
-                --array=$arraymin-$arraymax --job-name=$jobname \
-                run_jobarray_parallel.sh $exec $inputfile
-            seedcount=$((seedcount+stepsize))
-        done
-
+        sbatch $partition $requeue $exclusive $time $other \
+            --mem-per-cpu=$mem \
+            --array=$seedmin-$seedmax:$stepsize --job-name=$jobname \
+            run_jobarray_parallel.sh $exec $inputfile
     else
         sbatch $partition $requeue $exclusive $time $other \
             --mem-per-cpu=$mem \
