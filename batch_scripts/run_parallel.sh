@@ -2,8 +2,8 @@
 
 #SBATCH --nodes=1
 #SBATCH --kill-on-invalid-dep=yes
-#SBATCH --output=logs/DMRG-%A_%a.out
-#SBATCH --error=logs/DMRG-%A_%a.err
+#SBATCH --output=logs/DMRG-%A.out
+#SBATCH --error=logs/DMRG-%A.err
 
 
 
@@ -12,7 +12,7 @@ inputfile=${2}
 inputbase=$(basename $inputfile .cfg)
 nmin=${3}
 nmax=${4}
-outdir=logs/jobarray_$nmin
+outdir=logs/seed_$nmin-$nmax
 mkdir -p $outdir
 
 echo "Running job $SLURM_JOB_ID, seeds [$nmin - $nmax] at $HOSTNAME with inputfile $inputfile"
