@@ -14,7 +14,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -j <job name>                       : Job name. (default=DMRG)
 -k <step size>                      : Step size of job arrays,for use with GNU Parallel (default = 32)
 -m <memory (MB)>                    : Reserved amount of ram for each task in MB. (default = 4000)
--n <num sims/arrays>                : Number of simulations (default 10). If running with GNU Parallel, this is the number of arrays, and simulations = num arrays * bunch size.
+-n <num sims>                       : Number of simulations per input file (default 10)
 -o <other>                          : Other options passed to sbatch
 -p <partition>                      : Partition name (default = all)
 -r <requeue>                        : Enable --requeue, for requeuing in case of failure (default OFF)
@@ -69,22 +69,30 @@ inputfiles=$(find -L input -type f -name '*.cfg')
 count=0
 for inputfile in $inputfiles; do
     [ -e "$inputfile" ] || continue
-    nmin=$((count*nsims))
-    nmax=$((count*nsims+nsims-1))
+    seedmin=$((count*nsims))
+    seedmax=$((count*nsims+nsims-1))
     #echo "Submitting array=[$nmin - $nmax]"
 
     if [ "$gnuparallel" = true ]; then
-        sbatch $partition $requeue $exclusive $time $other \
-            --mem-per-cpu=$mem \
-            --array=$nmin-$nmax$stepsize --job-name=$jobname \
-            run_jobarray_parallel.sh $exec $inputfile
+        stepsize=$(( stepsize < nsims ? stepsize : nsims ))
+        while [  $count -lt $seedmax ]; do
+            arraymin=$count
+            arraymax=$((count + stepsize -1))
+            arraymax=$(( arraymax < seedmax ? arraymax : seedmax))
+            sbatch $partition $requeue $exclusive $time $other \
+                --mem-per-cpu=$mem \
+                --array=$arraymin-$arraymax --job-name=$jobname \
+                run_jobarray_parallel.sh $exec $inputfile
+            count=$((count+stepsize))
+        done
+
     else
         sbatch $partition $requeue $exclusive $time $other \
             --mem-per-cpu=$mem \
-            --array=$nmin-$nmax$maxtasks --job-name=$jobname \
+            --array=$seedmin-$seedmax$maxtasks --job-name=$jobname \
             run_jobarray.sh $exec $inputfile
+        count=$((count+1))
     fi
 
 
-    count=$((count+1))
 done
