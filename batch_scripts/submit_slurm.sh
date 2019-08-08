@@ -31,7 +31,7 @@ jobname=DMRG
 stepsize=:32
 mem=4000
 time=--time=0-1:00:00
-while getopts hb:ej:k:m:n:o:p:rs:t: o; do
+while getopts hb:egj:k:m:n:o:p:rs:t: o; do
     case $o in
         (h) usage ;;
         (b) build=$OPTARG;;
