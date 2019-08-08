@@ -14,9 +14,9 @@ nmax=$SLURM_ARRAY_TASK_MAX
 outdir=logs/jobarray_$SLURM_ARRAY_JOB_ID
 mkdir -p $outdir
 
-parallel --dry-run --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log  $exec $inputfile ::: {$nmin..$nmax}  '2>&1' ">" $outdir/$inputbase_{}.out
+parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log  $exec $inputfile ::: {$nmin..$nmax}
 
-
+# '2>&1' ">" $outdir/$inputbase_{}.out
 # Explanation
 
 # $(seq $nmin $nmax) will print a sequence of seeds from nmin to nmax. Each number is piped with | to parallel,
