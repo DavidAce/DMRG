@@ -10,18 +10,18 @@
 exec=${1}
 inputfile=${2}
 inputbase=$(basename $inputfile .cfg)
-nmin=$SLURM_ARRAY_TASK_ID
-nmax=$((nmin + SLURM_ARRAY_TASK_STEP - 1))
-outdir=logs/jobarray_$SLURM_ARRAY_JOB_ID
+nmin=${3}
+nmax=${4}
+outdir=logs/jobarray_$nmin
 mkdir -p $outdir
 
-echo "Running job $SLURM_ARRAY_JOB_ID, id [$nmin - $nmax] at $HOSTNAME with inputfile $inputfile"
-echo "ARRAY JOB ID     : $SLURM_ARRAY_JOB_ID"
-echo "ARRAY TASK COUNT : $SLURM_ARRAY_TASK_COUNT"
-echo "ARRAY TASK ID    : $SLURM_ARRAY_TASK_ID"
-echo "ARRAY TASK MAX   : $SLURM_ARRAY_TASK_MAX"
-echo "ARRAY TASK MIN   : $SLURM_ARRAY_TASK_MIN"
-echo "ARRAY TASK STEP  : $SLURM_ARRAY_TASK_STEP"
+echo "Running job $SLURM_JOB_ID, seeds [$nmin - $nmax] at $HOSTNAME with inputfile $inputfile"
+#echo "ARRAY JOB ID     : $SLURM_ARRAY_JOB_ID"
+#echo "ARRAY TASK COUNT : $SLURM_ARRAY_TASK_COUNT"
+#echo "ARRAY TASK ID    : $SLURM_ARRAY_TASK_ID"
+#echo "ARRAY TASK MAX   : $SLURM_ARRAY_TASK_MAX"
+#echo "ARRAY TASK MIN   : $SLURM_ARRAY_TASK_MIN"
+#echo "ARRAY TASK STEP  : $SLURM_ARRAY_TASK_STEP"
 
 echo "CPUS ON  NODE  : $SLURM_CPUS_ON_NODE"
 echo "CPUS PER NODE  : $SLURM_JOB_CPUS_PER_NODE"

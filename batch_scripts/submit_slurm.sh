@@ -86,10 +86,17 @@ for inputfile in $inputfiles; do
         module load parallel
         module load parallel/20181122-nsc1
         stepsize=$(( stepsize < nsims ? stepsize : nsims ))
-        sbatch $partition $requeue $exclusive $time $other \
-            --mem-per-cpu=$mem \
-            --array=$seedmin-$seedmax:$stepsize --job-name=$jobname \
-            run_jobarray_parallel.sh $exec $inputfile
+        seedcount=seedmin
+        while [ seedcount -lt seedmax ] ; do
+            nmin=$seedcount
+            nmax=$((nmin + stepsize - 1))
+            nmax=$((nmax < seedmax ? nmax : seedmax))
+            sbatch $partition $requeue $exclusive $time $other \
+                --mem-per-cpu=$mem \
+                --job-name=$jobname \
+                run_parallel.sh $exec $inputfile $nmin $nmax
+            seedcount=$((nmax + 1))
+        done
     else
         sbatch $partition $requeue $exclusive $time $other \
             --mem-per-cpu=$mem \
