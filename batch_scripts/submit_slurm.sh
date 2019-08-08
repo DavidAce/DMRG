@@ -68,7 +68,6 @@ for inputfile in $inputfiles; do
     nmax=$((count*nsims+nsims-1))
     #echo "Submitting array=[$nmin - $nmax]"
     sbatch $partition $requeue $exclusive $time $other \
-            --hint=compute_bound \
             --mem-per-cpu=$mem \
             --array=$nmin-$nmax$nsimu --job-name=$jobname \
             run_jobarray.sh $exec $inputfile
