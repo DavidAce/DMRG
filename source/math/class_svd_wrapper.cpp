@@ -18,12 +18,12 @@
 //#define EIGEN_MALLOC_ALREADY_ALIGNED 0
 
 
-//#include <complex.h>
-//#undef I
+#include <complex.h>
+#undef I
 
 //For svd debugging
-#include <h5pp/h5pp.h>
-#include <simulation/nmspc_settings.h>
+//#include <h5pp/h5pp.h>
+//#include <simulation/nmspc_settings.h>
 
 
 #include <Eigen/SVD>
@@ -50,6 +50,8 @@ void class_SVD::setThreshold(double newThreshold) {
 template<typename Scalar>
 std::tuple<class_SVD::MatrixType<Scalar>, class_SVD::VectorType<Scalar>,class_SVD::MatrixType<Scalar> , long>
 class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
+    if (use_lapacke) return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
+
     MatrixType<Scalar> mat = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows,cols);
 //    auto mat = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows,cols);
     if (rows <= 0)              throw std::runtime_error("SVD error: rows() == 0");
@@ -58,11 +60,11 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
     if (mat.isZero(0))          throw std::runtime_error("SVD error: matrix is all zeros");
 
     //Debugging, save matrix into h5 file
-    std::string outputFilename      = "svdmatrix_" + std::to_string(settings::model::seed_init) + ".h5";
-    size_t      logLevel  = 2;
-    h5pp::File file(outputFilename,h5pp::AccessMode::READWRITE, h5pp::CreateMode::TRUNCATE,logLevel);
-
-    file.writeDataset(mat, "svdmatrix");
+//    std::string outputFilename      = "svdmatrix_" + std::to_string(settings::model::seed_init) + ".h5";
+//    size_t      logLevel  = 2;
+//    h5pp::File file(outputFilename,h5pp::AccessMode::READWRITE, h5pp::CreateMode::TRUNCATE,logLevel);
+//
+//    file.writeDataset(mat, "svdmatrix");
 
 
 
@@ -83,8 +85,10 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
                     << "  Rank             = " << rank << '\n'
                     << "  U all finite     : " << std::boolalpha << SVD.matrixU().leftCols(rank).allFinite() << '\n'
                     << "  S all finite     : " << std::boolalpha << SVD.singularValues().head(rank).allFinite() << '\n'
-                    << "  V all finite     : " << std::boolalpha << SVD.matrixV().leftCols(rank).allFinite() << '\n';
-        throw std::runtime_error("SVD error:  Erroneous results");
+                    << "  V all finite     : " << std::boolalpha << SVD.matrixV().leftCols(rank).allFinite() << '\n'
+                    << "Trying SVD with LAPACKE instead \n";
+        return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
+//        throw std::runtime_error("SVD error:  Erroneous results");
     }
 
 

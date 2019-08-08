@@ -416,12 +416,14 @@ if(ENABLE_TESTS)
     add_subdirectory(tests/arpack++_mps      EXCLUDE_FROM_ALL)
     add_subdirectory(tests/file_io           EXCLUDE_FROM_ALL)
     add_subdirectory(tests/eigsolver         EXCLUDE_FROM_ALL)
+    add_subdirectory(tests/svdwrapper        EXCLUDE_FROM_ALL)
 
     add_custom_target(TEST-all ALL
             DEPENDS TEST-arpack++_simple
             DEPENDS TEST-arpack++_mps
             DEPENDS TEST-file_io
             DEPENDS TEST-eigsolver
+            DEPENDS TEST-svdwrapper
             DEPENDS ${PROJECT_NAME}
             )
 

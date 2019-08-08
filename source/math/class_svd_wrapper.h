@@ -13,9 +13,13 @@ class class_SVD{
 private:
     double SVDThreshold         = 1e-12;
     double truncation_error     = 0;
-
     template <typename Scalar> using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
     template <typename Scalar> using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
+
+    template<typename Scalar>
+    std::tuple<MatrixType<Scalar>, VectorType<Scalar>,MatrixType<Scalar>, long>
+    do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, long rank_max);
+
 
     template<typename Scalar>
     std::tuple<MatrixType<Scalar>, VectorType<Scalar>,MatrixType<Scalar>, long>
@@ -35,7 +39,7 @@ private:
 public:
 
     class_SVD()=default;
-
+    bool   use_lapacke          = false;
     double get_truncation_error();
     void setThreshold(double newThreshold);
 
@@ -48,15 +52,19 @@ public:
     template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
     decompose(const Eigen::Tensor<Scalar,2> &tensor, const long chi_max);
+
+    template<typename Scalar>
+    std::tuple<MatrixType<Scalar> ,VectorType<Scalar>, MatrixType<Scalar>>
+    decompose(const MatrixType<Scalar> &matrix);
+
     template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
     decompose(const Eigen::Tensor<Scalar,3> &tensor, const long rows,const long cols);
+
     template<typename Scalar,auto rank>
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
     schmidt  (const Eigen::Tensor<Scalar,rank> &tensor, long dL, long dR, long chiL, long chi_max, long chiR);
-    template<typename Scalar>
-    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-    schmidt  (const Eigen::Tensor<Scalar,2> &tensor);
+
     template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
     schmidt  (const Eigen::Tensor<Scalar,3> &tensor, long rows, long cols);
@@ -128,6 +136,17 @@ class_SVD::decompose(const Eigen::Tensor<Scalar,2> &tensor, const long chi_max) 
                            Textra::Matrix_to_Tensor2(V)
     );
 }
+
+template<typename Scalar>
+std::tuple<class_SVD::MatrixType<Scalar> ,class_SVD::VectorType<Scalar>, class_SVD::MatrixType<Scalar>>
+class_SVD::decompose(const class_SVD::MatrixType<Scalar> &matrix){
+    auto[U,S,V,rank] = do_svd(matrix);
+    return std::make_tuple(U,
+                           S.normalized().template cast<Scalar>(),
+                           V
+    );
+}
+
 
 template<typename Scalar, auto tensor_rank>
 std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
