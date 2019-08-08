@@ -75,9 +75,9 @@ for inputfile in $inputfiles; do
 
     if [ "$gnuparallel" = true ]; then
         stepsize=$(( stepsize < nsims ? stepsize : nsims ))
-        while [  $count -lt $seedmax ]; do
+        while [[ $count -lt $seedmax ]]; do
             arraymin=$count
-            arraymax=$((count + stepsize -1))
+            arraymax=$((count+stepsize-1))
             arraymax=$(( arraymax < seedmax ? arraymax : seedmax))
             sbatch $partition $requeue $exclusive $time $other \
                 --mem-per-cpu=$mem \
