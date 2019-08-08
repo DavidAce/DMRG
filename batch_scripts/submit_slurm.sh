@@ -85,7 +85,7 @@ for inputfile in $inputfiles; do
                 --mem-per-cpu=$mem \
                 --array=$arraymin-$arraymax --job-name=$jobname \
                 run_jobarray_parallel.sh $exec $inputfile
-            $seedcount=$((seedcount+stepsize))
+            seedcount=$((seedcount+stepsize))
         done
 
     else
