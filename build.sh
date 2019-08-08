@@ -4,52 +4,52 @@ PROGNAME=$0
 
 usage() {
   cat << EOF >&2
-
-Usage            : $PROGNAME [-c] [-h ] [-j <num_threads>] [-l] [-m <mode>] [-t <target>] [-a <march>]
+Usage            : $PROGNAME [-option <argument>]
 
 -a               : Choose microarchitecture for cxx and openblas. | core2 | nehalem | sandybridge | haswell | native | (default = sandybridge)
+-b <build type>  : Build type | Release | RelWithDebInfo | Debug | Profile |  (default = Release)
 -c               : Clear CMake files before build (delete ./build)
 -g <compiler>    : Compiler        | GNU | Clang | (default = "")
 -h               : Help. Shows this text.
 -i <ON|OFF>      : Intel MKL use   | ON | OFF | (default = OFF)
 -j <num_threads> : Number of threads used by CMake
 -l               : Clear downloaded libraries before build (i.e. delete ./libs and ./cmake-build-libs)
--m <mode>        : Release         | Debug | Profile |  (default = Release)
 -o <ON|OFF>      : OpenMP use      | ON | OFF | (default = OFF)
 -s <ON|OFF>      : Shared libs     | ON | OFF | (default = OFF)
 -t <target>      : DMRG++          | all | hdf5_test_target | arpack++_simple_test_target | arpack++_mps_test_target | (default = all)
--w <path>        : Path to gcc installation (default = "")
+-p <path>        : Path to gcc installation (default = )
+
+EXAMPLE:
+./build.sh -s OFF -a native -j 20 -o OFF  -i ON -b Release -c  -g Clang
 EOF
   exit 1
 }
 
 
 target="all"
-mode="Release"
+build="Release"
 clear_cmake=""
 clear_libs=""
-make_threads="8"
 march="sandybridge"
 omp="OFF"
 mkl="OFF"
 shared="OFF"
 compiler=""
-gcc_toolchain=""
 
-while getopts a:cg:hi:j:lm:o:s:t: o; do
+while getopts a:b:cg:hi:j:lo:p:s:t: o; do
     case $o in
 	    (a) march=$OPTARG;;
+        (b) build=$OPTARG;;
         (c) clear_cmake="true";;
         (g) compiler=$OPTARG;;
         (h) usage ;;
         (j) make_threads=$OPTARG;;
         (l) clear_libs="true";;
-        (m) mode=$OPTARG;;
         (o) omp=$OPTARG;;
+        (p) gcc_toolchain=--gcc-toolchain=$OPTARG;;
         (i) mkl=$OPTARG;;
         (s) shared=$OPTARG;;
         (t) target=$OPTARG;;
-        (w) gcc_toolchain=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
   esac
@@ -120,7 +120,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     elif [ "$compiler" = "Clang" ] ; then
         module load Clang
         if [ -z "$gcc_toolchain" ] ; then
-            gcc_toolchain=$EBROOTGCCCORE
+            gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE
         fi
         export CC=clang
         export CXX=clang++
@@ -151,7 +151,7 @@ elif [[ "$HOSTNAME" == *"anderson"* ]];then
     elif [ "$compiler" = "Clang" ] ; then
         module load Clang
         if [ -z "$gcc_toolchain" ] ; then
-            gcc_toolchain=$EBROOTGCCCORE
+            gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE
         fi
         export CC=clang
         export CXX=clang++
@@ -168,7 +168,7 @@ echo "CXX             :   $CXX"
 echo "Micro arch.     :   $march"
 echo "Target          :   $target"
 echo "Build threads   :   $make_threads"
-echo "Mode            :   $mode"
+echo "Build Type      :   $build"
 echo "OpenMP          :   $omp"
 echo "Intel MKL       :   $mkl"
 echo "Shared build    :   $shared"
@@ -177,7 +177,7 @@ echo "CMake version   :   $(cmake --version) at $(which cmake)"
 
 
 
-cmake -E make_directory build/$mode
-cd build/$mode
-cmake -DCMAKE_BUILD_TYPE=$mode -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DBUILD_SHARED_LIBS=$shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
+cmake -E make_directory build/$build
+cd build/$build
+cmake -DCMAKE_BUILD_TYPE=$build -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DBUILD_SHARED_LIBS=$shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
 cmake --build . --target $target -- -j $make_threads
