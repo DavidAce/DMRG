@@ -66,25 +66,26 @@ else
 fi
 
 inputfiles=$(find -L input -type f -name '*.cfg')
-count=0
+filecount=0
+seedcount=0
 for inputfile in $inputfiles; do
     [ -e "$inputfile" ] || continue
-    seedmin=$((count*nsims))
-    seedmax=$((count*nsims+nsims-1))
+    seedmin=$((filecount*nsims))
+    seedmax=$((filecount*nsims+nsims-1))
     echo "Submitting jobs=[$seedmin - $seedmax]"
 
     if [ "$gnuparallel" = true ]; then
         stepsize=$(( stepsize < nsims ? stepsize : nsims ))
-        while [[ $count -lt $seedmax ]]; do
-            arraymin=$count
-            arraymax=$((count+stepsize-1))
+        while [[ $seedcount -lt $seedmax ]]; do
+            arraymin=$seedcount
+            arraymax=$(($arraymin+stepsize-1))
             arraymax=$(( arraymax < seedmax ? arraymax : seedmax))
             echo "Submitting array=[$arraymin - $arraymax]"
             sbatch $partition $requeue $exclusive $time $other \
                 --mem-per-cpu=$mem \
                 --array=$arraymin-$arraymax --job-name=$jobname \
                 run_jobarray_parallel.sh $exec $inputfile
-            count=$((count+stepsize))
+            $seedcount=$(($seedcount+stepsize))
         done
 
     else
@@ -92,8 +93,8 @@ for inputfile in $inputfiles; do
             --mem-per-cpu=$mem \
             --array=$seedmin-$seedmax%$maxtasks --job-name=$jobname \
             run_jobarray.sh $exec $inputfile
-        count=$((count+1))
     fi
+    filecount=$((filecount+1))
 
 
 done
