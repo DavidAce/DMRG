@@ -2,6 +2,7 @@
 
 if(NOT TARGET Eigen3::Eigen)
     message(STATUS "Searching for Eigen3")
+    find_package(Eigen3 3.3.7  PATHS ${INSTALL_DIRECTORY}/Eigen3 NO_DEFAULT_PATH NO_MODULE)
     #find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_DEFAULT_PATH NO_MODULE)
     #find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_CMAKE_PACKAGE_REGISTRY NO_MODULE)
     #find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3)
@@ -46,11 +47,11 @@ elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
 
     include(ExternalProject)
     ExternalProject_Add(external_EIGEN3
-            GIT_REPOSITORY https://github.com/DavidAce/eigen-git-mirror.git
-            #GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
-            GIT_TAG 3.3.7-fix-svd-segfault
+            GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
+            GIT_TAG 3.3.7
             GIT_PROGRESS false
             GIT_SHALLOW true
+            PATCH_COMMAND git apply ${PROJECT_SOURCE_DIR}/cmake-modules/patches/Eigen_3.3.7.patch
             PREFIX      ${BUILD_DIRECTORY}/Eigen3
             INSTALL_DIR ${INSTALL_DIRECTORY}/Eigen3
             CMAKE_ARGS

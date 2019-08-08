@@ -2,14 +2,15 @@
 cmake_minimum_required(VERSION 3.10)
 #project(svdwrapper)
 add_executable(TEST-svdwrapper svdwrapper.cpp
-        ${PROJECT_SOURCE_DIR}/source/math/class_svdwrapper.cpp
-        ${PROJECT_SOURCE_DIR}/source/general/class_tic_toc.cpp)
+        ${PROJECT_SOURCE_DIR}/source/math/class_svd_wrapper.h
+        ${PROJECT_SOURCE_DIR}/source/math/class_svd_wrapper.cpp
+        ${PROJECT_SOURCE_DIR}/source/math/class_svd_wrapper_lapacke.cpp)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 target_include_directories(TEST-svdwrapper PUBLIC ${PROJECT_SOURCE_DIR}/source)
 target_include_directories(TEST-svdwrapper PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_compile_definitions(TEST-svdwrapper PRIVATE TEST_MATRIX_DIR="${PROJECT_SOURCE_DIR}/tests/svdwrapper")
+target_compile_definitions(TEST-svdwrapper PRIVATE TEST_DIR="${PROJECT_SOURCE_DIR}/tests/svdwrapper")
 
 ################################################
 ###  Force cmake to find .a library suffixes ###
