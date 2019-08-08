@@ -87,7 +87,7 @@ for inputfile in $inputfiles; do
         module load parallel/20181122-nsc1
         stepsize=$(( stepsize < nsims ? stepsize : nsims ))
         seedcount=seedmin
-        while [ seedcount -lt seedmax ] ; do
+        while [ $seedcount -lt $seedmax ] ; do
             nmin=$seedcount
             nmax=$((nmin + stepsize - 1))
             nmax=$((nmax < seedmax ? nmax : seedmax))
