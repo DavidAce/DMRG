@@ -138,7 +138,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     list(APPEND COMMON_OPTIONS -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes
             -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare -Wno-unused-local-typedefs)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    list(APPEND COMMON_OPTIONS --gcc-toolchain=${GCC_TOOLCHAIN})
+    list(APPEND COMMON_OPTIONS ${GCC_TOOLCHAIN})
     list(APPEND COMMON_OPTIONS -stdlib=libstdc++
             -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-unused-parameter
             -Wno-overloaded-virtual -Wno-uninitialized -Wno-unused-local-typedef -Wno-unused-parameter -Wno-ignored-qualifiers -Wno-format-pedantic)
@@ -224,7 +224,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     set(TEST_REQUIRED_FLAGS     "-std=c++17 -lstdc++fs" )
     set(TEST_REQUIRED_LIBRARIES "")
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(TEST_REQUIRED_FLAGS     "-stdlib=libstdc++ -lstdc++fs -std=c++17 --gcc-toolchain=${GCC_TOOLCHAIN}" )
+    set(TEST_REQUIRED_FLAGS     "-stdlib=libstdc++ -lstdc++fs -std=c++17 ${GCC_TOOLCHAIN}" )
     set(TEST_REQUIRED_LIBRARIES "-stdlib=libstdc++ -lstdc++fs -std=c++17")
 endif()
 CheckExperimentalHeaders("${TEST_REQUIRED_FLAGS}" "${TEST_REQUIRED_LIBRARIES}")
