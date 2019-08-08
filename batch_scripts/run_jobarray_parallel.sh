@@ -14,7 +14,7 @@ nmax=$SLURM_ARRAY_TASK_MAX
 outdir=logs/jobarray_$SLURM_ARRAY_JOB_ID
 mkdir -p $outdir
 
-parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log  $exec $inputfile ::: {$nmin..$nmax}
+parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log  $exec $inputfile ::: $(seq $nmin $nmax)
 
 # '2>&1' ">" $outdir/$inputbase_{}.out
 # Explanation
