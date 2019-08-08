@@ -71,7 +71,7 @@ for inputfile in $inputfiles; do
     [ -e "$inputfile" ] || continue
     seedmin=$((count*nsims))
     seedmax=$((count*nsims+nsims-1))
-    echo "Submitting jobs=[$nmin - $nmax]"
+    echo "Submitting jobs=[$seedmin - $seedmax]"
 
     if [ "$gnuparallel" = true ]; then
         stepsize=$(( stepsize < nsims ? stepsize : nsims ))
