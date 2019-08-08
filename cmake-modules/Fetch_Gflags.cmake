@@ -28,7 +28,7 @@ else()
     message(STATUS "gflags will be installed into ${INSTALL_DIRECTORY}/gflags on first build.")
     unset(FLAGS CACHE)
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        set(FLAGS "${FLAGS} --gcc-toolchain=${GCC_TOOLCHAIN} -stdlib=libstdc++")
+        set(FLAGS "${FLAGS}  -stdlib=libstdc++ ${GCC_TOOLCHAIN}")
     endif()
     include(ExternalProject)
     ExternalProject_Add(external_GFLAGS
