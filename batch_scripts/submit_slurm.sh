@@ -19,6 +19,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -p <partition>                      : Partition name (default = all)
 -r <requeue>                        : Enable --requeue, for requeuing in case of failure (default OFF)
 -s <max simultaneous tasks>         : Simultaneous tasks for each job array (default = 32)
+-S <start seed>                     : Starting seed, if you don't want to start from 0.
 -t <time>                           : Time for each run (default = 1:00:00, i.e. 1 hour)
 EOF
   exit 1
@@ -30,8 +31,9 @@ maxtasks=32
 jobname=DMRG
 stepsize=32
 mem=4000
+startseed=0
 time=--time=0-1:00:00
-while getopts hb:egj:k:m:n:o:p:rs:t: o; do
+while getopts hb:egj:k:m:n:o:p:rs:S:t: o; do
     case $o in
         (h) usage ;;
         (b) build=$OPTARG;;
@@ -45,6 +47,7 @@ while getopts hb:egj:k:m:n:o:p:rs:t: o; do
         (p) partition=--partition=$OPTARG;;
         (r) requeue=--requeue;;
         (s) maxtasks=$OPTARG;;
+        (s) startseed=$OPTARG;;
         (t) time=--time=0-$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
@@ -78,8 +81,8 @@ inputfiles=$(find -L input -type f -name '*.cfg')
 filecount=0
 for inputfile in $inputfiles; do
     [ -e "$inputfile" ] || continue
-    seedmin=$((filecount*nsims))
-    seedmax=$((filecount*nsims+nsims-1))
+    seedmin=$((filecount*nsims + startseed))
+    seedmax=$((seedmin+nsims-1))
     echo "Submitting jobs=[$seedmin - $seedmax]"
 
     if [ "$gnuparallel" = true ]; then
