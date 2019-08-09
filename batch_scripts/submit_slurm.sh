@@ -47,7 +47,7 @@ while getopts hb:egj:k:m:n:o:p:rs:S:t: o; do
         (p) partition=--partition=$OPTARG;;
         (r) requeue=--requeue;;
         (s) maxtasks=$OPTARG;;
-        (s) startseed=$OPTARG;;
+        (S) startseed=$OPTARG;;
         (t) time=--time=0-$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
