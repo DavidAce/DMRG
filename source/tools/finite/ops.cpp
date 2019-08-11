@@ -150,11 +150,22 @@ class_finite_state tools::finite::ops::get_closest_parity_state(const class_fini
 
 class_finite_state tools::finite::ops::get_closest_parity_state(const class_finite_state &state, std::string paulistring) {
     tools::log->trace("Finding closest projection");
-    if      (paulistring == "sx"){return get_closest_parity_state(state,qm::spinOneHalf::sx);}
-    else if (paulistring == "sy"){return get_closest_parity_state(state,qm::spinOneHalf::sy);}
-    else if (paulistring == "sz"){return get_closest_parity_state(state,qm::spinOneHalf::sz);}
+    if      (paulistring == "sx")  {return get_closest_parity_state(state,qm::spinOneHalf::sx);}
+    else if (paulistring == "sy")  {return get_closest_parity_state(state,qm::spinOneHalf::sy);}
+    else if (paulistring == "sz")  {return get_closest_parity_state(state,qm::spinOneHalf::sz);}
+    else if (paulistring == "none"){return state;}
+    else if (paulistring == "random"){
+        auto coeffs = Eigen::Vector4d::Random().normalized();
+        Eigen::Matrix2cd random_C2 =
+                    coeffs(0) * qm::spinOneHalf::Id
+                +   coeffs(1) * qm::spinOneHalf::sx
+                +   coeffs(2) * qm::spinOneHalf::sy
+                +   coeffs(3) * qm::spinOneHalf::sz;
+        return get_closest_parity_state(state,random_C2);
+    }
     else{
         tools::log->warn(R"(Wrong pauli string. Expected one of  "sx","sy" or "sz". Got: )" + paulistring);
+        tools::log->warn("Taking whichever is closest to current state!");
         auto spin_components = tools::finite::measure::spin_components(state);
         auto max_idx = std::distance(spin_components.begin(), std::max_element(spin_components.begin(),spin_components.end()));
         if(max_idx == 0)      {return get_closest_parity_state(state,"sx"); }

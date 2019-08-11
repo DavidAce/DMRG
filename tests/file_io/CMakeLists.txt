@@ -33,5 +33,5 @@ target_compile_options (TEST-file_io PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTI
 target_compile_options (TEST-file_io PRIVATE "$<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_OPTIONS}>")    ### Release build with debug info options
 
 add_test(NAME file_io_test COMMAND TEST-file_io)
-#add_dependencies(TEST-file_io Eigen3 hdf5::hdf5 hdf5::hdf5_hl hdf5::hdf5_cpp hdf5::hdf5_hl_cpp)
+#add_dependencies(TEST-file_io Eigen3 output::output output::hdf5_hl output::hdf5_cpp output::hdf5_hl_cpp)
 add_dependencies(TEST-file_io Eigen3::Eigen hdf5::hdf5 spdlog::spdlog h5pp::h5pp)

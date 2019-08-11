@@ -29,6 +29,31 @@
 #endif
 
 #include <thread>
+//#include <unistd.h>
+#include <getopt.h>
+#include <gitversion.h>
+
+
+void print_usage(){
+
+std::cout<<
+R"(
+==========  DMRG++  ============
+Usage                       : DMRG++ [-option <value>].
+NOTE                        : Order of argument matters. In particular, set seeds AFTER the input file.
+-h                          : Help. Shows this text.
+-i <input file>             : Full or relative path of the input file that configures the simulation (default = input.cfg)
+-l                          : Enables loading from the given output file (i.e., from a previous simulation)
+-r <seed rng>               : Positive number that seeds the random number generator, used for model params (default = 1)
+-s <seed state>             : Positive number that seed the initial state. Negative is unused (default -1)
+-o <output file>            : Full or relative path to the output file (output)
+-x                          : Do not append seed to the output filename.
+
+)";
+
+}
+
+
 
 /*!
     \brief  Main function. Sets simulation parameters and excecutes the desired algorithms.
@@ -38,56 +63,119 @@
 int main(int argc, char* argv[]) {
     auto log = Logger::setLogger("DMRG",0);
 
+    // print current Git status
+    log->info("Git branch      : {}",GIT::BRANCH);
+    log->info("    commit hash : {}",GIT::COMMIT_HASH);
+    log->info("    revision    : {}",GIT::REVISION);
+
+
+
+    bool append_seed = true;
+    bool load_previous = false;
+    while(true){
+        char opt = getopt(argc, argv, "hi:lr:s:o:x");
+        if (opt == EOF) break;
+        if(optarg == nullptr) log->info("Parsing input argument: -{}",opt);
+        else                  log->info("Parsing input argument: -{} {}",opt,optarg);
+
+        switch(opt){
+            case 'i': {
+                settings::input::input_file = std::string(optarg);
+                class_settings_reader indata(settings::input::input_file);
+                if(indata.found_file){
+                    settings::load_from_file(indata);
+                }else{
+                    log->critical("Could not find input file: {}", settings::input::input_file);
+                    exit(1);
+                }
+                continue;
+            }
+            case 'l': load_previous = true; continue;
+            case 'r': {
+                int seed_init = (int) std::strtol(optarg,nullptr,10);
+                if(seed_init >= 0){
+                    log->info("Replacing model::seed_init {} -> {}", settings::model::seed_init,seed_init);
+                    settings::model::seed_init = seed_init;
+
+                }
+                continue;
+            }
+            case 's': {
+                int seed_state = (int) std::strtol(optarg,nullptr,10);
+                if(seed_state >= 0) {
+                    log->info("Replacing model::seed_state {} -> {}", settings::model::seed_state,seed_state);
+                    settings::model::seed_state = seed_state;
+                }
+                continue;
+            }
+            case 'o': settings::output::output_filename = std::string(optarg); continue;
+            case 'x': append_seed = false; continue;
+            case ':': log->error("Option -{} needs a value", opt); break;
+            case 'h':
+            case '?':
+            default: print_usage(); exit(0);
+            case -1: break;
+        }
+        break;
+    }
+
+
+
 
 
 
     //print all given parameters
     //Load input and output files from command line. If none were given use defaults.
     //Normally an output filename is given in the input file. But it can also be given from command line.
-    std::string inputfile  = "input.cfg";
-    std::string outputfile = "output.h5";
-    int seed_init = -1; //Only accept non-negative seeds
-    int i = 0;
-    std::vector<std::string> allArgs(argv+1, argv + argc);
-    for (auto &arg_word : allArgs){
-        std::istringstream iss(arg_word);
-        std::string arg;
-        while(iss >> arg){
-            log->info("Input argument {} : {}",i++,arg);
-            if (arg.find(".cfg") != std::string::npos) {inputfile  = arg;continue;}
-            if (arg.find(".h5")  != std::string::npos) {outputfile = arg;continue;}
-            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_init < 0){seed_init = std::stoi(arg); continue;}
-        }
-    }
+//    std::string inputfile  = "input.cfg";
+//    std::string outputfile = "output.h5";
+//    int seed_init  = -1; //Only accept non-negative seeds
+//    int seed_state = -1; //Only accept non-negative seeds
+//    int i = 0;
+//    std::vector<std::string> allArgs(argv+1, argv + argc);
+//    for (auto &arg_word : allArgs){
+//        std::istringstream iss(arg_word);
+//        std::string arg;
+//        while(iss >> arg){
+//            log->info("Input argument {} : {}",i++,arg);
+//            if (arg.find(".cfg") != std::string::npos) {inputfile  = arg;continue;}
+//            if (arg.find(".h5")  != std::string::npos) {outputfile = arg;continue;}
+//            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_init  < 0){seed_init  = std::stoi(arg); continue;}
+//            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_state < 0){seed_state = std::stoi(arg); continue;}
+//        }
+//    }
 
 
-    class_settings_reader indata(inputfile);
-    if(indata.found_file){
-        settings::load_from_file(indata);
-    }else{
+
+
+    if(load_previous){
         try{
-            auto h5ppFile = std::make_shared<h5pp::File> (outputfile,h5pp::AccessMode::READONLY,h5pp::CreateMode::OPEN);
+            auto h5ppFile = std::make_shared<h5pp::File> (settings::output::output_filename, h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
             log->info("Loading settings from existing file [{}]", h5ppFile->getFilePath());
             settings::load_from_hdf5(*h5ppFile);
         }catch(std::exception &ex){
-            log->info("Couldn't find an inputfile or previous outputfile to load settings: {}", outputfile,ex.what() );
-            log->info("Running defaults");
+            log->info("Couldn't load from output file: {}", settings::output::output_filename, ex.what() );
+            exit(0);
         }
     }
-    if (outputfile != "output.h5"){
-        log->info("Replacing output filename {} --> {}",settings::hdf5::output_filename, outputfile);
-        settings::hdf5::output_filename = outputfile;
-    }
-    if (seed_init >= 0){
-        log->info("Replacing seed_init {} --> {}", settings::model::seed_init, seed_init);
-        settings::model::seed_init = seed_init;
+
+    if (not load_previous and append_seed and settings::model::seed_init >= 0 ){
         //Append the seed_init to the output filename
         namespace fs = std::experimental::filesystem;
-        fs::path oldFileName = settings::hdf5::output_filename;
-        fs::path newFileName = settings::hdf5::output_filename;
-        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(seed_init) + oldFileName.extension().string() );
-        settings::hdf5::output_filename = newFileName.string();
-        log->info("Appending seed_init to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
+        fs::path oldFileName = settings::output::output_filename;
+        fs::path newFileName = settings::output::output_filename;
+        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(settings::model::seed_init) + oldFileName.extension().string() );
+        settings::output::output_filename = newFileName.string();
+        log->info("Appended model::seed_init to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
+    }
+    if (not load_previous and append_seed and settings::model::seed_state >= 0){
+        //Append the seed_state to the output filename
+        namespace fs = std::experimental::filesystem;
+        fs::path oldFileName = settings::output::output_filename;
+        fs::path newFileName = settings::output::output_filename;
+        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(settings::model::seed_state) + oldFileName.extension().string() );
+        settings::output::output_filename = newFileName.string();
+        log->info("Appended model::seed_state to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
     }
 
 

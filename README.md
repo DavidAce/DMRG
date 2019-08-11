@@ -67,16 +67,16 @@ optionally the final state in MPS form.
 
 To view the data you can use any hdf5-viewer, such as HDFCompass.
 
-The script `analysis/data_analysis.py` (in progress) shows how to analyze the simulation data stored in the hdf5 files. You need to install the python package
+The script `analysis/data_analysis.py` (in progress) shows how to analyze the simulation data stored in the output files. You need to install the python package
 `h5py` from pip or conda to read files in the HDF5 format.
 
 
 ### Minimum Requirements
 The following software is required to build the project:
- - C++ compiler with support for C++17, OpenMP and libstdc++ standard library implementation  (version >= 7). Tested with two compilers:
+ - C++ compiler with support for C++17 and libstdc++ standard library implementation  (version >= 7). Tested with two compilers:
     - GNU GCC versions 7 and 8 (these bundle libstdc++)
-    - Clang version >= 7.0. (you need to manually install libstdc++ version >= 7, that comes bundled with gcc, for instance from `ppa:ubuntu-toolchain-r/test`)
- - CMake version >= 3.9. If you compile CMake from source, remember to enable `curl` (`./bootstrap --system-curl`). 
+    - Clang version >= 6.0. (you need to manually install libstdc++ version >= 7, that comes bundled with gcc, for instance from `ppa:ubuntu-toolchain-r/test`)
+ - CMake version >= 3.10. 
  - *(For library compilation only) Fortran compiler, tested with gfortran-7 and gfortran-8.*
  
 **Ubuntu** 17 or higher will have the above versions in the default repositories. For older distributions, use the ppa `ubuntu-toolchain-r/test` to get newer versions.
@@ -88,8 +88,8 @@ The following software is required to build the project:
 The compilation of DMRG++ requires several libraries. To meet the requirements, you have two options:
 
   1. **Automatic**: let CMake download and compile the libraries below from source into a local folder `./libs`. This is the default behavior if the library is not found on your system. Note that this does *NOT* make a system-wide install, so you can safely delete the `./libs` folder.
-  2. **Manual**: install the libraries yourself with your favorite package manager (e.g. `apt` in ubuntu or `brew` in OSX). The build script will always attempt to find the libraries in your system first.
-  3. **Manual with environment modules** (in construction). You can also load *modules* from the ubuntu command-line tool *environment-modules*. Simply export the variable `<LIBNAME>_DIR` to let CMake know where to look.
+  2. **Manually**: install the libraries yourself with your favorite package manager (e.g. `conda`, `apt` in ubuntu or `brew` in OSX). The build attempts to find libraries in your local system. 
+  3. **Manual with modules from [Easybuild](https://easybuild.readthedocs.io/en/latest/)** (in construction). You can also load *modules* from the ubuntu command-line tool *environment-modules* or *Lmod*.  CMake will look for environment variables such as `EBROOT<libname>` that are defined when loading Easybuild modules.
 
  If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from your package manager.
  
@@ -100,7 +100,8 @@ The compilation of DMRG++ requires several libraries. To meet the requirements, 
  - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on Fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
  - [**Arpackpp**](https://github.com/m-reuter/eigsolver_properties) C++ frontend for Arpack.
  - [**h5pp**](https://github.com/DavidAce/h5pp) a wrapper for HDF5.
- - [**HDF5**](https://support.hdfgroup.org/HDF5/) for hdf5 binary output file support (tested with version >= 1.10).
+ - [**HDF5**](https://support.hdfgroup.org/HDF5/) for output binary output file support (tested with version >= 1.10).
+ - [**ceres**](http://ceres-solver.org/) Optimization library. Here we use the L-BFGS routines. 
  - [**spdlog**](https://github.com/gabime/spdlog) logger).
 
 ---

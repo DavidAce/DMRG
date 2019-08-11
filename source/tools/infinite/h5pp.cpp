@@ -15,21 +15,21 @@ void tools::infinite::io::write_all_state(const class_infinite_state &state, h5p
     if(state.has_been_written){return;}
 
 
-    if (settings::hdf5::storage_level >= StorageLevel::NONE) {
+    if (settings::output::storage_level >= StorageLevel::NONE) {
     }
 
-    if (settings::hdf5::storage_level >= StorageLevel::LIGHT) {
+    if (settings::output::storage_level >= StorageLevel::LIGHT) {
         write_hamiltonian_params(state,h5ppFile,sim_name);
     }
 
-    if (settings::hdf5::storage_level >= StorageLevel::NORMAL) {
+    if (settings::output::storage_level >= StorageLevel::NORMAL) {
         write_2site_mps(state,h5ppFile,sim_name);
         write_2site_mpo(state,h5ppFile,sim_name);
         write_2site_env(state,h5ppFile,sim_name);
         write_2site_env2(state,h5ppFile,sim_name);
     }
 
-    if (settings::hdf5::storage_level >= StorageLevel::FULL) {
+    if (settings::output::storage_level >= StorageLevel::FULL) {
     }
 
     state.has_been_written = true;
@@ -60,7 +60,7 @@ void tools::infinite::io::write_2site_env2 (const class_infinite_state &state, h
 
 void tools::infinite::io::write_hamiltonian_params(const class_infinite_state &state, h5pp::File & h5ppFile, std::string sim_name){
     // Write down the Hamiltonian metadata as a table
-    // Remember to write tensors in row-major state order because that's what hdf5 uses.
+    // Remember to write tensors in row-major state order because that's what output uses.
     Eigen::MatrixXd hamiltonian_props;
 
     auto propsA = state.HA->get_parameter_values();

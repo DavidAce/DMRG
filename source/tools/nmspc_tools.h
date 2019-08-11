@@ -36,6 +36,7 @@ namespace tools{
     {
         using Scalar = std::complex<double>;
         namespace mps {
+            inline bool apply_seed = true;
             extern void initialize                  (class_finite_state & state, size_t length);
             extern void randomize                   (class_finite_state & state);
             extern void normalize                   (class_finite_state & state);

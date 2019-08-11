@@ -15,7 +15,6 @@
 void tools::finite::mps::initialize(class_finite_state &state, const size_t length){
     log->info("Initializing mps");
     using Scalar = class_finite_state::Scalar;
-
     //Generate MPS
     Eigen::Tensor<Scalar,3> G;
     Eigen::Tensor<Scalar,1> L;
@@ -35,6 +34,11 @@ void tools::finite::mps::randomize(class_finite_state &state){
     tools::log->trace("Randomizing mps");
     using Scalar = class_finite_state::Scalar;
     state.unset_measurements();
+    if(apply_seed and settings::model::seed_state >= 0){
+        std::srand((unsigned int) settings::model::seed_state);
+        apply_seed = false;
+    }
+
     Eigen::Tensor<Scalar,1> L (1);
     L.setConstant(1);
 

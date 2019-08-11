@@ -37,7 +37,7 @@ namespace settings {
         inline std::string input_filename = "input.cfg";
     }
 
-    namespace hdf5 {
+    namespace output {
         inline bool         save_logs            = true;                         /*!< If true, saves the history of the simulation in log files, not just the end results  (only enabled on storage level NORMAL and FULL.) */
         inline bool         save_profiling       = true;                         /*!< Whether to save profiling information to file. (only enabled on storage level NORMAL and FULL.) */
         inline std::string  access_mode          = "READWRITE" ;                 /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
@@ -49,8 +49,9 @@ namespace settings {
     //Parameters for the model Hamiltonian
     namespace model {
         inline std::string  model_type     = "tf_ising";        /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising} above*/
-        inline int          seed_init      = 1;                 /*!< Seed for the random number generator if you use random fields in the Hamiltonian. */
-        inline std::string  initial_sector = "sx";              /*!< Initialize in parity symmetry sector: {sx,sy,sz,random,none} */
+        inline int          seed_init      = 1;                 /*!< Main seed for the random number generator. Used for the random fields in the Hamiltonian. */
+        inline int          seed_state     = -1;                /*!< Seed for generating the initial state. If seed_state < 0, seed_init is used instead  */
+        inline std::string  initial_sector = "none";            /*!< Initialize in parity symmetry sector: {sx,sy,sz,random,none} */
 
 
         //Parameters for the transverse-field Ising model

@@ -18,6 +18,7 @@ void settings::load_from_file(class_settings_reader &indata){
     input::input_file                        = indata.get_input_file();
     model::model_type                        = indata.find_parameter<std::string>("model::model_type"                          , model::model_type);
     model::seed_init                         = indata.find_parameter<int>        ("model::seed_init"                           , model::seed_init);
+    model::seed_state                        = indata.find_parameter<int>        ("model::seed_state"                          , model::seed_state);
     model::initial_sector                    = indata.find_parameter<std::string>("model::initial_sector"                      , model::initial_sector);
     model::tf_ising::J                       = indata.find_parameter<double>     ("model::tf_ising::J"                         , model::tf_ising::J);
     model::tf_ising::g                       = indata.find_parameter<double>     ("model::tf_ising::g"                         , model::tf_ising::g);
@@ -100,14 +101,14 @@ void settings::load_from_file(class_settings_reader &indata){
         itebd::write_freq         = indata.find_parameter<int>    ("itebd::write_freq"  , itebd::write_freq);
     }
 
-    //Save data_struct to hdf5
-    hdf5::save_logs                = indata.find_parameter<bool>   ("hdf5::save_logs"               , hdf5::save_logs          );
-    hdf5::save_profiling           = indata.find_parameter<bool>   ("hdf5::save_profiling"          , hdf5::save_profiling        );
-    hdf5::output_filename          = indata.find_parameter<string> ("hdf5::output_filename"         , hdf5::output_filename);
-    hdf5::access_mode              = indata.find_parameter<string> ("hdf5::access_mode"             , hdf5::access_mode);
-    hdf5::create_mode              = indata.find_parameter<string> ("hdf5::create_mode"             , hdf5::create_mode);
-    int storageLevelRead           = indata.find_parameter<int>    ("hdf5::storage_level"           , 2       );
-    hdf5::storage_level            = static_cast<StorageLevel>     (storageLevelRead );
+    //Save data_struct to output
+    output::save_logs                = indata.find_parameter<bool>   ("output::save_logs"               , output::save_logs          );
+    output::save_profiling           = indata.find_parameter<bool>   ("output::save_profiling"          , output::save_profiling        );
+    output::output_filename          = indata.find_parameter<string> ("output::output_filename"         , output::output_filename);
+    output::access_mode              = indata.find_parameter<string> ("output::access_mode"             , output::access_mode);
+    output::create_mode              = indata.find_parameter<string> ("output::create_mode"             , output::create_mode);
+    int storageLevelRead           = indata.find_parameter<int>    ("output::storage_level"           , 2       );
+    output::storage_level            = static_cast<StorageLevel>     (storageLevelRead );
 
     //Profiling
     profiling::on                  = indata.find_parameter<bool>   ("profiling::on"        , profiling::on        );
