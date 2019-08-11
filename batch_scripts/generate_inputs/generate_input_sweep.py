@@ -11,7 +11,7 @@ location    = "../input"
 os.makedirs(location, exist_ok=True)
 
 
-sites        = np.linspace(20,36,5, dtype=int)
+sites        = np.linspace(20,20,1, dtype=int)
 lambdas      = [0] # np.linspace(0,0.2,3)
 deltas       = [0] # np.linspace(-1.0,1.0,5)
 J_log_mean   = np.array([1])
@@ -38,7 +38,7 @@ for num_L in sites:
                     "precision::MaxSitesMultiDmrg"                : "8",
                     "xdmrg::num_sites"                            : str(num_L),
                     "xdmrg::chi_max"                              : "256",
-                    "hdf5::output_filename"                       : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h)+ '/' + basename + '.h5'
+                    "output::output_filename"                     : 'output/L_'+ str(num_L) + '/l_'+str(num_l) + '/J_' +str(num_j) + '/h_'+ str(num_h)+ '/' + basename + '.h5'
                 }
                 num_total = num_total + 1
                 generate_input_file(settings, input_filename, template_filename)
