@@ -16,13 +16,6 @@ outdir=logs/seed_$nmin-$nmax
 mkdir -p $outdir
 
 echo "Running job $SLURM_JOB_ID, seeds [$nmin - $nmax] at $HOSTNAME with inputfile $inputfile"
-#echo "ARRAY JOB ID     : $SLURM_ARRAY_JOB_ID"
-#echo "ARRAY TASK COUNT : $SLURM_ARRAY_TASK_COUNT"
-#echo "ARRAY TASK ID    : $SLURM_ARRAY_TASK_ID"
-#echo "ARRAY TASK MAX   : $SLURM_ARRAY_TASK_MAX"
-#echo "ARRAY TASK MIN   : $SLURM_ARRAY_TASK_MIN"
-#echo "ARRAY TASK STEP  : $SLURM_ARRAY_TASK_STEP"
-
 echo "CPUS ON  NODE  : $SLURM_CPUS_ON_NODE"
 echo "CPUS PER NODE  : $SLURM_JOB_CPUS_PER_NODE"
 echo "CPUS PER TASK  : $SLURM_CPUS_PER_TASK"
@@ -30,7 +23,9 @@ echo "MEM PER CPU    : $SLURM_MEM_PER_CPU"
 echo "MEM PER NODE   : $SLURM_MEM_PER_NODE"
 
 
-parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log --results $outdir $exec $inputfile {} ::: $(seq $nmin $nmax)
+#parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log --results $outdir $exec $inputfile {} ::: $(seq $nmin $nmax)
+parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log $exec $inputfile {} ">" $outdir/$inputbase_{}.out ::: $(seq $nmin $nmax)
+
 
 #parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log  $exec $inputfile {} '2>&1' ">" $outdir/$inputbase_{}.out ::: $(seq $nmin $nmax)
 
