@@ -82,13 +82,13 @@ void class_algorithm_finite::run()
             run_preprocessing();
             run_simulation();
         }else if(simOK and mps_exists){
-            // We can go ahead and load the state from hdf5
+            // We can go ahead and load the state from output
             log->trace("Loading MPS from file");
             try{
                 tools::finite::io::load_from_hdf5(*h5pp_file, *state, sim_status, sim_name);
             }
             catch(std::exception &ex){
-                log->error("Failed to load from hdf5: {}", ex.what());
+                log->error("Failed to load from output: {}", ex.what());
                 throw std::runtime_error("Failed to resume from file: " + std::string(ex.what()));
             }
             catch(...){log->error("Unknown error when trying to resume from file.");}
@@ -279,7 +279,7 @@ void class_algorithm_finite::write_measurements(bool force){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (not state->position_is_any_edge()) {return;}
         if (write_freq() == 0){return;}
-        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
+        if (settings::output::storage_level <= StorageLevel::NONE){return;}
     }
     log->trace("Writing all measurements to file");
     state->unset_measurements();
@@ -294,7 +294,7 @@ void class_algorithm_finite::write_state(bool force){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (not state->position_is_any_edge()) {return;}
         if (write_freq() == 0){return;}
-        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
+        if (settings::output::storage_level <= StorageLevel::NONE){return;}
     }
     log->trace("Writing state to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");

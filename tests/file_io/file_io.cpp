@@ -25,7 +25,7 @@ using namespace std::complex_literals;
 
 
 
-// Store some dummy data to an hdf5 file
+// Store some dummy data to an output file
 
 
 int main()

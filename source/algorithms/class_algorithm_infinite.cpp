@@ -167,7 +167,7 @@ void class_algorithm_infinite::write_state(bool force){
     if(not force){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (write_freq() == 0){return;}
-        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
+        if (settings::output::storage_level <= StorageLevel::NONE){return;}
     }
     log->trace("Writing state to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");

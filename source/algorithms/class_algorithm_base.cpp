@@ -134,7 +134,7 @@ void class_algorithm_base::write_status(bool force){
     if (not force){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (write_freq() == 0){return;}
-        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
+        if (settings::output::storage_level <= StorageLevel::NONE){return;}
     }
     log->trace("Writing simulation status to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");
@@ -170,8 +170,8 @@ void class_algorithm_base::update_bond_dimension(){
 //void class_algorithm_base::store_profiling_deltas(bool force) {
 //    if(not force){
 //        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-//        if (not settings::profiling::on or not settings::hdf5::save_profiling){return;}
-//        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
+//        if (not settings::profiling::on or not settings::output::save_profiling){return;}
+//        if (settings::output::storage_level < StorageLevel::NORMAL){return;}
 //    }
 //
 //    log->trace("Storing profiling deltas");
@@ -187,8 +187,8 @@ void class_algorithm_base::update_bond_dimension(){
 //void class_algorithm_base::store_profiling_totals(bool force) {
 //    if(not force){
 //        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-//        if (not settings::profiling::on or not settings::hdf5::save_profiling){return;}
-//        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
+//        if (not settings::profiling::on or not settings::output::save_profiling){return;}
+//        if (settings::output::storage_level < StorageLevel::NORMAL){return;}
 //    }
 //
 //    log->trace("Storing profiling totals");

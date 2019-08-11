@@ -84,7 +84,7 @@ class_simulation_status tools::common::io::load_sim_status_from_hdf5 (const h5pp
         h5ppFile.readDataset(sim_status.variance_ham_saturated_for     , sim_name + "/sim_status/variance_ham_saturated_for");
         h5ppFile.readDataset(sim_status.variance_mom_saturated_for     , sim_name + "/sim_status/variance_mom_saturated_for");
     }catch(std::exception &ex){
-        throw std::runtime_error("Failed to load sim_status from hdf5: " + std::string(ex.what()));
+        throw std::runtime_error("Failed to load sim_status from output: " + std::string(ex.what()));
     }
     return sim_status;
 }

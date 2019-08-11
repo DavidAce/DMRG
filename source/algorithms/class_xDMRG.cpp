@@ -204,7 +204,7 @@ void class_xDMRG::check_convergence(){
     {
         log->info("Projecting to {} due to saturation", settings::model::initial_sector);
         *state = tools::finite::ops::get_closest_parity_state(*state,settings::model::initial_sector);
-//        projected_during_saturation = true;
+        projected_during_saturation = true;
     }
 
 
@@ -236,8 +236,7 @@ void class_xDMRG::find_energy_range() {
 
     }
     sim_status.energy_min = tools::finite::measure::energy_per_site(*state);
-
-    reset_to_random_state("sx");
+    reset_to_random_state(settings::model::initial_sector);
     // Find energy maximum
     while(true) {
         class_algorithm_finite::single_DMRG_step("LR");
@@ -257,18 +256,19 @@ void class_xDMRG::find_energy_range() {
     sim_status.energy_target      = sim_status.energy_min    + sim_status.energy_dens_target  * (sim_status.energy_max - sim_status.energy_min);
     sim_status.energy_ubound      = sim_status.energy_target + sim_status.energy_dens_window  * (sim_status.energy_max - sim_status.energy_min);
     sim_status.energy_lbound      = sim_status.energy_target - sim_status.energy_dens_window  * (sim_status.energy_max - sim_status.energy_min);
-    sim_status.energy_dens        = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     log->info("Energy minimum (per site) = {}", sim_status.energy_min);
     log->info("Energy maximum (per site) = {}", sim_status.energy_max);
     log->info("Energy target  (per site) = {}", sim_status.energy_target);
+
+    //Initialize state in window and in the specified initial sector
     int counterA = 0;
     int counterB = 0;
-    bool outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
+    tools::finite::mps::apply_seed = true;
+    bool outside_of_window = true;
     while(outside_of_window){
-        reset_to_random_state("sx");
+        reset_to_random_state(settings::model::initial_sector);
         sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
         outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
-
         counterA++;
         counterB++;
         if(counterA >= 100){
@@ -284,9 +284,9 @@ void class_xDMRG::find_energy_range() {
 
 void class_xDMRG::write_logs(bool force){
     if(not force){
-        if (not settings::hdf5::save_logs){return;}
+        if (not settings::output::save_logs){return;}
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
+        if (settings::output::storage_level < StorageLevel::NORMAL){return;}
     }
     log_sim_status->append_record(sim_status);
 //    log_profiling->append_record();

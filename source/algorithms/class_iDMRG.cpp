@@ -98,9 +98,9 @@ void class_iDMRG::check_convergence(){
 
 void class_iDMRG::write_logs(bool force){
     if(not force){
-        if (not settings::hdf5::save_logs){return;}
+        if (not settings::output::save_logs){return;}
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
+        if (settings::output::storage_level < StorageLevel::NORMAL){return;}
     }
     log_sim_status->append_record(sim_status);
 //    log_profiling->append_record();

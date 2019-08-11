@@ -43,21 +43,17 @@ class_algorithm_launcher::class_algorithm_launcher()
     setLogger("DMRG");
 
     h5pp::CreateMode createMode;
-    if(settings::hdf5::create_mode == "TRUNCATE") createMode        = h5pp::CreateMode::TRUNCATE;
-    else if (settings::hdf5::create_mode == "RENAME") createMode    = h5pp::CreateMode::RENAME;
-    else if (settings::hdf5::create_mode == "OPEN") createMode      = h5pp::CreateMode::OPEN;
-    else {throw std::runtime_error("Wrong create mode: " + settings::hdf5::create_mode);}
+    if(settings::output::create_mode == "TRUNCATE") createMode        = h5pp::CreateMode::TRUNCATE;
+    else if (settings::output::create_mode == "RENAME") createMode    = h5pp::CreateMode::RENAME;
+    else if (settings::output::create_mode == "OPEN") createMode      = h5pp::CreateMode::OPEN;
+    else {throw std::runtime_error("Wrong create mode: " + settings::output::create_mode);}
 
 
     h5ppFile = std::make_shared<h5pp::File>(
-            settings::hdf5::output_filename,
+            settings::output::output_filename,
             h5pp::AccessMode::READWRITE,
             createMode);
 
-    // print current Git status
-    log->info("Git branch      : {}",GIT::BRANCH);
-    log->info("    commit hash : {}",GIT::COMMIT_HASH);
-    log->info("    revision    : {}",GIT::REVISION);
 
     if (createMode == h5pp::CreateMode::TRUNCATE or createMode == h5pp::CreateMode::RENAME){
         //Put git revision in file attribute

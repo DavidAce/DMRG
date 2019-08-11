@@ -20,7 +20,7 @@ using Scalar    = std::complex<double>;
 
 
 void tools::finite::io::write_all_state(const class_finite_state &state, h5pp::File & h5ppFile,std::string sim_name) {
-    switch(settings::hdf5::storage_level){
+    switch(settings::output::storage_level){
         case StorageLevel::NONE:
             break;
         case StorageLevel::LIGHT:
@@ -86,7 +86,7 @@ void tools::finite::io::write_full_mps(const class_finite_state & state, h5pp::F
 
 void tools::finite::io::write_full_mpo(const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name) {
     // Write all the MPO's
-    // Remember to write tensors in row-major state order because that's what hdf5 uses.
+    // Remember to write tensors in row-major state order because that's what output uses.
     for (auto site = 0ul; site < state.get_length(); site++){
         h5ppFile.writeDataset(state.get_MPO(site).MPO(), sim_name + "/state/mpo/H_" + std::to_string(site));
         //Write MPO properties as attributes
@@ -100,7 +100,7 @@ void tools::finite::io::write_full_mpo(const class_finite_state & state, h5pp::F
 
 void tools::finite::io::write_hamiltonian_params(const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name){
     // Write down the Hamiltonian metadata as a table
-    // Remember to write tensors in row-major state order because that's what hdf5 uses.
+    // Remember to write tensors in row-major state order because that's what output uses.
     Eigen::MatrixXd hamiltonian_props;
     for (auto site = 0ul ; site < state.get_length(); site++){
         auto props = state.get_MPO(site).get_parameter_values();
@@ -152,7 +152,7 @@ void tools::finite::io::load_from_hdf5(const h5pp::File & h5ppFile, class_finite
         state.set_sweeps(sim_status.iteration);
         tools::finite::debug::check_integrity(state);
     }catch(std::exception &ex){
-        throw std::runtime_error("Failed to load from hdf5: " + std::string(ex.what()));
+        throw std::runtime_error("Failed to load from output: " + std::string(ex.what()));
     }
 }
 
@@ -196,10 +196,10 @@ class_finite_state tools::finite::io::load_state_from_hdf5(const h5pp::File & h5
         }
         h5ppFile.readDataset(state.MPS_C    , sim_name + "/state/mps/L_C");
         if (state.MPS_L.size() + state.MPS_R.size() != (size_t)sites){
-            throw std::runtime_error("Number of sites loaded does not match the number of sites advertised by the hdf5 file");
+            throw std::runtime_error("Number of sites loaded does not match the number of sites advertised by the output file");
         }
         if (position != state.get_position()){
-            throw std::runtime_error("Position loaded does not match the position read from the hdf5 file");
+            throw std::runtime_error("Position loaded does not match the position read from the output file");
         }
 
     }catch (std::exception &ex){
