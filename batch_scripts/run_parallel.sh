@@ -23,7 +23,7 @@ echo "MEM PER CPU    : $SLURM_MEM_PER_CPU"
 echo "MEM PER NODE   : $SLURM_MEM_PER_NODE"
 
 
-parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log $exec -i $inputfile -r 1811 -s {} ::: $(seq $nmin $nmax)
+parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log "$exec -i $inputfile -r 1811 -s {}" ::: $(seq $nmin $nmax)
 #parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log $exec $inputfile {} ">" $outdir/$inputbase_{}.out ::: $(seq $nmin $nmax)
 
 
