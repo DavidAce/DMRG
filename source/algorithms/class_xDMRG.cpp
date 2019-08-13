@@ -60,8 +60,8 @@ void class_xDMRG::run_simulation()    {
         write_logs();
         print_status_update();
         check_convergence();
-        tools::log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
-        tools::log->debug("Truncation errors: {}", state->truncation_error);
+//        tools::log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
+//        tools::log->debug("Truncation errors: {}", state->truncation_error);
         // It's important not to perform the last step.
         // That last state would not get optimized
         if (state->position_is_any_edge())
@@ -234,7 +234,7 @@ void class_xDMRG::find_energy_range() {
                or state->measurements.energy_variance_per_site.value() < 1e-8)
             {break;}
         }
-        move_center_point();
+//        move_center_point();
         sim_status.iteration = state->get_sweeps();
 
     }
@@ -252,7 +252,7 @@ void class_xDMRG::find_energy_range() {
             {break;}
         }
 
-        move_center_point();
+//        move_center_point();
         sim_status.iteration = state->get_sweeps();
     }
     sim_status.energy_max         = tools::finite::measure::energy_per_site(*state);

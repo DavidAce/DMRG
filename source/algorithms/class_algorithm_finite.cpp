@@ -132,10 +132,11 @@ void class_algorithm_finite::single_DMRG_step(std::string ritz){
 /*!
  * \fn void single_DMRG_step(std::string ritz)
  */
-    log->trace("Starting single DMRG step");
+    log->trace("Starting single xDMRG step");
     t_sim.tic();
     Eigen::Tensor<Scalar,4> theta = tools::finite::opt::find_ground_state(*state, ritz);
     tools::finite::opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
+    move_center_point();
     state->unset_measurements();
     t_sim.toc();
     sim_status.wall_time = t_tot.get_age();

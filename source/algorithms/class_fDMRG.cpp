@@ -48,7 +48,6 @@ void class_fDMRG::run_simulation(){
             if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
         update_bond_dimension();
-        move_center_point();
         sim_status.iteration = state->get_sweeps();
         sim_status.position  = state->get_position();
         sim_status.step++;
@@ -68,8 +67,9 @@ void class_fDMRG::run_simulation(){
 void class_fDMRG::check_convergence(){
     t_sim.tic();
     t_con.tic();
-    check_convergence_variance();
-    if(state->position_is_the_middle_any_direction()){
+
+    if(state->position_is_any_edge()){
+        check_convergence_variance();
         check_convergence_entg_entropy();
     }
 
@@ -88,10 +88,22 @@ void class_fDMRG::check_convergence(){
     if (        sim_status.variance_mpo_has_saturated
                 and sim_status.entanglement_has_saturated
                 and sim_status.bond_dimension_has_reached_max
-                and sim_status.variance_mpo_saturated_for > max_saturation_iters)
+                and sim_status.variance_mpo_saturated_for >= max_saturation_iters)
     {
         log->debug("Simulation has to stop");
         sim_status.simulation_has_to_stop = true;
+    }
+
+
+
+    if (state->position_is_any_edge()
+        and sim_status.variance_mpo_has_saturated
+        and not sim_status.simulation_has_converged
+        and not projected_during_saturation)
+    {
+        log->info("Projecting to {} due to saturation", settings::model::target_parity_sector);
+        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
+        projected_during_saturation = true;
     }
 
 
