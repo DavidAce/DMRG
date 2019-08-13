@@ -49,7 +49,7 @@ std::tuple<Eigen::MatrixXcd,Eigen::VectorXd,double> filter_states(const Eigen::M
     size_t min_accept = std::min(8ul,(size_t)eigvals.size());
     max_accept        = std::min(max_accept,(size_t)eigvals.size());
     if(min_accept == max_accept) return std::make_tuple(eigvecs,eigvals,1.0 - overlaps.cwiseAbs2().sum());
-    tools::log->debug("Filtering states, keeping {} to {}", min_accept,max_accept);
+    tools::log->debug("Filtering states keeping between {} to {}, log10 quality threshold {}", min_accept,max_accept, std::log10(quality_threshold));
     double subspace_quality  = 1.0;
     Eigen::VectorXd overlaps_filtered = overlaps;
     std::vector<int>    overlaps_accepted_idx;
@@ -283,7 +283,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
             double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
             double subspace_quality  = 1.0 - sq_sum_overlap;
             if(subspace_quality > settings::precision::MinSubspaceQuality) {
-                tools::log->debug("Subspace quality is poor: {} > {}. Switching to direct mode", subspace_quality, settings::precision::MinSubspaceQuality);
+                tools::log->debug("Log subspace quality is poor: {} > {}. Switching to direct mode", std::log10(subspace_quality), std::log10(settings::precision::MinSubspaceQuality));
                 return ceres_direct_optimization(state, sim_status, optType);
             }else{
                 std::tie(eigvecs,eigvals,subspace_quality) = filter_states(eigvecs,eigvals,overlaps,settings::precision::MinSubspaceQuality, 128);

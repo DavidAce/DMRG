@@ -172,7 +172,6 @@ void class_algorithm_finite::move_center_point(){
         for(size_t i = 0; i < move_steps;i++){
             tools::finite::mps::move_center_point(*state);
         }
-        sim_status.step = state->get_steps();
     }catch(std::exception & e){
         tools::finite::print::print_state(*state);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));

@@ -52,6 +52,7 @@ void class_xDMRG::run_preprocessing() {
 void class_xDMRG::run_simulation()    {
     log->info("Starting {} simulation", sim_name);
     while(true) {
+        log->trace("Starting step {}, iteration {}, direction {}", sim_status.step,sim_status.iteration,state->get_direction());
         single_DMRG_step();
         write_measurements();
         write_state();
@@ -72,9 +73,11 @@ void class_xDMRG::run_simulation()    {
 
         update_bond_dimension();
 //        move_center_point();
-        sim_status.iteration = state->get_sweeps();
-        sim_status.position = state->get_position();
         log->trace("Finished step {}, iteration {}, direction {}",sim_status.step,sim_status.iteration,state->get_direction());
+        sim_status.iteration    = state->get_sweeps();
+        sim_status.position     = state->get_position();
+        sim_status.step         = state->get_steps();
+
     }
     switch(stop_reason){
         case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_ITERS",sim_name) ;break;
@@ -92,7 +95,7 @@ void class_xDMRG::single_DMRG_step()
     using namespace tools::finite;
 
     t_sim.tic();
-    log->trace("Starting single xDMRG step {}", sim_status.step);
+    log->trace("Starting single xDMRG step");
 //    tools::log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
 
     auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;

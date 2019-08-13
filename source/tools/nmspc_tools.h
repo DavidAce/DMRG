@@ -63,11 +63,11 @@ namespace tools{
             extern void apply_mpo                     (class_finite_state & state, const Eigen::Tensor<Scalar,4> & mpo, const Eigen::Tensor<Scalar,3> &Ledge, const Eigen::Tensor<Scalar,3> & Redge);
             extern void apply_mpos                    (class_finite_state & state, const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
             extern class_finite_state
-            get_projection_to_parity_sector                (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix, int sign);
+            get_projection_to_parity_sector           (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix, int sign);
             extern class_finite_state
-            get_projection_to_closest_parity_sector                  (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix);
+            get_projection_to_closest_parity_sector   (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix);
             extern class_finite_state
-            get_projection_to_closest_parity_sector                  (const class_finite_state & state, std::string parity_sector);
+            get_projection_to_closest_parity_sector   (const class_finite_state & state, std::string parity_sector);
             extern double overlap                     (const class_finite_state & state1, const class_finite_state & state2);
             extern double expectation_value           (const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
             extern double exp_sq_value                (const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,4> & Ledge, const Eigen::Tensor<Scalar,4> & Redge);
