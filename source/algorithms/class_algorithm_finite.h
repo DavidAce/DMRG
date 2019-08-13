@@ -38,7 +38,7 @@ public:
     void run()                                                              final;
     void compute_observables()                                              final;
     void clear_saturation_status()                                          override;
-    void reset_to_random_state(const std::string parity)                    final;
+    void reset_to_random_state(const std::string symmetry)                    final;
     void write_measurements(bool force = false)                             final;
     void write_state(bool force = false)                                    final;
     void print_status_update()                                              final;

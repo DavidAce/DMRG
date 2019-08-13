@@ -261,9 +261,9 @@ void tools::finite::debug::print_parity_properties(const class_finite_state &sta
     tools::log->debug("\t<psi | sz | psi>                = {:0.16f}", sz);
 
     tools::log->debug("\tComputing parity projected states");
-    auto state_sx = tools::finite::ops::get_closest_parity_state(state,"sx");
-    auto state_sy = tools::finite::ops::get_closest_parity_state(state,"sx");
-    auto state_sz = tools::finite::ops::get_closest_parity_state(state,"sx");
+    auto state_sx = tools::finite::ops::get_projection_to_closest_parity_sector(state, "x");
+    auto state_sy = tools::finite::ops::get_projection_to_closest_parity_sector(state, "x");
+    auto state_sz = tools::finite::ops::get_projection_to_closest_parity_sector(state, "x");
 
 
 

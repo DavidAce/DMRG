@@ -86,8 +86,11 @@ for inputfile in $inputfiles; do
     echo "Submitting jobs=[$seedmin - $seedmax]"
 
     if [ "$gnuparallel" = true ]; then
-        module try-load parallel
-        module try-load parallel/20181122-nsc1
+        if [[ "$HOSTNAME" == *"tetralith"* ]];then
+            module try-load parallel/20181122-nsc1
+        else
+            module try-load parallel
+        fi
         stepsize=$(( stepsize < nsims ? stepsize : nsims ))
         seedcount=$seedmin
         while [ $seedcount -lt $seedmax ] ; do

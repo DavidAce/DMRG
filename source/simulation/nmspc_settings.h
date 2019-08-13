@@ -48,11 +48,12 @@ namespace settings {
 
     //Parameters for the model Hamiltonian
     namespace model {
-        inline std::string  model_type     = "tf_ising";        /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising} above*/
-        inline int          seed_init      = 1;                 /*!< Main seed for the random number generator. Used for the random fields in the Hamiltonian. */
-        inline int          seed_state     = -1;                /*!< Seed for generating the initial state. If seed_state < 0, seed_init is used instead  */
-        inline std::string  initial_sector = "none";            /*!< Initialize in parity symmetry sector: {sx,sy,sz,random,none} */
-
+        inline std::string  model_type     = "tf_ising";                /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising} above*/
+        inline int          seed_init      = 1;                         /*!< Main seed for the random number generator. Used for the random fields in the Hamiltonian. */
+        inline int          seed_state     = -1;                        /*!< Seed for generating the initial state. If seed_state < 0, seed_init is used instead  */
+        inline bool         use_seed_state_as_enumeration = true;       /*!< Use the bit field of seed_state to enumerate initial states in the basis hinted by initial_sector.  */
+        inline std::string  initial_parity_sector = "+x";               /*!< Initialize in a global parity sector: {x,+x,-x, y,+y,-y,z,+z,-z,random,none}  */
+        inline std::string  target_parity_sector  = "+x";              /*!< Project to in a global parity sector upon saturation: {x,+x,-x, y,+y,-y,z,+z,-z,random,none}  */
 
         //Parameters for the transverse-field Ising model
         namespace tf_ising {
