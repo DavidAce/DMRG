@@ -34,7 +34,6 @@ for num_L in sites:
                     "model::selfdual_tf_rf_ising::lambda"         : "{:.2f}".format(lambdas[num_l]),
                     "model::selfdual_tf_rf_ising::J_sigma"        : "1.0",
                     "model::selfdual_tf_rf_ising::h_sigma"        : "1.0",
-                    "model::seed"                                 : str(num_total),
                     "precision::MaxSitesMultiDmrg"                : "8",
                     "xdmrg::num_sites"                            : str(num_L),
                     "xdmrg::chi_max"                              : "256",

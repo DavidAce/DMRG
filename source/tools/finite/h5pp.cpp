@@ -136,6 +136,7 @@ void tools::finite::io::write_all_measurements(const class_finite_state & state,
 
 
 void tools::finite::io::write_projection_to_closest_parity_sector(const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name, std::string parity_sector){
+    if (parity_sector == "none") return;
     auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(state, parity_sector);
     state_projected.unset_measurements();
     state_projected.do_all_measurements();
