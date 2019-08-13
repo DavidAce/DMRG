@@ -121,16 +121,20 @@ void tools::finite::io::write_hamiltonian_params(const class_finite_state & stat
 
 void tools::finite::io::write_all_measurements(const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name){
     state.do_all_measurements();
-    h5ppFile.writeDataset(state.measurements.length.value()                      , sim_name + "/measurements/length");
-    h5ppFile.writeDataset(state.measurements.norm.value()                        , sim_name + "/measurements/norm");
-    h5ppFile.writeDataset(state.measurements.bond_dimensions.value()             , sim_name + "/measurements/bond_dimensions");
-    h5ppFile.writeDataset(state.measurements.energy_per_site.value()             , sim_name + "/measurements/energy_per_site");
-    h5ppFile.writeDataset(state.measurements.energy_variance_per_site.value()    , sim_name + "/measurements/energy_variance_per_site");
-    h5ppFile.writeDataset(state.measurements.entanglement_entropies.value()      , sim_name + "/measurements/entanglement_entropies");
-    h5ppFile.writeDataset(state.measurements.spin_components.value()             , sim_name + "/measurements/spin_components");
-    h5ppFile.writeDataset(state.measurements.spin_component_sx.value()           , sim_name + "/measurements/spin_component_sx");
-    h5ppFile.writeDataset(state.measurements.spin_component_sy.value()           , sim_name + "/measurements/spin_component_sy");
-    h5ppFile.writeDataset(state.measurements.spin_component_sz.value()           , sim_name + "/measurements/spin_component_sz");
+    h5ppFile.writeDataset(state.measurements.length.value()                        , sim_name + "/measurements/length");
+    h5ppFile.writeDataset(state.measurements.norm.value()                          , sim_name + "/measurements/norm");
+    h5ppFile.writeDataset(state.measurements.bond_dimensions.value()               , sim_name + "/measurements/bond_dimensions");
+    h5ppFile.writeDataset(state.measurements.bond_dimension_midchain.value()       , sim_name + "/measurements/bond_dimension_midchain");
+    h5ppFile.writeDataset(state.measurements.energy.value()                        , sim_name + "/measurements/energy");
+    h5ppFile.writeDataset(state.measurements.energy_per_site.value()               , sim_name + "/measurements/energy_per_site");
+    h5ppFile.writeDataset(state.measurements.energy_variance_mpo.value()           , sim_name + "/measurements/energy_variance_mpo");
+    h5ppFile.writeDataset(state.measurements.energy_variance_per_site.value()      , sim_name + "/measurements/energy_variance_per_site");
+    h5ppFile.writeDataset(state.measurements.entanglement_entropies.value()        , sim_name + "/measurements/entanglement_entropies");
+    h5ppFile.writeDataset(state.measurements.entanglement_entropy_midchain.value() , sim_name + "/measurements/entanglement_entropy_midchain");
+    h5ppFile.writeDataset(state.measurements.spin_components.value()               , sim_name + "/measurements/spin_components");
+    h5ppFile.writeDataset(state.measurements.spin_component_sx.value()             , sim_name + "/measurements/spin_component_sx");
+    h5ppFile.writeDataset(state.measurements.spin_component_sy.value()             , sim_name + "/measurements/spin_component_sy");
+    h5ppFile.writeDataset(state.measurements.spin_component_sz.value()             , sim_name + "/measurements/spin_component_sz");
 
 }
 
