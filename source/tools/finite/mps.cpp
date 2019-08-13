@@ -30,28 +30,28 @@ void tools::finite::mps::initialize(class_finite_state &state, const size_t leng
 
 
 
-void tools::finite::mps::randomize(class_finite_state &state){
+void tools::finite::mps::randomize(class_finite_state &state,const std::string &parity_sector, int seed_state){
     tools::log->trace("Randomizing mps");
     using Scalar = class_finite_state::Scalar;
     state.unset_measurements();
-    if(apply_seed and settings::model::seed_state >= 0){
-        std::srand((unsigned int) settings::model::seed_state);
-        apply_seed = false;
-    }
 
-    Eigen::Tensor<Scalar,1> L (1);
-    L.setConstant(1);
+    // There are three ways to randomize an initial product state state:
+    // a) Use seed_state to set spinors to a random sequence of eigenvectors (up/down) of either sx, sy or sz.
+    // b) Use seed_state as a bitfield "01100010110..." and interpret these as up/down of either sx, sy or sz.
+    // c) Use seed_state as to set the spinors completely randomly
+    // In either case we "use" the seed_state once.
 
-    for (auto &mpsL : state.MPS_L ){
-        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
-//        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXd::Random(2).cast<Scalar>().normalized(),2,1,1);
-        mpsL.set_mps(G,L);
-    }
-    state.MPS_C = L;
-    for (auto &mpsR : state.MPS_R ){
-        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
-//        auto G = Textra::Matrix_to_Tensor(Eigen::VectorXd::Random(2).cast<Scalar>().normalized(),2,1,1);
-        mpsR.set_mps(G,L);
+    std::vector<std::string> ok_parity_sectors = {"x","+x","-x","y","+y","-y", "z","+z","-z"};
+    bool parity_sector_is_defined = std::find(ok_parity_sectors.begin(), ok_parity_sectors.end(), parity_sector) != ok_parity_sectors.end();
+    if(seed_state >= 0 and internals::seed_state_unused){
+        internals::seed_state_unused = false;
+        if         (settings::model::use_seed_state_as_enumeration and     parity_sector_is_defined)   internals::set_product_state_in_parity_sector_from_bitset(state, parity_sector, seed_state);
+        else if(not settings::model::use_seed_state_as_enumeration and     parity_sector_is_defined)   internals::set_product_state_in_parity_sector_randomly(state, parity_sector, seed_state);
+        else if(not settings::model::use_seed_state_as_enumeration and not parity_sector_is_defined)   internals::set_product_state_randomly(state, parity_sector, seed_state);
+        else throw std::logic_error(fmt::format("Can't use seed_state as enumeration when parity_sector is not defined. Got: {}", parity_sector));
+    }else{
+        if(parity_sector_is_defined)        internals::set_product_state_in_parity_sector_randomly(state,parity_sector,seed_state);
+        else                                internals::set_product_state_randomly(state,parity_sector, seed_state);
     }
     tools::finite::mps::rebuild_environments(state);
 }
@@ -207,6 +207,6 @@ int tools::finite::mps::move_center_point(class_finite_state &  state){
 
 
 
-void tools::finite::mps::project_to_closest_parity   (class_finite_state & state, const std::string paulistring){
-    state = tools::finite::ops::get_closest_parity_state(state,paulistring);
+void tools::finite::mps::project_to_closest_parity_sector   (class_finite_state & state, std::string paulistring){
+    state = tools::finite::ops::get_projection_to_closest_parity_sector(state, paulistring);
 }

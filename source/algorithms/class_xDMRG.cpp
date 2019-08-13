@@ -160,7 +160,7 @@ void class_xDMRG::check_convergence(){
         sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
         int counter = 0;
         while(outside_of_window){
-            reset_to_random_state(settings::model::initial_sector);
+            reset_to_random_state(settings::model::initial_parity_sector);
             sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
             outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
             counter++;
@@ -197,13 +197,13 @@ void class_xDMRG::check_convergence(){
 
 
     if (state->position_is_any_edge()
-//        and sim_status.variance_mpo_has_saturated
+        and sim_status.variance_mpo_has_saturated
         and not sim_status.simulation_has_converged
         and not outside_of_window
         and not projected_during_saturation)
     {
-        log->info("Projecting to {} due to saturation", settings::model::initial_sector);
-        *state = tools::finite::ops::get_closest_parity_state(*state,settings::model::initial_sector);
+        log->info("Projecting to {} due to saturation", settings::model::target_parity_sector);
+        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
         projected_during_saturation = true;
     }
 
@@ -219,7 +219,7 @@ void class_xDMRG::find_energy_range() {
     size_t max_sweeps_during_f_range = 4;
     sim_status.iteration = state->reset_sweeps();
     sim_status.step      = state->reset_steps();
-
+    reset_to_random_state("none");
     // Find energy minimum
     while(true) {
         class_algorithm_finite::single_DMRG_step("SR");
@@ -236,7 +236,7 @@ void class_xDMRG::find_energy_range() {
 
     }
     sim_status.energy_min = tools::finite::measure::energy_per_site(*state);
-    reset_to_random_state(settings::model::initial_sector);
+    reset_to_random_state("none");
     // Find energy maximum
     while(true) {
         class_algorithm_finite::single_DMRG_step("LR");
@@ -263,10 +263,10 @@ void class_xDMRG::find_energy_range() {
     //Initialize state in window and in the specified initial sector
     int counterA = 0;
     int counterB = 0;
-    tools::finite::mps::apply_seed = true;
+    tools::finite::mps::internals::seed_state_unused = true;
     bool outside_of_window = true;
     while(outside_of_window){
-        reset_to_random_state(settings::model::initial_sector);
+        reset_to_random_state(settings::model::initial_parity_sector);
         sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
         outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
         counterA++;

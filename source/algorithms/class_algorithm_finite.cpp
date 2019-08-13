@@ -11,6 +11,7 @@
 #include <math/nmspc_math.h>
 #include <iomanip>
 #include <spdlog/fmt/bundled/ranges.h>
+#include <general/nmspc_random_numbers.h>
 
 class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type, size_t num_sites)
     : class_algorithm_base(std::move(h5ppFile_), sim_name,sim_type)
@@ -21,9 +22,11 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     state->set_chi_max(sim_status.chi_max);
     tools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
     tools::finite::mps::initialize(*state, num_sites);
+    rn::seed(settings::model::seed_init);
     tools::finite::mpo::randomize(*state);
+    rn::seed(settings::model::seed_state);
     tools::finite::mps::randomize(*state);
-    tools::finite::mps::project_to_closest_parity(*state, settings::model::initial_sector);
+    tools::finite::mps::project_to_closest_parity_sector(*state, settings::model::initial_parity_sector);
     tools::finite::debug::check_integrity(*state);
 
 
@@ -147,7 +150,8 @@ void class_algorithm_finite::run_postprocessing(){
     print_status_update();
     tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
     tools::finite::io::write_all_state(*state,*h5pp_file, sim_name);
-    tools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::initial_sector);
+    tools::finite::io::write_projection_to_closest_parity_sector(*state, *h5pp_file, sim_name,
+                                                                 settings::model::initial_parity_sector);
 
     //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
     if(store_wave_function()){
@@ -176,14 +180,14 @@ void class_algorithm_finite::move_center_point(){
     t_sim.toc();
 }
 
-void class_algorithm_finite::reset_to_random_state(const std::string parity) {
-    log->trace("Resetting MPS to random product state");
+void class_algorithm_finite::reset_to_random_state(const std::string parity_sector) {
+    log->trace("Resetting MPS to random product state in parity sector: {}", parity_sector);
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     // Randomize state
     t_sim.tic();
     state->set_chi_max(chi_max());
     tools::finite::mps::randomize(*state);
-    tools::finite::mps::project_to_closest_parity(*state,parity);
+    tools::finite::mps::project_to_closest_parity_sector(*state, parity_sector);
     clear_saturation_status();
     sim_status.iteration = state->reset_sweeps();
     t_sim.toc();
@@ -298,7 +302,8 @@ void class_algorithm_finite::write_state(bool force){
     }
     log->trace("Writing state to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");
-    tools::finite::io::write_closest_parity_projection(*state, *h5pp_file, sim_name, settings::model::initial_sector);
+    tools::finite::io::write_projection_to_closest_parity_sector(*state, *h5pp_file, sim_name,
+                                                                 settings::model::target_parity_sector);
     //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
     if(store_wave_function()){
         h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");
