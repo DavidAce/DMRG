@@ -325,18 +325,18 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     options.max_num_iterations = 150;
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = true;
-    options.max_line_search_step_expansion = 100.0;
-    options.min_line_search_step_size = 1e-8;
+    options.max_line_search_step_expansion = 10;// 100.0;
+    options.min_line_search_step_size = 1e-9;
     options.max_line_search_step_contraction = 1e-3;
     options.min_line_search_step_contraction = 0.6;
-    options.max_num_line_search_step_size_iterations  = 20;
-    options.max_num_line_search_direction_restarts    = 2;
-    options.line_search_sufficient_function_decrease  = 1e-2;
-    options.line_search_sufficient_curvature_decrease = 0.5;
-    options.max_solver_time_in_seconds = 60*2;
-    options.function_tolerance = 1e-4;
+    options.max_num_line_search_step_size_iterations  = 30;//20;
+    options.max_num_line_search_direction_restarts    = 5;//2;
+    options.line_search_sufficient_function_decrease  = 1e-4;// 1e-2;
+    options.line_search_sufficient_curvature_decrease = 0.9; //0.5;
+    options.max_solver_time_in_seconds = 60*5;//60*2;
+    options.function_tolerance = 1e-6;// 1e-4;
     options.gradient_tolerance = 1e-8;
-    options.parameter_tolerance = 1e-12;
+    options.parameter_tolerance = 1e-10;//1e-12;
     ceres::GradientProblemSolver::Summary summary;
 
     t_opt->tic();

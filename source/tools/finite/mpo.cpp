@@ -22,6 +22,9 @@ void tools::finite::mpo::initialize(class_finite_state & state, const size_t len
 void tools::finite::mpo::randomize(class_finite_state &state) {
     log->info("Setting random fields in state");
     std::vector<std::vector<double>> all_params;
+
+
+
     for (auto &mpo : state.MPO_L){
         mpo->randomize_hamiltonian();
         all_params.push_back(mpo->get_parameter_values());
@@ -30,6 +33,8 @@ void tools::finite::mpo::randomize(class_finite_state &state) {
         mpo->randomize_hamiltonian();
         all_params.push_back(mpo->get_parameter_values());
     }
+
+    //
 
     for (auto &mpo : state.MPO_L){
         mpo->set_full_lattice_parameters(all_params);
