@@ -30,8 +30,8 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     tools::finite::debug::check_integrity(*state);
 
 
-    min_saturation_iters = 1;
-    max_saturation_iters = 2;
+    min_saturation_iters = 2;
+    max_saturation_iters = 4;
 
     S_mat.resize(state->get_length()+1);
     BS_mat.resize(state->get_length()+1);
