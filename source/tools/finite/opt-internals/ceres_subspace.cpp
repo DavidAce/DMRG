@@ -84,6 +84,21 @@ std::tuple<Eigen::MatrixXcd,Eigen::VectorXd,double> filter_states(const Eigen::M
     return std::make_tuple(eigvecs_filtered,eigvals_filtered, subspace_quality);
 }
 
+
+std::tuple<double,int>
+get_best_state(const class_finite_state &state, const Eigen::MatrixXcd &eigvecs){
+    Eigen::VectorXd variances(eigvecs.cols());
+    using Scalar = class_finite_state::Scalar;
+    for(int idx = 0; idx < eigvecs.cols(); idx++){
+//        auto multitheta = Eigen::TensorMap<Eigen::Tensor<Scalar,3>> (eigvecs.col(i),state.active_dimensions());
+        auto multitheta = Textra::Matrix_to_Tensor(eigvecs.col(idx), state.active_dimensions());
+        variances(idx)  = tools::finite::measure::multisite::energy_variance_per_site(state, multitheta);
+    }
+    int    min_variance_idx;
+    double min_variance_val = variances.minCoeff(&min_variance_idx);
+    return std::make_tuple(min_variance_val, min_variance_idx);
+}
+
 int idx_best_overlap_in_window(const Eigen::VectorXd &overlaps, const Eigen::VectorXd & eigvals, double lbound, double ubound){
     assert(overlaps.size() == eigvals.size() and "idx_best_overlap_in_window: Mismatch in overlaps and eigvals sizes");
     Eigen::VectorXd overlaps_in_window = overlaps;
@@ -250,6 +265,8 @@ find_subspace(const class_finite_state & state,OptMode optMode){
 
 
 
+
+
 Eigen::Tensor<class_finite_state::Scalar,3>
 tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_state &state,
                                                          const class_simulation_status &sim_status, OptType optType,
@@ -283,8 +300,17 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
             double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
             double subspace_quality  = 1.0 - sq_sum_overlap;
             if(subspace_quality > settings::precision::MinSubspaceQuality) {
-                tools::log->debug("Log subspace quality is poor: {} > {}. Switching to direct mode", std::log10(subspace_quality), std::log10(settings::precision::MinSubspaceQuality));
-                return ceres_direct_optimization(state, sim_status, optType);
+                tools::log->debug("Log subspace quality is poor: {} > {}. Deciding what to do...", std::log10(subspace_quality), std::log10(settings::precision::MinSubspaceQuality));
+                double prev_variance = tools::finite::measure::energy_variance_per_site(state);
+                auto [best_variance, idx] = get_best_state(state,eigvecs);
+                if(best_variance < prev_variance){
+                    tools::log->debug("... One of the eigenstates had better (log10) variance: {} < {}", std::log10(best_variance), std::log10(prev_variance));
+                    return Textra::Matrix_to_Tensor(eigvecs.col(idx), state.active_dimensions());
+                }else{
+                    tools::log->debug("... Switching to direct mode");
+                    return ceres_direct_optimization(state, sim_status, optType);
+
+                }
             }else{
                 std::tie(eigvecs,eigvals,subspace_quality) = filter_states(eigvecs,eigvals,overlaps,settings::precision::MinSubspaceQuality, 128);
             }
@@ -383,7 +409,9 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     tools::log->trace("Finished Ceres. Exit status: {}. Message: {}", ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
     //    std::cout << summary.FullReport() << "\n";
     reports::print_report(opt_log);
-
+//
+//    tools::log->debug("Returning new theta (TEMPORARY FIX?)");
+//    return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
 
     if (variance_new < variance_0 * 2.0){
         state.unset_measurements();
