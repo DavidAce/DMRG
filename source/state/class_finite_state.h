@@ -41,8 +41,6 @@ private:
     using MType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
     using VType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
     template<auto rank> using TType = Eigen::Tensor<Scalar,rank>;
-
-
     int num_sweeps   = 0;
     int num_steps    = 0;
     int direction    = 1;
@@ -156,6 +154,14 @@ public:
     mutable Measurements measurements;
     void unset_measurements() const;
     void do_all_measurements()const;
+    void clear_cache() const;
+
+private:
+    struct Cache{
+        std::optional<TType<4>> multimpo     = {};
+        std::optional<TType<3>> multitheta   = {};
+    };
+    mutable Cache cache;
 };
 
 

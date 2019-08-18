@@ -136,6 +136,7 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
                 .shuffle(Textra::array4{0,2,1,3});
         std::tie(U, S, V,norm) = SVD.schmidt_with_norm(theta4,chi_);
         state.truncation_error[site+1] = SVD.get_truncation_error();
+        tools::log->trace("Truncation error site {} = {}, chi = {}", site,SVD.get_truncation_error(),S.dimension(0));
         Eigen::Tensor<Scalar,3> L_U = Textra::asDiagonalInversed(state.get_L(site)).contract(U,Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
 
         state.get_G(site)   = L_U;
@@ -217,6 +218,7 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
 
 
         state.truncation_error[site-1] = SVD.get_truncation_error();
+        tools::log->trace("Truncation error site {} = {}, chi = {}", site,SVD.get_truncation_error(),S.dimension(0));
         Eigen::Tensor<Scalar,3> V_L = V.contract(Textra::asDiagonalInversed(state.get_L(site+1)), Textra::idx({2},{0}));
 
         state.get_G(site) = V_L;

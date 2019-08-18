@@ -28,7 +28,7 @@ namespace tools::finite::opt{
         extern Eigen::Tensor<std::complex<double>,3> ceres_subspace_optimization       (const class_finite_state & state, const class_simulation_status & sim_status, OptType optType, OptMode optMode);
         extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_finite_state & state, const class_simulation_status & sim_status);
         extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_finite_state & state, std::string ritzstring = "SR");
-
+        inline double subspace_quality_threshold = 1e-4;
 
         extern std::vector<int> generate_size_list(size_t shape);
 
@@ -61,12 +61,13 @@ namespace tools::finite::opt{
         double windowed_grad_abs(double x,double window);
         double windowed_func_pow(double x,double window);
         double windowed_grad_pow(double x,double window);
+        std::pair<double,double> windowed_func_grad(double x,double window);
 
 
 
         namespace reports{
-            using direct_opt_tuple = std::tuple<std::string,int,double,std::complex<double>,double,int,int,double>;
-            using subspc_opt_tuple = std::tuple<std::string,int,double,double,double,int,int,double>;
+            using direct_opt_tuple = std::tuple<std::string,int,double,std::complex<double>,double,double,int,int,double>;
+            using subspc_opt_tuple = std::tuple<std::string,int,double,double,double,double,int,int,double>;
             using lbfgs_tuple = std::tuple<double,double,double,double,double>;
             using eig_tuple   = std::tuple<int,double,double,double,double,double,double>;
 //            std::vector<log_tuple> opt_log;

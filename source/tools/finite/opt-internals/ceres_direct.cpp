@@ -22,15 +22,14 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     using Scalar = std::complex<double>;
     t_opt->tic();
     auto theta = state.get_multitheta();
+
     double energy_0   = tools::finite::measure::multisite::energy_per_site(state,theta);
     double variance_0 = tools::finite::measure::multisite::energy_variance_per_site(state,theta);
-    t_opt->toc();
-    std::vector<reports::direct_opt_tuple> opt_log;
-    opt_log.emplace_back("Initial",theta.size(), energy_0, std::log10(variance_0), 1.0, 0 ,0,t_opt->get_last_time_interval());
-
-
     double energy_new,variance_new,overlap_new;
     Eigen::VectorXcd theta_start  = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size());
+    t_opt->toc();
+    std::vector<reports::direct_opt_tuple> opt_log;
+    opt_log.emplace_back("Initial",theta_start.size(), energy_0, std::log10(variance_0), 1.0, theta_start.norm(), 0 ,0,t_opt->get_last_time_interval());
 
 
 
@@ -76,8 +75,8 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.line_search_sufficient_function_decrease  = 1e-4;// 1e-2;
     options.line_search_sufficient_curvature_decrease = 0.9; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
-    options.function_tolerance = 1e-8;// 1e-4;
-    options.gradient_tolerance = 1e-10;
+    options.function_tolerance = 1e-5;// 1e-4;
+    options.gradient_tolerance = 1e-8;
     options.parameter_tolerance = 1e-12;//1e-12;
 
 
@@ -116,7 +115,18 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     t_opt->toc();
     auto theta_old = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size());
     overlap_new  = std::abs(theta_old.dot(theta_start));
-    opt_log.emplace_back("Ceres L-BFGS",theta.size(), energy_new, std::log10(variance_new), overlap_new, iter,counter, t_opt->get_last_time_interval());
+    opt_log.emplace_back("Ceres L-BFGS",theta.size(), energy_new, std::log10(variance_new), overlap_new, theta_start.norm(), iter,counter, t_opt->get_last_time_interval());
+
+    // Sanity check
+    t_opt->tic();
+    auto theta_san  = Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
+    double energy_san   = tools::finite::measure::multisite::energy_per_site(state,theta_san);
+    double variance_san = tools::finite::measure::multisite::energy_variance_per_site(state,theta_san);
+    t_opt->toc();
+    opt_log.emplace_back("Sanity check",theta_san.size(), energy_san, std::log10(variance_san), overlap_new, theta_start.norm(), 0,0, t_opt->get_last_time_interval());
+
+
+    // Finish up and print reports
     tools::log->trace("Finished Ceres. Exit status: {}. Message: {}", ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
 //    std::cout << summary.FullReport() << "\n";
     reports::print_report(opt_log);
@@ -128,8 +138,8 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
             tools::finite::opt::internals::t_op->get_measured_time()
     ));
 
-
-    if (variance_new < variance_0 * 2.0){
+    // Return something strictly better
+    if (variance_new < variance_0){
         state.unset_measurements();
         tools::log->debug("Returning new theta");
         return  Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());

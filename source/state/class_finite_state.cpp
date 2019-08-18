@@ -247,6 +247,7 @@ Eigen::Tensor<class_finite_state::Scalar,4> class_finite_state::get_theta(size_t
 
 
 std::list<size_t> class_finite_state::activate_sites(long threshold){
+    clear_cache();
     return active_sites = tools::finite::multisite::generate_site_list(*this,threshold);
 }
 
@@ -269,6 +270,7 @@ size_t class_finite_state::active_size() const {
 
 
 Eigen::Tensor<class_finite_state::Scalar,3>   class_finite_state::get_multitheta()    const{
+    if(cache.multitheta) return cache.multitheta.value();
     tools::log->trace("Generating multitheta");
     if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multitheta");}
     Eigen::Tensor<Scalar,3> multitheta;
@@ -287,10 +289,13 @@ Eigen::Tensor<class_finite_state::Scalar,3>   class_finite_state::get_multitheta
         multitheta = temp;
     }
     auto & L = get_L(active_sites.back()+1);
-    return multitheta.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));
+    temp = multitheta.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));
+    cache.multitheta = temp;
+    return cache.multitheta.value();
 }
 
 Eigen::Tensor<class_finite_state::Scalar,4>   class_finite_state::get_multimpo()    const{
+    if(cache.multimpo) return cache.multimpo.value();
     tools::log->trace("Generating multimpo");
     if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multimpo");}
     Eigen::Tensor<Scalar,4> multimpo;
@@ -309,8 +314,8 @@ Eigen::Tensor<class_finite_state::Scalar,4>   class_finite_state::get_multimpo()
                 .reshape(Textra::array4{dim0,dim1,dim2,dim3});
         multimpo = temp;
     }
-    tools::log->trace("Finished multimpo");
-    return multimpo;
+    cache.multimpo = multimpo;
+    return cache.multimpo.value();
 }
 
 
@@ -385,7 +390,8 @@ class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_m
     size_t log2spin  = std::log2(dims[0]);
     Eigen::Tensor<Scalar,2> H2;
     if(log2spin > log2chiL + log2chiR){
-        if (log2chiL >= log2chiR)
+        if (log2chiL >= log2chiR){
+            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL >= log2chiR ");
             H2 =
                     eigvecs_tensor
                             .contract(env2L.block,                Textra::idx({1},{0}))
@@ -393,7 +399,9 @@ class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_m
                             .contract(env2R.block,                Textra::idx({0,4},{0,2}))
                             .contract(mpo  ,                      Textra::idx({3,2,5},{2,0,1}))
                             .contract(eigvecs_tensor.conjugate(), Textra::idx({3,1,2},{0,1,2}));
+        }
         else{
+            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL < log2chiR ");
             H2 =
                     eigvecs_tensor
                             .contract(env2R.block,                Textra::idx({2},{0}))
@@ -403,6 +411,8 @@ class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_m
                             .contract(eigvecs_tensor.conjugate(), Textra::idx({3,2,1},{0,1,2}));
         }
     }else{
+        tools::log->trace("get_H2 path: log2spin <= log2chiL + log2chiR");
+
         H2 =
                 eigvecs_tensor
                         .contract(env2L.block,                Textra::idx({1},{0}))
@@ -426,6 +436,10 @@ class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_m
 
 void class_finite_state::unset_measurements()const {
     measurements = Measurements();
+}
+
+void class_finite_state::clear_cache()const {
+    cache = Cache();
 }
 
 void class_finite_state::do_all_measurements()const {

@@ -93,6 +93,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
 
     auto Hv      = Eigen::Map<VectorType>(Hv_tensor.data() ,Hv_tensor.size());
     auto H2v     = Eigen::Map<VectorType>(H2v_tensor.data(),H2v_tensor.size());
+    print_path   = false;
     vHv          = v.dot(Hv);
     vH2v         = v.dot(H2v);
 
@@ -108,7 +109,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
 
     energy         = std::real(ene)/length;
     variance       = std::abs(var)/length;
-    variance       = variance < 1e-15  ? 1e-15 : variance;
+//    variance       = variance < 1e-15  ? 1e-15 : variance;
 
     energy_dens    = (energy - energy_min ) / (energy_max - energy_min);
     energy_offset  = energy_dens - energy_target_dens;
@@ -117,8 +118,9 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
 
 
     norm_offset    = std::abs(vv) - 1.0 ;
-    norm_func      = windowed_func_pow(norm_offset,0.1);
-    norm_grad      = windowed_grad_pow(norm_offset,0.1);
+//    norm_func      = windowed_func_pow(norm_offset,0.0);
+//    norm_grad      = windowed_grad_pow(norm_offset,0.0);
+    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.0);
     log10var       = std::log10(variance);
     if(fx != nullptr){
         fx[0] = log10var
@@ -190,6 +192,7 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
     Eigen::Tensor<Scalar,3> vH2;
     if (log2spin > log2chiL + log2chiR){
         if (log2chiL > log2chiR){
+            if (print_path) tools::log->trace("get_H2v path: log2spin > log2chiL + log2chiR  and  log2chiL > log2chiR ");
             Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
             H2v_tensor.device(dev) =
                     theta
@@ -201,6 +204,7 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
         }
 
         else{
+            if (print_path) tools::log->trace("get_H2v path: log2spin > log2chiL + log2chiR  and  log2chiL <= log2chiR ");
             Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2,0,1});
             H2v_tensor.device(dev) =
                     theta
@@ -212,6 +216,7 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
         }
 
     }else{
+        if (print_path) tools::log->trace("get_H2v path: log2spin <= log2chiL + log2chiR");
         Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
         H2v_tensor.device(dev) =
                 theta
@@ -234,6 +239,8 @@ void ceres_direct_functor<Scalar>::get_Hv (const VectorType &v)const{
     size_t log2chiR  = std::log2(dsizes[2]);
 //            size_t log2spin  = std::log2(multiComponents.dsizes[0]);
     if (log2chiL > log2chiR){
+        if (print_path) tools::log->trace("get_Hv path: log2chiL > log2chiR ");
+
         Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
         Hv_tensor.device(dev) =
                 theta
@@ -242,6 +249,8 @@ void ceres_direct_functor<Scalar>::get_Hv (const VectorType &v)const{
                         .contract(envR, Textra::idx({0,2}, {0, 2}))
                         .shuffle(Textra::array3{1, 0, 2});
     }else{
+        if (print_path) tools::log->trace("get_Hv path: log2chiL <= log2chiR ");
+
         Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2,0,1});
         Hv_tensor.device(dev) =
                 theta

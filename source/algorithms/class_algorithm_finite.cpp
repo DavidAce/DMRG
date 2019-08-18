@@ -30,9 +30,6 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     tools::finite::debug::check_integrity(*state);
 
 
-    min_saturation_iters = 2;
-    max_saturation_iters = 4;
-
     S_mat.resize(state->get_length()+1);
     BS_mat.resize(state->get_length()+1);
     XS_mat.resize(state->get_length()+1);
@@ -201,15 +198,25 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
     log->debug("Checking convergence of variance mpo");
     threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
-    sim_status.variance_mpo_has_saturated = check_saturation_using_slope(
+    auto report = check_saturation_using_slope(
                     B_mpo_vec,
                     V_mpo_vec,
                     X_mpo_vec,
                     tools::finite::measure::energy_variance_per_site(*state),
                     sim_status.iteration,
                     1,
-                    slope_threshold,
-                    V_mpo_slope);
+                    slope_threshold);
+    if (report.has_computed){
+        V_mpo_slope  = report.slope;
+        log->debug("Variance slope details:");
+        log->debug(" -- relative slope  = {} %", report.slope);
+        log->debug(" -- tolerance       = {} %", slope_threshold);
+        log->debug(" -- average         = {} " , report.avgY);
+        log->debug(" -- history         = {} " , V_mpo_vec);
+        log->debug(" -- has saturated   = {} " , report.has_saturated);
+        log->debug(" -- checked from    = {} to {}", report.check_from, X_mpo_vec.size());
+    }
+    sim_status.variance_mpo_has_saturated = report.has_saturated;
     sim_status.variance_mpo_saturated_for = (int) count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
     sim_status.variance_mpo_has_converged =  state->measurements.energy_variance_per_site.value() < threshold;
 
@@ -224,25 +231,39 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
 
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::EntEntrSaturationThreshold  : slope_threshold;
     auto entropies  = tools::finite::measure::entanglement_entropies(*state);
-    std::vector<bool> entanglement_has_saturated(entropies.size());
-    std::vector<double> S_slopes(entropies.size());
-
+    std::vector<SaturationReport> reports(entropies.size());
     for (size_t site = 0; site < entropies.size(); site++){
-        entanglement_has_saturated[site] = check_saturation_using_slope(
+        reports[site] = check_saturation_using_slope(
                 BS_mat[site],
                 S_mat[site],
                 XS_mat[site],
                 entropies[site],
                 sim_status.iteration,
                 1,
-                slope_threshold,
-                S_slopes[site]);
-
+                slope_threshold);
     }
-    size_t idx = std::distance(S_slopes.begin(), std::max_element(S_slopes.begin(),S_slopes.end()));
-    S_slope = S_slopes[idx];
-    tools::log->debug("Max slope of entanglement entropy: {:.8f} %", S_slope);
-    sim_status.entanglement_has_saturated = entanglement_has_saturated[idx];
+    bool all_computed = std::all_of(reports.begin(), reports.end(), [](const SaturationReport r) { return r.has_computed; });
+    sim_status.entanglement_has_saturated = false;
+    if(all_computed){
+        size_t idx = std::distance(reports.begin(),
+                     std::max_element(reports.begin(),reports.end(),
+                        [](const SaturationReport &r1, const SaturationReport &r2) {return r1.slope < r2.slope;}));
+        S_slope = reports[idx].slope;
+        sim_status.entanglement_has_saturated = reports[idx].has_saturated;
+        sim_status.entanglement_saturated_for = (int) count(BS_mat[idx].begin(), BS_mat[idx].end(), true);
+        std::vector<double> all_slopes;
+        for (auto &r : reports) all_slopes.push_back(r.slope);
+        log->debug("Max slope of entanglement entropy at site {}: {:.8f} %",idx, S_slope);
+        log->debug("Entanglement slope details of worst slope:");
+        log->debug(" -- site            = {}"  , idx);
+        log->debug(" -- relative slope  = {} %", reports[idx].slope);
+        log->debug(" -- tolerance       = {} %", slope_threshold);
+        log->debug(" -- average         = {} " , reports[idx].avgY);
+        log->debug(" -- history         = {} " , S_mat[idx]);
+        log->debug(" -- has saturated   = {} " , reports[idx].has_saturated);
+        log->debug(" -- checked from    = {} to {}", reports[idx].check_from, S_mat[idx].size());
+        log->debug(" -- all slopes      = {}", all_slopes);
+    }
     sim_status.entanglement_has_converged = sim_status.entanglement_has_saturated;
 
 }
@@ -397,7 +418,8 @@ void class_algorithm_finite::print_status_update() {
     switch(sim_type){
         case SimulationType::fDMRG:
         case SimulationType::xDMRG:
-            report << left  << " σ²-" << setw(2) << sim_status.variance_mpo_saturated_for << " iters";
+            report << left  << "σ²:" << setw(2) << sim_status.variance_mpo_saturated_for;
+            report << left  << " S:" << setw(2) << sim_status.entanglement_saturated_for;
             break;
         default: throw std::runtime_error("Wrong simulation type");
 

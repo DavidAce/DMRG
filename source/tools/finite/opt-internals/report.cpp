@@ -12,6 +12,7 @@ void tools::finite::opt::internals::reports::print_report(const std::vector<dire
               <<"    "<< std::setw(24) << std::left << "energy"
               <<"    "<< std::setw(44) << std::left << "variance"
               <<"    "<< std::setw(24) << std::left << "overlap"
+              <<"    "<< std::setw(24) << std::left << "norm"
               <<"    "<< std::setw(8)  << std::left << "iter"
               <<"    "<< std::setw(8)  << std::left << "counter"
               <<"    "<< std::setw(20) << std::left << "Elapsed time [ms]"
@@ -24,10 +25,11 @@ void tools::finite::opt::internals::reports::print_report(const std::vector<dire
                << "    " << std::setw(24) << std::left << std::fixed << std::get<2>(item)
                << "    " << std::setw(44) << std::left << std::fixed << std::get<3>(item)
                << "    " << std::setw(24) << std::left << std::fixed << std::get<4>(item)
-               << "    " << std::setw(8)  << std::left << std::fixed << std::get<5>(item) << std::setprecision(3)
+               << "    " << std::setw(24) << std::left << std::fixed << std::get<5>(item)
                << "    " << std::setw(8)  << std::left << std::fixed << std::get<6>(item) << std::setprecision(3)
-               << "    " << std::setw(20) << std::left << std::fixed << std::get<7>(item) * 1000
-               << "    " << std::setw(20) << std::left << std::fixed << std::get<7>(item) * 1000 / (double)std::get<6>(item)
+               << "    " << std::setw(8)  << std::left << std::fixed << std::get<7>(item) << std::setprecision(3)
+               << "    " << std::setw(20) << std::left << std::fixed << std::get<8>(item) * 1000
+               << "    " << std::setw(20) << std::left << std::fixed << std::get<8>(item) * 1000 / (double)std::get<7>(item)
                << '\n';
     }
     report << '\n';
@@ -43,6 +45,7 @@ void tools::finite::opt::internals::reports::print_report(const std::vector<subs
               <<"    "<< std::setw(24) << std::left << "energy"
               <<"    "<< std::setw(44) << std::left << "variance"
               <<"    "<< std::setw(24) << std::left << "overlap"
+              <<"    "<< std::setw(24) << std::left << "norm"
               <<"    "<< std::setw(8)  << std::left << "iter"
               <<"    "<< std::setw(8)  << std::left << "counter"
               <<"    "<< std::setw(20) << std::left << "Elapsed time [ms]"
@@ -55,10 +58,11 @@ void tools::finite::opt::internals::reports::print_report(const std::vector<subs
                << "    " << std::setw(24) << std::left << std::fixed << std::get<2>(item)
                << "    " << std::setw(44) << std::left << std::fixed << std::get<3>(item)
                << "    " << std::setw(24) << std::left << std::fixed << std::get<4>(item)
-               << "    " << std::setw(8)  << std::left << std::fixed << std::get<5>(item) << std::setprecision(3)
+               << "    " << std::setw(24) << std::left << std::fixed << std::get<5>(item)
                << "    " << std::setw(8)  << std::left << std::fixed << std::get<6>(item) << std::setprecision(3)
-               << "    " << std::setw(20) << std::left << std::fixed << std::get<7>(item) * 1000
-               << "    " << std::setw(20) << std::left << std::fixed << std::get<7>(item) * 1000 / (double)std::get<6>(item)
+               << "    " << std::setw(8)  << std::left << std::fixed << std::get<7>(item) << std::setprecision(3)
+               << "    " << std::setw(20) << std::left << std::fixed << std::get<8>(item) * 1000
+               << "    " << std::setw(20) << std::left << std::fixed << std::get<8>(item) * 1000 / (double)std::get<7>(item)
                << '\n';
     }
     tools::log->debug(report.str());
