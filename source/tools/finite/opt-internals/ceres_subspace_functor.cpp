@@ -42,13 +42,13 @@ bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(con
 {
     Scalar vH2v,vHv;
     Scalar ene,var;
-    double log10var;
+    double vv, log10var;
     double norm_func,norm_grad;
     VectorType Hv, H2v;
     int vecSize = NumParameters();
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){vecSize = NumParameters()/2;}
     Eigen::Map<const VectorType> v (reinterpret_cast<const Scalar*>(v_double_double)   , vecSize);
-    double vv = v.squaredNorm();
+    vv = v.squaredNorm();
     norm = std::sqrt(vv);
 
     #pragma omp parallel
@@ -69,20 +69,13 @@ bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(con
     }
     ene             = vHv/vv;
     var             = vH2v/vv - ene*ene;
-//    double loss_of_precision = std::log10(std::abs(ene*ene));
-//    double expected_error    = std::pow(10, -(14-loss_of_precision));
-//    if (std::imag(ene)      > expected_error) tools::log->warn("Energy has imaginary component              : {:.16f} + i {:.16f}" , std::real(ene)    , std::imag(ene));
-//    if (std::imag(vH2v/vv)  > expected_error) tools::log->warn("Hamiltonian squared has imaginary component : {:.16f} + i {:.16f}" , std::real(vH2v/vv), std::imag(vH2v/vv));
-//    if (std::imag(var)      > expected_error) tools::log->warn("Variance has imaginary component            : {:.16f} + i {:.16f}" , std::real(var)    , std::imag(var));
     if (std::real(var)      < 0.0           ) tools::log->warn("Variance is negative                        : {:.16f} + i {:.16f}" , std::real(var)    , std::imag(var));
 
     energy         = std::real(ene) / length;
     variance       = std::abs(var)  / length;
-    variance       = variance < 1e-15  ? 1e-15 : variance;
-
     norm_offset    = std::abs(vv) - 1.0 ;
-    norm_func      = windowed_func_pow(norm_offset,0.1);
-    norm_grad      = windowed_grad_pow(norm_offset,0.1);
+    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.0);
+
     log10var       = std::log10(variance);
     if (fx != nullptr){
         fx[0] = log10var +  norm_func;
@@ -96,23 +89,8 @@ bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(con
                +  norm_grad * v;
     }
 
-
-//    grad = var_1 * (H2v  - 2.0 * ene * Hv )
-//           +  norm_grad * v;
-//    vecSize = grad.size();
-//    if constexpr (std::is_same<Scalar,std::complex<double>>::value){vecSize = 2*grad.size();}
-//    grad_double_double  = Eigen::Map<Eigen::VectorXd> (reinterpret_cast<double*> (grad.data()), vecSize);
-//
-
-//    std::cout   << std::setprecision(12) << std::fixed
-//            << " Variance: "   << std::setw(18)   << std::log10(variance/length)
-//            << " Variance: "   << std::setw(18)   << std::log10((vH2v/vv - vHv * vHv/vv/vv)/(double)length)
-//            << " Energy : "    << std::setw(18)   << energy/length
-//            << " norm : "      << std::setw(18)   << norm
-//            << " normsq : "    << std::setw(18)   << vv
-//            << " fx : "        << std::setw(18)   << fx
-//            << std::endl;
-
+//    tools::log->trace("Variance: {:<24.18f} Energy: {:<24.18f} norm: {:<24.18f} norm_func: {:<24.18f} norm_grad: {:<24.18f} fx: {:<24.18f} ",
+//            std::log10(variance),energy,norm,norm_func,norm_grad,fx[0] );
 
     if(std::isnan(log10var) or std::isinf(log10var)){
         tools::log->warn("log10 variance is invalid");

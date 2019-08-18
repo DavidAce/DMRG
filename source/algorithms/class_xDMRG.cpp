@@ -28,7 +28,7 @@ using namespace Textra;
 class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_finite(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG, settings::xdmrg::num_sites) {
     log->trace("Constructing class_xDMRG");
-    settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, 1+(size_t)(std::log2(chi_max())/2));
+    settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, (size_t)(std::log2(chi_max())));
     log_dmrg       = std::make_unique<class_hdf5_log<class_log_dmrg>>        (h5pp_file, sim_name + "/logs", "measurements", sim_name);
 }
 
@@ -58,10 +58,8 @@ void class_xDMRG::run_simulation()    {
         write_state();
         write_status();
         write_logs();
-        print_status_update();
         check_convergence();
-//        tools::log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
-//        tools::log->debug("Truncation errors: {}", state->truncation_error);
+        print_status_update();
         // It's important not to perform the last step.
         // That last state would not get optimized
         if (state->position_is_any_edge())
@@ -96,11 +94,11 @@ void class_xDMRG::single_DMRG_step()
 
     t_sim.tic();
     log->trace("Starting single xDMRG step");
-//    tools::log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
+//  log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
 
     auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
     auto optSpace = opt::OptSpace::SUBSPACE;
-    optSpace      = measure::energy_variance_per_site(*state) < settings::precision::VarConvergenceThreshold         ?  opt::OptSpace::DIRECT  : optSpace;
+//    optSpace      = measure::energy_variance_per_site(*state) < settings::precision::VarConvergenceThreshold         ?  opt::OptSpace::DIRECT  : optSpace;
     optSpace      = state->size_2site()  > settings::precision::MaxSizePartDiag                                      ?  opt::OptSpace::DIRECT  : optSpace;
     optSpace      = sim_status.iteration >= settings::xdmrg::min_sweeps                                              ?  opt::OptSpace::DIRECT  : optSpace;
     auto optType  = state->isReal() ?  opt::OptType::REAL :  opt::OptType::CPLX;
@@ -112,9 +110,6 @@ void class_xDMRG::single_DMRG_step()
         case  opt::OptSpace::DIRECT   : threshold = settings::precision::MaxSizeDirect  ; break;
     }
     state->activate_sites(threshold);
-//    sim_status.chi_temp = sim_status.iteration  < 4 ? 32 : sim_status.chi_temp;
-//    sim_status.chi_temp = sim_status.iteration  < 2 ? 16 : sim_status.chi_temp;
-//    sim_status.chi_temp = sim_status.iteration  < 1 ? 8  : sim_status.chi_temp;
 
     Eigen::Tensor<Scalar,3> theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
@@ -126,7 +121,7 @@ void class_xDMRG::single_DMRG_step()
 //    mps::rebuild_environments(*state);
     debug::check_integrity(*state);
 
-    tools::log->debug("Variance accurate check after  xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
+    log->debug("Variance accurate check after  xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
     sim_status.energy_dens        = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     state->unset_measurements();
 
@@ -181,16 +176,19 @@ void class_xDMRG::check_convergence(){
 
 
     if(    sim_status.variance_mpo_has_converged
-       and sim_status.entanglement_has_converged)
+       and sim_status.entanglement_has_converged
+//       and sim_status.variance_mpo_saturated_for >= min_saturation_iters
+//       and sim_status.entanglement_saturated_for >= min_saturation_iters
+       )
     {
         log->debug("Simulation has converged");
         sim_status.simulation_has_converged = true;
     }
 
-    if (    sim_status.variance_mpo_has_saturated
-        and sim_status.entanglement_has_saturated
-        and sim_status.bond_dimension_has_reached_max
-        and sim_status.variance_mpo_saturated_for >= max_saturation_iters)
+    if (sim_status.bond_dimension_has_reached_max
+        and (  sim_status.variance_mpo_saturated_for >= max_saturation_iters
+            or sim_status.entanglement_saturated_for >= max_saturation_iters)
+        )
     {
         log->debug("Simulation has to stop");
         sim_status.simulation_has_to_stop = true;

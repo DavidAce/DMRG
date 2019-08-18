@@ -24,6 +24,7 @@ tools::finite::opt::find_excited_state(const class_finite_state &state, const cl
         google::InitGoogleLogging(tools::log->name().c_str());
         googleLogginghasInitialized = true;
     }
+
     std::stringstream problem_report;
     auto dims = state.active_dimensions();
     auto size = std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<size_t>());
@@ -134,4 +135,17 @@ double tools::finite::opt::internals::windowed_grad_pow(double x,double window){
     }
 }
 
+
+
+std::pair<double,double> tools::finite::opt::internals::windowed_func_grad(double x,double window){
+    double func = 0;
+    double grad = 0;
+    if (std::abs(x) >= window){
+        func = x*x - window*window;
+//        func = std::log10(func + 1e-1 ); // Add a small epsilon so in case func == 0
+//        grad = 1.0/func/std::log(10);
+        grad = 2*x;
+    }
+    return std::make_pair(func,grad);
+}
 

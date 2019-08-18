@@ -24,8 +24,8 @@ public:
     std::unique_ptr<class_finite_state>    state;
 
 
-    size_t min_saturation_iters          = 0;
-    size_t max_saturation_iters          = 0;
+    size_t min_saturation_iters          = 2;
+    size_t max_saturation_iters          = 4;
 
 
     virtual void run_simulation()           = 0;
@@ -38,7 +38,7 @@ public:
     void run()                                                              final;
     void compute_observables()                                              final;
     void clear_saturation_status()                                          override;
-    void reset_to_random_state(const std::string symmetry)                    final;
+    void reset_to_random_state(const std::string symmetry)                  final;
     void write_measurements(bool force = false)                             final;
     void write_state(bool force = false)                                    final;
     void print_status_update()                                              final;

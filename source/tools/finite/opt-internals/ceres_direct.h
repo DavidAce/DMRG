@@ -20,6 +20,7 @@ namespace tools::finite::opt{
             Eigen::Tensor<Scalar,4> env2L, env2R;
             Eigen::Tensor<Scalar,4> mpo;
             Eigen::DSizes<long,3>   dsizes;
+            mutable bool print_path = true;
             mutable Eigen::Tensor<Scalar,3> Hv_tensor, H2v_tensor;
             void get_Hv   (const VectorType &v) const;
             void get_H2v  (const VectorType &v) const;

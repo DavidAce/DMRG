@@ -48,6 +48,7 @@ std::ostream & operator << (std::ostream& os, const class_simulation_status & si
             << std::string("variance_ham_has_saturated     : ")  << std::boolalpha << sim_status.variance_ham_has_saturated      << '\n'
             << std::string("variance_mom_has_converged     : ")  << std::boolalpha << sim_status.variance_mom_has_converged      << '\n'
             << std::string("variance_mom_has_saturated     : ")  << std::boolalpha << sim_status.variance_mom_has_saturated      << '\n'
+            << std::string("entanglement_saturated_for     : ")  << sim_status.entanglement_saturated_for                        << '\n'
             << std::string("variance_mpo_saturated_for     : ")  << sim_status.variance_mpo_saturated_for                        << '\n'
             << std::string("variance_ham_saturated_for     : ")  << sim_status.variance_ham_saturated_for                        << '\n'
             << std::string("variance_mom_saturated_for     : ")  << sim_status.variance_mom_saturated_for                        << '\n';

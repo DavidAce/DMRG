@@ -23,7 +23,7 @@ class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_finite(std::move(h5ppFile_),"fDMRG", SimulationType::fDMRG, settings::fdmrg::num_sites) {
     log->trace("Constructing class_fDMRG");
     log_dmrg       = std::make_unique<class_hdf5_log<class_log_dmrg>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
-    settings::fdmrg::min_sweeps = std::max(settings::fdmrg::min_sweeps, 1+(size_t)(std::log2(chi_max())/2));
+    settings::fdmrg::min_sweeps = std::max(settings::fdmrg::min_sweeps, (size_t)(std::log2(chi_max())));
 }
 
 
@@ -36,8 +36,8 @@ void class_fDMRG::run_simulation(){
         write_state();
         write_status();
         write_logs();
-        print_status_update();
         check_convergence();
+        print_status_update();
 
         // It's important not to perform the last step.
         // That last state would not get optimized
@@ -78,17 +78,21 @@ void class_fDMRG::check_convergence(){
     }
 
 
-    if(     sim_status.variance_mpo_has_converged
-            and sim_status.entanglement_has_converged)
+
+    if(    sim_status.variance_mpo_has_converged
+           and sim_status.entanglement_has_converged
+//           and sim_status.variance_mpo_saturated_for >= min_saturation_iters
+//           and sim_status.entanglement_saturated_for >= min_saturation_iters
+            )
     {
         log->debug("Simulation has converged");
         sim_status.simulation_has_converged = true;
     }
 
-    if (        sim_status.variance_mpo_has_saturated
-                and sim_status.entanglement_has_saturated
-                and sim_status.bond_dimension_has_reached_max
-                and sim_status.variance_mpo_saturated_for >= max_saturation_iters)
+    if (sim_status.bond_dimension_has_reached_max
+        and (  sim_status.variance_mpo_saturated_for >= max_saturation_iters
+               or sim_status.entanglement_saturated_for >= max_saturation_iters)
+            )
     {
         log->debug("Simulation has to stop");
         sim_status.simulation_has_to_stop = true;

@@ -38,6 +38,7 @@ void tools::common::io::write_simulation_status(const class_simulation_status &s
     h5ppFile.writeDataset(sim_status.variance_ham_saturated_for    ,sim_name + "/sim_status/variance_ham_saturated_for");
     h5ppFile.writeDataset(sim_status.variance_ham_has_converged    ,sim_name + "/sim_status/variance_ham_has_converged");
     h5ppFile.writeDataset(sim_status.variance_ham_has_saturated    ,sim_name + "/sim_status/variance_ham_has_saturated");
+    h5ppFile.writeDataset(sim_status.entanglement_saturated_for    ,sim_name + "/sim_status/entanglement_saturated_for");
     h5ppFile.writeDataset(sim_status.variance_mom_saturated_for    ,sim_name + "/sim_status/variance_mom_saturated_for");
     h5ppFile.writeDataset(sim_status.variance_mom_has_converged    ,sim_name + "/sim_status/variance_mom_has_converged");
     h5ppFile.writeDataset(sim_status.variance_mom_has_saturated    ,sim_name + "/sim_status/variance_mom_has_saturated");
@@ -80,6 +81,7 @@ class_simulation_status tools::common::io::load_sim_status_from_hdf5 (const h5pp
         h5ppFile.readDataset(sim_status.variance_ham_has_saturated     , sim_name + "/sim_status/variance_ham_has_saturated");
         h5ppFile.readDataset(sim_status.variance_mom_has_converged     , sim_name + "/sim_status/variance_mom_has_converged");
         h5ppFile.readDataset(sim_status.variance_mom_has_saturated     , sim_name + "/sim_status/variance_mom_has_saturated");
+        h5ppFile.readDataset(sim_status.entanglement_saturated_for     , sim_name + "/sim_status/entanglement_saturated_for");
         h5ppFile.readDataset(sim_status.variance_mpo_saturated_for     , sim_name + "/sim_status/variance_mpo_saturated_for");
         h5ppFile.readDataset(sim_status.variance_ham_saturated_for     , sim_name + "/sim_status/variance_ham_saturated_for");
         h5ppFile.readDataset(sim_status.variance_mom_saturated_for     , sim_name + "/sim_status/variance_mom_saturated_for");

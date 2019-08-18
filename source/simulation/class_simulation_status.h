@@ -46,6 +46,7 @@ struct status_data{
     bool   variance_ham_has_saturated     = false;
     bool   variance_mom_has_converged     = false;
     bool   variance_mom_has_saturated     = false;
+    size_t entanglement_saturated_for     = 0;
     size_t variance_mpo_saturated_for     = 0;
     size_t variance_ham_saturated_for     = 0;
     size_t variance_mom_saturated_for     = 0;

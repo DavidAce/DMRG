@@ -80,16 +80,16 @@ void class_algorithm_infinite::check_convergence_variance_mpo(double threshold,d
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
     compute_observables();
 
-    sim_status.variance_mpo_has_saturated =
-            check_saturation_using_slope(
+    auto report = check_saturation_using_slope(
                     B_mpo_vec,
                     V_mpo_vec,
                     X_mpo_vec,
                     tools::infinite::measure::energy_variance_per_site_mpo(*state),
                     sim_status.iteration,
                     1,
-                    slope_threshold,
-                    V_mpo_slope);
+                    slope_threshold);
+    if(report.has_computed) V_mpo_slope  = report.slope;
+    sim_status.variance_mpo_has_saturated = report.has_saturated;
     sim_status.variance_mpo_saturated_for = (int) count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
     sim_status.variance_mpo_has_converged =  state->measurements.energy_variance_per_site_mpo.value() < threshold;
 
@@ -102,15 +102,16 @@ void class_algorithm_infinite::check_convergence_variance_ham(double threshold,d
 
     threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
-    sim_status.variance_ham_has_saturated = check_saturation_using_slope(
+    auto report  = check_saturation_using_slope(
             B_ham_vec,
             V_ham_vec,
             X_ham_vec,
             tools::infinite::measure::energy_variance_per_site_ham(*state),
             sim_status.iteration,
             1,
-            slope_threshold,
-            V_ham_slope);
+            slope_threshold);
+    if(report.has_computed) V_ham_slope  = report.slope;
+    sim_status.variance_ham_has_saturated = report.has_saturated;
     sim_status.variance_ham_has_converged = tools::infinite::measure::energy_variance_per_site_ham(*state) < threshold;
 }
 
@@ -121,14 +122,15 @@ void class_algorithm_infinite::check_convergence_variance_mom(double threshold,d
 
     threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
-    sim_status.variance_mom_has_saturated = check_saturation_using_slope(B_mom_vec,
+    auto report = check_saturation_using_slope(B_mom_vec,
             V_mom_vec,
             X_mom_vec,
             tools::infinite::measure::energy_variance_per_site_mom(*state),
             sim_status.iteration,
             1,
-            slope_threshold,
-            V_mom_slope);
+            slope_threshold);
+    if(report.has_computed) V_mom_slope  = report.slope;
+    sim_status.variance_mom_has_saturated = report.has_saturated;
     sim_status.variance_mom_has_converged = tools::infinite::measure::energy_variance_per_site_mom(*state) < threshold;
 }
 
@@ -138,15 +140,16 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
     log->debug("Checking convergence of entanglement");
 
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::EntEntrSaturationThreshold  : slope_threshold;
-    sim_status.entanglement_has_saturated  = check_saturation_using_slope(
+    auto report = check_saturation_using_slope(
             BS_vec,
             S_vec,
             XS_vec,
             tools::infinite::measure::current_entanglement_entropy(*state),
             sim_status.iteration,
             1,
-            slope_threshold,
-            S_slope);
+            slope_threshold);
+    if(report.has_computed) S_slope       = report.slope;
+    sim_status.entanglement_has_saturated = report.has_saturated;
     sim_status.entanglement_has_converged = sim_status.entanglement_has_saturated;
 }
 
