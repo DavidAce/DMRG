@@ -330,45 +330,44 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     std::vector<reports::subspc_opt_tuple> opt_log;
 
+    if (tools::log->level() <= spdlog::level::debug){
 
-    t_opt->tic();
-    state.unset_measurements();
-    double energy_0   = tools::finite::measure::energy_per_site(state);
-    double variance_0 = tools::finite::measure::energy_variance_per_site(state);
-    int iter_0 = 0;
-//    Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
-    Eigen::VectorXcd theta_0 = (eigvecs * theta_start.conjugate().asDiagonal() ).rowwise().sum().normalized();
-    double overlap_0 = std::abs(theta_old.dot(theta_0));
-    t_opt->toc();
-    opt_log.emplace_back("Initial",theta_old.size(), energy_0, std::log10(variance_0), overlap_0,theta_old.norm(), iter_0,0, t_opt->get_last_time_interval());
+        t_opt->tic();
+        state.unset_measurements();
+        double energy_0   = tools::finite::measure::energy_per_site(state);
+        double variance_0 = tools::finite::measure::energy_variance_per_site(state);
+        int iter_0 = 0;
+    //    Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
+        Eigen::VectorXcd theta_0 = (eigvecs * theta_start.conjugate().asDiagonal() ).rowwise().sum().normalized();
+        double overlap_0 = std::abs(theta_old.dot(theta_0));
+        t_opt->toc();
+        opt_log.emplace_back("Initial",theta_old.size(), energy_0, std::log10(variance_0), overlap_0,theta_old.norm(), iter_0,0, t_opt->get_last_time_interval());
 
-    // Initial sanity check
-    t_opt->tic();
-    state.unset_measurements();
-    auto theta_0_map         = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(theta_0.data(), state.active_dimensions());
-    double energy_1          = tools::finite::measure::multisite::energy_per_site(state,theta_0_map);
-    double variance_1        = tools::finite::measure::multisite::energy_variance_per_site(state,theta_0_map);
-    t_opt->toc();
-    opt_log.emplace_back("Initial sanity check 1",theta.size(), energy_1, std::log10(variance_1), overlap_0,theta_0.norm(), iter_0,0, t_opt->get_last_time_interval());
-
-
+        // Initial sanity check
+        t_opt->tic();
+        state.unset_measurements();
+        auto theta_0_map         = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(theta_0.data(), state.active_dimensions());
+        double energy_1          = tools::finite::measure::multisite::energy_per_site(state,theta_0_map);
+        double variance_1        = tools::finite::measure::multisite::energy_variance_per_site(state,theta_0_map);
+        t_opt->toc();
+        opt_log.emplace_back("Initial sanity check 1",theta.size(), energy_1, std::log10(variance_1), overlap_0,theta_0.norm(), iter_0,0, t_opt->get_last_time_interval());
 
 
-    // Initial sanity check 2
-    t_opt->tic();
-    Eigen::MatrixXcd H2  = state.get_multi_hamiltonian2_subspace_matrix(eigvecs);
-    Eigen::VectorXcd Hv  = eigvals.asDiagonal() * theta_start;
-    Eigen::VectorXcd H2v = H2.template selfadjointView<Eigen::Upper>()*theta_start;
-    Scalar vHv  = theta_start.dot(Hv);
-    Scalar vH2v = theta_start.dot(H2v);
-    double vv   = theta_start.squaredNorm();
-    Scalar ene  = vHv/vv;
-    Scalar var  = vH2v/vv - ene*ene;
-    double ene_init_san = std::real(ene)/state.get_length();
-    double var_init_san = std::abs(var)/state.get_length();
-    t_opt->toc();
-    opt_log.emplace_back("Initial sanity check 2",theta_start.size(), ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), iter_0,0, t_opt->get_last_time_interval());
-
+        // Initial sanity check 2
+        t_opt->tic();
+        Eigen::MatrixXcd H2  = state.get_multi_hamiltonian2_subspace_matrix(eigvecs);
+        Eigen::VectorXcd Hv  = eigvals.asDiagonal() * theta_start;
+        Eigen::VectorXcd H2v = H2.template selfadjointView<Eigen::Upper>()*theta_start;
+        Scalar vHv  = theta_start.dot(Hv);
+        Scalar vH2v = theta_start.dot(H2v);
+        double vv   = theta_start.squaredNorm();
+        Scalar ene  = vHv/vv;
+        Scalar var  = vH2v/vv - ene*ene;
+        double ene_init_san = std::real(ene)/state.get_length();
+        double var_init_san = std::abs(var)/state.get_length();
+        t_opt->toc();
+        opt_log.emplace_back("Initial sanity check 2",theta_start.size(), ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), iter_0,0, t_opt->get_last_time_interval());
+    }
 
 
     ceres::GradientProblemSolver::Options options;
@@ -433,17 +432,21 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     }
     t_opt->toc();
 
-    overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
-    opt_log.emplace_back("Ceres L-BFGS",theta.size(), energy_new, std::log10(variance_new), overlap_new,theta_new.norm(), iter,counter, t_opt->get_last_time_interval());
 
 
-    // Sanity check
-    t_opt->tic();
-    auto theta_san      = Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
-    double energy_san   = tools::finite::measure::multisite::energy_per_site(state,theta_san);
-    double variance_san = tools::finite::measure::multisite::energy_variance_per_site(state,theta_san);
-    t_opt->toc();
-    opt_log.emplace_back("Sanity check",theta_san.size(), energy_san, std::log10(variance_san), overlap_new,theta_new.norm(), 0,0, t_opt->get_last_time_interval());
+    if (tools::log->level() <= spdlog::level::debug){
+        // Print results of Ceres LBFGS
+        overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
+        opt_log.emplace_back("Ceres L-BFGS",theta.size(), energy_new, std::log10(variance_new), overlap_new,theta_new.norm(), iter,counter, t_opt->get_last_time_interval());
+
+        // Sanity check
+        t_opt->tic();
+        auto theta_san      = Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
+        double energy_san   = tools::finite::measure::multisite::energy_per_site(state,theta_san);
+        double variance_san = tools::finite::measure::multisite::energy_variance_per_site(state,theta_san);
+        t_opt->toc();
+        opt_log.emplace_back("Sanity check",theta_san.size(), energy_san, std::log10(variance_san), overlap_new,theta_new.norm(), 0,0, t_opt->get_last_time_interval());
+    }
 
 
 
@@ -453,7 +456,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     reports::print_report(opt_log);
 
     // Return something strictly better
-    if (variance_new < variance_0){
+    if (variance_new < tools::finite::measure::energy_variance_per_site(state)){
         state.unset_measurements();
         tools::log->debug("Returning new theta");
         return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
@@ -469,10 +472,6 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
             tools::log->debug("... discarding subspace and switching to direct mode");
             return ceres_direct_optimization(state, sim_status, optType);
         }
-
-
-//        tools::log->debug("Returning old theta");
-//        return  theta;
     }
 
 
