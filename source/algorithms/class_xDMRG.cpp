@@ -199,6 +199,7 @@ void class_xDMRG::check_convergence(){
 
     if (state->position_is_any_edge()
         and sim_status.variance_mpo_has_saturated
+        and not sim_status.variance_mpo_has_converged
         and not sim_status.simulation_has_converged
         and not outside_of_window
         and not projected_during_saturation)

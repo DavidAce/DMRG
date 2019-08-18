@@ -12,7 +12,6 @@ inputfile=${2}
 inputbase=$(basename $inputfile .cfg)
 nmin=${3}
 nmax=${4}
-realization=1811
 outdir=logs/seed_$nmin-$nmax
 mkdir -p $outdir
 
@@ -24,13 +23,19 @@ echo "MEM PER CPU    : $SLURM_MEM_PER_CPU"
 echo "MEM PER NODE   : $SLURM_MEM_PER_NODE"
 
 
-parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log "$exec -i $inputfile -r $realization -s {} &> $outdir/${inputbase}_${realization}_{}.out" ::: $(seq $nmin $nmax)
-#parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log $exec $inputfile {} ">" $outdir/$inputbase_{}.out ::: $(seq $nmin $nmax)
+parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log "$exec -i $inputfile -r {} &> $outdir/${inputbase}_{}.out" ::: $(seq $nmin $nmax)
+
+# For initial state enumeration
+#realization=1811
+#parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log "$exec -i $inputfile -r $realization -s {} &> $outdir/${inputbase}_${realization}_{}.out" ::: $(seq $nmin $nmax)
+
+
+
+
 
 
 # parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log  $exec $inputfile {} '2>&1' ">" $outdir/$inputbase_{}.out ::: $(seq $nmin $nmax)
 
-# '2>&1' ">" $outdir/$inputbase_{}.out
 # Explanation
 
 # $(seq $nmin $nmax) will print a sequence of seeds from nmin to nmax. Each number is piped with | to parallel,
