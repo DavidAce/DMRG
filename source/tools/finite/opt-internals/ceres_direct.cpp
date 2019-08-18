@@ -62,7 +62,6 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    options.minimizer_progress_to_stdout = true;
     options.max_num_iterations = 150;
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = true;
@@ -78,7 +77,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.function_tolerance = 1e-5;// 1e-4;
     options.gradient_tolerance = 1e-8;
     options.parameter_tolerance = 1e-12;//1e-12;
-
+    options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::debug;
 
     ceres::GradientProblemSolver::Summary summary;
     int counter,iter;

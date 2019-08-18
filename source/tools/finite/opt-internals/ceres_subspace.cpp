@@ -375,7 +375,6 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    options.minimizer_progress_to_stdout = true;
     options.max_num_iterations = 150;
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = true;
@@ -392,6 +391,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     options.gradient_tolerance = 1e-8;
     options.parameter_tolerance = 1e-14;//1e-12;
     ceres::GradientProblemSolver::Summary summary;
+    options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::debug;
 
     t_opt->tic();
     using namespace LBFGSpp;
