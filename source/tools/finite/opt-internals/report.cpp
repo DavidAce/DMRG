@@ -5,6 +5,7 @@
 #include <tools/finite/opt.h>
 
 void tools::finite::opt::internals::reports::print_report(const std::vector<direct_opt_tuple> &opt_log){
+    if (tools::log->level() > spdlog::level::debug) return;
     std::stringstream report;
     report    << std::setprecision(16) << '\n'
               <<"    "<< std::setw(24) << std::left << "Algorithm"
@@ -38,6 +39,7 @@ void tools::finite::opt::internals::reports::print_report(const std::vector<dire
 
 
 void tools::finite::opt::internals::reports::print_report(const std::vector<subspc_opt_tuple> &opt_log){
+    if (tools::log->level() > spdlog::level::debug) return;
     std::stringstream report;
     report    << std::setprecision(16) << '\n'
               <<"    "<< std::setw(24) << std::left << "Algorithm"
@@ -72,6 +74,7 @@ void tools::finite::opt::internals::reports::print_report(const std::vector<subs
 
 
 void tools::finite::opt::internals::reports::print_report(const std::vector<eig_tuple> &eig_log){
+    if (tools::log->level() > spdlog::level::debug) return;
     std::stringstream solver_report;
     solver_report << '\n'
                   << std::setw(12) << std::right << "n eigvecs"
@@ -103,6 +106,7 @@ void tools::finite::opt::internals::reports::print_report(const std::vector<eig_
 
 
 void tools::finite::opt::internals::reports::print_report(const lbfgs_tuple lbfgs_log){
+    if (tools::log->level() > spdlog::level::debug) return;
     std::stringstream report;
     report
             << std::setprecision(3) << '\n'

@@ -447,7 +447,8 @@ double tools::infinite::measure::energy_mpo(const class_infinite_state & state, 
                     .contract(theta.conjugate(),                         idx({0,2,4},{1,0,2}))
                     .contract(state.Rblock->block,                  idx({0,2,1},{0,1,2}));
     if(abs(imag(E(0))) > 1e-10 ){
-        throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
+        tools::log->critical(fmt::format("Energy has an imaginary part: {:.16f} + i {:.16f}",std::real(E(0)), std::imag(E(0))));
+//        throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
     }
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part");
     tools::infinite::profile::t_ene_mpo.toc();
