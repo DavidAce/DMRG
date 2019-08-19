@@ -149,7 +149,7 @@ void class_algorithm_finite::run_postprocessing(){
     tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
     tools::finite::io::write_all_state(*state,*h5pp_file, sim_name);
     tools::finite::io::write_projection_to_closest_parity_sector(*state, *h5pp_file, sim_name,
-                                                                 settings::model::target_parity_sector);
+                                                                 settings::model::target_parity_sector,false);
 
     //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
     if(store_wave_function()){
@@ -324,7 +324,7 @@ void class_algorithm_finite::write_state(bool force){
     log->trace("Writing state to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");
     tools::finite::io::write_projection_to_closest_parity_sector(*state, *h5pp_file, sim_name,
-                                                                 settings::model::target_parity_sector);
+                                                                 settings::model::target_parity_sector, false);
     //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
     if(store_wave_function()){
         h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");

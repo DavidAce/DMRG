@@ -20,7 +20,8 @@ void settings::load_from_file(class_settings_reader &indata){
     model::seed_init                         = indata.find_parameter<int>        ("model::seed_init"                           , model::seed_init);
     model::seed_state                        = indata.find_parameter<int>        ("model::seed_state"                          , model::seed_state);
     model::use_seed_state_as_enumeration     = indata.find_parameter<bool>       ("model::use_seed_state_as_enumeration"       , model::use_seed_state_as_enumeration);
-    model::initial_parity_sector                    = indata.find_parameter<std::string>("model::initial_parity_sector"                      , model::initial_parity_sector);
+    model::project_when_saturated            = indata.find_parameter<bool>       ("model::project_when_saturated"              , model::project_when_saturated);
+    model::initial_parity_sector             = indata.find_parameter<std::string>("model::initial_parity_sector"               , model::initial_parity_sector);
     model::tf_ising::J                       = indata.find_parameter<double>     ("model::tf_ising::J"                         , model::tf_ising::J);
     model::tf_ising::g                       = indata.find_parameter<double>     ("model::tf_ising::g"                         , model::tf_ising::g);
     model::tf_ising::w                       = indata.find_parameter<double>     ("model::tf_ising::w"                         , model::tf_ising::w);

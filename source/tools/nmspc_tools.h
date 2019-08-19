@@ -38,10 +38,10 @@ namespace tools{
         namespace mps {
             extern void initialize                          (class_finite_state & state, size_t length);
             extern void randomize                           (class_finite_state & state, const std::string &parity_sector = "none", int seed_state = -1);
-            extern void normalize                           (class_finite_state & state);
+            extern void normalize                           (class_finite_state & state, bool keep_bond_dimensions = false);
             extern void rebuild_environments                (class_finite_state & state);
             extern int  move_center_point                   (class_finite_state & state);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
-            extern void project_to_closest_parity_sector    (class_finite_state & state, std::string paulistring);
+            extern void project_to_closest_parity_sector    (class_finite_state & state, std::string paulistring,bool keep_bond_dimensions = false);
 
             namespace internals{
                 inline bool seed_state_unused = true;
@@ -63,11 +63,11 @@ namespace tools{
             extern void apply_mpo                     (class_finite_state & state, const Eigen::Tensor<Scalar,4> & mpo, const Eigen::Tensor<Scalar,3> &Ledge, const Eigen::Tensor<Scalar,3> & Redge);
             extern void apply_mpos                    (class_finite_state & state, const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
             extern class_finite_state
-            get_projection_to_parity_sector           (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix, int sign);
+            get_projection_to_parity_sector           (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix, int sign,bool keep_bond_dimensions = false);
             extern class_finite_state
-            get_projection_to_closest_parity_sector   (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix);
+            get_projection_to_closest_parity_sector   (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix,bool keep_bond_dimensions = false);
             extern class_finite_state
-            get_projection_to_closest_parity_sector   (const class_finite_state & state, std::string parity_sector);
+            get_projection_to_closest_parity_sector   (const class_finite_state & state, std::string parity_sector, bool keep_bond_dimensions = false);
             extern double overlap                     (const class_finite_state & state1, const class_finite_state & state2);
             extern double expectation_value           (const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
             extern double exp_sq_value                (const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,4> & Ledge, const Eigen::Tensor<Scalar,4> & Redge);
@@ -134,18 +134,17 @@ namespace tools{
         }
 
         namespace io{
-            extern void write_all_state                    (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_bond_matrices                (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_bond_matrix                  (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_full_mps                     (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_full_mpo                     (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_hamiltonian_params           (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_entanglement                 (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_all_measurements             (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_projection_to_closest_parity_sector    (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name, std::string parity_sector);
-            extern void load_from_hdf5                     (const h5pp::File & h5ppFile, class_finite_state & state    , class_simulation_status & sim_status, std::string sim_name);
-            extern class_finite_state
-            load_state_from_hdf5                           (const h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_all_state                              (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_bond_matrices                          (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_bond_matrix                            (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_full_mps                               (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_full_mpo                               (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_hamiltonian_params                     (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_entanglement                           (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_all_measurements                       (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
+            extern void write_projection_to_closest_parity_sector    (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name, std::string parity_sector,bool keep_bond_dimensions);
+            extern void load_from_hdf5                               (const h5pp::File & h5ppFile, class_finite_state & state    , class_simulation_status & sim_status, std::string sim_name);
+            extern class_finite_state load_state_from_hdf5           (const h5pp::File & h5ppFile, std::string sim_name);
         }
 
         namespace profile{
