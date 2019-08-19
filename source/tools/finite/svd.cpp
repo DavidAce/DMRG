@@ -6,7 +6,7 @@
 #include <math/class_svd_wrapper.h>
 #include <simulation/nmspc_settings.h>
 
-void tools::finite::mps::normalize(class_finite_state & state){
+void tools::finite::mps::normalize(class_finite_state & state, bool keep_bond_dimensions){
 
     tools::log->trace("Normalizing state");
     using namespace Textra;
@@ -17,7 +17,7 @@ void tools::finite::mps::normalize(class_finite_state & state){
 //    std::cout << "Spin component sy (before normalization): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
 //    std::cout << "Spin component sz (before normalization): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
     // Sweep back and forth once on the state
-
+    auto bond_dimensions = tools::finite::measure::bond_dimensions(state);
     class_SVD svd;
     svd.setThreshold(settings::precision::SVDThreshold);
 
@@ -40,7 +40,8 @@ void tools::finite::mps::normalize(class_finite_state & state){
 
     while(num_traversals <= end_traversals){
         Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
-        try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta,state.get_chi_max()); svd_success = true;}
+        long bond_dimension = keep_bond_dimensions ? bond_dimensions[pos_LC] : state.get_chi_max() * 2;
+        try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta,bond_dimension); svd_success = true;}
         catch(std::exception &ex){
             tools::log->error("Skipping normalization step.\n\t SVD failed at positions A:{} C:{} B:{} , step {}:\n\t{}", pos_A, pos_LC, pos_B, step, ex.what());
             svd_success = false;
@@ -137,6 +138,7 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
         std::tie(U, S, V,norm) = SVD.schmidt_with_norm(theta4,chi_);
         state.truncation_error[site+1] = SVD.get_truncation_error();
         tools::log->trace("Truncation error site {} = {}, chi = {}", site,SVD.get_truncation_error(),S.dimension(0));
+
         Eigen::Tensor<Scalar,3> L_U = Textra::asDiagonalInversed(state.get_L(site)).contract(U,Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
 
         state.get_G(site)   = L_U;
@@ -155,7 +157,7 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
         Eigen::Tensor<Scalar,2> leftID = state.get_A(site)
                 .contract(state.get_A(site).conjugate(), Textra::idx({0,1},{0,1}) );
         auto leftIDmap = Textra::Tensor2_to_Matrix(leftID);
-        if(not leftIDmap.isIdentity(1e-14)) throw std::runtime_error(fmt::format("Not left normalized at site {}", site));
+        if(not leftIDmap.isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not left normalized at site {} with threshold 1e-12.", site));
 
     }
 
@@ -172,12 +174,12 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
     Eigen::Tensor<Scalar,2> rightID = state.get_B(site)
             .contract(state.get_B(site).conjugate(), Textra::idx({0,2},{0,2}) );
     auto rightIDmap = Textra::Tensor2_to_Matrix(rightID);
-    if(not rightIDmap.isIdentity(1e-14)) {
+    if(not rightIDmap.isIdentity(1e-12)) {
         std::cout << "L site   : \n" << state.get_L(site) << std::endl;
         std::cout << "L site+1 : \n" << state.get_L(site+1) << std::endl;
 
         std::cout << "rightID: \n" << rightID << std::endl;
-        throw std::runtime_error(fmt::format("Not right normalized at site {}", site));
+        throw std::runtime_error(fmt::format("Not right normalized at site {} with threshold 1e-12", site));
     }
 
 
@@ -237,7 +239,7 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
         Eigen::Tensor<Scalar,2> rightID = state.get_B(site)
                 .contract(state.get_B(site).conjugate(), Textra::idx({0,2},{0,2}) );
         auto rightIDmap = Textra::Tensor2_to_Matrix(rightID);
-        if(not rightIDmap.isIdentity(1e-14)) throw std::runtime_error(fmt::format("Not right normalized at site {}", site));
+        if(not rightIDmap.isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not right normalized at site {} with threshold 1e-12", site));
 
     }
     size_t site = reverse_active_sites.front();
@@ -250,7 +252,7 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
     Eigen::Tensor<Scalar,2> leftID = state.get_MPS(site).get_A()
             .contract(state.get_MPS(site).get_A().conjugate(), Textra::idx({0,1},{0,1}) );
     auto leftIDmap = Textra::Tensor2_to_Matrix(leftID);
-    if(not leftIDmap.isIdentity(1e-14)) throw std::runtime_error(fmt::format("Not left normalized at site {}", site));
+    if(not leftIDmap.isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not left normalized at site {} with threshold 1e-12", site));
 
 }
 

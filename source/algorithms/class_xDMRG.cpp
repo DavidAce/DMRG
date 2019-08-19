@@ -169,7 +169,7 @@ void class_xDMRG::check_convergence(){
         }
         log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
         clear_saturation_status();
-        projected_during_saturation  = false;
+        has_projected   = false;
         sim_status.energy_ubound      = sim_status.energy_target + sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
         sim_status.energy_lbound      = sim_status.energy_target - sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
     }
@@ -197,16 +197,19 @@ void class_xDMRG::check_convergence(){
 
 
 
-    if (state->position_is_any_edge()
-        and sim_status.variance_mpo_has_saturated
+    if (settings::model::project_when_saturated
+//        and state->position_is_any_edge()
+//        and sim_status.variance_mpo_has_saturated
+        and sim_status.iteration == 2
         and not sim_status.variance_mpo_has_converged
         and not sim_status.simulation_has_converged
         and not outside_of_window
-        and not projected_during_saturation)
+        and not has_projected)
     {
         log->info("Projecting to {} due to saturation", settings::model::target_parity_sector);
-        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
-        projected_during_saturation = true;
+        bool keep_bond_dimensions = true;
+        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector,keep_bond_dimensions);
+        has_projected = true;
     }
 
 

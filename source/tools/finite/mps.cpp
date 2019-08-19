@@ -207,6 +207,6 @@ int tools::finite::mps::move_center_point(class_finite_state &  state){
 
 
 
-void tools::finite::mps::project_to_closest_parity_sector   (class_finite_state & state, std::string paulistring){
-    state = tools::finite::ops::get_projection_to_closest_parity_sector(state, paulistring);
+void tools::finite::mps::project_to_closest_parity_sector   (class_finite_state & state, std::string parity_sector, bool keep_bond_dimensions){
+    state = tools::finite::ops::get_projection_to_closest_parity_sector(state, parity_sector, keep_bond_dimensions);
 }

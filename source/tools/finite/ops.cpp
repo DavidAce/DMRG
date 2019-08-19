@@ -124,7 +124,7 @@ void tools::finite::ops::apply_mpos(class_finite_state & state,const std::list<E
 }
 
 
-class_finite_state tools::finite::ops::get_projection_to_parity_sector(const class_finite_state & state, const Eigen::MatrixXcd  & paulimatrix, int sign) {
+class_finite_state tools::finite::ops::get_projection_to_parity_sector(const class_finite_state & state, const Eigen::MatrixXcd  & paulimatrix, int sign,bool keep_bond_dimensions) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
     tools::log->trace("Generating parity projected state");
     class_finite_state state_projected = state;
@@ -132,33 +132,33 @@ class_finite_state tools::finite::ops::get_projection_to_parity_sector(const cla
 
     const auto [mpo,L,R]    = qm::mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
-    tools::finite::mps::normalize(state_projected);
+    tools::finite::mps::normalize(state_projected,keep_bond_dimensions);
     tools::finite::mps::rebuild_environments(state_projected);
     tools::finite::debug::check_integrity_of_mps(state_projected);
     return state_projected;
 }
 
-class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(const class_finite_state &state, const Eigen::MatrixXcd & paulimatrix) {
+class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(const class_finite_state &state, const Eigen::MatrixXcd & paulimatrix, bool keep_bond_dimensions) {
     tools::log->trace("Finding closest projection");
     double measured_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
     if (measured_spin_component > 0){
-        return get_projection_to_parity_sector(state, paulimatrix, 1);
+        return get_projection_to_parity_sector(state, paulimatrix, 1,keep_bond_dimensions);
     }else{
-        return get_projection_to_parity_sector(state, paulimatrix, -1);
+        return get_projection_to_parity_sector(state, paulimatrix, -1,keep_bond_dimensions);
     }
 }
 
-class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(const class_finite_state &state, std::string parity_sector) {
+class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(const class_finite_state &state, std::string parity_sector, bool keep_bond_dimensions) {
     tools::log->trace("Finding closest projection");
-    if      (parity_sector == "x")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sx);}
-    else if (parity_sector == "y")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sy);}
-    else if (parity_sector == "z")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sz);}
-    else if (parity_sector == "+x") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sx, 1);}
-    else if (parity_sector == "-x") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sx,-1);}
-    else if (parity_sector == "+y") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sy, 1);}
-    else if (parity_sector == "-y") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sy,-1);}
-    else if (parity_sector == "+z") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sz, 1);}
-    else if (parity_sector == "-z") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sz,-1);}
+    if      (parity_sector == "x")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sx, keep_bond_dimensions);}
+    else if (parity_sector == "y")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sy, keep_bond_dimensions);}
+    else if (parity_sector == "z")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sz, keep_bond_dimensions);}
+    else if (parity_sector == "+x") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sx, 1, keep_bond_dimensions);}
+    else if (parity_sector == "-x") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sx,-1, keep_bond_dimensions);}
+    else if (parity_sector == "+y") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sy, 1, keep_bond_dimensions);}
+    else if (parity_sector == "-y") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sy,-1, keep_bond_dimensions);}
+    else if (parity_sector == "+z") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sz, 1, keep_bond_dimensions);}
+    else if (parity_sector == "-z") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sz,-1, keep_bond_dimensions);}
     else if (parity_sector == "none"){return state;}
     else if (parity_sector == "random"){
         auto coeffs = Eigen::Vector3d::Random().normalized();
@@ -166,16 +166,16 @@ class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(c
                     coeffs(0) * qm::spinOneHalf::sx
                 +   coeffs(1) * qm::spinOneHalf::sy
                 +   coeffs(2) * qm::spinOneHalf::sz;
-        return get_projection_to_closest_parity_sector(state, random_c2);
+        return get_projection_to_closest_parity_sector(state, random_c2,keep_bond_dimensions);
     }
     else{
         tools::log->warn(R"(Wrong pauli string. Expected one of (+-) "x","y","z", "none" or "random". Got: )" + parity_sector);
         tools::log->warn("Taking whichever is closest to current state!");
         auto spin_components = tools::finite::measure::spin_components(state);
         auto max_idx = std::distance(spin_components.begin(), std::max_element(spin_components.begin(),spin_components.end()));
-        if(max_idx == 0)      {return get_projection_to_closest_parity_sector(state, "x"); }
-        else if(max_idx == 1) {return get_projection_to_closest_parity_sector(state, "y"); }
-        else if(max_idx == 2) {return get_projection_to_closest_parity_sector(state, "z"); }
+        if(max_idx == 0)      {return get_projection_to_closest_parity_sector(state, "x",keep_bond_dimensions); }
+        else if(max_idx == 1) {return get_projection_to_closest_parity_sector(state, "y",keep_bond_dimensions); }
+        else if(max_idx == 2) {return get_projection_to_closest_parity_sector(state, "z",keep_bond_dimensions); }
         else {throw std::runtime_error("Wrong parity_sector string and could not find closest parity state");}
     }
 }

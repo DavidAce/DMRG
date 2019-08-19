@@ -28,7 +28,7 @@ public:
     explicit class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
     std::unique_ptr<class_hdf5_log<class_log_dmrg>> log_dmrg;
 
-    bool   projected_during_saturation  = false;
+    bool   has_projected  = false;
 
     void find_energy_range();
     void single_DMRG_step();
