@@ -100,7 +100,7 @@ void class_xDMRG::single_DMRG_step()
     auto optSpace = opt::OptSpace::SUBSPACE;
 //    optSpace      = measure::energy_variance_per_site(*state) < settings::precision::VarConvergenceThreshold         ?  opt::OptSpace::DIRECT  : optSpace;
     optSpace      = state->size_2site()  > settings::precision::MaxSizePartDiag                                      ?  opt::OptSpace::DIRECT  : optSpace;
-    optSpace      = sim_status.iteration >= settings::xdmrg::min_sweeps                                              ?  opt::OptSpace::DIRECT  : optSpace;
+//    optSpace      = sim_status.iteration >= settings::xdmrg::min_sweeps                                              ?  opt::OptSpace::DIRECT  : optSpace;
     auto optType  = state->isReal() ?  opt::OptType::REAL :  opt::OptType::CPLX;
 
 
@@ -198,9 +198,8 @@ void class_xDMRG::check_convergence(){
 
 
     if (settings::model::project_when_saturated
-//        and state->position_is_any_edge()
-//        and sim_status.variance_mpo_has_saturated
-        and sim_status.iteration == 2
+        and state->position_is_any_edge()
+        and sim_status.variance_mpo_has_saturated
         and not sim_status.variance_mpo_has_converged
         and not sim_status.simulation_has_converged
         and not outside_of_window
