@@ -62,21 +62,22 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    options.max_num_iterations = 150;
+    options.max_num_iterations = 300;
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = true;
-    options.max_line_search_step_expansion = 10;// 100.0;
+    options.max_line_search_step_expansion = 100;// 100.0;
     options.min_line_search_step_size = 1e-9;
     options.max_line_search_step_contraction = 1e-3;
     options.min_line_search_step_contraction = 0.6;
     options.max_num_line_search_step_size_iterations  = 30;//20;
     options.max_num_line_search_direction_restarts    = 5;//2;
-    options.line_search_sufficient_function_decrease  = 1e-4;// 1e-2;
-    options.line_search_sufficient_curvature_decrease = 0.9; //0.5;
+    options.line_search_sufficient_function_decrease  = 1e-2;// 1e-2;
+    options.line_search_sufficient_curvature_decrease = 0.5; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
-    options.function_tolerance = 1e-5;// 1e-4;
+    options.function_tolerance = 1e-4;
     options.gradient_tolerance = 1e-8;
     options.parameter_tolerance = 1e-12;//1e-12;
+
     options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::debug;
 
     ceres::GradientProblemSolver::Summary summary;

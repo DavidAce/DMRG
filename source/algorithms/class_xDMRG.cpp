@@ -97,6 +97,8 @@ void class_xDMRG::single_DMRG_step()
 //  log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
 
     auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
+    optMode       = measure::energy_variance_per_site(*state) > 1e-4  ?  opt::OptMode::OVERLAP : optMode;
+
     auto optSpace = opt::OptSpace::SUBSPACE;
 //    optSpace      = measure::energy_variance_per_site(*state) < settings::precision::VarConvergenceThreshold         ?  opt::OptSpace::DIRECT  : optSpace;
     optSpace      = state->size_2site()  > settings::precision::MaxSizePartDiag                                      ?  opt::OptSpace::DIRECT  : optSpace;
@@ -112,6 +114,11 @@ void class_xDMRG::single_DMRG_step()
     state->activate_sites(threshold);
 
     Eigen::Tensor<Scalar,3> theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
+
+
+    if (optMode == opt::OptMode::OVERLAP){
+        sim_status.chi_temp = 4 * (1+sim_status.iteration);
+    }
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     move_center_point();
     if(tools::finite::measure::norm(*state) > 1e-10){
@@ -149,7 +156,7 @@ void class_xDMRG::check_convergence(){
     if (outside_of_window
         and (   sim_status.iteration >= 2
                 or tools::finite::measure::energy_variance_per_site(*state) < 1e-4
-                or sim_status.variance_mpo_saturated_for > min_saturation_iters
+                or sim_status.variance_mpo_has_saturated
                 or sim_status.variance_mpo_has_converged)
         )
     {
@@ -263,27 +270,51 @@ void class_xDMRG::find_energy_range() {
     log->info("Energy minimum (per site) = {}", sim_status.energy_min);
     log->info("Energy maximum (per site) = {}", sim_status.energy_max);
     log->info("Energy target  (per site) = {}", sim_status.energy_target);
+    log->info("Energy lbound  (per site) = {}", sim_status.energy_lbound);
+    log->info("Energy ubound  (per site) = {}", sim_status.energy_ubound);
 
     //Initialize state in window and in the specified initial sector
-    int counterA = 0;
-    int counterB = 0;
     tools::finite::mps::internals::seed_state_unused = true;
     bool outside_of_window = true;
+    int counter = 0;
+    double growth_factor = 1.10;
+
     while(outside_of_window){
         reset_to_random_state(settings::model::initial_parity_sector);
         sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
         outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
-        counterA++;
-        counterB++;
-        if(counterA >= 100){
-            counterA = 0;
-            if(sim_status.energy_dens_window >= 0.5){break;}
-            sim_status.energy_dens_window = std::min(1.2*sim_status.energy_dens_window, 0.5);
-            sim_status.energy_ubound       = sim_status.energy_target +  sim_status.energy_dens_window*(sim_status.energy_max-sim_status.energy_min);
-            sim_status.energy_lbound       = sim_status.energy_target -  sim_status.energy_dens_window*(sim_status.energy_max-sim_status.energy_min);
+        counter++;
+        if (counter % 10 == 0) {
+            log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}", sim_status.energy_dens_window, std::min(growth_factor*sim_status.energy_dens_window, 0.5) );
+            sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
         }
     }
-    log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counterB );
+    log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
+    clear_saturation_status();
+    has_projected   = false;
+    sim_status.energy_ubound      = sim_status.energy_target + sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
+    sim_status.energy_lbound      = sim_status.energy_target - sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
+
+
+//    int counterA = 0;
+//    int counterB = 0;
+//    tools::finite::mps::internals::seed_state_unused = true;
+//    bool outside_of_window = true;
+//    while(outside_of_window){
+//        reset_to_random_state(settings::model::initial_parity_sector);
+//        sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
+//        outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
+//        counterA++;
+//        counterB++;
+//        if(counterA >= 100){
+//            counterA = 0;
+//            if(sim_status.energy_dens_window >= 0.5){break;}
+//            sim_status.energy_dens_window = std::min(1.2*sim_status.energy_dens_window, 0.5);
+//            sim_status.energy_ubound       = sim_status.energy_target +  sim_status.energy_dens_window*(sim_status.energy_max-sim_status.energy_min);
+//            sim_status.energy_lbound       = sim_status.energy_target -  sim_status.energy_dens_window*(sim_status.energy_max-sim_status.energy_min);
+//        }
+//    }
+//    log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counterB );
 }
 
 void class_xDMRG::write_logs(bool force){
