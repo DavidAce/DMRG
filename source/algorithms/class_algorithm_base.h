@@ -63,8 +63,6 @@ public:
     virtual bool   chi_grow()                                                                                 = 0;
     virtual void   print_status_update()                                                                      = 0;
     virtual void   print_status_full()                                                                        = 0;
-    virtual void   print_profiling()                                                                          = 0;
-    virtual void   print_profiling_sim(class_tic_toc &t_parent)                                               = 0;
     virtual void   reset_to_random_state(const std::string parity)                                            = 0;
     virtual void   clear_saturation_status()                                                                  = 0;
 
@@ -72,6 +70,7 @@ public:
     //common functions
     void write_status(bool force = false);
     void update_bond_dimension();
+    void print_profiling();
     double process_memory_in_mb(std::string name);
 
     // Profiling

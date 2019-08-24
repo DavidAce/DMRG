@@ -127,11 +127,13 @@ void tools::finite::ops::apply_mpos(class_finite_state & state,const std::list<E
 class_finite_state tools::finite::ops::get_projection_to_parity_sector(const class_finite_state & state, const Eigen::MatrixXcd  & paulimatrix, int sign,bool keep_bond_dimensions) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
     tools::log->trace("Generating parity projected state");
+    tools::common::profile::t_prj.tic();
     class_finite_state state_projected = state;
     state_projected.unset_measurements();
 
     const auto [mpo,L,R]    = qm::mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
+    tools::common::profile::t_prj.toc();
     tools::finite::mps::normalize(state_projected,keep_bond_dimensions);
     tools::finite::mps::rebuild_environments(state_projected);
     tools::finite::debug::check_integrity_of_mps(state_projected);

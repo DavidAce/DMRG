@@ -248,22 +248,6 @@ void class_algorithm_infinite::clear_saturation_status(){
     sim_status.simulation_has_to_stop         = false;
 }
 
-void class_algorithm_infinite::print_profiling(){
-    if (settings::profiling::on) {
-        t_tot.print_time_w_percent();
-        t_prt.print_time_w_percent(t_tot);
-        t_sim.print_time_w_percent(t_tot);
-        print_profiling_sim(t_sim);
-   }
-}
-
-void class_algorithm_infinite::print_profiling_sim(class_tic_toc &t_parent){
-    if (settings::profiling::on) {
-        std::cout << "\n Simulation breakdown:" << std::endl;
-        std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
-        t_con.print_time_w_percent(t_parent);
-    }
-}
 
 void class_algorithm_infinite::print_status_update() {
     if (math::mod(sim_status.iteration, print_freq()) != 0) {return;}

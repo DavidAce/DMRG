@@ -58,54 +58,6 @@ double tools::finite::measure::norm(const class_finite_state & state){
     return state.measurements.norm.value();
 }
 
-//double tools::finite::measure::norm(const class_finite_state & state){
-//    if (state.measurements.norm){return state.measurements.norm.value();}
-//    auto mpsL  = state.MPS_L.begin();
-//    auto endL  = state.MPS_L.end();
-//    Eigen::Tensor<Scalar,3>  A = mpsL->get_A(); // std::get<1>(*mpsL);
-//    Eigen::Tensor<Scalar,2> chain = A.contract(A.conjugate(), idx({0,1},{0,1}));
-//    Eigen::TensorRef<Eigen::Tensor<Scalar,2>> temp;
-//    mpsL++;
-//    while(mpsL != endL){
-//        A = mpsL->get_A() ; // std::get<1>(*mpsL);
-//        assert(A.dimension(1) == chain.dimension(0));
-//        temp = chain
-//                .contract(A,             idx({0},{1}))
-//                .contract(A.conjugate(), idx({0,1},{1,0}));
-//        chain = temp;
-//        mpsL++;
-//    }
-//
-////    Contract the center point
-//    auto &MPS_C = state.MPS_C;
-//    temp = chain
-//            .contract(asDiagonal(MPS_C), idx({0},{0}))
-//            .contract(asDiagonal(MPS_C), idx({0},{0}));
-//    chain = temp;
-//    //Contract the right half of the state
-//    auto mpsR  = state.MPS_R.begin();
-//    auto endR  = state.MPS_R.end();
-//
-//    while(mpsR != endR){
-//        auto B  = mpsR->get_B(); //std::get<0>(*mpsR);
-//        assert(B.dimension(1) == chain.dimension(0));
-//        Eigen::Tensor<Scalar,3>  tempB = chain.contract(B, idx({0},{1}));
-//        temp = chain
-//                .contract(B               , idx({0},{1}))
-//                .contract(B.conjugate()   , idx({0,1},{1,0}));
-//        chain = temp;
-//        mpsR++;
-//    }
-//    double norm_chain = std::abs(Textra::Tensor2_to_Matrix(chain).trace());
-//    if(std::abs(norm_chain - 1.0) > 1e-14){
-//        tools::log->warn("Measure: Norm far from unity: {:.16f}", norm_chain);
-////        throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
-//    }
-//    state.measurements.norm = norm_chain;
-//    return state.measurements.norm.value();
-//}
-
-
 
 size_t tools::finite::measure::bond_dimension_current(const class_finite_state & state){
     if (state.measurements.bond_dimension_current){return state.measurements.bond_dimension_current.value();}
@@ -138,7 +90,7 @@ std::vector<size_t> tools::finite::measure::bond_dimensions(const class_finite_s
 
 double tools::finite::measure::energy(const class_finite_state &state){
     if (state.measurements.energy){return state.measurements.energy.value();}
-    tools::finite::profile::t_ene.tic();
+    tools::common::profile::t_ene.tic();
     auto theta = state.get_theta();
     Eigen::Tensor<Scalar, 0>  E =
             state.ENV_L.back().block
@@ -152,7 +104,7 @@ double tools::finite::measure::energy(const class_finite_state &state){
     }
     assert(std::abs(std::imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
     state.measurements.energy = std::real(E(0));
-    tools::finite::profile::t_ene.toc();
+    tools::common::profile::t_ene.toc();
     return state.measurements.energy.value();
 }
 
@@ -169,7 +121,7 @@ double tools::finite::measure::energy_per_site(const class_finite_state &state){
 double tools::finite::measure::energy_variance(const class_finite_state &state){
     if (state.measurements.energy_variance_mpo){return state.measurements.energy_variance_mpo.value();}
     double energy = tools::finite::measure::energy(state);
-    tools::finite::profile::t_var.tic();
+    tools::common::profile::t_var.tic();
     auto theta = state.get_theta();
     Eigen::Tensor<Scalar, 0> H2 =
             state.ENV2_L.back().block
@@ -181,7 +133,7 @@ double tools::finite::measure::energy_variance(const class_finite_state &state){
                     .contract(theta.conjugate()            , idx({0,3,5},{1,0,2}))
                     .contract(state.ENV2_R.front().block   , idx({0,3,1,2},{0,1,2,3}));
     state.measurements.energy_variance_mpo = std::abs(H2(0) - energy*energy);
-    tools::finite::profile::t_var.toc();
+    tools::common::profile::t_var.toc();
     return state.measurements.energy_variance_mpo.value();
 }
 
@@ -198,46 +150,46 @@ double tools::finite::measure::energy_variance_per_site(const class_finite_state
 
 double tools::finite::measure::entanglement_entropy_current(const class_finite_state & state){
     if (state.measurements.entanglement_entropy_current){return state.measurements.entanglement_entropy_current.value();}
-    tools::finite::profile::t_ent.tic();
+    tools::common::profile::t_ent.tic();
     auto & LC = state.MPS_C;
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
     state.measurements.entanglement_entropy_current = std::real(SA(0));
-    tools::finite::profile::t_ent.tic();
+    tools::common::profile::t_ent.toc();
     return state.measurements.entanglement_entropy_current.value();
 }
 
 double tools::finite::measure::entanglement_entropy_midchain(const class_finite_state & state){
     if (state.measurements.entanglement_entropy_midchain){return state.measurements.entanglement_entropy_midchain.value();}
-    tools::finite::profile::t_ent.tic();
+    tools::common::profile::t_ent.tic();
     size_t middle = state.get_length() / 2;
     auto & LC = state.get_L(middle);
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
     state.measurements.entanglement_entropy_midchain =  std::real(SA(0));
-    tools::finite::profile::t_ent.tic();
+    tools::common::profile::t_ent.toc();
     return state.measurements.entanglement_entropy_midchain.value();
 }
 
 std::vector<double> tools::finite::measure::entanglement_entropies(const class_finite_state & state){
     if (state.measurements.entanglement_entropies){return state.measurements.entanglement_entropies.value();}
-    tools::finite::profile::t_ent.tic();
+    tools::common::profile::t_ent.tic();
     std::vector<double> SA;
     for (auto & mps : state.MPS_L) {
         auto &L = mps.get_L();
         Eigen::Tensor<Scalar, 0> SA_L = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
         SA.emplace_back(std::real(SA_L(0)));
     }
-    tools::finite::profile::t_ent.toc();
+    tools::common::profile::t_ent.toc();
     state.measurements.entanglement_entropy_current = entanglement_entropy_current(state);
-    tools::finite::profile::t_ent.tic();
+    tools::common::profile::t_ent.tic();
     SA.emplace_back(state.measurements.entanglement_entropy_current.value());
     for (auto & mps : state.MPS_R) {
         auto &L = mps.get_L();
         Eigen::Tensor<Scalar, 0> SA_R = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
         SA.emplace_back(std::real(SA_R(0)));
     }
-    tools::finite::profile::t_ent.toc();
+    tools::common::profile::t_ent.toc();
     return SA;
 }
 

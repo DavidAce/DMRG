@@ -30,9 +30,10 @@ void tools::finite::debug::check_integrity(const class_finite_state &state)
 
 
 void tools::finite::debug::check_integrity_of_mps(const class_finite_state &state){
+    tools::log->trace("Checking integrity of MPS");
     try{
+        tools::common::profile::t_chk.tic();
 
-        tools::log->trace("Checking integrity of MPS");
         if(state.MPS_L.size() + state.MPS_R.size() != state.get_length() )
             throw std::runtime_error(fmt::format("Mismatch in MPS sizes: {} + {} != {}", state.MPS_L.size(), state.MPS_R.size(), state.get_length()));
 
@@ -224,15 +225,20 @@ void tools::finite::debug::check_integrity_of_mps(const class_finite_state &stat
         if(std::abs(norm_chain - 1.0) > 1e-12) {
             throw std::runtime_error(fmt::format("Norm of state too far from unity: {}",norm_chain));
         }
+
     }
     catch(std::exception &ex){
         throw std::runtime_error(fmt::format("Integrity check of MPS failed: {}", ex.what()));
     }
     tools::log->trace("MPS OK");
+    tools::common::profile::t_chk.toc();
+
 }
 
 
 void tools::finite::debug::check_integrity_of_mpo(const class_finite_state &state) {
+    tools::common::profile::t_chk.tic();
+
     try{
         for (auto &mpo : state.MPO_L){
             auto site = mpo->get_position();
@@ -246,6 +252,8 @@ void tools::finite::debug::check_integrity_of_mpo(const class_finite_state &stat
     catch(std::exception &ex){
         throw std::runtime_error(fmt::format("Integrity check of MPO failed: {}", ex.what()));
     }
+    tools::common::profile::t_chk.toc();
+
 }
 
 

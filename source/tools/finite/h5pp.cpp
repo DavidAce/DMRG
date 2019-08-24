@@ -20,6 +20,7 @@ using Scalar    = std::complex<double>;
 
 
 void tools::finite::io::write_all_state(const class_finite_state &state, h5pp::File & h5ppFile,std::string sim_name) {
+    tools::common::profile::t_hdf.tic();
     switch(settings::output::storage_level){
         case StorageLevel::NONE:
             break;
@@ -41,6 +42,8 @@ void tools::finite::io::write_all_state(const class_finite_state &state, h5pp::F
     h5ppFile.writeDataset(state.get_position()       ,sim_name + "/state/position");
     h5ppFile.writeDataset(state.get_length()         ,sim_name + "/state/sites");
     h5ppFile.writeDataset(settings::model::model_type,sim_name + "/model/model_type");
+    tools::common::profile::t_hdf.toc();
+
 }
 
 
@@ -121,6 +124,7 @@ void tools::finite::io::write_hamiltonian_params(const class_finite_state & stat
 
 void tools::finite::io::write_all_measurements(const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name){
     state.do_all_measurements();
+    tools::common::profile::t_hdf.tic();
     h5ppFile.writeDataset(state.measurements.length.value()                        , sim_name + "/measurements/length");
     h5ppFile.writeDataset(state.measurements.norm.value()                          , sim_name + "/measurements/norm");
     h5ppFile.writeDataset(state.measurements.bond_dimensions.value()               , sim_name + "/measurements/bond_dimensions");
@@ -135,6 +139,7 @@ void tools::finite::io::write_all_measurements(const class_finite_state & state,
     h5ppFile.writeDataset(state.measurements.spin_component_sx.value()             , sim_name + "/measurements/spin_component_sx");
     h5ppFile.writeDataset(state.measurements.spin_component_sy.value()             , sim_name + "/measurements/spin_component_sy");
     h5ppFile.writeDataset(state.measurements.spin_component_sz.value()             , sim_name + "/measurements/spin_component_sz");
+    tools::common::profile::t_hdf.toc();
 
 }
 
