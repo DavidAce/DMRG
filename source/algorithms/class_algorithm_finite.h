@@ -43,8 +43,6 @@ public:
     void write_state(bool force = false)                                    final;
     void print_status_update()                                              final;
     void print_status_full()                                                final;
-    void print_profiling()                                                  final;
-    void print_profiling_sim(class_tic_toc &t_parent)                       final;
 
 
     void check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);

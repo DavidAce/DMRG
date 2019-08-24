@@ -12,6 +12,8 @@ void tools::finite::mps::normalize(class_finite_state & state, bool keep_bond_di
     using namespace Textra;
     using Scalar = class_finite_state::Scalar;
     state.unset_measurements();
+    tools::common::profile::t_svd.tic();
+
 //    std::cout << "Norm              (before normalization): " << tools::finite::measure::norm(state)  << std::endl;
 //    std::cout << "Spin component sx (before normalization): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
 //    std::cout << "Spin component sy (before normalization): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
@@ -75,6 +77,7 @@ void tools::finite::mps::normalize(class_finite_state & state, bool keep_bond_di
         step   ++;
     }
     state.unset_measurements();
+    tools::common::profile::t_svd.toc();
 //    std::cout << "Norm              (after normalization): " << tools::finite::measure::norm(state)  << std::endl;
 //    std::cout << "Spin component sx (after normalization): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
 //    std::cout << "Spin component sy (after normalization): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
@@ -93,7 +96,6 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_fi
     auto thetanorm = theta_map.norm();
     if(std::abs(fullnorm  - 1.0) > 1e-10){ tools::log->error("Norm before truncation too far from unity: {:.16f}",fullnorm);}
     if(std::abs(thetanorm - 1.0) > 1e-10){ tools::log->error("Norm of theta too far from unity: {:.16f}",thetanorm); theta_map.normalize();}
-
 
 
     if (state.get_direction() == 1){
@@ -127,7 +129,7 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
     Eigen::Tensor<Scalar,1> S;
     auto active_sites = state.active_sites;
     double norm;
-
+    tools::common::profile::t_svd.tic();
     while (active_sites.size() > 1){
         size_t site = active_sites.front();
         long dim0 = state.get_MPS(site).get_spin_dim();
@@ -183,6 +185,7 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
         std::cout << "rightID: \n" << rightID << std::endl;
         throw std::runtime_error(fmt::format("Not right normalized at site {} with threshold 1e-12", site));
     }
+    tools::common::profile::t_svd.toc();
 
 
 }
@@ -201,7 +204,7 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
     auto reverse_active_sites = state.active_sites;
     std::reverse(reverse_active_sites.begin(),reverse_active_sites.end());
     double norm;
-
+    tools::common::profile::t_svd.tic();
     while (reverse_active_sites.size() > 1){
         size_t site = reverse_active_sites.front();
         long dim0 = U.dimension(0) /  state.get_MPS(site).get_spin_dim();
@@ -255,12 +258,14 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
             .contract(state.get_MPS(site).get_A().conjugate(), Textra::idx({0,1},{0,1}) );
     auto leftIDmap = Textra::Tensor2_to_Matrix(leftID);
     if(not leftIDmap.isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not left normalized at site {} with threshold 1e-12", site));
+    tools::common::profile::t_svd.toc();
 
 }
 
 
 void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &theta, class_finite_state & state, long chi_, double SVDThreshold) {
     tools::log->trace("Truncating theta");
+    tools::common::profile::t_svd.tic();
     class_SVD SVD;
     SVD.setThreshold(SVDThreshold);
     auto[U, S, V] = SVD.schmidt(theta, chi_);
@@ -270,5 +275,6 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &t
     Eigen::Tensor<std::complex<double>,3> V_L = V.contract(Textra::asDiagonalInversed(state.MPS_R.front().get_L()), Textra::idx({2},{0}));
     state.MPS_L.back().set_G(L_U);
     state.MPS_R.front().set_G(V_L);
+    tools::common::profile::t_svd.toc();
 }
 

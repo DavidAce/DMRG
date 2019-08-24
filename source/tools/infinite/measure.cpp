@@ -426,19 +426,19 @@ double tools::infinite::measure::truncation_error(const class_infinite_state & s
 
 double tools::infinite::measure::current_entanglement_entropy(const class_infinite_state & state){
     tools::log->trace("Measuring entanglement entropy from state");
-    tools::infinite::profile::t_ent.tic();
+    tools::common::profile::t_ent.tic();
     if(state.measurements.current_entanglement_entropy){return state.measurements.current_entanglement_entropy.value();}
     auto & LC = state.MPS->LC;
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
-    tools::infinite::profile::t_ent.toc();
+    tools::common::profile::t_ent.toc();
     return std::real(SA(0));
 }
 
 
 double tools::infinite::measure::energy_mpo(const class_infinite_state & state, const Eigen::Tensor<Scalar,4> &theta){
     tools::log->trace("Measuring energy mpo from state");
-    tools::infinite::profile::t_ene_mpo.tic();
+    tools::common::profile::t_ene_mpo.tic();
     Eigen::Tensor<Scalar, 0>  E =
             state.Lblock->block
                     .contract(theta,                                     idx({0},{1}))
@@ -451,7 +451,7 @@ double tools::infinite::measure::energy_mpo(const class_infinite_state & state, 
 //        throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
     }
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part");
-    tools::infinite::profile::t_ene_mpo.toc();
+    tools::common::profile::t_ene_mpo.toc();
     return std::real(E(0)) ;
 }
 
@@ -478,7 +478,7 @@ double tools::infinite::measure::energy_per_site_ham(const class_infinite_state 
     if (state.sim_type == SimulationType::xDMRG){return std::numeric_limits<double>::quiet_NaN();}
     if (state.measurements.bond_dimension <= 2 ){return std::numeric_limits<double>::quiet_NaN();}
 
-    tools::infinite::profile::t_ene_ham.tic();
+    tools::common::profile::t_ene_ham.tic();
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
     auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
@@ -501,7 +501,7 @@ double tools::infinite::measure::energy_per_site_ham(const class_infinite_state 
             .contract(l_odd,                           idx({0, 2}, {0, 1}))
             .contract(r_odd,                           idx({0, 1}, {0, 1}));
     assert(abs(imag(E_evn(0)+ E_odd(0))) < 1e-10 and "Energy has an imaginary part!!!" );
-    tools::infinite::profile::t_ene_ham.toc();
+    tools::common::profile::t_ene_ham.toc();
     return 0.5*std::real(E_evn(0) + E_odd(0));
 
 }
@@ -512,7 +512,7 @@ double tools::infinite::measure::energy_per_site_mom(const class_infinite_state 
     if (state.sim_type == SimulationType::fDMRG){return std::numeric_limits<double>::quiet_NaN();}
     if (state.sim_type == SimulationType::xDMRG){return std::numeric_limits<double>::quiet_NaN();}
     if (state.measurements.bond_dimension <= 2 ){return std::numeric_limits<double>::quiet_NaN();}
-    tools::infinite::profile::t_ene_mom.tic();
+    tools::common::profile::t_ene_mom.tic();
     Scalar a  = Scalar(0.0 , 1.0) * 5e-3;
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -532,7 +532,7 @@ double tools::infinite::measure::energy_per_site_mom(const class_infinite_state 
     Scalar VarO     = 2.0*std::log(abs(G))/ (a*a);
     state.measurements.energy_per_site_mom           = std::real(O);
     state.measurements.energy_variance_per_site_mom  = std::real(VarO);
-    tools::infinite::profile::t_ene_mom.toc();
+    tools::common::profile::t_ene_mom.toc();
     return std::real(O);
 }
 
@@ -540,7 +540,7 @@ double tools::infinite::measure::energy_per_site_mom(const class_infinite_state 
 double tools::infinite::measure::energy_variance_mpo(const class_infinite_state & state,const Eigen::Tensor<std::complex<double>,4> &theta , double &energy_mpo) {
     if (state.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     tools::log->trace("Measuring energy variance mpo from state");
-    tools::infinite::profile::t_var_mpo.tic();
+    tools::common::profile::t_var_mpo.tic();
     Eigen::Tensor<Scalar, 0> H2 =
             state.Lblock2->block
                     .contract(theta              ,               idx({0}  ,{1}))
@@ -550,7 +550,7 @@ double tools::infinite::measure::energy_variance_mpo(const class_infinite_state 
                     .contract(state.HB->MPO(),              idx({4,3},{0,2}))
                     .contract(theta.conjugate()  ,               idx({0,3,5},{1,0,2}))
                     .contract(state.Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
-    tools::infinite::profile::t_var_mpo.toc();
+    tools::common::profile::t_var_mpo.toc();
     if(abs(imag(H2(0))) > 1e-10 ){
         throw std::runtime_error("H2 has an imaginary part: " + std::to_string(std::real(H2(0))) + " + i " + std::to_string(std::imag(H2(0))));
     }
@@ -595,7 +595,7 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_infini
 
     tools::log->trace("Measuring energy variance ham from state");
 
-    tools::infinite::profile::t_var_ham.tic();
+    tools::common::profile::t_var_ham.tic();
     using namespace tools::common::views;
 
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -730,7 +730,7 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_infini
     Scalar e2lrpabba      = E2LRP_ABBA(0);
     Scalar e2lrpbaba      = E2LRP_BABA(0);
     Scalar e2lrpbaab      = E2LRP_BAAB(0);
-    tools::infinite::profile::t_var_ham.toc();
+    tools::common::profile::t_var_ham.toc();
 
     return std::real(0.5*(e2ab + e2ba) + 0.5*(e2aba_1  + e2bab_1  + e2aba_2  + e2bab_2 )  + e2lrpabab + e2lrpabba + e2lrpbaba  + e2lrpbaab) ;
 }

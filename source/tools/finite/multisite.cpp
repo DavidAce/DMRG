@@ -61,6 +61,7 @@ using Scalar = class_finite_state::Scalar;
 
 
 double tools::finite::measure::multisite::energy(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+    tools::common::profile::t_ene.tic();
     auto multimpo   = state.get_multimpo();
     auto & envL     = state.get_ENVL(state.active_sites.front()).block;
     auto & envR     = state.get_ENVR(state.active_sites.back()).block;
@@ -75,6 +76,7 @@ double tools::finite::measure::multisite::energy(const class_finite_state &state
 //        throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
     }
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
+    tools::common::profile::t_ene.toc();
     return std::real(E(0));
 }
 
@@ -85,6 +87,7 @@ double tools::finite::measure::multisite::energy_per_site(const class_finite_sta
 
 
 double tools::finite::measure::multisite::energy_variance(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+    tools::common::profile::t_var.tic();
     double energy = tools::finite::measure::multisite::energy(state, multitheta);
     auto multimpo   = state.get_multimpo();
     auto & env2L    = state.get_ENV2L(state.active_sites.front()).block;
@@ -96,6 +99,7 @@ double tools::finite::measure::multisite::energy_variance(const class_finite_sta
             .contract(multimpo                   , idx({4,1},{2,0}))
             .contract(multitheta.conjugate()     , idx({4,0},{0,1}))
             .contract(env2R                      , idx({0,3,1,2},{0,1,2,3}));
+    tools::common::profile::t_var.toc();
     return std::abs(H2(0) - energy*energy);
 }
 

@@ -19,6 +19,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
 //    opt::internals::old_direct_optimization(state,sim_status,optType);
 
     tools::log->trace("Optimizing in CERES mode");
+    tools::common::profile::t_opt.tic();
     using Scalar = std::complex<double>;
     t_opt->tic();
     auto theta = state.get_multitheta();
@@ -139,6 +140,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     ));
 
     // Return something strictly better
+    tools::common::profile::t_opt.toc();
     if (variance_new < variance_0){
         state.unset_measurements();
         tools::log->debug("Returning new theta");

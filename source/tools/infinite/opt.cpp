@@ -19,7 +19,7 @@ Eigen::Tensor<tools::infinite::Scalar,4>
     std::array<long,4> shape_theta4 = theta.dimensions();
     std::array<long,4> shape_mpo4   = state.HA->MPO().dimensions();
 
-    tools::infinite::profile::t_eig.tic();
+    tools::common::profile::t_eig.tic();
     int nev = 1;
     using namespace settings::precision;
     using namespace eigutils::eigSetting;
@@ -30,8 +30,8 @@ Eigen::Tensor<tools::infinite::Scalar,4>
     solver.eigs_dense(matrix,nev,eigMaxNcv,NAN,Form::SYMMETRIC,ritz,Side::R,true,true);
     auto eigvec  = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
 
-    tools::infinite::profile::t_eig.toc();
-    tools::infinite::profile::t_eig.print_delta();
+    tools::common::profile::t_eig.toc();
+    tools::common::profile::t_eig.print_delta();
 
     return eigvec.reshape(theta.dimensions());
 

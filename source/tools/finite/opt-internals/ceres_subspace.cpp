@@ -133,7 +133,7 @@ find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
     tools::log->trace("Finding subspace -- full");
     using namespace eigutils::eigSetting;
     t_eig->tic();
-
+    tools::common::profile::t_eig.tic();
     Eigen::VectorXd   eigvals;
     Eigen::MatrixXcd  eigvecs;
     class_eigsolver solver;
@@ -155,6 +155,7 @@ find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
                                                     solver.solution.meta.rows, solver.solution.meta.cols);
     }
     t_eig->toc();
+    tools::common::profile::t_eig.toc();
     tools::log->debug("Finished eigensolver -- reason: Full diagonalization");
     Eigen::Map<const Eigen::VectorXcd> theta_vec   (theta.data(),theta.size());
     Eigen::VectorXd overlaps = (theta_vec.adjoint() * eigvecs).cwiseAbs().real();
@@ -179,6 +180,7 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
 
 
     t_eig->tic();
+    tools::common::profile::t_eig.tic();
     // You need to copy the data into StlMatrixProduct, because the PartialPivLU will overwrite the data in H_local otherwise.
     StlMatrixProduct<Scalar> hamiltonian(H_local.data(),H_local.rows(),Form::SYMMETRIC,Side::R, true);
     hamiltonian.set_shift(energy_target);
@@ -219,6 +221,7 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
         if(subspace_quality       < subspace_quality_threshold) {reason = "subspace quality is good enough"; break;}
     }
     tools::log->debug("Finished partial eigensolver -- reason: {}",reason);
+    tools::common::profile::t_eig.toc();
     return std::make_tuple(eigvecs,eigvals);
 }
 
@@ -285,6 +288,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                                                          const class_simulation_status &sim_status, OptType optType,
                                                          OptMode optMode){
     tools::log->trace("Optimizing in SUBSPACE mode");
+    tools::common::profile::t_opt.tic();
     using Scalar = class_finite_state::Scalar;
     using namespace eigutils::eigSetting;
     subspace_quality_threshold = settings::precision::SubspaceQualityFactor * tools::finite::measure::energy_variance_per_site(state);
@@ -436,10 +440,8 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     ceres::GradientProblemSolver::Summary summary;
     t_opt->tic();
-    using namespace LBFGSpp;
     using namespace tools::finite::opt::internals;
     int counter,iter;
-    LBFGSpp::LBFGSSolver<double> solver(params);
     switch (optType){
         case OptType::CPLX:{
             Eigen::VectorXd  theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double*> (theta_start.data()), 2*theta_start.size());
@@ -498,6 +500,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     reports::print_report(opt_log);
 
     // Return something strictly better
+    tools::common::profile::t_opt.toc();
     if (variance_new < tools::finite::measure::energy_variance_per_site(state)){
         state.unset_measurements();
         tools::log->debug("Returning new theta");

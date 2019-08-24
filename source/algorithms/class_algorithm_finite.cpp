@@ -333,24 +333,6 @@ void class_algorithm_finite::write_state(bool force){
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
-void class_algorithm_finite::print_profiling(){
-    if (settings::profiling::on) {
-        log->trace("Printing profiling information (tot)");
-        t_tot.print_time_w_percent();
-        t_prt.print_time_w_percent(t_tot);
-        t_sim.print_time_w_percent(t_tot);
-        print_profiling_sim(t_sim);
-    }
-}
-
-void class_algorithm_finite::print_profiling_sim(class_tic_toc &t_parent){
-    if (settings::profiling::on) {
-        log->trace("Printing profiling information (sim)");
-        std::cout << "\n Simulation breakdown:" << std::endl;
-        std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
-        t_con.print_time_w_percent(t_parent);
-    }
-}
 
 void class_algorithm_finite::print_status_update() {
     if (math::mod(sim_status.iteration, print_freq()) != 0) {return;}

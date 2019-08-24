@@ -39,7 +39,7 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     tools::log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
     log->trace("Constructing class_algorithm_base");
     set_profiling_labels();
-    tools::finite::profile::init_profiling();
+    tools::common::profile::init_profiling();
     log_profiling  = std::make_unique<class_hdf5_log<class_log_profiling>>        (h5pp_file, sim_name + "/logs", "profiling", sim_name);
     log_sim_status = std::make_unique<class_hdf5_log<class_log_simulation_status>>(h5pp_file, sim_name + "/logs", "status"   , sim_name);
 
@@ -165,40 +165,16 @@ void class_algorithm_base::update_bond_dimension(){
 
 
 
-//void class_algorithm_base::store_profiling_deltas(bool force) {
-//    if(not force){
-//        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-//        if (not settings::profiling::on or not settings::output::save_profiling){return;}
-//        if (settings::output::storage_level < StorageLevel::NORMAL){return;}
-//    }
-//
-//    log->trace("Storing profiling deltas");
-////    log_profiling->append_record(
-////            sim_status.iteration,
-////            t_tot.get_last_time_interval(),
-////            t_sim.get_last_time_interval(),
-////            t_prt.get_last_time_interval(),
-////            t_con.get_last_time_interval()
-////    );
-//}
-//
-//void class_algorithm_base::store_profiling_totals(bool force) {
-//    if(not force){
-//        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-//        if (not settings::profiling::on or not settings::output::save_profiling){return;}
-//        if (settings::output::storage_level < StorageLevel::NORMAL){return;}
-//    }
-//
-//    log->trace("Storing profiling totals");
-////    log_profiling->append_record(
-////            sim_status.iteration,
-////            t_tot.get_measured_time(),
-////            t_sim.get_measured_time(),
-////            t_prt.get_measured_time(),
-////            t_con.get_measured_time()
-////    );
-//
-//}
+void class_algorithm_base::print_profiling(){
+    if (settings::profiling::on) {
+        log->trace("Printing profiling information (tot)");
+        t_tot.print_time_w_percent();
+        t_sim.print_time_w_percent(t_tot);
+        t_prt.print_time_w_percent(t_tot);
+        t_con.print_time_w_percent(t_tot);
+        tools::common::profile::print_profiling(t_tot);
+    }
+}
 
 
 

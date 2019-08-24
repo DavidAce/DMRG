@@ -50,6 +50,7 @@ class_simulation_status tools::common::io::load_sim_status_from_hdf5 (const h5pp
     class_simulation_status sim_status;
     // common variables
     try{
+        tools::common::profile::t_hdf.tic();
         h5ppFile.readDataset(sim_status.iteration                      , sim_name + "/sim_status/iteration");
         h5ppFile.readDataset(sim_status.step                           , sim_name + "/sim_status/step");
         h5ppFile.readDataset(sim_status.position                       , sim_name + "/sim_status/position");
