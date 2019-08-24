@@ -117,7 +117,7 @@ void class_xDMRG::single_DMRG_step()
 
 
     if (optMode == opt::OptMode::OVERLAP){
-        sim_status.chi_temp = 4 * (1+sim_status.iteration);
+        sim_status.chi_temp = 16 * (1+sim_status.iteration);
     }
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     move_center_point();
