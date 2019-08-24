@@ -126,7 +126,7 @@ void tools::finite::ops::apply_mpos(class_finite_state & state,const std::list<E
 
 class_finite_state tools::finite::ops::get_projection_to_parity_sector(const class_finite_state & state, const Eigen::MatrixXcd  & paulimatrix, int sign,bool keep_bond_dimensions) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
-    tools::log->trace("Generating parity projected state");
+    tools::log->trace("Generating parity projected state with sign {}", sign);
     tools::common::profile::t_prj.tic();
     class_finite_state state_projected = state;
     state_projected.unset_measurements();
@@ -137,12 +137,15 @@ class_finite_state tools::finite::ops::get_projection_to_parity_sector(const cla
     tools::finite::mps::normalize(state_projected,keep_bond_dimensions);
     tools::finite::mps::rebuild_environments(state_projected);
     tools::finite::debug::check_integrity_of_mps(state_projected);
+    double measured_spin_component = tools::finite::measure::spin_component(state_projected, paulimatrix);
+    tools::log->trace("Resulting global spin component: {}",measured_spin_component );
     return state_projected;
 }
 
 class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(const class_finite_state &state, const Eigen::MatrixXcd & paulimatrix, bool keep_bond_dimensions) {
     tools::log->trace("Finding closest projection");
     double measured_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
+    tools::log->trace("Current global spin component: {}",measured_spin_component );
     if (measured_spin_component > 0){
         return get_projection_to_parity_sector(state, paulimatrix, 1,keep_bond_dimensions);
     }else{
@@ -151,7 +154,7 @@ class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(c
 }
 
 class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(const class_finite_state &state, std::string parity_sector, bool keep_bond_dimensions) {
-    tools::log->trace("Finding closest projection");
+    tools::log->trace("Finding closest projection in parity sector {}", parity_sector );
     if      (parity_sector == "x")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sx, keep_bond_dimensions);}
     else if (parity_sector == "y")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sy, keep_bond_dimensions);}
     else if (parity_sector == "z")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sz, keep_bond_dimensions);}
