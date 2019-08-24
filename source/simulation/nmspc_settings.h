@@ -53,8 +53,8 @@ namespace settings {
         inline int          seed_state     = -1;                        /*!< Seed for generating the initial state. If seed_state < 0, seed_init is used instead  */
         inline bool         use_seed_state_as_enumeration = true;       /*!< Use the bit field of seed_state to enumerate initial states in the basis hinted by initial_sector.  */
         inline bool         project_when_saturated        = true;       /*!< Project to target parity sector if saturation occurs before convergence.  */
-        inline std::string  initial_parity_sector = "+x";               /*!< Initialize in a global parity sector: {x,+x,-x, y,+y,-y,z,+z,-z,random,none}  */
-        inline std::string  target_parity_sector  = "+x";               /*!< Project to in a global parity sector upon saturation: {x,+x,-x, y,+y,-y,z,+z,-z,random,none}  */
+        inline std::string  initial_parity_sector = "x";                /*!< Initialize in a global parity sector: {x,+x,-x, y,+y,-y,z,+z,-z,random,none}  */
+        inline std::string  target_parity_sector  = "x";                /*!< Project to in a global parity sector upon saturation: {x,+x,-x, y,+y,-y,z,+z,-z,random,none}  */
 
         //Parameters for the transverse-field Ising model
         namespace tf_ising {
