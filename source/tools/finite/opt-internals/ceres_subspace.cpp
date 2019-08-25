@@ -2,7 +2,7 @@
 // Created by david on 2019-07-15.
 //
 
-#include "ceres_subspace.h"
+#include "ceres_subspace_functor.h"
 #include <Eigen/Core>
 #include <iostream>
 #include <simulation/class_simulation_status.h>
@@ -275,7 +275,6 @@ find_subspace(const class_finite_state & state,OptMode optMode){
         eigvecs = eigvecs.real();
     }
 
-//    eigvecs.colwise().normalize();
     return std::make_tuple(eigvecs, eigvals);
 }
 
@@ -304,6 +303,14 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     tools::log->trace("Subspace found with {} eigenvectors", eigvecs.cols());
     Eigen::VectorXd overlaps = (theta_old.adjoint() * eigvecs).cwiseAbs().real();
 
+    {
+        int     idx;
+        double max_overlap       = overlaps.maxCoeff(&idx);
+        tools::log->trace("Max overlap: {} -- Energy per site: {} -- Idx: {} -- outside of window: {}", max_overlap, eigvals(idx)/state.get_length(), idx,
+                          eigvals(idx)/state.get_length() <  sim_status.energy_lbound or eigvals(idx)/state.get_length() > sim_status.energy_ubound  );
+
+    }
+
 
 
     switch (optMode){
@@ -312,6 +319,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
             auto [best_overlap,idx_overlap] = get_best_overlap_in_window(overlaps,eigvals/state.get_length(),sim_status.energy_lbound,sim_status.energy_ubound);
             if (idx_overlap < 0){
                 tools::log->debug("No overlapping states in energy range. Returning old theta");
+                state.tag_active_sites_have_been_updated(false);
                 return theta;
             }
             if(best_overlap < 1e-1){
@@ -320,18 +328,25 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                 auto [best_variance, idx_variance] = get_best_state_in_window(state,eigvecs,eigvals/state.get_length(),sim_status.energy_lbound,sim_status.energy_ubound);
                 if (idx_variance < 0){
                     tools::log->debug("No better variance states in energy range. Returning old theta");
+                    state.tag_active_sites_have_been_updated(false);
                     return theta;
                 }
                 if(best_variance < prev_variance){
                     tools::log->debug("... Eigenstate {} had better (log10) variance: {} < {}.", idx_variance,std::log10(best_variance), std::log10(prev_variance));
+                    state.tag_active_sites_have_been_updated(true);
+                    state.unset_measurements();
                     return Textra::Matrix_to_Tensor(eigvecs.col(idx_variance), state.active_dimensions());
                 }else{
                     tools::log->debug("... No eigenstate was better, keeping badly overlapping state");
+                    state.tag_active_sites_have_been_updated(true);
+                    state.unset_measurements();
                     return Textra::Matrix_to_Tensor(eigvecs.col(idx_overlap), state.active_dimensions());
 
                 }
             }else{
                 tools::log->trace("Eigenstate {} has good overlap: {}", idx_overlap, best_overlap);
+                state.tag_active_sites_have_been_updated(true);
+                state.unset_measurements();
                 return Textra::Matrix_to_Tensor(eigvecs.col(idx_overlap), state.active_dimensions());
             }
 
@@ -347,10 +362,13 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                 auto [best_variance, idx_variance] = get_best_state_in_window(state,eigvecs,eigvals/state.get_length(),sim_status.energy_lbound,sim_status.energy_ubound);
                 if (idx_variance < 0){
                     tools::log->debug("Returning old theta");
+                    state.tag_active_sites_have_been_updated(false);
                     return theta;
                 }
                 if(best_variance < prev_variance){
                     tools::log->debug("... Eigenstate {} has better (log10) variance: {} < {}", idx_variance, std::log10(best_variance), std::log10(prev_variance));
+                    state.tag_active_sites_have_been_updated(true);
+                    state.unset_measurements();
                     return Textra::Matrix_to_Tensor(eigvecs.col(idx_variance), state.active_dimensions());
                 }else{
                     tools::log->debug("... Switching to direct mode");
@@ -504,6 +522,8 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     if (variance_new < tools::finite::measure::energy_variance_per_site(state)){
         state.unset_measurements();
         tools::log->debug("Returning new theta");
+        state.tag_active_sites_have_been_updated(true);
+        state.unset_measurements();
         return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
 
     }else{
@@ -512,6 +532,8 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
         auto [best_variance, idx_variance] = get_best_state_in_window(state,eigvecs,eigvals/state.get_length(),sim_status.energy_lbound,sim_status.energy_ubound);
         if(best_variance < prev_variance){
             tools::log->debug("... Eigenstate {} has better (log10) variance: {} < {}",idx_variance, std::log10(best_variance), std::log10(prev_variance));
+            state.tag_active_sites_have_been_updated(true);
+            state.unset_measurements();
             return Textra::Matrix_to_Tensor(eigvecs.col(idx_variance), state.active_dimensions());
         }else{
             tools::log->debug("... discarding subspace and switching to direct mode");

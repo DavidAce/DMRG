@@ -2,7 +2,7 @@
 // Created by david on 2019-07-15.
 //
 
-#include "ceres_subspace.h"
+#include "ceres_subspace_functor.h"
 #include <state/class_finite_state.h>
 
 using namespace tools::finite::opt::internals;
@@ -51,16 +51,16 @@ bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(con
     vv = v.squaredNorm();
     norm = std::sqrt(vv);
 
-    #pragma omp parallel
+#pragma omp parallel
     {
-        #pragma omp sections
+#pragma omp sections
         {
-            #pragma omp section
+#pragma omp section
             {
                 Hv  = eigvals.asDiagonal() * v;
                 vHv = v.dot(Hv);
             }
-            #pragma omp section
+#pragma omp section
             {
                 H2v = H2.template selfadjointView<Eigen::Upper>()*v;
                 vH2v = v.dot(H2v);
@@ -112,4 +112,3 @@ bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(con
 
 template class tools::finite::opt::internals::ceres_subspace_functor<double>;
 template class tools::finite::opt::internals::ceres_subspace_functor<std::complex<double>>;
-

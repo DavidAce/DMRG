@@ -2,7 +2,7 @@
 // Created by david on 2019-07-09.
 //
 
-#include "ceres_direct.h"
+#include "ceres_direct_functor.h"
 #include <spdlog/spdlog.h>
 #include <general/class_tic_toc.h>
 #include <state/class_finite_state.h>
@@ -144,9 +144,11 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     if (variance_new < variance_0){
         state.unset_measurements();
         tools::log->debug("Returning new theta");
+        state.tag_active_sites_have_been_updated(true);
         return  Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
 
     }else{
+        state.tag_active_sites_have_been_updated(false);
         tools::log->debug("Returning old theta");
         return  theta;
     }

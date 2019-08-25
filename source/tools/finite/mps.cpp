@@ -26,6 +26,7 @@ void tools::finite::mps::initialize(class_finite_state &state, const size_t leng
         if(state.MPS_L.size() + state.MPS_R.size() >= length){break;}
     }
     state.truncation_error.resize(length+1);
+    state.site_update_tags = std::vector<bool>(length,false);
 }
 
 
@@ -34,6 +35,7 @@ void tools::finite::mps::randomize(class_finite_state &state,const std::string &
     tools::log->trace("Randomizing mps");
     using Scalar = class_finite_state::Scalar;
     state.unset_measurements();
+    state.tag_all_sites_have_been_updated(false);
 
     // There are three ways to randomize an initial product state state:
     // a) Use seed_state to set spinors to a random sequence of eigenvectors (up/down) of either sx, sy or sz.

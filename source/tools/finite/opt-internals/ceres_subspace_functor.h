@@ -2,8 +2,8 @@
 // Created by david on 2019-07-15.
 //
 
-#ifndef DMRG_CERES_SUBSPACE_H
-#define DMRG_CERES_SUBSPACE_H
+#ifndef DMRG_CERES_SUBSPACE_FUNCTOR_H
+#define DMRG_CERES_SUBSPACE_FUNCTOR_H
 
 #include <tools/finite/opt.h>
 
@@ -30,4 +30,4 @@ namespace tools::finite::opt{
     }
 }
 
-#endif //DMRG_CERES_SUBSPACE_H
+#endif //DMRG_CERES_SUBSPACE_FUNCTOR_H
