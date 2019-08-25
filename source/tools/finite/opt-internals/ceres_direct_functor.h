@@ -2,8 +2,8 @@
 // Created by david on 2019-07-15.
 //
 
-#ifndef DMRG_CERES_DIRECT_H
-#define DMRG_CERES_DIRECT_H
+#ifndef DMRG_CERES_DIRECT_FUNCTOR_H
+#define DMRG_CERES_DIRECT_FUNCTOR_H
 
 #include <tools/finite/opt.h>
 
@@ -39,4 +39,4 @@ namespace tools::finite::opt{
 
 
 
-#endif //DMRG_CERES_DIRECT_H
+#endif //DMRG_CERES_DIRECT_FUNCTOR_H

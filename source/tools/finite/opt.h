@@ -28,6 +28,8 @@ namespace tools::finite::opt{
         extern Eigen::Tensor<std::complex<double>,3> ceres_subspace_optimization       (const class_finite_state & state, const class_simulation_status & sim_status, OptType optType, OptMode optMode);
         extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_finite_state & state, const class_simulation_status & sim_status);
         extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_finite_state & state, std::string ritzstring = "SR");
+
+        inline bool no_state_in_window = false;
         inline double subspace_quality_threshold = 1e-4;
 
         extern std::vector<int> generate_size_list(size_t shape);

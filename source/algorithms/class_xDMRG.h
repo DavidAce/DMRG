@@ -31,10 +31,12 @@ public:
     bool   has_projected  = false;
 
     void find_energy_range();
+    void reset_to_random_state_in_window(double growth_factor, std::string reason);
     void single_DMRG_step();
     void run_preprocessing()                final;
     void run_simulation()                   final;
     void check_convergence()                final;
+
     void write_logs(bool force = false)     final;
     bool   sim_on()                         final;
     long   chi_max()                        final;

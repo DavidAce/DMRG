@@ -13,7 +13,7 @@ Eigen::ThreadPoolDevice dev(&tp,Eigen::nbThreads());
 Eigen::DefaultDevice dev;
 #endif
 
-#include "ceres_direct.h"
+#include "ceres_direct_functor.h"
 #include <state/class_finite_state.h>
 
 

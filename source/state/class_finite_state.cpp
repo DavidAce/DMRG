@@ -458,3 +458,21 @@ void class_finite_state::do_all_measurements()const {
     measurements.entanglement_entropies           = tools::finite::measure::entanglement_entropies        (*this);
 }
 
+
+void class_finite_state::tag_active_sites_have_been_updated(bool tag)     const{
+    if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot tag active sites, size mismatch in site list");
+    for (auto & site: active_sites){
+        site_update_tags[site] = tag;
+    }
+}
+
+void class_finite_state::tag_all_sites_have_been_updated(bool tag) const{
+    if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot untag all sites, size mismatch in site list");
+    site_update_tags = std::vector<bool>(get_length(),tag);
+}
+
+bool class_finite_state::all_sites_updated() const {
+    if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
+    return  std::all_of(site_update_tags.begin(), site_update_tags.end(), [](bool v) { return v; });
+}
+

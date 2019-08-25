@@ -132,7 +132,6 @@ public:
 
 
     std::vector<double>  truncation_error;
-
     struct Measurements {
         std::optional<size_t>               length                                  = {};
         std::optional<size_t>               bond_dimension_midchain                 = {};
@@ -156,12 +155,19 @@ public:
     void do_all_measurements()const;
     void clear_cache() const;
 
+    void tag_active_sites_have_been_updated(bool tag)   const;
+    void tag_all_sites_have_been_updated(bool tag)      const;
+    bool all_sites_updated() const;
+    mutable std::vector<bool> site_update_tags;
 private:
     struct Cache{
         std::optional<TType<4>> multimpo     = {};
         std::optional<TType<3>> multitheta   = {};
     };
     mutable Cache cache;
+
+
+
 };
 
 
