@@ -116,9 +116,9 @@ void class_xDMRG::single_DMRG_step()
     Eigen::Tensor<Scalar,3> theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
 
 
-    if (optMode == opt::OptMode::OVERLAP){
-        sim_status.chi_temp = 16 * (1+sim_status.iteration);
-    }
+//    if (optMode == opt::OptMode::OVERLAP){
+//        sim_status.chi_temp = 16 * (1+sim_status.iteration);
+//    }
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     move_center_point();
     if(tools::finite::measure::norm(*state) > 1e-10){
