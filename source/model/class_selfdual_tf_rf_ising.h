@@ -69,10 +69,11 @@ public:
 //    double get_randomness_strength()                                                   const override;
     void   print_parameter_names ()                                                     const override;
     void   print_parameter_values()                                                     const override;
+//    std::vector<double>      get_random_parameter_values()                              const override;
     std::vector<std::string> get_parameter_names()                                      const override;
     std::vector<double>      get_parameter_values()                                     const override;
 
-    void   set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters)  override;
+    void   set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters, bool reverse = false)  override;
 
 
 //    void   write_to_hdf5_table()                                                override;
