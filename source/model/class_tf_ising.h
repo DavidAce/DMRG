@@ -43,9 +43,12 @@ public:
     size_t get_spin_dimension()                                                         const override;
     void   print_parameter_names ()                                                     const override;
     void   print_parameter_values()                                                     const override;
+//    std::vector<double>      get_random_parameter_values()                              const override;
     std::vector<std::string> get_parameter_names()                                      const override;
     std::vector<double>      get_parameter_values()                                     const override;
-    void   set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters)  override;
+    void   set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters, bool reverse = false)  override;
+
+
 };
 
 #endif //CLASS_TF_ISING_H

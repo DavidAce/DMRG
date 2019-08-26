@@ -176,7 +176,23 @@ std::vector<std::string> class_tf_ising::get_parameter_names() const {
             };
 }
 
-
+//
+//std::vector<double> class_tf_ising::get_random_parameter_values() const {
+//    return {(double)get_position(),
+//            J_rnd,
+//            h_rnd,
+//            J_log_mean,
+//            h_log_mean,
+//            J_avg,
+//            h_avg,
+//            J_sigma,
+//            h_sigma,
+//            lambda,
+//            delta,
+//            e_reduced,
+//            (double)spin_dim
+//    };
+//}
 
 std::vector<double> class_tf_ising::get_parameter_values() const {
     return {(double)get_position(),
@@ -190,6 +206,21 @@ std::vector<double> class_tf_ising::get_parameter_values() const {
 }
 
 
-void class_tf_ising::set_full_lattice_parameters([[maybe_unused]] const std::vector<std::vector<double>> chain_parameters){
+void class_tf_ising::set_full_lattice_parameters([[maybe_unused]] const std::vector<std::vector<double>> chain_parameters, bool reverse){
     all_mpo_parameters_have_been_set = true;
+    // Calculate average J_rnd on the whole state
+    all_mpo_parameters_have_been_set = true;
+    std::list<double> r_rnd_list;
+    if(reverse){
+        for (auto &params : chain_parameters){
+            r_rnd_list.emplace_front(params[3]);
+        }
+    }else{
+        for (auto &params : chain_parameters){
+            r_rnd_list.push_back(params[3]);
+        }
+    }
+
+    r_rnd_field  = *std::next(r_rnd_list.begin(), get_position());
+
 }
