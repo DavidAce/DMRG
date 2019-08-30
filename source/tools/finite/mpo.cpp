@@ -37,10 +37,10 @@ void tools::finite::mpo::randomize(class_finite_state &state) {
     //
 
     for (auto &mpo : state.MPO_L){
-        mpo->set_full_lattice_parameters(all_params,true);
+        mpo->set_full_lattice_parameters(all_params,false);
     }
     for (auto &mpo : state.MPO_R){
-        mpo->set_full_lattice_parameters(all_params,true);
+        mpo->set_full_lattice_parameters(all_params,false);
     }
 }
 //
