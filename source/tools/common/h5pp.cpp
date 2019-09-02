@@ -9,6 +9,7 @@
 void tools::common::io::write_simulation_status(const class_simulation_status &sim_status, h5pp::File &h5ppFile,
                                                 std::string sim_name) {
     h5ppFile.writeDataset(sim_status.iteration                     ,sim_name + "/sim_status/iteration");
+    h5ppFile.writeDataset(sim_status.moves                         ,sim_name + "/sim_status/moves");
     h5ppFile.writeDataset(sim_status.step                          ,sim_name + "/sim_status/step");
     h5ppFile.writeDataset(sim_status.position                      ,sim_name + "/sim_status/position");
     h5ppFile.writeDataset(sim_status.chi_temp                      ,sim_name + "/sim_status/chi_temp");
@@ -52,6 +53,7 @@ class_simulation_status tools::common::io::load_sim_status_from_hdf5 (const h5pp
     try{
         tools::common::profile::t_hdf.tic();
         h5ppFile.readDataset(sim_status.iteration                      , sim_name + "/sim_status/iteration");
+        h5ppFile.readDataset(sim_status.moves                          , sim_name + "/sim_status/moves");
         h5ppFile.readDataset(sim_status.step                           , sim_name + "/sim_status/step");
         h5ppFile.readDataset(sim_status.position                       , sim_name + "/sim_status/position");
         h5ppFile.readDataset(sim_status.chi_temp                       , sim_name + "/sim_status/chi_temp");

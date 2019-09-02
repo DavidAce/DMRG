@@ -39,7 +39,7 @@ void class_fDMRG::run_simulation(){
         check_convergence();
         print_status_update();
 
-        // It's important not to perform the last step.
+        // It's important not to perform the last moves.
         // That last state would not get optimized
         if (sim_status.iteration >= settings::fdmrg::min_sweeps and state->position_is_the_middle_any_direction())
         {
@@ -48,10 +48,11 @@ void class_fDMRG::run_simulation(){
             if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
         update_bond_dimension();
-        sim_status.iteration = state->get_sweeps();
-        sim_status.position  = state->get_position();
+        log->trace("Finished step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
+        sim_status.iteration     = state->get_sweeps();
+        sim_status.position      = state->get_position();
+        sim_status.moves         = state->get_moves();
         sim_status.step++;
-        log->trace("Finished step {}, iteration {}",sim_status.step,sim_status.iteration);
     }
     switch(stop_reason){
         case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
@@ -121,7 +122,7 @@ void class_fDMRG::check_convergence(){
 void class_fDMRG::write_logs(bool force){
     if(not force){
         if (not settings::output::save_logs){return;}
-        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (math::mod(sim_status.step, write_freq()) != 0) {return;}
         if (settings::output::storage_level < StorageLevel::NORMAL){return;}
     }
     log_sim_status->append_record(sim_status);

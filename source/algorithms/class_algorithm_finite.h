@@ -49,7 +49,7 @@ public:
     void check_convergence_entg_entropy(double slope_threshold = quietNaN);
     std::list<bool>   B_mpo_vec; //History of saturation true/false
     std::list<double> V_mpo_vec; //History of variances
-    std::list<int>    X_mpo_vec; //History of step numbers
+    std::list<int>    X_mpo_vec; //History of moves numbers
     double V_mpo_slope = 0;
 
     std::vector<std::list<bool>  > BS_mat;

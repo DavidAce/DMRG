@@ -130,13 +130,17 @@ class_algorithm_base::check_saturation_using_slope(
 
 void class_algorithm_base::write_status(bool force){
     if (not force){
-        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (math::mod(sim_status.step, write_freq()) != 0) {return;}
         if (write_freq() == 0){return;}
         if (settings::output::storage_level <= StorageLevel::NONE){return;}
     }
     log->trace("Writing simulation status to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");
     tools::common::io::write_simulation_status(sim_status, *h5pp_file, sim_name);
+    if (settings::output::storage_level >= StorageLevel::NORMAL){
+        std::string log_name = sim_name + "/logs/step_" + std::to_string(sim_status.step);
+        tools::common::io::write_simulation_status(sim_status, *h5pp_file, log_name);
+    }
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 

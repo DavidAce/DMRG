@@ -39,8 +39,8 @@ public:
     std::unique_ptr<class_hdf5_log<class_log_profiling>>          log_profiling;
     std::unique_ptr<class_hdf5_log<class_log_simulation_status>>  log_sim_status;
 
-    std::string             sim_name;
-    SimulationType          sim_type;
+    std::string              sim_name;
+    SimulationType           sim_type;
     class_simulation_status  sim_status;
 
 

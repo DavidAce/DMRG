@@ -52,7 +52,7 @@ void class_xDMRG::run_preprocessing() {
 void class_xDMRG::run_simulation()    {
     log->info("Starting {} simulation", sim_name);
     while(true) {
-        log->trace("Starting step {}, iteration {}, direction {}", sim_status.step,sim_status.iteration,state->get_direction());
+        log->trace("Starting moves {}, iteration {}, direction {}", sim_status.moves, sim_status.iteration, state->get_direction());
         single_DMRG_step();
         write_measurements();
         write_state();
@@ -60,7 +60,7 @@ void class_xDMRG::run_simulation()    {
         write_logs();
         check_convergence();
         print_status_update();
-        // It's important not to perform the last step.
+        // It's important not to perform the last moves.
         // That last state would not get optimized
         if (state->position_is_any_edge())
         {
@@ -70,12 +70,11 @@ void class_xDMRG::run_simulation()    {
         }
 
         update_bond_dimension();
-//        move_center_point();
-        log->trace("Finished step {}, iteration {}, direction {}",sim_status.step,sim_status.iteration,state->get_direction());
-        sim_status.iteration    = state->get_sweeps();
-        sim_status.position     = state->get_position();
-        sim_status.step         = state->get_steps();
-
+        log->trace("Finished step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
+        sim_status.iteration     = state->get_sweeps();
+        sim_status.position      = state->get_position();
+        sim_status.moves         = state->get_moves();
+        sim_status.step++;
     }
     switch(stop_reason){
         case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_ITERS",sim_name) ;break;
@@ -93,8 +92,8 @@ void class_xDMRG::single_DMRG_step()
     using namespace tools::finite;
 
     t_sim.tic();
-    log->trace("Starting single xDMRG step");
-//  log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
+    log->trace("Starting single xDMRG moves");
+//  log->debug("Variance accurate check before xDMRG moves: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
 
     auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
     optMode       = measure::energy_variance_per_site(*state) > 1e-4  ?  opt::OptMode::OVERLAP : optMode;
@@ -128,7 +127,7 @@ void class_xDMRG::single_DMRG_step()
 //    mps::rebuild_environments(*state);
     debug::check_integrity(*state);
 
-    log->debug("Variance accurate check after  xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
+    log->debug("Variance accurate check after  xDMRG moves: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
     sim_status.energy_dens        = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     state->unset_measurements();
 
@@ -251,13 +250,13 @@ void class_xDMRG::find_energy_range() {
     if (state->get_length() != num_sites()) throw std::runtime_error("find_energy_range: state lenght mismatch");
     size_t max_sweeps_during_f_range = 4;
     sim_status.iteration = state->reset_sweeps();
-    sim_status.step      = state->reset_steps();
+    sim_status.moves      = state->reset_moves();
     reset_to_random_state("none");
     // Find energy minimum
     while(true) {
         class_algorithm_finite::single_DMRG_step("SR");
         print_status_update();
-        // It's important not to perform the last step.
+        // It's important not to perform the last moves.
         // That last state would not get optimized
         if(state->position_is_any_edge()){
             if(sim_status.iteration >= max_sweeps_during_f_range
@@ -274,7 +273,7 @@ void class_xDMRG::find_energy_range() {
     while(true) {
         class_algorithm_finite::single_DMRG_step("LR");
         print_status_update();
-        // It's important not to perform the last step.
+        // It's important not to perform the last moves.
         // That last state would not get optimized
         if(state->position_is_any_edge()){
             if(sim_status.iteration >= max_sweeps_during_f_range
@@ -341,7 +340,7 @@ void class_xDMRG::find_energy_range() {
 void class_xDMRG::write_logs(bool force){
     if(not force){
         if (not settings::output::save_logs){return;}
-        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (math::mod(sim_status.step, write_freq()) != 0) {return;}
         if (settings::output::storage_level < StorageLevel::NORMAL){return;}
     }
     log_sim_status->append_record(sim_status);
