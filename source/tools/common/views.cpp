@@ -157,7 +157,7 @@ tools::common::views::get_theta_swapped(const class_infinite_state & state, std:
      @endverbatim
  */
 {
-    return  state.MPS->C() //whatever L_A was in the previous step
+    return  state.MPS->C() //whatever L_A was in the previous moves
                     .contract(state.MPS->B(),            idx({1},{1}))
                     .contract(state.MPS->MPS_A->get_G(), idx({2},{1}))
                     .contract(state.MPS->C(), idx({3},{0}))
@@ -332,7 +332,7 @@ tools::common::views::get_theta_swapped(const class_mps_2site  &MPS, std::comple
      @endverbatim
  */
 {
-    return  MPS.C() //whatever L_A was in the previous step
+    return  MPS.C() //whatever L_A was in the previous moves
                     .contract(MPS.B(),            idx({1},{1}))
                     .contract(MPS.MPS_A->get_G(), idx({2},{1}))
                     .contract(MPS.C(), idx({3},{0}))

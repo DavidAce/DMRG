@@ -62,7 +62,7 @@ void class_iDMRG::single_DMRG_step(std::string ritz){
 /*!
  * \fn void single_DMRG_step(class_superblock &state)
  */
-    log->trace("Starting infinite DMRG step");
+    log->trace("Starting infinite DMRG moves");
     t_sim.tic();
     Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::find_ground_state(*state,ritz);
     tools::infinite::opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);

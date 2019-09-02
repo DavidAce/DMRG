@@ -42,7 +42,7 @@ private:
     using VType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
     template<auto rank> using TType = Eigen::Tensor<Scalar,rank>;
     int num_sweeps   = 0;
-    int num_steps    = 0;
+    int num_moves    = 0;
     int direction    = 1;
     long chi_max     = 0;
 public:
@@ -67,10 +67,10 @@ public:
     void   set_sweeps(int num_sweeps_);
     void   increment_sweeps();
 
-    int    get_steps() const ;
-    int    reset_steps();
-    void   set_steps(int num_steps_);
-    void   increment_steps();
+    int    get_moves() const ;
+    int    reset_moves();
+    void   set_moves(int num_moves_);
+    void   increment_moves();
 
 
 

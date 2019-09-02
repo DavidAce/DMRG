@@ -201,7 +201,7 @@ int tools::finite::mps::move_center_point(class_finite_state &  state){
         state.flip_direction();
         state.increment_sweeps();
     }
-    state.increment_steps();
+    state.increment_moves();
     state.clear_cache();
     state.unset_measurements();
     return state.get_sweeps();

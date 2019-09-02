@@ -45,7 +45,7 @@ void tools::finite::mps::normalize(class_finite_state & state, bool keep_bond_di
         long bond_dimension = keep_bond_dimensions ? bond_dimensions[pos_LC] : state.get_chi_max() * 2;
         try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta,bond_dimension); svd_success = true;}
         catch(std::exception &ex){
-            tools::log->error("Skipping normalization step.\n\t SVD failed at positions A:{} C:{} B:{} , step {}:\n\t{}", pos_A, pos_LC, pos_B, step, ex.what());
+            tools::log->error("Skipping normalization moves.\n\t SVD failed at positions A:{} C:{} B:{} , moves {}:\n\t{}", pos_A, pos_LC, pos_B, step, ex.what());
             svd_success = false;
             end_traversals = std::min(end_traversals+1, max_traversals);
         }
