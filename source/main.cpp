@@ -121,33 +121,6 @@ int main(int argc, char* argv[]) {
 
 
 
-
-
-
-    //print all given parameters
-    //Load input and output files from command line. If none were given use defaults.
-    //Normally an output filename is given in the input file. But it can also be given from command line.
-//    std::string inputfile  = "input.cfg";
-//    std::string outputfile = "output.h5";
-//    int seed_model  = -1; //Only accept non-negative seeds
-//    int seed_state = -1; //Only accept non-negative seeds
-//    int i = 0;
-//    std::vector<std::string> allArgs(argv+1, argv + argc);
-//    for (auto &arg_word : allArgs){
-//        std::istringstream iss(arg_word);
-//        std::string arg;
-//        while(iss >> arg){
-//            log->info("Input argument {} : {}",i++,arg);
-//            if (arg.find(".cfg") != std::string::npos) {inputfile  = arg;continue;}
-//            if (arg.find(".h5")  != std::string::npos) {outputfile = arg;continue;}
-//            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_model  < 0){seed_model  = std::stoi(arg); continue;}
-//            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_state < 0){seed_state = std::stoi(arg); continue;}
-//        }
-//    }
-
-
-
-
     if(load_previous){
         try{
             auto h5ppFile = std::make_shared<h5pp::File> (settings::output::output_filename, h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);

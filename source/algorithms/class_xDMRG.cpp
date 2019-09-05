@@ -300,7 +300,7 @@ void class_xDMRG::find_energy_range() {
     int counter = 0;
     double growth_factor = 1.10;
     while(outside_of_window){
-        reset_to_random_state(settings::model::initial_parity_sector);
+        reset_to_random_state(settings::model::initial_parity_sector, settings::model::seed_state);
         sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
         outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
         counter++;
