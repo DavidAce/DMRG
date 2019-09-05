@@ -176,7 +176,7 @@ void class_algorithm_finite::move_center_point(){
 }
 
 void class_algorithm_finite::reset_to_random_state(const std::string parity_sector, int seed_state) {
-    log->trace("Resetting MPS to random product state in parity sector: {}", parity_sector);
+    log->trace("Resetting MPS to random product state in parity sector: {} with seed {}", parity_sector,seed_state);
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     // Randomize state
     t_sim.tic();

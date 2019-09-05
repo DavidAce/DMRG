@@ -20,8 +20,12 @@ int get_sign(const std::string & parity_sector){
 
 std::string get_axis(const std::string & parity_sector){
     int sign = get_sign(parity_sector);
-    if (sign == 0) return std::to_string(parity_sector.at(0));
-    else return std::to_string(parity_sector.at(1));
+    if (sign == 0){
+        return parity_sector.substr(0,1);
+    }
+    else{
+        return parity_sector.substr(1,1);
+    }
 }
 
 int get_elem(const std::string & parity_sector){
@@ -88,8 +92,6 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(
     Eigen::Tensor<Scalar,1> L (1);
     std::string axis = get_axis(parity_sector);
     int sector       = get_sign(parity_sector);
-
-
     int carry_sign = 1;
     int last_sign  = 1;
 
