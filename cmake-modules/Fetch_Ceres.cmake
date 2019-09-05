@@ -54,6 +54,7 @@ else()
             GIT_TAG master
             GIT_PROGRESS false
             GIT_SHALLOW true
+#            BUILD_ALWAYS 1
             PREFIX      ${BUILD_DIRECTORY}/ceres
             INSTALL_DIR ${INSTALL_DIRECTORY}/ceres
             UPDATE_COMMAND ""

@@ -294,6 +294,8 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     subspace_quality_threshold = std::min(subspace_quality_threshold, settings::precision::MaxSubspaceQuality);
     auto theta             = state.get_multitheta();
     auto theta_old         = Eigen::Map<const Eigen::VectorXcd>  (theta.data(),theta.size());
+    auto theta_old_map     = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(theta.data(), state.active_dimensions());
+
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
     switch(optType){
@@ -396,25 +398,27 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     if (tools::log->level() <= spdlog::level::debug){
 
-        t_opt->tic();
-        state.unset_measurements();
-        double energy_0   = tools::finite::measure::energy_per_site(state);
-        double variance_0 = tools::finite::measure::energy_variance_per_site(state);
-        int iter_0 = 0;
-    //    Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
-        Eigen::VectorXcd theta_0 = (eigvecs * theta_start.conjugate().asDiagonal() ).rowwise().sum().normalized();
-        double overlap_0 = std::abs(theta_old.dot(theta_0));
-        t_opt->toc();
-        opt_log.emplace_back("Initial",theta_old.size(), energy_0, std::log10(variance_0), overlap_0,theta_old.norm(), iter_0,0, t_opt->get_last_time_interval());
-
         // Initial sanity check
         t_opt->tic();
         state.unset_measurements();
-        auto theta_0_map         = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(theta_0.data(), state.active_dimensions());
-        double energy_1          = tools::finite::measure::multisite::energy_per_site(state,theta_0_map);
-        double variance_1        = tools::finite::measure::multisite::energy_variance_per_site(state,theta_0_map);
+        Eigen::VectorXcd theta_0 = (eigvecs * theta_start.conjugate().asDiagonal() ).rowwise().sum().normalized();
+        int iter_0               = 0;
+        double energy_0          = tools::finite::measure::multisite::energy_per_site(state,theta_old_map);
+        double variance_0        = tools::finite::measure::multisite::energy_variance_per_site(state,theta_old_map);
+        double overlap_0         = std::abs(theta_old.dot(theta_0));
         t_opt->toc();
-        opt_log.emplace_back("Initial sanity check 1",theta.size(), energy_1, std::log10(variance_1), overlap_0,theta_0.norm(), iter_0,0, t_opt->get_last_time_interval());
+        opt_log.emplace_back("Initial",theta.size(), energy_0, std::log10(variance_0), overlap_0,theta_0.norm(), iter_0,0, t_opt->get_last_time_interval());
+
+
+        t_opt->tic();
+        state.unset_measurements();
+        double energy_1   = tools::finite::measure::energy_per_site(state);
+        double variance_1 = tools::finite::measure::energy_variance_per_site(state);
+    //    Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
+        double overlap_1 = std::abs(theta_old.dot(theta_0));
+        t_opt->toc();
+        opt_log.emplace_back("Initial",theta_old.size(), energy_1, std::log10(variance_1), overlap_1,theta_old.norm(), iter_0,0, t_opt->get_last_time_interval());
+
 
 
         // Initial sanity check 2
@@ -519,7 +523,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     // Return something strictly better
     tools::common::profile::t_opt.toc();
-    if (variance_new < tools::finite::measure::energy_variance_per_site(state)){
+    if (variance_new < 1e-11 or variance_new < tools::finite::measure::multisite::energy_variance_per_site(state,theta_old_map)){
         state.unset_measurements();
         tools::log->debug("Returning new theta");
         state.tag_active_sites_have_been_updated(true);

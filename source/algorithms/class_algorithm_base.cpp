@@ -79,9 +79,15 @@ class_algorithm_base::check_saturation_using_slope(
     B_vec.push_back(false);
     Y_vec.push_back(new_data);
     X_vec.push_back(iter);
-    unsigned long min_data_points = 2;
+    unsigned long min_data_points = 4;
     if (Y_vec.size() < min_data_points){return report;}
-    auto check_from =  (unsigned long)(X_vec.size()*0.6); //Check from last part of the measurements in Y_vec.
+//    [2019-09-04 09:41:16][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.107435, 0.0755767, 0.689875, 0.692682, 0.709075, 0.936858, 0.771467, 0.609487, 0.637618, 0.708048, 0.703904, 0.716228, 0.131454 , 0.0982134, 0.165784, -0}
+//    [2019-09-04 14:09:38][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.107185, 0.0750735, 0.689648, 0.69319 , 0.705737, 0.764265, 0.71776 , 0.640145, 0.658814, 0.706533, 0.687854, 0.659679, 0.0969757, 0.0707726, 0.14884 , -0}
+//    [2019-09-04 15:50:25][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.109655, 0.0794533, 0.690183, 0.633393, 0.638498, 0.852765, 0.680258, 0.604823, 0.636992, 0.707849, 0.693525, 0.664779, 0.0980222, 0.191848 , 0.249013, -0} xDMRG Iter: 7     E: 1.1380981061517343    ε: 0.5688  log₁₀ σ²(E): -13.0853826559
+//    [2019-09-04 16:12:27][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.260162, 0.0767326, 0.691241, 0.693091, 0.704597, 0.744191, 0.683444, 0.603736, 0.63557 , 0.705953, 0.693286, 0.664763, 0.0973455, 0.0711479, 0.149059, -0} xDMRG Iter: 20    E: 0.3989677607237975    ε: 0.5241  log₁₀ σ²(E): -13.0536331913 (svd 1e-10)
+
+
+    auto check_from =  (unsigned long)(X_vec.size()*0.75); //Check from last part of the measurements in Y_vec.
     while (X_vec.size() - check_from < min_data_points and check_from > 0){
         check_from -=1; //Decrease check from if out of bounds.
     }
@@ -137,10 +143,7 @@ void class_algorithm_base::write_status(bool force){
     log->trace("Writing simulation status to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");
     tools::common::io::write_simulation_status(sim_status, *h5pp_file, sim_name);
-    if (settings::output::storage_level >= StorageLevel::NORMAL){
-        std::string log_name = sim_name + "/logs/step_" + std::to_string(sim_status.step);
-        tools::common::io::write_simulation_status(sim_status, *h5pp_file, log_name);
-    }
+
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 

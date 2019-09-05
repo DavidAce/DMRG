@@ -119,6 +119,7 @@ void class_algorithm_finite::run()
 void class_algorithm_finite::run_preprocessing(){
     sim_status.chi_max = chi_max();
     state->set_chi_max(sim_status.chi_max);
+    tools::finite::io::write_model(*state, *h5pp_file, sim_name);
 
 }
 
@@ -301,7 +302,8 @@ void class_algorithm_finite::compute_observables(){
 
 void class_algorithm_finite::write_measurements(bool force){
     if(not force){
-        if (math::mod(sim_status.step, write_freq()) != 0) {return;}
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (state->position_is_any_edge())
         if (write_freq() == 0){return;}
         if (settings::output::storage_level <= StorageLevel::NONE){return;}
     }
@@ -320,7 +322,8 @@ void class_algorithm_finite::write_measurements(bool force){
 
 void class_algorithm_finite::write_state(bool force){
     if(not force){
-        if (math::mod(sim_status.step, write_freq()) != 0) {return;}
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (state->position_is_any_edge())
         if (write_freq() == 0){return;}
         if (settings::output::storage_level <= StorageLevel::NONE){return;}
     }
@@ -334,9 +337,15 @@ void class_algorithm_finite::write_state(bool force){
     }
     tools::finite::io::write_all_state(*state, *h5pp_file, sim_name);
 
-    if (settings::output::storage_level >= StorageLevel::NORMAL){
+    if (settings::output::storage_level >= StorageLevel::FULL){
         std::string log_name = sim_name + "/logs/step_" + std::to_string(sim_status.step);
         tools::finite::io::write_all_state(*state, *h5pp_file, log_name);
+
+    }
+    //Write the simulation status here as well, since the base has no notion of state edge
+    if (settings::output::storage_level >= StorageLevel::NORMAL){
+        std::string log_name = sim_name + "/logs/step_" + std::to_string(sim_status.step);
+        tools::common::io::write_simulation_status(sim_status, *h5pp_file, log_name);
     }
 
     h5pp_file->writeDataset(true, sim_name + "/simOK");

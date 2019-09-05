@@ -181,8 +181,8 @@ void class_xDMRG::check_convergence(){
 
     if(    sim_status.variance_mpo_has_converged
        and sim_status.entanglement_has_converged
-//       and sim_status.variance_mpo_saturated_for >= min_saturation_iters
-//       and sim_status.entanglement_saturated_for >= min_saturation_iters
+       and sim_status.variance_mpo_saturated_for >= min_saturation_iters
+       and sim_status.entanglement_saturated_for >= min_saturation_iters
        )
     {
         log->debug("Simulation has converged");

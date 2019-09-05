@@ -14,6 +14,7 @@ else()
             GIT_PROGRESS 1
             PREFIX      ${BUILD_DIRECTORY}/h5pp
             INSTALL_DIR ${INSTALL_DIRECTORY}/h5pp
+#            BUILD_ALWAYS 1
             UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=Release
