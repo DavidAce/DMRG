@@ -63,7 +63,7 @@ public:
     virtual bool   chi_grow()                                                                                 = 0;
     virtual void   print_status_update()                                                                      = 0;
     virtual void   print_status_full()                                                                        = 0;
-    virtual void   reset_to_random_state(const std::string parity)                                            = 0;
+    virtual void   reset_to_random_state(const std::string parity = "none", int seed_state = -1)              = 0;
     virtual void   clear_saturation_status()                                                                  = 0;
 
 

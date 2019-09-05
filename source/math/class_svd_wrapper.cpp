@@ -60,7 +60,7 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
     if (mat.isZero(0))          throw std::runtime_error("SVD error: matrix is all zeros");
 
     //Debugging, save matrix into h5 file
-//    std::string outputFilename      = "svdmatrix_" + std::to_string(settings::model::seed_init) + ".h5";
+//    std::string outputFilename      = "svdmatrix_" + std::to_string(settings::model::seed_model) + ".h5";
 //    size_t      logLevel  = 2;
 //    h5pp::File file(outputFilename,h5pp::AccessMode::READWRITE, h5pp::CreateMode::TRUNCATE,logLevel);
 //

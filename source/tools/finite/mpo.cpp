@@ -5,7 +5,7 @@
 #include <tools/nmspc_tools.h>
 #include <model/class_model_base.h>
 #include <model/class_model_factory.h>
-
+#include <general/nmspc_random_numbers.h>
 
 void tools::finite::mpo::initialize(class_finite_state & state, const size_t length, std::string model_type){
     log->info("Initializing mpo");
@@ -19,8 +19,11 @@ void tools::finite::mpo::initialize(class_finite_state & state, const size_t len
 }
 
 
-void tools::finite::mpo::randomize(class_finite_state &state) {
+void tools::finite::mpo::randomize(class_finite_state &state, int seed_model) {
     log->info("Setting random fields in state");
+    if (seed_model >= 0){
+        rn::seed(seed_model);
+    }
     std::vector<std::vector<double>> all_params;
 
 

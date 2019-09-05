@@ -28,14 +28,14 @@ public:
 
     void enlarge_environment();
     void swap();
-    void run()                                                          override;
-    void compute_observables()                                          final;
-    void clear_saturation_status()                                      override;
-    void reset_to_random_state(const std::string parity)                final;
-    void write_measurements(bool force = false)                        final;
-    void write_state(bool force = false)                        final;
-    void print_status_update()                                          final;
-    void print_status_full()                                            final;
+    void run()                                                                                  override;
+    void compute_observables()                                                                  final;
+    void clear_saturation_status()                                                              override;
+    void reset_to_random_state(const std::string parity_secto = "none", int seed_state = -1)    final;
+    void write_measurements(bool force = false)                                                 final;
+    void write_state(bool force = false)                                                        final;
+    void print_status_update()                                                                  final;
+    void print_status_full()                                                                    final;
 
 
 

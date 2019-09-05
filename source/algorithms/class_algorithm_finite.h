@@ -35,14 +35,14 @@ public:
     virtual bool store_wave_function()               = 0;
 
     void move_center_point();
-    void run()                                                              final;
-    void compute_observables()                                              final;
-    void clear_saturation_status()                                          override;
-    void reset_to_random_state(const std::string symmetry)                  final;
-    void write_measurements(bool force = false)                             final;
-    void write_state(bool force = false)                                    final;
-    void print_status_update()                                              final;
-    void print_status_full()                                                final;
+    void run()                                                                                  final;
+    void compute_observables()                                                                  final;
+    void clear_saturation_status()                                                              override;
+    void reset_to_random_state(const std::string parity_sector = "none", int seed_state = -1)   final;
+    void write_measurements(bool force = false)                                                 final;
+    void write_state(bool force = false)                                                        final;
+    void print_status_update()                                                                  final;
+    void print_status_full()                                                                    final;
 
 
     void check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);

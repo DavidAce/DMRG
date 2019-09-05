@@ -49,7 +49,7 @@ namespace settings {
     //Parameters for the model Hamiltonian
     namespace model {
         inline std::string  model_type     = "tf_ising";                /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising} above*/
-        inline int          seed_init      = 1;                         /*!< Main seed for the random number generator. Used for the random fields in the Hamiltonian. */
+        inline int          seed_model      = 1;                         /*!< Main seed for the random number generator. Used for the random fields in the Hamiltonian. */
         inline int          seed_state     = -1;                        /*!< Seed for generating the initial state. If seed_state < 0, seed_init is used instead  */
         inline bool         use_seed_state_as_enumeration = true;       /*!< Use the bit field of seed_state to enumerate initial states in the basis hinted by initial_sector.  */
         inline bool         project_when_saturated        = true;       /*!< Project to target parity sector if saturation occurs before convergence.  */
