@@ -391,7 +391,7 @@ class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_m
     Eigen::Tensor<Scalar,2> H2;
     if(log2spin > log2chiL + log2chiR){
         if (log2chiL >= log2chiR){
-            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL >= log2chiR ");
+//            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL >= log2chiR ");
             H2 =
                     eigvecs_tensor
                             .contract(env2L.block,                Textra::idx({1},{0}))
@@ -401,7 +401,7 @@ class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_m
                             .contract(eigvecs_tensor.conjugate(), Textra::idx({3,1,2},{0,1,2}));
         }
         else{
-            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL < log2chiR ");
+//            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL < log2chiR ");
             H2 =
                     eigvecs_tensor
                             .contract(env2R.block,                Textra::idx({2},{0}))
@@ -411,7 +411,7 @@ class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_m
                             .contract(eigvecs_tensor.conjugate(), Textra::idx({3,2,1},{0,1,2}));
         }
     }else{
-        tools::log->trace("get_H2 path: log2spin <= log2chiL + log2chiR");
+//        tools::log->trace("get_H2 path: log2spin <= log2chiL + log2chiR");
 
         H2 =
                 eigvecs_tensor

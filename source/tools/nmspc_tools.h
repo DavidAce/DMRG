@@ -134,17 +134,20 @@ namespace tools{
         }
 
         namespace io{
-            extern void write_all_state                              (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_bond_matrices                          (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_bond_matrix                            (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_full_mps                               (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_full_mpo                               (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_hamiltonian_params                     (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_entanglement                           (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_all_measurements                       (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_projection_to_closest_parity_sector    (const class_finite_state & state, h5pp::File & h5ppFile, std::string sim_name, std::string parity_sector,bool keep_bond_dimensions);
-            extern void load_from_hdf5                               (const h5pp::File & h5ppFile, class_finite_state & state    , class_simulation_status & sim_status, std::string sim_name);
-            extern class_finite_state load_state_from_hdf5           (const h5pp::File & h5ppFile, std::string sim_name);
+            namespace internals{
+                inline bool make_extendable_dataset(const std::string & prefix_path);
+            }
+            extern void write_all_state                              (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+            extern void write_bond_matrices                          (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+            extern void write_bond_matrix                            (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+            extern void write_full_mps                               (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+            extern void write_full_mpo                               (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+            extern void write_model                                  (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+            extern void write_entanglement                           (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+            extern void write_all_measurements                       (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+            extern void write_projection_to_closest_parity_sector    (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path, std::string parity_sector,bool keep_bond_dimensions);
+            extern void load_from_hdf5                               (const h5pp::File & h5ppFile, class_finite_state & state    , class_simulation_status & sim_status, const std::string & prefix_path);
+            extern class_finite_state load_state_from_hdf5           (const h5pp::File & h5ppFile, const std::string & prefix_path);
         }
 
 
