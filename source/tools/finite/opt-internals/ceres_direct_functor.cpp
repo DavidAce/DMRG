@@ -100,12 +100,15 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
 
     ene             = vHv/vv;
     var             = vH2v/vv - ene*ene;
+
 //    double loss_of_precision = std::log10(std::abs(ene*ene));
 //    double expected_error    = std::pow(10, -(13-loss_of_precision));
 //    if (std::imag(ene)      > expected_error) tools::log->warn("Energy has imaginary component              : {:.16f} + i {:.16f}" , std::real(ene)    , std::imag(ene));
 //    if (std::imag(vH2v/vv)  > expected_error) tools::log->warn("Hamiltonian squared has imaginary component : {:.16f} + i {:.16f}" , std::real(vH2v/vv), std::imag(vH2v/vv));
 //    if (std::imag(var)      > expected_error) tools::log->warn("Variance has imaginary component            : {:.16f} + i {:.16f}" , std::real(var)    , std::imag(var));
     if (std::real(var)      < 0.0           ) tools::log->warn("Counter = {}. Variance is negative:  {:.16f} + i {:.16f}" , counter, std::real(var)    , std::imag(var));
+    // Make sure var is valid
+    var = std::real(var) <= 0.0 ? 1e-16 : var;
 
     energy         = std::real(ene)/length;
     variance       = std::abs(var)/length;
