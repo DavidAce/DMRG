@@ -33,7 +33,7 @@ int get_elem(const std::string & parity_sector){
 }
 
 
-Eigen::Vector2cd get_eigvec(std::string & parity, int sign){
+Eigen::Vector2cd get_eigvec(const std::string & parity, const int sign){
 
     if (parity == "x" and sign >  0 ) return qm::spinOneHalf::sx_eigvecs[0];
     if (parity == "x" and sign <= 0 ) return qm::spinOneHalf::sx_eigvecs[1];
@@ -54,7 +54,6 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bits
 
     std::string axis = get_axis(parity_sector);
     int sector       = get_sign(parity_sector);
-
     Eigen::Tensor<Scalar,1> L (1);
     L.setConstant(1);
     int carry_sign = 1;
@@ -84,10 +83,9 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bits
 
 
 
-void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(class_finite_state & state, const std::string &parity_sector, const int seed_state){
-    if (seed_state >= 0){
-        rn::seed(seed_state);
-    }    Eigen::Tensor<Scalar,1> L (1);
+void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(class_finite_state & state, const std::string &parity_sector){
+
+    Eigen::Tensor<Scalar,1> L (1);
     std::string axis = get_axis(parity_sector);
     int sector       = get_sign(parity_sector);
 
@@ -123,18 +121,14 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(
 
 
 
-void tools::finite::mps::internals::set_product_state_randomly(class_finite_state & state,const std::string &parity_sector, const int seed_state){
+void tools::finite::mps::internals::set_product_state_randomly(class_finite_state & state,const std::string &parity_sector){
 
 
     if (parity_sector == "random"){
         std::vector<std::string> possibilities = {"x","y","z"};
         std::string chosen_axis = possibilities[rn::uniform_integer(0,2)];
-        set_product_state_in_parity_sector_randomly(state, chosen_axis,seed_state );
+        set_product_state_in_parity_sector_randomly(state, chosen_axis );
     }else if (parity_sector == "none"){
-        if (seed_state >= 0){
-            rn::seed(seed_state);
-        }
-
         Eigen::Tensor<Scalar,1> L (1);
         L.setConstant(1);
         for (auto &mpsL : state.MPS_L ){

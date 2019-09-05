@@ -94,8 +94,8 @@ int main(int argc, char* argv[]) {
             case 'r': {
                 int seed_init = (int) std::strtol(optarg,nullptr,10);
                 if(seed_init >= 0){
-                    log->info("Replacing model::seed_init {} -> {}", settings::model::seed_init,seed_init);
-                    settings::model::seed_init = seed_init;
+                    log->info("Replacing model::seed_model {} -> {}", settings::model::seed_model, seed_init);
+                    settings::model::seed_model = seed_init;
 
                 }
                 continue;
@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
     //Normally an output filename is given in the input file. But it can also be given from command line.
 //    std::string inputfile  = "input.cfg";
 //    std::string outputfile = "output.h5";
-//    int seed_init  = -1; //Only accept non-negative seeds
+//    int seed_model  = -1; //Only accept non-negative seeds
 //    int seed_state = -1; //Only accept non-negative seeds
 //    int i = 0;
 //    std::vector<std::string> allArgs(argv+1, argv + argc);
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
 //            log->info("Input argument {} : {}",i++,arg);
 //            if (arg.find(".cfg") != std::string::npos) {inputfile  = arg;continue;}
 //            if (arg.find(".h5")  != std::string::npos) {outputfile = arg;continue;}
-//            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_init  < 0){seed_init  = std::stoi(arg); continue;}
+//            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_model  < 0){seed_model  = std::stoi(arg); continue;}
 //            if (arg.find_first_not_of( "0123456789" ) == std::string::npos and seed_state < 0){seed_state = std::stoi(arg); continue;}
 //        }
 //    }
@@ -159,14 +159,14 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    if (not load_previous and append_seed and settings::model::seed_init >= 0 ){
-        //Append the seed_init to the output filename
+    if (not load_previous and append_seed and settings::model::seed_model >= 0 ){
+        //Append the seed_model to the output filename
         namespace fs = std::experimental::filesystem;
         fs::path oldFileName = settings::output::output_filename;
         fs::path newFileName = settings::output::output_filename;
-        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(settings::model::seed_init) + oldFileName.extension().string() );
+        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(settings::model::seed_model) + oldFileName.extension().string() );
         settings::output::output_filename = newFileName.string();
-        log->info("Appended model::seed_init to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
+        log->info("Appended model::seed_model to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
     }
     if (not load_previous and append_seed and settings::model::seed_state >= 0){
         //Append the seed_state to the output filename
@@ -220,7 +220,7 @@ int main(int argc, char* argv[]) {
 
 
     // Seed only this once (This also takes care of srand used by Eigen
-    rn::seed(settings::model::seed_init);
+    rn::seed(settings::model::seed_model);
 
 
     //Initialize the algorithm class

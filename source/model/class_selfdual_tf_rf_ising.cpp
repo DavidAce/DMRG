@@ -264,7 +264,6 @@ void class_selfdual_tf_rf_ising::set_full_lattice_parameters(const std::vector<s
     std::list<double> J_rnd_list;
     std::list<double> h_rnd_list;
     if(reverse){
-        int length = chain_parameters.size();
         J_rnd_list.emplace_front(0.0);
         for (auto &params : chain_parameters){
             J_rnd_list.emplace_front(params[1]);

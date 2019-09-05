@@ -46,14 +46,15 @@ void tools::finite::mps::randomize(class_finite_state &state,const std::string &
     std::vector<std::string> ok_parity_sectors = {"x","+x","-x","y","+y","-y", "z","+z","-z"};
     bool parity_sector_is_defined = std::find(ok_parity_sectors.begin(), ok_parity_sectors.end(), parity_sector) != ok_parity_sectors.end();
     if(seed_state >= 0 and internals::seed_state_unused){
+        rn::seed(seed_state);
         internals::seed_state_unused = false;
         if         (settings::model::use_seed_state_as_enumeration and     parity_sector_is_defined)   internals::set_product_state_in_parity_sector_from_bitset(state, parity_sector, seed_state);
-        else if(not settings::model::use_seed_state_as_enumeration and     parity_sector_is_defined)   internals::set_product_state_in_parity_sector_randomly(state, parity_sector, seed_state);
-        else if(not settings::model::use_seed_state_as_enumeration and not parity_sector_is_defined)   internals::set_product_state_randomly(state, parity_sector, seed_state);
+        else if(not settings::model::use_seed_state_as_enumeration and     parity_sector_is_defined)   internals::set_product_state_in_parity_sector_randomly(state, parity_sector);
+        else if(not settings::model::use_seed_state_as_enumeration and not parity_sector_is_defined)   internals::set_product_state_randomly(state, parity_sector);
         else throw std::logic_error(fmt::format("Can't use seed_state as enumeration when parity_sector is not defined. Got: {}", parity_sector));
     }else{
-        if(parity_sector_is_defined)        internals::set_product_state_in_parity_sector_randomly(state,parity_sector,seed_state);
-        else                                internals::set_product_state_randomly(state,parity_sector, seed_state);
+        if(parity_sector_is_defined)        internals::set_product_state_in_parity_sector_randomly(state,parity_sector);
+        else                                internals::set_product_state_randomly(state,parity_sector);
     }
     tools::finite::mps::rebuild_environments(state);
 }

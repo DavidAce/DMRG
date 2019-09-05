@@ -22,11 +22,8 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     state->set_chi_max(sim_status.chi_max);
     tools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
     tools::finite::mps::initialize(*state, num_sites);
-    rn::seed(settings::model::seed_init);
-    tools::finite::mpo::randomize(*state);
-    rn::seed(settings::model::seed_state);
-    tools::finite::mps::randomize(*state);
-    tools::finite::mps::project_to_closest_parity_sector(*state, settings::model::initial_parity_sector);
+    tools::finite::mpo::randomize(*state,settings::model::seed_model);
+    tools::finite::mps::randomize(*state,settings::model::initial_parity_sector,settings::model::seed_state);
     tools::finite::debug::check_integrity(*state);
 
 
@@ -178,14 +175,14 @@ void class_algorithm_finite::move_center_point(){
     t_sim.toc();
 }
 
-void class_algorithm_finite::reset_to_random_state(const std::string parity_sector) {
+void class_algorithm_finite::reset_to_random_state(const std::string parity_sector, int seed_state) {
     log->trace("Resetting MPS to random product state in parity sector: {}", parity_sector);
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     // Randomize state
     t_sim.tic();
     state->set_chi_max(chi_max());
-    tools::finite::mps::randomize(*state);
-    tools::finite::mps::project_to_closest_parity_sector(*state, parity_sector);
+    tools::finite::mps::randomize(*state,parity_sector,seed_state);
+//    tools::finite::mps::project_to_closest_parity_sector(*state, parity_sector);
     clear_saturation_status();
     sim_status.iteration = state->reset_sweeps();
     t_sim.toc();

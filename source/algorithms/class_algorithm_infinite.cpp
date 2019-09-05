@@ -48,12 +48,12 @@ void class_algorithm_infinite::compute_observables(){
 }
 
 
-void class_algorithm_infinite::reset_to_random_state(const std::string parity) {
+void class_algorithm_infinite::reset_to_random_state(const std::string parity, int seed_state) {
     log->trace("Resetting MPS to random product state");
     sim_status.iteration = 0;
 
     // Randomize state
-    *state = tools::infinite::mps::set_random_state(*state,parity);
+    *state = tools::infinite::mps::set_random_state(*state,parity, seed_state);
     clear_saturation_status();
 }
 

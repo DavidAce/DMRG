@@ -46,15 +46,15 @@ namespace tools{
             namespace internals{
                 inline bool seed_state_unused = true;
                 extern void set_product_state_in_parity_sector_from_bitset(class_finite_state & state, const std::string &parity_sector, const int seed_state);
-                extern void set_product_state_in_parity_sector_randomly(class_finite_state & state, const std::string &parity_sector, const int seed_state);
-                extern void set_product_state_randomly(class_finite_state & state,const std::string &parity_sector,  const int seed_state);
+                extern void set_product_state_in_parity_sector_randomly(class_finite_state & state, const std::string &parity_sector);
+                extern void set_product_state_randomly(class_finite_state & state,const std::string &parity_sector);
             }
 
         }
 
         namespace mpo {
             extern void initialize                 (class_finite_state & state, size_t length, std::string model_type);
-            extern void randomize                  (class_finite_state & state);
+            extern void randomize                  (class_finite_state & state, int seed_state = -1);
         }
 
         namespace ops {
@@ -175,7 +175,7 @@ namespace tools{
         using Scalar = std::complex<double>;
 
         namespace mps{
-            extern class_infinite_state set_random_state(const class_infinite_state & state, std::string parity);
+            extern class_infinite_state set_random_state(const class_infinite_state & state, std::string parity, int seed_state);
         }
 
         namespace opt{

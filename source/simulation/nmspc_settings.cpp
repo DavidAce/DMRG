@@ -17,7 +17,7 @@ void settings::load_from_file(class_settings_reader &indata){
     input::input_filename                    = indata.get_input_filename();
     input::input_file                        = indata.get_input_file();
     model::model_type                        = indata.find_parameter<std::string>("model::model_type"                          , model::model_type);
-    model::seed_init                         = indata.find_parameter<int>        ("model::seed_init"                           , model::seed_init);
+    model::seed_model                         = indata.find_parameter<int>        ("model::seed_model"                           , model::seed_model);
     model::seed_state                        = indata.find_parameter<int>        ("model::seed_state"                          , model::seed_state);
     model::use_seed_state_as_enumeration     = indata.find_parameter<bool>       ("model::use_seed_state_as_enumeration"       , model::use_seed_state_as_enumeration);
     model::project_when_saturated            = indata.find_parameter<bool>       ("model::project_when_saturated"              , model::project_when_saturated);
