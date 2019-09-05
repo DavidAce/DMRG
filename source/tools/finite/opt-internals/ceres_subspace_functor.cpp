@@ -70,7 +70,8 @@ bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(con
     ene             = vHv/vv;
     var             = vH2v/vv - ene*ene;
     if (std::real(var)      < 0.0           ) tools::log->warn("Variance is negative                        : {:.16f} + i {:.16f}" , std::real(var)    , std::imag(var));
-
+    // Make sure var is valid
+    var = std::real(var) <= 0.0 ? 1e-16 : var;
     energy         = std::real(ene) / length;
     variance       = std::abs(var)  / length;
     norm_offset    = std::abs(vv) - 1.0 ;
