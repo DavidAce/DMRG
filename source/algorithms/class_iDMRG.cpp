@@ -16,7 +16,6 @@ using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     : class_algorithm_infinite(std::move(h5ppFile_),"iDMRG", SimulationType::iDMRG) {
-    log_dmrg       = std::make_unique<class_hdf5_log<class_log_dmrg>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
 }
 
 
@@ -24,7 +23,6 @@ class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 void class_iDMRG::run_simulation() {
     if (not settings::idmrg::on) { return; }
     log->info("Starting {} simulation", sim_name);
-    t_tot.tic();
     while(true){
         single_DMRG_step("SR");
         write_measurements();
@@ -46,14 +44,12 @@ void class_iDMRG::run_simulation() {
         swap();
         sim_status.iteration++;
     }
-    t_tot.toc();
     switch(stop_reason){
         case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
         case StopReason::CONVERGED : log->info("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
         case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
         default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
     }
-
 
 }
 
@@ -63,13 +59,13 @@ void class_iDMRG::single_DMRG_step(std::string ritz){
  * \fn void single_DMRG_step(class_superblock &state)
  */
     log->trace("Starting infinite DMRG moves");
-    t_sim.tic();
+    t_run.tic();
     Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::find_ground_state(*state,ritz);
     tools::infinite::opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     state->unset_measurements();
-    t_sim.toc();
+    t_run.toc();
     sim_status.wall_time = t_tot.get_age();
-    sim_status.simu_time = t_sim.get_age();
+    sim_status.simu_time = t_run.get_measured_time();
 }
 
 

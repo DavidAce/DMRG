@@ -6,7 +6,7 @@
 #define DMRG_CLASS_FINITE_DMRG_H
 
 #include "class_algorithm_finite.h"
-class class_log_dmrg;
+class class_log_finite_dmrg_measurements;
 
 
 /*!
@@ -19,12 +19,11 @@ public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_finite::class_algorithm_finite;
     explicit class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
-    std::unique_ptr<class_hdf5_log<class_log_dmrg>> log_dmrg;
+    std::unique_ptr<class_hdf5_log<class_log_finite_dmrg_measurements>> log_dmrg;
 
     bool   projected_during_saturation  = false;
     void run_simulation()                                        final;
     void check_convergence()                                     final;
-    void write_logs(bool force = false)                          final;
     bool   sim_on()                                              final;
     long   chi_max()                                             final;
     size_t num_sites()                                           final;

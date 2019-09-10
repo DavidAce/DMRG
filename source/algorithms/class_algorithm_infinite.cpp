@@ -25,26 +25,29 @@ class_algorithm_infinite::class_algorithm_infinite(
 
 void class_algorithm_infinite::run() {
     if (not sim_on()) { return; }
+    t_tot.tic();
     run_preprocessing();
     run_simulation();
     run_postprocessing();
+    t_tot.toc();
 }
 
 void class_algorithm_infinite::run_preprocessing() {
-
+    t_pre.tic();
+    t_pre.toc();
 }
 
 void class_algorithm_infinite::run_postprocessing(){
+    t_pos.tic();
     print_status_full();
     print_profiling();
     h5pp_file->writeDataset(true, sim_name + "/simOK");
+    t_pos.toc();
 }
 
 void class_algorithm_infinite::compute_observables(){
     log->trace("Starting all measurements on current state");
-    t_sim.tic();
     state->do_all_measurements();
-    t_sim.toc();
 }
 
 
@@ -60,16 +63,12 @@ void class_algorithm_infinite::reset_to_random_state(const std::string parity, i
 
 void class_algorithm_infinite::enlarge_environment(){
     log->trace("Enlarging environment" );
-    t_sim.tic();
     state->enlarge_environment(0);
-    t_sim.toc();
 }
 
 void class_algorithm_infinite::swap(){
     log->trace("Swap AB sites on state");
-    t_sim.tic();
     state->swap_AB();
-    t_sim.toc();
 }
 
 void class_algorithm_infinite::check_convergence_variance_mpo(double threshold,double slope_threshold){
@@ -178,6 +177,18 @@ void class_algorithm_infinite::write_state(bool force){
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
+
+void class_algorithm_infinite::write_status(bool force){
+    if (not force){
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (write_freq() == 0){return;}
+        if (settings::output::storage_level <= StorageLevel::NONE){return;}
+    }
+    log->trace("Writing simulation status to file");
+    h5pp_file->writeDataset(false, sim_name + "/simOK");
+    tools::common::io::write_simulation_status(sim_status, *h5pp_file, sim_name);
+    h5pp_file->writeDataset(true, sim_name + "/simOK");
+}
 
 
 //void class_algorithm_infinite::store_log_entry_progress(bool force){

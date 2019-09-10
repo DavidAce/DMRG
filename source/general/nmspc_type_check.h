@@ -56,7 +56,10 @@ namespace TypeCheck{
         }
     }
 
-
+    template<typename T>
+    constexpr bool is_complex(){
+        return is_specialization<T,std::complex>::value;
+    }
 
 
 

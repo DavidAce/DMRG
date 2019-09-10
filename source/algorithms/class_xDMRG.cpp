@@ -4,9 +4,7 @@
 
 
 #include <iomanip>
-#include <io/class_hdf5_log_buffer.h>
 #include <simulation/nmspc_settings.h>
-#include <state/class_infinite_state.h>
 #include <state/class_mps_2site.h>
 #include <state/class_finite_state.h>
 #include <tools/nmspc_tools.h>
@@ -29,30 +27,27 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_finite(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG, settings::xdmrg::num_sites) {
     log->trace("Constructing class_xDMRG");
     settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, (size_t)(std::log2(chi_max())));
-    log_dmrg       = std::make_unique<class_hdf5_log<class_log_dmrg>>        (h5pp_file, sim_name + "/logs", "measurements", sim_name);
 }
 
 
 
 
-
-
-
 void class_xDMRG::run_preprocessing() {
-
-    log->info("Starting {} preprocessing", sim_name);
+    log->info("Running {} preprocessing", sim_name);
+    t_pre.tic();
     sim_status.energy_dens_target = settings::xdmrg::energy_density_target;
     sim_status.energy_dens_window = settings::xdmrg::energy_density_window;
     sim_status.chi_max = chi_max();
     state->set_chi_max(sim_status.chi_max);
     find_energy_range();
+    t_pre.toc();
     log->info("Finished {} preprocessing", sim_name);
 }
 
 void class_xDMRG::run_simulation()    {
     log->info("Starting {} simulation", sim_name);
     while(true) {
-        log->trace("Starting moves {}, iteration {}, direction {}", sim_status.moves, sim_status.iteration, state->get_direction());
+        log->trace("Starting step {}, iteration {}, direction {}", sim_status.moves, sim_status.iteration, state->get_direction());
         single_DMRG_step();
         write_measurements();
         write_state();
@@ -60,7 +55,7 @@ void class_xDMRG::run_simulation()    {
         write_logs();
         check_convergence();
         print_status_update();
-        // It's important not to perform the last moves.
+        // It's important not to perform the last step.
         // That last state would not get optimized
         if (state->position_is_any_edge())
         {
@@ -91,9 +86,9 @@ void class_xDMRG::single_DMRG_step()
 {
     using namespace tools::finite;
 
-    t_sim.tic();
-    log->trace("Starting single xDMRG moves");
-//  log->debug("Variance accurate check before xDMRG moves: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
+    t_run.tic();
+    log->trace("Starting single xDMRG step");
+//  log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
 
     auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
     optMode       = measure::energy_variance_per_site(*state) > 1e-4  ?  opt::OptMode::OVERLAP : optMode;
@@ -119,30 +114,32 @@ void class_xDMRG::single_DMRG_step()
 //        sim_status.chi_temp = 16 * (1+sim_status.iteration);
 //    }
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
-    move_center_point();
+    //    mps::rebuild_environments(*state);
     if(tools::finite::measure::norm(*state) > 1e-10){
         tools::finite::mps::normalize(*state);
         mps::rebuild_environments(*state);
     }
-//    mps::rebuild_environments(*state);
     debug::check_integrity(*state);
 
-    log->debug("Variance accurate check after  xDMRG moves: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
+    log->debug("Variance (accurate) check after xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
+    log->debug("Variance (reduced ) check after xDMRG step: {:.16f}", std::log10(measure::reduced ::energy_variance_per_site(*state)));
+
+
+    move_center_point();
+
+
     sim_status.energy_dens        = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     state->unset_measurements();
 
-    t_sim.toc();
+    t_run.toc();
     sim_status.wall_time = t_tot.get_age();
-    sim_status.simu_time = t_sim.get_age();
+    sim_status.simu_time = t_run.get_measured_time();
 
 }
 
 
 void class_xDMRG::check_convergence(){
-
-    t_sim.tic();
     t_con.tic();
-
     if(state->position_is_any_edge()){
         check_convergence_variance();
         check_convergence_entg_entropy();
@@ -218,7 +215,6 @@ void class_xDMRG::check_convergence(){
 
 
     t_con.toc();
-    t_sim.toc();
 }
 
 
@@ -337,16 +333,7 @@ void class_xDMRG::find_energy_range() {
 //    log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counterB );
 }
 
-void class_xDMRG::write_logs(bool force){
-    if(not force){
-        if (not settings::output::save_logs){return;}
-        if (math::mod(sim_status.step, write_freq()) != 0) {return;}
-        if (settings::output::storage_level < StorageLevel::NORMAL){return;}
-    }
-    log_sim_status->append_record(sim_status);
-//    log_profiling->append_record();
-//    log_dmrg->append_record();
-}
+
 
 bool   class_xDMRG::sim_on()    {return settings::xdmrg::on;}
 long   class_xDMRG::chi_max()   {return settings::xdmrg::chi_max;}

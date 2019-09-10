@@ -7,14 +7,9 @@
 #include "class_algorithm_base.h"
 #include <io/class_hdf5_log_buffer.h>
 #include <io/nmspc_logger.h>
-#include <state/class_infinite_state.h>
-#include <state/class_environment.h>
-#include <state/class_finite_state.h>
 #include <tools/nmspc_tools.h>
-#include <state/class_mps_2site.h>
 #include <math/nmspc_math.h>
 #include <general/nmspc_random_numbers.h>
-#include <general/nmspc_quantum_mechanics.h>
 #include <io/log_types.h>
 #include <h5pp/h5pp.h>
 
@@ -40,6 +35,7 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     log->trace("Constructing class_algorithm_base");
     set_profiling_labels();
     tools::common::profile::init_profiling();
+    log->trace("Constructing log buffers in base");
     log_profiling  = std::make_unique<class_hdf5_log<class_log_profiling>>        (h5pp_file, sim_name + "/logs", "profiling", sim_name);
     log_sim_status = std::make_unique<class_hdf5_log<class_log_simulation_status>>(h5pp_file, sim_name + "/logs", "status"   , sim_name);
 
@@ -134,19 +130,6 @@ class_algorithm_base::check_saturation_using_slope(
     return report;
 }
 
-void class_algorithm_base::write_status(bool force){
-    if (not force){
-        if (math::mod(sim_status.step, write_freq()) != 0) {return;}
-        if (write_freq() == 0){return;}
-        if (settings::output::storage_level <= StorageLevel::NONE){return;}
-    }
-    log->trace("Writing simulation status to file");
-    h5pp_file->writeDataset(false, sim_name + "/simOK");
-    tools::common::io::write_simulation_status(sim_status, *h5pp_file, sim_name);
-
-    h5pp_file->writeDataset(true, sim_name + "/simOK");
-}
-
 
 void class_algorithm_base::update_bond_dimension(){
     sim_status.chi_max = chi_max();
@@ -176,7 +159,7 @@ void class_algorithm_base::print_profiling(){
     if (settings::profiling::on) {
         log->trace("Printing profiling information (tot)");
         t_tot.print_time_w_percent();
-        t_sim.print_time_w_percent(t_tot);
+        t_run.print_time_w_percent(t_tot);
         t_prt.print_time_w_percent(t_tot);
         t_con.print_time_w_percent(t_tot);
         tools::common::profile::print_profiling(t_tot);
@@ -216,7 +199,7 @@ void class_algorithm_base::set_profiling_labels() {
     t_tot.set_properties(true, precision,"+Total Time              ");
     t_prt.set_properties(on,   precision,"↳ Printing to console    ");
     t_con.set_properties(on,   precision,"↳ Convergence checks     ");
-    t_sim.set_properties(on,   precision,"↳+Simulation             ");
+    t_run.set_properties(on, precision, "↳+Simulation             ");
 //    t_obs.set_properties(on,   precision,"↳ Computing observables  ");
 
 //    t_sto.set_properties(on,   precision,"↳ Store to file          ");

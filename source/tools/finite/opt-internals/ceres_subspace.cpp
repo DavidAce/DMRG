@@ -407,7 +407,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
         double variance_0        = tools::finite::measure::multisite::energy_variance_per_site(state,theta_old_map);
         double overlap_0         = std::abs(theta_old.dot(theta_0));
         t_opt->toc();
-        opt_log.emplace_back("Initial",theta.size(), energy_0, std::log10(variance_0), overlap_0,theta_0.norm(), iter_0,0, t_opt->get_last_time_interval());
+        opt_log.emplace_back("Initial (multisite)",theta.size(), energy_0, std::log10(variance_0), overlap_0,theta_0.norm(), iter_0,0, t_opt->get_last_time_interval());
 
 
         t_opt->tic();
@@ -417,8 +417,10 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     //    Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
         double overlap_1 = std::abs(theta_old.dot(theta_0));
         t_opt->toc();
-        opt_log.emplace_back("Initial",theta_old.size(), energy_1, std::log10(variance_1), overlap_1,theta_old.norm(), iter_0,0, t_opt->get_last_time_interval());
+        opt_log.emplace_back("Initial (2site)",theta_old.size(), energy_1, std::log10(variance_1), overlap_1,theta_old.norm(), iter_0,0, t_opt->get_last_time_interval());
 
+        double variance_r = tools::finite::measure::reduced::energy_variance_per_site(state,theta_old_map);
+        opt_log.emplace_back("Initial (reduced)",theta_old.size(), energy_1, std::log10(variance_r), overlap_1,theta_old.norm(), iter_0,0, t_opt->get_last_time_interval());
 
 
         // Initial sanity check 2
@@ -434,7 +436,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
         double ene_init_san = std::real(ene)/state.get_length();
         double var_init_san = std::abs(var)/state.get_length();
         t_opt->toc();
-        opt_log.emplace_back("Initial sanity check 2",theta_start.size(), ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), iter_0,0, t_opt->get_last_time_interval());
+        opt_log.emplace_back("Initial (matrix)",theta_start.size(), ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), iter_0,0, t_opt->get_last_time_interval());
     }
 
 
@@ -478,6 +480,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
             variance_new = functor->get_variance();
             theta_start  = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
             theta_new    = (eigvecs * theta_start.conjugate().asDiagonal()).rowwise().sum().normalized();
+//            delete functor;
             break;
         }
         case OptType::REAL:{
@@ -493,6 +496,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
             variance_new = functor->get_variance();
             theta_start  = theta_start_cast.normalized().cast<Scalar>();
             theta_new    = (eigvecs.real() * theta_start.real().asDiagonal()).rowwise().sum().normalized();
+//            delete functor;
             break;
         }
     }

@@ -122,6 +122,7 @@ namespace tools::finite::opt{
         protected:
             mutable double variance;
             mutable double energy  ;
+            mutable double energy_reduced;
             mutable double energy_lower_bound;
             mutable double energy_upper_bound;
             mutable double energy_target;

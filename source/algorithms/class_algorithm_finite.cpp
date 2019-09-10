@@ -2,16 +2,15 @@
 // Created by david on 2019-06-24.
 //
 
-
+#include <iomanip>
 #include "class_algorithm_finite.h"
-#include <h5pp/h5pp.h>
-#include <tools/nmspc_tools.h>
 #include <state/class_finite_state.h>
 #include <io/class_hdf5_log_buffer.h>
 #include <math/nmspc_math.h>
-#include <iomanip>
 #include <spdlog/fmt/bundled/ranges.h>
 #include <general/nmspc_random_numbers.h>
+#include <h5pp/h5pp.h>
+#include <tools/nmspc_tools.h>
 
 class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type, size_t num_sites)
     : class_algorithm_base(std::move(h5ppFile_), sim_name,sim_type)
@@ -19,6 +18,10 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 {
     log->trace("Constructing class_algorithm_finite");
     state = std::make_unique<class_finite_state>();
+    log->trace("Constructing log buffers in finite base");
+    log_measurements       = std::make_shared<class_hdf5_log<class_log_finite_dmrg_measurements>> (h5pp_file, sim_name + "/logs", "measurements", sim_name);
+
+
     state->set_chi_max(sim_status.chi_max);
     tools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
     tools::finite::mps::initialize(*state, num_sites);
@@ -33,7 +36,7 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 
     tools::finite::print::print_hamiltonians(*state);
     tools::finite::print::print_state(*state);
-
+    tools::finite::io::write_model(*state, *h5pp_file, sim_name);
 }
 
 
@@ -114,10 +117,12 @@ void class_algorithm_finite::run()
 
 
 void class_algorithm_finite::run_preprocessing(){
+    log->info("Running {} preprocessing",sim_name);
+    t_pre.tic();
     sim_status.chi_max = chi_max();
     state->set_chi_max(sim_status.chi_max);
-    tools::finite::io::write_model(*state, *h5pp_file, sim_name);
-
+    t_pre.toc();
+    log->info("Finished {} preprocessing", sim_name);
 }
 
 
@@ -128,18 +133,20 @@ void class_algorithm_finite::single_DMRG_step(std::string ritz){
  * \fn void single_DMRG_step(std::string ritz)
  */
     log->trace("Starting single xDMRG step");
-    t_sim.tic();
+    t_run.tic();
     Eigen::Tensor<Scalar,4> theta = tools::finite::opt::find_ground_state(*state, ritz);
     tools::finite::opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     move_center_point();
     state->unset_measurements();
-    t_sim.toc();
+    t_run.toc();
     sim_status.wall_time = t_tot.get_age();
-    sim_status.simu_time = t_sim.get_age();
+    sim_status.simu_time = t_run.get_measured_time();
 }
 
 void class_algorithm_finite::run_postprocessing(){
+
     log->info("Running {} postprocessing",sim_name);
+    t_pos.tic();
     tools::finite::debug::check_integrity(*state);
     state->unset_measurements();
     state->do_all_measurements();
@@ -156,13 +163,13 @@ void class_algorithm_finite::run_postprocessing(){
     print_status_full();
     print_profiling();
     h5pp_file->writeDataset(true, sim_name + "/simOK");
+    t_pos.toc();
     log->info("Finished {} postprocessing",sim_name);
 }
 
 
 void class_algorithm_finite::move_center_point(){
     log->trace("Moving center point ");
-    t_sim.tic();
     size_t move_steps = state->active_sites.empty() ? 1 : std::max(1ul,state->active_sites.size()-2ul);
     try{
         for(size_t i = 0; i < move_steps;i++){
@@ -172,20 +179,17 @@ void class_algorithm_finite::move_center_point(){
         tools::finite::print::print_state(*state);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));
     }
-    t_sim.toc();
 }
 
 void class_algorithm_finite::reset_to_random_state(const std::string parity_sector, int seed_state) {
     log->trace("Resetting MPS to random product state in parity sector: {} with seed {}", parity_sector,seed_state);
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     // Randomize state
-    t_sim.tic();
     state->set_chi_max(chi_max());
     tools::finite::mps::randomize(*state,parity_sector,seed_state);
 //    tools::finite::mps::project_to_closest_parity_sector(*state, parity_sector);
     clear_saturation_status();
     sim_status.iteration = state->reset_sweeps();
-    t_sim.toc();
 }
 
 
@@ -291,16 +295,14 @@ void class_algorithm_finite::clear_saturation_status(){
 
 void class_algorithm_finite::compute_observables(){
     log->trace("Starting all measurements on current mps");
-    t_sim.tic();
     state->do_all_measurements();
-    t_sim.toc();
 }
 
 
 void class_algorithm_finite::write_measurements(bool force){
     if(not force){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-        if (state->position_is_any_edge())
+        if (not state->position_is_any_edge()){return;}
         if (write_freq() == 0){return;}
         if (settings::output::storage_level <= StorageLevel::NONE){return;}
     }
@@ -311,7 +313,7 @@ void class_algorithm_finite::write_measurements(bool force){
     tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
 
     if (settings::output::storage_level >= StorageLevel::NORMAL){
-        std::string log_name = sim_name + "/logs/step_" + std::to_string(sim_status.step);
+        std::string log_name = sim_name + "/logs/iter_" + std::to_string(sim_status.iteration);
         tools::finite::io::write_all_measurements(*state, *h5pp_file, log_name);
     }
     h5pp_file->writeDataset(true, sim_name + "/simOK");
@@ -320,7 +322,7 @@ void class_algorithm_finite::write_measurements(bool force){
 void class_algorithm_finite::write_state(bool force){
     if(not force){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-        if (state->position_is_any_edge())
+        if (not state->position_is_any_edge()){return;}
         if (write_freq() == 0){return;}
         if (settings::output::storage_level <= StorageLevel::NONE){return;}
     }
@@ -335,18 +337,120 @@ void class_algorithm_finite::write_state(bool force){
     tools::finite::io::write_all_state(*state, *h5pp_file, sim_name);
 
     if (settings::output::storage_level >= StorageLevel::FULL){
-        std::string log_name = sim_name + "/logs/step_" + std::to_string(sim_status.step);
+        std::string log_name = sim_name + "/logs/iter_" + std::to_string(sim_status.iteration);
         tools::finite::io::write_all_state(*state, *h5pp_file, log_name);
 
     }
     //Write the simulation status here as well, since the base has no notion of state edge
     if (settings::output::storage_level >= StorageLevel::NORMAL){
-        std::string log_name = sim_name + "/logs/step_" + std::to_string(sim_status.step);
+        std::string log_name = sim_name + "/logs/iter_" + std::to_string(sim_status.iteration);
         tools::common::io::write_simulation_status(sim_status, *h5pp_file, log_name);
     }
 
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
+
+
+void class_algorithm_finite::write_status(bool force){
+    if (not force){
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (not state->position_is_any_edge()){return;}
+        if (write_freq() == 0){return;}
+        if (settings::output::storage_level <= StorageLevel::NONE){return;}
+    }
+    log->trace("Writing simulation status to file");
+    h5pp_file->writeDataset(false, sim_name + "/simOK");
+    tools::common::io::write_simulation_status(sim_status, *h5pp_file, sim_name);
+    h5pp_file->writeDataset(true, sim_name + "/simOK");
+}
+
+
+void class_algorithm_finite::write_logs(bool force){
+    if(not force){
+        if (not settings::output::save_logs){return;}
+        if (math::mod(sim_status.step, write_freq()) != 0) {return;}
+        if (settings::output::storage_level < StorageLevel::NORMAL){return;}
+    }
+    write_log_measurement();
+    write_log_sim_status();
+    write_log_profiling();
+
+}
+
+void class_algorithm_finite::write_log_sim_status(){
+    if (log_sim_status == nullptr){return;}
+    log->trace("Appending sim_status log entry");
+    log_sim_status->append_record(sim_status);
+}
+
+
+
+void class_algorithm_finite::write_log_measurement(){
+    if (log_measurements == nullptr){return;}
+    log->trace("Appending measurement log entry");
+    state->do_all_measurements();
+    class_log_finite_dmrg_measurements::data_struct measurements_entry;
+    measurements_entry.step                            = sim_status.step;
+    measurements_entry.iteration                       = sim_status.iteration;
+    measurements_entry.position                        = sim_status.position;
+    measurements_entry.length                          = state->get_length();
+    measurements_entry.bond_dimension_midchain         = state->measurements.bond_dimension_midchain.value();
+    measurements_entry.bond_dimension_current          = state->measurements.bond_dimension_current.value();
+    measurements_entry.entanglement_entropy_midchain   = state->measurements.entanglement_entropy_midchain.value();
+    measurements_entry.entanglement_entropy_current    = state->measurements.entanglement_entropy_current.value();
+    measurements_entry.norm                            = state->measurements.norm.value();
+    measurements_entry.energy                          = state->measurements.energy.value();
+    measurements_entry.energy_per_site                 = state->measurements.energy_per_site.value();
+    measurements_entry.energy_variance                 = state->measurements.energy_variance_mpo.value();
+    measurements_entry.energy_variance_per_site        = state->measurements.energy_variance_per_site.value();
+    measurements_entry.spin_component_sx               = state->measurements.spin_component_sx.value();
+    measurements_entry.spin_component_sy               = state->measurements.spin_component_sy.value();
+    measurements_entry.spin_component_sz               = state->measurements.spin_component_sz.value();
+    measurements_entry.truncation_error                = state->truncation_error[state->get_position()];
+    measurements_entry.wall_time                       = t_tot.get_age();
+    log_measurements->append_record(measurements_entry);
+
+}
+
+void class_algorithm_finite::write_log_profiling(){
+    if (log_profiling == nullptr){return;}
+    log->trace("Appending profiling log entry");
+    class_log_profiling::data_struct profiling_entry;
+    profiling_entry.step            = sim_status.step;
+    profiling_entry.iteration       = sim_status.iteration;
+    profiling_entry.position        = sim_status.position;
+    profiling_entry.t_tot           = t_tot.get_age();
+    profiling_entry.t_run           = t_run.get_measured_time();
+
+    profiling_entry.t_eig           = tools::common::profile::t_eig.get_measured_time();
+    profiling_entry.t_svd           = tools::common::profile::t_svd.get_measured_time();
+    profiling_entry.t_ene           = tools::common::profile::t_ene.get_measured_time();
+    profiling_entry.t_var           = tools::common::profile::t_var.get_measured_time();
+    profiling_entry.t_ent           = tools::common::profile::t_ent.get_measured_time();
+    profiling_entry.t_hdf           = tools::common::profile::t_hdf.get_measured_time();
+    profiling_entry.t_prj           = tools::common::profile::t_prj.get_measured_time();
+    profiling_entry.t_opt           = tools::common::profile::t_opt.get_measured_time();
+    profiling_entry.t_chk           = tools::common::profile::t_chk.get_measured_time();
+    profiling_entry.t_ene_mpo       = tools::common::profile::t_ene_mpo.get_measured_time();
+    profiling_entry.t_ene_ham       = tools::common::profile::t_ene_ham.get_measured_time();
+    profiling_entry.t_ene_mom       = tools::common::profile::t_ene_mom.get_measured_time();
+    profiling_entry.t_var_mpo       = tools::common::profile::t_var_mpo.get_measured_time();
+    profiling_entry.t_var_ham       = tools::common::profile::t_var_ham.get_measured_time();
+    profiling_entry.t_var_mom       = tools::common::profile::t_var_mom.get_measured_time();
+
+
+    profiling_entry.t_env = 0;
+    profiling_entry.t_evo = 0;
+    profiling_entry.t_udt = 0;
+    profiling_entry.t_ste = 0;
+    profiling_entry.t_prt = 0;
+    profiling_entry.t_obs = 0;
+    profiling_entry.t_mps = 0;
+    profiling_entry.t_chi = 0;
+
+    log_profiling->append_record(profiling_entry);
+}
+
 
 
 void class_algorithm_finite::print_status_update() {

@@ -6,6 +6,7 @@
 #define DMRG_CLASS_ALGORITHM_FINITE_H
 
 #include <algorithms/class_algorithm_base.h>
+class class_log_finite_dmrg_measurements;
 class class_finite_state;
 
 
@@ -19,6 +20,9 @@ public:
             SimulationType sim_type,
             size_t num_sites
             );
+    // Logs
+    std::shared_ptr<class_hdf5_log<class_log_finite_dmrg_measurements>>  log_measurements;
+
 
     //MPS
     std::unique_ptr<class_finite_state>    state;
@@ -26,14 +30,17 @@ public:
 
     size_t min_saturation_iters          = 2;
     size_t max_saturation_iters          = 4;
+private:
+    void write_log_sim_status ();
+    void write_log_measurement();
+    void write_log_profiling();
+public:
 
-
-    virtual void run_simulation()           = 0;
+    virtual void run_simulation()                    = 0;
     virtual void run_preprocessing();
     virtual void run_postprocessing();
     virtual void single_DMRG_step(std::string ritz);
     virtual bool store_wave_function()               = 0;
-
     void move_center_point();
     void run()                                                                                  final;
     void compute_observables()                                                                  final;
@@ -41,9 +48,10 @@ public:
     void reset_to_random_state(const std::string parity_sector = "none", int seed_state = -1)   final;
     void write_measurements(bool force = false)                                                 final;
     void write_state(bool force = false)                                                        final;
+    void write_status(bool force = false)                                                       final;
+    void write_logs(bool force = false)                                                         final;
     void print_status_update()                                                                  final;
     void print_status_full()                                                                    final;
-
 
     void check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_entg_entropy(double slope_threshold = quietNaN);

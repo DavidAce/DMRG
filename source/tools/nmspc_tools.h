@@ -59,7 +59,7 @@ namespace tools{
 
         namespace ops {
             extern std::list<Eigen::Tensor<Scalar,4>>
-                        make_mpo_list                 (const std::list<std::shared_ptr<class_model_base>> & mpos_L, const std::list<std::shared_ptr<class_model_base>> & mpos_R);
+                        make_mpo_list                 (const std::list<std::unique_ptr<class_model_base>> & mpos_L, const std::list<std::unique_ptr<class_model_base>> & mpos_R);
             extern void apply_mpo                     (class_finite_state & state, const Eigen::Tensor<Scalar,4> & mpo, const Eigen::Tensor<Scalar,3> &Ledge, const Eigen::Tensor<Scalar,3> & Redge);
             extern void apply_mpos                    (class_finite_state & state, const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
             extern class_finite_state
@@ -110,19 +110,46 @@ namespace tools{
             extern std::vector<double> entanglement_entropies         (const class_finite_state & state);
             extern std::vector<double> spin_components                (const class_finite_state & state);
 
+            namespace multisite{
+                namespace internal{
+                    inline double digits;
+                    double significant_digits(double H2, double E2);
+                }
+                extern double energy                                  (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
+                extern double energy_per_site                         (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
+                extern double energy_variance                         (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
+                extern double energy_variance_per_site                (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
+                extern double energy                                  (const class_finite_state & state);
+                extern double energy_per_site                         (const class_finite_state & state);
+                extern double energy_variance                         (const class_finite_state & state);
+                extern double energy_variance_per_site                (const class_finite_state & state);
+            }
+
             namespace accurate{
+                namespace internal{
+                    inline double digits;
+                    double significant_digits(double H2, double E2);
+                }
                 extern double energy                                    (const class_finite_state & state);
                 extern double energy_per_site                           (const class_finite_state & state);
                 extern double energy_variance                           (const class_finite_state & state);
                 extern double energy_variance_per_site                  (const class_finite_state & state);
             }
-            namespace multisite{
-                extern double energy                                  (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
-                extern double energy_per_site                         (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
+
+
+            namespace reduced{
+                namespace internal{
+                    inline double digits;
+                    double significant_digits(double H2, double E2);
+                }
+                extern class_finite_state
+                get_state_with_energy_reduced_mpo                     (const class_finite_state & state);
                 extern double energy_variance                         (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
                 extern double energy_variance_per_site                (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
-            }
+                extern double energy_variance                         (const class_finite_state & state);
+                extern double energy_variance_per_site                (const class_finite_state & state);
 
+            }
         }
 
 
@@ -264,7 +291,6 @@ namespace tools{
             inline class_tic_toc t_prj;
             inline class_tic_toc t_opt;
             inline class_tic_toc t_chk;
-
             inline class_tic_toc t_ene_mpo;
             inline class_tic_toc t_ene_ham;
             inline class_tic_toc t_ene_mom;

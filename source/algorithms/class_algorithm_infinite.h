@@ -6,7 +6,6 @@
 #define DMRG_CLASS_ALGORITHM_INFINITE_H
 #include <algorithms/class_algorithm_base.h>
 
-class class_log_dmrg;
 class class_infinite_state;
 
 class class_algorithm_infinite: public class_algorithm_base {
@@ -34,6 +33,7 @@ public:
     void reset_to_random_state(const std::string parity_secto = "none", int seed_state = -1)    final;
     void write_measurements(bool force = false)                                                 final;
     void write_state(bool force = false)                                                        final;
+    void write_status(bool force = false)                                                       final;
     void print_status_update()                                                                  final;
     void print_status_full()                                                                    final;
 

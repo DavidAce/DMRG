@@ -130,8 +130,13 @@ Eigen::MatrixXcd class_tf_ising::single_site_hamiltonian(
 }
 
 
-std::shared_ptr<class_model_base> class_tf_ising::clone() const {return std::make_unique<class_tf_ising>(*this);}
-void   class_tf_ising::set_reduced_energy(double site_energy)             {e_reduced = site_energy;}
+std::unique_ptr<class_model_base> class_tf_ising::clone() const {return std::make_unique<class_tf_ising>(*this);}
+void   class_tf_ising::set_reduced_energy(double site_energy){
+    e_reduced = site_energy;
+    mpo_internal = MPO_reduced_view();
+}
+
+
 size_t class_tf_ising::get_spin_dimension()                         const {return spin_dim;}
 //double class_tf_ising::get_energy_reduced()                         const {return e_reduced;}
 //double class_tf_ising::get_random_field()                           const {return r_rnd_field;}

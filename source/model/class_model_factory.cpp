@@ -11,7 +11,7 @@
 #include "class_hamiltonian_h5tables.h"
 #include "class_selfdual_tf_rf_ising.h"
 
-std::shared_ptr<class_model_base> class_model_factory::create_mpo(size_t position, std::string model_type_str){
+std::unique_ptr<class_model_base> class_model_factory::create_mpo(size_t position, std::string model_type_str){
 
     if (model_type_str == std::string("tf_ising")){
         return std::make_unique<class_tf_ising>(position,model_type_str);
@@ -31,7 +31,7 @@ std::shared_ptr<class_model_base> class_model_factory::create_mpo(size_t positio
 
 
 
-std::shared_ptr<class_model_base> class_model_factory::clone(std::shared_ptr<class_model_base> other){
+std::unique_ptr<class_model_base> class_model_factory::clone(std::unique_ptr<class_model_base> other){
     return other->clone();
 }
 

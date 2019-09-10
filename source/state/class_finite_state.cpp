@@ -8,6 +8,51 @@
 #include <general/nmspc_quantum_mechanics.h>
 
 
+// We need to make a destructor manually for the enclosing class "class_finite_state"
+// that encloses "class_model_base". Otherwise unique_ptr will forcibly inline its
+// own default deleter.
+// This allows us to forward declare the abstract base class "class_model_base"
+// Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
+// And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
+class_finite_state::~class_finite_state()=default;
+
+class_finite_state::class_finite_state(const class_finite_state & other){
+    *this = other;
+}
+
+class_finite_state& class_finite_state::operator= (const class_finite_state & other){
+    // check for self-assignment
+    if(&other == this) return *this;
+
+    // Copy all data members
+    this->num_sweeps = other.num_sweeps;
+    this->num_moves  = other.num_moves;
+    this->direction  = other.direction;
+    this->chi_max    = other.chi_max;
+    this->MPS_L      = other.MPS_L;
+    this->MPS_R      = other.MPS_R;
+    this->MPS_C      = other.MPS_C;
+    this->ENV_L      = other.ENV_L;
+    this->ENV_R      = other.ENV_R;
+    this->ENV2_L     = other.ENV2_L;
+    this->ENV2_R     = other.ENV2_R;
+
+    this->active_sites     = other.active_sites;
+    this->truncation_error = other.truncation_error;
+    this->measurements     = other.measurements;
+    this->site_update_tags = other.site_update_tags;
+    this->cache            = other.cache;
+
+    // The MPO's are special and the whole point of doing this manually
+    this->MPO_L.clear();
+    this->MPO_R.clear();
+    for (auto & mpo: other.MPO_L) this->MPO_L.emplace_back(mpo->clone());
+    for (auto & mpo: other.MPO_R) this->MPO_R.emplace_back(mpo->clone());
+    return *this;
+}
+
+
+
 void class_finite_state::do_all_measurements(){
     using namespace tools::finite;
     measurements.length                         = measure::length(*this);
