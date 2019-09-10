@@ -32,28 +32,31 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(
         tools::log->trace("Parallelizing with {} threads", omp_get_max_threads());
     #endif
     tools::log->trace("Generating multi components");
+    energy_reduced      = tools::finite::measure::multisite::energy(state);
+    auto state_reduced = tools::finite::measure::reduced::get_state_with_energy_reduced_mpo(state);
+
     if constexpr (std::is_same<Scalar,double>::value){
-        mpo                          = state.get_multimpo().real();
-        auto & envL_cplx  = state.get_ENVL(state.active_sites.front());
-        auto & envR_cplx  = state.get_ENVR(state.active_sites.back());
-        auto & env2L_cplx = state.get_ENV2L(state.active_sites.front());
-        auto & env2R_cplx = state.get_ENV2R(state.active_sites.back());
+        mpo               = state_reduced.get_multimpo().real();
+        auto & envL_cplx  = state_reduced.get_ENVL (state_reduced.active_sites.front());
+        auto & envR_cplx  = state_reduced.get_ENVR (state_reduced.active_sites.back());
+        auto & env2L_cplx = state_reduced.get_ENV2L(state_reduced.active_sites.front());
+        auto & env2R_cplx = state_reduced.get_ENV2R(state_reduced.active_sites.back());
 
         envL  = envL_cplx.block.real();         envR  = envR_cplx.block.real();
         env2L = env2L_cplx.block.real();        env2R = env2R_cplx.block.real();
     }
 
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){
-        mpo                          = state.get_multimpo();
-        auto & envL_cplx  = state.get_ENVL(state.active_sites.front());
-        auto & envR_cplx  = state.get_ENVR(state.active_sites.back());
-        auto & env2L_cplx = state.get_ENV2L(state.active_sites.front());
-        auto & env2R_cplx = state.get_ENV2R(state.active_sites.back());
+        mpo               = state_reduced.get_multimpo();
+        auto & envL_cplx  = state_reduced.get_ENVL (state_reduced.active_sites.front());
+        auto & envR_cplx  = state_reduced.get_ENVR (state_reduced.active_sites.back());
+        auto & env2L_cplx = state_reduced.get_ENV2L(state_reduced.active_sites.front());
+        auto & env2R_cplx = state_reduced.get_ENV2R(state_reduced.active_sites.back());
         envL  = envL_cplx.block;         envR  = envR_cplx.block;
         env2L = env2L_cplx.block;        env2R = env2R_cplx.block;
     }
 
-    dsizes        = state.active_dimensions();
+    dsizes        = state_reduced.active_dimensions();
     tools::log->trace("Finished building multicomponents");
 
 
@@ -100,7 +103,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
 
     ene             = vHv/vv;
     var             = vH2v/vv - ene*ene;
-
+//    var             = vH2v/vv;
 //    double loss_of_precision = std::log10(std::abs(ene*ene));
 //    double expected_error    = std::pow(10, -(13-loss_of_precision));
 //    if (std::imag(ene)      > expected_error) tools::log->warn("Energy has imaginary component              : {:.16f} + i {:.16f}" , std::real(ene)    , std::imag(ene));
@@ -108,12 +111,11 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
 //    if (std::imag(var)      > expected_error) tools::log->warn("Variance has imaginary component            : {:.16f} + i {:.16f}" , std::real(var)    , std::imag(var));
     if (std::real(var)      < 0.0           ) tools::log->warn("Counter = {}. Variance is negative:  {:.16f} + i {:.16f}" , counter, std::real(var)    , std::imag(var));
     // Make sure var is valid
-    var = std::real(var) <= 0.0 ? 1e-16 : var;
+    var = std::real(var) <= 0.0 ? 1e-20 : std::real(var);
 
-    energy         = std::real(ene)/length;
+//    energy         = std::real(ene)/length;
+    energy         = std::real(ene + energy_reduced) / length;
     variance       = std::abs(var)/length;
-//    variance       = variance < 1e-15  ? 1e-15 : variance;
-
     energy_dens    = (energy - energy_min ) / (energy_max - energy_min);
     energy_offset  = energy_dens - energy_target_dens;
     energy_func    = windowed_func_pow(energy_offset,energy_window);
@@ -121,8 +123,6 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
 
 
     norm_offset    = std::abs(vv) - 1.0 ;
-//    norm_func      = windowed_func_pow(norm_offset,0.0);
-//    norm_grad      = windowed_grad_pow(norm_offset,0.0);
     std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.0);
     log10var       = std::log10(variance);
     if(fx != nullptr){
@@ -142,24 +142,18 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     }
 
 
-//        grad(grad.size()-1)  = energy_func;
-//    if constexpr (std::is_same<Scalar,std::complex<double>>::value){grad*=2; vecSize = grad.size()*2;}
-//    grad_double_double  = Eigen::Map<Eigen::VectorXd> (reinterpret_cast<double*> (grad.data()), vecSize);
 
-
-
-//    std::cout   << std::setprecision(12) << std::fixed
-//                << " Variance: "   << std::setw(18)   << log10var
-//                << " Energy : "    << std::setw(18)   << energy
-//                << " Energy t : "  << std::setw(18)   << energy_target
-//                << " Energy w : "  << std::setw(18)   << energy_density_window
-//                << " Energy d : "  << std::setw(18)   << energy_dens
-//                << " Energy td : " << std::setw(18)   << energy_target_dens
-//                << " Energy o : "  << std::setw(18)   << energy_offset
-//                << " norm o : "    << std::setw(18)   << norm_offset
-//                << " lambda 0: "   << std::setw(18)   << lambdas(0)
-//                << " fx : "        << std::setw(18)   << fx
-//                << std::endl;
+    std::cout   << std::setprecision(12) << std::fixed
+                << " Variance: "   << std::setw(18)   << log10var
+                << " Energy : "    << std::setw(18)   << energy
+                << " Energy t : "  << std::setw(18)   << energy_target
+                << " Energy d : "  << std::setw(18)   << energy_dens
+                << " Energy td : " << std::setw(18)   << energy_target_dens
+                << " Energy o : "  << std::setw(18)   << energy_offset
+                << " norm o : "    << std::setw(18)   << norm_offset
+                << " lambda 0: "   << std::setw(18)   << lambdas(0)
+                << " fx : "        << std::setw(18)   << fx[0]
+                << std::endl;
 
 
     if(std::isnan(log10var) or std::isinf(log10var)){

@@ -22,7 +22,7 @@ using namespace Textra;
 class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_finite(std::move(h5ppFile_),"fDMRG", SimulationType::fDMRG, settings::fdmrg::num_sites) {
     log->trace("Constructing class_fDMRG");
-    log_dmrg       = std::make_unique<class_hdf5_log<class_log_dmrg>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
+    log_dmrg       = std::make_unique<class_hdf5_log<class_log_finite_dmrg_measurements>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
     settings::fdmrg::min_sweeps = std::max(settings::fdmrg::min_sweeps, (size_t)(std::log2(chi_max())));
 }
 
@@ -39,7 +39,7 @@ void class_fDMRG::run_simulation(){
         check_convergence();
         print_status_update();
 
-        // It's important not to perform the last moves.
+        // It's important not to perform the last step.
         // That last state would not get optimized
         if (sim_status.iteration >= settings::fdmrg::min_sweeps and state->position_is_the_middle_any_direction())
         {
@@ -66,7 +66,6 @@ void class_fDMRG::run_simulation(){
 
 
 void class_fDMRG::check_convergence(){
-    t_sim.tic();
     t_con.tic();
 
     if(state->position_is_any_edge()){
@@ -114,22 +113,9 @@ void class_fDMRG::check_convergence(){
 
 
     t_con.toc();
-    t_sim.toc();
 
 }
 
-
-void class_fDMRG::write_logs(bool force){
-    if(not force){
-        if (not settings::output::save_logs){return;}
-        if (math::mod(sim_status.step, write_freq()) != 0) {return;}
-        if (settings::output::storage_level < StorageLevel::NORMAL){return;}
-    }
-    log_sim_status->append_record(sim_status);
-//    log_profiling->append_record();
-//    log_dmrg->append_record();
-
-}
 
 
 

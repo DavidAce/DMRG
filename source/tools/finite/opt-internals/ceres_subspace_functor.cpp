@@ -19,12 +19,13 @@ tools::finite::opt::internals::ceres_subspace_functor<Scalar>::ceres_subspace_fu
         eigvals(eigvals_)
 {
     tools::log->trace("Constructing subspace functor");
+    auto state_reduced = tools::finite::measure::reduced::get_state_with_energy_reduced_mpo(state);
     if constexpr(std::is_same<Scalar,double>::value){
-        H2 = state.get_multi_hamiltonian2_subspace_matrix(eigvecs).real();
+        H2 = state_reduced.get_multi_hamiltonian2_subspace_matrix(eigvecs).real();
 //        H2 = (eigvecs.adjoint().real() * state.get_multi_hamiltonian2_matrix().real().template selfadjointView<Eigen::Upper>() * eigvecs.real());
     }
     if constexpr(std::is_same<Scalar,std::complex<double>>::value){
-        H2 = state.get_multi_hamiltonian2_subspace_matrix(eigvecs);
+        H2 = state_reduced.get_multi_hamiltonian2_subspace_matrix(eigvecs);
 //        H2 = (eigvecs.adjoint() * state.get_multi_hamiltonian2_matrix().template selfadjointView<Eigen::Upper>() * eigvecs);
     }
     double sparcity = (H2.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
@@ -69,9 +70,10 @@ bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(con
     }
     ene             = vHv/vv;
     var             = vH2v/vv - ene*ene;
+    var             = vH2v/vv;
     if (std::real(var)      < 0.0           ) tools::log->warn("Variance is negative                        : {:.16f} + i {:.16f}" , std::real(var)    , std::imag(var));
     // Make sure var is valid
-    var = std::real(var) <= 0.0 ? 1e-16 : var;
+    var = std::real(var) <= 0.0 ? 1e-16 : std::real(var);
     energy         = std::real(ene) / length;
     variance       = std::abs(var)  / length;
     norm_offset    = std::abs(vv) - 1.0 ;

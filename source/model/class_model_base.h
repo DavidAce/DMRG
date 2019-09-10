@@ -21,7 +21,7 @@ public:
 
     class_model_base(size_t position_, std::string logName = "MODEL");
     virtual ~class_model_base() = default;
-    virtual std::shared_ptr<class_model_base> clone()                     const = 0;
+    virtual std::unique_ptr<class_model_base> clone()                     const = 0;
     const Eigen::Tensor<Scalar,4> & MPO() const;
     virtual Eigen::Tensor<Scalar,4> MPO_reduced_view()                          const = 0;
     virtual Eigen::Tensor<Scalar,4> MPO_reduced_view(double single_site_energy) const = 0;

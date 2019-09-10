@@ -60,6 +60,15 @@ using namespace Textra;
 using Scalar = class_finite_state::Scalar;
 
 
+double tools::finite::measure::multisite::internal::significant_digits(double H2, double E2){
+    double max_digits    = std::numeric_limits<double>::max_digits10;
+    double lost_bits     = -std::log2(1.0 - std::abs(std::min(H2,E2)/std::max(H2,E2)));
+    double lost_digits   = std::log10(std::pow(2.0,lost_bits));
+    tools::log->trace("Significant digits: {}",std::floor(max_digits - lost_digits));
+    return digits = std::floor(max_digits - lost_digits);
+}
+
+
 double tools::finite::measure::multisite::energy(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
     tools::common::profile::t_ene.tic();
     auto multimpo   = state.get_multimpo();
@@ -100,6 +109,7 @@ double tools::finite::measure::multisite::energy_variance(const class_finite_sta
             .contract(multitheta.conjugate()     , idx({4,0},{0,1}))
             .contract(env2R                      , idx({0,3,1,2},{0,1,2,3}));
     tools::common::profile::t_var.toc();
+    internal::significant_digits(std::abs(H2(0)),energy*energy);
     return std::abs(H2(0) - energy*energy);
 }
 
@@ -107,5 +117,25 @@ double tools::finite::measure::multisite::energy_variance(const class_finite_sta
 double tools::finite::measure::multisite::energy_variance_per_site(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
         return multisite::energy_variance(state,multitheta)/state.get_length();
 }
+
+
+
+double tools::finite::measure::multisite::energy(const class_finite_state &state){
+    return multisite::energy(state,state.get_multitheta());
+}
+
+double tools::finite::measure::multisite::energy_per_site(const class_finite_state &state){
+    return multisite::energy(state)/state.get_length();
+}
+
+double tools::finite::measure::multisite::energy_variance(const class_finite_state &state){
+    return multisite::energy_variance(state,state.get_multitheta());
+}
+
+double tools::finite::measure::multisite::energy_variance_per_site(const class_finite_state &state){
+    return multisite::energy_variance(state)/state.get_length();
+}
+
+
 
 

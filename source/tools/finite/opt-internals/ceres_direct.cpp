@@ -29,8 +29,10 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     if (tools::log->level() <= spdlog::level::debug){
         double energy_0   = tools::finite::measure::multisite::energy_per_site(state,theta);
         double variance_0 = tools::finite::measure::multisite::energy_variance_per_site(state,theta);
+        double variance_r = tools::finite::measure::reduced::energy_variance_per_site(state,theta);
         t_opt->toc();
-        opt_log.emplace_back("Initial",theta_start.size(), energy_0, std::log10(variance_0), 1.0, theta_start.norm(), 0 ,0,t_opt->get_last_time_interval());
+        opt_log.emplace_back("Initial"          ,theta_start.size(), energy_0, std::log10(variance_0), 1.0, theta_start.norm(), 0 ,0,t_opt->get_last_time_interval());
+        opt_log.emplace_back("Initial (reduced)",theta_start.size(), energy_0, std::log10(variance_r), 1.0, theta_start.norm(), 0 ,0,t_opt->get_last_time_interval());
     }else{
         t_opt->toc();
     }
@@ -99,6 +101,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
             energy_new   = functor->get_energy() ;
             variance_new = functor->get_variance();
             theta_start  = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
+//            delete functor;
             break;
         }
         case OptType::REAL:{
@@ -112,6 +115,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
             energy_new   = functor->get_energy();
             variance_new = functor->get_variance();
             theta_start  = theta_start_cast.normalized().cast<Scalar>();
+//            delete functor;
             break;
         }
     }
@@ -125,11 +129,16 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
 
         // Sanity check
         t_opt->tic();
-        auto theta_san  = Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
+        auto theta_san      = Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
         double energy_san   = tools::finite::measure::multisite::energy_per_site(state,theta_san);
         double variance_san = tools::finite::measure::multisite::energy_variance_per_site(state,theta_san);
         t_opt->toc();
         opt_log.emplace_back("Sanity check",theta_san.size(), energy_san, std::log10(variance_san), overlap_new, theta_start.norm(), 0,0, t_opt->get_last_time_interval());
+
+        double variance_acc = tools::finite::measure::reduced::energy_variance_per_site(state,theta_san);
+        opt_log.emplace_back("Sanity check (reduced)",theta_san.size(), energy_san, std::log10(variance_acc), overlap_new, theta_start.norm(), 0,0, t_opt->get_last_time_interval());
+
+
     }
 
     // Finish up and print reports

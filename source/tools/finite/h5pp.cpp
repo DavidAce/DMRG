@@ -42,7 +42,6 @@ void tools::finite::io::write_all_state(const class_finite_state &state, h5pp::F
             write_full_mpo(state,h5ppFile,prefix_path);
             break;
     }
-
     h5ppFile.writeDataset(state.get_position()       ,prefix_path + "/state/position");
     h5ppFile.writeDataset(state.get_length()         ,prefix_path + "/state/sites");
     h5ppFile.writeDataset(settings::model::model_type,prefix_path + "/model/model_type");

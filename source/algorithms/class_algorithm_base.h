@@ -35,9 +35,9 @@ public:
     enum class StopReason {CONVERGED, SATURATED, MAX_STEPS} stop_reason;
     void set_profiling_labels ();
 
-    std::shared_ptr<h5pp::File>                                  h5pp_file;
-    std::unique_ptr<class_hdf5_log<class_log_profiling>>          log_profiling;
-    std::unique_ptr<class_hdf5_log<class_log_simulation_status>>  log_sim_status;
+    std::shared_ptr<h5pp::File>                                   h5pp_file;
+    std::shared_ptr<class_hdf5_log<class_log_profiling>>          log_profiling;
+    std::shared_ptr<class_hdf5_log<class_log_simulation_status>>  log_sim_status;
 
     std::string              sim_name;
     SimulationType           sim_type;
@@ -54,6 +54,7 @@ public:
     virtual void   check_convergence()                                                                        = 0;
     virtual void   write_measurements(bool force = false)                                                     = 0;
     virtual void   write_state       (bool force = false)                                                     = 0;
+    virtual void   write_status      (bool force = false)                                                     = 0;
     virtual void   write_logs        (bool force = false)                                                     = 0;
     virtual bool   sim_on()                                                                                   = 0;
     virtual long   chi_max()                                                                                  = 0;
@@ -68,19 +69,17 @@ public:
 
 
     //common functions
-    void write_status(bool force = false);
     void update_bond_dimension();
     void print_profiling();
     double process_memory_in_mb(std::string name);
 
     // Profiling
-//    void store_profiling_deltas(bool force = false);
-//    void store_profiling_totals(bool force = false);
-
-    class_tic_toc t_tot;
-    class_tic_toc t_sim;
-    class_tic_toc t_prt;
-    class_tic_toc t_con;
+    class_tic_toc t_tot;    /*!< Total time */
+    class_tic_toc t_pre;    /*!< Preprocessing time */
+    class_tic_toc t_run;    /*!< Simulation run time */
+    class_tic_toc t_pos;    /*!< Postprocessing time*/
+    class_tic_toc t_prt;    /*!< Printing time */
+    class_tic_toc t_con;    /*!< Convergence checks time */
 
 protected:
 //    using SaturationReport = std::tuple<bool,bool,double,double,int>; //slopes computed, has saturated, rel slope, avgY, check from

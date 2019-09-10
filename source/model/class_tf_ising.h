@@ -38,7 +38,7 @@ public:
             std::vector<Eigen::MatrixXcd> &SX,
             std::vector<Eigen::MatrixXcd> &SY,
             std::vector<Eigen::MatrixXcd> &SZ)                                          const override;
-    std::shared_ptr<class_model_base> clone()                                     const override;
+    std::unique_ptr<class_model_base> clone()                                     const override;
     void   set_reduced_energy(double site_energy)                                             override;
     size_t get_spin_dimension()                                                         const override;
     void   print_parameter_names ()                                                     const override;

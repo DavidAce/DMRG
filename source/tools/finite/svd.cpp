@@ -104,6 +104,7 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_fi
         tools::finite::opt::truncate_left(theta,state,chi_,SVDThreshold);
     }
     state.unset_measurements();
+    state.clear_cache();
     fullnorm  = tools::finite::measure::norm(state);
     if(std::abs(fullnorm  - 1.0) > 1e-10){
         tools::log->warn("Norm after truncation too far from unity: {:.16f} -- Normalizing",fullnorm);

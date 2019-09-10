@@ -96,7 +96,7 @@ void class_hdf5_log<log_type>:: write_buffer_to_file() {
 
 //Explicit instantiations
 
-template class class_hdf5_log<class_log_dmrg>;
+template class class_hdf5_log<class_log_finite_dmrg_measurements>;
 template class class_hdf5_log<class_log_tebd>;
 template class class_hdf5_log<class_log_profiling>;
 template class class_hdf5_log<class_log_simulation_status>;

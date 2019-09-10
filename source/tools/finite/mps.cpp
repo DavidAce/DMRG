@@ -121,8 +121,9 @@ void tools::finite::mps::rebuild_environments(class_finite_state &state){
 
         }
     }
-
 }
+
+
 
 
 int tools::finite::mps::move_center_point(class_finite_state &  state){
