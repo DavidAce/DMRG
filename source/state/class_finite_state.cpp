@@ -291,6 +291,38 @@ Eigen::Tensor<class_finite_state::Scalar,4> class_finite_state::get_theta(size_t
 }
 
 
+
+
+// For reduced energy MPO's
+
+bool   class_finite_state::isReduced()                            const{
+    bool reduced = MPO_L.front()->isReduced();
+    for(auto &mpo : MPO_L) if(reduced != mpo->isReduced()){throw std::runtime_error(fmt::format("First MPO has isReduce: {}, but MPO at pos {} has isReduce: {}",reduced, mpo->get_position(), mpo->isReduced()));}
+    for(auto &mpo : MPO_R) if(reduced != mpo->isReduced()){throw std::runtime_error(fmt::format("First MPO has isReduce: {}, but MPO at pos {} has isReduce: {}",reduced, mpo->get_position(), mpo->isReduced()));}
+    return reduced;
+}
+
+
+double class_finite_state::get_energy_reduced()                   const{
+    //Check that all energies are the same
+    double e_reduced = MPO_L.front()->get_reduced_energy();
+    for(auto &mpo : MPO_L) {if (mpo->get_reduced_energy() != e_reduced){throw std::runtime_error("Reduced energy mismatch!");}}
+    for(auto &mpo : MPO_R) {if (mpo->get_reduced_energy() != e_reduced){throw std::runtime_error("Reduced energy mismatch!");}}
+
+    return e_reduced*get_length();
+}
+
+void class_finite_state::set_reduced_energy(double site_energy){
+    if(get_energy_reduced() == site_energy) return;
+    cache.multimpo = {};
+    for(auto &mpo : MPO_L) mpo->set_reduced_energy(site_energy);
+    for(auto &mpo : MPO_R) mpo->set_reduced_energy(site_energy);
+    tools::finite::mps::rebuild_environments(*this);
+}
+
+
+
+
 std::list<size_t> class_finite_state::activate_sites(long threshold){
     clear_cache();
     return active_sites = tools::finite::multisite::generate_site_list(*this,threshold);

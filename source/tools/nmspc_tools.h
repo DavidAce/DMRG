@@ -55,6 +55,7 @@ namespace tools{
         namespace mpo {
             extern void initialize                 (class_finite_state & state, size_t length, std::string model_type);
             extern void randomize                  (class_finite_state & state, int seed_state = -1);
+            extern void reduce_mpo_energy          (class_finite_state & state);
         }
 
         namespace ops {
@@ -99,6 +100,9 @@ namespace tools{
             extern size_t bond_dimension_midchain                     (const class_finite_state & state);
             extern std::vector<size_t> bond_dimensions                (const class_finite_state & state);
             extern double norm                                        (const class_finite_state & state);
+
+
+
             extern double energy                                      (const class_finite_state & state);
             extern double energy_per_site                             (const class_finite_state & state);
             extern double energy_variance                             (const class_finite_state & state);
@@ -110,11 +114,20 @@ namespace tools{
             extern std::vector<double> entanglement_entropies         (const class_finite_state & state);
             extern std::vector<double> spin_components                (const class_finite_state & state);
 
+            namespace twosite{
+                extern double energy_minus_energy_reduced                 (const class_finite_state & state, const Eigen::Tensor<Scalar,4> & theta);
+                extern double energy                                      (const class_finite_state & state, const Eigen::Tensor<Scalar,4> & theta);
+                extern double energy_per_site                             (const class_finite_state & state, const Eigen::Tensor<Scalar,4> & theta);
+                extern double energy_variance                             (const class_finite_state & state, const Eigen::Tensor<Scalar,4> & theta);
+                extern double energy_variance_per_site                    (const class_finite_state & state, const Eigen::Tensor<Scalar,4> & theta);
+            }
+
             namespace multisite{
                 namespace internal{
                     inline double digits;
                     double significant_digits(double H2, double E2);
                 }
+                extern double energy_minus_energy_reduced             (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
                 extern double energy                                  (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
                 extern double energy_per_site                         (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
                 extern double energy_variance                         (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
@@ -125,29 +138,40 @@ namespace tools{
                 extern double energy_variance_per_site                (const class_finite_state & state);
             }
 
-            namespace accurate{
-                namespace internal{
-                    inline double digits;
-                    double significant_digits(double H2, double E2);
-                }
-                extern double energy                                    (const class_finite_state & state);
-                extern double energy_per_site                           (const class_finite_state & state);
-                extern double energy_variance                           (const class_finite_state & state);
-                extern double energy_variance_per_site                  (const class_finite_state & state);
+            template<typename Derived>
+            double energy_minus_energy_reduced(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::WriteAccessors> & theta){
+                constexpr int rank = Derived::NumIndices;
+                if constexpr (rank == 4) return twosite::energy_minus_energy_reduced(state,theta);
+                if constexpr (rank == 3) return multisite::energy_minus_energy_reduced(state,theta);
+                static_assert("Wrong rank, expected 3 or 4" and (rank == 3 or rank == 4));
             }
-
-
-            namespace reduced{
-                namespace internal{
-                    inline double digits;
-                    double significant_digits(double H2, double E2);
-                }
-                extern class_finite_state
-                get_state_with_energy_reduced_mpo                     (const class_finite_state & state);
-                extern double energy_variance                         (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
-                extern double energy_variance_per_site                (const class_finite_state & state, const Eigen::Tensor<Scalar,3> & multitheta);
-                extern double energy_variance                         (const class_finite_state & state);
-                extern double energy_variance_per_site                (const class_finite_state & state);
+            template<typename Derived>
+            double energy(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::WriteAccessors> & theta){
+                constexpr int rank = Derived::NumIndices;
+                if constexpr (rank == 4) return twosite::energy(state,theta);
+                if constexpr (rank == 3) return multisite::energy(state,theta);
+                static_assert("Wrong rank, expected 3 or 4" and (rank == 3 or rank == 4));
+            }
+            template<typename Derived>
+            double energy_per_site(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::WriteAccessors> & theta){
+                constexpr int rank = Derived::NumIndices;
+                if constexpr (rank == 4) return twosite::energy_per_site(state,theta);
+                if constexpr (rank == 3) return multisite::energy_per_site(state,theta);
+                static_assert("Wrong rank, expected 3 or 4" and (rank == 3 or rank == 4));
+            }
+            template<typename Derived>
+            double energy_variance(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::WriteAccessors> & theta){
+                constexpr int rank = Derived::NumIndices;
+                if constexpr (rank == 4) return twosite::energy_variance(state,theta);
+                if constexpr (rank == 3) return multisite::energy_variance(state,theta);
+                static_assert("Wrong rank, expected 3 or 4" and (rank == 3 or rank == 4));
+            }
+            template<typename Derived>
+            double energy_variance_per_site(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::WriteAccessors> & theta){
+                constexpr int rank = Derived::NumIndices;
+                if constexpr (rank == 4) return twosite::energy_variance_per_site(state,theta);
+                if constexpr (rank == 3) return multisite::energy_variance_per_site(state,theta);
+                static_assert("Wrong rank, expected 3 or 4" and (rank == 3 or rank == 4));
 
             }
         }

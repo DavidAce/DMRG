@@ -88,10 +88,11 @@ std::vector<size_t> tools::finite::measure::bond_dimensions(const class_finite_s
 }
 
 
-double tools::finite::measure::energy(const class_finite_state &state){
-    if (state.measurements.energy){return state.measurements.energy.value();}
+double tools::finite::measure::twosite::energy_minus_energy_reduced(const class_finite_state &state, const Eigen::Tensor<Scalar,4> & theta){
+    // We want to measure energy accurately always.
+    // Since the state can be reduced, the true energy is always
+    // E + E_reduced
     tools::common::profile::t_ene.tic();
-    auto theta = state.get_theta();
     Eigen::Tensor<Scalar, 0>  E =
             state.ENV_L.back().block
                     .contract(theta,                               idx({0},{1}))
@@ -103,26 +104,32 @@ double tools::finite::measure::energy(const class_finite_state &state){
         tools::log->critical(fmt::format("Energy has an imaginary part: {:.16f} + i {:.16f}",std::real(E(0)), std::imag(E(0))));
     }
     assert(std::abs(std::imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
-    state.measurements.energy = std::real(E(0));
+    double ene = std::real(E(0));
+    if (std::isnan(ene) or std::isinf(ene)) throw std::runtime_error(fmt::format("Energy is invalid: {}", ene));
     tools::common::profile::t_ene.toc();
-    return state.measurements.energy.value();
+    return  std::real(E(0));
 }
 
 
-double tools::finite::measure::energy_per_site(const class_finite_state &state){
-    if (state.measurements.energy_per_site){return state.measurements.energy_per_site.value();}
-    else{
-        state.measurements.energy_per_site = energy(state)/state.get_length();
-        return state.measurements.energy_per_site.value();
-    }
+double tools::finite::measure::twosite::energy(const class_finite_state &state, const Eigen::Tensor<Scalar,4> & theta){
+    // We want to measure energy accurately always.
+    // Since the state can be reduced, the true energy is always
+    // (E-E_reduced) + E_reduced
+    return twosite::energy_minus_energy_reduced(state,theta) + state.get_energy_reduced();
 }
 
 
-double tools::finite::measure::energy_variance(const class_finite_state &state){
-    if (state.measurements.energy_variance_mpo){return state.measurements.energy_variance_mpo.value();}
-    double energy = tools::finite::measure::energy(state);
+double tools::finite::measure::twosite::energy_per_site(const class_finite_state &state, const Eigen::Tensor<Scalar,4> & theta){
+    return twosite::energy(state,theta)/state.get_length();
+}
+
+double tools::finite::measure::twosite::energy_variance(const class_finite_state &state, const Eigen::Tensor<Scalar,4> & theta){
+    // Depending on whether the state is reduced or not we get different formulas.
+    // Luckily, the variance is independent of offsets.
+    // If the state is not reduced we get Var H = H^2 - E^2 =  H2 - energy*energy
+    // IF the state is reduced we get Var H = (H-E_red) - (E-E_red)^2 = H2 - energy_minus_energy_reduced^2
+
     tools::common::profile::t_var.tic();
-    auto theta = state.get_theta();
     Eigen::Tensor<Scalar, 0> H2 =
             state.ENV2_L.back().block
                     .contract(theta                        , idx({0}  ,{1}))
@@ -132,18 +139,65 @@ double tools::finite::measure::energy_variance(const class_finite_state &state){
                     .contract(state.MPO_R.front()->MPO()   , idx({4,3},{0,2}))
                     .contract(theta.conjugate()            , idx({0,3,5},{1,0,2}))
                     .contract(state.ENV2_R.front().block   , idx({0,3,1,2},{0,1,2,3}));
-    state.measurements.energy_variance_mpo = std::abs(H2(0) - energy*energy);
     tools::common::profile::t_var.toc();
+    double energy;
+    if (state.isReduced()){
+        energy = tools::finite::measure::twosite::energy_minus_energy_reduced(state,theta);
+    }else{
+        energy = tools::finite::measure::twosite::energy(state,theta);
+    }
+    double E2 = energy*energy;
+    double var = std::abs(H2(0) - E2);
+    if (std::isnan(var) or std::isinf(var)) throw std::runtime_error(fmt::format("Variance is invalid: {}", var));
+    return var;
+}
+
+
+double tools::finite::measure::twosite::energy_variance_per_site(const class_finite_state &state, const Eigen::Tensor<Scalar,4> & theta){
+    return twosite::energy_variance(state,theta)/state.get_length();
+}
+
+
+
+
+double tools::finite::measure::energy(const class_finite_state &state){
+    if (state.measurements.energy)         return state.measurements.energy.value();
+    if (state.active_sites.size() > 2)     return multisite::energy(state);
+    tools::common::profile::t_ene.tic();
+    auto theta = state.get_theta();
+    tools::common::profile::t_ene.toc();
+    state.measurements.energy = twosite::energy(state,theta);
+    return state.measurements.energy.value();
+}
+
+
+double tools::finite::measure::energy_per_site(const class_finite_state &state){
+    if (state.measurements.energy_per_site)return state.measurements.energy_per_site.value();
+    if (state.active_sites.size() > 2)     return multisite::energy_per_site(state);
+    state.measurements.energy_per_site = energy(state)/state.get_length();
+    return state.measurements.energy_per_site.value();
+
+}
+
+
+double tools::finite::measure::energy_variance(const class_finite_state &state){
+    if (state.measurements.energy_variance_mpo) return state.measurements.energy_variance_mpo.value();
+    if (state.active_sites.size() > 2)          return multisite::energy_variance(state);
+    tools::common::profile::t_var.tic();
+    auto theta = state.get_theta();
+    tools::common::profile::t_var.toc();
+    state.measurements.energy_variance_mpo = twosite::energy_variance(state,theta);
     return state.measurements.energy_variance_mpo.value();
+
 }
 
 
 double tools::finite::measure::energy_variance_per_site(const class_finite_state &state){
-    if (state.measurements.energy_variance_per_site){return state.measurements.energy_variance_per_site.value();}
-    else{
-        state.measurements.energy_variance_per_site = energy_variance(state)/state.get_length();
-        return state.measurements.energy_variance_per_site.value();
-    }
+    if (state.measurements.energy_variance_per_site) return state.measurements.energy_variance_per_site.value();
+    if (state.active_sites.size() > 2)               return multisite::energy_variance_per_site(state);
+    state.measurements.energy_variance_per_site = energy_variance(state)/state.get_length();
+    return state.measurements.energy_variance_per_site.value();
+
 }
 
 

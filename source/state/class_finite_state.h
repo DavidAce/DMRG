@@ -118,6 +118,13 @@ public:
     TType<4>   get_theta()                               const;
     TType<4>   get_theta(size_t pos)                     const;
 
+    // For reduced energy MPO's
+    bool   isReduced()                            const;
+    double get_energy_reduced()                   const;
+    void   set_reduced_energy(double site_energy);
+
+
+
     //For multisite
     std::list<size_t>      active_sites;
     std::list<size_t>      activate_sites(long threshold);

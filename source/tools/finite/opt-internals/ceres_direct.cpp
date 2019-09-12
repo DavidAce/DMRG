@@ -29,10 +29,10 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     if (tools::log->level() <= spdlog::level::debug){
         double energy_0   = tools::finite::measure::multisite::energy_per_site(state,theta);
         double variance_0 = tools::finite::measure::multisite::energy_variance_per_site(state,theta);
-        double variance_r = tools::finite::measure::reduced::energy_variance_per_site(state,theta);
+        //double variance_r = tools::finite::measure::reduced::energy_variance_per_site(state,theta);
         t_opt->toc();
         opt_log.emplace_back("Initial"          ,theta_start.size(), energy_0, std::log10(variance_0), 1.0, theta_start.norm(), 0 ,0,t_opt->get_last_time_interval());
-        opt_log.emplace_back("Initial (reduced)",theta_start.size(), energy_0, std::log10(variance_r), 1.0, theta_start.norm(), 0 ,0,t_opt->get_last_time_interval());
+        //opt_log.emplace_back("Initial (reduced)",theta_start.size(), energy_0, std::log10(variance_r), 1.0, theta_start.norm(), 0 ,0,t_opt->get_last_time_interval());
     }else{
         t_opt->toc();
     }
@@ -71,7 +71,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = true;
     options.max_line_search_step_expansion = 100;// 100.0;
-    options.min_line_search_step_size = 1e-9;
+    options.min_line_search_step_size = 1e-12;
     options.max_line_search_step_contraction = 1e-3;
     options.min_line_search_step_contraction = 0.6;
     options.max_num_line_search_step_size_iterations  = 30;//20;
@@ -81,7 +81,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.max_solver_time_in_seconds = 60*5;//60*2;
     options.function_tolerance = 1e-4;
     options.gradient_tolerance = 1e-8;
-    options.parameter_tolerance = 1e-12;//1e-12;
+    options.parameter_tolerance = 1e-16;//1e-12;
 
     options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::debug;
 
@@ -135,8 +135,8 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
         t_opt->toc();
         opt_log.emplace_back("Sanity check",theta_san.size(), energy_san, std::log10(variance_san), overlap_new, theta_start.norm(), 0,0, t_opt->get_last_time_interval());
 
-        double variance_acc = tools::finite::measure::reduced::energy_variance_per_site(state,theta_san);
-        opt_log.emplace_back("Sanity check (reduced)",theta_san.size(), energy_san, std::log10(variance_acc), overlap_new, theta_start.norm(), 0,0, t_opt->get_last_time_interval());
+        //double variance_acc = tools::finite::measure::reduced::energy_variance_per_site(state,theta_san);
+        //opt_log.emplace_back("Sanity check (reduced)",theta_san.size(), energy_san, std::log10(variance_acc), overlap_new, theta_start.norm(), 0,0, t_opt->get_last_time_interval());
 
 
     }
@@ -153,16 +153,15 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
             tools::finite::opt::internals::t_op->get_measured_time()
     ));
 
-    // Return something strictly better
     tools::common::profile::t_opt.toc();
-    if (variance_new < 1e-11 or variance_new < tools::finite::measure::multisite::energy_variance_per_site(state,theta)){
-        state.unset_measurements();
+    // Return something strictly better
+    state.tag_active_sites_have_been_updated(true);
+    if (variance_new < tools::finite::measure::energy_variance_per_site(state)){
         tools::log->debug("Returning new theta");
-        state.tag_active_sites_have_been_updated(true);
         return  Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
 
     }else{
-        state.tag_active_sites_have_been_updated(false);
+        if (variance_new > 1e-11) state.tag_active_sites_have_been_updated(false);
         tools::log->debug("Returning old theta");
         return  theta;
     }
