@@ -19,15 +19,15 @@ tools::finite::opt::internals::ceres_subspace_functor<Scalar>::ceres_subspace_fu
         eigvals(eigvals_)
 {
     tools::log->trace("Constructing subspace functor");
-    auto state_reduced = tools::finite::measure::reduced::get_state_with_energy_reduced_mpo(state);
     if constexpr(std::is_same<Scalar,double>::value){
-        H2 = state_reduced.get_multi_hamiltonian2_subspace_matrix(eigvecs).real();
+        H2 = state.get_multi_hamiltonian2_subspace_matrix(eigvecs).real();
 //        H2 = (eigvecs.adjoint().real() * state.get_multi_hamiltonian2_matrix().real().template selfadjointView<Eigen::Upper>() * eigvecs.real());
     }
     if constexpr(std::is_same<Scalar,std::complex<double>>::value){
-        H2 = state_reduced.get_multi_hamiltonian2_subspace_matrix(eigvecs);
+        H2 = state.get_multi_hamiltonian2_subspace_matrix(eigvecs);
 //        H2 = (eigvecs.adjoint() * state.get_multi_hamiltonian2_matrix().template selfadjointView<Eigen::Upper>() * eigvecs);
     }
+    energy_reduced  = state.get_energy_reduced();
     double sparcity = (H2.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
     tools::log->debug("H_local2 nonzeros: {:.8f} %", sparcity*100);
     num_parameters = eigvals.size();
@@ -42,7 +42,7 @@ bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(con
                                                                              double* grad_double_double) const
 {
     Scalar vH2v,vHv;
-    Scalar ene,var;
+    Scalar ene,ene2,var;
     double vv, log10var;
     double norm_func,norm_grad;
     VectorType Hv, H2v;
@@ -52,48 +52,52 @@ bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(con
     vv = v.squaredNorm();
     norm = std::sqrt(vv);
 
-#pragma omp parallel
-    {
-#pragma omp sections
-        {
-#pragma omp section
-            {
-                Hv  = eigvals.asDiagonal() * v;
-                vHv = v.dot(Hv);
-            }
-#pragma omp section
-            {
-                H2v = H2.template selfadjointView<Eigen::Upper>()*v;
-                vH2v = v.dot(H2v);
-            }
-        }
-    }
+    Hv  = eigvals.asDiagonal() * v;
+    vHv = v.dot(Hv);
+    H2v = H2.template selfadjointView<Eigen::Upper>()*v;
+    vH2v = v.dot(H2v);
+
+
+    // Do this next bit carefully to avoid negative variance when numbers are very small
     ene             = vHv/vv;
-    var             = vH2v/vv - ene*ene;
-    var             = vH2v/vv;
-    if (std::real(var)      < 0.0           ) tools::log->warn("Variance is negative                        : {:.16f} + i {:.16f}" , std::real(var)    , std::imag(var));
-    // Make sure var is valid
-    var = std::real(var) <= 0.0 ? 1e-16 : std::real(var);
-    energy         = std::real(ene) / length;
+    ene2            = vH2v/vv;
+    if (std::real(ene2) < 0.0 ) tools::log->debug("Counter = {}. ene2 is negative:  {:.16f} + i {:.16f}" , counter, std::real(ene2) , std::imag(ene2));
+    ene2             = std::real(ene2) <  0.0 ? std::abs(ene2)                         : std::real(ene2);
+    ene2             = std::real(ene2) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(ene2);
+
+    var             = ene2 - ene*ene;
+    if (std::real(var)  < 0.0 ) tools::log->debug("Counter = {}. var  is negative:  {:.16f} + i {:.16f}" , counter, std::real(var)  , std::imag(var));
+    var             = std::real(var) <  0.0 ? std::abs(var)                          : std::real(var);
+    var             = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(var);
+
+    energy         = std::real(ene + energy_reduced) / length;
     variance       = std::abs(var)  / length;
     norm_offset    = std::abs(vv) - 1.0 ;
     std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.0);
-
     log10var       = std::log10(variance);
+
     if (fx != nullptr){
         fx[0] = log10var +  norm_func;
     }
 
     if (grad_double_double != nullptr){
         auto vv_1  = std::pow(vv,-1);
-        auto var_1 = 1.0/var/std::log(10); // Possibly abs(var) is required here
+        auto var_1 = 1.0/var/std::log(10);
         Eigen::Map<VectorType>  grad (reinterpret_cast<      Scalar*>(grad_double_double), vecSize);
         grad = var_1 * vv_1 * (H2v  - v  * vH2v - 2.0 * ene * (Hv - v * ene))
                +  norm_grad * v;
     }
 
-//    tools::log->trace("Variance: {:<24.18f} Energy: {:<24.18f} norm: {:<24.18f} norm_func: {:<24.18f} norm_grad: {:<24.18f} fx: {:<24.18f} ",
-//            std::log10(variance),energy,norm,norm_func,norm_grad,fx[0] );
+    tools::log->trace("log10 var: {:<24.18f} log10 ene2/L: {:<24.18f} ene/L: {:<24.18f} ene*ene/L/L: {:<24.18f} Energy: {:<24.18f}  SqNorm: {:<24.18f} Norm: {:<24.18f} fx: {:<24.18f}",
+                      std::log10(std::abs(var)/length),
+                      std::log10(std::abs(ene2)/length),
+                      std::real(ene)/length,
+                      std::real(ene*ene)/length/length,
+                      std::real(ene + energy_reduced) / length,
+                      vv,
+                      norm,
+                      fx[0]);
+
 
     if(std::isnan(log10var) or std::isinf(log10var)){
         tools::log->warn("log10 variance is invalid");

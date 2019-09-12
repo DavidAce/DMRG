@@ -23,6 +23,21 @@ bool class_model_base::isReal()const{
     return Textra::isReal(MPO(),"MPO");
 }
 
+bool class_model_base::isReduced() const{
+    return e_reduced != 0.0;
+}
+
+double class_model_base::get_reduced_energy() const {
+    return e_reduced;
+}
+
+void   class_model_base::set_reduced_energy(double site_energy){
+    e_reduced    = site_energy;
+    mpo_internal = MPO_reduced_view();
+}
+
+
+
 class_model_base::class_model_base(size_t position_, std::string logName){
     position = position_;
     log = Logger::setLogger(logName);

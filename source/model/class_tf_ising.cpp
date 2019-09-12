@@ -34,7 +34,7 @@ class_tf_ising::class_tf_ising(size_t position_, std::string logName): class_mod
 }
 
 
-void   class_tf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4> MPO_, std::vector<double> parameters) {
+void   class_tf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4> & MPO_, std::vector<double> & parameters) {
     mpo_internal = MPO_;
     set_hamiltonian(parameters);
     auto mpo1 = Eigen::Map<const Eigen::VectorXcd>(MPO_ .data(), MPO_ .size());
@@ -43,18 +43,18 @@ void   class_tf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4> MPO_, std::
     if (mpo1 != mpo2) throw std::runtime_error("MPO mismatch");
 }
 
-void   class_tf_ising::set_hamiltonian(const std::vector<double> parameters) {
+void   class_tf_ising::set_hamiltonian(const std::vector<double> & parameters) {
     auto temp = Eigen::Map<const Eigen::VectorXd>(parameters.data(),parameters.size());
     set_hamiltonian(temp);
 }
 
 
-void   class_tf_ising::set_hamiltonian(const Eigen::MatrixXd all_parameters, int position) {
+void   class_tf_ising::set_hamiltonian(const Eigen::MatrixXd & all_parameters, int position) {
     set_hamiltonian (all_parameters.row(position));
 }
 
 
-void   class_tf_ising::set_hamiltonian(const Eigen::VectorXd parameters) {
+void   class_tf_ising::set_hamiltonian(const Eigen::VectorXd & parameters) {
     if((int)parameters.size() != num_params ) throw std::runtime_error("Wrong number of parameters given to initialize this model");
     position        = parameters(0);
     J_coupling      = parameters(1);
@@ -131,11 +131,6 @@ Eigen::MatrixXcd class_tf_ising::single_site_hamiltonian(
 
 
 std::unique_ptr<class_model_base> class_tf_ising::clone() const {return std::make_unique<class_tf_ising>(*this);}
-void   class_tf_ising::set_reduced_energy(double site_energy){
-    e_reduced = site_energy;
-    mpo_internal = MPO_reduced_view();
-}
-
 
 size_t class_tf_ising::get_spin_dimension()                         const {return spin_dim;}
 //double class_tf_ising::get_energy_reduced()                         const {return e_reduced;}

@@ -21,7 +21,7 @@ void tools::finite::debug::check_integrity(const class_finite_state &state)
     }
     catch(std::exception & ex){
         tools::finite::print::print_state(state) ;
-        tools::finite::debug::print_parity_properties(state) ;
+//        tools::finite::debug::print_parity_properties(state) ;
         throw std::runtime_error(fmt::format("Check failed: {}", ex.what()));
     }
     state.unset_measurements();

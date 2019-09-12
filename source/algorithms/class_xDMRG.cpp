@@ -106,6 +106,7 @@ void class_xDMRG::single_DMRG_step()
         case  opt::OptSpace::DIRECT   : threshold = settings::precision::MaxSizeDirect  ; break;
     }
     state->activate_sites(threshold);
+    debug::check_integrity(*state);
 
     Eigen::Tensor<Scalar,3> theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
 
@@ -113,23 +114,28 @@ void class_xDMRG::single_DMRG_step()
 //    if (optMode == opt::OptMode::OVERLAP){
 //        sim_status.chi_temp = 16 * (1+sim_status.iteration);
 //    }
+    log->debug("Variance check before truncate: {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
+
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
-    //    mps::rebuild_environments(*state);
-    if(tools::finite::measure::norm(*state) > 1e-10){
+    move_center_point();
+//    tools::finite::mps::rebuild_environments(*state);
+    log->debug("Variance check after  truncate + move : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
+
+    if(std::abs(tools::finite::measure::norm(*state) - 1.0) > 1e-10){
+        tools::log->warn("Norm too large: {:.18f}",tools::finite::measure::norm(*state) );
         tools::finite::mps::normalize(*state);
-        mps::rebuild_environments(*state);
+        tools::finite::mps::rebuild_environments(*state);
+    }
+    if (state->position_is_the_left_edge()){
+        log->debug("Variance check after reduce   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
+        tools::finite::mpo::reduce_mpo_energy(*state);
     }
     debug::check_integrity(*state);
 
-    log->debug("Variance (accurate) check after xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
-    log->debug("Variance (reduced ) check after xDMRG step: {:.16f}", std::log10(measure::reduced ::energy_variance_per_site(*state)));
-
-
-    move_center_point();
-
-
     sim_status.energy_dens        = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
-    state->unset_measurements();
+
+//    mps::rebuild_environments(*state);
+
 
     t_run.toc();
     sim_status.wall_time = t_tot.get_age();

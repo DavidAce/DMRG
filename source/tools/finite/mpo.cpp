@@ -49,3 +49,10 @@ void tools::finite::mpo::randomize(class_finite_state &state, int seed_model) {
 
 
 
+void tools::finite::mpo::reduce_mpo_energy(class_finite_state &state){
+    state.unset_measurements();
+    state.clear_cache();
+    double energy_per_site   = tools::finite::measure::energy_per_site(state);
+    tools::log->trace("Reducing MPO energy by: {}",energy_per_site);
+    state.set_reduced_energy(energy_per_site);
+}
