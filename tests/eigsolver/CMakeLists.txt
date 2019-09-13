@@ -5,7 +5,7 @@ add_executable(TEST-eigsolver eigsolver.cpp
         ${PROJECT_SOURCE_DIR}/source/math/class_eigsolver.cpp
         ${PROJECT_SOURCE_DIR}/source/general/class_tic_toc.cpp)
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 target_include_directories(TEST-eigsolver PUBLIC ${PROJECT_SOURCE_DIR}/source)
 target_include_directories(TEST-eigsolver PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

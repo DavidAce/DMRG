@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 #project(arpack++_mps)
 
 enable_language(Fortran)
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 add_executable(TEST-arpack++_mps arpack++_mps.cpp
                             ../../source/math/class_eigsolver.cpp
                             ../../source/math/arpack_extra/arpackpp_solver.cpp
