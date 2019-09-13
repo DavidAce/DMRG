@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 #project(arpack++_simple)
 
 add_executable(TEST-arpack++_simple arpack++_simple.cpp)
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 ################################################
 ###  Force cmake to find .a library suffixes ###
