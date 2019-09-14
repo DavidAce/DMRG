@@ -94,8 +94,8 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_fi
     auto theta_map = Eigen::Map<Eigen::VectorXcd>(theta.data(),theta.size());
     auto fullnorm  = tools::finite::measure::norm(state);
     auto thetanorm = theta_map.norm();
-    if(std::abs(fullnorm  - 1.0) > 1e-10){ tools::log->error("Norm before truncation too far from unity: {:.16f}",fullnorm);}
-    if(std::abs(thetanorm - 1.0) > 1e-10){ tools::log->error("Norm of theta too far from unity: {:.16f}",thetanorm); theta_map.normalize();}
+    if(std::abs(fullnorm  - 1.0) > settings::precision::MaxNormError){ tools::log->error("Norm before truncation too far from unity: {:.16f}",fullnorm);}
+    if(std::abs(thetanorm - 1.0) > settings::precision::MaxNormError){ tools::log->error("Norm of theta too far from unity: {:.16f}",thetanorm); theta_map.normalize();}
 
 
     if (state.get_direction() == 1){

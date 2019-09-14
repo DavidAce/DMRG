@@ -50,7 +50,7 @@ double tools::finite::measure::norm(const class_finite_state & state){
             .contract(Textra::asDiagonal(state.get_L(pos)), Textra::idx({0},{1}));
     chain = temp;
     double norm_chain = std::abs(Textra::Tensor2_to_Matrix(chain).trace());
-    if(std::abs(norm_chain - 1.0) > 1e-12){
+    if(std::abs(norm_chain - 1.0) > settings::precision::MaxNormError){
         tools::log->warn("Measure: Norm far from unity: {:.16f}", norm_chain);
 //        throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
     }
@@ -369,7 +369,7 @@ Eigen::Tensor<Scalar,1> tools::finite::measure::mps_wavefn(const class_finite_st
     }
     Eigen::Tensor<Scalar,1> mps_chain = chain.reshape(array1{chain.dimension(0)});
     double norm_chain = Textra::Tensor2_to_Matrix(chain).norm();
-    if(std::abs(norm_chain - 1.0) > 1e-10){
+    if(std::abs(norm_chain - 1.0) > settings::precision::MaxNormError){
         tools::log->warn("Norm far from unity: {}", norm_chain);
         throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
     }
