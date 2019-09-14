@@ -118,10 +118,10 @@ void class_xDMRG::single_DMRG_step()
 
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     move_center_point();
-//    tools::finite::mps::rebuild_environments(*state);
+    tools::finite::mps::rebuild_environments(*state);
     log->debug("Variance check after  truncate + move : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
 
-    if(std::abs(tools::finite::measure::norm(*state) - 1.0) > 1e-10){
+    if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::MaxNormError){
         tools::log->warn("Norm too large: {:.18f}",tools::finite::measure::norm(*state) );
         tools::finite::mps::normalize(*state);
         tools::finite::mps::rebuild_environments(*state);

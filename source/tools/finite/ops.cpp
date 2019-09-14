@@ -130,7 +130,8 @@ class_finite_state tools::finite::ops::get_projection_to_parity_sector(const cla
     tools::common::profile::t_prj.tic();
     class_finite_state state_projected = state;
     state_projected.unset_measurements();
-    state_projected.tag_all_sites_have_been_updated(false);
+    state_projected.clear_cache();
+    state_projected.tag_all_sites_have_been_updated(true); // All sites change in this operation
 
     const auto [mpo,L,R]    = qm::mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
