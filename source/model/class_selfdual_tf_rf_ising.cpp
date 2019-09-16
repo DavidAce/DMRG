@@ -31,8 +31,6 @@ class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(size_t position_, std::st
     h_rnd       = rn::log_normal(h_log_mean,h_sigma);
     delta       = J_log_mean - h_log_mean;
 
-
-
 }
 
 

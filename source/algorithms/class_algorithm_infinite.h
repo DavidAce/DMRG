@@ -30,7 +30,7 @@ public:
     void run()                                                                                  override;
     void compute_observables()                                                                  final;
     void clear_saturation_status()                                                              override;
-    void reset_to_random_state(const std::string parity_secto = "none", int seed_state = -1)    final;
+    void reset_to_random_state(const std::string parity_secto = "random", int seed_state = -1)  final;
     void write_measurements(bool force = false)                                                 final;
     void write_state(bool force = false)                                                        final;
     void write_status(bool force = false)                                                       final;
