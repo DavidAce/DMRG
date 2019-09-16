@@ -40,6 +40,10 @@ void class_xDMRG::run_preprocessing() {
     sim_status.chi_max = chi_max();
     state->set_chi_max(sim_status.chi_max);
     find_energy_range();
+    tools::finite::mps::internals::seed_state_unused = true;
+//    reset_to_random_state_in_energy_window(settings::model::initial_parity_sector,true, "Initializing");
+    reset_to_random_state_in_energy_window("random",true, "Initializing");
+//    inflate_initial_state();
     t_pre.toc();
     log->info("Finished {} preprocessing", sim_name);
 }
@@ -162,10 +166,10 @@ void class_xDMRG::check_convergence(){
               or sim_status.variance_mpo_has_converged
               or tools::finite::measure::energy_variance_per_site(*state) < 1e-4))
         {
-            double growth_factor = 1.2;
+            sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
             std::string reason = fmt::format("saturated outside of energy window. Energy density: {}, Energy window: {} --> {}",
-                    sim_status.energy_dens, sim_status.energy_dens_window, std::min(growth_factor*sim_status.energy_dens_window, 0.5) );
-            reset_to_random_state_in_window(growth_factor, reason);
+                    sim_status.energy_dens, sim_status.energy_dens_window, std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5) );
+            reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, true, reason);
 
         }
         else
@@ -173,10 +177,10 @@ void class_xDMRG::check_convergence(){
             (   sim_status.variance_mpo_has_saturated
              or tools::finite::measure::energy_variance_per_site(*state) > 1e-4))
         {
-            double growth_factor = 1.2;
+            sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
             std::string reason = fmt::format("could not update all sites during the first 2 iterations. Energy density: {}, Energy window: {} --> {}",
-                    sim_status.energy_dens, sim_status.energy_dens_window, std::min(growth_factor*sim_status.energy_dens_window, 0.5) );
-            reset_to_random_state_in_window(growth_factor, reason);
+                     sim_status.energy_dens, sim_status.energy_dens_window, std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5) );
+            reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, true, reason);
         }
     }
 
@@ -224,19 +228,35 @@ void class_xDMRG::check_convergence(){
 }
 
 
-void class_xDMRG::reset_to_random_state_in_window(double growth_factor, std::string reason){
+void class_xDMRG::inflate_initial_state(){
+    tools::log->trace("Inflating bond dimension");
+    // Inflate by projecting randomly. Each projection doubles the bond dimension
+    bool keep_bond_dimensions = false;
+    for (int i = 0; i < 6; i++){
+        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, "random" ,keep_bond_dimensions);
+        log->info("χ = {}"         , tools::finite::measure::bond_dimensions(*state));
+    }
+    *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::initial_parity_sector ,keep_bond_dimensions);
+}
+
+
+void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &parity_sector,bool inflate, std::string reason ){
     log->info("Resetting to product state -- Reason: {}", reason);
-    sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
+//    sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
+
     int counter = 0;
     bool outside_of_window = true;
     while(outside_of_window){
         reset_to_random_state(settings::model::initial_parity_sector);
+        if (inflate) inflate_initial_state();
+
         sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
         outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
         counter++;
         if (counter % 10 == 0) {
-            log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}", sim_status.energy_dens_window, std::min(growth_factor*sim_status.energy_dens_window, 0.5) );
-            sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
+            log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}",
+                    sim_status.energy_dens_window, std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5) );
+            sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
         }
     }
     log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
@@ -244,6 +264,38 @@ void class_xDMRG::reset_to_random_state_in_window(double growth_factor, std::str
     has_projected   = false;
     sim_status.energy_ubound      = sim_status.energy_target + sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
     sim_status.energy_lbound      = sim_status.energy_target - sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
+
+
+
+
+
+
+
+    //Initialize state in window and in the specified initial sector
+//    tools::finite::mps::internals::seed_state_unused = true;
+//    bool outside_of_window = true;
+//    int counter = 0;
+//    double growth_factor = 1.10;
+//    while(outside_of_window){
+//        reset_to_random_state(settings::model::initial_parity_sector, settings::model::seed_state);
+//        sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
+//        outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
+//        counter++;
+//        if (counter % 10 == 0) {
+//            log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}", sim_status.energy_dens_window, std::min(growth_factor*sim_status.energy_dens_window, 0.5) );
+//            sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
+//        }
+//    }
+//    log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
+//    clear_saturation_status();
+//    has_projected   = false;
+//    sim_status.energy_ubound      = sim_status.energy_target + sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
+//    sim_status.energy_lbound      = sim_status.energy_target - sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
+
+
+
+
+
 }
 
 
@@ -253,7 +305,7 @@ void class_xDMRG::find_energy_range() {
     size_t max_sweeps_during_f_range = 4;
     sim_status.iteration = state->reset_sweeps();
     sim_status.moves      = state->reset_moves();
-    reset_to_random_state("none");
+    reset_to_random_state("random");
     // Find energy minimum
     while(true) {
         class_algorithm_finite::single_DMRG_step("SR");
@@ -270,7 +322,7 @@ void class_xDMRG::find_energy_range() {
 
     }
     sim_status.energy_min = tools::finite::measure::energy_per_site(*state);
-    reset_to_random_state("none");
+    reset_to_random_state("random");
     // Find energy maximum
     while(true) {
         class_algorithm_finite::single_DMRG_step("LR");
@@ -296,26 +348,7 @@ void class_xDMRG::find_energy_range() {
     log->info("Energy lbound  (per site) = {}", sim_status.energy_lbound);
     log->info("Energy ubound  (per site) = {}", sim_status.energy_ubound);
 
-    //Initialize state in window and in the specified initial sector
-    tools::finite::mps::internals::seed_state_unused = true;
-    bool outside_of_window = true;
-    int counter = 0;
-    double growth_factor = 1.10;
-    while(outside_of_window){
-        reset_to_random_state(settings::model::initial_parity_sector, settings::model::seed_state);
-        sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
-        outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
-        counter++;
-        if (counter % 10 == 0) {
-            log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}", sim_status.energy_dens_window, std::min(growth_factor*sim_status.energy_dens_window, 0.5) );
-            sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
-        }
-    }
-    log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
-    clear_saturation_status();
-    has_projected   = false;
-    sim_status.energy_ubound      = sim_status.energy_target + sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
-    sim_status.energy_lbound      = sim_status.energy_target - sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
+
 
 
 //    int counterA = 0;
@@ -338,6 +371,7 @@ void class_xDMRG::find_energy_range() {
 //    }
 //    log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counterB );
 }
+
 
 
 

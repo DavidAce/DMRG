@@ -18,7 +18,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
                                                          const class_simulation_status &sim_status, OptType optType){
 //    opt::internals::old_direct_optimization(state,sim_status,optType);
 
-    tools::log->trace("Optimizing in CERES mode");
+    tools::log->trace("Optimizing in DIRECT mode");
     tools::common::profile::t_opt.tic();
     using Scalar = std::complex<double>;
     t_opt->tic();
@@ -71,7 +71,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = true;
     options.max_line_search_step_expansion = 100;// 100.0;
-    options.min_line_search_step_size = 1e-12;
+    options.min_line_search_step_size = 1e-9;
     options.max_line_search_step_contraction = 1e-3;
     options.min_line_search_step_contraction = 0.6;
     options.max_num_line_search_step_size_iterations  = 30;//20;
@@ -81,7 +81,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.max_solver_time_in_seconds = 60*5;//60*2;
     options.function_tolerance = 1e-4;
     options.gradient_tolerance = 1e-8;
-    options.parameter_tolerance = 1e-16;//1e-12;
+    options.parameter_tolerance = 1e-14;//1e-12;
 
     options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::debug;
 

@@ -17,7 +17,7 @@
 class class_finite_state;
 class class_xDMRG : public class_algorithm_finite {
 private:
-
+    double energy_window_growth_factor = 1.2;
 public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_finite::class_algorithm_finite;
@@ -26,7 +26,8 @@ public:
     bool   has_projected  = false;
 
     void find_energy_range();
-    void reset_to_random_state_in_window(double growth_factor, std::string reason);
+    void inflate_initial_state();
+    void reset_to_random_state_in_energy_window(const std::string &parity_sector,bool inflate, std::string reason );
     void single_DMRG_step();
     void run_preprocessing()                final;
     void run_simulation()                   final;

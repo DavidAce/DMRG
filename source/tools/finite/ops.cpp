@@ -166,7 +166,11 @@ class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(c
     else if (parity_sector == "-y") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sy,-1, keep_bond_dimensions);}
     else if (parity_sector == "+z") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sz, 1, keep_bond_dimensions);}
     else if (parity_sector == "-z") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sz,-1, keep_bond_dimensions);}
-    else if (parity_sector == "none"){return state;}
+    else if (parity_sector == "randomAxis"){
+        std::vector<std::string> possibilities = {"x","y","z"};
+        std::string chosen_axis = possibilities[rn::uniform_integer(0,2)];
+        get_projection_to_closest_parity_sector(state, chosen_axis, keep_bond_dimensions);
+    }
     else if (parity_sector == "random"){
         auto coeffs = Eigen::Vector3d::Random().normalized();
         Eigen::Matrix2cd random_c2 =
@@ -175,8 +179,9 @@ class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(c
                 +   coeffs(2) * qm::spinOneHalf::sz;
         return get_projection_to_closest_parity_sector(state, random_c2,keep_bond_dimensions);
     }
+    else if (parity_sector == "none"){return state;}
     else{
-        tools::log->warn(R"(Wrong pauli string. Expected one of (+-) "x","y","z", "none" or "random". Got: )" + parity_sector);
+        tools::log->warn(R"(Wrong pauli string. Expected one of (+-) "x","y","z", "randomAxis", "random" or "none". Got: )" + parity_sector);
         tools::log->warn("Taking whichever is closest to current state!");
         auto spin_components = tools::finite::measure::spin_components(state);
         auto max_idx = std::distance(spin_components.begin(), std::max_element(spin_components.begin(),spin_components.end()));

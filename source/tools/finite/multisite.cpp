@@ -109,10 +109,10 @@ double tools::finite::measure::multisite::energy(const class_finite_state &state
     // We want to measure energy accurately always.
     // Since the state can be reduced, the true energy is always
     // E + E_reduced
-    double e_minus_e_reduced = multisite::energy_minus_energy_reduced(state,multitheta);
-    double e_reduced = state.get_energy_reduced();
-    tools::log->debug("Energy minus Energy_reduced = {}",e_minus_e_reduced);
-    tools::log->debug("Energy_reduced              = {}",e_reduced);
+//    double e_minus_e_reduced = multisite::energy_minus_energy_reduced(state,multitheta);
+//    double e_reduced = state.get_energy_reduced();
+//    tools::log->debug("Energy minus Energy_reduced = {}",e_minus_e_reduced);
+//    tools::log->debug("Energy_reduced              = {}",e_reduced);
     return multisite::energy_minus_energy_reduced(state,multitheta) + state.get_energy_reduced();
 }
 

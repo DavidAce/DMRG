@@ -126,11 +126,11 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(
 void tools::finite::mps::internals::set_product_state_randomly(class_finite_state & state,const std::string &parity_sector){
 
 
-    if (parity_sector == "random"){
-        std::vector<std::string> possibilities = {"x","y","z"};
-        std::string chosen_axis = possibilities[rn::uniform_integer(0,2)];
-        set_product_state_in_parity_sector_randomly(state, chosen_axis );
-    }else if (parity_sector == "none"){
+    if (parity_sector == "randomAxis") {
+        std::vector<std::string> possibilities = {"x", "y", "z"};
+        std::string chosen_axis = possibilities[rn::uniform_integer(0, 2)];
+        set_product_state_in_parity_sector_randomly(state, chosen_axis);
+    }else if (parity_sector == "random") {
         Eigen::Tensor<Scalar,1> L (1);
         L.setConstant(1);
         for (auto &mpsL : state.MPS_L ){
@@ -142,8 +142,10 @@ void tools::finite::mps::internals::set_product_state_randomly(class_finite_stat
             auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
             mpsR.set_mps(G,L);
         }
+    }else if (parity_sector == "none"){
+        return;
     }else{
-        throw std::runtime_error(fmt::format("Unrecognized parity_sector: {}. Expected none or random.", parity_sector));
+        throw std::runtime_error(fmt::format(R"(Wrong pauli string. Expected one of (+-) "x","y","z", "randomAxis", "random" or "none". Got: )" + parity_sector));
     }
 
 }
