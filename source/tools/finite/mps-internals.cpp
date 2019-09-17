@@ -52,6 +52,12 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bits
     if (seed_state < 0){
         throw std::runtime_error(fmt::format("Can't set sector from bitset with negative seed_state: {}", seed_state));
     }
+    std::vector<std::string> ok_parity_sectors = {"x","+x","-x","y","+y","-y", "z","+z","-z"};
+    bool parity_sector_is_defined = std::find(ok_parity_sectors.begin(), ok_parity_sectors.end(), parity_sector) != ok_parity_sectors.end();
+    if (not parity_sector_is_defined)
+        throw std::logic_error(fmt::format("Can't use seed_state as enumeration when parity_sector is not well defined. Got: {}", parity_sector));
+
+
     constexpr int maxbits = 128;
     if (maxbits > state.get_length()) throw std::range_error("Max supported state length for bitset is 128");
     std::bitset<maxbits> bs (seed_state);
@@ -123,10 +129,18 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(
 
 
 
-void tools::finite::mps::internals::set_product_state_randomly(class_finite_state & state,const std::string &parity_sector){
-
-
-    if (parity_sector == "randomAxis") {
+void tools::finite::mps::internals::set_product_state_randomly(class_finite_state & state,const std::string &parity_sector,bool use_pauli_eigenstates){
+    std::vector<std::string> ok_parity_sectors = {"x","+x","-x","y","+y","-y", "z","+z","-z"};
+    bool parity_sector_is_defined = std::find(ok_parity_sectors.begin(), ok_parity_sectors.end(), parity_sector) != ok_parity_sectors.end();
+    if (parity_sector_is_defined and use_pauli_eigenstates){
+        // Case a)
+        set_product_state_in_parity_sector_randomly(state,parity_sector);
+    }
+    else if (parity_sector_is_defined and not use_pauli_eigenstates){
+        set_product_state_randomly(state,"random",false);
+        state = tools::finite::ops::get_projection_to_closest_parity_sector(state,parity_sector,false);
+    }
+    else if (parity_sector == "randomAxis") {
         std::vector<std::string> possibilities = {"x", "y", "z"};
         std::string chosen_axis = possibilities[rn::uniform_integer(0, 2)];
         set_product_state_in_parity_sector_randomly(state, chosen_axis);
