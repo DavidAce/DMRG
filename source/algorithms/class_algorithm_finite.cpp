@@ -186,7 +186,7 @@ void class_algorithm_finite::reset_to_random_state(const std::string parity_sect
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     // Randomize state
     state->set_chi_max(chi_max());
-    tools::finite::mps::randomize(*state,parity_sector,seed_state);
+    tools::finite::mps::randomize(*state,parity_sector,seed_state, settings::model::use_pauli_eigvecs, settings::model::use_seed_state_as_enumeration);
 //    tools::finite::mps::project_to_closest_parity_sector(*state, parity_sector);
     clear_saturation_status();
     sim_status.iteration = state->reset_sweeps();

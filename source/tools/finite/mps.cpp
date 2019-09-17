@@ -31,31 +31,47 @@ void tools::finite::mps::initialize(class_finite_state &state, const size_t leng
 
 
 
-void tools::finite::mps::randomize(class_finite_state &state,const std::string &parity_sector, int seed_state){
+void tools::finite::mps::randomize(class_finite_state &state,const std::string &parity_sector, int seed_state, bool use_pauli_eigenstates, bool enumeration)
+/*!
+ * There are many ways to randomize an initial product state state, based on the
+ * arguments (parity_sector,seed_state,use_pauli_eigenstates, enumeration) = (string,int,true/false,true/false).
+ * Let "+-sector" mean one of {"x","+x","-x","y","+y","-y", "z","+z","-z"}.
+
+        a) ("+-sector"  ,+- ,t,f)   Set spinors to a random sequence of eigenvectors (up/down) of either
+                                    sx, sy or sz pauli matrices (same pauli for all sites). If the global
+                                    sign (+-) is omitted, a random sign is chosen with equal probabilities.
+                                    In the x and z cases the full state will turn out to be entirely real,
+                                    which improves performance.
+
+        b) ("random"    ,+- ,f,f)   Set each spinor randomly on C2
+
+
+        c) ("+-sector"  ,+- ,f,f)   Set each spinor randomly on C2 (i.e. case b) and then project the  full state
+                                    to the given parity sector. If the global sign (+-) is omitted,  a random
+                                    sign is chosen with equal probabilities. As a consequence of this, the
+                                    full state will have always have nonzero imaginary part.
+
+        d) ("randomAxis",+- ,f,f)   Randomly select one of {"x","y","z"} and go to case a).
+        e) ("none"      ,+- ,f,f)   Does not randomize
+        f) ("+-sector"  ,>=0,?,t)   Interpret seed_state as bitfield "01100010110..." and interpret these as
+                                    up(0)/down(1) of either sx, sy or sz pauli matrices (same pauli for all sites)
+ * Note: seed_state is only used if >= 0.
+ * Note: we "use" the seed_state only once. Subsequent calls do not keep resetting the seed.
+*/
+{
     tools::log->trace("Randomizing mps");
     using Scalar = class_finite_state::Scalar;
     state.unset_measurements();
     state.tag_all_sites_have_been_updated(false);
 
-    // There are three ways to randomize an initial product state state:
-    // a) Use seed_state to set spinors to a random sequence of eigenvectors (up/down) of either sx, sy or sz.
-    // b) Use seed_state as a bitfield "01100010110..." and interpret these as up/down of either sx, sy or sz.
-    // c) Use seed_state as to set the spinors completely randomly
-    // In either case we "use" the seed_state once.
-
-    std::vector<std::string> ok_parity_sectors = {"x","+x","-x","y","+y","-y", "z","+z","-z"};
-    bool parity_sector_is_defined = std::find(ok_parity_sectors.begin(), ok_parity_sectors.end(), parity_sector) != ok_parity_sectors.end();
     if(seed_state >= 0 and internals::seed_state_unused){
         rn::seed(seed_state);
         internals::seed_state_unused = false;
-        if         (settings::model::use_seed_state_as_enumeration and     parity_sector_is_defined)   internals::set_product_state_in_parity_sector_from_bitset(state, parity_sector, seed_state);
-        else if(not settings::model::use_seed_state_as_enumeration and     parity_sector_is_defined)   internals::set_product_state_in_parity_sector_randomly(state, parity_sector);
-        else if(not settings::model::use_seed_state_as_enumeration and not parity_sector_is_defined)   internals::set_product_state_randomly(state, parity_sector);
-        else throw std::logic_error(fmt::format("Can't use seed_state as enumeration when parity_sector is not defined. Got: {}", parity_sector));
-    }else{
-        if(parity_sector_is_defined)        internals::set_product_state_in_parity_sector_randomly(state,parity_sector);
-        else                                internals::set_product_state_randomly(state,parity_sector);
     }
+
+    if   (enumeration)
+         internals::set_product_state_in_parity_sector_from_bitset(state, parity_sector, seed_state);
+    else internals::set_product_state_randomly(state, parity_sector, use_pauli_eigenstates);
     tools::finite::mps::rebuild_environments(state);
 }
 

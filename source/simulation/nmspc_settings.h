@@ -53,6 +53,7 @@ namespace settings {
         inline int          seed_state     = -1;                        /*!< Seed for generating the initial state. If seed_state < 0, seed_init is used instead  */
         inline bool         use_seed_state_as_enumeration = true;       /*!< Use the bit field of seed_state to enumerate initial states in the basis hinted by initial_sector.  */
         inline bool         project_when_saturated        = true;       /*!< Project to target parity sector if saturation occurs before convergence.  */
+        inline bool         use_pauli_eigvecs             = true;       /*!< Use random pauli eigenvectors to initialize spinors in x,y or z  */
         inline std::string  initial_parity_sector = "x";                /*!< Initialize in a global parity sector: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
         inline std::string  target_parity_sector  = "x";                /*!< Project to in a global parity sector upon saturation: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
 

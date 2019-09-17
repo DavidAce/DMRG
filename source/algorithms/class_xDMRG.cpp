@@ -41,8 +41,8 @@ void class_xDMRG::run_preprocessing() {
     state->set_chi_max(sim_status.chi_max);
     find_energy_range();
     tools::finite::mps::internals::seed_state_unused = true;
-//    reset_to_random_state_in_energy_window(settings::model::initial_parity_sector,true, "Initializing");
-    reset_to_random_state_in_energy_window("random",true, "Initializing");
+    reset_to_random_state_in_energy_window(settings::model::initial_parity_sector,false, "Initializing");
+//    reset_to_random_state_in_energy_window("random",false, "Initializing");
 //    inflate_initial_state();
     t_pre.toc();
     log->info("Finished {} preprocessing", sim_name);
@@ -169,7 +169,7 @@ void class_xDMRG::check_convergence(){
             sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
             std::string reason = fmt::format("saturated outside of energy window. Energy density: {}, Energy window: {} --> {}",
                     sim_status.energy_dens, sim_status.energy_dens_window, std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5) );
-            reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, true, reason);
+            reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
 
         }
         else
@@ -180,7 +180,7 @@ void class_xDMRG::check_convergence(){
             sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
             std::string reason = fmt::format("could not update all sites during the first 2 iterations. Energy density: {}, Energy window: {} --> {}",
                      sim_status.energy_dens, sim_status.energy_dens_window, std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5) );
-            reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, true, reason);
+            reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
         }
     }
 

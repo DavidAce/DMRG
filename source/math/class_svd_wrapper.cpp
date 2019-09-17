@@ -67,8 +67,7 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
 //    file.writeDataset(mat, "svdmatrix");
 
 
-    return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
-
+//    return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
     SVD.setThreshold(SVDThreshold);
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -91,6 +90,19 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
         return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
 //        throw std::runtime_error("SVD error:  Erroneous results");
     }
+
+//    auto [U_lapacke, S_lapacke,V_lapacke ,rank_lapacke] = do_svd_lapacke(mat_ptr, rows,cols,rank_max);
+//    long rank_common = std::min(rank_lapacke,rank);
+//    if ( (SVD.singularValues().head(rank_common) - S_lapacke).array().cwiseAbs().sum() > 1e-12 ){
+//        std::cerr   << "SVD Eigen - Lapacke mismatch" << std::endl;
+//        std::cerr   << std::setw(48) << "Eigen" << std::setw(48) << "Lapacke"  << std::setw(48) << "Diff" << std::endl;
+//        for(int i = 0; i < rank_common; i++){
+//            std::cerr   << std::setw(48) <<  std::setprecision(16)  << SVD.singularValues()(i)
+//                        << std::setw(48) <<  std::setprecision(16)  << S_lapacke(i)
+//                        << std::setw(48) <<  std::setprecision(16)  << std::abs(SVD.singularValues()(i)  - S_lapacke(i))
+//                        << std::endl;
+//        }
+//    }
 
 
 //    std::cout << "Singular values           : " << SVD.singularValues().transpose() << std::endl;

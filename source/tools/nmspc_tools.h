@@ -37,7 +37,7 @@ namespace tools{
         using Scalar = std::complex<double>;
         namespace mps {
             extern void initialize                          (class_finite_state & state, size_t length);
-            extern void randomize                           (class_finite_state & state, const std::string &parity_sector = "random", int seed_state = -1);
+            extern void randomize                           (class_finite_state &state, const std::string &parity_sector = "random", int seed_state = -1, bool use_pauli_eigenstates = false, bool enumeration =  false);
             extern void normalize                           (class_finite_state & state, bool keep_bond_dimensions = false);
             extern void rebuild_environments                (class_finite_state & state);
             extern int  move_center_point                   (class_finite_state & state);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
@@ -47,7 +47,7 @@ namespace tools{
                 inline bool seed_state_unused = true;
                 extern void set_product_state_in_parity_sector_from_bitset(class_finite_state & state, const std::string &parity_sector, const int seed_state);
                 extern void set_product_state_in_parity_sector_randomly(class_finite_state & state, const std::string &parity_sector);
-                extern void set_product_state_randomly(class_finite_state & state,const std::string &parity_sector);
+                extern void set_product_state_randomly(class_finite_state & state,const std::string &parity_sector,bool use_pauli_eigenstates);
             }
 
         }
