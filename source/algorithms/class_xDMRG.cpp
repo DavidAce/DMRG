@@ -232,9 +232,9 @@ void class_xDMRG::inflate_initial_state(){
     tools::log->trace("Inflating bond dimension");
     // Inflate by projecting randomly. Each projection doubles the bond dimension
     bool keep_bond_dimensions = false;
-    for (int i = 0; i < 6; i++){
+    for (int i = 0; i < 4; i++){
         *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, "random" ,keep_bond_dimensions);
-        log->info("χ = {}"         , tools::finite::measure::bond_dimensions(*state));
+        log->debug("χ = {}"         , tools::finite::measure::bond_dimensions(*state));
     }
     *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::initial_parity_sector ,keep_bond_dimensions);
 }
