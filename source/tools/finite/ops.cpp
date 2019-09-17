@@ -190,6 +190,7 @@ class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(c
         else if(max_idx == 2) {return get_projection_to_closest_parity_sector(state, "z",keep_bond_dimensions); }
         else {throw std::runtime_error("Wrong parity_sector string and could not find closest parity state");}
     }
+    throw std::runtime_error(fmt::format(R"(Wrong pauli string. Expected one of (+-) "x","y","z", "randomAxis", "random" or "none". Got: )" + parity_sector));
 }
 
 

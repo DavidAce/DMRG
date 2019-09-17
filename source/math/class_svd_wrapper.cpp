@@ -67,6 +67,7 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
 //    file.writeDataset(mat, "svdmatrix");
 
 
+    return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
 
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
     SVD.setThreshold(SVDThreshold);
