@@ -342,7 +342,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                 double prev_variance = tools::finite::measure::energy_variance_per_site(state);
                 auto [best_variance, idx_variance] = get_best_state_in_window(state,eigvecs,eigvals_per_site_unreduced,sim_status.energy_lbound,sim_status.energy_ubound);
                 if (idx_variance < 0 or overlaps(idx_variance) < 0.01){
-                    tools::log->debug("No better variance states in energy range. Returning old theta");
+                    tools::log->debug("No better variance states (with sufficient overlap > 0.01) found in energy range. Returning old theta");
                     state.tag_active_sites_have_been_updated(false);
                     return theta;
                 }
