@@ -17,7 +17,7 @@
 class class_finite_state;
 class class_xDMRG : public class_algorithm_finite {
 private:
-    double energy_window_growth_factor = 1.2;
+    double energy_window_growth_factor = 1.1;
 public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_finite::class_algorithm_finite;

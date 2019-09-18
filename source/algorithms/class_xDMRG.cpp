@@ -94,8 +94,9 @@ void class_xDMRG::single_DMRG_step()
     log->trace("Starting single xDMRG step");
 //  log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
 
-    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
-    optMode       = measure::energy_variance_per_site(*state) > 1e-4  ?  opt::OptMode::OVERLAP : optMode;
+//    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
+//    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
+    auto optMode    = measure::energy_variance_per_site(*state) > 1e-6  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
 
     auto optSpace = opt::OptSpace::SUBSPACE;
 //    optSpace      = measure::energy_variance_per_site(*state) < settings::precision::VarConvergenceThreshold         ?  opt::OptSpace::DIRECT  : optSpace;
