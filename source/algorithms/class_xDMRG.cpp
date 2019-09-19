@@ -51,7 +51,7 @@ void class_xDMRG::run_preprocessing() {
 void class_xDMRG::run_simulation()    {
     log->info("Starting {} simulation", sim_name);
     while(true) {
-        log->trace("Starting step {}, iteration {}, direction {}", sim_status.moves, sim_status.iteration, state->get_direction());
+        log->trace("Starting step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
         single_DMRG_step();
         write_measurements();
         write_state();
