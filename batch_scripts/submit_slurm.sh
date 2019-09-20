@@ -9,12 +9,13 @@ usage() {
 Usage                               : $PROGNAME [-options] with the following options:
 -h                                  : Help. Shows this text.
 -b <build type>                     : Release | RelWithDebInfo | Debug | Profile |  (default = Release)
--e                                  : Enable --exclusive mode. (default off)
--g                                  : Enable GNU Parallel. (default off)
--j <job name>                       : Job name. (default=DMRG)
+-e                                  : Enable --exclusive mode. (default = off)
+-g                                  : Enable GNU Parallel. (default = off)
+-i <input seed file>                : Name of file containing a list of seeds. (default = )
+-j <job name>                       : Job name. (default = DMRG)
 -k <step size>                      : Step size of job arrays,for use with GNU Parallel (default = 32)
 -m <memory (MB)>                    : Reserved amount of ram for each task in MB. (default = 4000)
--n <num sims>                       : Number of simulations per input file (default 10)
+-n <num sims>                       : Number of simulations per input file (default = 10)
 -o <other>                          : Other options passed to sbatch
 -p <partition>                      : Partition name (default = all)
 -r <requeue>                        : Enable --requeue, for requeuing in case of failure (default OFF)
@@ -32,13 +33,15 @@ jobname=DMRG
 stepsize=32
 mem=4000
 startseed=0
+inputseeds=""
 time=--time=0-1:00:00
-while getopts hb:egj:k:m:n:o:p:rs:S:t: o; do
+while getopts hb:egi:j:k:m:n:o:p:rs:S:t: o; do
     case $o in
         (h) usage ;;
         (b) build=$OPTARG;;
         (e) exclusive=--exclusive;;
         (g) gnuparallel=true;;
+        (i) inputseeds=$OPTARG;;
         (j) jobname=$OPTARG;;
         (k) stepsize=$OPTARG;;
         (m) mem=$OPTARG;;
@@ -81,35 +84,42 @@ inputfiles=$(find -L input -type f -name '*.cfg')
 filecount=0
 for inputfile in $inputfiles; do
     [ -e "$inputfile" ] || continue
-    seedmin=$((filecount*nsims + startseed))
-    seedmax=$((seedmin+nsims-1))
-    echo "Submitting jobs=[$seedmin - $seedmax]"
 
-    if [ "$gnuparallel" = true ]; then
-        if [[ "$HOSTNAME" == *"tetralith"* ]];then
-            module try-load parallel/20181122-nsc1
+    if [ -n "$inputseeds" ] ; then
+        sbatch $partition $requeue $exclusive $time $other \
+                    --mem-per-cpu=$mem \
+                    --job-name=$jobname \
+                    run_parallel.sh -e $exec -f $inputfile -i $inputseeds
+    else
+        seedmin=$((filecount*nsims + startseed))
+        seedmax=$((seedmin+nsims-1))
+        echo "Submitting jobs=[$seedmin - $seedmax]"
+
+        if [ "$gnuparallel" = true ]; then
+            if [[ "$HOSTNAME" == *"tetralith"* ]];then
+                module try-load parallel/20181122-nsc1
+            else
+                module try-load parallel
+            fi
+            stepsize=$(( stepsize < nsims ? stepsize : nsims ))
+            seedcount=$seedmin
+            while [ $seedcount -lt $seedmax ] ; do
+                nmin=$seedcount
+                nmax=$((nmin + stepsize - 1))
+                nmax=$((nmax < seedmax ? nmax : seedmax))
+                sbatch $partition $requeue $exclusive $time $other \
+                    --mem-per-cpu=$mem \
+                    --job-name=$jobname \
+                    run_parallel.sh -e $exec -f $inputfile -l $nmin -u $nmax
+                seedcount=$((nmax + 1))
+            done
         else
-            module try-load parallel
-        fi
-        stepsize=$(( stepsize < nsims ? stepsize : nsims ))
-        seedcount=$seedmin
-        while [ $seedcount -lt $seedmax ] ; do
-            nmin=$seedcount
-            nmax=$((nmin + stepsize - 1))
-            nmax=$((nmax < seedmax ? nmax : seedmax))
             sbatch $partition $requeue $exclusive $time $other \
                 --mem-per-cpu=$mem \
-                --job-name=$jobname \
-                run_parallel.sh $exec $inputfile $nmin $nmax
-            seedcount=$((nmax + 1))
-        done
-    else
-        sbatch $partition $requeue $exclusive $time $other \
-            --mem-per-cpu=$mem \
-            --array=$seedmin-$seedmax%$maxtasks --job-name=$jobname \
-            run_jobarray.sh $exec $inputfile
+                --array=$seedmin-$seedmax%$maxtasks --job-name=$jobname \
+                run_jobarray.sh $exec $inputfile
+        fi
     fi
     filecount=$((filecount+1))
-
 
 done
