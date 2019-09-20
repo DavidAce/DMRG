@@ -86,10 +86,20 @@ for inputfile in $inputfiles; do
     [ -e "$inputfile" ] || continue
 
     if [ -n "$inputseeds" ] ; then
-        sbatch $partition $requeue $exclusive $time $other \
+        if [ "$gnuparallel" = true ]; then
+            if [[ "$HOSTNAME" == *"tetralith"* ]];then
+                module try-load parallel/20181122-nsc1
+            else
+                module try-load parallel
+            fi
+            sbatch $partition $requeue $exclusive $time $other \
                     --mem-per-cpu=$mem \
                     --job-name=$jobname \
                     run_parallel.sh -e $exec -f $inputfile -i $inputseeds
+        else
+            echo "Please enable gnu parallel"
+            exit 1
+        fi
     else
         seedmin=$((filecount*nsims + startseed))
         seedmax=$((seedmin+nsims-1))
