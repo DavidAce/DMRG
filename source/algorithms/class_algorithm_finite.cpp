@@ -281,15 +281,20 @@ void class_algorithm_finite::clear_saturation_status(){
     V_mpo_vec.clear();
     X_mpo_vec.clear();
 
-    sim_status.entanglement_has_saturated      = false;
-    sim_status.variance_mpo_has_saturated      = false;
-    sim_status.variance_mpo_saturated_for      = 0;
-
     sim_status.entanglement_has_converged     = false;
+    sim_status.entanglement_has_saturated     = false;
+    sim_status.entanglement_saturated_for     = 0;
+
     sim_status.variance_mpo_has_converged     = false;
+    sim_status.variance_mpo_has_saturated     = false;
+    sim_status.variance_mpo_saturated_for     = 0;
+
 
     sim_status.bond_dimension_has_reached_max = false;
     sim_status.simulation_has_to_stop         = false;
+    sim_status.simulation_has_converged       = false;
+    sim_status.simulation_has_saturated       = false;
+
 }
 
 

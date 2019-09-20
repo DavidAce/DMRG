@@ -163,9 +163,9 @@ void class_xDMRG::check_convergence(){
         )
     {
         if (outside_of_window and
-            (    sim_status.variance_mpo_has_saturated
-              or sim_status.variance_mpo_has_converged
-              or tools::finite::measure::energy_variance_per_site(*state) < 1e-4))
+            (   sim_status.variance_mpo_has_saturated or
+                sim_status.variance_mpo_has_converged or
+                tools::finite::measure::energy_variance_per_site(*state) < 1e-4))
         {
             sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
             std::string reason = fmt::format("saturated outside of energy window. Energy density: {}, Energy window: {} --> {}",
@@ -174,12 +174,13 @@ void class_xDMRG::check_convergence(){
 
         }
         else
-        if(not state->all_sites_updated() and
-            (   sim_status.variance_mpo_has_saturated
-             or tools::finite::measure::energy_variance_per_site(*state) > 1e-4))
+        if( not state->all_sites_updated() and
+            not sim_status.variance_mpo_has_converged and
+                sim_status.variance_mpo_has_saturated and
+                tools::finite::measure::energy_variance_per_site(*state) > 1e-4)
         {
             sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
-            std::string reason = fmt::format("could not update all sites during the first 2 iterations. Energy density: {}, Energy window: {} --> {}",
+            std::string reason = fmt::format("could not update all sites. Energy density: {}, Energy window: {} --> {}",
                      sim_status.energy_dens, sim_status.energy_dens_window, std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5) );
             reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
         }
