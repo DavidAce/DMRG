@@ -61,32 +61,18 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_finite_stat
     std::list<size_t> sites;
     std::vector<Eigen::DSizes<long,3>> dims;
     while(position >= 0 and position < length){
-//        dims.emplace_back(state.get_G(position).dimensions());
-//        long chiL = direction == 1 ? dims.front()[1] : dims.back() [1];
-//        long chiR = direction == 1 ? dims.back() [2] : dims.front()[2];
-//        long cost = chiL * chiR;
-//        for (auto &d : dims ){cost *= d[0];}
-//        costs.push_back(cost);
-//        sites.push_back(position);
-//        position += direction;
         sites.emplace_back(position);
         costs.emplace_back(get_problem_size(state,sites));
         position += direction;
     }
     tools::log->debug("Activation problem sizes: {}", costs);
-//    std::reverse(costs.begin(),costs.end()); //Go from expensive -> cheap
-
-
     // Evaluate best cost. Threshold depends on optSpace
     // Case 1: All costs are equal              -> take all sites
     // Case 2: Costs increase indefinitely      -> take until threshold
     // Case 3: Costs increase and saturate      -> take until threshold
-//    size_t costs_start = 0;
-//    size_t costs_size  = costs.size();
+
     std::string reason;
     while (true){
-//        auto costsmap = Eigen::Map<Eigen::Array<long, Eigen::Dynamic,1>>(costs.data() + costs_start ,costs_size);
-//        bool allequal = (costsmap == costsmap(0)).all();
         bool allequal = std::all_of(costs.begin(), costs.end(), [costs](size_t c) { return c == costs.front(); });
         auto c = costs.back();
         if (c <= threshold  and sites.size() <= max_sites) {reason = "good threshold found: " + std::to_string(c) ;break;}
@@ -97,8 +83,6 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_finite_stat
         else{
             sites.pop_back();
             costs.pop_back();
-//            costs_start++;
-//            costs_size--;
         }
     }
     if (direction == -1){std::reverse(sites.begin(),sites.end());}

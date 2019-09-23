@@ -156,7 +156,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     tools::common::profile::t_opt.toc();
     // Return something strictly better
     state.tag_active_sites_have_been_updated(true);
-    if (variance_new < 0.95 * tools::finite::measure::energy_variance_per_site(state)){
+    if (variance_new < 0.99 * tools::finite::measure::energy_variance_per_site(state)){
         tools::log->debug("Returning new theta");
         return  Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
 

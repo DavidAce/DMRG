@@ -208,8 +208,6 @@ void class_xDMRG::check_convergence(){
         }
     }
 
-
-
     if(    sim_status.variance_mpo_has_converged
        and sim_status.entanglement_has_converged
        and sim_status.variance_mpo_saturated_for >= min_saturation_iters
@@ -220,21 +218,23 @@ void class_xDMRG::check_convergence(){
         sim_status.simulation_has_converged = true;
     }
 
-
-    if (sim_status.bond_dimension_has_reached_max
+    else if( sim_status.bond_dimension_has_reached_max
+        and not sim_status.simulation_has_converged
+        and sim_status.num_resets < settings::precision::MaxResets
+        and ( sim_status.variance_mpo_saturated_for >= min_saturation_iters
+           or sim_status.entanglement_saturated_for >= min_saturation_iters))
+    {
+        std::string reason = fmt::format("simulation has saturated with bad precision",
+                                         sim_status.energy_dens, sim_status.energy_dens_window, sim_status.energy_dens_window);
+        reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
+    }
+    else if (sim_status.bond_dimension_has_reached_max
         and (  sim_status.variance_mpo_saturated_for >= max_saturation_iters
             or sim_status.entanglement_saturated_for >= max_saturation_iters)
         )
     {
-        if (sim_status.num_resets < settings::precision::MaxResets){
-            std::string reason = fmt::format("simulation has saturated with bad precision",
-                                             sim_status.energy_dens, sim_status.energy_dens_window, sim_status.energy_dens_window);
-            reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
-        }else{
-            log->debug("Simulation has to stop");
-            sim_status.simulation_has_to_stop = true;
-        }
-
+        log->debug("Simulation has to stop");
+        sim_status.simulation_has_to_stop = true;
     }
 
 
