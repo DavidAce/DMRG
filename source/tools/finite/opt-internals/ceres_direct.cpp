@@ -83,7 +83,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.gradient_tolerance = 1e-8;
     options.parameter_tolerance = 1e-14;//1e-12;
 
-    options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::debug;
+    options.minimizer_progress_to_stdout = tools::log->level() == spdlog::level::trace;
 
     ceres::GradientProblemSolver::Summary summary;
     int counter,iter;
@@ -156,7 +156,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     tools::common::profile::t_opt.toc();
     // Return something strictly better
     state.tag_active_sites_have_been_updated(true);
-    if (variance_new < tools::finite::measure::energy_variance_per_site(state)){
+    if (variance_new < 0.95 * tools::finite::measure::energy_variance_per_site(state)){
         tools::log->debug("Returning new theta");
         return  Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
 

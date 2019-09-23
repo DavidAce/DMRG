@@ -53,6 +53,7 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<size_t>     ("precision::MaxSizePartDiag"                 , precision::MaxSizePartDiag);
     indata.find_parameter<size_t>     ("precision::MaxSizeDirect"                   , precision::MaxSizeDirect);
     indata.find_parameter<double>     ("precision::MaxNormError"                    , precision::MaxNormError);
+    indata.find_parameter<size_t>     ("precision::MaxResets"                       , precision::MaxResets);
     //Parameters controlling infinite-DMRG
     indata.find_parameter<bool>   ("idmrg::on"         , idmrg::on);
     if(idmrg::on){

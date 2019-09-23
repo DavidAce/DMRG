@@ -57,7 +57,7 @@ if [ -n "$seedfile" ] ; then
         echo "Can't both have a range [nmin nmax] and a seedfile"
         exit 1
     elif [ -z "$outdir" ] ; then
-        outdir=logs
+        outdir=logs/seed_from_file
     fi
 fi
 

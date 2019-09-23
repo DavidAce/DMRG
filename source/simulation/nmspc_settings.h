@@ -100,7 +100,8 @@ namespace settings {
         inline size_t   MaxSizeFullDiag              = 2048  ;   /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
         inline size_t   MaxSizePartDiag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */
         inline size_t   MaxSizeDirect                = 131072;   /*!< Maximum linear size for direct multisite dmrg. If the linear size is larger than this, the algorithm prefers 2-site dmrg. */
-        inline double   MaxNormError                 = 1e-10 ;   /*!< Maximum noorm deviation from unity during integrity checks */
+        inline double   MaxNormError                 = 1e-10 ;   /*!< Maximum norm deviation from unity during integrity checks */
+        inline size_t   MaxResets                    = 10    ;   /*!< Maximum number of resets to initial state */
 
     }
 

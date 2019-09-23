@@ -27,7 +27,7 @@ tools::finite::opt::find_excited_state(const class_finite_state &state, const cl
 
     std::stringstream problem_report;
     auto dims = state.active_dimensions();
-    auto size = std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<size_t>());
+    auto size = state.active_problem_size();
     problem_report
             << "Starting optimization"
             << std::setprecision(10)

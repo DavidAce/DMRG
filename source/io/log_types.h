@@ -347,14 +347,15 @@ public:
 class class_log_simulation_status{
 private:
     struct meta_struct{
-        constexpr static hsize_t                NFIELDS     = 35;
+        constexpr static hsize_t                NFIELDS     = 36;
         size_t           dst_size                           = sizeof (status_data);
         std::array       <size_t,NFIELDS>       dst_offsets =
                 {
-                    HOFFSET(status_data, step                          ),
                     HOFFSET(status_data, iteration                     ),
                     HOFFSET(status_data, moves                         ),
+                    HOFFSET(status_data, step                          ),
                     HOFFSET(status_data, position                      ),
+                    HOFFSET(status_data, num_resets                    ),
                     HOFFSET(status_data, chi_temp                      ),
                     HOFFSET(status_data, chi_max                       ),
                     HOFFSET(status_data, min_sweeps                    ),
@@ -390,10 +391,11 @@ private:
                 };
 
         std::array       <size_t,NFIELDS>       dst_sizes   = {
-                sizeof(status_data::step                          ),
                 sizeof(status_data::iteration                     ),
                 sizeof(status_data::moves                         ),
+                sizeof(status_data::step                          ),
                 sizeof(status_data::position                      ),
+                sizeof(status_data::num_resets                    ),
                 sizeof(status_data::chi_temp                      ),
                 sizeof(status_data::chi_max                       ),
                 sizeof(status_data::min_sweeps                    ),
@@ -429,10 +431,11 @@ private:
 
         std::array       <const char*,NFIELDS>  field_names =
                 {
-                    "step",
                     "iteration",
                     "moves",
+                    "step",
                     "position",
+                    "num_resets"
                     "chi_temp",
                     "chi_max",
                     "min_sweeps",
@@ -468,6 +471,7 @@ private:
 
         std::array       <hid_t,NFIELDS>        field_types =
                 {
+                        H5T_NATIVE_UINT,
                         H5T_NATIVE_UINT,
                         H5T_NATIVE_UINT,
                         H5T_NATIVE_UINT,

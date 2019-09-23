@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iterator>
 #include <vector>
+#include <list>
 #include <iostream>
 #include <cmath>
 
@@ -35,6 +36,32 @@ namespace math
         return (x % y + y) % y;
     }
 
+    /*! \brief Python-style range generator, including edges
+    *   \return Range of T's. Example, <code> range(0,8,2) </code> gives a std::vector<int>: <code> [0,2,4,6,8] </code>
+    */
+    template<typename T1, typename T2, typename T3>
+    std::vector<T3> range(T1 first, T2 last, T3 step){
+        if (step == 0) throw std::runtime_error("Range cannot have step size zero");
+        if (first > last and step > 0 ) return range(first,last,-step);
+        if (first < last and step < 0 ) return range(first,last,-step);
+        if (first == last) return std::vector<T3>{first};
+        T3 current = first;
+        std::vector<T3> vec;
+        size_t num_steps = std::abs(int((last-first+step) / step));
+        if(num_steps > 1000000) throw std::runtime_error("Too many steps");
+        while(current <= last){
+            vec.push_back(current);
+            current += step;
+        }
+        return vec;
+    }
+
+    template<typename T1, typename T2, typename T3>
+    std::list<T3> range_list(T1 first, T2 last, T3 step){
+        std::list<T3> vec2list;
+        for(auto &item : range (first,last,step)){vec2list.emplace_back(item);}
+        return vec2list;
+    }
 
     /*! \brief MatLab-style linearly spaced array
     *   \param num number of linearly spaced values

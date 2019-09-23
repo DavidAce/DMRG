@@ -19,6 +19,7 @@ struct status_data{
     size_t moves                          = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
     size_t step                           = 0; //How many dmrg steps have been taken (each step may cover multiple sites)
     size_t position                       = 0;
+    size_t num_resets                     = 0;
     long   chi_temp                       = 16;
     long   chi_max                        = 16;
     size_t min_sweeps                     = 2 ;
