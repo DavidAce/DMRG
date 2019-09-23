@@ -71,14 +71,7 @@ else
     exit 1
 fi
 
-while [ $((nsims % stepsize )) != 0  ]; do
-    stepsize=$((stepsize-1))
-    echo "adjusted stepsize = $stepsize , mod= $((nsims % stepsize))"
-done
 
-if [ $stepsize = 0 ]; then
-    exit 1
-fi
 
 inputfiles=$(find -L input -type f -name '*.cfg')
 filecount=0
@@ -109,6 +102,16 @@ if [ -n "$inputseeds" ] ; then
 
 
 else
+    while [ $((nsims % stepsize )) != 0  ]; do
+        stepsize=$((stepsize-1))
+        echo "adjusted stepsize = $stepsize , mod= $((nsims % stepsize))"
+    done
+
+    
+    if [ $stepsize = 0 ]; then
+        exit 1
+    fi
+
     for inputfile in $inputfiles; do
         [ -e "$inputfile" ] || continue
         seedmin=$((filecount*nsims + startseed))
