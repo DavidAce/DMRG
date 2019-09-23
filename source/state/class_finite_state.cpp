@@ -6,7 +6,7 @@
 #include "class_finite_state.h"
 #include <tools/nmspc_tools.h>
 #include <general/nmspc_quantum_mechanics.h>
-
+#include <spdlog/fmt/bundled/ranges.h>
 
 // We need to make a destructor manually for the enclosing class "class_finite_state"
 // that encloses "class_model_base". Otherwise unique_ptr will forcibly inline its
@@ -323,26 +323,17 @@ void class_finite_state::set_reduced_energy(double site_energy){
 
 
 
-std::list<size_t> class_finite_state::activate_sites(long threshold){
+std::list<size_t> class_finite_state::activate_sites(const long threshold, const size_t max_sites){
     clear_cache();
-    return active_sites = tools::finite::multisite::generate_site_list(*this,threshold);
+    return active_sites = tools::finite::multisite::generate_site_list(*this,threshold, max_sites);
 }
 
 Eigen::DSizes<long,3> class_finite_state::active_dimensions() const{
-    Eigen::DSizes<long,3> dimensions;
-    dimensions[1] = get_G(active_sites.front()).dimension(1);
-    dimensions[2] = get_G(active_sites.back()).dimension(2);
-    dimensions[0] = 1;
-    for (auto & site : active_sites){
-        dimensions[0] *= get_G(site).dimension(0);
-    }
-    return dimensions;
+    return tools::finite::multisite::get_dimensions(*this,active_sites);
 }
 
-size_t class_finite_state::active_size() const {
-    if (active_dimensions().empty()) return 0;
-    auto dims = active_dimensions();
-    return dims[0]*dims[1]*dims[2];
+size_t class_finite_state::active_problem_size() const {
+    return tools::finite::multisite::get_problem_size(*this,active_sites);
 }
 
 
@@ -373,7 +364,7 @@ Eigen::Tensor<class_finite_state::Scalar,3>   class_finite_state::get_multitheta
 
 Eigen::Tensor<class_finite_state::Scalar,4>   class_finite_state::get_multimpo()    const{
     if(cache.multimpo) return cache.multimpo.value();
-    tools::log->trace("Generating multimpo");
+    tools::log->trace("Generating multimpo on sites {}", active_sites);
     if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multimpo");}
     Eigen::Tensor<Scalar,4> multimpo;
     Eigen::Tensor<Scalar,4> temp;
@@ -408,7 +399,7 @@ class_finite_state::get_multienv2()     const{
 
 
 class_finite_state::TType<6> class_finite_state::get_multi_hamiltonian() const{
-    tools::log->trace("Generating multi hamiltonian");
+    tools::log->trace("Generating multi hamiltonian on sites {}", active_sites);
 
 //    auto [envL,envR] = get_multienv();
     auto & envL = get_ENVL(active_sites.front());
@@ -438,16 +429,32 @@ class_finite_state::TType<6>   class_finite_state::get_multi_hamiltonian2() cons
 }
 
 class_finite_state::MType class_finite_state::get_multi_hamiltonian_matrix() const{
-    auto dims = active_dimensions();
-    long shape = dims[0] * dims[1] * dims[2];
-    return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(get_multi_hamiltonian().data(),shape,shape).transpose();
-}
-class_finite_state::MType class_finite_state::get_multi_hamiltonian2_matrix() const{
-    auto dims = active_dimensions();
-    long shape = dims[0] * dims[1] * dims[2];
-    Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> ham_squared = Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(get_multi_hamiltonian2().data(),shape,shape);
+    long size = active_problem_size();
+    auto ham_tensor = get_multi_hamiltonian();
+    auto cols       = ham_tensor.dimension(0)* ham_tensor.dimension(1)* ham_tensor.dimension(2);
+    auto rows       = ham_tensor.dimension(3)* ham_tensor.dimension(4)* ham_tensor.dimension(5);
+
+    if(rows != size)
+        throw std::runtime_error (fmt::format("Mismatch hamiltonian dim0*dim1*dim2 and cols: {} != {}",cols, size));
+    if(cols != size)
+        throw std::runtime_error (fmt::format("Mismatch hamiltonian dim3*dim4*dim5 and rows: {} != {}",rows, size));
     tools::log->trace("Finished contraction of multi hamiltonian squared");
-    return ham_squared.transpose();
+    return Eigen::Map<MType> (ham_tensor.data(),size,size).transpose();
+}
+
+
+class_finite_state::MType class_finite_state::get_multi_hamiltonian2_matrix() const{
+    long size = active_problem_size();
+    auto ham_squared_tensor = get_multi_hamiltonian2();
+    auto cols       = ham_squared_tensor.dimension(0)* ham_squared_tensor.dimension(1)* ham_squared_tensor.dimension(2);
+    auto rows       = ham_squared_tensor.dimension(3)* ham_squared_tensor.dimension(4)* ham_squared_tensor.dimension(5);
+    if(rows != size)
+        throw std::runtime_error (fmt::format("Mismatch hamiltonian sq dim0*dim1*dim2 and cols: {} != {}",cols, size));
+    if(cols != size)
+        throw std::runtime_error (fmt::format("Mismatch hamiltonian sq dim3*dim4*dim5 and rows: {} != {}",rows, size));
+
+    tools::log->trace("Finished contraction of multi hamiltonian squared");
+    return Eigen::Map<MType> (ham_squared_tensor.data(),size,size).transpose();
 }
 
 class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_matrix(const MType & eigvecs ) const{
@@ -551,5 +558,14 @@ void class_finite_state::tag_all_sites_have_been_updated(bool tag) const{
 bool class_finite_state::all_sites_updated() const {
     if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
     return  std::all_of(site_update_tags.begin(), site_update_tags.end(), [](bool v) { return v; });
+}
+
+bool class_finite_state::active_sites_updated() const {
+    if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
+    if (active_sites.empty()) return false;
+    auto first_site_ptr =  site_update_tags.begin() + active_sites.front();
+    auto last_site_ptr  =  first_site_ptr + active_sites.size()-1;
+    tools::log->trace("Checking update status on sites: {}", active_sites);
+    return  std::all_of(first_site_ptr, last_site_ptr, [](bool v) { return v; });
 }
 

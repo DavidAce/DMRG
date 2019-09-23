@@ -127,9 +127,9 @@ public:
 
     //For multisite
     std::list<size_t>      active_sites;
-    std::list<size_t>      activate_sites(long threshold);
+    std::list<size_t>      activate_sites(const long threshold, const size_t max_sites);
     Eigen::DSizes<long,3>  active_dimensions() const;
-    size_t                 active_size() const;
+    size_t                 active_problem_size() const;
 
     TType<3>   get_multitheta()    const;
     TType<4>   get_multimpo  ()    const;
@@ -170,6 +170,7 @@ public:
     void tag_active_sites_have_been_updated(bool tag)   const;
     void tag_all_sites_have_been_updated(bool tag)      const;
     bool all_sites_updated() const;
+    bool active_sites_updated() const;
     mutable std::vector<bool> site_update_tags;
 private:
     struct Cache{

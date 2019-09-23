@@ -13,6 +13,7 @@
 #include <general/nmspc_random_numbers.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
+#include <math/nmspc_math.h>
 #include <h5pp/h5pp.h>
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/bundled/ranges.h>
@@ -96,7 +97,7 @@ void class_xDMRG::single_DMRG_step()
 
 //    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
 //    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
-    auto optMode    = measure::energy_variance_per_site(*state) > 1e-6  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
+    auto optMode    = measure::energy_variance_per_site(*state) > 1e-2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
 
     auto optSpace = opt::OptSpace::SUBSPACE;
 //    optSpace      = measure::energy_variance_per_site(*state) < settings::precision::VarConvergenceThreshold         ?  opt::OptSpace::DIRECT  : optSpace;
@@ -110,16 +111,37 @@ void class_xDMRG::single_DMRG_step()
         case  opt::OptSpace::SUBSPACE : threshold = settings::precision::MaxSizePartDiag; break;
         case  opt::OptSpace::DIRECT   : threshold = settings::precision::MaxSizeDirect  ; break;
     }
-    state->activate_sites(threshold);
-    debug::check_integrity(*state);
 
-    Eigen::Tensor<Scalar,3> theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
+    debug::check_integrity(*state);
+    Eigen::Tensor<Scalar,3> theta;
+    std::list<size_t> max_num_sites_list = math::range_list(2ul,settings::precision::MaxSitesMultiDmrg,2ul);
+    while(not state->active_sites_updated() and not max_num_sites_list.empty()){
+        auto old_size = state->active_sites.size();
+        state->activate_sites(threshold, max_num_sites_list.front());
+        if(state->active_sites.size() == old_size  and optSpace == opt::OptSpace::SUBSPACE) {
+            optSpace  = opt::OptSpace::DIRECT;
+            threshold = settings::precision::MaxSizeDirect;
+            log->debug("Subspace threshold reached, switching to DIRECT mode");
+            state->activate_sites(threshold, max_num_sites_list.front());
+        }
+
+        theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
+        max_num_sites_list.pop_front();
+        if(state->get_direction() == 1  and state->get_position() - 1 + max_num_sites_list.front() >= state->get_length()){
+            log->debug("Can't activate more sites, at the edge, keeping old theta");
+            break;
+        }
+        else if(state->get_direction() == -1 and state->get_position() + 2 - max_num_sites_list.front() < 0                   ){
+            log->debug("Can't activate more sites, at the edge, keeping old theta");
+            break;
+        }
+    }
 
 
 //    if (optMode == opt::OptMode::OVERLAP){
 //        sim_status.chi_temp = 16 * (1+sim_status.iteration);
 //    }
-    log->debug("Variance check before truncate: {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
+    log->debug("Variance check before truncate        : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
 
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     move_center_point();
@@ -198,13 +220,21 @@ void class_xDMRG::check_convergence(){
         sim_status.simulation_has_converged = true;
     }
 
+
     if (sim_status.bond_dimension_has_reached_max
         and (  sim_status.variance_mpo_saturated_for >= max_saturation_iters
             or sim_status.entanglement_saturated_for >= max_saturation_iters)
         )
     {
-        log->debug("Simulation has to stop");
-        sim_status.simulation_has_to_stop = true;
+        if (sim_status.num_resets < settings::precision::MaxResets){
+            std::string reason = fmt::format("simulation has saturated with bad precision",
+                                             sim_status.energy_dens, sim_status.energy_dens_window, sim_status.energy_dens_window);
+            reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
+        }else{
+            log->debug("Simulation has to stop");
+            sim_status.simulation_has_to_stop = true;
+        }
+
     }
 
 
@@ -249,7 +279,7 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
     int counter = 0;
     bool outside_of_window = true;
     while(outside_of_window){
-        reset_to_random_state(settings::model::initial_parity_sector);
+        reset_to_random_state(parity_sector);
         if (inflate) inflate_initial_state();
 
         sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
@@ -264,6 +294,7 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
     log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
     clear_saturation_status();
     has_projected   = false;
+    sim_status.num_resets++;
     sim_status.energy_ubound      = sim_status.energy_target + sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
     sim_status.energy_lbound      = sim_status.energy_target - sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
 

@@ -13,7 +13,7 @@
 
 void tools::finite::debug::check_integrity(const class_finite_state &state)
 {
-    tools::log->debug("Checking integrity of state");
+    tools::log->trace("Checking integrity of state");
     state.unset_measurements();
 
     try{

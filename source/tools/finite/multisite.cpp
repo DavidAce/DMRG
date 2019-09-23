@@ -20,49 +20,89 @@ Eigen::DefaultDevice dev_multisite;
 #include <simulation/nmspc_settings.h>
 #include <spdlog/fmt/bundled/ranges.h>
 
-std::list<size_t> tools::finite::multisite::generate_site_list(class_finite_state &state, long threshold){
+
+Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions  (const class_finite_state &state, const std::list<size_t> &list_of_sites){
+    if (list_of_sites.empty()) return  Eigen::DSizes<long,3>{0,0,0};
+    Eigen::DSizes<long,3> dimensions;
+    int direction = list_of_sites.back() >= list_of_sites.front() ? 1 : -1;
+    if (direction == 1){
+        dimensions[1] = state.get_G(list_of_sites.front()).dimension(1);
+        dimensions[2] = state.get_G(list_of_sites.back()) .dimension(2);
+    }
+    else{
+        dimensions[1] = state.get_G(list_of_sites.back()) .dimension(1);
+        dimensions[2] = state.get_G(list_of_sites.front()).dimension(2);
+    }
+
+    dimensions[0] = 1;
+    for (auto & site : list_of_sites){
+        dimensions[0] *= state.get_G(site).dimension(0);
+    }
+    return dimensions;
+}
+
+
+size_t tools::finite::multisite::get_problem_size(const class_finite_state &state, const std::list<size_t> &list_of_sites){
+    auto dims = get_dimensions(state,list_of_sites);
+    return dims[0]*dims[1]*dims[2];
+}
+
+
+
+
+std::list<size_t> tools::finite::multisite::generate_site_list(class_finite_state &state, const size_t threshold, const size_t max_sites){
+    tools::log->trace("Activating sites. Threshold = {}, Max sites = {}", threshold,max_sites);
     using namespace Textra;
     int    direction = state.get_direction();
     size_t position  = state.get_position();
     size_t length    = state.get_length();
-    std::vector<long> costs;
+    if (direction == -1)position++; // If going to the left, take position to be the site on the right of the center bond.
+    std::list<size_t> costs;
     std::list<size_t> sites;
     std::vector<Eigen::DSizes<long,3>> dims;
-    if (direction == -1)position++; // If going to the right, take position to be the site on the right of the center bond.
     while(position >= 0 and position < length){
-        dims.emplace_back(state.get_G(position).dimensions());
-        long chiL = direction == 1 ? dims.front()[1] : dims.back() [1];
-        long chiR = direction == 1 ? dims.back() [2] : dims.front()[2];
-        long cost = chiL * chiR;
-        for (auto &d : dims ){cost *= d[0];}
-        costs.push_back(cost);
-        sites.push_back(position);
+//        dims.emplace_back(state.get_G(position).dimensions());
+//        long chiL = direction == 1 ? dims.front()[1] : dims.back() [1];
+//        long chiR = direction == 1 ? dims.back() [2] : dims.front()[2];
+//        long cost = chiL * chiR;
+//        for (auto &d : dims ){cost *= d[0];}
+//        costs.push_back(cost);
+//        sites.push_back(position);
+//        position += direction;
+        sites.emplace_back(position);
+        costs.emplace_back(get_problem_size(state,sites));
         position += direction;
     }
-    std::reverse(costs.begin(),costs.end());
+    tools::log->debug("Activation problem sizes: {}", costs);
+//    std::reverse(costs.begin(),costs.end()); //Go from expensive -> cheap
 
 
     // Evaluate best cost. Threshold depends on optSpace
     // Case 1: All costs are equal              -> take all sites
     // Case 2: Costs increase indefinitely      -> take until threshold
     // Case 3: Costs increase and saturate      -> take until threshold
-    auto costsmap = Eigen::Map<Eigen::Array<long, Eigen::Dynamic,1>>(costs.data(),costs.size());
-    bool allequal = (costsmap == costsmap(0)).all();
+//    size_t costs_start = 0;
+//    size_t costs_size  = costs.size();
     std::string reason;
-    for (auto & c : costs){
-        using namespace settings::precision;
-        if (allequal)                                   {reason = "equal costs: " + std::to_string(c); break;}
-        else if (sites.size() <= 2)                     {reason = "at least two sites were kept"; break;}
-        else if (c <= threshold
-                and sites.size() <= MaxSitesMultiDmrg)  {reason = "good threshold found: " + std::to_string(c) ;break;}
-        else if (sites.empty())                         {throw std::logic_error("No sites for a jump");}
+    while (true){
+//        auto costsmap = Eigen::Map<Eigen::Array<long, Eigen::Dynamic,1>>(costs.data() + costs_start ,costs_size);
+//        bool allequal = (costsmap == costsmap(0)).all();
+        bool allequal = std::all_of(costs.begin(), costs.end(), [costs](size_t c) { return c == costs.front(); });
+        auto c = costs.back();
+        if (c <= threshold  and sites.size() <= max_sites) {reason = "good threshold found: " + std::to_string(c) ;break;}
+        else if (sites.size() <= 2)                        {reason = "at least two sites were kept"; break;}
+        else if (allequal and sites.size() <= max_sites)   {reason = "equal costs: " + std::to_string(c); break;}
+        else if (sites.size() == 1)                        {throw std::logic_error("At least two sites required!");}
+        else if (sites.empty())                            {throw std::logic_error("No sites for a jump");}
         else{
             sites.pop_back();
+            costs.pop_back();
+//            costs_start++;
+//            costs_size--;
         }
     }
-    tools::log->debug("Problem sizes: {}", costs);
-    tools::log->debug("Chosen sites {}. Reason: {}", sites, reason);
     if (direction == -1){std::reverse(sites.begin(),sites.end());}
+    tools::log->debug("Chosen sites {}. Reason: {}", sites, reason);
     state.active_sites = sites;
     return sites;
 }

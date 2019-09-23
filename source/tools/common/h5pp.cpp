@@ -12,6 +12,7 @@ void tools::common::io::write_simulation_status(const class_simulation_status &s
     h5ppFile.writeDataset(sim_status.moves                         ,sim_name + "/sim_status/moves");
     h5ppFile.writeDataset(sim_status.step                          ,sim_name + "/sim_status/step");
     h5ppFile.writeDataset(sim_status.position                      ,sim_name + "/sim_status/position");
+    h5ppFile.writeDataset(sim_status.num_resets                    ,sim_name + "/sim_status/num_resets");
     h5ppFile.writeDataset(sim_status.chi_temp                      ,sim_name + "/sim_status/chi_temp");
     h5ppFile.writeDataset(sim_status.chi_max                       ,sim_name + "/sim_status/chi_max");
     h5ppFile.writeDataset(sim_status.min_sweeps                    ,sim_name + "/sim_status/min_sweeps");
