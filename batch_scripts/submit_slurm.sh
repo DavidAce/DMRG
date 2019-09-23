@@ -82,25 +82,35 @@ fi
 
 inputfiles=$(find -L input -type f -name '*.cfg')
 filecount=0
-for inputfile in $inputfiles; do
-    [ -e "$inputfile" ] || continue
 
-    if [ -n "$inputseeds" ] ; then
-        if [ "$gnuparallel" = true ]; then
-            if [[ "$HOSTNAME" == *"tetralith"* ]];then
-                module try-load parallel/20181122-nsc1
-            else
-                module try-load parallel
-            fi
-            sbatch $partition $requeue $exclusive $time $other \
-                    --mem-per-cpu=$mem \
-                    --job-name=$jobname \
-                    run_parallel.sh -e $exec -f $inputfile -i $inputseeds
+
+if [ -n "$inputseeds" ] ; then
+    if [ "$gnuparallel" = true ]; then
+        if [[ "$HOSTNAME" == *"tetralith"* ]];then
+            module try-load parallel/20181122-nsc1
         else
-            echo "Please enable gnu parallel"
-            exit 1
+            module try-load parallel
         fi
     else
+        echo "Please enable gnu parallel"
+        exit 1
+    fi
+    mkdir -p split
+    split --lines=$stepsize -d $inputseeds split/split.
+    splitfiles=$(find -L split -type f -name 'split.*')
+    for inputfile in $inputfiles; do
+        for splitfile in $splitfiles; do
+            sbatch $partition $requeue $exclusive $time $other \
+                --mem-per-cpu=$mem \
+                --job-name=$jobname \
+                run_parallel.sh -e $exec -f $inputfile -i $splitfile
+        done
+    done
+
+
+else
+    for inputfile in $inputfiles; do
+        [ -e "$inputfile" ] || continue
         seedmin=$((filecount*nsims + startseed))
         seedmax=$((seedmin+nsims-1))
         echo "Submitting jobs=[$seedmin - $seedmax]"
@@ -129,7 +139,8 @@ for inputfile in $inputfiles; do
                 --array=$seedmin-$seedmax%$maxtasks --job-name=$jobname \
                 run_jobarray.sh $exec $inputfile
         fi
-    fi
-    filecount=$((filecount+1))
 
-done
+        filecount=$((filecount+1))
+
+    done
+fi
