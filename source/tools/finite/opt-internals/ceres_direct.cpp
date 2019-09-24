@@ -154,16 +154,30 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     ));
 
     tools::common::profile::t_opt.toc();
-    // Return something strictly better
-    state.tag_active_sites_have_been_updated(true);
+
+
+
     if (variance_new < 0.99 * tools::finite::measure::energy_variance_per_site(state)){
-        tools::log->debug("Returning new theta");
+        // Only an improvement of 1% is considered to be an actual improvement
+        tools::log->debug("Returning new (better) theta");
+        state.tag_active_sites_have_been_updated(true);
         return  Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
 
-    }else{
-        if (variance_new > 1e-11) state.tag_active_sites_have_been_updated(false);
+    }
+    else if (variance_new < 10.0 * tools::finite::measure::energy_variance_per_site(state)) {
+        // Allow for variance to increase a bit to come out of local minima
+        tools::log->debug("Returning new (worse) theta");
+        state.tag_active_sites_have_been_updated(false);
+        return  Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
+    }
+    else{
+        tools::log->debug("Direct optimization didn't improve variance.");
         tools::log->debug("Returning old theta");
+        if (variance_new <= settings::precision::VarConvergenceThreshold)
+              state.tag_active_sites_have_been_updated(true);
+        else  state.tag_active_sites_have_been_updated(false);
         return  theta;
+
     }
 
 }

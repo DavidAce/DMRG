@@ -174,13 +174,15 @@ public:
     mutable std::vector<bool> site_update_tags;
 private:
     struct Cache{
-        std::optional<TType<4>> multimpo     = {};
-        std::optional<TType<3>> multitheta   = {};
+        std::optional<TType<4>> multimpo        = {};
+        std::optional<TType<3>> multitheta      = {};
+        std::optional<TType<6>> multiham        = {};
+        std::optional<TType<6>> multiham_sq     = {};
+        std::optional<MType>    multiham_mat    = {};
+        std::optional<MType>    multiham_sq_mat = {};
+        std::optional<MType>    multiham_sq_sub = {};
     };
     mutable Cache cache;
-
-
-
 };
 
 

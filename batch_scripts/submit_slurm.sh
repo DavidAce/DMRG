@@ -88,6 +88,7 @@ if [ -n "$inputseeds" ] ; then
         echo "Please enable gnu parallel"
         exit 1
     fi
+    rm -rf split*
     mkdir -p split
     split --lines=$stepsize -d $inputseeds split/split.
     splitfiles=$(find -L split -type f -name 'split.*')
@@ -107,7 +108,7 @@ else
         echo "adjusted stepsize = $stepsize , mod= $((nsims % stepsize))"
     done
 
-    
+
     if [ $stepsize = 0 ]; then
         exit 1
     fi

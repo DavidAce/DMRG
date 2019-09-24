@@ -87,13 +87,13 @@ void class_selfdual_tf_rf_ising::set_realization_averages(double J_avg_,double h
 void class_selfdual_tf_rf_ising::build_mpo()
 /*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
  *
- * H = - Σ J_{i} sz_{i} sz_{i+1} +  h_{i} sx_{i} + l*(h sx_i sx_{i+1} + J sz_{i} sz_{i+2})
+ * H = - Σ J_{i} sz_{i} sz_{i+1} +  h_{i} sx_{i} + l*(h_avg sx_i sx_{i+1} + J_avg sz_{i} sz_{i+2})
  *
  *  |     I                 0           0              0            0   |
  *  |     sz                0           0              0            0   |
  *  |     sx                0           0              0            0   |
  *  |     0                 I           0              0            0   |
- *  | -(h_rnd)*sx       -J_rnd*sz   -l*h_mean*sx     -l*J_mean*sz     I |
+ *  | -(h_rnd)*sx       -J_rnd*sz   -l*h_avg*sx     -l*J_avg*sz     I   |
  *
  *        2
  *        |
