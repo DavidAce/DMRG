@@ -158,12 +158,12 @@ void class_xDMRG::single_DMRG_step()
 //    if (optMode == opt::OptMode::OVERLAP){
 //        sim_status.chi_temp = 16 * (1+sim_status.iteration);
 //    }
-    log->debug("Variance check before truncate        : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
+    log->debug("Variance check before truncate       : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
 
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     move_center_point();
     tools::finite::mps::rebuild_environments(*state);
-    log->debug("Variance check after  truncate + move : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
+    log->debug("Variance check after truncate + move : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
 
     if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::MaxNormError){
         tools::log->warn("Norm too large: {:.18f}",tools::finite::measure::norm(*state) );
@@ -171,8 +171,8 @@ void class_xDMRG::single_DMRG_step()
         tools::finite::mps::rebuild_environments(*state);
     }
     if (state->position_is_the_left_edge()){
-        log->debug("Variance check after reduce   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
         tools::finite::mpo::reduce_mpo_energy(*state);
+        log->debug("Variance check after reduce          : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
     }
     debug::check_integrity(*state);
 
