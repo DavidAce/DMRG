@@ -250,7 +250,9 @@ void class_xDMRG::check_convergence(){
             *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector,keep_bond_dimensions);
             has_projected = true;
         }
-        else if (sim_status.num_resets < settings::precision::MaxResets){
+        else if (    sim_status.num_resets < settings::precision::MaxResets
+                 and tools::finite::measure::energy_variance_per_site(*state) > 1e-10)
+        {
             std::string reason = fmt::format("simulation has saturated with bad precision",
                                              sim_status.energy_dens, sim_status.energy_dens_window, sim_status.energy_dens_window);
             reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
