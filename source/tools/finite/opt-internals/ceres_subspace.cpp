@@ -384,7 +384,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                     tools::log->debug("The candidate theta has worse variance than before [ idx = {} | overlap = {} | variance = {} ]...", best_overlap_idx, best_overlap, std::log10(new_variance));
                     tools::log->debug("Looking for a candidate with lower variance...");
                     double subspace_quality;
-                    std::tie(eigvecs,eigvals,subspace_quality) = filter_states(eigvecs,eigvals,overlaps,subspace_quality_threshold, 256);
+                    std::tie(eigvecs,eigvals,subspace_quality) = filter_states(eigvecs,eigvals,overlaps,subspace_quality_threshold, 64);
                     eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
                     auto [best_variance, best_variance_idx] = get_best_state_in_window(state, eigvecs, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
                     if(best_variance < old_variance){
