@@ -430,7 +430,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
                 }
             }else{
-                std::tie(eigvecs,eigvals,subspace_quality) = filter_states(eigvecs,eigvals,overlaps,subspace_quality_threshold, 128);
+                std::tie(eigvecs,eigvals,subspace_quality) = filter_states(eigvecs,eigvals,overlaps,subspace_quality_threshold, 64);
                 eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
             }
         }
