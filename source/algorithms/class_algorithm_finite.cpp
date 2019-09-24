@@ -209,9 +209,14 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
                     1,
                     slope_threshold);
 
-    sim_status.variance_mpo_has_saturated = report.has_saturated;
-    sim_status.variance_mpo_saturated_for = (int) count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
-    sim_status.variance_mpo_has_converged =  state->measurements.energy_variance_per_site.value() < threshold;
+
+    sim_status.variance_mpo_has_converged =  V_mpo_vec.back() < threshold;
+    auto last_nonconverged_ptr = std::find_if(V_mpo_vec.begin(),V_mpo_vec.end(), [threshold](auto const& val){ return val > threshold; });
+    int converged_count = (int)  std::count_if(last_nonconverged_ptr, V_mpo_vec.end(),[threshold](auto const& val){ return val <= threshold; });
+    int saturated_count = (int)  std::count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
+    sim_status.variance_mpo_has_saturated = report.has_saturated or converged_count >= min_saturation_iters;
+    sim_status.variance_mpo_saturated_for = std::max(converged_count, saturated_count) ;
+
 
     if (report.has_computed){
         V_mpo_slope  = report.slope;
@@ -220,7 +225,7 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
         log->debug(" -- tolerance         = {} %", slope_threshold);
         log->debug(" -- average           = {} " , report.avgY);
         log->debug(" -- history           = {} " , V_mpo_vec);
-        log->debug(" -- has saturated     = {} " , report.has_saturated);
+        log->debug(" -- has saturated     = {} " , sim_status.variance_mpo_has_saturated);
         log->debug(" -- has saturated for = {} " , sim_status.variance_mpo_saturated_for);
         log->debug(" -- checked from      = {} to {}", report.check_from, X_mpo_vec.size());
     }

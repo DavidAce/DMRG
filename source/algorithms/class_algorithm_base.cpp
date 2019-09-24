@@ -116,7 +116,7 @@ class_algorithm_base::check_saturation_using_slope(
     //Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
     bool has_saturated;
     if (slope < tolerance){
-        B_vec.back() = true;
+        B_vec.back()  = true;
         has_saturated = true;
     }else{
         B_vec.clear();
