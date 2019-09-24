@@ -463,19 +463,19 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
         opt_log.emplace_back("Initial",theta.size(), energy_0, std::log10(variance_0), overlap_0,theta_0.norm(), iter_0,0, t_opt->get_last_time_interval());
 
         // Initial sanity check 2
-        t_opt->tic();
-        Eigen::MatrixXcd H2  = state.get_multi_hamiltonian2_subspace_matrix(eigvecs);
-        Eigen::VectorXcd Hv  = eigvals.asDiagonal() * theta_start;
-        Eigen::VectorXcd H2v = H2.template selfadjointView<Eigen::Upper>()*theta_start;
-        Scalar vHv  = theta_start.dot(Hv);
-        Scalar vH2v = theta_start.dot(H2v);
-        double vv   = theta_start.squaredNorm();
-        Scalar ene  = vHv/vv;
-        Scalar var  = vH2v/vv - ene*ene;
-        double ene_init_san = std::real(ene+state.get_energy_reduced())/state.get_length();
-        double var_init_san = std::abs(var)/state.get_length();
-        t_opt->toc();
-        opt_log.emplace_back("Initial (matrix)",theta_start.size(), ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), iter_0,0, t_opt->get_last_time_interval());
+//        t_opt->tic();
+//        Eigen::MatrixXcd H2  = state.get_multi_hamiltonian2_subspace_matrix(eigvecs);
+//        Eigen::VectorXcd Hv  = eigvals.asDiagonal() * theta_start;
+//        Eigen::VectorXcd H2v = H2.template selfadjointView<Eigen::Upper>()*theta_start;
+//        Scalar vHv  = theta_start.dot(Hv);
+//        Scalar vH2v = theta_start.dot(H2v);
+//        double vv   = theta_start.squaredNorm();
+//        Scalar ene  = vHv/vv;
+//        Scalar var  = vH2v/vv - ene*ene;
+//        double ene_init_san = std::real(ene+state.get_energy_reduced())/state.get_length();
+//        double var_init_san = std::abs(var)/state.get_length();
+//        t_opt->toc();
+//        opt_log.emplace_back("Initial (matrix)",theta_start.size(), ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), iter_0,0, t_opt->get_last_time_interval());
     }
 
 

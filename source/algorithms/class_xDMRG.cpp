@@ -117,7 +117,7 @@ void class_xDMRG::single_DMRG_step()
 //    std::list<size_t> max_num_sites_list = math::range_list(2ul,settings::precision::MaxSitesMultiDmrg,2ul);
     std::list<size_t> max_num_sites_list = {2,4,8,12};
     while (max_num_sites_list.back() > settings::precision::MaxSitesMultiDmrg) max_num_sites_list.pop_back();
-    while(not state->active_sites_updated() and not max_num_sites_list.empty()){
+    while(true){
         auto old_num_sites = state->active_sites.size();
         auto old_prob_size = state->active_problem_size();
         state->activate_sites(threshold, max_num_sites_list.front());
@@ -144,14 +144,24 @@ void class_xDMRG::single_DMRG_step()
 
         theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
         max_num_sites_list.pop_front();
+        if(state->active_sites_updated()){
+            log->debug("Sites successfully updated");
+            break;
+        }
+        if(max_num_sites_list.empty()){
+            log->debug("Keeping last theta: failed to find better theta and MaxSitesMultiDmrg reached");
+            if(theta.size() == 0) throw std::logic_error("Theta is empty!");
+            break;
+        }
         if(state->get_direction() == 1  and state->get_position() - 1 + max_num_sites_list.front() >= state->get_length()){
             log->debug("Keeping last theta: can't activate more sites, reached the right edge");
             break;
         }
-        else if(state->get_direction() == -1 and state->get_position() + 2 - max_num_sites_list.front() < 0                   ){
+        if(state->get_direction() == -1 and state->get_position() + 2 - max_num_sites_list.front() < 0){
             log->debug("Keeping last theta: can't activate more sites, reached the left edge");
             break;
         }
+
     }
 
 
