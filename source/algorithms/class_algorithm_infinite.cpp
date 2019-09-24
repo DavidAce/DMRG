@@ -392,8 +392,9 @@ void class_algorithm_infinite::print_status_full(){
         default: throw std::runtime_error("Wrong simulation type");
     }
 
+    log->info("Simulation saturated  = {:<}"    , sim_status.simulation_has_saturated);
     log->info("Simulation converged  = {:<}"    , sim_status.simulation_has_converged);
-
+    log->info("Simulation succeeded  = {:<}"    , sim_status.simulation_has_succeeded);
     switch(sim_type){
         case SimulationType::iDMRG:
             log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);

@@ -347,7 +347,7 @@ public:
 class class_log_simulation_status{
 private:
     struct meta_struct{
-        constexpr static hsize_t                NFIELDS     = 36;
+        constexpr static hsize_t                NFIELDS     = 38;
         size_t           dst_size                           = sizeof (status_data);
         std::array       <size_t,NFIELDS>       dst_offsets =
                 {
@@ -374,6 +374,7 @@ private:
                     HOFFSET(status_data, time_step_has_converged       ),
                     HOFFSET(status_data, simulation_has_converged      ),
                     HOFFSET(status_data, simulation_has_saturated      ),
+                    HOFFSET(status_data, simulation_has_succeeded      ),
                     HOFFSET(status_data, simulation_has_to_stop        ),
                     HOFFSET(status_data, bond_dimension_has_reached_max),
                     HOFFSET(status_data, entanglement_has_converged    ),
@@ -384,6 +385,7 @@ private:
                     HOFFSET(status_data, variance_ham_has_saturated    ),
                     HOFFSET(status_data, variance_mom_has_converged    ),
                     HOFFSET(status_data, variance_mom_has_saturated    ),
+                    HOFFSET(status_data, entanglement_saturated_for    ),
                     HOFFSET(status_data, variance_mpo_saturated_for    ),
                     HOFFSET(status_data, variance_ham_saturated_for    ),
                     HOFFSET(status_data, variance_mom_saturated_for    )
@@ -414,6 +416,7 @@ private:
                 sizeof(status_data::time_step_has_converged       ),
                 sizeof(status_data::simulation_has_converged      ),
                 sizeof(status_data::simulation_has_saturated      ),
+                sizeof(status_data::simulation_has_succeeded      ),
                 sizeof(status_data::simulation_has_to_stop        ),
                 sizeof(status_data::bond_dimension_has_reached_max),
                 sizeof(status_data::entanglement_has_converged    ),
@@ -424,6 +427,7 @@ private:
                 sizeof(status_data::variance_ham_has_saturated    ),
                 sizeof(status_data::variance_mom_has_converged    ),
                 sizeof(status_data::variance_mom_has_saturated    ),
+                sizeof(status_data::entanglement_saturated_for    ),
                 sizeof(status_data::variance_mpo_saturated_for    ),
                 sizeof(status_data::variance_ham_saturated_for    ),
                 sizeof(status_data::variance_mom_saturated_for    )
@@ -435,7 +439,7 @@ private:
                     "moves",
                     "step",
                     "position",
-                    "num_resets"
+                    "num_resets",
                     "chi_temp",
                     "chi_max",
                     "min_sweeps",
@@ -454,6 +458,7 @@ private:
                     "time_step_has_converged",
                     "simulation_has_converged",
                     "simulation_has_saturated",
+                    "simulation_has_succeeded",
                     "simulation_has_to_stop",
                     "bond_dimension_has_reached_max",
                     "entanglement_has_converged",
@@ -464,6 +469,7 @@ private:
                     "variance_ham_has_saturated",
                     "variance_mom_has_converged",
                     "variance_mom_has_saturated",
+                    "entanglement_saturated_for",
                     "variance_mpo_saturated_for",
                     "variance_ham_saturated_for",
                     "variance_mom_saturated_for"
@@ -504,6 +510,8 @@ private:
                         H5T_NATIVE_HBOOL,
                         H5T_NATIVE_HBOOL,
                         H5T_NATIVE_HBOOL,
+                        H5T_NATIVE_HBOOL,
+                        H5T_NATIVE_UINT,
                         H5T_NATIVE_UINT,
                         H5T_NATIVE_UINT,
                         H5T_NATIVE_UINT

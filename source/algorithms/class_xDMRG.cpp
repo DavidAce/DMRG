@@ -65,7 +65,7 @@ void class_xDMRG::run_simulation()    {
         if (state->position_is_any_edge())
         {
             if (sim_status.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
-            if (sim_status.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
+            if (sim_status.simulation_has_succeeded)                 {stop_reason = StopReason::SUCCEEDED; break;}
             if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
 
@@ -78,7 +78,7 @@ void class_xDMRG::run_simulation()    {
     }
     switch(stop_reason){
         case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_ITERS",sim_name) ;break;
-        case StopReason::CONVERGED : log->info("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
+        case StopReason::SUCCEEDED : log->info("Finished {} simulation -- reason: SUCCEEDED", sim_name) ;break;
         case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
         default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
     }
@@ -114,25 +114,42 @@ void class_xDMRG::single_DMRG_step()
 
     debug::check_integrity(*state);
     Eigen::Tensor<Scalar,3> theta;
-    std::list<size_t> max_num_sites_list = math::range_list(2ul,settings::precision::MaxSitesMultiDmrg,2ul);
+//    std::list<size_t> max_num_sites_list = math::range_list(2ul,settings::precision::MaxSitesMultiDmrg,2ul);
+    std::list<size_t> max_num_sites_list = {2,4,8,12};
+    while (max_num_sites_list.back() > settings::precision::MaxSitesMultiDmrg) max_num_sites_list.pop_back();
     while(not state->active_sites_updated() and not max_num_sites_list.empty()){
-        auto old_size = state->active_sites.size();
+        auto old_num_sites = state->active_sites.size();
+        auto old_prob_size = state->active_problem_size();
         state->activate_sites(threshold, max_num_sites_list.front());
-        if(state->active_sites.size() == old_size  and optSpace == opt::OptSpace::SUBSPACE) {
-            optSpace  = opt::OptSpace::DIRECT;
-            threshold = settings::precision::MaxSizeDirect;
-            log->debug("Subspace threshold reached, switching to DIRECT mode");
-            state->activate_sites(threshold, max_num_sites_list.front());
+
+
+        if( state->active_sites.size()   == old_num_sites and
+            state->active_problem_size() == old_prob_size){
+            //Reached threshold
+            if( optSpace == opt::OptSpace::SUBSPACE and
+                old_prob_size > settings::precision::MaxSizeFullDiag){
+                //Switch to DIRECT
+                optSpace  = opt::OptSpace::DIRECT;
+                threshold = settings::precision::MaxSizeDirect;
+                log->debug("SUBSPACE threshold reached, switching to DIRECT mode");
+                state->activate_sites(threshold, max_num_sites_list.front());
+            }
+            else{
+                log->debug("Keeping last theta: Reached DIRECT threshold or already did Full Diag.");
+                if(theta.size() == 0) throw std::logic_error("Theta is empty!");
+                break;
+            }
         }
+
 
         theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
         max_num_sites_list.pop_front();
         if(state->get_direction() == 1  and state->get_position() - 1 + max_num_sites_list.front() >= state->get_length()){
-            log->debug("Can't activate more sites, at the edge, keeping old theta");
+            log->debug("Keeping last theta: can't activate more sites, reached the right edge");
             break;
         }
         else if(state->get_direction() == -1 and state->get_position() + 2 - max_num_sites_list.front() < 0                   ){
-            log->debug("Can't activate more sites, at the edge, keeping old theta");
+            log->debug("Keeping last theta: can't activate more sites, reached the left edge");
             break;
         }
     }
@@ -181,25 +198,23 @@ void class_xDMRG::check_convergence(){
 
     sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     bool outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  > sim_status.energy_dens_window;
-    if (sim_status.iteration > 2
-        )
+    if (sim_status.iteration > 2)
     {
-        if (outside_of_window and
-            (   sim_status.variance_mpo_has_saturated or
-                sim_status.variance_mpo_has_converged or
-                tools::finite::measure::energy_variance_per_site(*state) < 1e-4))
+        if (    outside_of_window
+            and (sim_status.variance_mpo_has_saturated or
+                 sim_status.variance_mpo_has_converged or
+                 tools::finite::measure::energy_variance_per_site(*state) < 1e-4))
         {
             sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
             std::string reason = fmt::format("saturated outside of energy window. Energy density: {}, Energy window: {} --> {}",
                     sim_status.energy_dens, sim_status.energy_dens_window, std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5) );
             reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
-
         }
         else
-        if( not state->all_sites_updated() and
-            not sim_status.variance_mpo_has_converged and
-                sim_status.variance_mpo_has_saturated and
-                tools::finite::measure::energy_variance_per_site(*state) > 1e-4)
+        if( not     state->all_sites_updated()
+            and not sim_status.variance_mpo_has_converged
+            and     sim_status.variance_mpo_has_saturated
+            and     tools::finite::measure::energy_variance_per_site(*state) > 1e-4)
         {
             sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
             std::string reason = fmt::format("could not update all sites. Energy density: {}, Energy window: {} --> {}",
@@ -208,42 +223,45 @@ void class_xDMRG::check_convergence(){
         }
     }
 
-    if(    sim_status.variance_mpo_has_converged
-       and sim_status.entanglement_has_converged
-       and sim_status.variance_mpo_saturated_for >= min_saturation_iters
-       and sim_status.entanglement_saturated_for >= min_saturation_iters
-       )
+    sim_status.simulation_has_converged = sim_status.variance_mpo_has_converged and
+                                          sim_status.entanglement_has_converged;
+    sim_status.simulation_has_saturated = sim_status.variance_mpo_saturated_for >= min_saturation_iters and
+                                          sim_status.entanglement_saturated_for >= min_saturation_iters;
+
+    sim_status.simulation_has_succeeded = sim_status.simulation_has_converged and
+                                          sim_status.simulation_has_saturated;
+
+
+
+    log->debug("Simulation has converged: {}", sim_status.simulation_has_converged);
+    log->debug("Simulation has saturated: {}", sim_status.simulation_has_saturated);
+    log->debug("Simulation has succeeded: {}", sim_status.simulation_has_succeeded);
+
+    if(        sim_status.bond_dimension_has_reached_max
+       and     sim_status.simulation_has_saturated
+       and not sim_status.simulation_has_converged)
     {
-        log->debug("Simulation has converged");
-        sim_status.simulation_has_converged = true;
+        if (        settings::model::project_when_saturated and
+                not has_projected
+            and not outside_of_window )
+        {
+            log->info("Projecting to {} due to saturation", settings::model::target_parity_sector);
+            bool keep_bond_dimensions = true;
+            *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector,keep_bond_dimensions);
+            has_projected = true;
+        }
+        else if (sim_status.num_resets < settings::precision::MaxResets){
+            std::string reason = fmt::format("simulation has saturated with bad precision",
+                                             sim_status.energy_dens, sim_status.energy_dens_window, sim_status.energy_dens_window);
+            reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
+        }
+
     }
 
-    else if( sim_status.bond_dimension_has_reached_max
-        and not sim_status.simulation_has_converged
-        and sim_status.num_resets < settings::precision::MaxResets
-        and ( sim_status.variance_mpo_saturated_for >= min_saturation_iters
-           or sim_status.entanglement_saturated_for >= min_saturation_iters))
-    {
-        std::string reason = fmt::format("simulation has saturated with bad precision",
-                                         sim_status.energy_dens, sim_status.energy_dens_window, sim_status.energy_dens_window);
-        reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
-    }
-    else if (sim_status.bond_dimension_has_reached_max
-        and (  sim_status.variance_mpo_saturated_for >= max_saturation_iters
-            or sim_status.entanglement_saturated_for >= max_saturation_iters)
-        )
-    {
-        log->debug("Simulation has to stop");
-        sim_status.simulation_has_to_stop = true;
-    }
 
-
-
-
-    if (settings::model::project_when_saturated
-        and state->position_is_any_edge()
-        and sim_status.variance_mpo_has_saturated
-        and not sim_status.variance_mpo_has_converged
+    if (        settings::model::project_when_saturated
+        and     state->position_is_any_edge()
+        and     sim_status.variance_mpo_has_saturated
         and not sim_status.simulation_has_converged
         and not outside_of_window
         and not has_projected)
@@ -255,6 +273,13 @@ void class_xDMRG::check_convergence(){
     }
 
 
+
+
+    sim_status.simulation_has_to_stop = sim_status.bond_dimension_has_reached_max
+                                        and sim_status.simulation_has_saturated
+                                        and (sim_status.variance_mpo_saturated_for >= max_saturation_iters or
+                                             sim_status.entanglement_saturated_for >= max_saturation_iters);
+    log->debug("Simulation has to stop: {}", sim_status.simulation_has_to_stop);
 
     t_con.toc();
 }

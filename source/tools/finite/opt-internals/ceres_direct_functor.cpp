@@ -130,15 +130,15 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
                 +  norm_grad * v;
     }
 
-        tools::log->trace("log10 var: {:<24.18f} log10 ene2/L: {:<24.18f} ene/L: {:<24.18f} ene*ene/L/L: {:<24.18f} Energy: {:<24.18f}  SqNorm: {:<24.18f} Norm: {:<24.18f} fx: {:<24.18f}",
-                      std::log10(std::abs(var)/length),
-                      std::log10(std::abs(ene2)/length),
-                      std::real(ene)/length,
-                      std::real(ene*ene)/length/length,
-                      std::real(ene + energy_reduced) / length,
-                      vv,
-                      norm,
-                      fx[0]);
+//        tools::log->trace("log10 var: {:<24.18f} log10 ene2/L: {:<24.18f} ene/L: {:<24.18f} ene*ene/L/L: {:<24.18f} Energy: {:<24.18f}  SqNorm: {:<24.18f} Norm: {:<24.18f} fx: {:<24.18f}",
+//                      std::log10(std::abs(var)/length),
+//                      std::log10(std::abs(ene2)/length),
+//                      std::real(ene)/length,
+//                      std::real(ene*ene)/length/length,
+//                      std::real(ene + energy_reduced) / length,
+//                      vv,
+//                      norm,
+//                      fx[0]);
 
 
 

@@ -36,7 +36,7 @@ void class_iDMRG::run_simulation() {
         // That last state would not get optimized
 
         if (sim_status.iteration >= settings::idmrg::max_steps)  {stop_reason = StopReason::MAX_STEPS; break;}
-        if (sim_status.simulation_has_converged)                 {stop_reason = StopReason::CONVERGED; break;}
+        if (sim_status.simulation_has_converged)                 {stop_reason = StopReason::SUCCEEDED; break;}
         if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
 
 
@@ -46,7 +46,7 @@ void class_iDMRG::run_simulation() {
     }
     switch(stop_reason){
         case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
-        case StopReason::CONVERGED : log->info("Finished {} simulation -- reason: CONVERGED",sim_name) ;break;
+        case StopReason::SUCCEEDED : log->info("Finished {} simulation -- reason: SUCCEEDED", sim_name) ;break;
         case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
         default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
     }
