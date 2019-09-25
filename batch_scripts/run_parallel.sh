@@ -53,9 +53,9 @@ mkdir -p $outdir/$simbase
 num_cols=$(awk '{print NF}' $simfile | head -n 1)
 
 if [ "$num_cols" -eq 2 ]; then
-    cat $simfile | parallel --memfree $SLURM_MEM_PER_CPU --joblog $outfile --colsep ' ' "$exec -i {1} -r {2} &> $outdir/${simbase}/{1./}_{2}.out"
+    cat $simfile | parallel --memfree $SLURM_MEM_PER_CPU --joblog $outfile --colsep ' ' "$exec -i {1} -r {2} &> $outdir/${simbase}/{1/.}_{2}.out"
 elif [ "$num_cols" -eq 3 ]; then
-    cat $simfile | parallel --memfree $SLURM_MEM_PER_CPU --joblog $outfile --colsep ' ' "$exec -i {1} -r {2} -s {3} &> $outdir/${simbase}/{1./}_{2}_{3}.out"
+    cat $simfile | parallel --memfree $SLURM_MEM_PER_CPU --joblog $outfile --colsep ' ' "$exec -i {1} -r {2} -s {3} &> $outdir/${simbase}/{1/.}_{2}_{3}.out"
 else
     echo "Case not implemented"
     exit 1
