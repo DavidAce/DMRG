@@ -2,8 +2,8 @@
 
 #SBATCH --nodes=1
 #SBATCH --kill-on-invalid-dep=yes
-#SBATCH --output=logs/DMRG-%A.out
-#SBATCH --error=logs/DMRG-%A.err
+#SBATCH --output=logs/%x-%A.out
+#SBATCH --error=logs/%x-%A.err
 
 
 
@@ -15,73 +15,74 @@ usage() {
 Usage                               : $PROGNAME [-options] with the following options:
 -h                                  : Help. Shows this text.
 -e <executable>                     : Path to executable (default = "")
--f <inputfile>                      : Path to inputfile with settings (default = "")
--i <input seed file>                : Path to file containing a list of seeds. Incompatible with -l and -u. (default = "")
--l <lower seed>                     : Lower bound of seed range (default = )
--u <upper seed>                     : Upper bound of seed range (default = )
--o <output directory>               : Output directory for logs (default = "")
+-f <simfile>                        : Path to simulation file, two columns formatted as [configfile seed] (default = "")
+-o <output logfile>                 : Path to GNU parallel logfile (default = "")
 EOF
   exit 1
 }
 
-exec=""
-inputfile=""
-seedfile=""
-nmin=
-nmax=
-
-while getopts he:f:i:l:u:o: o; do
+while getopts he:f:o: o; do
     case $o in
         (h) usage ;;
         (e) exec=$OPTARG;;
-        (f) inputfile=$OPTARG;;
-        (i) seedfile=$OPTARG;;
-        (l) nmin=$OPTARG;;
-        (u) nmax=$OPTARG;;
-        (o) outdir=$OPTARG;;
+        (f) simfile=$OPTARG;;
+        (o) outfile=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
   esac
 done
 
-if [ -n "$nmin" ]; then
-    if [ -z "$nmax" ]; then
-        echo "Both bounds are needed, -l and -u."
-    elif [ -z "$outdir" ] ; then
-        outdir=logs/seed_$nmin-$nmax
-    fi
-fi
 
-if [ -n "$seedfile" ] ; then
-    if [ -n "$nmin" ] || [ -n "$nmax" ]; then
-        echo "Can't both have a range [nmin nmax] and a seedfile"
-        exit 1
-    elif [ -z "$outdir" ] ; then
-        outdir=logs/seed_from_file
-    fi
+if [ ! -f $simfile ]; then
+    echo "Simfile is not a valid file: $simfile"
+    exit 1
+else
+
+if [ -z "$outfile" ] ; then
+    simbase=$(basename $simfile .sim)
+    outfile=logs/$simbase.log
 fi
 
 
 
-
-inputbase=$(basename $inputfile .cfg)
+echo "Running job $SLURM_JOB_ID at $HOSTNAME with simfile $simfile"
+outdir=$(dirname $outfile)
 mkdir -p $outdir
 
-echo "CPUS ON  NODE  : $SLURM_CPUS_ON_NODE"
-echo "CPUS PER NODE  : $SLURM_JOB_CPUS_PER_NODE"
-echo "CPUS PER TASK  : $SLURM_CPUS_PER_TASK"
-echo "MEM PER CPU    : $SLURM_MEM_PER_CPU"
-echo "MEM PER NODE   : $SLURM_MEM_PER_NODE"
 
-if [ -n "$seedfile" ]; then
-    seedbase=$(basename $seedfile .txt)
-    echo "Running job $SLURM_JOB_ID, with seeds from file $seedfile at $HOSTNAME with inputfile $inputfile"
-    cat $seedfile | parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase_$seedbase.log "$exec -i $inputfile -r {} &> $outdir/${inputbase}_{}.out"
-elif [ -n "$nmin" ] && [ -n "$nmax" ] ;then
-    echo "Running job $SLURM_JOB_ID, seeds [$nmin - $nmax] at $HOSTNAME with inputfile $inputfile"
-    parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log "$exec -i $inputfile -r {} &> $outdir/${inputbase}_{}.out" ::: $(seq $nmin $nmax)
+num_cols=$(awk '{print NF}' $simfile | head -n 1)
+
+if [ "$num_cols" -eq 2 ]; then
+    cat $simfile | parallel --memfree $SLURM_MEM_PER_CPU --joblog $outfile --colsep ' ' "$exec -i {1} -r {2} &> $outdir/${simbase}/{1}_{2}.out"
+elif [ "$num_cols" -eq 3 ]; then
+    cat $simfile | parallel --memfree $SLURM_MEM_PER_CPU --joblog $outfile --colsep ' ' "$exec -i {1} -r {2} -s {3} &> $outdir/${simbase}/{1}_{2}_{3}.out"
+else
+    echo "Case not implemented"
+    exit 1
 fi
 
+
+#cat $simfile | parallel --memfree $SLURM_MEM_PER_CPU --joblog $outfile "$exec -i $inputfile -r {} &> $outdir/${inputbase}_{}.out"
+
+#
+#inputbase=$(basename $inputfile .cfg)
+#mkdir -p $outdir
+#
+#echo "CPUS ON  NODE  : $SLURM_CPUS_ON_NODE"
+#echo "CPUS PER NODE  : $SLURM_JOB_CPUS_PER_NODE"
+#echo "CPUS PER TASK  : $SLURM_CPUS_PER_TASK"
+#echo "MEM PER CPU    : $SLURM_MEM_PER_CPU"
+#echo "MEM PER NODE   : $SLURM_MEM_PER_NODE"
+#
+#if [ -n "$seedfile" ]; then
+#    seedbase=$(basename $seedfile .txt)
+#    echo "Running job $SLURM_JOB_ID, with seeds from file $seedfile at $HOSTNAME with inputfile $inputfile"
+#    cat $seedfile | parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase_$seedbase.log "$exec -i $inputfile -r {} &> $outdir/${inputbase}_{}.out"
+#elif [ -n "$nmin" ] && [ -n "$nmax" ] ;then
+#    echo "Running job $SLURM_JOB_ID, seeds [$nmin - $nmax] at $HOSTNAME with inputfile $inputfile"
+#    parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log "$exec -i $inputfile -r {} &> $outdir/${inputbase}_{}.out" ::: $(seq $nmin $nmax)
+#fi
+#
 
 # For initial state enumeration
 #realization=1811
