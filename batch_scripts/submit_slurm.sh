@@ -90,8 +90,8 @@ if [ -n "$inputseeds" ] ; then
     fi
     rm -rf split*
     mkdir -p split
-    split --lines=$stepsize -d $inputseeds split/split.
-    splitfiles=$(find -L split -type f -name 'split.*')
+    split --lines=$stepsize --additional-suffix=.txt -d $inputseeds split/split_
+    splitfiles=$(find -L split -type f -name 'split_*')
     for inputfile in $inputfiles; do
         for splitfile in $splitfiles; do
             sbatch $partition $requeue $exclusive $time $other \

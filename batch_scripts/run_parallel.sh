@@ -74,8 +74,9 @@ echo "MEM PER CPU    : $SLURM_MEM_PER_CPU"
 echo "MEM PER NODE   : $SLURM_MEM_PER_NODE"
 
 if [ -n "$seedfile" ]; then
+    seedbase=$(basename $seedfile .txt)
     echo "Running job $SLURM_JOB_ID, with seeds from file $seedfile at $HOSTNAME with inputfile $inputfile"
-    cat $seedfile | parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log "$exec -i $inputfile -r {} &> $outdir/${inputbase}_{}.out"
+    cat $seedfile | parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase_$seedbase.log "$exec -i $inputfile -r {} &> $outdir/${inputbase}_{}.out"
 elif [ -n "$nmin" ] && [ -n "$nmax" ] ;then
     echo "Running job $SLURM_JOB_ID, seeds [$nmin - $nmax] at $HOSTNAME with inputfile $inputfile"
     parallel --memfree $SLURM_MEM_PER_CPU --joblog $outdir/$inputbase.log "$exec -i $inputfile -r {} &> $outdir/${inputbase}_{}.out" ::: $(seq $nmin $nmax)
