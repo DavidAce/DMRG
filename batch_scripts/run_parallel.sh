@@ -47,7 +47,7 @@ fi
 
 echo "Running job $SLURM_JOB_ID at $HOSTNAME with simfile $simfile"
 outdir=$(dirname $outfile)
-mkdir -p $outdir
+mkdir -p $outdir/$simbase
 
 
 num_cols=$(awk '{print NF}' $simfile | head -n 1)
