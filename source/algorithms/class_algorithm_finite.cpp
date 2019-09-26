@@ -151,8 +151,13 @@ void class_algorithm_finite::run_postprocessing(){
     state->unset_measurements();
     state->do_all_measurements();
     print_status_update();
-    tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
-    tools::finite::io::write_all_state(*state,*h5pp_file, sim_name);
+    write_measurements(true);
+    write_state(true);
+    write_status(true);
+    write_logs(true);
+
+//    tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
+//    tools::finite::io::write_all_state(*state,*h5pp_file, sim_name);
     tools::finite::io::write_projection_to_closest_parity_sector(*state, *h5pp_file, sim_name,
                                                                  settings::model::target_parity_sector,false);
 
@@ -321,6 +326,7 @@ void class_algorithm_finite::compute_observables(){
 
 
 void class_algorithm_finite::write_measurements(bool force){
+    if (settings::output::storage_level == StorageLevel::NONE){return;}
     if(not force){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (not state->position_is_any_edge()){return;}
@@ -333,14 +339,16 @@ void class_algorithm_finite::write_measurements(bool force){
     h5pp_file->writeDataset(false, sim_name + "/simOK");
     tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
 
-    if (settings::output::storage_level >= StorageLevel::NORMAL){
-        std::string log_name = sim_name + "/logs/iter_" + std::to_string(sim_status.iteration);
-        tools::finite::io::write_all_measurements(*state, *h5pp_file, log_name);
-    }
+    // THIS IS NOT NEEDED ANYMORE SINCE WE STORE INTO TABLES INSTEAD
+    //    if (settings::output::storage_level >= StorageLevel::NORMAL){
+    //        std::string log_name = sim_name + "/logs/iter_" + std::to_string(sim_status.iteration);
+    //        tools::finite::io::write_all_measurements(*state, *h5pp_file, log_name);
+    //    }
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
 void class_algorithm_finite::write_state(bool force){
+    if (settings::output::storage_level == StorageLevel::NONE){return;}
     if(not force){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (not state->position_is_any_edge()){return;}
@@ -358,14 +366,9 @@ void class_algorithm_finite::write_state(bool force){
     tools::finite::io::write_all_state(*state, *h5pp_file, sim_name);
 
     if (settings::output::storage_level >= StorageLevel::FULL){
+        log->trace("Writing state to logs");
         std::string log_name = sim_name + "/logs/iter_" + std::to_string(sim_status.iteration);
         tools::finite::io::write_all_state(*state, *h5pp_file, log_name);
-
-    }
-    //Write the simulation status here as well, since the base has no notion of state edge
-    if (settings::output::storage_level >= StorageLevel::NORMAL){
-        std::string log_name = sim_name + "/logs/iter_" + std::to_string(sim_status.iteration);
-        tools::common::io::write_simulation_status(sim_status, *h5pp_file, log_name);
     }
 
     h5pp_file->writeDataset(true, sim_name + "/simOK");
@@ -373,24 +376,34 @@ void class_algorithm_finite::write_state(bool force){
 
 
 void class_algorithm_finite::write_status(bool force){
+    if (settings::output::storage_level == StorageLevel::NONE){return;}
     if (not force){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (not state->position_is_any_edge()){return;}
         if (write_freq() == 0){return;}
-        if (settings::output::storage_level <= StorageLevel::NONE){return;}
+        if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
     }
     log->trace("Writing simulation status to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");
     tools::common::io::write_simulation_status(sim_status, *h5pp_file, sim_name);
+
+    // THIS IS NOT NEEDED ANYMORE SINCE WE STORE INTO TABLES INSTEAD
+    // Write the simulation status here as well, since the base has no notion of state edge
+    //    if (settings::output::storage_level >= StorageLevel::NORMAL){
+    //        log->trace("Writing simulation status to logs");
+    //        std::string log_name = sim_name + "/logs/iter_" + std::to_string(sim_status.iteration);
+    //        tools::common::io::write_simulation_status(sim_status, *h5pp_file, log_name);
+    //    }
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
 
 void class_algorithm_finite::write_logs(bool force){
+    if (settings::output::storage_level == StorageLevel::NONE){return;}
     if(not force){
         if (not settings::output::save_logs){return;}
         if (math::mod(sim_status.step, write_freq()) != 0) {return;}
-        if (settings::output::storage_level < StorageLevel::NORMAL){return;}
+        if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
     }
     write_log_measurement();
     write_log_sim_status();
