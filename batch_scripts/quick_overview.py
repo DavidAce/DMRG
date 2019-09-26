@@ -8,6 +8,8 @@ regex = re.compile(r'\d+')
 
 
 for dirName, subdirList, fileList in os.walk(h5directory):
+    if not fileList:
+        continue
     subdirList.sort()
     fileList.sort()
     realization_num  = []
