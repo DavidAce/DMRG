@@ -90,18 +90,19 @@ namespace settings {
         inline size_t   eigMaxIter                   = 1000  ;   /*!< Maximum number of steps for eigenvalue solver. */
         inline double   eigThreshold                 = 1e-12 ;   /*!< Minimum threshold for halting eigenvalue solver. */
         inline size_t   eigMaxNcv                    = 16    ;   /*!< Parameter controlling the column space? of the Lanczos solver. */
-        inline double   SVDThreshold                 = 1e-8  ;   /*!< Minimum threshold value for keeping singular values. */
-        inline double   VarConvergenceThreshold      = 1e-8  ;   /*!< Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value */
-        inline double   VarSaturationThreshold       = 1e-4  ;   /*!< Variance saturation slope threshold [0-100%]. The variance has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration */
-        inline double   EntEntrSaturationThreshold   = 1e-4  ;   /*!< Entanglement Entropy saturation slope threshold [0-100%]. The entanglement entropy has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration*/
-        inline double   SubspaceQualityFactor        = 1     ;   /*!< The subspace quality threshold = energy_variance * SubspaceQualityFactor decides if we go ahead in variance optimization. If the quality is too bad, direct optimization is done instead */
-        inline double   MaxSubspaceError             = 1e-4  ;   /*!< The maximum subspace quality to accept. Helps in the early stages to find good overlapping states */
-        inline size_t   MaxSitesMultiDmrg            = 2     ;   /*!< Maximum number of sites in multi-site dmrg. Too many sites (>12 or so) makes the contractions slow. */
-        inline size_t   MaxSizeFullDiag              = 2048  ;   /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
-        inline size_t   MaxSizePartDiag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */
-        inline size_t   MaxSizeDirect                = 131072;   /*!< Maximum linear size for direct multisite dmrg. If the linear size is larger than this, the algorithm prefers 2-site dmrg. */
-        inline double   MaxNormError                 = 1e-10 ;   /*!< Maximum norm deviation from unity during integrity checks */
-        inline size_t   MaxResets                    = 4     ;   /*!< Maximum number of resets to initial state */
+        inline double   SVDThreshold                 = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
+        inline double   varianceConvergenceThreshold = 1e-11 ;   /*!< Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value */
+        inline double   varianceSlopeThreshold       = 5     ;   /*!< Variance saturation slope threshold [0-100%]. The variance has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration */
+        inline double   entropySlopeThreshold        = 0.1   ;   /*!< Entanglement Entropy saturation slope threshold [0-100%]. The entanglement entropy has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration*/
+        inline double   subspaceErrorFactor          = 1     ;   /*!< The subspace quality threshold = energy_variance * SubspaceQualityFactor decides if we go ahead in variance optimization. If the subspace error is too high, direct optimization is done instead */
+        inline double   maxSubspaceError             = 1e-4  ;   /*!< The maximum subspace error. Never do subspace variance optimization with subspace error greater than this. */
+        inline double   minSubspaceError             = 1e-8  ;   /*!< The minimum subspace error. Always do subspace variance optimization with subspace error less than this  */
+        inline size_t   maxSitesMultiDmrg            = 8     ;   /*!< Maximum number of sites in multi-site dmrg. Too many sites (>12 or so) makes the contractions slow. */
+        inline size_t   maxSizeFullDiag              = 2048  ;   /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
+        inline size_t   maxSizePartDiag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */
+        inline size_t   maxSizeDirect                = 131072;   /*!< Maximum linear size for direct multisite dmrg. If the linear size is larger than this, the algorithm prefers 2-site dmrg. */
+        inline double   maxNormError                 = 1e-10 ;   /*!< Maximum norm deviation from unity during integrity checks */
+        inline size_t   maxResets                    = 4     ;   /*!< Maximum number of resets to an initial product state */
 
     }
 

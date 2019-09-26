@@ -8,7 +8,6 @@
 #include <tools/nmspc_tools.h>
 #include <general/class_tic_toc.h>
 #include <iomanip>
-#include <LBFGS.h>
 #include <ceres/ceres.h>
 #include <glog/logging.h>
 class class_tic_toc;
@@ -70,8 +69,8 @@ namespace tools::finite::opt{
         namespace reports{
             using direct_opt_tuple = std::tuple<std::string,int,double,std::complex<double>,double,double,int,int,double>;
             using subspc_opt_tuple = std::tuple<std::string,int,double,double,double,double,int,int,double>;
-            using lbfgs_tuple = std::tuple<double,double,double,double,double>;
-            using eig_tuple   = std::tuple<int,double,double,double,double,double,double>;
+            using lbfgs_tuple      = std::tuple<double,double,double,double,double>;
+            using eig_tuple        = std::tuple<int,double,double,double,double,double,double>;
 //            std::vector<log_tuple> opt_log;
             void print_report(const std::vector<direct_opt_tuple> &opt_log);
             void print_report(const std::vector<subspc_opt_tuple> &opt_log);
@@ -91,26 +90,26 @@ namespace tools::finite::opt{
         inline std::unique_ptr<class_tic_toc> t_op   =  std::make_unique<class_tic_toc>(true,5,"t_op  ");
 
 
-        inline LBFGSpp::LBFGSParam<double> get_params(){
-            using namespace LBFGSpp;
-            LBFGSpp::LBFGSParam<double> params;
-            // READ HERE http://pages.mtu.edu/~msgocken/ma5630spring2003/lectures/lines/lines/node3.html
-            // I think c1 corresponds to ftol, and c2 corresponds to wolfe
-            params.max_iterations = 1000;
-            params.max_linesearch = 80; // Default is 20.
-            params.m              = 8;     // Default is 6
-            params.past           = 1;     //
-            params.epsilon        = 1e-2;  // Default is 1e-5.
-            params.delta          = 1e-6; // Default is 0.
-            params.ftol           = 1e-4;  // Default is 1e-4.
-            params.wolfe          = 0.90;   // Default is 0.9
-            params.min_step       = 1e-40;
-            params.max_step       = 1e+40;
-            params.linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_ARMIJO;
-            return params;
-        }
-
-        inline auto params = get_params();
+//        inline LBFGSpp::LBFGSParam<double> get_params(){
+//            using namespace LBFGSpp;
+//            LBFGSpp::LBFGSParam<double> params;
+//            // READ HERE http://pages.mtu.edu/~msgocken/ma5630spring2003/lectures/lines/lines/node3.html
+//            // I think c1 corresponds to ftol, and c2 corresponds to wolfe
+//            params.max_iterations = 1000;
+//            params.max_linesearch = 80; // Default is 20.
+//            params.m              = 8;     // Default is 6
+//            params.past           = 1;     //
+//            params.epsilon        = 1e-2;  // Default is 1e-5.
+//            params.delta          = 1e-6; // Default is 0.
+//            params.ftol           = 1e-4;  // Default is 1e-4.
+//            params.wolfe          = 0.90;   // Default is 0.9
+//            params.min_step       = 1e-40;
+//            params.max_step       = 1e+40;
+//            params.linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_ARMIJO;
+//            return params;
+//        }
+//
+//        inline auto params = get_params();
 
 
 
