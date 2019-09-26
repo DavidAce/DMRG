@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structclass__log__finite__dmrg__measurements_1_1meta__struct" kind="struct" language="C++" prot="public">
+    <compoundname>class_log_finite_dmrg_measurements::meta_struct</compoundname>
+    <includes refid="log__types_8h" local="no">log_types.h</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a84cd217b76116202743e1484301b3620" prot="public" static="yes" mutable="no">
+        <type>constexpr hsize_t</type>
+        <definition>constexpr hsize_t class_log_finite_dmrg_measurements::meta_struct::NFIELDS</definition>
+        <argsstring></argsstring>
+        <name>NFIELDS</name>
+        <initializer>= 18</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a81fe31944fae0dd868d0a64ff0d206d9" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_log_finite_dmrg_measurements::meta_struct::dst_size</definition>
+        <argsstring></argsstring>
+        <name>dst_size</name>
+        <initializer>= sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a4595254bda714542fad65f2d0a6d108c" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a84cd217b76116202743e1484301b3620" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t, NFIELDS&gt; class_log_finite_dmrg_measurements::meta_struct::dst_offsets</definition>
+        <argsstring></argsstring>
+        <name>dst_offsets</name>
+        <initializer>= {
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, step),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, iteration),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, position),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, length),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, bond_dimension_midchain),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, bond_dimension_current),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, entanglement_entropy_midchain),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, entanglement_entropy_current),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, norm),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, energy),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, energy_per_site),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, energy_variance),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, energy_variance_per_site),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, spin_component_sx),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, spin_component_sy),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, spin_component_sz),
+                HOFFSET(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct" kindref="compound">data_struct</ref>, truncation_error),
+
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__finite__dmrg__measurements_1_1meta__struct_1ac22fffff1909cf10d0f8daaf8cecacb0" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a84cd217b76116202743e1484301b3620" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t, NFIELDS&gt; class_log_finite_dmrg_measurements::meta_struct::dst_sizes</definition>
+        <argsstring></argsstring>
+        <name>dst_sizes</name>
+        <initializer>= {
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a5257cfbcc02b7c349a5873ba47a8e174" kindref="member">data_struct::step</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1aec4340a0313e13398767f2bf0972ac99" kindref="member">data_struct::iteration</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a19d76c146c8e347beb5bd03ebc8370ac" kindref="member">data_struct::position</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a7116c0b2dee8337215cb0d6312e2faa8" kindref="member">data_struct::length</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a6f2dc22ba0413c2e5af5f598e1a0cd53" kindref="member">data_struct::bond_dimension_midchain</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1ad25fe694093ae6db426a3d1579648e0a" kindref="member">data_struct::bond_dimension_current</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1ad1036ba46e77a6a753c0b3305c081b04" kindref="member">data_struct::entanglement_entropy_midchain</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a263315cd7f5a3e5fa877c6633f89231c" kindref="member">data_struct::entanglement_entropy_current</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a4e4d9a29fa0255b9e7fc25592733abab" kindref="member">data_struct::norm</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a12708073a741f4e38a36ae447043be64" kindref="member">data_struct::energy</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a19982150ac16f3e083904e25739f5f36" kindref="member">data_struct::energy_per_site</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1aced40b89ced4ecf4d7bb7196b2b30d3f" kindref="member">data_struct::energy_variance</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a1f008ad88c8743a8c5b23dfa3c055622" kindref="member">data_struct::energy_variance_per_site</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a90d476a87358558cc913a3400245824b" kindref="member">data_struct::spin_component_sx</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a8c12d06700daad24a6361ef14cfb3f6c" kindref="member">data_struct::spin_component_sy</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a55152c7a5dc2bf1110cd9025a691586e" kindref="member">data_struct::spin_component_sz</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a597e3fdc29ffd46627feead5835b0d34" kindref="member">data_struct::truncation_error</ref>),
+                sizeof(<ref refid="structclass__log__finite__dmrg__measurements_1_1data__struct_1a01bb3f0fac816fb0478debe1305c1724" kindref="member">data_struct::wall_time</ref>),
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a84db2ac684b0e841e698a6ccb18ea437" prot="public" static="no" mutable="no">
+        <type>std::array&lt; const char *, <ref refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a84cd217b76116202743e1484301b3620" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;const char *, NFIELDS&gt; class_log_finite_dmrg_measurements::meta_struct::field_names</definition>
+        <argsstring></argsstring>
+        <name>field_names</name>
+        <initializer>= {
+                &quot;step&quot;,
+                &quot;iteration&quot;,
+                &quot;position&quot;,
+                &quot;length&quot;,
+                &quot;bond_dimension_midchain&quot;,
+                &quot;bond_dimension_current&quot;,
+                &quot;entanglement_entropy_midchain&quot;,
+                &quot;entanglement_entropy_current&quot;,
+                &quot;norm&quot;,
+                &quot;energy&quot;,
+                &quot;energy_per_site&quot;,
+                &quot;energy_variance&quot;,
+                &quot;energy_variance_per_site&quot;,
+                &quot;spin_component_sx&quot;,
+                &quot;spin_component_sy&quot;,
+                &quot;spin_component_sz&quot;,
+                &quot;truncation_error&quot;,
+                &quot;wall_time&quot;
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__finite__dmrg__measurements_1_1meta__struct_1abc822c9b2d8590228441121a1d3c49a8" prot="public" static="no" mutable="no">
+        <type>std::array&lt; hid_t, <ref refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a84cd217b76116202743e1484301b3620" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;hid_t, NFIELDS&gt; class_log_finite_dmrg_measurements::meta_struct::field_types</definition>
+        <argsstring></argsstring>
+        <name>field_types</name>
+        <initializer>= {
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="103" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a155c837a5431dbeeab26b8f981012fcd" prot="public" static="no" mutable="no">
+        <type>hsize_t</type>
+        <definition>hsize_t class_log_finite_dmrg_measurements::meta_struct::chunk_size</definition>
+        <argsstring></argsstring>
+        <name>chunk_size</name>
+        <initializer>= 32</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="114" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__finite__dmrg__measurements_1_1meta__struct_1aadac57a585c00cbeaa348bae0bca740c" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* class_log_finite_dmrg_measurements::meta_struct::fill_data</definition>
+        <argsstring></argsstring>
+        <name>fill_data</name>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="115" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__finite__dmrg__measurements_1_1meta__struct_1aab0fdfb204897324c3b93d694d6ca753" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_log_finite_dmrg_measurements::meta_struct::compress</definition>
+        <argsstring></argsstring>
+        <name>compress</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="116" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="418">
+        <label>class_log_finite_dmrg_measurements::meta_struct</label>
+        <link refid="structclass__log__finite__dmrg__measurements_1_1meta__struct"/>
+        <childnode refid="419" relation="usage">
+          <edgelabel>field_names</edgelabel>
+        </childnode>
+        <childnode refid="420" relation="usage">
+          <edgelabel>field_types</edgelabel>
+        </childnode>
+        <childnode refid="421" relation="usage">
+          <edgelabel>dst_offsets</edgelabel>
+          <edgelabel>dst_sizes</edgelabel>
+        </childnode>
+      </node>
+      <node id="420">
+        <label>std::array&lt; hid_t, NFIELDS &gt;</label>
+      </node>
+      <node id="421">
+        <label>std::array&lt; size_t, NFIELDS &gt;</label>
+      </node>
+      <node id="419">
+        <label>std::array&lt; const char *, NFIELDS &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="39" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="39" bodyend="117"/>
+    <listofallmembers>
+      <member refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a155c837a5431dbeeab26b8f981012fcd" prot="public" virt="non-virtual"><scope>class_log_finite_dmrg_measurements::meta_struct</scope><name>chunk_size</name></member>
+      <member refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1aab0fdfb204897324c3b93d694d6ca753" prot="public" virt="non-virtual"><scope>class_log_finite_dmrg_measurements::meta_struct</scope><name>compress</name></member>
+      <member refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a4595254bda714542fad65f2d0a6d108c" prot="public" virt="non-virtual"><scope>class_log_finite_dmrg_measurements::meta_struct</scope><name>dst_offsets</name></member>
+      <member refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a81fe31944fae0dd868d0a64ff0d206d9" prot="public" virt="non-virtual"><scope>class_log_finite_dmrg_measurements::meta_struct</scope><name>dst_size</name></member>
+      <member refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1ac22fffff1909cf10d0f8daaf8cecacb0" prot="public" virt="non-virtual"><scope>class_log_finite_dmrg_measurements::meta_struct</scope><name>dst_sizes</name></member>
+      <member refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a84db2ac684b0e841e698a6ccb18ea437" prot="public" virt="non-virtual"><scope>class_log_finite_dmrg_measurements::meta_struct</scope><name>field_names</name></member>
+      <member refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1abc822c9b2d8590228441121a1d3c49a8" prot="public" virt="non-virtual"><scope>class_log_finite_dmrg_measurements::meta_struct</scope><name>field_types</name></member>
+      <member refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1aadac57a585c00cbeaa348bae0bca740c" prot="public" virt="non-virtual"><scope>class_log_finite_dmrg_measurements::meta_struct</scope><name>fill_data</name></member>
+      <member refid="structclass__log__finite__dmrg__measurements_1_1meta__struct_1a84cd217b76116202743e1484301b3620" prot="public" virt="non-virtual"><scope>class_log_finite_dmrg_measurements::meta_struct</scope><name>NFIELDS</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

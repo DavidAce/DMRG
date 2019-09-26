@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structclass__algorithm__base_1_1_saturation_report" kind="struct" language="C++" prot="protected">
+    <compoundname>class_algorithm_base::SaturationReport</compoundname>
+    <includes refid="class__algorithm__base_8h" local="no">class_algorithm_base.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclass__algorithm__base_1_1_saturation_report_1a4665be3f15a36ab061304513f6a32be8" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_algorithm_base::SaturationReport::has_computed</definition>
+        <argsstring></argsstring>
+        <name>has_computed</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="87" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__algorithm__base_1_1_saturation_report_1ab8c2530a0f676fc48916e551b679273d" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_algorithm_base::SaturationReport::has_saturated</definition>
+        <argsstring></argsstring>
+        <name>has_saturated</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="88" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__algorithm__base_1_1_saturation_report_1afd0e69afe481ee46381ef8fb70c54790" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_algorithm_base::SaturationReport::slope</definition>
+        <argsstring></argsstring>
+        <name>slope</name>
+        <initializer>= <ref refid="classclass__algorithm__base_1aeec0f1d83000ef7ba92bbcdd74bdcabb" kindref="member">quietNaN</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="89" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__algorithm__base_1_1_saturation_report_1a0754af6aec19aa9590b7a6cbc62d3c6e" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_algorithm_base::SaturationReport::avgY</definition>
+        <argsstring></argsstring>
+        <name>avgY</name>
+        <initializer>= <ref refid="classclass__algorithm__base_1aeec0f1d83000ef7ba92bbcdd74bdcabb" kindref="member">quietNaN</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="90" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__algorithm__base_1_1_saturation_report_1a29483593d2e79a3bc51c9889616aecca" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_algorithm_base::SaturationReport::check_from</definition>
+        <argsstring></argsstring>
+        <name>check_from</name>
+        <initializer>= -1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="91" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="86" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="86" bodyend="92"/>
+    <listofallmembers>
+      <member refid="structclass__algorithm__base_1_1_saturation_report_1a0754af6aec19aa9590b7a6cbc62d3c6e" prot="public" virt="non-virtual"><scope>class_algorithm_base::SaturationReport</scope><name>avgY</name></member>
+      <member refid="structclass__algorithm__base_1_1_saturation_report_1a29483593d2e79a3bc51c9889616aecca" prot="public" virt="non-virtual"><scope>class_algorithm_base::SaturationReport</scope><name>check_from</name></member>
+      <member refid="structclass__algorithm__base_1_1_saturation_report_1a4665be3f15a36ab061304513f6a32be8" prot="public" virt="non-virtual"><scope>class_algorithm_base::SaturationReport</scope><name>has_computed</name></member>
+      <member refid="structclass__algorithm__base_1_1_saturation_report_1ab8c2530a0f676fc48916e551b679273d" prot="public" virt="non-virtual"><scope>class_algorithm_base::SaturationReport</scope><name>has_saturated</name></member>
+      <member refid="structclass__algorithm__base_1_1_saturation_report_1afd0e69afe481ee46381ef8fb70c54790" prot="public" virt="non-virtual"><scope>class_algorithm_base::SaturationReport</scope><name>slope</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

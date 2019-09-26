@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_77510d0a53e1deaebbbb68f9864d99e2" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals</compoundname>
+    <innerfile refid="ceres__base_8cpp">ceres_base.cpp</innerfile>
+    <innerfile refid="ceres__direct_8cpp">ceres_direct.cpp</innerfile>
+    <innerfile refid="ceres__direct__functor_8cpp">ceres_direct_functor.cpp</innerfile>
+    <innerfile refid="ceres__direct__functor_8h">ceres_direct_functor.h</innerfile>
+    <innerfile refid="ceres__subspace_8cpp">ceres_subspace.cpp</innerfile>
+    <innerfile refid="ceres__subspace__functor_8cpp">ceres_subspace_functor.cpp</innerfile>
+    <innerfile refid="ceres__subspace__functor_8h">ceres_subspace_functor.h</innerfile>
+    <innerfile refid="ground__state_8cpp">ground_state.cpp</innerfile>
+    <innerfile refid="report_8cpp">report.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/"/>
+  </compounddef>
+</doxygen>

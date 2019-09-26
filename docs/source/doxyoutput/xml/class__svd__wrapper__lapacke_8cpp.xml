@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__svd__wrapper__lapacke_8cpp" kind="file" language="C++">
+    <compoundname>class_svd_wrapper_lapacke.cpp</compoundname>
+    <includes local="no">complex.h</includes>
+    <includes local="no">lapacke.h</includes>
+    <includes refid="class__svd__wrapper_8h" local="no">math/class_svd_wrapper.h</includes>
+    <includes local="no">Eigen/Core</includes>
+    <incdepgraph>
+      <node id="1338">
+        <label>math/class_svd_wrapper.h</label>
+        <link refid="class__svd__wrapper_8h"/>
+        <childnode refid="1339" relation="include">
+        </childnode>
+        <childnode refid="1345" relation="include">
+        </childnode>
+      </node>
+      <node id="1345">
+        <label>iomanip</label>
+      </node>
+      <node id="1343">
+        <label>iterator</label>
+      </node>
+      <node id="1346">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="1347" relation="include">
+        </childnode>
+        <childnode refid="1340" relation="include">
+        </childnode>
+        <childnode refid="1342" relation="include">
+        </childnode>
+      </node>
+      <node id="1340">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="1347">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="1342">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="1341">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1337">
+        <label>lapacke.h</label>
+      </node>
+      <node id="1336">
+        <label>complex.h</label>
+      </node>
+      <node id="1344">
+        <label>iostream</label>
+      </node>
+      <node id="1335">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp</label>
+        <link refid="class__svd__wrapper__lapacke_8cpp"/>
+        <childnode refid="1336" relation="include">
+        </childnode>
+        <childnode refid="1337" relation="include">
+        </childnode>
+        <childnode refid="1338" relation="include">
+        </childnode>
+        <childnode refid="1340" relation="include">
+        </childnode>
+      </node>
+      <node id="1339">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="1340" relation="include">
+        </childnode>
+        <childnode refid="1341" relation="include">
+        </childnode>
+        <childnode refid="1342" relation="include">
+        </childnode>
+        <childnode refid="1343" relation="include">
+        </childnode>
+        <childnode refid="1344" relation="include">
+        </childnode>
+        <childnode refid="1345" relation="include">
+        </childnode>
+        <childnode refid="1346" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="class__svd__wrapper__lapacke_8cpp_1a404df1e14fa7e09eeb60537486932fb0" prot="public" static="no">
+        <name>ComplexFloat_</name>
+        <initializer>__complex__ float</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp" line="23" column="10" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="class__svd__wrapper__lapacke_8cpp_1adabc2c82eff51faaacfd546de1ea7517" prot="public" static="no">
+        <name>ComplexDouble_</name>
+        <initializer>__complex__ double</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp" line="24" column="9" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="class__svd__wrapper__lapacke_8cpp_1ad9a894aaf835cafae89a187e0e70faf3" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using cplx =  std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>cplx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp" line="123" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-08-07.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;complex.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>I</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>MKL_AVAILABLE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MKL_Complex8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MKL_Complex8<sp/>std::complex&lt;float&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MKL_Complex16</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MKL_Complex16<sp/>std::complex&lt;double&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ComplexFloat_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ComplexFloat_<sp/><sp/>MKL_Complex8</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>ComplexDouble_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ComplexDouble_<sp/>MKL_Complex16</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;mkl_lapacke.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="class__svd__wrapper__lapacke_8cpp_1a404df1e14fa7e09eeb60537486932fb0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ComplexFloat_<sp/><sp/>__complex__<sp/>float</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="class__svd__wrapper__lapacke_8cpp_1adabc2c82eff51faaacfd546de1ea7517" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>ComplexDouble_<sp/>__complex__<sp/>double</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;lapacke.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__svd__wrapper_8h" kindref="compound">math/class_svd_wrapper.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/Core&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//template&lt;typename<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="comment">//std::tuple&lt;class_SVD::MatrixType&lt;Scalar&gt;,<sp/>class_SVD::VectorType&lt;Scalar&gt;,class_SVD::MatrixType&lt;Scalar&gt;<sp/>,<sp/>long&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">//do_svd_dgesvd(const<sp/>Scalar<sp/>*matrix,<sp/>int<sp/>rows,<sp/>int<sp/>cols){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">std::tuple&lt;class_SVD::MatrixType&lt;Scalar&gt;,<sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">class_SVD::VectorType&lt;Scalar&gt;</ref>,<ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType&lt;Scalar&gt;</ref><sp/>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="43" refid="classclass___s_v_d_1a972e614144e76de88b4495463a491860" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1a972e614144e76de88b4495463a491860" kindref="member">class_SVD::do_svd_lapacke</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>*<sp/>mat_ptr,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rows,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>cols,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rank_max){</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">MatrixType&lt;Scalar&gt;</ref><sp/>A<sp/>=<sp/>Eigen::Map&lt;const<sp/>MatrixType&lt;Scalar&gt;&gt;<sp/>(mat_ptr,rows,cols);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rows<sp/>&lt;=<sp/>0)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;SVD<sp/>error:<sp/>rows()<sp/>==<sp/>0&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(cols<sp/>&lt;=<sp/>0)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;SVD<sp/>error:<sp/>cols()<sp/>==<sp/>0&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>A.allFinite())<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;SVD<sp/>error:<sp/>matrix<sp/>has<sp/>inf&apos;s<sp/>or<sp/>nan&apos;s&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(A.isZero(0))<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;SVD<sp/>error:<sp/>matrix<sp/>is<sp/>all<sp/>zeros&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>info<sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rowsU<sp/><sp/>=<sp/>(int)<sp/>rows;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>colsU<sp/><sp/>=<sp/>(int)<sp/>std::min(rows,cols);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rowsVT<sp/>=<sp/>(int)<sp/>std::min(rows,cols);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>colsVT<sp/>=<sp/>(int)<sp/>cols;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sizeS<sp/><sp/>=<sp/>(int)<sp/>std::min(rows,cols);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lda<sp/><sp/><sp/><sp/>=<sp/>(int)<sp/>rows;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ldu<sp/><sp/><sp/><sp/>=<sp/>(int)<sp/>rowsU;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ldvt<sp/><sp/><sp/>=<sp/>(int)<sp/>rowsVT;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">MatrixType&lt;Scalar&gt;</ref><sp/>U(rowsU,colsU);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">VectorType&lt;double&gt;</ref><sp/>S(sizeS);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">MatrixType&lt;Scalar&gt;</ref><sp/>VT(rowsVT,colsVT);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">VectorType&lt;Scalar&gt;</ref><sp/>work(1);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;Scalar,double&gt;::value){</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>info<sp/>=<sp/>LAPACKE_dgesvd_work(LAPACK_COL_MAJOR,<sp/></highlight><highlight class="charliteral">&apos;S&apos;</highlight><highlight class="normal">,<sp/></highlight><highlight class="charliteral">&apos;S&apos;</highlight><highlight class="normal">,<sp/>rows,cols,<sp/>A.data(),<sp/>lda,<sp/>S.data(),<sp/>U.data(),<sp/>ldu,<sp/>VT.data(),<sp/>ldvt,<sp/>work.data(),<sp/>-1);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lwork<sp/><sp/>=<sp/>(int)<sp/>work(0);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>work.resize(lwork);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>info<sp/>=<sp/>LAPACKE_dgesvd_work(LAPACK_COL_MAJOR,<sp/></highlight><highlight class="charliteral">&apos;S&apos;</highlight><highlight class="normal">,<sp/></highlight><highlight class="charliteral">&apos;S&apos;</highlight><highlight class="normal">,<sp/>rows,cols,<sp/>A.data(),<sp/>lda,<sp/>S.data(),<sp/>U.data(),<sp/>ldu,<sp/>VT.data(),<sp/>ldvt,<sp/>work.data(),<sp/>lwork);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;<ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>,std::complex&lt;double&gt;&gt;::value){</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lrwork<sp/>=<sp/>(int)<sp/>(5<sp/>*<sp/>std::min(rows,cols));</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">VectorType&lt;double&gt;</ref><sp/>rwork(lrwork);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>Ap<sp/><sp/>=<sp/><sp/></highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="class__svd__wrapper__lapacke_8cpp_1adabc2c82eff51faaacfd546de1ea7517" kindref="member">ComplexDouble_</ref><sp/>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(A.data());</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>Up<sp/><sp/>=<sp/><sp/></highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="class__svd__wrapper__lapacke_8cpp_1adabc2c82eff51faaacfd546de1ea7517" kindref="member">ComplexDouble_</ref><sp/>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(U.data());</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>VTp<sp/>=<sp/><sp/></highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="class__svd__wrapper__lapacke_8cpp_1adabc2c82eff51faaacfd546de1ea7517" kindref="member">ComplexDouble_</ref><sp/>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(VT.data());</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>info<sp/>=<sp/>LAPACKE_zgesvd_work(LAPACK_COL_MAJOR,<sp/></highlight><highlight class="charliteral">&apos;S&apos;</highlight><highlight class="normal">,<sp/></highlight><highlight class="charliteral">&apos;S&apos;</highlight><highlight class="normal">,<sp/>rows,cols,<sp/>Ap,<sp/>lda,<sp/>S.data(),<sp/>Up,<sp/>ldu,<sp/>VTp,<sp/>ldvt,<sp/>work.data(),<sp/>-1,rwork.data());</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lwork<sp/><sp/>=<sp/>(int)<sp/>std::real(work(0));</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>work.resize(lwork);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>info<sp/>=<sp/>LAPACKE_zgesvd_work(LAPACK_COL_MAJOR,<sp/></highlight><highlight class="charliteral">&apos;S&apos;</highlight><highlight class="normal">,<sp/></highlight><highlight class="charliteral">&apos;S&apos;</highlight><highlight class="normal">,<sp/>rows,cols,<sp/>Ap,<sp/>lda,<sp/>S.data(),<sp/>Up,<sp/>ldu,<sp/>VTp,<sp/>ldvt,<sp/>work.data(),<sp/>lwork,rwork.data());</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rank<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>(S.array()<sp/>&gt;=<sp/><ref refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" kindref="member">SVDThreshold</ref>).count();</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nonzero<sp/><sp/><sp/><sp/><sp/>=<sp/>(S.array()<sp/>&gt;<sp/>0.0).count();</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" kindref="member">truncation_error</ref><sp/>=<sp/>S.normalized().tail(nonzero-rank).squaredNorm();</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rank<sp/>&lt;=<sp/>0</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>or<sp/>not<sp/>U.leftCols(rank).allFinite()</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>or<sp/>not<sp/>S.head(rank).allFinite()</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>or<sp/>not<sp/>VT.topRows(rank).allFinite()<sp/>)</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;SVD<sp/>error<sp/>\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>SVDThreshold<sp/><sp/><sp/><sp/><sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" kindref="member">SVDThreshold</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>Truncation<sp/>Error<sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" kindref="member">truncation_error</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>Rank<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>rank<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>U<sp/>all<sp/>finite<sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>U.leftCols(rank).allFinite()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>S<sp/>all<sp/>finite<sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>S.head(rank).allFinite()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>V<sp/>all<sp/>finite<sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>VT.topRows(rank).allFinite()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>do_svd_lapacke(mat_ptr,<sp/>rows,cols,rank_max);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;SVD<sp/>lapacke<sp/>error:<sp/><sp/>Erroneous<sp/>results&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_tuple(</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>U.leftCols(rank),</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>S.head(rank),</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>VT.topRows(rank),</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rank</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>std::tuple&lt;class_SVD::MatrixType&lt;double&gt;,<sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">class_SVD::VectorType&lt;double&gt;</ref>,<ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType&lt;double&gt;</ref><sp/>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><ref refid="classclass___s_v_d_1a972e614144e76de88b4495463a491860" kindref="member">class_SVD::do_svd_lapacke</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="class__svd__wrapper__lapacke_8cpp_1ad9a894aaf835cafae89a187e0e70faf3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__svd__wrapper_8cpp_1ad9a894aaf835cafae89a187e0e70faf3" kindref="member">cplx</ref><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
+<codeline lineno="126"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>std::tuple&lt;class_SVD::MatrixType&lt;cplx&gt;,<sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">class_SVD::VectorType&lt;cplx&gt;</ref>,<ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType&lt;cplx&gt;</ref><sp/>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><ref refid="classclass___s_v_d_1a972e614144e76de88b4495463a491860" kindref="member">class_SVD::do_svd_lapacke</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class__svd__wrapper_8cpp_1ad9a894aaf835cafae89a187e0e70faf3" kindref="member">cplx</ref><sp/>*,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp"/>
+  </compounddef>
+</doxygen>
