@@ -43,17 +43,18 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<double>     ("precision::eigThreshold"                    , precision::eigThreshold);
     indata.find_parameter<size_t>     ("precision::eigMaxNcv"                       , precision::eigMaxNcv);
     indata.find_parameter<double>     ("precision::SVDThreshold"                    , precision::SVDThreshold);
-    indata.find_parameter<double>     ("precision::VarConvergenceThreshold"         , precision::VarConvergenceThreshold);
-    indata.find_parameter<double>     ("precision::VarSaturationThreshold"          , precision::VarSaturationThreshold);
-    indata.find_parameter<double>     ("precision::EntEntrSaturationThreshold"      , precision::EntEntrSaturationThreshold);
-    indata.find_parameter<double>     ("precision::SubspaceQualityFactor"           , precision::SubspaceQualityFactor);
-    indata.find_parameter<double>     ("precision::MaxSubspaceError"                , precision::MaxSubspaceError);
-    indata.find_parameter<size_t>     ("precision::MaxSitesMultiDmrg"               , precision::MaxSitesMultiDmrg);
-    indata.find_parameter<size_t>     ("precision::MaxSizeFullDiag"                 , precision::MaxSizeFullDiag);
-    indata.find_parameter<size_t>     ("precision::MaxSizePartDiag"                 , precision::MaxSizePartDiag);
-    indata.find_parameter<size_t>     ("precision::MaxSizeDirect"                   , precision::MaxSizeDirect);
-    indata.find_parameter<double>     ("precision::MaxNormError"                    , precision::MaxNormError);
-    indata.find_parameter<size_t>     ("precision::MaxResets"                       , precision::MaxResets);
+    indata.find_parameter<double>     ("precision::varianceConvergenceThreshold"    , precision::varianceConvergenceThreshold);
+    indata.find_parameter<double>     ("precision::varianceSlopeThreshold"          , precision::varianceSlopeThreshold);
+    indata.find_parameter<double>     ("precision::entropySlopeThreshold"           , precision::entropySlopeThreshold);
+    indata.find_parameter<double>     ("precision::subspaceErrorFactor"             , precision::subspaceErrorFactor);
+    indata.find_parameter<double>     ("precision::maxSubspaceError"                , precision::maxSubspaceError);
+    indata.find_parameter<double>     ("precision::minSubspaceError"                , precision::minSubspaceError);
+    indata.find_parameter<size_t>     ("precision::maxSitesMultiDmrg"               , precision::maxSitesMultiDmrg);
+    indata.find_parameter<size_t>     ("precision::maxSizeFullDiag"                 , precision::maxSizeFullDiag);
+    indata.find_parameter<size_t>     ("precision::maxSizePartDiag"                 , precision::maxSizePartDiag);
+    indata.find_parameter<size_t>     ("precision::maxSizeDirect"                   , precision::maxSizeDirect);
+    indata.find_parameter<double>     ("precision::maxNormError"                    , precision::maxNormError);
+    indata.find_parameter<size_t>     ("precision::maxResets"                       , precision::maxResets);
     //Parameters controlling infinite-DMRG
     indata.find_parameter<bool>   ("idmrg::on"         , idmrg::on);
     if(idmrg::on){

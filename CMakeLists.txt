@@ -285,7 +285,7 @@ include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not foun
 include(cmake-modules/FindLAPACKE.cmake)                    # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
 include(cmake-modules/Fetch_spdlog.cmake)                   # spdlog library
-include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
+#include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
@@ -298,7 +298,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 target_link_libraries(${PROJECT_NAME} PRIVATE lapacke)
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
-target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
+#target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
 target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp)
 #target_link_libraries(${PROJECT_NAME} PRIVATE gflags)
@@ -317,7 +317,7 @@ get_target_property(ARPACK_INFO_INC     arpack           INTERFACE_INCLUDE_DIREC
 get_target_property(ARPACKPP_INFO_LIB   arpack++         INTERFACE_LINK_LIBRARIES)
 get_target_property(ARPACKPP_INFO_INC   arpack++         INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(EIGEN_INFO          Eigen3::Eigen    INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(LBFGS_INFO          LBFGSpp          INTERFACE_INCLUDE_DIRECTORIES)
+#get_target_property(LBFGS_INFO          LBFGSpp          INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(SPDLOG_INFO         spdlog::spdlog   INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(HDF5_INFO_LIB       hdf5             INTERFACE_LINK_LIBRARIES)
 get_target_property(HDF5_INFO_INC       hdf5             INTERFACE_INCLUDE_DIRECTORIES)
@@ -354,8 +354,8 @@ message("-----------------------------------------------------------------------
 message("    EIGEN3         INC:  ${EIGEN_INFO}")
 message("-----------------------------------------------------------------------------")
 message("    SPDLOG         INC:  ${SPDLOG_INFO}")
-message("-----------------------------------------------------------------------------")
-message("    LBFGS++        INC:  ${LBFGS_INFO}")
+#message("-----------------------------------------------------------------------------")
+#message("    LBFGS++        INC:  ${LBFGS_INFO}")
 message("-----------------------------------------------------------------------------")
 message("    HDF5           LIB:  ${HDF5_INFO_LIB}")
 message("                   INC:  ${HDF5_INFO_INC}")

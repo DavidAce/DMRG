@@ -173,7 +173,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     else{
         tools::log->debug("Direct optimization didn't improve variance.");
         tools::log->debug("Returning old theta");
-        if (variance_new <= settings::precision::VarConvergenceThreshold)
+        if (variance_new <= settings::precision::varianceConvergenceThreshold)
               state.tag_active_sites_have_been_updated(true);
         else  state.tag_active_sites_have_been_updated(false);
         return  theta;

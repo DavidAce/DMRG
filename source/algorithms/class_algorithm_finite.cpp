@@ -198,8 +198,8 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
     // We want to check every time we can because the variance is expensive to compute.
     if (not state->position_is_any_edge()){return;}
     log->debug("Checking convergence of variance mpo");
-    threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
-    slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
+    threshold       = std::isnan(threshold) ? settings::precision::varianceConvergenceThreshold : threshold;
+    slope_threshold = std::isnan(slope_threshold) ? settings::precision::varianceSlopeThreshold : slope_threshold;
     auto report = check_saturation_using_slope(
                     B_mpo_vec,
                     V_mpo_vec,
@@ -240,7 +240,7 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
     if (not state->position_is_any_edge()){return;}
     log->debug("Checking convergence of entanglement");
 
-    slope_threshold = std::isnan(slope_threshold) ? settings::precision::EntEntrSaturationThreshold  : slope_threshold;
+    slope_threshold = std::isnan(slope_threshold) ? settings::precision::entropySlopeThreshold : slope_threshold;
     auto entropies  = tools::finite::measure::entanglement_entropies(*state);
     std::vector<SaturationReport> reports(entropies.size());
     for (size_t site = 0; site < entropies.size(); site++){

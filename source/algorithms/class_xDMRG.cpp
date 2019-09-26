@@ -100,23 +100,23 @@ void class_xDMRG::single_DMRG_step()
     auto optMode    = measure::energy_variance_per_site(*state) > 1e-2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
 
     auto optSpace = opt::OptSpace::SUBSPACE;
-//    optSpace      = measure::energy_variance_per_site(*state) < settings::precision::VarConvergenceThreshold         ?  opt::OptSpace::DIRECT  : optSpace;
-    optSpace      = state->size_2site()  > settings::precision::MaxSizePartDiag                                      ?  opt::OptSpace::DIRECT  : optSpace;
+//    optSpace      = measure::energy_variance_per_site(*state) < settings::precision::varianceConvergenceThreshold         ?  opt::OptSpace::DIRECT  : optSpace;
+    optSpace      = state->size_2site()  > settings::precision::maxSizePartDiag ? opt::OptSpace::DIRECT : optSpace;
 //    optSpace      = sim_status.iteration >= settings::xdmrg::min_sweeps                                              ?  opt::OptSpace::DIRECT  : optSpace;
     auto optType  = state->isReal() ?  opt::OptType::REAL :  opt::OptType::CPLX;
 
 
     long threshold = 0;
     switch(optSpace){
-        case  opt::OptSpace::SUBSPACE : threshold = settings::precision::MaxSizePartDiag; break;
-        case  opt::OptSpace::DIRECT   : threshold = settings::precision::MaxSizeDirect  ; break;
+        case  opt::OptSpace::SUBSPACE : threshold = settings::precision::maxSizePartDiag; break;
+        case  opt::OptSpace::DIRECT   : threshold = settings::precision::maxSizeDirect  ; break;
     }
 
     debug::check_integrity(*state);
     Eigen::Tensor<Scalar,3> theta;
-//    std::list<size_t> max_num_sites_list = math::range_list(2ul,settings::precision::MaxSitesMultiDmrg,2ul);
+//    std::list<size_t> max_num_sites_list = math::range_list(2ul,settings::precision::maxSitesMultiDmrg,2ul);
     std::list<size_t> max_num_sites_list = {2,4,8,12};
-    while (max_num_sites_list.back() > settings::precision::MaxSitesMultiDmrg) max_num_sites_list.pop_back();
+    while (max_num_sites_list.back() > settings::precision::maxSitesMultiDmrg) max_num_sites_list.pop_back();
     while(true){
         auto old_num_sites = state->active_sites.size();
         auto old_prob_size = state->active_problem_size();
@@ -127,10 +127,10 @@ void class_xDMRG::single_DMRG_step()
             state->active_problem_size() == old_prob_size){
             //Reached threshold
             if( optSpace == opt::OptSpace::SUBSPACE and
-                old_prob_size > settings::precision::MaxSizeFullDiag){
+                old_prob_size > settings::precision::maxSizeFullDiag){
                 //Switch to DIRECT
                 optSpace  = opt::OptSpace::DIRECT;
-                threshold = settings::precision::MaxSizeDirect;
+                threshold = settings::precision::maxSizeDirect;
                 log->debug("SUBSPACE threshold reached, switching to DIRECT mode");
                 state->activate_sites(threshold, max_num_sites_list.front());
             }
@@ -149,7 +149,7 @@ void class_xDMRG::single_DMRG_step()
             break;
         }
         if(max_num_sites_list.empty()){
-            log->debug("Keeping last theta: failed to find better theta and MaxSitesMultiDmrg reached");
+            log->debug("Keeping last theta: failed to find better theta and maxSitesMultiDmrg reached");
             if(theta.size() == 0) throw std::logic_error("Theta is empty!");
             break;
         }
@@ -166,8 +166,11 @@ void class_xDMRG::single_DMRG_step()
 
 
 //    if (optMode == opt::OptMode::OVERLAP){
-//        sim_status.chi_temp = 16 * (1+sim_status.iteration);
+//        sim_status.chi_temp = 4 * (1+sim_status.iteration);
+//        log->debug("Forcing bond dimension down to {}",sim_status.chi_temp);
 //    }
+
+
     log->debug("Variance check before truncate       : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
 
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
@@ -175,7 +178,7 @@ void class_xDMRG::single_DMRG_step()
     tools::finite::mps::rebuild_environments(*state);
     log->debug("Variance check after truncate + move : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
 
-    if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::MaxNormError){
+    if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::maxNormError){
         tools::log->warn("Norm too large: {:.18f}",tools::finite::measure::norm(*state) );
         tools::finite::mps::normalize(*state);
         tools::finite::mps::rebuild_environments(*state);
@@ -260,7 +263,7 @@ void class_xDMRG::check_convergence(){
             *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector,keep_bond_dimensions);
             has_projected = true;
         }
-        else if (    sim_status.num_resets < settings::precision::MaxResets
+        else if (    sim_status.num_resets < settings::precision::maxResets
                  and tools::finite::measure::energy_variance_per_site(*state) > 1e-10)
         {
             std::string reason = fmt::format("simulation has saturated with bad precision",
@@ -310,7 +313,7 @@ void class_xDMRG::inflate_initial_state(){
 
 
 void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &parity_sector,bool inflate, std::string reason ){
-    log->info("Resetting to product state -- Reason: {}", reason);
+    log->warn("Resetting to product state -- Reason: {}", reason);
 //    sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
 
     int counter = 0;
@@ -335,37 +338,7 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
     sim_status.energy_ubound      = sim_status.energy_target + sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
     sim_status.energy_lbound      = sim_status.energy_target - sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
 
-
-
-
-
-
-
-    //Initialize state in window and in the specified initial sector
-//    tools::finite::mps::internals::seed_state_unused = true;
-//    bool outside_of_window = true;
-//    int counter = 0;
-//    double growth_factor = 1.10;
-//    while(outside_of_window){
-//        reset_to_random_state(settings::model::initial_parity_sector, settings::model::seed_state);
-//        sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
-//        outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
-//        counter++;
-//        if (counter % 10 == 0) {
-//            log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}", sim_status.energy_dens_window, std::min(growth_factor*sim_status.energy_dens_window, 0.5) );
-//            sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
-//        }
-//    }
-//    log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
-//    clear_saturation_status();
-//    has_projected   = false;
-//    sim_status.energy_ubound      = sim_status.energy_target + sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
-//    sim_status.energy_lbound      = sim_status.energy_target - sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
-
-
-
-
-
+    log->info("Number of product state resets: {}",sim_status.num_resets );
 }
 
 

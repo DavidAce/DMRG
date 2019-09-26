@@ -75,8 +75,8 @@ void class_algorithm_infinite::check_convergence_variance_mpo(double threshold,d
     //Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
     log->debug("Checking convergence of variance mpo");
-    threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
-    slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
+    threshold       = std::isnan(threshold) ? settings::precision::varianceConvergenceThreshold : threshold;
+    slope_threshold = std::isnan(slope_threshold) ? settings::precision::varianceSlopeThreshold : slope_threshold;
     compute_observables();
 
     auto report = check_saturation_using_slope(
@@ -99,8 +99,8 @@ void class_algorithm_infinite::check_convergence_variance_ham(double threshold,d
     // We want to check every time we can because the variance is expensive to compute.
     log->trace("Checking convergence of variance ham");
 
-    threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
-    slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
+    threshold       = std::isnan(threshold) ? settings::precision::varianceConvergenceThreshold : threshold;
+    slope_threshold = std::isnan(slope_threshold) ? settings::precision::varianceSlopeThreshold : slope_threshold;
     auto report  = check_saturation_using_slope(
             B_ham_vec,
             V_ham_vec,
@@ -119,8 +119,8 @@ void class_algorithm_infinite::check_convergence_variance_mom(double threshold,d
     // We want to check every time we can because the variance is expensive to compute.
     log->trace("Checking convergence of variance mom");
 
-    threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
-    slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
+    threshold       = std::isnan(threshold) ? settings::precision::varianceConvergenceThreshold : threshold;
+    slope_threshold = std::isnan(slope_threshold) ? settings::precision::varianceSlopeThreshold : slope_threshold;
     auto report = check_saturation_using_slope(B_mom_vec,
             V_mom_vec,
             X_mom_vec,
@@ -138,7 +138,7 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
     // This one is cheap to compute.
     log->debug("Checking convergence of entanglement");
 
-    slope_threshold = std::isnan(slope_threshold) ? settings::precision::EntEntrSaturationThreshold  : slope_threshold;
+    slope_threshold = std::isnan(slope_threshold) ? settings::precision::entropySlopeThreshold : slope_threshold;
     auto report = check_saturation_using_slope(
             BS_vec,
             S_vec,
