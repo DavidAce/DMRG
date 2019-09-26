@@ -6,11 +6,10 @@ import numpy as np
 h5directory = 'output'
 regex = re.compile(r'\d+')
 
-
+print("{:15} {:8} {:>8} {:>8} {:>10} {:>10} {:>10}".format("Realization", "Variance","Time", "Resets", "Converged", "Saturated", "Succeeded"))
 for dirName, subdirList, fileList in os.walk(h5directory):
     subdirList.sort()
     fileList.sort()
-    print("{:15} {:8} {:>8} {:>8} {:>10} {:>10} {:>10}".format("Realization", "Variance","Time", "Resets", "Converged", "Saturated", "Succeeded"))
     for h5path in fileList:
         # print("Filepath: ", h5path)
         try:
