@@ -46,7 +46,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                                                                                      "Succeeded", "Finished")
         print(header)
         if args.save:
-            file.write(header)
+            file.write(header + '\n')
     for h5path in fileList:
         # print("Filepath: ", h5path)
         try:
@@ -85,7 +85,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                     finished[-1])
                 print(entry)
                 if args.save:
-                    file.write(entry)
+                    file.write(entry + '\n')
 
         except Exception as er:
             print("Could not read dataset. Reason: ", er)
@@ -107,7 +107,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
     print(header)
     print(entry)
     if args.save:
-        file.write(header)
-        file.write(entry)
+        file.write(header + '\n')
+        file.write(entry + '\n')
 if args.save:
     file.close()
